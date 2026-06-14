@@ -62,7 +62,7 @@ body{color:#fff7df;
 .climate .frost{background:radial-gradient(125% 95% at 50% 46%,transparent 50%,#cfe6ff 128%);mix-blend-mode:screen;opacity:var(--frost,0)}
 /* heat-haze: a warm convection band that rises + wobbles low in the sky when it's hot (alpha+wobble
    scale with --heat, so it vanishes entirely when cold). Cheap transform/opacity only. */
-.climate .heatwave{top:auto;height:42%;background:linear-gradient(0deg,rgba(255,206,150,calc(.13*var(--heat,0))),transparent 85%);mix-blend-mode:soft-light;will-change:transform}
+.climate .heatwave{top:auto;height:42%;background:linear-gradient(0deg,rgba(255,206,150,calc(.13*var(--heat,0))),transparent 85%);mix-blend-mode:soft-light}
 @media (prefers-reduced-motion:no-preference){.climate .heatwave{animation:heatwave 3.1s ease-in-out infinite}}
 @keyframes heatwave{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(calc(-2px*var(--heat,0))) scaleY(calc(1 + .03*var(--heat,0)))}}
 /* top metadata scrim — protects the location/weather header from dissolving into the cloud
@@ -77,8 +77,16 @@ body{color:#fff7df;
 /* per-star twinkle subtracts its own --amp from its own base opacity --o (set inline by buildStars),
    so each star scintillates independently at its own phase/rate instead of in lockstep */
 @keyframes tw{0%,100%{opacity:var(--o,.85)}50%{opacity:calc(var(--o,.85) - var(--amp,.18))}}
-@media (prefers-reduced-motion:reduce){.stars circle{animation:none!important}}
-.moon{opacity:1}
+/* reduced-motion: stop ALL atmospheric/weather motion — including the thunder flash (photosensitivity) */
+@media (prefers-reduced-motion:reduce){
+  .stars circle,.cloudg-a,.cloudg-b,.wfx .fog,.wfx .drop,.wfx .flake,.wfx .flash,.wfx .bolt,
+  .climate .heatwave,.atmo .sun,.atmo .scatter,.milkyway{animation:none!important}
+}
+/* battery: a 24/7 iframe must not repaint when the user can't see it. Paused when the tab is hidden
+   OR the widget is scrolled offscreen (set by an IntersectionObserver + visibilitychange in JS). */
+.c.paused *,.c.paused{animation-play-state:paused!important}
+.milkyway{opacity:var(--mw,0);transition:opacity 1.6s ease}
+.moon{opacity:var(--moongrp,1);transition:opacity 1.2s}   /* a true new moon is invisible — fade the whole disc (and its occluder) out near frac 0 */
 .moccluder{fill:var(--moon-sky,#0b1430);opacity:var(--moonocc,1);transition:opacity .9s}  /* opaque only when stars are out (hides them); 0 in daylight so no ghost moon by day */
 .mfeatures{opacity:var(--moonfeat,1);transition:opacity .9s}
 .mcorona{fill:none;stroke:#eef0ff;stroke-width:0;mix-blend-mode:screen;filter:blur(10px);opacity:0;transition:opacity 1.2s,stroke-width 1.2s}  /* humidity-driven lunar corona */
@@ -100,7 +108,7 @@ body{color:#fff7df;
 .cloudg-b{opacity:.6;animation:cloudB var(--cloud-dur-b,130s) ease-in-out infinite}
 .wfx .sunhaze{position:absolute;left:var(--sunx);top:var(--suny);width:300px;height:300px;transform:translate(-50%,-50%);
   background:radial-gradient(circle,var(--glow),transparent 56%);mix-blend-mode:screen;filter:blur(7px);opacity:0;transition:opacity 1s}
-.wfx .fog{position:absolute;left:-22%;right:-22%;height:48px;opacity:0;filter:blur(9px);transition:opacity 1s;will-change:transform;
+.wfx .fog{position:absolute;left:-22%;right:-22%;height:48px;opacity:0;filter:blur(9px);transition:opacity 1s;
   background:linear-gradient(90deg,transparent,#cdd3d9b3 45%,#cdd3d966 60%,transparent);animation:fogdrift linear infinite}
 .wfx .drop{position:absolute;top:-10%;width:1.5px;height:14px;border-radius:2px;display:none;will-change:transform;
   background:linear-gradient(#b9dcf500,#b9dcf5cc);animation:fall linear infinite}
@@ -118,11 +126,13 @@ body{color:#fff7df;
   .c[data-fx=clear] .atmo .sun,.c[data-fx=cloud] .atmo .sun{animation:breathe var(--breathe-dur,9s) ease-in-out infinite}
   .c[data-fx=clear] .atmo .scatter{animation:scatterdrift 23s ease-in-out infinite}
 }
-@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.84}50%{transform:translate(-50%,-50%) scale(1.13);opacity:1}}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.92}50%{transform:translate(-50%,-50%) scale(1.05);opacity:1}}
 @keyframes scatterdrift{0%,100%{transform:translateX(0) scaleY(1);opacity:1}50%{transform:translateX(5%) scaleY(1.08);opacity:.9}}
 @keyframes fogdrift{0%{transform:translateX(-12%)}50%{transform:translateX(12%)}100%{transform:translateX(-12%)}}
-@keyframes fall{0%{transform:translate(0,-22px);opacity:0}12%{opacity:.75}88%{opacity:.75}100%{transform:translate(-86px,560px);opacity:0}}
-@keyframes snowfall{0%{transform:translate(0,-14px);opacity:0}10%{opacity:.95}25%{transform:translate(8px,128px)}50%{transform:translate(-6px,280px)}75%{transform:translate(8px,420px)}90%{opacity:.95}100%{transform:translate(-3px,560px);opacity:0}}
+/* precipitation slants with the live wind (--rain-slant / --snow-slant, px of horizontal drift over the
+   fall). Base = 0 (vertical) in calm air; snow slants ~2.5× rain for the same wind (far lower fall speed). */
+@keyframes fall{0%{transform:translate(0,-22px);opacity:0}12%{opacity:.75}88%{opacity:.75}100%{transform:translate(var(--rain-slant,0px),560px);opacity:0}}
+@keyframes snowfall{0%{transform:translate(0,-14px);opacity:0}10%{opacity:.95}25%{transform:translate(calc(var(--snow-slant,0px)*.22 + 8px),128px)}50%{transform:translate(calc(var(--snow-slant,0px)*.5 - 6px),280px)}75%{transform:translate(calc(var(--snow-slant,0px)*.78 + 8px),420px)}90%{opacity:.95}100%{transform:translate(var(--snow-slant,0px),560px);opacity:0}}
 @keyframes flash{0%,3.5%,9%,100%{opacity:0}1%{opacity:.85}2%{opacity:.18}3%{opacity:.6}}
 /* reveal per condition */
 .c[data-fx=cloud]    .clouds{opacity:.55}
@@ -230,10 +240,14 @@ body{color:#fff7df;
       <radialGradient id="mg" cx="40%" cy="34%" r="72%">
         <stop offset="0%" stop-color="#27334f"/><stop offset="65%" stop-color="#18223e"/><stop offset="100%" stop-color="#0e1630"/>
       </radialGradient>
+      <radialGradient id="mwglow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#cdd6ef" stop-opacity=".22"/><stop offset="55%" stop-color="#b9c4e6" stop-opacity=".07"/><stop offset="100%" stop-color="#b9c4e6" stop-opacity="0"/>
+      </radialGradient>
       <clipPath id="litclip"><path id="mlitclip"/></clipPath>
     </defs>
+    <g class="milkyway"></g>
     <g class="stars"></g>
-    <g class="moon" transform="translate(289 34)">
+    <g class="moon" transform="translate(250 64) scale(0.62)">
       <circle class="mcorona" r="48"/>
       <circle class="moccluder" r="48.6"/>            <!-- ALWAYS opaque, sky-coloured: occludes stars at every fade so the moon never goes see-through -->
       <g class="mfeatures">                            <!-- everything that dissolves at dawn/dusk lives here -->
@@ -249,13 +263,20 @@ body{color:#fff7df;
   <div class="wfx" id="wxfx" aria-hidden="true">
     <svg class="clouds" viewBox="0 0 325 530" preserveAspectRatio="none">
       <defs>
+        <!-- cloud colour comes from the live sky via flood-color:var(--cloud-tint): the turbulence is
+             reduced to an alpha mask, then filled with the sky-driven tint (gold underlit at sunset,
+             leaden in storms, dark blue-grey at night) instead of a hard-coded white. -->
         <filter id="clf" x="-40%" y="-40%" width="180%" height="180%">
           <feTurbulence type="fractalNoise" baseFrequency="0.013 0.022" numOctaves="4" seed="11" stitchTiles="stitch" result="n"/>
-          <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 3.1 -1.28"/>
+          <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 3.1 -1.28" result="m"/>
+          <feFlood flood-color="var(--cloud-tint,#eef1f6)" result="col"/>
+          <feComposite in="col" in2="m" operator="in"/>
         </filter>
         <filter id="clf2" x="-40%" y="-40%" width="180%" height="180%">
           <feTurbulence type="fractalNoise" baseFrequency="0.022 0.032" numOctaves="3" seed="4" stitchTiles="stitch" result="n"/>
-          <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 2.6 -1.18"/>
+          <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 2.6 -1.18" result="m"/>
+          <feFlood flood-color="var(--cloud-tint2,#dfe4ee)" result="col"/>
+          <feComposite in="col" in2="m" operator="in"/>
         </filter>
       </defs>
       <g class="cloudg cloudg-b"><rect x="-70" y="-46" width="465" height="484" filter="url(#clf2)"/></g>
@@ -529,8 +550,9 @@ function renderMoon(){
     $("#mlitclip").setAttribute("d", moonLit(R, frac, waxing));
   }
   const feat=$(".mfeatures"); if(feat) feat.setAttribute("transform", `rotate(${rotDeg.toFixed(1)})`);
-  // earthshine glows on the dark limb (strongest near new); the halo grows with illumination.
-  const ms=$(".mshine"); if(ms) ms.style.opacity=(0.10+0.20*(1-frac)).toFixed(3);
+  // earthshine glows on the dark limb (strongest near new, gone by the quarter — it's never visible
+  // against a gibbous/full moon); it sits under the opaque lit photo, so only the dark side shows it.
+  const ms=$(".mshine"); if(ms) ms.style.opacity=((0.12+0.22*(1-frac))*clamp((0.35-frac)/0.30)).toFixed(3);
   const gl=$(".mglow");  if(gl){ gl.setAttribute("r",(52+26*frac).toFixed(1)); gl.style.opacity=(0.04+0.26*frac).toFixed(3); }
 }
 
@@ -541,21 +563,43 @@ function buildStars(){
   const g=document.querySelector(".stars"); if(!g) return;
   const W=325, H=300, N=130;
   const rnd=(i,k)=>{ const v=Math.sin((i+1)*k)*43758.5453; return v-Math.floor(v); };
-  const COL=["#9bb2ff","#aabfff","#cad7ff","#f4f3ff","#fff4e8","#ffd9a8","#ffc070"];   // O/B → M (B-V → sRGB)
-  const CW =[ .06,      .12,      .24,      .22,      .18,      .12,      .06 ];          // naked-eye population weights
+  // B-V → sRGB but DESATURATED toward white: most naked-eye stars read as white/blue-white pinpricks,
+  // not coloured confetti. Saturation is reserved for the brightest few (see satBoost below).
+  const COL=["#c2ccff","#cfd7ff","#dee4ff","#f4f3ff","#fbf6ee","#ffe8cf","#ffd4a8"];   // O/B → M, muted
+  const CW =[ .05,      .11,      .27,      .33,      .15,      .06,      .03 ];          // white/blue-white dominate; warm <10 %
   const cdf=[]; let acc=0; for(const w of CW){ acc+=w; cdf.push(acc); }
+  // ---- Milky Way: a faint diffuse band of unresolved star-dust across the sky (deep night only, --mw).
+  // A few soft glow blobs along a diagonal axis + a Gaussian-spread point cloud — no per-element filters.
+  const mwg=document.querySelector(".milkyway");
+  if(mwg){
+    const nx=0.62, ny=0.78;                                             // band normal (axis ≈ 26° from horizontal)
+    let mw="";
+    for(const b of [[40,250],[120,176],[200,102],[280,40]])             // diffuse glow blobs along the band (bottom-left → top-right)
+      mw+=`<ellipse cx="${b[0]}" cy="${b[1]}" rx="78" ry="30" fill="url(#mwglow)" transform="rotate(-26 ${b[0]} ${b[1]})"/>`;
+    for(let i=0;i<150;i++){
+      const t=rnd(i,1.73), gp=(rnd(i,4.31)+rnd(i,9.81)+rnd(i,2.27)-1.5)*22;   // ~gaussian perpendicular spread
+      const px=(30+t*252)+nx*gp, py=(258-t*206)+ny*gp;
+      if(px<-4||px>W+4||py<-4||py>H+4) continue;
+      mw+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${(0.35+0.55*rnd(i,7.7)).toFixed(2)}" fill="#dde4f5" opacity="${(0.08+0.20*rnd(i,6.13)).toFixed(2)}"/>`;
+    }
+    mwg.innerHTML=mw;
+  }
   let s="";
   for(let i=0;i<N;i++){
-    const x=rnd(i,12.9898)*W, y=Math.pow(rnd(i,78.233),1.4)*H;          // bias star density toward the top of the window
+    const cluster=rnd(i,5.91)<0.32;                                     // ~⅓ of stars cluster along the Milky Way band (not pure Poisson)
+    let x,y;
+    if(cluster){ const t=rnd(i,1.41), gp=(rnd(i,3.7)+rnd(i,8.2)-1)*16; x=(30+t*252)+0.62*gp; y=(258-t*206)+0.78*gp; }
+    else { x=rnd(i,12.9898)*W; y=Math.pow(rnd(i,78.233),1.4)*H; }       // rest scattered, biased toward the top
+    x=Math.max(2,Math.min(W-2,x)); y=Math.max(2,Math.min(H-2,y));
     const mag=0.2+5.4*Math.pow(rnd(i,3.71),0.34);                       // steep faint-end power law: most stars are dim
     const r=Math.max(0.4, 1.85-0.25*mag), o=Math.min(1, Math.max(0.24, 1.08-0.15*mag));
     const cu=rnd(i,9.13); let ci=cdf.findIndex(c=>cu<=c); if(ci<0)ci=3;
     const col=COL[ci];
     const alt=1-y/H;                                                    // 1 = top, 0 = horizon
-    const amp=(0.18+0.34*(1-alt)).toFixed(2);                           // clearly-visible scintillation (low stars twinkle hardest)…
+    const amp=(0.16+0.30*(1-alt)).toFixed(2);                           // scintillation (low stars twinkle hardest)…
     const dur=(1.6+4.2*alt).toFixed(1);                                 // …and faster
-    const twinkles=rnd(i,5.27)>0.35;                                    // ~65 % twinkle
-    if(mag<2.4) s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r*2.7).toFixed(1)}" fill="${col}" opacity="0.2"/>`;  // soft glow halo on the brighter stars
+    const twinkles=mag<3.2 && rnd(i,5.27)>0.5;                          // only the brighter ~⅓ twinkle (faint scintillation is invisible)
+    if(mag<2.0) s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r*2.7).toFixed(1)}" fill="${col}" opacity="0.18"/>`;  // soft glow halo on the brightest stars only
     s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="${col}" opacity="${o.toFixed(2)}"`
       +(twinkles?` style="--o:${o.toFixed(2)};--amp:${amp};animation:tw ${dur}s ease-in-out ${(-rnd(i,2.1)*6).toFixed(1)}s infinite"`:"")+"/>";
   }
@@ -696,7 +740,7 @@ const KF={
   dawn:     {g1:[30,37,84],  g2:[60,48,96],  g3:[156,84,100], glow:[235,150,120,.20], hor:[233,120,112,.34], stars:.45, accent:[255,213,170],accent2:[236,170,116],text:[246,235,241]},
   sunrise:  {g1:[44,76,124], g2:[82,98,138], g3:[205,120,64], glow:[255,184,98,.30],  hor:[255,160,82,.36],  stars:.10, accent:[255,221,150],accent2:[244,184,92], text:[253,239,224]},
   morning:  {g1:[32,92,146], g2:[42,110,152],g3:[84,130,162], glow:[255,230,162,.20], hor:[255,226,168,.12], stars:0,   accent:[255,228,158],accent2:[242,192,104],text:[243,247,255]},
-  noon:     {g1:[27,96,150], g2:[24,108,143],g3:[46,120,143], glow:[255,244,198,.18], hor:[192,224,236,.05], stars:0,   accent:[255,231,170],accent2:[245,200,112],text:[241,247,255]},
+  noon:     {g1:[28,98,176], g2:[54,128,184],g3:[120,166,200], glow:[255,244,198,.18], hor:[198,226,238,.05], stars:0,   accent:[255,231,170],accent2:[245,200,112],text:[241,247,255]},
   afternoon:{g1:[29,88,136], g2:[46,101,141],g3:[122,120,130],glow:[255,226,152,.18], hor:[255,212,152,.10], stars:0,   accent:[255,224,150],accent2:[243,186,96], text:[245,244,238]},
   golden:   {g1:[37,76,122], g2:[114,88,114],g3:[210,140,74], glow:[255,178,88,.30],  hor:[255,152,74,.32],  stars:0,   accent:[255,205,132],accent2:[244,160,82], text:[255,240,222]},
   sunset:   {g1:[33,39,82],  g2:[98,54,92],  g3:[200,82,64],  glow:[255,118,76,.30],  hor:[242,94,72,.38],   stars:.22, accent:[255,206,158],accent2:[243,158,104],text:[253,237,222]},
@@ -723,13 +767,26 @@ function paletteAt(M){
     accent:mixRGB(p0.accent,p1.accent,f), accent2:mixRGB(p0.accent2,p1.accent2,f), text:mixRGB(p0.text,p1.text,f),
   };
 }
+// REAL solar altitude in degrees at absolute-minute a — same prayer-anchored hour-angle model the arc
+// uses (declination from the date, refined so altitude hits 0 at the day's own sunrise/sunset; the peak
+// lands at zawāl). Sim-aware (a = M.nowAbs follows SIM.time). This drives the twilight physics so the
+// Belt of Venus, glow reddening, and nightness key off genuine degrees, not a hand-tuned sinusoid.
+function sunAltAt(M,a){
+  const DEG=Math.PI/180, phi=(+(q.get("lat"))||0)*DEG;
+  const dayLen=M.sunset-M.sunrise, polar=dayLen<30||dayLen>1410;
+  const noonT=polar?M.noon:(M.sunrise+M.sunset)/2, apexT=polar?noonT:noonT-18;
+  let decl=M.decl;
+  const HsrDeg=((M.sunset-M.sunrise)/2)*0.25, tp=Math.tan(phi);
+  if(!polar && Math.abs(tp)>0.05){ const d=Math.atan(-Math.cos(HsrDeg*DEG)/tp); if(isFinite(d)&&Math.abs(d)<24*DEG) decl=d; }
+  const Hof = polar ? (a-noonT)*0.25 : (a<=apexT ? -HsrDeg*(apexT-a)/((apexT-M.sunrise)||1) : HsrDeg*(a-apexT)/((M.sunset-apexT)||1));
+  const cl=x=>x<-1?-1:x>1?1:x;
+  return Math.asin(cl(Math.sin(phi)*Math.sin(decl)+Math.cos(phi)*Math.cos(decl)*Math.cos(Hof*DEG)))/DEG;
+}
 function sunMetrics(M){
-  const start=M.noon-720, a=M.nowAbs; let alt;
-  if(a<=M.sunrise){ const f=(a-start)/((M.sunrise-start)||1); alt=-28*Math.cos(f*Math.PI/2); }
-  else if(a<=M.sunset){ const f=(a-M.sunrise)/((M.sunset-M.sunrise)||1); alt=46*Math.sin(f*Math.PI); }
-  else { const f=(a-M.sunset)/(((start+1440)-M.sunset)||1); alt=-28*Math.sin(f*Math.PI/2); }
-  const altN=alt/46;                                   // +1 at zenith (Dhuhr), <0 below horizon
-  return { x:6+(a-start)/1440*88, y:60-Math.max(0,altN)*44, altN };
+  const start=M.noon-720, a=M.nowAbs;
+  const altDeg=sunAltAt(M,a);                          // genuine solar altitude (degrees)
+  const altN=Math.max(-1,Math.min(1,altDeg/46));       // normalised for screen-y placement only
+  return { x:6+(a-start)/1440*88, y:60-Math.max(0,altN)*44, altN, altDeg };
 }
 
 // moon opacity: fully out by midday, fully present by night — fades Fajr→(Sunrise+h)
@@ -774,6 +831,7 @@ const WX={
   thunder: {tint:[46,36,74],    ts:.50, gs:.18, hs:.16,st:.16, mn:.46, blur:.6,  at:[172,154,236], as:.70},
 };
 
+let _lastFx="";   // last weather class — so cloud morphology (feTurbulence) is only rewritten on change
 function applyTheme(M){
   const day=isDayNow(M.nowMin);
   const code=weather?weather.code:null;
@@ -790,11 +848,14 @@ function applyTheme(M){
   // grey deck; at true night the horizon cools toward moonlit blue (scaled by the moon's phase);
   // and the band fades out as the sun sinks past twilight — so warm glow never lingers into night.
   let gr=[P.glow[0],P.glow[1],P.glow[2]], hr=[P.hor[0],P.hor[1],P.hor[2]];
+  // airmass reddening: as the sun nears the horizon by day its bloom reddens continuously (Rayleigh
+  // extinction), independent of the prayer-clock keyframes — so a low summer/winter sun still warms.
+  if(day && sm.altDeg>0 && sm.altDeg<18){ const red=clamp((18-sm.altDeg)/18); gr=mixRGB(gr,[255,150,70],0.42*red); }
   if(w.tint){ const k=Math.min(1,1.4*w.ts); gr=mixRGB(gr,w.tint,k); hr=mixRGB(hr,w.tint,k); }
-  const nightness=clamp(-sm.altN/0.25);                         // 0 at sunset → 1 once the sun is ~11.5° down
+  const nightness=clamp(-sm.altDeg/8);                          // 0 at sunset → 1 once the sun is ~8° below the horizon
   const tHor=(0.30+0.55*moonStrength)*nightness;
   hr=[lerp(hr[0],96,tHor), lerp(hr[1],116,tHor), lerp(hr[2],196,tHor)];
-  const scatterFac=clamp((sm.altN+0.30)/0.30);                  // 1 above horizon → 0 once the sun is well below it
+  const scatterFac=clamp((sm.altDeg+8)/10);                     // warm horizon band persists to ~−8°, then gone
   const glow=[gr[0],gr[1],gr[2],P.glow[3]*w.gs*(0.25+0.75*directional)];   // the Mie bloom fades out as cloud builds → no crisp sun-disc under overcast
   const hor =[hr[0],hr[1],hr[2],P.hor[3]*w.hs*scatterFac*(0.4+0.6*directional)];
   const stars=(day?0:P.stars)*w.st*(1-0.35*moonStrength);       // a bright moon washes out faint stars
@@ -820,16 +881,23 @@ function applyTheme(M){
   c.style.setProperty("--sunx",sm.x.toFixed(1)+"%");
   c.style.setProperty("--suny",sm.y.toFixed(1)+"%");
   c.style.setProperty("--stars",stars.toFixed(3));
-  c.style.setProperty("--moonocc",clamp(Math.max(stars, moon)*10).toFixed(3));   // occluder opaque whenever the disc OR stars are visible; 0 in full daylight (no ghost moon)
+  // Milky Way: faint band, deep night only, killed by daylight / a bright moon / anything but clear-ish sky
+  const mwv=clamp((P.stars-0.5)*2)*(1-moonStrength)*(day?0:1)*(cls==="clear"?1:cls==="cloud"?0.3:0);
+  c.style.setProperty("--mw",(0.4*mwv).toFixed(3));
+  // occluder is a HARD step (opaque whenever the disc or stars show, else 0) — never a fractional value
+  // mid-crossfade, which used to let stars bleed through the half-faded moon. The .mfeatures opacity
+  // does the actual fade; the occluder just needs to be solid-or-gone.
+  c.style.setProperty("--moonocc",(Math.max(stars, moon)>0.02?1:0).toFixed(0));
   c.style.setProperty("--starblur",Math.min(0.6, w.blur + 0.6*D.humid).toFixed(2)+"px");   // humid air softens the stars a touch (capped so points stay crisp)
   c.style.setProperty("--moonfeat",moon.toFixed(3));
-  c.style.setProperty("--moon-sky",rgb(g1));         // occluder tracks the live sky colour so the faded moon melts into it, never revealing stars
+  c.style.setProperty("--moongrp",clamp((mp.frac-0.012)/0.05).toFixed(3));   // hide the disc entirely within ~½ day of true new (an unlit new moon is invisible)
+  c.style.setProperty("--moon-sky",rgb(mixRGB(g1,g2,0.22)));   // sample the gradient at the moon's actual height so the faded disc melts into the real sky behind it
   // heat/cold cues from apparent_temperature; frost vignette + cool/warm soft-light tints (background only)
   c.style.setProperty("--heat",D.heat.toFixed(3));
   c.style.setProperty("--warm",(0.20*D.heat).toFixed(3));
   c.style.setProperty("--cool",(0.22*D.cold).toFixed(3));
   c.style.setProperty("--frost",(0.5*D.cold).toFixed(3));
-  c.style.setProperty("--breathe-dur",(9-5*D.heat).toFixed(1)+"s");   // the Mie bloom pulses faster on hot days (radiant shimmer)
+  c.style.setProperty("--breathe-dur",(9-3*D.heat).toFixed(1)+"s");   // the Mie bloom pulses a little faster on hot days (floored at 6s so it never strobes)
   // lunar corona: a thin-cloud + humid sky haloes a present moon
   const corona=clamp((D.rh-0.78)/0.18)*((D.cloud>0.15&&D.cloud<0.75)?1:0.3)*clamp(mp.frac+0.2)*clamp(moonVis(M));
   const mc=$(".mcorona"); if(mc){ mc.setAttribute("stroke-width",(6+10*corona).toFixed(1)); mc.style.opacity=(0.5*corona).toFixed(3); }
@@ -838,8 +906,32 @@ function applyTheme(M){
   c.style.setProperty("--cloud-dur-b",(100-80*D.wind).toFixed(0)+"s");
   c.style.setProperty("--gust",D.gust.toFixed(3));
   c.style.setProperty("--wind-dir", D.windX>=0?"1":"-1");        // wind FROM the west ⇒ clouds drift east(+); flips with the bearing
-  // Belt of Venus: a pink anti-twilight band low on the ANTI-solar horizon during civil twilight (sun 0..−6°)
-  const depN=-sm.altN, belt=Math.max(0,1-Math.abs(depN-0.045)/0.085)*((cls==="clear"||cls==="cloud")?1:0.25);
+  // precipitation slants with the wind (calm ⇒ vertical). Snow drifts ~2.5× more than rain (low fall speed).
+  c.style.setProperty("--rain-slant",(D.windX*D.wind*120).toFixed(0)+"px");
+  c.style.setProperty("--snow-slant",(D.windX*D.wind*300).toFixed(0)+"px");
+  // clouds underlit by the live sky: bright by day → leaden in heavy weather → dark blue-grey at night,
+  // with a warm underside when the sun is low. No more permanently-white clouds at sunset.
+  const wet=(cls==="rain"||cls==="thunder"||cls==="overcast")?1:(cls==="drizzle"||cls==="snow"||cls==="fog")?0.5:0;
+  let cloudBase=mixRGB([232,236,243],[196,206,220],wet);
+  cloudBase=mixRGB(cloudBase,[66,74,90],0.55*wet);                       // heavy deck → leaden grey
+  const dayK=day?1:clamp((sm.altDeg+8)/10);
+  cloudBase=mixRGB([34,44,66],cloudBase,dayK);                           // night clouds = dark blue-grey
+  if(sm.altDeg<14){ const warm=clamp((14-sm.altDeg)/22)*(day?1:0.4); cloudBase=mixRGB(cloudBase,[255,176,120],0.5*warm); }  // low-sun underlight
+  c.style.setProperty("--cloud-tint",rgb(cloudBase));
+  c.style.setProperty("--cloud-tint2",rgb(mixRGB(cloudBase,[20,26,40],0.12)));   // back layer a touch deeper for depth
+  // cloud MORPHOLOGY by condition (only when it changes — rewriting feTurbulence every second would
+  // re-rasterise the filter): cumulus = higher-frequency puffs, stratus/storm = low-frequency flat sheets.
+  if(cls!==_lastFx){
+    _lastFx=cls;
+    const morph={cloud:["0.016 0.027","0.027 0.04"],overcast:["0.006 0.012","0.01 0.018"],
+      rain:["0.008 0.015","0.014 0.024"],thunder:["0.006 0.011","0.01 0.02"],
+      drizzle:["0.012 0.02","0.02 0.03"],snow:["0.012 0.02","0.02 0.03"],fog:["0.006 0.01","0.01 0.016"]}[cls];
+    if(morph){ const f1=document.querySelector("#clf feTurbulence"), f2=document.querySelector("#clf2 feTurbulence");
+      if(f1)f1.setAttribute("baseFrequency",morph[0]); if(f2)f2.setAttribute("baseFrequency",morph[1]); }
+  }
+  // Belt of Venus: a pink anti-twilight band on the ANTI-solar horizon, peaking when the sun is ~4°
+  // below the horizon (civil twilight) — now keyed to the REAL solar depression, not the fake sinusoid.
+  const belt=Math.max(0,1-Math.abs(sm.altDeg+4)/5)*((cls==="clear"||cls==="cloud")?1:0.25);
   c.style.setProperty("--antix",(100-sm.x).toFixed(1)+"%");
   c.style.setProperty("--belt",`rgba(232,150,168,${(0.34*belt).toFixed(3)})`);
   c.dataset.fx=cls;
@@ -956,7 +1048,22 @@ async function boot(){
   }catch(e){
     if(!today) showError("Could not load prayer times");
   }
-  setInterval(tick,1000);
+  // battery: only run the per-second loop when the widget is actually visible — tab foregrounded AND
+  // scrolled on-screen. Pausing both the JS tick and the CSS animations (.paused) stops all repaint in
+  // a hidden/offscreen iframe, the dominant cost for a 24/7 embed. Snaps back up to date on resume.
+  let _timer=null, _onScreen=true;
+  const cEl=document.querySelector(".c");
+  const active=()=>_onScreen && document.visibilityState!=="hidden";
+  function sync(){
+    const on=active();
+    if(cEl) cEl.classList.toggle("paused",!on);
+    if(on && !_timer){ render(); _timer=setInterval(tick,1000); }
+    else if(!on && _timer){ clearInterval(_timer); _timer=null; }
+  }
+  document.addEventListener("visibilitychange",sync);
+  if("IntersectionObserver" in window && cEl)
+    new IntersectionObserver(es=>{ _onScreen=es[0].isIntersecting; sync(); },{threshold:0}).observe(cEl);
+  sync();
 }
 
 boot();
