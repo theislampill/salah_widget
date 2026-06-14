@@ -1,7 +1,7 @@
 # 🕌 Salah Widget
 
 A tiny, self-contained prayer-times widget you can embed anywhere that accepts an
-`<iframe>` — built for [TablissNG](https://github.com/BlieNuckte/tabliss) new-tab
+`<iframe>` — built for [TablissNG](https://github.com/BookCatKid/TablissNG) new-tab
 dashboards, but works in Notion, a personal site, or anywhere else.
 
 No build step, no dependencies, no tracking. One static HTML file that reads its
