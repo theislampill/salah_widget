@@ -36,6 +36,11 @@ body{color:#fff7df;
 .atmo .scatter{position:absolute;inset:0;background:radial-gradient(150% 96% at var(--sunx) 127%,var(--horizon),transparent 62%)}
 /* filmic grain / atmospheric noise — kills gradient banding, adds texture */
 .grain{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;mix-blend-mode:soft-light}
+/* top metadata scrim — protects the location/weather header from dissolving into the cloud
+   texture; only revealed in busy weather, so clear skies stay clean (no darkening). */
+.scrim{position:absolute;top:0;left:0;right:0;height:64px;z-index:1;pointer-events:none;opacity:0;transition:opacity .9s;
+  background:linear-gradient(180deg,rgba(8,11,20,.5),rgba(8,11,20,.2) 52%,transparent)}
+.c[data-fx=cloud] .scrim,.c[data-fx=overcast] .scrim,.c[data-fx=fog] .scrim,.c[data-fx=drizzle] .scrim,.c[data-fx=rain] .scrim,.c[data-fx=thunder] .scrim,.c[data-fx=snow] .scrim{opacity:1}
 
 /* sky background: stars + moon */
 .sky{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -137,13 +142,17 @@ body{color:#fff7df;
 .d{position:relative;z-index:1;direction:ltr;display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:8px;padding:0 10px;color:color-mix(in srgb,var(--text) 60%,transparent);font-size:11.5px;line-height:1.2}
 .d span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .er{opacity:.55;font-size:.84em;margin:0 4px;letter-spacing:.05em;unicode-bidi:isolate}
+#ah .er{font-size:1.3em;opacity:.66}   /* the Arabic hāʾ (AH marker) reads small — give it a few pt */
 
-/* keep foreground text legible over bright dawn / midday / sunset skies */
-.e,.wi,.wt,.foc .cn,.foc .nt,.left,.d{text-shadow:0 1px 3px rgba(0,0,0,.34)}
+/* readability over busy cloud/rain midtones: a crisp dark micro-rim + soft depth (NO heavy
+   outline that would muddy the serif, NO cheap white glow). Dates + glass cells keep a light shadow. */
+.d{text-shadow:0 1px 3px rgba(0,0,0,.34)}
 .p b,.tm{text-shadow:0 1px 2px rgba(0,0,0,.28)}
-/* the hero time gets a stronger dark halo so it reads even when the accent is a
-   pale, weather-driven tone on a light cloudy/snowy sky */
-.foc .nt{text-shadow:0 1px 2px rgba(0,0,0,.5),0 0 9px rgba(0,0,0,.3)}
+.e,.wi,.wt{text-shadow:0 0 1px rgba(4,8,16,.92),0 1px 1px rgba(4,8,16,.6),0 2px 5px rgba(0,0,0,.42)}
+.foc .cn,.left{text-shadow:0 0 1px rgba(6,10,18,.88),1px 0 1px rgba(6,10,18,.5),-1px 0 1px rgba(6,10,18,.5),0 1px 1px rgba(6,10,18,.6),0 3px 7px rgba(0,0,0,.4)}
+/* the hero time: strongest rim + depth, plus a faint accent-tinted bloom (warm by day, cool by
+   night via --accent) for atmosphere — never a white glow. */
+.foc .nt{text-shadow:0 0 1px rgba(0,0,0,.95),1px 0 1px rgba(0,0,0,.6),-1px 0 1px rgba(0,0,0,.6),0 1px 1px rgba(0,0,0,.7),0 2px 3px rgba(0,0,0,.55),0 5px 13px rgba(0,0,0,.4),0 0 16px color-mix(in srgb,var(--accent) 15%,transparent)}
 /* tabular figures so the per-second countdown, times and dates never jitter */
 .foc .nt,.left,.tm,.d,.wt{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 </style>
@@ -209,6 +218,7 @@ body{color:#fff7df;
     <rect width="325" height="530" filter="url(#grainf)"/>
   </svg>
 
+  <div class="scrim" aria-hidden="true"></div>
   <div class="h">
     <span class="e" id="loc"></span>
     <span class="wi" id="wi"></span>
@@ -472,6 +482,10 @@ function model(){
 function drawArc(M){
   const W=295,H=180,hY=104,Ad=94,An=76,R=5, start=M.noon-720;
   const X=a=>(a-start)/1440*W;
+  const noonT=(M.sunrise+M.sunset)/2;                          // solar noon = the arc's apex
+  // a smooth, continuous arc — a physically-INFORMED metaphor, not a literal altitude chart:
+  // 0 at the dotted horizon, peak at solar noon, a shallow dip below for twilight/night. The
+  // dots fall on this curve (Sunrise/Maghrib on the line, Fajr/Isha below, Asr descending).
   const ALT=a=>{
     if(a<=M.sunrise){ const f=(a-start)/(M.sunrise-start); return -An*Math.cos(f*Math.PI/2); }
     if(a<=M.sunset){  const f=(a-M.sunrise)/(M.sunset-M.sunrise); return Ad*Math.sin(f*Math.PI); }
@@ -487,7 +501,8 @@ function drawArc(M){
   let dots="";
   for(const p of M.dots){
     const cls = p.k===M.nextKey ? "dot next" : "dot";
-    dots+=`<circle class="${cls}" cx="${X(p.abs).toFixed(1)}" cy="${Y(p.abs).toFixed(1)}" r="${R}"/>`;
+    const a = p.k==="Dhuhr" ? Math.max(p.abs, noonT+18) : p.abs;   // Dhuhr reads just after the apex (zawāl)
+    dots+=`<circle class="${cls}" cx="${X(a).toFixed(1)}" cy="${Y(a).toFixed(1)}" r="${R}"/>`;
   }
   // "eye of a needle": split the marker ring at the two points where the arc
   // crosses it, draw one half behind the arc and the other half in front, so the
