@@ -44,15 +44,15 @@ iframe{box-shadow:0 18px 50px #0008}
     <label>Location name</label>
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr">
       <div style="grid-column:1 / span 2"><input id="label" placeholder="Madinah" value="Madinah"></div>
-      <button class="ghost" id="geo" type="button">📍 Use my location</button>
+      <button class="ghost" id="geo" type="button" style="white-space:nowrap;padding:10px">Detect Location</button>
     </div>
 
     <div class="row">
       <div><label>Latitude</label><input id="lat" inputmode="decimal" value="24.4672"></div>
-      <div><label style="text-align:center">Longitude</label><input id="lon" inputmode="decimal" value="39.6142"></div>
+      <div><label style="text-align:center">Longitude</label><input id="lon" inputmode="decimal" value="39.6142" style="text-align:center"></div>
       <div>
         <label style="text-align:right">Time format</label>
-        <select id="time">
+        <select id="time" style="text-align:right">
           <option value="24">24-hour</option>
           <option value="12">12-hour</option>
         </select>
@@ -83,7 +83,7 @@ iframe{box-shadow:0 18px 50px #0008}
       </div>
       <div>
         <label style="text-align:right">Mithl(ayn)</label>
-        <select id="school">
+        <select id="school" style="text-align:right">
           <option value="0">Shafiʿi/Maliki/Hanbali</option>
           <option value="1">Hanafi (later Asr)</option>
         </select>
@@ -225,8 +225,8 @@ function locate(auto){
   $("geo").textContent="Locating…";
   navigator.geolocation.getCurrentPosition(
     pos=>{ $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
-           $("geo").textContent="📍 Use my location"; update(); fillNameFromCoords(); },
-    err=>{ if(!auto) alert("Couldn't get your location: "+err.message); $("geo").textContent="📍 Use my location"; },
+           $("geo").textContent="Detect Location"; update(); fillNameFromCoords(); },
+    err=>{ if(!auto) alert("Couldn't get your location: "+err.message); $("geo").textContent="Detect Location"; },
     {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
   );
 }
