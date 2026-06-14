@@ -122,7 +122,7 @@ iframe{box-shadow:0 18px 50px #0008}
 
   <div class="preview">
     <iframe id="pv" title="Prayer Times" referrerpolicy="no-referrer"
-      style="width:330px;height:285px;border:0;border-radius:28px;overflow:hidden" scrolling="no"></iframe>
+      style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden" scrolling="no"></iframe>
     <button class="ghost" id="reload" type="button">↻ Refresh preview</button>
   </div>
 </div>
@@ -164,7 +164,7 @@ function url(){ return base+"#"+hash(); }
 // forces the iframe to actually reload (a hash-only change wouldn't re-run the script).
 function previewUrl(){ return base+"?r="+(rev++)+"#"+hash(); }
 function snippet(){
-  return `<iframe\n  title="Prayer Times"\n  referrerpolicy="no-referrer"\n  src="${url()}"\n  style="width:330px;height:285px;border:0;border-radius:28px;overflow:hidden"\n  scrolling="no">\n</iframe>`;
+  return `<iframe\n  title="Prayer Times"\n  referrerpolicy="no-referrer"\n  src="${url()}"\n  style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden"\n  scrolling="no">\n</iframe>`;
 }
 function update(){
   $("code").value=snippet();

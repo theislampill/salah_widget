@@ -21,8 +21,8 @@ body{color:#fff7df;
   --accent:#f8d878;--accent2:#e8b24a;--text:#fff7df;
   --stars:1;--starblur:0px;--moon:1;
   --glass:inset 0 1px .5px #ffffff45,inset 0 -2px 5px #00000017,0 3px 8px #0000001f;
-  position:relative;width:325px;height:280px;border-radius:28px;padding:11px 15px;
-  background:linear-gradient(160deg,var(--g1),var(--g2) 60%,var(--g3));
+  position:relative;width:325px;height:530px;border-radius:28px;padding:11px 15px;
+  background:linear-gradient(160deg,var(--g1),var(--g2) 55%,var(--g3));
   box-shadow:0 18px 50px #0008;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
   color:var(--text);overflow:hidden}
 
@@ -74,8 +74,8 @@ body{color:#fff7df;
 @keyframes cloudA{0%{transform:translateX(-26px)}50%{transform:translateX(30px)}100%{transform:translateX(-26px)}}
 @keyframes cloudB{0%{transform:translateX(26px)}50%{transform:translateX(-24px)}100%{transform:translateX(26px)}}
 @keyframes fogdrift{0%{transform:translateX(-12%)}50%{transform:translateX(12%)}100%{transform:translateX(-12%)}}
-@keyframes fall{0%{transform:translate(0,-22px);opacity:0}12%{opacity:.75}88%{opacity:.75}100%{transform:translate(-46px,300px);opacity:0}}
-@keyframes snowfall{0%{transform:translate(0,-14px);opacity:0}10%{opacity:.95}25%{transform:translate(7px,68px)}50%{transform:translate(-5px,150px)}75%{transform:translate(7px,224px)}90%{opacity:.95}100%{transform:translate(-3px,300px);opacity:0}}
+@keyframes fall{0%{transform:translate(0,-22px);opacity:0}12%{opacity:.75}88%{opacity:.75}100%{transform:translate(-86px,560px);opacity:0}}
+@keyframes snowfall{0%{transform:translate(0,-14px);opacity:0}10%{opacity:.95}25%{transform:translate(8px,128px)}50%{transform:translate(-6px,280px)}75%{transform:translate(8px,420px)}90%{opacity:.95}100%{transform:translate(-3px,560px);opacity:0}}
 @keyframes flash{0%,3.5%,9%,100%{opacity:0}1%{opacity:.85}2%{opacity:.18}3%{opacity:.6}}
 /* reveal per condition */
 .c[data-fx=cloud]    .clouds{opacity:.55}
@@ -109,10 +109,11 @@ body{color:#fff7df;
 
 /* prayer panel */
 .panel{position:relative;z-index:1}
-.arc{display:block;width:100%;height:96px;margin:0;overflow:visible}
-.foc{position:relative;text-align:center;margin-top:-48px;top:-15px}
+.arc{display:block;width:100%;height:360px;margin:0;overflow:visible}
+.overlay{position:absolute;left:0;right:0;top:176px}
+.foc{position:relative;text-align:center}
 .foc .cn{position:relative;top:4px;font-family:var(--font-display);font-size:15px;line-height:1.15;font-weight:600;letter-spacing:.01em;color:var(--text);opacity:.95;margin-bottom:4px}
-.foc .nt{position:relative;top:9.4px;font-family:var(--font-display);font-size:23px;line-height:1;font-weight:600;letter-spacing:.005em;color:var(--accent)}
+.foc .nt{position:relative;top:4.4px;font-family:var(--font-display);font-size:23px;line-height:1;font-weight:600;letter-spacing:.005em;color:var(--accent)}
 .arc .horizon{stroke:#ffffff;stroke-opacity:.16;stroke-width:1;stroke-dasharray:2.5 5}
 .arc .rail{fill:none;stroke:#ffffff;stroke-opacity:.3;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .arc .warm{fill:none;stroke:var(--accent);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px var(--accent))}
@@ -151,7 +152,7 @@ body{color:#fff7df;
 <body>
 <div class="c">
   <div class="atmo" aria-hidden="true"><div class="scatter"></div><div class="sun"></div></div>
-  <svg class="sky" viewBox="0 0 325 280" preserveAspectRatio="none" aria-hidden="true">
+  <svg class="sky" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
     <defs>
       <radialGradient id="mg" cx="40%" cy="34%" r="72%">
         <stop offset="0%" stop-color="#27334f"/><stop offset="65%" stop-color="#18223e"/><stop offset="100%" stop-color="#0e1630"/>
@@ -165,23 +166,7 @@ body{color:#fff7df;
         <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.60  0 0 0 0 0.74  0 0 0 0.5 0"/>
       </filter>
     </defs>
-    <g class="stars">
-      <circle cx="20" cy="45" r=".8" opacity=".55"/><circle cx="60" cy="75" r="1.1" opacity=".8"/>
-      <circle cx="38" cy="140" r=".7" opacity=".5"/><circle cx="88" cy="50" r=".9" opacity=".65"/>
-      <circle cx="110" cy="120" r=".7" opacity=".5"/><circle cx="135" cy="80" r="1" opacity=".75"/>
-      <circle cx="150" cy="180" r=".7" opacity=".5"/><circle cx="175" cy="55" r=".8" opacity=".6"/>
-      <circle cx="195" cy="130" r=".7" opacity=".5"/><circle cx="170" cy="160" r=".6" opacity=".45"/>
-      <circle cx="215" cy="90" r="1.1" opacity=".8"/><circle cx="240" cy="160" r=".7" opacity=".5"/>
-      <circle cx="262" cy="120" r=".9" opacity=".7"/><circle cx="285" cy="178" r=".7" opacity=".5"/>
-      <circle cx="300" cy="208" r=".8" opacity=".6"/><circle cx="32" cy="205" r=".7" opacity=".5"/>
-      <circle cx="75" cy="212" r=".6" opacity=".45"/><circle cx="120" cy="208" r=".8" opacity=".6"/>
-      <circle cx="205" cy="200" r=".7" opacity=".5"/><circle cx="250" cy="212" r=".6" opacity=".45"/>
-      <circle cx="15" cy="95" r=".7" opacity=".5"/><circle cx="100" cy="165" r=".7" opacity=".5"/>
-      <circle cx="145" cy="40" r=".6" opacity=".45"/><circle cx="228" cy="140" r=".6" opacity=".45"/>
-      <circle cx="50" cy="175" r=".8" opacity=".6"/><circle cx="90" cy="100" r=".7" opacity=".5"/>
-      <circle cx="160" cy="205" r=".6" opacity=".45"/><circle cx="185" cy="95" r=".7" opacity=".55"/>
-      <circle cx="270" cy="186" r=".7" opacity=".5"/><circle cx="130" cy="150" r=".6" opacity=".45"/>
-    </g>
+    <g class="stars"></g>
     <g class="moon" transform="translate(289 34)">
       <circle class="mglow" r="60"/>
       <circle class="mdisk" r="48"/>
@@ -198,7 +183,7 @@ body{color:#fff7df;
   </svg>
 
   <div class="wfx" id="wxfx" aria-hidden="true">
-    <svg class="clouds" viewBox="0 0 325 280" preserveAspectRatio="none">
+    <svg class="clouds" viewBox="0 0 325 530" preserveAspectRatio="none">
       <defs>
         <filter id="clf" x="-40%" y="-40%" width="180%" height="180%">
           <feTurbulence type="fractalNoise" baseFrequency="0.013 0.022" numOctaves="4" seed="11" stitchTiles="stitch" result="n"/>
@@ -209,20 +194,20 @@ body{color:#fff7df;
           <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 2.6 -1.18"/>
         </filter>
       </defs>
-      <g class="cloudg cloudg-b"><rect x="-70" y="-46" width="465" height="196" filter="url(#clf2)"/></g>
-      <g class="cloudg cloudg-a"><rect x="-70" y="-36" width="465" height="178" filter="url(#clf)"/></g>
+      <g class="cloudg cloudg-b"><rect x="-70" y="-46" width="465" height="340" filter="url(#clf2)"/></g>
+      <g class="cloudg cloudg-a"><rect x="-70" y="-36" width="465" height="326" filter="url(#clf)"/></g>
     </svg>
     <div class="veil"></div>
     <div class="sunhaze"></div>
-    <svg class="bolt" viewBox="0 0 325 280" preserveAspectRatio="none"><path d="M214 4 L201 52 L218 49 L199 116"/></svg>
+    <svg class="bolt" viewBox="0 0 325 530" preserveAspectRatio="none"><path d="M214 4 L201 60 L220 56 L198 150"/></svg>
     <div class="flash"></div>
   </div>
-  <svg class="grain" viewBox="0 0 325 280" preserveAspectRatio="none" aria-hidden="true">
+  <svg class="grain" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
     <filter id="grainf" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="5" stitchTiles="stitch" result="n"/>
       <feColorMatrix in="n" type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 0 1"/>
     </filter>
-    <rect width="325" height="280" filter="url(#grainf)"/>
+    <rect width="325" height="530" filter="url(#grainf)"/>
   </svg>
 
   <div class="h">
@@ -230,10 +215,12 @@ body{color:#fff7df;
   </div>
 
   <div class="panel">
-    <svg class="arc" viewBox="0 0 295 96" preserveAspectRatio="none"></svg>
-    <div class="foc"><div class="cn">—</div><div class="nt">—</div></div>
-    <div class="bar"><i></i></div>
-    <div class="left">Loading…</div>
+    <svg class="arc" viewBox="0 0 295 360" preserveAspectRatio="none"></svg>
+    <div class="overlay">
+      <div class="foc"><div class="cn">—</div><div class="nt">—</div></div>
+      <div class="bar"><i></i></div>
+      <div class="left">Loading…</div>
+    </div>
   </div>
 
   <div class="times"></div>
@@ -416,16 +403,31 @@ function renderMoon(){
   const gl=$(".mglow");  if(gl){ gl.setAttribute("r",(52+26*mp.frac).toFixed(1)); gl.style.opacity=(0.04+0.26*mp.frac).toFixed(3); }
 }
 
+// deterministic star field spread across the full (tall) card height
+function buildStars(){
+  const g=document.querySelector(".stars"); if(!g) return;
+  const W=325, H=520, N=70;
+  const rnd=(i,k)=>{ const v=Math.sin((i+1)*k)*43758.5453; return v-Math.floor(v); };
+  let s="";
+  for(let i=0;i<N;i++){
+    const x=(rnd(i,12.9898)*W).toFixed(1), y=(rnd(i,78.233)*H).toFixed(1);
+    const r=(0.5+rnd(i,3.71)*0.85).toFixed(2), o=(0.38+rnd(i,9.13)*0.5).toFixed(2);
+    const tw=rnd(i,5.27)>0.78 ? ` class="tw" style="animation-delay:${(-rnd(i,2.1)*5).toFixed(1)}s"` : "";
+    s+=`<circle${tw} cx="${x}" cy="${y}" r="${r}" opacity="${o}"/>`;
+  }
+  g.innerHTML=s;
+}
+
 // build the animated weather overlay once (deterministic positions, no RNG)
 function buildWeather(){
   const fx=document.getElementById("wxfx"); if(!fx) return;
   const add=(cls,css)=>{ const d=document.createElement("div"); d.className=cls; for(const k in css) d.style[k]=css[k]; fx.appendChild(d); };
-  [[88,52,0],[140,70,-20],[186,60,0]]
+  [[70,52,0],[120,70,-20],[176,60,0],[238,66,-30],[300,74,-10]]
     .forEach(([t,dur,del])=>add("fog",{top:t+"px",animationDuration:dur+"s",animationDelay:del+"s"}));
-  for(let i=0;i<20;i++)
-    add("drop",{left:((i*5.3+2)%100).toFixed(1)+"%",height:(12+(i%4)*2)+"px",animationDuration:(0.45+(i%5)*0.05).toFixed(2)+"s",animationDelay:(-(i*0.11)).toFixed(2)+"s"});
-  for(let i=0;i<24;i++){ const s=2+(i%3);
-    add("flake",{left:((i*4.3+2)%100).toFixed(1)+"%",width:s+"px",height:s+"px",animationDuration:(4.2+(i%6)*0.7).toFixed(2)+"s",animationDelay:(-(i*0.37)).toFixed(2)+"s"}); }
+  for(let i=0;i<32;i++)
+    add("drop",{left:((i*7.3+2)%100).toFixed(1)+"%",height:(12+(i%4)*3)+"px",animationDuration:(0.6+(i%5)*0.08).toFixed(2)+"s",animationDelay:(-(i*0.09)).toFixed(2)+"s"});
+  for(let i=0;i<40;i++){ const s=2+(i%3);
+    add("flake",{left:((i*5.7+2)%100).toFixed(1)+"%",width:s+"px",height:s+"px",animationDuration:(6+(i%6)*0.8).toFixed(2)+"s",animationDelay:(-(i*0.31)).toFixed(2)+"s"}); }
   // keep the lightning glow + bolt on top of the precipitation
   const bolt=fx.querySelector(".bolt"), flash=fx.querySelector(".flash");
   if(bolt) fx.appendChild(bolt);
@@ -467,7 +469,7 @@ function model(){
 
 // draw the solar-prayer arc
 function drawArc(M){
-  const W=295,H=96,hY=54,Ad=46,An=28,R=4, start=M.noon-720;
+  const W=295,H=360,hY=202,Ad=174,An=104,R=5, start=M.noon-720;
   const X=a=>(a-start)/1440*W;
   const ALT=a=>{
     if(a<=M.sunrise){ const f=(a-start)/(M.sunrise-start); return -An*Math.cos(f*Math.PI/2); }
@@ -489,7 +491,7 @@ function drawArc(M){
   // "eye of a needle": split the marker ring at the two points where the arc
   // crosses it, draw one half behind the arc and the other half in front, so the
   // arc threads through the ring instead of the ring sitting on top of it.
-  const cx=X(M.nowAbs), cy=Y(M.nowAbs), r=7;
+  const cx=X(M.nowAbs), cy=Y(M.nowAbs), r=9;
   const dx=X(M.nowAbs+10)-X(M.nowAbs-10), dy=Y(M.nowAbs+10)-Y(M.nowAbs-10);
   const th=Math.atan2(dy,dx), ux=Math.cos(th)*r, uy=Math.sin(th)*r;
   const p1=`${(cx+ux).toFixed(1)} ${(cy+uy).toFixed(1)}`, p2=`${(cx-ux).toFixed(1)} ${(cy-uy).toFixed(1)}`;
@@ -668,6 +670,7 @@ function tick(){
 }
 
 async function boot(){
+  buildStars();
   buildWeather();
   renderMoon();
   if(!lat||!lon){ showError("Add lat & lon to the URL"); return; }
