@@ -521,7 +521,7 @@ const KF={
   afternoon:{g1:[29,88,136], g2:[46,101,141],g3:[122,120,130],glow:[255,226,152,.18], hor:[255,212,152,.10], stars:0,   accent:[255,224,150],accent2:[243,186,96], text:[245,244,238]},
   golden:   {g1:[37,76,122], g2:[114,88,114],g3:[210,140,74], glow:[255,178,88,.30],  hor:[255,152,74,.32],  stars:0,   accent:[255,205,132],accent2:[244,160,82], text:[255,240,222]},
   sunset:   {g1:[33,39,82],  g2:[98,54,92],  g3:[200,82,64],  glow:[255,118,76,.30],  hor:[242,94,72,.38],   stars:.22, accent:[255,206,158],accent2:[243,158,104],text:[253,237,222]},
-  dusk:     {g1:[19,28,64],  g2:[31,30,68],  g3:[66,42,76],   glow:[132,98,182,.13],  hor:[152,86,126,.20],  stars:.75, accent:[222,214,236],accent2:[168,166,210],text:[240,233,245]},
+  dusk:     {g1:[19,28,64],  g2:[31,30,68],  g3:[66,42,76],   glow:[118,104,184,.11],  hor:[120,96,150,.16],  stars:.75, accent:[222,214,236],accent2:[168,166,210],text:[240,233,245]},
 };
 function paletteAt(M){
   const start=M.noon-720;
@@ -531,7 +531,7 @@ function paletteAt(M){
   const stops=[
     [start,        KF.deepNight], [fajr-72, KF.astro], [fajr, KF.dawn], [sr, KF.sunrise],
     [(sr+dh)/2,    KF.morning],   [dh, KF.noon],       [asr, KF.afternoon], [(asr+mg)/2, KF.golden],
-    [mg,           KF.sunset],    [ish, KF.dusk],      [start+1440, KF.deepNight],
+    [mg,           KF.sunset],    [mg+30, KF.dusk],    [mg+75, KF.astro],   [start+1440, KF.deepNight],
   ];
   for(let i=1;i<stops.length;i++) if(stops[i][0]<=stops[i-1][0]) stops[i][0]=stops[i-1][0]+1;
   const a=M.nowAbs;
@@ -600,21 +600,33 @@ function applyTheme(M){
   const code=weather?weather.code:null;
   const info=wxInfo(code,day), cls=wxClass(code), w=WX[cls];
   const P=paletteAt(M);
+  const sm=sunMetrics(M);
+  const mp=moonNow();
+  const moonStrength=clamp(moonVis(M))*clamp(mp.frac);          // 0 new/absent .. 1 full + present
   let g1=P.g1, g2=P.g2, g3=P.g3;
   if(w.tint){ g1=mixRGB(g1,w.tint,w.ts); g2=mixRGB(g2,w.tint,w.ts); g3=mixRGB(g3,w.tint,w.ts); }
-  const glow=[P.glow[0],P.glow[1],P.glow[2],P.glow[3]*w.gs];
-  const hor =[P.hor[0], P.hor[1], P.hor[2], P.hor[3]*w.hs];
-  const stars=(day?0:P.stars)*w.st;
+  // sun bloom + horizon scatter. In murky weather the leaked warm light desaturates toward the
+  // grey deck; at true night the horizon cools toward moonlit blue (scaled by the moon's phase);
+  // and the band fades out as the sun sinks past twilight — so warm glow never lingers into night.
+  let gr=[P.glow[0],P.glow[1],P.glow[2]], hr=[P.hor[0],P.hor[1],P.hor[2]];
+  if(w.tint){ const k=Math.min(1,1.4*w.ts); gr=mixRGB(gr,w.tint,k); hr=mixRGB(hr,w.tint,k); }
+  const nightness=clamp(-sm.altN/0.25);                         // 0 at sunset → 1 once the sun is ~11.5° down
+  const tHor=(0.30+0.55*moonStrength)*nightness;
+  hr=[lerp(hr[0],96,tHor), lerp(hr[1],116,tHor), lerp(hr[2],196,tHor)];
+  const scatterFac=clamp((sm.altN+0.30)/0.30);                  // 1 above horizon → 0 once the sun is well below it
+  const glow=[gr[0],gr[1],gr[2],P.glow[3]*w.gs];
+  const hor =[hr[0],hr[1],hr[2],P.hor[3]*w.hs*scatterFac];
+  const stars=(day?0:P.stars)*w.st*(1-0.35*moonStrength);       // a bright moon washes out faint stars
   const moon =clamp(moonVis(M))*w.mn;
-  const sm=sunMetrics(M);
-  // foreground accent + text track the sky: warm at golden hour / sunset, cool at
-  // night and noon, muted in murky weather — but always high-luminance so they
-  // stay legible against any sky.
-  // accent = the dominant light's colour (warm sun by day, cool moon by night),
-  // pulled toward the weather's light when it isn't clear; accent2 is a deeper
-  // tone of it for the progress bar. Kept light enough to read on any sky.
-  const ac = w.at ? mixRGB(P.accent, w.at, w.as) : P.accent.slice();
-  const ac2 = ac.map(v=>Math.round(v*0.78));
+  // accent = the dominant light's colour: a clear night reads the moon (brightness scales with phase,
+  // not hue); daytime reads the warm sun; weather tints it. accent2 = the hand-authored deeper tone.
+  let baseAccent=P.accent;
+  if(cls==="clear" && !day){
+    const L=clamp(moonVis(M))*(0.12+0.88*mp.frac);
+    baseAccent=mixRGB([188,198,220],[216,224,244],L);           // dim airglow silver → bright full-moon silver
+  }
+  const ac = w.at ? mixRGB(baseAccent, w.at, w.as) : baseAccent.slice();
+  const ac2 = w.at ? mixRGB(P.accent2, w.at, w.as) : P.accent2.slice();
   const c=$(".c");
   c.style.setProperty("--accent",rgb(ac));
   c.style.setProperty("--accent2",rgb(ac2));
