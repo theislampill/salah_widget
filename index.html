@@ -119,15 +119,36 @@ body{color:#fff7df;
 .foc .cn{position:relative;top:4px;font-family:var(--font-display);font-size:30px;line-height:1.15;font-weight:600;letter-spacing:.01em;color:var(--text);opacity:.95;margin-bottom:30.6px}
 .foc .nt{position:relative;top:4.4px;font-family:var(--font-display);font-size:46px;line-height:1;font-weight:600;letter-spacing:.005em;color:var(--accent)}
 .arc .horizon{stroke:#ffffff;stroke-opacity:.16;stroke-width:1;stroke-dasharray:2.5 5}
+/* layered arc for legibility over cloud/rain without going thick or cartoonish:
+   railsh = a soft dark shadow under the WHOLE arc (separation); rail = the secondary base/future
+   arc; warmsh = a faint dark shadow under the ACTIVE stroke (weather-gated); warm = the active
+   accent body with its existing glow (unchanged); warmcore = a thin crisp accent core on top. */
+.arc .railsh{fill:none;stroke:#070b16;stroke-opacity:.26;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:blur(1.6px)}
 .arc .rail{fill:none;stroke:#ffffff;stroke-opacity:.3;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.arc .warmsh{fill:none;stroke:#05070f;stroke-opacity:0;stroke-width:4.4;stroke-linecap:round;stroke-linejoin:round;filter:blur(2px)}
 .arc .warm{fill:none;stroke:var(--accent);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px var(--accent))}
+.arc .warmcore{fill:none;stroke:color-mix(in srgb,var(--accent) 78%,#fff);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 .arc .dot{fill:#ffffff;fill-opacity:.72}
 .arc .dot.next{fill:var(--accent)}
-.arc .cur{fill:none;stroke:#fff;stroke-width:2.5}
-.bar{height:6px;border-radius:6px;background:#ffffff1a;overflow:hidden;margin-top:16px}
-.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .9s linear}
-.left{display:block;text-align:center;margin-top:16px;color:var(--text);opacity:.78;font-size:17.25px;font-weight:400;line-height:1.2}
-.left .n{font-family:var(--font-display);font-weight:600;font-size:20.25px;opacity:1}
+.arc .cur{fill:none;stroke:#fff;stroke-width:2.5;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.5))}
+/* bar mirrors the arc's light system: a dark inset track, then the active fill as a soft accent
+   glow (box-shadow, same --accent as the arc) under a crisp gradient on top. No overflow:hidden so
+   the glow can breathe and the fill keeps a rounded luminous tip. */
+.bar{position:relative;height:6px;border-radius:6px;background:#ffffff12;margin-top:16px;box-shadow:inset 0 1px 2px rgba(0,0,0,.42)}
+.bar>i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 0 5px color-mix(in srgb,var(--accent) 58%,transparent);transition:width .9s linear}
+/* busy weather: deepen the dark separation and lift the accent glow a touch — elegant, not neon. */
+.c[data-fx=cloud] .arc .railsh,.c[data-fx=overcast] .arc .railsh,.c[data-fx=fog] .arc .railsh,.c[data-fx=drizzle] .arc .railsh,.c[data-fx=rain] .arc .railsh,.c[data-fx=thunder] .arc .railsh,.c[data-fx=snow] .arc .railsh{stroke-opacity:.58}
+.c[data-fx=cloud] .arc .warmsh,.c[data-fx=overcast] .arc .warmsh,.c[data-fx=fog] .arc .warmsh,.c[data-fx=drizzle] .arc .warmsh,.c[data-fx=rain] .arc .warmsh,.c[data-fx=thunder] .arc .warmsh,.c[data-fx=snow] .arc .warmsh{stroke-opacity:.5}
+.c[data-fx=cloud] .bar,.c[data-fx=overcast] .bar,.c[data-fx=fog] .bar,.c[data-fx=drizzle] .bar,.c[data-fx=rain] .bar,.c[data-fx=thunder] .bar,.c[data-fx=snow] .bar{box-shadow:inset 0 1px 2.5px rgba(0,0,0,.6)}
+.c[data-fx=cloud] .bar>i,.c[data-fx=overcast] .bar>i,.c[data-fx=fog] .bar>i,.c[data-fx=drizzle] .bar>i,.c[data-fx=rain] .bar>i,.c[data-fx=thunder] .bar>i,.c[data-fx=snow] .bar>i{box-shadow:0 0 7px color-mix(in srgb,var(--accent) 76%,transparent)}
+.left{display:block;text-align:center;margin-top:16px;color:var(--text);font-size:17.25px;font-weight:400;line-height:1.2;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+/* countdown line reads in three roles: the time is the value (UI-mono + tabular, the
+   brightest part so it's read first); "left until" is quiet connective tissue; the prayer
+   name borrows the display face AND the --accent colour so it stays tied to the hero time
+   and the prayer-name system. text-shadow is inherited from .left (dark micro-rim, no glow). */
+.left .until-time{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:500;letter-spacing:-.01em;opacity:.92}
+.left .until-label{opacity:.6;font-family:var(--font-body)}   /* words stay Inter; the spaces around them inherit .left's mono so every gap is one even monospace space */
+.left .until-prayer{font-family:var(--font-display);font-weight:600;font-size:20.25px;color:var(--accent)}
 
 /* prayer-times grid */
 .times{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:4px;margin-top:15px}
@@ -482,14 +503,15 @@ function model(){
 
 // draw the solar-prayer arc
 function drawArc(M){
-  const W=295,H=180,hY=104,Ad=94,An=76,R=5, start=M.noon-720;
+  const W=295,H=180,hY=104,Ad=104,An=76,R=5, start=M.noon-720;
   const X=a=>(a-start)/1440*W;
   const noonT=(M.sunrise+M.sunset)/2;                          // solar noon = the arc's apex
-  // Physics-INFORMED continuous arc: sample the real sun altitude across the day, then COMPRESS it
-  // with tanh into the Ad/An envelope. The shape (apex height, daylight span, twilight depth) now
-  // follows the actual sun for this date + latitude — summer rides high with long days, winter sits
-  // low with short ones — yet the tanh keeps it smooth and rounded like the old arc, never a steep
-  // chart. 0° altitude maps to the dotted horizon; positive above, negative twilight/night below.
+  // FIXED FRAME, physics-INFORMED curve. The arc's box never moves: the apex always reaches the top
+  // (1 M below the header) and the deepest night always reaches the bottom (1 M above the bar). We
+  // sample the real sun altitude, tanh-shape it for a smooth rounded line, then NORMALISE so the
+  // curve fills that fixed frame regardless of date/latitude. The physics lives in the SHAPE (a high
+  // summer sun saturates into a broad flat dome, a low winter sun peaks more sharply) and in where
+  // the horizon crossings + dots fall — NOT in the dimensions. 0° altitude maps to the horizon line.
   const DEG=Math.PI/180, phi=(+(q.get("lat"))||0)*DEG;
   let decl=M.decl;                                             // declination from the date (rad)…
   const tp=Math.tan(phi), Hsr=((M.sunset-M.sunrise)/2)*0.25*DEG;
@@ -497,9 +519,13 @@ function drawArc(M){
     if(isFinite(d)&&Math.abs(d)<24*DEG) decl=d; }             // altitude hits exactly 0 at sunrise/sunset
   const cl=x=>x<-1?-1:x>1?1:x;
   const elevDeg=a=>Math.asin(cl(Math.sin(phi)*Math.sin(decl)+Math.cos(phi)*Math.cos(decl)*Math.cos((a-noonT)*0.25*DEG)))/DEG;
-  // Sn = S·An/Ad makes the day and night slopes match at the horizon → one smooth curve, no kink.
+  // normalise each side by the day's own extreme so the apex lands on Ad and the deepest night on
+  // An every time; maxE/maxD are the solar-noon altitude / solar-midnight depression (clamped so a
+  // very low sun still fills the frame instead of collapsing flat).
   const S=42, Sn=S*An/Ad;
-  const ALT=a=>{ const d=elevDeg(a); return d>=0 ? Ad*Math.tanh(d/S) : An*Math.tanh(d/Sn); };
+  const maxE=Math.max(3, elevDeg(noonT)), maxD=Math.max(3, -elevDeg(noonT+720));
+  const dayK=Math.tanh(maxE/S), nightK=Math.tanh(maxD/Sn);
+  const ALT=a=>{ const d=elevDeg(a); return d>=0 ? Ad*Math.tanh(d/S)/dayK : An*Math.tanh(d/Sn)/nightK; };
   const Y=a=>hY-ALT(a);
   const pathFrom=(a0,a1,steps)=>{
     let d=""; for(let i=0;i<=steps;i++){ const a=a0+(a1-a0)*i/steps; d+=`${i?"L":"M"}${X(a).toFixed(1)} ${Y(a).toFixed(1)}`; } return d;
@@ -522,8 +548,11 @@ function drawArc(M){
   const p1=`${(cx+ux).toFixed(1)} ${(cy+uy).toFixed(1)}`, p2=`${(cx-ux).toFixed(1)} ${(cy-uy).toFixed(1)}`;
   const eyeBack =`<path class="cur" d="M${p1} A${r} ${r} 0 0 0 ${p2}"/>`;
   const eyeFront=`<path class="cur" d="M${p1} A${r} ${r} 0 0 1 ${p2}"/>`;
-  return `<line class="horizon" x1="0" y1="${hY}" x2="${W}" y2="${hY}"/>`+eyeBack+
-         `<path class="rail" d="${rail}"/><path class="warm" d="${elapsed}"/>${dots}`+eyeFront;
+  return `<line class="horizon" x1="0" y1="${hY}" x2="${W}" y2="${hY}"/>`+
+         `<path class="railsh" d="${rail}"/>`+eyeBack+
+         `<path class="rail" d="${rail}"/>`+
+         `<path class="warmsh" d="${elapsed}"/><path class="warm" d="${elapsed}"/><path class="warmcore" d="${elapsed}"/>`+
+         `${dots}`+eyeFront;
 }
 
 // ---- continuous time-of-day sky -----------------------------------------
@@ -680,7 +709,7 @@ function render(){
   }
   $(".cn").textContent = M.currentKey;
   $(".nt").textContent = fmt(M.nextTime);
-  $(".left").innerHTML = `${dur(M.leftMin)} left until <span class="n">${M.nextKey}</span>`;
+  $(".left").innerHTML = `<span class="until-time">${dur(M.leftMin)}</span> <span class="until-label">left</span> <span class="until-label">until</span> <span class="until-prayer">${M.nextKey}</span>`;
   $(".bar>i").style.width = (M.progress*100).toFixed(1)+"%";
   $(".arc").innerHTML = drawArc(M);
   $(".times").innerHTML = prayers.map(k=>{
