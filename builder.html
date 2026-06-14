@@ -87,18 +87,26 @@ iframe{box-shadow:0 18px 50px #0008}
       <div>
         <label>Time format</label>
         <select id="time">
-          <option value="12">12-hour (3:45 PM)</option>
           <option value="24">24-hour (15:45)</option>
+          <option value="12">12-hour (3:45 PM)</option>
         </select>
       </div>
       <div>
-        <label>Temperature units</label>
-        <select id="units">
-          <option value="f">Fahrenheit (°F)</option>
-          <option value="c">Celsius (°C)</option>
+        <label>Date format</label>
+        <select id="datefmt">
+          <option value="iso">2026-06-14 (YYYY-MM-DD)</option>
+          <option value="us">06/14/2026 (MM/DD/YYYY)</option>
+          <option value="eu">14/06/2026 (DD/MM/YYYY)</option>
+          <option value="long">14 June 2026</option>
         </select>
       </div>
     </div>
+
+    <label>Temperature units</label>
+    <select id="units">
+      <option value="f">Fahrenheit (°F)</option>
+      <option value="c">Celsius (°C)</option>
+    </select>
   </div>
 
   <div class="preview">
@@ -122,7 +130,7 @@ iframe{box-shadow:0 18px 50px #0008}
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const fields=["label","lat","lon","tz","method","school","time","units"];
+const fields=["label","lat","lon","tz","method","school","time","datefmt","units"];
 const base=location.href.replace(/builder\.html.*$/,"").replace(/[?#].*$/,"");
 
 function hash(){
@@ -133,22 +141,27 @@ function hash(){
   p.set("label",$("label").value.trim());
   p.set("method",$("method").value);
   p.set("school",$("school").value);
-  if($("time").value==="24") p.set("time","24");
+  if($("time").value==="12") p.set("time","12");
+  if($("datefmt").value!=="iso") p.set("datefmt",$("datefmt").value);
   if($("units").value==="c") p.set("units","c");
   return p.toString();
 }
+let rev=0;
 function url(){ return base+"#"+hash(); }
+// the widget reads only location.hash, so a changing ?r= query is ignored by it but
+// forces the iframe to actually reload (a hash-only change wouldn't re-run the script).
+function previewUrl(){ return base+"?r="+(rev++)+"#"+hash(); }
 function snippet(){
   return `<iframe\n  title="Prayer Times"\n  referrerpolicy="no-referrer"\n  src="${url()}"\n  style="width:330px;height:285px;border:0;border-radius:28px;overflow:hidden"\n  scrolling="no">\n</iframe>`;
 }
 function update(){
   $("code").value=snippet();
-  $("pv").src=url();
+  $("pv").src=previewUrl();
 }
 fields.forEach(f=>$(f).addEventListener("input",update));
 fields.forEach(f=>$(f).addEventListener("change",update));
 
-$("reload").onclick=()=>{ $("pv").src=url(); };
+$("reload").onclick=()=>{ $("pv").src=previewUrl(); };
 $("open").onclick=()=>window.open(url(),"_blank","noreferrer");
 $("copy").onclick=async()=>{
   try{ await navigator.clipboard.writeText($("code").value); }

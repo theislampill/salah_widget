@@ -50,7 +50,8 @@ widget and paste the snippet above (with your own coordinates).
 | `label`  |          | `Prayer Times`     | Location name shown on the widget. Encode spaces as `%20`. |
 | `method` |          | `2` (ISNA)         | Calculation method — see table below. |
 | `school` |          | `0`                | Asr calculation: `0` = standard, `1` = Hanafi (later Asr). |
-| `time`   |          | `12`               | Clock format: `12` (3:45 PM) or `24` (15:45). |
+| `time`   |          | `24`               | Clock format: `24` (15:45) or `12` (3:45 PM). |
+| `datefmt`|          | `iso`              | Date style: `iso` (2026-06-14), `us` (06/14/2026), `eu` (14/06/2026), `long` (14 June 2026). Applies to both the Gregorian and Hijri dates. |
 | `units`  |          | `f`                | Weather temperature: `f` (°F) or `c` (°C). |
 
 > Tip: don't know your coordinates? Right-click your location on
@@ -96,7 +97,8 @@ widget and paste the snippet above (with your own coordinates).
   paints instantly on reload and survives a flaky connection.
 - **Auto-retry** on API hiccups, and an automatic refresh when the day rolls over.
 - Passed prayers dim; the upcoming one is highlighted.
-- Hijri date shown alongside the Gregorian date.
+- Gregorian (CE) date bottom-left and Hijri (AH) date bottom-right, in your chosen
+  `datefmt` (defaults to ISO `YYYY-MM-DD`).
 
 ---
 
