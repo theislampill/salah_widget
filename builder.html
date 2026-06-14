@@ -91,28 +91,30 @@ iframe{box-shadow:0 18px 50px #0008}
     </div>
     <p class="note" style="margin-top:6px"><b>Method</b> only changes the Fajr &amp; Isha twilight angles<br>(choose the authority your region or community follows).<br><b>Mithl</b>: Asr begins when an object's shadow equals its height<br>(Shafiʿi · Maliki · Hanbali);<br><b>Mithlayn</b>: when the shadow is twice its height — a later Asr<br>(Hanafi).</p>
 
-    <label>Date format</label>
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr">
-      <div style="grid-column:1 / span 2">
+      <div>
+        <label>Temperature units</label>
+        <select id="units">
+          <option value="f">Fahrenheit (°F)</option>
+          <option value="c">Celsius (°C)</option>
+        </select>
+      </div>
+      <div>
+        <label>Date format</label>
         <select id="datefmt" aria-label="Date format preset">
-          <option value="YYYY-MM-DD">2026-06-14 (YYYY-MM-DD)</option>
-          <option value="MM/DD/YYYY">06/14/2026 (MM/DD/YYYY)</option>
-          <option value="DD/MM/YYYY">14/06/2026 (DD/MM/YYYY)</option>
-          <option value="DD MMMM YYYY">14 June 2026 (DD MMMM YYYY)</option>
+          <option value="YYYY-MM-DD">2026-06-14</option>
+          <option value="MM/DD/YYYY">06/14/2026</option>
+          <option value="DD/MM/YYYY">14/06/2026</option>
+          <option value="DD MMMM YYYY">14 June 2026</option>
           <option value="__custom__" id="dfCustomOpt">(Custom)</option>
         </select>
       </div>
       <div>
+        <label aria-hidden="true">&nbsp;</label>
         <input id="dfcode" value="YYYY-MM-DD" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Date format code">
       </div>
     </div>
     <p class="note" style="margin-top:6px;text-align:right">Custom dates use <a href="https://cldr.unicode.org/translation/date-time/date-time-symbols" target="_blank" rel="noreferrer">Unicode date symbols</a>.</p>
-
-    <label>Temperature units</label>
-    <select id="units">
-      <option value="f">Fahrenheit (°F)</option>
-      <option value="c">Celsius (°C)</option>
-    </select>
   </div>
 
   <div class="preview">
