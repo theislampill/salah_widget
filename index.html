@@ -141,7 +141,7 @@ body{color:#fff7df;
 .c[data-fx=cloud] .arc .warmsh,.c[data-fx=overcast] .arc .warmsh,.c[data-fx=fog] .arc .warmsh,.c[data-fx=drizzle] .arc .warmsh,.c[data-fx=rain] .arc .warmsh,.c[data-fx=thunder] .arc .warmsh,.c[data-fx=snow] .arc .warmsh{stroke-opacity:.5}
 .c[data-fx=cloud] .bar,.c[data-fx=overcast] .bar,.c[data-fx=fog] .bar,.c[data-fx=drizzle] .bar,.c[data-fx=rain] .bar,.c[data-fx=thunder] .bar,.c[data-fx=snow] .bar{box-shadow:inset 0 1px 2.5px rgba(0,0,0,.6)}
 .c[data-fx=cloud] .bar>i,.c[data-fx=overcast] .bar>i,.c[data-fx=fog] .bar>i,.c[data-fx=drizzle] .bar>i,.c[data-fx=rain] .bar>i,.c[data-fx=thunder] .bar>i,.c[data-fx=snow] .bar>i{box-shadow:0 0 7px color-mix(in srgb,var(--accent) 76%,transparent)}
-.left{display:block;text-align:center;margin-top:8px;color:var(--text);font-size:17.25px;font-weight:400;line-height:1.2;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.left{display:block;text-align:center;margin-top:3.3px;color:var(--text);font-size:17.25px;font-weight:400;line-height:1.2;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 /* countdown line reads in three roles: the time is the value (UI-mono + tabular, the
    brightest part so it's read first); "left until" is quiet connective tissue; the prayer
    name borrows the display face AND the --accent colour so it stays tied to the hero time
@@ -506,8 +506,10 @@ function model(){
 
 // draw the solar-prayer arc
 function drawArc(M){
-  const W=295,H=180,hY=104,Ad=104,An=76,R=5, start=M.noon-720;
-  const X=a=>(a-start)/1440*W;
+  const W=295,H=180,hY=104,Ad=104,An=76,R=5, PAD=1.3, start=M.noon-720;
+  // inset the curve by the rail's stroke half-width so its VISIBLE edge (stroke + round cap) lines
+  // up with the progress-bar's edge, instead of overhanging it by ~1.2px.
+  const X=a=>PAD+(a-start)/1440*(W-2*PAD);
   const noonT=(M.sunrise+M.sunset)/2;                          // solar transit (sun crosses the meridian)
   const apexT=noonT-18;                                        // the curve PEAKS ~18 min before Dhuhr: the
   // zenith — when the sun is highest and shadows shortest — is the makrūh moment; Dhuhr begins only
@@ -555,7 +557,7 @@ function drawArc(M){
   const p1=`${(cx+ux).toFixed(1)} ${(cy+uy).toFixed(1)}`, p2=`${(cx-ux).toFixed(1)} ${(cy-uy).toFixed(1)}`;
   const eyeBack =`<path class="cur" d="M${p1} A${r} ${r} 0 0 0 ${p2}"/>`;
   const eyeFront=`<path class="cur" d="M${p1} A${r} ${r} 0 0 1 ${p2}"/>`;
-  return `<line class="horizon" x1="0" y1="${hY}" x2="${W}" y2="${hY}"/>`+
+  return `<line class="horizon" x1="${PAD}" y1="${hY}" x2="${W-PAD}" y2="${hY}"/>`+
          `<path class="railsh" d="${rail}"/>`+eyeBack+
          `<path class="rail" d="${rail}"/>`+eyeFront+
          `<path class="warmsh" d="${elapsed}"/><path class="warm" d="${elapsed}"/><path class="warmcore" d="${elapsed}"/>`+
@@ -753,7 +755,7 @@ function render(){
   if(!today) return;
   const M=model();
   const afterMaghrib = M.nowMin >= mins(M.t.Maghrib);          // the Islamic (Hijri) day rolls over at Maghrib, not midnight
-  if((M.needTomorrow || afterMaghrib) && !tomorrow && !fetchingTomorrow){
+  if(!tomorrow && !fetchingTomorrow){                          // always: needed for the overnight Fajr, the AH roll-over, and the pre-Maghrib preview number
     fetchingTomorrow=true;
     fetchTimings(tomorrowStr()).then(d=>{tomorrow=d;fetchingTomorrow=false;}).catch(()=>{fetchingTomorrow=false;});
   }
@@ -771,13 +773,13 @@ function render(){
   }).join("");
   const g=today.date&&today.date.gregorian, h=today.date&&today.date.hijri;
   $("#ce").innerHTML = g ? `${fmtDate(g)}<span class="er">CE</span>` : "";
-  // AH advances at Maghrib (not midnight): before Maghrib show today's Hijri plus a faint preview of
-  // the day that begins tonight (separator + moon-phase emoji at ~20% opacity); after Maghrib the date
-  // becomes that next day and the emoji turns fully opaque.
-  const advanced = afterMaghrib && tomorrow && tomorrow.date && tomorrow.date.hijri;
-  const ahH = advanced ? tomorrow.date.hijri : h, moonE = phaseEmoji(moonNow().phase);
-  const moonHtml = advanced ? ` <span class="mph">${moonE}</span>` : ` <span class="mph pre">| ${moonE}</span>`;
-  $("#ah").innerHTML = ahH ? `<span class="er">ه</span>${fmtDate(ahH)}${moonHtml}` : "";
+  // AH advances at Maghrib (not midnight). BEFORE Maghrib show today's Hijri plus a faint preview of
+  // the day that begins tonight — "| <moon-phase emoji> <that day's number>" at ~20% opacity. AFTER
+  // Maghrib the date itself becomes that next day and the preview/emoji is dropped entirely.
+  const tmrwH = tomorrow && tomorrow.date && tomorrow.date.hijri;
+  const ahH = (afterMaghrib && tmrwH) ? tomorrow.date.hijri : h;
+  const tail = (!afterMaghrib && tmrwH) ? ` <span class="mph pre">| ${phaseEmoji(moonNow().phase)} ${tomorrow.date.hijri.day}</span>` : "";
+  $("#ah").innerHTML = ahH ? `<span class="er">ه</span>${fmtDate(ahH)}${tail}` : "";
   applyTheme(M);
 }
 
