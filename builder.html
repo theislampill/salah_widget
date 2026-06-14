@@ -41,7 +41,7 @@ iframe{box-shadow:0 18px 50px #0008}
 
 <div class="wrap">
   <div class="card form">
-    <label>Location name (shown on the widget)</label>
+    <label>Location name (auto-fills from the coordinates — edit to override)</label>
     <input id="label" placeholder="Madinah" value="Madinah">
 
     <div class="row">
@@ -173,6 +173,23 @@ function update(){
 fields.forEach(f=>$(f).addEventListener("input",update));
 fields.forEach(f=>$(f).addEventListener("change",update));
 
+// Auto-fill the location name from the coordinates (reverse geocode) — until the user types their own.
+let labelAuto = (!$("label").value.trim() || $("label").value.trim()==="Madinah");
+$("label").addEventListener("input",()=>{ labelAuto=false; });   // programmatic .value sets don't fire 'input', so this only trips on a real keystroke
+let geoTimer=0;
+async function fillNameFromCoords(){
+  if(!labelAuto) return;
+  const la=$("lat").value.trim(), lo=$("lon").value.trim();
+  if(!la||!lo||isNaN(+la)||isNaN(+lo)) return;
+  try{
+    const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(la)}&longitude=${encodeURIComponent(lo)}&localityLanguage=en`,{referrerPolicy:"no-referrer"});
+    const j=await r.json();
+    const name=(j.city||j.locality||j.principalSubdivision||j.countryName||"").trim();
+    if(name && labelAuto){ $("label").value=name; update(); }
+  }catch(e){}
+}
+["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ clearTimeout(geoTimer); geoTimer=setTimeout(fillNameFromCoords,700); }));
+
 // ---- date format: preset dropdown <-> editable format-code box ------------
 const DF_PRESETS=["YYYY-MM-DD","MM/DD/YYYY","DD/MM/YYYY","DD MMMM YYYY"];
 function fmtSample(code){
@@ -212,7 +229,7 @@ function locate(auto){
   navigator.geolocation.getCurrentPosition(
     pos=>{ $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
            try{ $("tz").value=Intl.DateTimeFormat().resolvedOptions().timeZone; }catch(e){}
-           $("geo").textContent="📍 Use my location"; update(); },
+           $("geo").textContent="📍 Use my location"; update(); fillNameFromCoords(); },
     err=>{ if(!auto) alert("Couldn't get your location: "+err.message); $("geo").textContent="📍 Use my location"; },
     {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
   );
