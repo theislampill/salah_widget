@@ -28,6 +28,8 @@ button.ghost{background:#ffffff14;color:#fff7df;border:1px solid #ffffff22}
 textarea{width:100%;min-height:120px;resize:vertical;border-radius:14px;border:1px solid #ffffff22;background:#0a1714;color:#cfe;
   font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:14px}
 .note{color:#ffffff77;font-size:13px;margin-top:8px}
+.note code,p code{background:#ffffff14;border:1px solid #ffffff1f;border-radius:5px;padding:0 5px;font:12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#f8d878}
+#dfcode{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
 a{color:#f8d878}
 .copied{color:#9be29b;font-size:13px;margin-left:6px}
 iframe{box-shadow:0 18px 50px #0008}
@@ -48,9 +50,20 @@ iframe{box-shadow:0 18px 50px #0008}
     </div>
     <div class="btns"><button class="ghost" id="geo" type="button">📍 Use my location</button></div>
 
-    <label>Time zone</label>
-    <input id="tz" value="Asia/Riyadh">
-    <div class="btns"><button class="ghost" id="tzauto" type="button">🌐 Auto-detect time zone</button></div>
+    <div class="row">
+      <div>
+        <label>Time zone</label>
+        <input id="tz" value="Asia/Riyadh">
+        <div class="btns"><button class="ghost" id="tzauto" type="button">🌐 Auto-detect</button></div>
+      </div>
+      <div>
+        <label>Time format</label>
+        <select id="time">
+          <option value="24">24-hour (15:45)</option>
+          <option value="12">12-hour (3:45 PM)</option>
+        </select>
+      </div>
+    </div>
 
     <div class="row">
       <div>
@@ -83,24 +96,22 @@ iframe{box-shadow:0 18px 50px #0008}
       </div>
     </div>
 
+    <label>Date format</label>
     <div class="row">
       <div>
-        <label>Time format</label>
-        <select id="time">
-          <option value="24">24-hour (15:45)</option>
-          <option value="12">12-hour (3:45 PM)</option>
+        <select id="datefmt" aria-label="Date format preset">
+          <option value="YYYY-MM-DD">2026-06-14 (YYYY-MM-DD)</option>
+          <option value="MM/DD/YYYY">06/14/2026 (MM/DD/YYYY)</option>
+          <option value="DD/MM/YYYY">14/06/2026 (DD/MM/YYYY)</option>
+          <option value="DD MMMM YYYY">14 June 2026 (DD MMMM YYYY)</option>
+          <option value="__custom__" id="dfCustomOpt">(Custom)</option>
         </select>
       </div>
       <div>
-        <label>Date format</label>
-        <select id="datefmt">
-          <option value="iso">2026-06-14 (YYYY-MM-DD)</option>
-          <option value="us">06/14/2026 (MM/DD/YYYY)</option>
-          <option value="eu">14/06/2026 (DD/MM/YYYY)</option>
-          <option value="long">14 June 2026</option>
-        </select>
+        <input id="dfcode" value="YYYY-MM-DD" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Date format code">
       </div>
     </div>
+    <p class="note" style="margin-top:6px">Tokens: <code>YYYY</code> <code>YY</code> <code>MMMM</code> <code>MMM</code> <code>MM</code> <code>M</code> <code>DD</code> <code>D</code> — edit the box for a custom format.</p>
 
     <label>Temperature units</label>
     <select id="units">
@@ -130,7 +141,7 @@ iframe{box-shadow:0 18px 50px #0008}
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const fields=["label","lat","lon","tz","method","school","time","datefmt","units"];
+const fields=["label","lat","lon","tz","method","school","time","units"];
 const base=location.href.replace(/builder\.html.*$/,"").replace(/[?#].*$/,"");
 
 function hash(){
@@ -142,7 +153,8 @@ function hash(){
   p.set("method",$("method").value);
   p.set("school",$("school").value);
   if($("time").value==="12") p.set("time","12");
-  if($("datefmt").value!=="iso") p.set("datefmt",$("datefmt").value);
+  const df=$("dfcode").value.trim();
+  if(df && df!=="YYYY-MM-DD") p.set("datefmt",df);
   if($("units").value==="c") p.set("units","c");
   return p.toString();
 }
@@ -160,6 +172,28 @@ function update(){
 }
 fields.forEach(f=>$(f).addEventListener("input",update));
 fields.forEach(f=>$(f).addEventListener("change",update));
+
+// ---- date format: preset dropdown <-> editable format-code box ------------
+const DF_PRESETS=["YYYY-MM-DD","MM/DD/YYYY","DD/MM/YYYY","DD MMMM YYYY"];
+function fmtSample(code){
+  const t={YYYY:"2026",YY:"26",MMMM:"June",MMM:"Jun",MM:"06",M:"6",DD:"14",D:"14"};
+  return code.replace(/YYYY|YY|MMMM|MMM|MM|M|DD|D/g, m=>t[m]);
+}
+// reflect the box into the dropdown: pick the matching preset, or show a live
+// "(Custom) <today in that format>" entry
+function syncDateFromBox(){
+  const code=$("dfcode").value.trim();
+  if(DF_PRESETS.indexOf(code)>=0){ $("datefmt").value=code; }
+  else { $("dfCustomOpt").textContent="(Custom) "+(code?fmtSample(code):"—"); $("datefmt").value="__custom__"; }
+}
+$("datefmt").addEventListener("change",()=>{
+  const v=$("datefmt").value;
+  if(v!=="__custom__"){ $("dfcode").value=v; }   // preset → fill the code box
+  else { $("dfcode").focus(); }                  // custom → let them type
+  update();
+});
+$("dfcode").addEventListener("input",()=>{ syncDateFromBox(); update(); });
+syncDateFromBox();
 
 $("reload").onclick=()=>{ $("pv").src=previewUrl(); };
 $("open").onclick=()=>window.open(url(),"_blank","noreferrer");

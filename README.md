@@ -51,7 +51,7 @@ widget and paste the snippet above (with your own coordinates).
 | `method` |          | `2` (ISNA)         | Calculation method — see table below. |
 | `school` |          | `0`                | Asr calculation: `0` = standard, `1` = Hanafi (later Asr). |
 | `time`   |          | `24`               | Clock format: `24` (15:45) or `12` (3:45 PM). |
-| `datefmt`|          | `iso`              | Date style: `iso` (2026-06-14), `us` (06/14/2026), `eu` (14/06/2026), `long` (14 June 2026). Applies to both the Gregorian and Hijri dates. |
+| `datefmt`|          | `YYYY-MM-DD`       | Date format as a token string — `YYYY`/`YY` year, `MMMM`/`MMM`/`MM`/`M` month, `DD`/`D` day (e.g. `DD MMMM YYYY`, `MMM D, YYYY`). The old preset keys `iso`/`us`/`eu`/`long` still work. Applies to both the Gregorian and Hijri dates. |
 | `units`  |          | `f`                | Weather temperature: `f` (°F) or `c` (°C). |
 
 > Tip: don't know your coordinates? Right-click your location on

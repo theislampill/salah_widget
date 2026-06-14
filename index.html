@@ -253,7 +253,11 @@ const method= q.get("method")|| "2";
 const school= q.get("school")|| "0";
 const fmt24 = (q.get("time") || "24") !== "12";
 const units = (q.get("units") || "f").toLowerCase() === "c" ? "c" : "f";
-const datefmt = (q.get("datefmt") || "iso").toLowerCase();
+// datefmt is now a token format string (YYYY MM DD MMMM …). The old preset keys
+// still work for backward compatibility with existing embeds.
+const DATEFMT_PRESETS = {iso:"YYYY-MM-DD", us:"MM/DD/YYYY", eu:"DD/MM/YYYY", long:"DD MMMM YYYY"};
+const dfRaw = q.get("datefmt") || "iso";
+const datefmtStr = DATEFMT_PRESETS[dfRaw.toLowerCase()] || dfRaw;
 
 // ---- simulation overrides (only active when present in the hash) ----------
 // Lets you preview any condition without waiting for the real clock/weather:
@@ -290,15 +294,12 @@ const dur = leftMin => {
   if(m>0) return `${m}m`;
   return `${sec}s`;
 };
+// token date formatter: YYYY/YY year · MMMM/MMM/MM/M month · DD/D day
 const fmtDate = o => {
   if(!o) return "";
-  const dd=pad(+o.day), mm=pad(+(o.month&&o.month.number||0)), yyyy=o.year, mon=(o.month&&o.month.en)||"";
-  switch(datefmt){
-    case "us":   return `${mm}/${dd}/${yyyy}`;
-    case "eu":   return `${dd}/${mm}/${yyyy}`;
-    case "long": return `${+o.day} ${mon} ${yyyy}`;
-    default:     return `${yyyy}-${mm}-${dd}`;   // iso
-  }
+  const yyyy=String(o.year), mn=+(o.month&&o.month.number||0), day=+o.day, mon=(o.month&&o.month.en)||"";
+  const t={YYYY:yyyy, YY:yyyy.slice(-2), MMMM:mon, MMM:mon.slice(0,3), MM:pad(mn), M:String(mn), DD:pad(day), D:String(day)};
+  return datefmtStr.replace(/YYYY|YY|MMMM|MMM|MM|M|DD|D/g, m=>t[m]);
 };
 
 // current wall-clock in the *configured* timezone (not the browser's)
