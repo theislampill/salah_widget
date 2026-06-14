@@ -173,19 +173,23 @@ function update(){
 fields.forEach(f=>$(f).addEventListener("input",update));
 fields.forEach(f=>$(f).addEventListener("change",update));
 
-// Auto-fill the location name from the coordinates (reverse geocode) — until the user types their own.
+// Auto-fill from the coordinates (reverse geocode): the location name, and the calculation method
+// (ISNA in North America, else the Umm al-Qura default). Each backs off once the user sets their own.
 let labelAuto = (!$("label").value.trim() || $("label").value.trim()==="Madinah");
-$("label").addEventListener("input",()=>{ labelAuto=false; });   // programmatic .value sets don't fire 'input', so this only trips on a real keystroke
+let methodAuto = true;
+$("label").addEventListener("input",()=>{ labelAuto=false; });   // programmatic .value sets don't fire 'input'/'change', so these only trip on a real edit
+$("method").addEventListener("change",()=>{ methodAuto=false; });
 let geoTimer=0;
 async function fillNameFromCoords(){
-  if(!labelAuto) return;
+  if(!labelAuto && !methodAuto) return;
   const la=$("lat").value.trim(), lo=$("lon").value.trim();
   if(!la||!lo||isNaN(+la)||isNaN(+lo)) return;
   try{
     const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(la)}&longitude=${encodeURIComponent(lo)}&localityLanguage=en`,{referrerPolicy:"no-referrer"});
     const j=await r.json();
-    const name=(j.city||j.locality||j.principalSubdivision||j.countryName||"").trim();
-    if(name && labelAuto){ $("label").value=name; update(); }
+    if(labelAuto){ const name=(j.city||j.locality||j.principalSubdivision||j.countryName||"").trim(); if(name) $("label").value=name; }
+    if(methodAuto) $("method").value = (j.continentCode==="NA") ? "2" : "4";   // ISNA for North America
+    update();
   }catch(e){}
 }
 ["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ clearTimeout(geoTimer); geoTimer=setTimeout(fillNameFromCoords,700); }));
