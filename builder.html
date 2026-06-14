@@ -40,16 +40,16 @@ iframe{box-shadow:0 18px 50px #0008}
 <div class="wrap">
   <div class="card form">
     <label>Location name (shown on the widget)</label>
-    <input id="label" placeholder="Central FL" value="Central FL">
+    <input id="label" placeholder="Madinah" value="Madinah">
 
     <div class="row">
-      <div><label>Latitude</label><input id="lat" inputmode="decimal" value="28.93084"></div>
-      <div><label>Longitude</label><input id="lon" inputmode="decimal" value="-82.39122"></div>
+      <div><label>Latitude</label><input id="lat" inputmode="decimal" value="24.4672"></div>
+      <div><label>Longitude</label><input id="lon" inputmode="decimal" value="39.6142"></div>
     </div>
     <div class="btns"><button class="ghost" id="geo" type="button">📍 Use my location</button></div>
 
     <label>Time zone</label>
-    <input id="tz" value="America/New_York">
+    <input id="tz" value="Asia/Riyadh">
     <div class="btns"><button class="ghost" id="tzauto" type="button">🌐 Auto-detect time zone</button></div>
 
     <div class="row">
@@ -59,7 +59,7 @@ iframe{box-shadow:0 18px 50px #0008}
           <option value="2">ISNA — N. America</option>
           <option value="3">Muslim World League</option>
           <option value="1">Univ. of Islamic Sciences, Karachi</option>
-          <option value="4">Umm al-Qura, Makkah</option>
+          <option value="4" selected>Umm al-Qura, Makkah</option>
           <option value="5">Egyptian General Authority</option>
           <option value="0">Shia Ithna-Ashari</option>
           <option value="7">Univ. of Tehran</option>
@@ -172,18 +172,24 @@ $("copy").onclick=async()=>{
 $("tzauto").onclick=()=>{
   try{ $("tz").value=Intl.DateTimeFormat().resolvedOptions().timeZone; update(); }catch(e){}
 };
-$("geo").onclick=()=>{
-  if(!navigator.geolocation){ alert("Geolocation isn't available in this browser."); return; }
+function locate(auto){
+  if(!navigator.geolocation){ if(!auto) alert("Geolocation isn't available in this browser."); return; }
   $("geo").textContent="Locating…";
   navigator.geolocation.getCurrentPosition(
     pos=>{ $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
            try{ $("tz").value=Intl.DateTimeFormat().resolvedOptions().timeZone; }catch(e){}
            $("geo").textContent="📍 Use my location"; update(); },
-    err=>{ alert("Couldn't get your location: "+err.message); $("geo").textContent="📍 Use my location"; }
+    err=>{ if(!auto) alert("Couldn't get your location: "+err.message); $("geo").textContent="📍 Use my location"; },
+    {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
   );
-};
+}
+$("geo").onclick=()=>locate(false);
 
+// on load: auto-detect time zone (no prompt) and request location (prompts once,
+// falls back silently to the Madinah default if denied/unavailable)
+try{ $("tz").value=Intl.DateTimeFormat().resolvedOptions().timeZone; }catch(e){}
 update();
+locate(true);
 </script>
 </body>
 </html>

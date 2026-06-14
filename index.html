@@ -11,10 +11,11 @@ body{color:#fff7df;font:14px system-ui,-apple-system,Segoe UI,sans-serif}
 .c{
   --g1:#102b23;--g2:#071211;--g3:#241507;
   --glow:#7c5b2488;--accent:#f8d878;--accent2:#e8b24a;--text:#fff7df;
-  width:325px;height:280px;border-radius:28px;padding:13px 15px;
+  --stars:1;--starblur:0px;--moon:1;
+  position:relative;width:325px;height:280px;border-radius:28px;padding:11px 15px;
   background:radial-gradient(circle at 0 0,var(--glow),transparent 40%),linear-gradient(145deg,var(--g1),var(--g2) 70%,var(--g3));
   box-shadow:0 18px 50px #0008;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
-  color:var(--text);overflow:hidden;transition:color .5s,border-color .5s}
+  color:var(--text);overflow:hidden;transition:color .6s,border-color .6s}
 /* weather + day/night palettes */
 .c[data-theme="clearDay"]  {--g1:#1d6a4e;--g2:#0a2a23;--g3:#3a2606;--glow:#ffcf6baa;--accent:#ffdf8e;--accent2:#edb43f;--text:#fff7df}
 .c[data-theme="clearNight"]{--g1:#101a3c;--g2:#070b1c;--g3:#171340;--glow:#475ec0aa;--accent:#ecd49a;--accent2:#c9a85f;--text:#eef1ff}
@@ -24,42 +25,98 @@ body{color:#fff7df;font:14px system-ui,-apple-system,Segoe UI,sans-serif}
 .c[data-theme="snow"]      {--g1:#2a3a45;--g2:#16242c;--g3:#243039;--glow:#cfeaffcc;--accent:#eaf6ff;--accent2:#a9d2ea;--text:#f2f9ff}
 .c[data-theme="fog"]       {--g1:#2b3331;--g2:#171c1b;--g3:#202624;--glow:#b8c2c088;--accent:#e2e6e0;--accent2:#aab0aa;--text:#eef1ee}
 .c[data-theme="thunder"]   {--g1:#241b3c;--g2:#0c0a1a;--g3:#241228;--glow:#8a6cffaa;--accent:#dac9ff;--accent2:#9d7cff;--text:#efeaff}
-.h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px}
+
+/* sky background: stars + moon */
+.sky{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.stars{opacity:var(--stars);filter:blur(var(--starblur));transition:opacity .8s,filter .8s}
+.stars circle{fill:#fff}
+.moon{opacity:var(--moon);transition:opacity .8s}
+.mglow{fill:var(--accent);opacity:.06}
+.mdisk{fill:url(#mg)}
+.mlit{fill:#e7ecfb}
+.mrim{fill:none;stroke:#cdd6f0;stroke-opacity:.42;stroke-width:1.2}
+
+/* header */
+.h{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
 .hl{min-width:0;display:flex;align-items:center;gap:9px}
 .e{min-width:0;font-size:11px;line-height:1.2;letter-spacing:.16em;text-transform:uppercase;color:color-mix(in srgb,var(--accent) 72%,#fff);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ar{font-size:23px;line-height:1;color:var(--accent);text-shadow:0 0 18px color-mix(in srgb,var(--accent) 40%,transparent);flex:none}
 .wx{font-size:13px;line-height:1;color:var(--text);opacity:.92;white-space:nowrap;display:flex;align-items:center;gap:4px;flex:none}
 .wx .i{font-size:15px}
-.nbox{padding:9px 13px;border-radius:18px;background:#ffffff14;border:1px solid #ffffff22;margin-bottom:8px}
-.left{color:color-mix(in srgb,var(--text) 62%,transparent);font-size:12px;line-height:1.25;margin-top:1px}
-.nr{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.n{font-size:25px;line-height:1.05;font-weight:950}
-.nt{font-size:21px;line-height:1.05;font-weight:850;color:var(--accent)}
-.bar{height:6px;border-radius:6px;background:#ffffff1a;margin:8px 0 6px;overflow:hidden}
+
+/* prayer panel */
+.panel{position:relative;z-index:1}
+.arc{display:block;width:100%;height:96px;margin:0;overflow:visible}
+.foc{position:relative;text-align:center;margin-top:-26px}
+.foc .nt{font-size:23px;line-height:1;font-weight:850;color:var(--accent)}
+.foc .n{font-size:14px;line-height:1.15;font-weight:800;opacity:.9;margin-top:2px}
+.arc .horizon{stroke:#ffffff;stroke-opacity:.16;stroke-width:1;stroke-dasharray:2.5 5}
+.arc .rail{fill:none;stroke:#ffffff;stroke-opacity:.3;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.arc .warm{fill:none;stroke:var(--accent);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px var(--accent))}
+.arc .dot{fill:#ffffff;fill-opacity:.72}
+.arc .dot.next{fill:var(--accent)}
+.arc .cur{fill:color-mix(in srgb,var(--g1) 55%,var(--g2));stroke:var(--accent);stroke-width:3}
+.bar{height:6px;border-radius:6px;background:#ffffff1a;overflow:hidden}
 .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .9s linear}
-.times{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.p{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px;border-radius:13px;background:#ffffff10;border:1px solid #ffffff12;transition:opacity .3s,background .3s}
+.left{display:block;text-align:center;margin-top:5px;color:var(--text);opacity:.78;font-size:11px;line-height:1.2}
+
+/* prayer-times grid */
+.times{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:5px}
+.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:3px 9px;border-radius:11px;background:#ffffff10;border:1px solid #ffffff14;transition:opacity .3s,background .3s}
 .p.on{background:color-mix(in srgb,var(--accent) 16%,transparent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
 .p.past{opacity:.42}
-b{font-weight:800}
-.tm{font-weight:850;font-size:13.5px}
-.d{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:7px;color:color-mix(in srgb,var(--text) 62%,transparent);font-size:12px;line-height:1.25}
+.p b{font-weight:800;font-size:12.5px}
+.tm{font-weight:850;font-size:12.5px}
+
+/* dates */
+.d{position:relative;z-index:1;direction:ltr;display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:5px;color:color-mix(in srgb,var(--text) 60%,transparent);font-size:11.5px;line-height:1.2}
 .d span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.er{opacity:.55;font-size:.82em;margin-left:4px;letter-spacing:.05em}
+.er{opacity:.55;font-size:.84em;margin:0 4px;letter-spacing:.05em;unicode-bidi:isolate}
 </style>
 </head>
 <body>
 <div class="c">
+  <svg class="sky" viewBox="0 0 325 280" preserveAspectRatio="none" aria-hidden="true">
+    <defs><radialGradient id="mg" cx="40%" cy="34%" r="72%">
+      <stop offset="0%" stop-color="#27334f"/><stop offset="65%" stop-color="#18223e"/><stop offset="100%" stop-color="#0e1630"/>
+    </radialGradient></defs>
+    <g class="stars">
+      <circle cx="20" cy="45" r=".8" opacity=".55"/><circle cx="60" cy="75" r="1.1" opacity=".8"/>
+      <circle cx="38" cy="140" r=".7" opacity=".5"/><circle cx="88" cy="50" r=".9" opacity=".65"/>
+      <circle cx="110" cy="120" r=".7" opacity=".5"/><circle cx="135" cy="80" r="1" opacity=".75"/>
+      <circle cx="150" cy="180" r=".7" opacity=".5"/><circle cx="175" cy="55" r=".8" opacity=".6"/>
+      <circle cx="195" cy="130" r=".7" opacity=".5"/><circle cx="170" cy="160" r=".6" opacity=".45"/>
+      <circle cx="215" cy="90" r="1.1" opacity=".8"/><circle cx="240" cy="160" r=".7" opacity=".5"/>
+      <circle cx="262" cy="120" r=".9" opacity=".7"/><circle cx="285" cy="178" r=".7" opacity=".5"/>
+      <circle cx="300" cy="208" r=".8" opacity=".6"/><circle cx="32" cy="205" r=".7" opacity=".5"/>
+      <circle cx="75" cy="212" r=".6" opacity=".45"/><circle cx="120" cy="208" r=".8" opacity=".6"/>
+      <circle cx="205" cy="200" r=".7" opacity=".5"/><circle cx="250" cy="212" r=".6" opacity=".45"/>
+      <circle cx="15" cy="95" r=".7" opacity=".5"/><circle cx="100" cy="165" r=".7" opacity=".5"/>
+      <circle cx="145" cy="40" r=".6" opacity=".45"/><circle cx="228" cy="140" r=".6" opacity=".45"/>
+      <circle cx="50" cy="175" r=".8" opacity=".6"/><circle cx="90" cy="100" r=".7" opacity=".5"/>
+      <circle cx="160" cy="205" r=".6" opacity=".45"/><circle cx="185" cy="95" r=".7" opacity=".55"/>
+      <circle cx="270" cy="186" r=".7" opacity=".5"/><circle cx="130" cy="150" r=".6" opacity=".45"/>
+    </g>
+    <g class="moon" transform="translate(296 22)">
+      <circle class="mglow" r="74"/>
+      <circle class="mdisk" r="56"/>
+      <path class="mlit" id="mlit"/>
+      <circle class="mrim" r="56"/>
+    </g>
+  </svg>
+
   <div class="h">
     <div class="hl"><span class="e" id="loc"></span><span class="wx" id="wx"></span></div>
-    <div class="ar">الصلاة</div>
   </div>
-  <div class="nbox">
-    <div class="nr"><div class="n">—</div><div class="nt">—</div></div>
+
+  <div class="panel">
+    <svg class="arc" viewBox="0 0 295 96" preserveAspectRatio="none"></svg>
+    <div class="foc"><div class="nt">—</div><div class="n">—</div></div>
     <div class="bar"><i></i></div>
     <div class="left">Loading…</div>
   </div>
+
   <div class="times"></div>
+
   <div class="d"><span class="ce" id="ce"></span><span class="ah" id="ah"></span></div>
 </div>
 
@@ -85,6 +142,7 @@ const $    = s => document.querySelector(s);
 const pad  = n => String(n).padStart(2,"0");
 const enc  = encodeURIComponent;
 const sleep= ms => new Promise(r=>setTimeout(r,ms));
+const clamp= x => Math.min(1,Math.max(0,x));
 const clean= t => String(t).replace(/\s*\(.+\)\s*/,"").trim();
 const mins = t => { const [h,m]=clean(t).split(":").map(Number); return h*60+m; };
 const fmt  = t => {
@@ -92,14 +150,12 @@ const fmt  = t => {
   if(fmt24) return `${pad(h)}:${pad(m)}`;
   return `${h%12||12}:${pad(m)} ${h>=12?"PM":"AM"}`;
 };
-const formatLeft = leftMin => {
-  const s=Math.max(0,Math.round(leftMin*60));
-  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
-  if(h>0) return `${h}h ${m}m left`;
-  if(m>0) return `${m}m left`;
-  return `${sec}s left`;
+const dur = leftMin => {
+  const s=Math.max(0,Math.round(leftMin*60)), h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
+  if(h>0) return `${h}h ${m}m`;
+  if(m>0) return `${m}m`;
+  return `${sec}s`;
 };
-// format an Aladhan {day, month:{number,en}, year} object per the chosen style
 const fmtDate = o => {
   if(!o) return "";
   const dd=pad(+o.day), mm=pad(+(o.month&&o.month.number||0)), yyyy=o.year, mon=(o.month&&o.month.en)||"";
@@ -107,7 +163,7 @@ const fmtDate = o => {
     case "us":   return `${mm}/${dd}/${yyyy}`;
     case "eu":   return `${dd}/${mm}/${yyyy}`;
     case "long": return `${+o.day} ${mon} ${yyyy}`;
-    default:     return `${yyyy}-${mm}-${dd}`;   // iso (YYYY-MM-DD)
+    default:     return `${yyyy}-${mm}-${dd}`;   // iso
   }
 };
 
@@ -129,7 +185,7 @@ function tomorrowStr(){
   return `${pad(d.getUTCDate())}-${pad(d.getUTCMonth()+1)}-${d.getUTCFullYear()}`;
 }
 
-// ---- data: fetch + cache + retry ----------------------------------------
+// ---- prayer-times data: fetch + cache + retry ---------------------------
 const cacheKey = "salah:"+[lat,lon,tz,method,school].join("|");
 function loadCache(dateStr){
   try{ const j=JSON.parse(localStorage.getItem(cacheKey)); if(j&&j.date===dateStr) return j.data; }catch(e){}
@@ -161,8 +217,8 @@ function loadWx(){
 async function fetchWeather(){
   if(!lat||!lon||wxBusy) return;
   const now=Date.now();
-  if(weather && now-lastWxAt < 15*60*1000) return;   // still fresh
-  if(now-lastWxTry < 60*1000) return;                // throttle (incl. retries on failure)
+  if(weather && now-lastWxAt < 15*60*1000) return;
+  if(now-lastWxTry < 60*1000) return;
   lastWxTry=now; wxBusy=true;
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(lat)}&longitude=${enc(lon)}&current=temperature_2m,weather_code&temperature_unit=${units==="c"?"celsius":"fahrenheit"}&timezone=${enc(tz)}`;
   try{
@@ -176,7 +232,6 @@ async function fetchWeather(){
   }catch(e){}
   finally{ wxBusy=false; }
 }
-// WMO weather code (+ day/night) -> condition / emoji / label
 function wxInfo(code, day){
   const c=code;
   if(c==null||c===0)   return {cond:"clear",   icon:day?"☀️":"🌙", label:day?"Clear":"Clear night"};
@@ -191,21 +246,27 @@ function wxInfo(code, day){
   if(c>=95)            return {cond:"thunder", icon:"⛈️", label:"Thunderstorm"};
   return {cond:"clear", icon:day?"☀️":"🌙", label:"—"};
 }
-// daytime = between Sunrise and Sunset, straight from the prayer data
-function isDayNow(nowMin){
-  if(!today) return true;
-  const sr=mins(today.timings.Sunrise);
-  const ss=mins(today.timings.Sunset||today.timings.Maghrib);
-  return nowMin>=sr && nowMin<ss;
+
+// ---- moon phase (synodic) ------------------------------------------------
+function moonPhase(date){
+  const synodic=29.530588853;
+  const ref=Date.UTC(2000,0,6,18,14,0)/86400000;        // known new moon
+  const now=date.getTime()/86400000;
+  const phase=(((now-ref)%synodic)+synodic)%synodic/synodic;   // 0 new .. .5 full .. 1 new
+  const frac=(1-Math.cos(2*Math.PI*phase))/2;            // illuminated fraction
+  return {phase, frac, waxing:phase<0.5};
 }
-function applyTheme(nowMin){
-  const day=isDayNow(nowMin);
-  const info=wxInfo(weather?weather.code:null, day);
-  const key=(info.cond==="clear"||info.cond==="cloud") ? info.cond+(day?"Day":"Night") : info.cond;
-  $(".c").dataset.theme=key;
-  const el=$("#wx");
-  el.title=info.label;
-  el.innerHTML = `<span class="i">${info.icon}</span>` + (weather ? `${weather.temp}°` : "");
+// SVG path for the lit region of a moon of radius R, centred at the origin
+function moonLit(R, frac, waxing){
+  frac=clamp(frac);
+  const rx=R*Math.abs(1-2*frac);                          // terminator half-width
+  const limb=waxing?1:0;                                  // bright limb on right(1)/left(0)
+  const term=waxing?(frac<0.5?0:1):(frac<0.5?1:0);        // crescent hugs the limb, gibbous bulges away
+  return `M0 ${-R} A${R} ${R} 0 0 ${limb} 0 ${R} A${rx.toFixed(2)} ${R} 0 0 ${term} 0 ${-R} Z`;
+}
+function renderMoon(){
+  const mp=moonPhase(new Date());
+  $("#mlit").setAttribute("d", moonLit(56, mp.frac, mp.waxing));
 }
 
 // ---- state ---------------------------------------------------------------
@@ -214,74 +275,124 @@ $("#loc").textContent = label;
 $("#loc").style.display = label ? "" : "none";
 
 function showError(msg){ $(".n").textContent="—"; $(".nt").textContent="—"; $(".left").textContent=msg; }
-
-// figure out the next prayer + interval progress, all in tz minutes
-function compute(){
-  const n=nowParts();
-  const nowMin=n.h*60+n.mi+n.s/60;
-  const t=today.timings;
-  const list=real.map(k=>({k,t:t[k],m:mins(t[k])}));
-  const i=list.findIndex(x=>x.m>nowMin);
-
-  if(i>=0){
-    const next=list[i];
-    const prevMin = i>0 ? list[i-1].m : list[list.length-1].m-1440; // before Fajr → prev is Isha (yesterday)
-    return {next:{k:next.k,t:next.t,tomorrow:false}, nowMin, leftMin:next.m-nowMin,
-            progress:clamp((nowMin-prevMin)/(next.m-prevMin)), needTomorrow:false};
-  }
-  // after Isha → next is tomorrow's Fajr
-  const ft = tomorrow ? tomorrow.timings.Fajr : t.Fajr;
-  const nextMin = mins(ft)+1440;
-  const prevMin = list[list.length-1].m; // Isha today
-  return {next:{k:"Fajr",t:ft,tomorrow:true}, nowMin, leftMin:nextMin-nowMin,
-          progress:clamp((nowMin-prevMin)/(nextMin-prevMin)), needTomorrow:true};
+function isDayNow(nowMin){
+  if(!today) return true;
+  const sr=mins(today.timings.Sunrise), ss=mins(today.timings.Sunset||today.timings.Maghrib);
+  return nowMin>=sr && nowMin<ss;
 }
-function clamp(x){ return Math.min(1,Math.max(0,x)); }
+
+// build everything render() needs, in tz minutes
+function model(){
+  const n=nowParts(), nowMin=n.h*60+n.mi+n.s/60, t=today.timings;
+  const noon=mins(t.Dhuhr), start=noon-720;
+  const norm=x=>{ while(x<start)x+=1440; while(x>=start+1440)x-=1440; return x; };
+  const list=real.map(k=>({k,m:mins(t[k]),t:t[k]}));
+  const i=list.findIndex(x=>x.m>nowMin);
+  let next, nextMin, prevMin, tomorrowFlag;
+  if(i>=0){ next=list[i]; nextMin=next.m; prevMin=i>0?list[i-1].m:list[list.length-1].m-1440; tomorrowFlag=false; }
+  else { const ft=tomorrow?tomorrow.timings.Fajr:t.Fajr; next={k:"Fajr",t:ft,m:mins(ft)}; nextMin=mins(ft)+1440; prevMin=list[list.length-1].m; tomorrowFlag=true; }
+  let cur="Isha"; for(const k of real){ if(mins(t[k])<=nowMin) cur=k; }
+  return {
+    t, noon, sunrise:norm(mins(t.Sunrise)), sunset:norm(mins(t.Sunset||t.Maghrib)),
+    nowMin, nowAbs:norm(nowMin), warmEnd: tomorrowFlag ? start+1440 : norm(next.m),
+    dots: prayers.map(k=>({k, abs:norm(mins(t[k]))})),
+    currentKey:cur, nextKey:next.k, nextTime:next.t,
+    leftMin:nextMin-nowMin, progress:clamp((nowMin-prevMin)/(nextMin-prevMin)),
+    needTomorrow:tomorrowFlag
+  };
+}
+
+// draw the solar-prayer arc
+function drawArc(M){
+  const W=295,H=96,hY=54,Ad=46,An=28,R=4, start=M.noon-720;
+  const X=a=>(a-start)/1440*W;
+  const ALT=a=>{
+    if(a<=M.sunrise){ const f=(a-start)/(M.sunrise-start); return -An*Math.cos(f*Math.PI/2); }
+    if(a<=M.sunset){  const f=(a-M.sunrise)/(M.sunset-M.sunrise); return Ad*Math.sin(f*Math.PI); }
+    const f=(a-M.sunset)/((start+1440)-M.sunset); return -An*Math.sin(f*Math.PI/2);
+  };
+  const Y=a=>hY-ALT(a);
+  const pathFrom=(a0,a1,steps)=>{
+    let d=""; for(let i=0;i<=steps;i++){ const a=a0+(a1-a0)*i/steps; d+=`${i?"L":"M"}${X(a).toFixed(1)} ${Y(a).toFixed(1)}`; } return d;
+  };
+  const rail=pathFrom(start,start+1440,120);
+  // elapsed portion of the day, filled in accent up to "now" (like the progress bar)
+  const elapsed=pathFrom(start,M.nowAbs,Math.max(2,Math.round((M.nowAbs-start)/12)));
+  let dots="";
+  for(const p of M.dots){
+    const cls = (p.k===M.nextKey && !M.needTomorrow) ? "dot next" : "dot";
+    dots+=`<circle class="${cls}" cx="${X(p.abs).toFixed(1)}" cy="${Y(p.abs).toFixed(1)}" r="${R}"/>`;
+  }
+  const cur=`<circle class="cur" cx="${X(M.nowAbs).toFixed(1)}" cy="${Y(M.nowAbs).toFixed(1)}" r="5"/>`;
+  return `<line class="horizon" x1="0" y1="${hY}" x2="${W}" y2="${hY}"/>`+
+         `<path class="rail" d="${rail}"/><path class="warm" d="${elapsed}"/>${dots}${cur}`;
+}
+
+function applyTheme(nowMin){
+  const day=isDayNow(nowMin);
+  const info=wxInfo(weather?weather.code:null, day);
+  const key=(info.cond==="clear"||info.cond==="cloud") ? info.cond+(day?"Day":"Night") : info.cond;
+  const c=$(".c"); c.dataset.theme=key;
+  const el=$("#wx"); el.title=info.label;
+  el.innerHTML = `<span class="i">${info.icon}</span>` + (weather ? `${weather.temp}°` : "");
+  // sky reactivity
+  let stars=0.8, blur=0, moon=1;
+  if(day){ stars=0; blur=0; moon=0.12; }
+  else switch(info.cond){
+    case "clear":   stars=1;    blur=0;   moon=1;   break;
+    case "cloud":   stars=0.4;  blur=0.7; moon=0.7; break;
+    case "fog":     stars=0.18; blur=1.4; moon=0.5; break;
+    case "rain":    stars=0.12; blur=0.9; moon=0.55;break;
+    case "snow":    stars=0.5;  blur=0.6; moon=0.7; break;
+    case "thunder": stars=0.22; blur=0.8; moon=0.5; break;
+  }
+  c.style.setProperty("--stars",stars);
+  c.style.setProperty("--starblur",blur+"px");
+  c.style.setProperty("--moon",moon);
+}
 
 function render(){
   if(!today) return;
-  const c=compute();
-
-  if(c.needTomorrow && !tomorrow && !fetchingTomorrow){
+  const M=model();
+  if(M.needTomorrow && !tomorrow && !fetchingTomorrow){
     fetchingTomorrow=true;
     fetchTimings(tomorrowStr()).then(d=>{tomorrow=d;fetchingTomorrow=false;}).catch(()=>{fetchingTomorrow=false;});
   }
-
-  const t=today.timings;
-  const onKey = c.next.tomorrow ? null : c.next.k;
-  $(".n").textContent  = c.next.k;
-  $(".nt").textContent = fmt(c.next.t);
-  $(".left").textContent = formatLeft(c.leftMin);
-  $(".bar>i").style.width = (c.progress*100).toFixed(1)+"%";
+  $(".n").textContent  = M.nextKey;
+  $(".nt").textContent = fmt(M.nextTime);
+  $(".left").textContent = `${dur(M.leftMin)} left`;
+  $(".bar>i").style.width = (M.progress*100).toFixed(1)+"%";
+  $(".arc").innerHTML = drawArc(M);
   $(".times").innerHTML = prayers.map(k=>{
-    const on   = k===onKey;
-    const past = mins(t[k])<=c.nowMin && !on;
-    return `<div class="p ${on?"on":""} ${past?"past":""}"><b>${k}</b><span class="tm">${fmt(t[k])}</span></div>`;
+    const on   = k===M.nextKey && !M.needTomorrow;
+    const past = mins(M.t[k])<=M.nowMin && !on;
+    return `<div class="p ${on?"on":""} ${past?"past":""}"><b>${k}</b><span class="tm">${fmt(M.t[k])}</span></div>`;
   }).join("");
   const g=today.date&&today.date.gregorian, h=today.date&&today.date.hijri;
   $("#ce").innerHTML = g ? `${fmtDate(g)}<span class="er">CE</span>` : "";
-  $("#ah").innerHTML = h ? `${fmtDate(h)}<span class="er">AH</span>` : "";
-  applyTheme(c.nowMin);
+  $("#ah").innerHTML = h ? `<span class="er">ه</span>${fmtDate(h)}` : "";
+  applyTheme(M.nowMin);
 }
 
 function tick(){
   const n=nowParts();
   if(lastDate && n.dateStr!==lastDate){           // crossed midnight → load the new day
-    tomorrow=null;
+    tomorrow=null; renderMoon();
     fetchTimings(n.dateStr).then(d=>{today=d;saveCache(n.dateStr,d);}).catch(()=>{});
   }
   lastDate=n.dateStr;
-  fetchWeather();          // self-throttling; refreshes ~every 15 min
+  fetchWeather();
   render();
 }
 
 async function boot(){
+  renderMoon();
   if(!lat||!lon){ showError("Add lat & lon to the URL"); return; }
-  loadWx();                // instant weather from cache, if any
-  fetchWeather();          // refresh in the background
+  loadWx();
+  fetchWeather();
   const ds=nowParts().dateStr;
   const cached=loadCache(ds);
-  if(cached){ today=cached; lastDate=ds; render(); }   // instant paint from cache
+  if(cached){ today=cached; lastDate=ds; render(); }
   try{
     today=await fetchTimings(ds);
     saveCache(ds,today);

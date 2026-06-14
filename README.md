@@ -25,7 +25,7 @@ Or write the iframe yourself:
 <iframe
   title="Prayer Times"
   referrerpolicy="no-referrer"
-  src="https://theislampill.github.io/salah_widget/#lat=28.93084&lon=-82.39122&tz=America%2FNew_York&label=Central%20FL&method=2&school=0"
+  src="https://theislampill.github.io/salah_widget/#lat=24.4672&lon=39.6142&tz=Asia%2FRiyadh&label=Madinah&method=4&school=0"
   style="width:330px;height:285px;border:0;border-radius:28px;overflow:hidden"
   scrolling="no">
 </iframe>
