@@ -53,7 +53,7 @@ body{color:#fff7df;font:14px system-ui,-apple-system,Segoe UI,sans-serif}
 .arc .warm{fill:none;stroke:var(--accent);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px var(--accent))}
 .arc .dot{fill:#ffffff;fill-opacity:.72}
 .arc .dot.next{fill:var(--accent)}
-.arc .cur{fill:color-mix(in srgb,var(--g1) 55%,var(--g2));stroke:var(--accent);stroke-width:3}
+.arc .cur{fill:none;stroke:#fff;stroke-width:2.5}
 .bar{height:6px;border-radius:6px;background:#ffffff1a;overflow:hidden;margin-top:4px}
 .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .9s linear}
 .left{display:block;text-align:center;margin-top:7px;color:var(--text);opacity:.78;font-size:11.5px;line-height:1.2}
@@ -323,9 +323,17 @@ function drawArc(M){
     const cls = (p.k===M.nextKey && !M.needTomorrow) ? "dot next" : "dot";
     dots+=`<circle class="${cls}" cx="${X(p.abs).toFixed(1)}" cy="${Y(p.abs).toFixed(1)}" r="${R}"/>`;
   }
-  const cur=`<circle class="cur" cx="${X(M.nowAbs).toFixed(1)}" cy="${Y(M.nowAbs).toFixed(1)}" r="5"/>`;
-  return `<line class="horizon" x1="0" y1="${hY}" x2="${W}" y2="${hY}"/>`+
-         `<path class="rail" d="${rail}"/><path class="warm" d="${elapsed}"/>${dots}${cur}`;
+  // "eye of a needle": split the marker ring at the two points where the arc
+  // crosses it, draw one half behind the arc and the other half in front, so the
+  // arc threads through the ring instead of the ring sitting on top of it.
+  const cx=X(M.nowAbs), cy=Y(M.nowAbs), r=7;
+  const dx=X(M.nowAbs+10)-X(M.nowAbs-10), dy=Y(M.nowAbs+10)-Y(M.nowAbs-10);
+  const th=Math.atan2(dy,dx), ux=Math.cos(th)*r, uy=Math.sin(th)*r;
+  const p1=`${(cx+ux).toFixed(1)} ${(cy+uy).toFixed(1)}`, p2=`${(cx-ux).toFixed(1)} ${(cy-uy).toFixed(1)}`;
+  const eyeBack =`<path class="cur" d="M${p1} A${r} ${r} 0 0 0 ${p2}"/>`;
+  const eyeFront=`<path class="cur" d="M${p1} A${r} ${r} 0 0 1 ${p2}"/>`;
+  return `<line class="horizon" x1="0" y1="${hY}" x2="${W}" y2="${hY}"/>`+eyeBack+
+         `<path class="rail" d="${rail}"/><path class="warm" d="${elapsed}"/>${dots}`+eyeFront;
 }
 
 function applyTheme(nowMin){
