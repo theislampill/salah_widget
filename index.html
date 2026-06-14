@@ -25,6 +25,21 @@ body{color:#fff7df;
   background:linear-gradient(160deg,var(--g1),var(--g2) 55%,var(--g3));
   box-shadow:0 18px 50px #0008;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
   color:var(--text);overflow:hidden}
+/* register the sky/light custom props as typed so applyTheme()'s per-second writes INTERPOLATE
+   instead of snapping — continuous time/weather colour transitions for free (Baseline 2024). */
+@property --g1{syntax:"<color>";inherits:true;initial-value:#0b1430}
+@property --g2{syntax:"<color>";inherits:true;initial-value:#070a1c}
+@property --g3{syntax:"<color>";inherits:true;initial-value:#0d1024}
+@property --accent{syntax:"<color>";inherits:true;initial-value:#f8d878}
+@property --accent2{syntax:"<color>";inherits:true;initial-value:#e8b24a}
+@property --text{syntax:"<color>";inherits:true;initial-value:#fff7df}
+@property --glow{syntax:"<color>";inherits:true;initial-value:rgba(70,90,180,0)}
+@property --horizon{syntax:"<color>";inherits:true;initial-value:rgba(40,40,90,0)}
+@property --sunx{syntax:"<length-percentage>";inherits:true;initial-value:50%}
+@property --suny{syntax:"<length-percentage>";inherits:true;initial-value:30%}
+@media (prefers-reduced-motion:no-preference){
+  .c{transition:--g1 1.1s linear,--g2 1.1s linear,--g3 1.1s linear,--accent 1.1s linear,--accent2 1.1s linear,--text 1.1s linear,--glow 1.1s linear,--horizon 1.1s linear,--sunx 1.1s linear,--suny 1.1s linear}
+}
 
 /* atmosphere: additive (screen) light driven by the sun's trajectory — a Mie
    forward-scatter bloom at the sun, and a Rayleigh horizon band that pools under
@@ -34,8 +49,17 @@ body{color:#fff7df;
 .atmo .sun{position:absolute;left:var(--sunx);top:var(--suny);width:360px;height:360px;transform:translate(-50%,-50%);
   background:radial-gradient(circle,var(--glow),transparent 64%);filter:blur(6px)}
 .atmo .scatter{position:absolute;inset:0;background:radial-gradient(150% 96% at var(--sunx) 127%,var(--horizon),transparent 62%)}
+.atmo .belt{position:absolute;inset:0;background:radial-gradient(135% 26% at var(--antix,50%) 120%,var(--belt,transparent),transparent 72%)}  /* Belt of Venus (anti-solar pink, civil twilight) */
 /* filmic grain / atmospheric noise — kills gradient banding, adds texture */
 .grain{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;mix-blend-mode:soft-light}
+/* heat/cold climate cues — soft-light tints + a frost vignette, all behind the foreground (z-index 0)
+   so only the SKY is tinted, never the prayer panel/text. Driven by --warm/--cool/--frost from the
+   apparent-temperature (feels-like) weather driver. */
+.climate{position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:28px;overflow:hidden}
+.climate>div{position:absolute;inset:0;transition:opacity 1.6s ease}
+.climate .tintw{background:#ff9a3c;mix-blend-mode:soft-light;opacity:var(--warm,0)}
+.climate .tintc{background:#7fb0ff;mix-blend-mode:soft-light;opacity:var(--cool,0)}
+.climate .frost{background:radial-gradient(125% 95% at 50% 46%,transparent 50%,#cfe6ff 128%);mix-blend-mode:screen;opacity:var(--frost,0)}
 /* top metadata scrim — protects the location/weather header from dissolving into the cloud
    texture; only revealed in busy weather, so clear skies stay clean (no darkening). */
 .scrim{position:absolute;top:0;left:0;right:0;height:64px;z-index:1;pointer-events:none;opacity:0;transition:opacity .9s;
@@ -45,17 +69,18 @@ body{color:#fff7df;
 /* sky background: stars + moon */
 .sky{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .stars{opacity:var(--stars);filter:blur(var(--starblur));transition:opacity .8s,filter .8s}
-.stars circle{fill:#fff}
-.tw{animation:tw 5s ease-in-out infinite}
-@keyframes tw{0%,100%{opacity:.85}50%{opacity:.25}}
-.moon{opacity:var(--moon);transition:opacity .9s}
-.mglow{fill:#cfdcff;filter:blur(7px);mix-blend-mode:screen}
+/* per-star twinkle subtracts its own --amp from its own base opacity --o (set inline by buildStars),
+   so each star scintillates independently at its own phase/rate instead of in lockstep */
+@keyframes tw{0%,100%{opacity:var(--o,.85)}50%{opacity:calc(var(--o,.85) - var(--amp,.18))}}
+@media (prefers-reduced-motion:reduce){.stars circle{animation:none!important}}
+.moon{opacity:1}
+.moccluder{fill:var(--moon-sky,#0b1430)}            /* sky colour where the moon sits → the fade dissolves into the sky, never reveals stars */
+.mfeatures{opacity:var(--moonfeat,1);transition:opacity .9s}
+.mcorona{fill:none;stroke:#eef0ff;stroke-width:0;mix-blend-mode:screen;filter:blur(10px);opacity:0;transition:opacity 1.2s,stroke-width 1.2s}  /* humidity-driven lunar corona */
+.mglow{fill:#dfe6f2;filter:blur(7px);mix-blend-mode:screen}
 .mdisk{fill:url(#mg)}
-.mshine{fill:#37456e}
-.mlit{fill:url(#ml)}
-.mtex{mix-blend-mode:multiply;opacity:.6}
-.mcraters circle{fill:#8ea2cf;mix-blend-mode:multiply}
-.mrim{fill:none;stroke:#cdd6f0;stroke-opacity:.32;stroke-width:1}
+.mshine{fill:#3c465c}                               /* earthshine: cool ash-grey on the dark limb */
+.mrim{fill:none;stroke:#d6d0c2;stroke-opacity:.3;stroke-width:1}
 
 /* weather effects: animated overlay, behind the foreground (z-index 1) */
 .wfx{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;border-radius:28px}
@@ -63,8 +88,11 @@ body{color:#fff7df;
   background:linear-gradient(180deg,#262e3600,#222831 96%)}
 .wfx .clouds{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 1s}
 .cloudg{will-change:transform}
-.cloudg-a{animation:cloudA 80s linear infinite}
-.cloudg-b{opacity:.6;animation:cloudB 130s linear infinite}
+/* drift speed comes from the wind (--cloud-dur-a/b set per poll); a gust flickers the front layer's
+   opacity (--gust); the two layers drift at a non-integer ratio + a touch of vertical creep so the
+   overlap pattern never repeats — clouds that actually evolve instead of "always the same clouds". */
+.cloudg-a{animation:cloudA var(--cloud-dur-a,80s) ease-in-out infinite, gust calc(2.5s + 5s*(1 - var(--gust,0))) ease-in-out infinite}
+.cloudg-b{opacity:.6;animation:cloudB var(--cloud-dur-b,130s) ease-in-out infinite}
 .wfx .sunhaze{position:absolute;left:var(--sunx);top:var(--suny);width:300px;height:300px;transform:translate(-50%,-50%);
   background:radial-gradient(circle,var(--glow),transparent 56%);mix-blend-mode:screen;filter:blur(7px);opacity:0;transition:opacity 1s}
 .wfx .fog{position:absolute;left:-22%;right:-22%;height:48px;opacity:0;filter:blur(9px);transition:opacity 1s;will-change:transform;
@@ -76,8 +104,17 @@ body{color:#fff7df;
   background:radial-gradient(circle at 68% 14%,#dfe2ffe6,#b9b0ff66 28%,transparent 58%)}
 .wfx .bolt{position:absolute;inset:0;width:100%;height:100%;opacity:0}
 .wfx .bolt path{fill:none;stroke:#eef0ff;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 4px #cfd2ff)}
-@keyframes cloudA{0%{transform:translateX(-26px)}50%{transform:translateX(30px)}100%{transform:translateX(-26px)}}
-@keyframes cloudB{0%{transform:translateX(26px)}50%{transform:translateX(-24px)}100%{transform:translateX(26px)}}
+@keyframes cloudA{0%{transform:translate(-26px,0)}50%{transform:translate(30px,-5px)}100%{transform:translate(-26px,0)}}
+@keyframes cloudB{0%{transform:translate(26px,0)}50%{transform:translate(-24px,4px)}100%{transform:translate(26px,0)}}
+@keyframes gust{0%,100%{opacity:1}50%{opacity:calc(1 - .12*var(--gust,0))}}
+/* continuous "alive" cues so a clear sky is never static: the Mie bloom breathes, the Rayleigh
+   scatter band drifts laterally. GPU transform/opacity only; gated to clear/cloud + reduced-motion. */
+@media (prefers-reduced-motion:no-preference){
+  .c[data-fx=clear] .atmo .sun,.c[data-fx=cloud] .atmo .sun{animation:breathe 11s ease-in-out infinite}
+  .c[data-fx=clear] .atmo .scatter{animation:scatterdrift 23s ease-in-out infinite}
+}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.92}50%{transform:translate(-50%,-50%) scale(1.06);opacity:1}}
+@keyframes scatterdrift{0%,100%{transform:translateX(0) scaleY(1);opacity:1}50%{transform:translateX(2.5%) scaleY(1.04);opacity:.93}}
 @keyframes fogdrift{0%{transform:translateX(-12%)}50%{transform:translateX(12%)}100%{transform:translateX(-12%)}}
 @keyframes fall{0%{transform:translate(0,-22px);opacity:0}12%{opacity:.75}88%{opacity:.75}100%{transform:translate(-86px,560px);opacity:0}}
 @keyframes snowfall{0%{transform:translate(0,-14px);opacity:0}10%{opacity:.95}25%{transform:translate(8px,128px)}50%{transform:translate(-6px,280px)}75%{transform:translate(8px,420px)}90%{opacity:.95}100%{transform:translate(-3px,560px);opacity:0}}
@@ -182,34 +219,25 @@ body{color:#fff7df;
 </head>
 <body>
 <div class="c">
-  <div class="atmo" aria-hidden="true"><div class="scatter"></div><div class="sun"></div></div>
+  <div class="atmo" aria-hidden="true"><div class="scatter"></div><div class="belt"></div><div class="sun"></div></div>
   <svg class="sky" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
     <defs>
       <radialGradient id="mg" cx="40%" cy="34%" r="72%">
         <stop offset="0%" stop-color="#27334f"/><stop offset="65%" stop-color="#18223e"/><stop offset="100%" stop-color="#0e1630"/>
       </radialGradient>
-      <radialGradient id="ml" cx="40%" cy="36%" r="74%">
-        <stop offset="0%" stop-color="#f6f8ff"/><stop offset="60%" stop-color="#dde5f6"/><stop offset="100%" stop-color="#bfcae2"/>
-      </radialGradient>
       <clipPath id="litclip"><path id="mlitclip"/></clipPath>
-      <filter id="moontex" x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.045 0.055" numOctaves="4" seed="9" stitchTiles="stitch" result="n"/>
-        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.60  0 0 0 0 0.74  0 0 0 0.5 0"/>
-      </filter>
     </defs>
     <g class="stars"></g>
     <g class="moon" transform="translate(289 34)">
-      <circle class="mglow" r="60"/>
-      <circle class="mdisk" r="48"/>
-      <circle class="mshine" r="48"/>
-      <path class="mlit" id="mlit"/>
-      <rect class="mtex" x="-48" y="-48" width="96" height="96" clip-path="url(#litclip)" filter="url(#moontex)"/>
-      <g class="mcraters" clip-path="url(#litclip)">
-        <circle cx="-15" cy="-9" r="7"  opacity=".42"/><circle cx="7" cy="9" r="10" opacity=".34"/>
-        <circle cx="-3"  cy="21" r="5"  opacity=".42"/><circle cx="18" cy="-15" r="4" opacity=".38"/>
-        <circle cx="-21" cy="14" r="3.4" opacity=".34"/><circle cx="23" cy="6" r="3" opacity=".34"/>
+      <circle class="mcorona" r="48"/>
+      <circle class="moccluder" r="48.6"/>            <!-- ALWAYS opaque, sky-coloured: occludes stars at every fade so the moon never goes see-through -->
+      <g class="mfeatures">                            <!-- everything that dissolves at dawn/dusk lives here -->
+        <circle class="mglow" r="60"/>
+        <circle class="mdisk" r="48"/>
+        <circle class="mshine" r="48"/>
+        <image class="mphoto" href="data:image/jpeg;base64,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" x="-48" y="-48" width="96" height="96" clip-path="url(#litclip)" preserveAspectRatio="xMidYMid slice"/>
+        <circle class="mrim" r="48"/>
       </g>
-      <circle class="mrim" r="48"/>
     </g>
   </svg>
 
@@ -241,6 +269,7 @@ body{color:#fff7df;
     <rect width="325" height="530" filter="url(#grainf)"/>
   </svg>
 
+  <div class="climate" aria-hidden="true"><div class="tintw"></div><div class="tintc"></div><div class="frost"></div></div>
   <div class="scrim" aria-hidden="true"></div>
   <div class="h">
     <span class="e" id="loc"></span>
@@ -282,13 +311,19 @@ const datefmtStr = DATEFMT_PRESETS[dfRaw.toLowerCase()] || dfRaw;
 // Lets you preview any condition without waiting for the real clock/weather:
 //   simTime=HH:MM   force the wall clock   simWx=<WMO code>  force weather
 //   simMoon=0..1    force illuminated frac simWax=1|0        force waxing/waning
-//   simTemp=<n>     force the shown temp
+//   simTemp=<n>     force the shown temp     simFeels=<n>     force apparent (feels-like) temp
+//   simWind=<m/s>   simWindDir=<deg FROM>    simHumid=<RH %>  simCloud=<cover %>
 const SIM = {
   time: q.get("simTime"),
   wx:   q.get("simWx"),
   temp: q.get("simTemp"),
   moon: q.get("simMoon"),
   wax:  q.get("simWax"),
+  feels:   q.get("simFeels"),
+  wind:    q.get("simWind"),
+  windDir: q.get("simWindDir"),
+  humid:   q.get("simHumid"),
+  cloud:   q.get("simCloud"),
 };
 
 const prayers = ["Fajr","Sunrise","Dhuhr","Asr","Maghrib","Isha"];
@@ -380,17 +415,40 @@ async function fetchWeather(){
   if(weather && now-lastWxAt < 15*60*1000) return;
   if(now-lastWxTry < 60*1000) return;
   lastWxTry=now; wxBusy=true;
-  const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(lat)}&longitude=${enc(lon)}&current=temperature_2m,weather_code&temperature_unit=${units==="c"?"celsius":"fahrenheit"}&timezone=${enc(tz)}`;
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(lat)}&longitude=${enc(lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,visibility,is_day,weather_code&temperature_unit=${units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(tz)}`;
   try{
     const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer"});
     const j=await r.json();
     if(j&&j.current&&j.current.weather_code!=null){
-      weather={code:j.current.weather_code, temp:Math.round(j.current.temperature_2m)};
+      const cu=j.current;
+      weather={code:cu.weather_code, temp:Math.round(cu.temperature_2m),
+        feels:cu.apparent_temperature, rh:cu.relative_humidity_2m, dew:cu.dew_point_2m,
+        wind:cu.wind_speed_10m, windDir:cu.wind_direction_10m, gust:cu.wind_gusts_10m,
+        cloud:cu.cloud_cover, vis:cu.visibility, isDay:cu.is_day};
       lastWxAt=Date.now();
       try{ localStorage.setItem(wxKey,JSON.stringify({w:weather,ts:lastWxAt})); }catch(e){}
     }
   }catch(e){}
   finally{ wxBusy=false; }
+}
+// normalise the current weather into 0..1 physical drivers (heat/cold/wind/humidity/cloud/haze)
+function wxDrivers(){
+  const r=(x,a,b)=>clamp((x-a)/(b-a));
+  if(!weather) return {heat:0,cold:0,wind:0,gust:0,windX:-0.7,humid:0,rh:0.5,cloud:0,haze:0};
+  const toC=v=> v==null?null : (units==="f"?(v-32)*5/9:v);
+  const feelsC=toC(weather.feels!=null?weather.feels:weather.temp);
+  const dewC=toC(weather.dew);
+  return {
+    heat: feelsC==null?0:r(feelsC,27,40),                 // 0 below 27°C → 1 at 40°C  (≈80→104°F)
+    cold: feelsC==null?0:r(feelsC,8,-8),                  // 0 above 8°C → 1 at −8°C
+    wind: r(weather.wind||0,0.5,14),                      // calm → gale (m/s)
+    gust: r((weather.gust||0)-(weather.wind||0),2,16),
+    windX: -Math.sin((weather.windDir!=null?weather.windDir:225)*Math.PI/180),  // +1 ⇒ wind FROM the west ⇒ clouds drift east
+    humid: dewC==null?0:r(dewC,8,22),                     // mugginess via dew point
+    rh: (weather.rh!=null?weather.rh:50)/100,
+    cloud: (weather.cloud!=null?weather.cloud:0)/100,
+    haze: 1-r(weather.vis!=null?weather.vis:20000,1000,20000),
+  };
 }
 function wxInfo(code, day){
   const c=code;
@@ -405,6 +463,28 @@ function wxInfo(code, day){
   if(c===85||c===86)   return {cond:"snow",    icon:"🌨️", label:"Snow showers"};
   if(c>=95)            return {cond:"thunder", icon:"⛈️", label:"Thunderstorm"};
   return {cond:"clear", icon:day?"☀️":"🌙", label:"—"};
+}
+
+// ---- accurate Moon position & orientation (SunCalc core, BSD-2, github.com/mourner/suncalc) ----
+const _RAD=Math.PI/180, _DAYMS=86400000, _J1970=2440588, _J2000=2451545, _OBL=_RAD*23.4397;
+const _toDays = d => d.valueOf()/_DAYMS - 0.5 + _J1970 - _J2000;
+const _ra  = (l,b)=> Math.atan2(Math.sin(l)*Math.cos(_OBL) - Math.tan(b)*Math.sin(_OBL), Math.cos(l));
+const _dec = (l,b)=> Math.asin(Math.sin(b)*Math.cos(_OBL) + Math.cos(b)*Math.sin(_OBL)*Math.sin(l));
+const _sid = (d,lw)=> _RAD*(280.16 + 360.9856235*d) - lw;
+function _sunCoords(d){ const M=_RAD*(357.5291+0.98560028*d), C=_RAD*(1.9148*Math.sin(M)+0.02*Math.sin(2*M)+0.0003*Math.sin(3*M)), L=M+C+_RAD*102.9372+Math.PI; return {dec:_dec(L,0), ra:_ra(L,0)}; }
+function _moonCoords(d){ const L=_RAD*(218.316+13.176396*d), M=_RAD*(134.963+13.064993*d), F=_RAD*(93.272+13.229350*d), l=L+_RAD*6.289*Math.sin(M), b=_RAD*5.128*Math.sin(F), dt=385001-20905*Math.cos(M); return {ra:_ra(l,b), dec:_dec(l,b), dist:dt}; }
+// illuminated fraction, waxing flag, and bright-limb position angle χ (Meeus 48.5)
+function moonIllum(date){
+  const d=_toDays(date), s=_sunCoords(d), m=_moonCoords(d), sd=149598000;
+  const phi=Math.acos(Math.sin(s.dec)*Math.sin(m.dec)+Math.cos(s.dec)*Math.cos(m.dec)*Math.cos(s.ra-m.ra));
+  const inc=Math.atan2(sd*Math.sin(phi), m.dist-sd*Math.cos(phi));
+  const chi=Math.atan2(Math.cos(s.dec)*Math.sin(s.ra-m.ra), Math.sin(s.dec)*Math.cos(m.dec)-Math.cos(s.dec)*Math.sin(m.dec)*Math.cos(s.ra-m.ra));
+  return {fraction:(1+Math.cos(inc))/2, waxing:chi<0, chi};
+}
+// parallactic angle q of the Moon for this place/time (radians)
+function moonParallactic(date, latDeg, lonDeg){
+  const lw=_RAD*-lonDeg, ph=_RAD*latDeg, d=_toDays(date), c=_moonCoords(d), H=_sid(d,lw)-c.ra;
+  return Math.atan2(Math.sin(H), Math.tan(ph)*Math.cos(c.dec)-Math.sin(c.dec)*Math.cos(H));
 }
 
 // ---- moon phase (synodic) ------------------------------------------------
@@ -430,26 +510,46 @@ function moonNow(){
 }
 function phaseEmoji(p){ return ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"][Math.round(((p||0)%1)*8)%8]; }  // synodic phase (0..1) → 8-step moon emoji
 function renderMoon(){
-  const mp=moonNow(), R=48, d=moonLit(R, mp.frac, mp.waxing);
-  $("#mlit").setAttribute("d", d);
-  $("#mlitclip").setAttribute("d", d);
-  // earthshine glows on the dark limb (strongest near new); the halo grows with
-  // illumination (big at full, gone at new).
-  const ms=$(".mshine"); if(ms) ms.style.opacity=(0.10+0.20*(1-mp.frac)).toFixed(3);
-  const gl=$(".mglow");  if(gl){ gl.setAttribute("r",(52+26*mp.frac).toFixed(1)); gl.style.opacity=(0.04+0.26*mp.frac).toFixed(3); }
+  const R=48; let frac, waxing, rotDeg=0;
+  if(SIM.moon!=null){                                              // sim: simple upright phase for testing
+    frac=clamp(+SIM.moon); waxing=SIM.wax!=="0";
+    $("#mlitclip").setAttribute("d", moonLit(R, frac, waxing));
+  } else {                                                         // real: accurate fraction + observed orientation
+    const date=new Date(), il=moonIllum(date), q=moonParallactic(date, +lat, +lon);
+    frac=il.fraction; waxing=il.waxing;
+    $("#mlitclip").setAttribute("d", moonLit(R, frac, true));      // canonical (lit-right, cusps vertical)…
+    rotDeg=-(((il.chi - q)*180/Math.PI)+90);                       // …rotate the whole disc to the bright-limb zenith angle χ−q (encodes hemisphere mirror + cusp tilt)
+  }
+  const feat=$(".mfeatures"); if(feat) feat.setAttribute("transform", `rotate(${rotDeg.toFixed(1)})`);
+  // earthshine glows on the dark limb (strongest near new); the halo grows with illumination.
+  const ms=$(".mshine"); if(ms) ms.style.opacity=(0.10+0.20*(1-frac)).toFixed(3);
+  const gl=$(".mglow");  if(gl){ gl.setAttribute("r",(52+26*frac).toFixed(1)); gl.style.opacity=(0.04+0.26*frac).toFixed(3); }
 }
 
-// deterministic star field spread across the full (tall) card height
+// physically-weighted star field: a power-law magnitude cascade (a few bright, many faint), per-star
+// colour from the B-V sequence (mostly blue-white→white with a warm minority), bright-star glow halos,
+// and altitude-dependent twinkle (stars low in the window scintillate harder + faster). Deterministic.
 function buildStars(){
   const g=document.querySelector(".stars"); if(!g) return;
-  const W=325, H=520, N=70;
+  const W=325, H=300, N=130;
   const rnd=(i,k)=>{ const v=Math.sin((i+1)*k)*43758.5453; return v-Math.floor(v); };
+  const COL=["#9bb2ff","#aabfff","#cad7ff","#f4f3ff","#fff4e8","#ffd9a8","#ffc070"];   // O/B → M (B-V → sRGB)
+  const CW =[ .06,      .12,      .24,      .22,      .18,      .12,      .06 ];          // naked-eye population weights
+  const cdf=[]; let acc=0; for(const w of CW){ acc+=w; cdf.push(acc); }
   let s="";
   for(let i=0;i<N;i++){
-    const x=(rnd(i,12.9898)*W).toFixed(1), y=(rnd(i,78.233)*H).toFixed(1);
-    const r=(0.5+rnd(i,3.71)*0.85).toFixed(2), o=(0.38+rnd(i,9.13)*0.5).toFixed(2);
-    const tw=rnd(i,5.27)>0.78 ? ` class="tw" style="animation-delay:${(-rnd(i,2.1)*5).toFixed(1)}s"` : "";
-    s+=`<circle${tw} cx="${x}" cy="${y}" r="${r}" opacity="${o}"/>`;
+    const x=rnd(i,12.9898)*W, y=Math.pow(rnd(i,78.233),1.4)*H;          // bias star density toward the top of the window
+    const mag=0.2+5.4*Math.pow(rnd(i,3.71),0.34);                       // steep faint-end power law: most stars are dim
+    const r=Math.max(0.4, 1.85-0.25*mag), o=Math.min(1, Math.max(0.24, 1.08-0.15*mag));
+    const cu=rnd(i,9.13); let ci=cdf.findIndex(c=>cu<=c); if(ci<0)ci=3;
+    const col=COL[ci];
+    const alt=1-y/H;                                                    // 1 = top, 0 = horizon
+    const amp=(0.05+0.26*(1-alt)).toFixed(2);                           // low stars twinkle with more amplitude…
+    const dur=(1.7+4.6*alt).toFixed(1);                                 // …and faster
+    const twinkles=rnd(i,5.27)>0.62;                                    // ~38 % twinkle, the rest hold steady
+    if(mag<1.9) s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r*2.7).toFixed(1)}" fill="${col}" opacity="0.13"/>`;  // soft glow halo on the brightest few
+    s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="${col}" opacity="${o.toFixed(2)}"`
+      +(twinkles?` style="--o:${o.toFixed(2)};--amp:${amp};animation:tw ${dur}s ease-in-out ${(-rnd(i,2.1)*6).toFixed(1)}s infinite"`:"")+"/>";
   }
   g.innerHTML=s;
 }
@@ -674,6 +774,8 @@ function applyTheme(M){
   const sm=sunMetrics(M);
   const mp=moonNow();
   const moonStrength=clamp(moonVis(M))*clamp(mp.frac);          // 0 new/absent .. 1 full + present
+  const D=wxDrivers();                                          // 0..1 physical weather drivers (heat/cold/wind/humidity…)
+  const directional=1-D.cloud*D.cloud;                          // weather-directed light: hard sun when clear, flat/shadowless as it goes overcast
   let g1=P.g1, g2=P.g2, g3=P.g3;
   if(w.tint){ g1=mixRGB(g1,w.tint,w.ts); g2=mixRGB(g2,w.tint,w.ts); g3=mixRGB(g3,w.tint,w.ts); }
   // sun bloom + horizon scatter. In murky weather the leaked warm light desaturates toward the
@@ -685,8 +787,8 @@ function applyTheme(M){
   const tHor=(0.30+0.55*moonStrength)*nightness;
   hr=[lerp(hr[0],96,tHor), lerp(hr[1],116,tHor), lerp(hr[2],196,tHor)];
   const scatterFac=clamp((sm.altN+0.30)/0.30);                  // 1 above horizon → 0 once the sun is well below it
-  const glow=[gr[0],gr[1],gr[2],P.glow[3]*w.gs];
-  const hor =[hr[0],hr[1],hr[2],P.hor[3]*w.hs*scatterFac];
+  const glow=[gr[0],gr[1],gr[2],P.glow[3]*w.gs*(0.25+0.75*directional)];   // the Mie bloom fades out as cloud builds → no crisp sun-disc under overcast
+  const hor =[hr[0],hr[1],hr[2],P.hor[3]*w.hs*scatterFac*(0.4+0.6*directional)];
   const stars=(day?0:P.stars)*w.st*(1-0.35*moonStrength);       // a bright moon washes out faint stars
   const moon =clamp(moonVis(M))*w.mn;
   // accent = the dominant light's colour: a clear night reads the moon (brightness scales with phase,
@@ -710,8 +812,24 @@ function applyTheme(M){
   c.style.setProperty("--sunx",sm.x.toFixed(1)+"%");
   c.style.setProperty("--suny",sm.y.toFixed(1)+"%");
   c.style.setProperty("--stars",stars.toFixed(3));
-  c.style.setProperty("--starblur",w.blur+"px");
-  c.style.setProperty("--moon",moon.toFixed(3));
+  c.style.setProperty("--starblur",(w.blur + 1.1*D.humid).toFixed(2)+"px");   // humid air softens the stars
+  c.style.setProperty("--moonfeat",moon.toFixed(3));
+  c.style.setProperty("--moon-sky",rgb(g1));         // occluder tracks the live sky colour so the faded moon melts into it, never revealing stars
+  // heat/cold cues from apparent_temperature; frost vignette + cool/warm soft-light tints (background only)
+  c.style.setProperty("--warm",(0.20*D.heat).toFixed(3));
+  c.style.setProperty("--cool",(0.22*D.cold).toFixed(3));
+  c.style.setProperty("--frost",(0.5*D.cold).toFixed(3));
+  // lunar corona: a thin-cloud + humid sky haloes a present moon
+  const corona=clamp((D.rh-0.78)/0.18)*((D.cloud>0.15&&D.cloud<0.75)?1:0.3)*clamp(mp.frac+0.2)*clamp(moonVis(M));
+  const mc=$(".mcorona"); if(mc){ mc.setAttribute("stroke-width",(6+10*corona).toFixed(1)); mc.style.opacity=(0.5*corona).toFixed(3); }
+  // wind → cloud drift speed + gust flicker
+  c.style.setProperty("--cloud-dur-a",(120-95*D.wind).toFixed(0)+"s");
+  c.style.setProperty("--cloud-dur-b",(190-150*D.wind).toFixed(0)+"s");
+  c.style.setProperty("--gust",D.gust.toFixed(3));
+  // Belt of Venus: a pink anti-twilight band low on the ANTI-solar horizon during civil twilight (sun 0..−6°)
+  const depN=-sm.altN, belt=Math.max(0,1-Math.abs(depN-0.045)/0.085)*((cls==="clear"||cls==="cloud")?1:0.25);
+  c.style.setProperty("--antix",(100-sm.x).toFixed(1)+"%");
+  c.style.setProperty("--belt",`rgba(232,150,168,${(0.34*belt).toFixed(3)})`);
   c.dataset.fx=cls;
   const wi=$("#wi"); wi.textContent=info.icon; wi.title=info.label;
   $("#wt").textContent=weather?`${weather.temp}°`:"";
@@ -808,7 +926,11 @@ async function boot(){
   renderMoon();
   if(!lat||!lon){ showError("Add lat & lon to the URL"); return; }
   loadWx();
-  if(SIM.wx!=null) weather={code:+SIM.wx, temp: SIM.temp!=null?+SIM.temp:72};
+  if(SIM.wx!=null) weather={code:+SIM.wx, temp: SIM.temp!=null?+SIM.temp:72,
+    feels: SIM.feels!=null?+SIM.feels:(SIM.temp!=null?+SIM.temp:72),
+    rh: SIM.humid!=null?+SIM.humid:45, dew: units==="f"?50:10,
+    wind: SIM.wind!=null?+SIM.wind:3, windDir: SIM.windDir!=null?+SIM.windDir:225,
+    gust: (SIM.wind!=null?+SIM.wind:3)+2, cloud: SIM.cloud!=null?+SIM.cloud:0, vis:20000, isDay:1};
   fetchWeather();
   const ds=nowParts().dateStr;
   const cached=loadCache(ds);
