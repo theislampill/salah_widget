@@ -84,7 +84,8 @@ body{color:#fff7df;
 .c[data-fx=rain]     .clouds{opacity:.78}
 .c[data-fx=thunder]  .clouds{opacity:.9}
 .c[data-fx=snow]     .clouds{opacity:.62}
-.c[data-fx=cloud] .sunhaze,.c[data-fx=overcast] .sunhaze,.c[data-fx=drizzle] .sunhaze,.c[data-fx=rain] .sunhaze,.c[data-fx=thunder] .sunhaze{opacity:.5}
+.c[data-fx=cloud]   .sunhaze{opacity:.45}
+.c[data-fx=drizzle] .sunhaze{opacity:.22}
 .c[data-fx=cloud]    .veil{opacity:.3}
 .c[data-fx=overcast] .veil{opacity:.72}
 .c[data-fx=drizzle]  .veil{opacity:.46}
@@ -587,12 +588,12 @@ function wxClass(code){
 const WX={
   clear:   {tint:null,          ts:0,   gs:1,   hs:1,  st:1,   mn:1,   blur:0,   at:null,          as:0},
   cloud:   {tint:[62,74,90],    ts:.20, gs:.80, hs:.7, st:.5,  mn:.82, blur:.3,  at:[190,206,226], as:.34},
-  overcast:{tint:[60,68,80],    ts:.50, gs:.35, hs:.3, st:.12, mn:.42, blur:.5,  at:[142,172,206], as:.70},
-  fog:     {tint:[122,128,130], ts:.44, gs:.40, hs:.3, st:.15, mn:.45, blur:1.6, at:[156,172,190], as:.72},
+  overcast:{tint:[60,68,80],    ts:.50, gs:.18, hs:.16,st:.12, mn:.42, blur:.5,  at:[142,172,206], as:.70},
+  fog:     {tint:[122,128,130], ts:.44, gs:.10, hs:.05,st:0,   mn:.30, blur:1.6, at:[156,172,190], as:.72},
   drizzle: {tint:[56,74,92],    ts:.34, gs:.50, hs:.5, st:.22, mn:.58, blur:.5,  at:[140,186,224], as:.70},
-  rain:    {tint:[42,62,84],    ts:.46, gs:.40, hs:.4, st:.10, mn:.50, blur:.7,  at:[108,166,218], as:.84},
+  rain:    {tint:[42,62,84],    ts:.46, gs:.22, hs:.20,st:.10, mn:.50, blur:.7,  at:[108,166,218], as:.84},
   snow:    {tint:[96,110,126],  ts:.34, gs:.60, hs:.5, st:.50, mn:.70, blur:.5,  at:[122,188,226], as:.82},
-  thunder: {tint:[46,36,74],    ts:.50, gs:.40, hs:.4, st:.16, mn:.46, blur:.6,  at:[172,154,236], as:.70},
+  thunder: {tint:[46,36,74],    ts:.50, gs:.18, hs:.16,st:.16, mn:.46, blur:.6,  at:[172,154,236], as:.70},
 };
 
 function applyTheme(M){
