@@ -266,7 +266,7 @@ body{color:#fff7df;
 const q     = new URLSearchParams(location.hash.slice(1));
 const lat   = q.get("lat");
 const lon   = q.get("lon");
-const tz    = q.get("tz")    || "America/New_York";
+let tz      = q.get("tz")    || "America/New_York";   // a hint/fallback; the real zone is adopted from the location (see fetchTimings)
 const label = q.get("label") || "";
 const method= q.get("method")|| "2";
 const school= q.get("school")|| "0";
@@ -351,13 +351,16 @@ function saveCache(dateStr,data){
   try{ localStorage.setItem(cacheKey,JSON.stringify({date:dateStr,data})); }catch(e){}
 }
 async function fetchTimings(dateStr){
-  const u=`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${enc(lat)}&longitude=${enc(lon)}&method=${enc(method)}&school=${enc(school)}&timezonestring=${enc(tz)}`;
+  // No timezonestring: let Aladhan resolve the zone from lat/lon, so a wrong/stale tz param can't
+  // shift the prayer times around the clock. Adopt the resolved zone for "now" so the day-rollover
+  // and the countdown match the location, not the viewer's device.
+  const u=`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${enc(lat)}&longitude=${enc(lon)}&method=${enc(method)}&school=${enc(school)}`;
   let err;
   for(let i=0;i<3;i++){
     try{
       const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer"});
       const j=await r.json();
-      if(j&&j.data&&j.data.timings) return j.data;
+      if(j&&j.data&&j.data.timings){ if(j.data.meta&&j.data.meta.timezone) tz=j.data.meta.timezone; return j.data; }
       throw new Error("bad api");
     }catch(e){ err=e; if(i<2) await sleep(900*(i+1)); }
   }
@@ -484,12 +487,14 @@ function model(){
   const n=nowParts(), nowMin=n.h*60+n.mi+n.s/60, t=today.timings;
   const noon=mins(t.Dhuhr), start=noon-720;
   const norm=x=>{ while(x<start)x+=1440; while(x>=start+1440)x-=1440; return x; };
-  const list=prayers.map(k=>({k,m:mins(t[k]),t:t[k]}));   // all six arc waypoints (incl. Sunrise)
+  // sort the six waypoints by time-of-day so "next"/"current" stay correct even if the timings
+  // aren't in the usual Fajr→Isha order (e.g. a mis-set time zone shifts them around the clock).
+  const list=prayers.map(k=>({k,m:mins(t[k]),t:t[k]})).sort((a,b)=>a.m-b.m);
   const i=list.findIndex(x=>x.m>nowMin);
   let next, nextMin, prevMin, tomorrowFlag;
   if(i>=0){ next=list[i]; nextMin=next.m; prevMin=i>0?list[i-1].m:list[list.length-1].m-1440; tomorrowFlag=false; }
   else { const ft=tomorrow?tomorrow.timings.Fajr:t.Fajr; next={k:"Fajr",t:ft,m:mins(ft)}; nextMin=mins(ft)+1440; prevMin=list[list.length-1].m; tomorrowFlag=true; }
-  let cur="Isha"; for(const k of prayers){ if(mins(t[k])<=nowMin) cur=k; }
+  const passed=list.filter(x=>x.m<=nowMin); let cur=passed.length?passed[passed.length-1].k:"Isha";
   // "Sunrise" only lingers 20 min; the rest of the morning (until Dhuhr) is "Forenoon"
   if(cur==="Sunrise" && nowMin >= mins(t.Sunrise)+20) cur="Forenoon";
   const doy=Math.floor((Date.UTC(n.y,n.mo-1,n.d)-Date.UTC(n.y,0,0))/86400000);
@@ -804,7 +809,7 @@ async function boot(){
   fetchWeather();
   const ds=nowParts().dateStr;
   const cached=loadCache(ds);
-  if(cached){ today=cached; lastDate=ds; render(); }
+  if(cached){ today=cached; if(cached.meta&&cached.meta.timezone) tz=cached.meta.timezone; lastDate=ds; render(); }
   try{
     today=await fetchTimings(ds);
     saveCache(ds,today);
