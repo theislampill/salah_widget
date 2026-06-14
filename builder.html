@@ -44,7 +44,7 @@ iframe{box-shadow:0 18px 50px #0008}
 
 <div class="wrap">
   <form class="card form" onsubmit="return false">
-    <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr">
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr;position:relative">
       <label for="label" id="loclabel" style="grid-column:1 / span 2">Location name</label>
       <div class="geotip" id="geotip" style="grid-column:3">click to auto-detect</div>
     </div>
@@ -187,12 +187,23 @@ $("method").addEventListener("change",()=>{ methodAuto=false; });
 let srchDebounce=0, srchSeq=0, dotsTimer=0, btnRevert=0, tipRevert=0, multiCands=[], multiIdx=0;
 const GEO_DEFAULT="Detect Location", TIP_DEFAULT="click to auto-detect";
 let homeCC=""; try{ homeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}  // bias bare postcodes to the viewer's country (upgraded from geolocation below)
-function setTip(text, align){
-  const t=$("geotip"); t.textContent=text; t.style.textAlign=align;
-  // long result: right-align and let it overflow left over the (hidden) label; min-width:0 keeps the
-  // column a third wide so the button never moves. Short messages stay centred over the button.
-  $("loclabel").style.visibility = (align==="right") ? "hidden" : "";
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function tipMode(align){
+  // "right" = a found address: lift it out of the grid, anchor it to the card's right edge, cap the
+  // width to ~35 chars and WRAP — so a long address breaks to a new line instead of spilling past the
+  // border, and (being absolute) the button never moves. "center" = a short hint, over the button.
+  const t=$("geotip");
+  if(align==="right"){
+    t.style.position="absolute"; t.style.right="0"; t.style.bottom="5px";
+    t.style.maxWidth="210px"; t.style.textAlign="right"; t.style.whiteSpace="normal";
+    $("loclabel").style.visibility="hidden";
+  } else {
+    t.style.position=""; t.style.right=""; t.style.bottom="";
+    t.style.maxWidth=""; t.style.textAlign="center"; t.style.whiteSpace="nowrap";
+    $("loclabel").style.visibility="";
+  }
 }
+function setTip(text, align){ $("geotip").textContent=text; tipMode(align); }
 function startDots(){
   if(dotsTimer) return;
   let n=0; $("geo").textContent="Searching";
@@ -218,22 +229,23 @@ function foundSingle(c){
   btnRevert=setTimeout(()=>{ if($("geo").textContent==="Found!") $("geo").textContent=GEO_DEFAULT; }, 5000);
   tipRevert=setTimeout(()=>setTip(TIP_DEFAULT,"center"), 8000);
 }
-function showMulti(){                                 // rare: two sources returned distinct places — Enter cycles through them
+function showMulti(){                                 // several distinct matches (e.g. Inverness Scotland vs Florida) — Enter cycles
   const c=multiCands[multiIdx]; applyCand(c);
-  $("geo").textContent=`Found! (${multiIdx+1}/${multiCands.length})`;
-  const t=$("geotip");
-  t.innerHTML = c.norm.replace(/&/g,"&amp;").replace(/</g,"&lt;") + "<br>Enter to cycle";   // hint on its own line so the address doesn't overflow
-  t.style.textAlign="right"; $("loclabel").style.visibility="hidden";
+  $("geo").textContent=`Found! (${multiIdx+1}/${multiCands.length}) ↵`;   // ↵ = press Enter to cycle through the matches
+  $("geotip").innerHTML = esc(c.norm);                                     // full address (wraps, never spills); count+hint live on the button
+  tipMode("right");
   clearTimeout(btnRevert); clearTimeout(tipRevert);
   tipRevert=setTimeout(()=>{ multiCands=[]; $("geo").textContent=GEO_DEFAULT; setTip(TIP_DEFAULT,"center"); }, 12000);
 }
-function nomCand(arr){                                // Nominatim (OSM) result → candidate
-  if(!Array.isArray(arr) || !arr.length) return null;
-  const res=arr[0], a=res.address||{};
-  const place=a.city||a.town||a.village||a.hamlet||a.municipality||a.suburb||a.county||res.name||"";
-  return { lat:parseFloat(res.lat).toFixed(5), lon:parseFloat(res.lon).toFixed(5),
-           norm:[place, a.state||a.region||a.province||"", a.country||""].filter(Boolean).join(", "),
-           cc:(a.country_code||"").toLowerCase() };
+function nomCands(arr){                               // Nominatim (OSM) results → candidates (keep places/boundaries, drop POIs)
+  if(!Array.isArray(arr)) return [];
+  const places=arr.filter(r=>r.class==="place"||r.class==="boundary");
+  return (places.length?places:arr).map(res=>{ const a=res.address||{};
+    const place=a.city||a.town||a.village||a.hamlet||a.municipality||a.suburb||a.county||res.name||"";
+    return { lat:parseFloat(res.lat).toFixed(5), lon:parseFloat(res.lon).toFixed(5),
+             norm:[place, a.state||a.region||a.province||"", a.country||""].filter(Boolean).join(", "),
+             cc:(a.country_code||"").toLowerCase() };
+  });
 }
 function zipCand(j){                                  // Zippopotam (Canada Post FSA) result → candidate
   if(!j || !j.places || !j.places.length) return null;
@@ -242,17 +254,18 @@ function zipCand(j){                                  // Zippopotam (Canada Post
            norm:[place, p.state||"", j.country||""].filter(Boolean).join(", "),
            cc:(j["country abbreviation"]||"").toLowerCase() };
 }
-function dedupe(cs){                                  // collapse candidates that point at essentially the same spot
-  const out=[]; for(const c of cs){ if(!out.some(o=>Math.abs(+o.lat-+c.lat)<0.2 && Math.abs(+o.lon-+c.lon)<0.2)) out.push(c); } return out;
+function dedupe(cs){                                  // collapse candidates with the same name or that point at the same spot
+  const out=[]; for(const c of cs){ if(!out.some(o=>o.norm===c.norm || (Math.abs(+o.lat-+c.lat)<0.2 && Math.abs(+o.lon-+c.lon)<0.2))) out.push(c); } return out;
 }
 async function doSearch(q){
   const seq=++srchSeq, ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),8000);
   const bias=(/\d/.test(q) && homeCC)?`&countrycodes=${homeCC}`:"";            // a digit ⇒ likely a postcode ⇒ keep it in the viewer's country
   const bare=q.replace(/\s/g,""), caFSA=/^[A-Za-z]\d[A-Za-z]/.test(bare)?bare.slice(0,3).toUpperCase():null;   // Canadian postal format → also ask Zippopotam (OSM lacks Canada Post data)
-  const jobs=[ fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1${bias}&q=${encodeURIComponent(q)}`,{signal:ctl.signal}).then(r=>r.json()).then(nomCand).catch(()=>null) ];
-  if(caFSA) jobs.push( fetch(`https://api.zippopotam.us/ca/${caFSA}`,{signal:ctl.signal}).then(r=>r.ok?r.json():null).then(zipCand).catch(()=>null) );
+  // limit=5 so genuinely different places that share a name (Inverness Scotland vs Florida) all surface
+  const jobs=[ fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5${bias}&q=${encodeURIComponent(q)}`,{signal:ctl.signal}).then(r=>r.json()).then(nomCands).catch(()=>[]) ];
+  if(caFSA) jobs.push( fetch(`https://api.zippopotam.us/ca/${caFSA}`,{signal:ctl.signal}).then(r=>r.ok?r.json():null).then(j=>{ const c=zipCand(j); return c?[c]:[]; }).catch(()=>[]) );
   try{
-    const cands=dedupe((await Promise.all(jobs)).filter(Boolean)); clearTimeout(to);
+    const cands=dedupe((await Promise.all(jobs)).flat()); clearTimeout(to);
     if(seq!==srchSeq) return;                          // a newer keystroke superseded this lookup
     stopDots();
     if(!cands.length) searchFailed();
@@ -269,8 +282,12 @@ $("label").addEventListener("input",()=>{
   startDots();                                        // animate immediately…
   srchDebounce=setTimeout(()=>doSearch(q), 1000);     // …but only fetch after a 1 s pause
 });
-$("label").addEventListener("keydown",(e)=>{          // cycle through multiple matches with Enter
-  if(e.key==="Enter" && multiCands.length>1){ e.preventDefault(); multiIdx=(multiIdx+1)%multiCands.length; showMulti(); }
+$("label").addEventListener("keydown",(e)=>{          // Enter cycles matches, or forces the lookup now (no 1 s wait)
+  if(e.key!=="Enter") return;
+  e.preventDefault();
+  if(multiCands.length>1){ multiIdx=(multiIdx+1)%multiCands.length; showMulti(); return; }
+  const q=$("label").value.trim();
+  if(q.length>=2){ clearTimeout(srchDebounce); startDots(); doSearch(q); }
 });
 let geoTimer=0;
 async function fillNameFromCoords(){
