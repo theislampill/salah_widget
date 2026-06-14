@@ -515,11 +515,13 @@ function drawArc(M){
   // inset the curve by the rail's stroke half-width so its VISIBLE edge (stroke + round cap) lines
   // up with the progress-bar's edge, instead of overhanging it by ~1.2px.
   const X=a=>PAD+(a-start)/1440*(W-2*PAD);
-  const noonT=(M.sunrise+M.sunset)/2;                          // solar transit (sun crosses the meridian)
-  const apexT=noonT-18;                                        // the curve PEAKS ~18 min before Dhuhr: the
-  // zenith — when the sun is highest and shadows shortest — is the makrūh moment; Dhuhr begins only
-  // AFTER the sun passes the meridian (zawāl) and starts to decline, so Dhuhr (and the live ring) must
-  // sit just PAST the apex, never on it.
+  // POLAR days (midnight sun / polar night) have no real sunrise→sunset — Aladhan returns a degenerate
+  // Sunrise≈Sunset, which would make the warp below collapse the curve to a flat line. Detect it and
+  // fall back to the plain solar-altitude curve about the transit, so the sun's shallow path still shows.
+  const dayLen=M.sunset-M.sunrise, polar=dayLen<30||dayLen>1410;
+  const noonT=polar?M.noon:(M.sunrise+M.sunset)/2;             // solar transit (Dhuhr when degenerate)
+  const apexT=polar?noonT:noonT-18;                            // normal days peak ~18 min before Dhuhr (zawāl, the
+  // makrūh zenith) so Dhuhr/the ring sit just past the apex; polar days keep the true transit.
   // FIXED FRAME, physics-INFORMED curve. The arc's box never moves: the apex always reaches the top
   // (1 M below the header) and the deepest night always reaches the bottom (1 M above the bar). We
   // sample the real sun altitude, tanh-shape it for a smooth rounded line, then NORMALISE so the
@@ -527,11 +529,12 @@ function drawArc(M){
   const DEG=Math.PI/180, phi=(+(q.get("lat"))||0)*DEG;
   let decl=M.decl;                                             // declination from the date (rad)…
   const HsrDeg=((M.sunset-M.sunrise)/2)*0.25, tp=Math.tan(phi); // sunrise hour angle (deg, half-day)
-  if(Math.abs(tp)>0.05){ const d=Math.atan(-Math.cos(HsrDeg*DEG)/tp); // …refined by the day's own length
+  if(!polar && Math.abs(tp)>0.05){ const d=Math.atan(-Math.cos(HsrDeg*DEG)/tp); // …refined by the day's own length
     if(isFinite(d)&&Math.abs(d)<24*DEG) decl=d; }             // so altitude hits exactly 0 at sunrise/sunset
   // warp the hour angle so the peak (H=0) lands at apexT while H=±Hsr still lands on sunrise/sunset —
-  // Sunrise/Maghrib stay on the horizon, the apex shifts just before Dhuhr, the curve stays smooth.
-  const Hof=a=> a<=apexT ? -HsrDeg*(apexT-a)/(apexT-M.sunrise) : HsrDeg*(a-apexT)/(M.sunset-apexT);
+  // Sunrise/Maghrib stay on the horizon, the apex shifts just before Dhuhr. On a polar day there is no
+  // crossing, so use the plain hour angle from the transit.
+  const Hof = polar ? (a=>(a-noonT)*0.25) : (a=> a<=apexT ? -HsrDeg*(apexT-a)/(apexT-M.sunrise) : HsrDeg*(a-apexT)/(M.sunset-apexT));
   const cl=x=>x<-1?-1:x>1?1:x;
   const elevDeg=a=>Math.asin(cl(Math.sin(phi)*Math.sin(decl)+Math.cos(phi)*Math.cos(decl)*Math.cos(Hof(a)*DEG)))/DEG;
   // normalise each side by the day's own extreme so the apex lands on Ad and the deepest night on
