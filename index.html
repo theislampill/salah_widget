@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prayer Times</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:transparent}
+body{color:#fff7df;font:14px system-ui,-apple-system,Segoe UI,sans-serif}
+.c{width:325px;height:280px;border-radius:28px;padding:13px 15px;background:radial-gradient(circle at 0 0,#7c5b2488,transparent 38%),linear-gradient(145deg,#102b23,#071211 70%,#241507);box-shadow:0 18px 50px #0008;border:1px solid #f6d98b55;overflow:hidden}
+.h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
+.e{font-size:10px;line-height:1.2;letter-spacing:.16em;text-transform:uppercase;color:#f6d98bbb;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t{font-size:19px;line-height:1.1;font-weight:900;letter-spacing:-.04em}
+.ar{font-size:21px;line-height:1;color:#f8d878;text-shadow:0 0 18px #f8d87855}
+.nbox{padding:8px 11px;border-radius:16px;background:#ffffff14;border:1px solid #ffffff22;margin-bottom:6px}
+.lab,.left,.d{color:#ffffffaa;font-size:11.5px;line-height:1.25}
+.nr{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.n{font-size:22px;line-height:1.05;font-weight:950}
+.nt{font-size:19px;line-height:1.05;font-weight:850;color:#f8d878}
+.bar{height:5px;border-radius:5px;background:#ffffff1a;margin:6px 0 4px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f8d878,#e8b24a);border-radius:5px;transition:width .9s linear}
+.times{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.p{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 9px;border-radius:12px;background:#ffffff10;border:1px solid #ffffff12;transition:opacity .3s,background .3s}
+.p.on{background:#f8d87822;border-color:#f8d87866}
+.p.past{opacity:.42}
+b{font-weight:800}
+.tm{font-weight:850;font-size:13px}
+.d{display:block;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+</head>
+<body>
+<div class="c">
+  <div class="h">
+    <div><div class="e" id="loc">Prayer Times</div><div class="t">Prayer Times</div></div>
+    <div class="ar">الصلاة</div>
+  </div>
+  <div class="nbox">
+    <div class="lab">Next prayer</div>
+    <div class="nr"><div class="n">—</div><div class="nt">—</div></div>
+    <div class="bar"><i></i></div>
+    <div class="left">Loading…</div>
+  </div>
+  <div class="times"></div>
+  <small class="d"></small>
+</div>
+
+<script>
+"use strict";
+// ---- config from URL hash ------------------------------------------------
+const q     = new URLSearchParams(location.hash.slice(1));
+const lat   = q.get("lat");
+const lon   = q.get("lon");
+const tz    = q.get("tz")    || "America/New_York";
+const label = q.get("label") || "Prayer Times";
+const method= q.get("method")|| "2";
+const school= q.get("school")|| "0";
+const fmt24 = (q.get("time") || "12") === "24";
+
+const prayers = ["Fajr","Sunrise","Dhuhr","Asr","Maghrib","Isha"];
+const real    = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+
+// ---- helpers -------------------------------------------------------------
+const $    = s => document.querySelector(s);
+const pad  = n => String(n).padStart(2,"0");
+const enc  = encodeURIComponent;
+const sleep= ms => new Promise(r=>setTimeout(r,ms));
+const clean= t => String(t).replace(/\s*\(.+\)\s*/,"").trim();
+const mins = t => { const [h,m]=clean(t).split(":").map(Number); return h*60+m; };
+const fmt  = t => {
+  const [h,m]=clean(t).split(":").map(Number);
+  if(fmt24) return `${pad(h)}:${pad(m)}`;
+  return `${h%12||12}:${pad(m)} ${h>=12?"PM":"AM"}`;
+};
+const formatLeft = leftMin => {
+  const s=Math.max(0,Math.round(leftMin*60));
+  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
+  if(h>0) return `${h}h ${m}m left`;
+  if(m>0) return `${m}m left`;
+  return `${sec}s left`;
+};
+
+// current wall-clock in the *configured* timezone (not the browser's)
+function nowParts(){
+  try{
+    const f=new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+    const p={}; for(const part of f.formatToParts(new Date())) p[part.type]=part.value;
+    return {y:+p.year,mo:+p.month,d:+p.day,h:(+p.hour)%24,mi:+p.minute,s:+p.second,dateStr:`${p.day}-${p.month}-${p.year}`};
+  }catch(e){
+    const d=new Date();
+    return {y:d.getFullYear(),mo:d.getMonth()+1,d:d.getDate(),h:d.getHours(),mi:d.getMinutes(),s:d.getSeconds(),dateStr:`${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()}`};
+  }
+}
+function tomorrowStr(){
+  const n=nowParts();
+  const d=new Date(Date.UTC(n.y,n.mo-1,n.d));
+  d.setUTCDate(d.getUTCDate()+1);
+  return `${pad(d.getUTCDate())}-${pad(d.getUTCMonth()+1)}-${d.getUTCFullYear()}`;
+}
+
+// ---- data: fetch + cache + retry ----------------------------------------
+const cacheKey = "salah:"+[lat,lon,tz,method,school].join("|");
+function loadCache(dateStr){
+  try{ const j=JSON.parse(localStorage.getItem(cacheKey)); if(j&&j.date===dateStr) return j.data; }catch(e){}
+  return null;
+}
+function saveCache(dateStr,data){
+  try{ localStorage.setItem(cacheKey,JSON.stringify({date:dateStr,data})); }catch(e){}
+}
+async function fetchTimings(dateStr){
+  const u=`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${enc(lat)}&longitude=${enc(lon)}&method=${enc(method)}&school=${enc(school)}&timezonestring=${enc(tz)}`;
+  let err;
+  for(let i=0;i<3;i++){
+    try{
+      const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer"});
+      const j=await r.json();
+      if(j&&j.data&&j.data.timings) return j.data;
+      throw new Error("bad api");
+    }catch(e){ err=e; if(i<2) await sleep(900*(i+1)); }
+  }
+  throw err;
+}
+
+// ---- state ---------------------------------------------------------------
+let today=null, tomorrow=null, lastDate=null, fetchingTomorrow=false;
+$("#loc").textContent = label;
+
+function showError(msg){ $(".n").textContent="—"; $(".nt").textContent="—"; $(".left").textContent=msg; }
+
+// figure out the next prayer + interval progress, all in tz minutes
+function compute(){
+  const n=nowParts();
+  const nowMin=n.h*60+n.mi+n.s/60;
+  const t=today.timings;
+  const list=real.map(k=>({k,t:t[k],m:mins(t[k])}));
+  const i=list.findIndex(x=>x.m>nowMin);
+
+  if(i>=0){
+    const next=list[i];
+    const prevMin = i>0 ? list[i-1].m : list[list.length-1].m-1440; // before Fajr → prev is Isha (yesterday)
+    return {next:{k:next.k,t:next.t,tomorrow:false}, nowMin, leftMin:next.m-nowMin,
+            progress:clamp((nowMin-prevMin)/(next.m-prevMin)), needTomorrow:false};
+  }
+  // after Isha → next is tomorrow's Fajr
+  const ft = tomorrow ? tomorrow.timings.Fajr : t.Fajr;
+  const nextMin = mins(ft)+1440;
+  const prevMin = list[list.length-1].m; // Isha today
+  return {next:{k:"Fajr",t:ft,tomorrow:true}, nowMin, leftMin:nextMin-nowMin,
+          progress:clamp((nowMin-prevMin)/(nextMin-prevMin)), needTomorrow:true};
+}
+function clamp(x){ return Math.min(1,Math.max(0,x)); }
+
+function render(){
+  if(!today) return;
+  const c=compute();
+
+  if(c.needTomorrow && !tomorrow && !fetchingTomorrow){
+    fetchingTomorrow=true;
+    fetchTimings(tomorrowStr()).then(d=>{tomorrow=d;fetchingTomorrow=false;}).catch(()=>{fetchingTomorrow=false;});
+  }
+
+  const t=today.timings;
+  const onKey = c.next.tomorrow ? null : c.next.k;
+  $(".n").textContent  = c.next.k;
+  $(".nt").textContent = fmt(c.next.t);
+  $(".left").textContent = formatLeft(c.leftMin);
+  $(".bar>i").style.width = (c.progress*100).toFixed(1)+"%";
+  $(".times").innerHTML = prayers.map(k=>{
+    const on   = k===onKey;
+    const past = mins(t[k])<=c.nowMin && !on;
+    return `<div class="p ${on?"on":""} ${past?"past":""}"><b>${k}</b><span class="tm">${fmt(t[k])}</span></div>`;
+  }).join("");
+  const hijri = today.date && today.date.hijri && today.date.hijri.date ? ` · ${today.date.hijri.date}` : "";
+  $(".d").textContent = (today.date && today.date.readable || "")+hijri;
+}
+
+function tick(){
+  const n=nowParts();
+  if(lastDate && n.dateStr!==lastDate){           // crossed midnight → load the new day
+    tomorrow=null;
+    fetchTimings(n.dateStr).then(d=>{today=d;saveCache(n.dateStr,d);}).catch(()=>{});
+  }
+  lastDate=n.dateStr;
+  render();
+}
+
+async function boot(){
+  if(!lat||!lon){ showError("Add lat & lon to the URL"); return; }
+  const ds=nowParts().dateStr;
+  const cached=loadCache(ds);
+  if(cached){ today=cached; lastDate=ds; render(); }   // instant paint from cache
+  try{
+    today=await fetchTimings(ds);
+    saveCache(ds,today);
+    lastDate=ds;
+    render();
+  }catch(e){
+    if(!today) showError("Could not load prayer times");
+  }
+  setInterval(tick,1000);
+}
+
+boot();
+</script>
+</body>
+</html>

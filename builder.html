@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prayer Times widget · builder</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:#fff7df;font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;
+  background:radial-gradient(circle at 12% 0,#7c5b2433,transparent 42%),linear-gradient(160deg,#0c241e,#06100f 65%,#1c1206);
+  display:flex;flex-direction:column;align-items:center;padding:32px 18px 60px}
+h1{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:0 0 4px}
+.ar{color:#f8d878}
+.sub{color:#ffffff99;margin:0 0 28px;text-align:center}
+.wrap{display:flex;gap:32px;flex-wrap:wrap;justify-content:center;align-items:flex-start;width:100%;max-width:860px}
+.card{background:#ffffff0d;border:1px solid #ffffff1f;border-radius:22px;padding:22px;backdrop-filter:blur(6px)}
+.form{flex:1 1 360px;min-width:320px}
+label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#f6d98bcc;margin:14px 0 5px}
+input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #ffffff22;background:#0d1c18;color:#fff7df;font:inherit;font-size:14px}
+input:focus,select:focus{outline:none;border-color:#f8d87888}
+.row{display:flex;gap:10px}.row>div{flex:1}
+.btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+button{cursor:pointer;border:0;border-radius:12px;padding:10px 16px;font:inherit;font-weight:700;font-size:13px;
+  background:linear-gradient(135deg,#f8d878,#e0a93c);color:#241507}
+button.ghost{background:#ffffff14;color:#fff7df;border:1px solid #ffffff22}
+.preview{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:14px}
+.out{width:100%;max-width:860px;margin-top:26px}
+textarea{width:100%;min-height:120px;resize:vertical;border-radius:14px;border:1px solid #ffffff22;background:#0a1714;color:#cfe;
+  font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:14px}
+.note{color:#ffffff77;font-size:13px;margin-top:8px}
+a{color:#f8d878}
+.copied{color:#9be29b;font-size:13px;margin-left:6px}
+iframe{box-shadow:0 18px 50px #0008}
+</style>
+</head>
+<body>
+<h1>Prayer Times widget <span class="ar">·</span> builder</h1>
+<p class="sub">Fill in a location, copy the snippet, paste it anywhere that takes HTML (TablissNG, Notion, a webpage…).</p>
+
+<div class="wrap">
+  <div class="card form">
+    <label>Location name (shown on the widget)</label>
+    <input id="label" placeholder="Central FL" value="Central FL">
+
+    <div class="row">
+      <div><label>Latitude</label><input id="lat" inputmode="decimal" value="28.93084"></div>
+      <div><label>Longitude</label><input id="lon" inputmode="decimal" value="-82.39122"></div>
+    </div>
+    <div class="btns"><button class="ghost" id="geo" type="button">📍 Use my location</button></div>
+
+    <label>Time zone</label>
+    <input id="tz" value="America/New_York">
+
+    <div class="row">
+      <div>
+        <label>Calculation method</label>
+        <select id="method">
+          <option value="2">ISNA — N. America</option>
+          <option value="3">Muslim World League</option>
+          <option value="1">Univ. of Islamic Sciences, Karachi</option>
+          <option value="4">Umm al-Qura, Makkah</option>
+          <option value="5">Egyptian General Authority</option>
+          <option value="0">Shia Ithna-Ashari</option>
+          <option value="7">Univ. of Tehran</option>
+          <option value="8">Gulf Region</option>
+          <option value="9">Kuwait</option>
+          <option value="10">Qatar</option>
+          <option value="11">Singapore (MUIS)</option>
+          <option value="12">UOIF — France</option>
+          <option value="13">Diyanet — Turkey</option>
+          <option value="14">Russia (SAMR)</option>
+          <option value="15">Moonsighting Committee</option>
+          <option value="16">Dubai</option>
+        </select>
+      </div>
+      <div>
+        <label>Asr (madhhab)</label>
+        <select id="school">
+          <option value="0">Standard (Shafiʿi/Maliki/Hanbali)</option>
+          <option value="1">Hanafi (later Asr)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Time format</label>
+        <select id="time">
+          <option value="12">12-hour (3:45 PM)</option>
+          <option value="24">24-hour (15:45)</option>
+        </select>
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button class="ghost" id="tzauto" type="button" style="width:100%">Auto-detect time zone</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="preview">
+    <iframe id="pv" title="Prayer Times" referrerpolicy="no-referrer"
+      style="width:330px;height:285px;border:0;border-radius:28px;overflow:hidden" scrolling="no"></iframe>
+    <button class="ghost" id="reload" type="button">↻ Refresh preview</button>
+  </div>
+</div>
+
+<div class="out">
+  <label>Embed code <span id="copied" class="copied"></span></label>
+  <textarea id="code" readonly></textarea>
+  <div class="btns">
+    <button id="copy" type="button">Copy embed code</button>
+    <button class="ghost" id="open" type="button">Open widget in new tab</button>
+  </div>
+  <p class="note">Powered by the free <a href="https://aladhan.com/prayer-times-api" target="_blank" rel="noreferrer">Aladhan API</a>.
+  Don't know your coordinates? Right-click your spot on <a href="https://www.openstreetmap.org" target="_blank" rel="noreferrer">OpenStreetMap</a> → “Show address”.</p>
+</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const fields=["label","lat","lon","tz","method","school","time"];
+const base=location.href.replace(/builder\.html.*$/,"").replace(/[?#].*$/,"");
+
+function hash(){
+  const p=new URLSearchParams();
+  p.set("lat",$("lat").value.trim());
+  p.set("lon",$("lon").value.trim());
+  p.set("tz",$("tz").value.trim());
+  p.set("label",$("label").value.trim());
+  p.set("method",$("method").value);
+  p.set("school",$("school").value);
+  if($("time").value==="24") p.set("time","24");
+  return p.toString();
+}
+function url(){ return base+"#"+hash(); }
+function snippet(){
+  return `<iframe\n  title="Prayer Times"\n  referrerpolicy="no-referrer"\n  src="${url()}"\n  style="width:330px;height:285px;border:0;border-radius:28px;overflow:hidden"\n  scrolling="no">\n</iframe>`;
+}
+function update(){
+  $("code").value=snippet();
+  $("pv").src=url();
+}
+fields.forEach(f=>$(f).addEventListener("input",update));
+fields.forEach(f=>$(f).addEventListener("change",update));
+
+$("reload").onclick=()=>{ $("pv").src=url(); };
+$("open").onclick=()=>window.open(url(),"_blank","noreferrer");
+$("copy").onclick=async()=>{
+  try{ await navigator.clipboard.writeText($("code").value); }
+  catch(e){ $("code").select(); document.execCommand("copy"); }
+  $("copied").textContent="copied ✓";
+  setTimeout(()=>$("copied").textContent="",1800);
+};
+$("tzauto").onclick=()=>{
+  try{ $("tz").value=Intl.DateTimeFormat().resolvedOptions().timeZone; update(); }catch(e){}
+};
+$("geo").onclick=()=>{
+  if(!navigator.geolocation){ alert("Geolocation isn't available in this browser."); return; }
+  $("geo").textContent="Locating…";
+  navigator.geolocation.getCurrentPosition(
+    pos=>{ $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
+           try{ $("tz").value=Intl.DateTimeFormat().resolvedOptions().timeZone; }catch(e){}
+           $("geo").textContent="📍 Use my location"; update(); },
+    err=>{ alert("Couldn't get your location: "+err.message); $("geo").textContent="📍 Use my location"; }
+  );
+};
+
+update();
+</script>
+</body>
+</html>
