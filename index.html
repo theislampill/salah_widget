@@ -14,25 +14,19 @@ body{color:#fff7df;font:14px system-ui,-apple-system,Segoe UI,sans-serif}
   --accent:#f8d878;--accent2:#e8b24a;--text:#fff7df;
   --stars:1;--starblur:0px;--moon:1;
   --glass:inset 0 1px .5px #ffffff45,inset 0 -2px 5px #00000017,0 3px 8px #0000001f;
-  --rayo:0;--rayc:rgba(255,206,150,.14);
   position:relative;width:325px;height:280px;border-radius:28px;padding:11px 15px;
   background:linear-gradient(160deg,var(--g1),var(--g2) 60%,var(--g3));
   box-shadow:0 18px 50px #0008;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
   color:var(--text);overflow:hidden}
 
-/* atmosphere: additive (screen) light driven by the sun's trajectory —
-   Mie forward-scatter bloom at the sun, a Rayleigh horizon band, crepuscular rays */
+/* atmosphere: additive (screen) light driven by the sun's trajectory — a Mie
+   forward-scatter bloom at the sun, and a Rayleigh horizon band that pools under
+   the sun's azimuth (left at dawn, right at dusk). No discrete "rays": clear-sky
+   scattering is smooth; shafts only read through cloud (see .godray). */
 .atmo{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:28px;mix-blend-mode:screen}
-.atmo .sun{position:absolute;left:var(--sunx);top:var(--suny);width:330px;height:330px;transform:translate(-50%,-50%);
-  background:radial-gradient(circle,var(--glow),transparent 60%);filter:blur(3px)}
-.atmo .scatter{position:absolute;inset:0;background:radial-gradient(155% 86% at 50% 123%,var(--horizon),transparent 58%)}
-.atmo .ray{position:absolute;left:var(--sunx);top:var(--suny);width:620px;height:620px;opacity:var(--rayo);
-  transform:translate(-50%,-50%);transform-origin:50% 50%;filter:blur(1.2px);
-  background:repeating-conic-gradient(from 0deg,transparent 0deg 5deg,var(--rayc) 6deg 7.5deg,transparent 8.5deg 13deg);
-  -webkit-mask:radial-gradient(circle,transparent 7%,#000 26%,transparent 58%);
-  mask:radial-gradient(circle,transparent 7%,#000 26%,transparent 58%);
-  animation:raysweep 19s ease-in-out infinite}
-@keyframes raysweep{0%,100%{transform:translate(-50%,-50%) rotate(-5deg)}50%{transform:translate(-50%,-50%) rotate(5deg)}}
+.atmo .sun{position:absolute;left:var(--sunx);top:var(--suny);width:360px;height:360px;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,var(--glow),transparent 64%);filter:blur(6px)}
+.atmo .scatter{position:absolute;inset:0;background:radial-gradient(150% 96% at var(--sunx) 127%,var(--horizon),transparent 62%)}
 /* filmic grain / atmospheric noise — kills gradient banding, adds texture */
 .grain{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;mix-blend-mode:soft-light}
 
@@ -136,11 +130,15 @@ body{color:#fff7df;font:14px system-ui,-apple-system,Segoe UI,sans-serif}
 .d{position:relative;z-index:1;direction:ltr;display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:5px;padding:0 10px;color:color-mix(in srgb,var(--text) 60%,transparent);font-size:11.5px;line-height:1.2}
 .d span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .er{opacity:.55;font-size:.84em;margin:0 4px;letter-spacing:.05em;unicode-bidi:isolate}
+
+/* keep foreground text legible over bright dawn / midday / sunset skies */
+.e,.wx,.foc .cn,.foc .nt,.left,.d{text-shadow:0 1px 3px rgba(0,0,0,.34)}
+.p b,.tm{text-shadow:0 1px 2px rgba(0,0,0,.28)}
 </style>
 </head>
 <body>
 <div class="c">
-  <div class="atmo" aria-hidden="true"><div class="scatter"></div><div class="ray"></div><div class="sun"></div></div>
+  <div class="atmo" aria-hidden="true"><div class="scatter"></div><div class="sun"></div></div>
   <svg class="sky" viewBox="0 0 325 280" preserveAspectRatio="none" aria-hidden="true">
     <defs>
       <radialGradient id="mg" cx="40%" cy="34%" r="72%">
@@ -499,16 +497,16 @@ const rgba =a=>`rgba(${Math.round(a[0])},${Math.round(a[1])},${Math.round(a[2])}
 // · hor (warm horizon bloom rgba) · stars opacity. Luminance is bounded so the
 // light text stays legible even at "noon" (deep azure, never pastel).
 const KF={
-  deepNight:{g1:[11,20,48],  g2:[7,10,28],   g3:[13,16,38],   glow:[70,90,180,0],     hor:[40,40,92,0],      stars:1},
-  astro:    {g1:[15,23,56],  g2:[10,16,38],  g3:[24,21,54],   glow:[92,102,192,.07],  hor:[120,92,150,.10],  stars:.92},
-  dawn:     {g1:[30,37,84],  g2:[60,48,96],  g3:[156,84,100], glow:[235,150,120,.20], hor:[233,120,112,.34], stars:.45},
-  sunrise:  {g1:[44,76,124], g2:[82,98,138], g3:[205,120,64], glow:[255,184,98,.30],  hor:[255,160,82,.36],  stars:.10},
-  morning:  {g1:[32,92,146], g2:[42,110,152],g3:[84,130,162], glow:[255,230,162,.20], hor:[255,226,168,.12], stars:0},
-  noon:     {g1:[27,96,150], g2:[24,108,143],g3:[46,120,143], glow:[255,244,198,.18], hor:[192,224,236,.05], stars:0},
-  afternoon:{g1:[29,88,136], g2:[46,101,141],g3:[122,120,130],glow:[255,226,152,.18], hor:[255,212,152,.10], stars:0},
-  golden:   {g1:[37,76,122], g2:[114,88,114],g3:[210,140,74], glow:[255,178,88,.30],  hor:[255,152,74,.32],  stars:0},
-  sunset:   {g1:[33,39,82],  g2:[98,54,92],  g3:[200,82,64],  glow:[255,118,76,.30],  hor:[242,94,72,.38],   stars:.22},
-  dusk:     {g1:[19,28,64],  g2:[31,30,68],  g3:[66,42,76],   glow:[132,98,182,.13],  hor:[152,86,126,.20],  stars:.75},
+  deepNight:{g1:[11,20,48],  g2:[7,10,28],   g3:[13,16,38],   glow:[70,90,180,0],     hor:[40,40,92,0],      stars:1,   accent:[248,216,120],accent2:[232,178,74], text:[238,241,255]},
+  astro:    {g1:[15,23,56],  g2:[10,16,38],  g3:[24,21,54],   glow:[92,102,192,.07],  hor:[120,92,150,.10],  stars:.92, accent:[247,216,128],accent2:[230,178,82], text:[234,238,252]},
+  dawn:     {g1:[30,37,84],  g2:[60,48,96],  g3:[156,84,100], glow:[235,150,120,.20], hor:[233,120,112,.34], stars:.45, accent:[255,213,170],accent2:[236,170,116],text:[246,235,241]},
+  sunrise:  {g1:[44,76,124], g2:[82,98,138], g3:[205,120,64], glow:[255,184,98,.30],  hor:[255,160,82,.36],  stars:.10, accent:[255,221,150],accent2:[244,184,92], text:[253,239,224]},
+  morning:  {g1:[32,92,146], g2:[42,110,152],g3:[84,130,162], glow:[255,230,162,.20], hor:[255,226,168,.12], stars:0,   accent:[255,228,158],accent2:[242,192,104],text:[243,247,255]},
+  noon:     {g1:[27,96,150], g2:[24,108,143],g3:[46,120,143], glow:[255,244,198,.18], hor:[192,224,236,.05], stars:0,   accent:[255,231,170],accent2:[245,200,112],text:[241,247,255]},
+  afternoon:{g1:[29,88,136], g2:[46,101,141],g3:[122,120,130],glow:[255,226,152,.18], hor:[255,212,152,.10], stars:0,   accent:[255,224,150],accent2:[243,186,96], text:[245,244,238]},
+  golden:   {g1:[37,76,122], g2:[114,88,114],g3:[210,140,74], glow:[255,178,88,.30],  hor:[255,152,74,.32],  stars:0,   accent:[255,205,132],accent2:[244,160,82], text:[255,240,222]},
+  sunset:   {g1:[33,39,82],  g2:[98,54,92],  g3:[200,82,64],  glow:[255,118,76,.30],  hor:[242,94,72,.38],   stars:.22, accent:[255,206,158],accent2:[243,158,104],text:[253,237,222]},
+  dusk:     {g1:[19,28,64],  g2:[31,30,68],  g3:[66,42,76],   glow:[132,98,182,.13],  hor:[152,86,126,.20],  stars:.75, accent:[248,214,128],accent2:[230,176,86], text:[240,233,245]},
 };
 function paletteAt(M){
   const start=M.noon-720;
@@ -528,6 +526,7 @@ function paletteAt(M){
   return {
     g1:mixRGB(p0.g1,p1.g1,f), g2:mixRGB(p0.g2,p1.g2,f), g3:mixRGB(p0.g3,p1.g3,f),
     glow:mixA(p0.glow,p1.glow,f), hor:mixA(p0.hor,p1.hor,f), stars:lerp(p0.stars,p1.stars,f),
+    accent:mixRGB(p0.accent,p1.accent,f), accent2:mixRGB(p0.accent2,p1.accent2,f), text:mixRGB(p0.text,p1.text,f),
   };
 }
 function sunMetrics(M){
@@ -567,16 +566,17 @@ function wxClass(code){
   return "clear";
 }
 // tint = sky colour pulled toward this (ts strength); gs/hs scale glow/horizon
-// bloom; st/mn scale stars/moon; blur adds atmospheric softening.
+// bloom; st/mn scale stars/moon; blur adds atmospheric softening; ad mutes the
+// accent toward neutral (a saturated gold clashes with grey, wet, snowy skies).
 const WX={
-  clear:   {tint:null,          ts:0,   gs:1,   hs:1,  st:1,   mn:1,   blur:0},
-  cloud:   {tint:[62,74,90],    ts:.20, gs:.80, hs:.7, st:.5,  mn:.82, blur:.3},
-  overcast:{tint:[60,68,80],    ts:.50, gs:.35, hs:.3, st:.12, mn:.42, blur:.5},
-  fog:     {tint:[122,128,130], ts:.44, gs:.40, hs:.3, st:.15, mn:.45, blur:1.6},
-  drizzle: {tint:[56,74,92],    ts:.34, gs:.50, hs:.5, st:.22, mn:.58, blur:.5},
-  rain:    {tint:[42,62,84],    ts:.46, gs:.40, hs:.4, st:.10, mn:.50, blur:.7},
-  snow:    {tint:[96,110,126],  ts:.34, gs:.60, hs:.5, st:.50, mn:.70, blur:.5},
-  thunder: {tint:[46,36,74],    ts:.50, gs:.40, hs:.4, st:.16, mn:.46, blur:.6},
+  clear:   {tint:null,          ts:0,   gs:1,   hs:1,  st:1,   mn:1,   blur:0,   ad:0},
+  cloud:   {tint:[62,74,90],    ts:.20, gs:.80, hs:.7, st:.5,  mn:.82, blur:.3,  ad:.12},
+  overcast:{tint:[60,68,80],    ts:.50, gs:.35, hs:.3, st:.12, mn:.42, blur:.5,  ad:.32},
+  fog:     {tint:[122,128,130], ts:.44, gs:.40, hs:.3, st:.15, mn:.45, blur:1.6, ad:.38},
+  drizzle: {tint:[56,74,92],    ts:.34, gs:.50, hs:.5, st:.22, mn:.58, blur:.5,  ad:.22},
+  rain:    {tint:[42,62,84],    ts:.46, gs:.40, hs:.4, st:.10, mn:.50, blur:.7,  ad:.30},
+  snow:    {tint:[96,110,126],  ts:.34, gs:.60, hs:.5, st:.50, mn:.70, blur:.5,  ad:.26},
+  thunder: {tint:[46,36,74],    ts:.50, gs:.40, hs:.4, st:.16, mn:.46, blur:.6,  ad:.26},
 };
 
 function applyTheme(M){
@@ -591,11 +591,15 @@ function applyTheme(M){
   const stars=(day?0:P.stars)*w.st;
   const moon =clamp(moonVis(M))*w.mn;
   const sm=sunMetrics(M);
-  // crepuscular rays: present only when the sun is up and low (golden hour / near
-  // the horizon), peaking ~10° altitude, gone by midday; dimmed by cloud/weather.
-  const rayo = sm.altN>0 ? clamp(Math.min(sm.altN*5,(0.72-sm.altN)*1.7))*w.gs : 0;
+  // foreground accent + text track the sky: warm at golden hour / sunset, cool at
+  // night and noon, muted in murky weather — but always high-luminance so they
+  // stay legible against any sky.
+  const N=[202,196,186];
+  const ac =mixRGB(P.accent, N, w.ad), ac2=mixRGB(P.accent2, N, w.ad);
   const c=$(".c");
-  c.style.setProperty("--rayo",rayo.toFixed(3));
+  c.style.setProperty("--accent",rgb(ac));
+  c.style.setProperty("--accent2",rgb(ac2));
+  c.style.setProperty("--text",rgb(P.text));
   c.style.setProperty("--g1",rgb(g1));
   c.style.setProperty("--g2",rgb(g2));
   c.style.setProperty("--g3",rgb(g3));
