@@ -116,7 +116,7 @@ body{color:#fff7df;
 .panel{position:relative;z-index:1}
 .arc{display:block;width:100%;height:180px;margin:0;overflow:visible}
 .foc{position:absolute;left:0;right:0;top:57.5px;text-align:center}
-.foc .cn{position:relative;top:4px;font-family:var(--font-display);font-size:30px;line-height:1.15;font-weight:600;letter-spacing:.01em;color:var(--text);opacity:.95;margin-bottom:30.6px}
+.foc .cn{position:relative;top:4px;font-family:var(--font-display);font-size:30px;line-height:1.15;font-weight:600;letter-spacing:-.015em;color:var(--text);opacity:.95;margin-bottom:30.6px}
 .foc .nt{position:relative;top:4.4px;font-family:var(--font-display);font-size:46px;line-height:1;font-weight:600;letter-spacing:.005em;color:var(--accent)}
 .arc .horizon{stroke:#ffffff;stroke-opacity:.16;stroke-width:1;stroke-dasharray:2.5 5}
 /* layered arc for legibility over cloud/rain without going thick or cartoonish:
@@ -141,7 +141,7 @@ body{color:#fff7df;
 .c[data-fx=cloud] .arc .warmsh,.c[data-fx=overcast] .arc .warmsh,.c[data-fx=fog] .arc .warmsh,.c[data-fx=drizzle] .arc .warmsh,.c[data-fx=rain] .arc .warmsh,.c[data-fx=thunder] .arc .warmsh,.c[data-fx=snow] .arc .warmsh{stroke-opacity:.5}
 .c[data-fx=cloud] .bar,.c[data-fx=overcast] .bar,.c[data-fx=fog] .bar,.c[data-fx=drizzle] .bar,.c[data-fx=rain] .bar,.c[data-fx=thunder] .bar,.c[data-fx=snow] .bar{box-shadow:inset 0 1px 2.5px rgba(0,0,0,.6)}
 .c[data-fx=cloud] .bar>i,.c[data-fx=overcast] .bar>i,.c[data-fx=fog] .bar>i,.c[data-fx=drizzle] .bar>i,.c[data-fx=rain] .bar>i,.c[data-fx=thunder] .bar>i,.c[data-fx=snow] .bar>i{box-shadow:0 0 7px color-mix(in srgb,var(--accent) 76%,transparent)}
-.left{display:block;text-align:center;margin-top:16px;color:var(--text);font-size:17.25px;font-weight:400;line-height:1.2;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.left{display:block;text-align:center;margin-top:8px;color:var(--text);font-size:17.25px;font-weight:400;line-height:1.2;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 /* countdown line reads in three roles: the time is the value (UI-mono + tabular, the
    brightest part so it's read first); "left until" is quiet connective tissue; the prayer
    name borrows the display face AND the --accent colour so it stays tied to the hero time
@@ -536,12 +536,12 @@ function drawArc(M){
   let dots="";
   for(const p of M.dots){
     const cls = p.k===M.nextKey ? "dot next" : "dot";
-    const a = p.k==="Dhuhr" ? Math.max(p.abs, noonT+18) : p.abs;   // Dhuhr reads just after the apex (zawāl)
+    const a = p.abs;                                              // every dot at its real time so the moving ring lands exactly on the dot when that prayer is current
     dots+=`<circle class="${cls}" cx="${X(a).toFixed(1)}" cy="${Y(a).toFixed(1)}" r="${R}"/>`;
   }
-  // "eye of a needle": split the marker ring at the two points where the arc
-  // crosses it, draw one half behind the arc and the other half in front, so the
-  // arc threads through the ring instead of the ring sitting on top of it.
+  // "eye of a needle": split the marker ring at the two points where the curve crosses it. The grey
+  // future rail threads THROUGH the ring (one half behind, one half in front); the active/coloured
+  // arc is then drawn over the whole ring, so the live light reads as sitting ON TOP of the marker.
   const cx=X(M.nowAbs), cy=Y(M.nowAbs), r=8;
   const dx=X(M.nowAbs+10)-X(M.nowAbs-10), dy=Y(M.nowAbs+10)-Y(M.nowAbs-10);
   const th=Math.atan2(dy,dx), ux=Math.cos(th)*r, uy=Math.sin(th)*r;
@@ -550,9 +550,9 @@ function drawArc(M){
   const eyeFront=`<path class="cur" d="M${p1} A${r} ${r} 0 0 1 ${p2}"/>`;
   return `<line class="horizon" x1="0" y1="${hY}" x2="${W}" y2="${hY}"/>`+
          `<path class="railsh" d="${rail}"/>`+eyeBack+
-         `<path class="rail" d="${rail}"/>`+
+         `<path class="rail" d="${rail}"/>`+eyeFront+
          `<path class="warmsh" d="${elapsed}"/><path class="warm" d="${elapsed}"/><path class="warmcore" d="${elapsed}"/>`+
-         `${dots}`+eyeFront;
+         `${dots}`;
 }
 
 // ---- continuous time-of-day sky -----------------------------------------
