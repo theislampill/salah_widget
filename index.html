@@ -160,14 +160,16 @@ body{color:#fff7df;
 .tm{font-weight:600;font-size:12.5px;line-height:16.7px}
 
 /* dates */
-.d{position:relative;z-index:1;direction:ltr;display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:8px;padding:0 10px;color:color-mix(in srgb,var(--text) 60%,transparent);font-size:11.5px;line-height:1.2}
+.d{position:relative;z-index:1;direction:ltr;display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:8px;padding:0 10px;color:color-mix(in srgb,var(--text) 90%,transparent);font-size:11.5px;line-height:1.2}
 .d span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .er{opacity:.55;font-size:.84em;margin:0 4px;letter-spacing:.05em;unicode-bidi:isolate}
 #ah .er{font-size:1.3em;opacity:.66}   /* the Arabic hāʾ (AH marker) reads small — give it a few pt */
+.mph{font-size:.92em;unicode-bidi:isolate}   /* moon-phase emoji by the AH date (own class — .moon is the sky moon) */
+.mph.pre{opacity:.2}                    /* faint preview of the Hijri day that begins at tonight's Maghrib */
 
 /* readability over busy cloud/rain midtones: a crisp dark micro-rim + soft depth (NO heavy
    outline that would muddy the serif, NO cheap white glow). Dates + glass cells keep a light shadow. */
-.d{text-shadow:0 1px 3px rgba(0,0,0,.34)}
+.d{text-shadow:0 0 1px rgba(4,8,16,.85),0 1px 2px rgba(0,0,0,.55),0 2px 5px rgba(0,0,0,.3)}
 .p b,.tm{text-shadow:0 1px 2px rgba(0,0,0,.28)}
 .e,.wi,.wt{text-shadow:0 0 1px rgba(4,8,16,.92),0 1px 1px rgba(4,8,16,.6),0 2px 5px rgba(0,0,0,.42)}
 .foc .cn,.left{text-shadow:0 0 1px rgba(6,10,18,.88),1px 0 1px rgba(6,10,18,.5),-1px 0 1px rgba(6,10,18,.5),0 1px 1px rgba(6,10,18,.6),0 3px 7px rgba(0,0,0,.4)}
@@ -423,6 +425,7 @@ function moonNow(){
   if(SIM.moon!=null){ const frac=clamp(+SIM.moon), waxing=SIM.wax!=="0"; return {frac, waxing, phase: waxing?frac/2:1-frac/2}; }
   return moonPhase(new Date());
 }
+function phaseEmoji(p){ return ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"][Math.round(((p||0)%1)*8)%8]; }  // synodic phase (0..1) → 8-step moon emoji
 function renderMoon(){
   const mp=moonNow(), R=48, d=moonLit(R, mp.frac, mp.waxing);
   $("#mlit").setAttribute("d", d);
@@ -505,25 +508,29 @@ function model(){
 function drawArc(M){
   const W=295,H=180,hY=104,Ad=104,An=76,R=5, start=M.noon-720;
   const X=a=>(a-start)/1440*W;
-  const noonT=(M.sunrise+M.sunset)/2;                          // solar noon = the arc's apex
+  const noonT=(M.sunrise+M.sunset)/2;                          // solar transit (sun crosses the meridian)
+  const apexT=noonT-18;                                        // the curve PEAKS ~18 min before Dhuhr: the
+  // zenith — when the sun is highest and shadows shortest — is the makrūh moment; Dhuhr begins only
+  // AFTER the sun passes the meridian (zawāl) and starts to decline, so Dhuhr (and the live ring) must
+  // sit just PAST the apex, never on it.
   // FIXED FRAME, physics-INFORMED curve. The arc's box never moves: the apex always reaches the top
   // (1 M below the header) and the deepest night always reaches the bottom (1 M above the bar). We
   // sample the real sun altitude, tanh-shape it for a smooth rounded line, then NORMALISE so the
-  // curve fills that fixed frame regardless of date/latitude. The physics lives in the SHAPE (a high
-  // summer sun saturates into a broad flat dome, a low winter sun peaks more sharply) and in where
-  // the horizon crossings + dots fall — NOT in the dimensions. 0° altitude maps to the horizon line.
+  // curve fills that fixed frame regardless of date/latitude.
   const DEG=Math.PI/180, phi=(+(q.get("lat"))||0)*DEG;
   let decl=M.decl;                                             // declination from the date (rad)…
-  const tp=Math.tan(phi), Hsr=((M.sunset-M.sunrise)/2)*0.25*DEG;
-  if(Math.abs(tp)>0.05){ const d=Math.atan(-Math.cos(Hsr)/tp);// …refined by the day's own length so
-    if(isFinite(d)&&Math.abs(d)<24*DEG) decl=d; }             // altitude hits exactly 0 at sunrise/sunset
+  const HsrDeg=((M.sunset-M.sunrise)/2)*0.25, tp=Math.tan(phi); // sunrise hour angle (deg, half-day)
+  if(Math.abs(tp)>0.05){ const d=Math.atan(-Math.cos(HsrDeg*DEG)/tp); // …refined by the day's own length
+    if(isFinite(d)&&Math.abs(d)<24*DEG) decl=d; }             // so altitude hits exactly 0 at sunrise/sunset
+  // warp the hour angle so the peak (H=0) lands at apexT while H=±Hsr still lands on sunrise/sunset —
+  // Sunrise/Maghrib stay on the horizon, the apex shifts just before Dhuhr, the curve stays smooth.
+  const Hof=a=> a<=apexT ? -HsrDeg*(apexT-a)/(apexT-M.sunrise) : HsrDeg*(a-apexT)/(M.sunset-apexT);
   const cl=x=>x<-1?-1:x>1?1:x;
-  const elevDeg=a=>Math.asin(cl(Math.sin(phi)*Math.sin(decl)+Math.cos(phi)*Math.cos(decl)*Math.cos((a-noonT)*0.25*DEG)))/DEG;
+  const elevDeg=a=>Math.asin(cl(Math.sin(phi)*Math.sin(decl)+Math.cos(phi)*Math.cos(decl)*Math.cos(Hof(a)*DEG)))/DEG;
   // normalise each side by the day's own extreme so the apex lands on Ad and the deepest night on
-  // An every time; maxE/maxD are the solar-noon altitude / solar-midnight depression (clamped so a
-  // very low sun still fills the frame instead of collapsing flat).
+  // An every time (clamped so a very low sun still fills the frame instead of collapsing flat).
   const S=42, Sn=S*An/Ad;
-  const maxE=Math.max(3, elevDeg(noonT)), maxD=Math.max(3, -elevDeg(noonT+720));
+  const maxE=Math.max(3, elevDeg(apexT)), maxD=Math.max(3, -elevDeg(start), -elevDeg(start+1440));
   const dayK=Math.tanh(maxE/S), nightK=Math.tanh(maxD/Sn);
   const ALT=a=>{ const d=elevDeg(a); return d>=0 ? Ad*Math.tanh(d/S)/dayK : An*Math.tanh(d/Sn)/nightK; };
   const Y=a=>hY-ALT(a);
@@ -745,7 +752,8 @@ function fitCn(M){
 function render(){
   if(!today) return;
   const M=model();
-  if(M.needTomorrow && !tomorrow && !fetchingTomorrow){
+  const afterMaghrib = M.nowMin >= mins(M.t.Maghrib);          // the Islamic (Hijri) day rolls over at Maghrib, not midnight
+  if((M.needTomorrow || afterMaghrib) && !tomorrow && !fetchingTomorrow){
     fetchingTomorrow=true;
     fetchTimings(tomorrowStr()).then(d=>{tomorrow=d;fetchingTomorrow=false;}).catch(()=>{fetchingTomorrow=false;});
   }
@@ -763,7 +771,13 @@ function render(){
   }).join("");
   const g=today.date&&today.date.gregorian, h=today.date&&today.date.hijri;
   $("#ce").innerHTML = g ? `${fmtDate(g)}<span class="er">CE</span>` : "";
-  $("#ah").innerHTML = h ? `<span class="er">ه</span>${fmtDate(h)}` : "";
+  // AH advances at Maghrib (not midnight): before Maghrib show today's Hijri plus a faint preview of
+  // the day that begins tonight (separator + moon-phase emoji at ~20% opacity); after Maghrib the date
+  // becomes that next day and the emoji turns fully opaque.
+  const advanced = afterMaghrib && tomorrow && tomorrow.date && tomorrow.date.hijri;
+  const ahH = advanced ? tomorrow.date.hijri : h, moonE = phaseEmoji(moonNow().phase);
+  const moonHtml = advanced ? ` <span class="mph">${moonE}</span>` : ` <span class="mph pre">| ${moonE}</span>`;
+  $("#ah").innerHTML = ahH ? `<span class="er">ه</span>${fmtDate(ahH)}${moonHtml}` : "";
   applyTheme(M);
 }
 
