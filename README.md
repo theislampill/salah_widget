@@ -46,7 +46,7 @@ widget and paste the snippet above (with your own coordinates).
 |----------|:--------:|--------------------|-------------|
 | `lat`    | ✅       | —                  | Latitude, e.g. `28.93084` |
 | `lon`    | ✅       | —                  | Longitude, e.g. `-82.39122` |
-| `tz`     |          | `America/New_York` | IANA time zone, e.g. `Europe/London`. URL-encode the `/` as `%2F`. |
+| `tz`     |          | *auto*             | **Auto-detected from the coordinates** — you normally don't need to set it. The countdown and day-rollover use the *location's* zone (so Madinah always shows Madinah time, whatever device you view it on). Pass an IANA zone (e.g. `Europe/London`, `/` encoded as `%2F`) only as a fallback for the first paint. |
 | `label`  |          | `Prayer Times`     | Location name shown on the widget. Encode spaces as `%20`. |
 | `method` |          | `2` (ISNA)         | Calculation method — see table below. |
 | `school` |          | `0`                | Asr calculation: `0` = standard, `1` = Hanafi (later Asr). |
@@ -91,8 +91,8 @@ widget and paste the snippet above (with your own coordinates).
   from the prayer Sunrise/Sunset times, so it always matches the widget.
 - **Next prayer** front and centre with a live, per-second countdown.
 - **Progress bar** showing how far you are through the current interval.
-- **Time-zone correct** — the countdown uses the configured `tz`, so it's accurate even
-  if the device's clock is set to a different zone.
+- **Time-zone correct** — the time zone is resolved from the coordinates, so the times and
+  countdown always reflect the *location's* clock, no matter where you view the widget.
 - **Offline-friendly** — the day's times are cached in `localStorage`, so the widget
   paints instantly on reload and survives a flaky connection.
 - **Auto-retry** on API hiccups, and an automatic refresh when the day rolls over.
