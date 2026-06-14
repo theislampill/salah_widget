@@ -13,21 +13,23 @@ h1{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:0 0 4px}
 .ar{color:#f8d878}
 .sub{color:#ffffff99;margin:0 0 28px;text-align:center}
 .wrap{display:flex;gap:32px;flex-wrap:wrap;justify-content:center;align-items:flex-start;width:100%;max-width:860px}
-.card{background:#ffffff0d;border:1px solid #ffffff1f;border-radius:22px;padding:22px;backdrop-filter:blur(6px)}
+.card{background:#ffffff0d;border:1px solid #ffffff1f;border-radius:22px;padding:16px;backdrop-filter:blur(6px)}
 .form{flex:1 1 360px;min-width:320px}
 label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#f6d98bcc;margin:14px 0 5px}
-input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #ffffff22;background:#0d1c18;color:#fff7df;font:inherit;font-size:14px}
+input,select{width:100%;min-height:44px;padding:10px 12px;border-radius:12px;border:1px solid #ffffff22;background:#0d1c18;color:#fff7df;font:inherit;font-size:14px}
 input:focus,select:focus{outline:none;border-color:#f8d87888}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid #f8d878;outline-offset:2px}
+a:focus-visible{outline:2px solid #f8d878;outline-offset:2px;border-radius:3px}
 .row{display:flex;gap:10px}.row>div{flex:1}
 .btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-button{cursor:pointer;border:0;border-radius:12px;padding:10px 16px;font:inherit;font-weight:700;font-size:13px;
+button{cursor:pointer;border:0;border-radius:12px;min-height:44px;padding:10px 16px;font:inherit;font-weight:700;font-size:13px;
   background:linear-gradient(135deg,#f8d878,#e0a93c);color:#241507}
 button.ghost{background:#ffffff14;color:#fff7df;border:1px solid #ffffff22}
 .preview{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:14px}
 .out{width:100%;max-width:860px;margin-top:26px}
 textarea{width:100%;min-height:120px;resize:vertical;border-radius:14px;border:1px solid #ffffff22;background:#0a1714;color:#cfe;
   font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:14px}
-.note{color:#ffffff77;font-size:13px;margin-top:8px}
+.note{color:#ffffffb3;font-size:13px;margin-top:8px}
 .note code,p code{background:#ffffff14;border:1px solid #ffffff1f;border-radius:5px;padding:0 5px;font:12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#f8d878}
 #dfcode{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
 a{color:#f8d878}
@@ -40,18 +42,18 @@ iframe{box-shadow:0 18px 50px #0008}
 <p class="sub">Fill in a location, copy the snippet, paste it anywhere that takes HTML (<a href="https://github.com/BookCatKid/TablissNG" target="_blank" rel="noreferrer">TablissNG</a>, Notion, a webpage…).<br>Shows live prayer times <em>and</em> local weather — and re-colors itself for the conditions and time of day.</p>
 
 <div class="wrap">
-  <div class="card form">
-    <label>Location name</label>
+  <form class="card form" onsubmit="return false">
+    <label for="label">Location name</label>
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr">
       <div style="grid-column:1 / span 2"><input id="label" placeholder="Madinah" value="Madinah"></div>
       <button class="ghost" id="geo" type="button" style="white-space:nowrap;padding:10px">Detect Location</button>
     </div>
 
     <div class="row">
-      <div><label>Latitude</label><input id="lat" inputmode="decimal" value="24.4672"></div>
-      <div><label style="text-align:center">Longitude</label><input id="lon" inputmode="decimal" value="39.6142" style="text-align:center"></div>
+      <div><label for="lat">Latitude</label><input id="lat" inputmode="decimal" value="24.4672"></div>
+      <div><label for="lon" style="text-align:center">Longitude</label><input id="lon" inputmode="decimal" value="39.6142" style="text-align:center"></div>
       <div>
-        <label style="text-align:right">Time format</label>
+        <label for="time" style="text-align:right">Time format</label>
         <select id="time" style="text-align:right">
           <option value="24">24-hour</option>
           <option value="12">12-hour</option>
@@ -61,7 +63,7 @@ iframe{box-shadow:0 18px 50px #0008}
 
     <div class="row">
       <div>
-        <label>Calculation method</label>
+        <label for="method">Calculation method</label>
         <select id="method">
           <option value="2">ISNA — N. America</option>
           <option value="3">Muslim World League</option>
@@ -82,26 +84,26 @@ iframe{box-shadow:0 18px 50px #0008}
         </select>
       </div>
       <div>
-        <label style="text-align:right">Mithl(ayn)</label>
+        <label for="school" style="text-align:right">Mithl(ayn)</label>
         <select id="school" style="text-align:right">
           <option value="0">Shafiʿi/Maliki/Hanbali</option>
           <option value="1">Hanafi (later Asr)</option>
         </select>
       </div>
     </div>
-    <p class="note" style="margin-top:6px"><b>Method</b>: changes the Fajr &amp; Isha twilight angles<br>(choose the authority your region or community follows).<br><b>Mithl</b>: Asr begins when an object's shadow equals its height<br>(Shafiʿi · Maliki · Hanbali);<br><b>Mithlayn</b>: when the shadow is twice its height — a later Asr<br>(Hanafi).</p>
+    <p class="note" style="margin-top:6px"><strong>Method</strong>: changes the Fajr &amp; Isha twilight angles<br>(choose the authority your region or community follows).<br><strong>Mithl</strong>: Asr begins when an object's shadow equals its height<br>(Shafiʿi · Maliki · Hanbali);<br><strong>Mithlayn</strong>: when the shadow is twice its height — a later Asr<br>(Hanafi).</p>
 
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr">
       <div>
-        <label style="text-align:center">Temperature units</label>
+        <label for="units" style="text-align:center">Temperature units</label>
         <select id="units" style="text-align:center">
           <option value="f">Fahrenheit (°F)</option>
           <option value="c">Celsius (°C)</option>
         </select>
       </div>
       <div>
-        <label style="text-align:right">Date format</label>
-        <select id="datefmt" aria-label="Date format preset" style="text-align:right">
+        <label for="datefmt" style="text-align:right">Date format</label>
+        <select id="datefmt" style="text-align:right">
           <option value="YYYY-MM-DD">2026-06-14</option>
           <option value="MM/DD/YYYY">06/14/2026</option>
           <option value="DD/MM/YYYY">14/06/2026</option>
@@ -115,7 +117,7 @@ iframe{box-shadow:0 18px 50px #0008}
       </div>
     </div>
     <p class="note" style="margin-top:6px;text-align:right">Custom dates use <a href="https://cldr.unicode.org/translation/date-time/date-time-symbols" target="_blank" rel="noreferrer">Unicode date symbols</a>.</p>
-  </div>
+  </form>
 
   <div class="preview">
     <iframe id="pv" title="Prayer Times" referrerpolicy="no-referrer"
@@ -125,8 +127,8 @@ iframe{box-shadow:0 18px 50px #0008}
 </div>
 
 <div class="out">
-  <label>Embed code <span id="copied" class="copied"></span></label>
-  <textarea id="code" readonly></textarea>
+  <label for="code">Embed code <span id="copied" class="copied" role="status" aria-live="polite"></span></label>
+  <textarea id="code" readonly aria-label="Embed code"></textarea>
   <div class="btns">
     <button id="copy" type="button">Copy embed code</button>
     <button class="ghost" id="open" type="button">Open widget in new tab</button>
