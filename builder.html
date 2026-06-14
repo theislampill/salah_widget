@@ -16,13 +16,14 @@ h1{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:0 0 4px}
 .card{background:#ffffff0d;border:1px solid #ffffff1f;border-radius:22px;padding:16px;backdrop-filter:blur(6px)}
 .form{flex:1 1 360px;min-width:320px}
 label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#f6d98bcc;margin:14px 0 5px}
+.geotip{margin:14px 0 5px;font-size:11px;line-height:1.5;color:#ffffffb3;white-space:nowrap;min-width:0;text-align:center}
 input,select{width:100%;min-height:44px;padding:10px 12px;border-radius:12px;border:1px solid #ffffff22;background:#0d1c18;color:#fff7df;font:inherit;font-size:14px}
 input:focus,select:focus{outline:none;border-color:#f8d87888}
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid #f8d878;outline-offset:2px}
 a:focus-visible{outline:2px solid #f8d878;outline-offset:2px;border-radius:3px}
 .row{display:flex;gap:10px}.row>div{flex:1}
 .btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-button{cursor:pointer;border:0;border-radius:12px;min-height:44px;padding:10px 16px;font:inherit;font-weight:700;font-size:13px;
+button{cursor:pointer;border:0;border-radius:12px;height:44px;padding:10px 16px;font:inherit;font-weight:700;font-size:13px;
   background:linear-gradient(135deg,#f8d878,#e0a93c);color:#241507}
 button.ghost{background:#ffffff14;color:#fff7df;border:1px solid #ffffff22}
 .preview{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:14px}
@@ -43,9 +44,12 @@ iframe{box-shadow:0 18px 50px #0008}
 
 <div class="wrap">
   <form class="card form" onsubmit="return false">
-    <label for="label">Location name</label>
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr">
-      <div style="grid-column:1 / span 2"><input id="label" placeholder="Madinah" value="Madinah"></div>
+      <label for="label" id="loclabel" style="grid-column:1 / span 2">Location name</label>
+      <div class="geotip" id="geotip" style="grid-column:3">click to auto-detect</div>
+    </div>
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr">
+      <div style="grid-column:1 / span 2"><input id="label" placeholder="city, postcode, or place name" value="Madinah"></div>
       <button class="ghost" id="geo" type="button" style="white-space:nowrap;padding:10px">Detect Location</button>
     </div>
 
@@ -175,8 +179,99 @@ fields.forEach(f=>$(f).addEventListener("change",update));
 // (ISNA in North America, else the Umm al-Qura default). Each backs off once the user sets their own.
 let labelAuto = (!$("label").value.trim() || $("label").value.trim()==="Madinah");
 let methodAuto = true;
-$("label").addEventListener("input",()=>{ labelAuto=false; });   // programmatic .value sets don't fire 'input'/'change', so these only trip on a real edit
 $("method").addEventListener("change",()=>{ methodAuto=false; });
+
+// ---- forward geocode: type a place / postcode in the Location field to find it ----------
+// The button animates "Searching…" the moment you type; the actual lookup fires only after a
+// 1 s pause. A hit fills lat/lon and shows the normalised address in the tip; a miss says so.
+let srchDebounce=0, srchSeq=0, dotsTimer=0, btnRevert=0, tipRevert=0, multiCands=[], multiIdx=0;
+const GEO_DEFAULT="Detect Location", TIP_DEFAULT="click to auto-detect";
+let homeCC=""; try{ homeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}  // bias bare postcodes to the viewer's country (upgraded from geolocation below)
+function setTip(text, align){
+  const t=$("geotip"); t.textContent=text; t.style.textAlign=align;
+  // long result: right-align and let it overflow left over the (hidden) label; min-width:0 keeps the
+  // column a third wide so the button never moves. Short messages stay centred over the button.
+  $("loclabel").style.visibility = (align==="right") ? "hidden" : "";
+}
+function startDots(){
+  if(dotsTimer) return;
+  let n=0; $("geo").textContent="Searching";
+  dotsTimer=setInterval(()=>{ n=(n+1)%4; $("geo").textContent="Searching"+".".repeat(n); }, 350);
+}
+function stopDots(){ if(dotsTimer){ clearInterval(dotsTimer); dotsTimer=0; } }
+function searchReset(){
+  clearTimeout(srchDebounce); stopDots(); clearTimeout(btnRevert); clearTimeout(tipRevert);
+  srchSeq++; multiCands=[]; $("geo").textContent=GEO_DEFAULT; setTip(TIP_DEFAULT,"center");
+}
+function searchFailed(){                              // a miss shows only in the tip, not on the button
+  $("geo").textContent=GEO_DEFAULT;
+  setTip("Not found!","center");
+  tipRevert=setTimeout(()=>setTip(TIP_DEFAULT,"center"), 3500);
+}
+function applyCand(c){                                // push a candidate's coords (+ method) into the form & preview
+  $("lat").value=c.lat; $("lon").value=c.lon;
+  if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";
+  update();
+}
+function foundSingle(c){
+  applyCand(c); $("geo").textContent="Found!"; setTip(c.norm,"right");
+  btnRevert=setTimeout(()=>{ if($("geo").textContent==="Found!") $("geo").textContent=GEO_DEFAULT; }, 5000);
+  tipRevert=setTimeout(()=>setTip(TIP_DEFAULT,"center"), 8000);
+}
+function showMulti(){                                 // rare: two sources returned distinct places — Enter cycles through them
+  const c=multiCands[multiIdx]; applyCand(c);
+  $("geo").textContent=`Found! (${multiIdx+1}/${multiCands.length})`;
+  const t=$("geotip");
+  t.innerHTML = c.norm.replace(/&/g,"&amp;").replace(/</g,"&lt;") + "<br>Enter to cycle";   // hint on its own line so the address doesn't overflow
+  t.style.textAlign="right"; $("loclabel").style.visibility="hidden";
+  clearTimeout(btnRevert); clearTimeout(tipRevert);
+  tipRevert=setTimeout(()=>{ multiCands=[]; $("geo").textContent=GEO_DEFAULT; setTip(TIP_DEFAULT,"center"); }, 12000);
+}
+function nomCand(arr){                                // Nominatim (OSM) result → candidate
+  if(!Array.isArray(arr) || !arr.length) return null;
+  const res=arr[0], a=res.address||{};
+  const place=a.city||a.town||a.village||a.hamlet||a.municipality||a.suburb||a.county||res.name||"";
+  return { lat:parseFloat(res.lat).toFixed(5), lon:parseFloat(res.lon).toFixed(5),
+           norm:[place, a.state||a.region||a.province||"", a.country||""].filter(Boolean).join(", "),
+           cc:(a.country_code||"").toLowerCase() };
+}
+function zipCand(j){                                  // Zippopotam (Canada Post FSA) result → candidate
+  if(!j || !j.places || !j.places.length) return null;
+  const p=j.places[0], place=(p["place name"]||"").split(" (")[0].trim();
+  return { lat:(+p.latitude).toFixed(5), lon:(+p.longitude).toFixed(5),
+           norm:[place, p.state||"", j.country||""].filter(Boolean).join(", "),
+           cc:(j["country abbreviation"]||"").toLowerCase() };
+}
+function dedupe(cs){                                  // collapse candidates that point at essentially the same spot
+  const out=[]; for(const c of cs){ if(!out.some(o=>Math.abs(+o.lat-+c.lat)<0.2 && Math.abs(+o.lon-+c.lon)<0.2)) out.push(c); } return out;
+}
+async function doSearch(q){
+  const seq=++srchSeq, ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),8000);
+  const bias=(/\d/.test(q) && homeCC)?`&countrycodes=${homeCC}`:"";            // a digit ⇒ likely a postcode ⇒ keep it in the viewer's country
+  const bare=q.replace(/\s/g,""), caFSA=/^[A-Za-z]\d[A-Za-z]/.test(bare)?bare.slice(0,3).toUpperCase():null;   // Canadian postal format → also ask Zippopotam (OSM lacks Canada Post data)
+  const jobs=[ fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1${bias}&q=${encodeURIComponent(q)}`,{signal:ctl.signal}).then(r=>r.json()).then(nomCand).catch(()=>null) ];
+  if(caFSA) jobs.push( fetch(`https://api.zippopotam.us/ca/${caFSA}`,{signal:ctl.signal}).then(r=>r.ok?r.json():null).then(zipCand).catch(()=>null) );
+  try{
+    const cands=dedupe((await Promise.all(jobs)).filter(Boolean)); clearTimeout(to);
+    if(seq!==srchSeq) return;                          // a newer keystroke superseded this lookup
+    stopDots();
+    if(!cands.length) searchFailed();
+    else if(cands.length===1) foundSingle(cands[0]);
+    else { multiCands=cands; multiIdx=0; showMulti(); }
+  }catch(e){ clearTimeout(to); if(seq!==srchSeq) return; stopDots(); searchFailed(); }
+}
+$("label").addEventListener("input",()=>{
+  labelAuto=false;                                   // user owns the label now (programmatic .value sets don't fire 'input')
+  const q=$("label").value.trim();
+  clearTimeout(srchDebounce); clearTimeout(btnRevert); clearTimeout(tipRevert); srchSeq++; multiCands=[];  // invalidate any in-flight lookup / cycling
+  if(q.length<2){ searchReset(); return; }           // nothing meaningful to search
+  setTip(TIP_DEFAULT,"center");                       // restore the default tip while searching
+  startDots();                                        // animate immediately…
+  srchDebounce=setTimeout(()=>doSearch(q), 1000);     // …but only fetch after a 1 s pause
+});
+$("label").addEventListener("keydown",(e)=>{          // cycle through multiple matches with Enter
+  if(e.key==="Enter" && multiCands.length>1){ e.preventDefault(); multiIdx=(multiIdx+1)%multiCands.length; showMulti(); }
+});
 let geoTimer=0;
 async function fillNameFromCoords(){
   if(!labelAuto && !methodAuto) return;
@@ -185,6 +280,7 @@ async function fillNameFromCoords(){
   try{
     const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(la)}&longitude=${encodeURIComponent(lo)}&localityLanguage=en`,{referrerPolicy:"no-referrer"});
     const j=await r.json();
+    if(j.countryCode) homeCC=j.countryCode.toLowerCase();   // upgrade the postcode-bias country to the actual detected location
     if(labelAuto){ const name=(j.city||j.locality||j.principalSubdivision||j.countryName||"").trim(); if(name) $("label").value=name; }
     if(methodAuto) $("method").value = (j.continentCode==="NA") ? "2" : "4";   // ISNA for North America
     update();
@@ -224,6 +320,7 @@ $("copy").onclick=async()=>{
 };
 function locate(auto){
   if(!navigator.geolocation){ if(!auto) alert("Geolocation isn't available in this browser."); return; }
+  searchReset();                                       // clicking the button cancels any in-progress text search
   $("geo").textContent="Locating…";
   navigator.geolocation.getCurrentPosition(
     pos=>{ $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
