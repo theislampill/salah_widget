@@ -468,8 +468,10 @@ function model(){
   let cur="Isha"; for(const k of prayers){ if(mins(t[k])<=nowMin) cur=k; }
   // "Sunrise" only lingers 20 min; the rest of the morning (until Dhuhr) is "Forenoon"
   if(cur==="Sunrise" && nowMin >= mins(t.Sunrise)+20) cur="Forenoon";
+  const doy=Math.floor((Date.UTC(n.y,n.mo-1,n.d)-Date.UTC(n.y,0,0))/86400000);
+  const decl=23.44*Math.PI/180*Math.sin(2*Math.PI*(doy-80)/365.25);   // solar declination (rad), from the date
   return {
-    t, noon, sunrise:norm(mins(t.Sunrise)), sunset:norm(mins(t.Sunset||t.Maghrib)),
+    t, noon, decl, sunrise:norm(mins(t.Sunrise)), sunset:norm(mins(t.Sunset||t.Maghrib)),
     nowMin, nowAbs:norm(nowMin), warmEnd: tomorrowFlag ? start+1440 : norm(next.m),
     dots: prayers.map(k=>({k, abs:norm(mins(t[k]))})),
     currentKey:cur, nextKey:next.k, nextTime:next.t,
@@ -483,21 +485,28 @@ function drawArc(M){
   const W=295,H=180,hY=104,Ad=94,An=76,R=5, start=M.noon-720;
   const X=a=>(a-start)/1440*W;
   const noonT=(M.sunrise+M.sunset)/2;                          // solar noon = the arc's apex
-  // a smooth, continuous arc — a physically-INFORMED metaphor, not a literal altitude chart:
-  // 0 at the dotted horizon, peak at solar noon, a shallow dip below for twilight/night. The
-  // dots fall on this curve (Sunrise/Maghrib on the line, Fajr/Isha below, Asr descending).
-  const ALT=a=>{
-    if(a<=M.sunrise){ const f=(a-start)/(M.sunrise-start); return -An*Math.cos(f*Math.PI/2); }
-    if(a<=M.sunset){  const f=(a-M.sunrise)/(M.sunset-M.sunrise); return Ad*Math.sin(f*Math.PI); }
-    const f=(a-M.sunset)/((start+1440)-M.sunset); return -An*Math.sin(f*Math.PI/2);
-  };
+  // Physics-INFORMED continuous arc: sample the real sun altitude across the day, then COMPRESS it
+  // with tanh into the Ad/An envelope. The shape (apex height, daylight span, twilight depth) now
+  // follows the actual sun for this date + latitude — summer rides high with long days, winter sits
+  // low with short ones — yet the tanh keeps it smooth and rounded like the old arc, never a steep
+  // chart. 0° altitude maps to the dotted horizon; positive above, negative twilight/night below.
+  const DEG=Math.PI/180, phi=(+(q.get("lat"))||0)*DEG;
+  let decl=M.decl;                                             // declination from the date (rad)…
+  const tp=Math.tan(phi), Hsr=((M.sunset-M.sunrise)/2)*0.25*DEG;
+  if(Math.abs(tp)>0.05){ const d=Math.atan(-Math.cos(Hsr)/tp);// …refined by the day's own length so
+    if(isFinite(d)&&Math.abs(d)<24*DEG) decl=d; }             // altitude hits exactly 0 at sunrise/sunset
+  const cl=x=>x<-1?-1:x>1?1:x;
+  const elevDeg=a=>Math.asin(cl(Math.sin(phi)*Math.sin(decl)+Math.cos(phi)*Math.cos(decl)*Math.cos((a-noonT)*0.25*DEG)))/DEG;
+  // Sn = S·An/Ad makes the day and night slopes match at the horizon → one smooth curve, no kink.
+  const S=42, Sn=S*An/Ad;
+  const ALT=a=>{ const d=elevDeg(a); return d>=0 ? Ad*Math.tanh(d/S) : An*Math.tanh(d/Sn); };
   const Y=a=>hY-ALT(a);
   const pathFrom=(a0,a1,steps)=>{
     let d=""; for(let i=0;i<=steps;i++){ const a=a0+(a1-a0)*i/steps; d+=`${i?"L":"M"}${X(a).toFixed(1)} ${Y(a).toFixed(1)}`; } return d;
   };
-  const rail=pathFrom(start,start+1440,120);
+  const rail=pathFrom(start,start+1440,180);                  // ~8 min per sample → a smooth path
   // elapsed portion of the day, filled in accent up to "now" (like the progress bar)
-  const elapsed=pathFrom(start,M.nowAbs,Math.max(2,Math.round((M.nowAbs-start)/12)));
+  const elapsed=pathFrom(start,M.nowAbs,Math.max(2,Math.round((M.nowAbs-start)/8)));
   let dots="";
   for(const p of M.dots){
     const cls = p.k===M.nextKey ? "dot next" : "dot";
