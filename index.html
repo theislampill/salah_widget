@@ -8,21 +8,40 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:transparent}
 body{color:#fff7df;font:14px system-ui,-apple-system,Segoe UI,sans-serif}
-.c{width:325px;height:280px;border-radius:28px;padding:13px 15px;background:radial-gradient(circle at 0 0,#7c5b2488,transparent 38%),linear-gradient(145deg,#102b23,#071211 70%,#241507);box-shadow:0 18px 50px #0008;border:1px solid #f6d98b55;overflow:hidden}
-.h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
-.e{font-size:10px;line-height:1.2;letter-spacing:.16em;text-transform:uppercase;color:#f6d98bbb;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c{
+  --g1:#102b23;--g2:#071211;--g3:#241507;
+  --glow:#7c5b2488;--accent:#f8d878;--accent2:#e8b24a;--text:#fff7df;
+  width:325px;height:280px;border-radius:28px;padding:13px 15px;
+  background:radial-gradient(circle at 0 0,var(--glow),transparent 40%),linear-gradient(145deg,var(--g1),var(--g2) 70%,var(--g3));
+  box-shadow:0 18px 50px #0008;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  color:var(--text);overflow:hidden;transition:color .5s,border-color .5s}
+/* weather + day/night palettes */
+.c[data-theme="clearDay"]  {--g1:#1d6a4e;--g2:#0a2a23;--g3:#3a2606;--glow:#ffcf6baa;--accent:#ffdf8e;--accent2:#edb43f;--text:#fff7df}
+.c[data-theme="clearNight"]{--g1:#101a3c;--g2:#070b1c;--g3:#171340;--glow:#475ec0aa;--accent:#ecd49a;--accent2:#c9a85f;--text:#eef1ff}
+.c[data-theme="cloudDay"]  {--g1:#2c3c3a;--g2:#161f1e;--g3:#23211b;--glow:#aebbb888;--accent:#ecd9a4;--accent2:#cbb578;--text:#f3f5f0}
+.c[data-theme="cloudNight"]{--g1:#1b2533;--g2:#0a0f18;--g3:#161820;--glow:#61739480;--accent:#d8c89c;--accent2:#b0a074;--text:#eaedf4}
+.c[data-theme="rain"]      {--g1:#16323f;--g2:#0a1a22;--g3:#0e2531;--glow:#5aa0c2aa;--accent:#bfe2f2;--accent2:#6fb6d8;--text:#eaf4fb}
+.c[data-theme="snow"]      {--g1:#2a3a45;--g2:#16242c;--g3:#243039;--glow:#cfeaffcc;--accent:#eaf6ff;--accent2:#a9d2ea;--text:#f2f9ff}
+.c[data-theme="fog"]       {--g1:#2b3331;--g2:#171c1b;--g3:#202624;--glow:#b8c2c088;--accent:#e2e6e0;--accent2:#aab0aa;--text:#eef1ee}
+.c[data-theme="thunder"]   {--g1:#241b3c;--g2:#0c0a1a;--g3:#241228;--glow:#8a6cffaa;--accent:#dac9ff;--accent2:#9d7cff;--text:#efeaff}
+.h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:7px}
+.hl{min-width:0}
+.hr{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:none}
+.e{font-size:10px;line-height:1.2;letter-spacing:.16em;text-transform:uppercase;color:color-mix(in srgb,var(--accent) 72%,#fff);max-width:185px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .t{font-size:19px;line-height:1.1;font-weight:900;letter-spacing:-.04em}
-.ar{font-size:21px;line-height:1;color:#f8d878;text-shadow:0 0 18px #f8d87855}
+.ar{font-size:18px;line-height:1;color:var(--accent);text-shadow:0 0 18px color-mix(in srgb,var(--accent) 40%,transparent)}
+.wx{font-size:12px;line-height:1;color:var(--text);opacity:.9;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.wx .i{font-size:14px}
 .nbox{padding:8px 11px;border-radius:16px;background:#ffffff14;border:1px solid #ffffff22;margin-bottom:6px}
-.lab,.left,.d{color:#ffffffaa;font-size:11.5px;line-height:1.25}
+.lab,.left,.d{color:color-mix(in srgb,var(--text) 62%,transparent);font-size:11.5px;line-height:1.25}
 .nr{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .n{font-size:22px;line-height:1.05;font-weight:950}
-.nt{font-size:19px;line-height:1.05;font-weight:850;color:#f8d878}
+.nt{font-size:19px;line-height:1.05;font-weight:850;color:var(--accent)}
 .bar{height:5px;border-radius:5px;background:#ffffff1a;margin:6px 0 4px;overflow:hidden}
-.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f8d878,#e8b24a);border-radius:5px;transition:width .9s linear}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:5px;transition:width .9s linear}
 .times{display:grid;grid-template-columns:1fr 1fr;gap:5px}
 .p{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 9px;border-radius:12px;background:#ffffff10;border:1px solid #ffffff12;transition:opacity .3s,background .3s}
-.p.on{background:#f8d87822;border-color:#f8d87866}
+.p.on{background:color-mix(in srgb,var(--accent) 16%,transparent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
 .p.past{opacity:.42}
 b{font-weight:800}
 .tm{font-weight:850;font-size:13px}
@@ -32,8 +51,8 @@ b{font-weight:800}
 <body>
 <div class="c">
   <div class="h">
-    <div><div class="e" id="loc">Prayer Times</div><div class="t">Prayer Times</div></div>
-    <div class="ar">الصلاة</div>
+    <div class="hl"><div class="e" id="loc">Prayer Times</div><div class="t">Prayer Times</div></div>
+    <div class="hr"><div class="ar">الصلاة</div><div class="wx" id="wx"></div></div>
   </div>
   <div class="nbox">
     <div class="lab">Next prayer</div>
@@ -56,6 +75,7 @@ const label = q.get("label") || "Prayer Times";
 const method= q.get("method")|| "2";
 const school= q.get("school")|| "0";
 const fmt24 = (q.get("time") || "12") === "24";
+const units = (q.get("units") || "f").toLowerCase() === "c" ? "c" : "f";
 
 const prayers = ["Fajr","Sunrise","Dhuhr","Asr","Maghrib","Isha"];
 const real    = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
@@ -121,6 +141,62 @@ async function fetchTimings(dateStr){
   throw err;
 }
 
+// ---- weather (Open-Meteo: free, no key, CORS-enabled) -------------------
+let weather=null, lastWxAt=0, lastWxTry=0, wxBusy=false;
+const wxKey = "salahwx:"+[lat,lon,units].join("|");
+function loadWx(){
+  try{ const j=JSON.parse(localStorage.getItem(wxKey)); if(j && Date.now()-j.ts < 6*3600e3){ weather=j.w; lastWxAt=j.ts; } }catch(e){}
+}
+async function fetchWeather(){
+  if(!lat||!lon||wxBusy) return;
+  const now=Date.now();
+  if(weather && now-lastWxAt < 15*60*1000) return;   // still fresh
+  if(now-lastWxTry < 60*1000) return;                // throttle (incl. retries on failure)
+  lastWxTry=now; wxBusy=true;
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(lat)}&longitude=${enc(lon)}&current=temperature_2m,weather_code&temperature_unit=${units==="c"?"celsius":"fahrenheit"}&timezone=${enc(tz)}`;
+  try{
+    const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer"});
+    const j=await r.json();
+    if(j&&j.current&&j.current.weather_code!=null){
+      weather={code:j.current.weather_code, temp:Math.round(j.current.temperature_2m)};
+      lastWxAt=Date.now();
+      try{ localStorage.setItem(wxKey,JSON.stringify({w:weather,ts:lastWxAt})); }catch(e){}
+    }
+  }catch(e){}
+  finally{ wxBusy=false; }
+}
+// WMO weather code (+ day/night) -> condition / emoji / label
+function wxInfo(code, day){
+  const c=code;
+  if(c==null||c===0)   return {cond:"clear",   icon:day?"☀️":"🌙", label:day?"Clear":"Clear night"};
+  if(c===1||c===2)     return {cond:"cloud",   icon:day?"⛅":"☁️", label:"Partly cloudy"};
+  if(c===3)            return {cond:"cloud",   icon:"☁️",  label:"Overcast"};
+  if(c===45||c===48)   return {cond:"fog",     icon:"🌫️", label:"Fog"};
+  if(c>=51&&c<=57)     return {cond:"rain",    icon:"🌦️", label:"Drizzle"};
+  if(c>=61&&c<=67)     return {cond:"rain",    icon:"🌧️", label:"Rain"};
+  if(c>=71&&c<=77)     return {cond:"snow",    icon:"🌨️", label:"Snow"};
+  if(c>=80&&c<=82)     return {cond:"rain",    icon:"🌦️", label:"Showers"};
+  if(c===85||c===86)   return {cond:"snow",    icon:"🌨️", label:"Snow showers"};
+  if(c>=95)            return {cond:"thunder", icon:"⛈️", label:"Thunderstorm"};
+  return {cond:"clear", icon:day?"☀️":"🌙", label:"—"};
+}
+// daytime = between Sunrise and Sunset, straight from the prayer data
+function isDayNow(nowMin){
+  if(!today) return true;
+  const sr=mins(today.timings.Sunrise);
+  const ss=mins(today.timings.Sunset||today.timings.Maghrib);
+  return nowMin>=sr && nowMin<ss;
+}
+function applyTheme(nowMin){
+  const day=isDayNow(nowMin);
+  const info=wxInfo(weather?weather.code:null, day);
+  const key=(info.cond==="clear"||info.cond==="cloud") ? info.cond+(day?"Day":"Night") : info.cond;
+  $(".c").dataset.theme=key;
+  const el=$("#wx");
+  el.title=info.label;
+  el.innerHTML = `<span class="i">${info.icon}</span>` + (weather ? `${weather.temp}°` : "");
+}
+
 // ---- state ---------------------------------------------------------------
 let today=null, tomorrow=null, lastDate=null, fetchingTomorrow=false;
 $("#loc").textContent = label;
@@ -172,6 +248,7 @@ function render(){
   }).join("");
   const hijri = today.date && today.date.hijri && today.date.hijri.date ? ` · ${today.date.hijri.date}` : "";
   $(".d").textContent = (today.date && today.date.readable || "")+hijri;
+  applyTheme(c.nowMin);
 }
 
 function tick(){
@@ -181,11 +258,14 @@ function tick(){
     fetchTimings(n.dateStr).then(d=>{today=d;saveCache(n.dateStr,d);}).catch(()=>{});
   }
   lastDate=n.dateStr;
+  fetchWeather();          // self-throttling; refreshes ~every 15 min
   render();
 }
 
 async function boot(){
   if(!lat||!lon){ showError("Add lat & lon to the URL"); return; }
+  loadWx();                // instant weather from cache, if any
+  fetchWeather();          // refresh in the background
   const ds=nowParts().dateStr;
   const cached=loadCache(ds);
   if(cached){ today=cached; lastDate=ds; render(); }   // instant paint from cache

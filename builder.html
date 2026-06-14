@@ -35,7 +35,7 @@ iframe{box-shadow:0 18px 50px #0008}
 </head>
 <body>
 <h1>Prayer Times widget <span class="ar">·</span> builder</h1>
-<p class="sub">Fill in a location, copy the snippet, paste it anywhere that takes HTML (TablissNG, Notion, a webpage…).</p>
+<p class="sub">Fill in a location, copy the snippet, paste it anywhere that takes HTML (TablissNG, Notion, a webpage…).<br>Shows live prayer times <em>and</em> local weather — and re-colors itself for the conditions and time of day.</p>
 
 <div class="wrap">
   <div class="card form">
@@ -50,6 +50,7 @@ iframe{box-shadow:0 18px 50px #0008}
 
     <label>Time zone</label>
     <input id="tz" value="America/New_York">
+    <div class="btns"><button class="ghost" id="tzauto" type="button">🌐 Auto-detect time zone</button></div>
 
     <div class="row">
       <div>
@@ -91,8 +92,11 @@ iframe{box-shadow:0 18px 50px #0008}
         </select>
       </div>
       <div>
-        <label>&nbsp;</label>
-        <button class="ghost" id="tzauto" type="button" style="width:100%">Auto-detect time zone</button>
+        <label>Temperature units</label>
+        <select id="units">
+          <option value="f">Fahrenheit (°F)</option>
+          <option value="c">Celsius (°C)</option>
+        </select>
       </div>
     </div>
   </div>
@@ -118,7 +122,7 @@ iframe{box-shadow:0 18px 50px #0008}
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const fields=["label","lat","lon","tz","method","school","time"];
+const fields=["label","lat","lon","tz","method","school","time","units"];
 const base=location.href.replace(/builder\.html.*$/,"").replace(/[?#].*$/,"");
 
 function hash(){
@@ -130,6 +134,7 @@ function hash(){
   p.set("method",$("method").value);
   p.set("school",$("school").value);
   if($("time").value==="24") p.set("time","24");
+  if($("units").value==="c") p.set("units","c");
   return p.toString();
 }
 function url(){ return base+"#"+hash(); }

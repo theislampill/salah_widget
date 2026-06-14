@@ -51,6 +51,7 @@ widget and paste the snippet above (with your own coordinates).
 | `method` |          | `2` (ISNA)         | Calculation method — see table below. |
 | `school` |          | `0`                | Asr calculation: `0` = standard, `1` = Hanafi (later Asr). |
 | `time`   |          | `12`               | Clock format: `12` (3:45 PM) or `24` (15:45). |
+| `units`  |          | `f`                | Weather temperature: `f` (°F) or `c` (°C). |
 
 > Tip: don't know your coordinates? Right-click your location on
 > [OpenStreetMap](https://www.openstreetmap.org) → **Show address**, or just use the
@@ -81,6 +82,12 @@ widget and paste the snippet above (with your own coordinates).
 
 ## Features
 
+- **Live local weather** — current condition and temperature (from Open-Meteo) shown in
+  the header.
+- **Weather-reactive color theme** — the palette shifts with the sky: warm gold under a
+  clear day, deep indigo on a clear night, muted grey when cloudy, cool steel-blue for
+  rain, icy for snow, and charcoal-violet for thunderstorms. Day vs. night is derived
+  from the prayer Sunrise/Sunset times, so it always matches the widget.
 - **Next prayer** front and centre with a live, per-second countdown.
 - **Progress bar** showing how far you are through the current interval.
 - **Time-zone correct** — the countdown uses the configured `tz`, so it's accurate even
@@ -104,5 +111,6 @@ widget and paste the snippet above (with your own coordinates).
 
 ## Credits
 
-Prayer time calculations by the [Aladhan API](https://aladhan.com/prayer-times-api).
-The widget makes a direct browser request to Aladhan and stores nothing about you.
+Prayer time calculations by the [Aladhan API](https://aladhan.com/prayer-times-api), and
+weather by [Open-Meteo](https://open-meteo.com) — both free and key-less. The widget makes
+direct browser requests to these APIs and stores nothing about you.
