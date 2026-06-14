@@ -60,6 +60,11 @@ body{color:#fff7df;
 .climate .tintw{background:#ff9a3c;mix-blend-mode:soft-light;opacity:var(--warm,0)}
 .climate .tintc{background:#7fb0ff;mix-blend-mode:soft-light;opacity:var(--cool,0)}
 .climate .frost{background:radial-gradient(125% 95% at 50% 46%,transparent 50%,#cfe6ff 128%);mix-blend-mode:screen;opacity:var(--frost,0)}
+/* heat-haze: a warm convection band that rises + wobbles low in the sky when it's hot (alpha+wobble
+   scale with --heat, so it vanishes entirely when cold). Cheap transform/opacity only. */
+.climate .heatwave{top:auto;height:42%;background:linear-gradient(0deg,rgba(255,206,150,calc(.13*var(--heat,0))),transparent 85%);mix-blend-mode:soft-light;will-change:transform}
+@media (prefers-reduced-motion:no-preference){.climate .heatwave{animation:heatwave 3.1s ease-in-out infinite}}
+@keyframes heatwave{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(calc(-2px*var(--heat,0))) scaleY(calc(1 + .03*var(--heat,0)))}}
 /* top metadata scrim — protects the location/weather header from dissolving into the cloud
    texture; only revealed in busy weather, so clear skies stay clean (no darkening). */
 .scrim{position:absolute;top:0;left:0;right:0;height:64px;z-index:1;pointer-events:none;opacity:0;transition:opacity .9s;
@@ -74,7 +79,7 @@ body{color:#fff7df;
 @keyframes tw{0%,100%{opacity:var(--o,.85)}50%{opacity:calc(var(--o,.85) - var(--amp,.18))}}
 @media (prefers-reduced-motion:reduce){.stars circle{animation:none!important}}
 .moon{opacity:1}
-.moccluder{fill:var(--moon-sky,#0b1430)}            /* sky colour where the moon sits → the fade dissolves into the sky, never reveals stars */
+.moccluder{fill:var(--moon-sky,#0b1430);opacity:var(--moonocc,1);transition:opacity .9s}  /* opaque only when stars are out (hides them); 0 in daylight so no ghost moon by day */
 .mfeatures{opacity:var(--moonfeat,1);transition:opacity .9s}
 .mcorona{fill:none;stroke:#eef0ff;stroke-width:0;mix-blend-mode:screen;filter:blur(10px);opacity:0;transition:opacity 1.2s,stroke-width 1.2s}  /* humidity-driven lunar corona */
 .mglow{fill:#dfe6f2;filter:blur(7px);mix-blend-mode:screen}
@@ -104,17 +109,17 @@ body{color:#fff7df;
   background:radial-gradient(circle at 68% 14%,#dfe2ffe6,#b9b0ff66 28%,transparent 58%)}
 .wfx .bolt{position:absolute;inset:0;width:100%;height:100%;opacity:0}
 .wfx .bolt path{fill:none;stroke:#eef0ff;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 4px #cfd2ff)}
-@keyframes cloudA{0%{transform:translate(-26px,0)}50%{transform:translate(30px,-5px)}100%{transform:translate(-26px,0)}}
-@keyframes cloudB{0%{transform:translate(26px,0)}50%{transform:translate(-24px,4px)}100%{transform:translate(26px,0)}}
-@keyframes gust{0%,100%{opacity:1}50%{opacity:calc(1 - .12*var(--gust,0))}}
+@keyframes cloudA{0%{transform:translate(calc(var(--wind-dir,1)*-42px),0)}50%{transform:translate(calc(var(--wind-dir,1)*46px),-6px)}100%{transform:translate(calc(var(--wind-dir,1)*-42px),0)}}
+@keyframes cloudB{0%{transform:translate(calc(var(--wind-dir,1)*40px),0)}50%{transform:translate(calc(var(--wind-dir,1)*-38px),5px)}100%{transform:translate(calc(var(--wind-dir,1)*40px),0)}}
+@keyframes gust{0%,100%{opacity:1}50%{opacity:calc(1 - .22*var(--gust,0))}}
 /* continuous "alive" cues so a clear sky is never static: the Mie bloom breathes, the Rayleigh
    scatter band drifts laterally. GPU transform/opacity only; gated to clear/cloud + reduced-motion. */
 @media (prefers-reduced-motion:no-preference){
-  .c[data-fx=clear] .atmo .sun,.c[data-fx=cloud] .atmo .sun{animation:breathe 11s ease-in-out infinite}
+  .c[data-fx=clear] .atmo .sun,.c[data-fx=cloud] .atmo .sun{animation:breathe var(--breathe-dur,9s) ease-in-out infinite}
   .c[data-fx=clear] .atmo .scatter{animation:scatterdrift 23s ease-in-out infinite}
 }
-@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.92}50%{transform:translate(-50%,-50%) scale(1.06);opacity:1}}
-@keyframes scatterdrift{0%,100%{transform:translateX(0) scaleY(1);opacity:1}50%{transform:translateX(2.5%) scaleY(1.04);opacity:.93}}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.84}50%{transform:translate(-50%,-50%) scale(1.13);opacity:1}}
+@keyframes scatterdrift{0%,100%{transform:translateX(0) scaleY(1);opacity:1}50%{transform:translateX(5%) scaleY(1.08);opacity:.9}}
 @keyframes fogdrift{0%{transform:translateX(-12%)}50%{transform:translateX(12%)}100%{transform:translateX(-12%)}}
 @keyframes fall{0%{transform:translate(0,-22px);opacity:0}12%{opacity:.75}88%{opacity:.75}100%{transform:translate(-86px,560px);opacity:0}}
 @keyframes snowfall{0%{transform:translate(0,-14px);opacity:0}10%{opacity:.95}25%{transform:translate(8px,128px)}50%{transform:translate(-6px,280px)}75%{transform:translate(8px,420px)}90%{opacity:.95}100%{transform:translate(-3px,560px);opacity:0}}
@@ -269,7 +274,7 @@ body{color:#fff7df;
     <rect width="325" height="530" filter="url(#grainf)"/>
   </svg>
 
-  <div class="climate" aria-hidden="true"><div class="tintw"></div><div class="tintc"></div><div class="frost"></div></div>
+  <div class="climate" aria-hidden="true"><div class="tintw"></div><div class="tintc"></div><div class="frost"></div><div class="heatwave"></div></div>
   <div class="scrim" aria-hidden="true"></div>
   <div class="h">
     <span class="e" id="loc"></span>
@@ -514,11 +519,14 @@ function renderMoon(){
   if(SIM.moon!=null){                                              // sim: simple upright phase for testing
     frac=clamp(+SIM.moon); waxing=SIM.wax!=="0";
     $("#mlitclip").setAttribute("d", moonLit(R, frac, waxing));
-  } else {                                                         // real: accurate fraction + observed orientation
-    const date=new Date(), il=moonIllum(date), q=moonParallactic(date, +lat, +lon);
+  } else if(isFinite(+lat) && isFinite(+lon)){                     // real: accurate fraction + observed orientation
+    const date=new Date(), latC=Math.max(-89.5,Math.min(89.5,+lat)), il=moonIllum(date), q=moonParallactic(date, latC, +lon);
     frac=il.fraction; waxing=il.waxing;
     $("#mlitclip").setAttribute("d", moonLit(R, frac, true));      // canonical (lit-right, cusps vertical)…
     rotDeg=-(((il.chi - q)*180/Math.PI)+90);                       // …rotate the whole disc to the bright-limb zenith angle χ−q (encodes hemisphere mirror + cusp tilt)
+  } else {                                                         // no coords yet: a plausible upright moon, never NaN
+    const mp=moonNow(); frac=mp.frac; waxing=mp.waxing;
+    $("#mlitclip").setAttribute("d", moonLit(R, frac, waxing));
   }
   const feat=$(".mfeatures"); if(feat) feat.setAttribute("transform", `rotate(${rotDeg.toFixed(1)})`);
   // earthshine glows on the dark limb (strongest near new); the halo grows with illumination.
@@ -544,10 +552,10 @@ function buildStars(){
     const cu=rnd(i,9.13); let ci=cdf.findIndex(c=>cu<=c); if(ci<0)ci=3;
     const col=COL[ci];
     const alt=1-y/H;                                                    // 1 = top, 0 = horizon
-    const amp=(0.05+0.26*(1-alt)).toFixed(2);                           // low stars twinkle with more amplitude…
-    const dur=(1.7+4.6*alt).toFixed(1);                                 // …and faster
-    const twinkles=rnd(i,5.27)>0.62;                                    // ~38 % twinkle, the rest hold steady
-    if(mag<1.9) s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r*2.7).toFixed(1)}" fill="${col}" opacity="0.13"/>`;  // soft glow halo on the brightest few
+    const amp=(0.18+0.34*(1-alt)).toFixed(2);                           // clearly-visible scintillation (low stars twinkle hardest)…
+    const dur=(1.6+4.2*alt).toFixed(1);                                 // …and faster
+    const twinkles=rnd(i,5.27)>0.35;                                    // ~65 % twinkle
+    if(mag<2.4) s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r*2.7).toFixed(1)}" fill="${col}" opacity="0.2"/>`;  // soft glow halo on the brighter stars
     s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="${col}" opacity="${o.toFixed(2)}"`
       +(twinkles?` style="--o:${o.toFixed(2)};--amp:${amp};animation:tw ${dur}s ease-in-out ${(-rnd(i,2.1)*6).toFixed(1)}s infinite"`:"")+"/>";
   }
@@ -571,7 +579,7 @@ function buildWeather(){
 }
 
 // ---- state ---------------------------------------------------------------
-let today=null, tomorrow=null, lastDate=null, fetchingTomorrow=false;
+let today=null, tomorrow=null, lastDate=null, fetchingTomorrow=false, lastMoonMin=-1;
 $("#loc").textContent = label;
 $("#loc").style.display = label ? "" : "none";
 
@@ -812,20 +820,24 @@ function applyTheme(M){
   c.style.setProperty("--sunx",sm.x.toFixed(1)+"%");
   c.style.setProperty("--suny",sm.y.toFixed(1)+"%");
   c.style.setProperty("--stars",stars.toFixed(3));
-  c.style.setProperty("--starblur",(w.blur + 1.1*D.humid).toFixed(2)+"px");   // humid air softens the stars
+  c.style.setProperty("--moonocc",clamp(Math.max(stars, moon)*10).toFixed(3));   // occluder opaque whenever the disc OR stars are visible; 0 in full daylight (no ghost moon)
+  c.style.setProperty("--starblur",Math.min(0.6, w.blur + 0.6*D.humid).toFixed(2)+"px");   // humid air softens the stars a touch (capped so points stay crisp)
   c.style.setProperty("--moonfeat",moon.toFixed(3));
   c.style.setProperty("--moon-sky",rgb(g1));         // occluder tracks the live sky colour so the faded moon melts into it, never revealing stars
   // heat/cold cues from apparent_temperature; frost vignette + cool/warm soft-light tints (background only)
+  c.style.setProperty("--heat",D.heat.toFixed(3));
   c.style.setProperty("--warm",(0.20*D.heat).toFixed(3));
   c.style.setProperty("--cool",(0.22*D.cold).toFixed(3));
   c.style.setProperty("--frost",(0.5*D.cold).toFixed(3));
+  c.style.setProperty("--breathe-dur",(9-5*D.heat).toFixed(1)+"s");   // the Mie bloom pulses faster on hot days (radiant shimmer)
   // lunar corona: a thin-cloud + humid sky haloes a present moon
   const corona=clamp((D.rh-0.78)/0.18)*((D.cloud>0.15&&D.cloud<0.75)?1:0.3)*clamp(mp.frac+0.2)*clamp(moonVis(M));
   const mc=$(".mcorona"); if(mc){ mc.setAttribute("stroke-width",(6+10*corona).toFixed(1)); mc.style.opacity=(0.5*corona).toFixed(3); }
   // wind → cloud drift speed + gust flicker
-  c.style.setProperty("--cloud-dur-a",(120-95*D.wind).toFixed(0)+"s");
-  c.style.setProperty("--cloud-dur-b",(190-150*D.wind).toFixed(0)+"s");
+  c.style.setProperty("--cloud-dur-a",(70-55*D.wind).toFixed(0)+"s");
+  c.style.setProperty("--cloud-dur-b",(100-80*D.wind).toFixed(0)+"s");
   c.style.setProperty("--gust",D.gust.toFixed(3));
+  c.style.setProperty("--wind-dir", D.windX>=0?"1":"-1");        // wind FROM the west ⇒ clouds drift east(+); flips with the bearing
   // Belt of Venus: a pink anti-twilight band low on the ANTI-solar horizon during civil twilight (sun 0..−6°)
   const depN=-sm.altN, belt=Math.max(0,1-Math.abs(depN-0.045)/0.085)*((cls==="clear"||cls==="cloud")?1:0.25);
   c.style.setProperty("--antix",(100-sm.x).toFixed(1)+"%");
@@ -880,6 +892,7 @@ function fitCn(M){
 function render(){
   if(!today) return;
   const M=model();
+  const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin){ lastMoonMin=mm; renderMoon(); }   // re-render the moon each minute so its orientation/earthshine track the evening
   const afterMaghrib = M.nowMin >= mins(M.t.Maghrib);          // the Islamic (Hijri) day rolls over at Maghrib, not midnight
   if(!tomorrow && !fetchingTomorrow){                          // always: needed for the overnight Fajr, the AH roll-over, and the pre-Maghrib preview number
     fetchingTomorrow=true;
