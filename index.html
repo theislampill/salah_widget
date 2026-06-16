@@ -58,7 +58,7 @@ body{color:#fff7df;
 .atmo .suncorner>div{position:absolute;left:0;top:0;border-radius:50%;will-change:transform;transition:background 1.6s linear}
 .atmo .suncorner .disc{width:240px;height:240px;
   background:radial-gradient(circle,#fff 0%,#fff 20%,var(--suncore,#fff6e0) 42%,var(--sunmid,#ffcf8a) 66%,rgba(255,190,110,0) 88%);
-  filter:blur(1.3px);transform:translate(-50%,-50%) scale(var(--sundisc,1))}   /* bright nucleus fading smoothly to RADIANCE (smaller solid plateau, softer falloff) so the clipped corner sun reads as glow, not a flat pasted disc */
+  filter:blur(1.3px);transform:translate(-50%,-50%) scale(var(--sundisc,1)) scaleY(var(--sunflat,1))}   /* bright nucleus fading to RADIANCE; scaleY = low-sun atmospheric-refraction FLATTENING near the horizon */
 .atmo .suncorner .corona{width:600px;height:600px;
   background:radial-gradient(circle,rgba(255,214,158,.4) 0%,rgba(255,198,128,.2) 24%,rgba(255,184,112,.075) 48%,rgba(255,170,100,0) 66%);
   filter:blur(10px);transform:translate(-50%,-50%) scale(var(--sunpulse,1))}   /* broad subordinate corona/radiance */
@@ -70,6 +70,36 @@ body{color:#fff7df;
 .atmo .scatter{position:absolute;inset:0;background:radial-gradient(150% 96% at var(--sunx) 127%,var(--horizon),transparent 62%)}
 .atmo .belt{position:absolute;inset:0;background:radial-gradient(135% 26% at var(--antix,50%) 120%,var(--belt,transparent),transparent 72%)}  /* Belt of Venus (anti-solar pink, civil twilight) */
 .atmo .airglow{position:absolute;inset:0;background:radial-gradient(150% 40% at 50% 119%,var(--airglow,transparent),transparent 74%)}  /* night airglow + light-pollution dome low on the horizon */
+/* FALSE DAWN (al-fajr al-kādhib, the zodiacal "wolf's tail"): a faint NARROW, TALL, VERTICAL cone of light rising
+   from the EASTERN horizon BEFORE true dawn. It does NOT begin Fajr — purely contextual, deliberately distinct in
+   SHAPE from true dawn (vertical, not horizontal) and never a warm sunrise colour. */
+.atmo .falsedawn{position:absolute;inset:0;opacity:var(--falsedawn,0);transition:opacity 2s ease;mix-blend-mode:screen;
+  background:radial-gradient(8% 44% at var(--dawnx,20%) 33%,rgba(214,220,242,.6),rgba(206,214,238,.12) 48%,transparent 72%)}  /* narrow TALL cone rising in the eastern sky above the horizon */
+/* TRUE DAWN (al-fajr al-ṣādiq): a WIDE, SHORT, HORIZONTAL whiteness spreading ALONG the dashed 0° horizon — this
+   is the light that begins Fajr. Faint cool white (the sky stays dark; NOT a bright sunrise palette). */
+.atmo .truedawn{position:absolute;inset:0;opacity:var(--truedawn,0);transition:opacity 2s ease;mix-blend-mode:screen;
+  background:radial-gradient(62% 9% at var(--dawnx,20%) 43%,rgba(230,234,250,.62),rgba(214,222,242,.14) 46%,transparent 64%)}  /* wide SHORT horizontal thread along the horizon */
+/* ICE-CRYSTAL SOLAR OPTICS (only with thin CIRRUS / cold air — gated in atmosphere(), never random). Centre on the
+   sun's screen position (--sunx/--suny), screen-blend. 22° HALO: a discrete ring, RED inner edge → BLUE outer, with
+   a DARK inner gap (refraction, opposite a rainbow). SUNDOGS/parhelia: two bright spots at the halo radius LEFT and
+   RIGHT of the sun at the SAME elevation + a faint horizontal parhelic-circle band. SUN PILLAR: a soft VERTICAL
+   column above/below a LOW sun (plate-crystal reflection, not a beam). */
+.atmo .sunhalo{position:absolute;left:var(--sunx);top:var(--suny);width:300px;height:300px;transform:translate(-50%,-50%);
+  opacity:var(--sunhalo,0);mix-blend-mode:screen;filter:blur(1.4px);transition:opacity 2s;
+  background:radial-gradient(circle,transparent 0,transparent 41%,rgba(255,176,138,.55) 45%,rgba(255,246,236,.34) 48.5%,rgba(188,206,255,.42) 53%,transparent 60%)}
+.atmo .sundogs{position:absolute;left:var(--sunx);top:var(--suny);width:300px;height:64px;transform:translate(-50%,-50%);
+  opacity:var(--sundogs,0);mix-blend-mode:screen;filter:blur(2px);transition:opacity 2s;
+  background:radial-gradient(circle at 5% 50%,rgba(255,206,156,.85),rgba(255,248,238,.32) 26%,transparent 50%),radial-gradient(circle at 95% 50%,rgba(255,206,156,.85),rgba(255,248,238,.32) 26%,transparent 50%),linear-gradient(90deg,transparent,rgba(238,242,255,.16) 22%,rgba(238,242,255,.16) 78%,transparent)}
+.atmo .sunpillar{position:absolute;left:var(--sunx);top:var(--suny);width:24px;height:250px;transform:translate(-50%,-50%);
+  opacity:var(--sunpillar,0);mix-blend-mode:screen;filter:blur(4px);transition:opacity 1.6s;
+  background:linear-gradient(180deg,transparent 2%,var(--pillarcol,rgba(255,206,150,.55)) 32%,var(--pillarcol,rgba(255,214,160,.6)) 50%,var(--pillarcol,rgba(255,206,150,.5)) 66%,transparent 98%)}
+/* ANTICREPUSCULAR rays: the same parallel shafts as crepuscular but on the side OPPOSITE the sun, converging by
+   perspective toward the antisolar point (--antix, at/below the far horizon); fainter than crepuscular. */
+.atmo .anticrep{position:absolute;left:var(--antix,50%);top:122%;width:560px;height:560px;transform:translate(-50%,-50%);
+  opacity:var(--anticrep,0);mix-blend-mode:screen;filter:blur(5px);transition:opacity 1.6s;
+  background:repeating-conic-gradient(from 168deg,rgba(255,238,222,0) 0deg,rgba(255,238,222,.12) 2.6deg,rgba(255,238,222,0) 6.5deg,rgba(255,238,222,0) 15deg);
+  -webkit-mask-image:radial-gradient(circle,#000 6%,rgba(0,0,0,.4) 30%,transparent 60%);
+          mask-image:radial-gradient(circle,#000 6%,rgba(0,0,0,.4) 30%,transparent 60%)}
 /* high-latitude aurora: faint green→blue curtains in the upper sky, conditional (|lat|≳55°, deep night, clear).
    Static glow gated by --aurora (no decorative loop) — its presence/strength is the state-driven part. */
 .atmo .aurora{position:absolute;left:0;right:0;top:0;height:54%;opacity:var(--aurora,0);transition:opacity 2.5s;filter:blur(4px);
@@ -129,6 +159,7 @@ body{color:#fff7df;
 /* 22° ice halo (refraction ring) and water-droplet corona (diffraction aureole) — two DISTINCT optical elements,
    each gated by cloud type / humidity in paint(); never both prominent at once. */
 .mhalo{fill:url(#mhalog);mix-blend-mode:screen;filter:blur(2.5px);opacity:var(--mhalo,0);transition:opacity 1.8s}
+.mparhelia{mix-blend-mode:screen;filter:blur(1.6px);opacity:var(--mparhelia,0);transition:opacity 1.8s}   /* lunar moondogs */
 .mcorona{fill:url(#mcoronag);mix-blend-mode:screen;filter:blur(3px);opacity:var(--mcorona,0);transition:opacity 1.4s}
 .mglow{fill:url(#mglowg);filter:blur(2px);mix-blend-mode:screen;opacity:calc(var(--mgo,.2) * var(--mrad,1))}   /* halo radiance breathes via --mrad (simTime + humidity), set in paint() */
 
@@ -303,7 +334,7 @@ body{color:#fff7df;
   <div class="simclock" aria-hidden="true"></div>
   <div class="dbglayers" aria-hidden="true"></div>
   <div class="dbgmoon" aria-hidden="true"></div>
-  <div class="atmo" aria-hidden="true"><div class="airglow"></div><div class="aurora"></div><div class="scatter"></div><div class="belt"></div><div class="sun"></div><div class="suncorner"><div class="rays"></div><div class="corona"></div><div class="disc"></div></div></div>
+  <div class="atmo" aria-hidden="true"><div class="airglow"></div><div class="aurora"></div><div class="falsedawn"></div><div class="truedawn"></div><div class="scatter"></div><div class="belt"></div><div class="anticrep"></div><div class="sunpillar"></div><div class="sunhalo"></div><div class="sundogs"></div><div class="sun"></div><div class="suncorner"><div class="rays"></div><div class="corona"></div><div class="disc"></div></div></div>
   <svg class="sky" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
     <defs>
       <radialGradient id="mg" cx="40%" cy="34%" r="72%">
@@ -328,6 +359,10 @@ body{color:#fff7df;
       </radialGradient>
       <!-- water-droplet CORONA (diffraction through thin altostratus/fog): a small near-white aureole fringed
            yellow/red, then pastel rings bluish-inner → green → yellow → red-outer, HUGGING the disc. -->
+      <radialGradient id="mparhg" cx="50%" cy="50%" r="50%">   <!-- moondog spot: warm-white near the moon → cool/transparent outward -->
+        <stop offset="0%" stop-color="#fff6e6" stop-opacity=".85"/><stop offset="38%" stop-color="#ffe0c2" stop-opacity=".42"/>
+        <stop offset="70%" stop-color="#dfe6ff" stop-opacity=".2"/><stop offset="100%" stop-color="#dfe6ff" stop-opacity="0"/>
+      </radialGradient>
       <radialGradient id="mcoronag" cx="50%" cy="50%" r="50%">
         <stop offset="0%"  stop-color="#fffdf5" stop-opacity=".8"/>
         <stop offset="30%" stop-color="#fff2d6" stop-opacity=".55"/>
@@ -345,6 +380,7 @@ body{color:#fff7df;
     <g class="moon" transform="translate(250 64) scale(0.62)">
       <circle class="mbeam" r="135"/>                 <!-- moonlight cast on the sky (only a real, above-horizon moon) -->
       <circle class="mhalo" r="120"/>                 <!-- 22° ICE-crystal halo ring (cirrus); shown only with thin high cloud -->
+      <g class="mparhelia"><circle cx="-118" cy="0" r="20" fill="url(#mparhg)"/><circle cx="118" cy="0" r="20" fill="url(#mparhg)"/></g>  <!-- lunar PARASELENAE (moondogs): lateral spots at the 22° radius; rare, bright moon + cirrus -->
       <circle class="mcorona" r="84"/>                <!-- water-droplet diffraction CORONA aureole (altostratus/fog/humidity) -->
       <circle class="moccluder" r="45"/>              <!-- opaque star-occluder. The canvas disc only fills ~r46.4 of the 96px image (120→96 slice), so this MUST be < that or its dark fill PEEKS past the bright disc as a contrast ring. r45 stays fully hidden behind the opaque disc. -->
       <g class="mfeatures">                            <!-- everything that dissolves at dawn/dusk lives here -->
@@ -431,6 +467,7 @@ const SIM = {
   windDir: q.get("simWindDir"),
   humid:   q.get("simHumid"),
   cloud:   q.get("simCloud"),
+  precip:  q.get("simPrecip"),   // observed precip (mm) for QA of the precip/thunder gate: e.g. simWx=95&simPrecip=0 ⇒ dry forecast-thunder ⇒ downgraded
 };
 
 const prayers = ["Fajr","Sunrise","Dhuhr","Asr","Maghrib","Isha"];
@@ -441,6 +478,8 @@ const real    = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
 const LPOLL = Math.min(1, Math.max(0, +q.get("lp") || 0));
 const DEBUGLAYERS = q.get("debugLayers")==="1";   // ?debugLayers=1 → live read-out of every sky/cloud layer opacity
 const DEBUGMOON = q.get("debugMoon")==="1";       // ?debugMoon=1 → moon layer radii/opacities + a pixel-ring across the limb
+const DEBUGDAWN = q.get("debugDawn");             // ?debugDawn=false|true → force the false-dawn / true-dawn layer for inspection
+const DEBUGOPTIC = q.get("debugOptic");           // ?debugOptic=halo|sundogs|pillar|anticrep|paraselene → force a (condition-gated) optical phenomenon
 const QA = q.get("qa")==="1";                     // ?qa=1 → force the forecast track on boot + expose window.qaState() frame-diff metrics
 
 // ---- helpers -------------------------------------------------------------
@@ -555,7 +594,7 @@ async function fetchWeather(){
   if(now-lastWxTry < 60*1000) return;
   lastWxTry=now; wxBusy=true;
   const HRLY="temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day";
-  const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(lat)}&longitude=${enc(lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code&hourly=${HRLY}&forecast_days=3&temperature_unit=${units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(tz)}`;
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(lat)}&longitude=${enc(lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${HRLY}&forecast_days=3&temperature_unit=${units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(tz)}`;
   try{
     const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer"});
     const j=await r.json();
@@ -566,7 +605,8 @@ async function fetchWeather(){
         feels:cu.apparent_temperature, rh:cu.relative_humidity_2m, dew:cu.dew_point_2m,
         wind:cu.wind_speed_10m, windDir:cu.wind_direction_10m, gust:cu.wind_gusts_10m,
         cloud:cu.cloud_cover, cloudLow:cu.cloud_cover_low, cloudMid:cu.cloud_cover_mid, cloudHigh:cu.cloud_cover_high,
-        vis:cu.visibility, isDay:cu.is_day};
+        precip:cu.precipitation, rain:cu.rain, showers:cu.showers, snow:cu.snowfall,   // OBSERVED current/nowcast precip (mm) — the evidence the precip/thunder gate requires
+        vis:cu.visibility, isDay:cu.is_day, src:"current"};
       lastWxAt=Date.now();
       try{ localStorage.setItem(wxKey,JSON.stringify({w:weather,ts:lastWxAt})); }catch(e){}
     }
@@ -597,9 +637,12 @@ function wxAt(ms){
 // sped-up clock). Explicit simWx always wins; real-time keeps the `current=` block. No track → hold state.
 function syncWeather(){
   if(SIM.wx!=null || !weatherTrack) return;                   // explicit sim weather wins; no track → hold last fetch
-  // REAL TIME TOO: interpolate the hourly forecast at simTime so coverage/humidity/visibility/wind/precip DRIFT
-  // slowly over minutes/hours — clouds re-form, haze/airglow/corona breathe, stars dim/sharpen. Not just timeScale.
-  const w=wxAt(simNow()); if(w&&w.code!=null) weather=w;
+  // TRUTHFULNESS: only a FAST-FORWARD/sim preview (ADVANCING) may derive `weather` from the hourly FORECAST track.
+  // In normal REAL-TIME we must NEVER overwrite the `current=` OBSERVED/nowcast weather with a forecast — a forecast
+  // rain/thunder code must not be presented as "currently raining/storming". Real drift comes from the 15-min
+  // current refetch (fetchWeather), which is observed, not projected.
+  if(!ADVANCING) return;
+  const w=wxAt(simNow()); if(w){ if(w.code!=null) weather=w; w.src="forecast"; }
 }
 // normalise the current weather into 0..1 physical drivers (heat/cold/wind/humidity/cloud/haze)
 function wxDrivers(){
@@ -1158,6 +1201,28 @@ function physSky(M, sm){
 
 
 // ---- weather → sky modifier + effect class ------------------------------
+// PRECIP/THUNDER GATE — a precipitation or thunderstorm WEATHER CODE is only honoured when there is ACTIVE
+// observed precipitation EVIDENCE (current/nowcast precip amount, mm). Open-Meteo's current weather_code is a
+// model nowcast that can over-call rain/thunder; without corroborating precip we DOWNGRADE to the cloud state
+// implied by the observed cloud cover, so the widget never claims "Rain"/"Thunderstorm" (or animates rain/
+// lightning) when it isn't actually precipitating. NOTE: this is Open-Meteo's current/nowcast precip, NOT a true
+// radar feed — see DESIGN.md › "Weather truthfulness". Fail-safe: no precip evidence ⇒ no precip visuals.
+const _PRECIP_MIN=0.05, _THUNDER_MIN=0.8;   // mm thresholds: active precip / a genuinely wet storm
+let _wxDowngrade="";                          // diagnostic (qaState): why the shown condition differs from the raw code
+function _coverCode(w){ const cov=(w&&w.cloud!=null)?+w.cloud:0; return cov>=85?3:cov>=22?2:0; }   // overcast / partly / clear
+function gateWeatherCode(raw,w){
+  _wxDowngrade="";
+  if(raw==null) return raw;
+  const cls=wxClass(raw), precipCls=(cls==="drizzle"||cls==="rain"||cls==="thunder"||cls==="snow");
+  if(!precipCls) return raw;                                   // clear/cloud/overcast/fog — nothing to gate
+  const precip=(w&&w.precip!=null)?+w.precip:null, has=precip!=null&&precip>=_PRECIP_MIN;
+  if(cls==="thunder"){
+    if(has&&precip>=_THUNDER_MIN) return raw;                  // genuinely wet storm → keep thunder
+    const dc=has?63:_coverCode(w); _wxDowngrade=`thunder code, precip ${precip==null?"n/a":precip.toFixed(2)+"mm"} < storm evidence → ${wxClass(dc)}`; return dc;
+  }
+  if(!has){ const dc=_coverCode(w); _wxDowngrade=`${cls} code but observed precip ${precip==null?"unavailable":precip.toFixed(2)+"mm"} → ${wxClass(dc)}`; return dc; }
+  return raw;                                                  // precip supported → keep rain/drizzle/snow
+}
 function wxClass(code){
   const c=code;
   if(c==null||c===0) return "clear";
@@ -1206,7 +1271,14 @@ const _ssc=(a,b,x)=>{ x=(x-a)/(b-a); x=x<0?0:x>1?1:x; return x*x*(3-2*x); };
 // shifts — without any keyframe/bounce loop (value-noise on a monotonic time axis never repeats).
 function _airDrift(){ const td=simNow()/1000/1400, sd=(+lat||0)*0.131+(+lon||0)*0.071;
   let s=0,a=0.5,fr=1,n=0; for(let i=0;i<3;i++){ s+=a*_vn3(td*fr, sd, 11.7); n+=a; fr*=2.07; a*=0.5; } return s/n; }
-let cloudState={covLow:0,covMid:0,covHigh:0,wx:-0.7,wy:0.2,wspd:0.15,
+// CONTINUITY: the cloud field has a STABLE identity (location + day + optional ?seed) so the same place always
+// grows the same cloud population — it is advected/eroded smoothly, never reseeded on a weather refresh or render.
+const _cloudFieldSeed=((Math.abs(+lat||0)*12.9+Math.abs(+lon||0)*7.31+(+q.get("seed")||0)*4.7)%617);
+let _cloudReady=false;   // false until the deck is first established (then coverage changes EASE instead of snapping)
+// covLow/Mid/High are the LIVE coverages the renderer uses; tgt* are the targets from the latest weather. The live
+// values EASE toward the targets (paint) so a coverage change (15-min refetch) grows/erodes the deck smoothly
+// instead of popping clusters in/out (no "slideshow").
+let cloudState={covLow:0,covMid:0,covHigh:0,tgtLow:0,tgtMid:0,tgtHigh:0,wx:-0.7,wy:0.2,wspd:0.15,
   tLow:[208,214,226],tMid:[232,236,243],tHi:[233,238,247],sunX:0.5,sunY:0.3,sunUp:0,
   sunCol:[255,247,232],moonCol:[206,220,246],moonX:0.84,moonY:0.1,moonLit:0};
 let _cloudCv=null,_cloudCtx=null,_cloudImg=null,_cloudDirty=true,_colDens=null;
@@ -1237,7 +1309,7 @@ function paintClouds(t){
   ctx.clearRect(0,0,W,H);
   const cols=(_colDens&&_colDens.length===W)?_colDens:(_colDens=new Float32Array(W)); cols.fill(0);
   if(S.covLow+S.covMid+S.covHigh<0.02){ _cloudDirty=false; return; }   // clear sky → nothing
-  const _cs=((Math.abs(+lat||0)*12.9+Math.abs(+lon||0)*7.31+Math.floor(t/86400)*3.13+(+q.get("seed")||0)*4.7)%617);
+  const _cs=((_cloudFieldSeed+Math.floor(t/86400)*3.13)%617);   // stable per location+day → the cloud population keeps its identity across refreshes/renders
   const wind=S.wx*S.wspd;
   // decks: [coverage, clusterR(px), bandY(0..1), bandSpread, tint, deckOpacity, seed, nSlots]
   const decks=[
@@ -1303,7 +1375,8 @@ function tieRainToClouds(){
 // Nothing here is keyed to a prayer NAME. paint(A) below is the ONLY place this state touches the DOM.
 function atmosphere(M){
   const day=isDayNow(M.nowMin);
-  const code=weather?weather.code:null;
+  const rawCode=weather?weather.code:null;
+  const code=gateWeatherCode(rawCode, weather);   // EFFECTIVE condition: precip/thunder honoured only with observed precip evidence (else downgraded to a cloud state)
   const info=wxInfo(code,day), cls=wxClass(code), w=WX[cls];
   const sm=sunMetrics(M);                                       // genuine solar altitude (deg) + screen x/y
   const S=physSky(M, sm);                                       // sky colours DERIVED from solar elevation
@@ -1370,6 +1443,15 @@ function atmosphere(M){
   const corona=clamp((D.rh-0.78)/0.18)*((D.cloud>0.15&&D.cloud<0.75)?1:0.3)*clamp(mFrac+0.2)*moonUp*darkness;
   const belt=Math.max(0,1-Math.abs(sm.altDeg+4)/5)*((cls==="clear"||cls==="cloud")?1:0.25);
   const skyL=skyLum(sm.altDeg);
+  // FALSE vs TRUE DAWN — MORNING-only (dawn side), gated by solar DEPRESSION, and only in a clear-ish sky. The sky
+  // stays dark: these are faint horizon CUES, not a bright sunrise palette. FALSE dawn (zodiacal) leads, in a deep
+  // pre-dawn band; TRUE dawn (the Fajr light) follows and grows toward sunrise. Distinct SHAPES in CSS (vertical vs
+  // horizontal). Dawn visuals are explanatory only — they never drive the prayer clock.
+  const dep=-sm.altDeg, morning=M.nowMin<M.noon, clearish=(cls==="clear"||cls==="cloud"||cls==="fog");
+  let falseDawn = (morning&&clearish) ? clamp((dep-16.5)/2.5)*clamp((20.5-dep)/2.5) : 0;   // ~17..20° depression, peaks ~18.5 (before true dawn)
+  let trueDawn  = (morning&&clearish) ? clamp((17.5-dep)/8)*clamp((dep-6.5)/3) : 0;        // ~7..17° (Fajr onset → near sunrise), grows toward sunrise
+  if(DEBUGDAWN==="false"){ falseDawn=1; trueDawn=0; } else if(DEBUGDAWN==="true"){ trueDawn=1; falseDawn=0; }
+  const dawnX=Math.max(0.12,Math.min(0.4,(sm.x||28)/100));   // eastern-horizon screen anchor (sun azimuth at dawn), held to the eastern sky
   // — cloud LAYERS (low/mid/high): prefer the real forecast layering; else split total coverage by condition.
   //   low = horizon deck (thick band), mid = broad deck, high = thin upper veil. Coverage is DATA-driven, so a
   //   clear sky shows NO cloud body and overcast fills the deck — not a blanket texture keyed to a data-fx name.
@@ -1386,6 +1468,16 @@ function atmosphere(M){
   //   and there's participating medium (humidity/haze). Clear dry sky → 0; solid overcast → directional≈0 → 0.
   const broken=clamp(1-Math.abs(clMid-0.45)/0.42);                 // peaks at half-cover (gaps); 0 at clear & solid
   const ray=Math.min(0.5, clamp(sm.altDeg/8)*broken*(1-0.8*clLow)*clamp(0.3+0.7*D.humid)*directional*(cls==="fog"?0.25:1));
+  // ICE-CRYSTAL & RAY OPTICS — all CONDITION-GATED (never random). Thin CIRRUS (high cloud, no thick low/mid) →
+  // 22° HALO + SUNDOGS; cold air + a low sun → SUN PILLAR; broken cloud/haze + low sun → ANTICREPUSCULAR rays
+  // (the faint mirror of the crepuscular `ray`). Forced individually by ?debugOptic= for inspection.
+  const cirrus=clamp((clHigh-0.06)/0.34)*clamp((0.72-clHigh)/0.42)*(1-clLow)*(1-0.55*clMid), sunUpO=clamp((sm.altDeg+1)/6);
+  let sunHalo=cirrus*sunUpO, sunDogs=cirrus*sunUpO*clamp((12-sm.altDeg)/12), sunPillar=D.cold*clamp((6-sm.altDeg)/8)*clamp((sm.altDeg+5)/7)*(0.45+0.55*cirrus), antiCrep=ray*0.5;
+  // LUNAR PARASELENAE / moondogs: the lunar analogue of sundogs — lateral spots at the moon's elevation, RARE,
+  // needing a bright moon + thin ice cloud (cirrus). Lateral only when plausible.
+  let moonParhelia=cirrus*moonLume*clamp((14-moonSky.alt)/16);
+  if(DEBUGOPTIC==="halo")sunHalo=0.95; else if(DEBUGOPTIC==="sundogs")sunDogs=0.95; else if(DEBUGOPTIC==="pillar")sunPillar=0.9; else if(DEBUGOPTIC==="anticrep")antiCrep=0.8; else if(DEBUGOPTIC==="paraselene")moonParhelia=0.9;
+  const pillarCol=rgba([cloudSunCol[0],cloudSunCol[1],cloudSunCol[2],0.6]);
   // — finish (post): filmic grain a touch heavier in low light / murk for texture, lighter in bright day.
   const grain=clamp(0.34+0.26*(1-skyL)+0.18*D.haze);
   // — horizon AIRGLOW / light-pollution dome: a faint glow low on the sky at night. Natural airglow is always
@@ -1432,7 +1524,8 @@ function atmosphere(M){
     // descriptors (renderer contract): scattering/aerial values the colour math already encodes
     rayleighStrength: skyL, mieStrength: glow[3], aerosolDensity: D.haze, aerialPerspective: clamp(D.haze*0.7+0.3*clLow), airDrift,
     // —— anti-solar + night horizon glow + high-lat aurora ——
-    antiX: 100-sm.x, belt, airglow:[airCol[0],airCol[1],airCol[2],airA], aurora,
+    antiX: 100-sm.x, belt, airglow:[airCol[0],airCol[1],airCol[2],airA], aurora, falseDawn, trueDawn, dawnX,
+    sunHalo, sunDogs, sunPillar, antiCrep, pillarCol, moonParhelia,
   };
 }
 // paint(A) — the ONLY place AtmosphereState reaches the DOM. Writes the typed sky/light custom props on .c
@@ -1465,6 +1558,7 @@ function paint(A){
     c.style.setProperty("--sunx2",(16-26*(1-noon)).toFixed(1)+"px");      // more CLIPPED into the top-left corner (mostly off-card → we see radiance, not the whole body)
     c.style.setProperty("--sunray",(0.12+0.30*noon*mute).toFixed(3));  // crisp rays only with a high, unclouded sun
     c.style.setProperty("--sunpulse",(_REDUCED?1:1+(0.045+0.035*A.heat)*Math.sin(simNow()/1000/23)+0.015*Math.sin(simNow()/1000/6.5)+(1-noon)*0.16).toFixed(4));  // slow coronal breathing + a faint faster ray flicker + broader corona at low sun (all simTime-driven)
+    const lowF=clamp((3-selv)/6)*clamp((selv+4)/4); c.style.setProperty("--sunflat",(1-0.18*lowF).toFixed(3));   // atmospheric REFRACTION: the low sun flattens/ovalises near the horizon
   }
   c.style.setProperty("--stars",A.starOpacity.toFixed(3));
   c.style.setProperty("--mw",A.milkyWayOpacity.toFixed(3));
@@ -1487,7 +1581,11 @@ function paint(A){
   c.style.setProperty("--rain-op",A.rainOp.toFixed(3));        // rain-streak opacity scales with precipitation amount (mm)
   // cloud DECKS render on the canvas density field (paintClouds). MUTATE the shared state (no per-tick realloc).
   const CS=cloudState;
-  CS.covLow=A.cloudLayerLow; CS.covMid=A.cloudLayerMid; CS.covHigh=A.cloudLayerHigh;
+  CS.tgtLow=A.cloudLayerLow; CS.tgtMid=A.cloudLayerMid; CS.tgtHigh=A.cloudLayerHigh;
+  // Establish the deck promptly the FIRST time clouds appear (snap), then EASE every later coverage change so a
+  // 15-min refetch grows/erodes the EXISTING deck smoothly — no popping/slideshow. Fast-forward snaps (must track).
+  if(!_cloudReady && (CS.tgtLow+CS.tgtMid+CS.tgtHigh)>0.05){ CS.covLow=CS.tgtLow; CS.covMid=CS.tgtMid; CS.covHigh=CS.tgtHigh; _cloudReady=true; }
+  else { const ce=ADVANCING?1:0.08; CS.covLow+=(CS.tgtLow-CS.covLow)*ce; CS.covMid+=(CS.tgtMid-CS.covMid)*ce; CS.covHigh+=(CS.tgtHigh-CS.covHigh)*ce; }
   CS.wx=A.windUX; CS.wy=A.windUY; CS.wspd=0.06+0.6*A.windSpeedNorm;
   CS.tLow=A.cloudTint2; CS.tMid=A.cloudTint; CS.tHi=A.cloudTintHi;
   CS.sunX=A.sunX/100; CS.sunY=A.sunY/100; CS.sunUp=clamp((A.solarElevationDeg+1)/5);   // clouds stay sun-lit even at a low golden-hour sun
@@ -1499,6 +1597,15 @@ function paint(A){
   c.style.setProperty("--belt",`rgba(232,150,168,${(0.34*A.belt).toFixed(3)})`);
   c.style.setProperty("--airglow",rgba(A.airglow));
   c.style.setProperty("--aurora",A.aurora.toFixed(3));
+  c.style.setProperty("--falsedawn",(0.55*A.falseDawn).toFixed(3));   // faint vertical zodiacal cone (pre-Fajr)
+  c.style.setProperty("--truedawn",(0.55*A.trueDawn).toFixed(3));     // faint horizontal Fajr horizon thread
+  c.style.setProperty("--dawnx",(A.dawnX*100).toFixed(1)+"%");
+  c.style.setProperty("--sunhalo",(0.85*A.sunHalo).toFixed(3));       // 22° ice halo (cirrus)
+  c.style.setProperty("--sundogs",(0.9*A.sunDogs).toFixed(3));        // parhelia / sundogs (cirrus, low sun)
+  c.style.setProperty("--sunpillar",(0.8*A.sunPillar).toFixed(3));    // sun pillar (cold + low sun)
+  c.style.setProperty("--pillarcol",A.pillarCol);
+  c.style.setProperty("--anticrep",(0.8*A.antiCrep).toFixed(3));      // anticrepuscular rays (faint, opposite the sun)
+  c.style.setProperty("--mparhelia",(0.85*A.moonParhelia).toFixed(3)); // lunar paraselenae / moondogs (cirrus + bright moon)
   c.dataset.fx=A.cls;
   c.style.setProperty("--mhalo",Math.min(0.85,1.5*A.lunarHalo).toFixed(3));     // 22° ice halo ring — only with thin cirrus (boosted so the ring reads through the cloud)
   c.style.setProperty("--mcorona",Math.min(0.9,1.15*A.lunarCorona).toFixed(3)); // droplet corona aureole — only with thin water cloud / fog / humidity
@@ -1651,6 +1758,11 @@ window.qaState=function(){
     sim:`${n.dateStr} ${pad(n.h)}:${pad(n.mi)}`,
     sunEl:+(A.solarElevationDeg||0).toFixed(1),
     wx:{code:weather?weather.code:null, cloud:weather?Math.round(weather.cloud):null, temp:weather?weather.temp:null, rh:weather&&weather.rh!=null?Math.round(weather.rh):null, vis:weather?weather.vis:null, wind:weather?+(+weather.wind||0).toFixed(1):null},
+    // ── WEATHER TRUTHFULNESS diagnostics: why the widget is / isn't showing rain or thunder ──
+    wxTruth:(()=>{ const raw=weather?weather.code:null, g=gateWeatherCode(raw,weather), p=weather&&weather.precip!=null?+weather.precip:null;
+      return { currentWeatherSource: weather?(weather.src||"current")+" (Open-Meteo, NOT radar)":"none", forecastTrackSource: weatherTrack?"Open-Meteo hourly (forecast — sim/fast-forward only)":"none",
+        rawCode: raw, observedPrecipMm: p, activePrecip: p!=null&&p>=_PRECIP_MIN, activeThunder: (wxClass(raw)==="thunder"&&p!=null&&p>=_THUNDER_MIN),
+        displayCondition: wxClass(g), downgradeReason: _wxDowngrade||null, advancing: ADVANCING, cloudFieldSeed: _cloudFieldSeed }; })(),
     clouds:{low:+(A.cloudLayerLow||0).toFixed(2), mid:+(A.cloudLayerMid||0).toFixed(2), high:+(A.cloudLayerHigh||0).toFixed(2), hash:cloudHash, alpha:cloudAlpha},
     stars:{op:+(cs.getPropertyValue("--stars").trim()||0), visible:starsVis, blur:cs.getPropertyValue("--starblur").trim(), mw:+(cs.getPropertyValue("--mw").trim()||0)},
     sky:{airglow:cs.getPropertyValue("--airglow").trim(), haze:+(A.aerosolDensity||0).toFixed(2), airDrift:+(A.airDrift||0).toFixed(3), moonBeam:+(A.moonBeam||0).toFixed(2), corona:+(A.corona||0).toFixed(2), aurora:+(A.aurora||0).toFixed(2)}
@@ -1667,10 +1779,14 @@ async function boot(){
   if(SIM.wx!=null){
     const sTemp=SIM.temp!=null?+SIM.temp:72, sRh=SIM.humid!=null?+SIM.humid:45;
     const tC=units==="f"?(sTemp-32)*5/9:sTemp, dC=tC-(100-Math.max(1,Math.min(100,sRh)))/5;   // derive dew point from temp+RH (Magnus approx) so simHumid drives the dew-point haze/blur
+    // default a code-appropriate observed precip so a bare simWx still shows its precip visuals; simPrecip overrides
+    // it (e.g. simWx=95&simPrecip=0 → a "forecast thunder but dry" case the gate must downgrade).
+    const sCls=wxClass(+SIM.wx), defP=(sCls==="thunder")?5:(sCls==="rain")?2:(sCls==="drizzle")?0.3:(sCls==="snow")?1:0;
     weather={code:+SIM.wx, temp: sTemp,
       feels: SIM.feels!=null?+SIM.feels:sTemp, rh: sRh, dew: units==="f"?dC*9/5+32:dC,
       wind: SIM.wind!=null?+SIM.wind:3, windDir: SIM.windDir!=null?+SIM.windDir:225,
-      gust: (SIM.wind!=null?+SIM.wind:3)+2, cloud: SIM.cloud!=null?+SIM.cloud:0, vis: SIM.humid!=null&&+SIM.humid>92?2000:20000, isDay:1};
+      gust: (SIM.wind!=null?+SIM.wind:3)+2, cloud: SIM.cloud!=null?+SIM.cloud:0, precip: SIM.precip!=null?+SIM.precip:defP,
+      vis: SIM.humid!=null&&+SIM.humid>92?2000:20000, isDay:1, src:"sim"};
   }
   fetchWeather();
   const ds=nowParts().dateStr;
