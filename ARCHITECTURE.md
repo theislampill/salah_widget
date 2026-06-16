@@ -13,6 +13,15 @@ own-sake, preserve the static / no-build / no-dependency / single-file character
 - **`config.js`** — `window.SalahConfig`, the **shared** `WidgetConfig` module (parse / validate / normalize /
   serialize / load-save-clear-local / coarse-detect / precedence). Loaded as a classic same-origin `<script>`
   **before** the inline script of both pages.
+- **Install wizard** (`install.sh` / `install.ps1` + `presets/salah-widget.tablissng.json`) — a *separate, optional*
+  CLI flow (not part of the runtime) that stages the TablissNG extension + preset for **manual** import (never a
+  silent install). The builder's **Install widget** button copies the one-liner and, when the builder's config
+  differs from the plain `#local=1` default, carries it via a `SALAH_WIDGET_HASH` env var that the wizard bakes into
+  the preset's iframe (replacing `#local=1`) — so an installed widget keeps the builder's settings.
+
+**Embed-size invariant:** the iframe wrapper **must equal the widget card** (`index.html` `.c` = **325×530**). The
+builder preview, the copy snippet, `README.md`, and the preset all use `325×530`; an oversized wrapper only adds
+invisible transparent margin (a `330×534` wrapper around the 325×530 card was the cause of a 4px builder misalign).
 
 **2026-06-16 — the single-file rule was deliberately relaxed (by maintainer decision)** so config logic can never
 fork between widget and builder (the local-mode task's "do not fork config logic" requirement). `config.js` is the

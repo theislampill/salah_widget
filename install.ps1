@@ -7,6 +7,7 @@
 #   powershell -ExecutionPolicy Bypass -File .\install.ps1 -PresetUrl "https://raw.githubusercontent.com/YOU/REPO/main/presets/salah-widget.tablissng.json"
 #
 # Environment overrides:
+#   SALAH_WIDGET_HASH        Optional URL-hash config (lat=..&lon=..&method=..) baked into the widget iframe
 #   SALAH_WIDGET_PRESET_URL  Raw URL to your TablissNG preset JSON
 #   SALAH_INSTALL_SOURCE     github | store | ask
 #   TABLISSNG_REPO           owner/repo for upstream TablissNG, default BookCatKid/TablissNG
@@ -16,6 +17,7 @@
 [CmdletBinding()]
 param(
     [string]$PresetUrl = $(if ($env:SALAH_WIDGET_PRESET_URL) { $env:SALAH_WIDGET_PRESET_URL } else { "https://raw.githubusercontent.com/theislampill/salah_widget/main/presets/salah-widget.tablissng.json" }),
+    [string]$WidgetHash = $(if ($env:SALAH_WIDGET_HASH) { $env:SALAH_WIDGET_HASH } else { "" }),
     [ValidateSet("ask", "github", "store")]
     [string]$InstallSource = $(if ($env:SALAH_INSTALL_SOURCE) { $env:SALAH_INSTALL_SOURCE } else { "github" }),
     [string]$TablissNgRepo = $(if ($env:TABLISSNG_REPO) { $env:TABLISSNG_REPO } else { "BookCatKid/TablissNG" }),
@@ -392,6 +394,13 @@ function Download-Preset {
 
     try {
         Invoke-WebRequest -UseBasicParsing -Uri $PresetUrl -OutFile $presetFile
+        if ($WidgetHash) {
+            # bake the builder's chosen configuration into the staged preset's iframe URL
+            # (replaces the default #local=1 hash) so the user's settings carry through the install
+            $raw = (Get-Content -Raw -LiteralPath $presetFile).Replace("local=1", $WidgetHash)
+            [System.IO.File]::WriteAllText($presetFile, $raw, (New-Object System.Text.UTF8Encoding $false))
+            Write-Ok "Applied your widget configuration to the preset (#$WidgetHash)."
+        }
         try {
             Get-Content -Raw -LiteralPath $presetFile | ConvertFrom-Json | Out-Null
             Write-Ok "Preset JSON is parseable: $presetFile"

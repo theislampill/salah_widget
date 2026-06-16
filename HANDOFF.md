@@ -11,9 +11,12 @@ and don't expect this file to repeat them.
   regressions, **commit policy (do not commit unless explicitly asked)**, and run/debug recipes.
 - Auto-memory: `C:\Users\theis\.claude\projects\C--workspace-ai-salah-widget\memory\` — `MEMORY.md` index +
   `background-overhaul-progress.md` (a turn-by-turn log of the whole overhaul; the newest entries are this work).
-- Git history is the source of truth for *what changed*. Latest commits on `main`:
-  - `6bde513` — weather truthfulness + cloud continuity + false/true dawn + optics suite + arc/header fixes + docs.
-  - `1dcda23` — living-atmosphere renderer overhaul + liquid-glass header + arc fixes.
+- Git history is the source of truth for *what changed*. Latest commits on `main` (HEAD `37084ae` + the install/
+  builder pass committed on top of it):
+  - `37084ae` — local self-configuring mode (`#local=1`) + shared `config.js` + in-widget settings + TablissNG wizard.
+  - `90928c8` — true radar (RainViewer) confirm-only precip evidence for the weather gate.
+  - `a10af5c` — living-sky round 2 (solar/lunar correctness, day-rollover truth, SRP extractions, smokes).
+  - `91d0fc1` — living-sky rescue + architecture/optics hardening, observability & smokes.
   Use `git log -p` / `git show <hash>` for detail rather than re-deriving it.
 
 ## Project shape
@@ -30,33 +33,36 @@ local mode only) — all keyless/CORS-safe, no secrets in the repo.
 
 ## Working state
 
-**2026-06-16 — local self-configuring mode (UNCOMMITTED in the working tree; needs explicit go-ahead, `main`→Pages).**
-New `config.js` shared module; `index.html` refactored so `lat/lon/method/…` are mutable bindings resolved by
-`SalahConfig.resolve()` (`cacheKey`/`wxKey` are now functions). New modes: `#local=1` (coarse IP/timezone
-auto-detect via GeoJS→ipinfo → in-widget settings → saved to `salah_widget:config:v1`) and `#preferLocal=1`;
-hardcoded `#lat&lon` embeds are **byte-identical** (proven Smoke A/B). The header buckle becomes an accessible
-settings button (weather emoji ⇄ ⚙ gear; mouse/keyboard/touch) **only in local mode**; a compact in-card settings
-panel (all fields + Use-estimated-area / Use-precise-location / Save / Apply / Reset / Cancel) applies **in-memory,
-no reload** (works when storage is blocked). `builder.html` gains a Portable-vs-Self-configuring toggle (local
-snippet adds `allow="geolocation"`) via the shared serializer. `qaState().config` added. `tests/smoke.html` **61/61**
-(+21 deterministic config-contract smokes). Privacy: coarse detect sends the IP to GeoJS/ipinfo (disclosed),
-precise geolocation is user-gesture-only, saved config stays local; all three degrade gracefully (TablissNG
-caveats documented in README). Plans: `plans/round-3/`. Verified live in preview (hardcoded unchanged, `#local=1`
-detect, settings open by mouse/keyboard/touch, save+reload persist, reset, storage-blocked, geolocation
-denied/success). **Do not commit unless asked.**
+**All prior work is committed on `main` and live on Pages.** The local self-configuring mode + shared `config.js` +
+in-widget settings panel + TablissNG setup wizard shipped as **`37084ae`**; the living-sky / photometric / radar
+passes as `91d0fc1`, `a10af5c`, `90928c8`. So `#local=1`/`#preferLocal=1`, the buckle⇄⚙ settings affordance (local
+mode only), the in-card settings panel (in-memory `applyConfig`, no reload), coarse IP detect (GeoJS→ipinfo), and
+the byte-identical hardcoded-embed path (proven Smoke A/B) are all live. `tests/smoke.html` **61/61**. Privacy:
+coarse detect sends the IP to GeoJS/ipinfo (disclosed), precise geolocation is user-gesture-only, saved config
+stays local. Plans: `plans/round-3/`. Deferred by decision: moon hemisphere (upright N-only) + false-dawn (unbuilt,
+fail-closed); radar precip wiring gated on a source decision.
 
-The live-motion + photometric + moon/dawn/buckle pass is **committed** as `91d0fc1` on `main` (live on Pages).
-A **newer UNCOMMITTED pass** (2026-06-16) is in the working tree, in two waves. **Round-1 impl:** shared
-`solarElevationDeg` helper, sun tone-map lifted into `atmosphere`, day-rollover robustness, reduced-motion unified,
-overcast leaden deck, moonSky-ordering guard, `?debugOptic=lunarhalo`, the moon-upright/anti-spin fix. **Round-2 impl:**
-dead-code removal (`moonParallactic` + unused `chi`), a quiet worded day-rollover "stale" cue, `applyCloudState()`
-extracted from `paint`, debugMotion telemetry extracted from `boot`, **true radar** (RainViewer, confirm-only +
-fail-closed, via `fetchRadar`/`gateWeatherCode(raw,w,radarMm)`), +9 smokes (**`tests/smoke.html` now 40/40**).
-Deferred by decision: moon hemisphere (upright N-only) + false-dawn (unbuilt). Radar precip: researched, wiring
-gated on a source decision. Touched: `index.html`, `DESIGN.md`, `ARCHITECTURE.md`, `OPTICS.md`, `HANDOFF.md`,
-`tests/smoke.html`, `plans/` (+ `plans/round-2/`). Three stray scratch files
-(`_mag_extract.txt`, `noaa_clouds.html`, `workspaceaisalah_widget_photopills.html`) remain untracked and must
-**never** be committed. **Do not commit unless the user explicitly asks** (a commit to `main` deploys to Pages).
+**Latest pass — install config-carry + builder/embed-size parity** (committed on top of `37084ae`):
+- **Install config-carry.** The builder's **Install widget** button copies the OS one-liner and, when the config
+  differs from the plain `#local=1` default, prepends `SALAH_WIDGET_HASH='<hash>'`; `install.sh`/`install.ps1` bake
+  that hash into the staged preset's iframe (replacing `#local=1`) so an installed widget keeps the builder's
+  settings (no re-setup). `install.sh` hit a **bash 5.2 gotcha** — `&` in a `${//}` replacement means "the matched
+  text," which mangled the hash's `&` separators; fixed with `shopt -u patsub_replacement` so `&` stays literal
+  (PowerShell `.Replace` is literal — fine). Verified: `bash -n` + simulated bake (no leftover `local=1`, JSON
+  valid), `install.ps1` parses 0-error, builder copies the right command per mode (portable / local+prefs / plain).
+- **Builder card == the *visible* widget.** The widget card (`.c`) is **325×530**, but every iframe wrapper was
+  `330×534` — a 5×4px invisible transparent margin — so the builder card (matched to the 534 box) sat 4px below the
+  visible widget. Corrected the canonical embed size to **325×530** everywhere (builder preview + copy snippet,
+  README ×2, TablissNG preset); the builder card is now `height:530px` (a hard **cap**, not `min-height`) with ~44px
+  slack (tighter label margins + note line-height) so it never scrolls. **Install**/**Refresh** share a row (both
+  44px; install-row gap = preview gap = 14px). The geo-pin is centered (`padding:0` to drop the inherited `button`
+  padding + a square 22×22 svg). Verified in preview: card bottom = visible `.c` bottom (diff 0), buttons delta 0,
+  no clipping, no scrollbar. Touched: `builder.html`, `install.sh`, `install.ps1`, `README.md`,
+  `presets/salah-widget.tablissng.json` (+ docs). See the **Embed-size invariant** in ARCHITECTURE.md / AGENTS.md.
+
+Three stray scratch files (`_mag_extract.txt`, `noaa_clouds.html`, `workspaceaisalah_widget_photopills.html`)
+remain untracked and must **never** be committed. **Do not commit unless the user explicitly asks** (a commit to
+`main` deploys to Pages).
 
 What changed in the (committed `91d0fc1`) live-motion pass (all verified live in preview, no console throws):
 - **Live motion (headline):** cloud advection/lifecycle were ~100× too slow (≈4 px/min → read as a frozen

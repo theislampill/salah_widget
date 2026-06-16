@@ -92,6 +92,9 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
 - **Solar optics (halo / sundogs / pillar) detached from the visible sun** (they must register to `--sunvx/--sunvy`,
   not the arc-sun azimuth). A center-screen halo is an instant FAIL.
 - Footer date row clipped or any header change that **moves the content stack**.
+- **Builder/embed:** the iframe wrapper size drifting from the widget card — it must be **325×530** (= `.c`) in the
+  builder preview, the copy snippet, README, and the TablissNG preset (an oversized wrapper adds invisible margin
+  and misaligns the builder card/buttons).
 - Header buckle off-centre, straps full-width, a heavy drop shadow, or **any strap geometry visible THROUGH the
   translucent buckle** (the strap inner ends must be *masked/cut*, not merely z-indexed — translucent glass reveals
   what's under it).
@@ -106,9 +109,11 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
 
 ## Commit policy
 
-Do not commit or push unless the user explicitly asks. When asked: commit only `index.html` (+ docs) — never the
-stray research scratch files (`noaa_clouds.html`, `*_photopills.html`, `_mag_extract.txt`, etc.). `main` deploys
-to GitHub Pages, so a commit to `main` is a deploy. End commit messages with the standard `Co-Authored-By` line.
+Do not commit or push unless the user explicitly asks. When asked: commit the **relevant source + docs**
+(`index.html`, `config.js`, `builder.html`, `install.sh`/`install.ps1`, `presets/`, `tests/`, the `*.md` docs) —
+**never** the stray research scratch files (`noaa_clouds.html`, `*_photopills.html`, `_mag_extract.txt`, etc.).
+`main` deploys to GitHub Pages, so a commit to `main` is a deploy. End commit messages with the standard
+`Co-Authored-By` line.
 
 ## Running / debugging common scenarios
 

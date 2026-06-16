@@ -8,6 +8,7 @@
 #   SALAH_WIDGET_PRESET_URL="https://raw.githubusercontent.com/YOU/REPO/main/presets/salah-widget.tablissng.json" bash install.sh
 #
 # Environment overrides:
+#   SALAH_WIDGET_HASH        Optional URL-hash config (lat=..&lon=..&method=..) baked into the widget iframe
 #   SALAH_WIDGET_PRESET_URL  Raw URL to your TablissNG preset JSON
 #   SALAH_INSTALL_SOURCE     github | store | ask
 #   TABLISSNG_REPO           owner/repo for upstream TablissNG, default BookCatKid/TablissNG
@@ -17,6 +18,7 @@ set -Eeuo pipefail
 TABLISSNG_REPO="${TABLISSNG_REPO:-BookCatKid/TablissNG}"
 SALAH_INSTALL_SOURCE="${SALAH_INSTALL_SOURCE:-github}"
 SALAH_WIDGET_PRESET_URL="${SALAH_WIDGET_PRESET_URL:-https://raw.githubusercontent.com/theislampill/salah_widget/main/presets/salah-widget.tablissng.json}"
+SALAH_WIDGET_HASH="${SALAH_WIDGET_HASH:-}"   # optional: the builder's config hash (e.g. lat=..&lon=..&method=..) baked into the preset's iframe so the user's settings carry through
 NO_OPEN="${NO_OPEN:-0}"
 DRY_RUN="${DRY_RUN:-0}"
 
@@ -333,6 +335,16 @@ download_preset() {
   if ! curl -fL "$SALAH_WIDGET_PRESET_URL" -o "$dest"; then
     warn "Could not download preset. Configure SALAH_WIDGET_PRESET_URL after publishing the preset JSON."
     return 1
+  fi
+  if [ -n "$SALAH_WIDGET_HASH" ]; then
+    # bake the builder's chosen configuration into the staged preset's iframe URL
+    # (replaces the default #local=1 hash) so the user's settings carry through the install.
+    # bash 5.2+ treats '&' in a ${//} replacement as the matched text — turn that off so the
+    # hash's '&' separators stay literal (no-op / harmless on older bash).
+    shopt -u patsub_replacement 2>/dev/null || true
+    local _c; _c="$(cat "$dest")"
+    printf '%s' "${_c//local=1/$SALAH_WIDGET_HASH}" > "$dest"
+    ok "Applied your widget configuration to the preset (#${SALAH_WIDGET_HASH})." >&2
   fi
   if command -v python3 >/dev/null 2>&1; then
     if python3 -m json.tool "$dest" >/dev/null 2>&1; then

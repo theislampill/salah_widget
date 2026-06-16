@@ -26,7 +26,7 @@ Or write the iframe yourself:
   title="Prayer Times"
   referrerpolicy="no-referrer"
   src="https://theislampill.github.io/salah_widget/#lat=24.4672&lon=39.6142&tz=Asia%2FRiyadh&label=Madinah&method=4&school=0"
-  style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden"
+  style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden"
   scrolling="no">
 </iframe>
 ```
@@ -55,6 +55,10 @@ curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/inst
 irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex
 ```
 
+If you've configured the widget in the builder, the **Install widget** button bakes those
+settings into the install (via a `SALAH_WIDGET_HASH` the wizard writes into the preset's
+iframe), so you don't have to reconfigure after installing.
+
 It **never** silently installs extensions or writes to browser storage — it downloads the
 asset, opens the browser's own install page, and stages the preset for **manual** import. It
 runs code from this repo, so review-first works too:
@@ -82,7 +86,7 @@ use **local mode**. Add `#local=1` to the URL and the widget will:
   title="Prayer Times"
   src="https://theislampill.github.io/salah_widget/#local=1"
   allow="geolocation"
-  style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden"
+  style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden"
   scrolling="no">
 </iframe>
 ```

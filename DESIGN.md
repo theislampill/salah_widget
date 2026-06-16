@@ -286,6 +286,14 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   clips header/footer). Precise geolocation is **only** called from the panel button (user gesture).
 - **`qaState().config`** exposes `configSource/configMode/autoDetectSource/autoDetectStatus/storageAvailable/
   storageError/geolocationPermissionState/geolocationLastError/lat/lon/tz/label/hashConfigOverridden/why`.
+- **Embed size = card size:** the iframe wrapper is **325×530** — exactly the widget card (`.c`) — in the builder
+  preview, the copied snippet, README, and the TablissNG preset. A larger wrapper only adds invisible transparent
+  margin, so the builder card/preview are matched to the *visible* widget (530px), not to an oversized box.
+- **Install wizard config-carry:** the builder's **Install widget** button copies the OS one-liner; when the config
+  is non-default it prepends `SALAH_WIDGET_HASH='<hash>'`, which `install.sh`/`install.ps1` bake into the staged
+  preset's iframe (replacing `#local=1`) so the installed widget starts already configured (no re-setup). Bash note:
+  `install.sh` uses `shopt -u patsub_replacement` so the hash's `&` separators stay literal in the `${//}` replace
+  (bash 5.2+ otherwise treats `&` as the matched text); PowerShell's `.Replace` is already literal.
 
 ## Known approximations (honest)
 

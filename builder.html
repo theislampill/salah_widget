@@ -14,15 +14,15 @@ h1{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:0 0 4px}
 .sub{color:#ffffff99;margin:0 0 28px;text-align:center}
 .wrap{display:flex;gap:32px;flex-wrap:wrap;justify-content:center;align-items:flex-start;width:100%;max-width:860px}
 .card{background:#ffffff0d;border:1px solid #ffffff1f;border-radius:22px;padding:16px;backdrop-filter:blur(6px)}
-.form{width:100%;min-height:534px}   /* match the widget preview height */
+.form{width:100%;height:530px;overflow-y:auto;overflow-x:hidden}   /* exactly the widget's visible height (.c = 530px) — a cap, not just a floor */
 .form-col{flex:1 1 360px;min-width:320px;display:flex;flex-direction:column}
-label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#f6d98bcc;margin:14px 0 5px}
+label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#f6d98bcc;margin:11px 0 4px}
 .loc-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .geotip{font-size:11px;line-height:1.4;color:#ffffffb3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62%;text-align:right}
 .locrow{display:flex;gap:10px;align-items:stretch}
 .locrow input{flex:1 1 auto;min-width:0}
-.geo-pin{flex:0 0 auto;width:48px;min-height:44px;display:grid;place-items:center;cursor:pointer;border-radius:12px;border:1px solid #ffffff22;background:#0d1c18;color:#9aa3b2;transition:color .2s,border-color .2s}
-.geo-pin svg{width:22px;height:26px}
+.geo-pin{flex:0 0 auto;width:48px;min-height:44px;padding:0;display:grid;place-items:center;cursor:pointer;border-radius:12px;border:1px solid #ffffff22;background:#0d1c18;color:#9aa3b2;transition:color .2s,border-color .2s}
+.geo-pin svg{width:22px;height:22px}
 .geo-pin svg path{fill:currentColor;stroke:none}
 .geo-pin.lit{color:#ec4a3d;border-color:#ec4a3d66}
 .geo-pin.glow{color:#ff5347;border-color:#ff534799}
@@ -43,7 +43,7 @@ button.ghost{background:#ffffff14;color:#fff7df;border:1px solid #ffffff22}
 .out{width:100%;max-width:860px;margin-top:26px}
 textarea{width:100%;min-height:120px;resize:vertical;border-radius:14px;border:1px solid #ffffff22;background:#0a1714;color:#cfe;
   font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:14px}
-.note{color:#ffffffb3;font-size:13px;margin-top:8px}
+.note{color:#ffffffb3;font-size:13px;line-height:1.4;margin-top:8px}
 .note code,p code{background:#ffffff14;border:1px solid #ffffff1f;border-radius:5px;padding:0 5px;font:12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#f8d878}
 #dfcode{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
 a{color:#f8d878}
@@ -54,7 +54,7 @@ iframe{box-shadow:0 18px 50px #0008}
 .modebtn{flex:1 1 200px;background:#ffffff14;color:#fff7df;border:1px solid #ffffff22;border-radius:12px;height:auto;min-height:44px;padding:9px 14px;font-weight:700;font-size:13px;text-align:center}
 .modebtn.active{background:linear-gradient(135deg,#f8d878,#e0a93c);color:#241507;border-color:transparent}
 #modenote{margin-top:8px}
-.install-row{text-align:center;margin-top:22px}
+.install-row{text-align:center;margin-top:14px}   /* match .preview gap so Install lines up with Refresh */
 .install-tip{margin-top:8px;min-height:18px;transition:color .15s}
 </style>
 </head>
@@ -153,7 +153,7 @@ iframe{box-shadow:0 18px 50px #0008}
 
   <div class="preview">
     <iframe id="pv" title="Prayer Times" referrerpolicy="no-referrer"
-      style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden" scrolling="no"></iframe>
+      style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden" scrolling="no"></iframe>
     <button class="ghost" id="reload" type="button">↻ Refresh preview</button>
   </div>
 </div>
@@ -201,7 +201,7 @@ function url(){ return base+"#"+hash(); }
 function previewUrl(){ return base+"?r="+(rev++)+"#"+hash(); }
 function snippet(){
   const allow = embedMode==="local" ? '\n  allow="geolocation"' : '';
-  return `<iframe\n  title="Prayer Times"\n  referrerpolicy="no-referrer"${allow}\n  src="${url()}"\n  style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden"\n  scrolling="no">\n</iframe>`;
+  return `<iframe\n  title="Prayer Times"\n  referrerpolicy="no-referrer"${allow}\n  src="${url()}"\n  style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden"\n  scrolling="no">\n</iframe>`;
 }
 function update(){
   $("code").value=snippet();
@@ -338,11 +338,23 @@ $("copy").onclick=async()=>{
 // The repo hosts install.ps1 (Windows) and install.sh (mac/Linux) at the root; the command pipes the
 // right one for the visitor's OS. (Scripts must be committed to the repo for the URL to resolve.)
 const INSTALL_REPO="theislampill/salah_widget";
+// Build the install one-liner. The wizard installs a generic auto-detect preset by default; if the user has
+// configured the widget here (anything other than the plain "#local=1" default), carry that config to the wizard
+// via SALAH_WIDGET_HASH so the installed widget keeps their settings (no need to re-configure after installing).
 function installCmd(){
   const p=((navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||navigator.userAgent||"").toLowerCase();
-  return p.includes("win")
-    ? `irm https://raw.githubusercontent.com/${INSTALL_REPO}/main/install.ps1 | iex`
-    : `curl -fsSL https://raw.githubusercontent.com/${INSTALL_REPO}/main/install.sh | bash`;
+  const win=p.includes("win");
+  const h=(typeof hash==="function")?hash():"";          // same config hash as the embed snippet (respects portable / local mode)
+  const carry = !!h && h!=="local=1";                     // only pass it when it differs from the default auto-detect
+  let cmd;
+  if(win){
+    const base=`irm https://raw.githubusercontent.com/${INSTALL_REPO}/main/install.ps1 | iex`;
+    cmd = carry ? `$env:SALAH_WIDGET_HASH='${h}'; ${base}` : base;
+  } else {
+    const base=`curl -fsSL https://raw.githubusercontent.com/${INSTALL_REPO}/main/install.sh`;
+    cmd = carry ? `${base} | SALAH_WIDGET_HASH='${h}' bash` : `${base} | bash`;
+  }
+  return { cmd, carry };
 }
 let installTipTimer=0;
 async function copyText(t){
@@ -350,10 +362,11 @@ async function copyText(t){
   catch(e){ const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.focus(); ta.select(); let ok=false; try{ ok=document.execCommand("copy"); }catch(_){} ta.remove(); return ok; }
 }
 $("install").onclick=async()=>{
-  const ok=await copyText(installCmd());
+  const { cmd, carry }=installCmd();
+  const ok=await copyText(cmd);
   const tip=$("installtip");
   clearTimeout(installTipTimer);
-  if(ok){ tip.textContent="Copied to clipboard! Paste into your terminal."; tip.style.color="#9be29b"; }
+  if(ok){ tip.textContent = carry ? "Copied — with your settings! Paste into your terminal." : "Copied to clipboard! Paste into your terminal."; tip.style.color="#9be29b"; }
   else { tip.textContent="Couldn’t copy — select the embed code box and copy manually."; tip.style.color="#ffb38a"; }
   installTipTimer=setTimeout(()=>{ tip.textContent="copies terminal script for installation wizard"; tip.style.color=""; }, 8000);
 };
