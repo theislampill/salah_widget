@@ -25,12 +25,19 @@ Data: Aladhan (prayer times) + Open-Meteo (weather) — both keyless/CORS-safe, 
 
 ## Working state
 
-**Large UNCOMMITTED change** on `main` (HEAD `be1ef16`): a live-motion + photometric + moon/dawn/buckle pass.
-`index.html`, `DESIGN.md`, `AGENTS.md`, `HANDOFF.md` are all modified. Three stray scratch files
+The live-motion + photometric + moon/dawn/buckle pass is **committed** as `91d0fc1` on `main` (live on Pages).
+A **newer UNCOMMITTED pass** (2026-06-16) is in the working tree, in two waves. **Round-1 impl:** shared
+`solarElevationDeg` helper, sun tone-map lifted into `atmosphere`, day-rollover robustness, reduced-motion unified,
+overcast leaden deck, moonSky-ordering guard, `?debugOptic=lunarhalo`, the moon-upright/anti-spin fix. **Round-2 impl:**
+dead-code removal (`moonParallactic` + unused `chi`), a quiet worded day-rollover "stale" cue, `applyCloudState()`
+extracted from `paint`, debugMotion telemetry extracted from `boot`, +4 smokes (**`tests/smoke.html` now 35/35**).
+Deferred by decision: moon hemisphere (upright N-only) + false-dawn (unbuilt). Radar precip: researched, wiring
+gated on a source decision. Touched: `index.html`, `DESIGN.md`, `ARCHITECTURE.md`, `OPTICS.md`, `HANDOFF.md`,
+`tests/smoke.html`, `plans/` (+ `plans/round-2/`). Three stray scratch files
 (`_mag_extract.txt`, `noaa_clouds.html`, `workspaceaisalah_widget_photopills.html`) remain untracked and must
 **never** be committed. **Do not commit unless the user explicitly asks** (a commit to `main` deploys to Pages).
 
-What changed this pass (all verified live in preview, no console throws):
+What changed in the (committed `91d0fc1`) live-motion pass (all verified live in preview, no console throws):
 - **Live motion (headline):** cloud advection/lifecycle were ~100× too slow (≈4 px/min → read as a frozen
   wallpaper while the `qaState` hash "changed" every frame). Now ≈70 screen-px/min at moderate wind + visible
   morph. Added `?debugMotion=1` telemetry overlay and `?motion=full` (honest override of OS reduced-motion).
@@ -77,9 +84,11 @@ What changed this pass (all verified live in preview, no console throws):
   change, so it changes every frame even when the sky is visually frozen — this caused repeated false PASS reports.
   **Prove motion only with a real 15–60s watch / `?debugMotion=1` 10s–60s Δ / a centroid-drift probe**, never the
   hash. (The user treats their live observation as ground truth over any metric — rightly.)
-- **Measuring the moon disc:** `getBoundingClientRect()` on `.mphoto`/`.mfeatures` returns the **rotated** bounding
-  box (the disc is rotated to the bright-limb angle), so a 96px disc reads ~135px. Measure the disc geometry from
-  `.moccluder` (an un-rotated circle) instead.
+- **Moon orientation:** the disc is now **upright** (no rotation) — `renderMoonPBR(frac, waxing)` bakes the lit
+  side (right=waxing, left=waning) with the maria fixed, so `.mfeatures` has **no `transform`** and the moon never
+  spins (it previously rotated to the parallactic bright-limb angle `χ−q`, which read as the moon spinning over
+  time + mismatching the footer emoji — removed). `.moccluder` is still the clean un-rotated circle for disc
+  geometry. The lit side **must** match the footer phase emoji (waxing→right, waning→left) — smoke-guarded.
 - **The Moon is OPAQUE.** Never make it "subtle" by lowering `--moongrp`/group opacity — that makes stars show
   through (a hologram). Subtlety for a calendar/new moon = a *dark ashen* disc at full opacity; dimness lives in the
   PBR render + (the absence of) moonlight, never in transparency.
@@ -88,8 +97,9 @@ What changed this pass (all verified live in preview, no console throws):
 
 ## Known residuals / candidate next work (honest, from the judge panels)
 
-- **Overcast leaden deck:** clouds are believable stacked-puff cumulus but **overcast still reads a touch hazy
-  rather than a heavy leaden ceiling** — the most-flagged remaining visual item (a denser, flatter overcast deck).
+- **Overcast leaden deck:** addressed 2026-06-16 — neutral-grey + stronger `WX.overcast` sky tint, darker overcast
+  `cloudBase`, and a high-coverage puff-opacity fill (all overcast/coverage-gated; broken & clear unchanged, motion
+  preserved, moon opaque). Overcast now reads as a leaden ceiling; final aesthetic dial is the maintainer's eye.
 - **False dawn (zodiacal light) — future work, currently NOT rendered.** A faithful cue needs real ecliptic-tilt
   projection + strict dark-sky/no-moon/low-light-pollution/clear gating + very faint opacity + no foreground-
   crossing streak + must never imply Fajr. Until all hold, it stays unbuilt (fail-closed). True dawn is the

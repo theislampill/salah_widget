@@ -49,6 +49,12 @@ the art is "realism-adjacent" (believable, never random). Two standing rules:
 
 - Times come from the **Aladhan API** (`fetchTimings`), cached in `localStorage`. The Islamic (Hijri) day rolls
   over at **Maghrib**, not midnight; the AH date and the moon-phase preview update accordingly.
+- **Day-rollover stale cue:** if the calendar day rolls over but the new day's timings can't be loaded (offline /
+  fetch failure with no new-day cache), the widget keeps the prior day's times, does NOT advance the date, and sets
+  `_prayerStale` → a quiet worded **"stale"** chip (warm amber, not alarming) appears by the Hijri date + a faint
+  date-row desaturation. Set from `render()` via `.c[data-stale="prayer"]` (never read by `atmosphere()`); scope is
+  **prayer-time staleness only** (weather staleness stays in `qaState`). `qaState().cache` exposes `prayerStale` +
+  `rolloverPendingMs`.
 - The arc (`drawArc`) is **one continuous solar-elevation curve** built from real solar motion (hour angle +
   declination), NOT from prayer-to-prayer interpolation. Prayer events are *sampled onto* it. The declination is
   fit so elevation crosses **0° exactly at this date's sunrise/sunset** (the fit may slightly exceed the real
@@ -132,7 +138,12 @@ Each render tick:
   physical-vs-calendar visibility, displayMode, opacities, moonlight, and the reason any layer is dim.
 - `.mphoto` is a **physically-lit** disc: real LRO albedo + LOLA normals, Lommel-Seeliger + lunar-Lambert
   reflectance with an opposition surge, rendered to a **300px supersampled** backing canvas with **coverage-AA**
-  on the limb (no jaggies/stroke), oriented to the true bright-limb angle for the phase.
+  on the limb (no jaggies/stroke). **Orientation: one steady UPRIGHT face** — `renderMoonPBR(frac, waxing)` lights
+  the bright limb on the **right** (waxing) or **left** (waning) with the maria **fixed**, so the terminator just
+  sweeps across; the disc never rotates and its lit side matches the footer phase emoji. (It previously rotated to
+  the parallactic bright-limb angle `χ−q`, which made the disc visibly **spin** over time and mismatch the emoji —
+  removed 2026-06-16. The trade-off is the moon is the upright N-hemisphere view, not tilted "as seen from your
+  exact location" — consistent with the upright emoji, and the right call for a corner widget.)
 - **Earthshine**: a smooth curve `es = 0.09 + 0.34·(1−frac)^1.7` (steeper-than-linear toward full) × albedo —
   moderate ashen glow at thin crescent (the lit crescent still dominates), faint **textured** terrain at gibbous
   (never a black cutout), a small floor at full.
@@ -248,9 +259,11 @@ Config and debug are read from the URL **hash** (`#…`). Common:
 - The arc's declination fit absorbs refraction to make sunrise/sunset land on the line (a visual calibration).
 - Dhuhr's "hair past the apex" is a small deliberate offset (post-zawāl cue), since minute-resolution data can put
   Dhuhr exactly on solar noon.
-- Cloud edges are soft/painterly rather than crisp cumulus; overcast reads a touch hazy rather than heavy-leaden
-  (most-flagged remaining item). The cloud renderer is a **stylized 2D puff-cluster + time-noise** field, **not**
-  volumetric; the motion rates are **perceptual** (read as alive at widget scale), not measured advection.
+- Cloud edges are soft/painterly rather than crisp cumulus. (Overcast was deepened to a **leaden ceiling**
+  2026-06-16 — a neutral-grey, stronger `WX.overcast` sky tint + a darker overcast `cloudBase` + a high-coverage
+  puff-opacity fill, all overcast/coverage-gated so broken & clear are unchanged and motion is preserved.) The
+  cloud renderer is a **stylized 2D puff-cluster + time-noise** field, **not** volumetric; the motion rates are
+  **perceptual** (read as alive at widget scale), not measured advection.
 - **Solar tone-mapping** uses a real discipline (airmass + transmittance + CCT + ACES) but the **headroom and
   constants are tuned for a pleasing clipped nucleus, not radiometrically calibrated**; CSS can't composite in
   linear light, so the tone-map is baked per gradient-stop in JS.

@@ -54,7 +54,7 @@ independent time loops (a convention, not an enforced boundary).
 | Stars (catalog + projection + twinkle) | `buildStars`/`projectStars` | 865–946 |
 | Prayer model (current/next/progress) | `model` | 977–1001 |
 | Solar-prayer arc (SVG) | `drawArc` | 1004–1147 |
-| Sun geometry | `sunAltAt`/`sunMetrics` | 1153–1158 / 1153 |
+| Sun geometry | `solarElevationDeg` (shared single source) ← `sunAltAt` (alias) / `sunMetrics` / `drawArc.elevDeg` | ~1172 |
 | Sky colour (sole source) | `skyLum`/`physSky` | 1167–1200 |
 | Clouds (canvas density field) | `paintClouds`/`tieRainToClouds` | 1306–1367 |
 | **Atmosphere state vector** (pure) | `atmosphere` | 1376–1559 |
@@ -65,14 +65,15 @@ independent time loops (a convention, not an enforced boundary).
 | Boot + rAF loop + lifecycle + motion telemetry | `boot` (closures) | 1772+ |
 
 ### Responsibility tangles (SRP), ranked
-1. **`paint(A)` does derivation, not just DOM writes.** The corner-sun block computes Kasten–Young airmass,
-   Beer–Lambert + cloud transmittance, a CCT blackbody colour and an ACES tone-map *inline*, and it also mutates
-   `cloudState`. So "the only place state reaches the DOM" is true *for the sky*, but `paint` is no longer pure
-   presentation. *Deferred follow-up:* lift the sun tone-map math into `atmosphere` (state) so `paint` only writes.
+1. ~~`paint(A)` mutates `cloudState` + does tone-map derivation~~ **RESOLVED (2026-06-16):** the corner-sun tone-map
+   was lifted into `atmosphere` (returns `sunCoreRGB`/`sunMidRGB`/`sunCloudT`; `paint` writes them), and the
+   `cloudState` ease/snap mutation was extracted into `applyCloudState(A)` (called by `paint` as a clearly-separated
+   side-effect step). `paint` is now sky-CSS writes + that one explicit call.
 2. **`render()` mixes prayer-UI DOM writes with atmosphere orchestration.** "paint is the only DOM writer" holds
    only for the *sky*; prayer-list/arc/date DOM is written directly in `render`. (Correctly scoped in DESIGN.)
-3. **`boot()` carries the whole motion-telemetry subsystem** (`updateMotionDbg`/`_cloudAlphaNow`/`_starSampleNow`)
-   as inner closures. *Deferred:* extract to top-level `DEBUGMOTION`-gated helpers in a debug-tooling pass.
+3. ~~`boot()` carries the motion-telemetry subsystem as inner closures~~ **RESOLVED (2026-06-16):**
+   `updateMotionDbg`/`_cloudAlphaNow`/`_starSampleNow`/`_motHist` are now top-level (`DEBUGMOTION`-gated); the loop's
+   rate counters stay in `boot` and are passed into `updateMotionDbg(rafPS,cloudPS,cEl)` — boot lifecycle untouched.
 
 **Deliberately NOT split (anti-over-engineering):** `atmosphere(M)` (one cohesive state vector) and `drawArc(M)`
 (one cohesive SVG output). Splitting these would add indirection without removing drift.
@@ -84,8 +85,10 @@ independent time loops (a convention, not an enforced boundary).
   invariant lives here — easy to break with a careless reseed.
 - **`tz`** (`let`, reassigned from the Aladhan response): `cacheKey`/`wxKey` are captured once at load, so a wrong
   URL `tz` hint causes a benign one-time cache miss + a small clock re-anchor near t0.
-- **`_REDUCED` (paint) vs `_RM` (loop) vs the CSS `prefers-reduced-motion` block** — *three* places that must
-  agree on reduced motion (cleared together by `?motion=full`). A known cross-scope drift surface; keep in sync.
+- **Reduced motion** — the two duplicated JS `matchMedia` checks are unified behind one **live** helper
+  `isMotionReduced()` (`paint`'s `_REDUCED` and the loop's `_RM` both call it; `?motion=full` overrides). The CSS
+  `@media (prefers-reduced-motion)` blocks read the SAME native signal gated by the `.motionfull` class — they are
+  the live native signal, not duplicated logic. One decision, consulted by JS and CSS.
 
 ## Control-flow (CFG) findings
 - **Boot:** DOM scaffold builds before data; a hard `if(!lat||!lon){ showError; return }` means **the rAF loop
@@ -168,18 +171,29 @@ elements**; cloud identity stable across reads; observability surface present + 
 truthfulness gate, cloud continuity/advection, painted-dawn removal, opaque/calendar moon, qaState/debugMotion.)
 
 ## Deferred follow-ups (documented, intentionally not done — out of minimal scope / higher risk)
-- **Shared `solarElevationDeg(M,a)` helper** for `drawArc` + `sunAltAt` (now clamp-aligned; the duplicated math
-  remains a small drift surface). Refactors the sacrosanct arc — defer to a dedicated pass.
-- **Lift the corner-sun tone-map** out of `paint` into `atmosphere` (purity of the render boundary).
-- **Day-rollover robustness:** a failed rollover fetch with no new-day cache silently shows the previous day's
-  times. Repro: cross sim-midnight offline with an empty cache for the new day. Root cause: `loop()` advances
-  `_lastDateStr` before confirming the new day's data, and the `.catch` is empty. Fix needs a throttled retry or a
-  subtle stale indicator — left as a follow-up to avoid a half-fix.
-- **Reduced-motion single source:** unify `_REDUCED`/`_RM` and the CSS media query behind one flag.
+- ~~**Shared `solarElevationDeg(M,a)` helper** for `drawArc` + `sunAltAt`~~ **DONE (2026-06-16):** extracted as a
+  pure, bit-identical refactor (`sunAltAt` is now an alias; `drawArc.elevDeg` calls it) — verified by before/after
+  hash equality of `drawArc(model())` + a `sunAltAt` grid across refinement/phi≈0/polar paths. The duplication
+  drift surface is closed.
+- ~~**Lift the corner-sun tone-map** out of `paint` into `atmosphere`~~ **DONE (2026-06-16):** byte-identical move;
+  `atmosphere` returns `sunCoreRGB`/`sunMidRGB`/`sunCloudT`, `paint` only writes them.
+- ~~**Day-rollover robustness**~~ **DONE (2026-06-16):** the rollover branch advances the day only on confirmed
+  data (cache-hit or fetch-success), throttles the refetch (`_ROLLOVER_RETRY_MS`), exposes `prayerStale`/
+  `rolloverPendingMs` in `qaState().cache`, and shows a quiet worded "stale" cue by the Hijri date.
+- ~~**Reduced-motion single source**~~ **DONE (2026-06-16):** one live `isMotionReduced()` consulted by `paint` and
+  the loop; CSS keeps the native `@media`/`.motionfull`. (`moonParallactic` + the unused `chi` return were also
+  removed as dead code after the moon-upright fix.)
 - **File splits (Stage 5):** NOT justified — the investigation did not show index.html is too fragile to patch;
-  splitting would break the single-file static character. Keep as one file.
+  splitting would break the single-file static character. Keep as one file. *(Two smaller SRP extractions were
+  done — `applyCloudState` out of `paint`, and the debugMotion telemetry out of `boot` — but these are not a file
+  split; the widget stays one self-contained file.)*
 
 ## Remaining risks
-- The `moonSky` ordering coupling (renderMoon-before-atmosphere) is convention, not enforced.
-- Reduced-motion correctness depends on three sites staying in agreement.
+- The `moonSky` ordering coupling (renderMoon-before-atmosphere) is now guarded: `renderMoon` stamps
+  `moonSky._min` with the minute it rendered, `atmosphere` returns a pure `moonSkyFresh` flag, and `render`
+  emits a one-shot `console.warn` if the order is broken (surfaced as `qaState().moonTruth.moonSkyFresh`, covered
+  by a smoke). It is a detector, not a hard enforcement — a reorder warns + flips the flag rather than throwing
+  (a throw would break the direct `atmosphere(model())` calls in `qaState`/debug).
+- Reduced-motion is unified behind one live `isMotionReduced()` (JS) + the native `@media`/`.motionfull` (CSS);
+  both read the same signal, so the old three-site drift surface is closed.
 - Weather "current" is an Open-Meteo nowcast, **not radar** — the gate is conservative, not ground-truth.

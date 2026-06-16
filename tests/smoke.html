@@ -100,7 +100,8 @@ const prayerReady=w=>{ try{ const q=w.qaState(); return !!(q&&q.cache&&q.cache.p
     const cs=ww.getComputedStyle(ww.document.querySelector(".c"));
     ok("--moongrp ~1 (opaque, no stars through)", +cs.getPropertyValue("--moongrp")>0.9, cs.getPropertyValue("--moongrp").trim());
     ok("--moonocc ~1 (occludes stars behind disc)", +cs.getPropertyValue("--moonocc")>0.9, cs.getPropertyValue("--moonocc").trim());
-    ok("moonlight is on (physical)", q.moonTruth.moonlightOpacity>0, ""+q.moonTruth.moonlightOpacity); });
+    ok("moonlight is on (physical)", q.moonTruth.moonlightOpacity>0, ""+q.moonTruth.moonlightOpacity);
+    ok("moonSky fresh (renderMoon ran before atmosphere this tick)", q.moonTruth.moonSkyFresh===true, ""+q.moonTruth.moonSkyFresh); });
 
   head("dawn (no painted overlays)");
   await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simTime=05:00&simWx=0","no painted false/true dawn layers",(ww,q)=>{
@@ -113,7 +114,42 @@ const prayerReady=w=>{ try{ const q=w.qaState(); return !!(q&&q.cache&&q.cache.p
   await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simWx=2","observability surface present",(ww,q)=>{
     ok("qaState exposes wxTruth + cache + render", !!(q.wxTruth&&q.cache&&q.render));
     ok("cache reports not-stale under sim", q.cache.weatherStale===false);
+    ok("prayer not stale + no rollover pending (normal boot)", q.cache.prayerStale===false && q.cache.rolloverPendingMs===null, "stale="+q.cache.prayerStale+" pending="+q.cache.rolloverPendingMs);
     ok("render summary has fx + currentKey", !!(q.render&&q.render.fx&&q.render.currentKey)); });
+
+  head("moon orientation (lit side matches the footer phase emoji; upright, never spins)");
+  const moonReady=w=>{ try{ const m=w.document.querySelector(".mphoto"); return prayerReady(w) && m && (m.getAttribute("href")||"").length>50; }catch(e){ return false; } };
+  function moonLitSide(ww){ const m=ww.document.querySelector(".mphoto"), href=m&&m.getAttribute("href"); if(!href) return Promise.resolve(null);
+    return new Promise(res=>{ const im=new Image(); im.onload=()=>{ const N=im.width||96, cv=document.createElement("canvas"); cv.width=N; cv.height=N; const cx=cv.getContext("2d"); cx.drawImage(im,0,0); const d=cx.getImageData(0,0,N,N).data; let L=0,R=0,lc=0,rc=0; for(let y=0;y<N;y++)for(let x=0;x<N;x++){ const i=(y*N+x)*4; if(d[i+3]<20)continue; const lum=(d[i]+d[i+1]+d[i+2])/3; if(x<N/2){L+=lum;lc++;}else{R+=lum;rc++;} } res((lc?L/lc:0)>(rc?R/rc:0)?"LEFT":"RIGHT"); }; im.onerror=()=>res(null); im.src=href; }); }
+  { const ww=await loadUntil("lat=24.47&lon=39.61&label=Madinah&method=4&simTime=02:00&simWx=0&simMoon=0.3&simWax=1&simMoonAlt=55&simMoonH=0", 8000, moonReady);
+    if(!ww){ line("skip","waxing moon orientation (offline?)"); }
+    else { const feat=ww.document.querySelector(".mfeatures");
+      ok("moon is UPRIGHT — no rotation transform (never spins like a record)", !(feat&&feat.getAttribute("transform")), ""+(feat&&feat.getAttribute("transform")));
+      const side=await moonLitSide(ww); ok("WAXING moon is lit on the RIGHT (matches 🌒/🌓/🌔)", side==="RIGHT", ""+side); } }
+  { const ww=await loadUntil("lat=24.47&lon=39.61&label=Madinah&method=4&simTime=02:00&simWx=0&simMoon=0.3&simWax=0&simMoonAlt=55&simMoonH=0", 8000, moonReady);
+    if(!ww){ line("skip","waning moon orientation (offline?)"); }
+    else { const side=await moonLitSide(ww); ok("WANING moon is lit on the LEFT (matches 🌖/🌗/🌘)", side==="LEFT", ""+side); } }
+
+  head("round-2: reduced-motion liveness + cloud continuity");
+  // reduced-motion is ONE LIVE source (isMotionReduced): overriding matchMedia mid-run must freeze the sun-breath
+  // animation, because paint() reads it live (not cached at boot). The loop's cloud-paint gate uses the same fn.
+  { const ww=await loadUntil("lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&simWx=0", 8000, prayerReady);
+    if(!ww){ line("skip","reduced-motion liveness (offline?)"); }
+    else { const sp=()=>+ww.getComputedStyle(ww.document.querySelector(".c")).getPropertyValue("--sunpulse"); const orig=ww.matchMedia;
+      try{ ww.matchMedia=(qq)=>({matches:/reduce/.test(qq),media:qq,addListener(){},removeListener(){},addEventListener(){},removeEventListener(){}});
+        ww.applyTheme(ww.model()); const reduced=sp(); ww.matchMedia=orig; ww.applyTheme(ww.model()); const live=sp();
+        ok("reduced-motion LIVE: --sunpulse freezes to 1 under a matchMedia override", reduced===1, "reduced="+reduced);
+        ok("reduced-motion LIVE: --sunpulse animates (≠1) once the override is removed", live!==1, "live="+live);
+      }catch(e){ ww.matchMedia=orig; line("fail","reduced-motion liveness — "+e.message); } } }
+  // cloud continuity: a stable per-day field seed (no reseed/slideshow) + a present, evolving deck (not a frozen slab)
+  { const ww=await loadUntil("lat=24.47&lon=39.61&label=Madinah&method=4&simWx=3&simCloud=100", 8000, prayerReady);
+    if(!ww){ line("skip","cloud continuity (offline?)"); }
+    else { try{ const seed1=ww.qaState().wxTruth.cloudFieldSeed; const cv=ww.document.querySelector(".cloudcanvas"), x=cv.getContext("2d");
+        const grab=()=>{ const d=x.getImageData(0,0,cv.width,cv.height).data; let a=0,h=0; for(let i=3;i<d.length;i+=4){ a+=d[i]; h=(h+d[i]*(((i>>2)*2654435761>>>20)&2047))%2147483647; } return {a,h}; };
+        ww.paintClouds(10); const g1=grab(); ww.paintClouds(40); const g2=grab(); const seed2=ww.qaState().wxTruth.cloudFieldSeed;
+        ok("continuity: overcast deck is present + evolves between frames (not a frozen slab)", g1.a>0 && g1.h!==g2.h, "alpha="+g1.a+" moved="+(g1.h!==g2.h));
+        ok("continuity: cloudFieldSeed stable across reads (no reseed / slideshow)", seed1===seed2, "s1="+seed1+" s2="+seed2);
+      }catch(e){ line("fail","cloud continuity — "+e.message); } } }
 
   sumEl.textContent = pass+" passed · "+fail+" failed · "+skip+" skipped";
   sumEl.className = fail? "fail":"pass";

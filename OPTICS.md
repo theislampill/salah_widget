@@ -60,7 +60,10 @@ Contract per phenomenon: **family · inputs · gate · shape · NOT-shape · off
   wind + slow morph.
 - **NOT:** a scrolled static texture; a uniform grey blanket; pop-in on refresh; lamp-bright blobs; the moon
   showing through a heavy deck.  **Verdict:** keep (advection/continuity load-bearing).
-- *Residual:* overcast still reads a touch hazy rather than a heavy leaden ceiling (most-flagged remaining item).
+- *Improved (2026-06-16):* overcast now reads as a leaden ceiling — the sky tint behind the deck was neutralised +
+  strengthened (`WX.overcast`), the overcast `cloudBase` darkened, and high-coverage puff opacity raised (all
+  overcast/coverage-gated; broken & clear unchanged, motion preserved, moon stays opaque). Final aesthetic dial is
+  the maintainer's.
 
 ### Fog / haze / humidity — *production*
 - **Family:** aerosol / water-droplet participating media.
@@ -110,7 +113,11 @@ arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 - **Family:** ice-crystal refraction around a bright moon.
 - **Gate:** `lunarHalo = clamp((clHigh−.06)/.34)·clamp((.66−clHigh)/.42)·(1−clLow)·(1−0.7·clMid)·moonLume`.
 - **NOT:** an aureole hugging the disc (that is the droplet corona); by day / new moon / thick cloud.  **Verdict:**
-  keep. (Forcing `?debugOptic=halo` forces the *sun* halo; the moon halo has no separate debug key — noted.)
+  keep. **`?debugOptic=lunarhalo`** now forces the moon halo independently for QA (the sun `halo` key is unchanged).
+  *Geometric limit (accepted by design):* the moon sits in the top-right pocket ~56 px from the top/right card edges,
+  so a true-to-scale ring (r≈135 px) necessarily extends past them; the card's `overflow:hidden` clips it to a clean
+  **partial arc**. A radius small enough to fit fully (≤~56 px) would collapse into a corona/aureole and break the
+  "distinct 22° ring" contract, so the partial arc is kept — it reads as a coherent halo curving around the moon.
 
 ### Parhelia / sundogs (+ parhelic band) — *production + `?debugOptic=sundogs`*
 - **Family:** plate-ice refraction; two spots flanking the sun at the **same elevation**, a low-sun phenomenon.
