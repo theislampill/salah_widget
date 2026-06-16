@@ -25,9 +25,28 @@ Data: Aladhan (prayer times) + Open-Meteo (weather) — both keyless/CORS-safe, 
 
 ## Working state
 
-Clean. Working tree has only untracked files: `HANDOFF.md` (this), and three stray research scratch files
-(`_mag_extract.txt`, `noaa_clouds.html`, `workspaceaisalah_widget_photopills.html`) that must **never** be
-committed. Everything intended is committed + pushed.
+**Large UNCOMMITTED change** on `main` (HEAD `be1ef16`): a live-motion + photometric + moon/dawn/buckle pass.
+`index.html`, `DESIGN.md`, `AGENTS.md`, `HANDOFF.md` are all modified. Three stray scratch files
+(`_mag_extract.txt`, `noaa_clouds.html`, `workspaceaisalah_widget_photopills.html`) remain untracked and must
+**never** be committed. **Do not commit unless the user explicitly asks** (a commit to `main` deploys to Pages).
+
+What changed this pass (all verified live in preview, no console throws):
+- **Live motion (headline):** cloud advection/lifecycle were ~100× too slow (≈4 px/min → read as a frozen
+  wallpaper while the `qaState` hash "changed" every frame). Now ≈70 screen-px/min at moderate wind + visible
+  morph. Added `?debugMotion=1` telemetry overlay and `?motion=full` (honest override of OS reduced-motion).
+- **Sun:** scene-referred **tone-mapping** (Kasten–Young airmass + Beer–Lambert + per-class cloud transmittance +
+  CCT blackbody + ACES) — fixes the grey/purple blob; **defined white nucleus + warm-gold body edge** (restored
+  after a tone-map regression that greyed the disc); sunrise enters low-left; **optics register to the VISIBLE
+  corner sun** (`--sunvx/--sunvy`) — fixes the center-screen halo FAIL.
+- **Moon:** now **OPAQUE** (`moonShow` = one night opacity for disc + occluder; no stars through); **physical vs
+  calendar** split (calendar disc shows the phase at night even below-horizon/new, but **moonbeam is physical-
+  only — no faked light**); **mostly in-frame** (pocket below temp strap / above the arc) so the phase reads;
+  ~+13% bigger. `qaState().moonTruth` added.
+- **Dawn:** **removed both painted overlays** (fail-closed). True dawn = the real physical twilight sky + Fajr
+  marker; **false dawn is NOT rendered** (an unmodeled CSS cone read as a lens-flare slash and showed under a
+  bright moon). `debugDawn` is a deprecated no-op; a faithful zodiacal cue is future work only.
+- **Header buckle:** strap inner ends **masked** (circular cut-out) so no strap shows through the translucent
+  buckle (z-index alone can't — translucent glass reveals what's under it).
 
 ## Dev / verify loop (how this work was actually done)
 
@@ -54,22 +73,43 @@ committed. Everything intended is committed + pushed.
   fixed time** — another reason a still can look static. Check `matchMedia(...).matches`.
 - The preview **viewport occasionally zooms** mid-session; reset with `preview_resize` to ~390×600 to see the
   whole 325×530 card.
+- **The `qaState().clouds.hash` is a TRAP for "is it moving?"** It is position-weighted and flips on sub-pixel
+  change, so it changes every frame even when the sky is visually frozen — this caused repeated false PASS reports.
+  **Prove motion only with a real 15–60s watch / `?debugMotion=1` 10s–60s Δ / a centroid-drift probe**, never the
+  hash. (The user treats their live observation as ground truth over any metric — rightly.)
+- **Measuring the moon disc:** `getBoundingClientRect()` on `.mphoto`/`.mfeatures` returns the **rotated** bounding
+  box (the disc is rotated to the bright-limb angle), so a 96px disc reads ~135px. Measure the disc geometry from
+  `.moccluder` (an un-rotated circle) instead.
+- **The Moon is OPAQUE.** Never make it "subtle" by lowering `--moongrp`/group opacity — that makes stars show
+  through (a hologram). Subtlety for a calendar/new moon = a *dark ashen* disc at full opacity; dimness lives in the
+  PBR render + (the absence of) moonlight, never in transparency.
 - `paint(A)` is the only DOM writer; top-level `let`/`const` in the page ARE reachable from `preview_eval`
   (global lexical env), which is how the live probes above work.
 
 ## Known residuals / candidate next work (honest, from the judge panels)
 
-- **Clouds** are believable stacked-puff cumulus but edges read soft/painterly, and **overcast reads hazy rather
-  than a heavy leaden ceiling**. Crisper cumulus + a denser overcast deck is the most-flagged remaining item.
-- **Optics are art-directed approximations, not photometric.** The solar halo/sundogs/pillar attach to the
-  *arc-sun* screen position (the established `.godray` convention), so they coexist with the separate top-left
-  corner-sun body; the moon's halo/paraselenae render as partial arcs/spots (the moon is corner-clipped); the
-  parhelic-circle band looks a touch broad at the forced debug max (fainter under real cirrus gating). None were
-  run through a full 5-judge skeptic panel — that's the verification gap to close before calling them "done".
-- Header buckle currently holds the **weather icon**; a phase-accurate moon glyph was noted earlier as a cosmetic
-  wish, not done.
+- **Overcast leaden deck:** clouds are believable stacked-puff cumulus but **overcast still reads a touch hazy
+  rather than a heavy leaden ceiling** — the most-flagged remaining visual item (a denser, flatter overcast deck).
+- **False dawn (zodiacal light) — future work, currently NOT rendered.** A faithful cue needs real ecliptic-tilt
+  projection + strict dark-sky/no-moon/low-light-pollution/clear gating + very faint opacity + no foreground-
+  crossing streak + must never imply Fajr. Until all hold, it stays unbuilt (fail-closed). True dawn is the
+  physical twilight sky — do not re-add a painted band.
+- **Optics are art-directed approximations, not photometric** — but they now **register to the visible corner
+  sun** (`--sunvx/--sunvy`), so the old "halo center-screen" bug is fixed. The moon's halo/paraselenae may still
+  show as partial arcs (halo radius > the disc). Sun tone-mapping constants are tuned, not radiometric.
 - Weather precip evidence is Open-Meteo's **nowcast, not true radar** (documented limitation). If a CORS-safe
   radar/nowcast precip source is found, wiring it into `gateWeatherCode` would make the gate ground-truth.
+
+## Do NOT reintroduce (the user has explicitly rejected these)
+
+- A **painted true-dawn horizontal band** or a **false-dawn diagonal cone/slash** — dawn is the physical sky; false
+  dawn is fail-closed. (The user called painted dawn "strips" illegitimate, then "gross/inaccurate".)
+- A **transparent moon** (stars through the disc). The Moon is opaque; never lower group opacity to make it subtle.
+- A **moonless / empty-slot normal night** or a "new moon invisible" rule. New moon = a faint **opaque** ashen
+  calendar disc.
+- A **z-index-only** buckle fix (translucent glass still shows the strap) — keep the mask cut-out.
+- Claiming live motion from `qaState().clouds.hash`. Use a real watch / `debugMotion` Δ.
+- A **grey/purple sun blob** or a sun with no defined nucleus.
 
 ## Suggested skills
 

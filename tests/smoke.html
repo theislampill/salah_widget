@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>salah_widget · characterization smokes</title>
+<!--
+  NO-BUILD characterization smokes (readiness.md Subagent 9 + opticals.md validation).
+  Open this file from the SAME static server that serves index.html (e.g. the repo root),
+  i.e. /tests/smoke.html — it loads ../index.html in a hidden iframe and asserts behaviour.
+
+  Two tiers:
+    PURE  — calls the widget's global gate functions directly (gateWeatherCode/wxClass).
+            Deterministic, no network. These characterise the weather-truthfulness gate.
+    INTEGRATION — loads the widget with sim params (deterministic weather) and reads
+            window.qaState(). Prayer times still come from the Aladhan API, so if the
+            network is down those checks SKIP (they never FAIL on a flaky connection).
+
+  These describe INTENDED behaviour (truthfulness gate, opaque/calendar moon, no painted
+  dawn, observability surface). A FAIL means a real regression. Run after any change to
+  weather/cloud/moon/dawn/observability code.
+-->
+<style>
+  body{font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#0b1430;color:#cfe3ff;margin:0;padding:18px}
+  h1{font-size:16px;color:#f8d878;margin:0 0 4px}
+  .sub{color:#ffffff99;margin:0 0 14px}
+  #sum{font-size:15px;font-weight:700;margin:10px 0;padding:8px 12px;border-radius:8px;background:#ffffff10;display:inline-block}
+  pre{white-space:pre-wrap;margin:0}
+  .pass{color:#9be29b}.fail{color:#ff8a8a}.skip{color:#e8c06a}.head{color:#f8d878}
+</style>
+</head>
+<body>
+<h1>salah_widget · characterization smokes</h1>
+<p class="sub">Serve from the repo root and open <code>/tests/smoke.html</code>. Green = intended behaviour holds.</p>
+<div id="sum">running…</div>
+<pre id="out"></pre>
+<iframe id="w" title="widget under test" referrerpolicy="no-referrer"
+        style="position:absolute;left:-9999px;top:0;width:330px;height:534px;border:0"></iframe>
+<script>
+"use strict";
+const out=document.getElementById("out"), sumEl=document.getElementById("sum"), fr=document.getElementById("w");
+let pass=0,fail=0,skip=0;
+function line(cls,txt){ const s=document.createElement("span"); s.className=cls;
+  s.textContent=(cls==="pass"?"✓ PASS  ":cls==="fail"?"✗ FAIL  ":cls==="skip"?"• SKIP  ":"        ")+txt+"\n";
+  out.appendChild(s); if(cls==="pass")pass++; else if(cls==="fail")fail++; else if(cls==="skip")skip++; }
+function ok(name,cond,detail){ line(cond?"pass":"fail", name+((!cond&&detail!=null)?"  — "+detail:"")); }
+function head(t){ line("head","\n— "+t+" —"); }
+const hashOf=w=>{ try{ return (w.location.hash||"").replace(/^#/,""); }catch(e){ return ""; } };
+// Navigate the iframe and resolve the contentWindow ONLY once it is actually showing the requested scene AND
+// ready(w) holds. Polling the hash avoids a stale-frame race (returning the PREVIOUS scene before the new one
+// loads). Resolves null on timeout (→ the caller SKIPs; never a false FAIL on a flaky network).
+let _r=0;
+function loadUntil(hash, ms, ready){ const want=hash+"&qa=1";
+  fr.src="../index.html?r="+(++_r)+"#"+want;   // the ?r= cache-buster forces a REAL reload — a hash-only src change would not re-run the widget script (the widget reads only location.hash, so ?r is ignored by it)
+  const t0=Date.now();
+  return new Promise(res=>{ (function poll(){ let w=null; try{ w=fr.contentWindow; }catch(e){}
+    try{ if(w && hashOf(w)===want && ready(w)) return res(w); }catch(e){}
+    if(Date.now()-t0>ms) return res(null); setTimeout(poll,150); })(); }); }
+const prayerReady=w=>{ try{ const q=w.qaState(); return !!(q&&q.cache&&q.cache.prayerLoaded); }catch(e){ return false; } };
+
+(async()=>{
+  // ---------- PURE: weather-truthfulness gate (deterministic, no network) ----------
+  const w=await loadUntil("lat=24.47&lon=39.61&label=Madinah&method=4&simWx=0", 8000, fw=>typeof fw.gateWeatherCode==="function");
+  head("weather truthfulness gate (pure)");
+  const G=w&&w.gateWeatherCode, C=w&&w.wxClass;
+  if(typeof G!=="function"||typeof C!=="function"){ line("skip","gate functions not reachable (widget did not load)"); }
+  else{
+    ok("thunder code + dry (precip 0) downgrades", C(G(95,{precip:0,cloud:50}))!=="thunder", "got "+C(G(95,{precip:0,cloud:50})));
+    ok("thunder code + heavy (precip 5) keeps thunder", C(G(95,{precip:5}))==="thunder", "got "+C(G(95,{precip:5})));
+    ok("thunder code + light (precip 0.3) NOT thunder", C(G(95,{precip:0.3,cloud:80}))!=="thunder", "got "+C(G(95,{precip:0.3,cloud:80})));
+    ok("rain code + dry (precip 0) downgrades", C(G(63,{precip:0,cloud:90}))!=="rain", "got "+C(G(63,{precip:0,cloud:90})));
+    ok("rain code + wet (precip 2) keeps rain", C(G(63,{precip:2}))==="rain", "got "+C(G(63,{precip:2})));
+    ok("clear code unchanged", G(0,{})===0, "got "+G(0,{}));
+    ok("cloud/overcast codes are not precip-gated", G(3,{precip:0})===3 && G(2,{precip:0})===2);
+    ok("wxClass mapping", C(95)==="thunder"&&C(3)==="overcast"&&C(0)==="clear"&&C(45)==="fog"&&C(63)==="rain"&&C(73)==="snow");
+  }
+
+  // ---------- INTEGRATION: qaState contract (sim weather deterministic; prayer = network) ----------
+  async function scene(hash,name,fn){ const ww=await loadUntil(hash, 8000, prayerReady);
+    if(!ww){ line("skip", name+"  (scene did not load/boot — offline?)"); return; }
+    try{ fn(ww, ww.qaState()); }catch(e){ line("fail", name+"  — "+e.message); } }
+
+  head("weather truthfulness (qaState integration)");
+  await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simWx=95&simPrecip=0","dry forecast-thunder is downgraded",(ww,q)=>{
+    ok("displayCondition is not thunder", q.wxTruth.displayCondition!=="thunder", q.wxTruth.displayCondition);
+    ok("downgradeReason is reported", !!q.wxTruth.downgradeReason, ""+q.wxTruth.downgradeReason);
+    ok("final data-fx is not thunder", q.wxTruth.finalDataFx!=="thunder", ""+q.wxTruth.finalDataFx); });
+  await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simWx=63&simPrecip=2","precip-supported rain is shown",(ww,q)=>{
+    ok("displayCondition is rain", q.wxTruth.displayCondition==="rain", q.wxTruth.displayCondition); });
+  await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simWx=45&simHumid=96","fog code shows fog, not rain",(ww,q)=>{
+    ok("displayCondition is fog", q.wxTruth.displayCondition==="fog", q.wxTruth.displayCondition);
+    ok("no active precip", q.wxTruth.activePrecip===false); });
+
+  head("moon truthfulness");
+  await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simTime=01:00&simWx=0&simMoon=0.01&simWax=1&simMoonAlt=-20","new/below-horizon moon: opaque calendar disc, NO moonlight",(ww,q)=>{
+    ok("moonlightOpacity is 0 (no faked light)", q.moonTruth.moonlightOpacity===0, ""+q.moonTruth.moonlightOpacity);
+    ok("calendarMoonVisible (slot not empty)", q.moonTruth.calendarMoonVisible===true);
+    const grp=+ww.getComputedStyle(ww.document.querySelector(".c")).getPropertyValue("--moongrp");
+    ok("calendar disc opaque at deep night (--moongrp ~1, no stars through)", grp>0.9, "--moongrp="+grp); });
+  await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simTime=01:00&simWx=0&simMoon=0.6&simWax=1&simMoonAlt=40&simMoonH=8","physical moon up: opaque + casts moonlight",(ww,q)=>{
+    const cs=ww.getComputedStyle(ww.document.querySelector(".c"));
+    ok("--moongrp ~1 (opaque, no stars through)", +cs.getPropertyValue("--moongrp")>0.9, cs.getPropertyValue("--moongrp").trim());
+    ok("--moonocc ~1 (occludes stars behind disc)", +cs.getPropertyValue("--moonocc")>0.9, cs.getPropertyValue("--moonocc").trim());
+    ok("moonlight is on (physical)", q.moonTruth.moonlightOpacity>0, ""+q.moonTruth.moonlightOpacity); });
+
+  head("dawn (no painted overlays)");
+  await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simTime=05:00&simWx=0","no painted false/true dawn layers",(ww,q)=>{
+    ok("no .falsedawn element", !ww.document.querySelector(".falsedawn"));
+    ok("no .truedawn element", !ww.document.querySelector(".truedawn")); });
+
+  head("continuity + observability");
+  await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simWx=3&simCloud=100","cloud identity is stable (no reseed per read)",(ww,q)=>{
+    ok("cloudFieldSeed stable across reads", ww.qaState().wxTruth.cloudFieldSeed===ww.qaState().wxTruth.cloudFieldSeed); });
+  await scene("lat=24.47&lon=39.61&label=Madinah&method=4&simWx=2","observability surface present",(ww,q)=>{
+    ok("qaState exposes wxTruth + cache + render", !!(q.wxTruth&&q.cache&&q.render));
+    ok("cache reports not-stale under sim", q.cache.weatherStale===false);
+    ok("render summary has fx + currentKey", !!(q.render&&q.render.fx&&q.render.currentKey)); });
+
+  sumEl.textContent = pass+" passed · "+fail+" failed · "+skip+" skipped";
+  sumEl.className = fail? "fail":"pass";
+  window.__smoke={pass,fail,skip};
+})();
+</script>
+</body>
+</html>

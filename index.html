@@ -37,8 +37,10 @@ body{color:#fff7df;
 @property --horizon{syntax:"<color>";inherits:true;initial-value:rgba(40,40,90,0)}
 @property --sunx{syntax:"<length-percentage>";inherits:true;initial-value:50%}
 @property --suny{syntax:"<length-percentage>";inherits:true;initial-value:30%}
+@property --sunvx{syntax:"<length-percentage>";inherits:true;initial-value:5%}
+@property --sunvy{syntax:"<length-percentage>";inherits:true;initial-value:7%}
 @media (prefers-reduced-motion:no-preference){
-  .c{transition:--g1 1.1s linear,--g2 1.1s linear,--g3 1.1s linear,--accent 1.1s linear,--accent2 1.1s linear,--text 1.1s linear,--glow 1.1s linear,--horizon 1.1s linear,--sunx 1.1s linear,--suny 1.1s linear}
+  .c{transition:--g1 1.1s linear,--g2 1.1s linear,--g3 1.1s linear,--accent 1.1s linear,--accent2 1.1s linear,--text 1.1s linear,--glow 1.1s linear,--horizon 1.1s linear,--sunx 1.1s linear,--suny 1.1s linear,--sunvx 1.1s linear,--sunvy 1.1s linear}
 }
 
 /* atmosphere: additive (screen) light driven by the sun's trajectory — a Mie
@@ -46,7 +48,7 @@ body{color:#fff7df;
    the sun's azimuth (left at dawn, right at dusk). No discrete "rays": clear-sky
    scattering is smooth; shafts only read through cloud (see .godray). */
 .atmo{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:28px;mix-blend-mode:screen}
-.atmo .sun{position:absolute;left:var(--sunx);top:var(--suny);width:360px;height:360px;transform:translate(-50%,-50%);
+.atmo .sun{position:absolute;left:var(--sunvx,5%);top:var(--sunvy,7%);width:360px;height:360px;transform:translate(-50%,-50%);
   background:radial-gradient(circle,var(--glow),transparent 64%);filter:blur(6px)}
 /* CORNER SUN — a large, top-left-clipped daytime sun: a bright nucleus, a soft warm corona that slowly
    BREATHES (scale driven by simTime via --sunpulse, not a CSS loop), and faint radiating rays. Colour, size
@@ -57,8 +59,8 @@ body{color:#fff7df;
   transform:translate(var(--sunx2,24px),var(--sunlift,14px));transition:opacity 1.5s ease,transform 2.4s ease}
 .atmo .suncorner>div{position:absolute;left:0;top:0;border-radius:50%;will-change:transform;transition:background 1.6s linear}
 .atmo .suncorner .disc{width:240px;height:240px;
-  background:radial-gradient(circle,#fff 0%,#fff 20%,var(--suncore,#fff6e0) 42%,var(--sunmid,#ffcf8a) 66%,rgba(255,190,110,0) 88%);
-  filter:blur(1.3px);transform:translate(-50%,-50%) scale(var(--sundisc,1)) scaleY(var(--sunflat,1))}   /* bright nucleus fading to RADIANCE; scaleY = low-sun atmospheric-refraction FLATTENING near the horizon */
+  background:radial-gradient(circle,#fff 0%,#fff 19%,var(--suncore,#fff6e0) 38%,var(--sunmid,#ffcf8a) 64%,rgba(255,190,110,0) 86%);
+  filter:blur(0.8px);transform:translate(-50%,-50%) scale(var(--sundisc,1)) scaleY(var(--sunflat,1))}   /* DEFINED bright white nucleus (0-38%) → warm-gold body edge → soft falloff (a radiant BODY with an edge, not a vague brush); scaleY = low-sun atmospheric-refraction FLATTENING near the horizon */
 .atmo .suncorner .corona{width:600px;height:600px;
   background:radial-gradient(circle,rgba(255,214,158,.4) 0%,rgba(255,198,128,.2) 24%,rgba(255,184,112,.075) 48%,rgba(255,170,100,0) 66%);
   filter:blur(10px);transform:translate(-50%,-50%) scale(var(--sunpulse,1))}   /* broad subordinate corona/radiance */
@@ -70,27 +72,25 @@ body{color:#fff7df;
 .atmo .scatter{position:absolute;inset:0;background:radial-gradient(150% 96% at var(--sunx) 127%,var(--horizon),transparent 62%)}
 .atmo .belt{position:absolute;inset:0;background:radial-gradient(135% 26% at var(--antix,50%) 120%,var(--belt,transparent),transparent 72%)}  /* Belt of Venus (anti-solar pink, civil twilight) */
 .atmo .airglow{position:absolute;inset:0;background:radial-gradient(150% 40% at 50% 119%,var(--airglow,transparent),transparent 74%)}  /* night airglow + light-pollution dome low on the horizon */
-/* FALSE DAWN (al-fajr al-kādhib, the zodiacal "wolf's tail"): a faint NARROW, TALL, VERTICAL cone of light rising
-   from the EASTERN horizon BEFORE true dawn. It does NOT begin Fajr — purely contextual, deliberately distinct in
-   SHAPE from true dawn (vertical, not horizontal) and never a warm sunrise colour. */
-.atmo .falsedawn{position:absolute;inset:0;opacity:var(--falsedawn,0);transition:opacity 2s ease;mix-blend-mode:screen;
-  background:radial-gradient(8% 44% at var(--dawnx,20%) 33%,rgba(214,220,242,.6),rgba(206,214,238,.12) 48%,transparent 72%)}  /* narrow TALL cone rising in the eastern sky above the horizon */
-/* TRUE DAWN (al-fajr al-ṣādiq): a WIDE, SHORT, HORIZONTAL whiteness spreading ALONG the dashed 0° horizon — this
-   is the light that begins Fajr. Faint cool white (the sky stays dark; NOT a bright sunrise palette). */
-.atmo .truedawn{position:absolute;inset:0;opacity:var(--truedawn,0);transition:opacity 2s ease;mix-blend-mode:screen;
-  background:radial-gradient(62% 9% at var(--dawnx,20%) 43%,rgba(230,234,250,.62),rgba(214,222,242,.14) 46%,transparent 64%)}  /* wide SHORT horizontal thread along the horizon */
+/* DAWN — NEITHER false nor true dawn is a painted overlay (fail-closed). TRUE dawn IS the real physical twilight
+   sky (the skyLum astronomical→nautical→civil progression + the warm horizon scatter at the sun's azimuth) plus the
+   Fajr marker/time on the arc. FALSE dawn (al-fajr al-kādhib / zodiacal light) is NOT rendered: a generic CSS cone
+   read as a decorative lens-flare slash and showed under a bright moon, so it was removed. A faithful zodiacal-light
+   cue is FUTURE WORK only — it would require true ecliptic-tilt projection, strict dark-sky + low/no-moon + low
+   light-pollution + clear-sky gating, very faint opacity, no foreground-crossing streak, and must never imply Fajr.
+   See DESIGN.md › "False dawn vs true dawn". */
 /* ICE-CRYSTAL SOLAR OPTICS (only with thin CIRRUS / cold air — gated in atmosphere(), never random). Centre on the
    sun's screen position (--sunx/--suny), screen-blend. 22° HALO: a discrete ring, RED inner edge → BLUE outer, with
    a DARK inner gap (refraction, opposite a rainbow). SUNDOGS/parhelia: two bright spots at the halo radius LEFT and
    RIGHT of the sun at the SAME elevation + a faint horizontal parhelic-circle band. SUN PILLAR: a soft VERTICAL
    column above/below a LOW sun (plate-crystal reflection, not a beam). */
-.atmo .sunhalo{position:absolute;left:var(--sunx);top:var(--suny);width:300px;height:300px;transform:translate(-50%,-50%);
+.atmo .sunhalo{position:absolute;left:var(--sunvx,5%);top:var(--sunvy,7%);width:300px;height:300px;transform:translate(-50%,-50%);
   opacity:var(--sunhalo,0);mix-blend-mode:screen;filter:blur(1.4px);transition:opacity 2s;
   background:radial-gradient(circle,transparent 0,transparent 41%,rgba(255,176,138,.55) 45%,rgba(255,246,236,.34) 48.5%,rgba(188,206,255,.42) 53%,transparent 60%)}
-.atmo .sundogs{position:absolute;left:var(--sunx);top:var(--suny);width:300px;height:64px;transform:translate(-50%,-50%);
+.atmo .sundogs{position:absolute;left:var(--sunvx,5%);top:var(--sunvy,7%);width:300px;height:64px;transform:translate(-50%,-50%);
   opacity:var(--sundogs,0);mix-blend-mode:screen;filter:blur(2px);transition:opacity 2s;
   background:radial-gradient(circle at 5% 50%,rgba(255,206,156,.85),rgba(255,248,238,.32) 26%,transparent 50%),radial-gradient(circle at 95% 50%,rgba(255,206,156,.85),rgba(255,248,238,.32) 26%,transparent 50%),linear-gradient(90deg,transparent,rgba(238,242,255,.16) 22%,rgba(238,242,255,.16) 78%,transparent)}
-.atmo .sunpillar{position:absolute;left:var(--sunx);top:var(--suny);width:24px;height:250px;transform:translate(-50%,-50%);
+.atmo .sunpillar{position:absolute;left:var(--sunvx,5%);top:var(--sunvy,7%);width:24px;height:250px;transform:translate(-50%,-50%);
   opacity:var(--sunpillar,0);mix-blend-mode:screen;filter:blur(4px);transition:opacity 1.6s;
   background:linear-gradient(180deg,transparent 2%,var(--pillarcol,rgba(255,206,150,.55)) 32%,var(--pillarcol,rgba(255,214,160,.6)) 50%,var(--pillarcol,rgba(255,206,150,.5)) 66%,transparent 98%)}
 /* ANTICREPUSCULAR rays: the same parallel shafts as crepuscular but on the side OPPOSITE the sun, converging by
@@ -138,21 +138,28 @@ body{color:#fff7df;
 .starglints{opacity:var(--stars);filter:blur(var(--starblur))}
 .starglints g{mix-blend-mode:screen}
 .starglints line{stroke:#f2f6ff;stroke-width:.7;stroke-linecap:round;filter:blur(.3px)}
-/* reduced-motion: stop ALL atmospheric/weather motion — including the thunder flash (photosensitivity) */
+/* reduced-motion: stop ALL atmospheric/weather motion — including the thunder flash (photosensitivity). Scoped to
+   .c:not(.motionfull) so an explicit ?motion=full override re-enables animation even under OS reduced-motion
+   (an honest opt-in; the DEFAULT still respects the accessibility preference). The JS rAF cloud/sun-breath paths
+   are gated by the matching _RM/_REDUCED flags, which MOTIONFULL also clears. */
 @media (prefers-reduced-motion:reduce){
-  .stars circle,.wfx .fog,.wfx .drop,.wfx .flake,.wfx .flash,.wfx .bolt,
-  .climate .heatwave,.atmo .sun,.atmo .scatter,.milkyway{animation:none!important}
+  .c:not(.motionfull) .stars circle,.c:not(.motionfull) .starglints g,.c:not(.motionfull) .wfx .fog,.c:not(.motionfull) .wfx .drop,.c:not(.motionfull) .wfx .flake,.c:not(.motionfull) .wfx .flash,.c:not(.motionfull) .wfx .bolt,
+  .c:not(.motionfull) .climate .heatwave,.c:not(.motionfull) .atmo .sun,.c:not(.motionfull) .atmo .scatter,.c:not(.motionfull) .milkyway{animation:none!important}
 }
+/* bright-anchor 4-ray glints SCINTILLATE: each pulses around its projected base opacity (--go) at its own phase/
+   rate, so the luminaries the eye tracks visibly glint instead of sitting static. */
+@keyframes glintpulse{0%,100%{opacity:var(--go,.6)}45%{opacity:calc(var(--go,.6)*0.3)}}
 /* battery: a 24/7 iframe must not repaint when the user can't see it. Paused when the tab is hidden
    OR the widget is scrolled offscreen (set by an IntersectionObserver + visibilitychange in JS). */
 .c.paused *,.c.paused{animation-play-state:paused!important}
 .milkyway{opacity:var(--mw,0);transform-box:fill-box;transform-origin:center;transform:rotate(var(--mwtilt,0deg));transition:opacity 1.6s ease,transform 4s linear}
-.moon{opacity:var(--moongrp,1);transition:opacity 1.2s,transform 1.6s linear}   /* new moon invisible (--moongrp); transform eases so the moon GLIDES along its path */
+.moon{opacity:var(--moongrp,1);transition:opacity 1.2s,transform 1.6s linear}   /* --moongrp = lunar-CALENDAR presence: kept >0 every night (subtle ashen "calendar moon" even near-new / below horizon) so the slot is never empty; physical moonlight is a SEPARATE var (--moonbeam). transform eases so the moon GLIDES along its path */
 .mbeam{fill:#cdd9f5;filter:blur(26px);mix-blend-mode:screen;opacity:var(--moonbeam,0);transition:opacity 1.4s}  /* directional moonlight: present only for a real above-horizon moon */
 /* debug fast-forward: a small simulated-clock read-out, only shown when ?timeScale= is set */
 .simclock{position:absolute;left:8px;top:6px;z-index:6;display:none;font:10px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#fff;background:rgba(8,11,20,.55);padding:2px 7px;border-radius:7px;letter-spacing:.02em;pointer-events:none;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .dbglayers{position:absolute;right:6px;bottom:6px;z-index:6;display:none;white-space:pre;font:9px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#cfe0ff;background:rgba(8,11,20,.62);padding:4px 7px;border-radius:7px;pointer-events:none;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .dbgmoon{position:absolute;left:6px;bottom:6px;z-index:6;display:none;white-space:pre;font:9px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#ffe0c0;background:rgba(8,11,20,.62);padding:4px 7px;border-radius:7px;pointer-events:none;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.dbgmotion{position:absolute;left:8px;top:22px;z-index:7;display:none;white-space:pre;font:9px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#bdf3d0;background:rgba(8,11,20,.66);padding:4px 7px;border-radius:7px;pointer-events:none;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .c.fast,.c.fast *{transition:none!important}   /* fast-forward: snap every layer (sky, moon position/opacity, clouds) each frame — dense frames read smooth, no lagging/lurching/see-through mid-transition */
 .moccluder{fill:var(--moon-sky,#0b1430);opacity:var(--moonocc,1);transition:opacity .9s}  /* opaque only when stars are out (hides them); 0 in daylight so no ghost moon by day */
 .mfeatures{opacity:var(--moonfeat,1);transition:opacity .9s}
@@ -174,12 +181,12 @@ body{color:#fff7df;
 .wfx .cloudcanvas{position:absolute;inset:0;width:100%;height:100%;filter:blur(.55px);
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 3%,#000 24%,transparent 34%);
           mask-image:linear-gradient(180deg,transparent 0,#000 3%,#000 24%,transparent 34%)}
-.wfx .sunhaze{position:absolute;left:var(--sunx);top:var(--suny);width:300px;height:300px;transform:translate(-50%,-50%);
+.wfx .sunhaze{position:absolute;left:var(--sunvx,5%);top:var(--sunvy,7%);width:300px;height:300px;transform:translate(-50%,-50%);
   background:radial-gradient(circle,var(--glow),transparent 56%);mix-blend-mode:screen;filter:blur(7px);opacity:0;transition:opacity 1s}
 /* CREPUSCULAR RAYS (light shafts): soft radial shafts emanating from the sun's screen position, revealed
    only by --ray (sun up + broken cloud + participating haze; 0 in clear-dry or solid-overcast sky). Behind
    the arc/text. The shafts come from the conic gradient; the radial mask fades them out from the source. */
-.wfx .godray{position:absolute;left:var(--sunx);top:var(--suny);width:560px;height:560px;transform:translate(-50%,-50%);pointer-events:none;
+.wfx .godray{position:absolute;left:var(--sunvx,5%);top:var(--sunvy,7%);width:560px;height:560px;transform:translate(-50%,-50%);pointer-events:none;
   background:repeating-conic-gradient(from 8deg,rgba(255,247,228,0) 0deg,rgba(255,247,228,.16) 2.4deg,rgba(255,247,228,0) 6.5deg,rgba(255,247,228,0) 15deg);
   -webkit-mask-image:radial-gradient(circle,#000 4%,rgba(0,0,0,.42) 26%,transparent 62%);
           mask-image:radial-gradient(circle,#000 4%,rgba(0,0,0,.42) 26%,transparent 62%);
@@ -238,21 +245,31 @@ body{color:#fff7df;
    the buckle. Inner padding = outer + tuck, so the gap buckle→text equals the gap text→strap-end. Subtle inner
    glass only — NO heavy drop shadow (matches the prayer cells). .h has a FIXED height so layout/footer never move. */
 .h{position:relative;z-index:2;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  --buckle-r:12.5px;--belt-tuck:7px;--belt-cut-center:5.5px;--belt-cut-r:14px;   /* belt-cut-center = buckle-r − belt-tuck (the buckle centre relative to each strap's inner edge) */
   height:25px;box-sizing:border-box;margin:0 0 12px;padding:0;background:none;border:none;box-shadow:none}
 .e,.wt{box-sizing:border-box;height:18px;max-width:128px;display:flex;align-items:center;line-height:1;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(44,52,76,.18) 52%,rgba(10,16,30,.26));  /* a top sheen fading to a DARK-tinted base, so the strap reads over BRIGHT skies too (not just night) */
   -webkit-backdrop-filter:blur(8px) saturate(1.2);backdrop-filter:blur(8px) saturate(1.2);
   border:1px solid rgba(255,255,255,.17);box-shadow:inset 0 1px .5px rgba(255,255,255,.36)}
-.e{justify-self:end;padding:0 18px 0 15px;margin-right:-7px;border-radius:9px 3px 3px 9px;
+/* the inner end of each strap is physically CUT by a circular mask matching the buckle, so the buckle sits over
+   sky/glass — NOT over translucent strap pixels (z-index alone can't fix it: backdrop-filtered glass reveals what's
+   underneath). Left strap cut at its RIGHT edge, right strap at its LEFT edge. */
+.e{justify-self:end;grid-column:1;padding:0 18px 0 15px;margin-right:calc(-1 * var(--belt-tuck));border-radius:9px 3px 3px 9px;
+  -webkit-mask-image:radial-gradient(circle var(--belt-cut-r) at calc(100% + var(--belt-cut-center)) 50%,transparent 0 13.5px,#000 14px);
+          mask-image:radial-gradient(circle var(--belt-cut-r) at calc(100% + var(--belt-cut-center)) 50%,transparent 0 13.5px,#000 14px);
   font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:color-mix(in srgb,var(--accent) 30%,#fff)}
-.wt{justify-self:start;padding:0 15px 0 18px;margin-left:-7px;border-radius:3px 9px 9px 3px;font-size:12px;font-weight:600;color:var(--text);opacity:.96}
-/* BUCKLE — ~25px, ABOVE the straps (z-index 3) so it CUTS the belt; subtle inner glass, no heavy drop shadow */
-.buckle{position:relative;z-index:3;justify-self:center;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;
+.wt{justify-self:start;grid-column:3;padding:0 15px 0 18px;margin-left:calc(-1 * var(--belt-tuck));border-radius:3px 9px 9px 3px;
+  -webkit-mask-image:radial-gradient(circle var(--belt-cut-r) at calc(0% - var(--belt-cut-center)) 50%,transparent 0 13.5px,#000 14px);
+          mask-image:radial-gradient(circle var(--belt-cut-r) at calc(0% - var(--belt-cut-center)) 50%,transparent 0 13.5px,#000 14px);
+  font-size:12px;font-weight:600;color:var(--text);opacity:.96}
+/* BUCKLE — ~25px, ABOVE the straps (z-index 3) and now over a CUT-OUT gap; isolate+overflow so its glass composites
+   over sky, not over belt geometry. Subtle inner glass, no heavy drop shadow. */
+.buckle{position:relative;z-index:3;justify-self:center;grid-column:2;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;isolation:isolate;overflow:hidden;
   background:radial-gradient(circle at 50% 32%,rgba(255,255,255,.37),rgba(150,170,210,.13) 60%,rgba(255,255,255,.06));
   border:1px solid rgba(255,255,255,.37);
   box-shadow:inset 0 1px 1.2px rgba(255,255,255,.62),inset 0 -1.5px 2.5px rgba(8,12,24,.24)}
-.wi{font-size:13px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.34))}
+.wi{position:relative;z-index:2;font-size:13px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.34))}
 
 /* prayer panel */
 .panel{position:relative;z-index:1}
@@ -334,7 +351,8 @@ body{color:#fff7df;
   <div class="simclock" aria-hidden="true"></div>
   <div class="dbglayers" aria-hidden="true"></div>
   <div class="dbgmoon" aria-hidden="true"></div>
-  <div class="atmo" aria-hidden="true"><div class="airglow"></div><div class="aurora"></div><div class="falsedawn"></div><div class="truedawn"></div><div class="scatter"></div><div class="belt"></div><div class="anticrep"></div><div class="sunpillar"></div><div class="sunhalo"></div><div class="sundogs"></div><div class="sun"></div><div class="suncorner"><div class="rays"></div><div class="corona"></div><div class="disc"></div></div></div>
+  <div class="dbgmotion" aria-hidden="true"></div>
+  <div class="atmo" aria-hidden="true"><div class="airglow"></div><div class="aurora"></div><div class="scatter"></div><div class="belt"></div><div class="anticrep"></div><div class="sunpillar"></div><div class="sunhalo"></div><div class="sundogs"></div><div class="sun"></div><div class="suncorner"><div class="rays"></div><div class="corona"></div><div class="disc"></div></div></div>
   <svg class="sky" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
     <defs>
       <radialGradient id="mg" cx="40%" cy="34%" r="72%">
@@ -478,9 +496,11 @@ const real    = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
 const LPOLL = Math.min(1, Math.max(0, +q.get("lp") || 0));
 const DEBUGLAYERS = q.get("debugLayers")==="1";   // ?debugLayers=1 → live read-out of every sky/cloud layer opacity
 const DEBUGMOON = q.get("debugMoon")==="1";       // ?debugMoon=1 → moon layer radii/opacities + a pixel-ring across the limb
-const DEBUGDAWN = q.get("debugDawn");             // ?debugDawn=false|true → force the false-dawn / true-dawn layer for inspection
+const DEBUGDAWN = q.get("debugDawn");             // DEPRECATED no-op: dawn is not a painted overlay anymore (true dawn = the physical twilight sky + Fajr marker; false dawn is not rendered). Kept only so old URLs don't error.
 const DEBUGOPTIC = q.get("debugOptic");           // ?debugOptic=halo|sundogs|pillar|anticrep|paraselene → force a (condition-gated) optical phenomenon
 const QA = q.get("qa")==="1";                     // ?qa=1 → force the forecast track on boot + expose window.qaState() frame-diff metrics
+const DEBUGMOTION = q.get("debugMotion")==="1";   // ?debugMotion=1 → live motion telemetry overlay (rAF & cloud-paint rates, reduced-motion, paused, cloud/star Δ over 10s/60s, wx source, timeScale, reason)
+const MOTIONFULL = (q.get("motion")||"")==="full";// ?motion=full → force full animation even under OS prefers-reduced-motion. DEFAULT respects accessibility (motion reduced when the OS asks), but this gives an honest override for testing and for users who want it
 
 // ---- helpers -------------------------------------------------------------
 const $    = s => document.querySelector(s);
@@ -832,9 +852,12 @@ function renderMoon(){
   // stays high in the corner (a clear gap above the always-low/descending arc at this x) and never sweeps
   // across the centre/header. A faint culmination lift keeps a high moon from looking frozen.
   const sweep=up, hd=Math.max(-1,Math.min(1,Hm/120));
-  const x=312 - 24*sweep + hd*7;                                   // pushed further into the top-right corner so the disc clears the glass belt's right cap (no crowding with the temperature)
-  const y=12 + 30*sweep - clamp((alt-6)/70)*5;                     // up0 12 (clipped by the top) → up1 ≈42; a small extra rise near culmination
-  const scale=0.86 + 0.24*sweep;                                   // ≈1.10 risen (~1.9× the old 0.58) → 0.86 entering; clipped by the corner at full size
+  // The moon SETTLES into a mostly-on-card top-right slot in EVERY visible state (a below-horizon moon only ever
+  // shows at night as the calendar ghost — by day moongrp→0 — so it must NOT be jammed off the corner). The sweep
+  // now only adds a small rise/settle for life; it no longer flings the disc off-card.
+  const x=268 + hd*1.5;                                            // centred so the WHOLE disc has comfortable margin on the right (≈5px) — a thin WAXING crescent's lit right limb is clearly in frame, not at the edge — while the left limb clears the temperature strap row below
+  const y=55 + 3*sweep - clamp((alt-6)/70)*3;                      // ≈55-58: dropped below the temp strap (y19-37) and above the arc (top y≈121 on the right) — its wide middle clears the strap, so the disc is large AND fully on-card
+  const scale=1.11 + 0.02*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
   const g=$(".moon"); if(g) g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
   moonSky={alt,H:Hm,frac,up,sx:x/325,sy:y/530};   // sx/sy = card-fraction centre, so the cloud deck can be moon-lit from the right spot
   const feat=$(".mfeatures"); if(feat) feat.setAttribute("transform", `rotate(${rotDeg.toFixed(1)})`);
@@ -882,7 +905,7 @@ function projectStars(date){
     if(mw>0.12){ const dr=Math.hypot(x-mx,y-my); o*=(1-0.92*mw*Math.max(0,1-dr/175)); if(dr<58) o*=0.10; }   // dim stars near a bright moon; fully crush them inside the inner glow
     el.style.display=""; el.setAttribute("cx",x.toFixed(1)); el.setAttribute("cy",y.toFixed(1));
     el.style.setProperty("--o",o.toFixed(3)); el.style.opacity=o.toFixed(3);
-    if(s.tw) el.style.setProperty("--amp",(0.12+0.45*(1-ext)).toFixed(3));
+    if(s.tw) el.style.setProperty("--amp",((0.12+0.45*(1-ext))*(s.bright?1.5:1)).toFixed(3));   // anchors scintillate ~1.5× deeper than the dust bed
   }
   // assign the 6 glints to the BRIGHTEST currently-visible anchor stars (so a few always land on what's up)
   const upBright=[];
@@ -894,7 +917,7 @@ function projectStars(date){
     if(i==null){ if(g.style.display!=="none") g.style.display="none"; continue; }
     const el=_starEls[i], sz=0.6+1.15*(+_starCat[i].b), op=(+el.style.opacity||0)*0.8;
     g.style.display=""; g.setAttribute("transform",`translate(${el.getAttribute("cx")} ${el.getAttribute("cy")}) scale(${sz.toFixed(2)})`);
-    g.style.opacity=op.toFixed(3);
+    g.style.setProperty("--go",op.toFixed(3)); g.style.opacity=op.toFixed(3);   // --go = the glint's base opacity; the glintpulse animation scintillates around it
   }
 }
 function buildStars(){
@@ -930,7 +953,7 @@ function buildStars(){
     const cu=rng(); let ci=cdf.findIndex(c=>cu<=c); if(ci<0)ci=3;
     let fill=COL[ci];
     if(bright){ const BC=["#a8c4ff","#e6efff","#fff0cf","#ffce98","#ffb6a6"]; fill=BC[(rng()*BC.length)|0]; }   // vivid, distinct luminary hues (blue / white / amber / red)
-    const tw= rng()>0.4, dur=(1.6+3.8*rng()).toFixed(1), del=(-rng()*6).toFixed(1);
+    const twr=rng()>0.4, tw= bright||twr, dur=(1.6+3.8*rng()).toFixed(1), del=(-rng()*6).toFixed(1);   // ALL bright anchors scintillate (the eye tracks them); ~60% of the dust bed too
     _starCat.push({ra, sd:Math.sin(dec), cd:Math.cos(dec), b:0.14+0.86*br2, tw, bright, mag});
     let sty=""; if(tw) sty+=`--o:.5;--amp:.2;animation:tw ${dur}s ease-in-out ${del}s infinite;`; if(bright) sty+=`--hc:${fill};`;   // --hc = this luminary's own colour → a COLOURED halo (see .br)
     s+=`<circle r="${rr.toFixed(2)}" fill="${fill}"${bright?' class="br"':''}${sty?` style="${sty}"`:""}/>`;
@@ -941,7 +964,7 @@ function buildStars(){
   // (so a few glints are always on screen rather than tied to fixed stars that may be below the horizon).
   const glg=document.querySelector(".starglints");
   _brightIdx=_starCat.map((st,i)=>i).filter(i=>_starCat[i].mag<0.7);   // glint pool: a bit wider than the halo set, so 2–3 glints are usually on screen
-  if(glg){ glg.innerHTML=Array.from({length:6},()=>'<g><line x1="-7" y1="0" x2="7" y2="0"/><line x1="0" y1="-7" x2="0" y2="7"/></g>').join(""); _glintEls=[...glg.querySelectorAll("g")]; }
+  if(glg){ glg.innerHTML=Array.from({length:6},(_,k)=>`<g style="animation:glintpulse ${(2.4+0.7*k).toFixed(1)}s ease-in-out ${(-0.9*k).toFixed(1)}s infinite"><line x1="-7" y1="0" x2="7" y2="0"/><line x1="0" y1="-7" x2="0" y2="7"/></g>`).join(""); _glintEls=[...glg.querySelectorAll("g")]; }   // each glint pulses at its own phase/rate (see @keyframes glintpulse), modulating its projected base opacity --go
   projectStars(simDate()); _starsProjected=true;
 }
 
@@ -991,7 +1014,7 @@ function model(){
   const doy=Math.floor((Date.UTC(n.y,n.mo-1,n.d)-Date.UTC(n.y,0,0))/86400000);
   const decl=23.44*Math.PI/180*Math.sin(2*Math.PI*(doy-80)/365.25);   // solar declination (rad), from the date
   return {
-    t, noon, decl, sunrise:norm(mins(t.Sunrise)), sunset:norm(mins(t.Sunset||t.Maghrib)),
+    t, noon, decl, doy, sunrise:norm(mins(t.Sunrise)), sunset:norm(mins(t.Sunset||t.Maghrib)),
     nowMin, nowAbs:norm(nowMin), warmEnd: tomorrowFlag ? start+1440 : norm(next.m),
     dots: prayers.map(k=>({k, abs:norm(mins(t[k]))})),
     currentKey:cur, nextKey:next.k, nextTime:next.t,
@@ -1145,7 +1168,7 @@ function sunAltAt(M,a){
   const noonT=polar?M.noon:(M.sunrise+M.sunset)/2;
   let decl=M.decl;
   const HsrDeg=((M.sunset-M.sunrise)/2)*0.25, tp=Math.tan(phi);
-  if(!polar && Math.abs(tp)>0.05){ const d=Math.atan(-Math.cos(HsrDeg*DEG)/tp); if(isFinite(d)&&Math.abs(d)<24*DEG) decl=d; }
+  if(!polar && Math.abs(tp)>0.05){ const d=Math.atan(-Math.cos(HsrDeg*DEG)/tp); if(isFinite(d)&&Math.abs(d)<27.5*DEG) decl=d; }   // 27.5° clamp MUST equal drawArc's (was 24° — caused the sky-sun elevation to diverge from the arc when the near-solstice fit lands in 24°..27.5°, breaking the "fire sunrise glow when the arc's sunrise dot is on the horizon" invariant)
   const Hof=(a-noonT)*0.25;                                   // TRUE hour angle, no warp (matches drawArc)
   const cl=x=>x<-1?-1:x>1?1:x;
   return Math.asin(cl(Math.sin(phi)*Math.sin(decl)+Math.cos(phi)*Math.cos(decl)*Math.cos(Hof*DEG)))/DEG;
@@ -1323,11 +1346,14 @@ function paintClouds(t){
     const base=[tint[0]*0.6,tint[1]*0.6,tint[2]*0.64], top=[Math.min(255,tint[0]*1.14),Math.min(255,tint[1]*1.13),Math.min(255,tint[2]*1.1)];
     for(let i=0;i<n;i++){
       const sd=dseed+i*1.37;
-      const life=_ssc(0.30,0.62,_vn3(sd*1.7,7.3,5+t*0.0042+i*0.5));        // slow noise(time) → smooth birth/grow/erode (time-driven, not a loop)
+      const life=_ssc(0.30,0.62,_vn3(sd*1.7,7.3,5+t*(0.018+di*0.004)+i*0.5));  // noise(time) → birth/grow/erode. RATE CALIBRATED for a PERCEPTIBLE morph over 15-60s real-time (was 0.0042 → sub-pixel/min, read as frozen); high decks evolve a touch faster
       const gate=clamp((cov*n*1.25 - i)*1.2);                              // coverage decides how many clusters are active (smooth fade-in)
       const aMul=life*gate; if(aMul<0.02) continue;
-      let ux=((i*0.618+_vn3(sd,2,0) - wind*t*0.0016)%1.25); if(ux<0)ux+=1.25; ux-=0.12;   // drift across + in/out off the edges (wrap)
-      const cx=ux*W, cy=(bandY+(_vn3(sd,3,0)-0.5)*spread)*H + (_vn3(sd,4,t*0.0022)-0.5)*7;
+      // ADVECTION: drift = wind·DRIFT·W px/s. DRIFT 0.024 (was 0.0016, ~15×) makes a moderate wind carry a cluster
+      // ~25-30% of the card width per minute — clearly visible in a 15-60s watch, gentle in calm air, fast in a gale.
+      // High thin decks ride the wind a little faster (di term). t is simNow seconds, so fast-forward accelerates it.
+      let ux=((i*0.618+_vn3(sd,2,0) - wind*t*(0.024+di*0.006))%1.25); if(ux<0)ux+=1.25; ux-=0.12;   // drift across + in/out off the edges (wrap)
+      const cx=ux*W, cy=(bandY+(_vn3(sd,3,0)-0.5)*spread)*H + (_vn3(sd,4,t*0.011)-0.5)*7;
       const R=R0*(0.6+0.5*life)*(0.78+0.5*_vn3(sd,5,0));                   // grows with life + per-cluster size variation
       const sux=S.sunX*W-cx, suy=S.sunY*H-cy, suL=Math.hypot(sux,suy)||1, sl=Math.max(0,1-suL/(W*0.9))*S.sunUp;
       const mux=S.moonX*W-cx, muy=S.moonY*H-cy, muL=Math.hypot(mux,muy)||1, ml=Math.max(0,1-muL/(W*0.6))*S.moonLit;
@@ -1386,13 +1412,21 @@ function atmosphere(M){
   // — lunar state (from the REAL ephemeris in moonSky, set by renderMoon). Three regimes: a real above-
   //   horizon lit night moon (bright disc + casts moonlight); a below-horizon/daytime faint calendar
   //   presence (no sky illumination); a near-new moon (nearly gone).
-  const moonUp=clamp((moonSky.alt+2)/6);
+  const moonUp=clamp((moonSky.alt+2)/6);                        // 1 = physically above the horizon
   const darkness=clamp(-(sm.altDeg+3)/9);                       // night emerges over civil→nautical twilight
-  const phaseVis=clamp((mFrac-0.02)/0.05);
-  const moonObject=moonUp*darkness*phaseVis;
-  const moonlight=moonObject*(0.35+0.65*mFrac);
+  const phaseVis=clamp((mFrac-0.02)/0.05);                      // ~0 only at true new moon
+  const moonObject=moonUp*darkness*phaseVis;                    // a real, above-horizon, LIT moon (drives accent / star-wash)
+  const moonlight=moonObject*(0.35+0.65*mFrac);                // PHYSICAL illumination ONLY — 0 below horizon / new / day, never faked for the calendar moon
   const moonStrength=moonlight;
-  const moonPresence=phaseVis*clamp(0.18*darkness+0.82*moonObject);
+  // The Moon is an OPAQUE body — you NEVER see stars through it. So its disc and its star-occluder share ONE
+  // opacity (--moongrp = moonShow) that is FULL at night and only fades out by day (no daytime ghost). It is never
+  // a translucent hologram. The lunar-CALENDAR requirement (the Moon is meaningfully present EVERY night, even
+  // below the horizon or near-new) is met by rendering the real OPAQUE phase disc every night — a new moon is a
+  // DARK ASHEN disc, not a see-through one. The physical-vs-calendar distinction lives in MOONLIGHT (moonbeam,
+  // physical-only), NOT in transparency. Heavy cloud hides the Moon by drawing the cloud deck OVER it (layer
+  // order), not by fading the disc — so partial cloud never makes the Moon see-through either.
+  const moonShow=clamp(darkness*1.8);   // reaches FULL opacity by early nautical twilight (before stars are prominent) so the Moon is never see-through once stars are out; fades to 0 by day (no daytime ghost)
+  const moonPresence=moonShow;
   const directional=1-D.cloud*D.cloud;                          // hard sun when clear → flat/shadowless overcast
   // — sky gradient: physical sky → weather tint → moonlit lift —
   let g1=S.g1, g2=S.g2, g3=S.g3;
@@ -1414,7 +1448,7 @@ function atmosphere(M){
   const altClarity=clamp(siteElev/3000);
   // faint stars COME AND GO with the slow transparency drift (×0.84..1.06) — a clear night is never frozen.
   const stars=S.stars*w.st*(1-0.55*moonlight)*(1-0.45*D.haze*(1-0.55*altClarity))*(1-0.16*D.humid)*(1-0.5*LPOLL)*(0.84+0.22*airDrift);
-  const moon =moonPresence*w.mn;
+  const moon =1;   // .mfeatures + occluder are FULLY opaque within the group; the group (--moongrp=moonShow) carries the night fade. The Moon is OPAQUE — no stars show through the disc
   // Milky Way GEOMETRY: the galactic centre's altitude sets prominence (bright bulge up vs faint outer arm) and
   // its hour angle tilts the band — so the MW RISES, tilts and SETS through the night and shifts with season +
   // latitude (driven by simTime, so fast-forward sweeps it). ONLY a dark, clear, moonless, TRANSPARENT,
@@ -1439,19 +1473,23 @@ function atmosphere(M){
   const sunWarmC=clamp((15-sm.altDeg)/22)*(day?1:0);
   const cloudSunCol=mixRGB([255,247,232],[255,168,96], sunWarmC);
   const cloudMoonCol=mixRGB([206,220,246],[226,232,250], mFrac);
-  // — anti-solar twilight + lunar corona —
-  const corona=clamp((D.rh-0.78)/0.18)*((D.cloud>0.15&&D.cloud<0.75)?1:0.3)*clamp(mFrac+0.2)*moonUp*darkness;
-  const belt=Math.max(0,1-Math.abs(sm.altDeg+4)/5)*((cls==="clear"||cls==="cloud")?1:0.25);
+  // — anti-solar Belt of Venus (pink anti-twilight band; needs a clear-ish anti-solar sky, so off under
+  //   overcast/precip/fog). (The old `corona` anti-solar/lunar-corona heuristic was removed — it painted nothing;
+  //   the real water-droplet aureole is `lunarCorona`→--mcorona below.) —
+  const belt=Math.max(0,1-Math.abs(sm.altDeg+4)/5)*((cls==="clear"||cls==="cloud")?1:0);
   const skyL=skyLum(sm.altDeg);
-  // FALSE vs TRUE DAWN — MORNING-only (dawn side), gated by solar DEPRESSION, and only in a clear-ish sky. The sky
-  // stays dark: these are faint horizon CUES, not a bright sunrise palette. FALSE dawn (zodiacal) leads, in a deep
-  // pre-dawn band; TRUE dawn (the Fajr light) follows and grows toward sunrise. Distinct SHAPES in CSS (vertical vs
-  // horizontal). Dawn visuals are explanatory only — they never drive the prayer clock.
+  // DAWN. TRUE dawn (al-fajr al-ṣādiq) is NOT painted as a separate layer — it IS the real physical twilight sky
+  // (skyLum's astronomical→nautical→civil progression + the warm horizon scatter at the sun's azimuth, all above)
+  // plus the Fajr marker/time on the arc. `trueDawn` below is kept ONLY as a 0..1 diagnostic scalar (qaState), not
+  // rendered. FALSE dawn (al-fajr al-kādhib, the zodiacal cue) IS painted — a real phenomenon the twilight engine
+  // doesn't produce — but only as a RARE, FAINT, FAIL-CLOSED cue (gates below); it never drives the prayer clock.
   const dep=-sm.altDeg, morning=M.nowMin<M.noon, clearish=(cls==="clear"||cls==="cloud"||cls==="fog");
-  let falseDawn = (morning&&clearish) ? clamp((dep-16.5)/2.5)*clamp((20.5-dep)/2.5) : 0;   // ~17..20° depression, peaks ~18.5 (before true dawn)
-  let trueDawn  = (morning&&clearish) ? clamp((17.5-dep)/8)*clamp((dep-6.5)/3) : 0;        // ~7..17° (Fajr onset → near sunrise), grows toward sunrise
-  if(DEBUGDAWN==="false"){ falseDawn=1; trueDawn=0; } else if(DEBUGDAWN==="true"){ trueDawn=1; falseDawn=0; }
-  const dawnX=Math.max(0.12,Math.min(0.4,(sm.x||28)/100));   // eastern-horizon screen anchor (sun azimuth at dawn), held to the eastern sky
+  // TRUE DAWN is the physical twilight sky (the gradient/glow above) + the Fajr marker — NOT painted. `trueDawn`
+  // is kept ONLY as a 0..1 DIAGNOSTIC scalar (qaState), never rendered. FALSE DAWN (zodiacal light) is NOT rendered
+  // at all (fail-closed): a generic CSS cone read as a decorative lens-flare slash and showed under a bright moon.
+  // A faithful zodiacal cue is FUTURE WORK (needs real ecliptic-tilt projection + strict dark-sky/no-moon/low-LP/
+  // clear-sky gating + very faint, no foreground-crossing streak, never implying Fajr). See DESIGN.md.
+  const trueDawn = (morning&&clearish) ? clamp((17.5-dep)/3.0)*clamp(dep/1.5) : 0;
   // — cloud LAYERS (low/mid/high): prefer the real forecast layering; else split total coverage by condition.
   //   low = horizon deck (thick band), mid = broad deck, high = thin upper veil. Coverage is DATA-driven, so a
   //   clear sky shows NO cloud body and overcast fills the deck — not a blanket texture keyed to a data-fx name.
@@ -1505,8 +1543,8 @@ function atmosphere(M){
     // —— night sky ——
     starOpacity: stars, milkyWayOpacity: milkyWay, mwTilt,
     starTurb: 0.62+0.62*clamp(0.5*D.humid+0.42*D.wind+0.3*D.haze),   // scintillation amplitude ← live air turbulence (humidity/wind/haze)
-    moonDisc: moon, moonOcc: (moon>0.02?1:0), moonBeam: 0.6*moonlight, moonGrp: clamp((mFrac-0.012)/0.05),
-    moonSky: mixRGB(g1,g2,0.22), starBlur: Math.max(0,Math.min(0.6, (w.blur + 0.6*D.humid)*(1-0.5*altClarity) + 0.3*(airDrift-0.5))), corona, lunarHalo, lunarCorona,
+    moonDisc: moon, moonOcc: moon, moonBeam: 0.6*moonlight, moonGrp: moonShow,   // disc+occluder fully opaque; group (moonShow) is full at night, fades by day — the Moon is solid, never see-through
+    moonSky: mixRGB(g1,g2,0.22), starBlur: Math.max(0,Math.min(0.6, (w.blur + 0.6*D.humid)*(1-0.5*altClarity) + 0.3*(airDrift-0.5))), lunarHalo, lunarCorona,
     // —— accent / text ——
     accent, accent2, text: S.text,
     // —— heat / cold ——
@@ -1524,7 +1562,7 @@ function atmosphere(M){
     // descriptors (renderer contract): scattering/aerial values the colour math already encodes
     rayleighStrength: skyL, mieStrength: glow[3], aerosolDensity: D.haze, aerialPerspective: clamp(D.haze*0.7+0.3*clLow), airDrift,
     // —— anti-solar + night horizon glow + high-lat aurora ——
-    antiX: 100-sm.x, belt, airglow:[airCol[0],airCol[1],airCol[2],airA], aurora, falseDawn, trueDawn, dawnX,
+    antiX: 100-sm.x, belt, airglow:[airCol[0],airCol[1],airCol[2],airA], aurora, trueDawnTwilight: trueDawn,
     sunHalo, sunDogs, sunPillar, antiCrep, pillarCol, moonParhelia,
   };
 }
@@ -1545,30 +1583,62 @@ function paint(A){
   c.style.setProperty("--sunx",A.sunX.toFixed(1)+"%");
   c.style.setProperty("--suny",A.sunY.toFixed(1)+"%");
   // —— CORNER SUN (.suncorner): nucleus + corona + rays, reading time-of-day & weather ——
-  { const selv=A.solarElevationDeg, noon=clamp(selv/40), sunAmt=clamp((selv+1.5)/7);
-    const wxMute=({overcast:.42,thunder:.3,rain:.55,drizzle:.7,fog:.5,snow:.66,cloud:.82})[A.cls];
-    const mute=wxMute==null?1:wxMute, cool=v=>mixRGB(v,[206,208,214],(1-mute)*0.7);
-    c.style.setProperty("--sunamt",(sunAmt*mute).toFixed(3));
-    c.style.setProperty("--suncore",rgb(cool(mixRGB([255,231,188],[255,250,238],noon))));   // warm low → white-gold high
-    c.style.setProperty("--sunmid", rgb(cool(mixRGB([255,158,78], [255,210,146],noon))));   // deep orange low → soft gold high
-    c.style.setProperty("--sundisc",(1.08-0.22*noon).toFixed(3));      // BROAD soft disc low → tighter, whiter nucleus at noon
-    // the sun RISES from the left edge near the horizon (sunrise) and climbs UP-and-LEFT into the top corner (noon)
-    // — a diagonal solar path, never "dropping from the top". --sunlift=vertical (near horizon→high), --sunx2=horizontal (clipped at the left edge→settled in the corner).
-    c.style.setProperty("--sunlift",(34+118*(1-noon)).toFixed(1)+"px");   // higher in the corner at noon, low near the horizon at sunrise
-    c.style.setProperty("--sunx2",(16-26*(1-noon)).toFixed(1)+"px");      // more CLIPPED into the top-left corner (mostly off-card → we see radiance, not the whole body)
-    c.style.setProperty("--sunray",(0.12+0.30*noon*mute).toFixed(3));  // crisp rays only with a high, unclouded sun
+  { const e=A.solarElevationDeg, noon=clamp(e/40), sunAmt=clamp((e+1.5)/7);
+    // ——— SOLAR TONE-MAPPING / WHITE-BALANCE (scene-referred radiance → attenuate → ACES → display) ———
+    // The OLD code multiplied a display OPACITY by a weather "mute" and mixed the colour toward cold grey
+    // (206,208,214) → a dim grey/purple BLOB and a vague soft BRUSH. Correct discipline (deep-research §4):
+    // build a LINEAR HDR sun radiance (a bright >1 core), attenuate it by airmass + cloud transmittance, then
+    // ACES tone-map → the nucleus CLIPS to a DEFINED white body even under cloud, while the corona carries the
+    // colour and the dimming. Cloud DESATURATES toward neutral-WARM white (a colour-temp shift), never blue-grey.
+    const eC=Math.max(0,e);
+    const m=1/(Math.sin(eC*Math.PI/180)+0.50572*Math.pow(eC+6.07995,-1.6364));   // Kasten–Young relative airmass
+    const k=0.13+0.07*clamp(A.aerosolDensity);                                    // broadband optical depth: clean → hazy
+    const Tbeam=Math.exp(-k*(m-1));                                               // Beer–Lambert beam transmittance
+    const _tc={clear:1.0,cloud:0.7,overcast:0.35,thunder:0.22,fog:0.30,rain:0.40,snow:0.55,drizzle:0.6}[A.cls];
+    const Tcloud=_tc!=null?_tc:(1-0.65*clamp(A.cloudCover));                      // cloud transmittance (attenuates flux, does NOT grey the colour)
+    const CCT=Math.max(2000,Math.min(5800,2000+3500*_ss(e/40)));                  // colour temperature: ~2000K horizon → ~5500K noon
+    const _bb=[[2000,255,137,18],[2700,255,169,87],[3500,255,196,137],[4500,255,219,186],[5500,255,228,206],[6500,255,243,239]];
+    let cCol=[255,243,239]; for(let i=0;i<_bb.length-1;i++){ if(CCT<=_bb[i+1][0]){ const f=(CCT-_bb[i][0])/(_bb[i+1][0]-_bb[i][0]); cCol=[1,2,3].map(j=>_bb[i][j]+f*(_bb[i+1][j]-_bb[i][j])); break; } }
+    cCol=mixRGB(cCol,[255,244,232],(0.12+0.08*clamp(A.cloudCover))*clamp((1-Tcloud)/0.65));   // cloud WARM white-balance (never cold grey)
+    const cLin=cCol.map(v=>Math.pow(v/255,2.2));                                  // de-gamma → linear
+    const aces=x=>{ x=Math.max(0,x*0.6); return Math.min(1,(x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14)); };   // ACES (Narkowicz)
+    const tm=(lin,L)=>rgb(lin.map(c=>Math.round(255*Math.pow(aces(c*L),1/2.2))));  // tone-map a radiance to a display colour
+    c.style.setProperty("--sunamt",sunAmt.toFixed(3));                            // PRESENCE only (is the sun up?) — NOT a brightness mute
+    c.style.setProperty("--suncore",tm(cLin,6.0*Tcloud*(0.22+0.78*Tbeam)));      // bright NUCLEUS colour (tone-mapped → correct white-balance, never the old grey-purple); a transmittance floor keeps the horizon sun glowing, not a dark smudge
+    // disc BODY/edge colour: a SATURATED warm gold (deep orange low → soft gold high) that gives the nucleus a
+    // DEFINED edge against the corona (a near-white tone-mapped mid washed the disc into a formless glow). Cloud
+    // desaturates it toward warm-WHITE, NEVER cold grey/purple (that was the original bug).
+    let sunmidB=mixRGB([255,150,70],[255,214,170],noon);
+    sunmidB=mixRGB(sunmidB,[255,238,218],(1-Tcloud)*0.45);
+    c.style.setProperty("--sunmid",rgb(sunmidB));
+    c.style.setProperty("--sundisc",(1.10-0.24*noon).toFixed(3));                 // broad soft disc low → tighter bright nucleus high
+    // SOLAR PATH: the sun ENTERS from the left edge near the dashed horizon at sunrise (low e) and climbs UP-and-
+    // LEFT, cresting HIGH into the top-left corner near apex (mostly clipped → a powerful sliver, not a mid-corner
+    // blob). --sunlift=vertical (≈216px≈near the 228px horizon at sunrise → 22px high at noon), --sunx2=horizontal
+    // (settled ~16px in the corner at noon → ≈−22px off the left edge at sunrise).
+    const sunLiftPx=40+176*(1-noon), sunX2Px=20-40*(1-noon);   // noon: nucleus sits a touch more ON-card (≈20,40) so the bright core reads as a defined body, not a corner sliver; sunrise: enters from off the left edge near the dashed horizon (≈−20,216)
+    c.style.setProperty("--sunlift",sunLiftPx.toFixed(1)+"px");
+    c.style.setProperty("--sunx2",sunX2Px.toFixed(1)+"px");
+    // VISIBLE-SUN screen coordinate (the corner-sun disc centre). The DISCRETE solar optics (22° halo, sundogs,
+    // pillar, sun bloom, crepuscular rays, cloud sun-haze) register HERE — to the body the eye actually sees —
+    // NOT to the arc-sun azimuth (--sunx/--suny), which sweeps mid-card and left the halo detached center-screen
+    // (an instant FAIL). The diffuse HORIZON scatter band and the anti-solar Belt/anticrepuscular rays stay on the
+    // azimuth (--sunx / --antix), which is physically where they belong. See DESIGN.md › "Sun layers".
+    c.style.setProperty("--sunvx",(sunX2Px/325*100).toFixed(1)+"%");
+    c.style.setProperty("--sunvy",(sunLiftPx/530*100).toFixed(1)+"%");
+    c.style.setProperty("--sunray",((0.10+0.30*clamp(e/30))*Tcloud).toFixed(3));  // rays fade via TRANSMITTANCE, not a grey mix
     c.style.setProperty("--sunpulse",(_REDUCED?1:1+(0.045+0.035*A.heat)*Math.sin(simNow()/1000/23)+0.015*Math.sin(simNow()/1000/6.5)+(1-noon)*0.16).toFixed(4));  // slow coronal breathing + a faint faster ray flicker + broader corona at low sun (all simTime-driven)
-    const lowF=clamp((3-selv)/6)*clamp((selv+4)/4); c.style.setProperty("--sunflat",(1-0.18*lowF).toFixed(3));   // atmospheric REFRACTION: the low sun flattens/ovalises near the horizon
+    c.style.setProperty("--sunflat",(1-0.20*clamp((4-e)/8)*clamp((e+3)/4)).toFixed(3));   // atmospheric REFRACTION oblateness (~0.8 at the horizon, 1 above ~5°)
   }
   c.style.setProperty("--stars",A.starOpacity.toFixed(3));
   c.style.setProperty("--mw",A.milkyWayOpacity.toFixed(3));
   c.style.setProperty("--mwtilt",A.mwTilt.toFixed(1)+"deg");   // Milky Way band tilts with the galactic centre's hour angle
   c.style.setProperty("--star-turb",A.starTurb.toFixed(2));    // live scintillation amplitude (atmospheric turbulence)
-  c.style.setProperty("--moonocc",A.moonOcc.toFixed(0));        // OPAQUE whenever the disc shows (never see-through)
+  c.style.setProperty("--moonocc",A.moonOcc.toFixed(3));        // tracks the disc opacity: a bright physical disc fully hides stars; a faint calendar ghost only dims them (no hard black hole)
   c.style.setProperty("--starblur",A.starBlur.toFixed(2)+"px");
   c.style.setProperty("--moonfeat",A.moonDisc.toFixed(3));
   c.style.setProperty("--moonbeam",A.moonBeam.toFixed(3));
-  c.style.setProperty("--moongrp",A.moonGrp.toFixed(3));        // an unlit new moon is invisible
+  c.style.setProperty("--moongrp",A.moonGrp.toFixed(3));        // lunar-calendar presence: never 0 at night (the Moon is always meaningfully present), even near-new or below horizon
   c.style.setProperty("--moon-sky",rgb(A.moonSky));             // occluder tracks the live sky colour
   c.style.setProperty("--mrad",(_REDUCED?1:1+0.10*Math.sin(simNow()/1000/17)+0.12*A.aerosolDensity).toFixed(3));   // moon-glow radiance: gentle simTime breathing, a touch stronger in haze (subtle, not the dominant element)
   c.style.setProperty("--heat",A.heat.toFixed(3));
@@ -1597,9 +1667,7 @@ function paint(A){
   c.style.setProperty("--belt",`rgba(232,150,168,${(0.34*A.belt).toFixed(3)})`);
   c.style.setProperty("--airglow",rgba(A.airglow));
   c.style.setProperty("--aurora",A.aurora.toFixed(3));
-  c.style.setProperty("--falsedawn",(0.55*A.falseDawn).toFixed(3));   // faint vertical zodiacal cone (pre-Fajr)
-  c.style.setProperty("--truedawn",(0.55*A.trueDawn).toFixed(3));     // faint horizontal Fajr horizon thread
-  c.style.setProperty("--dawnx",(A.dawnX*100).toFixed(1)+"%");
+  // (No painted dawn layers — true dawn is the physical twilight sky + Fajr marker; false dawn is not rendered.)
   c.style.setProperty("--sunhalo",(0.85*A.sunHalo).toFixed(3));       // 22° ice halo (cirrus)
   c.style.setProperty("--sundogs",(0.9*A.sunDogs).toFixed(3));        // parhelia / sundogs (cirrus, low sun)
   c.style.setProperty("--sunpillar",(0.8*A.sunPillar).toFixed(3));    // sun pillar (cold + low sun)
@@ -1620,14 +1688,14 @@ function paint(A){
         +`stars ${A.starOpacity.toFixed(2)} (vis ${vis})\n`
         +`milkyway ${A.milkyWayOpacity.toFixed(2)} tilt ${A.mwTilt.toFixed(0)}°\n`
         +`airglow ${A.airglow[3].toFixed(2)}\n`
-        +`moon beam ${A.moonBeam.toFixed(2)} disc ${A.moonDisc.toFixed(2)} corona ${A.corona.toFixed(2)}\n`
+        +`moon beam ${A.moonBeam.toFixed(2)} disc ${A.moonDisc.toFixed(2)} lunarCorona ${(A.lunarCorona||0).toFixed(2)}\n`
         +`cloud L/M/H ${A.cloudLayerLow.toFixed(2)}/${A.cloudLayerMid.toFixed(2)}/${A.cloudLayerHigh.toFixed(2)}\n`
         +`haze ${A.aerosolDensity.toFixed(2)} ray ${A.rayIntensity.toFixed(2)} grain ${A.grainStrength.toFixed(2)}\n`
         +`lp ${LPOLL.toFixed(2)}  elev ${siteElev|0}m`;
     }
   }
 }
-const _REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+const _REDUCED = !MOTIONFULL && !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);   // ?motion=full clears it (sun-breath / moon-radiance animate even under OS reduced-motion)
 function applyTheme(M){ paint(atmosphere(M)); }                 // physical state → render
 
 // Size the present-prayer name to the live arc: keep 1 M of clearance from the curve on each side
@@ -1699,7 +1767,7 @@ function genLightning(seed){
   }
   return d;
 }
-let _lastBolt=-1;
+let _lastBolt=-1, _lastRender=null;   // _lastRender: last actually-rendered state summary (observability, read by qaState)
 function render(){
   if(!today) return;
   syncWeather();                                              // sim/fast-forward: pull weather from the forecast track at simTime
@@ -1735,6 +1803,10 @@ function render(){
   const tail = (!afterMaghrib && tmrwH) ? ` <span class="mph pre">| ${phaseEmoji(moonNow().phase)} ${tomorrow.date.hijri.day}</span>` : "";
   $("#ah").innerHTML = ahH ? `<span class="er">ه</span>${fmtDate(ahH)}${tail}` : "";
   applyTheme(M);
+  // OBSERVABILITY: capture the state actually rendered this tick (read by qaState().render — a real last-render
+  // summary, not a recompute), so the next failure is diagnosable.
+  _lastRender={ atMs:Math.round(_RAFNOW()), sim:`${nowParts().dateStr} ${pad(nowParts().h)}:${pad(nowParts().mi)}`,
+    currentKey:M.currentKey, nextKey:M.nextKey, leftMin:+M.leftMin.toFixed(1), progress:+M.progress.toFixed(3), fx:$(".c").dataset.fx };
   // regenerate the branching bolt each ~2.6s strike-window while a thunderstorm is active (deterministic from simTime)
   if($(".c").dataset.fx==="thunder"){ const bk=Math.floor(simNow()/2600); if(bk!==_lastBolt){ _lastBolt=bk; const bp=document.querySelector(".bolt path"); if(bp) bp.setAttribute("d",genLightning(bk)); } }
 }
@@ -1760,12 +1832,29 @@ window.qaState=function(){
     wx:{code:weather?weather.code:null, cloud:weather?Math.round(weather.cloud):null, temp:weather?weather.temp:null, rh:weather&&weather.rh!=null?Math.round(weather.rh):null, vis:weather?weather.vis:null, wind:weather?+(+weather.wind||0).toFixed(1):null},
     // ── WEATHER TRUTHFULNESS diagnostics: why the widget is / isn't showing rain or thunder ──
     wxTruth:(()=>{ const raw=weather?weather.code:null, g=gateWeatherCode(raw,weather), p=weather&&weather.precip!=null?+weather.precip:null;
+      const fc=(()=>{ try{ const w=weatherTrack?wxAt(simNow()):null; return w?w.code:null; }catch(e){ return null; } })();
       return { currentWeatherSource: weather?(weather.src||"current")+" (Open-Meteo, NOT radar)":"none", forecastTrackSource: weatherTrack?"Open-Meteo hourly (forecast — sim/fast-forward only)":"none",
-        rawCode: raw, observedPrecipMm: p, activePrecip: p!=null&&p>=_PRECIP_MIN, activeThunder: (wxClass(raw)==="thunder"&&p!=null&&p>=_THUNDER_MIN),
-        displayCondition: wxClass(g), downgradeReason: _wxDowngrade||null, advancing: ADVANCING, cloudFieldSeed: _cloudFieldSeed }; })(),
+        rawCode: raw, rawForecastCode: fc, observedPrecipMm: p, activePrecip: p!=null&&p>=_PRECIP_MIN, activeThunder: (wxClass(raw)==="thunder"&&p!=null&&p>=_THUNDER_MIN),
+        displayCondition: wxClass(g), finalDataFx: (document.querySelector(".c").dataset.fx||null), downgradeReason: _wxDowngrade||null, advancing: ADVANCING, cloudFieldSeed: _cloudFieldSeed }; })(),
+    // ── CACHE / STALE-STATE diagnostics (BASE): what may be stale and how old ──
+    cache:(()=>{ const wxAge=lastWxAt?Math.round((Date.now()-lastWxAt)/1000):null;
+      return { weatherSource: weather?(weather.src||"current"):"none", weatherAgeSec: wxAge, weatherStale: (SIM.wx!=null)?false:(lastWxAt? (Date.now()-lastWxAt)>15*60*1000 : true),
+        lastWeatherRefresh: lastWxAt?new Date(lastWxAt).toISOString():null, forecastTrackLoaded: !!weatherTrack,
+        prayerDate: lastDate||null, prayerLoaded: !!today, tomorrowLoaded: !!tomorrow, simulated:(SIM.wx!=null||SIM.time!=null||SIM.moon!=null) }; })(),
+    render: _lastRender,
     clouds:{low:+(A.cloudLayerLow||0).toFixed(2), mid:+(A.cloudLayerMid||0).toFixed(2), high:+(A.cloudLayerHigh||0).toFixed(2), hash:cloudHash, alpha:cloudAlpha},
     stars:{op:+(cs.getPropertyValue("--stars").trim()||0), visible:starsVis, blur:cs.getPropertyValue("--starblur").trim(), mw:+(cs.getPropertyValue("--mw").trim()||0)},
-    sky:{airglow:cs.getPropertyValue("--airglow").trim(), haze:+(A.aerosolDensity||0).toFixed(2), airDrift:+(A.airDrift||0).toFixed(3), moonBeam:+(A.moonBeam||0).toFixed(2), corona:+(A.corona||0).toFixed(2), aurora:+(A.aurora||0).toFixed(2)}
+    sky:{airglow:cs.getPropertyValue("--airglow").trim(), haze:+(A.aerosolDensity||0).toFixed(2), airDrift:+(A.airDrift||0).toFixed(3), moonBeam:+(A.moonBeam||0).toFixed(2), lunarCorona:+(A.lunarCorona||0).toFixed(2), aurora:+(A.aurora||0).toFixed(2)},
+    // ── LUNAR PRESENCE diagnostics: physical sky-moon vs lunar-calendar moon (the slot must never be empty at night) ──
+    moonTruth:(()=>{ const mp=moonNow(), alt=(A.moonAltitude!=null?A.moonAltitude:moonSky.alt), up=alt>-0.5;
+      const phys=up && !A.day && (A.moonlightIntensity||0)>0.02, grp=+(A.moonGrp||0), disc=+(A.moonDisc||0);
+      return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1),
+        physicalMoonVisible:phys, calendarMoonVisible:grp>0.01,
+        displayMode: A.day?"day-suppressed":(phys?"physical":(grp>0.01?"calendar-ghost":"debug-hidden")),
+        moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
+        moonlightOpacity:+(A.moonBeam||0).toFixed(3), earthshine:"PBR earthshine (es curve in renderMoonPBR) — ashen, never black",
+        reason: A.day?"daytime suppression (calendar chip persists in header/footer)":phys?null:(up?"near-new / cloud → calendar ashen ghost (no moonlight)":"below horizon → calendar ghost, moonlight off") };
+    })()
   };
 };
 
@@ -1804,10 +1893,31 @@ async function boot(){
   // so the marker, sky, prayer state and moon all advance from simTime. Decorative weather motion lives in
   // CSS (wind/precip-driven), independent of this clock. Stops entirely when the iframe is hidden/offscreen.
   const cEl=document.querySelector(".c");
+  if(MOTIONFULL && cEl) cEl.classList.add("motionfull");    // CSS reduced-motion rules are scoped to .c:not(.motionfull)
   let _raf=null, _onScreen=true, _lastSec=-1, _lastDateStr=lastDate||"", _lastWx=0, _lastCloud=0;
-  const _RM=(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const _RM=!MOTIONFULL && (window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const visible=()=>_onScreen && document.visibilityState!=="hidden";
+  // —— MOTION TELEMETRY (?debugMotion=1): prove the sky is actually alive in normal real-time ——
+  let _rafN=0,_cloudN=0,_tickAcc=_RAFNOW(),_rafPS=0,_cloudPS=0; const _motHist=[];
+  function _cloudAlphaNow(){ try{ const cv=document.querySelector('.cloudcanvas'),x=cv.getContext('2d'),d=x.getImageData(0,0,cv.width,cv.height).data; let a=0; for(let i=3;i<d.length;i+=4)a+=d[i]; return a; }catch(e){ return 0; } }
+  function _starSampleNow(){ const els=document.querySelectorAll('.stars circle'); for(const e of els){ if(e.style.display!=='none' && getComputedStyle(e).animationName==='tw') return +getComputedStyle(e).opacity; } return 0; }   // sample a VISIBLE twinkling star (not a display:none pool star) so starΔ is representative
+  function updateMotionDbg(){
+    const dm=document.querySelector('.dbgmotion'); if(!dm) return; if(dm.style.display!=='block') dm.style.display='block';
+    _motHist.push({a:_cloudAlphaNow(), s:_starSampleNow()}); if(_motHist.length>61)_motHist.shift();
+    const cur=_motHist[_motHist.length-1], h10=_motHist[Math.max(0,_motHist.length-11)], h60=_motHist[0];
+    const pct=(a,b)=> b? (Math.abs(a-b)/b*100):0;
+    const starAnim=(()=>{ const e=document.querySelector('.stars circle'); return e?getComputedStyle(e).animationName==='tw':false; })();
+    const wt=(()=>{try{return qaState().wxTruth;}catch(e){return {};}})();
+    dm.textContent=`MOTION rAF ${_rafPS}/s  cloudPaint ${_cloudPS}/s\n`
+      +`reduced ${_RM?'YES':'no'}  motion=full ${MOTIONFULL?'YES':'no'}  paused ${cEl.classList.contains('paused')?'YES':'no'}\n`
+      +`timeScale ${TIMESCALE}  advancing ${ADVANCING?'yes':'no'}\n`
+      +`cloudΔ 10s ${pct(cur.a,h10&&h10.a).toFixed(1)}%  60s ${pct(cur.a,h60&&h60.a).toFixed(1)}%\n`
+      +`starΔ 10s ${(cur.s-(h10?h10.s:cur.s)).toFixed(3)}  starAnim ${starAnim?'on':'OFF'}\n`
+      +`wx ${wt.currentWeatherSource||'?'}  fx ${cEl.dataset.fx||'?'}\n`
+      +`reason ${_RM?'OS reduced-motion (add motion=full to override)':(cEl.classList.contains('paused')?'offscreen/hidden → paused (battery)':'full real-time motion')}`;
+  }
   function loop(){
+    _rafN++;
     const n=nowParts();
     if(n.dateStr!==_lastDateStr){                       // crossed (sim) midnight → load that day's timings
       if(_lastDateStr){ tomorrow=null; const ds=n.dateStr, c=loadCache(ds); if(c) today=c;
@@ -1820,8 +1930,9 @@ async function boot(){
     if(sec!==_lastSec){ _lastSec=sec; render(); if(ADVANCING) updateSimClock(n); }
     // cloud density field repaints ~13fps so it visibly EVOLVES + drifts (time = simNow, so fast-forward
     // accelerates it). Reduced-motion: paint once per state change with frozen time (no animation).
-    if(_RM){ if(_cloudDirty){ paintClouds(1000); tieRainToClouds(); } }
-    else if(rt-_lastCloud>76){ _lastCloud=rt; paintClouds(simNow()/1000); tieRainToClouds(); }
+    if(_RM){ if(_cloudDirty){ paintClouds(1000); tieRainToClouds(); _cloudN++; } }
+    else if(rt-_lastCloud>76){ _lastCloud=rt; paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; }
+    if(rt-_tickAcc>=1000){ _rafPS=Math.round(_rafN*1000/(rt-_tickAcc)); _cloudPS=Math.round(_cloudN*1000/(rt-_tickAcc)); _rafN=0;_cloudN=0;_tickAcc=rt; if(DEBUGMOTION) updateMotionDbg(); }
     _raf=requestAnimationFrame(loop);
   }
   function start(){ if(!_raf) _raf=requestAnimationFrame(loop); }

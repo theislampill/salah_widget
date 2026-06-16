@@ -18,7 +18,11 @@ visual and physics-adjacent, so **review is dominated by looking at rendered pix
 - **GitHub/source auditor** — confirms the committed `index.html` matches what's served; lists the relevant
   systems before any edit.
 - **Runtime DOM/CSS/canvas auditor** — measures live geometry (header/footer, cloud band vs dashed horizon, moon
-  layers/radius/alpha, rain origin vs cloud columns) and reports numbers + crops.
+  layers/radius/alpha **+ disc opacity/occlusion (no stars through)**, buckle cut-out vs strap, rain origin vs
+  cloud columns) and reports numbers + crops.
+- **Live-motion auditor** — proves the default real-time widget actually animates over 15–60s (cloud drift/morph,
+  star scintillation, sky breathing) via `?debugMotion=1` Δ / a clip / a centroid-drift probe. **Must NOT cite the
+  `qaState().clouds.hash` as motion evidence** (it flips on sub-pixel change — it produced false PASS reports).
 - **Atmospheric-optics researcher** — supplies condition gates, geometry, colour orders, gradient recipes for each
   phenomenon before it is coded.
 - **Islamic dawn / Fajr semantics researcher** — verifies false-dawn (vertical) vs true-dawn (horizontal) and the
@@ -39,32 +43,58 @@ stomp on each other's scenes). State this honestly rather than faking a simultan
 
 A cycle PASSES only when, with **screenshot/clip evidence**:
 
-- A — Sun apex higher/coherent; the sun is a defined radiant body, not a vague brush.
-- B — Sunrise rises from the left near the horizon; sunset accounted for; low-sun colour believable.
-- C — Solar optics distinct + gated (halo / parhelia / pillar / crepuscular / anticrepuscular / refraction) —
-  each only under its physical condition.
-- D — Moon appears meaningfully every night; earthshine correct across crescent/half/gibbous/full (gibbous dark
-  side faint **but textured, never a black cutout**).
+- A — Sun is a **defined radiant body with a clear nucleus**, not a vague brush; colour is **tone-mapped/white-
+  balanced** (airmass + transmittance + CCT + ACES) — under cloud it goes **warm-white, never a grey/purple blob**.
+- B — Sunrise **enters low from the left** near the horizon (warm glowing disc); sunset sky is warm (not generic
+  daylight); low-sun colour believable; low-sun refraction flattening.
+- C — Solar optics distinct + gated (halo / parhelia / pillar / crepuscular / anticrepuscular / refraction), each
+  only under its physical condition, and **registered to the VISIBLE corner sun** (`--sunvx/--sunvy`) — a center-
+  screen halo is a FAIL.
+- D — Moon is **OPAQUE every night (no stars through the disc)** and **meaningfully present every night** — a new/
+  below-horizon moon shows a faint **ashen opaque calendar disc with NO moonlight** (never blank, never faked
+  light); the disc is **mostly in frame** so the phase reads. Earthshine correct across crescent/half/gibbous/full
+  (gibbous dark side faint **but textured, never a black cutout**).
 - E — Lunar corona (small, close) vs 22° halo (large ring) vs paraselenae (lateral, rare) are distinct + gated.
-- F — False dawn (vertical) and true dawn (horizontal) are visually + semantically distinct; Fajr sky stays dark
-  with a faint horizon thread, not a bright palette.
+- F — **Dawn is honest, not painted:** true dawn is the **real physical twilight sky** (dark at Fajr depth,
+  brightening toward sunrise) + the Fajr marker — **no horizontal "true-dawn band."** False dawn is **fail-closed
+  (not rendered)** — **no diagonal cone / lens-flare slash**, and nothing under a bright moon.
 - G — Clouds structured, lit, weather-linked; small distinct cells; mostly around/above the dashed 0° horizon.
 - H — Rain/lightning originate from cloud systems and vary by weather type/intensity.
-- I — Stars beautiful/alive/varied; **not** a spinning or static image.
-- J — Header belt + footer + prayer UI intact and readable in every scene.
-- K/L/M — DESIGN.md + AGENTS.md current; high-value comments present; approximations stated honestly.
+- I — Stars beautiful/alive/varied; **not** a spinning or static image; anchors + their glints **scintillate**.
+- J — Header belt (buckle **cut-out**, no strap through it) + footer + prayer UI intact and readable in every scene.
+- **M0 (live motion) — the default real-time widget VISIBLY animates over 15–60s where the scene allows (clouds
+  drift/morph, stars scintillate, sky breathes). Proven by a real watch / `?debugMotion=1` Δ, NEVER the qaState
+  hash. Accessibility: `prefers-reduced-motion` reduces it by default; `?motion=full` overrides.**
+- K/L/M — DESIGN.md + AGENTS.md + HANDOFF.md current; high-value comments present; approximations stated honestly.
 
 ## Evidence requirements (per cycle)
 
-Crops/clips for: clear-day apex, sunrise, sunset, forced parhelia/halo/pillar, forced crepuscular/anticrepuscular,
-forced false-dawn vs true-dawn, crescent/half/gibbous/full moon, forced lunar corona/halo/paraselene, daytime
-clouds, moonlit night clouds, rain + thunder, star twinkle, header/footer. Plus 5m/15m/60m/day simulated deltas
-and a 30–60s real-time continuity watch where feasible. Judges list failures and residual approximations.
+Crops/clips for: clear-day apex (**defined nucleus**), sunrise (enters low-left), sunset (warm sky), overcast
+(**warm-white sun, not grey/purple**), forced parhelia/halo/pillar (**ringing the visible sun**), forced
+crepuscular/anticrepuscular, crescent (**right limb in frame**)/half/gibbous/full moon, **new moon (opaque ashen
+calendar disc)**, **moon-opacity proof (no stars through the disc)**, forced lunar corona/halo/paraselene, daytime
+clouds, moonlit night clouds, rain + thunder, star twinkle, **header buckle cut-out (zoom — no strap through)**,
+header/footer, near-Fajr (real twilight, **no painted dawn band/cone**). Plus a **real 15–60s live-motion clip /
+`debugMotion` 10s–60s Δ** (the headline gate), 5m/15m/60m/day simulated deltas, and `motion=full` vs reduced-motion.
+Judges list failures and residual approximations. **Screenshots/Δ — never the qaState hash — decide motion.**
 
 ## Forbidden regressions (instant FAIL)
 
+- **No visible motion in normal live real-time view** (a static "wallpaper" sky). Verify with a real 15–60s watch
+  / `?debugMotion=1` 10s–60s Δ — **NOT** the `qaState().clouds.hash` (it flips on sub-pixel change and lies).
+- The **moon rendered transparent** — stars visible *through* the disc, in ANY phase. The Moon is an opaque body.
+- An **empty moon slot / moonless normal night.** A new/below-horizon moon must still show a faint **ashen OPAQUE
+  calendar disc** (no moonlight) — never blank sky, never a "new moon invisible" rule.
+- A **painted false-dawn cone or horizontal true-dawn band/strip.** Dawn = the real physical twilight sky + the
+  Fajr marker; false dawn is **fail-closed** (not rendered) until properly modeled.
+- The **sun rendered as a dim grey/purple blob** or a vague brush with **no defined nucleus** (use the scene-
+  referred tone-map; cloud → warm-white, never cold grey).
+- **Solar optics (halo / sundogs / pillar) detached from the visible sun** (they must register to `--sunvx/--sunvy`,
+  not the arc-sun azimuth). A center-screen halo is an instant FAIL.
 - Footer date row clipped or any header change that **moves the content stack**.
-- Header buckle off-centre, straps full-width, or the belt showing **behind** the buckle, or a heavy drop shadow.
+- Header buckle off-centre, straps full-width, a heavy drop shadow, or **any strap geometry visible THROUGH the
+  translucent buckle** (the strap inner ends must be *masked/cut*, not merely z-indexed — translucent glass reveals
+  what's under it).
 - Sunrise marker drawn as a filled dot (it is a **ring**) or off the dashed line; Maghrib off the line; **Dhuhr
   on the apex**.
 - The moon's dark limb rendered as a **black cutout**, or a jaggy/stroked moon edge.
@@ -91,7 +121,12 @@ Serve the folder statically and open `index.html#lat=24.47&lon=39.61&label=Madin
   thunder; check `qaState().wxTruth` for the source/reason chain.
 - Moon: `&simMoon=0.08&simWax=1&simMoonAlt=20&simMoonH=42` (crescent), `&simMoon=0.92…` (gibbous), `&simMoon=0.98…`
   (full); thin-cloud halo/corona via `&simWx=2&simCloud=30` on a moon scene.
-- Motion/cycles: `&timeScale=1800` (fast-forward a day); continuity: load real-time and watch ~60s.
-- Readouts: `&debugLayers=1`, `&debugMoon=1`, `&qa=1` then `window.qaState()`.
+- **Live motion**: load real-time (no `simTime`) and **watch ~15–60s** — clouds must drift/morph, stars
+  scintillate, sky breathe. `&debugMotion=1` shows rAF/s, cloud-paint/s, reduced-motion, paused, **cloud Δ 10s/60s**,
+  star Δ, reason. `&motion=full` forces motion under OS reduced-motion. `&timeScale=1800` fast-forwards a day.
+- **Moon opacity**: any night moon — confirm **no stars show through the disc**; new moon (`&simMoon=0.01`) shows a
+  faint **opaque** ashen calendar disc with `qaState().moonTruth.moonlightOpacity == 0`.
+- Readouts: `&debugLayers=1`, `&debugMoon=1`, `&debugMotion=1`, `&qa=1` then `window.qaState()` (incl. `wxTruth`,
+  `moonTruth`). `&debugDawn=…` is a deprecated no-op (dawn is not painted).
 - Preview gotcha: `simTime` without `timeScale` freezes the clock (TIMESCALE 0), so cloud drift won't be visible
   in a still test — use the direct `paintClouds(t)` probe or a real-time / `timeScale` watch to see motion.

@@ -4,6 +4,10 @@ A single self-contained `index.html` Islamic prayer-times widget, deployed via G
 iframe (e.g. in TablissNG). No build step, no dependencies. All logic, styles, and the atmospheric renderer live
 in one file. `builder.html` is a small config/URL generator.
 
+**Companion docs:** [`ARCHITECTURE.md`](ARCHITECTURE.md) — the maintainer's responsibility/data-flow/contract map
+and risk list. [`OPTICS.md`](OPTICS.md) — the per-phenomenon physical-family taxonomy + gating. [`AGENTS.md`](AGENTS.md)
+— how to work here + PASS/FAIL gates. [`tests/smoke.html`](tests/smoke.html) — no-build characterization smokes.
+
 ## Purpose & design philosophy
 
 Show the day's prayer times truthfully and beautifully, with a **living sky** that reflects the real sun, moon,
@@ -28,11 +32,18 @@ the art is "realism-adjacent" (believable, never random). Two standing rules:
   **date footer must stay fully visible** (the footer was clipped once when the header grew — never again).
 - **Header belt**: a bare `1fr auto 1fr` grid (no background of its own) holding two **content-fit** glass straps
   — location (left) and temperature (right) — flanking a **~25px circular icon "buckle"** that is *centred on the
-  widget* and **cuts** the belt (the straps tuck ~7px under it via negative margin; the buckle's z-index covers
-  them, so no strap shows behind it). Straps are **thinner** than the buckle. Subtle inner-glass only — no heavy
-  drop shadow. Outer strap padding is a touch wider than the buckle-to-text gap so the spacing reads even around
-  the round buckle. The belt has a fixed height so it never moves the content stack / footer.
-- Large **moon** lives clipped in the **top-right** corner; large clipped **sun** in the **top-left**.
+  widget* and **cuts** the belt. The three children are **explicitly column-pinned** (`.e`→1, `.buckle`→2,
+  `.wt`→3) so the buckle stays centred **even when the location strap is absent** (no `label` → `#loc` is
+  `display:none`; without explicit columns, grid auto-placement would collapse and shove the buckle left). The straps tuck ~7px under it (negative margin) AND each strap's inner end is
+  physically **masked with a circular cut-out** matching the buckle (`mask-image` radial-gradient, header vars
+  `--buckle-r/--belt-tuck/--belt-cut-center/--belt-cut-r`). This is required because the straps and buckle are both
+  **translucent / backdrop-filtered glass** — z-index alone can't hide a strap behind translucent glass (the
+  underlying pixels show through), so the strap pixels under the buckle are *removed*, and the buckle (`isolation`
+  + `overflow:hidden`) composites over sky/glass, never over belt geometry. Straps are **thinner** than the buckle;
+  subtle inner-glass only, no heavy drop shadow. The belt has a fixed height so it never moves the content stack.
+- Large **moon** lives in the **top-right** (mostly **in-frame** — the disc sits in the pocket *below* the
+  temperature strap and *above* the arc so its right limb shows and the lunar phase is readable; only a sliver of
+  the right edge clips the card). Large clipped **sun** in the **top-left**.
 
 ## Prayer-time logic & arc semantics
 
@@ -51,16 +62,21 @@ the art is "realism-adjacent" (believable, never random). Two standing rules:
 
 ## False dawn vs true dawn (Fajr semantics)
 
-Islamically distinct, and rendered distinctly (not one generic bright dawn):
+Islamically distinct — and represented honestly. **Neither false nor true dawn is a painted overlay** (fail-closed):
 
-- **False dawn** (al-fajr al-kādhib, the zodiacal "wolf's tail"): a faint **vertical, column-like** glow on the
-  eastern horizon that appears before true dawn and then fades. It **does not** begin Fajr and must not trigger
-  any Fajr/sunrise styling.
-- **True dawn** (al-fajr al-ṣādiq): a **horizontal** whiteness spreading **along** the horizon; this begins Fajr.
-- Around Fajr (solar depression roughly −15° to −18°), the sky stays **dark** with only a faint true-dawn horizon
-  thread — never a bright sunrise palette. The arc and countdown always follow the API timings; the dawn visuals
-  are explanatory atmospheric layers, not the prayer clock.
-- Debug: `?debugDawn=false` / `?debugDawn=true` force the two states for inspection (see params).
+- **True dawn** (al-fajr al-ṣādiq) is the real **physical twilight sky** — the `skyLum` astronomical→nautical→civil
+  brightening plus the warm horizon scatter at the sun's azimuth — together with the **Fajr marker/time** on the arc
+  and the countdown. There is no separate horizontal "true-dawn band" (that would be a fake duplicate of what the
+  sky engine already renders). Around Fajr (solar depression ~−15° to −18°) the sky stays genuinely **dark**,
+  brightening steeply only in the last few degrees before sunrise.
+- **False dawn** (al-fajr al-kādhib, the zodiacal light) is **NOT rendered.** A generic CSS cone was tried and
+  removed: unmodeled, it read as a decorative lens-flare/godray slash and (wrongly) showed under a bright moon.
+  Rather than ship an inaccurate cue, the widget **fails closed** — it shows nothing for false dawn.
+- **Future work (only):** a faithful zodiacal-light cue would require a real ecliptic-tilt projection, strict
+  dark-sky gating, low/no moonlight, low light-pollution, clear sky / minimal low cloud, very faint opacity, no
+  foreground-crossing streak, and it must never imply Fajr has entered. Until all of those hold, it stays unbuilt.
+- `trueDawnTwilight` exists only as a 0..1 **diagnostic scalar** (qaState); it paints nothing.
+- Debug: `?debugDawn=…` is a **deprecated no-op** — there is no painted dawn layer to force.
 
 ## Atmosphere state model
 
@@ -77,17 +93,43 @@ Each render tick:
 
 ## Sun layers & optical phenomena
 
-- `.atmo .suncorner` is the large **clipped corner sun**: a defined nucleus + a broad corona + faint radiating
-  rays, screen-blended. It **rises from the left edge** near the horizon at sunrise and climbs up-and-left to the
-  top corner at noon (driven by solar elevation), tightening/whitening high and broadening/warming low. Clouds
-  attenuate and recolour it; it sits *behind* the cloud layer (clouds can occlude it).
-- `.atmo .sun` / `.scatter` / `.belt` (Belt of Venus) / `.wfx .godray` (crepuscular shafts) / `.sunhaze` are the
-  supporting atmospheric glows tied to the real arc-sun screen position.
+- `.atmo .suncorner` is the large **clipped corner sun**: a **defined white nucleus** (a generous bright core) + a
+  warm-gold body edge + a broad corona + faint rays, screen-blended. It **enters from off the left edge** near the
+  dashed horizon at sunrise and climbs up-and-left, cresting high into the top-left corner at noon (driven by solar
+  elevation). It sits *behind* the cloud layer (clouds can occlude it).
+- **Solar tone-mapping / white-balance** (the disc colour discipline): the sun colour is **scene-referred, then
+  tone-mapped** — never display-gamma colours multiplied by a weather "mute" (which produced a dim grey/purple
+  blob). Pipeline: Kasten–Young **airmass** → Beer–Lambert **beam transmittance** × per-class **cloud
+  transmittance** → a **CCT(elevation)** blackbody colour (≈2000 K horizon → ≈5500 K noon) → **ACES** (Narkowicz)
+  tone-map. The nucleus carries enough radiance to **clip to a defined white body even through cloud**; the corona/
+  body carries the colour and the dimming; cloud **desaturates toward warm-white, never cold grey/purple**. A small
+  transmittance floor keeps the horizon sun a glowing warm disc (not a dark smudge); `--sunflat` ovalises it near
+  the horizon (refraction).
+- **Optics coordinate (important):** the **discrete** solar optics that ring/emanate from the sun — 22° halo,
+  sundogs, sun pillar, the `.sun` bloom, `.wfx .godray` crepuscular shafts, `.sunhaze` — are registered to the
+  **visible corner-sun** screen position (`--sunvx/--sunvy`, the corner-sun disc centre), so e.g. the halo arcs
+  *around the sun you can see*. (Previously they bound to the arc-sun azimuth `--sunx/--suny`, which sweeps
+  mid-card, so the halo rendered detached center-screen — that was a bug.) Only the **diffuse, azimuthal** cues
+  stay on `--sunx`/`--antix`: the **horizon scatter** band (`.scatter`, pools under the sun's azimuth — left at
+  dawn, right at dusk) and the anti-solar **Belt of Venus** (`.belt`) / **anticrepuscular** rays.
 - **Optical phenomena are condition-gated, never random** (ice-crystal vs water-droplet, low-sun + broken-cloud,
-  etc.). See "Known approximations" for which are implemented vs scoped.
+  etc.). See "Known approximations". *Known stylization:* the corner-sun body stays top-left in all states (the
+  moon owns top-right and the header owns the centre); at dusk the warm directional glow correctly pools on the
+  right (west) via the azimuthal scatter while the sun body remains the top-left luminary.
 
 ## Moon — PBR, earthshine, halo/corona
 
+- The Moon is an **OPAQUE body — you never see stars through it.** The disc (`.mphoto`) and its star-occluder
+  (`.moccluder`) share **one opacity** (`--moongrp = moonShow = clamp(darkness·1.8)`): **full at night**, fading
+  out only by day (no daytime ghost). It is never a translucent "hologram." (Heavy cloud hides the Moon by drawing
+  the cloud deck *over* it — layer order — not by fading the disc, so partial cloud never makes it see-through.)
+- **Physical vs calendar moon.** This widget is also a **lunar-calendar** instrument, so the Moon stays
+  meaningfully present **every night** — even when the physical Moon is below the horizon or near-new — by rendering
+  the real **opaque phase disc** (a new moon is a *dark ashen disc*, not a blank slot or a transparent one). The
+  physical-vs-calendar distinction lives entirely in **moonlight** (`--moonbeam` / cloud moon-lighting), which is
+  **physical-only** — 0 below the horizon / new / day, **never faked** for the calendar moon. So the calendar moon
+  informs the date **without lying about light**. `qaState().moonTruth` reports phase fraction, altitude,
+  physical-vs-calendar visibility, displayMode, opacities, moonlight, and the reason any layer is dim.
 - `.mphoto` is a **physically-lit** disc: real LRO albedo + LOLA normals, Lommel-Seeliger + lunar-Lambert
   reflectance with an opposition surge, rendered to a **300px supersampled** backing canvas with **coverage-AA**
   on the limb (no jaggies/stroke), oriented to the true bright-limb angle for the phase.
@@ -98,7 +140,6 @@ Each render tick:
   a dark inner gap, red-inner/blue-outer, from cirrus) vs a **droplet corona** (`.mcorona`, a small near-white
   aureole with pastel rings hugging the disc, from altostratus/fog/humidity). The generic `.mglow` is subtle and
   breathes gently with simTime/haze — it is **not** the dominant element and does not flatten the whole sky.
-- `.moccluder` hides stars behind the disc by day; `.mbeam` is the moonlight cast at night.
 
 ## Cloud & weather engine
 
@@ -107,6 +148,11 @@ Each render tick:
   (grow/erode, no popping) and **wind advection**. Coverage decides how many clusters are active (broken → a few
   puffs with gaps; overcast → many overlapping into a solid deck). Clusters live **around/above the dashed 0°
   horizon**, above the hero.
+- **Perceptible live motion (calibrated).** Advection and lifecycle are tuned so the deck **visibly drifts/morphs
+  in a 15–60s real-time glance** — a moderate wind carries a cluster ~25–30% of the card width per minute (≈70
+  screen-px/min; gentle in calm air, fast in a gale), with a slower in-place grow/erode on top. (Earlier rates
+  were ~100× too slow → the deck read as a frozen wallpaper even though the QA hash "changed" every frame — see
+  "Live motion".) Time is `simNow` seconds, so `?timeScale=` accelerates it; reduced-motion paints one frozen frame.
 - **Lighting**: warm sun rim / silver lining on the sun-facing side, cool moonlit edges at night, leaden
   undersides in storm, lit tops / shaded bases for volume; rain/fog diffuse.
 - **Continuity**: the cloud field has a **stable identity** (`_cloudFieldSeed` = location + day + optional
@@ -144,6 +190,32 @@ Open-Meteo is fetched once for both `current=` (**observed/nowcast**) and `hourl
   glints; colour temperature varies (blue/white/amber/red). A bright moon **washes its neighbourhood** (local
   star suppression) without flattening the whole sky. Humidity/haze/cloud reduce/soften stars; dry/high sites
   sharpen them. The Milky Way / airglow appear only when plausible.
+- **Twinkle (the visible life):** per-star CSS scintillation (`@keyframes tw`, independent phase/rate, amplitude
+  from live air turbulence `--star-turb`). **All bright anchors twinkle** (the eye tracks them) ~1.5× deeper than
+  the dust bed, and their **4-ray glints scintillate** too (`@keyframes glintpulse` around each glint's projected
+  base opacity `--go`) — so the luminaries shimmer instead of sitting static. CSS scintillation is disabled under
+  OS `prefers-reduced-motion` unless `?motion=full` overrides it.
+
+## Live motion & accessibility
+
+The default widget must **visibly animate in normal real-time** wherever the scene has animatable phenomena — a
+static-looking sky is a regression, not a "polish" gap.
+
+- **Pipeline.** One rAF loop. `render()` runs each sim-second (state/sky/marker/moon). The **cloud canvas repaints
+  ~13 fps** (`paintClouds(simNow()/1000)`); **star twinkle + glint scintillation, rain, fog, lightning** are CSS
+  animations, independent of `render()`. The loop **pauses** (and CSS via `.c.paused`) when the iframe is hidden or
+  scrolled offscreen (visibilitychange + IntersectionObserver) — battery for a 24/7 embed.
+- **Accessibility.** Under OS `prefers-reduced-motion: reduce` the CSS reduced-motion block stops all atmospheric/
+  weather animation and the cloud loop paints **one frozen frame** (no animation). `?motion=full` is an honest
+  **override** (adds `.c.motionfull`, clears the JS `_RM`/`_REDUCED` flags) so motion runs even under the OS
+  preference — for testing or for users who want it. The default still respects the preference.
+- **`?debugMotion=1`** overlays live telemetry: rAF ticks/s, cloud-paint/s, reduced-motion, `motion=full`, paused,
+  `timeScale`/advancing, **cloud Δ over 10s/60s**, **star Δ** + whether the twinkle animation is active, the
+  weather source, and the reason motion is reduced (if any).
+- **The qaState-hash trap (read this).** `qaState().clouds.hash` is position-weighted and flips on sub-pixel change,
+  so it "changes every frame" even when nothing visibly moves — it produced false PASS reports. **Never claim live
+  motion from the hash.** Verify with a real ≥15–60s watch (the `debugMotion` 10s/60s Δ, a centroid-drift probe, or
+  a clip): clouds drifting/morphing, stars scintillating, the sky breathing.
 
 ## API & data sources
 
@@ -165,7 +237,9 @@ Config and debug are read from the URL **hash** (`#…`). Common:
   e.g. `simWx=95&simPrecip=0` ⇒ dry forecast-thunder ⇒ downgraded). `simTemp`, `simFeels`, `simWind`,
   `simWindDir`, `simHumid`, `simCloud`, `simMoon`, `simWax`, `simMoonAlt`, `simMoonH`.
 - `qa=1` + `window.qaState()` — a structured snapshot (incl. `wxTruth`).
-- `debugLayers=1`, `debugMoon=1` — on-card readouts. `debugDawn=false|true` — force false/true dawn.
+- `debugLayers=1`, `debugMoon=1`, `debugMotion=1` — on-card readouts (layers / moon / live-motion telemetry).
+  `debugDawn=…` — **deprecated no-op** (dawn is not a painted overlay; nothing to force).
+  `motion=full` — force full animation even under OS `prefers-reduced-motion` (accessibility override; default respects it).
 - `debugOptic=halo|sundogs|pillar|anticrep|paraselene` — force a (normally condition-gated) optical phenomenon.
 
 ## Known approximations (honest)
@@ -174,19 +248,39 @@ Config and debug are read from the URL **hash** (`#…`). Common:
 - The arc's declination fit absorbs refraction to make sunrise/sunset land on the line (a visual calibration).
 - Dhuhr's "hair past the apex" is a small deliberate offset (post-zawāl cue), since minute-resolution data can put
   Dhuhr exactly on solar noon.
-- Cloud edges are soft/painterly rather than crisp cumulus; overcast reads hazy rather than heavy-leaden.
-- Lunar halo shows as a partial arc (the moon is corner-clipped). Earthshine brightness vs phase is art-directed.
+- Cloud edges are soft/painterly rather than crisp cumulus; overcast reads a touch hazy rather than heavy-leaden
+  (most-flagged remaining item). The cloud renderer is a **stylized 2D puff-cluster + time-noise** field, **not**
+  volumetric; the motion rates are **perceptual** (read as alive at widget scale), not measured advection.
+- **Solar tone-mapping** uses a real discipline (airmass + transmittance + CCT + ACES) but the **headroom and
+  constants are tuned for a pleasing clipped nucleus, not radiometrically calibrated**; CSS can't composite in
+  linear light, so the tone-map is baked per gradient-stop in JS.
+- **False dawn is not rendered** (fail-closed); **true dawn is the physical twilight sky** + the Fajr marker, not a
+  painted layer. A faithful zodiacal-light cue is documented **future work** (needs real ecliptic projection +
+  strict dark/no-moon/low-LP/clear gating + very faint + no foreground streak + never implies Fajr).
+- The **calendar moon** shows the opaque phase disc at night even when the physical Moon is below the horizon /
+  near-new (a deliberate **lunar-calendar** choice, not a literal sky photo) — but it casts **no moonlight** (that
+  stays physical-only). Earthshine brightness vs phase is art-directed (never a black cutout).
 - Optical phenomena: all **implemented and condition-gated** (shown only under their physical conditions, never
-  random) — corner sun + rising path + low-sun **refraction flattening**; crepuscular `.godray` + **anticrepuscular**
+  random) — corner sun + entry path + low-sun **refraction flattening**; crepuscular `.godray` + **anticrepuscular**
   rays; Belt of Venus; solar **22° halo**, **sundogs/parhelia + parhelic circle**, **sun pillar** (all ice-crystal/
-  cirrus/cold gated); lunar **22° halo + corona + paraselenae** and earthshine. Each can be forced for inspection
-  via `?debugOptic=`. They are art-directed approximations (believable, not photometric); the moon's halo/pillar
-  show as partial arcs/columns because the moon/sun are corner-clipped.
+  cirrus/cold gated, **registered to the visible corner sun** via `--sunvx/--sunvy`); lunar **22° halo + corona +
+  paraselenae** and earthshine. Each can be forced via `?debugOptic=`. They are **art-directed approximations
+  (believable, not photometric)**; the moon's halo/pillar may show as partial arcs because the halo radius exceeds
+  the (mostly in-frame) disc. The **corner-sun body stays top-left** in all states (a layout stylization — the moon
+  owns top-right); the azimuthal horizon glow correctly moves left→right dawn→dusk.
 
 ## QA matrix (scenes to check before claiming done)
 
-Day: clear noon (sun apex), sunrise (rising-left), sunset, broken-cloud golden hour, overcast, daytime rain,
-thunderstorm. Night: clear (stars), thin crescent (earthshine), gibbous (earthshine), full moon (star wash),
-thin-cloud night (halo/corona). Weather truth: `simWx=95&simPrecip=0` (must downgrade), `simWx=95&simPrecip=5`
-(thunder), `simWx=65&simPrecip=0` (downgrade), real-time live (source = current, not forecast). Continuity:
-30–60s real-time watch (clouds drift, never slideshow). Layout: footer visible + header geometry in every scene.
+Day: clear noon (**defined sun nucleus**, not a vague brush), sunrise (enters low from the left, warm), sunset
+(warm sky, not generic daylight), broken-cloud golden hour, overcast (**warm-white sun through cloud, never a
+grey/purple blob**), daytime rain, thunderstorm. Night: clear (stars + scintillation), thin crescent (right limb
+in frame, earthshine), gibbous (earthshine), full moon (bright opaque disc, local star wash), **new moon (a faint
+ashen OPAQUE calendar disc — never an empty slot, never moonlight), thin-cloud night (halo/corona).
+**Moon must be OPAQUE — no stars visible through the disc, in any phase.** Weather truth: `simWx=95&simPrecip=0`
+(must downgrade), `simWx=95&simPrecip=5` (thunder), `simWx=65&simPrecip=0` (downgrade), real-time live (source =
+current, not forecast). **Live motion (`?debugMotion=1`): a real 15–60s watch — clouds drift/morph, stars
+scintillate, sky breathes; cloud Δ 10s ≫ 0. "No visible motion in normal live view" is a FAIL (do NOT trust the
+qaState hash).** Optics: force each via `?debugOptic=` and confirm it rings the **visible** sun. Accessibility:
+`prefers-reduced-motion` freezes motion by default; `?motion=full` overrides. Layout: footer visible + header
+buckle cut-out (no strap through the buckle) + readability in every scene. Dawn: near-Fajr brightening comes only
+from the real twilight sky (no painted band/cone), Fajr clear on the arc.
