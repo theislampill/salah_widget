@@ -38,6 +38,95 @@ Everything after the `#` is configuration — change it to your own location.
 TablissNG can't run scripts, but it can embed an iframe. Add an **HTML / iframe**
 widget and paste the snippet above (with your own coordinates).
 
+### One-line install (optional setup wizard)
+
+Don't want to set TablissNG up by hand? A small installer detects your browser, downloads the
+right TablissNG extension asset, and stages a ready-made preset (this widget in
+self-configuring mode) for you to import. The **Install widget** button on the
+[builder](https://theislampill.github.io/salah_widget/builder.html) copies the command for
+your OS:
+
+```bash
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | bash
+```
+```powershell
+# Windows PowerShell
+irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex
+```
+
+It **never** silently installs extensions or writes to browser storage — it downloads the
+asset, opens the browser's own install page, and stages the preset for **manual** import. It
+runs code from this repo, so review-first works too:
+`curl -fsSLO …/install.sh` → `less install.sh` → `bash install.sh`.
+**Note:** importing the preset *replaces* your current TablissNG dashboard with a clean layout
+containing the widget; precise in-widget location additionally needs the iframe's
+`allow="geolocation"` (some hosts strip it — coarse auto-detect still works).
+
+---
+
+## Self-configuring (local) mode
+
+If you don't want to hard-code coordinates — e.g. a generic embed that anyone can drop in —
+use **local mode**. Add `#local=1` to the URL and the widget will:
+
+1. try a **coarse, permission-free area auto-detect** (approximate, IP/timezone-based),
+2. show prayer times for that estimated area,
+3. let the viewer **open settings inside the widget** (tap/click the header buckle — it
+   morphs into a ⚙ gear on hover/focus; keyboard `Enter`/`Space` and touch work too) to
+   correct the location or any setting,
+4. **save their choice locally** (in their own browser) for next time.
+
+```html
+<iframe
+  title="Prayer Times"
+  src="https://theislampill.github.io/salah_widget/#local=1"
+  allow="geolocation"
+  style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden"
+  scrolling="no">
+</iframe>
+```
+
+The in-widget settings panel supports location (name, latitude, longitude), calculation
+method, Asr school, 12/24-hour, date format, and temperature units. A **location pin** beside
+the location field shows the source — **red** = estimated from your IP (the default),
+**glowing** = precise GPS (tap it to request browser permission), **grey** = manually set.
+Type a place name to **search** (Enter cycles multiple matches; **Shift+Enter** keeps a custom
+display name without moving the coordinates). Changes **save automatically** when you close the
+panel; the **↺** icon resets (clears your saved settings and re-detects).
+
+### Modes & precedence
+
+| Mode | URL | Behaviour |
+|------|-----|-----------|
+| **Hardcoded** | `#lat=…&lon=…` | Fixed location baked into the URL. Unchanged, classic behaviour. A saved local config **never** overrides it. |
+| **Local** | `#local=1` | Saved local config → else coarse auto-detect → else in-widget manual setup. |
+| **Prefer-local** | `#preferLocal=1` | Like hardcoded, but a saved local config (if any) **may** override the hash defaults — because the URL explicitly opted in. |
+
+Resolution order: explicit hardcoded hash (unless `local=1`/`preferLocal=1`) → saved local
+config → coarse IP/timezone detect → manual setup → safe error state.
+
+### Auto-detect, precise location & privacy
+
+- **Coarse auto-detect is approximate** — it's based on your **IP address and timezone**, not
+  GPS. It necessarily sends your IP to the geolocation provider
+  ([GeoJS](https://www.geojs.io/), with [ipinfo.io](https://ipinfo.io) as a fallback); this
+  widget itself does no tracking and stores nothing about you on any server. We say
+  **"estimated area,"** never "precise location."
+- **Precise location is optional and user-triggered.** The "Use precise location" button asks
+  your browser's permission (`navigator.geolocation`) — it is **never** called automatically.
+  In an iframe it usually requires `allow="geolocation"` on the `<iframe>` (the local-mode
+  snippet from the builder includes it). If a host (e.g. TablissNG) strips that attribute or
+  you deny permission, the widget falls back gracefully — coarse auto-detect and manual setup
+  still work.
+- **Saved settings stay local** to your browser/profile. If storage is blocked or partitioned
+  (private browsing, strict third-party-iframe storage), saving is unavailable — the widget
+  says so and your changes still apply **for the current session** (it never crashes).
+- **TablissNG:** coarse auto-detect works inside the iframe if your network/ad-blocker allows
+  the request; precise location works only if TablissNG preserves `allow="geolocation"`;
+  saved settings persist only if it doesn't partition iframe storage. All three degrade
+  gracefully when not available.
+
 ---
 
 ## Configuration (URL hash parameters)
@@ -53,6 +142,9 @@ widget and paste the snippet above (with your own coordinates).
 | `time`   |          | `24`               | Clock format: `24` (15:45) or `12` (3:45 PM). |
 | `datefmt`|          | `YYYY-MM-DD`       | Date format as a token string — `YYYY`/`YY` year, `MMMM`/`MMM`/`MM`/`M` month, `DD`/`D` day (e.g. `DD MMMM YYYY`, `MMM D, YYYY`). The old preset keys `iso`/`us`/`eu`/`long` still work. Applies to both the Gregorian and Hijri dates. |
 | `units`  |          | `f`                | Weather temperature: `f` (°F) or `c` (°C). |
+| `local`  |          | —                  | `#local=1` → [self-configuring mode](#self-configuring-local-mode): coarse auto-detect + in-widget settings, saved locally. When set, hash `lat`/`lon` are ignored in favour of the saved/detected config. |
+| `preferLocal` |     | —                  | `#preferLocal=1` → use hash `lat`/`lon` as defaults, but let a saved local config override them (opt-in). |
+| `lp`     |          | `0`                | Light-pollution dial `0`–`1` — raises the night-sky glow and erases the faintest stars / Milky Way. |
 
 > Tip: don't know your coordinates? Right-click your location on
 > [OpenStreetMap](https://www.openstreetmap.org) → **Show address**, or just use the
@@ -107,7 +199,10 @@ widget and paste the snippet above (with your own coordinates).
 | File           | Purpose |
 |----------------|---------|
 | `index.html`   | The widget itself. |
-| `builder.html` | Interactive embed-code generator. |
+| `builder.html` | Interactive embed-code generator (portable **and** self-configuring snippets). |
+| `config.js`    | Shared `WidgetConfig` module (`window.SalahConfig`) — parse / validate / serialize / load-save local config / coarse auto-detect. Loaded by both `index.html` and `builder.html` so config logic can't fork. |
+| `install.sh` / `install.ps1` | Optional setup wizard (macOS-Linux / Windows): detects the browser, downloads the TablissNG extension asset, and stages the preset for manual import. No silent installs. |
+| `presets/salah-widget.tablissng.json` | A ready-made TablissNG dashboard export (this widget in self-configuring mode) that the installer imports. |
 
 ---
 

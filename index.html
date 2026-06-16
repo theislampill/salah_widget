@@ -272,6 +272,63 @@ body{color:#fff7df;
   border:1px solid rgba(255,255,255,.37);
   box-shadow:inset 0 1px 1.2px rgba(255,255,255,.62),inset 0 -1.5px 2.5px rgba(8,12,24,.24)}
 .wi{position:relative;z-index:2;font-size:13px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.34))}
+/* settings affordance: in LOCAL mode the buckle becomes a button; the weather emoji morphs to a
+   gear on hover/focus (hover NOT required — tap/Enter/Space also open). Hardcoded embeds never get
+   .interactive, so their buckle is the plain decorative weather icon, visually unchanged. */
+.buckle.interactive{cursor:pointer}
+.buckle.interactive .wi{transition:opacity .18s ease}
+.buckle .gear{position:absolute;inset:0;display:grid;place-items:center;z-index:2;font-size:13px;line-height:1;opacity:0;pointer-events:none;color:var(--text);filter:drop-shadow(0 1px 1px rgba(0,0,0,.34));transition:opacity .18s ease}
+.buckle.interactive:hover .wi,.buckle.interactive:focus-visible .wi{opacity:0}
+.buckle.interactive:hover .gear,.buckle.interactive:focus-visible .gear{opacity:1}
+.buckle:focus{outline:none}
+.buckle.interactive:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* in-card SETTINGS panel — overlays the prayer display within the same 325×530 card; internal
+   scroll (the iframe stays scrolling="no"); never resizes the iframe or clips header/footer. */
+.settings{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(10,16,30,.94),rgba(6,10,20,.965));
+  -webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1);
+  color:#fff7df;font:12px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;text-align:left}
+.c.settings-open .settings{display:flex}
+.set-hd{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:11px 13px 6px;font-weight:800;font-size:15px;letter-spacing:-.01em}
+.set-x{border:0;background:none;color:#fff7df;font-size:20px;line-height:1;cursor:pointer;width:30px;height:30px;padding:0;display:grid;place-items:center;border-radius:8px;opacity:.82}
+.set-x:hover{opacity:1}
+.set-body{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 13px 8px;display:flex;flex-direction:column;gap:4px}
+.set-l{display:block;font-size:9.5px;letter-spacing:.035em;text-transform:uppercase;color:#f6d98bcc;margin:6px 0 1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.set-i{width:100%;min-height:33px;padding:6px 9px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(8,14,24,.72);color:#fff7df;font:inherit;font-size:13px}
+.set-i:focus-visible,.set-b:focus-visible,.set-x:focus-visible,.set-icon:focus-visible,.set-pin:focus-visible{outline:2px solid var(--accent,#f8d878);outline-offset:1px}
+/* location row: search/name input + a single map-pin button on the right (replaces the two text buttons).
+   The pin is a tri-state location indicator: RED-lit = estimated from IP (default), GLOWING = precise GPS
+   active, GREY = manual (not sensing). Clicking it requests precise location. */
+.set-locrow{display:flex;gap:8px;align-items:stretch}
+.set-locrow .set-i{flex:1 1 auto;min-width:0}
+.set-pin{flex:0 0 auto;width:44px;min-height:40px;display:grid;place-items:center;cursor:pointer;border-radius:9px;
+  border:1px solid rgba(255,255,255,.18);background:rgba(8,14,24,.72);color:#9aa3b2;transition:color .2s ease,border-color .2s ease}
+.set-pin svg{width:20px;height:24px;display:block}
+.set-pin svg path{fill:currentColor;stroke:none}
+.set-pin.lit{color:#ec4a3d;border-color:#ec4a3d55}                                   /* IP-estimated (default ON) — filled red pin */
+.set-pin.glow{color:#ff5347;border-color:#ff534788}                                  /* precise GPS — filled + glow */
+.set-pin.glow svg{filter:drop-shadow(0 0 3px #ff5347) drop-shadow(0 0 6px rgba(255,83,71,.55))}
+.set-pin.off{color:#9aa3b2}                                                          /* manual — OUTLINE pin (distinct SHAPE, not colour-only) */
+.set-pin.off svg path{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linejoin:round}
+@media (forced-colors:active){ .set-pin svg path{fill:currentColor} .set-pin.off svg path{fill:none;stroke:currentColor} }
+/* header buttons: reset (counter-clockwise) icon + the × close — equal-sized boxes, centred glyphs */
+.set-hd-btns{display:flex;align-items:center;gap:6px}
+.set-icon{border:0;background:none;color:#fff7df;cursor:pointer;width:30px;height:30px;padding:0;border-radius:8px;display:grid;place-items:center;opacity:.82}
+.set-icon:hover{opacity:1}
+.set-icon svg{width:18px;height:18px;display:block}
+.set-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end}
+.set-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end}
+.set-units{flex:0 0 auto;width:62px;padding:6px 6px}
+.set-status{font-size:11px;line-height:1.35;color:#9be29b;min-height:14px;margin-top:5px;white-space:pre-line}
+.set-status.err{color:#ffc08a}
+.set-footer{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:36px;padding:9px 15px;border-top:1px solid rgba(255,255,255,.1)}
+.set-link{display:grid;place-items:center;color:#5f6a7d;padding:5px;border-radius:8px;transition:color .25s ease,transform .15s ease}   /* monotone by default; fills with colour on hover */
+.set-link svg{width:21px;height:21px;display:block;fill:currentColor;filter:drop-shadow(0 1px 0.5px rgba(255,255,255,.14))}            /* faint engraved/indent look */
+.set-link:hover,.set-link:focus-visible{transform:translateY(-1px)}
+.set-link.heart:hover,.set-link.heart:focus-visible{color:#ff4d6d}                   /* heart fills red */
+.set-link:not(.heart):hover,.set-link:not(.heart):focus-visible{color:#ffffff}        /* GitHub fills white */
+.set-link:focus-visible{outline:2px solid var(--accent,#f8d878);outline-offset:2px}
 
 /* prayer panel */
 .panel{position:relative;z-index:1}
@@ -451,25 +508,120 @@ body{color:#fff7df;
   <div class="times"></div>
 
   <div class="d"><span class="ce" id="ce"></span><span class="ah" id="ah"></span></div>
+
+  <!-- in-widget settings (local mode only; populated/wired lazily in JS). Overlays the prayer
+       display inside the same card — never enlarges the iframe, never clips header/footer. -->
+  <div class="settings" id="settings" role="dialog" aria-modal="true" aria-label="Widget settings">
+    <div class="set-hd"><span>Settings</span>
+      <div class="set-hd-btns">
+        <button type="button" class="set-icon" id="set-reset" aria-label="Reset settings" title="Reset — clear saved settings and re-detect your area">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </button>
+        <button type="button" class="set-x" id="setClose" aria-label="Close settings">×</button>
+      </div>
+    </div>
+    <div class="set-body">
+      <label class="set-l" for="set-label">Location name</label>
+      <div class="set-locrow">
+        <input class="set-i" id="set-label" type="text" placeholder="place to search, or a custom name" autocomplete="off">
+        <select class="set-i set-units" id="set-units" aria-label="Temperature units" title="Temperature units (auto from your area)"><option value="f">°F</option><option value="c">°C</option></select>
+        <button type="button" class="set-pin" id="set-pin" aria-label="Use precise location" title="Estimated from your IP. Click to use precise location (GPS).">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 2C7.6 2 4 5.6 4 10c0 5.2 7.1 11.6 7.5 11.9a.75.75 0 0 0 1 0C12.9 21.6 20 15.2 20 10 20 5.6 16.4 2 12 2ZM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+        </button>
+      </div>
+      <div class="set-row3">
+        <div><label class="set-l" for="set-lat">Latitude</label><input class="set-i" id="set-lat" inputmode="decimal" autocomplete="off"></div>
+        <div style="text-align:center"><label class="set-l" for="set-lon">Longitude</label><input class="set-i" id="set-lon" inputmode="decimal" autocomplete="off"></div>
+        <div style="text-align:right"><label class="set-l" for="set-time">Time format</label><select class="set-i" id="set-time"><option value="24">24-hour</option><option value="12">12-hour</option></select></div>
+      </div>
+      <div class="set-row2" style="grid-template-columns:1.35fr 1fr">
+        <div><label class="set-l" for="set-method">Calculation method</label><select class="set-i" id="set-method">
+          <option value="2">ISNA — N. America</option>
+          <option value="3">Muslim World League</option>
+          <option value="1">Univ. of Islamic Sciences, Karachi</option>
+          <option value="4">Umm al-Qura, Makkah</option>
+          <option value="5">Egyptian General Authority</option>
+          <option value="0">Shia Ithna-Ashari</option>
+          <option value="7">Univ. of Tehran</option>
+          <option value="8">Gulf Region</option>
+          <option value="9">Kuwait</option>
+          <option value="10">Qatar</option>
+          <option value="11">Singapore (MUIS)</option>
+          <option value="12">UOIF — France</option>
+          <option value="13">Diyanet — Turkey</option>
+          <option value="14">Russia (SAMR)</option>
+          <option value="15">Moonsighting Committee</option>
+          <option value="16">Dubai</option>
+        </select></div>
+        <div style="text-align:right"><label class="set-l" for="set-school">Mithl(ayn)</label><select class="set-i" id="set-school"><option value="0">Mithl</option><option value="1">Mithlayn (Hanafi)</option></select></div>
+      </div>
+      <div class="set-row2">
+        <div style="text-align:right"><label class="set-l" for="set-datefmt-preset">Date format</label><select class="set-i" id="set-datefmt-preset">
+          <option value="YYYY-MM-DD">2026-06-14</option>
+          <option value="MM/DD/YYYY">06/14/2026</option>
+          <option value="DD/MM/YYYY">14/06/2026</option>
+          <option value="DD MMMM YYYY">14 June 2026</option>
+          <option value="__custom__">Custom…</option>
+        </select></div>
+        <div><label class="set-l" aria-hidden="true">&nbsp;</label><input class="set-i" id="set-datefmt" placeholder="YYYY-MM-DD" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Date format code"></div>
+      </div>
+      <div class="set-status" id="set-status" role="status" aria-live="polite">Enter to search a place · Shift+Enter to keep the typed name.</div>
+    </div>
+    <div class="set-footer">
+      <a class="set-link" href="https://github.com/theislampill" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.3v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+      </a>
+      <a class="set-link" href="https://x.com/theIslampill" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" title="X (Twitter)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/></svg>
+      </a>
+      <a class="set-link heart" href="https://buymeacoffee.com/theislampill" target="_blank" rel="noopener noreferrer" aria-label="Support — buy me a coffee" title="Buy me a coffee">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </a>
+    </div>
+  </div>
 </div>
 
+<script src="config.js"></script>
 <script>
 "use strict";
-// ---- config from URL hash ------------------------------------------------
-const q     = new URLSearchParams(location.hash.slice(1));
-const lat   = q.get("lat");
-const lon   = q.get("lon");
-let tz      = q.get("tz")    || "America/New_York";   // a hint/fallback; the real zone is adopted from the location (see fetchTimings)
-const label = q.get("label") || "";
-const method= q.get("method")|| "2";
-const school= q.get("school")|| "0";
-const fmt24 = (q.get("time") || "24") !== "12";
-const units = (q.get("units") || "f").toLowerCase() === "c" ? "c" : "f";
-// datefmt is now a token format string (YYYY MM DD MMMM …). The old preset keys
-// still work for backward compatibility with existing embeds.
-const DATEFMT_PRESETS = {iso:"YYYY-MM-DD", us:"MM/DD/YYYY", eu:"DD/MM/YYYY", long:"DD MMMM YYYY"};
-const dfRaw = q.get("datefmt") || "iso";
-const datefmtStr = DATEFMT_PRESETS[dfRaw.toLowerCase()] || dfRaw;
+// ---- config: resolved from the shared module (config.js / window.SalahConfig) ----
+// `q` stays for SIM/debug-only flags below. CONFIG is the single resolved WidgetConfig;
+// lat/lon/method/… are LET bindings populated from it (mutable — local mode resolves them
+// at boot via saved-config / coarse auto-detect, and the in-widget settings panel updates
+// them live without a reload). HARDCODED embeds (#lat&lon, no local flag) resolve
+// SYNCHRONOUSLY here, byte-identical to the previous behaviour.
+const q = new URLSearchParams(location.hash.slice(1));
+let lat=null, lon=null, tz="America/New_York", label="", method="2", school="0",
+    fmt24=true, units="f", datefmtStr="YYYY-MM-DD", LPOLL=0;
+let _cacheTz="America/New_York";   // tz FROZEN into the prayer-cache key at resolve time (the old const captured the boot-time tz; the live `tz` is later overwritten by the API's meta zone, but the cache key must stay stable across reloads)
+let CONFIG=null, _cfgMode="bare", _needsDetect=false, _hashCfg={}, _cfgFlags={local:false,preferLocal:false};
+let _autoDetectSource=null, _autoDetectStatus="idle", _geoPermission="unknown", _geoLastError=null, _storageErr=null;
+function bindConfig(c){            // copy a resolved WidgetConfig into the live runtime bindings
+  if(!c) return;
+  CONFIG=c;
+  lat=c.lat; lon=c.lon; tz=c.tz||tz; _cacheTz=c.tz||_cacheTz; label=c.label||"";
+  method=c.method; school=c.school; fmt24=(c.time!=="12"); units=c.units;
+  datefmtStr=c.datefmt; LPOLL=c.lp||0;
+}
+if(window.SalahConfig){
+  const _r=SalahConfig.resolve(location.hash);
+  _cfgMode=_r.mode; _needsDetect=_r.needsDetect; _hashCfg=_r.hashCfg||{}; _cfgFlags=_r.flags||_cfgFlags;
+  bindConfig(_r.cfg);             // null for bare / needs-detect → lat/lon stay null, resolved later in boot()
+}else{
+  // DEGRADE: config.js failed to load → legacy hash-only parse so the widget still runs.
+  console.warn("salah_widget: config.js missing — falling back to legacy hash parsing.");
+  const _la=q.get("lat"), _lo=q.get("lon");
+  _cfgMode=(_la!=null&&_lo!=null)?"hardcoded":"bare";
+  if(_cfgMode==="hardcoded"){
+    const _P={iso:"YYYY-MM-DD",us:"MM/DD/YYYY",eu:"DD/MM/YYYY",long:"DD MMMM YYYY"};
+    lat=+_la; lon=+_lo; tz=q.get("tz")||"America/New_York"; _cacheTz=tz; label=q.get("label")||"";
+    method=q.get("method")||"2"; school=q.get("school")||"0";
+    fmt24=(q.get("time")||"24")!=="12"; units=(q.get("units")||"f").toLowerCase()==="c"?"c":"f";
+    const _df=q.get("datefmt")||"iso"; datefmtStr=_P[_df.toLowerCase()]||_df;
+    LPOLL=Math.min(1,Math.max(0,+q.get("lp")||0));
+    CONFIG={v:1,lat,lon,tz,label,method,school,time:fmt24?"24":"12",datefmt:datefmtStr,units,lp:LPOLL,source:"hash"};
+  }
+}
 
 // ---- simulation overrides (only active when present in the hash) ----------
 // Lets you preview any condition without waiting for the real clock/weather:
@@ -499,7 +651,7 @@ const real    = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
 // light-pollution dial (0 pristine dark-sky … 1 inner-city). No global light-pollution dataset ships inline, so
 // this is an honest user-set value via ?lp= ; it raises the night-sky background, warms the horizon dome, and
 // erases the Milky Way + faint stars. Default 0 (assume dark) so nothing changes unless set.
-const LPOLL = Math.min(1, Math.max(0, +q.get("lp") || 0));
+// (LPOLL is bound from CONFIG.lp in bindConfig — ?lp= still flows through the shared config parser.)
 const DEBUGLAYERS = q.get("debugLayers")==="1";   // ?debugLayers=1 → live read-out of every sky/cloud layer opacity
 const DEBUGMOON = q.get("debugMoon")==="1";       // ?debugMoon=1 → moon layer radii/opacities + a pixel-ring across the limb
 const DEBUGDAWN = q.get("debugDawn");             // DEPRECATED no-op: dawn is not a painted overlay anymore (true dawn = the physical twilight sky + Fajr marker; false dawn is not rendered). Kept only so old URLs don't error.
@@ -580,13 +732,13 @@ function tomorrowStr(){
 }
 
 // ---- prayer-times data: fetch + cache + retry ---------------------------
-const cacheKey = "salah:"+[lat,lon,tz,method,school].join("|");
+function cacheKey(){ return "salah:"+[lat,lon,_cacheTz,method,school].join("|"); }   // function (not const): reflects runtime config changes (local mode / settings panel)
 function loadCache(dateStr){
-  try{ const j=JSON.parse(localStorage.getItem(cacheKey)); if(j&&j.date===dateStr) return j.data; }catch(e){}
+  try{ const j=JSON.parse(localStorage.getItem(cacheKey())); if(j&&j.date===dateStr) return j.data; }catch(e){}
   return null;
 }
 function saveCache(dateStr,data){
-  try{ localStorage.setItem(cacheKey,JSON.stringify({date:dateStr,data})); }catch(e){}
+  try{ localStorage.setItem(cacheKey(),JSON.stringify({date:dateStr,data})); }catch(e){}
 }
 async function fetchTimings(dateStr){
   // No timezonestring: let Aladhan resolve the zone from lat/lon, so a wrong/stale tz param can't
@@ -612,9 +764,9 @@ let weather=null, lastWxAt=0, lastWxTry=0, wxBusy=false;
 // clock shows a coherent future weather cycle, not frozen current weather under a moving sun.
 let weatherTrack=null;   // {ep:[epoch…], temperature_2m:[…], cloud_cover:[…], weather_code:[…], …}
 let siteElev=0;          // surface elevation (m), from the Open-Meteo response — high, thin-air sites read sharper/darker
-const wxKey = "salahwx:"+[lat,lon,units].join("|");
+function wxKey(){ return "salahwx:"+[lat,lon,units].join("|"); }   // function (not const): reflects runtime config changes
 function loadWx(){
-  try{ const j=JSON.parse(localStorage.getItem(wxKey)); if(j && Date.now()-j.ts < 6*3600e3){ weather=j.w; lastWxAt=j.ts; } }catch(e){}
+  try{ const j=JSON.parse(localStorage.getItem(wxKey())); if(j && Date.now()-j.ts < 6*3600e3){ weather=j.w; lastWxAt=j.ts; } }catch(e){}
 }
 async function fetchWeather(){
   if(SIM.wx!=null) return;                 // simulated weather: never overwrite
@@ -638,7 +790,7 @@ async function fetchWeather(){
         precip:cu.precipitation, rain:cu.rain, showers:cu.showers, snow:cu.snowfall,   // OBSERVED current/nowcast precip (mm) — the evidence the precip/thunder gate requires
         vis:cu.visibility, isDay:cu.is_day, src:"current"};
       lastWxAt=Date.now();
-      try{ localStorage.setItem(wxKey,JSON.stringify({w:weather,ts:lastWxAt})); }catch(e){}
+      try{ localStorage.setItem(wxKey(),JSON.stringify({w:weather,ts:lastWxAt})); }catch(e){}
     }
     if(j&&j.hourly&&Array.isArray(j.hourly.time)&&j.hourly.time.length){
       const h=j.hourly, T={ep:h.time.map(s=>{ const m=/^(\d+)-(\d+)-(\d+)T(\d+):(\d+)/.exec(s); return m?epochForTzTime(+m[1],+m[2],+m[3],+m[4],+m[5]):NaN; })};
@@ -1035,8 +1187,8 @@ let today=null, tomorrow=null, lastDate=null, fetchingTomorrow=false, lastMoonMi
 // Day-rollover robustness: a failed new-day fetch must NOT silently present yesterday's times as today's.
 // _prayerStale is qaState() diagnostic ONLY — it is never read by atmosphere()/paint() (render-boundary).
 let _prayerStale=false, _rolloverBusy=false, _rolloverNextTry=0; const _ROLLOVER_RETRY_MS=60000;   // throttle: at most one rollover refetch / 60s while offline
-$("#loc").textContent = label;
-$("#loc").style.display = label ? "" : "none";
+function setLocLabel(){ const el=$("#loc"); if(el){ el.textContent=label; el.style.display=label?"":"none"; } }
+setLocLabel();   // initial (hardcoded embeds show their label immediately; runtime/local changes refresh via render())
 
 function showError(msg){ $(".nt").textContent="—"; $(".left").textContent=msg; }
 function isDayNow(nowMin){
@@ -1824,6 +1976,7 @@ function genLightning(seed){
 let _lastBolt=-1, _lastRender=null;   // _lastRender: last actually-rendered state summary (observability, read by qaState)
 function render(){
   if(!today) return;
+  setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)
   syncWeather();                                              // sim/fast-forward: pull weather from the forecast track at simTime
   const M=model();
   const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin){ lastMoonMin=mm; renderMoon(); moonSky._min=mm; }   // re-render the moon each minute so its orientation/earthshine track the evening; stamp the minute so atmosphere() can detect a stale / out-of-order moonSky
@@ -1909,6 +2062,24 @@ window.qaState=function(){
         prayerDate: lastDate||null, prayerLoaded: !!today, tomorrowLoaded: !!tomorrow,
         prayerStale: _prayerStale, rolloverPendingMs: (_prayerStale ? Math.max(0, _rolloverNextTry-Date.now()) : null),
         simulated:(SIM.wx!=null||SIM.time!=null||SIM.moon!=null) }; })(),
+    // ── CONFIG diagnostics: how the WidgetConfig was resolved + persistence/permission state ──
+    config:(()=>{
+      const hashHadCoords = _hashCfg && _hashCfg.lat!=null && _hashCfg.lon!=null;
+      const overridden = (_cfgMode==="local"||_cfgMode==="preferLocal") && hashHadCoords && (!CONFIG || CONFIG.source!=="hash");
+      return {
+        configSource: (CONFIG&&CONFIG.source)||null,
+        configMode: _cfgMode,                                     // hardcoded | local | preferLocal | bare
+        autoDetectSource: _autoDetectSource, autoDetectStatus: _autoDetectStatus,
+        storageAvailable: (window.SalahConfig?SalahConfig.storageAvailable().ok:false), storageError: _storageErr,
+        geolocationPermissionState: _geoPermission, geolocationLastError: _geoLastError,
+        lat: lat, lon: lon, tz: tz, label: label,
+        hashConfigOverridden: !!overridden,
+        why: _cfgMode==="hardcoded" ? "explicit hash lat/lon (no local flag) → hardcoded wins; saved config ignored"
+           : _cfgMode==="preferLocal" ? "preferLocal=1 → saved local config (if any) overrides hash defaults"
+           : _cfgMode==="local" ? "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+           : "no lat/lon and no local flag → bare (showError)"
+      };
+    })(),
     render: _lastRender,
     clouds:{low:+(A.cloudLayerLow||0).toFixed(2), mid:+(A.cloudLayerMid||0).toFixed(2), high:+(A.cloudLayerHigh||0).toFixed(2), hash:cloudHash, alpha:cloudAlpha},
     stars:{op:+(cs.getPropertyValue("--stars").trim()||0), visible:starsVis, blur:cs.getPropertyValue("--starblur").trim(), mw:+(cs.getPropertyValue("--mw").trim()||0)},
@@ -1948,12 +2119,11 @@ function updateMotionDbg(rafPS, cloudPS, cEl){
     +`reason ${rm?'OS reduced-motion (add motion=full to override)':(cEl.classList.contains('paused')?'offscreen/hidden → paused (battery)':'full real-time motion')}`;
 }
 
-async function boot(){
-  if(QA){ lastWxAt=0; lastWxTry=0; }                          // QA: always build a fresh forecast track on boot (cache must not block it)
-  buildStars();
-  buildWeather();
-  renderMoon();
-  if(!lat||!lon){ showError("Add lat & lon to the URL"); return; }
+let _loopStarted=false;
+
+// The post-config WEATHER pipeline, factored out of boot() so the settings panel's live
+// Apply (applyConfig) re-runs the SAME path — one source of truth, no page reload.
+function startWeather(){
   loadWx();
   if(SIM.wx!=null){
     const sTemp=SIM.temp!=null?+SIM.temp:72, sRh=SIM.humid!=null?+SIM.humid:45;
@@ -1968,6 +2138,9 @@ async function boot(){
       vis: SIM.humid!=null&&+SIM.humid>92?2000:20000, isDay:1, src:"sim"};
   }
   fetchWeather(); fetchRadar();
+}
+// The post-config PRAYER-DATA pipeline (cache → live fetch → render).
+async function loadPrayerData(){
   const ds=nowParts().dateStr;
   const cached=loadCache(ds);
   if(cached){ today=cached; if(cached.meta&&cached.meta.timezone) tz=cached.meta.timezone; lastDate=ds; render(); }
@@ -1979,9 +2152,77 @@ async function boot(){
   }catch(e){
     if(!today) showError("Could not load prayer times");
   }
-  // SINGLE rAF render clock. Renders on each sim-second (≈1 Hz at timeScale 1; up to per-frame when fast),
-  // so the marker, sky, prayer state and moon all advance from simTime. Decorative weather motion lives in
-  // CSS (wind/precip-driven), independent of this clock. Stops entirely when the iframe is hidden/offscreen.
+}
+// clear per-location state so a runtime config change can't show the old place's data
+function resetForNewLocation(){
+  today=null; tomorrow=null; fetchingTomorrow=false;
+  weather=null; weatherTrack=null; lastWxAt=0; lastWxTry=0;
+  weatherRadar=null; lastRadarAt=0;
+  _starsProjected=false; _prayerStale=false;
+  renderMoon();
+}
+// Apply a new WidgetConfig at RUNTIME (settings panel) — IN-MEMORY, no reload, so it still
+// works when third-party-iframe localStorage is blocked/partitioned. opts.save persists it.
+async function applyConfig(cfg, opts){
+  opts=opts||{};
+  cfg=window.SalahConfig?SalahConfig.normalize(cfg):cfg;
+  if(opts.save && window.SalahConfig){
+    const r=SalahConfig.saveLocal(cfg);
+    _storageErr=r.ok?null:(r.error||"error");
+    if(r.ok){ cfg.origin=cfg.source; cfg.source="localStorage"; cfg.savedAt=r.savedAt; }   // keep how the coords were obtained (pin reflects origin, not the storage marker)
+  }
+  bindConfig(cfg);
+  resetForNewLocation();
+  if(lat==null||lon==null){ render(); return; }     // incomplete manual entry → nothing to load yet
+  startWeather();
+  await loadPrayerData();
+  startRenderLoop();                                  // no-op if already running
+}
+
+async function boot(){
+  if(QA){ lastWxAt=0; lastWxTry=0; }                          // QA: always build a fresh forecast track on boot (cache must not block it)
+  buildStars();
+  buildWeather();
+  renderMoon();
+
+  // ---- resolve coordinates (mode-aware: hardcoded sync above; local resolves here) ----
+  if(lat==null||lon==null){
+    if(_needsDetect && window.SalahConfig){
+      // local / preferLocal with no saved config → coarse, PERMISSION-FREE area auto-detect.
+      _autoDetectStatus="pending";
+      let det=null; try{ det=await SalahConfig.coarseDetect(); }catch(e){ det={ok:false}; }
+      if(det && det.ok){
+        bindConfig(SalahConfig.applyHashPrefs(det.cfg,_hashCfg));
+        _autoDetectStatus="ok"; _autoDetectSource=det.provider||det.source||"coarse-ip";
+        enableSettingsAffordance();
+      } else {
+        // detect failed/blocked/rate-limited → open manual setup (never crash). Sky still
+        // animates behind the panel; entering coordinates then closing (auto-save) brings prayer times to life.
+        _autoDetectStatus="failed";
+        enableSettingsAffordance();
+        openSettings();
+        startRenderLoop();
+        return;
+      }
+    } else {
+      showError("Add lat & lon to the URL");                  // bare mode: byte-identical to before
+      return;
+    }
+  } else if(_cfgMode==="local"||_cfgMode==="preferLocal"){
+    enableSettingsAffordance();                               // saved/opted-in local config → settings gear available
+  }
+
+  startWeather();
+  await loadPrayerData();
+  startRenderLoop();
+}
+
+// SINGLE rAF render clock, factored into a function so the settings-panel Apply can (re)start it.
+// Renders on each sim-second (≈1 Hz at timeScale 1; up to per-frame when fast), so the marker, sky,
+// prayer state and moon all advance from simTime. Decorative weather motion lives in CSS
+// (wind/precip-driven), independent of this clock. Stops entirely when the iframe is hidden/offscreen.
+function startRenderLoop(){
+  if(_loopStarted) return; _loopStarted=true;
   const cEl=document.querySelector(".c");
   if(MOTIONFULL && cEl) cEl.classList.add("motionfull");    // CSS reduced-motion rules are scoped to .c:not(.motionfull)
   let _raf=null, _onScreen=true, _lastSec=-1, _lastDateStr=lastDate||"", _lastWx=0, _lastCloud=0;
@@ -2031,6 +2272,178 @@ async function boot(){
   if(ADVANCING){ const sc=document.querySelector(".simclock"); if(sc) sc.style.display="block"; }
   setVis();
 }
+
+// ——————————————————————— in-widget settings (local mode) ———————————————————————
+// boot() calls these (declared as function statements, so hoisted). They no-op gracefully if the
+// shared module is absent (settings are only ever enabled in local mode, which requires config.js).
+function enableSettingsAffordance(){ _enableSettingsAffordance(); }
+function openSettings(){ _openSettings(); }
+function closeSettings(){ _closeSettings(); }
+
+let _setWired=false, _setLastFocus=null, _setSearchSeq=0, _setCands=[], _setCandIdx=0, _setHomeCC="", _locSource="manual", _setDirty=false;
+try{ _setHomeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}
+const _byId=id=>document.getElementById(id);
+function _setStatus(msg,isErr){ const s=_byId("set-status"); if(s){ s.textContent=msg||""; s.classList.toggle("err",!!isErr); } }
+// the map-pin's tri-state: "ip" = estimated from IP (lit red, default ON), "precise" = GPS active (glowing),
+// "manual" = typed name / edited coords (greyscale, not sensing). Clicking the pin requests precise GPS.
+function _setPin(src){
+  _locSource=src;
+  const b=_byId("set-pin"); if(!b) return;
+  b.classList.remove("lit","glow","off");
+  b.classList.add(src==="precise"?"glow":src==="ip"?"lit":"off");
+  const t = src==="precise" ? "Using precise location (GPS) — click to refresh"
+          : src==="ip" ? "Estimated from your IP — click for precise location (GPS)"
+          : "Manual location — click for precise location (GPS)";
+  b.title = t; b.setAttribute("aria-label", t);   // state-bearing accessible name (not color-only)
+}
+
+// forward-geocode search on the location field (same shared SalahConfig.geocodeSearch as the builder):
+// type a place/postcode + Enter → search → fill lat/lon; multiple matches cycle on Enter.
+async function _runSetSearch(q){
+  const seq=++_setSearchSeq;
+  _setStatus("Searching…");
+  let cands=[];
+  try{ if(window.SalahConfig) cands=await SalahConfig.geocodeSearch(q,{homeCC:_setHomeCC}); }catch(e){}
+  if(seq!==_setSearchSeq) return;                               // a newer keystroke superseded this lookup
+  if(!cands.length){ _setCands=[]; _setStatus("Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for precise location.",true); return; }
+  _setCands=cands; _setCandIdx=0; _showSetCand();
+}
+function _showSetCand(){
+  const c=_setCands[_setCandIdx]; if(!c) return;
+  _byId("set-lat").value=(+c.lat).toFixed(5);
+  _byId("set-lon").value=(+c.lon).toFixed(5);
+  if(c.name) _byId("set-label").value=c.name;                 // display name follows the chosen place (override later with Shift+Enter)
+  _setPin("manual"); _setDirty=true;                          // a searched place is a user choice, not live sensing → grey pin
+  _setStatus(_setCands.length>1
+    ? ("Match "+(_setCandIdx+1)+" of "+_setCands.length+": "+c.norm+"\npress Enter to cycle")
+    : ("Found: "+c.norm));
+}
+// date format: keep the preset dropdown in sync with the editable code box (mirrors builder.html)
+const _DF_PRESETS=["YYYY-MM-DD","MM/DD/YYYY","DD/MM/YYYY","DD MMMM YYYY"];
+function _syncDateFromBox(){ const dd=_byId("set-datefmt-preset"); if(!dd) return; const code=_byId("set-datefmt").value.trim(); dd.value=(_DF_PRESETS.indexOf(code)>=0)?code:"__custom__"; }
+
+function _enableSettingsAffordance(){
+  const b=document.querySelector(".buckle"); if(!b) return;
+  const c=document.querySelector(".c"); if(c) c.classList.add("cfg-local");
+  if(b.classList.contains("interactive")) return;             // idempotent
+  b.classList.add("interactive");
+  b.setAttribute("role","button"); b.setAttribute("tabindex","0"); b.setAttribute("aria-label","Widget settings");
+  if(!b.querySelector(".gear")){ const g=document.createElement("span"); g.className="gear"; g.textContent="⚙"; g.setAttribute("aria-hidden","true"); b.appendChild(g); }
+  b.addEventListener("click",_toggleSettings);
+  b.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); _toggleSettings(); } });
+}
+
+function _settingsFormToConfig(){
+  const g=_byId, base={ lat:g("set-lat").value.trim(), lon:g("set-lon").value.trim(),
+    label:g("set-label").value.trim(), method:g("set-method").value, school:g("set-school").value,
+    time:g("set-time").value, units:g("set-units").value,
+    datefmt:g("set-datefmt").value.trim()||"YYYY-MM-DD",
+    tz:(CONFIG&&CONFIG.tz)||tz, lp:LPOLL,
+    source:(_locSource==="precise"?"browser-geolocation":_locSource==="ip"?"coarse-ip":"manual") };
+  return window.SalahConfig ? SalahConfig.normalize(base) : base;
+}
+function _populateSettingsForm(){
+  const g=_byId;
+  g("set-lat").value = lat!=null?lat:""; g("set-lon").value = lon!=null?lon:"";
+  g("set-label").value = label||""; g("set-method").value=method; g("set-school").value=school;
+  g("set-time").value=fmt24?"24":"12"; g("set-units").value=units; g("set-datefmt").value=datefmtStr;
+  _syncDateFromBox();
+  const _src=(CONFIG&&(CONFIG.origin||CONFIG.source))||"";   // origin survives a Save (source becomes "localStorage") so the pin reflects how the coords were really obtained
+  _setPin(_src==="browser-geolocation"?"precise":(_src==="coarse-ip"?"ip":"manual"));
+  _setCands=[]; _setSearchSeq++; _setDirty=false;            // fresh open: nothing to auto-save yet
+  _setStatus("Enter to search a place · Shift+Enter to keep the typed name.");
+}
+function _wireSettings(){
+  if(_setWired) return; _setWired=true;
+  _byId("setClose").addEventListener("click",_closeSettings);
+  _byId("set-pin").addEventListener("click",_usePrecise);     // map-pin → precise GPS (asks permission)
+  _byId("set-reset").addEventListener("click",_resetLocal);
+  // AUTO-SAVE (no Save button): any edit marks the form dirty → committed on close. Esc closes; Tab is trapped.
+  const panel=_byId("settings");
+  panel.addEventListener("input",()=>{ _setDirty=true; });
+  panel.addEventListener("change",()=>{ _setDirty=true; });
+  panel.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){ e.preventDefault(); _closeSettings(); return; }
+    if(e.key==="Tab"){                                         // focus trap — keep Tab inside the dialog
+      const f=[...panel.querySelectorAll('a[href],button,input,select,[tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled && el.offsetParent!==null);
+      if(!f.length) return;
+      const first=f[0], last=f[f.length-1];
+      if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+    }
+  });
+  // typing a name / editing coordinates = manual → the pin goes greyscale (no longer location-sensing)
+  ["set-label","set-lat","set-lon"].forEach(id=>_byId(id).addEventListener("input",()=>{ if(_locSource!=="manual") _setPin("manual"); }));
+  // date format: preset dropdown <-> editable code box (mirrors builder.html)
+  _byId("set-datefmt-preset").addEventListener("change",()=>{ const v=_byId("set-datefmt-preset").value; if(v!=="__custom__") _byId("set-datefmt").value=v; else _byId("set-datefmt").focus(); });
+  _byId("set-datefmt").addEventListener("input",_syncDateFromBox);
+  // LOCATION field — the display NAME and the actual coordinates are stored separately (config.label vs
+  // lat/lon), so each can be overridden independently. Enter = search the typed place (cycle matches) →
+  // sets the ACTUAL location/coordinates. Shift+Enter = keep the typed text as the DISPLAY NAME only,
+  // WITHOUT searching (coordinates unchanged — e.g. force "Central Florida" over a precise location).
+  const lab=_byId("set-label");
+  lab.addEventListener("keydown",(e)=>{
+    if(e.key!=="Enter") return;
+    e.preventDefault();
+    if(e.shiftKey){                                            // Shift+Enter → display-name override (no search)
+      _setCands=[]; const nm=lab.value.trim(); _setDirty=true;
+      _setStatus(nm ? ("Display name “"+nm+"” — coordinates unchanged.")
+                    : "Type a place and press Enter to search.");
+      return;
+    }
+    if(_setCands.length>1){ _setCandIdx=(_setCandIdx+1)%_setCands.length; _showSetCand(); return; }  // cycle matches
+    const q=lab.value.trim();
+    if(q.length>=2) _runSetSearch(q);                          // Enter → search the typed place
+  });
+}
+// AUTO-SAVE: there is no Save button — the current form is applied + persisted when the panel closes
+// (only if something changed and the coordinates are valid). Storage blocked → applies for the session.
+function _commitSettings(){
+  if(!_setDirty) return;
+  const cfg=_settingsFormToConfig();
+  const v=window.SalahConfig?SalahConfig.validate(cfg):{ok:cfg.lat!=null&&cfg.lon!=null};
+  if(!v.ok) return;                                            // incomplete/invalid → keep the prior config
+  _setDirty=false;
+  applyConfig(cfg,{save:true});                                // persist + re-fetch + re-render (fire-and-forget)
+}
+async function _usePrecise(){    // the map-pin button → precise GPS (only place getCurrentPosition is called)
+  if(!window.SalahConfig){ _setStatus("Precise location unavailable.",true); return; }
+  _setStatus("Requesting precise location…");
+  const r=await SalahConfig.geolocate({});                    // user gesture
+  try{ _geoPermission=await SalahConfig.permissionState(); }catch(e){}
+  if(r.ok){ _byId("set-lat").value=(+r.lat).toFixed(5); _byId("set-lon").value=(+r.lon).toFixed(5); _geoLastError=null;
+    _setPin("precise"); _setDirty=true;                       // pin glows = precise GPS active
+    _setStatus("Using your precise location."); }
+  else { _geoLastError=r.error||"denied";
+    _setStatus(r.error==="unsupported" ? "Geolocation isn't available in this browser/iframe." :
+      "Precise location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the estimated area.", true); }
+}
+async function _resetLocal(){
+  if(window.SalahConfig) SalahConfig.clearLocal();
+  _storageErr=null; _setStatus("Local settings cleared.");
+  let d=null; try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){}
+  if(d&&d.ok){ const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg); await applyConfig(c,{save:false});
+    _populateSettingsForm(); _setStatus("Reset — using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
+  else { _setStatus("Local settings cleared — enter your location.",true); }
+}
+function _openSettings(){
+  const c=document.querySelector(".c"); if(!c) return;
+  _wireSettings(); _populateSettingsForm();
+  _setLastFocus=document.activeElement;
+  const b=document.querySelector(".buckle"); if(b) b.setAttribute("tabindex","-1");   // covered while open → out of the tab order (focus trap)
+  c.classList.add("settings-open");
+  const first=_byId("set-label"); if(first) setTimeout(()=>{ try{ first.focus(); }catch(e){} },30);
+}
+function _closeSettings(){
+  const c=document.querySelector(".c"); if(!c) return;
+  _commitSettings();                                          // AUTO-SAVE on close
+  c.classList.remove("settings-open");
+  const b=document.querySelector(".buckle");
+  if(b){ b.setAttribute("tabindex","0"); }                    // restore to the tab order
+  if(b&&b.classList.contains("interactive")){ try{ b.focus(); }catch(e){} }
+  else if(_setLastFocus&&_setLastFocus.focus){ try{ _setLastFocus.focus(); }catch(e){} }
+}
+function _toggleSettings(){ const c=document.querySelector(".c"); if(!c) return; c.classList.contains("settings-open")?_closeSettings():_openSettings(); }
 
 boot();
 </script>

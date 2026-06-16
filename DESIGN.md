@@ -256,6 +256,36 @@ Config and debug are read from the URL **hash** (`#…`). Common:
   `debugDawn=…` — **deprecated no-op** (dawn is not a painted overlay; nothing to force).
   `motion=full` — force full animation even under OS `prefers-reduced-motion` (accessibility override; default respects it).
 - `debugOptic=halo|sundogs|pillar|anticrep|paraselene` — force a (normally condition-gated) optical phenomenon.
+- `local=1` — self-configuring mode (coarse auto-detect + in-widget settings, saved locally).
+  `preferLocal=1` — hardcoded defaults that a saved local config may override (opt-in). `lp=0..1` — light-pollution dial.
+
+## Config resolution & local mode (`config.js`)
+
+Config logic lives in **`config.js`** (`window.SalahConfig`), a same-origin classic script loaded **before** the
+inline page script by **both** `index.html` and `builder.html` — one un-forkable source for parse/validate/
+normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately relaxes the old "single self-contained
+`index.html`" rule; `index.html` keeps a one-line **legacy fallback** to hash-only parsing if `config.js` 404s.)
+
+- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, lp, seed, source, savedAt}`,
+  `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, manual, fallback}`. Persisted under
+  `salah_widget:config:v1` (separate from the prayer/weather caches; every access wrapped in try/catch).
+- **Precedence:** explicit hardcoded hash (unless `local`/`preferLocal`) → saved local → coarse IP/timezone detect
+  → manual setup → safe error. **Stale localStorage never overrides an intentional hardcoded embed.**
+- **Sync vs async:** hardcoded resolves **synchronously at module load** (byte-identical boot timing — proven by
+  Smoke A/B equality of `qaState` stable fields). Only `local`/`preferLocal` **without** a saved config defer to
+  the async `coarseDetect()` in `boot()`; failure opens the manual settings panel (never crashes).
+- **Coarse detect:** GeoJS (`get.geojs.io/v1/ip/geo.json`) → ipinfo.io fallback, AbortController timeout, IANA tz
+  from the device (`Intl`) first. Approximate (IP-based) — surfaced as "estimated area," never "precise."
+- **Runtime apply** (`applyConfig`): the settings panel updates the live config **in-memory, no reload** (so it
+  works when third-party-iframe storage is blocked). `cacheKey`/`wxKey` are **functions** (not consts) so the new
+  location's caches are keyed correctly; the post-config pipeline (`startWeather`/`loadPrayerData`/`startRenderLoop`)
+  is shared by `boot()` and apply.
+- **Settings affordance:** the header buckle becomes a `role=button` (weather emoji ⇄ ⚙ gear on hover/focus; tap +
+  `Enter`/`Space` work; not hover-dependent) **only in local/preferLocal mode** — hardcoded embeds are untouched.
+  The panel overlays the prayer display inside the same 325×530 card (internal scroll; never resizes the iframe or
+  clips header/footer). Precise geolocation is **only** called from the panel button (user gesture).
+- **`qaState().config`** exposes `configSource/configMode/autoDetectSource/autoDetectStatus/storageAvailable/
+  storageError/geolocationPermissionState/geolocationLastError/lat/lon/tz/label/hashConfigOverridden/why`.
 
 ## Known approximations (honest)
 

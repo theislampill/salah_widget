@@ -6,16 +6,27 @@ SOLID/CUPID, control-flow, data-lineage/SSA, BASE stale-state, ACID write-safety
 observability) — then a *minimal, justified* hardening pass. **Guardrails:** no rewrite, no abstraction-for-its-
 own-sake, preserve the static / no-build / no-dependency / single-file character. Line refs are approximate.
 
-## Two artifacts, one contract
+## Three artifacts, one config contract
 
-- **`index.html`** — the runtime widget (one self-contained file: CSS + JS + the atmospheric renderer).
-- **`builder.html`** — the embed-code generator (separate page, **shares no JS** with the widget).
+- **`index.html`** — the runtime widget (self-contained CSS + JS + atmospheric renderer; reads `location.hash`).
+- **`builder.html`** — the embed-code generator (portable **and** self-configuring snippets).
+- **`config.js`** — `window.SalahConfig`, the **shared** `WidgetConfig` module (parse / validate / normalize /
+  serialize / load-save-clear-local / coarse-detect / precedence). Loaded as a classic same-origin `<script>`
+  **before** the inline script of both pages.
 
-The *only* coupling between them is the **URL-hash parameter contract**: the builder *writes*
-`#lat&lon&label&method&school[&time][&datefmt][&units]` (fixed key order; no `tz` — the widget derives the zone
-from the coordinates), and the widget *reads* `location.hash` only. This is correct separation — **do not merge
-them.** (The builder forces an iframe re-run with a throwaway `?r=` query because a hash-only change does not
-re-run the widget's boot.)
+**2026-06-16 — the single-file rule was deliberately relaxed (by maintainer decision)** so config logic can never
+fork between widget and builder (the local-mode task's "do not fork config logic" requirement). `config.js` is the
+*only* extracted module; everything else stays inline. `index.html` keeps a one-line **legacy fallback** (hash-only
+parse) if `config.js` fails to load, so a 404 degrades instead of white-screening.
+
+The coupling is now the **`WidgetConfig` contract in `config.js`**: the builder serializes a config to the hash
+(portable `#lat&lon&label&method&school[&time][&datefmt][&units]` — byte-identical to the historical output — or
+generic `#local=1`), and the widget resolves `location.hash` through the same module. (The builder still forces an
+iframe re-run with a throwaway `?r=` query because a hash-only change does not re-run the widget's boot.)
+Persistence: `salah_widget:config:v1` (separate from prayer/weather caches). Precedence: hardcoded hash (unless
+`local`/`preferLocal`) → saved local → coarse-ip → manual → fallback. **Stale localStorage never overrides a
+hardcoded embed.** Runtime re-config (`applyConfig`) is in-memory (no reload); `cacheKey`/`wxKey` are functions so
+they track config changes. See DESIGN.md “Config resolution & local mode” for the full contract.
 
 ## Runtime pipeline — Physics → State → Render
 

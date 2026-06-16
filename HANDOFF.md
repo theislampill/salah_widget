@@ -18,12 +18,32 @@ and don't expect this file to repeat them.
 
 ## Project shape
 
-One self-contained `C:\workspace\ai\salah_widget\index.html` (≈1700 lines: all CSS + JS + the atmospheric
-renderer inline). `builder.html` is a config/URL generator. **Deploys via GitHub Pages from `main`**, so a commit
+`C:\workspace\ai\salah_widget\index.html` (≈2100 lines: all CSS + JS + the atmospheric renderer inline) +
+**`config.js`** — the one shared module (`window.SalahConfig`: parse/validate/serialize/load-save-local/
+coarse-detect), loaded by both `index.html` and `builder.html`. **As of 2026-06-16 the "single self-contained
+index.html" invariant is deliberately relaxed** (maintainer decision) to keep config logic un-forkable; `config.js`
+is the *only* extracted module and `index.html` falls back to legacy hash parsing if it 404s. `builder.html` is the
+config/URL generator (portable + self-configuring snippets). **Deploys via GitHub Pages from `main`**, so a commit
 to `main` is a deploy — that's the user's established workflow. Repo: github.com/theislampill/salah_widget.
-Data: Aladhan (prayer times) + Open-Meteo (weather) — both keyless/CORS-safe, no secrets in the repo.
+Data: Aladhan (prayer times) + Open-Meteo (weather) + RainViewer (radar) + GeoJS/ipinfo (coarse IP geolocation,
+local mode only) — all keyless/CORS-safe, no secrets in the repo.
 
 ## Working state
+
+**2026-06-16 — local self-configuring mode (UNCOMMITTED in the working tree; needs explicit go-ahead, `main`→Pages).**
+New `config.js` shared module; `index.html` refactored so `lat/lon/method/…` are mutable bindings resolved by
+`SalahConfig.resolve()` (`cacheKey`/`wxKey` are now functions). New modes: `#local=1` (coarse IP/timezone
+auto-detect via GeoJS→ipinfo → in-widget settings → saved to `salah_widget:config:v1`) and `#preferLocal=1`;
+hardcoded `#lat&lon` embeds are **byte-identical** (proven Smoke A/B). The header buckle becomes an accessible
+settings button (weather emoji ⇄ ⚙ gear; mouse/keyboard/touch) **only in local mode**; a compact in-card settings
+panel (all fields + Use-estimated-area / Use-precise-location / Save / Apply / Reset / Cancel) applies **in-memory,
+no reload** (works when storage is blocked). `builder.html` gains a Portable-vs-Self-configuring toggle (local
+snippet adds `allow="geolocation"`) via the shared serializer. `qaState().config` added. `tests/smoke.html` **61/61**
+(+21 deterministic config-contract smokes). Privacy: coarse detect sends the IP to GeoJS/ipinfo (disclosed),
+precise geolocation is user-gesture-only, saved config stays local; all three degrade gracefully (TablissNG
+caveats documented in README). Plans: `plans/round-3/`. Verified live in preview (hardcoded unchanged, `#local=1`
+detect, settings open by mouse/keyboard/touch, save+reload persist, reset, storage-blocked, geolocation
+denied/success). **Do not commit unless asked.**
 
 The live-motion + photometric + moon/dawn/buckle pass is **committed** as `91d0fc1` on `main` (live on Pages).
 A **newer UNCOMMITTED pass** (2026-06-16) is in the working tree, in two waves. **Round-1 impl:** shared

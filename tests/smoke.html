@@ -35,6 +35,7 @@
 <pre id="out"></pre>
 <iframe id="w" title="widget under test" referrerpolicy="no-referrer"
         style="position:absolute;left:-9999px;top:0;width:330px;height:534px;border:0"></iframe>
+<script src="../config.js"></script>
 <script>
 "use strict";
 const out=document.getElementById("out"), sumEl=document.getElementById("sum"), fr=document.getElementById("w");
@@ -58,6 +59,46 @@ function loadUntil(hash, ms, ready){ const want=hash+"&qa=1";
 const prayerReady=w=>{ try{ const q=w.qaState(); return !!(q&&q.cache&&q.cache.prayerLoaded); }catch(e){ return false; } };
 
 (async()=>{
+  // ---------- PURE: local-config contract (config.js, deterministic, no network, no iframe) ----------
+  head("local config contract (config.js, pure)");
+  const SC = window.SalahConfig;
+  if(!SC){ line("fail","config.js did not load (window.SalahConfig missing)"); }
+  else {
+    try{ SC.clearLocal(); }catch(e){}   // self-contained: the "no saved config" precedence checks must not see ambient localStorage
+    // #1 — existing hardcoded embeds parse UNCHANGED (location wins; saved config ignored)
+    const hc=SC.resolve("#lat=24.4672&lon=39.6142&label=Madinah&method=4");
+    ok("hardcoded: mode + coords + source=hash", hc.mode==="hardcoded" && hc.cfg.lat===24.4672 && hc.cfg.lon===39.6142 && hc.cfg.method==="4" && hc.cfg.source==="hash");
+    ok("hardcoded: historical defaults (units f, 24h, school 0, iso date)", hc.cfg.units==="f"&&hc.cfg.time==="24"&&hc.cfg.school==="0"&&hc.cfg.datefmt==="YYYY-MM-DD");
+    ok("hardcoded: resolves synchronously (not needsDetect)", hc.needsDetect===false);
+    ok("serialize portable is byte-identical to the legacy builder format", SC.serialize({lat:24.4672,lon:39.6142,label:"Madinah",method:"4",school:"0"})==="lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0");
+    // precedence
+    ok("bare: mode=bare, no cfg, no detect (legacy error path)", (q=>q.mode==="bare"&&q.cfg===null&&!q.needsDetect)(SC.resolve("")));
+    ok("local (no saved): needsDetect=true", (q=>q.mode==="local"&&q.cfg===null&&q.needsDetect===true)(SC.resolve("#local=1")));
+    ok("preferLocal (no saved): falls back to hash coords", (q=>q.mode==="preferLocal"&&q.cfg&&q.cfg.lat===10&&q.cfg.source==="hash")(SC.resolve("#preferLocal=1&lat=10&lon=20")));
+    ok("serialize local generic = just local=1 (no coordinates)", SC.serialize({lat:1,lon:2,method:"2"},{mode:"local"})==="local=1");
+    ok("serialize local keeps a non-default preference", SC.serialize({method:"4"},{mode:"local"})==="local=1&method=4");
+    // validate / normalize / back-compat
+    ok("datefmt preset back-compat (eu→token)", SC.parseHash("#datefmt=eu").cfg.datefmt==="DD/MM/YYYY");
+    ok("lat=0/lon=0 is a VALID hardcoded location (not treated as missing)", (q=>q.mode==="hardcoded"&&q.cfg.lat===0&&q.cfg.lon===0)(SC.resolve("#lat=0&lon=0")));
+    ok("validate rejects a config with no coordinates", SC.validate(SC.normalize({})).ok===false);
+    ok("normalize clamps out-of-range lat/lon", (c=>c.lat===90&&c.lon===180)(SC.normalize({lat:200,lon:400})));
+    ok("applyHashPrefs overlays prefs but keeps the detected location", (m=>m.lat===1&&m.units==="c"&&m.method==="3"&&m.label==="Det")(SC.applyHashPrefs(SC.normalize({lat:1,lon:2,method:"4",label:"Det"}), SC.parseHash("#local=1&units=c&method=3").cfg)));
+    // persistence: save → load → reset (uses the harness origin; cleaned up after)
+    SC.clearLocal();
+    ok("storageAvailable in this context", SC.storageAvailable().ok===true);
+    ok("loadLocal empty after clear", SC.loadLocal()===null);
+    const sv=SC.saveLocal({lat:51.5,lon:-0.12,label:"London",method:"3",units:"c"});
+    ok("saveLocal ok + savedAt stamped", sv.ok===true&&typeof sv.savedAt==="number");
+    ok("loadLocal returns saved (source=localStorage)", (c=>!!c&&c.lat===51.5&&c.label==="London"&&c.source==="localStorage")(SC.loadLocal()));
+    ok("local mode uses saved config when present (no detect)", (q=>q.mode==="local"&&!!q.cfg&&q.cfg.lat===51.5&&!q.needsDetect)(SC.resolve("#local=1")));
+    SC.clearLocal();
+    ok("clearLocal (Reset) removes the saved config", SC.loadLocal()===null);
+    // storage BLOCKED degrades gracefully — saveLocal returns {ok:false}, never throws
+    const _set=Storage.prototype.setItem; Storage.prototype.setItem=function(){ throw new DOMException("blocked","SecurityError"); };
+    let blocked; try{ blocked=SC.saveLocal({lat:1,lon:2}); }catch(e){ blocked={threw:e.message}; } finally{ Storage.prototype.setItem=_set; }
+    ok("saveLocal under blocked storage returns {ok:false} (never throws)", !!blocked && blocked.ok===false && !blocked.threw, JSON.stringify(blocked));
+  }
+
   // ---------- PURE: weather-truthfulness gate (deterministic, no network) ----------
   const w=await loadUntil("lat=24.47&lon=39.61&label=Madinah&method=4&simWx=0", 8000, fw=>typeof fw.gateWeatherCode==="function");
   head("weather truthfulness gate (pure)");
