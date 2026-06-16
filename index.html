@@ -648,6 +648,45 @@ async function fetchWeather(){
   }catch(e){}
   finally{ wxBusy=false; }
 }
+// —— TRUE RADAR (RainViewer): an INDEPENDENT observed-precip sensor the weather-truthfulness gate uses to CONFIRM
+// (never fabricate) precip. RainViewer publishes colourised radar TILES served with CORS, so we can read them on a
+// canvas. We sample the pixel-neighbourhood at the widget's lat/lon: returns present (alpha + density) ⇒ radar-observed
+// precipitation, with a coarse mm proxy. FAIL-CLOSED: any error / coverage gap / stale frame ⇒ radarPrecipNow()=0 ⇒
+// the gate behaves exactly as before (Open-Meteo nowcast only). CONFIRM-ONLY: radar can KEEP an API precip code the
+// model nowcast missed, but the gate only ever gates DOWN (and only precip codes), so radar never fabricates rain.
+let weatherRadar=null, lastRadarAt=0, radarBusy=false;        // {precipMm, at, frame, source} | null
+const _RADAR_Z=6, _RADAR_TTL=20*60*1000, _RADAR_REFRESH=10*60*1000;
+function radarPrecipNow(){                                     // mm of radar-observed precip at the site, or 0 (sim / stale / no radar)
+  if(SIM.wx!=null || !weatherRadar) return 0;                 // forced/sim weather ignores radar
+  if(Date.now()-weatherRadar.at > _RADAR_TTL) return 0;       // stale frame → fail closed
+  return weatherRadar.precipMm||0;
+}
+async function fetchRadar(){
+  if(SIM.wx!=null || !lat || !lon || radarBusy) return;       // real mode only
+  const now=Date.now(); if(now-lastRadarAt < _RADAR_REFRESH) return;   // radar updates ~10 min
+  lastRadarAt=now; radarBusy=true;
+  try{
+    const r=await fetch("https://api.rainviewer.com/public/weather-maps.json",{cache:"no-store",referrerPolicy:"no-referrer"});
+    const j=await r.json(); const host=j&&j.host, past=j&&j.radar&&j.radar.past;
+    if(host&&past&&past.length){
+      const fr=past[past.length-1];                           // most recent OBSERVED radar frame
+      const z=_RADAR_Z, n=Math.pow(2,z), latRad=(+lat)*Math.PI/180;
+      const fx=(+lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+      const xt=Math.floor(fx), yt=Math.floor(fy);
+      const url=host+fr.path+"/256/"+z+"/"+xt+"/"+yt+"/2/1_1.png";
+      const mm=await new Promise(res=>{ const im=new Image(); im.crossOrigin="anonymous";
+        im.onload=()=>{ try{ const cv=document.createElement("canvas"); cv.width=256; cv.height=256; const cx=cv.getContext("2d"); cx.drawImage(im,0,0);
+          const d=cx.getImageData(0,0,256,256).data, px=Math.floor((fx-xt)*256), py=Math.floor((fy-yt)*256);
+          let cnt=0,sumA=0,tot=0; for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){ const x=px+dx,y=py+dy; if(x<0||x>255||y<0||y>255)continue; tot++; const a=d[(y*256+x)*4+3]; if(a>40){ cnt++; sumA+=a; } }
+          if(cnt<3||!tot){ res(0); return; }                 // need ≥3 return pixels (ignore lone clutter / anti-alias edges)
+          const coverage=cnt/tot, meanA=(sumA/cnt)/255; res((0.3+4.0*coverage)*meanA);   // sparse/light → ~0.3 (confirms rain); dense/solid → >0.8 (can confirm a wet storm)
+        }catch(e){ res(0); } };                               // tainted / read error → fail closed
+        im.onerror=()=>res(0); im.src=url; });
+      weatherRadar={precipMm:mm, at:Date.now(), frame:fr.time, source:"RainViewer radar"};
+    }
+  }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
+  finally{ radarBusy=false; }
+}
 // linear-interpolate the forecast track at an arbitrary epoch (numeric fields lerp; wind direction via
 // unit-vectors so it wraps; weather_code is stepped — codes are categorical, not interpolable). Returns a
 // `weather`-shaped object, or null if there's no track. Clamps to the track's range (holds the endpoint).
@@ -1241,18 +1280,23 @@ function physSky(M, sm){
 const _PRECIP_MIN=0.05, _THUNDER_MIN=0.8;   // mm thresholds: active precip / a genuinely wet storm
 let _wxDowngrade="";                          // diagnostic (qaState): why the shown condition differs from the raw code
 function _coverCode(w){ const cov=(w&&w.cloud!=null)?+w.cloud:0; return cov>=85?3:cov>=22?2:0; }   // overcast / partly / clear
-function gateWeatherCode(raw,w){
+function gateWeatherCode(raw,w,radarMm){
   _wxDowngrade="";
   if(raw==null) return raw;
   const cls=wxClass(raw), precipCls=(cls==="drizzle"||cls==="rain"||cls==="thunder"||cls==="snow");
   if(!precipCls) return raw;                                   // clear/cloud/overcast/fog — nothing to gate
-  const precip=(w&&w.precip!=null)?+w.precip:null, has=precip!=null&&precip>=_PRECIP_MIN;
+  // OBSERVED precip evidence = the MORE supportive of the Open-Meteo nowcast and the radar sensor (radar CONFIRMS,
+  // never suppresses; radarMm defaults to 0 so the pure unit-gate is unchanged). The gate only ever gates DOWN, so
+  // radar can keep an API precip code the model missed — it can never fabricate rain from a clear code.
+  const npre=(w&&w.precip!=null)?+w.precip:null, rpre=+radarMm||0;
+  const precip=(npre!=null||rpre>0)?Math.max(npre||0,rpre):null, has=precip!=null&&precip>=_PRECIP_MIN;
+  const rNote=(rpre>=_PRECIP_MIN)?` [radar ${rpre.toFixed(2)}mm]`:"";
   if(cls==="thunder"){
-    if(has&&precip>=_THUNDER_MIN) return raw;                  // genuinely wet storm → keep thunder
-    const dc=has?63:_coverCode(w); _wxDowngrade=`thunder code, precip ${precip==null?"n/a":precip.toFixed(2)+"mm"} < storm evidence → ${wxClass(dc)}`; return dc;
+    if(has&&precip>=_THUNDER_MIN) return raw;                  // genuinely wet storm (nowcast or radar) → keep thunder
+    const dc=has?63:_coverCode(w); _wxDowngrade=`thunder code, precip ${precip==null?"n/a":precip.toFixed(2)+"mm"}${rNote} < storm evidence → ${wxClass(dc)}`; return dc;
   }
-  if(!has){ const dc=_coverCode(w); _wxDowngrade=`${cls} code but observed precip ${precip==null?"unavailable":precip.toFixed(2)+"mm"} → ${wxClass(dc)}`; return dc; }
-  return raw;                                                  // precip supported → keep rain/drizzle/snow
+  if(!has){ const dc=_coverCode(w); _wxDowngrade=`${cls} code but observed precip ${precip==null?"unavailable":precip.toFixed(2)+"mm"}${rNote} → ${wxClass(dc)}`; return dc; }
+  return raw;                                                  // precip supported (nowcast or radar) → keep rain/drizzle/snow
 }
 function wxClass(code){
   const c=code;
@@ -1410,7 +1454,7 @@ function tieRainToClouds(){
 function atmosphere(M){
   const day=isDayNow(M.nowMin);
   const rawCode=weather?weather.code:null;
-  const code=gateWeatherCode(rawCode, weather);   // EFFECTIVE condition: precip/thunder honoured only with observed precip evidence (else downgraded to a cloud state)
+  const code=gateWeatherCode(rawCode, weather, radarPrecipNow());   // EFFECTIVE condition: precip/thunder honoured only with observed evidence (Open-Meteo nowcast OR RainViewer radar); else downgraded to a cloud state
   const info=wxInfo(code,day), cls=wxClass(code), w=WX[cls];
   const sm=sunMetrics(M);                                       // genuine solar altitude (deg) + screen x/y
   const S=physSky(M, sm);                                       // sky colours DERIVED from solar elevation
@@ -1852,10 +1896,11 @@ window.qaState=function(){
     sunEl:+(A.solarElevationDeg||0).toFixed(1),
     wx:{code:weather?weather.code:null, cloud:weather?Math.round(weather.cloud):null, temp:weather?weather.temp:null, rh:weather&&weather.rh!=null?Math.round(weather.rh):null, vis:weather?weather.vis:null, wind:weather?+(+weather.wind||0).toFixed(1):null},
     // ── WEATHER TRUTHFULNESS diagnostics: why the widget is / isn't showing rain or thunder ──
-    wxTruth:(()=>{ const raw=weather?weather.code:null, g=gateWeatherCode(raw,weather), p=weather&&weather.precip!=null?+weather.precip:null;
+    wxTruth:(()=>{ const raw=weather?weather.code:null, rp=radarPrecipNow(), g=gateWeatherCode(raw,weather,rp), p=weather&&weather.precip!=null?+weather.precip:null, eff=Math.max(p||0,rp);
       const fc=(()=>{ try{ const w=weatherTrack?wxAt(simNow()):null; return w?w.code:null; }catch(e){ return null; } })();
-      return { currentWeatherSource: weather?(weather.src||"current")+" (Open-Meteo, NOT radar)":"none", forecastTrackSource: weatherTrack?"Open-Meteo hourly (forecast — sim/fast-forward only)":"none",
-        rawCode: raw, rawForecastCode: fc, observedPrecipMm: p, activePrecip: p!=null&&p>=_PRECIP_MIN, activeThunder: (wxClass(raw)==="thunder"&&p!=null&&p>=_THUNDER_MIN),
+      return { currentWeatherSource: weather?(weather.src||"current")+" (Open-Meteo nowcast)":"none", forecastTrackSource: weatherTrack?"Open-Meteo hourly (forecast — sim/fast-forward only)":"none",
+        radarSource: weatherRadar?weatherRadar.source:"none (RainViewer unavailable / sim / coverage gap)", radarPrecipMm: rp>0?+rp.toFixed(2):0, radarAgeSec: weatherRadar?Math.round((Date.now()-weatherRadar.at)/1000):null, radarConfirming:(rp>=_PRECIP_MIN && !(p!=null&&p>=_PRECIP_MIN)),
+        rawCode: raw, rawForecastCode: fc, observedPrecipMm: p, effectivePrecipMm:+eff.toFixed(2), activePrecip: eff>=_PRECIP_MIN, activeThunder: (wxClass(raw)==="thunder"&&eff>=_THUNDER_MIN),
         displayCondition: wxClass(g), finalDataFx: (document.querySelector(".c").dataset.fx||null), downgradeReason: _wxDowngrade||null, advancing: ADVANCING, cloudFieldSeed: _cloudFieldSeed }; })(),
     // ── CACHE / STALE-STATE diagnostics (BASE): what may be stale and how old ──
     cache:(()=>{ const wxAge=lastWxAt?Math.round((Date.now()-lastWxAt)/1000):null;
@@ -1922,7 +1967,7 @@ async function boot(){
       gust: (SIM.wind!=null?+SIM.wind:3)+2, cloud: SIM.cloud!=null?+SIM.cloud:0, precip: SIM.precip!=null?+SIM.precip:defP,
       vis: SIM.humid!=null&&+SIM.humid>92?2000:20000, isDay:1, src:"sim"};
   }
-  fetchWeather();
+  fetchWeather(); fetchRadar();
   const ds=nowParts().dateStr;
   const cached=loadCache(ds);
   if(cached){ today=cached; if(cached.meta&&cached.meta.timezone) tz=cached.meta.timezone; lastDate=ds; render(); }
@@ -1967,7 +2012,7 @@ async function boot(){
       } else { _lastDateStr=n.dateStr; }                // first observation (boot t0): just record; boot() does the initial load
     }
     const rt=_RAFNOW();
-    if(!ADVANCING && rt-_lastWx>30000){ _lastWx=rt; fetchWeather(); }    // refresh real weather ~½-min (held during a fast sweep)
+    if(!ADVANCING && rt-_lastWx>30000){ _lastWx=rt; fetchWeather(); fetchRadar(); }    // refresh real weather ~½-min + radar (self-throttled ~10min); both held during a fast sweep
     const sec=Math.floor(simNow()/1000);
     if(sec!==_lastSec){ _lastSec=sec; render(); if(ADVANCING) updateSimClock(n); }
     // cloud density field repaints ~13fps so it visibly EVOLVES + drifts (time = simNow, so fast-forward

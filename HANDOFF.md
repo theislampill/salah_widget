@@ -30,7 +30,8 @@ A **newer UNCOMMITTED pass** (2026-06-16) is in the working tree, in two waves. 
 `solarElevationDeg` helper, sun tone-map lifted into `atmosphere`, day-rollover robustness, reduced-motion unified,
 overcast leaden deck, moonSky-ordering guard, `?debugOptic=lunarhalo`, the moon-upright/anti-spin fix. **Round-2 impl:**
 dead-code removal (`moonParallactic` + unused `chi`), a quiet worded day-rollover "stale" cue, `applyCloudState()`
-extracted from `paint`, debugMotion telemetry extracted from `boot`, +4 smokes (**`tests/smoke.html` now 35/35**).
+extracted from `paint`, debugMotion telemetry extracted from `boot`, **true radar** (RainViewer, confirm-only +
+fail-closed, via `fetchRadar`/`gateWeatherCode(raw,w,radarMm)`), +9 smokes (**`tests/smoke.html` now 40/40**).
 Deferred by decision: moon hemisphere (upright N-only) + false-dawn (unbuilt). Radar precip: researched, wiring
 gated on a source decision. Touched: `index.html`, `DESIGN.md`, `ARCHITECTURE.md`, `OPTICS.md`, `HANDOFF.md`,
 `tests/smoke.html`, `plans/` (+ `plans/round-2/`). Three stray scratch files

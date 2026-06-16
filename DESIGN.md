@@ -184,13 +184,17 @@ Open-Meteo is fetched once for both `current=` (**observed/nowcast**) and `hourl
   observed block only. `syncWeather()` only derives `weather` from the forecast track when **ADVANCING** (a
   `?timeScale=` fast-forward/sim preview). A forecast rain/thunder code must **never** be presented as "currently
   raining/storming."
-- **Conservative precip gate** (`gateWeatherCode`): a precip/thunder code is honoured only with **active observed
-  precipitation** (`current.precipitation ≥ 0.05 mm`; thunder additionally needs ≥ 0.8 mm). Otherwise it is
-  **downgraded** to the cloud state implied by the observed cloud cover (overcast/partly/clear). No precip
-  evidence ⇒ no rain/lightning/`data-fx="thunder"` (fail-safe).
-- **Honest limitation**: Open-Meteo's "current" is a model nowcast, **not** a true radar feed. The gate makes the
-  widget conservative (won't over-claim), but it is not radar-accurate. `qaState().wxTruth` exposes the full chain
-  (source, raw code, observed precip, activePrecip/activeThunder, display condition, downgrade reason).
+- **Conservative precip gate** (`gateWeatherCode(raw,w,radarMm)`): a precip/thunder code is honoured only with
+  **active observed precipitation** (`≥ 0.05 mm`; thunder additionally needs `≥ 0.8 mm`). The observed evidence is
+  `max(Open-Meteo nowcast, RainViewer radar)`. Otherwise the code is **downgraded** to the cloud state implied by
+  the observed cloud cover. No evidence ⇒ no rain/lightning/`data-fx="thunder"` (fail-safe).
+- **True radar (`fetchRadar`, RainViewer):** an INDEPENDENT observed-precip sensor — it samples the radar tile's
+  pixel-neighbourhood at the site (CORS-readable tiles) into a coarse mm proxy. **Confirm-only** (it can keep a
+  precip code the model nowcast missed, but the gate only ever gates DOWN, so radar never fabricates rain) and
+  **fail-closed** (error / coverage gap / stale > 20 min / sim ⇒ ignored ⇒ nowcast-only behaviour). `qaState().wxTruth`
+  exposes `radarSource`/`radarPrecipMm`/`radarAgeSec`/`radarConfirming`/`effectivePrecipMm` + the full source chain.
+  *Honest limit:* radar coverage has gaps and the mm proxy is alpha-density, not calibrated dBZ — both safe under
+  confirm-only + fail-closed.
 
 ## Star / night-sky system
 

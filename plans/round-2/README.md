@@ -10,11 +10,11 @@ plans 01–08 + the moon-spin/emoji fix, all applied and sitting **uncommitted**
 > cleanup, test-hardening, one real feature (radar precip), and the rest are decision-gated or optional polish the
 > investigators themselves marked "don't do now." Nothing here is a bug or a regression.
 >
-> **UPDATE 2026-06-16 — implemented per user decisions (UNCOMMITTED).** 01 (dead-code), 02 (smokes → 35/35),
-> 05 (stale cue), 06 (`applyCloudState`), 07 (telemetry extract) are **DONE**; 04 (moon hemisphere) and round-1's 08
-> (false-dawn) are **deferred by decision**; 03 (radar) is **researched, wiring gated on your external-source
-> decision** (not wired — it needs a new third-party dependency). See each plan's `Status:` line. **Nothing is
-> committed** — a commit to `main` deploys to Pages, so that needs explicit authorization.
+> **UPDATE 2026-06-16 — implemented per user decisions.** 01 (dead-code), 02 (smokes), 05 (stale cue),
+> 06 (`applyCloudState`), 07 (telemetry extract), and **03 (true radar — RainViewer, confirm-only + fail-closed,
+> user accepted the dependency)** are **DONE** → `tests/smoke.html` **40/40**; 04 (moon hemisphere) and round-1's 08
+> (false-dawn) are **deferred by decision**. Round-1+round-2 (minus radar) committed as `a10af5c`; the radar pass
+> is a follow-up commit. See each plan's `Status:` line.
 
 ## How these were produced
 

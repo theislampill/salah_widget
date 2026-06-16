@@ -72,6 +72,12 @@ const prayerReady=w=>{ try{ const q=w.qaState(); return !!(q&&q.cache&&q.cache.p
     ok("clear code unchanged", G(0,{})===0, "got "+G(0,{}));
     ok("cloud/overcast codes are not precip-gated", G(3,{precip:0})===3 && G(2,{precip:0})===2);
     ok("wxClass mapping", C(95)==="thunder"&&C(3)==="overcast"&&C(0)==="clear"&&C(45)==="fog"&&C(63)==="rain"&&C(73)==="snow");
+    // RADAR confirm-only (3rd gate arg): radar CONFIRMS an API precip code the nowcast missed, never fabricates rain.
+    ok("radar confirms rain when nowcast is dry (rain code + radar 2mm)", C(G(63,{precip:0,cloud:90},2))==="rain", "got "+C(G(63,{precip:0,cloud:90},2)));
+    ok("no radar + dry nowcast still downgrades (rain code)", C(G(63,{precip:0,cloud:90},0))!=="rain", "got "+C(G(63,{precip:0,cloud:90},0)));
+    ok("heavy radar (1.5mm) confirms a thunder code", C(G(95,{precip:0},1.5))==="thunder", "got "+C(G(95,{precip:0},1.5)));
+    ok("light radar (0.3mm) does NOT confirm thunder (downgraded)", C(G(95,{precip:0},0.3))!=="thunder", "got "+C(G(95,{precip:0},0.3)));
+    ok("radar never fabricates rain from a clear code", G(0,{},5)===0, "got "+G(0,{},5));
   }
 
   // ---------- INTEGRATION: qaState contract (sim weather deterministic; prayer = network) ----------
