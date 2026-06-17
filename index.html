@@ -1361,7 +1361,7 @@ function solarElevationDeg(M,a){
   // 23.4° because it absorbs refraction). This math was DUPLICATED in drawArc + sunAltAt and a 24°-vs-27.5° split
   // between the copies once broke "fire the sunrise glow when the arc's sunrise dot is on the horizon" — hence ONE
   // source. Returns raw degrees (negative below the horizon); only the asin ARGUMENT is clamped, never the result.
-  const DEG=Math.PI/180, phi=(+(q.get("lat"))||0)*DEG;
+  const DEG=Math.PI/180, phi=(+lat||0)*DEG;   // RESOLVED runtime latitude — works for hardcoded hash AND #local=1 / coarse-detect / settings. Was q.get("lat"), which is null in local mode → phi=0 (equator) → the whole solar curve was computed for the equator while prayer times were for the real latitude (Sunrise/Maghrib sank below the drawn horizon). For hardcoded embeds lat===+q.get("lat"), so they stay byte-identical.
   const dayLen=M.sunset-M.sunrise, polar=dayLen<30||dayLen>1410;
   const noonT=polar?M.noon:(M.sunrise+M.sunset)/2;
   let decl=M.decl;
