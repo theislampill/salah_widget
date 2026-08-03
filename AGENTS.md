@@ -65,6 +65,15 @@ A cycle PASSES only when, with **screenshot/clip evidence**:
 - **M0 (live motion) — the default real-time widget VISIBLY animates over 15–60s where the scene allows (clouds
   drift/morph, stars scintillate, sky breathes). Proven by a real watch / `?debugMotion=1` Δ, NEVER the qaState
   hash. Accessibility: `prefers-reduced-motion` reduces it by default; `?motion=full` overrides.**
+- **N (date correctness) — the displayed dates must be RIGHT, and provably so.** `qaState().dateTruth` must show
+  `requestedPrayerDate === loadedPrayerDate === locationLocalGregorianYmd` (the day is chosen in the *location's*
+  zone, never the viewer's device and never the `America/New_York` placeholder). The **Hijri date is monotonic** —
+  it advances at local **Maghrib** and then holds through the night *and* the following daylight ("20 night, then
+  20 day"); it may **never** move backward, least of all at midnight. Verify by crossing Maghrib **and** midnight
+  (a mocked clock, or `timeScale`), **online and offline** — an offline rollover must still advance, because
+  tomorrow's payload is already prefetched and is promoted rather than discarded. Never print `undefined`/`NaN`
+  into the card, and no interpolated value (`datefmt` is user-supplied and is the *template*; month names come
+  from the API) may reach `innerHTML` unescaped.
 - K/L/M — DESIGN.md + AGENTS.md + HANDOFF.md current; high-value comments present; approximations stated honestly.
 
 ## Evidence requirements (per cycle)

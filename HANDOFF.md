@@ -82,6 +82,43 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
 - **Header buckle:** strap inner ends **masked** (circular cut-out) so no strap shows through the translucent
   buckle (z-index alone can't — translucent glass reveals what's under it).
 
+## Date-correctness pass (2026-08-02, branch `audit/hijri-date-and-render`, UNCOMMITTED)
+
+A forensic audit of the Hijri/Gregorian date path. **The displayed Hijri number was never wrong** — Aladhan's
+`HJCoSA` value is Umm al-Qura and matches the actual moon (2 Aug 2026 = 19 Ṣafar 1448; the moon was 19.1 days
+old / 80% lit that day; a "17" from elsewhere is the *tabular* calendar, which runs ~2 days behind). What was
+broken was everything around it. Fixed, with `tests/smoke.html` now **81 PASS / 0 FAIL / 0 SKIP** (was 61) and
+the card verified **pixel-identical** to the previous build (footer 0 px difference over 10+ A/B comparisons;
+residual card noise matches a HEAD-vs-HEAD control exactly):
+
+- **Hijri regressed at midnight.** The rollover discarded the already-prefetched `tomorrow` and left yesterday's
+  `today` in place, so the date walked back one Islamic day at 00:00 (`20 → 19 → 20`), permanently when offline.
+  Now `tomorrow` is **promoted** into `today` (guarded on its own Gregorian date), so the rollover also works
+  with no network at all.
+- **Boot asked for the wrong day.** `tz` defaults to `America/New_York` and decides which day is requested, but
+  the real zone only arrives in the response. `loadPrayerData` now re-derives the location-local date once the
+  authoritative zone is known and corrects it **before the first paint**. The prayer cache key no longer
+  contains a zone (it froze a zone that was never the location's).
+- **DOM-XSS, execution-confirmed.** `datefmt` is user-supplied *and is the format template*; it reached
+  `innerHTML` unescaped, as did API month names. Both sinks now go through `escHtml`.
+- **Retry storm.** The `tomorrow` prefetch refired every render tick while offline; now on the same 60 s throttle.
+- **`undefined-00-NaN`** could be painted from a partial payload; `fmtDate` now returns `""` instead.
+- **Monotonicity guard** — the Hijri date can never move backward. Aladhan's `HJCoSA` is genuinely
+  discontinuous on rare days (9 Dhu al-Hijjah is missing in 1425/1427/1428 AH); anomalies are *reported* in
+  `qaState().dateTruth.hijriAnomaly`, never invented. `calendarMethod=UAQ` is clean but was deliberately NOT
+  adopted — HJCoSA is what Saudi Arabia actually announced.
+- **`qaState().dateTruth`** added (device vs location zone, requested vs loaded day, Maghrib side, calendar
+  convention read from the payload, anomalies). `fmtDate`/`escHtml` are now function declarations so the smokes
+  can reach them cross-window.
+- Maintainer constraints honoured: **no visual change whatsoever** (explicit instruction), no build step, no new
+  dependency, no logic forked into builder.html, 325×530 intact.
+
+Deliberately NOT changed, and still open: the Hijri renders through the Gregorian token formatter (so
+`1 Ramaḍān 1448` shows as `ه1448-09-01`); `datefmt=long` ellipsises both years at 325 px in all three engines;
+the footer measures **1.6–2.0:1 contrast at clear noon** (WCAG AA needs 4.5); literal `D`/`M`/`Y` in a format
+string are eaten (`AD` → `A2`); `MMM` collides for 8 of 12 Hijri months. All are visual/format changes the
+maintainer scoped out of this pass.
+
 ## Dev / verify loop (how this work was actually done)
 
 - A static dev server runs via the preview MCP (`.claude/launch.json`, name `static`, port 5577). Drive it with

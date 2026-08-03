@@ -49,6 +49,13 @@ the art is "realism-adjacent" (believable, never random). Two standing rules:
 
 - Times come from the **Aladhan API** (`fetchTimings`), cached in `localStorage`. The Islamic (Hijri) day rolls
   over at **Maghrib**, not midnight; the AH date and the moon-phase preview update accordingly.
+  The Hijri date is therefore **monotonic**: it advances at local Maghrib and then holds through the night AND
+  the following daylight ("20 night → 20 day → 21 night"), so it may never move backward. That is why the day
+  rollover **promotes the already-prefetched `tomorrow` into `today`** instead of discarding it — discarding it
+  used to walk the Hijri date back one day at midnight (permanently, if offline) until a refetch landed.
+  The value itself is the Aladhan payload verbatim (`calendarMethod` default `HJCoSA` — the Saudi High Judicial
+  Council calendar, i.e. Umm al-Qura amended by announced sightings); it is independent of location and of the
+  prayer calculation method, and is never converted client-side. See README → "The Hijri date — what it means".
 - **Day-rollover stale cue:** if the calendar day rolls over but the new day's timings can't be loaded (offline /
   fetch failure with no new-day cache), the widget keeps the prior day's times, does NOT advance the date, and sets
   `_prayerStale` → a quiet worded **"stale"** chip (warm amber, not alarming) appears by the Hijri date + a faint

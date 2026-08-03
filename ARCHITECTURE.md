@@ -103,8 +103,17 @@ independent time loops (a convention, not an enforced boundary).
   `renderMoon` must run before `atmosphere` in a tick**, so `atmosphere` is "pure" only given that ordering.
 - **`cloudState`** (mutated in `paint` ease-vs-snap branch, read in `paintClouds`): the no-slideshow continuity
   invariant lives here — easy to break with a careless reseed.
-- **`tz`** (`let`, reassigned from the Aladhan response): `cacheKey`/`wxKey` are captured once at load, so a wrong
-  URL `tz` hint causes a benign one-time cache miss + a small clock re-anchor near t0.
+- **`tz`** (`let`, reassigned from the Aladhan response): **NOT benign, and not a hint.** `tz` decides *which
+  Gregorian day the widget asks Aladhan for*, and it is consulted **before** any response has set the real zone.
+  A tz-less embed therefore boots on the placeholder `America/New_York` and, for any location on a different
+  calendar day, requests, caches, renders and dates the **wrong day**. (`serialize()` never emits `tz` and
+  builder.html never offers it, so *every* builder-generated embed is tz-less. `#local=1` is unaffected —
+  `bindConfig` runs before `loadPrayerData`.) Fixed by re-deriving the location-local date once the authoritative
+  zone arrives and correcting it **before the first paint** (`loadPrayerData`); previously the day-rollover
+  branch repaired it a round-trip later while flashing the `stale` chip on a healthy boot.
+  `cacheKey`/`wxKey` are **functions**, not captured-once constants (they have been since `37084ae`), and the
+  prayer cache key no longer contains the zone at all — `lat/lon` already determine it, and including it only
+  served to freeze a zone that was never the location's.
 - **Reduced motion** — the two duplicated JS `matchMedia` checks are unified behind one **live** helper
   `isMotionReduced()` (`paint`'s `_REDUCED` and the loop's `_RM` both call it; `?motion=full` overrides). The CSS
   `@media (prefers-reduced-motion)` blocks read the SAME native signal gated by the `.motionfull` class — they are

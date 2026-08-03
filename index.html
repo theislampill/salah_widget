@@ -683,13 +683,23 @@ const dur = leftMin => {
   if(m>0) return `${m}m`;
   return `${sec}s`;
 };
+// HTML-escape for any value that reaches an innerHTML template. The date row interpolates TWO untrusted
+// sources — the user's `datefmt` (URL hash / saved config, and it is the TEMPLATE itself, not just a value)
+// and the API's month names — so an unescaped write is a live script-execution sink, not a theoretical one.
+// Escaping is a no-op for every legitimate format (digits, letters, spaces, - / , .), so the rendered footer
+// is byte-identical; it only neutralises markup.
+// NOTE both of these are FUNCTION DECLARATIONS, not const arrows: a top-level const/let is not a property of
+// the global object, so `iframe.contentWindow.fmtDate` would be undefined and the date subsystem would stay
+// structurally untestable (which is exactly why it shipped with zero smoke coverage). Behaviour is identical.
+function escHtml(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 // token date formatter: YYYY/YY year · MMMM/MMM/MM/M month · DD/D day
-const fmtDate = o => {
-  if(!o) return "";
+function fmtDate(o){
+  // A partial/corrupt payload must never print "undefined-00-NaN" into the card — render nothing instead.
+  if(!o || o.year==null || o.day==null || !o.month) return "";
   const yyyy=String(o.year), mn=+(o.month&&o.month.number||0), day=+o.day, mon=(o.month&&o.month.en)||"";
   const t={YYYY:yyyy, YY:yyyy.slice(-2), MMMM:mon, MMM:mon.slice(0,3), MM:pad(mn), M:String(mn), DD:pad(day), D:String(day)};
   return datefmtStr.replace(/YYYY|YY|MMMM|MMM|MM|M|DD|D/g, m=>t[m]);
-};
+}
 
 // ---- SINGLE TEMPORAL SOURCE OF TRUTH -------------------------------------------------------------
 // simTime = simBase + realElapsed·timeScale. EVERYTHING visual (sun altitude, sky colour, prayer state,
@@ -732,7 +742,11 @@ function tomorrowStr(){
 }
 
 // ---- prayer-times data: fetch + cache + retry ---------------------------
-function cacheKey(){ return "salah:"+[lat,lon,_cacheTz,method,school].join("|"); }   // function (not const): reflects runtime config changes (local mode / settings panel)
+// NOTE: the timezone is deliberately NOT part of the key. lat/lon already determine the location's zone, so
+// tz added no discrimination — but it DID add a bug: `_cacheTz` froze whatever zone was known at boot, which
+// for any embed without an explicit #tz= is the placeholder "America/New_York". The key therefore recorded a
+// zone that was never the location's, and changed once the API reported the real one, orphaning the entry.
+function cacheKey(){ return "salah:"+[lat,lon,method,school].join("|"); }   // function (not const): reflects runtime config changes (local mode / settings panel)
 function loadCache(dateStr){
   try{ const j=JSON.parse(localStorage.getItem(cacheKey())); if(j&&j.date===dateStr) return j.data; }catch(e){}
   return null;
@@ -1187,6 +1201,18 @@ let today=null, tomorrow=null, lastDate=null, fetchingTomorrow=false, lastMoonMi
 // Day-rollover robustness: a failed new-day fetch must NOT silently present yesterday's times as today's.
 // _prayerStale is qaState() diagnostic ONLY — it is never read by atmosphere()/paint() (render-boundary).
 let _prayerStale=false, _rolloverBusy=false, _rolloverNextTry=0; const _ROLLOVER_RETRY_MS=60000;   // throttle: at most one rollover refetch / 60s while offline
+let _tomorrowNextTry=0;   // same throttle for the tomorrow prefetch: it retried EVERY render tick while offline (~1 call/s, forever)
+// HIJRI MONOTONICITY GUARD. The Islamic date may only ever move FORWARD. Two things can violate that:
+// (1) our own state (a rollover that hasn't landed yet), and (2) the upstream calendar itself — Aladhan's
+// default calendarMethod (HJCoSA, the Saudi High Judicial Council calendar) is NOT continuous: it emits the
+// same Hijri date on two consecutive Gregorian days and then skips one. Verified against the live API:
+// 9 Dhū al-Ḥijjah is absent in 1425/1427/1428 AH and 11 Dhū al-Ḥijjah in 1436/1437 (day 10 is duplicated
+// instead), while calendarMethod=UAQ is clean in the same years. We keep HJCoSA because it is what Saudi
+// Arabia actually announced (so Ramadan/Eid match), and refuse to display a backward step. A duplicate or a
+// skip is REPORTED, never invented — fabricating a date the source did not give would be worse than showing
+// the source's own value. Cleared by resetForNewLocation (a new location may legitimately be on an earlier date).
+let _lastHijriShown=null, _lastHijriOrd=null, _hijriAnomaly=null;
+const hijriOrd = h => (h && h.year!=null && h.day!=null && h.month) ? ((+h.year)*12 + (+(h.month.number)||0))*31 + (+h.day||0) : null;
 function setLocLabel(){ const el=$("#loc"); if(el){ el.textContent=label; el.style.display=label?"":"none"; } }
 setLocLabel();   // initial (hardcoded embeds show their label immediately; runtime/local changes refresh via render())
 
@@ -1974,6 +2000,7 @@ function genLightning(seed){
   return d;
 }
 let _lastBolt=-1, _lastRender=null;   // _lastRender: last actually-rendered state summary (observability, read by qaState)
+let _lastDateTruth=null;              // _lastDateTruth: the date/calendar decision this tick actually painted (same idiom; read by qaState().dateTruth)
 function render(){
   if(!today) return;
   setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)
@@ -1984,8 +2011,11 @@ function render(){
   // is re-projected ONLY under timeScale (ADVANCING), or once per new day, so fast-forward shows celestial motion.
   if(ADVANCING || !_starsProjected){ projectStars(simDate()); _starsProjected=true; }
   const afterMaghrib = M.nowMin >= mins(M.t.Maghrib);          // the Islamic (Hijri) day rolls over at Maghrib, not midnight
-  if(!tomorrow && !fetchingTomorrow){                          // always: needed for the overnight Fajr, the AH roll-over, and the pre-Maghrib preview number
-    fetchingTomorrow=true;
+  if(!tomorrow && !fetchingTomorrow && Date.now()>=_tomorrowNextTry){   // always: needed for the overnight Fajr, the AH roll-over, and the pre-Maghrib preview number
+    // THROTTLED (same 60s gate as the rollover refetch). Unthrottled this refired on every render tick, so an
+    // offline widget hammered Aladhan ~1 call/s indefinitely — and during a stale rollover every payload it
+    // did fetch was discarded on the next frame, so the storm was also 100% futile.
+    fetchingTomorrow=true; _tomorrowNextTry=Date.now()+_ROLLOVER_RETRY_MS;
     fetchTimings(tomorrowStr()).then(d=>{tomorrow=d;fetchingTomorrow=false;}).catch(()=>{fetchingTomorrow=false;});
   }
   $(".cn").textContent = M.currentKey;
@@ -2001,20 +2031,62 @@ function render(){
     return `<div class="p ${on?"on":""} ${now?"now":""} ${dim?"past":""}"><b>${k}</b><span class="tm">${fmt(M.t[k])}</span></div>`;
   }).join("");
   const g=today.date&&today.date.gregorian, h=today.date&&today.date.hijri;
-  $("#ce").innerHTML = g ? `${fmtDate(g)}<span class="er">CE</span>` : "";
+  $("#ce").innerHTML = g ? `${escHtml(fmtDate(g))}<span class="er">CE</span>` : "";
   // AH advances at Maghrib (not midnight). BEFORE Maghrib show today's Hijri plus a faint preview of
   // the day that begins tonight — "| <moon-phase emoji> <that day's number>" at ~20% opacity. AFTER
   // Maghrib the date itself becomes that next day and the preview/emoji is dropped entirely.
   const tmrwH = tomorrow && tomorrow.date && tomorrow.date.hijri;
-  const ahH = (afterMaghrib && tmrwH) ? tomorrow.date.hijri : h;
-  const tail = (!afterMaghrib && tmrwH) ? ` <span class="mph pre">| ${phaseEmoji(moonNow().phase)} ${tomorrow.date.hijri.day}</span>` : "";
+  let ahH = (afterMaghrib && tmrwH) ? tomorrow.date.hijri : h;
+  // MONOTONICITY GUARD (see _lastHijriShown above): never paint a date earlier than the one already shown.
+  const _ord = hijriOrd(ahH);
+  if(_ord!=null && _lastHijriOrd!=null && _ord<_lastHijriOrd){
+    _hijriAnomaly = {kind:"backward", from:_lastHijriShown && _lastHijriShown.date, to:ahH.date, atSim:nowParts().dateStr};
+    ahH = _lastHijriShown;                                   // hold the later date rather than walk the calendar back
+  } else if(_ord!=null){
+    if(_lastHijriOrd!=null && _ord===_lastHijriOrd+31) _hijriAnomaly={kind:"skip", from:_lastHijriShown && _lastHijriShown.date, to:ahH.date, atSim:nowParts().dateStr};
+    _lastHijriShown = ahH; _lastHijriOrd = _ord;
+  }
+  const tail = (!afterMaghrib && tmrwH) ? ` <span class="mph pre">| ${phaseEmoji(moonNow().phase)} ${escHtml(tomorrow.date.hijri.day)}</span>` : "";
   // DAY-ROLLOVER STALE CUE (prayer-only): if the day rolled over but the new day's timings could not be loaded, the
   // shown times may be the previous day's — surface a quiet WORDED "stale" chip by the Hijri date + a faint date-row
   // desaturation (via .c[data-stale]). Set from render() (where _prayerStale is known); NEVER read by atmosphere().
   // Scope is prayer-time staleness ONLY — weather staleness stays in qaState, not on the card.
   const staleTag = _prayerStale ? `<span class="staletag" title="Prayer times may be out of date — couldn't refresh for the new day">stale</span> ` : "";
-  $("#ah").innerHTML = ahH ? `${staleTag}<span class="er">ه</span>${fmtDate(ahH)}${tail}` : staleTag;
+  const ahEl = $("#ah");
+  ahEl.innerHTML = ahH ? `${staleTag}<span class="er">ه</span>${escHtml(fmtDate(ahH))}${tail}` : staleTag;
+  // DISCLOSURE (text only — no visual change): the Islamic day begins at Maghrib, so this date advances at
+  // sunset and then holds through the night AND the following daylight. That means the widget deliberately
+  // disagrees by one day with midnight-rolling phone/printed calendars during the evening. Say so on hover /
+  // to a screen reader rather than leaving the user to wonder.
+  ahEl.title = afterMaghrib
+    ? "Hijri (Umm al-Qura / Saudi High Judicial Council, via Aladhan). The Islamic day begins at Maghrib, so this date already advanced at sunset — calendars that roll at midnight will show one day less until midnight."
+    : "Hijri (Umm al-Qura / Saudi High Judicial Council, via Aladhan). The Islamic day begins at Maghrib; this date advances at tonight's sunset.";
   $(".c").dataset.stale = _prayerStale ? "prayer" : "";
+  // OBSERVABILITY: mirror the date decision this tick actually painted (never a recompute) — the _lastRender idiom.
+  _lastDateTruth = {
+    deviceTimezone: (()=>{ try{ return Intl.DateTimeFormat().resolvedOptions().timeZone; }catch(e){ return null; } })(),
+    configuredLocationTimezone: tz,
+    locationLocalGregorianYmd: nowParts().dateStr,
+    requestedPrayerDate: lastDate || null,
+    loadedPrayerDate: (g && g.date) || null,
+    tomorrowPrayerDate: (tomorrow && tomorrow.date && tomorrow.date.gregorian && tomorrow.date.gregorian.date) || null,
+    beforeOrAfterMaghrib: afterMaghrib ? "after" : "before",
+    // After Maghrib the Islamic day has advanced, but the widget can only SHOW that if tomorrow's payload is
+    // in hand. When it isn't (offline / slow / rate-limited) the date silently stays a day behind — report it
+    // rather than let a wrong-looking date be indistinguishable from a correct one.
+    maghribRollApplied: afterMaghrib ? !!tmrwH : null,
+    maghribClock: M.t && M.t.Maghrib,
+    hijriRolloverMode: "maghrib",                                  // product policy: the Islamic day begins at sunset
+    hijriCalendarConvention: (h && h.method) || null,              // reported BY THE PAYLOAD (HJCoSA by default) — never hardcoded
+    hijriSource: "aladhan /v1/timings data.date.hijri (verbatim; no client-side conversion)",
+    gregorianSource: "aladhan /v1/timings data.date.gregorian",
+    displayGregorian: $("#ce").textContent,
+    displayHijri: ahEl.textContent,
+    hijriRaw: ahH ? ahH.date : null,
+    dateFormat: datefmtStr,
+    staleDateState: _prayerStale ? "stale-prayer-day" : "current",
+    hijriAnomaly: _hijriAnomaly                                    // upstream duplicate/skip, or a blocked backward step
+  };
   // SAFETY (moonSky coupling): renderMoon() must run before atmosphere() this tick. In correct render order
   // moonSky._min===mm always; a mismatch means render() was reordered (atmosphere/applyTheme ahead of the
   // renderMoon block) and the moon geometry would silently lag a minute — warn once. (atmosphere() stays pure;
@@ -2081,6 +2153,9 @@ window.qaState=function(){
       };
     })(),
     render: _lastRender,
+    // ── DATE / CALENDAR TRUTH: which instant, which zone, which Gregorian day was requested vs loaded,
+    //    which Hijri value was painted and under which rollover policy. Mirrors render(), never recomputes. ──
+    dateTruth: _lastDateTruth,
     clouds:{low:+(A.cloudLayerLow||0).toFixed(2), mid:+(A.cloudLayerMid||0).toFixed(2), high:+(A.cloudLayerHigh||0).toFixed(2), hash:cloudHash, alpha:cloudAlpha},
     stars:{op:+(cs.getPropertyValue("--stars").trim()||0), visible:starsVis, blur:cs.getPropertyValue("--starblur").trim(), mw:+(cs.getPropertyValue("--mw").trim()||0)},
     sky:{airglow:cs.getPropertyValue("--airglow").trim(), haze:+(A.aerosolDensity||0).toFixed(2), airDrift:+(A.airDrift||0).toFixed(3), moonBeam:+(A.moonBeam||0).toFixed(2), lunarCorona:+(A.lunarCorona||0).toFixed(2), aurora:+(A.aurora||0).toFixed(2)},
@@ -2145,9 +2220,18 @@ async function loadPrayerData(){
   const cached=loadCache(ds);
   if(cached){ today=cached; if(cached.meta&&cached.meta.timezone) tz=cached.meta.timezone; lastDate=ds; render(); }
   try{
-    today=await fetchTimings(ds);
-    saveCache(ds,today);
-    lastDate=ds;
+    let d=await fetchTimings(ds);
+    // TIMEZONE ANCHORING. `ds` above was derived from whatever zone was known BEFORE any response — for an
+    // embed without an explicit #tz= that is the placeholder "America/New_York", so for any location on a
+    // different calendar day we just asked for the WRONG day. fetchTimings has now adopted the authoritative
+    // zone from meta.timezone, so re-derive the location-local date and correct it BEFORE the first paint.
+    // Previously this was left to the day-rollover branch, which repaired it a round-trip later and flashed
+    // the "stale" chip on a perfectly healthy boot.
+    let real=nowParts().dateStr;
+    if(real!==ds) d=await fetchTimings(real);
+    today=d;
+    saveCache(real,today);
+    lastDate=real;
     render();
   }catch(e){
     if(!today) showError("Could not load prayer times");
@@ -2159,6 +2243,8 @@ function resetForNewLocation(){
   weather=null; weatherTrack=null; lastWxAt=0; lastWxTry=0;
   weatherRadar=null; lastRadarAt=0;
   _starsProjected=false; _prayerStale=false;
+  _lastHijriShown=null; _lastHijriOrd=null; _hijriAnomaly=null;   // a new location may legitimately be on an earlier date — do not let the monotonicity guard pin the old one
+  _tomorrowNextTry=0;                                            // and don't hold a settings change behind the previous location's throttle
   renderMoon();
 }
 // Apply a new WidgetConfig at RUNTIME (settings panel) — IN-MEMORY, no reload, so it still
@@ -2234,9 +2320,18 @@ function startRenderLoop(){
     const n=nowParts();
     if(n.dateStr!==_lastDateStr){                       // crossed (sim) midnight → load that day's timings
       if(_lastDateStr){
-        const ds=n.dateStr, c=loadCache(ds);
-        if(c){                                          // new-day data is cached → adopt it and advance the day
-          today=c; tomorrow=null; lastDate=ds; _prayerStale=false; _lastDateStr=ds; renderMoon(); _starsProjected=false;
+        const ds=n.dateStr;
+        // PROMOTE the already-prefetched `tomorrow` — it IS this new day's payload (render() fetched it via
+        // tomorrowStr()). Discarding it used to force a refetch, and until that refetch landed the card kept
+        // yesterday's `today`, so the Hijri date walked BACKWARD at midnight (it had already advanced at
+        // Maghrib: "20 night" became "19 day"). Offline it never recovered. Promotion also makes the rollover
+        // work with no network at all. Guarded on the payload's own Gregorian date so we can never promote the
+        // wrong day (e.g. after a location/timezone change, or a >24h sleep).
+        const tG = tomorrow && tomorrow.date && tomorrow.date.gregorian && tomorrow.date.gregorian.date;
+        const c = tG===ds ? tomorrow : loadCache(ds);
+        if(c){                                          // new-day data in hand (prefetch or cache) → advance the day
+          today=c; tomorrow=null; saveCache(ds,c); lastDate=ds; _prayerStale=false; _lastDateStr=ds; renderMoon(); _starsProjected=false;
+          lastMoonMin=-1;                               // renderMoon() REASSIGNS moonSky (index.html:1067), which drops the ._min stamp render() sets — force the next render() to re-render and re-stamp, else atmosphere() sees a stale moonSky for a tick
         } else {
           // No cache for the new day yet. Do NOT advance _lastDateStr (so we keep retrying) and do NOT pass
           // yesterday's `today` off as the new day — flag it stale (qaState exposes prayerStale). Throttle the

@@ -139,12 +139,12 @@ config → coarse IP/timezone detect → manual setup → safe error state.
 |----------|:--------:|--------------------|-------------|
 | `lat`    | ✅       | —                  | Latitude, e.g. `28.93084` |
 | `lon`    | ✅       | —                  | Longitude, e.g. `-82.39122` |
-| `tz`     |          | *auto*             | **Auto-detected from the coordinates** — you normally don't need to set it. The countdown and day-rollover use the *location's* zone (so Madinah always shows Madinah time, whatever device you view it on). Pass an IANA zone (e.g. `Europe/London`, `/` encoded as `%2F`) only as a fallback for the first paint. |
+| `tz`     |          | *auto*             | **Resolved from the coordinates by the prayer-times API.** The countdown, day-rollover and both dates use the *location's* zone (so Madinah shows Madinah time on any device). Setting it is optional but **recommended for hand-written embeds**: it is the zone used for the very first request, before the API has replied. Pass an IANA zone (e.g. `Europe/London`, `/` encoded as `%2F`). If it is absent the first request is made in a placeholder zone and silently corrected once the real zone is known — correct, but one extra request. |
 | `label`  |          | `Prayer Times`     | Location name shown on the widget. Encode spaces as `%20`. |
 | `method` |          | `2` (ISNA)         | Calculation method — see table below. |
 | `school` |          | `0`                | Asr calculation: `0` = standard, `1` = Hanafi (later Asr). |
 | `time`   |          | `24`               | Clock format: `24` (15:45) or `12` (3:45 PM). |
-| `datefmt`|          | `YYYY-MM-DD`       | Date format as a token string — `YYYY`/`YY` year, `MMMM`/`MMM`/`MM`/`M` month, `DD`/`D` day (e.g. `DD MMMM YYYY`, `MMM D, YYYY`). The old preset keys `iso`/`us`/`eu`/`long` still work. Applies to both the Gregorian and Hijri dates. |
+| `datefmt`|          | `YYYY-MM-DD`       | Date format as a token string — `YYYY`/`YY` year, `MMMM`/`MMM`/`MM`/`M` month, `DD`/`D` day (e.g. `DD MMMM YYYY`, `MMM D, YYYY`). The old preset keys `iso`/`us`/`eu`/`long` still work. Applies to both the Gregorian and Hijri dates. **Known limits:** there is no escape syntax, so any literal `D`, `M` or `Y` in the string is substituted too (`DD MMMM YYYY AD` renders as `02 August 2026 A2`); unsupported tokens such as `dddd` are printed literally; and `MMM` is the first three characters of the month name, which is ambiguous for Hijri months (`Rabīʿ al-awwal` and `Rabīʿ al-thānī` both give `Rab`). Long formats can also ellipsise inside the 325 px card. |
 | `units`  |          | `f`                | Weather temperature: `f` (°F) or `c` (°C). |
 | `local`  |          | —                  | `#local=1` → [self-configuring mode](#self-configuring-local-mode): coarse auto-detect + in-widget settings, saved locally. When set, hash `lat`/`lon` are ignored in favour of the saved/detected config. |
 | `preferLocal` |     | —                  | `#preferLocal=1` → use hash `lat`/`lon` as defaults, but let a saved local config override them (opt-in). |
@@ -174,6 +174,41 @@ config → coarse IP/timezone detect → manual setup → safe error state.
 | 14 | Spiritual Administration of Muslims of Russia |
 | 15 | Moonsighting Committee Worldwide |
 | 16 | Dubai |
+
+---
+
+## The Hijri date — what it means
+
+The footer shows a Gregorian and a Hijri date. Two things about the Hijri one are deliberate choices, and
+both are worth knowing because they make the widget disagree with other calendars in predictable ways.
+
+**1. It advances at Maghrib, not at midnight.** The Islamic day begins at sunset, so the widget rolls the
+Hijri date at the location's Maghrib and then holds it through the night *and* the whole following daylight —
+"the 20th night, then the 20th day, then the 21st night". Most phone and printed calendars roll at civil
+midnight instead. **So between Maghrib and midnight the widget is deliberately one day ahead of them.** Hover
+the Hijri date for a reminder of which side of sunset you are on. The date never moves backward.
+
+**2. It is the Saudi calendar, taken verbatim from the API.** The value comes straight from the Aladhan
+prayer-times response (`data.date.hijri`) — there is no client-side conversion, so the printed date and the
+prayer times can never disagree with each other. Aladhan's default is `HJCoSA`, the **High Judicial Council of
+Saudi Arabia** calendar: the computed Umm al-Qura table as amended by Saudi Arabia's actual crescent-sighting
+announcements. `qaState().dateTruth.hijriCalendarConvention` reports whatever the payload actually says.
+
+Honest limitations:
+
+- **It is a civil calendar, not a sighting.** Umm al-Qura is pre-computed for the Kaʿba's coordinates and is
+  explicitly intended for civil use; on most first evenings the crescent is not naked-eye visible. Your local
+  mosque or national authority may legitimately begin a month a day earlier or later, especially for Ramadan,
+  Shawwal and Dhu al-Hijjah. The widget does not claim to override them.
+- **It does not depend on your location.** The same Gregorian day yields the same Hijri date everywhere
+  (verified: Madinah and Orlando, calculation methods 2 and 4, all return the same value). Only the *rollover
+  moment* is local, because Maghrib is local.
+- **The prayer calculation method does not affect it.** Choosing "Umm al-Qura" as a *prayer* method changes
+  Fajr/Isha angles, not the calendar.
+- **Upstream is not perfectly continuous.** The HJCoSA data has rare gaps — e.g. 9 Dhu al-Hijjah is absent in
+  1425/1427/1428 AH and 11 Dhu al-Hijjah in 1436/1437, with day 10 emitted twice instead. The widget therefore
+  refuses to display a backward step and records any duplicate or skip in `qaState().dateTruth.hijriAnomaly`
+  rather than inventing a date the source did not provide.
 
 ---
 

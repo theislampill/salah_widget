@@ -34,7 +34,7 @@
 <div id="sum">running…</div>
 <pre id="out"></pre>
 <iframe id="w" title="widget under test" referrerpolicy="no-referrer"
-        style="position:absolute;left:-9999px;top:0;width:330px;height:534px;border:0"></iframe>
+        style="position:absolute;left:-9999px;top:0;width:325px;height:530px;border:0"></iframe>
 <script src="../config.js"></script>
 <script>
 "use strict";
@@ -197,6 +197,51 @@ const prayerReady=w=>{ try{ const q=w.qaState(); return !!(q&&q.cache&&q.cache.p
         ok("continuity: overcast deck is present + evolves between frames (not a frozen slab)", g1.a>0 && g1.h!==g2.h, "alpha="+g1.a+" moved="+(g1.h!==g2.h));
         ok("continuity: cloudFieldSeed stable across reads (no reseed / slideshow)", seed1===seed2, "s1="+seed1+" s2="+seed2);
       }catch(e){ line("fail","cloud continuity — "+e.message); } } }
+
+  // ---------- round-4: date / calendar correctness (the whole date subsystem previously had ZERO coverage) ----------
+  head("round-4: date & Hijri correctness");
+  { const ww=await loadUntil("lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia/Riyadh", 9000, prayerReady);
+    if(!ww){ line("skip","date truth (offline?)"); }
+    else { try{ const q=ww.qaState(), dt=q.dateTruth;
+        ok("qaState exposes dateTruth", !!dt);
+        // TIMEZONE ANCHORING (regression guard for the boot-zone leak): the day we ASKED Aladhan for must be
+        // the LOCATION's civil day, never the viewer device's and never the placeholder zone's.
+        ok("requested prayer day == the LOCATION's local day (not the device's)", dt.requestedPrayerDate===dt.locationLocalGregorianYmd, "requested="+dt.requestedPrayerDate+" locationLocal="+dt.locationLocalGregorianYmd);
+        ok("loaded prayer day == requested day", dt.loadedPrayerDate===dt.requestedPrayerDate, "loaded="+dt.loadedPrayerDate);
+        ok("the location zone is used, not the America/New_York placeholder", dt.configuredLocationTimezone==="Asia/Riyadh", dt.configuredLocationTimezone);
+        // the cache key must never be keyed on a zone (it froze a zone that was never the location's)
+        ok("cache key carries no timezone", ww.cacheKey().indexOf("/")===-1, ww.cacheKey());
+        // CALENDAR PROVENANCE: reported by the payload, never hardcoded
+        ok("hijri convention is read from the payload", dt.hijriCalendarConvention===null||typeof dt.hijriCalendarConvention==="string", ""+dt.hijriCalendarConvention);
+        ok("rollover policy is declared as maghrib", dt.hijriRolloverMode==="maghrib");
+        ok("the painted Hijri text matches dateTruth", dt.displayHijri===ww.document.querySelector("#ah").textContent);
+        ok("no upstream calendar anomaly on this date", dt.hijriAnomaly===null, JSON.stringify(dt.hijriAnomaly));
+      }catch(e){ line("fail","date truth — "+e.message); } } }
+  // FORMATTER: a partial/corrupt payload must never paint undefined/NaN/null (it used to print "undefined-00-NaN")
+  { const ww=await loadUntil("lat=24.47&lon=39.61&label=Madinah&method=4", 9000, prayerReady);
+    if(!ww){ line("skip","formatter degradation (offline?)"); }
+    else { try{
+        ok("fmtDate(undefined) is empty", ww.fmtDate(undefined)==="", JSON.stringify(ww.fmtDate(undefined)));
+        ok("fmtDate({}) is empty (no 'undefined-00-NaN')", ww.fmtDate({})==="", JSON.stringify(ww.fmtDate({})));
+        ok("fmtDate(day only) is empty", ww.fmtDate({day:"5"})==="", JSON.stringify(ww.fmtDate({day:"5"})));
+        ok("fmtDate(null year) is empty", ww.fmtDate({day:"5",month:{number:3,en:"X"},year:null})==="", JSON.stringify(ww.fmtDate({day:"5",month:{number:3,en:"X"},year:null})));
+        // independent expected vector (hand-computed from the token contract, NOT from the implementation)
+        ok("fmtDate renders a complete payload", ww.fmtDate({day:"19",month:{number:2,en:"Safar"},year:"1448"})==="1448-02-19", ww.fmtDate({day:"19",month:{number:2,en:"Safar"},year:"1448"}));
+        // SECURITY (regression guard for a CONFIRMED live DOM-XSS via #datefmt= and via a hostile month name)
+        ok("escHtml neutralises markup", ww.escHtml('<img src=x onerror=1>').indexOf("<")===-1, ww.escHtml('<img src=x onerror=1>'));
+        const inj=ww.document.querySelectorAll("#ce img,#ah img,#ce script,#ah script");
+        ok("no injected elements in the date row", inj.length===0, "found "+inj.length);
+      }catch(e){ line("fail","formatter degradation — "+e.message); } } }
+  // FOOTER GEOMETRY: the row must stay inside the 325×530 card and the two dates must never overlap
+  { const ww=await loadUntil("lat=24.47&lon=39.61&label=Madinah&method=4&datefmt=long", 9000, prayerReady);
+    if(!ww){ line("skip","footer geometry (offline?)"); }
+    else { try{ const D=ww.document, c=D.querySelector(".c"), d=D.querySelector(".d"), ce=D.querySelector("#ce"), ah=D.querySelector("#ah");
+        const rc=c.getBoundingClientRect(), rd=d.getBoundingClientRect();
+        ok("card is exactly 325×530", Math.round(rc.width)===325&&Math.round(rc.height)===530, rc.width+"×"+rc.height);
+        ok("date row stays inside the card", rd.bottom<=rc.bottom+0.5 && rd.left>=rc.left-0.5 && rd.right<=rc.right+0.5);
+        ok("date row is a single line", rd.height<19.5, "h="+rd.height.toFixed(2));
+        ok("#ce and #ah never overlap", ah.getBoundingClientRect().left >= ce.getBoundingClientRect().right-0.5);
+      }catch(e){ line("fail","footer geometry — "+e.message); } } }
 
   sumEl.textContent = pass+" passed · "+fail+" failed · "+skip+" skipped";
   sumEl.className = fail? "fail":"pass";
