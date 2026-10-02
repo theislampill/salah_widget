@@ -66,6 +66,9 @@ function builder() {
     return elements.get(id);
   }
   // Derive the radio members from the actual group markup; run its production listener.
+  const scripts = [...sources['builder.html'].matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].filter(m => !/\bsrc\s*=/.test(m[1]));
+  assert.equal(scripts.length, 1, 'one production builder inline script');
+  const modeIds = [...new Set([...scripts[0][2].matchAll(/\$\("(mode-[^"]+)"\)/g)].map(m => m[1]))];
   const groupMarkup = sources['builder.html'].match(/<div class="modebtns"[^>]*>([\s\S]*?)<\/div>/);
   const modeGroup = groupMarkup ? element('mode-group') : null, modeButtons = [];
   for (const match of groupMarkup?.[1].matchAll(/<button\b([^>]*)>/g) || []) {
@@ -76,13 +79,16 @@ function builder() {
     button.classList.add(...attrs.class.split(/\s+/)); button.disabled = /(?:^|\s)disabled(?:\s|$|=)/.test(match[1]);
     modeButtons.push(button);
   }
+  // Missing required radios make this fixture inapplicable; ID lookup must not invent them.
+  assert(modeGroup, 'fixture applicability: missing .modebtns markup');
+  assert(modeIds.length, 'fixture applicability: production radio ID lookups unavailable');
+  for (const id of modeIds) assert(modeButtons.some(button => button.id === id), `fixture applicability: missing required radio ${id}`);
   if (modeGroup) modeGroup.querySelectorAll = selector => selector === '.modebtn' ? modeButtons : [];
-  const document = { activeElement: null, getElementById: element,
+  const document = { activeElement: null,
+    getElementById: id => modeIds.includes(id) ? modeButtons.find(button => button.id === id) || null : element(id),
     querySelector: selector => selector === '.modebtns' ? modeGroup : null };
   const env = context({ document, navigator: { language: 'en-CA', platform: 'Win32' },
     location: { href: 'https://example.invalid/builder.html' } });
-  const scripts = [...sources['builder.html'].matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].filter(m => !/\bsrc\s*=/.test(m[1]));
-  assert.equal(scripts.length, 1, 'one production builder inline script');
   vm.runInContext(scripts[0][2], env.ctx, { filename: 'builder.html:inline' });
   return { ...env, elements, element,
     dispatch(id, type, event = {}) { for (const fn of element(id).listeners[type] || []) fn({ key: '', preventDefault() {}, ...event }); } };
