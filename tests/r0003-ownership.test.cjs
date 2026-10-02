@@ -68,3 +68,17 @@ test("R0003 mutant unconditional finally is killed by replacement-slot ownership
   const h=harness({source:source().replace(before,"_requestSlots[op.kind]=null; return true;")});h.apply(cfg(10,"A"));h.apply(cfg(20,"B"));await settle();
   assert.throws(()=>assert.equal(h.run("_requestSlots.current && _requestSlots.current.lat"),20));
 });
+test("R0003 historical Madinah/Riyadh to New York race preserves exact winning zone and Asr",async()=>{
+  const h=harness();h.run("nowParts=function(){return {y:2026,mo:9,d:7,h:12,mi:0,s:0,dateStr:'07-09-2026'};}");
+  const madinah=cfg(24.47,"Madinah",{lon:39.61,method:"4"}),newYork=cfg(40.71,"New York",{lon:-74.01});
+  const dataA=record(undefined,"Asia/Riyadh","A"),dataB=record(undefined,"America/New_York","B");
+  Object.assign(dataA.timings,{Fajr:"04:46",Sunrise:"06:00",Dhuhr:"12:00",Asr:"15:49",Maghrib:"18:00",Sunset:"18:00",Isha:"19:30"});
+  Object.assign(dataB.timings,{Fajr:"05:00",Sunrise:"06:00",Dhuhr:"12:00",Asr:"15:30",Maghrib:"18:00",Sunset:"18:00",Isha:"19:30"});
+  const a=h.apply(madinah),old=req(h,undefined,24.47),b=h.apply(newYork);req(h,undefined,40.71).ok(dataB);await settle();await b;
+  const before=observed(h);old.ok(dataA);await settle();await a;assert.deepEqual(observed(h),before);assert.equal(h.state().tz,"America/New_York");assert.equal(h.run("model().nextTime"),"15:30");
+  assert.equal(JSON.parse(h.storage.get("salah:40.71|-74.01|UTC|2|0")).data.meta.timezone,"America/New_York");
+});
+test("R0003 equator/prime-meridian current acquisition preserves numeric zero coordinates",async()=>{
+  const h=harness(),applied=h.apply(cfg(0,"zero"));req(h,undefined,0).ok(record(undefined,"UTC","zero"));await settle();await applied;
+  assert.equal(h.state().lat,0);assert.equal(h.state().lon,0);assert.equal(h.state().today.tag,"zero");assert.ok(h.writes.some(w=>w.key==="salah:0|0|UTC|2|0"));
+});
