@@ -2340,6 +2340,8 @@ function closeSettings(){ _closeSettings(); }
 
 let _setWired=false, _setLastFocus=null, _setSearchSeq=0, _setCands=[], _setCandIdx=0, _setHomeCC="", _locSource="manual", _setDirty=false;
 let _setSession=0, _setEdit=0, _setOpen=false, _setCandOwner=null, _setFocusTimer=0;
+let _setPrefSeq=0, _setPrefVersions={};
+const _SET_PREF_IDS={method:"set-method",school:"set-school",time:"set-time",units:"set-units",datefmt:"set-datefmt"};
 try{ _setHomeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}
 const _byId=id=>document.getElementById(id);
 function _setStatus(msg,isErr){ const s=_byId("set-status"); if(s){ s.textContent=msg||""; s.classList.toggle("err",!!isErr); } }
@@ -2348,6 +2350,16 @@ function _setStatus(msg,isErr){ const s=_byId("set-status"); if(s){ s.textConten
 function _invalidateSetLocation(){ _setEdit++; _setSearchSeq++; _setCands=[]; _setCandOwner=null; }
 function _captureSetLookup(){ return {session:_setSession,edit:_setEdit,seq:++_setSearchSeq}; }
 function _ownsSetLookup(owner){ return _setOpen && owner.session===_setSession && owner.edit===_setEdit && owner.seq===_setSearchSeq; }
+function _recordSetEdit(e){
+  _setDirty=true;
+  const id=e.target.id, key=Object.keys(_SET_PREF_IDS).find(key=>_SET_PREF_IDS[key]===id || (key==="datefmt" && id==="set-datefmt-preset"));
+  if(key) _setPrefVersions[key]=++_setPrefSeq;
+}
+function _newerSetPrefs(owner){
+  const prefs={};
+  Object.entries(_SET_PREF_IDS).forEach(([key,id])=>{ if((_setPrefVersions[key]||0)!==(owner[key]||0)) prefs[key]=_byId(id).value; });
+  return prefs;
+}
 // the map-pin's tri-state: "ip" = estimated from IP (lit red, default ON), "precise" = GPS active (glowing),
 // "manual" = typed name / edited coords (greyscale, not sensing). Clicking the pin requests precise GPS.
 function _setPin(src){
@@ -2426,8 +2438,8 @@ function _wireSettings(){
   _byId("set-reset").addEventListener("click",_resetLocal);
   // AUTO-SAVE (no Save button): any edit marks the form dirty → committed on close. Esc closes; Tab is trapped.
   const panel=_byId("settings");
-  panel.addEventListener("input",()=>{ _setDirty=true; });
-  panel.addEventListener("change",()=>{ _setDirty=true; });
+  panel.addEventListener("input",_recordSetEdit);
+  panel.addEventListener("change",_recordSetEdit);
   panel.addEventListener("keydown",e=>{
     if(e.key==="Escape"){ e.preventDefault(); _closeSettings(); return; }
     if(e.key==="Tab"){                                         // focus trap — keep Tab inside the dialog
@@ -2493,14 +2505,22 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
       "Precise location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the estimated area.", true); }
 }
 async function _resetLocal(){
-  _invalidateSetLocation(); const owner=_captureSetLookup();
+  _invalidateSetLocation(); const owner=_captureSetLookup(), prefOwner={..._setPrefVersions};
   if(window.SalahConfig) SalahConfig.clearLocal();
   _storageErr=null; _setStatus("Local settings cleared.");
   let d=null; try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){}
   if(!_ownsSetLookup(owner)) return;
-  if(d&&d.ok){ const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg); await applyConfig(c,{save:false});
+  if(d&&d.ok){ const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg);
+    // Reset still owns the detected location, while preferences edited since
+    // dispatch (or during apply's await) own their fields and their close-save.
+    Object.assign(c,_newerSetPrefs(prefOwner));
+    await applyConfig(c,{save:false});
     if(!_ownsSetLookup(owner)) return;
-    _populateSettingsForm(); _setStatus("Reset — using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
+    const prefs=_newerSetPrefs(prefOwner);
+    _populateSettingsForm();
+    Object.entries(prefs).forEach(([key,value])=>{ _byId(_SET_PREF_IDS[key]).value=value; });
+    _syncDateFromBox(); _setDirty=Object.keys(prefs).length>0;
+    _setStatus("Reset — using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
   else { _setStatus("Local settings cleared — enter your location.",true); }
 }
 function _openSettings(){
