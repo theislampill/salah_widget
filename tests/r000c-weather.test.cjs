@@ -27,15 +27,19 @@ function region(start, end, input = source) {
   return input.slice(a, b);
 }
 const runtime = [
+  region('const MOTIONFULL =', '// ---- helpers'),
   region('// ---- SINGLE TEMPORAL SOURCE OF TRUTH', '// ---- prayer-times data:'),
   ...(requestOwnerSource ? [region('function cacheKey(){', '// Read only the selected legacy main-format envelope.', requestOwnerSource)] : []),
   region('// ---- weather (Open-Meteo:', '// ---- accurate Moon position'),
   region('const lerp =', '// QUARANTINED:'),
   region('const _ss=t=>', '\n'),
   region('const _PRECIP_MIN=', '// ---- CLOUD ENGINE:'),
+  region('// ---- CLOUD ENGINE:', '// ---- ATMOSPHERE STATE'),
+  region('let _mAlb=', '\n'),
   region('function moonGeometryIdentity(date){', '// Raw backing-canvas measurements only.'),
-  region('let _starBase=[],', 'const _SKYX='),
+  region('let _starCat=null,', 'const _SKYX='),
   region('function refreshStarAppearance(A){', 'function buildStars(){'),
+  region('function skySceneIdentity(){', '// build the animated weather overlay'),
   region('function atmosphere(M){', '// paint(A)'),
   region('function applyCloudState(A){', '// Size the present-prayer name'),
   // Joined calendar QA reads its actual last-painted declaration; older source has no such reader.
@@ -70,11 +74,19 @@ function fixture(options = {}) {
   }
   const nodes = new Map();
   function element() {
-    const props = new Map(), attributes = new Map();
+    const props = new Map(), attributes = new Map(), classes = new Set();
     return { dataset: {}, textContent: '', title: '', style: {
       setProperty(k, v) { props.set(k, String(v)); },
       getPropertyValue(k) { return props.get(k) || ''; },
-    }, setAttribute(k,v) { attributes.set(k,String(v)); }, getAttribute(k) { return attributes.get(k) ?? null; } };
+      removeProperty(k) { const old=props.get(k)||''; props.delete(k); return old; },
+    }, classList: {
+      add(...names) { for (const name of names) classes.add(name); },
+      remove(...names) { for (const name of names) classes.delete(name); },
+      contains(name) { return classes.has(name); },
+      toggle(name, force) { const on=force===undefined?!classes.has(name):!!force; if(on)classes.add(name);else classes.delete(name);return on; },
+    }, setAttribute(k,v) { attributes.set(k,String(v)); }, getAttribute(k) { return attributes.get(k) ?? null; },
+    removeAttribute(k) { attributes.delete(k); },
+    getBoundingClientRect() { return { x:0,y:0,top:0,left:0,right:325,bottom:530,width:325,height:530 }; } };
   }
   const pixels = new Uint8ClampedArray(256 * 256 * 4);
   for (let i = 0; i < pixels.length; i += 4) pixels.set(opts.rgba || [82, 147, 196, 255], i);
@@ -86,8 +98,21 @@ function fixture(options = {}) {
   const canvas = { width: 256, height: 256, getContext: () => ({
     drawImage() {}, getImageData() { if (opts.canvasError) throw Error('contained canvas error'); return { data: pixels }; },
   }) };
+  // Keep the actual cloud backing dimensions distinct from the controlled radar tile.
+  // Canvas calls are recorded; this double does not rasterize gradients or qualify native pixels.
+  const cloudTag=/<canvas class="cloudcanvas" width="(\d+)" height="(\d+)"/.exec(source); assert(cloudTag);
+  const cloudTrace=[];
+  const cloudContext={
+    clearRect(...args) { cloudTrace.push(['clearRect',...args]); },
+    createRadialGradient(...args) { const stops=[];cloudTrace.push(['gradient',...args,stops]);return {addColorStop(...stop){stops.push(stop);}}; },
+    beginPath() { cloudTrace.push(['beginPath']); }, arc(...args) { cloudTrace.push(['arc',...args]); },
+    fill() { cloudTrace.push(['fill']); },
+    getImageData(x,y,width,height) { return {data:new Uint8ClampedArray(width*height*4)}; },
+  };
+  const cloudCanvas={width:+cloudTag[1],height:+cloudTag[2],getContext:()=>cloudContext};
   const document = {
-    querySelector(selector) { if (selector === '.cloudcanvas') return canvas; if (!nodes.has(selector)) nodes.set(selector, element()); return nodes.get(selector); },
+    querySelector(selector) { if (selector === '.cloudcanvas') return cloudCanvas; if (!nodes.has(selector)) nodes.set(selector, element()); return nodes.get(selector); },
+    querySelectorAll() { return []; }, // this weather fixture has no built star/drop catalog
     createElement(tag) { assert.equal(tag, 'canvas'); return canvas; },
   };
   class ImageDouble {
@@ -116,12 +141,12 @@ function fixture(options = {}) {
       }) };
     },
     isDayNow: () => true, sunMetrics: () => ({ altDeg: 45, x: 15, y: 12 }),
-    skyLum: () => 1, _airDrift: () => 0.5, mwGeom: () => ({ alt: 10, H: 0 }),
+    skyLum: () => 1, mwGeom: () => ({ alt: 10, H: 0 }),
     moonNow: () => ({ frac: 0.6, waxing: true }),
     physSky: () => ({ g1: [90, 130, 160], g2: [100, 140, 170], g3: [120, 150, 170],
       glow: [200, 170, 130, 0.2], hor: [200, 170, 130, 0.2], stars: 0,
       accent: [200, 170, 120], accent2: [200, 170, 120], text: [240, 240, 240] }),
-    model: () => ({ nowMin: 1260, noon: 720 }), isMotionReduced: () => false,
+    model: () => ({ nowMin: 1260, noon: 720 }), matchMedia: () => ({matches:!!opts.reducedMotion}),
   });
   context.window = context;
   vm.runInContext(`
@@ -131,8 +156,7 @@ function fixture(options = {}) {
     const clamp=x=>Math.min(1,Math.max(0,x)), enc=encodeURIComponent, pad=n=>String(n).padStart(2,'0');
     const $=s=>document.querySelector(s), DEBUGOPTIC=null, DEBUGLAYERS=false, LPOLL=0;
     let moonSky={alt:20,H:0,_min:1260,sx:.84,sy:.1};
-    let cloudState={covLow:0,covMid:0,covHigh:0}, _cloudReady=false, _cloudDirty=false, _cloudFieldSeed=1;
-    let _starEls=[], _glintEls=[], lastDate=null, today=null, tomorrow=null, _prayerStale=false, _rolloverNextTry=0, _lastRender=null;
+    let lastDate=null, today=null, tomorrow=null, _prayerStale=false, _rolloverNextTry=0, _lastRender=null;
     let _hashCfg={}, _cfgMode='hardcoded', CONFIG=opts.config||null, label='', _autoDetectSource=null, _autoDetectStatus='idle';
     let _storageErr=null, _geoPermission='unknown', _geoLastError=null;
   ` + runtime + `
@@ -150,7 +174,7 @@ function fixture(options = {}) {
   `, context, { filename: sourcePath });
   vm.runInContext(configSource, context, { filename: 'config.js' });
   for (const fn of ['fetchWeather', 'fetchRadar', 'loadWx', 'wxAt', 'syncWeather', 'wxDrivers', 'gateWeatherCode', 'radarPrecipNow']) assert.equal(typeof context.api[fn], 'function', 'real entrypoint missing ' + fn);
-  return { ...context.api, context, clock, calls, images, storage, nodes,
+  return { ...context.api, context, clock, calls, images, storage, nodes, cloudTrace,
     cache: () => JSON.parse(storage.get('salahwx:' + opts.lat + '|' + opts.lon + '|' + opts.units) || 'null'),
   };
 }
