@@ -108,6 +108,12 @@ const forceBlock = region(sources['index.html'], '  if(DEBUGOPTIC===', '\n  cons
 const forceNames = [...forceBlock.matchAll(/DEBUGOPTIC\s*===\s*"([a-z]+)"/g)].map(m => m[1]);
 const claimedNames = ['halo', 'sundogs', 'pillar', 'anticrep', 'paraselene', 'lunarhalo'];
 const base = 'index.html#lat=24.47&lon=39.61&label=Madinah&method=4';
+// Preserve the original published-baseline replay; new composed contracts require their actual source.
+const historicalBaseline = ref === 'fd2972ba64225fe9d6848e92497e6d0ed20ea624';
+const prose = name => sources[name].replace(/\s+/g, ' ');
+function mentions(name, tokens) {
+  for (const token of tokens) assert(prose(name).includes(token), `${name}: missing contract ${token}`);
+}
 
 (async () => {
   await check('source: exact M5V2T6 search recipients', async () => {
@@ -197,6 +203,77 @@ const base = 'index.html#lat=24.47&lon=39.61&label=Madinah&method=4';
     assert(!forceNames.includes('corona'));
     assert.throws(() => assert.deepEqual([...claimedNames, 'corona'], forceNames), 'unsupported enum mutant must fail');
   });
+  if (!historicalBaseline) {
+    await check('source: actual appearance exports, saved precedence and private fix age', async () => {
+      let stamp = 1788880200000;
+      class FixtureDate extends Date { static now() { return stamp; } }
+      const e = context({ Date: FixtureDate }), api = e.ctx.SalahConfig;
+      assert.equal(api.normalize({}).appearance, 'glass');
+      assert.equal(api.normalize({ appearance: 'legacy' }).appearance, 'glass');
+      const evidence = api.browserLocationEvidence({ coords: { accuracy: 25 }, timestamp: stamp - 300000 });
+      const cfg = api.normalize({ lat: 24.47, lon: 39.61, source: 'browser-geolocation', locationEvidence: evidence, appearance: 'contrast' });
+      assert(api.saveLocal(cfg).ok); stamp += 86400000;
+      const saved = api.loadLocal(); assert.equal(saved.locationEvidence.accuracyM, 25);
+      assert.equal(saved.locationEvidence.acquiredAt, 1788879900000);
+      assert(api.saveLocal({ ...saved, units: 'c' }).ok);
+      assert.equal(api.loadLocal().locationEvidence.acquiredAt, 1788879900000);
+      assert.equal(api.resolve('#local=1&appearance=glass').cfg.appearance, 'contrast');
+      const portable = api.serialize(cfg, { explicitPrefs: ['appearance'] });
+      assert.equal(api.normalize({ ...api.parseHash(portable).cfg, source: 'hash' }).locationEvidence.intent, 'fixed-site');
+      for (const key of ['locationEvidence', 'accuracyM', 'acquiredAt', 'savedAt']) assert(!new URLSearchParams(portable).has(key));
+      const appearanceMarkup = sources['builder.html'].match(/<select\b[^>]*\bid="appearance"[^>]*>([\s\S]*?)<\/select>/)?.[1];
+      assert(appearanceMarkup, 'fixture applicability: actual appearance select required');
+      assert.deepEqual([...appearanceMarkup.matchAll(/<option\b[^>]*\bvalue="([^"]+)"/g)].map(m => m[1]), ['glass', 'contrast']);
+      const b = builder(); await settled(); b.element('appearance').value = 'glass';
+      for (const mode of ['portable', 'local']) {
+        vm.runInContext(`setMode('${mode}')`, b.ctx);
+        const params = new URLSearchParams(vm.runInContext('hash()', b.ctx));
+        assert.equal(params.get('appearance'), 'glass', `actual ${mode} builder explicitly carries default glass`);
+        if (mode === 'local') { assert(!params.has('lat')); assert(params.has('method') && params.has('units')); }
+      }
+    });
+    await check('source: default wall correction versus explicit anchored one-times preview', () => {
+      const temporal = region(sources['index.html'], 'const _RAFNOW', '\nfunction simDate');
+      for (const scale of [null, '1']) {
+        let wall = 1788880200000, elapsed = 0;
+        class FixtureDate extends Date { static now() { return wall; } }
+        const q = new URLSearchParams(scale === null ? '' : 'timeScale=1');
+        const read = vm.runInNewContext(`${temporal}\n({now:simNow,wall:FOLLOW_WALL_CLOCK,advancing:ADVANCING})`,
+          { Date: FixtureDate, performance: { now: () => elapsed }, q, SIM: { time: null }, tz: 'UTC', Intl });
+        assert.equal(read.now(), wall); assert.equal(read.wall, scale === null); assert.equal(read.advancing, scale !== null);
+        wall += 3600000; elapsed += 1000;
+        assert.equal(read.now(), scale === null ? wall : 1788880201000);
+        wall -= 7200000; elapsed += 1000;
+        assert.equal(read.now(), scale === null ? wall : 1788880202000);
+      }
+    });
+    await check('source: actual model-live negative and admitted synthetic wet, expiry and outage', () => {
+      const source = sources['index.html'];
+      const number = source.match(/^function wxNumber.*$/m)?.[0];
+      const same = source.match(/^function weatherTargetSame.*$/m)?.[0];
+      assert(number && same, 'fixture applicability: actual weather primitives required');
+      const functions = region(source, 'const _WX_PRESENT_TTL', '\nfunction weatherDecision');
+      const api = vm.runInNewContext(`${region(source, 'function usableWeatherCoordinates', '\nfunction wxNumber')}\n${number}\n${same}\n${functions}\n({admit:admitWeatherFixture,reconcile:reconcileWeatherEvidence})`);
+      const now = 1788880200000, target = { generation: 3, lat: 24.47, lon: 39.61, intent: 'fixed-site', source: 'hash' };
+      const raw = { scope: 'simulation-fixture', provider: 'Synthetic QA', product: 'present/nearby contract', policy: 'synthetic-present-v1', target,
+        measurementAt: now - 60000, retrievedAt: now, validFrom: now - 60000, validUntil: now + 60000, units: 'categorical',
+        quality: { status: 'qualified', sampling: 'direct', operationalHealth: 'operational', localObservationAt: now - 60000 },
+        footprint: { kind: 'point', coverage: 'target', lat: target.lat, lon: target.lon }, present: { state: 'wet', type: 'rain', lightning: 'not-observed' } };
+      const admitted = api.admit(raw, target, now); assert(admitted.ok, admitted.reason);
+      const model = { src: 'current', code: 0, precip: 0, currentIntervalSec: 900, currentValidAt: now, retrievedAt: now, trusted: true };
+      const inputs = { target, model, modelCategory: 'clear', present: admitted.evidence };
+      const live = api.reconcile({ ...inputs, lane: 'live' }, now);
+      assert.equal(live.present.available, false); assert.equal(live.spatial.state, 'unavailable');
+      assert.equal(live.horizon.arrival, null); assert(!live.permissions.rain && !live.permissions.snow && !live.permissions.lightning);
+      const wet = api.reconcile({ ...inputs, lane: 'simulation-fixture' }, now);
+      assert.equal(wet.current, 'supported-wet'); assert.equal(wet.disagreement, true); assert.equal(wet.permissions.rain, true);
+      assert.equal(api.reconcile({ ...inputs, lane: 'simulation-fixture' }, raw.validUntil).permissions.rain, false);
+      const outage = api.admit(null, target, now); assert.equal(outage.ok, false);
+      assert.equal(api.reconcile({ ...inputs, present: null, presentRejection: outage.reason, lane: 'simulation-fixture' }, now).permissions.rain, false);
+      const preview = api.reconcile({ ...inputs, model: { ...model, precip: 5 }, modelCategory: 'thunder', lane: 'preview' }, now);
+      assert.equal(preview.permissions.rain, true); assert.equal(preview.permissions.lightning, true);
+    });
+  }
   if (!sourceOnly) {
     await check('docs: README privacy names actual recipients and trigger fields', () => {
       const privacy = region(sources['README.md'], '### Auto-detect, precise location & privacy', '\n---');
@@ -244,6 +321,62 @@ const base = 'index.html#lat=24.47&lon=39.61&label=Madinah&method=4';
       assert(privacy.includes('Nominatim'), 'positive disclosure control must exist before mutation');
       assert.throws(() => assert(privacy.replaceAll('Nominatim', 'withheld').includes('Nominatim')));
     });
+    if (!historicalBaseline) {
+      await check('docs composed: useful model estimate without local observation or arrival', () => {
+        mentions('README.md', ['Model estimate', '≈', 'local precipitation', 'nearby', 'arrival']);
+        const weather = region(sources['DESIGN.md'], '### Weather truthfulness (critical)', '\n## Star');
+        assert(!/observed\/nowcast|max\(Open-Meteo nowcast|INDEPENDENT observed-precip sensor/.test(weather), 'model/radar must not acquire observed authority');
+        assert(/strong.*(?:rain|precipitation)|rain.*permission/i.test(weather));
+      });
+      await check('docs composed: current and forecast quantity windows retain unavailable metadata', () => {
+        mentions('DESIGN.md', ['preceding-interval', 'preceding-hour', 'instantaneous', 'probability', 'unavailable']);
+      });
+      await check('docs composed: admitted synthetic lane and immediate withdrawal stay separate', () => {
+        mentions('DESIGN.md', ['synthetic-present-v1', 'underlying', 'exclusive', 'outage', 'generation', 'trusted:true']);
+        mentions('AGENTS.md', ['model estimate', 'synthetic']);
+      });
+      await check('docs composed: fix acquisition age and portable privacy survive saving', () => {
+        mentions('README.md', ['acquisition', 'Saving settings does not renew', 'Portable', 'partition']);
+        mentions('DESIGN.md', ['locationEvidence', 'accuracyM', 'acquiredAt', 'savedAt', 'fixed-site']);
+        assert(!/precise GPS|stores nothing about you/.test(sources['README.md']), 'unsupported precision/privacy claim');
+      });
+      await check('docs composed: ordinary wall and explicit anchored one-times authorities', () => {
+        mentions('DESIGN.md', ['Date.now()', 'backward', 'timeScale=1', 'anchored', 'Countdown unavailable']);
+      });
+      await check('docs composed: opaque calendar Earthshine versus atmospheric lunar eligibility', () => {
+        mentions('DESIGN.md', ['Earthshine', 'near-new', 'stellar-background', 'cutout', 'PBR', 'lunarhalo']);
+        mentions('OPTICS.md', ['moonLightEligible', 'Earthshine']);
+      });
+      await check('docs composed: cloud monotonic intervals, old wind, identity and suspension', () => {
+        mentions('DESIGN.md', ['signed', 'monotonic', 'old wind', 'two seconds', 'Empty decks', 'explicit seek']);
+        assert(!/stable identity[^\n]*location \+ day|direct `paintClouds\(t1\)`/.test(sources['DESIGN.md'] + sources['HANDOFF.md']));
+      });
+      await check('docs composed: neutral initial reveal and separate texture failure', () => {
+        mentions('DESIGN.md', ['neutral', 'initial', 'matching stellar projection', 'decoded', 'unavailable']);
+      });
+      await check('docs composed: one selected provider calendar decision and complete-value access', () => {
+        mentions('README.md', ['Sunset date update unavailable', 'Hijri date unavailable', 'footer', 'selected payload']);
+        mentions('DESIGN.md', ['calendar convention unavailable', 'anomaly', 'Maghrib']);
+      });
+      await check('docs composed: default glass and opt-in contrast keep distinct gates', () => {
+        mentions('README.md', ['Liquid glass', 'High contrast', 'appearance', 'saved']);
+        mentions('DESIGN.md', ['appearance=glass', 'appearance=contrast', '4.5:1', 'white', 'does not']);
+        const appearance = region(sources['DESIGN.md'], '- **Timetable appearance:**', '\n## Prayer-time');
+        assert(appearance.includes('default glass does not claim that guarantee'), 'default glass must retain the explicit stress-gate limit');
+      });
+      await check('docs composed: actual smoke terminal contract and held qualification', () => {
+        mentions('ARCHITECTURE.md', ['automatically', 'PASS', 'FAIL', 'INCOMPLETE', 'declared', 'missing']);
+        mentions('HANDOFF.md', ['30', '141', 'Apple Bash 3.2', 'PARTIAL', 'round-4', 'held']);
+        assert(!/\?run=1|manual Run button/.test(sources['ARCHITECTURE.md']), 'unimplemented smoke opt-in');
+      });
+      await check('docs composed: two legacy SIM comments describe synthetic preview amount', () => {
+        const parameter = sources['index.html'].match(/^\s*precip:\s*q\.get\("simPrecip"\).*$/m)?.[0];
+        const defaultComment = sources['index.html'].match(/^\s*\/\/ default a code-appropriate.*$/m)?.[0];
+        assert(parameter && defaultComment, 'fixture applicability: exact existing SIM comments required');
+        assert(!/observed precip/.test(parameter + defaultComment));
+        assert(/synthetic preview/.test(parameter) && /synthetic preview/.test(defaultComment));
+      });
+    }
   }
   for (const result of results) console.log(JSON.stringify(result));
   const failed = results.filter(r => r.status === 'FAIL').length;

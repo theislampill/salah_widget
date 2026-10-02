@@ -4,8 +4,8 @@ A tiny, self-contained prayer-times widget you can embed anywhere that accepts a
 `<iframe>` — built for [TablissNG](https://github.com/BookCatKid/TablissNG) new-tab
 dashboards, but works in Notion, a personal site, or anywhere else.
 
-No build step, no dependencies. One static HTML file that reads its
-configuration from the URL and fetches times from the free
+No build step or new dependency. A static HTML runtime and shared configuration module read
+configuration from the URL and fetch times from the free
 [Aladhan API](https://aladhan.com/prayer-times-api).
 
 **Live widget:** <https://theislampill.github.io/salah_widget/>
@@ -122,7 +122,7 @@ containing the widget; precise in-widget location additionally needs the iframe'
 If you don't want to hard-code coordinates — e.g. a generic embed that anyone can drop in —
 use **local mode**. Add `#local=1` to the URL and the widget will:
 
-1. try a **coarse, permission-free area auto-detect** (approximate, IP/timezone-based),
+1. reuse a valid saved configuration, or try a **coarse, permission-free area auto-detect** (approximate, IP/timezone-based),
 2. show prayer times for that estimated area,
 3. let the viewer **open settings inside the widget** (tap/click the header buckle — it
    morphs into a ⚙ gear on hover/focus; keyboard `Enter`/`Space` and touch work too) to
@@ -140,12 +140,21 @@ use **local mode**. Add `#local=1` to the URL and the widget will:
 ```
 
 The in-widget settings panel supports location (name, latitude, longitude), calculation
-method, Asr school, 12/24-hour, date format, and temperature units. A **location pin** beside
-the location field shows the source — **red** = estimated from your IP (the default),
-**glowing** = precise GPS (tap it to request browser permission), **grey** = manually set.
+method, Asr school, 12/24-hour, date format, temperature units and timetable appearance.
+The location pin distinguishes an estimated area, a browser position or saved browser
+position, and a configured site. Browser location is a one-shot request made by your action;
+reported accuracy and original acquisition time are shown when available. Saving settings does not renew
+that fix. Missing accuracy or acquisition time remains unknown; editing coordinates chooses a manual site.
 Type a place name to **search** (Enter cycles multiple matches; **Shift+Enter** keeps a custom
-display name without moving the coordinates). Changes **save automatically** when you close the
-panel; the **↺** icon resets (clears your saved settings and re-detects).
+display name without moving the coordinates). Changes apply when you close the panel. A successful save
+retains them in this browser/profile; a refused write leaves the choices active for this session and
+reports the persistence failure. Reset attempts to remove the saved configuration before re-detection;
+if removal fails, it keeps the selected configuration and reports the failure.
+
+**Liquid glass** is the default appearance. Choose **High contrast** for a dark backing behind timetable
+text. Both retain opaque informational text and the existing row hierarchy. The builder includes the
+selected appearance in portable and local exports, including explicit `appearance=glass` for its default;
+saved viewer settings take precedence in local/prefer-local mode.
 
 ### Modes & precedence
 
@@ -157,6 +166,9 @@ panel; the **↺** icon resets (clears your saved settings and re-detects).
 
 Resolution order: explicit hardcoded hash (unless `local=1`/`preferLocal=1`) → saved local
 config → coarse IP/timezone detect → manual setup → safe error state.
+Builder local exports include the selected method, temperature units and appearance for a fresh viewer;
+a generic `#local=1` keeps automatic defaults. Portable URLs omit private acquisition metadata and describe
+a configured destination, not the sender's or recipient's current device position.
 
 ### Auto-detect, precise location & privacy
 
@@ -167,7 +179,7 @@ below depend on the feature used, cache state and network availability.
 
 | Trigger | Recipient and fields |
 |---|---|
-| Builder's initial area detection; widget local/preferLocal mode when it needs detection; an in-widget Reset/re-detect action | GeoJS, then ipinfo.io on failure. The request exposes the connection's IP address. The provider URLs have no user-entered location/query parameters; the device timezone is used locally in configuration resolution. |
+| Builder's initial area detection; widget local/preferLocal mode when it needs detection; an accepted Reset/re-detect action | GeoJS, then ipinfo.io on failure. The request exposes the connection's IP address. The provider URLs have no user-entered location/query parameters; the device timezone is used locally in configuration resolution. |
 | Builder location-name input after its search debounce or Enter; widget Settings place/postcode search on Enter | Nominatim receives the typed query as `q`. A digit-containing query may also send the current home-country bias as `countrycodes`. |
 | A search whose whitespace-stripped text begins with letter-digit-letter | Zippopotam receives the uppercase first three characters in its `/ca/` path, in addition to Nominatim receiving the query. This is the implemented prefix trigger, not proof the complete input is a valid Canadian postcode. |
 | Builder automatic name/method lookup after eligible coordinate input or a precise-location result | BigDataCloud `reverse-geocode-client` receives `latitude`, `longitude` and `localityLanguage=en`. The in-widget precise path itself does not call this builder reverse function. |
@@ -190,15 +202,17 @@ Source trace: [config.js](config.js) (`coarseDetect`, `geocodeSearch`, `clearLoc
   your browser's permission (`navigator.geolocation`) — it is **never** called automatically.
   In an iframe it usually requires `allow="geolocation"` on the `<iframe>` (the local-mode
   snippet from the builder includes it). If a host (e.g. TablissNG) strips that attribute or
-  you deny permission, the widget falls back gracefully — coarse auto-detect and manual setup
-  still work.
-- **Saved settings stay local** to your browser/profile. If storage is blocked or partitioned
-  (private browsing, strict third-party-iframe storage), persistence can be unavailable;
-  changes can still apply **for the current session**.
+   you deny permission, browser-location acquisition can be unavailable. Refusal or timeout keeps the
+   selected location; coarse auto-detect and manual setup remain available. Browser geolocation does not
+   prove a fresh GPS fix or that you still occupy saved coordinates.
+- **Saved settings stay local** to your browser/profile, including private browser acquisition metadata.
+   Portable snippets omit that history. If storage refuses access or writes, changes can still apply
+   **for the current session**, with a persistence warning. Storage may be writable within a partition;
+   partitioning alone does not mean writes fail or promise sharing across embedding sites.
 - **TablissNG:** coarse auto-detect works inside the iframe if your network/ad-blocker allows
   the request; precise location works only if TablissNG preserves `allow="geolocation"`;
-  saved settings persist only if it doesn't partition iframe storage. All three degrade
-  gracefully when not available.
+   saved settings depend on the host/browser's storage policy. A writable partition can retain settings
+   within that context; it does not promise the same settings in another embed.
 
 ---
 
@@ -215,6 +229,7 @@ Source trace: [config.js](config.js) (`coarseDetect`, `geocodeSearch`, `clearLoc
 | `time`   |          | `24`               | Clock format: `24` (15:45) or `12` (3:45 PM). |
 | `datefmt`|          | `YYYY-MM-DD`       | Date format as a token string — `YYYY`/`YY` year, `MMMM`/`MMM`/`MM`/`M` month, `DD`/`D` day (e.g. `DD MMMM YYYY`, `MMM D, YYYY`). The old preset keys `iso`/`us`/`eu`/`long` still work. Applies to both the Gregorian and Hijri dates. |
 | `units`  |          | `f`                | Weather temperature: `f` (°F) or `c` (°C). |
+| `appearance` |      | `glass`            | Timetable appearance: `glass` (Liquid glass) or `contrast` (High contrast). Absent, legacy or unsupported values normalize to glass. |
 | `local`  |          | —                  | `#local=1` → [self-configuring mode](#self-configuring-local-mode): coarse auto-detect + in-widget settings, saved locally. When set, hash `lat`/`lon` are ignored in favour of the saved/detected config. |
 | `preferLocal` |     | —                  | `#preferLocal=1` → use hash `lat`/`lon` as defaults, but let a saved local config override them (opt-in). |
 | `lp`     |          | `0`                | Light-pollution dial `0`–`1` — raises the night-sky glow and erases the faintest stars / Milky Way. |
@@ -248,22 +263,30 @@ Source trace: [config.js](config.js) (`coarseDetect`, `geocodeSearch`, `clearLoc
 
 ## Features
 
-- **Live local weather** — current condition and temperature (from Open-Meteo) shown in
-  the header.
-- **Weather-reactive color theme** — the palette shifts with the sky: warm gold under a
-  clear day, deep indigo on a clear night, muted grey when cloudy, cool steel-blue for
-  rain, icy for snow, and charcoal-violet for thunderstorms. Day vs. night is derived
-  from the prayer Sunrise/Sunset times, so it always matches the widget.
-- **Next prayer** front and centre with a live, per-second countdown.
+- **Model estimate** — eligible Open-Meteo current data appears with `≈` and temperature in the header;
+  its accessible description identifies a model estimate and unobserved local precipitation. Absent or
+  expired current data shows `?`. The selected live adapters do not support local falling rain, snow,
+  lightning, nearby precipitation or an arrival claim. Explicit SIM/forecast previews are separate.
+- **Weather-reactive color theme** — solar geometry and eligible model cloud/temperature/humidity inputs
+  influence the palette. Rain/snow/thunder palettes belong to marked previews or qualified synthetic scenes;
+  they are not a live local precipitation claim. Prayer Sunrise/Sunset supplies the day/night classification.
+- **Next prayer** front and centre with a per-second elapsed countdown. An unavailable or ambiguous intended
+  endpoint shows “Countdown unavailable”; a usable timetable can remain visible.
 - **Progress bar** showing how far you are through the current interval.
-- **Time-zone correct** — the time zone is resolved from the coordinates, so the times and
-  countdown always reflect the *location's* clock, no matter where you view the widget.
-- **Offline-friendly** — the day's times are cached in `localStorage`, so the widget
-  paints instantly on reload and survives a flaky connection.
-- **Auto-retry** on API hiccups, and an automatic refresh when the day rolls over.
-- Passed prayers dim; the upcoming one is highlighted.
-- Gregorian (CE) date bottom-left and Hijri (AH) date bottom-right, in your chosen
-  `datefmt` (defaults to ISO `YYYY-MM-DD`).
+- **Location clock** — admitted prayer data supplies the selected location's timezone. Countdown resolves
+  its intended endpoint there; invalid or ambiguous mappings remain unavailable.
+- **Offline-friendly** — admitted selected prayer-cache data can display while refresh runs; failed refresh
+  retains usable data and marks a stale prayer day separately.
+- **Bounded recovery** — up to three ten-second prayer attempts with backoff; same-day retry starts are
+  spaced by sixty seconds of real elapsed time while the visible loop runs. Hidden/offscreen pause does
+  not provide background recovery.
+- Timetable state uses past borders, a current inset and upcoming tint while keeping informational text
+  opaque. Liquid glass is the default; High contrast adds local dark backing.
+- Gregorian (CE) and provider-selected Hijri (AH) dates use your `datefmt` (default ISO `YYYY-MM-DD`). Either
+  footer button opens complete values and selection context. At/after Maghrib AH advances only using a
+  matching usable tomorrow record. Otherwise a usable current value carries “Sunset date update unavailable,”
+  or the footer says “Hijri date unavailable.” Calendar method metadata comes from the selected payload;
+  it is not inferred from the prayer calculation method.
 
 ---
 
@@ -282,5 +305,5 @@ Source trace: [config.js](config.js) (`coarseDetect`, `geocodeSearch`, `clearLoc
 ## Credits
 
 Prayer time calculations by the [Aladhan API](https://aladhan.com/prayer-times-api), and
-weather by [Open-Meteo](https://open-meteo.com) — both free and key-less. The widget makes
-direct browser requests to these APIs and stores nothing about you.
+weather by [Open-Meteo](https://open-meteo.com). The widget makes direct browser requests;
+see [request recipients and local persistence](#auto-detect-precise-location--privacy).

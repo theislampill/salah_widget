@@ -11,8 +11,8 @@ and don't expect this file to repeat them.
   regressions, **commit policy (do not commit unless explicitly asked)**, and run/debug recipes.
 - Auto-memory: `C:\Users\theis\.claude\projects\C--workspace-ai-salah-widget\memory\` — `MEMORY.md` index +
   `background-overhaul-progress.md` (a turn-by-turn log of the whole overhaul; the newest entries are this work).
-- Git history is the source of truth for *what changed*. Latest commits on `main` (HEAD `37084ae` + the install/
-  builder pass committed on top of it):
+- Git history is the source of truth for *what changed*. Historical June main records (not the current HEAD
+  or public-byte qualification):
   - `37084ae` — local self-configuring mode (`#local=1`) + shared `config.js` + in-widget settings + TablissNG wizard.
   - `90928c8` — true radar (RainViewer) confirm-only precip evidence for the weather gate.
   - `a10af5c` — living-sky round 2 (solar/lunar correctness, day-rollover truth, SRP extractions, smokes).
@@ -21,29 +21,90 @@ and don't expect this file to repeat them.
 
 ## Project shape
 
-`C:\workspace\ai\salah_widget\index.html` (≈2100 lines: all CSS + JS + the atmospheric renderer inline) +
+`C:\workspace\ai\salah_widget\index.html` (runtime CSS + JS + atmospheric renderer inline) +
 **`config.js`** — the one shared module (`window.SalahConfig`: parse/validate/serialize/load-save-local/
 coarse-detect), loaded by both `index.html` and `builder.html`. **As of 2026-06-16 the "single self-contained
 index.html" invariant is deliberately relaxed** (maintainer decision) to keep config logic un-forkable; `config.js`
 is the *only* extracted module and `index.html` falls back to legacy hash parsing if it 404s. `builder.html` is the
 config/URL generator (portable + self-configuring snippets). **Deploys via GitHub Pages from `main`**, so a commit
 to `main` is a deploy — that's the user's established workflow. Repo: github.com/theislampill/salah_widget.
-Data: Aladhan (prayer times) + Open-Meteo (weather) + RainViewer (radar) + GeoJS/ipinfo (coarse IP geolocation,
-local mode only) — all keyless/CORS-safe, no secrets in the repo.
+Data: Aladhan (prayer times) + Open-Meteo (model weather) + RainViewer (tile diagnostics) + GeoJS/ipinfo
+(coarse IP geolocation). README lists actual recipients/fields/triggers. Provider availability and cross-origin
+behavior require current checks; no local-observation or retention guarantee follows from this list.
 
 ## Working state
+
+**2026-10-02 source candidate — PARTIAL:** this documentation lease is bound to
+`b996f033e75ba959ab15ad5dcf38205a7de9ef0f`, tree `def57c3c8b22136dd93cc8c2909e41dc5b1991a2`.
+Root owns the subsequent composed freeze, independent review, native preview and integration. This prose
+does not qualify current Pages bytes, final native pixels/M0 or an installed extension. Reacquire actual
+HEAD/tree and affected evidence before resuming; do not restart the campaign or replay accepted units.
+
+- **Clock/prayer:** ordinary loads follow `Date.now()`, including backward correction; explicit `timeScale=1`
+  is anchored ADVANCING preview. Zoned inverse gaps/folds and unresolved intended endpoints remain unavailable.
+  Generation/operation/attempt ownership covers complete response bodies and adoption. Selected cache-zone/day
+  discovery, a shared three-attempt budget and sixty-second visible recovery retain usable timings; async
+  accepted state marks the existing loop dirty rather than creating another loop.
+- **Calendar:** one selected provider-record decision supplies AH, method and status. At Maghrib, matching
+  usable tomorrow is required to advance; otherwise Sunset date update unavailable/Hijri date unavailable is
+  explicit. Complete footer values/provenance are accessible through the date buttons/dialog. No inferred
+  calendar method, persisted hold, offset or anomaly correction is added.
+- **Weather:** useful live model estimate/≈ and temperature remain while current source/receipt eligibility
+  holds; absent/expired current is unknown and removes current inputs. Selected live adapters cannot establish
+  local wet/dry/lightning, nearby or arrival, so strong live effects remain off. `synthetic-present-v1` is a
+  separately admitted marked QA lane, with original underlying-observation age, exclusive lease, target
+  generation and immediate end/outage/expiry withdrawal. It is not a new provider or public hash setter.
+- **Location/settings:** original acquisition timestamp/accuracy and intent stay private; preference saving
+  does not renew fix age. Portable output omits acquisition history and denotes a configured site. Refused
+  save retains session choices; refused Reset retains selected config. Storage partitioning differs from
+  denial. Liquid glass is default; High contrast is opt-in. Both builder modes explicitly carry appearance,
+  including glass, and saved preferences precede local/prefer-local defaults. Only the contrast option has the
+  4.5:1 white-underlay stress gate; default glass earns no blanket ratio claim.
+- **Sky/clouds:** neutral first entry reveals on fresh consumed lunar geometry and matching stellar projection.
+  PBR decode/href readiness is separate; a failed surface cannot pass the calendar-disc gate. Independent
+  stellar masking covers stars/glints/Milky Way through twilight fade. Shared atmospheric lunar eligibility
+  disables near-new/zero-horizon-permission/daylight atmospheric light while retaining opaque night-side/Earthshine. Signed cloud population
+  survives ordinary day/zone/weather changes; old wind covers preceding monotonic intervals. Empty decks advance,
+  hidden/reduced periods hold/rebase, gaps over two seconds discard backlog and explicit seeks start at zero
+  displacement. Source controls do not award native first-frame/edge/motion/PBR success.
+- **Held scope:** the round-4 adaptive-performance governor remains held. No governor/performance success,
+  new provider, painted dawn or extra platform qualification belongs to this update.
+
+**Reviewed and joined smoke successor:** `48ba16e80f9715e40728349da8c8c5a26d2e4eaa`, tree
+`d19b5b8a664059575615674f9561ed628d59ffd9` has **30 declared groups / 141 assertions**: 19 retained groups,
+11 actual-weather groups (66 assertions) and an added monotonic-cloud assertion. Root joined it at
+`64fdb1241bb3569c6519e39142cbe9e10a3e5872`; those TEST files are outside this documentation branch's older
+base. The subsequent PRAYER fixture join `65952878d16ebc4b5e77e4e689b0937311f99bfb` changes tests only;
+the runtime bytes remain the same pre-comment composition. Final native smoke execution is pending.
+The instrument runs automatically on navigation; private
+injected stores and preparse wrapper isolation persist. PASS requires the full declaration; assertion/bootstrap
+error is FAIL; missing callback/assertions/readiness is INCOMPLETE with declared/executed/missing names. The
+wrapper binds run/attempt/UUID/hash/source hash and rejects changed source within a run. On root's disposable
+loopback origin, the fixture URL is `/tests/smoke.html?fixture=healthy|reject|hang|bootstrap-error` (choose one).
+Its source command is:
+
+```text
+node --test --test-concurrency=1 tests/r0017-contract.cjs tests/r0017-transport.cjs tests/r0017-weather.cjs
+```
+
+The 55 contained controls (35+14+6) are not the native 30/141 ledger. Frozen/controlled Date and suppressed
+fonts earn no normal-entry appearance, default live M0, OS reduced/full or public-safety claim.
 
 **Installer candidate contract:** reviewed local-file invocation, terminal requirements and offline/no-effect
 preview are documented in [README](README.md#one-line-install-optional-setup-wizard). The builder's one-liner
 still fetches published `main`; a local candidate is not public-byte readback. Bash uses Python literal hash
 replacement plus JSON validation, fresh private per-attempt scratch and a retained home bundle. Windows keeps
 its TEMP staging path. Keep a Chromium unpacked directory while installed; preset/XPI removal is optional and
-manual after the browser step. Native Apple Bash 3.2, distinct-UID and real browser/public qualification are
-still open. Reconcile the complete source and documentation at the final composed freeze.
+manual after the browser step. The accepted native Linux DAC cell records owner UID1000/peer UID65534,
+49 probes, actual owner EXIT and a fresh UID1000 retained-file consumer. Retention is qualified through that
+consumer in the original run; later native fixture availability is unknown. Native Apple Bash 3.2 and real
+browser/public qualification remain open. In particular **Apple Bash 3.2** is unavailable in this environment,
+so candidate qualification remains PARTIAL until the required real native checks; source parsing is not that
+platform witness.
 
 The following main/Pages and preview entries are historical records, not qualification of this candidate.
 
-**All prior work is committed on `main` and live on Pages.** The local self-configuring mode + shared `config.js` +
+**Historical June report: prior work committed on `main` and live on Pages.** The local self-configuring mode + shared `config.js` +
 in-widget settings panel + TablissNG setup wizard shipped as **`37084ae`**; the living-sky / photometric / radar
 passes as `91d0fc1`, `a10af5c`, `90928c8`. So `#local=1`/`#preferLocal=1`, the buckle⇄⚙ settings affordance (local
 mode only), the in-card settings panel (in-memory `applyConfig`, no reload), coarse IP detect (GeoJS→ipinfo), and
@@ -70,8 +131,8 @@ fail-closed); radar precip wiring gated on a source decision.
   no clipping, no scrollbar. Touched: `builder.html`, `install.sh`, `install.ps1`, `README.md`,
   `presets/salah-widget.tablissng.json` (+ docs). See the **Embed-size invariant** in ARCHITECTURE.md / AGENTS.md.
 
-Three stray scratch files (`_mag_extract.txt`, `noaa_clouds.html`, `workspaceaisalah_widget_photopills.html`)
-remain untracked and must **never** be committed. **Do not commit unless the user explicitly asks** (a commit to
+The historical scratch files (`_mag_extract.txt`, `noaa_clouds.html`, `workspaceaisalah_widget_photopills.html`)
+must **never** be committed. **Do not commit unless the user explicitly asks** (a commit to
 `main` deploys to Pages).
 
 What changed in the (committed `91d0fc1`) live-motion pass (all verified live in preview, no console throws):
@@ -92,16 +153,16 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
 - **Header buckle:** strap inner ends **masked** (circular cut-out) so no strap shows through the translucent
   buckle (z-index alone can't — translucent glass reveals what's under it).
 
-## Dev / verify loop (how this work was actually done)
+## Dev / verify loop
 
-- A static dev server runs via the preview MCP (`.claude/launch.json`, name `static`, port 5577). Drive it with
-  `mcp__Claude_Preview__preview_*` (load via ToolSearch). Navigate by setting `location.href` to a hash URL then
-  `location.reload()`; wait ~2.5–4 s (the Aladhan fetch can briefly show "Loading…", retry if so).
+- Serve statically on a disposable loopback origin. Verify the actual source/URL and storage isolation before
+  instrument navigation; smoke autoruns. Root owns the shared native preview lease. June preview tooling/
+  port records below are historical and do not establish tools, origin or source identity for a new run.
 - Force scenes with the sim/debug params documented in DESIGN.md (`simTime`, `simWx`, `simPrecip`, `simMoon…`,
   `timeScale`, `debugDawn`, `debugOptic`, `qa=1` → `window.qaState()`).
-- **Verify with pixels + `qaState`, not assumptions.** Independent skeptic subagents (general-purpose, given the
-  serverId, driving the preview and screenshotting) were used as judges; they share the one preview server so
-  they must run **sequentially**.
+- **Verify with pixels + `qaState`, not assumptions.** Historical skeptic judges drove one shared preview
+  sequentially. Additional agents require explicit approval; source receipts do not become independent native
+  visual evidence through repetition.
 
 ## Gotchas learned the hard way (these will bite you)
 
@@ -111,8 +172,9 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
 - **`atmosphere()` has strict lexical ordering (TDZ).** Cloud layers (`let clLow,clMid,clHigh`), `ray`,
   `cloudSunCol`, `moonLume` are declared partway down. New code that uses them must be placed *after* their
   declarations or you get "Cannot access 'X' before initialization" (this exact bug was hit + fixed).
-- **`simTime` without `timeScale` sets TIMESCALE=0 → the clock is frozen**, so cloud drift/animation won't show
-  in a still test. Use real-time, a `timeScale` value, or a direct `paintClouds(t1)` vs `paintClouds(t2)` probe.
+- **`simTime` without `timeScale` sets TIMESCALE=0 → the clock-driven scene is frozen.** For cloud motion use
+  default wall time or an explicit running preview and actual monotonic elapsed. A changed `paintClouds(t)`
+  argument alone is no longer a travel probe; it initializes/reconstructs civil state, not ordinary travel.
 - The preview browser sometimes reports `prefers-reduced-motion: reduce`, which **freezes the cloud canvas at a
   fixed time** — another reason a still can look static. Check `matchMedia(...).matches`.
 - The preview **viewport occasionally zooms** mid-session; reset with `preview_resize` to ~390×600 to see the
@@ -126,10 +188,12 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
   spins (it previously rotated to the parallactic bright-limb angle `χ−q`, which read as the moon spinning over
   time + mismatching the footer emoji — removed). `.moccluder` is still the clean un-rotated circle for disc
   geometry. The lit side **must** match the footer phase emoji (waxing→right, waning→left) — smoke-guarded.
-- **The Moon is OPAQUE.** Never make it "subtle" by lowering `--moongrp`/group opacity — that makes stars show
-  through (a hologram). Subtlety for a calendar/new moon = a *dark ashen* disc at full opacity; dimness lives in the
-  PBR render + (the absence of) moonlight, never in transparency.
-- `paint(A)` is the only DOM writer; top-level `let`/`const` in the page ARE reachable from `preview_eval`
+- **The Moon is OPAQUE.** Calendar/new-moon dimness belongs to PBR night-side/Earthshine, with no atmospheric
+  lunar light. The existing twilight group fade is retained; its independent binary stellar cutout prevents
+  stars/glints/Milky Way showing through. Do not lower lunar opacity as a substitute for the mask or claim a
+  failed texture decode shows the calendar disc. Native edges and daytime no-hole controls remain required.
+- `paint(A)` writes sky CSS/state, with an explicit cloud-state step; prayer/arc/date/moon/stellar DOM has other
+  writers. Top-level `let`/`const` in the page ARE reachable from the historical `preview_eval`
   (global lexical env), which is how the live probes above work.
 
 ## Known residuals / candidate next work (honest, from the judge panels)
@@ -144,14 +208,16 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
 - **Optics are art-directed approximations, not photometric** — but they now **register to the visible corner
   sun** (`--sunvx/--sunvy`), so the old "halo center-screen" bug is fixed. The moon's halo/paraselenae may still
   show as partial arcs (halo radius > the disc). Sun tone-mapping constants are tuned, not radiometric.
-- Weather precip evidence is Open-Meteo's **nowcast, not true radar** (documented limitation). If a CORS-safe
-  radar/nowcast precip source is found, wiring it into `gateWeatherCode` would make the gate ground-truth.
+- Live weather is a **model estimate**, not qualified local precipitation. RainViewer palette/alpha provides
+  diagnostics, not calibrated mm or local wet/dry/arrival. Synthetic QA is not provider qualification; any
+  future live provider needs a separately authorized/admitted contract. No new provider is in this candidate.
 
 ## Do NOT reintroduce (the user has explicitly rejected these)
 
 - A **painted true-dawn horizontal band** or a **false-dawn diagonal cone/slash** — dawn is the physical sky; false
   dawn is fail-closed. (The user called painted dawn "strips" illegitimate, then "gross/inaccurate".)
-- A **transparent moon** (stars through the disc). The Moon is opaque; never lower group opacity to make it subtle.
+- A **transparent moon** (stars/glints/Milky Way through the disc). Keep the opaque PBR surface and its independent
+  stellar mask through the existing twilight fade; dim surface radiance, not an artificial transparency trick.
 - A **moonless / empty-slot normal night** or a "new moon invisible" rule. New moon = a faint **opaque** ashen
   calendar disc.
 - A **z-index-only** buckle fix (translucent glass still shows the strap) — keep the mask cut-out.

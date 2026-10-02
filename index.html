@@ -139,7 +139,7 @@ body{color:#fff7df;
 .starglints g{mix-blend-mode:screen}
 .starglints line{stroke:#f2f6ff;stroke-width:.7;stroke-linecap:round;filter:blur(.3px)}
 /* reduced-motion: stop ALL atmospheric/weather motion — including the thunder flash (photosensitivity). Scoped to
-   .c:not(.motionfull) so an explicit ?motion=full override re-enables animation even under OS reduced-motion
+   .c:not(.motionfull) so an explicit &motion=full override re-enables animation even under OS reduced-motion
    (an honest opt-in; the DEFAULT still respects the accessibility preference). The JS rAF cloud/sun-breath paths
    are gated by isMotionReduced() — the single JS source consulted by both paint() and the loop — which reads this
    SAME native @media signal and honours MOTIONFULL. (CSS @media kept as-is: it is the live native signal, not
@@ -696,24 +696,24 @@ const SIM = {
   windDir: q.get("simWindDir"),
   humid:   q.get("simHumid"),
   cloud:   q.get("simCloud"),
-  precip:  q.get("simPrecip"),   // observed precip (mm) for QA of the precip/thunder gate: e.g. simWx=95&simPrecip=0 ⇒ dry forecast-thunder ⇒ downgraded
+  precip:  q.get("simPrecip"),   // synthetic preview precip (mm) for QA of the precip/thunder gate: e.g. simWx=95&simPrecip=0 ⇒ dry forecast-thunder ⇒ downgraded
 };
 
 const prayers = ["Fajr","Sunrise","Dhuhr","Asr","Maghrib","Isha"];
 const real    = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
 // light-pollution dial (0 pristine dark-sky … 1 inner-city). No global light-pollution dataset ships inline, so
-// this is an honest user-set value via ?lp= ; it raises the night-sky background, warms the horizon dome, and
+// this is an honest user-set value via &lp= appended after # configuration; it raises the night-sky background, warms the horizon dome, and
 // erases the Milky Way + faint stars. Default 0 (assume dark) so nothing changes unless set.
-// (LPOLL is bound from CONFIG.lp in bindConfig — ?lp= still flows through the shared config parser.)
-const DEBUGLAYERS = q.get("debugLayers")==="1";   // ?debugLayers=1 → live read-out of every sky/cloud layer opacity
-const DEBUGMOON = q.get("debugMoon")==="1";       // ?debugMoon=1 → moon layer radii/opacities + a pixel-ring across the limb
+// (LPOLL is bound from CONFIG.lp in bindConfig — &lp= still flows through the shared config parser.)
+const DEBUGLAYERS = q.get("debugLayers")==="1";   // &debugLayers=1 → live read-out of every sky/cloud layer opacity
+const DEBUGMOON = q.get("debugMoon")==="1";       // &debugMoon=1 → moon layer radii/opacities + a pixel-ring across the limb
 const DEBUGDAWN = q.get("debugDawn");             // DEPRECATED no-op: dawn is not a painted overlay anymore (true dawn = the physical twilight sky + Fajr marker; false dawn is not rendered). Kept only so old URLs don't error.
-const DEBUGOPTIC = q.get("debugOptic");           // ?debugOptic=halo|sundogs|pillar|anticrep|paraselene → force a (condition-gated) optical phenomenon
-const QA = q.get("qa")==="1";                     // ?qa=1 → force the forecast track on boot + expose window.qaState() frame-diff metrics
-const DEBUGMOTION = q.get("debugMotion")==="1";   // ?debugMotion=1 → live motion telemetry overlay (rAF & cloud-paint rates, reduced-motion, paused, cloud/star Δ over 10s/60s, wx source, timeScale, reason)
-const MOTIONFULL = (q.get("motion")||"")==="full";// ?motion=full → force full animation even under OS prefers-reduced-motion. DEFAULT respects accessibility (motion reduced when the OS asks), but this gives an honest override for testing and for users who want it
+const DEBUGOPTIC = q.get("debugOptic");           // &debugOptic=halo|sundogs|pillar|anticrep|paraselene|lunarhalo → force the corresponding QA branch; lunar forces retain moonlight eligibility
+const QA = q.get("qa")==="1";                     // &qa=1 → reset lastWxAt/lastWxTry on boot; window.qaState() is always assigned
+const DEBUGMOTION = q.get("debugMotion")==="1";   // &debugMotion=1 → live motion telemetry overlay (rAF & cloud-paint rates, reduced-motion, paused, cloud/star Δ over 10s/60s, wx source, timeScale, reason)
+const MOTIONFULL = (q.get("motion")||"")==="full";// &motion=full → force full animation even under OS prefers-reduced-motion. DEFAULT respects accessibility (motion reduced when the OS asks), but this gives an honest override for testing and for users who want it
 // SINGLE SOURCE for the reduced-motion decision (was duplicated as _REDUCED + _RM). Evaluated LIVE so a mid-session
-// OS toggle is honoured (matchMedia is cheap); ?motion=full overrides. The CSS @media (prefers-reduced-motion) blocks
+// OS toggle is honoured (matchMedia is cheap); &motion=full overrides. The CSS @media (prefers-reduced-motion) blocks
 // read the SAME native signal, gated by the .motionfull opt-out class — one decision, consulted by both JS and CSS.
 const isMotionReduced = () => !MOTIONFULL && !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
@@ -2588,7 +2588,7 @@ function atmosphere(M){
   // cloud), and a water-droplet CORONA aureole from thin ALTOSTRATUS/FOG (mid cloud / humidity). Both need a bright
   // above-horizon moon in a dark sky; thick low cloud kills both. They are near-exclusive (ice vs water cloud).
   const moonLume=moonLightEligible?moonUp*darkness*clamp(0.25+0.75*mFrac):0;
-  let lunarHalo    =clamp((clHigh-0.06)/0.34)*clamp((0.66-clHigh)/0.42)*(1-clLow)*(1-0.7*clMid)*moonLume;   // `let`: forceable via ?debugOptic=lunarhalo
+  let lunarHalo    =clamp((clHigh-0.06)/0.34)*clamp((0.66-clHigh)/0.42)*(1-clLow)*(1-0.7*clMid)*moonLume;   // `let`: forceable via &debugOptic=lunarhalo
   const lunarCorona=clamp(Math.max((clMid-0.08)/0.36,(D.humid-0.72)/0.24,(cls==="fog"?0.7:0)))*clamp((0.72-clMid)/0.5)*(1-0.45*clLow)*moonLume;
   // — crepuscular rays (light shafts): only when the sun is up, the deck is BROKEN (gaps to shine through),
   //   and there's participating medium (humidity/haze). Clear dry sky → 0; solid overcast → directional≈0 → 0.
@@ -2596,7 +2596,7 @@ function atmosphere(M){
   const ray=Math.min(0.5, clamp(sm.altDeg/8)*broken*(1-0.8*clLow)*clamp(0.3+0.7*D.humid)*directional*(cls==="fog"?0.25:1));
   // ICE-CRYSTAL & RAY OPTICS — all CONDITION-GATED (never random). Thin CIRRUS (high cloud, no thick low/mid) →
   // 22° HALO + SUNDOGS; cold air + a low sun → SUN PILLAR; broken cloud/haze + low sun → ANTICREPUSCULAR rays
-  // (the faint mirror of the crepuscular `ray`). Forced individually by ?debugOptic= for inspection.
+  // (the faint mirror of the crepuscular `ray`). Forced individually by &debugOptic= for inspection.
   const cirrus=clamp((clHigh-0.06)/0.34)*clamp((0.72-clHigh)/0.42)*(1-clLow)*(1-0.55*clMid), sunUpO=clamp((sm.altDeg+1)/6);
   let sunHalo=cirrus*sunUpO, sunDogs=cirrus*sunUpO*clamp((12-sm.altDeg)/12), sunPillar=D.cold*clamp((6-sm.altDeg)/8)*clamp((sm.altDeg+5)/7)*(0.45+0.55*cirrus), antiCrep=ray*0.5;
   // LUNAR PARASELENAE / moondogs: the lunar analogue of sundogs — lateral spots at the moon's elevation, RARE,
@@ -2712,7 +2712,7 @@ function paint(A){
     // render() may already have projected this exact accepted target before entering paint().
     if(sceneKey!==null && _starProjectionKey===sceneKey) _starsProjected=true;
   }
-  const _REDUCED = isMotionReduced();   // live per-paint (single source) → --sunpulse / --mrad freeze under OS reduced-motion unless ?motion=full
+  const _REDUCED = isMotionReduced();   // live per-paint (single source) → --sunpulse / --mrad freeze under OS reduced-motion unless &motion=full
   c.style.setProperty("--accent",rgb(A.accent));
   c.style.setProperty("--accent2",rgb(A.accent2));
   c.style.setProperty("--text",rgb(A.text));
@@ -2935,7 +2935,7 @@ function updateSimClock(n){       // debug fast-forward read-out (only shown whe
   if(el) el.textContent=`SIM ${n.dateStr} ${pad(n.h)}:${pad(n.mi)}:${pad(Math.floor(n.s))}  ×${TIMESCALE}`;
 }
 
-// QA frame-diff metrics (?qa=1): a state snapshot for measuring temporal LIFE — call window.qaState() at intervals
+// QA frame-diff metrics (always exposed; &qa=1 resets boot weather timestamps): a state snapshot for measuring temporal LIFE — call window.qaState() at intervals
 // and diff. cloudHash is position-weighted so it detects SHAPE change (not just translation); a hash that repeats
 // over a long watch would reveal a loop (the FBM z=simTime is monotonic, so it shouldn't).
 window.qaState=function(){
@@ -3017,7 +3017,7 @@ window.qaState=function(){
   };
 };
 
-// debugMotion telemetry (extracted from boot for readability; ?debugMotion=1 only). Pure helpers + the overlay
+// debugMotion telemetry (extracted from boot for readability; &debugMotion=1 only). Pure helpers + the overlay
 // renderer; the loop's rate counters stay in boot and are passed in, so the boot lifecycle / rAF scheduling /
 // visibility + offscreen behaviour are untouched. Behaviour is identical to the old inner closures.
 const _motHist=[];
@@ -3048,7 +3048,7 @@ function startWeather(){
   if(SIM.wx!=null){
     const sTemp=SIM.temp!=null?+SIM.temp:72, sRh=SIM.humid!=null?+SIM.humid:45;
     const tC=units==="f"?(sTemp-32)*5/9:sTemp, dC=tC-(100-Math.max(1,Math.min(100,sRh)))/5;   // derive dew point from temp+RH (Magnus approx) so simHumid drives the dew-point haze/blur
-    // default a code-appropriate observed precip so a bare simWx still shows its precip visuals; simPrecip overrides
+    // default a code-appropriate synthetic preview precip so a bare simWx still shows its precip visuals; simPrecip overrides
     // it (e.g. simWx=95&simPrecip=0 → a "forecast thunder but dry" case the gate must downgrade).
     const sCls=wxClass(+SIM.wx), defP=(sCls==="thunder")?5:(sCls==="rain")?2:(sCls==="drizzle")?0.3:(sCls==="snow")?1:0;
     weather={code:+SIM.wx, temp: sTemp,
@@ -3184,7 +3184,7 @@ function startRenderLoop(){
   if(MOTIONFULL && cEl) cEl.classList.add("motionfull");    // CSS reduced-motion rules are scoped to .c:not(.motionfull)
   let _raf=null, _onScreen=true, _lastSec=-1, _lastWx=0, _lastCloud=0;
   const visible=()=>_onScreen && document.visibilityState!=="hidden";
-  // —— MOTION TELEMETRY (?debugMotion=1): prove the sky is actually alive in normal real-time ——
+  // —— MOTION TELEMETRY (&debugMotion=1): prove the sky is actually alive in normal real-time ——
   let _rafN=0,_cloudN=0,_tickAcc=_RAFNOW(),_rafPS=0,_cloudPS=0;   // loop rate counters (consumed only by the debugMotion overlay, which now lives at module scope)
   function loop(){
     _rafN++;

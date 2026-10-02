@@ -1,10 +1,10 @@
 # salah_widget — Architecture & Readiness
 
 A maintainer's map of the widget: who owns what, where state flows, where patches are risky, and the
-contracts a future change must honor. Produced by a read-only multi-pass investigation (responsibility/GRASP,
-SOLID/CUPID, control-flow, data-lineage/SSA, BASE stale-state, ACID write-safety, normal-form/contracts,
-observability) — then a *minimal, justified* hardening pass. **Guardrails:** no rewrite, no abstraction-for-its-
-own-sake, preserve the static / no-build / no-dependency / single-file character. Line refs are approximate.
+contracts a future change must honor. The current contract below incorporates the bounded 2026-10-02 source
+composition; dated June notes are historical changes, not qualification of current bytes. **Guardrails:** no
+rewrite, no abstraction-for-its-own-sake, preserve the static / no-build / no-dependency character. Function
+names identify owners; source checks do not establish native pixels, motion, installation or public state.
 
 ## Three artifacts, one config contract
 
@@ -32,61 +32,66 @@ fork between widget and builder (the local-mode task's "do not fork config logic
 *only* extracted module; everything else stays inline. `index.html` keeps a one-line **legacy fallback** (hash-only
 parse) if `config.js` fails to load, so a 404 degrades instead of white-screening.
 
-The coupling is now the **`WidgetConfig` contract in `config.js`**: the builder serializes a config to the hash
-(portable `#lat&lon&label&method&school[&time][&datefmt][&units]` — byte-identical to the historical output — or
-generic `#local=1`), and the widget resolves `location.hash` through the same module. (The builder still forces an
+The coupling is the **`WidgetConfig` contract in `config.js`**: the builder serializes a fixed-site portable
+fragment or `#local=1` with explicit method/units/appearance preferences. Both builder modes include the selected
+appearance, including default `appearance=glass`; a generic `#local=1` retains automatic defaults. Portable
+fragments omit private acquisition evidence. The widget resolves `location.hash` through the same module;
+saved preferences take precedence in local/prefer-local mode. (The builder still forces an
 iframe re-run with a throwaway `?r=` query because a hash-only change does not re-run the widget's boot.)
-Persistence: `salah_widget:config:v1` (separate from prayer/weather caches). Precedence: hardcoded hash (unless
-`local`/`preferLocal`) → saved local → coarse-ip → manual → fallback. **Stale localStorage never overrides a
+Persistence: `salah_widget:config:v1` (separate from prayer/weather caches). Original fix time/accuracy remain
+private and survive preference saves without renewed acquisition age. Refused save retains session choices;
+refused Reset retains the selected config and stops before detection. **Stale localStorage never overrides a
 hardcoded embed.** Runtime re-config (`applyConfig`) is in-memory (no reload); `cacheKey`/`wxKey` are functions so
-they track config changes. See DESIGN.md “Config resolution & local mode” for the full contract.
+they track config changes. See DESIGN.md “Config resolution & local mode” for precedence and feedback.
 
 ## Runtime pipeline — Physics → State → Render
 
 ```
-URL hash (immutable config consts)  ─┐
-simNow()  [single temporal source]  ─┤
-fetchTimings → today/tomorrow → model()                ─┐  DRIVERS (physical truth)
-fetchWeather → weather (current/nowcast) + weatherTrack ─┤
-   syncWeather() [ADVANCING-gated] / wxAt() / wxDrivers()┤
-moonNow()/renderMoon() → moonSky (shared)               ─┘
+resolved config → runtime generation/target           ─┐
+simNow() [wall by default; explicit anchored preview] ─┤
+admitted prayer records → today/tomorrow → model()     ─┤  DRIVERS
+eligible model current / ADVANCING forecast track     ─┤
+   selectedWeather() / weatherDecision() / wxDrivers() ┤
+renderMoon() → fresh moonSky + matching projectStars()─┘
                          │
               atmosphere(M)   ── ONE pure state vector (~50 named fields, touches NO DOM)
                          │
-              paint(A)        ── the ONLY writer of the sky/light CSS custom props + data-fx
+              paint(A)        ── sky/light CSS custom props + data-fx + explicit cloud-state step
                          │
-   render() orchestrates: prayer-UI DOM + renderMoon + projectStars + applyTheme(=paint∘atmosphere) + lightning
-boot() → ONE requestAnimationFrame loop (~1 Hz) + visibility/IntersectionObserver lifecycle (pauses offscreen)
+render() → prayer/arc/calendar writers + lunar/stellar geometry + applyTheme + initial reveal
+boot/applyConfig → ONE requestAnimationFrame loop + accepted dirty-state adoption
+cloud canvas → bounded monotonic visual elapsed; lifecycle pauses hidden/offscreen
 ```
 
-Layer z-order is **implicit in DOM markup order** and relied on for occlusion (sky/stars → cloud deck → moon → arc
-→ text; cloud deck paints *over* the moon, which is how heavy cloud hides it). There is one rAF clock; no
-independent time loops (a convention, not an enforced boundary).
+Layer composition relies on markup/CSS: the cloud deck can cover the Moon, while the filtered stellar
+background has an independent luminance cutout registered to the lunar image/transform. Stars, glints and
+Milky Way remain masked through lunar twilight fade; daylight withdraws the surface/cutout. Initial decorations
+start hidden over a neutral card and reveal on consumed lunar geometry plus matching stellar projection.
+Decoded PBR texture readiness is separate; pending/failed texture is unavailable, not a successful calendar
+disc. Native first-frame/edge/day-no-hole evidence is still required. One existing rAF loop coordinates scene
+updates; CSS animations remain explicit consumers of the same lifecycle/reduced-motion state.
 
 ## Responsibility map (information-expert owners)
 
-| Responsibility | Owner | ~Lines |
-|---|---|---|
-| Config (parse URL hash → consts) | top-level `q`/`SIM`/`LPOLL`/`DEBUG*` | 435–503 |
-| Temporal source of truth | `simNow`/`simDate`/`nowParts`/`partsInTz`/`epochForTzTime` | 517–550 |
-| Prayer-time fetch + cache | `fetchTimings`/`loadCache`/`saveCache` | 553–576 |
-| Weather fetch + cache | `fetchWeather`/`loadWx` | 586–620 |
-| Forecast-track interpolation | `wxAt`/`syncWeather` | 624–646 |
-| Weather → 0..1 drivers | `wxDrivers` | 648–664 |
-| **Weather truthfulness gate** | `gateWeatherCode` (+ `wxClass`/`_coverCode`/`WX`) | 1213–1251 |
-| Moon ephemeris + PBR + position | `renderMoonPBR`/`moonNow`/`renderMoon` (writes shared `moonSky`) | 744–855 |
-| Stars (catalog + projection + twinkle) | `buildStars`/`projectStars` | 865–946 |
-| Prayer model (current/next/progress) | `model` | 977–1001 |
-| Solar-prayer arc (SVG) | `drawArc` | 1004–1147 |
-| Sun geometry | `solarElevationDeg` (shared single source) ← `sunAltAt` (alias) / `sunMetrics` / `drawArc.elevDeg` | ~1172 |
-| Sky colour (sole source) | `skyLum`/`physSky` | 1167–1200 |
-| Clouds (canvas density field) | `paintClouds`/`tieRainToClouds` | 1306–1367 |
-| **Atmosphere state vector** (pure) | `atmosphere` | 1376–1559 |
-| **Sky DOM writes** (sole sky writer) | `paint` | 1535–1700 |
-| Lightning channel | `genLightning`/`_midDisp` | 1686–1701 |
-| Render orchestration | `render` | 1703–1807 |
-| QA / observability | `window.qaState` | 1817+ |
-| Boot + rAF loop + lifecycle + motion telemetry | `boot` (closures) | 1772+ |
+| Responsibility | Owner |
+|---|---|
+| Config, private fix evidence, persistence outcomes | `SalahConfig`, `bindConfig`, settings handlers |
+| Generation/operation/attempt identity | `beginRuntimeGeneration`, `beginRequest`, `beginAttempt`, eligibility/finish helpers |
+| Civil authority and zoned inverse | `simNow`/`simDate`/`nowParts`/`partsInTz`/`epochForTzTime` |
+| Prayer admission/cache/day adoption/recovery | `admitPrayerRecord`, `fetchTimings`, `adoptPrayerBundle`, `maintainPrayerDay`, `loadPrayerData` |
+| Model endpoints, provider calendar selection/access | `model`, `selectCalendarDisplay`, `renderCalendarDates` |
+| Weather admission/current expiry/captured target | `admitWeatherRecord`, `weatherEligibility`, `selectedWeather`, `captureWeatherTarget`, `fetchWeather` |
+| Model forecast and bounded radar diagnostics | `wxAt`, `syncWeather`, `wxFetchJson`, `fetchRadar`, `wxRadarSample` |
+| Weather permissions and synthetic QA | `admitWeatherFixture`, `reconcileWeatherEvidence`, `weatherDecision` |
+| Moon ephemeris/PBR/fresh observation | `moonNow`, `renderMoonPBR`, `renderMoon`, `moonGeometryObservation` |
+| Stars, glints and projection/appearance | `buildStars`, `projectStars`, `refreshStarAppearance` |
+| Initial scene/surface/reveal | `beginSkyScene`, `updateSkySurface`, `commitSkyScene` |
+| Solar-prayer arc and shared solar elevation | `drawArc`, `solarElevationDeg`, `sunAltAt`, `sunMetrics` |
+| Sky colour and pure atmosphere vector | `skyLum`, `physSky`, `atmosphere` |
+| Cloud identity/visual interval/wind/coverage | `cloudSceneIdentity`, `advanceCloudMotion`, `applyCloudState`, `paintClouds` |
+| Sky writes and permitted weather particles | `paint`, `tieRainToClouds`, `genLightning` |
+| Render, single loop, lifecycle and telemetry | `render`, `startRenderLoop`, `updateMotionDbg` |
+| Actual consumed/painted diagnostics | `window.qaState` |
 
 ### Responsibility tangles (SRP), ranked
 1. ~~`paint(A)` mutates `cloudState` + does tone-map derivation~~ **RESOLVED (2026-06-16):** the corner-sun tone-map
@@ -105,58 +110,72 @@ independent time loops (a convention, not an enforced boundary).
 ### High-risk mutation points (shared mutable state)
 - **`moonSky`** (written by `renderMoon`, read by `atmosphere`/`projectStars`/`qaState`): **temporal coupling —
   `renderMoon` must run before `atmosphere` in a tick**, so `atmosphere` is "pure" only given that ordering.
-- **`cloudState`** (mutated in `paint` ease-vs-snap branch, read in `paintClouds`): the no-slideshow continuity
-  invariant lives here — easy to break with a careless reseed.
-- **`tz`** (`let`, reassigned from the Aladhan response): `cacheKey`/`wxKey` are captured once at load, so a wrong
-  URL `tz` hint causes a benign one-time cache miss + a small clock re-anchor near t0.
+- **`cloudState`** (eased by `applyCloudState`, read in `paintClouds`): integrate the preceding interval with old
+  wind before replacing drivers. Population survives ordinary day/zone/weather changes; accepted target or
+  explicit preview identity replacement reconstructs deterministically.
+- **`tz`** (adopted from admitted Aladhan data): dynamic keys and the captured selected-cache timezone precede
+  day selection. Corrected-day fetches share the operation budget; obsolete generations cannot adopt them.
 - **Reduced motion** — the two duplicated JS `matchMedia` checks are unified behind one **live** helper
   `isMotionReduced()` (`paint`'s `_REDUCED` and the loop's `_RM` both call it; `&motion=full` overrides). The CSS
   `@media (prefers-reduced-motion)` blocks read the SAME native signal gated by the `.motionfull` class — they are
   the live native signal, not duplicated logic. One decision, consulted by JS and CSS.
 
 ## Control-flow (CFG) findings
-- **Boot:** DOM scaffold builds before data; a hard `if(!lat||!lon){ showError; return }` means **the rAF loop
-  never starts without coordinates**. Cached times render first so the card isn't blank during the prayer fetch.
-- **Prayer fetch has three call-sites with three error policies:** boot (`await`, shows error if no `today`),
-  tomorrow-prefetch (swallowed), and **day-rollover (swallowed, no retry, no stale signal)** — see Remaining risks.
-- **`fetchWeather` guards, in order:** `SIM.wx` → reentrancy (`wxBusy`) → 15-min freshness (needs *both*
-  `weather` and `weatherTrack`) → 60-s try-throttle; `finally` always clears `wxBusy`; network/parse errors are
-  swallowed and the last good state is held (Basically Available).
-- **Render loop:** `render()` runs once per sim-second; the cloud canvas repaints ~13 fps; reduced-motion paints
-  one frozen cloud frame; the loop stops entirely when hidden/offscreen.
+- **Boot/apply:** validate finite bounded coordinates (zero is valid), establish generation/target and build the
+  scaffold once. Admitted selected cache can render before network success. Explicit invalid clock anchors
+  preserve card/Settings access while withdrawing clock-dependent output.
+- **Request ownership:** capture config/target/day/cache identity. Attempts remain eligible through headers,
+  body, parse and adoption under real elapsed deadlines. Generation replacement invalidates slot identities
+  before cancellation; obsolete completion/finally cannot overwrite or release a replacement owner.
+- **Prayer recovery:** at most three ten-second attempts, 900/1800ms backoff and at most one corrected-day fetch
+  within that budget. Matching tomorrow can become current; accepted state/completion marks render dirty. The
+  existing visible loop provides sixty-second elapsed recovery starts; hidden/offscreen is not background work.
+- **Weather/radar:** bounded complete JSON and image operations retain eligible model data on rejected refresh.
+  Current expiry withdraws render authority even if readable cache/track remain. Weather inputs ease cloud
+  appearance, but expired/outage synthetic evidence withdraws particles immediately.
+- **Render loop:** changed civil seconds or dirty state call `render`; cloud canvas cadence is about 13 fps.
+  Reduced-motion holds a cloud frame, and hidden/offscreen pauses/rebases visual elapsed. A missing-frame gap
+  over two seconds is discarded as suspension. These bounds cannot preempt blocked JavaScript.
 
 ## Data-lineage (SSA) — classification of key values
-- **raw → never to render policy:** `weather.code` (raw current), `weatherTrack.weather_code` (raw forecast).
-  These must pass through `gateWeatherCode` before any precip/thunder visual. *Verified:* `data-fx`, the chip, and
-  precip visuals all consume the **gated** code, never the raw one.
+- **raw → admitted → reconciled → painted:** `weather.code` and hourly codes are model inputs, not local
+  observation. `weatherDecision` consumes eligible model/present/forecast states; raw/gated WMO or radar alpha
+  alone grants no strong live effect. The chip retains useful model estimates while particles stay off.
 - **normalized:** `wxDrivers()` 0..1 (heat/cold/wind/humid/cloud/haze), the `atmosphere(M)` state vector.
-- **live (real-time):** `weather` (current/nowcast block), `model()` prayer state, `simNow()`.
+- **ordinary wall view:** eligible Open-Meteo model current, `model()` prayer state and default `Date.now()`.
+  Explicit `timeScale=1` remains an anchored ADVANCING preview, not the default wall authority.
 - **simulated:** anything under `SIM.*` (`simWx`/`simTime`/`simMoon`/…) and `ADVANCING` forecast-derived weather.
 - **cached/stale:** `today`/`tomorrow` (per-day localStorage), `weather`/`weatherTrack` (15-min), `cloudState`
   (eased), `_starsProjected`. See BASE below.
-- **identity:** `_cloudFieldSeed` (lat+lon+day+`?seed`) — stable per location+day; never reseeded on refresh.
+- **identity:** signed accepted coordinates, explicit seed and preview anchor/rate; initial day contribution is
+  captured once. Ordinary day/month/year/weather refresh retains population. An explicit seek reconstructs
+  with zero initial displacement. Actual monotonic elapsed, not changed civil probe arguments, advances travel.
 
 ## Canonical contracts (documented, already implied by the code — no new layers added)
 - **WeatherCurrent** = the `current=` block on `weather` (`{code,temp,feels,rh,dew,wind,windDir,gust,cloud,
-  cloudLow,cloudMid,cloudHigh,precip,rain,showers,snow,vis,isDay, src:"current"|"sim"}`).
-- **WeatherForecastTrack** = `weatherTrack` (`{ep:[…], <hourly field>:[…]}`), interpolated by `wxAt(ms)`.
-- **WeatherDisplayState** = the *gated* condition: `wxClass(gateWeatherCode(raw, weather))` → `data-fx`.
+  cloudLow,cloudMid,cloudHigh,precip,rain,showers,snow,vis,isDay, src:"current"|"sim"}` plus admission/quantity/target metadata).
+- **WeatherForecastTrack** = admitted `weatherTrack` (`{ep:[…], <hourly field>:[…]}`); `wxAt(ms)` interpolates
+  eligible continuous fields, while preceding-hour precipitation remains stepped.
+- **WeatherDisplayState** = reconciled `weatherDecision` → atmosphere/`data-fx`, model cue and separate permissions.
+- **SyntheticPresent** = `synthetic-present-v1` admitted fixture with exact identity, target generation, qualified
+  coverage/health, underlying observation time and exclusive lease. It is not a live provider/hash switch.
 - **AtmosphereState** = the object `atmosphere(M)` returns (the renderer's whole input contract).
 - **QAState** = `window.qaState()` (`{sim,sunEl,wx,wxTruth,cache,render,clouds,stars,sky,moonTruth}`).
-The hash param order is canonical (builder emits a fixed order). One name per concept: prefer **current /
-nowcast / observed** for the live block and **forecast / track** for the projection — never interchange them.
+The hash param order is canonical (builder emits a fixed order). **Model current**, **model forecast** and
+**qualified synthetic present** have different authority. Current amounts describe a preceding interval;
+hourly amounts describe a preceding hour, not instantaneous intensity/onset/probability.
 
 ## BASE — soft state & convergence
 | Stale thing | Refreshes | Replaced by | Must NOT assume while stale |
 |---|---|---|---|
-| Prayer cache (`today`/`tomorrow`) | day rollover; boot re-fetch | fresh Aladhan day | that times are for *today* after a failed rollover |
-| Weather current (`weather`) | every ~15 min / 30 s loop tick | fresh `current=` block | that it is "now" to the second |
-| Forecast track (`weatherTrack`) | same fetch | fresh 3-day hourly | that it is observed (it is a forecast) |
-| Display condition (`data-fx`) | each render from gated code | recomputed | n/a (derived, not stored) |
-| Cloud identity (`_cloudFieldSeed`) | only on new day / `?seed` | same-day stable | n/a |
-**Non-negotiable, upheld:** stale **forecast** is never shown as live observed — `syncWeather` early-returns
-unless `ADVANCING`, and the precip gate fails safe to the cloud state. `qaState().cache` now exposes ages +
-`weatherStale`, and `qaState().wxTruth` the source chain.
+| Prayer cache (`today`/`tomorrow`) | selected day/zone/config re-adoption; visible recovery | admitted matching record | that retained prior-day timings are today's after failed rollover |
+| Weather model current (`weather`) | bounded refresh; source and receipt eligibility each consumption | eligible `current=` record | that readable expired cache grants current inputs or local observation |
+| Forecast track (`weatherTrack`) | bounded refresh | admitted 3-day hourly | that it is observed or live particle authority |
+| Display condition (`data-fx`) | each render from reconciliation | recomputed | that cloud easing may delay withdrawal of particle permission |
+| Cloud population (`_cloudFieldSeed`) | accepted target/seed/explicit preview replacement | deterministic population | that ordinary midnight or timezone/weather refresh requires reseeding |
+`syncWeather` is ADVANCING-gated. Live model conditions keep an ≈ estimate cue; absent/expired current becomes
+unknown. Nearby precipitation/arrival remain unavailable. Unknown observation is not observed dry. Current
+source and receipt times must both be no older than fifteen minutes; rejected records never renew that age.
 
 ## ACID — write/output safety
 - **builder output** is generated atomically per `update()` (string built, then assigned to the textarea +
@@ -165,23 +184,25 @@ unless `ADVANCING`, and the precip gate fails safe to the cloud state. `qaState(
 - **localStorage** writes (`saveCache`, weather cache) are single `setItem` calls wrapped in try/catch.
 
 ## Observability (added this pass — Stage 1, no visual change)
-`window.qaState()` now reports the full required surface: `wxTruth` (currentWeatherSource, forecastTrackSource,
-rawCode, **rawForecastCode**, observedPrecipMm, activePrecip, activeThunder, displayCondition, **finalDataFx**,
-downgradeReason, advancing, cloudFieldSeed); **`cache`** (weatherSource, weatherAgeSec, weatherStale,
-lastWeatherRefresh, forecastTrackLoaded, prayerDate, prayerLoaded, tomorrowLoaded, simulated); **`render`** (a
-real last-rendered summary: currentKey/nextKey/leftMin/progress/fx); plus `clouds`/`stars`/`sky`/`moonTruth`.
+`window.qaState()` reports the actual target/fix age, model/present/disagreement, source/receipt/quantity,
+spatial/horizon/forecast, lane and particle permissions in `wxTruth`. Its legacy `observedPrecipMm` field refers
+only to qualified synthetic amount, not live model authority. `cache` includes eligibility, prayer staleness,
+recovery and request ownership; `render`, calendar, clouds, stars, sky and moon diagnostics expose consumed/
+painted state. A fresh diagnostic recomputation is not automatically a last-painted or native-pixel observation.
 On-card debug overlays: `&debugLayers=1`, `&debugMoon=1`, `&debugMotion=1` (rAF/cloud rates, cloud/star Δ).
 Append these suffixes to the configuration fragment after `#`; see [complete recipes](DESIGN.md#url--hash--debug-parameters).
 
-## Characterization smokes (added: `tests/smoke.html`, no-build, browser-runnable)
-Pure-function smokes call the global gate directly (deterministic, no network): dry forecast-thunder downgrades;
-heavy-precip thunder kept; rain-without-precip downgrades; precip-supported rain kept; clear/cloud codes not
-precip-gated; `wxClass` mapping. Integration smokes (sim weather) read `qaState()`: dry-thunder downgrade +
-reason + `data-fx`; precip-supported rain; fog ≠ rain; new/below-horizon moon = opaque calendar disc with **zero
-moonlight**; physical moon up = `--moongrp`/`--moonocc` ~1 + moonlight on; **no `.falsedawn`/`.truedawn`
-elements**; cloud identity stable across reads; observability surface present + not-stale under sim.
+## Characterization smoke contract (`tests/smoke.html`, no-build)
 
-## Exact changes made this pass
+The instrument runs **automatically on navigation**. Its private injected config stores and preparse wrapper
+storage isolation prevent real configuration/cache mutation. Controlled/frozen Date and suppressed fonts make
+this a contained correctness instrument, not normal-entry appearance, default live M0 or public-safety proof.
+PASS requires every declared group/assertion; assertion/bootstrap errors are FAIL. Missing callback, assertions
+or readiness is INCOMPLETE, with declared/executed/missing names retained. The wrapper binds run, attempt, UUID,
+hash and source hash; changed source within a run fails. See HANDOFF for the reviewed successor identity and
+its still-separate native qualification. No source-test total can substitute for that native ledger.
+
+## Historical hardening changes (2026-06-16)
 1. **FIX (correctness):** `sunAltAt`'s declination clamp `24°` → **`27.5°`** to match `drawArc` — they are
    documented to "match exactly," but the differing clamp let the sky-sun elevation diverge from the arc when the
    day-length-fitted declination lands in 24°–27.5° (near solstice). Now consistent.
@@ -192,8 +213,8 @@ elements**; cloud identity stable across reads; observability surface present + 
 4. **Truthfulness gate:** Belt of Venus no longer shows (`0.25`→`0`) under overcast/precip/fog (it needs a
    clear-ish anti-solar sky).
 5. **Tests:** added `tests/smoke.html`.
-(Prior, already in place and confirmed load-bearing: weather current-vs-forecast separation + the precip/thunder
-truthfulness gate, cloud continuity/advection, painted-dawn removal, opaque/calendar moon, qaState/debugMotion.)
+(The old code-only weather gate and radar confirmation model were subsequently superseded by the model-only
+live policy above; these dated records are not current observation authority.)
 
 ## Deferred follow-ups (documented, intentionally not done — out of minimal scope / higher risk)
 - ~~**Shared `solarElevationDeg(M,a)` helper** for `drawArc` + `sunAltAt`~~ **DONE (2026-06-16):** extracted as a
@@ -214,15 +235,18 @@ truthfulness gate, cloud continuity/advection, painted-dawn removal, opaque/cale
   split; the widget stays one self-contained file.)*
 
 ## Remaining risks
-- The `moonSky` ordering coupling (renderMoon-before-atmosphere) is now guarded: `renderMoon` stamps
-  `moonSky._min` with the minute it rendered, `atmosphere` returns a pure `moonSkyFresh` flag, and `render`
-  emits a one-shot `console.warn` if the order is broken (surfaced as `qaState().moonTruth.moonSkyFresh`, covered
-  by a smoke). It is a detector, not a hard enforcement — a reorder warns + flips the flag rather than throwing
-  (a throw would break the direct `atmosphere(model())` calls in `qaState`/debug).
+- The `moonSky` ordering coupling (renderMoon-before-atmosphere) has a consumed observation binding epoch
+  minute, local minute and target/zone context. `applyTheme` records actual paint status/observation and warns
+  once on explicitly stale consumed geometry. Missing provenance is unavailable; paint failure preserves the
+  failed status and ordinary error behavior. This diagnosis/initial-reveal guard is not general reorder
+  enforcement or native pixel evidence; later diagnostic recomputation must not overwrite consumption history.
 - Reduced-motion is unified behind one live `isMotionReduced()` (JS) + the native `@media`/`.motionfull` (CSS);
   both read the same signal, so the old three-site drift surface is closed.
-- Weather "current" is an Open-Meteo nowcast, now **cross-checked against RainViewer radar** (`fetchRadar` →
-  `gateWeatherCode(raw,w,radarMm)`): radar CONFIRMS a precip code the model missed (`max(nowcast, radar)`),
-  **fail-closed** (no radar / coverage gap / stale / sim → nowcast-only) and **confirm-only** (never fabricates
-  rain — the gate only gates DOWN). Residual: radar coverage has gaps (oceans/deserts/some regions) and the
-  mm proxy is coarse (alpha-density, not calibrated dBZ); both are handled by confirm-only + fail-closed.
+- The selected live adapters provide useful model estimates and diagnostic tiles, not qualified local wet/dry/
+  lightning/nearby/arrival evidence. Strong live effects remain off. Qualified synthetic positives exercise
+  admission/withdrawal consumers but establish no provider skill. No new provider is added.
+- Calendar convention/anomalies and ambiguous temporal inverses remain explicitly unavailable/neutral where
+  source records cannot establish them. Retained provider/cache data alone earns no current-day claim.
+- Native first entry, real decoded PBR, stellar-mask edges, real-font/default-glass/contrast readability, OS
+  reduced/full motion and final composed browser smokes remain separate evidence requirements. The round-4
+  adaptive-performance governor is held; no comparative CPU/battery or public qualification is implied.
