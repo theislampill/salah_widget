@@ -4,7 +4,7 @@ A tiny, self-contained prayer-times widget you can embed anywhere that accepts a
 `<iframe>` — built for [TablissNG](https://github.com/BookCatKid/TablissNG) new-tab
 dashboards, but works in Notion, a personal site, or anywhere else.
 
-No build step, no dependencies, no tracking. One static HTML file that reads its
+No build step, no dependencies. One static HTML file that reads its
 configuration from the URL and fetches times from the free
 [Aladhan API](https://aladhan.com/prayer-times-api).
 
@@ -112,11 +112,32 @@ config → coarse IP/timezone detect → manual setup → safe error state.
 
 ### Auto-detect, precise location & privacy
 
-- **Coarse auto-detect is approximate** — it's based on your **IP address and timezone**, not
-  GPS. It necessarily sends your IP to the geolocation provider
-  ([GeoJS](https://www.geojs.io/), with [ipinfo.io](https://ipinfo.io) as a fallback); this
-  widget itself does no tracking and stores nothing about you on any server. We say
-  **"estimated area,"** never "precise location."
+Settings are stored in your browser/profile, but the widget and builder use external services.
+Local storage does not make search or location-based requests local-only. Coarse detection is
+approximate; precise browser location is optional and requested by your action. The requests
+below depend on the feature used, cache state and network availability.
+
+| Trigger | Recipient and fields |
+|---|---|
+| Builder's initial area detection; widget local/preferLocal mode when it needs detection; an in-widget Reset/re-detect action | GeoJS, then ipinfo.io on failure. The request exposes the connection's IP address. The provider URLs have no user-entered location/query parameters; the device timezone is used locally in configuration resolution. |
+| Builder location-name input after its search debounce or Enter; widget Settings place/postcode search on Enter | Nominatim receives the typed query as `q`. A digit-containing query may also send the current home-country bias as `countrycodes`. |
+| A search whose whitespace-stripped text begins with letter-digit-letter | Zippopotam receives the uppercase first three characters in its `/ca/` path, in addition to Nominatim receiving the query. This is the implemented prefix trigger, not proof the complete input is a valid Canadian postcode. |
+| Builder automatic name/method lookup after eligible coordinate input or a precise-location result | BigDataCloud `reverse-geocode-client` receives `latitude`, `longitude` and `localityLanguage=en`. The in-widget precise path itself does not call this builder reverse function. |
+| Prayer-time loading and refresh for the configured location | Aladhan receives latitude, longitude, calculation method, school and requested date. |
+| Weather loading and refresh when real-weather acquisition is active | Open-Meteo receives latitude, longitude, timezone, requested units and weather-field selections. |
+| Radar loading and refresh when real-weather acquisition is active | RainViewer receives a weather-map manifest request; the returned tile host receives a frame/tile path whose x/y indices are derived from the configured location. |
+| Page font loading, subject to browser caching | Google Fonts stylesheet/font hosts receive font resource requests. These resource URLs do not contain the widget's location or search text. |
+
+Reset attempts to remove the saved widget configuration key. It does not clear prayer/weather
+caches or erase information held by external services. Browser or embedding-host storage and
+permission policies can limit persistence or precise location. This description identifies
+client-side request construction; it makes no claim about providers' retention practices.
+
+Source trace: [config.js](config.js) (`coarseDetect`, `geocodeSearch`, `clearLocal`);
+[builder.html](builder.html) (`doSearch`, `fillNameFromCoords`, `locate`, `detectArea`);
+[index.html](index.html) (`_runSetSearch`, `_usePrecise`, `_resetLocal`, `fetchTimings`,
+`fetchWeather`, `fetchRadar` and the font declarations).
+
 - **Precise location is optional and user-triggered.** The "Use precise location" button asks
   your browser's permission (`navigator.geolocation`) — it is **never** called automatically.
   In an iframe it usually requires `allow="geolocation"` on the `<iframe>` (the local-mode
@@ -124,8 +145,8 @@ config → coarse IP/timezone detect → manual setup → safe error state.
   you deny permission, the widget falls back gracefully — coarse auto-detect and manual setup
   still work.
 - **Saved settings stay local** to your browser/profile. If storage is blocked or partitioned
-  (private browsing, strict third-party-iframe storage), saving is unavailable — the widget
-  says so and your changes still apply **for the current session** (it never crashes).
+  (private browsing, strict third-party-iframe storage), persistence can be unavailable;
+  changes can still apply **for the current session**.
 - **TablissNG:** coarse auto-detect works inside the iframe if your network/ad-blocker allows
   the request; precise location works only if TablissNG preserves `allow="geolocation"`;
   saved settings persist only if it doesn't partition iframe storage. All three degrade

@@ -12,6 +12,11 @@ optics · precipitation · thermal/material cues · celestial · visual-only UI.
 
 Contract per phenomenon: **family · inputs · gate · shape · NOT-shape · off-conditions · prod/debug · verdict**.
 
+Recipe suffixes below append to the existing configuration fragment after `#`.
+The six force names are `halo`, `sundogs`, `pillar`, `anticrep`, `paraselene` and `lunarhalo`;
+corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs.
+Complete activation/motion recipes are in [DESIGN.md](DESIGN.md#url--hash--debug-parameters).
+
 ---
 
 ## Group 1 — Diffuse (participating media + thermal)
@@ -96,12 +101,12 @@ arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 - **Shape:** soft radial shafts from the visible sun, fading from source.  **NOT:** a hard conic sticker; a single
   diagonal slash; a lens flare.  **Verdict:** keep.
 
-### Anticrepuscular rays — *production + `?debugOptic=anticrep`*
+### Anticrepuscular rays — *production + `&debugOptic=anticrep`*
 - **Family:** the far end of the same shafts, converging by perspective at the antisolar point.
 - **Gate:** `antiCrep = ray·0.5` (inherits every crepuscular gate; strictly fainter), at `--antix=100−sm.x`.
 - **NOT:** brighter than crepuscular; centred on the sun; aurora/false-dawn-like.  **Verdict:** keep.
 
-### 22° sun halo — *production + `?debugOptic=halo`*
+### 22° sun halo — *production + `&debugOptic=halo`*
 - **Family:** ice-crystal refraction (cirrus).
 - **Gate:** `cirrus=clamp((clHigh−.06)/.34)·clamp((.72−clHigh)/.42)·(1−clLow)·(1−0.55·clMid)`; `sunHalo=cirrus·
   sunUpO`.
@@ -113,22 +118,22 @@ arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 - **Family:** ice-crystal refraction around a bright moon.
 - **Gate:** `lunarHalo = clamp((clHigh−.06)/.34)·clamp((.66−clHigh)/.42)·(1−clLow)·(1−0.7·clMid)·moonLume`.
 - **NOT:** an aureole hugging the disc (that is the droplet corona); by day / new moon / thick cloud.  **Verdict:**
-  keep. **`?debugOptic=lunarhalo`** now forces the moon halo independently for QA (the sun `halo` key is unchanged).
+  keep. **`&debugOptic=lunarhalo`** forces the moon halo independently for QA (the sun `halo` key is unchanged).
   *Geometric limit (accepted by design):* the moon sits in the top-right pocket ~56 px from the top/right card edges,
   so a true-to-scale ring (r≈135 px) necessarily extends past them; the card's `overflow:hidden` clips it to a clean
   **partial arc**. A radius small enough to fit fully (≤~56 px) would collapse into a corona/aureole and break the
   "distinct 22° ring" contract, so the partial arc is kept — it reads as a coherent halo curving around the moon.
 
-### Parhelia / sundogs (+ parhelic band) — *production + `?debugOptic=sundogs`*
+### Parhelia / sundogs (+ parhelic band) — *production + `&debugOptic=sundogs`*
 - **Family:** plate-ice refraction; two spots flanking the sun at the **same elevation**, a low-sun phenomenon.
 - **Gate:** `sunDogs = cirrus·sunUpO·clamp((12−e)/12)`.
 - **NOT:** vertical; a full ring; saturated blobs; present at high sun.  **Verdict:** keep.
 
-### Paraselenae / moondogs — *production + `?debugOptic=paraselene`*
+### Paraselenae / moondogs — *production + `&debugOptic=paraselene`*
 - **Gate:** `moonParhelia = cirrus·moonLume·clamp((14−moonSky.alt)/16)` — rare; bright moon + cirrus + low moon.
 - **NOT:** vertical; a ring; rainbow.  **Verdict:** keep.
 
-### Sun pillar — *production + `?debugOptic=pillar`*
+### Sun pillar — *production + `&debugOptic=pillar`*
 - **Family:** reflection off oriented plate/column ice crystals (cirrus or cold diamond-dust).
 - **Gate:** `D.cold · clamp((6−e)/8) · clamp((e+5)/7) · (0.45+0.55·cirrus)` — cold air (ice-crystal proxy) + a low
   sun; the 0.45 floor admits a diamond-dust pillar without cirrus (physically real in very cold air).
@@ -159,7 +164,9 @@ clear day (defined sun nucleus) · sunrise (low-left warm) · sunset (warm sky) 
 bright-moon night (local star wash, opaque disc) · cloudy night (moonlit rim) · overcast (warm-white sun, **no
 grey/purple blob**; **no Belt of Venus**) · fog/haze (desaturate, no fake cones) · rain & thunder (only with
 observed precip evidence) · snow · dawn/twilight (**no painted band/cone**; bright moon → no false-dawn) ·
-low-sun + cirrus (halo/sundogs ringing the **visible** sun) · debug-forced optics (`?debugOptic=…`).
+low-sun + cirrus (halo/sundogs ringing the **visible** sun) · debug-forced optics (`&debugOptic=…`, six names above).
+Flag activation alone does not prove visible motion or correct optical pixels; use recorded physical
+scene inputs for effects without a dedicated switch and a real-time 15–60 second watch for motion.
 
 ## Truthfulness non-negotiables (upheld)
 No forecast-only data claims live rain/thunder; no rain/lightning without observed-precip support; ambiguous/stale

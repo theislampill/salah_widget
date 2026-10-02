@@ -67,7 +67,7 @@ remain untracked and must **never** be committed. **Do not commit unless the use
 What changed in the (committed `91d0fc1`) live-motion pass (all verified live in preview, no console throws):
 - **Live motion (headline):** cloud advection/lifecycle were ~100× too slow (≈4 px/min → read as a frozen
   wallpaper while the `qaState` hash "changed" every frame). Now ≈70 screen-px/min at moderate wind + visible
-  morph. Added `?debugMotion=1` telemetry overlay and `?motion=full` (honest override of OS reduced-motion).
+  morph. Added `&debugMotion=1` telemetry overlay and `&motion=full` (honest override of OS reduced-motion).
 - **Sun:** scene-referred **tone-mapping** (Kasten–Young airmass + Beer–Lambert + per-class cloud transmittance +
   CCT blackbody + ACES) — fixes the grey/purple blob; **defined white nucleus + warm-gold body edge** (restored
   after a tone-map regression that greyed the disc); sunrise enters low-left; **optics register to the VISIBLE
@@ -109,7 +109,7 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
   whole 325×530 card.
 - **The `qaState().clouds.hash` is a TRAP for "is it moving?"** It is position-weighted and flips on sub-pixel
   change, so it changes every frame even when the sky is visually frozen — this caused repeated false PASS reports.
-  **Prove motion only with a real 15–60s watch / `?debugMotion=1` 10s–60s Δ / a centroid-drift probe**, never the
+  **Prove motion only with a real 15–60s watch / `&debugMotion=1` 10s–60s Δ / a centroid-drift probe**, never the
   hash. (The user treats their live observation as ground truth over any metric — rightly.)
 - **Moon orientation:** the disc is now **upright** (no rotation) — `renderMoonPBR(frac, waxing)` bakes the lit
   side (right=waxing, left=waning) with the maria fixed, so `.mfeatures` has **no `transform`** and the moon never

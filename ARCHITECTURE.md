@@ -106,7 +106,7 @@ independent time loops (a convention, not an enforced boundary).
 - **`tz`** (`let`, reassigned from the Aladhan response): `cacheKey`/`wxKey` are captured once at load, so a wrong
   URL `tz` hint causes a benign one-time cache miss + a small clock re-anchor near t0.
 - **Reduced motion** — the two duplicated JS `matchMedia` checks are unified behind one **live** helper
-  `isMotionReduced()` (`paint`'s `_REDUCED` and the loop's `_RM` both call it; `?motion=full` overrides). The CSS
+  `isMotionReduced()` (`paint`'s `_REDUCED` and the loop's `_RM` both call it; `&motion=full` overrides). The CSS
   `@media (prefers-reduced-motion)` blocks read the SAME native signal gated by the `.motionfull` class — they are
   the live native signal, not duplicated logic. One decision, consulted by JS and CSS.
 
@@ -166,7 +166,8 @@ rawCode, **rawForecastCode**, observedPrecipMm, activePrecip, activeThunder, dis
 downgradeReason, advancing, cloudFieldSeed); **`cache`** (weatherSource, weatherAgeSec, weatherStale,
 lastWeatherRefresh, forecastTrackLoaded, prayerDate, prayerLoaded, tomorrowLoaded, simulated); **`render`** (a
 real last-rendered summary: currentKey/nextKey/leftMin/progress/fx); plus `clouds`/`stars`/`sky`/`moonTruth`.
-On-card debug overlays: `?debugLayers=1`, `?debugMoon=1`, `?debugMotion=1` (rAF/cloud rates, cloud/star Δ).
+On-card debug overlays: `&debugLayers=1`, `&debugMoon=1`, `&debugMotion=1` (rAF/cloud rates, cloud/star Δ).
+Append these suffixes to the configuration fragment after `#`; see [complete recipes](DESIGN.md#url--hash--debug-parameters).
 
 ## Characterization smokes (added: `tests/smoke.html`, no-build, browser-runnable)
 Pure-function smokes call the global gate directly (deterministic, no network): dry forecast-thunder downgrades;

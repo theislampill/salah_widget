@@ -21,7 +21,7 @@ visual and physics-adjacent, so **review is dominated by looking at rendered pix
   layers/radius/alpha **+ disc opacity/occlusion (no stars through)**, buckle cut-out vs strap, rain origin vs
   cloud columns) and reports numbers + crops.
 - **Live-motion auditor** — proves the default real-time widget actually animates over 15–60s (cloud drift/morph,
-  star scintillation, sky breathing) via `?debugMotion=1` Δ / a clip / a centroid-drift probe. **Must NOT cite the
+  star scintillation, sky breathing) via `&debugMotion=1` Δ / a clip / a centroid-drift probe. **Must NOT cite the
   `qaState().clouds.hash` as motion evidence** (it flips on sub-pixel change — it produced false PASS reports).
 - **Atmospheric-optics researcher** — supplies condition gates, geometry, colour orders, gradient recipes for each
   phenomenon before it is coded.
@@ -63,8 +63,8 @@ A cycle PASSES only when, with **screenshot/clip evidence**:
 - I — Stars beautiful/alive/varied; **not** a spinning or static image; anchors + their glints **scintillate**.
 - J — Header belt (buckle **cut-out**, no strap through it) + footer + prayer UI intact and readable in every scene.
 - **M0 (live motion) — the default real-time widget VISIBLY animates over 15–60s where the scene allows (clouds
-  drift/morph, stars scintillate, sky breathes). Proven by a real watch / `?debugMotion=1` Δ, NEVER the qaState
-  hash. Accessibility: `prefers-reduced-motion` reduces it by default; `?motion=full` overrides.**
+  drift/morph, stars scintillate, sky breathes). Proven by a real watch / `&debugMotion=1` Δ, NEVER the qaState
+  hash. Accessibility: `prefers-reduced-motion` reduces it by default; `&motion=full` overrides.**
 - K/L/M — DESIGN.md + AGENTS.md + HANDOFF.md current; high-value comments present; approximations stated honestly.
 
 ## Evidence requirements (per cycle)
@@ -81,7 +81,7 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
 ## Forbidden regressions (instant FAIL)
 
 - **No visible motion in normal live real-time view** (a static "wallpaper" sky). Verify with a real 15–60s watch
-  / `?debugMotion=1` 10s–60s Δ — **NOT** the `qaState().clouds.hash` (it flips on sub-pixel change and lies).
+  / `&debugMotion=1` 10s–60s Δ — **NOT** the `qaState().clouds.hash` (it flips on sub-pixel change and lies).
 - The **moon rendered transparent** — stars visible *through* the disc, in ANY phase. The Moon is an opaque body.
 - An **empty moon slot / moonless normal night.** A new/below-horizon moon must still show a faint **ashen OPAQUE
   calendar disc** (no moonlight) — never blank sky, never a "new moon invisible" rule.
@@ -118,6 +118,8 @@ Do not commit or push unless the user explicitly asks. When asked: commit the **
 ## Running / debugging common scenarios
 
 Serve the folder statically and open `index.html#lat=24.47&lon=39.61&label=Madinah&method=4`.
+Append diagnostic flags to that same `#` fragment; the `&…` suffixes below are not query parameters.
+Complete motion/optics recipes and the six supported force names are in [DESIGN.md](DESIGN.md#url--hash--debug-parameters).
 
 - Day positions: `&simTime=12:30` (noon), `&simTime=05:50` (sunrise), `&simTime=18:55` (sunset/golden hour).
 - Weather visuals: `&simWx=2&simCloud=50` (broken), `&simWx=3&simCloud=100` (overcast), `&simWx=63` (rain),
