@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict');
 const {test} = require('node:test');
-const {realm, sha256, source, temporal, lifecycle, modelRealm, loadRender, loadLifecycle, prayerRecord} = require('./r0008-clock-harness.cjs');
+const {realm, sha256, source, temporal, skySources, lifecycle, modelRealm, loadRender, loadLifecycle, prayerRecord} = require('./r0008-clock-harness.cjs');
 console.log(`SOURCE ${sha256(source)} TEMPORAL ${sha256(temporal)}`);
 const base=Date.parse('2026-09-07T12:00Z');
 for(const step of [0,3600000,-3600000,7200000,-7200000]) {
@@ -36,8 +36,11 @@ test('actual loop renders forward and backward prayer-boundary corrections', () 
 test('actual hidden/resumed loop reads the current wall once without missed-second replay', () => {
   const c=boundaryLoop();
   c.dom.visibilityState='hidden'; c.dom.listeners.get('visibilitychange')(); assert.equal(c.pending.size,0);
+  if(skySources){ assert.equal(c.run('_cloudMotion.paused'),true); assert.equal(c.run('_cloudMotion.lastRt'),c.clock.mono); }
+  c.clock.mono=120000;
   c.clock.wall=Date.parse('2026-09-07T18:00:01Z');
   c.dom.visibilityState='visible'; c.dom.listeners.get('visibilitychange')(); assert.equal(c.pending.size,1);
+  if(skySources){ assert.equal(c.run('_cloudMotion.paused'),false); assert.equal(c.run('_cloudMotion.lastRt'),120000); }
   c.frame();
   assert.equal(c.dom.querySelector('.cn').textContent,'Maghrib'); assert(c.dom.querySelector('.left').innerHTML.includes('Isha'));
   assert.equal(c.pending.size,1); assert.equal(c.calls.requests.length,0);

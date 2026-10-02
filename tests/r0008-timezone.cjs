@@ -2,8 +2,40 @@
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const {test} = require('node:test');
-const {realm, countedIntl, sha256, source, temporal, modelRealm, loadRender, loadLifecycle, loadSettingsAffordance, prayerRecord} = require('./r0008-clock-harness.cjs');
+const {realm, countedIntl, sha256, source, temporal, skySources, modelRealm, loadRender, loadLifecycle, loadSettingsAffordance, prayerRecord} = require('./r0008-clock-harness.cjs');
 console.log(`SOURCE ${sha256(source)} TEMPORAL ${sha256(temporal)}`);
+
+test('CLOCK DOM begins with actual SKY markup while successful prayer rendering cannot qualify excluded producers', {skip:!skySources}, () => {
+  const c=loadRender(modelRealm({zone:'UTC',wall:Date.parse('2026-09-07T01:30Z')}));
+  const card=c.dom.querySelector('.c');
+  assert.equal(card.getAttribute('class'),'c sky-pending sky-initializing');
+  assert.equal(card.dataset.fx,undefined,'the markup has no weather publication');
+  assert.equal(c.dom.querySelector('.mphoto').getAttribute('href'),'');
+  assert.equal(c.dom.getElementById('ce'),c.dom.querySelector('.ce'));
+  c.run('render()');
+  assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
+  assert.equal((c.dom.querySelector('.times').innerHTML.match(/class="p /g)||[]).length,6);
+  assert.equal(c.run('_starProjectionKey'),null); assert.equal(c.run('_starsProjected'),false);
+  assert.equal(c.run('_pbrReady'),false); assert.equal(c.run('_skyCommitted'),false);
+  assert(card.classList.contains('sky-pending')); assert(card.classList.contains('sky-initializing'));
+  assert.equal(card.classList.contains('moon-ready'),false);
+});
+
+test('actual SKY reset clears stale gates before CLOCK boot and retains the unavailable surface', {skip:!skySources}, () => {
+  const c=loadRender(modelRealm({zone:'UTC'})), card=c.dom.querySelector('.c');
+  c.run('_skySceneKey="obsolete"; _skyCommitted=true; _skyMoonPresence=1; _starsProjected=true; _cloudReady=true; cloudState.covLow=cloudState.covMid=cloudState.covHigh=1; _colDens=new Float32Array([1,2]); _cloudDirty=false');
+  card.classList.add('moon-ready'); card.classList.remove('sky-pending','sky-initializing');
+  c.run('beginSkyScene()');
+  assert.equal(c.run('_skySceneKey'),null); assert.equal(c.run('_skyCommitted'),false);
+  assert.equal(c.run('_skyMoonPresence'),0); assert.equal(c.run('_starsProjected'),false);
+  assert.equal(c.run('_cloudReady'),false); assert.equal(c.run('_cloudDirty'),true);
+  assert.equal(c.run('cloudState.covLow+cloudState.covMid+cloudState.covHigh'),0);
+  assert.deepEqual(Array.from(c.run('_colDens')),[0,0]);
+  assert(card.classList.contains('sky-pending')); assert(card.classList.contains('sky-initializing'));
+  assert.equal(card.classList.contains('moon-ready'),false);
+  c.run('commitSkyScene({moonObservation:{fresh:false}})');
+  assert.equal(c.run('_skyCommitted'),false); assert(card.classList.contains('sky-pending'));
+});
 
 const r = realm({zone: 'America/New_York'});
 const convert = (parts, zone = 'America/New_York') => r.run(`epochForTzTime(${parts.join(',')},${JSON.stringify(zone)})`);

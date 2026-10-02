@@ -25,6 +25,15 @@ const prayerSource = slice('// ---- prayer-times data:', '// ---- weather (Open-
 const configBindings = slice('function bindConfig(c)', 'if(window.SalahConfig)');
 const persistenceSource = source.includes('function _publishPersistence(')
   ? slice('let _persistOutcome=null', '// A dialog session') : '';
+// Accepted SKY gates run unchanged. Catalog/canvas producers remain outside these CLOCK source tests.
+const skySources = source.includes('function beginSkyScene()') ? {
+  astronomy: slice('const _RAD=', '// ---- moon phase'),
+  stars: slice('let _starCat=null', 'function buildStars()'),
+  moonSurface: slice('let _mAlb=null', '(function loadMoonMaps()'),
+  moonGeometry: slice('let moonSky=', '// Raw backing-canvas'),
+  cloudMotion: slice('let _cloudFieldSeed=0', '// puff template'),
+  scene: slice('function skySceneIdentity()', '// build the animated weather overlay once')
+} : null;
 
 function realm({query = '', zone = 'UTC', wall = Date.parse('2026-09-07T12:00:00Z'), mono = 0,
   intl = Intl, block = temporal, globals = {}} = {}) {
@@ -72,21 +81,40 @@ function nodes() {
   const createElement = () => {
       let html = '', text = '';
       const classes=new Set(), attributes=new Map(), events=new Map(), children=[];
-      return {style: {}, dataset: {fx: 'clear'}, children, events,
+      const element = {style: {setProperty(name,value){this[name]=String(value);},removeProperty(name){delete this[name];}}, dataset: {}, children, events,
         classList: {add(...names) {names.forEach(name=>classes.add(name));}, remove(...names) {names.forEach(name=>classes.delete(name));},
-          toggle(name,on) {if(on===undefined)on=!classes.has(name);if(on)classes.add(name);else classes.delete(name);}, contains(name) {return classes.has(name);}},
-        setAttribute(name,value) {attributes.set(name,String(value));}, getAttribute(name) {return attributes.get(name)??null;},
+          toggle(name,on) {if(on===undefined)on=!classes.has(name);if(on)classes.add(name);else classes.delete(name);return !!on;}, contains(name) {return classes.has(name);}},
+        set className(value) {classes.clear();String(value).split(/\s+/).filter(Boolean).forEach(name=>classes.add(name));},
+        get className() {return [...classes].join(' ');},
+        setAttribute(name,value) {attributes.set(name,String(value));if(name==='class')this.className=value;
+          if(name.startsWith('data-'))this.dataset[name.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]=String(value);},
+        getAttribute(name) {return name==='class'?this.className:(attributes.get(name)??null);},
         appendChild(child) {children.push(child);}, querySelector(selector) {return children.find(child=>(child.className||'').split(' ').includes(selector.slice(1)))||null;},
         addEventListener(name,callback) {events.set(name,callback);},
         set textContent(value) {text = String(value); html = text;}, get textContent() {return text;},
         set innerHTML(value) {html = String(value); text = html.replace(/<[^>]*>/g, '');}, get innerHTML() {return html;}};
+      return element;
   };
+  // Read actual opening-tag attributes once; ID/class aliases share one node. This does not model layout,
+  // parsed generated SVG, CSS or canvas, and cannot manufacture a successful celestial production.
+  for(const match of slice('<body>', '<script src="config.js"></script>').matchAll(/<[a-z][\w:-]*\b([^>]*)>/gi)){
+    const element=createElement();
+    for(const attribute of match[1].matchAll(/([\w:-]+)\s*=\s*(["'])(.*?)\2/g)) element.setAttribute(attribute[1],attribute[3]);
+    const id=element.getAttribute('id'); if(id&&!store.has('#'+id))store.set('#'+id,element);
+    for(const name of element.className.split(/\s+/).filter(Boolean))if(!store.has('.'+name))store.set('.'+name,element);
+  }
   const querySelector = selector => {
     if (!store.has(selector)) store.set(selector,createElement());
     return store.get(selector);
   };
   return {querySelector, getElementById:id=>querySelector('#'+id), createElement, store, visibilityState:'visible',
     addEventListener(name, callback) {listeners.set(name, callback);}, listeners};
+}
+
+function loadSkyBindings(r) {
+  if(!skySources || r.skyBindingsLoaded) return r;
+  for(const block of Object.values(skySources))r.run(block);
+  return {...r,skyBindingsLoaded:true};
 }
 
 function modelRealm(options = {}) {
@@ -135,18 +163,19 @@ function loadPrayerPipeline(r) {
 }
 
 function loadRender(r, block = renderSource) {
-  r=loadPrayerPipeline(r);
-  Object.assign(r.context, {lastMoonMin: -1, moonSky: {}, _starsProjected: true,
+  r=loadSkyBindings(loadPrayerPipeline(r));
+  Object.assign(r.context, {lastMoonMin: -1,
     _prayerStale: false, _moonStaleWarned: false,
-    setLocLabel() {}, syncWeather() {}, renderMoon() {}, projectStars() {},
+    setLocLabel() {}, syncWeather() {}, renderMoon() {},
     fitCn() {}, drawArc: () => '<svg>fixture arc dependency</svg>', applyTheme() {},
     moonNow: () => ({phase: 0.5}), phaseEmoji: () => '◐', console});
+  if(!skySources)Object.assign(r.context,{moonSky:{},_starsProjected:true,projectStars(){}});
   r.run(block);
   return r;
 }
 
 function loadLifecycle(r, block = lifecycle, {autoTimings=true} = {}) {
-  r=loadPrayerPipeline(r); r.prayerTransport.auto=autoTimings;
+  r=loadSkyBindings(loadPrayerPipeline(r)); r.prayerTransport.auto=autoTimings;
   const calls={stars:0,weatherBuild:0,moon:0,weatherStart:0,cloud:0,requests:[],raf:0};
   calls.requests.push(...r.prayerTransport.requests.map(request=>request.day));
   r.prayerTransport.onRequest=request=>calls.requests.push(request.day);
@@ -154,7 +183,7 @@ function loadLifecycle(r, block = lifecycle, {autoTimings=true} = {}) {
   Object.assign(r.context, {QA:false, MOTIONFULL:false, DEBUGMOTION:false,
     _needsDetect:false, _cfgMode:'hardcoded',
     _loopStarted:false, lastDate:null, _prayerStale:false, _rolloverBusy:false,
-    _rolloverNextTry:0, _ROLLOVER_RETRY_MS:60000, _cloudDirty:true,
+    _rolloverNextTry:0, _ROLLOVER_RETRY_MS:60000,
     buildStars(){calls.stars++;}, buildWeather(){calls.weatherBuild++;},
     renderMoon(){calls.moon++;}, startWeather(){calls.weatherStart++;},
     fetchWeather(){}, fetchRadar(){}, isMotionReduced:()=>false,
@@ -174,4 +203,4 @@ function loadSettingsAffordance(r) {
 }
 
 module.exports = {sourcePath, source, configPath, configSource, sha256, slice, temporal, helpers, modelSource, prayerSource, persistenceSource,
-  renderSource, lifecycle, realm, countedIntl, prayerRecord, modelRealm, loadPrayerPipeline, loadRender, loadLifecycle, loadSettingsAffordance};
+  skySources, renderSource, lifecycle, realm, countedIntl, prayerRecord, modelRealm, loadPrayerPipeline, loadSkyBindings, loadRender, loadLifecycle, loadSettingsAffordance};
