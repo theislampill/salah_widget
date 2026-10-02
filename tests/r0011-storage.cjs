@@ -74,4 +74,13 @@ test("failed reset cancels pending GPS hint and abandoned fix cannot revive it",
   assert.match(status(f),/saved settings remain/);assert.match(status(f),/Enter to search/);assert.doesNotMatch(status(f),/Requesting/);assert.equal(f.storage.get(key),old);assert.deepEqual(f.config(),before);assert.equal(f.calls.coarse.length,0);const after=status(f);
   await f.resolveCall("gps",0,{coords:{latitude:52.52,longitude:13.41,accuracy:25},timestamp:Date.now()});assert.equal(status(f),after);assert.deepEqual(f.config(),before);
 });
+test("realm-local storage getter denial reaches caller then successful reset clears the warning",async()=>{
+  const f=make(),key=f.sandbox.SalahConfig.KEY,old=f.storage.get(key);f.sandbox.fixturePrivateStore=f.sandbox.localStorage;f.sandbox.DOMException=DOMException;
+  // Node's contextified global swallows some host-created getter exceptions.
+  // Define the denied getter in the same realm as the actual production caller.
+  f.run('Object.defineProperty(window,"localStorage",{configurable:true,get(){throw new DOMException("blocked getter","SecurityError");}})');
+  f.input("set-units","c","change");f.key("set-units","Escape");assert.equal(f.config().units,"c");assert.equal(f.storage.get(key),old);assert.equal(f.run("_storageErr"),"SecurityError");warning(f,/session only/);
+  f.buckle.dispatch("click");f.click("set-reset");assert.equal(f.calls.coarse.length,0);assert.match(status(f),/saved settings remain/);assert.equal(f.storage.get(key),old);
+  f.run('Object.defineProperty(window,"localStorage",{configurable:true,value:fixturePrivateStore,writable:true})');f.click("set-reset");assert.equal(f.storage.has(key),false);assert.equal(f.calls.coarse.length,1);assert.equal(f.run("_storageErr"),null);assert.equal(f.buckle.querySelector(".gear").textContent,"⚙");await f.resolveCall("coarse",0,{ok:false});assert.match(status(f),/Saved settings cleared.*Enter your location/s);
+});
 (async()=>{let failed=0;for(const c of cases){try{await c.body();console.log("PASS",c.name);}catch(e){failed++;console.error("FAIL",c.name,"\n",e.stack);}}console.log(JSON.stringify({cases:cases.length,passed:cases.length-failed,failed,ref:ref||"working-tree",mutant:mutant||null,native:"NOT_RUN"}));process.exitCode=failed?1:0;})();
