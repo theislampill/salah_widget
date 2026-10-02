@@ -711,15 +711,16 @@ const fmtDate = (o,calendar=null) => {
 };
 
 // ---- SINGLE TEMPORAL SOURCE OF TRUTH -------------------------------------------------------------
-// simTime = simBase + realElapsed·timeScale. EVERYTHING visual (sun altitude, sky colour, prayer state,
-// countdown, the arc marker, moon phase/altitude/moonlight) derives from it — there are no independent
-// time loops. timeScale (URL hash) = 1 → real time; >1 → fast-forward debug (e.g. 3600 = 1s/hour, 86400 =
-// 1s/day). A fixed simTime= without a timeScale= freezes the clock (timeScale 0) for single-scene previews.
+// Ordinary loads follow Date.now(); explicit previews use simBase + realElapsed·timeScale. EVERYTHING
+// visual (sun altitude, sky colour, prayer state, countdown, arc, moon) consumes the same simNow() API.
+// An explicit timeScale=1 is an anchored 1× preview; >1 fast-forwards (3600 = 1s/hour). A fixed simTime=
+// without timeScale= freezes the scene. Parameter presence expresses preview intent, not just its rate.
 const _RAFNOW = ()=> (typeof performance!=='undefined' && performance.now) ? performance.now() : Date.now();
 const _tsParam=q.get("timeScale");
 let TIMESCALE = _tsParam!=null ? Math.max(0,+_tsParam||0) : (SIM.time!=null ? 0 : 1);
 const ADVANCING = _tsParam!=null && TIMESCALE>0;          // a running fast-forward → show the sim clock
-let _rafT0=_RAFNOW(), _simBase=null, _simTz=null;
+const FOLLOW_WALL_CLOCK = _tsParam==null && SIM.time==null && TIMESCALE===1;
+let _rafT0=_RAFNOW(), _simBase=null, _simTz=null, _simValid=true, _simInvalidTz=null;
 function partsInTz(ms){
   try{
     const f=new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
@@ -730,17 +731,94 @@ function partsInTz(ms){
     return {y:d.getFullYear(),mo:d.getMonth()+1,d:d.getDate(),h:d.getHours(),mi:d.getMinutes(),s:d.getSeconds(),dateStr:`${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()}`};
   }
 }
-// epoch (ms) for a Y-M-D H:M interpreted in the configured timezone (guess UTC, measure tz offset, correct)
-function epochForTzTime(y,mo,d,h,mi){ const guess=Date.UTC(y,mo-1,d,h,mi,0); const p=partsInTz(guess); return guess-(Date.UTC(p.y,p.mo-1,p.d,p.h,p.mi,p.s)-guess); }
+// Strict Gregorian coordinate, including years 1–99 (Date.UTC would reinterpret those as 1901–1999).
+// Projection may cross the BCE boundary; callers of the inverse require a positive requested year.
+function utcFields(y,mo,d,h=0,mi=0,s=0){
+  if(![y,mo,d,h,mi,s].every(Number.isInteger) || mo<1 || mo>12 || d<1 || d>31 || h<0 || h>23 || mi<0 || mi>59 || s<0 || s>59) return NaN;
+  const date=new Date(0); date.setUTCFullYear(y,mo-1,d); date.setUTCHours(h,mi,s,0);
+  const ms=date.getTime();
+  return Number.isFinite(ms) && date.getUTCFullYear()===y && date.getUTCMonth()+1===mo && date.getUTCDate()===d ? ms : NaN;
+}
+function zoneFormatter(zone){
+  return new Intl.DateTimeFormat("en-US-u-ca-gregory-nu-latn",{timeZone:zone,calendar:"gregory",numberingSystem:"latn",era:"short",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"});
+}
+function projectInZone(formatter,ms){
+  try{
+    const p={}; for(const part of formatter.formatToParts(new Date(ms))) p[part.type]=part.value;
+    if(p.era!=="AD" && p.era!=="BC") return null;
+    const y=p.era==="BC" ? 1-(+p.year) : +p.year, mo=+p.month, d=+p.day, h=+p.hour, mi=+p.minute, s=+p.second;
+    if(!Number.isFinite(utcFields(y,mo,d,h,mi,s))) return null;
+    return {y,mo,d,h,mi,s};
+  }catch(e){ return null; }
+}
+// Minute-precision inverse, fail-closed for gaps, folds and unsupported offsets. One day profile searches
+// all 4,321 UTC minutes in the ±24h offset window; reuse it across model/hourly callers, never each frame.
+// This deliberately does not certify historical second-resolution offsets or arbitrary IANA history.
+const _zoneDays=new Map();
+function zoneDay(y,mo,d,zone){
+  const key=JSON.stringify([zone,y,mo,d]);
+  if(_zoneDays.has(key)) return _zoneDays.get(key);
+  const profile={formatter:null,minutes:null};
+  _zoneDays.set(key,profile); if(_zoneDays.size>4) _zoneDays.delete(_zoneDays.keys().next().value);
+  try{
+    const f=zoneFormatter(zone), u=utcFields(y,mo,d), minutes=Array.from({length:1440},()=>[]);
+    for(let ms=u-86400000;ms<=u+172800000;ms+=60000){
+      const p=projectInZone(f,ms);
+      if(!p) return profile;
+      const offset=(utcFields(p.y,p.mo,p.d,p.h,p.mi,p.s)-ms)/60000;
+      if(!Number.isInteger(offset) || Math.abs(offset)>1440) return profile;
+      if(p.y===y && p.mo===mo && p.d===d && p.s===0){
+        const entry=minutes[p.h*60+p.mi]; if(!entry.includes(ms)) entry.push(ms);
+      }
+    }
+    profile.formatter=f; profile.minutes=minutes;
+  }catch(e){}
+  return profile;
+}
+function epochForTzTime(y,mo,d,h,mi,zone=tz){
+  if(y<=0 || typeof zone!=="string" || !zone || !Number.isFinite(utcFields(y,mo,d,h,mi))) return NaN;
+  const profile=zoneDay(y,mo,d,zone), entry=profile.minutes && profile.minutes[h*60+mi];
+  if(!entry || entry.length!==1) return NaN;
+  const ms=entry[0], p=projectInZone(profile.formatter,ms);
+  return p && p.y===y && p.mo===mo && p.d===d && p.h===h && p.mi===mi && p.s===0 ? ms : NaN;
+}
 function initSim(){
-  const real=partsInTz(Date.now());
-  if(SIM.time!=null){ const t=String(SIM.time).split(":"); _simBase=epochForTzTime(real.y,real.mo,real.d,((+t[0]%24)+24)%24,(+t[1]||0)); }
-  else _simBase=Date.now();
-  _rafT0=_RAFNOW(); _simTz=tz;
+  const now=Date.now(); let base=now;
+  if(SIM.time!=null){
+    let real=null; try{ real=projectInZone(zoneFormatter(tz),now); }catch(e){}
+    const t=String(SIM.time).split(":");
+    base=real ? epochForTzTime(real.y,real.mo,real.d,((+t[0]%24)+24)%24,(+t[1]||0),tz) : NaN;
+  }
+  if(!Number.isFinite(base)){ _simBase=null; _simValid=false; _simInvalidTz=tz; return false; }
+  _simBase=base; _rafT0=_RAFNOW(); _simTz=tz; _simValid=true; _simInvalidTz=null;
+  return true;
 }
 // re-anchor when the timezone settles (it loads from the location AFTER boot — only changes once, near t0)
-function simNow(){ if(_simBase==null || _simTz!==tz) initSim(); return _simBase + (_RAFNOW()-_rafT0)*TIMESCALE; }
+function simNow(){
+  if(FOLLOW_WALL_CLOCK) return Date.now();
+  if(!_simValid && _simInvalidTz===tz) return NaN;
+  if((_simBase==null || _simTz!==tz) && !initSim()) return NaN;
+  return _simBase + (_RAFNOW()-_rafT0)*TIMESCALE;
+}
 function simDate(){ return new Date(simNow()); }
+// An unresolved explicit scene has no celestial/prayer clock. Hide its retained outputs without changing
+// geometry or settings access, and restore each element's prior visibility when a valid scene recovers.
+const _simHidden=new Map(); let _simClockDisplay=null;
+function simulationReady(){
+  const valid=SIM.time==null || Number.isFinite(simNow()), sc=$(".simclock");
+  if(!valid){
+    for(const selector of [".sky","#wxfx",".climate",".arc",".bar",".cn",".times",".d"]){
+      const el=$(selector); if(el && !_simHidden.has(el)){ _simHidden.set(el,el.style.visibility); el.style.visibility="hidden"; }
+    }
+    showError("Simulation time unavailable");
+    if(sc){ if(_simClockDisplay===null) _simClockDisplay=sc.style.display; sc.textContent="SIM unavailable"; sc.style.display="block"; }
+    return false;
+  }
+  for(const [el,visibility] of _simHidden) el.style.visibility=visibility;
+  _simHidden.clear();
+  if(sc && _simClockDisplay!==null){ sc.style.display=_simClockDisplay; _simClockDisplay=null; }
+  return true;
+}
 // current wall-clock in the configured timezone, derived from simTime (not the browser clock)
 function nowParts(){ return partsInTz(simNow()); }
 function tomorrowStr(){
@@ -1292,28 +1370,55 @@ function isDayNow(nowMin){
 }
 
 // build everything render() needs, in tz minutes
+function prayerDayFields(record){
+  const g=record && record.date && record.date.gregorian;
+  if(!g) return null;
+  const y=+g.year, mo=+(g.month && g.month.number), d=+g.day;
+  return y>0 && Number.isFinite(utcFields(y,mo,d)) ? {y,mo,d,dateStr:`${pad(d)}-${pad(mo)}-${y}`} : null;
+}
 function model(){
-  const n=nowParts(), nowMin=n.h*60+n.mi+n.s/60, t=today.timings;
+  if(!today || !today.timings) return null;
+  const nowEpoch=simNow(); if(!Number.isFinite(nowEpoch)) return null;
+  const n=partsInTz(nowEpoch), nowMin=n.h*60+n.mi+n.s/60, t=today.timings;
+  const list=prayers.map(k=>({k,m:mins(t[k]),t:t[k]})).sort((a,b)=>a.m-b.m);
+  const sunsetMin=mins(t.Sunset||t.Maghrib);
+  // Ingress owns full validation; this defense prevents nonfinite or unbounded bypassed minutes from
+  // entering the normalization loops. Equal/reordered finite polar clocks remain supported.
+  if(!Number.isFinite(nowMin) || list.some(x=>!Number.isFinite(x.m) || x.m<0 || x.m>=1440) || !Number.isFinite(sunsetMin) || sunsetMin<0 || sunsetMin>=1440) return null;
   const noon=mins(t.Dhuhr), start=noon-720;
   const norm=x=>{ while(x<start)x+=1440; while(x>=start+1440)x-=1440; return x; };
   // sort the six waypoints by time-of-day so "next"/"current" stay correct even if the timings
   // aren't in the usual Fajr→Isha order (e.g. a mis-set time zone shifts them around the clock).
-  const list=prayers.map(k=>({k,m:mins(t[k]),t:t[k]})).sort((a,b)=>a.m-b.m);
   const i=list.findIndex(x=>x.m>nowMin);
-  let next, nextMin, prevMin, tomorrowFlag;
+  const currentDay=prayerDayFields(today);
+  let next, nextMin, prevMin, tomorrowFlag, nextDay=currentDay, nextRecord=today;
   if(i>=0){ next=list[i]; nextMin=next.m; prevMin=i>0?list[i-1].m:list[list.length-1].m-1440; tomorrowFlag=false; }
-  else { const ft=tomorrow?tomorrow.timings.Fajr:t.Fajr; next={k:"Fajr",t:ft,m:mins(ft)}; nextMin=mins(ft)+1440; prevMin=list[list.length-1].m; tomorrowFlag=true; }
+  else {
+    nextDay=prayerDayFields(tomorrow); nextRecord=tomorrow;
+    if(currentDay){
+      const successor=new Date(utcFields(currentDay.y,currentDay.mo,currentDay.d)); successor.setUTCDate(successor.getUTCDate()+1);
+      if(!nextDay || nextDay.y!==successor.getUTCFullYear() || nextDay.mo!==successor.getUTCMonth()+1 || nextDay.d!==successor.getUTCDate()) nextDay=null;
+    }else nextDay=null;
+    const ft=tomorrow && tomorrow.timings ? tomorrow.timings.Fajr : t.Fajr;
+    next={k:"Fajr",t:ft,m:mins(ft)}; nextMin=next.m+1440; prevMin=list[list.length-1].m; tomorrowFlag=true;
+    if(!Number.isFinite(next.m) || next.m<0 || next.m>=1440){ nextDay=null; nextMin=mins(t.Fajr)+1440; }
+  }
+  const nextZone=nextRecord && nextRecord.meta && nextRecord.meta.timezone || tz;
+  const [nextHour,nextMinute]=clean(next.t).split(":").map(Number);
+  const nextEpoch=nextDay ? epochForTzTime(nextDay.y,nextDay.mo,nextDay.d,nextHour,nextMinute,nextZone) : NaN;
+  const leftMin=Number.isFinite(nextEpoch) && nextEpoch>nowEpoch ? (nextEpoch-nowEpoch)/60000 : NaN;
   const passed=list.filter(x=>x.m<=nowMin); let cur=passed.length?passed[passed.length-1].k:"Isha";
   // "Sunrise" only lingers 20 min; the rest of the morning (until Dhuhr) is "Forenoon"
   if(cur==="Sunrise" && nowMin >= mins(t.Sunrise)+20) cur="Forenoon";
   const doy=Math.floor((Date.UTC(n.y,n.mo-1,n.d)-Date.UTC(n.y,0,0))/86400000);
   const decl=23.44*Math.PI/180*Math.sin(2*Math.PI*(doy-80)/365.25);   // solar declination (rad), from the date
   return {
-    t, noon, decl, doy, sunrise:norm(mins(t.Sunrise)), sunset:norm(mins(t.Sunset||t.Maghrib)),
+    t, noon, decl, doy, sunrise:norm(mins(t.Sunrise)), sunset:norm(sunsetMin),
     nowMin, nowAbs:norm(nowMin), warmEnd: tomorrowFlag ? start+1440 : norm(next.m),
     dots: prayers.map(k=>({k, abs:norm(mins(t[k]))})),
     currentKey:cur, nextKey:next.k, nextTime:next.t,
-    leftMin:nextMin-nowMin, progress:clamp((nowMin-prevMin)/(nextMin-prevMin)),
+    leftMin, nowEpoch, nextEpoch, nextDateStr:nextDay && nextDay.dateStr, nextZone,
+    progress:clamp((nowMin-prevMin)/(nextMin-prevMin)),
     needTomorrow:tomorrowFlag
   };
 }
@@ -2102,10 +2207,12 @@ function genLightning(seed){
 }
 let _lastBolt=-1, _lastRender=null;   // _lastRender: last actually-rendered state summary (observability, read by qaState)
 function render(){
+  if(!simulationReady()){ _lastRender=null; return; }
   if(!today) return;
   setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)
   syncWeather();                                              // sim/fast-forward: pull weather from the forecast track at simTime
   const M=model();
+  if(!M){ showError("Prayer times unavailable"); _lastRender=null; return; }
   const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin || moonGeometryObservation(M).fresh!==true){ renderMoon(); lastMoonMin=moonSky._min; }   // minute cadence + date/location invalidation; failed production never advances the success marker
   // REAL-TIME: star POSITIONS stay fixed (no record-player spin) — only CSS per-star scintillation varies. The sky
   // is re-projected ONLY under timeScale (ADVANCING), or once per new day, so fast-forward shows celestial motion.
@@ -2116,8 +2223,10 @@ function render(){
     fetchTimings(tomorrowStr()).then(d=>{tomorrow=d;fetchingTomorrow=false;}).catch(()=>{fetchingTomorrow=false;});
   }
   $(".cn").textContent = M.currentKey;
-  $(".nt").textContent = fmt(M.nextTime);
-  $(".left").innerHTML = `<span class="until-time">${dur(M.leftMin)}</span> <span class="until-label">left</span> <span class="until-label">until</span> <span class="until-prayer">${M.nextKey}</span>`;
+  if(Number.isFinite(M.leftMin)){
+    $(".nt").textContent = fmt(M.nextTime);
+    $(".left").innerHTML = `<span class="until-time">${dur(M.leftMin)}</span> <span class="until-label">left</span> <span class="until-label">until</span> <span class="until-prayer">${M.nextKey}</span>`;
+  }else showError("Countdown unavailable");
   $(".bar>i").style.width = (M.progress*100).toFixed(1)+"%";
   $(".arc").innerHTML = drawArc(M);
   fitCn(M);
@@ -2266,6 +2375,7 @@ function startWeather(){
 }
 // The post-config PRAYER-DATA pipeline (cache → live fetch → render).
 async function loadPrayerData(){
+  if(!simulationReady()) return;
   const ds=nowParts().dateStr;
   const cached=loadCache(ds);
   if(cached){ today=cached; if(cached.meta&&cached.meta.timezone) tz=cached.meta.timezone; lastDate=ds; render(); }
@@ -2284,7 +2394,7 @@ function resetForNewLocation(){
   weather=null; weatherTrack=null; lastWxAt=0; lastWxTry=0;
   weatherRadar=null; lastRadarAt=0;
   _starsProjected=false; _prayerStale=false;
-  renderMoon();
+  if(simulationReady()) renderMoon();
 }
 // Apply a new WidgetConfig at RUNTIME (settings panel) — IN-MEMORY, no reload, so it still
 // works when third-party-iframe localStorage is blocked/partitioned. opts.save persists it.
@@ -2298,6 +2408,7 @@ async function applyConfig(cfg, opts){
   }
   bindConfig(cfg);
   resetForNewLocation();
+  if(!simulationReady()) return;
   if(lat==null||lon==null){ render(); return; }     // incomplete manual entry → nothing to load yet
   startWeather();
   await loadPrayerData();
@@ -2305,6 +2416,7 @@ async function applyConfig(cfg, opts){
 }
 
 async function boot(){
+  if(!simulationReady()) return;
   if(QA){ lastWxAt=0; lastWxTry=0; }                          // QA: always build a fresh forecast track on boot (cache must not block it)
   buildStars();
   buildWeather();
@@ -2337,6 +2449,7 @@ async function boot(){
     enableSettingsAffordance();                               // saved/opted-in local config → settings gear available
   }
 
+  if(!simulationReady()) return;                            // coordinate detection may have changed the explicit scene's zone
   startWeather();
   await loadPrayerData();
   startRenderLoop();
@@ -2347,6 +2460,7 @@ async function boot(){
 // prayer state and moon all advance from simTime. Decorative weather motion lives in CSS
 // (wind/precip-driven), independent of this clock. Stops entirely when the iframe is hidden/offscreen.
 function startRenderLoop(){
+  if(!simulationReady()) return;
   if(_loopStarted) return; _loopStarted=true;
   const cEl=document.querySelector(".c");
   if(MOTIONFULL && cEl) cEl.classList.add("motionfull");    // CSS reduced-motion rules are scoped to .c:not(.motionfull)
@@ -2356,12 +2470,13 @@ function startRenderLoop(){
   let _rafN=0,_cloudN=0,_tickAcc=_RAFNOW(),_rafPS=0,_cloudPS=0;   // loop rate counters (consumed only by the debugMotion overlay, which now lives at module scope)
   function loop(){
     _rafN++;
+    if(!simulationReady()){ _raf=requestAnimationFrame(loop); return; }
     const n=nowParts();
     if(n.dateStr!==_lastDateStr){                       // crossed (sim) midnight → load that day's timings
       if(_lastDateStr){
         const ds=n.dateStr, c=loadCache(ds);
         if(c){                                          // new-day data is cached → adopt it and advance the day
-          today=c; tomorrow=null; lastDate=ds; _prayerStale=false; _lastDateStr=ds; renderMoon(); _starsProjected=false;
+          today=c; tomorrow=null; lastDate=ds; _prayerStale=false; _lastDateStr=ds; if(simulationReady()) renderMoon(); _starsProjected=false;
         } else {
           // No cache for the new day yet. Do NOT advance _lastDateStr (so we keep retrying) and do NOT pass
           // yesterday's `today` off as the new day — flag it stale (qaState exposes prayerStale). Throttle the
@@ -2371,7 +2486,7 @@ function startRenderLoop(){
           const ms=Date.now();
           if(!_rolloverBusy && ms>=_rolloverNextTry){
             _rolloverBusy=true; _rolloverNextTry=ms+_ROLLOVER_RETRY_MS;
-            fetchTimings(ds).then(d=>{ today=d; saveCache(ds,d); lastDate=ds; _prayerStale=false; _lastDateStr=ds; renderMoon(); _starsProjected=false; _rolloverBusy=false; })
+            fetchTimings(ds).then(d=>{ today=d; saveCache(ds,d); lastDate=ds; _prayerStale=false; _lastDateStr=ds; if(simulationReady()) renderMoon(); _starsProjected=false; _rolloverBusy=false; })
                             .catch(()=>{ _rolloverBusy=false; });   // stays stale; _rolloverNextTry gates the next attempt
           }
         }
