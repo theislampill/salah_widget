@@ -556,7 +556,7 @@ body{color:#fff7df;
       <div class="set-locrow">
         <input class="set-i" id="set-label" type="text" placeholder="place to search, or a custom name" autocomplete="off">
         <select class="set-i set-units" id="set-units" aria-label="Temperature units" title="Temperature units (auto from your area)"><option value="f">°F</option><option value="c">°C</option></select>
-        <button type="button" class="set-pin" id="set-pin" aria-label="Use precise location" title="Estimated from your IP. Click to use precise location (GPS).">
+        <button type="button" class="set-pin" id="set-pin" aria-label="Use browser location" title="Estimated from your IP. Click to request browser location.">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 2C7.6 2 4 5.6 4 10c0 5.2 7.1 11.6 7.5 11.9a.75.75 0 0 0 1 0C12.9 21.6 20 15.2 20 10 20 5.6 16.4 2 12 2ZM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
         </button>
       </div>
@@ -2693,7 +2693,10 @@ window.qaState=function(){
         autoDetectSource: _autoDetectSource, autoDetectStatus: _autoDetectStatus,
         storageAvailable: (window.SalahConfig?SalahConfig.storageAvailable().ok:false), storageError: _storageErr,
         geolocationPermissionState: _geoPermission, geolocationLastError: _geoLastError,
-        lat: lat, lon: lon, tz: tz, label: label,
+        lat: lat, lon: lon, tz: tz, label: label, method:method, units:units,
+        locationEvidence: CONFIG&&CONFIG.locationEvidence||null,
+        fixAgeMs: CONFIG&&CONFIG.locationEvidence&&CONFIG.locationEvidence.acquiredAt!=null&&CONFIG.locationEvidence.acquiredAt<=Date.now() ? Date.now()-CONFIG.locationEvidence.acquiredAt : null,
+        savedAt: CONFIG&&CONFIG.savedAt||null,
         hashConfigOverridden: !!overridden,
         why: _cfgMode==="hardcoded" ? "explicit hash lat/lon (no local flag) → hardcoded wins; saved config ignored"
            : _cfgMode==="preferLocal" ? "preferLocal=1 → saved local config (if any) overrides hash defaults"
@@ -2819,7 +2822,7 @@ async function applyConfig(cfg, opts){
   if(opts.save && window.SalahConfig){
     const r=SalahConfig.saveLocal(cfg);
     _publishPersistence("save",r);                 // publish before any awaited provider work
-    if(r.ok){ cfg.origin=cfg.source; cfg.source="localStorage"; cfg.savedAt=r.savedAt; }   // keep how the coords were obtained (pin reflects origin, not the storage marker)
+    if(r.ok){ cfg.origin=cfg.origin||cfg.source; cfg.source="localStorage"; cfg.savedAt=r.savedAt; }   // acquisition evidence and original origin survive the storage marker
   }
   beginRuntimeGeneration();
   bindConfig(cfg);
@@ -2924,6 +2927,7 @@ let _setWired=false, _setLastFocus=null, _setSearchSeq=0, _setCands=[], _setCand
 let _setSession=0, _setEdit=0, _setOpen=false, _setCandOwner=null, _setFocusTimer=0;
 let _setPrefSeq=0, _setPrefVersions={};
 let _persistOutcome=null, _setHint={msg:"",isErr:false};
+let _setLocationEvidence=null, _setLocationOrigin="manual", _setLocationSaved=false;
 const _SET_PREF_IDS={method:"set-method",school:"set-school",time:"set-time",units:"set-units",datefmt:"set-datefmt"};
 try{ _setHomeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}
 const _byId=id=>document.getElementById(id);
@@ -2969,16 +2973,18 @@ function _newerSetPrefs(owner){
   Object.entries(_SET_PREF_IDS).forEach(([key,id])=>{ if((_setPrefVersions[key]||0)!==(owner[key]||0)) prefs[key]=_byId(id).value; });
   return prefs;
 }
-// the map-pin's tri-state: "ip" = estimated from IP (lit red, default ON), "precise" = GPS active (glowing),
-// "manual" = typed name / edited coords (greyscale, not sensing). Clicking the pin requests precise GPS.
+// Pin colours distinguish area/browser/site; browser provenance does not prove
+// the device is still there. Saved fixes keep their original epoch and accuracy.
 function _setPin(src){
   _locSource=src;
   const b=_byId("set-pin"); if(!b) return;
   b.classList.remove("lit","glow","off");
   b.classList.add(src==="precise"?"glow":src==="ip"?"lit":"off");
-  const t = src==="precise" ? "Using precise location (GPS) — click to refresh"
-          : src==="ip" ? "Estimated from your IP — click for precise location (GPS)"
-          : "Manual location — click for precise location (GPS)";
+  const evidence=_setLocationEvidence, accuracy=evidence && evidence.accuracyM!=null ? evidence.accuracyM+" m" : "unknown";
+  const age=evidence && evidence.acquiredAt!=null && evidence.acquiredAt<=Date.now() ? Math.floor((Date.now()-evidence.acquiredAt)/60000)+" min old" : "time unknown";
+  const t = src==="precise" ? (_setLocationSaved?"Saved browser position":"Browser position")+" · accuracy "+accuracy+" · fix "+age+" — click to refresh"
+          : src==="ip" ? "Estimated from your IP — click to request browser location"
+          : "Configured site — click to request browser location";
   b.title = t; b.setAttribute("aria-label", t);   // state-bearing accessible name (not color-only)
 }
 
@@ -2990,7 +2996,7 @@ async function _runSetSearch(q){
   let cands=[];
   try{ if(window.SalahConfig) cands=await SalahConfig.geocodeSearch(q,{homeCC:bias}); }catch(e){}
   if(!_ownsSetLookup(owner)) return;
-  if(!cands.length){ _setCands=[]; _setStatus("Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for precise location.",true); return; }
+  if(!cands.length){ _setCands=[]; _setStatus("Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for browser location.",true); return; }
   _setCands=cands; _setCandIdx=0; _setCandOwner={...owner,label:_byId("set-label").value}; _showSetCand();
 }
 function _showSetCand(){
@@ -2999,6 +3005,7 @@ function _showSetCand(){
   _byId("set-lat").value=(+c.lat).toFixed(5);
   _byId("set-lon").value=(+c.lon).toFixed(5);
   if(c.name) _byId("set-label").value=c.name;                 // display name follows the chosen place (override later with Shift+Enter)
+  _setLocationEvidence=window.SalahConfig?SalahConfig.placeLocationEvidence(c):null; _setLocationOrigin="place"; _setLocationSaved=false;
   _setCandOwner.label=_byId("set-label").value;              // cycling owns its programmatic display-name update
   _setPin("manual"); _setDirty=true;                          // a searched place is a user choice, not live sensing → grey pin
   _setStatus(_setCands.length>1
@@ -3026,8 +3033,8 @@ function _settingsFormToConfig(){
     label:g("set-label").value.trim(), method:g("set-method").value, school:g("set-school").value,
     time:g("set-time").value, units:g("set-units").value,
     datefmt:g("set-datefmt").value.trim()||"YYYY-MM-DD",
-    tz:(CONFIG&&CONFIG.tz)||tz, lp:LPOLL,
-    source:(_locSource==="precise"?"browser-geolocation":_locSource==="ip"?"coarse-ip":"manual") };
+    tz:(CONFIG&&CONFIG.tz)||tz, lp:LPOLL, locationEvidence:_setLocationEvidence,
+    source:_setLocationOrigin };
   return window.SalahConfig ? SalahConfig.normalize(base) : base;
 }
 function _populateSettingsForm(){
@@ -3036,15 +3043,17 @@ function _populateSettingsForm(){
   g("set-label").value = label||""; g("set-method").value=method; g("set-school").value=school;
   g("set-time").value=fmt24?"24":"12"; g("set-units").value=units; g("set-datefmt").value=datefmtStr;
   _syncDateFromBox();
-  const _src=(CONFIG&&(CONFIG.origin||CONFIG.source))||"";   // origin survives a Save (source becomes "localStorage") so the pin reflects how the coords were really obtained
-  _setPin(_src==="browser-geolocation"?"precise":(_src==="coarse-ip"?"ip":"manual"));
+  _setLocationEvidence=window.SalahConfig?SalahConfig.normalize(CONFIG||{}).locationEvidence:null;
+  _setLocationOrigin=(CONFIG&&(CONFIG.origin||CONFIG.source))||"manual"; _setLocationSaved=!!CONFIG&&CONFIG.source==="localStorage";
+  const intent=_setLocationEvidence&&_setLocationEvidence.intent;
+  _setPin(intent==="device-position"?"precise":(intent==="coarse-area"?"ip":"manual"));
   _setCands=[]; _setCandOwner=null; _setSearchSeq++; _setDirty=false; // fresh open: nothing to auto-save yet
   _setStatus("Enter to search a place · Shift+Enter to keep the typed name.");
 }
 function _wireSettings(){
   if(_setWired) return; _setWired=true;
   _byId("setClose").addEventListener("click",_closeSettings);
-  _byId("set-pin").addEventListener("click",_usePrecise);     // map-pin → precise GPS (asks permission)
+  _byId("set-pin").addEventListener("click",_usePrecise);     // one-shot browser position (asks permission)
   _byId("set-reset").addEventListener("click",_resetLocal);
   // AUTO-SAVE (no Save button): any edit marks the form dirty → committed on close. Esc closes; Tab is trapped.
   const panel=_byId("settings");
@@ -3060,9 +3069,13 @@ function _wireSettings(){
       else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
     }
   });
-  // typing a name / editing coordinates = manual → the pin goes greyscale (no longer location-sensing)
+  // Name edits preserve acquisition; coordinate edits select a manual site.
   ["set-label","set-lat","set-lon"].forEach(id=>_byId(id).addEventListener("input",()=>{
-    _invalidateSetLocation(); if(_locSource!=="manual") _setPin("manual");
+    _invalidateSetLocation();
+    if(id!=="set-label"){
+      _setLocationEvidence=window.SalahConfig?SalahConfig.normalize({source:"manual"}).locationEvidence:null;
+      _setLocationOrigin="manual"; _setLocationSaved=false; _setPin("manual");
+    }
     _setStatus("Enter to search a place · Shift+Enter to keep the typed name.");
   }));
   // date format: preset dropdown <-> editable code box (mirrors builder.html)
@@ -3100,19 +3113,20 @@ function _commitSettings(){
 }
 async function _usePrecise(){    // the map-pin button → precise GPS (only place getCurrentPosition is called)
   _invalidateSetLocation(); const owner=_captureSetLookup();
-  if(!window.SalahConfig){ _setStatus("Precise location unavailable.",true); return; }
-  _setStatus("Requesting precise location…");
+  if(!window.SalahConfig){ _setStatus("Browser location unavailable.",true); return; }
+  _setStatus("Requesting browser location…");
   let r; try{ r=await SalahConfig.geolocate({}); }catch(e){ r={ok:false,error:"unavailable"}; }
   if(!_ownsSetLookup(owner)) return;
   let permission=_geoPermission; try{ permission=await SalahConfig.permissionState(); }catch(e){}
   if(!_ownsSetLookup(owner)) return;
   _geoPermission=permission;
   if(r.ok){ _byId("set-lat").value=(+r.lat).toFixed(5); _byId("set-lon").value=(+r.lon).toFixed(5); _geoLastError=null;
-    _setPin("precise"); _setDirty=true;                       // pin glows = precise GPS active
-    _setStatus("Using your precise location."); }
+    _setLocationEvidence=r.locationEvidence||SalahConfig.normalize({source:"browser-geolocation"}).locationEvidence; _setLocationOrigin="browser-geolocation"; _setLocationSaved=false;
+    _setPin("precise"); _setDirty=true;
+    _setStatus(_byId("set-pin").title); }
   else { _geoLastError=r.error||"denied";
     _setStatus(r.error==="unsupported" ? "Geolocation isn't available in this browser/iframe." :
-      "Precise location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the estimated area.", true); }
+      "Browser location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the estimated area.", true); }
 }
 async function _resetLocal(){
   _invalidateSetLocation(); const owner=_captureSetLookup(), prefOwner={..._setPrefVersions};

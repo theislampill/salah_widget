@@ -13,7 +13,7 @@
  * load, so a 404 degrades instead of white-screening.
  *
  * Sources of a resolved config (the `source` field): hash | localStorage | coarse-ip
- * | browser-geolocation | manual | fallback.
+ * | browser-geolocation | place | manual | fallback.
  * ========================================================================== */
 (function (root) {
   "use strict";
@@ -33,7 +33,7 @@
     datefmt: "YYYY-MM-DD",
     units: "f",
     lp: 0, seed: null,
-    source: "fallback", savedAt: null
+    source: "fallback", savedAt: null, locationEvidence: null
   };
 
   // Back-compat date-format preset keys (old embeds) → Unicode token strings.
@@ -44,6 +44,44 @@
   function clampN(x, a, b) { return Math.min(b, Math.max(a, x)); }
   function clamp01(x) { return clampN(x, 0, 1); }
   function mapDatefmt(raw) { if (!raw) return DEFAULTS.datefmt; return DATEFMT_PRESETS[String(raw).toLowerCase()] || String(raw); }
+  function finiteNumber(x) { return typeof x === "number" && isFinite(x) ? x : null; }
+  function boundsNumber(x) { return typeof x === "number" || typeof x === "string" && x.trim() ? numOrNull(x) : null; }
+  function textOrNull(x, max) { return typeof x === "string" && x ? x.slice(0, max) : null; }
+  function locationBounds(b) {
+    if (!b || [b.south,b.north,b.west,b.east].some(function (n) { return finiteNumber(n) === null; })) return null;
+    if (b.south < -90 || b.north > 90 || b.south > b.north || b.west < -180 || b.east > 180 || b.west > b.east) return null;
+    return { south:b.south, north:b.north, west:b.west, east:b.east };
+  }
+  // Coordinates select a target. Evidence describes acquisition, never presence
+  // "here now". No decimal-derived accuracy or savedAt-derived fix timestamp.
+  function normalizeLocationEvidence(raw, cfg) {
+    cfg = cfg || {};
+    var origins = ["hash","manual","place","browser-geolocation","coarse-ip","legacy","unknown"];
+    var original = cfg.origin || cfg.source, source = raw && origins.indexOf(raw.source) >= 0 ? raw.source : original;
+    var intent = source === "browser-geolocation" ? "device-position" : source === "coarse-ip" ? "coarse-area"
+      : ["hash","manual","place"].indexOf(source) >= 0 ? "fixed-site" : "unknown";
+    if (source === "browser-geolocation" && (!raw || raw.source !== source)) source = "legacy";
+    if (source === "localStorage") source = "legacy";
+    if (origins.indexOf(source) < 0) source = "unknown";
+    if (source === "legacy" && raw && ["fixed-site","device-position","coarse-area","unknown"].indexOf(raw.intent) >= 0) intent = raw.intent;
+    var accuracy = source === "browser-geolocation" && raw ? finiteNumber(raw.accuracyM) : null;
+    var acquired = source === "browser-geolocation" && raw ? finiteNumber(raw.acquiredAt) : null;
+    if (accuracy !== null && accuracy < 0) accuracy = null;
+    // Zero skew allowance: future/nonpositive epochs remain unknown, not age 0.
+    if (acquired !== null && (acquired <= 0 || acquired > Date.now())) acquired = null;
+    return { intent:intent, source:source, accuracyM:accuracy, acquiredAt:acquired,
+      provider:textOrNull(raw && raw.provider || (source === "coarse-ip" && cfg.detectProvider), 80),
+      area:textOrNull(raw && raw.area || (source === "coarse-ip" && cfg.area), 240),
+      bounds:locationBounds(raw && raw.bounds) };
+  }
+  // Both one-shot acquisition callers consume this exact Position contract.
+  function browserLocationEvidence(pos) {
+    return normalizeLocationEvidence({ source:"browser-geolocation", accuracyM:pos && pos.coords && pos.coords.accuracy,
+      acquiredAt: pos && pos.timestamp }, {});
+  }
+  function placeLocationEvidence(c) {
+    return normalizeLocationEvidence({ source:"place", provider:c && c.provider, area:c && c.norm, bounds:c && c.bounds }, {});
+  }
 
   // ---- parse: URL hash → partial config (present keys only) + mode flags -----
   function parseHash(hashStr) {
@@ -83,6 +121,7 @@
     c.seed = numOrNull(c.seed);
     c.source = (typeof c.source === "string" && c.source) ? c.source : "fallback";
     c.savedAt = numOrNull(c.savedAt);
+    c.locationEvidence = normalizeLocationEvidence(c.locationEvidence, c);
     c.v = 1;
     return c;
   }
@@ -150,7 +189,7 @@
       if (!j || j.v !== 1) return null;            // version gate (future migrations)
       var c = normalize(j);
       if (!validate(c).ok) return null;            // corrupt/partial → ignore (fall through to detect)
-      c.origin = c.source;                         // how the coords were obtained (coarse-ip / browser-geolocation / manual) — survives the storage marker
+      c.origin = c.origin || c.source;             // preserve acquisition origin independently of the storage marker
       c.source = "localStorage"; c.savedAt = numOrNull(j.savedAt);
       return c;
     } catch (e) { return null; }
@@ -208,7 +247,8 @@
           var d = p.parse(j);
           if (d.lat == null || d.lon == null || isNaN(d.lat) || isNaN(d.lon)) throw new Error("no coords");
           var cfg = normalize({ lat: d.lat, lon: d.lon, label: d.label || "",
-            tz: tzIntl || d.tz || "", method: methodForCC(d.cc), units: unitsForCC(d.cc), source: "coarse-ip" });
+            tz: tzIntl || d.tz || "", method: methodForCC(d.cc), units: unitsForCC(d.cc), source: "coarse-ip",
+            detectProvider:p.name, area:d.area || d.label || "" });
           cfg.source = "coarse-ip"; cfg.detectProvider = p.name; cfg.accuracy = d.accuracy; cfg.area = d.area || cfg.label;
           return { ok: true, cfg: cfg, source: "coarse-ip", provider: p.name, status: "ok" };
         });
@@ -224,8 +264,9 @@
     return new Promise(function (resolve) {
       if (!root.navigator || !root.navigator.geolocation) { resolve({ ok: false, error: "unsupported" }); return; }
       root.navigator.geolocation.getCurrentPosition(
-        function (pos) { resolve({ ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude,
-          accuracy: pos.coords.accuracy, source: "browser-geolocation" }); },
+        function (pos) { var evidence = browserLocationEvidence(pos);
+          resolve({ ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude,
+            accuracy:evidence.accuracyM, acquiredAt:evidence.acquiredAt, locationEvidence:evidence, source:"browser-geolocation" }); },
         function (err) { resolve({ ok: false, error: (err && err.message) || "denied", code: err && err.code }); },
         { enableHighAccuracy: false, timeout: opts.timeoutMs || 10000, maximumAge: 600000 }
       );
@@ -286,7 +327,8 @@
       var place = a.city || a.town || a.village || a.hamlet || a.municipality || a.suburb || a.county || res.name || "";
       return { lat: parseFloat(res.lat), lon: parseFloat(res.lon), name: place,
         norm: [place, a.state || a.region || a.province || "", a.country || ""].filter(Boolean).join(", "),
-        cc: (a.country_code || "").toLowerCase() };
+        cc: (a.country_code || "").toLowerCase(), provider:"Nominatim",
+        bounds:Array.isArray(res.boundingbox) && res.boundingbox.length === 4 ? locationBounds({south:boundsNumber(res.boundingbox[0]),north:boundsNumber(res.boundingbox[1]),west:boundsNumber(res.boundingbox[2]),east:boundsNumber(res.boundingbox[3])}) : null };
     });
   }
   function _zipCand(j) {
@@ -294,7 +336,7 @@
     var p = j.places[0], place = (p["place name"] || "").split(" (")[0].trim();
     return { lat: +p.latitude, lon: +p.longitude, name: place,
       norm: [place, p.state || "", j.country || ""].filter(Boolean).join(", "),
-      cc: (j["country abbreviation"] || "").toLowerCase() };
+      cc: (j["country abbreviation"] || "").toLowerCase(), provider:"Zippopotam", bounds:null };
   }
   function _dedupeCands(cs) {
     var out = [];
@@ -324,7 +366,7 @@
 
   root.SalahConfig = {
     KEY: KEY, DEFAULTS: DEFAULTS, DATEFMT_PRESETS: DATEFMT_PRESETS,
-    geocodeSearch: geocodeSearch,
+    geocodeSearch: geocodeSearch, browserLocationEvidence:browserLocationEvidence, placeLocationEvidence:placeLocationEvidence,
     parseHash: parseHash, normalize: normalize, validate: validate, serialize: serialize,
     storageAvailable: storageAvailable, loadLocal: loadLocal, saveLocal: saveLocal, clearLocal: clearLocal,
     coarseDetect: coarseDetect, geolocate: geolocate, permissionState: permissionState,

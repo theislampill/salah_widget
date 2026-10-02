@@ -73,7 +73,7 @@ iframe{box-shadow:0 18px 50px #0008}
     </div>
     <div class="locrow">
       <input id="label" placeholder="city, postcode, or place name" value="Madinah">
-      <button class="geo-pin" id="geo" type="button" aria-label="Use precise location" title="Estimated from your IP — click for precise location (GPS)">
+      <button class="geo-pin" id="geo" type="button" aria-label="Use browser location" title="Estimated from your IP — click to request browser location">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 2C7.6 2 4 5.6 4 10c0 5.2 7.1 11.6 7.5 11.9a.75.75 0 0 0 1 0C12.9 21.6 20 15.2 20 10 20 5.6 16.4 2 12 2ZM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
       </button>
     </div>
@@ -196,11 +196,11 @@ const fields=["label","lat","lon","method","school","time","units"];
 const base=location.href.replace(/builder\.html.*$/,"").replace(/[?#].*$/,"");
 
 // embed mode: "portable" (fixed lat/lon baked in) | "local" (generic #local=1 auto-detect)
-let embedMode="portable";
+let embedMode="portable", builderLocation=null;
 function formConfig(){
   return { lat:$("lat").value.trim(), lon:$("lon").value.trim(), label:$("label").value.trim(),
     method:$("method").value, school:$("school").value, time:$("time").value, units:$("units").value,
-    datefmt:$("dfcode").value.trim()||"YYYY-MM-DD" };
+    datefmt:$("dfcode").value.trim()||"YYYY-MM-DD", source:builderLocation?builderLocation.source:"manual", locationEvidence:builderLocation };
 }
 // SINGLE shared serializer (config.js) → builder and widget can't drift apart.
 function hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode==="local"?{mode:"local",explicitPrefs:["method","units"]}:{}) : ""; }
@@ -264,9 +264,10 @@ let homeCC=""; try{ homeCC=(new Intl.Locale(navigator.language).region||"").toLo
 function setGeoPin(state){
   const b=$("geo"); if(!b) return;
   b.classList.remove("lit","glow","off"); b.classList.add(state==="glow"?"glow":state==="lit"?"lit":"off");
-  b.title = state==="glow" ? "Using precise location (GPS) — click to refresh"
-          : state==="lit" ? "Estimated from your IP — click for precise location (GPS)"
-          : "Manual location — click for precise location (GPS)";
+  const accuracy=builderLocation && builderLocation.accuracyM!=null ? builderLocation.accuracyM+" m" : "unknown";
+  b.title = state==="glow" ? "Browser position · accuracy "+accuracy+" — click to refresh"
+          : state==="lit" ? "Estimated from your IP — click to request browser location"
+          : "Configured site — click to request browser location";
   b.setAttribute("aria-label", b.title);
 }
 function setTip(text){ $("geotip").textContent=text; }
@@ -277,8 +278,9 @@ function stopDots(){}
 function searchReset(){ clearTimeout(srchDebounce); clearTimeout(tipRevert); clearTimeout(geoTimer); locationEdit++; srchSeq++; multiCands=[]; multiOwner=null; setTip(TIP_DEFAULT); }
 function captureLookup(){ return {edit:locationEdit,seq:++srchSeq}; }
 function ownsLookup(owner){ return owner.edit===locationEdit && owner.seq===srchSeq; }
-function searchFailed(owner){ setTip("Couldn’t find that — try the pin (precise GPS) or enter coordinates."); tipRevert=setTimeout(()=>{ if(ownsLookup(owner)) setTip(TIP_DEFAULT); },4000); }
+function searchFailed(owner){ setTip("Couldn’t find that — try the pin (browser location) or enter coordinates."); tipRevert=setTimeout(()=>{ if(ownsLookup(owner)) setTip(TIP_DEFAULT); },4000); }
 function applyCand(c){                                // push a candidate's coords (+ method) into the form & preview
+  builderLocation=window.SalahConfig?SalahConfig.placeLocationEvidence(c):null;
   $("lat").value=(+c.lat).toFixed(5); $("lon").value=(+c.lon).toFixed(5);
   if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";
   update();
@@ -302,7 +304,7 @@ async function doSearch(q){
   else { multiCands=cands; multiIdx=0; multiOwner={...owner,label:$("label").value}; showMulti(); }
 }
 $("label").addEventListener("input",()=>{
-  labelAuto=false; setGeoPin("off");                 // typing → manual (not location-sensing); programmatic .value sets don't fire 'input'
+  labelAuto=false;                                  // a display-name edit does not change the target's acquisition
   const q=$("label").value.trim();
   searchReset();
   if(q.length<2) return;                            // nothing meaningful to search
@@ -333,7 +335,7 @@ async function fillNameFromCoords(edit=locationEdit){
     update();
   }catch(e){}
 }
-["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ searchReset(); setGeoPin("off"); const edit=locationEdit; geoTimer=setTimeout(()=>fillNameFromCoords(edit),700); }));
+["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ builderLocation=null; searchReset(); setGeoPin("off"); const edit=locationEdit; geoTimer=setTimeout(()=>fillNameFromCoords(edit),700); }));
 
 // ---- date format: preset dropdown <-> editable format-code box ------------
 const DF_PRESETS=["YYYY-MM-DD","MM/DD/YYYY","DD/MM/YYYY","DD MMMM YYYY"];
@@ -430,12 +432,13 @@ $("install").onclick=()=>{
 function locate(auto){                                 // pin click → precise GPS (browser permission)
   searchReset();
   if(!navigator.geolocation){ if(!auto) setTip("Geolocation isn't available in this browser."); return; }
-  const owner=captureLookup(); setTip("Requesting precise location…");
+  const owner=captureLookup(); setTip("Requesting browser location…");
   navigator.geolocation.getCurrentPosition(
     pos=>{ if(!ownsLookup(owner)) return;
+           builderLocation=window.SalahConfig?SalahConfig.browserLocationEvidence(pos):null;
            $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
-           setGeoPin("glow"); setTip("Using your precise location."); update(); fillNameFromCoords(owner.edit); },
-    err=>{ if(ownsLookup(owner) && !auto) setTip("Precise location unavailable ("+err.message+"). Type a place, or it stays estimated."); },
+           setGeoPin("glow"); setTip("Using browser position · accuracy "+(builderLocation && builderLocation.accuracyM!=null?builderLocation.accuracyM+" m":"unknown")+"."); update(); fillNameFromCoords(owner.edit); },
+    err=>{ if(ownsLookup(owner) && !auto) setTip("Browser location unavailable ("+err.message+"). Type a place, or it stays estimated."); },
     {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
   );
 }
@@ -448,11 +451,12 @@ async function detectArea(){
   let d=null; try{ d=await SalahConfig.coarseDetect(); }catch(e){}
   if(!ownsLookup(owner)) return;
   if(d&&d.ok){
+    builderLocation=SalahConfig.normalize(d.cfg).locationEvidence;
     $("lat").value=(+d.cfg.lat).toFixed(5); $("lon").value=(+d.cfg.lon).toFixed(5);
     if(labelAuto && d.cfg.label) $("label").value=d.cfg.label;
     if(methodAuto && d.cfg.method) $("method").value=d.cfg.method;
     setGeoPin("lit"); setTip("Detected: "+(d.cfg.label||"your area")+" (approx.)"); update();
-  } else { setGeoPin("off"); setTip("Couldn’t detect — type a place, or click the pin for precise GPS."); }
+  } else { setGeoPin("off"); setTip("Couldn’t detect — type a place, or click the pin for browser location."); }
 }
 
 // on load: coarse IP auto-detect (no prompt) fills the form and lits the pin; precise GPS is opt-in via

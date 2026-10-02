@@ -30,6 +30,17 @@ function widget(options={}) {
     loadPrayerData:()=>queue("prayer",{}),startRenderLoop:()=>calls.loop++,
     render:()=>calls.render++,showError:msg=>calls.errors.push(msg)
   });
+  // CLOCK's valid-scene and once-only catalog consumers remain actual source.
+  // Explicit simulation parsing/geometry is outside this CONFIG-only fixture.
+  if(new URLSearchParams(f.sandbox.location.hash.slice(1)).has("simTime"))throw new Error("explicit simulation belongs to CLOCK fixture");
+  function helper(name){const start=page.indexOf("function "+name+"("),end=page.indexOf("\n}",start);if(start<0||end<start)throw new Error(name+" source boundary missing");return page.slice(start,end+2);}
+  if(page.includes("function simulationReady()")){
+    f.sandbox.SIM={time:null};f.run("const _simHidden=new Map(); let _simClockDisplay=null;");f.run(helper("simulationReady"));
+  }
+  if(page.includes("function buildSceneOnce()")){f.run("let _sceneBuilt=false;");f.run(helper("buildSceneOnce"));}
+  // PRAYER owns the real request-slot/cooldown controller. Its explicit boundary
+  // double advances only generation; CONFIG still executes actual apply/boot.
+  if(page.includes("beginRuntimeGeneration();"))f.run("let _runtimeGeneration=0; function beginRuntimeGeneration(){_runtimeGeneration++;}");
   const applyStart=page.indexOf("async function applyConfig("), bootStart=page.indexOf("async function boot(){",applyStart), bootEnd=page.indexOf("// SINGLE rAF render clock",bootStart);
   if(applyStart<0 || bootStart<applyStart || bootEnd<bootStart)throw new Error("apply/boot source boundary missing");
   let runtime=page.slice(applyStart,bootEnd);
