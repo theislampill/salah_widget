@@ -377,10 +377,11 @@ body{color:#fff7df;
 
 /* prayer-times grid */
 .times{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:6px;margin-top:9.6px}
-.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;background:linear-gradient(160deg,#ffffff26,#ffffff0d);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
-.p.on{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 30%,transparent),color-mix(in srgb,var(--accent) 12%,transparent));border-color:color-mix(in srgb,var(--accent) 50%,transparent)}
+/* Schedule values stay opaque; every state keeps a local dark base beneath its decorative tint. */
+.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;color:#f0edf8;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.90);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
+.p.on{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 30%,transparent),color-mix(in srgb,var(--accent) 12%,transparent)),rgba(9,17,28,.90);border-color:color-mix(in srgb,var(--accent) 50%,transparent)}
 .p.now{box-shadow:var(--glass),inset 0 0 0 1.5px color-mix(in srgb,var(--text) 55%,transparent)}
-.p.past{opacity:.42}
+.p.past{border-color:#ffffff1f}
 .p b{font-weight:600;font-size:12.5px;line-height:16.7px;letter-spacing:.01em}
 .tm{font-weight:600;font-size:12.5px;line-height:16.7px}
 
@@ -709,6 +710,8 @@ const fmtDate = (o,calendar=null) => {
   const t={YYYY:yyyy, YY:yyyy.slice(-2), MMMM:mon, MMM:mon.slice(0,3), MM:pad(mn), M:String(mn), DD:pad(day), D:String(day)};
   return datefmtStr.replace(/YYYY|YY|MMMM|MMM|MM|M|DD|D/g, m=>t[m]);
 };
+// Date formats and provider text stay literal; encode once only where trusted markup is assembled.
+const escHtml = v => String(v).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 // ---- SINGLE TEMPORAL SOURCE OF TRUTH -------------------------------------------------------------
 // Ordinary loads follow Date.now(); explicit previews use simBase + realElapsed·timeScale. EVERYTHING
@@ -2237,19 +2240,19 @@ function render(){
     return `<div class="p ${on?"on":""} ${now?"now":""} ${dim?"past":""}"><b>${k}</b><span class="tm">${fmt(M.t[k])}</span></div>`;
   }).join("");
   const g=today.date&&today.date.gregorian, h=today.date&&today.date.hijri;
-  $("#ce").innerHTML = g ? `${fmtDate(g)}<span class="er">CE</span>` : "";
+  $("#ce").innerHTML = g ? `${escHtml(fmtDate(g))}<span class="er">CE</span>` : "";
   // AH advances at Maghrib (not midnight). BEFORE Maghrib show today's Hijri plus a faint preview of
   // the day that begins tonight — "| <moon-phase emoji> <that day's number>" at ~20% opacity. AFTER
   // Maghrib the date itself becomes that next day and the preview/emoji is dropped entirely.
   const tmrwH = tomorrow && tomorrow.date && tomorrow.date.hijri;
   const ahH = (afterMaghrib && tmrwH) ? tomorrow.date.hijri : h;
-  const tail = (!afterMaghrib && tmrwH) ? ` <span class="mph pre">| ${phaseEmoji(moonNow().phase)} ${tomorrow.date.hijri.day}</span>` : "";
+  const tail = (!afterMaghrib && tmrwH) ? ` <span class="mph pre">| ${phaseEmoji(moonNow().phase)} ${escHtml(tomorrow.date.hijri.day)}</span>` : "";
   // DAY-ROLLOVER STALE CUE (prayer-only): if the day rolled over but the new day's timings could not be loaded, the
   // shown times may be the previous day's — surface a quiet WORDED "stale" chip by the Hijri date + a faint date-row
   // desaturation (via .c[data-stale]). Set from render() (where _prayerStale is known); NEVER read by atmosphere().
   // Scope is prayer-time staleness ONLY — weather staleness stays in qaState, not on the card.
   const staleTag = _prayerStale ? `<span class="staletag" title="Prayer times may be out of date — couldn't refresh for the new day">stale</span> ` : "";
-  $("#ah").innerHTML = ahH ? `${staleTag}<span class="er">ه</span>${fmtDate(ahH)}${tail}` : staleTag;
+  $("#ah").innerHTML = ahH ? `${staleTag}<span class="er">ه</span>${escHtml(fmtDate(ahH,"hijri"))}${tail}` : staleTag;
   $(".c").dataset.stale = _prayerStale ? "prayer" : "";
   // applyTheme captures the geometry actually consumed; a later producer cannot erase stale/failure evidence.
   applyTheme(M);
