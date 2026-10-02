@@ -23,6 +23,8 @@ const renderSource = slice('let _lastBolt=-1', 'function updateSimClock');
 const lifecycle = slice('async function loadPrayerData()', '// ——————————————————————— in-widget settings');
 const prayerSource = slice('// ---- prayer-times data:', '// ---- weather (Open-Meteo:');
 const configBindings = slice('function bindConfig(c)', 'if(window.SalahConfig)');
+const persistenceSource = source.includes('function _publishPersistence(')
+  ? slice('let _persistOutcome=null', '// A dialog session') : '';
 
 function realm({query = '', zone = 'UTC', wall = Date.parse('2026-09-07T12:00:00Z'), mono = 0,
   intl = Intl, block = temporal, globals = {}} = {}) {
@@ -83,7 +85,7 @@ function nodes() {
     if (!store.has(selector)) store.set(selector,createElement());
     return store.get(selector);
   };
-  return {querySelector, createElement, store, visibilityState:'visible',
+  return {querySelector, getElementById:id=>querySelector('#'+id), createElement, store, visibilityState:'visible',
     addEventListener(name, callback) {listeners.set(name, callback);}, listeners};
 }
 
@@ -105,7 +107,7 @@ function loadPrayerPipeline(r) {
   const requests=[], timers=new Map(), storage=new Map(); let serial=0;
   const transport={requests,timers,storage,auto:false,onRequest:null};
   Object.assign(r.context, {lat:24,lon:39,label:'Fixture',method:'2',school:'0',units:'f',LPOLL:0,
-    _cacheTz:r.context.tz,CONFIG:null,lastDate:null,_loopStarted:false,
+    _cacheTz:r.context.tz,CONFIG:null,lastDate:null,_loopStarted:false,_storageErr:null,
     fetchingTomorrow:false,_prayerStale:false,_rolloverBusy:false,_rolloverNextTry:0,_ROLLOVER_RETRY_MS:60000,
     wxBusy:false,radarBusy:false,AbortController,
     setTimeout(callback,ms=0){const id=++serial;timers.set(id,{at:r.clock.mono+Number(ms),callback});return id;},
@@ -126,6 +128,7 @@ function loadPrayerPipeline(r) {
   r.context._clockFixtureConfig={lat:24,lon:39,tz:r.context.tz,label:'Fixture',method:'2',school:'0',
     time:r.context.fmt24?'24':'12',units:'f',datefmt:r.context.datefmtStr,source:'manual'};
   r.run('bindConfig(SalahConfig.normalize(_clockFixtureConfig))');
+  if(persistenceSource) r.run(persistenceSource); // Actual accepted settings/save disclosure, when present in this source.
   r.run(prayerSource); // Actual admission, ownership, deadlines, cache, prefetch, adoption and civil-day paths.
   transport.settle=async()=>{for(let i=0;i<16;i++) await Promise.resolve();};
   return {...r,prayerTransport:transport};
@@ -170,5 +173,5 @@ function loadSettingsAffordance(r) {
   return r;
 }
 
-module.exports = {sourcePath, source, configPath, configSource, sha256, slice, temporal, helpers, modelSource, prayerSource,
+module.exports = {sourcePath, source, configPath, configSource, sha256, slice, temporal, helpers, modelSource, prayerSource, persistenceSource,
   renderSource, lifecycle, realm, countedIntl, prayerRecord, modelRealm, loadPrayerPipeline, loadRender, loadLifecycle, loadSettingsAffordance};

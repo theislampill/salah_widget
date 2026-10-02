@@ -177,3 +177,47 @@ test('valid boot and subsequent config reuse builders; bare embeds keep existing
   await c.run('applyConfig({lat:24,lon:39,tz:"UTC"})'); c.frame(); await c.run('boot()');
   assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
 });
+
+test('actual failed save discloses session-only state before acquisition and a successful retry clears it',
+  {skip:!source.includes('_publishPersistence("save",r)')}, async()=>{
+  const c=loadSettingsAffordance(loadLifecycle(loadRender(modelRealm({query:'simTime=02:30',zone:'UTC',
+    wall:Date.parse('2026-03-08T12:00Z')})),undefined,{autoTimings:false}));
+  c.run('enableSettingsAffordance()');
+  const buckle=c.dom.querySelector('.buckle'), storage=c.context.localStorage;
+  assert.equal(c.dom.getElementById('settings-persistence-status'),c.dom.querySelector('#settings-persistence-status'));
+  const setItem=storage.setItem, blocked=Object.assign(new Error('fixture denied'),{name:'SecurityError'});
+  storage.setItem=()=>{throw blocked;};
+  const applying=c.run('applyConfig({lat:24,lon:39,tz:"UTC",source:"manual"},{save:true})');
+  assert.equal(c.run('_persistOutcome.status'),'session-only'); assert.equal(c.run('_storageErr'),'SecurityError');
+  assert.equal(c.dom.querySelector('#settings-persistence-status').textContent,
+    'Changes apply for this session only. Could not save settings (SecurityError).');
+  assert(c.dom.querySelector('#set-status').classList.contains('err'));
+  assert(buckle.classList.contains('persist-warning'));
+  assert.equal(buckle.getAttribute('aria-label'),'Widget settings — changes not saved; session only');
+  assert.equal(buckle.querySelector('.gear').textContent,'!');
+  assert.equal(c.run('CONFIG.source'),'manual'); assert.equal(c.run('CONFIG.savedAt'),null);
+  assert.equal(c.run('SalahConfig.loadLocal()'),null);
+  assert.equal(c.prayerTransport.requests.length,1); assert.equal(c.context.today,null);
+  assert.equal(c.run('_runtimeGeneration'),1,'failed persistence still applies the session configuration');
+  c.prayerTransport.requests[0].resolve(); await applying; c.frame();
+  assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
+  assert.equal(c.run('model().nextEpoch'),Date.parse('2026-03-08T05:00Z'));
+  assert.equal(c.run('model().leftMin'),150);
+  assert.equal((c.dom.querySelector('.times').innerHTML.match(/class="p /g)||[]).length,6);
+  assert(buckle.classList.contains('persist-warning'),'successful prayer acquisition is not a successful settings save');
+
+  storage.setItem=setItem;
+  const retry=c.run('applyConfig({lat:24,lon:39,tz:"UTC",source:"manual"},{save:true})');
+  assert.equal(c.run('_persistOutcome.status'),'saved'); assert.equal(c.run('_storageErr'),null);
+  assert.equal(c.dom.querySelector('#settings-persistence-status').textContent,'Settings saved in this browser.');
+  assert.equal(c.dom.querySelector('#set-status').classList.contains('err'),false);
+  assert.equal(buckle.classList.contains('persist-warning'),false);
+  assert.equal(buckle.getAttribute('aria-label'),'Widget settings'); assert.equal(buckle.querySelector('.gear').textContent,'⚙');
+  assert.equal(c.run('CONFIG.source'),'localStorage'); assert.equal(c.run('CONFIG.origin'),'manual');
+  assert.equal(c.run('CONFIG.savedAt'),c.clock.wall);
+  assert.equal(c.run('SalahConfig.loadLocal().savedAt'),c.clock.wall);
+  const pending=c.prayerTransport.requests.at(-1); assert.equal(pending.day,'08-03-2026'); assert.equal(pending.zone,'UTC');
+  pending.resolve(); await retry; c.frame();
+  assert.equal(c.run('_runtimeGeneration'),2); assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
+  assert.equal(c.run('model().leftMin'),150);
+});
