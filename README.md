@@ -40,14 +40,17 @@ widget and paste the snippet above (with your own coordinates).
 
 ### One-line install (optional setup wizard)
 
-Don't want to set TablissNG up by hand? A small installer detects your browser, downloads the
-right TablissNG extension asset, and stages a ready-made preset (this widget in
-self-configuring mode) for you to import. The **Install widget** button on the
-[builder](https://theislampill.github.io/salah_widget/builder.html) copies the command for
-your OS:
+A small installer detects browser/profile targets, downloads a TablissNG asset when needed,
+and stages a preset for **manual** browser installation/import. Normal execution needs an
+interactive terminal. The Bash wizard requires a readable controlling terminal (`/dev/tty`)
+for every answer; missing terminal input or EOF fails rather than acknowledging an install.
+
+The **Install widget** button on the [builder](https://theislampill.github.io/salah_widget/builder.html)
+copies an OS-specific command that fetches published `main`. It does not execute a
+local checkout or an unmerged candidate. The published one-liners are:
 
 ```bash
-# macOS / Linux
+# Bash route (macOS / Linux)
 curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | bash
 ```
 ```powershell
@@ -59,10 +62,55 @@ If you've configured the widget in the builder, the **Install widget** button ba
 settings into the install (via a `SALAH_WIDGET_HASH` the wizard writes into the preset's
 iframe), so you don't have to reconfigure after installing.
 
-It **never** silently installs extensions or writes to browser storage — it downloads the
-asset, opens the browser's own install page, and stages the preset for **manual** import. It
-runs code from this repo, so review-first works too:
-`curl -fsSLO …/install.sh` → `less install.sh` → `bash install.sh`.
+#### Review and preview local files
+
+To inspect or test a candidate, use its reviewed local files. Read [install.sh](install.sh)
+or [install.ps1](install.ps1) in an editor first, then run these commands from that checkout:
+
+```bash
+DRY_RUN=1 bash "./install.sh"
+```
+```powershell
+powershell.exe -NoProfile -File ".\install.ps1" -DryRun
+```
+
+These are **offline previews**: the installer performs read-only local discovery and prints
+planned actions, with no network requests, clipboard changes, browser opens, staging,
+file writes, extraction or cleanup. No interactive answers are required. Release/version,
+asset paths and an `ask` source choice remain unresolved until execution; no detected or
+eligible target is an explicit non-success result. Downloading the script beforehand is a
+separate network action. This preview contract applies to the reviewed candidate files;
+a `main` one-liner is not evidence that those candidate bytes have been published.
+
+For normal execution after review, use `bash "./install.sh"` or
+`powershell.exe -NoProfile -File ".\install.ps1"` in an interactive terminal. The Windows
+script requires Windows PowerShell 5.1 or later; use `pwsh.exe` for PowerShell 7 with the
+same file arguments. `SALAH_WIDGET_HASH` can carry the builder's percent-encoded fragment
+without the leading `#`; preserve its single quotes and encoding when using a local file.
+`NO_OPEN=1` / `-NoOpen` suppress browser opening only; they do not make execution a dry-run.
+
+Normal Bash staging uses existing `curl`, Python 3 and native `stat`/`id`/`mktemp` tools.
+Native Apple Bash 3.2/macOS qualification is still incomplete; automatic staging can refuse
+symlinked or untrusted home/temporary ancestry. The manual iframe/preset route remains available.
+
+#### Keep the files needed by the browser
+
+The Bash wizard creates fresh private scratch and a retained bundle under the validated home
+directory, using `$HOME/salah-widget-install.XXXXXXXX`. Repeated asset requests within the
+same attempt can reuse its validated download; a later invocation creates fresh roots and
+does not adopt a cross-run shared cache or an older retained bundle as a download cache.
+Only verified scratch is cleaned up. The retained bundle survives exit and partial failures;
+the wizard prints its exact path and labels incomplete work.
+
+Keep the selected Chromium directory **while the unpacked extension is installed**. Preset
+JSON/Firefox XPI removal after the actual import/install is optional and manual. The Windows
+wizard stages files under `%TEMP%\SalahWidgetInstaller`, rather than the Bash home bundle;
+choose a durable location before using **Load unpacked** if temporary-directory cleanup
+could remove it, and keep the directory the browser uses.
+
+The wizard does not silently install extensions or directly write extension storage. Finish
+the browser installation and preset import yourself; pressing Enter or staging files does
+not verify those browser steps.
 **Note:** importing the preset *replaces* your current TablissNG dashboard with a clean layout
 containing the widget; precise in-widget location additionally needs the iframe's
 `allow="geolocation"` (some hosts strip it — coarse auto-detect still works).
@@ -227,7 +275,7 @@ Source trace: [config.js](config.js) (`coarseDetect`, `geocodeSearch`, `clearLoc
 | `builder.html` | Interactive embed-code generator (portable **and** self-configuring snippets). |
 | `config.js`    | Shared `WidgetConfig` module (`window.SalahConfig`) — parse / validate / serialize / load-save local config / coarse auto-detect. Loaded by both `index.html` and `builder.html` so config logic can't fork. |
 | `install.sh` / `install.ps1` | Optional setup wizard (macOS-Linux / Windows): detects the browser, downloads the TablissNG extension asset, and stages the preset for manual import. No silent installs. |
-| `presets/salah-widget.tablissng.json` | A ready-made TablissNG dashboard export (this widget in self-configuring mode) that the installer imports. |
+| `presets/salah-widget.tablissng.json` | A ready-made TablissNG dashboard export (this widget in self-configuring mode) staged for you to import manually. |
 
 ---
 

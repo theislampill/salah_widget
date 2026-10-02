@@ -33,6 +33,16 @@ local mode only) — all keyless/CORS-safe, no secrets in the repo.
 
 ## Working state
 
+**Installer candidate contract:** reviewed local-file invocation, terminal requirements and offline/no-effect
+preview are documented in [README](README.md#one-line-install-optional-setup-wizard). The builder's one-liner
+still fetches published `main`; a local candidate is not public-byte readback. Bash uses Python literal hash
+replacement plus JSON validation, fresh private per-attempt scratch and a retained home bundle. Windows keeps
+its TEMP staging path. Keep a Chromium unpacked directory while installed; preset/XPI removal is optional and
+manual after the browser step. Native Apple Bash 3.2, distinct-UID and real browser/public qualification are
+still open. Reconcile the complete source and documentation at the final composed freeze.
+
+The following main/Pages and preview entries are historical records, not qualification of this candidate.
+
 **All prior work is committed on `main` and live on Pages.** The local self-configuring mode + shared `config.js` +
 in-widget settings panel + TablissNG setup wizard shipped as **`37084ae`**; the living-sky / photometric / radar
 passes as `91d0fc1`, `a10af5c`, `90928c8`. So `#local=1`/`#preferLocal=1`, the buckle⇄⚙ settings affordance (local
@@ -42,7 +52,7 @@ coarse detect sends the IP to GeoJS/ipinfo (disclosed), precise geolocation is u
 stays local. Plans: `plans/round-3/`. Deferred by decision: moon hemisphere (upright N-only) + false-dawn (unbuilt,
 fail-closed); radar precip wiring gated on a source decision.
 
-**Latest pass — install config-carry + builder/embed-size parity** (committed on top of `37084ae`):
+**Historical pass — install config-carry + builder/embed-size parity** (committed on top of `37084ae`):
 - **Install config-carry.** The builder's **Install widget** button copies the OS one-liner and, when the config
   differs from the plain `#local=1` default, prepends `SALAH_WIDGET_HASH='<hash>'`; `install.sh`/`install.ps1` bake
   that hash into the staged preset's iframe (replacing `#local=1`) so an installed widget keeps the builder's

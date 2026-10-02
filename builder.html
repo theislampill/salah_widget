@@ -363,8 +363,8 @@ $("reload").onclick=()=>{ $("pv").src=previewUrl(); };
 $("open").onclick=()=>window.open(url(),"_blank","noreferrer");
 $("copy").onclick=()=>copyArtifact("copy",$("code").value,false);
 // ---- "Install widget" → copy the one-line terminal command that runs the GitHub install wizard ----
-// The repo hosts install.ps1 (Windows) and install.sh (mac/Linux) at the root; the command pipes the
-// right one for the visitor's OS. (Scripts must be committed to the repo for the URL to resolve.)
+// The command pipes install.ps1 (Windows) or install.sh (mac/Linux) from published main, not a local candidate.
+// Normal execution is interactive; reviewed local-file and offline-preview instructions are in README.md.
 const INSTALL_REPO="theislampill/salah_widget";
 // Build the install one-liner. The wizard installs a generic auto-detect preset by default; if the user has
 // configured the widget here (anything other than the plain "#local=1" default), carry that config to the wizard

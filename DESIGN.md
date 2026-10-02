@@ -315,9 +315,12 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   margin, so the builder card/preview are matched to the *visible* widget (530px), not to an oversized box.
 - **Install wizard config-carry:** the builder's **Install widget** button copies the OS one-liner; when the config
   is non-default it prepends `SALAH_WIDGET_HASH='<hash>'`, which `install.sh`/`install.ps1` bake into the staged
-  preset's iframe (replacing `#local=1`) so the installed widget starts already configured (no re-setup). Bash note:
-  `install.sh` uses `shopt -u patsub_replacement` so the hash's `&` separators stay literal in the `${//}` replace
-  (bash 5.2+ otherwise treats `&` as the matched text); PowerShell's `.Replace` is already literal.
+  preset's iframe (replacing `#local=1`). Bash uses Python literal string replacement followed by JSON validation;
+  PowerShell's `.Replace` is literal. The copied command fetches published `main`, not a local candidate.
+  See [README installer usage](README.md#one-line-install-optional-setup-wizard) for reviewed-file execution,
+  offline/no-effect preview, terminal requirements and the manual file lifetime. The Bash private retained
+  bundle and same-attempt cache are separate from Windows TEMP staging; neither staging nor Enter confirms
+  browser installation/import.
 
 ## Known approximations (honest)
 

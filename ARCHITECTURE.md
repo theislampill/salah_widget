@@ -17,7 +17,11 @@ own-sake, preserve the static / no-build / no-dependency / single-file character
   CLI flow (not part of the runtime) that stages the TablissNG extension + preset for **manual** import (never a
   silent install). The builder's **Install widget** button copies the one-liner and, when the builder's config
   differs from the plain `#local=1` default, carries it via a `SALAH_WIDGET_HASH` env var that the wizard bakes into
-  the preset's iframe (replacing `#local=1`) — so an installed widget keeps the builder's settings.
+  the preset's iframe (replacing `#local=1`). The copied command fetches published `main`; candidate checks use
+  reviewed local files. Both offline preview switches branch before prompts/staging/artifact consumers.
+  Normal Bash execution owns fresh private scratch plus a retained home bundle; Windows retains its TEMP-based
+  staging path. Browser installation and dashboard-replacing preset import remain manual. Usage, terminal and
+  retained-file boundaries are in [README](README.md#one-line-install-optional-setup-wizard).
 
 **Embed-size invariant:** the iframe wrapper **must equal the widget card** (`index.html` `.c` = **325×530**). The
 builder preview, the copy snippet, `README.md`, and the preset all use `325×530`; an oversized wrapper only adds
