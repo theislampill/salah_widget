@@ -2689,9 +2689,14 @@ function applyCloudState(A){
   const CS=cloudState;
   advanceCloudMotion(simNow()/1000);
   CS.tgtLow=A.cloudLayerLow; CS.tgtMid=A.cloudLayerMid; CS.tgtHigh=A.cloudLayerHigh;
+  // The captured live decision withdraws unavailable model coverage immediately. Retain motion/population,
+  // and let the next admitted deck establish promptly; healthy current coverage still eases below.
+  if(A.weatherDecision.lane==="live" && A.weatherDecision.modelCode==null){
+    CS.covLow=CS.covMid=CS.covHigh=0; _cloudReady=false;
+  }
   // Establish the deck promptly the FIRST time clouds appear (snap), then EASE every later coverage change so a
   // 15-min refetch grows/erodes the EXISTING deck smoothly — no popping/slideshow. Fast-forward snaps (must track).
-  if(!_cloudReady && (CS.tgtLow+CS.tgtMid+CS.tgtHigh)>0.05){ CS.covLow=CS.tgtLow; CS.covMid=CS.tgtMid; CS.covHigh=CS.tgtHigh; _cloudReady=true; }
+  else if(!_cloudReady && (CS.tgtLow+CS.tgtMid+CS.tgtHigh)>0.05){ CS.covLow=CS.tgtLow; CS.covMid=CS.tgtMid; CS.covHigh=CS.tgtHigh; _cloudReady=true; }
   else { const ce=ADVANCING?1:0.08; CS.covLow+=(CS.tgtLow-CS.covLow)*ce; CS.covMid+=(CS.tgtMid-CS.covMid)*ce; CS.covHigh+=(CS.tgtHigh-CS.covHigh)*ce; }
   CS.wx=A.windUX; CS.wy=A.windUY; CS.wspd=0.06+0.6*A.windSpeedNorm;
   CS.tLow=A.cloudTint2; CS.tMid=A.cloudTint; CS.tHi=A.cloudTintHi;
