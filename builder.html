@@ -203,7 +203,7 @@ function formConfig(){
     datefmt:$("dfcode").value.trim()||"YYYY-MM-DD" };
 }
 // SINGLE shared serializer (config.js) → builder and widget can't drift apart.
-function hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode==="local"?{mode:"local"}:{}) : ""; }
+function hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode==="local"?{mode:"local",explicitPrefs:["method","units"]}:{}) : ""; }
 let rev=0;
 function url(){ return base+"#"+hash(); }
 // the widget reads only location.hash, so a changing ?r= query is ignored by it but
@@ -228,7 +228,7 @@ function setMode(m){
   if(!chosen) return;
   embedMode=chosen.id==="mode-local"?"local":"portable";
   $("modenote").innerHTML = embedMode==="local"
-    ? 'Generic embed — each viewer’s area is <strong>auto-detected</strong> (approximate, IP/timezone-based, no permission prompt) and they can change it inside the widget (tap the header buckle); their choice is saved <strong>locally in their browser</strong>. The snippet adds <code>allow="geolocation"</code> so the in-widget “use precise location” button can work. <strong>TablissNG</strong> may strip <code>allow</code> (precise location then unavailable — coarse auto-detect + manual still work) and may partition iframe storage (settings then apply for the session only). Location fields below are ignored in this mode.'
+    ? 'Self-configuring location — each viewer’s area is <strong>auto-detected</strong> (approximate, IP/timezone-based, no permission prompt). The method and temperature units selected here are included for a fresh viewer; saved widget settings take precedence. Location fields are omitted. Viewers can change settings inside the widget (tap the header buckle); their choice is saved <strong>locally in their browser</strong>. The snippet adds <code>allow="geolocation"</code> so the in-widget location button can work. <strong>TablissNG</strong> may strip <code>allow</code> (precise location then unavailable — coarse auto-detect + manual still work). If storage is unavailable, settings apply for the session only.'
     : 'Fixed coordinates baked into the URL — works anywhere with no per-viewer setup. Best for one specific place.';
   ["lat","lon"].forEach(id=>{ $(id).style.opacity = embedMode==="local"?".5":"1"; });
   update();

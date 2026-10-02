@@ -56,7 +56,10 @@ test("install recovery is platform-specific exact command data",async()=>{
   }
 });
 test("intentional generic install recovery does not invent carried settings",async()=>{
-  const f=make({clipboard:denied}); f.input("method","2","change"); f.click("mode-local"); await execute(f,"install");
+  const f=make({clipboard:denied});
+  // R0010 makes builder selections explicit. This control deliberately supplies
+  // the unchanged generic serializer input to the actual install/copy consumer.
+  f.run('hash=()=>SalahConfig.serialize({}, {mode:"local"})'); await execute(f,"install");
   const want="irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex";
   assert.equal(f.calls.copy[0],want); verifyRecovery(f,"install",want);
 });

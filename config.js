@@ -102,12 +102,13 @@
 
   // ---- serialize: config → URL hash string ----------------------------------
   // opts.mode: "local" → generic "#local=1" (no coordinates); "preferLocal" → adds
-  // preferLocal=1 + emits coordinates as defaults. Default (portable/hardcoded) emits
-  // location + always method/school — matching builder.html's historical output so
-  // existing portable snippets stay byte-identical.
+  // preferLocal=1 + emits coordinates as defaults. opts.explicitPrefs may carry
+  // selected method/units even at their defaults. Default (portable/hardcoded)
+  // emits location + always method/school; portable snippets stay byte-identical.
   function serialize(cfg, opts) {
     opts = opts || {};
     var c = normalize(cfg), p = new URLSearchParams(), local = opts.mode === "local";
+    var explicit = local && Array.isArray(opts.explicitPrefs) ? opts.explicitPrefs : [];
     if (local) p.set("local", "1");
     else if (opts.mode === "preferLocal") p.set("preferLocal", "1");
     if (!local) {
@@ -117,13 +118,13 @@
       p.set("method", c.method);
       p.set("school", c.school);
     } else {
-      // generic local snippet: only carry non-default *preferences*, never coordinates
-      if (c.method !== DEFAULTS.method) p.set("method", c.method);
+      // Local: non-default or explicitly selected preferences, never coordinates.
+      if (c.method !== DEFAULTS.method || explicit.indexOf("method") >= 0) p.set("method", c.method);
       if (c.school !== DEFAULTS.school) p.set("school", c.school);
     }
     if (c.time === "12") p.set("time", "12");
     if (c.datefmt && c.datefmt !== DEFAULTS.datefmt) p.set("datefmt", c.datefmt);
-    if (c.units === "c") p.set("units", "c");
+    if (c.units === "c" || explicit.indexOf("units") >= 0) p.set("units", c.units);
     if (c.lp > 0) p.set("lp", String(c.lp));
     if (c.seed != null) p.set("seed", String(c.seed));
     return p.toString();
