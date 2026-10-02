@@ -168,8 +168,8 @@ iframe{box-shadow:0 18px 50px #0008}
   <div class="modewrap">
     <label>Embed type</label>
     <div class="modebtns" role="radiogroup" aria-label="Embed type">
-      <button type="button" class="modebtn active" id="mode-portable" role="radio" aria-checked="true">Portable — fixed location</button>
-      <button type="button" class="modebtn" id="mode-local" role="radio" aria-checked="false">Self-configuring — auto-detect</button>
+      <button type="button" class="modebtn active" id="mode-portable" role="radio" aria-checked="true" tabindex="0">Portable — fixed location</button>
+      <button type="button" class="modebtn" id="mode-local" role="radio" aria-checked="false" tabindex="-1">Self-configuring — auto-detect</button>
     </div>
     <p class="note" id="modenote"></p>
   </div>
@@ -219,11 +219,14 @@ function update(){
   $("pv").src=previewUrl();
 }
 function setMode(m){
-  embedMode = (m==="local") ? "local" : "portable";
-  $("mode-portable").classList.toggle("active",embedMode==="portable");
-  $("mode-local").classList.toggle("active",embedMode==="local");
-  $("mode-portable").setAttribute("aria-checked",embedMode==="portable"?"true":"false");
-  $("mode-local").setAttribute("aria-checked",embedMode==="local"?"true":"false");
+  const buttons=[$("mode-portable"),$("mode-local")], requested=m==="local"?"mode-local":"mode-portable";
+  const chosen=buttons.find(button=>!button.disabled && button.id===requested) || buttons.find(button=>!button.disabled);
+  buttons.forEach(button=>{ const selected=button===chosen;
+    button.classList.toggle("active",selected); button.setAttribute("aria-checked",selected?"true":"false");
+    button.tabIndex=selected?0:-1;
+  });
+  if(!chosen) return;
+  embedMode=chosen.id==="mode-local"?"local":"portable";
   $("modenote").innerHTML = embedMode==="local"
     ? 'Generic embed — each viewer’s area is <strong>auto-detected</strong> (approximate, IP/timezone-based, no permission prompt) and they can change it inside the widget (tap the header buckle); their choice is saved <strong>locally in their browser</strong>. The snippet adds <code>allow="geolocation"</code> so the in-widget “use precise location” button can work. <strong>TablissNG</strong> may strip <code>allow</code> (precise location then unavailable — coarse auto-detect + manual still work) and may partition iframe storage (settings then apply for the session only). Location fields below are ignored in this mode.'
     : 'Fixed coordinates baked into the URL — works anywhere with no per-viewer setup. Best for one specific place.';
@@ -232,6 +235,16 @@ function setMode(m){
 }
 $("mode-portable").addEventListener("click",()=>setMode("portable"));
 $("mode-local").addEventListener("click",()=>setMode("local"));
+const modeGroup=document.querySelector(".modebtns");
+modeGroup.addEventListener("keydown",e=>{
+  const direction=(e.key==="ArrowRight"||e.key==="ArrowDown")?1:(e.key==="ArrowLeft"||e.key==="ArrowUp")?-1:0;
+  if(!direction) return;                            // native Tab and button Enter/Space remain untouched
+  const buttons=[...modeGroup.querySelectorAll(".modebtn")].filter(button=>!button.disabled), index=buttons.indexOf(e.target);
+  if(index<0) return;
+  e.preventDefault();
+  const next=buttons[(index+direction+buttons.length)%buttons.length];
+  next.focus(); setMode(next.id==="mode-local"?"local":"portable");
+});
 fields.forEach(f=>$(f).addEventListener("input",update));
 fields.forEach(f=>$(f).addEventListener("change",update));
 

@@ -104,7 +104,11 @@ function fixture(kind,options={}) {
     for(const [id,value]of Object.entries(defaults))el(id,value);
     for(const id of ["loclabel","geotip","geo","dfCustomOpt","pv","code","copied","copy","open","reload","install","installtip","modenote","embed-recovery","embed-recovery-wrap","install-recovery","install-recovery-wrap"] )el(id);
     for(const id of ["embed-recovery-wrap","install-recovery-wrap"])env.elements.get(id).hidden=true;
-    for(const id of ["mode-portable","mode-local"]) { const button=el(id); button.classList.add("modebtn"); button.eventParent=env.group; env.group.children.push(button); }
+    for(const id of ["mode-portable","mode-local"]) {
+      const button=el(id), tag=sources.page.match(new RegExp('<button[^>]*id="'+id+'"[^>]*>'))[0];
+      for(const name of ["role","aria-checked","tabindex"]) { const attr=tag.match(new RegExp(name+'="([^"]*)"')); if(attr)button.setAttribute(name,attr[1]); }
+      button.classList.add("modebtn"); button.eventParent=env.group; env.group.children.push(button);
+    }
     let script=sources.page.match(/<script>\s*([\s\S]*?)<\/script>/)[1];
     if(options.mutate)script=options.mutate(script);
     run(script);
