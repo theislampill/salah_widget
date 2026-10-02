@@ -101,14 +101,14 @@ function load({sourcePath=path.join(root,'index.html'), source, debugMoon=false,
   // Every await has a finite host turn budget. A Promise without a live callback
   // cannot silently terminate Node with exit 0. Only this VM's owned timers run.
   async function complete(operation,{turns=64,driveTimers=true}={}){
-    let settled=false,result,error;
-    Promise.resolve(operation).then(v=>{settled=true;result=v;},e=>{settled=true;error=e;});
+    let settled=false,rejected=false,result,error;
+    Promise.resolve(operation).then(v=>{settled=true;result=v;},e=>{settled=true;rejected=true;error=e;});
     for(let i=0;i<turns&&!settled;i++){
       await new Promise(resolve=>setImmediate(resolve));
       if(!settled&&driveTimers)advanceTimer();
     }
     if(!settled)throw new Error('INCOMPLETE: fixture operation did not settle within '+turns+' owned turns');
-    if(error)throw error;return result;
+    if(rejected)throw error;return result;
   }
   async function drain(turns=4){for(let i=0;i<turns;i++){await new Promise(resolve=>setImmediate(resolve));advanceTimer();}}
   return {run,ctx,elements,select,warnings,rafs,clock,storage,timers,requests,timerEvents,advanceTimer,complete,drain,
