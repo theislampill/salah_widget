@@ -1140,32 +1140,65 @@ function loadWx(){
     if(w){ weather=w; if(weatherEligibility(w,now).eligible) lastWxAt=receipt; }
   }catch(e){}                                    // cache misses preserve bytes and never prevent a fetch
 }
+const _WX_BODY_WAIT=10000, _RADAR_BODY_WAIT=10000, _RADAR_IMAGE_WAIT=10000;
+const _wxRequests={weather:null,radar:null};                  // last small attempt result; never a freshness/coverage grant
+function wxAttemptState(op,a,state,reason=null){
+  if(requestEligible(op)) _wxRequests[op.kind]={generation:op.generation,operationId:op.operationId,attemptId:a.attemptId,state,reason};
+}
+// Exactly one fetch+JSON settlement. Abort is cleanup; this promise also settles if the transport ignores it.
+// Keep the owning attempt until the caller's final candidate guard, including an absolute elapsed deadline.
+function wxFetchJson(op,a,url){
+  return new Promise(resolve=>{
+    let settled=false,stage="fetch";
+    const finish=(data,reason)=>{
+      if(settled) return; settled=true;
+      if(a.timer!=null){ clearTimeout(a.timer); a.timer=null; } a.cancel=null;
+      if(reason) a.expired=true;
+      wxAttemptState(op,a,reason?"unavailable":"received",reason);
+      resolve({ok:!reason,data});
+      if(reason&&a.controller) a.controller.abort();        // terminal before abort can trigger synchronous listeners
+    };
+    a.cancel=()=>finish(null,"cancelled");
+    a.timer=setTimeout(()=>finish(null,stage+" timeout"),Math.max(0,a.deadlineAt-_RAFNOW()));
+    wxAttemptState(op,a,"fetch");
+    (async()=>{
+      const r=await fetch(url,{cache:"no-store",referrerPolicy:"no-referrer",...(a.controller?{signal:a.controller.signal}:{})});
+      if(!attemptEligible(op,a)) return finish(null,"obsolete or expired fetch");
+      if(r.ok!==true) return finish(null,"HTTP unavailable");
+      stage="body"; wxAttemptState(op,a,"body");
+      const data=await r.json();
+      if(!attemptEligible(op,a)) return finish(null,"obsolete or expired body");
+      finish(data,null);
+    })().catch(()=>finish(null,stage+" error"));             // losing late rejection is always observed
+  });
+}
 async function fetchWeather(){
   if(SIM.wx!=null) return;                 // simulated weather: never overwrite
-  const captured={lat,lon,units,zone:tz,cacheKey:wxKey()};
-  if(!usableWeatherCoordinates(captured.lat,captured.lon)||wxBusy) return;
+  if(!usableWeatherCoordinates(lat,lon)||wxBusy) return;
   const now=Date.now();
   if(selectedWeather(now) && weatherTrack && now-lastWxAt < _WX_CURRENT_TTL) return;   // need the hourly TRACK too — a fresh current-weather cache must not block timeScale demos
   if(now-lastWxTry < 60*1000) return;
+  const op=beginRequest("weather"); if(!op) return;
+  const captured={lat:op.lat,lon:op.lon,units:op.units,zone:op.requestZone,cacheKey:op.weatherCacheKey};
+  const a=beginAttempt(op,_WX_BODY_WAIT); if(!a){ finishRequest(op); return; }
   lastWxTry=now; wxBusy=true;
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;
   try{
-    const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer"});
-    if(!r.ok) return;
-    const j=await r.json();
+    const result=await wxFetchJson(op,a,u); if(!result.ok||!attemptEligible(op,a)) return;
+    const j=result.data;
     if(!j||typeof j!=="object"||Array.isArray(j)||j.error===true) return;
     const ctx={...captured,retrievedAt:Date.now()}, current=wxUnitsMatch(j.current_units,ctx)?admitWeatherRecord(j.current,ctx):null;
     const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);
-    // Candidates are fully local here. Request-generation ownership is supplied by the acquisition owner.
+    if(!attemptEligible(op,a)) return;                     // includes delayed-timer absolute expiry after normalization
     if((current||track)&&elevation!=null) siteElev=elevation;
-    if(current&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
+    if(current&&attemptEligible(op,a)&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
       weather=current;
       if(weatherEligibility(current,ctx.retrievedAt).eligible) lastWxAt=ctx.retrievedAt;
-      try{ localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}
+      try{ if(attemptEligible(op,a)) localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}
     }
-    if(track) weatherTrack=track;
+    if(track&&attemptEligible(op,a)) weatherTrack=track;
   }catch(e){}
-  finally{ wxBusy=false; }
+  finally{ finishAttempt(op,a); if(finishRequest(op)) wxBusy=false; }
 }
 // RainViewer tiles retain mosaic provenance and UNIT-LESS pixel diagnostics only. Alpha/density is not rainfall,
 // reflectivity, on-site precipitation or lightning evidence. Until a qualified decoder exists its gate contribution
@@ -1179,15 +1212,47 @@ function radarEvidence(now=Date.now()){
     frameAge>=0&&frameAge<=_RADAR_TTL&&receiptAge>=0&&receiptAge<=_RADAR_TTL),frameAgeMs:frameAge,receiptAgeMs:receiptAge};
 }
 function radarPrecipNow(){ return 0; }              // compatibility shim: unsupported quantitative evidence contributes nothing
+// Application cancellation detaches handlers; it does not claim physical cancellation of an Image download.
+function wxRadarSample(op,a,url,fx,fy,xt,yt){
+  return new Promise(resolve=>{
+    const im=new Image(); let settled=false; im.crossOrigin="anonymous";
+    const finish=(sample,reason)=>{
+      if(settled) return; settled=true;
+      if(a.timer!=null){ clearTimeout(a.timer); a.timer=null; } a.cancel=null;
+      im.onload=null; im.onerror=null; if(reason) a.expired=true;
+      wxAttemptState(op,a,reason?"unavailable":"received",reason);
+      resolve({ok:!reason,sample});
+    };
+    a.cancel=()=>finish(null,"cancelled image");
+    a.timer=setTimeout(()=>finish(null,"image timeout"),Math.max(0,a.deadlineAt-_RAFNOW()));
+    wxAttemptState(op,a,"image");
+    im.onload=()=>{
+      if(settled) return;
+      if(!attemptEligible(op,a)) return finish(null,"obsolete or expired image");
+      try{
+        const cv=document.createElement("canvas"); cv.width=256; cv.height=256; const cx=cv.getContext("2d"); cx.drawImage(im,0,0);
+        const d=cx.getImageData(0,0,256,256).data, px=Math.floor((fx-xt)*256), py=Math.floor((fy-yt)*256);
+        let cnt=0,sumA=0,tot=0;
+        for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){ const x=px+dx,y=py+dy; if(x<0||x>255||y<0||y>255)continue; tot++; const alpha=d[(y*256+x)*4+3]; if(alpha>40){ cnt++; sumA+=alpha; } }
+        if(!attemptEligible(op,a)) return finish(null,"obsolete or expired canvas");
+        finish({returnCount:cnt,sampledCount:tot,coverage:tot?cnt/tot:0,meanAlpha:cnt?sumA/cnt/255:0},null);
+      }catch(e){ finish(null,"canvas unavailable"); }
+    };
+    im.onerror=()=>finish(null,"image unavailable");
+    try{ im.src=url; }catch(e){ finish(null,"image unavailable"); }
+  });
+}
 async function fetchRadar(){
-  const captured={lat,lon};
-  if(SIM.wx!=null || !usableWeatherCoordinates(captured.lat,captured.lon) || radarBusy) return;       // real mode only
+  if(SIM.wx!=null || !usableWeatherCoordinates(lat,lon) || radarBusy) return;       // real mode only
   const now=Date.now(); if(now-lastRadarAt < _RADAR_REFRESH) return;   // radar updates ~10 min
+  const op=beginRequest("radar"); if(!op) return;
+  const captured={lat:op.lat,lon:op.lon};
+  let a=beginAttempt(op,_RADAR_BODY_WAIT); if(!a){ finishRequest(op); return; }
   lastRadarAt=now; radarBusy=true;
   try{
-    const r=await fetch("https://api.rainviewer.com/public/weather-maps.json",{cache:"no-store",referrerPolicy:"no-referrer"});
-    if(!r.ok) return;
-    const j=await r.json(); const host=j&&j.host, past=j&&j.radar&&j.radar.past;
+    const result=await wxFetchJson(op,a,"https://api.rainviewer.com/public/weather-maps.json");
+    if(!result.ok||!attemptEligible(op,a)) return;
+    const j=result.data, host=j&&j.host, past=j&&j.radar&&j.radar.past;
     if(typeof host==="string"&&Array.isArray(past)&&past.length){
       const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
       if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
@@ -1196,19 +1261,16 @@ async function fetchRadar(){
       if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
       const xt=Math.floor(fx), yt=Math.floor(fy);
       const url=host+fr.path+"/256/"+z+"/"+xt+"/"+yt+"/2/1_1.png";
-      const sample=await new Promise(res=>{ const im=new Image(); im.crossOrigin="anonymous";
-        im.onload=()=>{ try{ const cv=document.createElement("canvas"); cv.width=256; cv.height=256; const cx=cv.getContext("2d"); cx.drawImage(im,0,0);
-          const d=cx.getImageData(0,0,256,256).data, px=Math.floor((fx-xt)*256), py=Math.floor((fy-yt)*256);
-          let cnt=0,sumA=0,tot=0; for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){ const x=px+dx,y=py+dy; if(x<0||x>255||y<0||y>255)continue; tot++; const a=d[(y*256+x)*4+3]; if(a>40){ cnt++; sumA+=a; } }
-          res({returnCount:cnt,sampledCount:tot,coverage:tot?cnt/tot:0,meanAlpha:cnt?sumA/cnt/255:0});
-        }catch(e){ res(null); } };                           // tainted / read error → diagnostic unavailable
-        im.onerror=()=>res(null); im.src=url; });
+      if(!attemptEligible(op,a)) return;
+      finishAttempt(op,a); a=beginAttempt(op,_RADAR_IMAGE_WAIT); if(!a) return;
+      const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
+      if(!image.ok||!attemptEligible(op,a)) return;
       const retrievedAt=Date.now();
       weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,frame:fr.time,frameGeneratedAt:fr.time*1000,
-        indexGeneratedAt:j.generated*1000,sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
+        indexGeneratedAt:j.generated*1000,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
     }
   }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
-  finally{ radarBusy=false; }
+  finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }
 }
 // linear-interpolate the forecast track at an arbitrary epoch (numeric fields lerp; wind direction via
 // unit-vectors so it wraps; weather_code is stepped — codes are categorical, not interpolable). Returns a
@@ -2526,6 +2588,7 @@ window.qaState=function(){
         radarSource: weatherRadar?weatherRadar.source:"none (RainViewer unavailable / sim / coverage gap)", radarPrecipMm:0, radarAgeSec:radar.receiptAgeMs==null?null:Math.round(radar.receiptAgeMs/1000),
         radarFrameAgeSec:radar.frameAgeMs==null?null:Math.round(radar.frameAgeMs/1000), radarAvailable:radar.available, radarConfirming:false,
         radarDiagnostic:weatherRadar?weatherRadar.sample:null, radarQuantitativeReason:"unavailable: uncalibrated palette/alpha; no on-site precipitation or lightning authority",
+        requests:{weather:_wxRequests.weather,radar:_wxRequests.radar},
         rawCode: raw, rawForecastCode: fc, observedPrecipMm:null, modelPrecipMm:p, effectivePrecipMm:p==null?null:+p.toFixed(2), activePrecip:p!=null&&p>=_PRECIP_MIN, activeThunder:(wxClass(raw)==="thunder"&&p!=null&&p>=_THUNDER_MIN),
         displayCondition: wxClass(g), finalDataFx: (document.querySelector(".c").dataset.fx||null), downgradeReason: _wxDowngrade||null, advancing: ADVANCING, cloudFieldSeed: _cloudFieldSeed }; })(),
     // ── CACHE / STALE-STATE diagnostics (BASE): what may be stale and how old ──

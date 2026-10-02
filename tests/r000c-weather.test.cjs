@@ -11,16 +11,22 @@ const crypto = require('node:crypto');
 const sourcePath = process.env.SALAH_WEATHER_SOURCE || path.join(__dirname, '..', 'index.html');
 const source = fs.readFileSync(sourcePath, 'utf8');
 const configSource = fs.readFileSync(path.join(__dirname, '..', 'config.js'), 'utf8');
+// During interface preparation the declared owner is an immutable source snapshot; after
+// integration its exact functions come from this same product source. No owner logic is copied.
+const requestOwnerSource = source.includes('function beginRequest(kind,') ? source :
+  process.env.SALAH_REQUEST_OWNER_SOURCE ? fs.readFileSync(process.env.SALAH_REQUEST_OWNER_SOURCE, 'utf8') : null;
 const NOW = Date.parse('2026-09-07T21:00:00Z');
 console.log('WEATHER source ' + sourcePath + ' SHA256 ' + crypto.createHash('sha256').update(source).digest('hex'));
+if (requestOwnerSource) console.log('WEATHER request-owner SHA256 ' + crypto.createHash('sha256').update(requestOwnerSource).digest('hex'));
 
-function region(start, end) {
-  const a = source.indexOf(start), b = source.indexOf(end, a + start.length);
+function region(start, end, input = source) {
+  const a = input.indexOf(start), b = input.indexOf(end, a + start.length);
   assert(a >= 0 && b > a, 'actual source region missing: ' + start);
-  return source.slice(a, b);
+  return input.slice(a, b);
 }
 const runtime = [
   region('// ---- SINGLE TEMPORAL SOURCE OF TRUTH', '// ---- prayer-times data:'),
+  ...(requestOwnerSource ? [region('function cacheKey(){', '// Read only the selected legacy main-format envelope.', requestOwnerSource)] : []),
   region('// ---- weather (Open-Meteo:', '// ---- accurate Moon position'),
   region('const lerp =', '// QUARANTINED:'),
   region('const _ss=t=>', '\n'),
@@ -115,7 +121,8 @@ function fixture(options = {}) {
   });
   context.window = context;
   vm.runInContext(`
-    let lat=opts.lat, lon=opts.lon, units=opts.units, tz=opts.zone;
+    let lat=opts.lat, lon=opts.lon, units=opts.units, tz=opts.zone, method=4, school=0, _cacheTz='UTC';
+    const _prayerCooldown={current:null,prefetch:null};
     const SIM={wx:null,time:null,moon:null,...opts.sim}, q=new URLSearchParams(opts.hash||'');
     const clamp=x=>Math.min(1,Math.max(0,x)), enc=encodeURIComponent, pad=n=>String(n).padStart(2,'0');
     const $=s=>document.querySelector(s), DEBUGOPTIC=null, DEBUGLAYERS=false, LPOLL=0;
@@ -126,6 +133,7 @@ function fixture(options = {}) {
     let _storageErr=null, _geoPermission='unknown', _geoLastError=null;
   ` + runtime + `
     globalThis.api={fetchWeather,fetchRadar,loadWx,wxAt,syncWeather,wxDrivers,gateWeatherCode,wxClass,radarPrecipNow,
+      beginRuntimeGeneration:typeof beginRuntimeGeneration==='function'?beginRuntimeGeneration:null,
       read:()=>({weather,weatherTrack,weatherRadar,lastWxAt,lastWxTry,wxBusy,radarBusy,siteElev}),
       set:(values)=>{if('lat' in values)lat=values.lat;if('lon' in values)lon=values.lon;if('units' in values)units=values.units;
         if('zone' in values)tz=values.zone;if('weather' in values)weather=values.weather;if('lastWxAt' in values)lastWxAt=values.lastWxAt;
