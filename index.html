@@ -2388,13 +2388,20 @@ async function loadPrayerData(){
     if(!today) showError("Could not load prayer times");
   }
 }
+// Invalid explicit boot postpones these builders; the first valid configuration must still initialize
+// their catalogs/overlay exactly once. Reconfiguration reprojects existing stars and retains weather DOM.
+let _sceneBuilt=false;
+function buildSceneOnce(){
+  if(_sceneBuilt) return;
+  buildStars(); buildWeather(); _sceneBuilt=true;
+}
 // clear per-location state so a runtime config change can't show the old place's data
 function resetForNewLocation(){
   today=null; tomorrow=null; fetchingTomorrow=false;
   weather=null; weatherTrack=null; lastWxAt=0; lastWxTry=0;
   weatherRadar=null; lastRadarAt=0;
   _starsProjected=false; _prayerStale=false;
-  if(simulationReady()) renderMoon();
+  if(simulationReady()){ buildSceneOnce(); renderMoon(); }
 }
 // Apply a new WidgetConfig at RUNTIME (settings panel) — IN-MEMORY, no reload, so it still
 // works when third-party-iframe localStorage is blocked/partitioned. opts.save persists it.
@@ -2416,10 +2423,10 @@ async function applyConfig(cfg, opts){
 }
 
 async function boot(){
+  if(_cfgMode==="local"||_cfgMode==="preferLocal") enableSettingsAffordance();  // recovery controls do not depend on a valid scene
   if(!simulationReady()) return;
   if(QA){ lastWxAt=0; lastWxTry=0; }                          // QA: always build a fresh forecast track on boot (cache must not block it)
-  buildStars();
-  buildWeather();
+  buildSceneOnce();
   renderMoon();
 
   // ---- resolve coordinates (mode-aware: hardcoded sync above; local resolves here) ----
@@ -2445,8 +2452,6 @@ async function boot(){
       showError("Add lat & lon to the URL");                  // bare mode: byte-identical to before
       return;
     }
-  } else if(_cfgMode==="local"||_cfgMode==="preferLocal"){
-    enableSettingsAffordance();                               // saved/opted-in local config → settings gear available
   }
 
   if(!simulationReady()) return;                            // coordinate detection may have changed the explicit scene's zone

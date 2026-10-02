@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const {test} = require('node:test');
-const {realm, countedIntl, sha256, source, temporal, modelRealm, loadRender, loadLifecycle, prayerRecord} = require('./r0008-clock-harness.cjs');
+const {realm, countedIntl, sha256, source, temporal, modelRealm, loadRender, loadLifecycle, loadSettingsAffordance, prayerRecord} = require('./r0008-clock-harness.cjs');
 console.log(`SOURCE ${sha256(source)} TEMPORAL ${sha256(temporal)}`);
 
 const r = realm({zone: 'America/New_York'});
@@ -138,4 +138,39 @@ test('bypassing simulation validity is caught by the actual boot caller', async 
   await c.run('boot()'); assert(c.calls.stars>0);
   assert.notEqual(c.dom.querySelector('.left').textContent,'Simulation time unavailable');
   console.log(`MUTANT invalid-scene-bypass ${sha256(block)} rejected by boot boundary`);
+});
+
+for(const mode of ['local','preferLocal']) for(const zone of ['UTC','America/New_York']) {
+  test(`${mode} ${zone} boot keeps actual settings button reachable before scene validity`, async () => {
+    const c=loadSettingsAffordance(loadLifecycle(loadRender(modelRealm({query:'simTime=02:30',zone,wall:Date.parse('2026-03-08T12:00Z')}))));
+    c.context._cfgMode=mode;
+    await c.run('boot()');
+    const buckle=c.dom.querySelector('.buckle');
+    assert.equal(buckle.getAttribute('role'),'button'); assert.equal(buckle.getAttribute('tabindex'),'0');
+    assert.equal(buckle.getAttribute('aria-label'),'Widget settings');
+    assert(buckle.events.has('click')); assert(buckle.events.has('keydown'));
+    assert.notEqual(buckle.style.visibility,'hidden'); assert.notEqual(c.dom.querySelector('.settings').style.visibility,'hidden');
+    assert.equal(c.calls.stars,zone==='UTC'?1:0); assert.equal(c.calls.weatherBuild,zone==='UTC'?1:0);
+  });
+}
+
+test('initial invalid boot then valid config initializes scene builders once across further recoveries', async () => {
+  const c=loadLifecycle(loadRender(modelRealm({query:'simTime=02:30',zone:'America/New_York',wall:Date.parse('2026-03-08T12:00Z')})));
+  await c.run('boot()'); assert.equal(c.calls.stars,0); assert.equal(c.calls.weatherBuild,0);
+  await c.run('applyConfig({tz:"UTC"})');
+  assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
+  assert.equal(c.run('Number.isFinite(simNow())'),true); assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
+  await c.run('applyConfig({tz:"UTC"})'); await c.run('applyConfig({tz:"America/New_York"})');
+  assert.equal(c.dom.querySelector('.left').textContent,'Simulation time unavailable');
+  await c.run('applyConfig({tz:"UTC"})');
+  assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1); assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
+});
+
+test('valid boot and subsequent config reuse builders; bare embeds keep existing settings behavior', async () => {
+  const c=loadSettingsAffordance(loadLifecycle(loadRender(modelRealm({query:'simTime=02:30',zone:'UTC',wall:Date.parse('2026-03-08T12:00Z')}))));
+  c.context._cfgMode='bare'; await c.run('boot()');
+  assert.equal(c.dom.querySelector('.buckle').getAttribute('role'),null);
+  assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
+  await c.run('applyConfig({tz:"UTC"})'); await c.run('boot()');
+  assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
 });

@@ -63,17 +63,23 @@ function prayerRecord(date, zone = 'America/New_York', clocks = {}) {
 function nodes() {
   const store = new Map();
   const listeners = new Map();
-  const querySelector = selector => {
-    if (!store.has(selector)) {
+  const createElement = () => {
       let html = '', text = '';
-      store.set(selector, {style: {}, dataset: {fx: 'clear'},
-        classList: {add() {}, remove() {}, toggle() {}, contains() {return false;}},
+      const classes=new Set(), attributes=new Map(), events=new Map(), children=[];
+      return {style: {}, dataset: {fx: 'clear'}, children, events,
+        classList: {add(...names) {names.forEach(name=>classes.add(name));}, remove(...names) {names.forEach(name=>classes.delete(name));},
+          toggle(name,on) {if(on===undefined)on=!classes.has(name);if(on)classes.add(name);else classes.delete(name);}, contains(name) {return classes.has(name);}},
+        setAttribute(name,value) {attributes.set(name,String(value));}, getAttribute(name) {return attributes.get(name)??null;},
+        appendChild(child) {children.push(child);}, querySelector(selector) {return children.find(child=>(child.className||'').split(' ').includes(selector.slice(1)))||null;},
+        addEventListener(name,callback) {events.set(name,callback);},
         set textContent(value) {text = String(value); html = text;}, get textContent() {return text;},
-        set innerHTML(value) {html = String(value); text = html.replace(/<[^>]*>/g, '');}, get innerHTML() {return html;}});
-    }
+        set innerHTML(value) {html = String(value); text = html.replace(/<[^>]*>/g, '');}, get innerHTML() {return html;}};
+  };
+  const querySelector = selector => {
+    if (!store.has(selector)) store.set(selector,createElement());
     return store.get(selector);
   };
-  return {querySelector, store, visibilityState:'visible',
+  return {querySelector, createElement, store, visibilityState:'visible',
     addEventListener(name, callback) {listeners.set(name, callback);}, listeners};
 }
 
@@ -120,5 +126,12 @@ function loadLifecycle(r, block = lifecycle) {
   return {...r,calls,pending,frame};
 }
 
+function loadSettingsAffordance(r) {
+  r.run(slice('function enableSettingsAffordance()', 'function openSettings()'));
+  r.run(slice('function _enableSettingsAffordance()', 'function _settingsFormToConfig()'));
+  r.context._toggleSettings=()=>{}; // Dialog contents remain the browser owner's qualification cell.
+  return r;
+}
+
 module.exports = {sourcePath, source, sha256, slice, temporal, helpers, modelSource,
-  renderSource, lifecycle, realm, countedIntl, prayerRecord, modelRealm, loadRender, loadLifecycle};
+  renderSource, lifecycle, realm, countedIntl, prayerRecord, modelRealm, loadRender, loadLifecycle, loadSettingsAffordance};
