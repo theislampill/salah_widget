@@ -617,7 +617,7 @@ if(window.SalahConfig){
     lat=+_la; lon=+_lo; tz=q.get("tz")||"America/New_York"; _cacheTz=tz; label=q.get("label")||"";
     method=q.get("method")||"2"; school=q.get("school")||"0";
     fmt24=(q.get("time")||"24")!=="12"; units=(q.get("units")||"f").toLowerCase()==="c"?"c":"f";
-    const _df=q.get("datefmt")||"iso"; datefmtStr=_P[_df.toLowerCase()]||_df;
+    const _df=q.get("datefmt")||"iso"; datefmtStr=Object.prototype.hasOwnProperty.call(_P,_df.toLowerCase())?_P[_df.toLowerCase()]:_df;
     LPOLL=Math.min(1,Math.max(0,+q.get("lp")||0));
     CONFIG={v:1,lat,lon,tz,label,method,school,time:fmt24?"24":"12",datefmt:datefmtStr,units,lp:LPOLL,source:"hash"};
   }
@@ -683,10 +683,29 @@ const dur = leftMin => {
   if(m>0) return `${m}m`;
   return `${sec}s`;
 };
+const recordObject = o => !!o && typeof o==="object" && !Array.isArray(o);
+const calendarInteger = v => {
+  if(typeof v!=="number" && !(typeof v==="string" && /^\d+$/.test(v))) return NaN;
+  const n=Number(v); return Number.isSafeInteger(n)?n:NaN;
+};
+// Structural AH bounds do not calculate a Hijri month's true length. Gregorian
+// fields must survive a calendar round trip; setUTCFullYear preserves years 1–99.
+function calendarFields(o,calendar="gregorian"){
+  if(!recordObject(o) || !recordObject(o.month)) return null;
+  const y=calendarInteger(o.year), mo=calendarInteger(o.month.number), d=calendarInteger(o.day);
+  if(!(y>0 && mo>=1 && mo<=12 && d>=1 && d<=(calendar==="hijri"?30:31))) return null;
+  if(calendar==="gregorian"){
+    const check=new Date(0); check.setUTCFullYear(y,mo-1,d);
+    if(!Number.isFinite(check.getTime()) || check.getUTCFullYear()!==y || check.getUTCMonth()!==mo-1 || check.getUTCDate()!==d) return null;
+  }
+  return {y,mo,d};
+}
 // token date formatter: YYYY/YY year · MMMM/MMM/MM/M month · DD/D day
-const fmtDate = o => {
-  if(!o) return "";
-  const yyyy=String(o.year), mn=+(o.month&&o.month.number||0), day=+o.day, mon=(o.month&&o.month.en)||"";
+const fmtDate = (o,calendar=null) => {
+  const fields=calendarFields(o,calendar);
+  if(!fields || typeof datefmtStr!=="string") return "";
+  const yyyy=String(fields.y), mn=fields.mo, day=fields.d, mon=typeof o.month.en==="string"?o.month.en:"";
+  if(/MMMM|MMM/.test(datefmtStr) && !mon.trim()) return "";
   const t={YYYY:yyyy, YY:yyyy.slice(-2), MMMM:mon, MMM:mon.slice(0,3), MM:pad(mn), M:String(mn), DD:pad(day), D:String(day)};
   return datefmtStr.replace(/YYYY|YY|MMMM|MMM|MM|M|DD|D/g, m=>t[m]);
 };
@@ -732,13 +751,38 @@ function tomorrowStr(){
 }
 
 // ---- prayer-times data: fetch + cache + retry ---------------------------
+// The same pure admission result gates network, cache reads and persistence.
+// Equal/reordered polar clocks are valid; this validates fields, never order.
+function admitPrayerRecord(data,dateStr){
+  if(!recordObject(data) || !recordObject(data.timings)) return {ok:false,reason:"timings"};
+  const validClock=v=>typeof v==="string" && /^(?:[01]\d|2[0-3]):[0-5]\d(?:\s*\([^()\r\n]+\))?$/.test(v.trim());
+  for(const k of prayers) if(!validClock(data.timings[k])) return {ok:false,reason:"clock:"+k};
+  if(data.timings.Sunset!=null && !validClock(data.timings.Sunset)) return {ok:false,reason:"clock:Sunset"};
+  const g=data.date&&data.date.gregorian, fields=calendarFields(g);
+  if(!fields) return {ok:false,reason:"gregorian-fields"};
+  const date=`${pad(fields.d)}-${pad(fields.mo)}-${String(fields.y).padStart(4,"0")}`;
+  if(typeof dateStr!=="string" || date!==dateStr || g.date!==date) return {ok:false,reason:"gregorian-date"};
+  const timezone=data.meta&&data.meta.timezone;
+  if(typeof timezone!=="string" || !timezone || /^[+-]/.test(timezone)) return {ok:false,reason:"timezone"};
+  try{ new Intl.DateTimeFormat("en",{timeZone:timezone}).format(new Date(0)); }
+  catch(e){ return {ok:false,reason:"timezone"}; }
+  // Malformed optional AH is unavailable; it cannot poison otherwise usable times
+  // or supply an invalid preview-day value. Missing names remain optional.
+  const h=data.date.hijri;
+  const usable=(h!=null && !calendarFields(h,"hijri"))?{...data,date:{...data.date,hijri:null}}:data;
+  return {ok:true,data:usable,date,timezone};
+}
 function cacheKey(){ return "salah:"+[lat,lon,_cacheTz,method,school].join("|"); }   // function (not const): reflects runtime config changes (local mode / settings panel)
 function loadCache(dateStr){
-  try{ const j=JSON.parse(localStorage.getItem(cacheKey())); if(j&&j.date===dateStr) return j.data; }catch(e){}
+  try{
+    const j=JSON.parse(localStorage.getItem(cacheKey()));
+    if(recordObject(j) && j.date===dateStr){ const admitted=admitPrayerRecord(j.data,j.date); if(admitted.ok) return admitted.data; }
+  }catch(e){}
   return null;
 }
 function saveCache(dateStr,data){
-  try{ localStorage.setItem(cacheKey(),JSON.stringify({date:dateStr,data})); }catch(e){}
+  const admitted=admitPrayerRecord(data,dateStr); if(!admitted.ok) return;
+  try{ localStorage.setItem(cacheKey(),JSON.stringify({date:dateStr,data:admitted.data})); }catch(e){}
 }
 async function fetchTimings(dateStr){
   // No timezonestring: let Aladhan resolve the zone from lat/lon, so a wrong/stale tz param can't
@@ -749,9 +793,12 @@ async function fetchTimings(dateStr){
   for(let i=0;i<3;i++){
     try{
       const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer"});
+      if(r.ok!==true) throw new Error("bad api HTTP");
       const j=await r.json();
-      if(j&&j.data&&j.data.timings){ if(j.data.meta&&j.data.meta.timezone) tz=j.data.meta.timezone; return j.data; }
-      throw new Error("bad api");
+      if(!recordObject(j) || (j.code!=null&&j.code!==200) || (j.status!=null&&j.status!=="OK")) throw new Error("bad api envelope");
+      const admitted=admitPrayerRecord(j.data,dateStr);
+      if(!admitted.ok) throw new Error("bad api "+admitted.reason);
+      tz=admitted.timezone; return admitted.data;
     }catch(e){ err=e; if(i<2) await sleep(900*(i+1)); }
   }
   throw err;
@@ -1302,20 +1349,31 @@ function drawArc(M){
   const Lnow=cum[iNow];
   // prayer markers placed ONTO the path via the same X/Y closures (on the curve by construction — sampled
   // onto it, never inserted into the polyline so they can't kink it).
-  // Fajr/Isha are method-ESTIMATED (not true twilight crossings) when the sun never reaches their depression
-  // angle — shallow high-latitude nights. Mark those two dots subtly as "adjusted" (hollow ring) so the curve
-  // doesn't imply a false physical crossing.
-  const estimated = minRealE > -14;
+  // Only accepted per-prayer numeric angles can support a reachability claim.
+  // Interval/missing metadata is explicitly unknown, never coerced into degrees.
+  const params=today&&today.meta&&today.meta.method&&today.meta.method.params;
+  const adjustment=k=>{
+    const angle=params&&params[k];
+    if(typeof angle!=="number" || !Number.isFinite(angle) || angle<=0){
+      const interval=typeof angle==="string" && /^\d+(?:\.\d+)?\s+min$/i.test(angle.trim());
+      return {status:"unknown",description:`${k}: adjustment classification unavailable for ${interval?"an interval-based":"an unsupported"} parameter`};
+    }
+    const reached=minRealE<=-angle && -angle<=maxRealE;
+    return {status:reached?"reachable-angle":"unreachable-angle",angle,
+      description:`${k}: selected ${angle} degree depression is ${reached?"within":"outside"} the modeled solar range`};
+  };
   let dots="";
   for(const p of M.dots){
-    const adj = estimated && (p.k==="Fajr"||p.k==="Isha");
+    const classification=(p.k==="Fajr"||p.k==="Isha")?adjustment(p.k):null;
+    const adj = classification&&classification.status==="unreachable-angle";
     const ring = (p.k==="Sunrise");   // Sunrise is an astronomical event, NOT a prayer → a hollow ring, not a filled dot
     // Dhuhr begins just AFTER zawāl (the sun passing the meridian); it is NOT solar noon. The apex IS solar noon,
     // so Dhuhr's dot must sit a hair PAST the apex, never on it. If its minute-rounded time collapsed onto the
     // apex, hold it the minimum hair past; if it's genuinely later, its own time already places it further along.
     const pabs = (p.k==="Dhuhr") ? Math.max(p.abs, noonT + 11) : p.abs;
     const cls = (p.k===M.nextKey ? "dot next" : "dot") + (adj?" adj":"") + (ring?" ring":"");
-    dots+=`<circle class="${cls}" cx="${X(pabs).toFixed(2)}" cy="${Y(pabs).toFixed(2)}" r="${R}"/>`;
+    const geometry=`<circle class="${cls}" cx="${X(pabs).toFixed(2)}" cy="${Y(pabs).toFixed(2)}" r="${R}"`;
+    dots+=classification?`${geometry} data-adjustment="${classification.status}"${classification.angle!=null?` data-angle="${classification.angle}"`:""} data-solar-min="${minRealE}" data-solar-max="${maxRealE}"><title>${classification.description}</title></circle>`:`${geometry}/>`;
   }
   // "eye of a needle": the ring centre + tangent come from the SAME sample at iNow — pts[iNow] IS the
   // point at path-length Lnow, so the ring threads the one path with zero divergence. The grey rail
