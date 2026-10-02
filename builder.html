@@ -235,7 +235,7 @@ $("method").addEventListener("change",()=>{ methodAuto=false; });
 // Typing searches after a 1 s pause (Enter forces it / cycles matches); feedback shows in #geotip.
 // The pin (#geo) is the tri-state location indicator (same UI as the widget): lit red = IP estimate,
 // glow = precise GPS, grey outline = manual (typed/searched). Clicking it requests precise GPS.
-let srchDebounce=0, srchSeq=0, tipRevert=0, multiCands=[], multiIdx=0;
+let srchDebounce=0, srchSeq=0, tipRevert=0, geoTimer=0, locationEdit=0, multiCands=[], multiIdx=0, multiOwner=null;
 const TIP_DEFAULT="type a place, or use the pin →";
 let homeCC=""; try{ homeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}  // bias bare postcodes to the viewer's country
 function setGeoPin(state){
@@ -249,8 +249,12 @@ function setGeoPin(state){
 function setTip(text){ $("geotip").textContent=text; }
 function startDots(){ $("geotip").textContent="Searching…"; }
 function stopDots(){}
-function searchReset(){ clearTimeout(srchDebounce); clearTimeout(tipRevert); srchSeq++; multiCands=[]; setTip(TIP_DEFAULT); }
-function searchFailed(){ setTip("Couldn’t find that — try the pin (precise GPS) or enter coordinates."); tipRevert=setTimeout(()=>setTip(TIP_DEFAULT),4000); }
+// All location operations share this form's edit owner; separate fetch counters
+// would still let an old GPS/coarse/reverse result overwrite a newer search.
+function searchReset(){ clearTimeout(srchDebounce); clearTimeout(tipRevert); clearTimeout(geoTimer); locationEdit++; srchSeq++; multiCands=[]; multiOwner=null; setTip(TIP_DEFAULT); }
+function captureLookup(){ return {edit:locationEdit,seq:++srchSeq}; }
+function ownsLookup(owner){ return owner.edit===locationEdit && owner.seq===srchSeq; }
+function searchFailed(owner){ setTip("Couldn’t find that — try the pin (precise GPS) or enter coordinates."); tipRevert=setTimeout(()=>{ if(ownsLookup(owner)) setTip(TIP_DEFAULT); },4000); }
 function applyCand(c){                                // push a candidate's coords (+ method) into the form & preview
   $("lat").value=(+c.lat).toFixed(5); $("lon").value=(+c.lon).toFixed(5);
   if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";
@@ -264,45 +268,49 @@ function showMulti(){                                 // several distinct matche
 // Place/postcode search now lives in the shared module (SalahConfig.geocodeSearch) so the widget's
 // in-card settings panel and this builder use the SAME geocoder (Nominatim + Zippopotam, deduped).
 async function doSearch(q){
-  const seq=++srchSeq;
+  clearTimeout(tipRevert);
+  const owner=captureLookup(), bias=homeCC;
   let cands=[];
-  try{ cands = window.SalahConfig ? await SalahConfig.geocodeSearch(q,{homeCC}) : []; }catch(e){}
-  if(seq!==srchSeq) return;                          // a newer keystroke superseded this lookup
+  try{ cands = window.SalahConfig ? await SalahConfig.geocodeSearch(q,{homeCC:bias}) : []; }catch(e){}
+  if(!ownsLookup(owner)) return;
   stopDots();
-  if(!cands.length) searchFailed();
+  if(!cands.length) searchFailed(owner);
   else if(cands.length===1) foundSingle(cands[0]);
-  else { multiCands=cands; multiIdx=0; showMulti(); }
+  else { multiCands=cands; multiIdx=0; multiOwner={...owner,label:$("label").value}; showMulti(); }
 }
 $("label").addEventListener("input",()=>{
   labelAuto=false; setGeoPin("off");                 // typing → manual (not location-sensing); programmatic .value sets don't fire 'input'
   const q=$("label").value.trim();
-  clearTimeout(srchDebounce); clearTimeout(tipRevert); srchSeq++; multiCands=[];  // invalidate any in-flight lookup / cycling
-  if(q.length<2){ searchReset(); return; }           // nothing meaningful to search
+  searchReset();
+  if(q.length<2) return;                            // nothing meaningful to search
   startDots();                                        // "Searching…" immediately…
   srchDebounce=setTimeout(()=>doSearch(q), 1000);     // …but only fetch after a 1 s pause
 });
 $("label").addEventListener("keydown",(e)=>{          // Enter cycles matches, or forces the lookup now (no 1 s wait)
   if(e.key!=="Enter") return;
   e.preventDefault();
-  if(multiCands.length>1){ multiIdx=(multiIdx+1)%multiCands.length; showMulti(); return; }
+  if(multiCands.length>1 && multiOwner && ownsLookup(multiOwner) && multiOwner.label===$("label").value){ multiIdx=(multiIdx+1)%multiCands.length; showMulti(); return; }
+  multiCands=[]; multiOwner=null;
   const q=$("label").value.trim();
   if(q.length>=2){ clearTimeout(srchDebounce); startDots(); doSearch(q); }
 });
-let geoTimer=0;
-async function fillNameFromCoords(){
+async function fillNameFromCoords(edit=locationEdit){
+  if(edit!==locationEdit) return;
   if(!labelAuto && !methodAuto) return;
   const la=$("lat").value.trim(), lo=$("lon").value.trim();
   if(!la||!lo||isNaN(+la)||isNaN(+lo)) return;
+  const owner=captureLookup();
   try{
     const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(la)}&longitude=${encodeURIComponent(lo)}&localityLanguage=en`,{referrerPolicy:"no-referrer"});
     const j=await r.json();
+    if(!ownsLookup(owner)) return;
     if(j.countryCode) homeCC=j.countryCode.toLowerCase();   // upgrade the postcode-bias country to the actual detected location
     if(labelAuto){ const name=(j.city||j.locality||j.principalSubdivision||j.countryName||"").trim(); if(name) $("label").value=name; }
     if(methodAuto) $("method").value = (j.continentCode==="NA") ? "2" : "4";   // ISNA for North America
     update();
   }catch(e){}
 }
-["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ clearTimeout(geoTimer); geoTimer=setTimeout(fillNameFromCoords,700); }));
+["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ searchReset(); setGeoPin("off"); const edit=locationEdit; geoTimer=setTimeout(()=>fillNameFromCoords(edit),700); }));
 
 // ---- date format: preset dropdown <-> editable format-code box ------------
 const DF_PRESETS=["YYYY-MM-DD","MM/DD/YYYY","DD/MM/YYYY","DD MMMM YYYY"];
@@ -371,21 +379,25 @@ $("install").onclick=async()=>{
   installTipTimer=setTimeout(()=>{ tip.textContent="copies terminal script for installation wizard"; tip.style.color=""; }, 8000);
 };
 function locate(auto){                                 // pin click → precise GPS (browser permission)
+  searchReset();
   if(!navigator.geolocation){ if(!auto) setTip("Geolocation isn't available in this browser."); return; }
-  searchReset(); setTip("Requesting precise location…");
+  const owner=captureLookup(); setTip("Requesting precise location…");
   navigator.geolocation.getCurrentPosition(
-    pos=>{ $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
-           setGeoPin("glow"); setTip("Using your precise location."); update(); fillNameFromCoords(); },
-    err=>{ if(!auto) setTip("Precise location unavailable ("+err.message+"). Type a place, or it stays estimated."); },
+    pos=>{ if(!ownsLookup(owner)) return;
+           $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
+           setGeoPin("glow"); setTip("Using your precise location."); update(); fillNameFromCoords(owner.edit); },
+    err=>{ if(ownsLookup(owner) && !auto) setTip("Precise location unavailable ("+err.message+"). Type a place, or it stays estimated."); },
     {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
   );
 }
 $("geo").onclick=()=>locate(false);
 // coarse IP auto-detect on load (no permission prompt) — same default as the widget; the pin lits on success.
 async function detectArea(){
+  const owner=captureLookup();
   if(!window.SalahConfig){ setGeoPin("off"); setTip(TIP_DEFAULT); return; }
   setTip("Detecting your area…");
   let d=null; try{ d=await SalahConfig.coarseDetect(); }catch(e){}
+  if(!ownsLookup(owner)) return;
   if(d&&d.ok){
     $("lat").value=(+d.cfg.lat).toFixed(5); $("lon").value=(+d.cfg.lon).toFixed(5);
     if(labelAuto && d.cfg.label) $("label").value=d.cfg.label;

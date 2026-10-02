@@ -2339,9 +2339,15 @@ function openSettings(){ _openSettings(); }
 function closeSettings(){ _closeSettings(); }
 
 let _setWired=false, _setLastFocus=null, _setSearchSeq=0, _setCands=[], _setCandIdx=0, _setHomeCC="", _locSource="manual", _setDirty=false;
+let _setSession=0, _setEdit=0, _setOpen=false, _setCandOwner=null, _setFocusTimer=0;
 try{ _setHomeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}
 const _byId=id=>document.getElementById(id);
 function _setStatus(msg,isErr){ const s=_byId("set-status"); if(s){ s.textContent=msg||""; s.classList.toggle("err",!!isErr); } }
+// A dialog session and location edit own every async lookup, including GPS and
+// reset detection. Query/coordinate equality cannot distinguish A → B → A.
+function _invalidateSetLocation(){ _setEdit++; _setSearchSeq++; _setCands=[]; _setCandOwner=null; }
+function _captureSetLookup(){ return {session:_setSession,edit:_setEdit,seq:++_setSearchSeq}; }
+function _ownsSetLookup(owner){ return _setOpen && owner.session===_setSession && owner.edit===_setEdit && owner.seq===_setSearchSeq; }
 // the map-pin's tri-state: "ip" = estimated from IP (lit red, default ON), "precise" = GPS active (glowing),
 // "manual" = typed name / edited coords (greyscale, not sensing). Clicking the pin requests precise GPS.
 function _setPin(src){
@@ -2358,19 +2364,21 @@ function _setPin(src){
 // forward-geocode search on the location field (same shared SalahConfig.geocodeSearch as the builder):
 // type a place/postcode + Enter → search → fill lat/lon; multiple matches cycle on Enter.
 async function _runSetSearch(q){
-  const seq=++_setSearchSeq;
+  const owner=_captureSetLookup(), bias=_setHomeCC;
   _setStatus("Searching…");
   let cands=[];
-  try{ if(window.SalahConfig) cands=await SalahConfig.geocodeSearch(q,{homeCC:_setHomeCC}); }catch(e){}
-  if(seq!==_setSearchSeq) return;                               // a newer keystroke superseded this lookup
+  try{ if(window.SalahConfig) cands=await SalahConfig.geocodeSearch(q,{homeCC:bias}); }catch(e){}
+  if(!_ownsSetLookup(owner)) return;
   if(!cands.length){ _setCands=[]; _setStatus("Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for precise location.",true); return; }
-  _setCands=cands; _setCandIdx=0; _showSetCand();
+  _setCands=cands; _setCandIdx=0; _setCandOwner={...owner,label:_byId("set-label").value}; _showSetCand();
 }
 function _showSetCand(){
+  if(!_setCandOwner || !_ownsSetLookup(_setCandOwner)) return;
   const c=_setCands[_setCandIdx]; if(!c) return;
   _byId("set-lat").value=(+c.lat).toFixed(5);
   _byId("set-lon").value=(+c.lon).toFixed(5);
   if(c.name) _byId("set-label").value=c.name;                 // display name follows the chosen place (override later with Shift+Enter)
+  _setCandOwner.label=_byId("set-label").value;              // cycling owns its programmatic display-name update
   _setPin("manual"); _setDirty=true;                          // a searched place is a user choice, not live sensing → grey pin
   _setStatus(_setCands.length>1
     ? ("Match "+(_setCandIdx+1)+" of "+_setCands.length+": "+c.norm+"\npress Enter to cycle")
@@ -2408,7 +2416,7 @@ function _populateSettingsForm(){
   _syncDateFromBox();
   const _src=(CONFIG&&(CONFIG.origin||CONFIG.source))||"";   // origin survives a Save (source becomes "localStorage") so the pin reflects how the coords were really obtained
   _setPin(_src==="browser-geolocation"?"precise":(_src==="coarse-ip"?"ip":"manual"));
-  _setCands=[]; _setSearchSeq++; _setDirty=false;            // fresh open: nothing to auto-save yet
+  _setCands=[]; _setCandOwner=null; _setSearchSeq++; _setDirty=false; // fresh open: nothing to auto-save yet
   _setStatus("Enter to search a place · Shift+Enter to keep the typed name.");
 }
 function _wireSettings(){
@@ -2431,7 +2439,10 @@ function _wireSettings(){
     }
   });
   // typing a name / editing coordinates = manual → the pin goes greyscale (no longer location-sensing)
-  ["set-label","set-lat","set-lon"].forEach(id=>_byId(id).addEventListener("input",()=>{ if(_locSource!=="manual") _setPin("manual"); }));
+  ["set-label","set-lat","set-lon"].forEach(id=>_byId(id).addEventListener("input",()=>{
+    _invalidateSetLocation(); if(_locSource!=="manual") _setPin("manual");
+    _setStatus("Enter to search a place · Shift+Enter to keep the typed name.");
+  }));
   // date format: preset dropdown <-> editable code box (mirrors builder.html)
   _byId("set-datefmt-preset").addEventListener("change",()=>{ const v=_byId("set-datefmt-preset").value; if(v!=="__custom__") _byId("set-datefmt").value=v; else _byId("set-datefmt").focus(); });
   _byId("set-datefmt").addEventListener("input",_syncDateFromBox);
@@ -2444,12 +2455,13 @@ function _wireSettings(){
     if(e.key!=="Enter") return;
     e.preventDefault();
     if(e.shiftKey){                                            // Shift+Enter → display-name override (no search)
-      _setCands=[]; const nm=lab.value.trim(); _setDirty=true;
+      _invalidateSetLocation(); const nm=lab.value.trim(); _setDirty=true;
       _setStatus(nm ? ("Display name “"+nm+"” — coordinates unchanged.")
                     : "Type a place and press Enter to search.");
       return;
     }
-    if(_setCands.length>1){ _setCandIdx=(_setCandIdx+1)%_setCands.length; _showSetCand(); return; }  // cycle matches
+    if(_setCands.length>1 && _setCandOwner && _ownsSetLookup(_setCandOwner) && _setCandOwner.label===lab.value){ _setCandIdx=(_setCandIdx+1)%_setCands.length; _showSetCand(); return; }
+    _setCands=[]; _setCandOwner=null;
     const q=lab.value.trim();
     if(q.length>=2) _runSetSearch(q);                          // Enter → search the typed place
   });
@@ -2465,10 +2477,14 @@ function _commitSettings(){
   applyConfig(cfg,{save:true});                                // persist + re-fetch + re-render (fire-and-forget)
 }
 async function _usePrecise(){    // the map-pin button → precise GPS (only place getCurrentPosition is called)
+  _invalidateSetLocation(); const owner=_captureSetLookup();
   if(!window.SalahConfig){ _setStatus("Precise location unavailable.",true); return; }
   _setStatus("Requesting precise location…");
-  const r=await SalahConfig.geolocate({});                    // user gesture
-  try{ _geoPermission=await SalahConfig.permissionState(); }catch(e){}
+  let r; try{ r=await SalahConfig.geolocate({}); }catch(e){ r={ok:false,error:"unavailable"}; }
+  if(!_ownsSetLookup(owner)) return;
+  let permission=_geoPermission; try{ permission=await SalahConfig.permissionState(); }catch(e){}
+  if(!_ownsSetLookup(owner)) return;
+  _geoPermission=permission;
   if(r.ok){ _byId("set-lat").value=(+r.lat).toFixed(5); _byId("set-lon").value=(+r.lon).toFixed(5); _geoLastError=null;
     _setPin("precise"); _setDirty=true;                       // pin glows = precise GPS active
     _setStatus("Using your precise location."); }
@@ -2477,23 +2493,29 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
       "Precise location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the estimated area.", true); }
 }
 async function _resetLocal(){
+  _invalidateSetLocation(); const owner=_captureSetLookup();
   if(window.SalahConfig) SalahConfig.clearLocal();
   _storageErr=null; _setStatus("Local settings cleared.");
   let d=null; try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){}
+  if(!_ownsSetLookup(owner)) return;
   if(d&&d.ok){ const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg); await applyConfig(c,{save:false});
+    if(!_ownsSetLookup(owner)) return;
     _populateSettingsForm(); _setStatus("Reset — using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
   else { _setStatus("Local settings cleared — enter your location.",true); }
 }
 function _openSettings(){
   const c=document.querySelector(".c"); if(!c) return;
+  _setSession++; _setOpen=true; _invalidateSetLocation();
   _wireSettings(); _populateSettingsForm();
   _setLastFocus=document.activeElement;
   const b=document.querySelector(".buckle"); if(b) b.setAttribute("tabindex","-1");   // covered while open → out of the tab order (focus trap)
   c.classList.add("settings-open");
-  const first=_byId("set-label"); if(first) setTimeout(()=>{ try{ first.focus(); }catch(e){} },30);
+  clearTimeout(_setFocusTimer);
+  const session=_setSession, first=_byId("set-label"); if(first) _setFocusTimer=setTimeout(()=>{ if(_setOpen && session===_setSession){ try{ first.focus(); }catch(e){} } },30);
 }
 function _closeSettings(){
   const c=document.querySelector(".c"); if(!c) return;
+  _setOpen=false; _setSession++; _invalidateSetLocation(); clearTimeout(_setFocusTimer);
   _commitSettings();                                          // AUTO-SAVE on close
   c.classList.remove("settings-open");
   const b=document.querySelector(".buckle");
