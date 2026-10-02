@@ -893,76 +893,162 @@ let weather=null, lastWxAt=0, lastWxTry=0, wxBusy=false;
 let weatherTrack=null;   // {ep:[epoch…], temperature_2m:[…], cloud_cover:[…], weather_code:[…], …}
 let siteElev=0;          // surface elevation (m), from the Open-Meteo response — high, thin-air sites read sharper/darker
 function wxKey(){ return "salahwx:"+[lat,lon,units].join("|"); }   // function (not const): reflects runtime config changes
+const _WX_CURRENT_TTL=15*60*1000, _WX_CACHE_RETENTION=6*3600e3;
+const _WX_CODES=new Set([0,1,2,3,45,48,51,53,55,56,57,61,63,65,66,67,71,73,75,77,80,81,82,85,86,95,96,99]);
+const _WX_FIELDS={temperature_2m:"temp",apparent_temperature:"feels",relative_humidity_2m:"rh",dew_point_2m:"dew",
+  wind_speed_10m:"wind",wind_direction_10m:"windDir",wind_gusts_10m:"gust",cloud_cover:"cloud",
+  cloud_cover_low:"cloudLow",cloud_cover_mid:"cloudMid",cloud_cover_high:"cloudHigh",precipitation:"precip",
+  rain:"rain",showers:"showers",snowfall:"snow",visibility:"vis",is_day:"isDay"};
+const _WX_HOURLY="temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day";
+function usableWeatherCoordinates(la,lo){
+  return typeof la==="number" && Number.isFinite(la) && la>=-90 && la<=90 &&
+    typeof lo==="number" && Number.isFinite(lo) && lo>=-180 && lo<=180;
+}
+function wxNumber(v,min=-Infinity,max=Infinity){ return typeof v==="number" && Number.isFinite(v) && v>=min && v<=max ? v : null; }
+function wxValue(field,v){
+  if(field==="is_day") return v===0||v===1?v:null;
+  if(field==="relative_humidity_2m"||field.startsWith("cloud_cover")) return wxNumber(v,0,100);
+  if(field==="wind_direction_10m") return wxNumber(v,0,360);
+  if(["wind_speed_10m","wind_gusts_10m","precipitation","rain","showers","snowfall","visibility"].includes(field)) return wxNumber(v,0);
+  return wxNumber(v);                 // negative temperatures/dew points/elevations are valid
+}
+function wxUnitsMatch(meta,ctx){
+  if(meta==null) return true;         // the captured request supplies units when optional metadata is absent
+  if(typeof meta!=="object"||Array.isArray(meta)) return false;
+  const expected={temperature_2m:ctx.units==="c"?"°C":"°F",apparent_temperature:ctx.units==="c"?"°C":"°F",
+    dew_point_2m:ctx.units==="c"?"°C":"°F",wind_speed_10m:"m/s",wind_gusts_10m:"m/s",precipitation:"mm",
+    rain:"mm",showers:"mm",snowfall:"cm",visibility:"m",relative_humidity_2m:"%",cloud_cover:"%",
+    cloud_cover_low:"%",cloud_cover_mid:"%",cloud_cover_high:"%"};
+  return Object.keys(expected).every(k=>meta[k]==null||meta[k]===expected[k]);
+}
+function wxEpoch(s,zone){
+  if(typeof s!=="string") return null;
+  const m=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(s); if(!m) return null;
+  const [y,mo,d,h,mi]=m.slice(1).map(Number), check=new Date(Date.UTC(y,mo-1,d,h,mi));
+  if(check.getUTCFullYear()!==y||check.getUTCMonth()+1!==mo||check.getUTCDate()!==d||h>23||mi>59) return null;
+  // The shared temporal owner must resolve this exact captured zone, including gaps/folds. No host-local parse.
+  try{ return wxNumber(epochForTzTime(y,mo,d,h,mi,zone)); }catch(e){ return null; }
+}
+function admitWeatherRecord(input,ctx,cached=false){
+  if(!input||typeof input!=="object"||Array.isArray(input)) return null;
+  const code=cached?input.code:input.weather_code;
+  if(!_WX_CODES.has(code)||(cached&&input.units!=null&&input.units!==ctx.units)) return null;
+  const w={code,units:ctx.units,src:"current",admission:{}};
+  for(const [field,key] of Object.entries(_WX_FIELDS)){
+    const raw=input[cached?key:field], v=wxValue(field,raw);
+    w[key]=key==="temp"&&v!=null?Math.round(v):v;
+    if(v==null) w.admission[key]=raw==null?"unavailable":"invalid measurement";
+  }
+  w.currentTime=cached?(typeof input.currentTime==="string"?input.currentTime:null):(typeof input.time==="string"?input.time:null);
+  w.currentZone=cached?(typeof input.currentZone==="string"?input.currentZone:ctx.zone):ctx.zone;
+  w.currentValidAt=cached?wxNumber(input.currentValidAt):wxEpoch(w.currentTime,ctx.zone);
+  const interval=wxNumber(cached?input.currentIntervalSec:input.interval);
+  w.currentIntervalSec=interval!=null&&interval>0?interval:null;
+  w.retrievedAt=ctx.retrievedAt;
+  return w;
+}
+function admitWeatherTrack(h,ctx,meta){
+  if(!h||typeof h!=="object"||!wxUnitsMatch(meta,ctx)||!Array.isArray(h.time)||!h.time.length) return null;
+  const ep=h.time.map(s=>wxEpoch(s,ctx.zone)), len=ep.length;
+  if(ep.some((v,i)=>v==null||(i>0&&v<=ep[i-1]))) return null;
+  const T={ep,units:ctx.units,zone:ctx.zone};
+  for(const k of _WX_HOURLY.split(",")){
+    const a=h[k], required=k==="temperature_2m"||k==="weather_code";
+    if(!Object.prototype.hasOwnProperty.call(h,k)&&!required){ T[k]=Array(len).fill(null); continue; }
+    if(!Array.isArray(a)||a.length!==len) return null;
+    if(k==="weather_code"){ if(a.some(v=>!_WX_CODES.has(v))) return null; T[k]=a.slice(); }
+    else T[k]=a.map(v=>wxValue(k,v));
+  }
+  return T;
+}
+function weatherEligibility(w,now=Date.now()){
+  const sourceAge=w&&wxNumber(w.currentValidAt)!=null?now-w.currentValidAt:null;
+  const receiptAge=w&&wxNumber(w.retrievedAt)!=null?now-w.retrievedAt:null;
+  const interval=w&&wxNumber(w.currentIntervalSec);
+  const eligible=!!(w&&_WX_CODES.has(w.code)&&interval!=null&&interval>0&&sourceAge!=null&&receiptAge!=null&&
+    sourceAge>=0&&sourceAge<=_WX_CURRENT_TTL&&receiptAge>=0&&receiptAge<=_WX_CURRENT_TTL);
+  return {eligible,sourceAgeMs:sourceAge,receiptAgeMs:receiptAge,
+    reason:eligible?null:"current model time/interval unavailable, future or expired"};
+}
+function selectedWeather(now=Date.now()){
+  if(SIM.wx!=null||ADVANCING) return weather;      // explicit simulations retain their separate preview contract
+  return weatherEligibility(weather,now).eligible?weather:null;
+}
 function loadWx(){
-  try{ const j=JSON.parse(localStorage.getItem(wxKey())); if(j && Date.now()-j.ts < 6*3600e3){ weather=j.w; lastWxAt=j.ts; } }catch(e){}
+  try{
+    const j=JSON.parse(localStorage.getItem(wxKey())), now=Date.now(), receipt=j&&wxNumber(j.ts);
+    if(receipt==null||now-receipt<0||now-receipt>=_WX_CACHE_RETENTION) return;
+    if(j.w&&j.w.retrievedAt!=null&&j.w.retrievedAt!==receipt) return;
+    const w=admitWeatherRecord(j.w,{units,zone:tz,retrievedAt:receipt},true);
+    if(w){ weather=w; if(weatherEligibility(w,now).eligible) lastWxAt=receipt; }
+  }catch(e){}                                    // cache misses preserve bytes and never prevent a fetch
 }
 async function fetchWeather(){
   if(SIM.wx!=null) return;                 // simulated weather: never overwrite
-  if(!lat||!lon||wxBusy) return;
+  const captured={lat,lon,units,zone:tz,cacheKey:wxKey()};
+  if(!usableWeatherCoordinates(captured.lat,captured.lon)||wxBusy) return;
   const now=Date.now();
-  if(weather && weatherTrack && now-lastWxAt < 15*60*1000) return;   // need the hourly TRACK too — a fresh current-weather cache must not block timeScale demos
+  if(selectedWeather(now) && weatherTrack && now-lastWxAt < _WX_CURRENT_TTL) return;   // need the hourly TRACK too — a fresh current-weather cache must not block timeScale demos
   if(now-lastWxTry < 60*1000) return;
   lastWxTry=now; wxBusy=true;
-  const HRLY="temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day";
-  const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(lat)}&longitude=${enc(lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${HRLY}&forecast_days=3&temperature_unit=${units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(tz)}`;
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;
   try{
     const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer"});
+    if(!r.ok) return;
     const j=await r.json();
-    if(j&&j.elevation!=null) siteElev=+j.elevation;                  // Open-Meteo returns the grid-cell elevation
-    if(j&&j.current&&j.current.weather_code!=null){
-      const cu=j.current;
-      weather={code:cu.weather_code, temp:Math.round(cu.temperature_2m),
-        feels:cu.apparent_temperature, rh:cu.relative_humidity_2m, dew:cu.dew_point_2m,
-        wind:cu.wind_speed_10m, windDir:cu.wind_direction_10m, gust:cu.wind_gusts_10m,
-        cloud:cu.cloud_cover, cloudLow:cu.cloud_cover_low, cloudMid:cu.cloud_cover_mid, cloudHigh:cu.cloud_cover_high,
-        precip:cu.precipitation, rain:cu.rain, showers:cu.showers, snow:cu.snowfall,   // OBSERVED current/nowcast precip (mm) — the evidence the precip/thunder gate requires
-        vis:cu.visibility, isDay:cu.is_day, src:"current"};
-      lastWxAt=Date.now();
-      try{ localStorage.setItem(wxKey(),JSON.stringify({w:weather,ts:lastWxAt})); }catch(e){}
+    if(!j||typeof j!=="object"||Array.isArray(j)||j.error===true) return;
+    const ctx={...captured,retrievedAt:Date.now()}, current=wxUnitsMatch(j.current_units,ctx)?admitWeatherRecord(j.current,ctx):null;
+    const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);
+    // Candidates are fully local here. Request-generation ownership is supplied by the acquisition owner.
+    if((current||track)&&elevation!=null) siteElev=elevation;
+    if(current&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
+      weather=current;
+      if(weatherEligibility(current,ctx.retrievedAt).eligible) lastWxAt=ctx.retrievedAt;
+      try{ localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}
     }
-    if(j&&j.hourly&&Array.isArray(j.hourly.time)&&j.hourly.time.length){
-      const h=j.hourly, T={ep:h.time.map(s=>{ const m=/^(\d+)-(\d+)-(\d+)T(\d+):(\d+)/.exec(s); return m?epochForTzTime(+m[1],+m[2],+m[3],+m[4],+m[5]):NaN; })};
-      for(const k of HRLY.split(",")) T[k]=h[k]||[];
-      weatherTrack=T;
-    }
+    if(track) weatherTrack=track;
   }catch(e){}
   finally{ wxBusy=false; }
 }
-// —— TRUE RADAR (RainViewer): an INDEPENDENT observed-precip sensor the weather-truthfulness gate uses to CONFIRM
-// (never fabricate) precip. RainViewer publishes colourised radar TILES served with CORS, so we can read them on a
-// canvas. We sample the pixel-neighbourhood at the widget's lat/lon: returns present (alpha + density) ⇒ radar-observed
-// precipitation, with a coarse mm proxy. FAIL-CLOSED: any error / coverage gap / stale frame ⇒ radarPrecipNow()=0 ⇒
-// the gate behaves exactly as before (Open-Meteo nowcast only). CONFIRM-ONLY: radar can KEEP an API precip code the
-// model nowcast missed, but the gate only ever gates DOWN (and only precip codes), so radar never fabricates rain.
-let weatherRadar=null, lastRadarAt=0, radarBusy=false;        // {precipMm, at, frame, source} | null
+// RainViewer tiles retain mosaic provenance and UNIT-LESS pixel diagnostics only. Alpha/density is not rainfall,
+// reflectivity, on-site precipitation or lightning evidence. Until a qualified decoder exists its gate contribution
+// is unavailable. Source/frame age and download age remain separate even when the same mosaic is downloaded again.
+let weatherRadar=null, lastRadarAt=0, radarBusy=false;
 const _RADAR_Z=6, _RADAR_TTL=20*60*1000, _RADAR_REFRESH=10*60*1000;
-function radarPrecipNow(){                                     // mm of radar-observed precip at the site, or 0 (sim / stale / no radar)
-  if(SIM.wx!=null || !weatherRadar) return 0;                 // forced/sim weather ignores radar
-  if(Date.now()-weatherRadar.at > _RADAR_TTL) return 0;       // stale frame → fail closed
-  return weatherRadar.precipMm||0;
+function radarEvidence(now=Date.now()){
+  const frameAge=weatherRadar&&wxNumber(weatherRadar.frameGeneratedAt)!=null?now-weatherRadar.frameGeneratedAt:null;
+  const receiptAge=weatherRadar&&wxNumber(weatherRadar.retrievedAt)!=null?now-weatherRadar.retrievedAt:null;
+  return {available:!!(SIM.wx==null&&weatherRadar&&weatherRadar.sample&&frameAge!=null&&receiptAge!=null&&
+    frameAge>=0&&frameAge<=_RADAR_TTL&&receiptAge>=0&&receiptAge<=_RADAR_TTL),frameAgeMs:frameAge,receiptAgeMs:receiptAge};
 }
+function radarPrecipNow(){ return 0; }              // compatibility shim: unsupported quantitative evidence contributes nothing
 async function fetchRadar(){
-  if(SIM.wx!=null || !lat || !lon || radarBusy) return;       // real mode only
+  const captured={lat,lon};
+  if(SIM.wx!=null || !usableWeatherCoordinates(captured.lat,captured.lon) || radarBusy) return;       // real mode only
   const now=Date.now(); if(now-lastRadarAt < _RADAR_REFRESH) return;   // radar updates ~10 min
   lastRadarAt=now; radarBusy=true;
   try{
     const r=await fetch("https://api.rainviewer.com/public/weather-maps.json",{cache:"no-store",referrerPolicy:"no-referrer"});
+    if(!r.ok) return;
     const j=await r.json(); const host=j&&j.host, past=j&&j.radar&&j.radar.past;
-    if(host&&past&&past.length){
-      const fr=past[past.length-1];                           // most recent OBSERVED radar frame
-      const z=_RADAR_Z, n=Math.pow(2,z), latRad=(+lat)*Math.PI/180;
-      const fx=(+lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+    if(typeof host==="string"&&Array.isArray(past)&&past.length){
+      const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
+      if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
+      const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;
+      const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+      if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
       const xt=Math.floor(fx), yt=Math.floor(fy);
       const url=host+fr.path+"/256/"+z+"/"+xt+"/"+yt+"/2/1_1.png";
-      const mm=await new Promise(res=>{ const im=new Image(); im.crossOrigin="anonymous";
+      const sample=await new Promise(res=>{ const im=new Image(); im.crossOrigin="anonymous";
         im.onload=()=>{ try{ const cv=document.createElement("canvas"); cv.width=256; cv.height=256; const cx=cv.getContext("2d"); cx.drawImage(im,0,0);
           const d=cx.getImageData(0,0,256,256).data, px=Math.floor((fx-xt)*256), py=Math.floor((fy-yt)*256);
           let cnt=0,sumA=0,tot=0; for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){ const x=px+dx,y=py+dy; if(x<0||x>255||y<0||y>255)continue; tot++; const a=d[(y*256+x)*4+3]; if(a>40){ cnt++; sumA+=a; } }
-          if(cnt<3||!tot){ res(0); return; }                 // need ≥3 return pixels (ignore lone clutter / anti-alias edges)
-          const coverage=cnt/tot, meanA=(sumA/cnt)/255; res((0.3+4.0*coverage)*meanA);   // sparse/light → ~0.3 (confirms rain); dense/solid → >0.8 (can confirm a wet storm)
-        }catch(e){ res(0); } };                               // tainted / read error → fail closed
-        im.onerror=()=>res(0); im.src=url; });
-      weatherRadar={precipMm:mm, at:Date.now(), frame:fr.time, source:"RainViewer radar"};
+          res({returnCount:cnt,sampledCount:tot,coverage:tot?cnt/tot:0,meanAlpha:cnt?sumA/cnt/255:0});
+        }catch(e){ res(null); } };                           // tainted / read error → diagnostic unavailable
+        im.onerror=()=>res(null); im.src=url; });
+      const retrievedAt=Date.now();
+      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,frame:fr.time,frameGeneratedAt:fr.time*1000,
+        indexGeneratedAt:j.generated*1000,sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
     }
   }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
   finally{ radarBusy=false; }
@@ -974,42 +1060,44 @@ function wxAt(ms){
   const T=weatherTrack; if(!T||!T.ep||!T.ep.length) return null;
   let i=0; while(i<T.ep.length-1 && T.ep[i+1]<=ms) i++;
   const i0=i, i1=Math.min(T.ep.length-1,i+1), span=(T.ep[i1]-T.ep[i0])||1, f=clamp((ms-T.ep[i0])/span);
-  const lp=k=>{ const A=T[k]||[], a=A[i0], b=A[i1]; return a==null?b:(b==null?a:a+(b-a)*f); };
-  const d0=(T.wind_direction_10m[i0]||0)*Math.PI/180, d1=(T.wind_direction_10m[i1]||0)*Math.PI/180;
-  const wdir=(Math.atan2((1-f)*Math.sin(d0)+f*Math.sin(d1),(1-f)*Math.cos(d0)+f*Math.cos(d1))*180/Math.PI+360)%360;
-  return { code:(T.weather_code[f<0.5?i0:i1]), temp:Math.round(lp("temperature_2m")), feels:lp("apparent_temperature"),
+  const lp=k=>{ const A=T[k]||[], a=A[i0], b=A[i1]; return a==null?(b==null?null:b):(b==null?a:a+(b-a)*f); };
+  const directions=T.wind_direction_10m||[], a=directions[i0], b=directions[i1];
+  const d0=a==null?null:a*Math.PI/180, d1=b==null?null:b*Math.PI/180;
+  const wdir=d0==null?(b==null?null:b):d1==null?a:(Math.atan2((1-f)*Math.sin(d0)+f*Math.sin(d1),(1-f)*Math.cos(d0)+f*Math.cos(d1))*180/Math.PI+360)%360;
+  const temp=lp("temperature_2m"), isDay=lp("is_day");
+  return { code:(T.weather_code[f<0.5?i0:i1]), temp:temp==null?null:Math.round(temp), feels:lp("apparent_temperature"),
     rh:lp("relative_humidity_2m"), dew:lp("dew_point_2m"), wind:lp("wind_speed_10m"), windDir:wdir, gust:lp("wind_gusts_10m"),
     cloud:lp("cloud_cover"), cloudLow:lp("cloud_cover_low"), cloudMid:lp("cloud_cover_mid"), cloudHigh:lp("cloud_cover_high"),
-    precip:lp("precipitation"), vis:lp("visibility"), isDay:(lp("is_day")>=0.5?1:0) };
+    precip:lp("precipitation"), vis:lp("visibility"), isDay:isDay==null?null:(isDay>=0.5?1:0), units:T.units, src:"forecast" };
 }
 // in sim/fast-forward, derive `weather` from the forecast track by simTime (so weather evolves with the
 // sped-up clock). Explicit simWx always wins; real-time keeps the `current=` block. No track → hold state.
 function syncWeather(){
   if(SIM.wx!=null || !weatherTrack) return;                   // explicit sim weather wins; no track → hold last fetch
   // TRUTHFULNESS: only a FAST-FORWARD/sim preview (ADVANCING) may derive `weather` from the hourly FORECAST track.
-  // In normal REAL-TIME we must NEVER overwrite the `current=` OBSERVED/nowcast weather with a forecast — a forecast
+  // In normal REAL-TIME we must NEVER overwrite the `current=` model estimate with an hourly forecast — a forecast
   // rain/thunder code must not be presented as "currently raining/storming". Real drift comes from the 15-min
-  // current refetch (fetchWeather), which is observed, not projected.
+  // current refetch (fetchWeather). Neither model block is an on-site observation.
   if(!ADVANCING) return;
   const w=wxAt(simNow()); if(w){ if(w.code!=null) weather=w; w.src="forecast"; }
 }
 // normalise the current weather into 0..1 physical drivers (heat/cold/wind/humidity/cloud/haze)
-function wxDrivers(){
+function wxDrivers(w=selectedWeather()){
   const r=(x,a,b)=>clamp((x-a)/(b-a));
-  if(!weather) return {heat:0,cold:0,wind:0,gust:0,windX:-0.7,humid:0,rh:0.5,cloud:0,haze:0};
-  const toC=v=> v==null?null : (units==="f"?(v-32)*5/9:v);
-  const feelsC=toC(weather.feels!=null?weather.feels:weather.temp);
-  const dewC=toC(weather.dew);
+  if(!w) return {heat:0,cold:0,wind:0,gust:0,windX:-0.7,humid:0,rh:0.5,cloud:0,haze:0};
+  const toC=v=> v==null?null : ((w.units||units)==="f"?(v-32)*5/9:v);
+  const feelsC=toC(w.feels!=null?w.feels:w.temp);
+  const dewC=toC(w.dew);
   return {
     heat: feelsC==null?0:r(feelsC,27,40),                 // 0 below 27°C → 1 at 40°C  (≈80→104°F)
     cold: feelsC==null?0:r(feelsC,8,-8),                  // 0 above 8°C → 1 at −8°C
-    wind: r(weather.wind||0,0.5,14),                      // calm → gale (m/s)
-    gust: r((weather.gust||0)-(weather.wind||0),2,16),
-    windX: -Math.sin((weather.windDir!=null?weather.windDir:225)*Math.PI/180),  // +1 ⇒ wind FROM the west ⇒ clouds drift east
+    wind: r(w.wind||0,0.5,14),                      // calm → gale (m/s)
+    gust: w.gust==null||w.wind==null?0:r(w.gust-w.wind,2,16),
+    windX: -Math.sin((w.windDir!=null?w.windDir:225)*Math.PI/180),  // decorative fallback only; never stored as measured wind
     humid: dewC==null?0:r(dewC,8,22),                     // mugginess via dew point
-    rh: (weather.rh!=null?weather.rh:50)/100,
-    cloud: (weather.cloud!=null?weather.cloud:0)/100,
-    haze: 1-r(weather.vis!=null?weather.vis:20000,1000,20000),
+    rh: (w.rh!=null?w.rh:50)/100,
+    cloud: (w.cloud!=null?w.cloud:0)/100,
+    haze: 1-r(w.vis!=null?w.vis:20000,1000,20000),
   };
 }
 function wxInfo(code, day){
@@ -1636,32 +1724,25 @@ function physSky(M, sm){
 
 
 // ---- weather → sky modifier + effect class ------------------------------
-// PRECIP/THUNDER GATE — a precipitation or thunderstorm WEATHER CODE is only honoured when there is ACTIVE
-// observed precipitation EVIDENCE (current/nowcast precip amount, mm). Open-Meteo's current weather_code is a
-// model nowcast that can over-call rain/thunder; without corroborating precip we DOWNGRADE to the cloud state
-// implied by the observed cloud cover, so the widget never claims "Rain"/"Thunderstorm" (or animates rain/
-// lightning) when it isn't actually precipitating. NOTE: this is Open-Meteo's current/nowcast precip, NOT a true
-// radar feed — see DESIGN.md › "Weather truthfulness". Fail-safe: no precip evidence ⇒ no precip visuals.
-const _PRECIP_MIN=0.05, _THUNDER_MIN=0.8;   // mm thresholds: active precip / a genuinely wet storm
+// Lower-level MODEL eligibility: current interval precipitation may support a model category. This does not
+// establish on-site rain/snow/lightning permission. The final live-render policy owns that stronger decision.
+// Numeric radar inputs remain an ignored compatibility argument: alpha/density cannot stand in for millimetres.
+const _PRECIP_MIN=0.05, _THUNDER_MIN=0.8;   // model interval mm thresholds, not a lightning observation
 let _wxDowngrade="";                          // diagnostic (qaState): why the shown condition differs from the raw code
-function _coverCode(w){ const cov=(w&&w.cloud!=null)?+w.cloud:0; return cov>=85?3:cov>=22?2:0; }   // overcast / partly / clear
+function _coverCode(w){ const cov=w?wxNumber(w.cloud,0,100):null; return cov>=85?3:cov>=22?2:0; }   // decorative fallback, not confirmed dry
 function gateWeatherCode(raw,w,radarMm){
   _wxDowngrade="";
   if(raw==null) return raw;
+  if(!_WX_CODES.has(raw)) return null;
   const cls=wxClass(raw), precipCls=(cls==="drizzle"||cls==="rain"||cls==="thunder"||cls==="snow");
   if(!precipCls) return raw;                                   // clear/cloud/overcast/fog — nothing to gate
-  // OBSERVED precip evidence = the MORE supportive of the Open-Meteo nowcast and the radar sensor (radar CONFIRMS,
-  // never suppresses; radarMm defaults to 0 so the pure unit-gate is unchanged). The gate only ever gates DOWN, so
-  // radar can keep an API precip code the model missed — it can never fabricate rain from a clear code.
-  const npre=(w&&w.precip!=null)?+w.precip:null, rpre=+radarMm||0;
-  const precip=(npre!=null||rpre>0)?Math.max(npre||0,rpre):null, has=precip!=null&&precip>=_PRECIP_MIN;
-  const rNote=(rpre>=_PRECIP_MIN)?` [radar ${rpre.toFixed(2)}mm]`:"";
+  const precip=w?wxNumber(w.precip,0):null, has=precip!=null&&precip>=_PRECIP_MIN;
   if(cls==="thunder"){
-    if(has&&precip>=_THUNDER_MIN) return raw;                  // genuinely wet storm (nowcast or radar) → keep thunder
-    const dc=has?63:_coverCode(w); _wxDowngrade=`thunder code, precip ${precip==null?"n/a":precip.toFixed(2)+"mm"}${rNote} < storm evidence → ${wxClass(dc)}`; return dc;
+    if(has&&precip>=_THUNDER_MIN) return raw;                  // eligible MODEL category only
+    const dc=has?63:_coverCode(w); _wxDowngrade=`thunder model code, interval precip ${precip==null?"n/a":precip.toFixed(2)+"mm"} below model threshold → ${wxClass(dc)}`; return dc;
   }
-  if(!has){ const dc=_coverCode(w); _wxDowngrade=`${cls} code but observed precip ${precip==null?"unavailable":precip.toFixed(2)+"mm"}${rNote} → ${wxClass(dc)}`; return dc; }
-  return raw;                                                  // precip supported (nowcast or radar) → keep rain/drizzle/snow
+  if(!has){ const dc=_coverCode(w); _wxDowngrade=`${cls} model code but interval precip ${precip==null?"unavailable":precip.toFixed(2)+"mm"} → ${wxClass(dc)}`; return dc; }
+  return raw;                                                  // model amount supports its model category
 }
 function wxClass(code){
   const c=code;
@@ -1818,12 +1899,12 @@ function tieRainToClouds(){
 // Nothing here is keyed to a prayer NAME. paint(A) below is the ONLY place this state touches the DOM.
 function atmosphere(M){
   const day=isDayNow(M.nowMin);
-  const rawCode=weather?weather.code:null;
-  const code=gateWeatherCode(rawCode, weather, radarPrecipNow());   // EFFECTIVE condition: precip/thunder honoured only with observed evidence (Open-Meteo nowcast OR RainViewer radar); else downgraded to a cloud state
-  const info=wxInfo(code,day), cls=wxClass(code), w=WX[cls];
+  const current=selectedWeather(), rawCode=current?current.code:null;
+  const code=gateWeatherCode(rawCode,current,radarPrecipNow());   // final live-particle permission is supplied by the weather-policy owner
+  const info=current?wxInfo(code,day):{cond:"clear",icon:"",label:"Weather unavailable"}, cls=wxClass(code), w=WX[cls];
   const sm=sunMetrics(M);                                       // genuine solar altitude (deg) + screen x/y
   const S=physSky(M, sm);                                       // sky colours DERIVED from solar elevation
-  const D=wxDrivers();                                          // 0..1 physical weather drivers (heat/cold/wind/humidity…)
+  const D=wxDrivers(current);                                   // the same eligible snapshot supplies every weather consumer
   const airDrift=_airDrift();                                   // slow non-looping transparency/air-mass wander (0..1) — makes a clear sky breathe over 15–60 min
   const mFrac=clamp(moonSky.frac);                             // phase AND altitude from the geometry this frame consumes
   // — lunar state (from the REAL ephemeris in moonSky, set by renderMoon). Three regimes: a real above-
@@ -1914,7 +1995,7 @@ function atmosphere(M){
   //   low = horizon deck (thick band), mid = broad deck, high = thin upper veil. Coverage is DATA-driven, so a
   //   clear sky shows NO cloud body and overcast fills the deck — not a blanket texture keyed to a data-fx name.
   let clLow,clMid,clHigh;
-  if(weather && weather.cloudLow!=null){ clLow=clamp(weather.cloudLow/100); clMid=clamp(weather.cloudMid/100); clHigh=clamp(weather.cloudHigh/100); }
+  if(current && current.cloudLow!=null){ clLow=clamp(current.cloudLow/100); clMid=clamp(current.cloudMid/100); clHigh=clamp(current.cloudHigh/100); }
   else { const sp=({clear:[0,0,0],cloud:[.2,.55,.4],overcast:[.92,.85,.5],fog:[1,.2,0],drizzle:[.72,.6,.2],rain:[.9,.85,.3],thunder:[.92,.9,.6],snow:[.82,.7,.3]})[cls]||[0,0,0]; clLow=sp[0]; clMid=sp[1]; clHigh=sp[2]; }
   // LUNAR OPTICS — two DISTINCT phenomena gated by cloud TYPE: a 22° ICE-crystal HALO ring from thin CIRRUS (high
   // cloud), and a water-droplet CORONA aureole from thin ALTOSTRATUS/FOG (mid cloud / humidity). Both need a bright
@@ -1949,7 +2030,7 @@ function atmosphere(M){
   const aurDark=clamp(-(sm.altDeg+8)/6);   // needs a genuinely DARK sky (sun ≲ −10°): no aurora in bright twilight/white nights
   const aurora=(Math.abs(+lat||0)>=55?clamp((Math.abs(+lat||0)-55)/12):0)*aurDark*clamp(1-1.5*clLow)*(1-0.55*moonStrength)*(1-0.7*LPOLL)*0.5;
   // precipitation AMOUNT (mm) → rain-streak opacity: light drizzle faint, heavy rain bold (was fetched-but-unused).
-  const pmm=weather&&weather.precip!=null?weather.precip:null;
+  const pmm=current&&current.precip!=null?current.precip:null;
   const rainOp=pmm==null?0.72:clamp(0.42+0.6*clamp((pmm-0.1)/6));
   // ——— CORNER-SUN TONE-MAPPING (scene-referred radiance → Kasten–Young airmass + Beer–Lambert + per-class cloud
   // transmittance + CCT blackbody → ACES). LIFTED here from paint() so paint() only WRITES --suncore/--sunmid
@@ -1974,12 +2055,12 @@ function atmosphere(M){
     illumination:moonlight,beam:0.6*moonlight,cloudLight:moonlight,localStarWash:moonLocalWash,localGlow:moonGlow,halo:lunarHalo,corona:lunarCorona,paraselenae:moonParhelia})});
   return {
     // —— physical drivers (the source of truth) ——
-    day, cls, info, code, wxTemp: weather?weather.temp:null,
+    day, cls, info, code, wxTemp: current?current.temp:null,
     solarElevationDeg: sm.altDeg, skyLuminance: skyLum(sm.altDeg), sunX: sm.x, sunY: sm.y,
     sunCoreRGB, sunMidRGB, sunCloudT: _Tcloud,                   // tone-mapped corner-sun nucleus + body + cloud transmittance (paint() writes --suncore/--sunmid and uses sunCloudT for --sunray)
     moonPhase: mFrac, moonAltitude: moonSky.alt, moonHourAngle: moonSky.H, moonObservation,moonSkyFresh:moonObservation.fresh,
     moonObject, moonlightIntensity: moonlight,moonGlow,moonLocalWash,
-    cloudCover: D.cloud, windSpeed: D.wind, windDeg: weather&&weather.windDir!=null?weather.windDir:225,
+    cloudCover: D.cloud, windSpeed: D.wind, windDeg: current&&current.windDir!=null?current.windDir:225,
     // —— sky gradient + glows ——
     skyTop: g1, skyMid: g2, skyHorizon: g3, glow, horizon: hor,
     // —— night sky ——
@@ -1998,7 +2079,7 @@ function atmosphere(M){
     // —— clouds: layered coverage (low/mid/high) + wind VELOCITY vector for the canvas density field's advection ——
     cloudLayerLow: clLow, cloudLayerMid: clMid, cloudLayerHigh: clHigh,
     cloudSunCol, cloudMoonCol, cloudMoonX: (moonSky.sx!=null?moonSky.sx:0.84), cloudMoonY: (moonSky.sy!=null?moonSky.sy:0.1), cloudMoonLit: moonlight,
-    windUX: D.windX, windUY: Math.cos((weather&&weather.windDir!=null?weather.windDir:225)*Math.PI/180), windSpeedNorm: D.wind,
+    windUX: D.windX, windUY: Math.cos((current&&current.windDir!=null?current.windDir:225)*Math.PI/180), windSpeedNorm: D.wind,
     // —— light shafts + post / finish ——
     rayIntensity: ray, grainStrength: grain,
     // descriptors (renderer contract): scattering/aerial values the colour math already encodes
@@ -2279,20 +2360,24 @@ window.qaState=function(){
   const cs=getComputedStyle(document.querySelector(".c")); let A={}; try{ A=atmosphere(model()); }catch(e){}
   let starsVis=0; for(const e of _starEls) if(e.style.display!=="none") starsVis++;
   const n=nowParts();
+  const current=selectedWeather();
   return {
     sim:`${n.dateStr} ${pad(n.h)}:${pad(n.mi)}`,
     sunEl:+(A.solarElevationDeg||0).toFixed(1),
-    wx:{code:weather?weather.code:null, cloud:weather?Math.round(weather.cloud):null, temp:weather?weather.temp:null, rh:weather&&weather.rh!=null?Math.round(weather.rh):null, vis:weather?weather.vis:null, wind:weather?+(+weather.wind||0).toFixed(1):null},
+    wx:{code:current?current.code:null, cloud:current&&current.cloud!=null?Math.round(current.cloud):null, temp:current?current.temp:null, rh:current&&current.rh!=null?Math.round(current.rh):null, vis:current?current.vis:null, wind:current&&current.wind!=null?+current.wind.toFixed(1):null},
     // ── WEATHER TRUTHFULNESS diagnostics: why the widget is / isn't showing rain or thunder ──
-    wxTruth:(()=>{ const raw=weather?weather.code:null, rp=radarPrecipNow(), g=gateWeatherCode(raw,weather,rp), p=weather&&weather.precip!=null?+weather.precip:null, eff=Math.max(p||0,rp);
+    wxTruth:(()=>{ const raw=current?current.code:null, rp=radarPrecipNow(), g=gateWeatherCode(raw,current,rp), p=current?wxNumber(current.precip,0):null, radar=radarEvidence();
       const fc=(()=>{ try{ const w=weatherTrack?wxAt(simNow()):null; return w?w.code:null; }catch(e){ return null; } })();
-      return { currentWeatherSource: weather?(weather.src||"current")+" (Open-Meteo nowcast)":"none", forecastTrackSource: weatherTrack?"Open-Meteo hourly (forecast — sim/fast-forward only)":"none",
-        radarSource: weatherRadar?weatherRadar.source:"none (RainViewer unavailable / sim / coverage gap)", radarPrecipMm: rp>0?+rp.toFixed(2):0, radarAgeSec: weatherRadar?Math.round((Date.now()-weatherRadar.at)/1000):null, radarConfirming:(rp>=_PRECIP_MIN && !(p!=null&&p>=_PRECIP_MIN)),
-        rawCode: raw, rawForecastCode: fc, observedPrecipMm: p, effectivePrecipMm:+eff.toFixed(2), activePrecip: eff>=_PRECIP_MIN, activeThunder: (wxClass(raw)==="thunder"&&eff>=_THUNDER_MIN),
+      return { currentWeatherSource: current?(current.src||"current")+(current.src==="sim"?" (simulation)":" (Open-Meteo model estimate)"):"none (current unavailable)", forecastTrackSource: weatherTrack?"Open-Meteo hourly (forecast — sim/fast-forward only)":"none",
+        radarSource: weatherRadar?weatherRadar.source:"none (RainViewer unavailable / sim / coverage gap)", radarPrecipMm:0, radarAgeSec:radar.receiptAgeMs==null?null:Math.round(radar.receiptAgeMs/1000),
+        radarFrameAgeSec:radar.frameAgeMs==null?null:Math.round(radar.frameAgeMs/1000), radarAvailable:radar.available, radarConfirming:false,
+        radarDiagnostic:weatherRadar?weatherRadar.sample:null, radarQuantitativeReason:"unavailable: uncalibrated palette/alpha; no on-site precipitation or lightning authority",
+        rawCode: raw, rawForecastCode: fc, observedPrecipMm:null, modelPrecipMm:p, effectivePrecipMm:p==null?null:+p.toFixed(2), activePrecip:p!=null&&p>=_PRECIP_MIN, activeThunder:(wxClass(raw)==="thunder"&&p!=null&&p>=_THUNDER_MIN),
         displayCondition: wxClass(g), finalDataFx: (document.querySelector(".c").dataset.fx||null), downgradeReason: _wxDowngrade||null, advancing: ADVANCING, cloudFieldSeed: _cloudFieldSeed }; })(),
     // ── CACHE / STALE-STATE diagnostics (BASE): what may be stale and how old ──
-    cache:(()=>{ const wxAge=lastWxAt?Math.round((Date.now()-lastWxAt)/1000):null;
-      return { weatherSource: weather?(weather.src||"current"):"none", weatherAgeSec: wxAge, weatherStale: (SIM.wx!=null)?false:(lastWxAt? (Date.now()-lastWxAt)>15*60*1000 : true),
+    cache:(()=>{ const eligibility=weatherEligibility(weather), wxAge=eligibility.receiptAgeMs==null?null:Math.round(eligibility.receiptAgeMs/1000);
+      return { weatherSource: weather?(weather.src||"current"):"none", weatherAgeSec:wxAge, weatherSourceAgeSec:eligibility.sourceAgeMs==null?null:Math.round(eligibility.sourceAgeMs/1000),
+        weatherStale:(SIM.wx!=null||ADVANCING)?false:!eligibility.eligible, currentEligible:eligibility.eligible, currentUnavailableReason:eligibility.reason,
         lastWeatherRefresh: lastWxAt?new Date(lastWxAt).toISOString():null, forecastTrackLoaded: !!weatherTrack,
         prayerDate: lastDate||null, prayerLoaded: !!today, tomorrowLoaded: !!tomorrow,
         prayerStale: _prayerStale, rolloverPendingMs: (_prayerStale ? Math.max(0, _rolloverNextTry-Date.now()) : null),
