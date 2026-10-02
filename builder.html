@@ -382,12 +382,20 @@ function installCmd(){
   }
   return { cmd, carry };
 }
-async function copyText(t){
+async function copyText(t,isCurrent=()=>true){
+  if(!isCurrent()) return false;
   try{ await navigator.clipboard.writeText(t); return true; }
   catch(e){
+    if(!isCurrent()) return false;                  // an abandoned rejection must not start fallback effects
     let ta=null, ok=false;
     try{ ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0";
-      document.body.appendChild(ta); ta.focus(); ta.select(); ok=document.execCommand("copy")===true;
+      if(!isCurrent()) return false;
+      document.body.appendChild(ta);
+      if(!isCurrent()) return false;
+      ta.focus();
+      if(!isCurrent()) return false;
+      ta.select();
+      if(isCurrent()) ok=document.execCommand("copy")===true;
     }catch(_){}
     finally{ if(ta){ try{ ta.remove(); }catch(_){} } }
     return ok;
@@ -402,7 +410,7 @@ async function copyArtifact(buttonId,payload,carry){
   clearTimeout(state.timer); $(kind+"-recovery-wrap").hidden=true;
   tip.textContent=""; tip.style.color=""; button.disabled=true;
   let ok=false;
-  try{ ok=await copyText(payload); }catch(_){}
+  try{ ok=await copyText(payload,()=>attempt===state.seq); }catch(_){}
   finally{ if(attempt===state.seq) button.disabled=false; }
   if(attempt!==state.seq) return;
   if(ok){
