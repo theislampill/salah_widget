@@ -25,3 +25,14 @@ test("R0005 frozen simulated second repaints accepted asynchronous rollover in e
   const before=h.paints.length;for(let i=0;i<20;i++){await h.advance(h.elapsed()+16);await h.frame();}
   assert.ok(h.paints.length>before);assert.equal(h.paints.at(-1).today.tag,"new-current8");assert.equal(h.nodes.get(".c").dataset.stale,"");
 });
+
+test("R0005 held-out warm 100-frame control avoids repeated admission/Intl construction",async()=>{
+  const h=harness();h.seed(record(),record("08-09-2026"));
+  h.run(`let reviewIntl=0,reviewAdmissions=0;const originalIntl=Intl,originalCtor=Intl.DateTimeFormat,originalAdmit=admitPrayerRecord;
+    Intl=Object.create(originalIntl);Intl.DateTimeFormat=function(...a){reviewIntl++;return new originalCtor(...a);};
+    admitPrayerRecord=function(...a){reviewAdmissions++;return originalAdmit(...a);};startRenderLoop();`);
+  await h.frame();h.run("reviewIntl=0;reviewAdmissions=0;");const paints=h.paints.length;
+  for(let i=0;i<100;i++){await h.advance(h.elapsed()+16);await h.frame();}
+  const observed={frames:100,elapsed:1600,intl:h.run("reviewIntl"),admission:h.run("reviewAdmissions"),paints:h.paints.length-paints,requests:h.requests.length,stale:h.state()._prayerStale};
+  console.log(JSON.stringify({warmLoop:observed}));assert.equal(observed.admission,0);assert.ok(observed.intl<=106);assert.equal(observed.paints,1);assert.equal(observed.requests,0);assert.equal(observed.stale,false);
+});

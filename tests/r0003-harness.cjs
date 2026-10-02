@@ -23,7 +23,7 @@ function harness(options={}){
   const raw=options.source||source();
   const slice=(a,b)=>between(raw,a,b);
   let elapsed=0,wall=Date.parse(options.epoch||"2026-09-07T12:00:00Z"),serial=0,context;
-  const timers=new Map(),frames=new Map(),events=new Map(),nodes=new Map(),storage=new Map(),writes=[],requests=[],paints=[],errors=[];
+  const timers=new Map(),frames=new Map(),events=new Map(),nodes=new Map(),storage=new Map(),reads=[],writes=[],requests=[],paints=[],errors=[];
   class ClockDate extends Date {constructor(...a){super(...(a.length?a:[wall]));}static now(){return wall;}}
   function run(code){return vm.runInContext(code,context,{timeout:300});}
   function state(){return copy(run("({today,tomorrow,tz,lat,lon,method,school,lastDate,fetchingTomorrow,_prayerStale,_loopStarted})"));}
@@ -37,7 +37,7 @@ function harness(options={}){
     setTimeout:(fn,ms=0)=>{const id=++serial;timers.set(id,{at:elapsed+Number(ms),fn});return id;},clearTimeout:id=>timers.delete(id),
     requestAnimationFrame:fn=>{const id=++serial;frames.set(id,fn);return id;},cancelAnimationFrame:id=>frames.delete(id),
     document:{visibilityState:"visible",querySelector:node,querySelectorAll:()=>[],addEventListener:(name,fn)=>events.set(name,fn)},
-    localStorage:{getItem:k=>storage.get(k)??null,setItem:(key,value)=>{storage.set(key,value);writes.push({key,value,at:elapsed});}},
+    localStorage:{getItem:k=>{reads.push(k);return storage.get(k)??null;},setItem:(key,value)=>{storage.set(key,value);writes.push({key,value,at:elapsed});}},
     fetch:(url,init={})=>{const headers=deferred(),body=deferred(),req={url,init,headers,body,at:elapsed};requests.push(req);
       req.ok=(data)=>{headers.resolve({ok:true,status:200,json:()=>body.promise});body.resolve({code:200,status:"OK",data:copy(data)});};
       req.fail=()=>headers.reject(new Error("offline fixture"));
@@ -58,7 +58,7 @@ function harness(options={}){
     slice("let _loopStarted=false;","// ——————————————————————— in-widget settings"));
   async function advance(to){assert.ok(to>=elapsed);let budget=0;while(true){await settle();const next=[...timers].filter(([,t])=>t.at<=to).sort((a,b)=>a[1].at-b[1].at)[0];if(!next)break;if(++budget>200)throw Error("fixture timer bound");const [id,t]=next;timers.delete(id);const at=Math.max(elapsed,t.at);wall+=at-elapsed;elapsed=at;t.fn();}wall+=to-elapsed;elapsed=to;await settle();}
   async function frame(){const pending=[...frames];frames.clear();for(const [,fn]of pending)fn(elapsed);await settle();}
-  return {run,state,storage,writes,requests,paints,errors,nodes,timers,frames,advance,frame,settle,
+  return {run,state,storage,reads,writes,requests,paints,errors,nodes,timers,frames,advance,frame,settle,
     wallBy:ms=>{wall+=ms;},elapse:ms=>{elapsed+=ms;wall+=ms;},elapsed:()=>elapsed,
     hide:()=>{sandbox.document.visibilityState="hidden";events.get("visibilitychange")?.();},
     show:()=>{sandbox.document.visibilityState="visible";events.get("visibilitychange")?.();},

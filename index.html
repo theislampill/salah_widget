@@ -952,9 +952,14 @@ async function fetchTimings(dateStr,operation=null){
 }
 
 const _prayerCooldown={current:null,prefetch:null};
+const _prayerAdmissions=new WeakMap();
+let _prayerDayZone=null, _prayerDayFormatter=null;
 let _renderDirty=false;
 function prayerCivilDay(zone=tz){
-  let n=null; try{ n=projectInZone(zoneFormatter(zone),simNow()); }catch(e){}
+  let n=null; try{
+    if(!_prayerDayFormatter || _prayerDayZone!==zone){ _prayerDayFormatter=zoneFormatter(zone); _prayerDayZone=zone; }
+    n=projectInZone(_prayerDayFormatter,simNow());
+  }catch(e){}
   return n ? `${pad(n.d)}-${pad(n.mo)}-${String(n.y).padStart(4,"0")}` : null;
 }
 function prayerNextDay(day){
@@ -965,7 +970,14 @@ function prayerNextDay(day){
   return `${pad(n.getUTCDate())}-${pad(n.getUTCMonth()+1)}-${String(n.getUTCFullYear()).padStart(4,"0")}`;
 }
 function prayerRecordReady(data,day){
-  return !!data && !!day && !!data.meta && data.meta.timezone===tz && admitPrayerRecord(data,day).ok;
+  if(!recordObject(data) || !day || !data.meta || data.meta.timezone!==tz || !data.date || !data.date.gregorian || data.date.gregorian.date!==day) return false;
+  // Provider bundles are read-only after admission. Cache/network/adoption still validate each ingress;
+  // repeated visible frames reuse only this record's validation, never its day/zone eligibility.
+  let admitted=_prayerAdmissions.get(data);
+  if(!admitted || admitted.date!==day || admitted.zone!==tz){
+    admitted={date:day,zone:tz,ok:admitPrayerRecord(data,day).ok}; _prayerAdmissions.set(data,admitted);
+  }
+  return admitted.ok;
 }
 function prayerResultEligible(op){
   const a=op&&op.completedAttempt;
