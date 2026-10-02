@@ -438,7 +438,7 @@ function locate(auto){                                 // pin click → precise 
            builderLocation=window.SalahConfig?SalahConfig.browserLocationEvidence(pos):null;
            $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
            setGeoPin("glow"); setTip("Using browser position · accuracy "+(builderLocation && builderLocation.accuracyM!=null?builderLocation.accuracyM+" m":"unknown")+"."); update(); fillNameFromCoords(owner.edit); },
-    err=>{ if(ownsLookup(owner) && !auto) setTip("Browser location unavailable ("+err.message+"). Type a place, or it stays estimated."); },
+    err=>{ if(ownsLookup(owner) && !auto) setTip("Browser location unavailable ("+err.message+"). Type a place, or keep the selected location."); },
     {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
   );
 }

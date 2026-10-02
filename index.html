@@ -3413,7 +3413,7 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
     _setStatus(_byId("set-pin").title); }
   else { _geoLastError=r.error||"denied";
     _setStatus(r.error==="unsupported" ? "Geolocation isn't available in this browser/iframe." :
-      "Browser location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the estimated area.", true); }
+      "Browser location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the selected location.", true); }
 }
 async function _resetLocal(){
   _invalidateSetLocation(); const owner=_captureSetLookup(), prefOwner={..._setPrefVersions};
