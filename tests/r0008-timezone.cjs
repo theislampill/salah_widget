@@ -95,13 +95,13 @@ test('actual render/apply/loop invalidate a prior scene and restore valid config
   assert.equal(c.dom.querySelector('.left').textContent,'Simulation time unavailable');
   assert.notEqual(c.dom.querySelector('.h').style.visibility,'hidden');
   assert.notEqual(c.dom.querySelector('.settings').style.visibility,'hidden');
-  await c.run('applyConfig({tz:"UTC"})');
+  await c.run('applyConfig({lat:24,lon:39,tz:"UTC"})'); c.frame();
   assert.equal(c.dom.querySelector('.sky').style.visibility,undefined);
   assert.equal(c.dom.querySelector('.climate').style.visibility,'hidden','preexisting visibility is restored');
   assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
   assert.equal(c.dom.querySelector('.simclock').style.display,undefined);
   const requests=c.calls.requests.length;
-  await c.run('applyConfig({tz:"America/New_York"})');
+  await c.run('applyConfig({lat:24,lon:39,tz:"America/New_York"})');
   assert.equal(c.calls.requests.length,requests);
   assert.equal(c.dom.querySelector('.left').textContent,'Simulation time unavailable');
 });
@@ -135,7 +135,10 @@ test('first-fold-candidate and ignored-explicit-zone mutants are discriminated',
 test('bypassing simulation validity is caught by the actual boot caller', async () => {
   const block=temporal.replace('const valid=SIM.time==null || Number.isFinite(simNow()),','const valid=true,'); assert.notEqual(block,temporal);
   const c=loadLifecycle(loadRender(modelRealm({block,query:'simTime=02:30',zone:'America/New_York',wall:Date.parse('2026-03-08T12:00Z')})));
-  await c.run('boot()'); assert(c.calls.stars>0);
+  const boot=c.run('boot()'); assert(c.calls.stars>0);
+  // A deliberately unguarded NaN scene has no civil request day. Cancel its real loader through
+  // the accepted ownership boundary rather than letting invalid transport retries hold this mutant.
+  c.run('beginRuntimeGeneration()'); await boot;
   assert.notEqual(c.dom.querySelector('.left').textContent,'Simulation time unavailable');
   console.log(`MUTANT invalid-scene-bypass ${sha256(block)} rejected by boot boundary`);
 });
@@ -157,12 +160,12 @@ for(const mode of ['local','preferLocal']) for(const zone of ['UTC','America/New
 test('initial invalid boot then valid config initializes scene builders once across further recoveries', async () => {
   const c=loadLifecycle(loadRender(modelRealm({query:'simTime=02:30',zone:'America/New_York',wall:Date.parse('2026-03-08T12:00Z')})));
   await c.run('boot()'); assert.equal(c.calls.stars,0); assert.equal(c.calls.weatherBuild,0);
-  await c.run('applyConfig({tz:"UTC"})');
+  await c.run('applyConfig({lat:24,lon:39,tz:"UTC"})'); c.frame();
   assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
   assert.equal(c.run('Number.isFinite(simNow())'),true); assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
-  await c.run('applyConfig({tz:"UTC"})'); await c.run('applyConfig({tz:"America/New_York"})');
+  await c.run('applyConfig({lat:24,lon:39,tz:"UTC"})'); await c.run('applyConfig({lat:24,lon:39,tz:"America/New_York"})');
   assert.equal(c.dom.querySelector('.left').textContent,'Simulation time unavailable');
-  await c.run('applyConfig({tz:"UTC"})');
+  await c.run('applyConfig({lat:24,lon:39,tz:"UTC"})'); c.frame();
   assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1); assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
 });
 
@@ -171,6 +174,6 @@ test('valid boot and subsequent config reuse builders; bare embeds keep existing
   c.context._cfgMode='bare'; await c.run('boot()');
   assert.equal(c.dom.querySelector('.buckle').getAttribute('role'),null);
   assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
-  await c.run('applyConfig({tz:"UTC"})'); await c.run('boot()');
+  await c.run('applyConfig({lat:24,lon:39,tz:"UTC"})'); c.frame(); await c.run('boot()');
   assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
 });

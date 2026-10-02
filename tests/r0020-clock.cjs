@@ -18,7 +18,7 @@ for(const step of [0,3600000,-3600000,7200000,-7200000]) {
 
 function boundaryLoop(block=lifecycle) {
   const c=loadLifecycle(loadRender(modelRealm({zone:'UTC',wall:Date.parse('2026-09-07T15:29:59Z'),
-    globals:{today:prayerRecord('2026-09-07','UTC')}})),block);
+    globals:{today:prayerRecord('2026-09-07','UTC'),tomorrow:prayerRecord('2026-09-08','UTC')}})),block);
   c.run('startRenderLoop()'); c.frame();
   assert.equal(c.dom.querySelector('.cn').textContent,'Dhuhr'); assert.equal(c.run('model().nextKey'),'Asr');
   c.clock.wall=Date.parse('2026-09-07T15:30:01Z'); c.frame();
@@ -49,7 +49,9 @@ test('anchor-only, broad-default and increasing-only loop mutants fail their ind
   c.clock.wall=base+3600000; assert.notEqual(c.run('simNow()'),c.clock.wall);
   const broad=temporal.replace('_tsParam==null && SIM.time==null && TIMESCALE===1','_tsParam==null'); assert.notEqual(broad,temporal);
   assert.notEqual(realm({block:broad,query:'simTime=03:30'}).run('simNow()'),Date.parse('2026-09-07T03:30Z'));
-  const increasing=lifecycle.replace('if(sec!==_lastSec)','if(sec>_lastSec)'); assert.notEqual(increasing,lifecycle);
+  const predicate='if(sec!==_lastSec || _renderDirty)';
+  assert.equal(lifecycle.split(predicate).length,2,'one actual combined clock/dirty predicate is required');
+  const increasing=lifecycle.replace(predicate,'if(sec>_lastSec || _renderDirty)'); assert.notEqual(increasing,lifecycle);
   assert.equal(boundaryLoop(increasing).dom.querySelector('.cn').textContent,'Asr','mutant visibly retains the future prayer after the reverse correction');
   console.log(`MUTANT anchor-only ${sha256(anchored)} / broad-default ${sha256(broad)} / increasing-only ${sha256(increasing)} rejected`);
 });

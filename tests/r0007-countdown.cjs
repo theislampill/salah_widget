@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const {test} = require('node:test');
-const {modelRealm, prayerRecord, loadRender, source, modelSource, renderSource, sha256, countedIntl} = require('./r0008-clock-harness.cjs');
+const {modelRealm, prayerRecord, loadRender, loadLifecycle, source, modelSource, renderSource, lifecycle, sha256, countedIntl} = require('./r0008-clock-harness.cjs');
 console.log(`SOURCE ${sha256(source)} MODEL ${sha256(modelSource)} RENDER ${sha256(renderSource)}`);
 for(const [name,date,now,target,zone,expected] of [
   ['spring', '2026-03-08','2026-03-08T01:30:00-05:00','2026-03-08T05:00:00-04:00','America/New_York',150],
@@ -128,4 +128,71 @@ test('finite equal/reordered polar records remain usable', () => {
     const c=modelRealm({zone:'UTC',globals:{today:prayerRecord('2026-09-07','UTC',clocks),tomorrow:prayerRecord('2026-09-08','UTC',clocks)}});
     const m=c.run('model()'); assert(m); assert(Number.isFinite(m.progress));
   }
+});
+
+function heldOvernight(block=lifecycle){
+  const c=loadLifecycle(loadRender(modelRealm({query:'simTime=23:30',zone:'America/New_York',
+    wall:Date.parse('2026-03-07T23:30:00-05:00'),globals:{today:prayerRecord('2026-03-07','America/New_York')}})),block,{autoTimings:false});
+  c.run('startRenderLoop()'); c.frame();
+  assert.equal(c.dom.querySelector('.left').textContent,'Countdown unavailable');
+  assert.equal(c.dom.querySelector('.nt').textContent,'—');
+  assert.equal(c.prayerTransport.requests.length,1);
+  assert.equal(c.prayerTransport.requests[0].day,'08-03-2026');
+  assert.equal(c.prayerTransport.requests[0].zone,'America/New_York');
+  assert.equal(c.run('_requestSlots.prefetch.requestedDay'),'08-03-2026');
+  assert.equal(c.run('_renderDirty'),false);
+  return c;
+}
+async function settleOvernight(c){
+  const instant=c.run('simNow()');
+  c.prayerTransport.requests[0].resolve(); await c.prayerTransport.settle();
+  assert.equal(c.run('tomorrow.date.gregorian.date'),'08-03-2026');
+  assert.equal(c.run('_requestSlots.prefetch'),null);
+  assert.equal(c.prayerTransport.timers.size,0);
+  assert.equal(c.run('_renderDirty'),true);
+  c.frame(); assert.equal(c.run('simNow()'),instant,'late arrival does not advance a frozen scene');
+  return c;
+}
+test('actual held prefetch restores the frozen overnight countdown on the dirty visible frame', async()=>{
+  const c=await settleOvernight(heldOvernight());
+  assert.equal(c.run('model().leftMin'),270);
+  assert.equal(c.run('model().nextEpoch'),Date.parse('2026-03-08T05:00:00-04:00'));
+  assert.equal(c.run('model().nextDateStr'),'08-03-2026');
+  assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
+  assert(c.dom.querySelector('.left').innerHTML.includes('4h 30m'));
+  assert.equal((c.dom.querySelector('.times').innerHTML.match(/class="p /g)||[]).length,6);
+  c.context.fmt24=false; c.run('_renderDirty=true'); c.frame();
+  assert.equal(c.dom.querySelector('.nt').textContent,'5:00 AM');
+});
+test('sec-only loop mutant cannot paint a late countdown in a frozen scene', async()=>{
+  const predicate='if(sec!==_lastSec || _renderDirty)';
+  assert.equal(lifecycle.split(predicate).length,2);
+  const secOnly=lifecycle.replace(predicate,'if(sec!==_lastSec)');
+  const c=await settleOvernight(heldOvernight(secOnly));
+  assert.equal(c.run('model().leftMin'),270,'actual adoption still supplies the valid endpoint');
+  assert.equal(c.dom.querySelector('.left').textContent,'Countdown unavailable');
+  assert.equal(c.dom.querySelector('.nt').textContent,'—');
+  console.log(`MUTANT sec-only ${sha256(secOnly)} rejected by actual late-prefetch consumer`);
+});
+test('actual config generation cancels a held old-zone prefetch before the recovered countdown', async()=>{
+  const c=heldOvernight(), obsolete=c.prayerTransport.requests[0];
+  const applying=c.run('applyConfig({lat:24,lon:39,tz:"UTC"})');
+  assert.equal(obsolete.init.signal.aborted,true);
+  assert.equal(c.run('_runtimeGeneration'),1);
+  assert.equal(c.prayerTransport.requests.length,2);
+  const current=c.prayerTransport.requests[1];
+  assert.equal(current.day,'08-03-2026'); assert.equal(current.zone,'UTC');
+  obsolete.resolve(); await c.prayerTransport.settle();
+  assert.equal(c.context.tz,'UTC'); assert.equal(c.context.today,null); assert.equal(c.context.tomorrow,null);
+  assert.equal(c.run('_requestSlots.current.requestZone'),'UTC');
+  current.resolve(); await applying; c.frame();
+  assert.equal(c.context.today.meta.timezone,'UTC');
+  assert.equal(c.dom.querySelector('.left').textContent,'Countdown unavailable');
+  const next=c.prayerTransport.requests[2]; assert(next);
+  assert.equal(next.day,'09-03-2026'); assert.equal(next.zone,'UTC');
+  next.resolve(); await c.prayerTransport.settle(); c.frame();
+  assert.equal(c.run('model().nextEpoch'),Date.parse('2026-03-09T05:00:00Z'));
+  assert.equal(c.run('model().leftMin'),330);
+  assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
+  assert(c.dom.querySelector('.left').innerHTML.includes('5h 30m'));
 });

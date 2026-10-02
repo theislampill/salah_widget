@@ -8,6 +8,8 @@ const {createHash} = require('node:crypto');
 
 const sourcePath = process.env.SALAH_CLOCK_SOURCE || path.join(__dirname, '..', 'index.html');
 const source = fs.readFileSync(sourcePath, 'utf8');
+const configPath = process.env.SALAH_CLOCK_CONFIG || path.join(__dirname, '..', 'config.js');
+const configSource = fs.readFileSync(configPath, 'utf8');
 const sha256 = text => createHash('sha256').update(text).digest('hex');
 function slice(start, end, text = source) {
   const a = text.indexOf(start), b = text.indexOf(end, a);
@@ -19,6 +21,8 @@ const helpers = slice('const $    =', '// ---- SINGLE TEMPORAL SOURCE OF TRUTH')
 const modelSource = slice('// build everything render() needs', '// draw the solar-prayer arc');
 const renderSource = slice('let _lastBolt=-1', 'function updateSimClock');
 const lifecycle = slice('async function loadPrayerData()', '// ——————————————————————— in-widget settings');
+const prayerSource = slice('// ---- prayer-times data:', '// ---- weather (Open-Meteo:');
+const configBindings = slice('function bindConfig(c)', 'if(window.SalahConfig)');
 
 function realm({query = '', zone = 'UTC', wall = Date.parse('2026-09-07T12:00:00Z'), mono = 0,
   intl = Intl, block = temporal, globals = {}} = {}) {
@@ -42,7 +46,7 @@ function countedIntl(offset = 0) {
   intl.DateTimeFormat = function (...args) {
     counts.constructs++;
     const actual = new Intl.DateTimeFormat(...args);
-    return {formatToParts(date) {
+    return {format: date => actual.format(date), resolvedOptions: () => actual.resolvedOptions(), formatToParts(date) {
       counts.projections++;
       if(!Number.isFinite(date.getTime())) counts.invalid++;
       return actual.formatToParts(new Date(date.getTime() + offset));
@@ -96,9 +100,41 @@ function modelRealm(options = {}) {
   return {...r, dom};
 }
 
+function loadPrayerPipeline(r) {
+  if (r.prayerTransport) return r;
+  const requests=[], timers=new Map(), storage=new Map(); let serial=0;
+  const transport={requests,timers,storage,auto:false,onRequest:null};
+  Object.assign(r.context, {lat:24,lon:39,label:'Fixture',method:'2',school:'0',units:'f',LPOLL:0,
+    _cacheTz:r.context.tz,CONFIG:null,lastDate:null,_loopStarted:false,
+    fetchingTomorrow:false,_prayerStale:false,_rolloverBusy:false,_rolloverNextTry:0,_ROLLOVER_RETRY_MS:60000,
+    wxBusy:false,radarBusy:false,AbortController,
+    setTimeout(callback,ms=0){const id=++serial;timers.set(id,{at:r.clock.mono+Number(ms),callback});return id;},
+    clearTimeout(id){timers.delete(id);},
+    localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,String(value)),removeItem:key=>storage.delete(key)},
+    fetch(url,init){
+      const day=new URL(url).pathname.split('/').pop(), zone=r.context.tz;
+      let resolve,reject; const promise=new Promise((a,b)=>{resolve=a;reject=b;});
+      const request={url,init,day,zone,resolve(data=prayerRecord(day.split('-').reverse().join('-'),zone)){
+        resolve({ok:true,status:200,json:async()=>({code:200,status:'OK',data})});
+      },reject};
+      requests.push(request); if(transport.onRequest) transport.onRequest(request);
+      if(transport.auto) request.resolve();
+      return promise;
+    }});
+  r.context.window=r.context;
+  r.run(configSource); r.run(configBindings);
+  r.context._clockFixtureConfig={lat:24,lon:39,tz:r.context.tz,label:'Fixture',method:'2',school:'0',
+    time:r.context.fmt24?'24':'12',units:'f',datefmt:r.context.datefmtStr,source:'manual'};
+  r.run('bindConfig(SalahConfig.normalize(_clockFixtureConfig))');
+  r.run(prayerSource); // Actual admission, ownership, deadlines, cache, prefetch, adoption and civil-day paths.
+  transport.settle=async()=>{for(let i=0;i<16;i++) await Promise.resolve();};
+  return {...r,prayerTransport:transport};
+}
+
 function loadRender(r, block = renderSource) {
+  r=loadPrayerPipeline(r);
   Object.assign(r.context, {lastMoonMin: -1, moonSky: {}, _starsProjected: true,
-    fetchingTomorrow: true, _prayerStale: false, _moonStaleWarned: false,
+    _prayerStale: false, _moonStaleWarned: false,
     setLocLabel() {}, syncWeather() {}, renderMoon() {}, projectStars() {},
     fitCn() {}, drawArc: () => '<svg>fixture arc dependency</svg>', applyTheme() {},
     moonNow: () => ({phase: 0.5}), phaseEmoji: () => '◐', console});
@@ -106,18 +142,19 @@ function loadRender(r, block = renderSource) {
   return r;
 }
 
-function loadLifecycle(r, block = lifecycle) {
+function loadLifecycle(r, block = lifecycle, {autoTimings=true} = {}) {
+  r=loadPrayerPipeline(r); r.prayerTransport.auto=autoTimings;
   const calls={stars:0,weatherBuild:0,moon:0,weatherStart:0,cloud:0,requests:[],raf:0};
+  calls.requests.push(...r.prayerTransport.requests.map(request=>request.day));
+  r.prayerTransport.onRequest=request=>calls.requests.push(request.day);
   const pending=new Map(); let rafId=0;
   Object.assign(r.context, {QA:false, MOTIONFULL:false, DEBUGMOTION:false,
-    window:{}, lat:24, lon:39, label:'Fixture', _needsDetect:false, _cfgMode:'hardcoded',
+    _needsDetect:false, _cfgMode:'hardcoded',
     _loopStarted:false, lastDate:null, _prayerStale:false, _rolloverBusy:false,
     _rolloverNextTry:0, _ROLLOVER_RETRY_MS:60000, _cloudDirty:true,
     buildStars(){calls.stars++;}, buildWeather(){calls.weatherBuild++;},
     renderMoon(){calls.moon++;}, startWeather(){calls.weatherStart++;},
-    loadCache:()=>null, saveCache(){}, fetchWeather(){}, fetchRadar(){},
-    async fetchTimings(date) {calls.requests.push(date); return prayerRecord(date.split('-').reverse().join('-'),r.context.tz);},
-    bindConfig(cfg){if(cfg.tz) r.context.tz=cfg.tz;}, isMotionReduced:()=>false,
+    fetchWeather(){}, fetchRadar(){}, isMotionReduced:()=>false,
     paintClouds(){calls.cloud++;}, tieRainToClouds(){},
     requestAnimationFrame(callback){const id=++rafId; pending.set(id,callback); calls.raf++; return id;},
     cancelAnimationFrame(id){pending.delete(id);}, console});
@@ -133,5 +170,5 @@ function loadSettingsAffordance(r) {
   return r;
 }
 
-module.exports = {sourcePath, source, sha256, slice, temporal, helpers, modelSource,
-  renderSource, lifecycle, realm, countedIntl, prayerRecord, modelRealm, loadRender, loadLifecycle, loadSettingsAffordance};
+module.exports = {sourcePath, source, configPath, configSource, sha256, slice, temporal, helpers, modelSource, prayerSource,
+  renderSource, lifecycle, realm, countedIntl, prayerRecord, modelRealm, loadPrayerPipeline, loadRender, loadLifecycle, loadSettingsAffordance};
