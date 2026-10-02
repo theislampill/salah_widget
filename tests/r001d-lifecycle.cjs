@@ -26,12 +26,16 @@ if(process.argv.includes('--missing-terminal-control'))return;
   });
   for(const cached of [true,false])await test('actual rAF '+(cached?'cache':'network')+' day adoption keeps producer stamp',async()=>{
     const h=load({sourcePath});h.run('render();startRenderLoop();');
-    if(cached){h.run('saveCache("09-09-2026",__fixtureNextPrayer)');assert.equal(h.run('loadCache("09-09-2026").date.gregorian.date'),'09-09-2026');}
+    if(cached){h.run('(()=>{const d=JSON.parse(JSON.stringify(__fixtureNextPrayer));d.timings.Fajr="04:51";saveCache("09-09-2026",d);})()');assert.equal(h.run('loadCache("09-09-2026").timings.Fajr'),'04:51');}
+    // Remove the prefetched seed in both rows: otherwise promotion bypasses the
+    // cache/network boundary. The distinct cached Fajr proves which record wins.
+    h.run('tomorrow=null;');assert.equal(h.run('tomorrow'),null);
     h.run('_simBase+=86400000;');h.clock.now=50; // below the independent 76ms cloud raster tick; lunar/day consumers still run
     h.rafs.shift()();await h.drain();
     assert.equal(h.run('lastDate'),'09-09-2026');
     assert.equal(h.run('today.date.gregorian.date'),'09-09-2026');
-    if(!cached)assert.ok(h.requests.some(r=>r.dateStr==='09-09-2026'));
+    if(cached){assert.equal(h.run('today.timings.Fajr'),'04:51');assert.equal(h.requests.some(r=>r.dateStr==='09-09-2026'),false);}
+    else assert.ok(h.requests.some(r=>r.dateStr==='09-09-2026'));
     h.run('applyTheme(model())');assert.equal(h.run('qaState().moonTruth.moonSkyFresh'),true);
     assert.equal(h.run('qaState().moonTruth.lastConsumed.observation.produced.epochMinute'),29816340);
     assert.equal(h.run('_prayerStale'),false);
