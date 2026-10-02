@@ -916,7 +916,7 @@ function wxUnitsMatch(meta,ctx){
   if(meta==null) return true;         // the captured request supplies units when optional metadata is absent
   if(typeof meta!=="object"||Array.isArray(meta)) return false;
   const expected={temperature_2m:ctx.units==="c"?"°C":"°F",apparent_temperature:ctx.units==="c"?"°C":"°F",
-    dew_point_2m:ctx.units==="c"?"°C":"°F",wind_speed_10m:"m/s",wind_gusts_10m:"m/s",precipitation:"mm",
+    dew_point_2m:ctx.units==="c"?"°C":"°F",wind_speed_10m:"m/s",wind_direction_10m:"°",wind_gusts_10m:"m/s",precipitation:"mm",
     rain:"mm",showers:"mm",snowfall:"cm",visibility:"m",relative_humidity_2m:"%",cloud_cover:"%",
     cloud_cover_low:"%",cloud_cover_mid:"%",cloud_cover_high:"%"};
   return Object.keys(expected).every(k=>meta[k]==null||meta[k]===expected[k]);

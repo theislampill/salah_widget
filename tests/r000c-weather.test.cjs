@@ -221,6 +221,28 @@ for (const block of ['current', 'hourly']) test('R000C contradictory ' + block +
   assert.equal(f.read()[block === 'current' ? 'weather' : 'weatherTrack'], null);
   assert(f.read()[block === 'current' ? 'weatherTrack' : 'weather']);
 });
+for (const block of ['current', 'hourly']) {
+  test('R000C advertised radians cannot be consumed as degrees in ' + block, async () => {
+    const payload = healthy({ wind_direction_10m: 2 }); payload.hourly.wind_direction_10m = [2, 2];
+    payload[block + '_units'] = { wind_direction_10m: 'rad' };
+    const f = fixture({ payload }); await f.fetchWeather();
+    assert.equal(f.read()[block === 'current' ? 'weather' : 'weatherTrack'], null);
+    assert(f.read()[block === 'current' ? 'weatherTrack' : 'weather']);
+    if (block === 'current') assert.equal(f.view().a.wxTemp, null);
+    else assert.equal(f.wxAt(NOW + 1800000), null);
+  });
+  for (const [name, meta] of [['advertised degrees', { wind_direction_10m: '°' }], ['missing direction units', {}]]) {
+    test('control: ' + name + ' keep ' + block + ' wind direction usable', async () => {
+      const payload = healthy({ wind_direction_10m: 90 }); payload.hourly.wind_direction_10m = [90, 90];
+      payload[block + '_units'] = meta;
+      const f = fixture({ payload }); await f.fetchWeather();
+      assert(f.read().weather); assert(f.read().weatherTrack);
+      if (block === 'current') {
+        assert.equal(f.read().weather.windDir, 90); assert.equal(f.wxDrivers().windX, -1);
+      } else assert.equal(f.wxAt(NOW + 1800000).windDir, 90);
+    });
+  }
+}
 for (const [name, change] of [
   ['mismatched required array', h => { h.temperature_2m = [20]; }],
   ['mismatched optional array', h => { h.visibility = [20000]; }],
