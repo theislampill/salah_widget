@@ -27,6 +27,42 @@ function sliceBetween(raw, begin, end) {
   assert.ok(a >= 0 && b > a, `source owners not found: ${begin} / ${end}`);
   return raw.slice(a,b);
 }
+// Record the actual markup's ID owners and native-handler effects. This does not
+// emulate layout, keyboard activation or modal focus containment. Unknown IDs
+// remain absent, so missing calendar markup cannot silently become a fixture node.
+function recordingDocument(raw, {nodes=new Map(),onHtml=()=>{},onText=()=>{}}={}) {
+  const document={activeElement:null,visibilityState:"visible"}, events=new Map();
+  const encode=v=>String(v).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  const plain=v=>String(v).replace(/<[^>]*>/g,"").replace(/&(amp|lt|gt|quot|#39);/g,(_,v)=>({amp:"&",lt:"<",gt:">",quot:'"',"#39":"'"}[v]));
+  function make(selector,tag="div",attrs={}) {
+    let html="",text=""; const listeners=new Map(), attributes=Object.assign(Object.create(null),attrs);
+    const n={tagName:tag.toUpperCase(),id:attrs.id||"",attributes,dataset:{},style:{setProperty(){}},isConnected:true,calls:[],
+      classList:{add(){},toggle(){},remove(){},contains(){return false;}},
+      setAttribute:(key,value)=>{attributes[key]=String(value);},getAttribute:key=>attributes[key]??null,removeAttribute:key=>{delete attributes[key];},
+      addEventListener:(type,fn)=>{if(!listeners.has(type))listeners.set(type,new Set());listeners.get(type).add(fn);},
+      removeEventListener:(type,fn)=>listeners.get(type)?.delete(fn),
+      dispatchEvent:event=>{event.target=event.target||n;event.currentTarget=n;for(const fn of [...listeners.get(event.type)||[]])fn.call(n,event);return !event.defaultPrevented;},
+      click:()=>n.dispatchEvent({type:"click",preventDefault(){this.defaultPrevented=true;}}),
+      focus:options=>{if(n.isConnected){document.activeElement=n;n.calls.push({type:"focus",options});}},
+      showModal:()=>{n.open=true;n.calls.push({type:"showModal"});},
+      close:()=>{n.calls.push({type:"close"});if(n.open){n.open=false;n.dispatchEvent({type:"close"});}}
+    };
+    for(const prop of ["open","hidden"])Object.defineProperty(n,prop,{get:()=>Object.hasOwn(attributes,prop),set:value=>{if(value)attributes[prop]="";else delete attributes[prop];}});
+    Object.defineProperty(n,"innerHTML",{get:()=>html,set:value=>{html=String(value);text=plain(html);onHtml(selector,html);}});
+    Object.defineProperty(n,"textContent",{get:()=>text,set:value=>{text=String(value);html=encode(text);onText(selector,text);}});
+    nodes.set(selector,n);return n;
+  }
+  const start=raw.indexOf("<body"),end=raw.indexOf('<script src="config.js">',start);
+  assert.ok(start>=0&&end>start,"actual widget body owners missing");
+  for(const match of raw.slice(start,end).matchAll(/<([a-z][\w-]*)\b([^>]*\bid="[^"]+"[^>]*)>/gi)) {
+    const attrs=Object.fromEntries(Array.from(match[2].matchAll(/([\w-]+)\s*=\s*"([^"]*)"/g),m=>[m[1],m[2]]));
+    for(const prop of ["open","hidden"])if(new RegExp("(?:^|\\s)"+prop+"(?:\\s|$)").test(match[2]))attrs[prop]="";
+    make("#"+attrs.id,match[1],attrs);
+  }
+  const node=selector=>nodes.get(selector)||(selector.startsWith("#")?null:make(selector));
+  Object.assign(document,{querySelector:node,getElementById:id=>node("#"+id),querySelectorAll:()=>[],addEventListener:(type,fn)=>events.set(type,fn)});
+  return {document,nodes,events};
+}
 function harness(options = {}) {
   const raw = options.source || source();
   const date = options.date || ordinary.date.gregorian.date;
@@ -45,13 +81,11 @@ function harness(options = {}) {
     static now() { return epoch; }
   }
   let context;
+  const {document}=recordingDocument(raw,{nodes});
   const sandbox = {
     location, URLSearchParams, Intl, Date:FixedDate, AbortController, performance:{now:()=>elapsed},
     console:{warn:()=>{},log:()=>{}}, setTimeout:(fn,ms)=>ms>=10000?setTimeout(fn,ms):queueMicrotask(fn), clearTimeout,
-    document:{ querySelector:selector=>{
-      if(!nodes.has(selector)) nodes.set(selector,{textContent:"",style:{},dataset:{}});
-      return nodes.get(selector);
-    } },
+    document,
     localStorage:{
       getItem:k=>{ if(options.readDenied) throw new Error("storage denied"); return storage.get(k) ?? null; },
       setItem:(k,value)=>{ if(options.writeDenied) throw new Error("storage denied"); writes.push({key:k,value,zone:run("tz")}); storage.set(k,value); }
@@ -85,4 +119,4 @@ function finiteConsumers(h) {
   assert.equal((svg.match(/<circle class="dot/g)||[]).length,6);
   return {model:m,svg};
 }
-module.exports={source,sourcePath,sha256,clone,ordinary,polar,harness,finiteConsumers};
+module.exports={source,sourcePath,sha256,clone,ordinary,polar,recordingDocument,harness,finiteConsumers};
