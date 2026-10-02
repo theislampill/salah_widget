@@ -36,7 +36,7 @@ const initial=["Madinah","24.4672","39.6142","4"];
 test("positive: builder current search and canonical serialized tuple",async()=>{
   const f=fixture("builder",{ref}); await search(f,"London"); await f.resolve("search",0,[london]);
   assert.deepEqual(f.tuple(),["London","51.50000","-0.12000","4"]);
-  assert.equal(f.hash(),"lat=51.5&lon=-0.12&label=London&method=4&school=0");
+  assert.equal(f.hash(),"lat=51.5&lon=-0.12&label=London&method=4&school=0&appearance=glass");
 });
 test("positive: builder label input already invalidates an older search",async()=>{
   const f=fixture("builder",{ref}); await search(f,"London"); f.input("label","Cairo"); const before=f.snapshot();

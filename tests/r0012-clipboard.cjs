@@ -47,7 +47,7 @@ test("absent clipboard API retains true and false fallback outcomes",async()=>{
   }
 });
 test("install recovery is platform-specific exact command data",async()=>{
-  const hash="lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0";
+  const hash="lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass";
   for(const platform of ["Win32","MacIntel","Linux x86_64"]) {
     const f=make({platform,clipboard:denied}); await execute(f,"install");
     const want=platform==="Win32"?`$env:SALAH_WIDGET_HASH='${hash}'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex`

@@ -2,10 +2,11 @@
 // Actual config resolution, boot, applyConfig and settings source. Provider and
 // renderer lifecycle doubles contain no owner storage, GPS or network effects.
 // DOM/event scheduling here is supplementary to the parent's native bridge.
-const {fixture,readSource,deferred,drain}=require("./r000f-fixture.cjs");
+const {environment,readSource,deferred,drain}=require("./r000f-fixture.cjs");
 function widget(options={}) {
-  const f=fixture("builder",{ref:options.ref}), page=readSource("index.html",options.ref);
-  f.buckle.querySelector=selector=>selector===".gear"?f.buckle.children.find(c=>c.className==="gear"||c.classList.contains("gear"))||null:null;
+  const f=environment(), page=readSource("index.html",options.ref);
+  const cardTag=page.match(/<div class="c(?:\s[^"]*)?"[^>]*>/);if(!cardTag)throw Error("card source tag missing");f.initializeTag(f.card,cardTag[0]);
+  for(const cls of ["mphoto","moon-mask-disc"]){const tag=page.match(new RegExp('<[^>]+class="'+cls+'"[^>]*>'));if(tag)f.initializeTag(f.el(cls),tag[0]);}
   f.sandbox.location.hash=options.hash || "#local=1";
   const config=readSource("config.js",options.ref);
   f.run(options.configMutate?options.configMutate(config):config);
@@ -20,27 +21,39 @@ function widget(options={}) {
   f.sandbox.SalahConfig.permissionState=()=>Promise.resolve("granted");
   if(options.moduleMissing)delete f.sandbox.SalahConfig;
   const panel=f.el("settings");
-  for(const id of ["set-lat","set-lon","set-label","set-method","set-school","set-time","set-units","set-datefmt","set-datefmt-preset","setClose","set-pin","set-reset","set-status","settings-persistence-status"]){const e=f.el(id);e.eventParent=panel;panel.children.push(e);}
+  for(const id of ["set-lat","set-lon","set-label","set-method","set-school","set-time","set-units","set-appearance","set-datefmt","set-datefmt-preset","setClose","set-pin","set-reset","set-status","settings-persistence-status"]){const e=f.el(id);e.eventParent=panel;panel.children.push(e);}
   const start=page.indexOf("const q = new URLSearchParams(location.hash.slice(1));"), end=page.indexOf("// ---- simulation overrides",start);
   if(start<0 || end<start)throw new Error("resolution source boundary missing");
   f.run(page.slice(start,end));
   Object.assign(f.sandbox,{
     QA:false, buildStars:()=>calls.stars++, buildWeather:()=>calls.buildWeather++,renderMoon:()=>{},
-    resetForNewLocation:()=>{},startWeather:()=>calls.weather++,
+    startWeather:()=>calls.weather++,
     loadPrayerData:()=>queue("prayer",{}),startRenderLoop:()=>calls.loop++,
     render:()=>calls.render++,showError:msg=>calls.errors.push(msg)
   });
-  // CLOCK's valid-scene and once-only catalog consumers remain actual source.
-  // Explicit simulation parsing/geometry is outside this CONFIG-only fixture.
+  // Execute the widget's selector and lifecycle closure in a pristine realm;
+  // builder's $ selector accepts IDs and must not stand in for widget CSS lookup.
+  // Only providers and pixel/catalog builders above are explicit scope doubles.
   if(new URLSearchParams(f.sandbox.location.hash.slice(1)).has("simTime"))throw new Error("explicit simulation belongs to CLOCK fixture");
+  const load=source=>f.run(options.mutate?options.mutate(source):source);
   function helper(name){const start=page.indexOf("function "+name+"("),end=page.indexOf("\n}",start);if(start<0||end<start)throw new Error(name+" source boundary missing");return page.slice(start,end+2);}
+  function declaration(pattern){const match=page.match(pattern);if(!match)throw Error(pattern+" declaration source boundary missing");const end=page.indexOf(";",match.index);if(end<0)throw Error("declaration terminator missing");return page.slice(match.index,end+1).trim();}
+  load(declaration(/^const \$\s*=/m));
+  for(const pattern of [/^let today=/m,/^let weather=null/m,/^let weatherTrack=null/m,/^let weatherRadar=null/m,/^let _prayerStale=/m])load(declaration(pattern));
+  if(/^let _renderDirty=/m.test(page))load(declaration(/^let _renderDirty=/m));
+  if(page.includes("function beginSkyScene(")){
+    for(const pattern of [/^let _skySceneKey=/m,/^let _starCat=/m,/^let _mAlb=/m,/^let _cloudReady=/m,/^let cloudState=/m,/^let _cloudCv=/m])load(declaration(pattern));
+    load(helper("updateSkySurface"));load(helper("beginSkyScene"));
+  }else if(/^let _starCat=/m.test(page))load(declaration(/^let _starCat=/m));
   if(page.includes("function simulationReady()")){
-    f.sandbox.SIM={time:null};f.run("const _simHidden=new Map(); let _simClockDisplay=null;");f.run(helper("simulationReady"));
+    f.sandbox.SIM={time:null};f.run("const _simHidden=new Map(); let _simClockDisplay=null;");load(helper("simulationReady"));
   }
-  if(page.includes("function buildSceneOnce()")){f.run("let _sceneBuilt=false;");f.run(helper("buildSceneOnce"));}
-  // PRAYER owns the real request-slot/cooldown controller. Its explicit boundary
-  // double advances only generation; CONFIG still executes actual apply/boot.
-  if(page.includes("beginRuntimeGeneration();"))f.run("let _runtimeGeneration=0; function beginRuntimeGeneration(){_runtimeGeneration++;}");
+  if(page.includes("function buildSceneOnce()")){load(declaration(/^let _sceneBuilt=/m));load(helper("buildSceneOnce"));}
+  if(page.includes("beginRuntimeGeneration();")){
+    const first=page.indexOf("function cacheKey()"),last=page.indexOf("function readPrayerCache(",first);if(first<0||last<first)throw Error("request lifecycle source boundary missing");
+    f.sandbox.AbortController=AbortController;load(declaration(/^const _RAFNOW\s*=/m));load(declaration(/^const _prayerCooldown=/m));load(page.slice(first,last));
+  }
+  load(helper("resetForNewLocation"));
   const applyStart=page.indexOf("async function applyConfig("), bootStart=page.indexOf("async function boot(){",applyStart), bootEnd=page.indexOf("// SINGLE rAF render clock",bootStart);
   if(applyStart<0 || bootStart<applyStart || bootEnd<bootStart)throw new Error("apply/boot source boundary missing");
   let runtime=page.slice(applyStart,bootEnd);

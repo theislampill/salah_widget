@@ -15,17 +15,22 @@ function make(platform="Win32") {
 }
 const cases=[],test=(name,body)=>cases.push({name,body});
 for(const method of ["2","4"])for(const units of ["f","c"])test(`fresh runtime follows selected ${method}/${units} through every export`,async()=>{
-  const f=make();f.input("method",method,"change");f.input("units",units,"change");
-  const h=f.run("hash()"), p=new URLSearchParams(h);
-  assert.equal(p.get("method"),method);assert.equal(p.get("units"),units);assert.equal(p.has("lat"),false);assert.equal(p.has("lon"),false);
-  const snippet=f.elements.get("code").value, preview=f.elements.get("pv").src;
-  assert.equal(new URL(snippet.match(/src="([^"]+)"/)[1]).hash.slice(1),h);assert.equal(new URL(preview).hash.slice(1),h);
-  for(const platform of ["Win32","Linux"]) {
-    f.sandbox.navigator.platform=platform;const command=f.run("installCmd().cmd"), carried=command.match(/SALAH_WIDGET_HASH='([^']+)'/)[1];assert.equal(carried,h);
-    const w=widget({ref,hash:"#"+carried,open:false}), boot=w.boot();
-    await w.resolveCall("coarse",0,{ok:true,provider:"GeoJS",cfg:{lat:24.47,lon:39.61,label:"Madinah",method:"4",units:"c",source:"coarse-ip"}});
-    assert.equal(w.config().method,method);assert.equal(w.config().units,units);assert.equal(w.json("units"),units);
-    w.calls.prayer[0].resolve();await boot;
+  for(const appearance of ["glass","contrast"])for(const mode of ["local","portable"]){
+    const f=make();f.input("method",method,"change");f.input("units",units,"change");f.input("appearance",appearance,"change");f.run(`setMode("${mode}")`);
+    const h=f.run("hash()"),p=new URLSearchParams(h);
+    const expected=mode==="local"?`local=1&method=${method}&units=${units}&appearance=${appearance}`
+      :`lat=24.4672&lon=39.6142&label=Madinah&method=${method}&school=0${units==="c"?"&units=c":""}&appearance=${appearance}`;
+    assert.equal(h,expected);assert.equal(p.get("appearance"),appearance);assert.equal(p.has("lat"),mode==="portable");assert.equal(p.has("lon"),mode==="portable");
+    const snippet=f.elements.get("code").value,preview=f.elements.get("pv").src;
+    assert.equal(new URL(snippet.match(/src="([^"]+)"/)[1]).hash.slice(1),h);assert.equal(new URL(preview).hash.slice(1),h);
+    for(const platform of ["Win32","Linux"]){
+      f.sandbox.navigator.platform=platform;const command=f.run("installCmd().cmd"),carried=command.match(/SALAH_WIDGET_HASH='([^']+)'/)[1];assert.equal(carried,h);
+      const w=widget({ref,hash:"#"+carried,open:false}),boot=w.boot();
+      if(mode==="local")await w.resolveCall("coarse",0,{ok:true,provider:"GeoJS",cfg:{lat:24.47,lon:39.61,label:"Madinah",method:"4",units:"c",appearance:appearance==="glass"?"contrast":"glass",source:"coarse-ip"}});
+      else assert.equal(w.calls.coarse.length,0);
+      assert.deepEqual([w.config().method,w.config().units,w.config().appearance],[method,units,appearance]);assert.equal(w.json("units"),units);assert.equal(w.card.dataset.appearance,appearance);assert.equal(w.card.getAttribute("data-appearance"),appearance);
+      w.calls.prayer[0].resolve();await boot;
+    }
   }
 });
 test("generic local API stays automatic and ignores unsupported explicit names",async()=>{
@@ -35,9 +40,9 @@ test("generic local API stays automatic and ignores unsupported explicit names",
   assert.deepEqual([w.config().method,w.config().units],["4","c"]);w.calls.prayer[0].resolve();await boot;
 });
 test("saved viewer preferences win local and preferLocal on both reloads",async()=>{
-  const f=make(),h=f.run("hash()"),seed={lat:51.5,lon:-.12,label:"London",method:"3",units:"c",source:"manual"};
-  for(const hash of ["#"+h,"#preferLocal=1&lat=24.47&lon=39.61&method=2&units=f"])for(let reload=0;reload<2;reload++){
-    const w=widget({ref,hash,seed,open:false}),boot=w.boot();assert.equal(w.calls.coarse.length,0);assert.deepEqual([w.config().label,w.config().method,w.config().units],["London","3","c"]);w.calls.prayer[0].resolve();await boot;
+  const f=make(),h=f.run("hash()"),seed={lat:51.5,lon:-.12,label:"London",method:"3",units:"c",appearance:"contrast",source:"manual"};
+  for(const hash of ["#"+h,"#preferLocal=1&lat=24.47&lon=39.61&method=2&units=f&appearance=glass"])for(let reload=0;reload<2;reload++){
+    const w=widget({ref,hash,seed,open:false}),boot=w.boot();assert.equal(w.calls.coarse.length,0);assert.deepEqual([w.config().label,w.config().method,w.config().units,w.config().appearance],["London","3","c","contrast"]);assert.equal(w.card.dataset.appearance,"contrast");w.calls.prayer[0].resolve();await boot;
   }
 });
 test("portable literal encoding and zero coordinates remain compatible",()=>{

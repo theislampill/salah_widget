@@ -25,22 +25,30 @@ function environment() {
     set value(value) { this._value=String(value); }
     constructor(id="") {
       this.id=id; this.value=""; this.textContent=""; this.innerHTML="";
-      this.style={}; this.attributes={}; this.listeners={}; this.children=[];
+      this.tagName="DIV"; this.style={}; this.attributes={}; this.listeners={}; this.children=[];
+      this.dataset=new Proxy(Object.create(null),{set:(data,key,value)=>{
+        data[key]=String(value);this.attributes["data-"+String(key).replace(/[A-Z]/g,c=>"-"+c.toLowerCase())]=String(value);return true;
+      }});
       this.disabled=false; this.hidden=false; this.tabIndex=0; this.offsetParent={};
       const classes=new Set();
-      this.classList={add:(...xs)=>xs.forEach(x=>classes.add(x)),
-        remove:(...xs)=>xs.forEach(x=>classes.delete(x)), contains:x=>classes.has(x),
-        toggle:(x,on)=>{ on=on===undefined?!classes.has(x):on; on?classes.add(x):classes.delete(x); return on; },
+      const syncClass=()=>{this.attributes.class=[...classes].join(" ");};
+      Object.defineProperty(this,"className",{get:()=>[...classes].join(" "),set:value=>{classes.clear();String(value).split(/\s+/).filter(Boolean).forEach(x=>classes.add(x));syncClass();}});
+      this.classList={add:(...xs)=>{xs.forEach(x=>classes.add(x));syncClass();},
+        remove:(...xs)=>{xs.forEach(x=>classes.delete(x));syncClass();}, contains:x=>classes.has(x),
+        toggle:(x,on)=>{ on=on===undefined?!classes.has(x):on; on?classes.add(x):classes.delete(x);syncClass();return on; },
         toString:()=>[...classes].sort().join(" ")};
     }
     addEventListener(type,handler) { (this.listeners[type] ||= []).push(handler); }
-    setAttribute(key,value) { this.attributes[key]=String(value); if(key==="tabindex")this.tabIndex=+value; }
+    setAttribute(key,value) {
+      this.attributes[key]=String(value);if(key==="tabindex")this.tabIndex=+value;if(key==="class")this.className=value;
+      if(key.startsWith("data-"))this.dataset[key.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]=value;
+    }
     getAttribute(key) { return this.attributes[key] ?? null; }
     appendChild(child) { child.parent=this; this.children.push(child); return child; }
     remove() { if(this.parent)this.parent.children=this.parent.children.filter(x=>x!==this); }
     focus() { document.activeElement=this; }
     select() { this.selectionStart=0; this.selectionEnd=this.value.length; document.lastSelected=this; }
-    querySelector() { return this.children.find(x=>x.classList.contains("gear")) || null; }
+    querySelector(selector) { return this.children.find(x=>selector.startsWith(".")?x.classList.contains(selector.slice(1)):selector.startsWith("#")?x.id===selector.slice(1):false) || null; }
     querySelectorAll() { return this.children; }
     dispatch(type,options={}) {
       const event={type,target:this,key:"",shiftKey:false,defaultPrevented:false,
@@ -55,11 +63,12 @@ function environment() {
   }
   function el(id,value="") { const element=new Element(id); element.value=value; elements.set(id,element); return element; }
   const body=new Element("body"), card=el("card"), buckle=el("buckle"), group=el("mode-group");
-  buckle.classList.add("buckle");
+  card.classList.add("c");buckle.classList.add("buckle");group.classList.add("modebtns");
   document.body=body;
   document.getElementById=id=>elements.get(id) || null;
-  document.createElement=()=>new Element();
-  document.querySelector=selector=>selector===".c"?card:selector===".buckle"?buckle:selector===".modebtns"?group:null;
+  document.createElement=tag=>{const element=new Element();element.tagName=String(tag).toUpperCase();return element;};
+  document.querySelector=selector=>selector.startsWith("#")?elements.get(selector.slice(1))||null:selector.startsWith(".")?[...elements.values()].find(x=>x.classList.contains(selector.slice(1)))||null:null;
+  function initializeTag(element,tag){for(const [,name,value]of tag.matchAll(/([\w:-]+)="([^"]*)"/g))element.setAttribute(name,value);}
   const localStorage={getItem:key=>storage.get(key)??null,
     setItem:(key,value)=>storage.set(key,String(value)),removeItem:key=>storage.delete(key)};
   const sandbox={console, URL, URLSearchParams, Intl, Date, document, localStorage,
@@ -79,7 +88,7 @@ function environment() {
     time=until; await drain();
   }
   function input(id,value,type="input") { const field=elements.get(id); field.value=String(value); field.dispatch(type); }
-  return {el,elements,context,document,sandbox,card,buckle,group,storage,timers,advance,input,
+  return {el,elements,context,document,sandbox,card,buckle,group,storage,timers,advance,input,initializeTag,
     run:source=>vm.runInContext(source,context), key:(id,key,shiftKey=false)=>elements.get(id).dispatch("keydown",{key,shiftKey}),
     click:id=>elements.get(id).dispatch("click")};
 }
@@ -100,21 +109,22 @@ function fixture(kind,options={}) {
   env.document.execCommand=command=>{ calls.fallback.push({command,text:env.document.lastSelected?.value}); return options.fallback?options.fallback(command):false; };
   if(options.platform)sandbox.navigator.platform=options.platform;
   if(kind==="builder") {
-    const defaults={label:"Madinah",lat:"24.4672",lon:"39.6142",method:"4",school:"0",time:"24",units:"f",dfcode:"YYYY-MM-DD",datefmt:"YYYY-MM-DD"};
+    const defaults={label:"Madinah",lat:"24.4672",lon:"39.6142",method:"4",school:"0",time:"24",units:"f",appearance:"glass",dfcode:"YYYY-MM-DD",datefmt:"YYYY-MM-DD"};
     for(const [id,value]of Object.entries(defaults))el(id,value);
     for(const id of ["loclabel","geotip","geo","dfCustomOpt","pv","code","copied","copy","open","reload","install","installtip","modenote","embed-recovery","embed-recovery-wrap","install-recovery","install-recovery-wrap"] )el(id);
     for(const id of ["embed-recovery-wrap","install-recovery-wrap"])env.elements.get(id).hidden=true;
     for(const id of ["mode-portable","mode-local"]) {
       const button=el(id), tag=sources.page.match(new RegExp('<button[^>]*id="'+id+'"[^>]*>'))[0];
-      for(const name of ["role","aria-checked","tabindex"]) { const attr=tag.match(new RegExp(name+'="([^"]*)"')); if(attr)button.setAttribute(name,attr[1]); }
+      env.initializeTag(button,tag);
       button.classList.add("modebtn"); button.eventParent=env.group; env.group.children.push(button);
     }
     let script=sources.page.match(/<script>\s*([\s\S]*?)<\/script>/)[1];
     if(options.mutate)script=options.mutate(script);
     run(script);
   } else {
+    const cardTag=sources.page.match(/<div class="c(?:\s[^"]*)?"[^>]*>/);if(!cardTag)throw Error("card source tag missing");env.initializeTag(env.card,cardTag[0]);
     const panel=el("settings");
-    for(const id of ["set-lat","set-lon","set-label","set-method","set-school","set-time","set-units","set-datefmt","set-datefmt-preset","setClose","set-pin","set-reset","set-status"]) {
+    for(const id of ["set-lat","set-lon","set-label","set-method","set-school","set-time","set-units","set-appearance","set-datefmt","set-datefmt-preset","setClose","set-pin","set-reset","set-status"]) {
       const field=el(id); field.eventParent=panel; panel.children.push(field);
     }
     run('let lat=24.4672,lon=39.6142,label="Madinah",method="4",school="0",fmt24=true,units="f",datefmtStr="YYYY-MM-DD",tz="Asia/Riyadh",LPOLL=0; let CONFIG={lat,lon,label,method,school,time:"24",units,datefmt:datefmtStr,tz,source:"manual"}; let _hashCfg={},_storageErr=null,_geoPermission="unknown",_geoLastError=null;');
@@ -148,4 +158,4 @@ function fixture(kind,options={}) {
     resolve:async(name,index,value)=>{ queues[name][index].resolve(value); await drain(); },
     reject:async(name,index)=>{ queues[name][index].reject(new Error("controlled provider failure")); await drain(); }};
 }
-module.exports={fixture,deferred,drain,readSource};
+module.exports={fixture,environment,deferred,drain,readSource};

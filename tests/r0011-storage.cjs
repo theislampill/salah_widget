@@ -9,7 +9,11 @@ function make(extra={}){
   const mutate=source=>mutant==="save-result"?source.replace('_publishPersistence("save",r);','_publishPersistence("save",{ok:true});')
     :mutant==="reset-result"?source.replace('if(!r.ok){','if(false){')
     :mutant==="cancel-hint"?source.replace('_setStatus("Enter to search a place · Shift+Enter to keep the typed name."); return;','return;')
-    :mutant==="status-overwrite"?source.replace('s.textContent=[message,_setHint.msg].filter(Boolean).join("\\n");','s.textContent=_setHint.msg;'):source;
+    :mutant==="status-overwrite"?source.replace('s.textContent=[message,_setHint.msg].filter(Boolean).join("\\n");','s.textContent=_setHint.msg;')
+    :mutant==="scene-reset"&&source.startsWith("function beginSkyScene(){")?'function beginSkyScene(){}'
+    :mutant==="scene-surface"&&source.startsWith("function updateSkySurface(){")?'function updateSkySurface(){}'
+    :mutant==="generation-reset"?source.replace('a.expired=true; if(a.cancel) a.cancel();','a.expired=true;')
+      .replace('if(a.controller) a.controller.abort();',''):source;
   return widget({ref,seed,...extra,mutate:mutant?mutate:undefined});
 }
 const status=f=>f.elements.get("set-status").textContent;
@@ -82,5 +86,32 @@ test("realm-local storage getter denial reaches caller then successful reset cle
   f.input("set-units","c","change");f.key("set-units","Escape");assert.equal(f.config().units,"c");assert.equal(f.storage.get(key),old);assert.equal(f.run("_storageErr"),"SecurityError");warning(f,/session only/);
   f.buckle.dispatch("click");f.click("set-reset");assert.equal(f.calls.coarse.length,0);assert.match(status(f),/saved settings remain/);assert.equal(f.storage.get(key),old);
   f.run('Object.defineProperty(window,"localStorage",{configurable:true,value:fixturePrivateStore,writable:true})');f.click("set-reset");assert.equal(f.storage.has(key),false);assert.equal(f.calls.coarse.length,1);assert.equal(f.run("_storageErr"),null);assert.equal(f.buckle.querySelector(".gear").textContent,"⚙");await f.resolveCall("coarse",0,{ok:false});assert.match(status(f),/Saved settings cleared.*Enter your location/s);
+});
+test("actual boot and apply execute scene reset and surface gates with faithful DOM classes",async()=>{
+  const f=make(),photo=f.elements.get("mphoto"),mask=f.elements.get("moon-mask-disc");
+  assert.equal(f.run('$(".c")===document.querySelector(".c")'),true);assert.equal(f.card.classList.contains("sky-pending"),true);assert.equal(f.card.dataset.appearance,"glass");
+  photo.setAttribute("href","fixture-owned-pixels");
+  f.run('_pbrReady=true;_skySceneKey="old";_skyMoonPresence=1;updateSkySurface()');
+  assert.equal(f.card.classList.contains("moon-ready"),true);assert.equal(mask.classList.contains("mask-on"),true);
+  f.sandbox.sceneClearCalls=[];
+  const dirtyScene=()=>f.run('_skyCommitted=true;_starsProjected=true;_cloudReady=true;cloudState.covLow=.8;cloudState.covMid=.7;cloudState.covHigh=.6;_colDens=new Float32Array([1,2]);_cloudCv={width:7,height:9};_cloudCtx={clearRect:(...args)=>sceneClearCalls.push(args)}');
+  const clearedScene=()=>{
+    assert.deepEqual(f.json('[_skySceneKey,_skyCommitted,_skyMoonPresence,_starsProjected,_cloudReady,cloudState.covLow,cloudState.covMid,cloudState.covHigh]'),[null,false,0,false,false,0,0,0]);
+    assert.deepEqual(f.json('Array.from(_colDens)'),[0,0]);assert.deepEqual(f.json('sceneClearCalls.at(-1)'),[0,0,7,9]);
+    assert.equal(f.card.classList.contains("sky-pending"),true);assert.equal(f.card.classList.contains("sky-initializing"),true);assert.equal(f.card.classList.contains("moon-ready"),false);assert.equal(mask.classList.contains("mask-on"),false);
+  };
+  dirtyScene();const boot=f.boot();clearedScene();assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);f.calls.prayer[0].resolve();await boot;
+  f.run('_skySceneKey="second-old";_skyMoonPresence=1;updateSkySurface()');dirtyScene();
+  f.sandbox.sceneNext={...f.config(),appearance:"contrast"};const apply=f.run('applyConfig(sceneNext,{save:false})');clearedScene();
+  assert.equal(f.card.dataset.appearance,"contrast");assert.equal(f.card.getAttribute("data-appearance"),"contrast");assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);f.calls.prayer[1].resolve();await apply;
+});
+test("actual apply invalidates owned request attempts before deferred provider work",async()=>{
+  const f=make();f.sandbox.cancelled=[];
+  f.run('globalThis.ownedOps=Object.keys(_requestSlots).map(kind=>{const op=beginRequest(kind);const a=beginAttempt(op,10000);a.cancel=()=>cancelled.push(kind);a.timer=setTimeout(()=>{},10000);return {op,a};});wxBusy=radarBusy=true;_prayerCooldown.current=_prayerCooldown.prefetch={until:99};');
+  f.sandbox.sceneNext={...f.config(),units:"c",appearance:"contrast"};const apply=f.run('applyConfig(sceneNext,{save:false})');
+  assert.equal(f.run('_runtimeGeneration'),1);assert.deepEqual(f.json('Object.values(_requestSlots)'),[null,null,null,null]);
+  assert.deepEqual(f.json('ownedOps.map(({op,a})=>[requestEligible(op),a.expired,a.controller.signal.aborted,a.timer,op.attempt])'),Array.from({length:4},()=>[false,true,true,null,null]));
+  assert.deepEqual(f.sandbox.cancelled,["current","prefetch","weather","radar"]);assert.deepEqual(f.json('[wxBusy,radarBusy,_prayerCooldown.current,_prayerCooldown.prefetch]'),[false,false,null,null]);
+  assert.deepEqual([f.config().units,f.config().appearance,f.card.dataset.appearance],["c","contrast","contrast"]);assert.equal(f.calls.prayer.length,1);assert.equal(f.calls.loop,0);f.calls.prayer[0].resolve();await apply;assert.equal(f.calls.loop,1);
 });
 (async()=>{let failed=0;for(const c of cases){try{await c.body();console.log("PASS",c.name);}catch(e){failed++;console.error("FAIL",c.name,"\n",e.stack);}}console.log(JSON.stringify({cases:cases.length,passed:cases.length-failed,failed,ref:ref||"working-tree",mutant:mutant||null,native:"NOT_RUN"}));process.exitCode=failed?1:0;})();

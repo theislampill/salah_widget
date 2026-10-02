@@ -20,13 +20,13 @@ test("reset preserves newer method in applied config, form and close save",async
 });
 test("reset preserves every newer display preference without cancelling coordinates",async()=>{
   const f=make(); f.click("set-reset");
-  f.input("set-school","1","change"); f.input("set-units","c","change"); f.input("set-time","12","change"); f.input("set-datefmt","DD/MM/YYYY");
+  f.input("set-school","1","change"); f.input("set-units","c","change"); f.input("set-time","12","change"); f.input("set-appearance","contrast","change"); f.input("set-datefmt","DD/MM/YYYY");
   await f.resolve("coarse",0,detected);
   assert.equal(f.tuple()[1],"40.7");
-  assert.deepEqual(["set-school","set-units","set-time","set-datefmt"].map(id=>f.elements.get(id).value),["1","c","12","DD/MM/YYYY"]);
+  assert.deepEqual(["set-school","set-units","set-time","set-appearance","set-datefmt"].map(id=>f.elements.get(id).value),["1","c","12","contrast","DD/MM/YYYY"]);
   assert.equal(f.run("_setDirty"),true); const applied=f.calls.applied[0].cfg;
-  assert.deepEqual([applied.school,applied.units,applied.time,applied.datefmt],["1","c","12","DD/MM/YYYY"]);
-  f.click("setClose"); const saved=f.sandbox.SalahConfig.loadLocal(); assert.deepEqual([saved.school,saved.units,saved.time,saved.datefmt],["1","c","12","DD/MM/YYYY"]);
+  assert.deepEqual([applied.school,applied.units,applied.time,applied.appearance,applied.datefmt],["1","c","12","contrast","DD/MM/YYYY"]);
+  f.click("setClose"); const saved=f.sandbox.SalahConfig.loadLocal(); assert.deepEqual([saved.school,saved.units,saved.time,saved.appearance,saved.datefmt],["1","c","12","contrast","DD/MM/YYYY"]);
 });
 test("reset recognises date preset change as ownership of the format box",async()=>{
   const f=make(); f.click("set-reset"); f.input("set-datefmt-preset","DD MMMM YYYY","change"); await f.resolve("coarse",0,detected);
