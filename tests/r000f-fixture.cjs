@@ -39,7 +39,7 @@ function environment() {
     appendChild(child) { child.parent=this; this.children.push(child); return child; }
     remove() { if(this.parent)this.parent.children=this.parent.children.filter(x=>x!==this); }
     focus() { document.activeElement=this; }
-    select() { this.selectionStart=0; this.selectionEnd=this.value.length; }
+    select() { this.selectionStart=0; this.selectionEnd=this.value.length; document.lastSelected=this; }
     querySelector() { return this.children.find(x=>x.classList.contains("gear")) || null; }
     querySelectorAll() { return this.children; }
     dispatch(type,options={}) {
@@ -97,12 +97,13 @@ function fixture(kind,options={}) {
   sandbox.navigator.geolocation={getCurrentPosition:(ok,bad,opts)=>{ queue("gps",{opts}).then(ok,bad); }};
   sandbox.fetch=url=>{ const d=deferred(); queues.reverse.push(d); calls.reverse.push(url); return Promise.resolve({json:()=>d.promise}); };
   sandbox.navigator.clipboard={writeText:text=>{calls.copy.push(text); return options.clipboard?options.clipboard(text):Promise.resolve();}};
-  env.document.execCommand=command=>{ calls.fallback.push({command,text:env.document.activeElement.value}); return options.fallback?options.fallback(command):false; };
+  env.document.execCommand=command=>{ calls.fallback.push({command,text:env.document.lastSelected?.value}); return options.fallback?options.fallback(command):false; };
   if(options.platform)sandbox.navigator.platform=options.platform;
   if(kind==="builder") {
     const defaults={label:"Madinah",lat:"24.4672",lon:"39.6142",method:"4",school:"0",time:"24",units:"f",dfcode:"YYYY-MM-DD",datefmt:"YYYY-MM-DD"};
     for(const [id,value]of Object.entries(defaults))el(id,value);
     for(const id of ["loclabel","geotip","geo","dfCustomOpt","pv","code","copied","copy","open","reload","install","installtip","modenote","embed-recovery","embed-recovery-wrap","install-recovery","install-recovery-wrap"] )el(id);
+    for(const id of ["embed-recovery-wrap","install-recovery-wrap"])env.elements.get(id).hidden=true;
     for(const id of ["mode-portable","mode-local"]) { const button=el(id); button.classList.add("modebtn"); button.eventParent=env.group; env.group.children.push(button); }
     let script=sources.page.match(/<script>\s*([\s\S]*?)<\/script>/)[1];
     if(options.mutate)script=options.mutate(script);

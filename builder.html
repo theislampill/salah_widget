@@ -56,6 +56,8 @@ iframe{box-shadow:0 18px 50px #0008}
 #modenote{margin-top:8px}
 .install-row{text-align:center;margin-top:14px}   /* match .preview gap so Install lines up with Refresh */
 .install-tip{margin-top:8px;min-height:18px;transition:color .15s}
+.manual-recovery{text-align:left;margin-top:10px}
+.manual-recovery textarea{min-height:90px;white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -148,6 +150,10 @@ iframe{box-shadow:0 18px 50px #0008}
   <div class="install-row">
     <button id="install" type="button">Install widget</button>
     <p class="note install-tip" id="installtip" role="status" aria-live="polite">copies terminal script for installation wizard</p>
+    <div class="manual-recovery" id="install-recovery-wrap" hidden>
+      <label for="install-recovery">Install command — copy manually</label>
+      <textarea id="install-recovery" readonly aria-describedby="installtip"></textarea>
+    </div>
   </div>
   </div>
 
@@ -172,6 +178,10 @@ iframe{box-shadow:0 18px 50px #0008}
   <div class="btns">
     <button id="copy" type="button">Copy embed code</button>
     <button class="ghost" id="open" type="button">Open widget in new tab</button>
+  </div>
+  <div class="manual-recovery" id="embed-recovery-wrap" hidden>
+    <label for="embed-recovery">Embed code — copy manually</label>
+    <textarea id="embed-recovery" readonly aria-describedby="copied"></textarea>
   </div>
   <p class="note">Powered by the free <a href="https://aladhan.com/prayer-times-api" target="_blank" rel="noreferrer">Aladhan API</a>.
   Don't know your coordinates? Right-click your spot on <a href="https://www.openstreetmap.org" target="_blank" rel="noreferrer">OpenStreetMap</a> → “Show address”.</p>
@@ -336,12 +346,7 @@ syncDateFromBox();
 
 $("reload").onclick=()=>{ $("pv").src=previewUrl(); };
 $("open").onclick=()=>window.open(url(),"_blank","noreferrer");
-$("copy").onclick=async()=>{
-  try{ await navigator.clipboard.writeText($("code").value); }
-  catch(e){ $("code").select(); document.execCommand("copy"); }
-  $("copied").textContent="copied ✓";
-  setTimeout(()=>$("copied").textContent="",1800);
-};
+$("copy").onclick=()=>copyArtifact("copy",$("code").value,false);
 // ---- "Install widget" → copy the one-line terminal command that runs the GitHub install wizard ----
 // The repo hosts install.ps1 (Windows) and install.sh (mac/Linux) at the root; the command pipes the
 // right one for the visitor's OS. (Scripts must be committed to the repo for the URL to resolve.)
@@ -364,19 +369,42 @@ function installCmd(){
   }
   return { cmd, carry };
 }
-let installTipTimer=0;
 async function copyText(t){
   try{ await navigator.clipboard.writeText(t); return true; }
-  catch(e){ const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.focus(); ta.select(); let ok=false; try{ ok=document.execCommand("copy"); }catch(_){} ta.remove(); return ok; }
+  catch(e){
+    let ta=null, ok=false;
+    try{ ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.focus(); ta.select(); ok=document.execCommand("copy")===true;
+    }catch(_){}
+    finally{ if(ta){ try{ ta.remove(); }catch(_){} } }
+    return ok;
+  }
 }
-$("install").onclick=async()=>{
-  const { cmd, carry }=installCmd();
-  const ok=await copyText(cmd);
-  const tip=$("installtip");
-  clearTimeout(installTipTimer);
-  if(ok){ tip.textContent = carry ? "Copied — with your settings! Paste into your terminal." : "Copied to clipboard! Paste into your terminal."; tip.style.color="#9be29b"; }
-  else { tip.textContent="Couldn’t copy — select the embed code box and copy manually."; tip.style.color="#ffb38a"; }
-  installTipTimer=setTimeout(()=>{ tip.textContent="copies terminal script for installation wizard"; tip.style.color=""; }, 8000);
+// Copy-result ownership is per button, independent of location edits. Recovery
+// retains the captured artifact even if the form regenerates while copying.
+const copyActions={copy:{seq:0,timer:0},install:{seq:0,timer:0}};
+async function copyArtifact(buttonId,payload,carry){
+  const state=copyActions[buttonId], attempt=++state.seq, button=$(buttonId);
+  const kind=buttonId==="copy"?"embed":"install", tip=$(buttonId==="copy"?"copied":"installtip");
+  clearTimeout(state.timer); $(kind+"-recovery-wrap").hidden=true;
+  tip.textContent=""; tip.style.color=""; button.disabled=true;
+  let ok=false;
+  try{ ok=await copyText(payload); }catch(_){}
+  finally{ if(attempt===state.seq) button.disabled=false; }
+  if(attempt!==state.seq) return;
+  if(ok){
+    tip.textContent=buttonId==="copy"?"copied ✓":carry?"Copied — with your settings! Paste into your terminal.":"Copied to clipboard! Paste into your terminal.";
+    tip.style.color="#9be29b"; button.focus();
+    state.timer=setTimeout(()=>{ if(attempt===state.seq){ tip.textContent=buttonId==="copy"?"":"copies terminal script for installation wizard"; tip.style.color=""; } },buttonId==="copy"?1800:8000);
+  } else {
+    tip.textContent="Couldn’t copy. Select the "+(buttonId==="copy"?"embed code":"install command")+" below and copy it manually.";
+    tip.style.color="#ffb38a";
+    const recovery=$(kind+"-recovery"); recovery.value=payload;
+    $(kind+"-recovery-wrap").hidden=false; recovery.focus(); recovery.select();
+  }
+}
+$("install").onclick=()=>{
+  const {cmd,carry}=installCmd(); return copyArtifact("install",cmd,carry);
 };
 function locate(auto){                                 // pin click → precise GPS (browser permission)
   searchReset();
