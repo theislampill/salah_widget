@@ -37,6 +37,7 @@ function harness(options = {}) {
   const suffix = options.hash || "";
   const location = {hash:`#lat=${options.lat ?? 24.47}&lon=${options.lon ?? 39.61}&tz=${encodeURIComponent(zone)}&method=${options.method || 3}${suffix}`};
   const storage = new Map(), writes = [], requests = [], rendered = [], nodes = new Map();
+  let elapsed=0, loads=0;
   const key = `salah:${options.lat ?? 24.47}|${options.lon ?? 39.61}|${zone}|${options.method || 3}|0`;
   if (options.cache !== undefined) storage.set(key, typeof options.cache === "string" ? options.cache : JSON.stringify(options.cache));
   class FixedDate extends Date {
@@ -45,8 +46,8 @@ function harness(options = {}) {
   }
   let context;
   const sandbox = {
-    location, URLSearchParams, Intl, Date:FixedDate, AbortController, performance:{now:()=>0},
-    console:{warn:()=>{},log:()=>{}}, setTimeout:fn=>queueMicrotask(fn),
+    location, URLSearchParams, Intl, Date:FixedDate, AbortController, performance:{now:()=>elapsed},
+    console:{warn:()=>{},log:()=>{}}, setTimeout:(fn,ms)=>ms>=10000?setTimeout(fn,ms):queueMicrotask(fn), clearTimeout,
     document:{ querySelector:selector=>{
       if(!nodes.has(selector)) nodes.set(selector,{textContent:"",style:{},dataset:{}});
       return nodes.get(selector);
@@ -71,8 +72,9 @@ function harness(options = {}) {
   const state=sliceBetween(raw,"// ---- state ----","// ---- continuous time-of-day sky");
   const solar=sliceBetween(raw,"function solarElevationDeg(M,a){","function sunAltAt(M,a){");
   const loader=sliceBetween(raw,"async function loadPrayerData(){","// clear per-location state");
-  run(prefix+"\n"+state+"\n"+solar+"\n"+loader);
-  return {run,load:()=>run("loadPrayerData()"),data,body,key,storage,writes,requests,rendered,nodes,
+  // Unrelated renderer double: these fixtures consume actual model/arc separately, not star projection.
+  run(prefix+"\nlet _loopStarted=false, _starsProjected=false;\n"+state+"\n"+solar+"\n"+loader);
+  return {run,load:()=>{ if(loads++) elapsed+=60000; return run("loadPrayerData()"); },data,body,key,storage,writes,requests,rendered,nodes,
     state:()=>({today:run("today"),tomorrow:run("tomorrow"),zone:run("tz"),lastDate:run("lastDate"),error:nodes.get(".left")?.textContent||""})};
 }
 function finiteConsumers(h) {

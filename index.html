@@ -854,35 +854,180 @@ function admitPrayerRecord(data,dateStr){
   return {ok:true,data:usable,date,timezone};
 }
 function cacheKey(){ return "salah:"+[lat,lon,_cacheTz,method,school].join("|"); }   // function (not const): reflects runtime config changes (local mode / settings panel)
-function loadCache(dateStr){
+// In-memory ownership is independent of weather freshness and persisted cache schemas.
+// A -> B -> A has three generations; each kind keeps its own operation across retry backoffs.
+let _runtimeGeneration=0, _requestSerial=0, _attemptSerial=0;
+const _requestSlots={current:null,prefetch:null,weather:null,radar:null};
+function beginRequest(kind,requestedDay=null){
+  if(!Object.prototype.hasOwnProperty.call(_requestSlots,kind) || _requestSlots[kind]) return null;
+  const op={generation:_runtimeGeneration,operationId:++_requestSerial,kind,requestedDay,
+    lat,lon,method,school,units,requestZone:tz,cacheKey:cacheKey(),
+    weatherCacheKey:"salahwx:"+[lat,lon,units].join("|"),attempt:null};
+  _requestSlots[kind]=op; return op;
+}
+function requestEligible(op){
+  return !!op && op.generation===_runtimeGeneration && _requestSlots[op.kind]===op;
+}
+function finishRequest(op){
+  if(!requestEligible(op)) return false;
+  _requestSlots[op.kind]=null; return true;
+}
+function beginAttempt(op,timeoutMs){
+  if(!requestEligible(op) || op.attempt) return null;
+  const a={operationId:op.operationId,attemptId:++_attemptSerial,controller:typeof AbortController!=="undefined"?new AbortController():null,
+    deadlineAt:_RAFNOW()+timeoutMs,timer:null,cancel:null,expired:false};
+  op.attempt=a; return a;
+}
+function attemptEligible(op,a){
+  return requestEligible(op) && !!a && op.attempt===a && !a.expired && _RAFNOW()<a.deadlineAt;
+}
+function finishAttempt(op,a){
+  if(!a) return;
+  if(a.timer!=null){ clearTimeout(a.timer); a.timer=null; }
+  a.cancel=null; if(op.attempt===a) op.attempt=null;
+}
+function beginRuntimeGeneration(){
+  const obsolete=Object.values(_requestSlots); _runtimeGeneration++;
+  for(const kind of Object.keys(_requestSlots)) _requestSlots[kind]=null;
+  for(const op of obsolete){
+    const a=op&&op.attempt; if(!a) continue;
+    a.expired=true; if(a.cancel) a.cancel();
+    if(a.controller) a.controller.abort();
+    finishAttempt(op,a);
+  }
+  wxBusy=false; radarBusy=false;
+  _prayerCooldown.current=null; _prayerCooldown.prefetch=null;
+}
+// Read only the selected legacy main-format envelope. Validate its stored day before trusting its zone.
+function readPrayerCache(key=cacheKey()){
   try{
-    const j=JSON.parse(localStorage.getItem(cacheKey()));
-    if(recordObject(j) && j.date===dateStr){ const admitted=admitPrayerRecord(j.data,j.date); if(admitted.ok) return admitted.data; }
+    const j=JSON.parse(localStorage.getItem(key));
+    if(recordObject(j)){ const admitted=admitPrayerRecord(j.data,j.date); if(admitted.ok) return admitted; }
   }catch(e){}
   return null;
 }
-function saveCache(dateStr,data){
-  const admitted=admitPrayerRecord(data,dateStr); if(!admitted.ok) return;
-  try{ localStorage.setItem(cacheKey(),JSON.stringify({date:dateStr,data:admitted.data})); }catch(e){}
+function loadCache(dateStr,key=cacheKey()){
+  const cached=readPrayerCache(key); return cached && cached.date===dateStr ? cached.data : null;
 }
-async function fetchTimings(dateStr){
-  // No timezonestring: let Aladhan resolve the zone from lat/lon, so a wrong/stale tz param can't
-  // shift the prayer times around the clock. Adopt the resolved zone for "now" so the day-rollover
-  // and the countdown match the location, not the viewer's device.
-  const u=`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${enc(lat)}&longitude=${enc(lon)}&method=${enc(method)}&school=${enc(school)}`;
+function saveCache(dateStr,data,key=cacheKey()){
+  const admitted=admitPrayerRecord(data,dateStr); if(!admitted.ok) return;
+  try{ localStorage.setItem(key,JSON.stringify({date:dateStr,data:admitted.data})); }catch(e){}
+}
+async function fetchTimings(dateStr,operation=null){
+  const op=operation||beginRequest("current",dateStr), own=!operation;
+  if(!op || !requestEligible(op)) throw new Error("obsolete prayer request");
+  // Pure transport: only guarded caller adoption may change the resolved timezone or cache.
+  const u=`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${enc(op.lat)}&longitude=${enc(op.lon)}&method=${enc(op.method)}&school=${enc(op.school)}`;
   let err;
-  for(let i=0;i<3;i++){
-    try{
-      const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer"});
-      if(r.ok!==true) throw new Error("bad api HTTP");
-      const j=await r.json();
-      if(!recordObject(j) || (j.code!=null&&j.code!==200) || (j.status!=null&&j.status!=="OK")) throw new Error("bad api envelope");
-      const admitted=admitPrayerRecord(j.data,dateStr);
-      if(!admitted.ok) throw new Error("bad api "+admitted.reason);
-      tz=admitted.timezone; return admitted.data;
-    }catch(e){ err=e; if(i<2) await sleep(900*(i+1)); }
+  try{
+    while((op.prayerAttempts||0)<3){
+      if(!requestEligible(op)) throw new Error("obsolete prayer request");
+      op.prayerAttempts=(op.prayerAttempts||0)+1;
+      const a=beginAttempt(op,10000); a.requestedDay=dateStr;
+      try{
+        const deadline=new Promise((resolve,reject)=>{
+          a.cancel=()=>{ a.expired=true; if(a.controller) a.controller.abort(); reject(new Error("prayer attempt unavailable")); };
+          a.timer=setTimeout(a.cancel,10000);
+        });
+        const body=(async()=>{
+          const r=await fetch(u,{cache:"no-store",referrerPolicy:"no-referrer",...(a.controller?{signal:a.controller.signal}:{})});
+          if(r.ok!==true) throw new Error("bad api HTTP");
+          const j=await r.json();
+          if(!recordObject(j) || (j.code!=null&&j.code!==200) || (j.status!=null&&j.status!=="OK")) throw new Error("bad api envelope");
+          const admitted=admitPrayerRecord(j.data,dateStr);
+          if(!admitted.ok) throw new Error("bad api "+admitted.reason);
+          if(!attemptEligible(op,a)) throw new Error("obsolete prayer attempt");
+          return admitted.data;
+        })();
+        const data=await Promise.race([body,deadline]);
+        if(!attemptEligible(op,a)) throw new Error("obsolete prayer attempt");
+        op.completedAttempt=a; return data;
+      }catch(e){
+        err=e; if(!requestEligible(op)) throw e;
+      }finally{ finishAttempt(op,a); }
+      if(op.prayerAttempts<3) await sleep(900*op.prayerAttempts);
+    }
+    throw err||new Error("prayer attempt budget exhausted");
+  }finally{ if(own) finishRequest(op); }
+}
+
+const _prayerCooldown={current:null,prefetch:null};
+let _renderDirty=false;
+function prayerCivilDay(zone=tz){
+  let n=null; try{ n=projectInZone(zoneFormatter(zone),simNow()); }catch(e){}
+  return n ? `${pad(n.d)}-${pad(n.mo)}-${String(n.y).padStart(4,"0")}` : null;
+}
+function prayerNextDay(day){
+  if(typeof day!=="string" || !/^\d{2}-\d{2}-\d{4,}$/.test(day)) return null;
+  const [d,mo,y]=day.split("-").map(Number), ms=utcFields(y,mo,d);
+  if(!Number.isFinite(ms)) return null;
+  const n=new Date(ms); n.setUTCDate(n.getUTCDate()+1);
+  return `${pad(n.getUTCDate())}-${pad(n.getUTCMonth()+1)}-${String(n.getUTCFullYear()).padStart(4,"0")}`;
+}
+function prayerRecordReady(data,day){
+  return !!data && !!day && !!data.meta && data.meta.timezone===tz && admitPrayerRecord(data,day).ok;
+}
+function prayerResultEligible(op){
+  const a=op&&op.completedAttempt;
+  return requestEligible(op) && (!a || (!a.expired && _RAFNOW()<a.deadlineAt));
+}
+// The same settlement classifier handles loader, prefetch, rollover and local promotion.
+// A requested "tomorrow" may be current by settlement; a newer current record wins that duplicate race.
+function adoptPrayerBundle(data,requestedDay,op=null,replaceCurrent=true,persist=true){
+  if(op && !prayerResultEligible(op)) return false;
+  const admitted=admitPrayerRecord(data,requestedDay); if(!admitted.ok) return false;
+  if(op && op.kind==="prefetch" && admitted.timezone!==tz) return false;
+  const current=prayerCivilDay(admitted.timezone), next=prayerNextDay(current);
+  if(admitted.date===current){
+    if(!replaceCurrent && prayerRecordReady(today,current)) return false;
+    const changedDay=lastDate!==current;
+    tz=admitted.timezone; today=admitted.data; lastDate=current; _prayerStale=false;
+    if(!prayerRecordReady(tomorrow,next)) tomorrow=null;
+    if(persist) saveCache(current,today,op?op.cacheKey:cacheKey());
+    if(changedDay){ _starsProjected=false; lastMoonMin=-1; }
+    _renderDirty=true; return true;
   }
-  throw err;
+  if(admitted.date===next && admitted.timezone===tz){
+    tomorrow=admitted.data; _renderDirty=true; return true;
+  }
+  return false;
+}
+function beginPrayerRequest(kind,day){
+  const elapsed=_RAFNOW(), cooldown=_prayerCooldown[kind];
+  if(cooldown && cooldown.day===day && elapsed<cooldown.nextTry) return null;
+  const op=beginRequest(kind,day); if(!op) return null;
+  _prayerCooldown[kind]={day,nextTry:elapsed+_ROLLOVER_RETRY_MS};
+  if(kind==="prefetch") fetchingTomorrow=true;
+  else { _rolloverBusy=true; _rolloverNextTry=elapsed+_ROLLOVER_RETRY_MS; }
+  return op;
+}
+function finishPrayerRequest(op){
+  if(!finishRequest(op)) return;
+  if(op.kind==="prefetch") fetchingTomorrow=false;
+  else _rolloverBusy=false;
+  _renderDirty=true;
+}
+function prefetchPrayerDay(){
+  const current=prayerCivilDay(), day=prayerNextDay(current);
+  if(!prayerRecordReady(today,current) || prayerRecordReady(tomorrow,day)) return;
+  const op=beginPrayerRequest("prefetch",day); if(!op) return;
+  fetchTimings(day,op).then(data=>{ adoptPrayerBundle(data,day,op,false); })
+    .catch(()=>{}).finally(()=>{ finishPrayerRequest(op); });
+}
+function maintainPrayerDay(){
+  const day=prayerCivilDay(), next=prayerNextDay(day);
+  if(!day || lat==null || lon==null) return;
+  if(!prayerRecordReady(today,day)){
+    // Promotion must precede clearing tomorrow. It also works after a backward wall-clock correction.
+    if(prayerRecordReady(tomorrow,day)) adoptPrayerBundle(tomorrow,day);
+    else {
+      const cached=loadCache(day); if(cached && cached.meta.timezone===tz) adoptPrayerBundle(cached,day,null,true,false);
+    }
+  }
+  if(tomorrow && !prayerRecordReady(tomorrow,next)){ tomorrow=null; _renderDirty=true; }
+  const stale=!!today && !prayerRecordReady(today,day);
+  if(stale!==_prayerStale){ _prayerStale=stale; _renderDirty=true; }
+  if(!prayerRecordReady(today,day) && !_requestSlots.current) loadPrayerData();
 }
 
 // ---- weather (Open-Meteo: free, no key, CORS-enabled) -------------------
@@ -2302,10 +2447,7 @@ function render(){
   // is re-projected ONLY under timeScale (ADVANCING), or once per new day, so fast-forward shows celestial motion.
   if(ADVANCING || !_starsProjected){ projectStars(simDate()); _starsProjected=true; }
   const afterMaghrib = M.nowMin >= mins(M.t.Maghrib);          // the Islamic (Hijri) day rolls over at Maghrib, not midnight
-  if(!tomorrow && !fetchingTomorrow){                          // always: needed for the overnight Fajr, the AH roll-over, and the pre-Maghrib preview number
-    fetchingTomorrow=true;
-    fetchTimings(tomorrowStr()).then(d=>{tomorrow=d;fetchingTomorrow=false;}).catch(()=>{fetchingTomorrow=false;});
-  }
+  prefetchPrayerDay();                                        // civil-day/owner/cooldown checks also allow late midnight reclassification
   $(".cn").textContent = M.currentKey;
   if(Number.isFinite(M.leftMin)){
     $(".nt").textContent = fmt(M.nextTime);
@@ -2380,7 +2522,7 @@ window.qaState=function(){
         weatherStale:(SIM.wx!=null||ADVANCING)?false:!eligibility.eligible, currentEligible:eligibility.eligible, currentUnavailableReason:eligibility.reason,
         lastWeatherRefresh: lastWxAt?new Date(lastWxAt).toISOString():null, forecastTrackLoaded: !!weatherTrack,
         prayerDate: lastDate||null, prayerLoaded: !!today, tomorrowLoaded: !!tomorrow,
-        prayerStale: _prayerStale, rolloverPendingMs: (_prayerStale ? Math.max(0, _rolloverNextTry-Date.now()) : null),
+        prayerStale: _prayerStale, rolloverPendingMs: (_prayerStale ? Math.max(0, _rolloverNextTry-_RAFNOW()) : null),
         simulated:(SIM.wx!=null||SIM.time!=null||SIM.moon!=null) }; })(),
     // ── CONFIG diagnostics: how the WidgetConfig was resolved + persistence/permission state ──
     config:(()=>{
@@ -2463,18 +2605,36 @@ function startWeather(){
 }
 // The post-config PRAYER-DATA pipeline (cache → live fetch → render).
 async function loadPrayerData(){
-  if(!simulationReady()) return;
-  const ds=nowParts().dateStr;
-  const cached=loadCache(ds);
-  if(cached){ today=cached; if(cached.meta&&cached.meta.timezone) tz=cached.meta.timezone; lastDate=ds; render(); }
+  if(!simulationReady() || lat==null || lon==null) return;
+  const op=beginPrayerRequest("current",prayerCivilDay()); if(!op) return;
   try{
-    today=await fetchTimings(ds);
-    saveCache(ds,today);
-    lastDate=ds;
-    render();
+    const cached=readPrayerCache(op.cacheKey);
+    if(cached && requestEligible(op)){
+      tz=cached.timezone;                                    // validated selected-envelope metadata, before requested-day filtering
+      if(!simulationReady()) return;
+      const day=prayerCivilDay();
+      if(cached.date===day && adoptPrayerBundle(cached.data,day,op,true,false) && !_loopStarted){ render(); _renderDirty=false; }
+    }
+    if(!requestEligible(op)) return;
+    let requested=prayerCivilDay(); op.requestedDay=requested; op.requestZone=tz;
+    _prayerCooldown.current.day=requested;
+    let data=await fetchTimings(requested,op);
+    if(!prayerResultEligible(op)) return;
+    tz=data.meta.timezone;                                   // guarded bootstrap metadata never paints the hint-day payload as current
+    if(!simulationReady()) return;
+    let day=prayerCivilDay(); _prayerCooldown.current.day=day;
+    if(day!==requested){
+      requested=day; data=await fetchTimings(requested,op);   // at most one corrected-day request, within the same three-attempt budget
+      if(!prayerResultEligible(op)) return;
+      tz=data.meta.timezone;
+      if(!simulationReady()) return;
+      day=prayerCivilDay(); _prayerCooldown.current.day=day;
+    }
+    if(adoptPrayerBundle(data,requested,op) && !_loopStarted){ render(); _renderDirty=false; }
+    else if(!today && requestEligible(op)) showError("Could not load prayer times");
   }catch(e){
-    if(!today) showError("Could not load prayer times");
-  }
+    if(requestEligible(op) && !today) showError("Could not load prayer times");
+  }finally{ finishPrayerRequest(op); }
 }
 // Invalid explicit boot postpones these builders; the first valid configuration must still initialize
 // their catalogs/overlay exactly once. Reconfiguration reprojects existing stars and retains weather DOM.
@@ -2485,10 +2645,11 @@ function buildSceneOnce(){
 }
 // clear per-location state so a runtime config change can't show the old place's data
 function resetForNewLocation(){
-  today=null; tomorrow=null; fetchingTomorrow=false;
+  today=null; tomorrow=null; lastDate=null; fetchingTomorrow=false;
   weather=null; weatherTrack=null; lastWxAt=0; lastWxTry=0;
   weatherRadar=null; lastRadarAt=0;
-  _starsProjected=false; _prayerStale=false;
+  _starsProjected=false; _prayerStale=false; lastMoonMin=-1; _renderDirty=true;
+  _rolloverBusy=false; _rolloverNextTry=0;
   if(simulationReady()){ buildSceneOnce(); renderMoon(); }
 }
 // Apply a new WidgetConfig at RUNTIME (settings panel) — IN-MEMORY, no reload, so it still
@@ -2501,16 +2662,20 @@ async function applyConfig(cfg, opts){
     _storageErr=r.ok?null:(r.error||"error");
     if(r.ok){ cfg.origin=cfg.source; cfg.source="localStorage"; cfg.savedAt=r.savedAt; }   // keep how the coords were obtained (pin reflects origin, not the storage marker)
   }
+  beginRuntimeGeneration();
   bindConfig(cfg);
   resetForNewLocation();
   if(!simulationReady()) return;
   if(lat==null||lon==null){ render(); return; }     // incomplete manual entry → nothing to load yet
   startWeather();
+  const generation=_runtimeGeneration;
   await loadPrayerData();
+  if(generation!==_runtimeGeneration) return;
   startRenderLoop();                                  // no-op if already running
 }
 
 async function boot(){
+  const generation=_runtimeGeneration;
   if(_cfgMode==="local"||_cfgMode==="preferLocal") enableSettingsAffordance();  // recovery controls do not depend on a valid scene
   if(!simulationReady()) return;
   if(QA){ lastWxAt=0; lastWxTry=0; }                          // QA: always build a fresh forecast track on boot (cache must not block it)
@@ -2523,6 +2688,7 @@ async function boot(){
       // local / preferLocal with no saved config → coarse, PERMISSION-FREE area auto-detect.
       _autoDetectStatus="pending";
       let det=null; try{ det=await SalahConfig.coarseDetect(); }catch(e){ det={ok:false}; }
+      if(generation!==_runtimeGeneration) return;
       if(det && det.ok){
         bindConfig(SalahConfig.applyHashPrefs(det.cfg,_hashCfg));
         _autoDetectStatus="ok"; _autoDetectSource=det.provider||det.source||"coarse-ip";
@@ -2545,6 +2711,7 @@ async function boot(){
   if(!simulationReady()) return;                            // coordinate detection may have changed the explicit scene's zone
   startWeather();
   await loadPrayerData();
+  if(generation!==_runtimeGeneration) return;
   startRenderLoop();
 }
 
@@ -2557,7 +2724,7 @@ function startRenderLoop(){
   if(_loopStarted) return; _loopStarted=true;
   const cEl=document.querySelector(".c");
   if(MOTIONFULL && cEl) cEl.classList.add("motionfull");    // CSS reduced-motion rules are scoped to .c:not(.motionfull)
-  let _raf=null, _onScreen=true, _lastSec=-1, _lastDateStr=lastDate||"", _lastWx=0, _lastCloud=0;
+  let _raf=null, _onScreen=true, _lastSec=-1, _lastWx=0, _lastCloud=0;
   const visible=()=>_onScreen && document.visibilityState!=="hidden";
   // —— MOTION TELEMETRY (?debugMotion=1): prove the sky is actually alive in normal real-time ——
   let _rafN=0,_cloudN=0,_tickAcc=_RAFNOW(),_rafPS=0,_cloudPS=0;   // loop rate counters (consumed only by the debugMotion overlay, which now lives at module scope)
@@ -2565,30 +2732,11 @@ function startRenderLoop(){
     _rafN++;
     if(!simulationReady()){ _raf=requestAnimationFrame(loop); return; }
     const n=nowParts();
-    if(n.dateStr!==_lastDateStr){                       // crossed (sim) midnight → load that day's timings
-      if(_lastDateStr){
-        const ds=n.dateStr, c=loadCache(ds);
-        if(c){                                          // new-day data is cached → adopt it and advance the day
-          today=c; tomorrow=null; lastDate=ds; _prayerStale=false; _lastDateStr=ds; if(simulationReady()) renderMoon(); _starsProjected=false;
-        } else {
-          // No cache for the new day yet. Do NOT advance _lastDateStr (so we keep retrying) and do NOT pass
-          // yesterday's `today` off as the new day — flag it stale (qaState exposes prayerStale). Throttle the
-          // refetch so an offline window can't spam the network every frame; advance the day only once a fetch
-          // confirms it. THIS IS THE FIX: previously _lastDateStr advanced unconditionally + the .catch was empty.
-          tomorrow=null; _prayerStale=true;
-          const ms=Date.now();
-          if(!_rolloverBusy && ms>=_rolloverNextTry){
-            _rolloverBusy=true; _rolloverNextTry=ms+_ROLLOVER_RETRY_MS;
-            fetchTimings(ds).then(d=>{ today=d; saveCache(ds,d); lastDate=ds; _prayerStale=false; _lastDateStr=ds; if(simulationReady()) renderMoon(); _starsProjected=false; _rolloverBusy=false; })
-                            .catch(()=>{ _rolloverBusy=false; });   // stays stale; _rolloverNextTry gates the next attempt
-          }
-        }
-      } else { _lastDateStr=n.dateStr; }                // first observation (boot t0): just record; boot() does the initial load
-    }
+    maintainPrayerDay();                               // promotion, rollover and cold same-day recovery share this visible opportunity
     const rt=_RAFNOW();
     if(!ADVANCING && rt-_lastWx>30000){ _lastWx=rt; fetchWeather(); fetchRadar(); }    // refresh real weather ~½-min + radar (self-throttled ~10min); both held during a fast sweep
     const sec=Math.floor(simNow()/1000);
-    if(sec!==_lastSec){ _lastSec=sec; render(); if(ADVANCING) updateSimClock(n); }
+    if(sec!==_lastSec || _renderDirty){ _lastSec=sec; _renderDirty=false; render(); if(ADVANCING) updateSimClock(n); }
     // cloud density field repaints ~13fps so it visibly EVOLVES + drifts (time = simNow, so fast-forward
     // accelerates it). Reduced-motion: paint once per state change with frozen time (no animation).
     if(isMotionReduced()){ if(_cloudDirty){ paintClouds(1000); tieRainToClouds(); _cloudN++; } }   // LIVE reduced-motion (single source; honours a mid-session OS toggle)

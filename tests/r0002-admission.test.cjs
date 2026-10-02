@@ -112,21 +112,26 @@ function mutant(before,after) {
   const raw=source(); assert.equal(raw.split(before).length-1,1,"mutation owner drifted");
   return raw.replace(before,after);
 }
-test("mutant bypassing network admission is killed by actual loader state",async()=>{
+test("mutant bypassing network admission is killed by retries while bundle admission still contains it",async()=>{
   const raw=mutant("const admitted=admitPrayerRecord(j.data,dateStr);","const admitted={ok:true,data:j.data,timezone:j.data.meta.timezone};");
   const data=clone(ordinary); data.timings={};
-  await assert.rejects(rejected({source:raw,data}),/invalid record entered today/);
+  // The successor bundle guard now independently rejects this payload. All invalid-state/cache/render
+  // assertions run before the discriminating transport assertion: three bad-body attempts, not one.
+  await assert.rejects(rejected({source:raw,data}),/1 !== 3/);
 });
 test("mutant removing required clocks is killed before model consumption",async()=>{
   const raw=mutant('for(const k of prayers) if(!validClock(data.timings[k])) return {ok:false,reason:"clock:"+k};',"");
   const data=clone(ordinary); data.timings.Dhuhr="1e999:00";
   await assert.rejects(rejected({source:raw,data}),/invalid record entered today/);
 });
-test("mutant bypassing cache admission is killed by recovery render boundary",async()=>{
-  const raw=mutant("const admitted=admitPrayerRecord(j.data,j.date); if(admitted.ok) return admitted.data;","return j.data;");
+test("mutant bypassing selected-envelope admission is killed by cache miss oracle; bundle still contains it",async()=>{
+  const raw=mutant("const admitted=admitPrayerRecord(j.data,j.date); if(admitted.ok) return admitted;","return {ok:true,data:j.data,date:j.date,timezone:j.data.meta.timezone};");
   const h=harness({source:raw,cache:{date:"07-09-2026",data:{...clone(ordinary),timings:{}}}}); await h.load();
-  assert.throws(()=>assert.equal(h.rendered.length,1),/2 !== 1/);
-  assert.equal(Object.keys(h.rendered[0].today.timings).length,0);
+  // Reinsert the same invalid envelope after healthy recovery to exercise the public cache wrapper.
+  h.storage.set(h.key,JSON.stringify({date:"07-09-2026",data:{...clone(ordinary),timings:{}}}));
+  assert.throws(()=>assert.equal(h.run("loadCache('07-09-2026')"),null));
+  assert.equal(h.rendered.length,1); assert.equal(Object.keys(h.rendered[0].today.timings).length,7);
+  assert.equal(h.writes.length,1); finiteConsumers(h);
 });
 test("mutant removing own-key alias guard is killed by literal output",async()=>{
   const raw=mutant('Object.prototype.hasOwnProperty.call(_P,_df.toLowerCase())?_P[_df.toLowerCase()]:_df','_P[_df.toLowerCase()]||_df');
