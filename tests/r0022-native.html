@@ -45,29 +45,34 @@ window.lunarFixture={
     const hash=new URLSearchParams({lat:'24.47',lon:'39.61',tz:'Asia/Riyadh',label:'Madinah',method:'4',units:'c',seed:'1',simTemp:'24',simHumid:String(humidity),simWind:'3',simMoon:String(fraction),simWax:waxing?'1':'0',simMoonAlt:String(altitude),simMoonH:String(hourAngle),qa:'1'});
     if(weatherLane==='preview'){hash.set('simWx',String(code));hash.set('simCloud','30');hash.set('simPrecip',String(precip));}
     if(!realTime)hash.set('simTime',time);if(motion)hash.set('motion',motion);if(debugMoon)hash.set('debugMoon','1');if(debugOptic)hash.set('debugOptic',debugOptic);
-    const prefix='('+boundaries.toString()+')('+JSON.stringify(realTime)+','+JSON.stringify(prayerDelayMs)+');\n'+config;
+    const documentToken=crypto.randomUUID();
+    const prefix='window.__fixtureDocumentToken='+JSON.stringify(documentToken)+';\n('+boundaries.toString()+')('+JSON.stringify(realTime)+','+JSON.stringify(prayerDelayMs)+');\n'+config;
     const injected=html.replace('<script src="config.js"><'+'/script>','<script>'+prefix+'<'+'/script>');
     if(injected===html)throw new Error('config bootstrap anchor missing');
     const blob=URL.createObjectURL(new Blob([injected],{type:'text/html'}));
-    frame.src=blob+'#'+hash.toString();if(previousBlob)URL.revokeObjectURL(previousBlob);previousBlob=blob;
+    const documentUrl=blob+'#'+hash.toString();
+    frame.src=documentUrl;if(previousBlob)URL.revokeObjectURL(previousBlob);previousBlob=blob;
+    const ownsDocument=w=>{try{return w.location.href===documentUrl&&w.__fixtureDocumentToken===documentToken;}catch(e){return false;}};
     const started=performance.now();let w;
     for(;;){
       w=frame.contentWindow;
-      try{if(w.location.hash==='#'+hash.toString()&&w.qaState().cache.prayerLoaded&&w.qaState().moonTruth.moonSkyFresh===true&&w.eval('_pbrReady')&&w.document.querySelector('.mphoto').getAttribute('href'))break;}catch(e){}
+      try{if(ownsDocument(w)&&w.location.hash==='#'+hash.toString()&&w.qaState().cache.prayerLoaded&&w.qaState().moonTruth.moonSkyFresh===true&&w.eval('_pbrReady')&&w.document.querySelector('.mphoto').getAttribute('href'))break;}catch(e){}
       if(performance.now()-started>12000)throw new Error('fixture readiness unavailable');await new Promise(r=>setTimeout(r,50));
     }
     await w.document.fonts.ready;
+    if(!ownsDocument(w))throw new Error('fixture document changed before weather admission');
     const current={interval:900,weather_code:code,temperature_2m:24,apparent_temperature:24,relative_humidity_2m:humidity,dew_point_2m:15,
       visibility:20000,wind_speed_10m:3,wind_direction_10m:225,wind_gusts_10m:5,precipitation:precip,rain:precip,showers:0,snowfall:0,is_day:1,
       cloud_cover:30,cloud_cover_low:layers[0],cloud_cover_mid:layers[1],cloud_cover_high:layers[2]};
     w.__fixtureCurrent=current;
     w.eval('(()=>{const n=partsInTz(Date.now());__fixtureCurrent.time=n.y+"-"+pad(n.mo)+"-"+pad(n.d)+"T"+pad(n.h)+":"+pad(n.mi);weather=admitWeatherRecord(__fixtureCurrent,{lat,lon,units:"c",zone:tz,retrievedAt:Date.now()});if(!weather||!weatherEligibility(weather).eligible)throw new Error("fixture current model admission unavailable");weatherTrack=null;weatherRadar=null;siteElev=0;_cloudReady=false;cloudState.covLow=cloudState.covMid=cloudState.covHigh=0;render();paintClouds(simNow()/1000);})()');
     await new Promise(r=>setTimeout(r,2200));
+    if(!ownsDocument(w))throw new Error('fixture document changed before report');
     if(freeze)for(const a of w.document.getAnimations()){a.pause();a.currentTime=2000;}
     const q=w.qaState(),cs=w.getComputedStyle(w.document.querySelector('.c'));
     const opacities={};for(const key of ['--moonbeam','--mhalo','--mcorona','--mparhelia','--moongrp','--moonocc','--moonfeat'])opacities[key]=cs.getPropertyValue(key).trim();
     const report={sourceUrl:String(sourceUrl),sourceSha256,sourceByteLength:sourceBytes.length,configSha256,configByteLength:configBytes.length,
-      hash:hash.toString(),weatherLane,currentInput:w.__fixtureCurrent,acceptedWeather:w.eval('weather'),weatherEligibility:w.eval('weatherEligibility(weather)'),
+      hash:hash.toString(),documentIdentity:{token:documentToken,url:documentUrl,matched:ownsDocument(w)},weatherLane,currentInput:w.__fixtureCurrent,acceptedWeather:w.eval('weather'),weatherEligibility:w.eval('weatherEligibility(weather)'),
       fixtureClock:w.__fixtureClock,prayerRequests:w.__fixturePrayerRequests,prayerDelayMs,viewport:{width:innerWidth,height:innerHeight},
       card:{width:325,height:530},dpr:devicePixelRatio,fonts:w.document.fonts.status,fontFaces:[...w.document.fonts].map(f=>({family:f.family,status:f.status})),textureReady:w.eval('_pbrReady'),
       realTime,freeze,motionEvidence:'Requires actual elapsed crops/clip; readiness and hashes are not motion proof',sameTimeWeatherInjection:true,

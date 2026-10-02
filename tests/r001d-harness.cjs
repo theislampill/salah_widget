@@ -33,6 +33,7 @@ function makeElement(tag = 'div') {
     createImageData(w,h){return {data:new Uint8ClampedArray(w*h*4),width:w,height:h};},
     getImageData(x,y,w,h){if(this.error)throw new Error('image-read-failure');return {data:this.data||new Uint8ClampedArray(w*h*4)};},
     putImageData(d){this.data=d.data;this.puts=(this.puts||0)+1;}, drawImage(){},
+    clearRect(){},beginPath(){},arc(){},fill(){},createRadialGradient(){return {addColorStop(){}};},
     measureText(t){return {width:String(t).length*15};},
   };
   return el;
@@ -48,14 +49,14 @@ function prayerForDate(dateStr) {
       hijri:{day:+day+18,month:{number:3,en:'Rabi'},year:1448}}};
 }
 
-function load({sourcePath=path.join(root,'index.html'), source, debugMoon=false, extraHash='', prayerMode='healthy', prayerFailures=0}={}) {
+function load({sourcePath=path.join(root,'index.html'), source, debugMoon=false, extraHash='', hash, prayerMode='healthy', prayerFailures=0}={}) {
   const html=source||fs.readFileSync(sourcePath,'utf8');
   const inline=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(m=>m[1]).find(s=>s.includes('function renderMoon()'));
   if(!inline)throw new Error('actual inline runtime not found');
   // Hold only the final entrypoint so pre-first-render and ordered fixtures are possible.
   const runtime=inline.replace(/\nboot\(\);\s*$/, '\n');
   if(runtime===inline)throw new Error('boot interception did not match actual entrypoint');
-  const elements=new Map(), storage=new Map(), warnings=[], rafs=[], timers=new Map(), requests=[], timerEvents=[];
+  const elements=new Map(), storage=new Map(), warnings=[], rafs=[], timers=new Map(), requests=[], timerEvents=[],images=[];
   const clock={now:0,wall:Date.parse('2026-09-08T19:00:00Z')}; let timerId=0,failures=prayerFailures;
   class FixtureDate extends Date {
     constructor(...args){super(...(args.length?args:[clock.wall]));}
@@ -65,8 +66,8 @@ function load({sourcePath=path.join(root,'index.html'), source, debugMoon=false,
   const prayer=prayerForDate('08-09-2026');
   const sandbox={URLSearchParams,URL,Intl,Math,Date:FixtureDate,Uint8ClampedArray,Float32Array,Float64Array,Promise,
     console:{warn(s){warnings.push(s);},log(){}}, navigator:{language:'en-US'},
-    location:{hash:'#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&units=c&seed=1&simTime=22:00&simMoon=0.5&simWax=1&simMoonAlt=20&simMoonH=42'+(debugMoon?'&debugMoon=1':'')+extraHash},
-    performance:{now:()=>clock.now}, Image:class {set src(v){this._src=v;}},
+    location:{hash:hash||'#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&units=c&seed=1&simTime=22:00&simMoon=0.5&simWax=1&simMoonAlt=20&simMoonH=42'+(debugMoon?'&debugMoon=1':'')+extraHash},
+    performance:{now:()=>clock.now}, Image:class {constructor(){images.push(this);}set src(v){this._src=v;}},
     localStorage:{getItem(k){return storage.get(k)||null;},setItem(k,v){storage.set(k,String(v));},removeItem(k){storage.delete(k);}},
     document:{querySelector:select,getElementById:id=>select('#'+id),createElement:makeElement,
       querySelectorAll:s=>s==='.stars circle'?select('.stars').children:[],addEventListener(){},visibilityState:'visible',
@@ -115,7 +116,7 @@ function load({sourcePath=path.join(root,'index.html'), source, debugMoon=false,
     if(rejected)throw error;return result;
   }
   async function drain(turns=4){for(let i=0;i<turns;i++){await new Promise(resolve=>setImmediate(resolve));advanceTimer();}}
-  return {run,ctx,elements,select,warnings,rafs,clock,storage,timers,requests,timerEvents,advanceTimer,complete,drain,
+  return {run,ctx,elements,select,warnings,rafs,clock,storage,timers,requests,timerEvents,images,advanceTimer,complete,drain,
     sourceHash:sha(Buffer.from(html)),runtimeHash:sha(Buffer.from(runtime)),sourcePath};
 }
 
