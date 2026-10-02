@@ -170,7 +170,7 @@ body{color:#fff7df;
 .mhalo{fill:url(#mhalog);mix-blend-mode:screen;filter:blur(2.5px);opacity:var(--mhalo,0);transition:opacity 1.8s}
 .mparhelia{mix-blend-mode:screen;filter:blur(1.6px);opacity:var(--mparhelia,0);transition:opacity 1.8s}   /* lunar moondogs */
 .mcorona{fill:url(#mcoronag);mix-blend-mode:screen;filter:blur(3px);opacity:var(--mcorona,0);transition:opacity 1.4s}
-.mglow{fill:url(#mglowg);filter:blur(2px);mix-blend-mode:screen;opacity:calc(var(--mgo,.2) * var(--mrad,1))}   /* halo radiance breathes via --mrad (simTime + humidity), set in paint() */
+.mglow{fill:url(#mglowg);filter:blur(2px);mix-blend-mode:screen;opacity:calc(var(--mgo,0) * var(--mrad,1))}   /* physical atmospheric glow: fail closed before paint; breathing via --mrad */
 
 /* weather effects: animated overlay, behind the foreground (z-index 1) */
 .wfx{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;border-radius:28px}
@@ -1068,6 +1068,39 @@ function moonNow(){
 }
 function phaseEmoji(p){ return ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"][Math.round(((p||0)%1)*8)%8]; }  // synodic phase (0..1) → 8-step moon emoji
 let moonSky={alt:25,H:0,frac:0.5,up:1};                           // shared cinematic-moon state (read by applyTheme)
+// Geometry identity belongs to its producer, including direct boot/config/day-adoption callers.
+// Equal local minutes on another date or at another location are not the same production context.
+function moonGeometryIdentity(date){
+  const n=partsInTz(date.getTime());
+  return Object.freeze({epochMinute:Math.floor(date.getTime()/60000),minute:n.h*60+n.mi,context:[lat,lon,tz].join("|")});
+}
+function moonGeometryObservation(M){
+  const expected=moonGeometryIdentity(simDate());
+  const qualified=Number.isFinite(moonSky._epochMin) && Number.isFinite(moonSky._min) && typeof moonSky._context==="string";
+  const produced=qualified?Object.freeze({epochMinute:moonSky._epochMin,minute:moonSky._min,context:moonSky._context}):null;
+  return Object.freeze({fresh:produced?produced.epochMinute===expected.epochMinute && produced.minute===expected.minute && produced.context===expected.context && expected.minute===Math.floor(M.nowMin):null,
+    produced,expected,phaseFraction:moonSky.frac,altitudeDeg:moonSky.alt});
+}
+// Raw backing-canvas measurements only. Validate coordinates before flattening: x=width must never wrap rows.
+function sampleMoonPixel(data,width,height,x,y){
+  if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0) return {x,y,status:"unavailable",lum:null,alpha:null};
+  if(!Number.isInteger(x)||!Number.isInteger(y)||x<0||y<0||x>=width||y>=height) return {x,y,status:"OOB",lum:null,alpha:null};
+  if(!data||data.length<width*height*4) return {x,y,status:"unavailable",lum:null,alpha:null};
+  const i=(y*width+x)*4;
+  return {x,y,status:"ok",lum:Math.round((data[i]+data[i+1]+data[i+2])/3),alpha:data[i+3]};
+}
+function moonDebugSamples(){
+  const width=_moonCv?_moonCv.width:null,height=_moonCv?_moonCv.height:null,radius=_MR,cx=width/2,cy=Math.round(height/2);
+  try{
+    if(!_moonCv) throw new Error("canvas absent");
+    const ctx=_moonCv.getContext("2d"); if(!ctx) throw new Error("context absent");
+    const image=ctx.getImageData(0,0,width,height),data=image&&image.data;
+    if(!data||data.length<width*height*4) throw new Error("image unavailable");
+    const points=[["inner",Math.round(cx+0.5*radius)],["limb",Math.round(cx+0.99*radius)],["edge",Math.round(cx+radius)],
+      ["disc exterior",Math.ceil(cx+radius)+1],["canvas exterior",width-1]];
+    return {status:"ok",width,height,radius,cx,cy,samples:points.map(([label,x])=>({label,...(label==="canvas exterior"&&x<=cx+radius?{x,y:cy,status:"unavailable",lum:null,alpha:null}:sampleMoonPixel(data,width,height,x,cy))}))};
+  }catch(e){ return {status:"unavailable",width,height,radius,cx,cy,samples:[]}; }
+}
 function renderMoon(){
   let frac, waxing;
   const date=simDate();                                            // moon phase advances with simTime (debug fast-forward spans days)
@@ -1104,20 +1137,17 @@ function renderMoon(){
   const y=55 + 3*sweep - clamp((alt-6)/70)*3;                      // ≈55-58: dropped below the temp strap (y19-37) and above the arc (top y≈121 on the right) — its wide middle clears the strap, so the disc is large AND fully on-card
   const scale=1.11 + 0.02*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
   const g=$(".moon"); if(g) g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
-  moonSky={alt,H:Hm,frac,up,sx:x/325,sy:y/530};   // sx/sy = card-fraction centre, so the cloud deck can be moon-lit from the right spot
   const feat=$(".mfeatures"); if(feat) feat.removeAttribute("transform");   // moon is upright (no parallactic rotation); the lit side is baked by renderMoonPBR per waxing/waning
-  const gl=$(".mglow");  if(gl){ gl.setAttribute("r",(56+34*frac).toFixed(1)); gl.style.setProperty("--mgo",(0.03+0.24*frac*frac).toFixed(3)); }   // SUBTLE atmospheric glow (toned down — the halo/corona carry the optics now); grows faster-than-linear toward full. Breathing via --mrad.
+  const gl=$(".mglow"); if(gl) gl.setAttribute("r",(56+34*frac).toFixed(1));   // geometry only; atmospheric glow permission is consumed from AtmosphereState in paint()
+  const stamp=moonGeometryIdentity(date),valid=[alt,Hm,frac,up,x,y].every(Number.isFinite);
+  moonSky={alt,H:Hm,frac,waxing,up,sx:x/325,sy:y/530,_min:valid?stamp.minute:null,_epochMin:valid?stamp.epochMinute:null,_context:valid?stamp.context:null};   // sx/sy = card-fraction centre; stamp ONLY this successfully produced finite geometry
   if(DEBUGMOON){ const dm=$(".dbgmoon");
     if(dm){ if(dm.style.display!=="block") dm.style.display="block";
-      let ring="n/a";
-      try{ const ctx=_moonCv.getContext("2d"),N=_moonCv.width,R=58,cx=N/2,cy=N/2,d=ctx.getImageData(0,0,N,N).data;
-        const at=f=>{const x=Math.round(cx+f*R),y=cy,i=(y*N+x)*4;return `${Math.round((d[i]+d[i+1]+d[i+2])/3)}/${d[i+3]}`;};
-        ring=`inner ${at(0.5)}  limb ${at(0.99)}  edge ${at(1.0)}  out ${at(1.04)}  sky ${at(1.25)}`;
-      }catch(e){ ring="(pbr not painted)"; }
+      const pixels=moonDebugSamples(),ring=pixels.status==="ok"?pixels.samples.map(p=>`${p.label} (${p.x},${p.y}) ${p.status==="ok"?p.lum+"/"+p.alpha:p.status}`).join("  "):"unavailable (pbr not painted)";
       dm.textContent=`MOON frac ${frac.toFixed(2)} ${waxing?"wax":"wane"} alt ${alt.toFixed(0)}°\n`
         +`disc r48 opaque · occluder r${$(".moccluder").getAttribute("r")} · glow r${gl?gl.getAttribute("r"):"?"}\n`
-        +`feat ${(+getComputedStyle($(".mfeatures")).opacity).toFixed(2)} occ ${(+getComputedStyle($(".moccluder")).opacity).toFixed(2)} glowOp ${gl?gl.style.opacity:"?"}\n`
-        +`ring lum/α  ${ring}`;
+        +`CSS now feat ${(+getComputedStyle($(".mfeatures")).opacity).toFixed(2)} occ ${(+getComputedStyle($(".moccluder")).opacity).toFixed(2)} glowOp ${gl?(+getComputedStyle(gl).opacity).toFixed(2):"unavailable"}\n`
+        +`canvas ${pixels.width}×${pixels.height} R${pixels.radius} center (${pixels.cx},${pixels.cy}) · raw lum/α\n${ring}`;
     }
   }
 }
@@ -1129,13 +1159,11 @@ function renderMoon(){
 // scintillation rises toward the horizon. ?seed= varies the synthetic draw. NOT a fixed screen wallpaper.
 function _mb32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
 let _starCat=null, _starEls=[], _starsProjected=false, _brightIdx=[], _glintEls=[];
+let _starBase=[], _glintStarIdx=[], _starLightKey=null;        // held positions/extinction, refreshed light appearance
 const _SKYX=162, _SKYY=-30, _SKYR=270, _SKYK=0.8;            // azimuthal-equidistant dome anchor (zenith above card)
 function projectStars(date){
   if(!_starCat||!_starEls.length) return;
   const d=_toDays(date), lst=_sid(d,_RAD*-(+lon||0)), ph=_RAD*(+lat||0), sp=Math.sin(ph), cp=Math.cos(ph);
-  // a bright, above-horizon moon WASHES OUT the stars around it (its glow out-shines its neighbourhood)
-  const mw=(moonSky&&moonSky.up!=null)?clamp(moonSky.frac*moonSky.up*1.15):0;
-  const mx=(moonSky&&moonSky.sx!=null)?moonSky.sx*325:1e4, my=(moonSky&&moonSky.sy!=null)?moonSky.sy*530:1e4;
   for(let i=0;i<_starCat.length;i++){
     const s=_starCat[i], el=_starEls[i]; if(!el) continue;
     const H=lst-s.ra, cH=Math.cos(H), sH=Math.sin(H);
@@ -1147,7 +1175,7 @@ function projectStars(date){
     // atmospheric EXTINCTION via Rozenberg airmass X (finite at the horizon): transparency = 10^(−0.4·k·X), k≈0.2.
     const X=1/(Math.max(0.02,sinAlt)+0.025*Math.exp(-11*Math.max(0,sinAlt))), ext=Math.pow(10,-0.08*X);
     let o=(0.10+1.05*s.b*ext); if(o>1)o=1;   // brighter, higher-contrast field (was a dim background)
-    if(mw>0.12){ const dr=Math.hypot(x-mx,y-my); o*=(1-0.92*mw*Math.max(0,1-dr/175)); if(dr<58) o*=0.10; }   // dim stars near a bright moon; fully crush them inside the inner glow
+    _starBase[i]={opacity:o,x,y};                             // physical local wash is applied later from the SAME state paint consumes
     el.style.display=""; el.setAttribute("cx",x.toFixed(1)); el.setAttribute("cy",y.toFixed(1));
     el.style.setProperty("--o",o.toFixed(3)); el.style.opacity=o.toFixed(3);
     if(s.tw) el.style.setProperty("--amp",((0.12+0.45*(1-ext))*(s.bright?1.5:1)).toFixed(3));   // anchors scintillate ~1.5× deeper than the dust bed
@@ -1159,11 +1187,30 @@ function projectStars(date){
   for(let k=0;k<_glintEls.length;k++){
     const g=_glintEls[k]; if(!g) continue;
     const i=upBright[k];
+    _glintStarIdx[k]=i;
     if(i==null){ if(g.style.display!=="none") g.style.display="none"; continue; }
     const el=_starEls[i], sz=0.6+1.15*(+_starCat[i].b), op=(+el.style.opacity||0)*0.8;
     g.style.display=""; g.setAttribute("transform",`translate(${el.getAttribute("cx")} ${el.getAttribute("cy")}) scale(${sz.toFixed(2)})`);
     g.style.setProperty("--go",op.toFixed(3)); g.style.opacity=op.toFixed(3);   // --go = the glint's base opacity; the glintpulse animation scintillates around it
   }
+  _starLightKey=null;
+}
+// Appearance changes independently of projection: ordinary real time holds star positions,
+// but must release yesterday's/earlier moon wash when phase, altitude or daylight permission changes.
+function refreshStarAppearance(A){
+  const mw=A.moonLocalWash,mx=A.cloudMoonX*325,my=A.cloudMoonY*530,key=[mw,mx,my].join("|");
+  if(key===_starLightKey) return;
+  for(let i=0;i<_starEls.length;i++){
+    const el=_starEls[i],base=_starBase[i]; if(!base || !el || el.style.display==="none") continue;
+    let o=base.opacity;
+    if(mw>0.12){ const dr=Math.hypot(base.x-mx,base.y-my); o*=(1-0.92*mw*Math.max(0,1-dr/175)); if(dr<58) o*=0.10; }
+    el.style.setProperty("--o",o.toFixed(3)); el.style.opacity=o.toFixed(3);
+  }
+  for(let k=0;k<_glintEls.length;k++){
+    const g=_glintEls[k],el=_starEls[_glintStarIdx[k]]; if(!g||!el||g.style.display==="none") continue;
+    const op=(+el.style.opacity||0)*0.8; g.style.setProperty("--go",op.toFixed(3)); g.style.opacity=op.toFixed(3);
+  }
+  _starLightKey=key;
 }
 function buildStars(){
   const g=document.querySelector(".stars"); if(!g) return;
@@ -1670,7 +1717,7 @@ function atmosphere(M){
   const S=physSky(M, sm);                                       // sky colours DERIVED from solar elevation
   const D=wxDrivers();                                          // 0..1 physical weather drivers (heat/cold/wind/humidity…)
   const airDrift=_airDrift();                                   // slow non-looping transparency/air-mass wander (0..1) — makes a clear sky breathe over 15–60 min
-  const mp=moonNow(), mFrac=clamp(mp.frac);
+  const mFrac=clamp(moonSky.frac);                             // phase AND altitude from the geometry this frame consumes
   // — lunar state (from the REAL ephemeris in moonSky, set by renderMoon). Three regimes: a real above-
   //   horizon lit night moon (bright disc + casts moonlight); a below-horizon/daytime faint calendar
   //   presence (no sky illumination); a near-new moon (nearly gone).
@@ -1678,6 +1725,12 @@ function atmosphere(M){
   const darkness=clamp(-(sm.altDeg+3)/9);                       // night emerges over civil→nautical twilight
   const phaseVis=clamp((mFrac-0.02)/0.05);                      // ~0 only at true new moon
   const moonObject=moonUp*darkness*phaseVis;                    // a real, above-horizon, LIT moon (drives accent / star-wash)
+  // One physical permission for EVERY atmospheric lunar consumer. The near-new cutoff is a renderer
+  // eligibility rule, not literal zero lunar-surface radiance: PBR night-side/Earthshine stays separate.
+  const moonLightEligible=moonObject>0;
+  const moonLightReason=darkness===0?"daylight":moonUp===0?"below-horizon":phaseVis===0?"near-new":"eligible";
+  const moonLocalWash=moonLightEligible?clamp(mFrac*moonUp*1.15):0;
+  const moonGlow=moonLightEligible?(0.03+0.24*mFrac*mFrac):0;    // retain the existing eligible-phase gain
   const moonlight=moonObject*(0.35+0.65*mFrac);                // PHYSICAL illumination ONLY — 0 below horizon / new / day, never faked for the calendar moon
   const moonStrength=moonlight;
   // The Moon is an OPAQUE body — you NEVER see stars through it. So its disc and its star-occluder share ONE
@@ -1758,7 +1811,7 @@ function atmosphere(M){
   // LUNAR OPTICS — two DISTINCT phenomena gated by cloud TYPE: a 22° ICE-crystal HALO ring from thin CIRRUS (high
   // cloud), and a water-droplet CORONA aureole from thin ALTOSTRATUS/FOG (mid cloud / humidity). Both need a bright
   // above-horizon moon in a dark sky; thick low cloud kills both. They are near-exclusive (ice vs water cloud).
-  const moonLume=moonUp*darkness*clamp(0.25+0.75*mFrac);
+  const moonLume=moonLightEligible?moonUp*darkness*clamp(0.25+0.75*mFrac):0;
   let lunarHalo    =clamp((clHigh-0.06)/0.34)*clamp((0.66-clHigh)/0.42)*(1-clLow)*(1-0.7*clMid)*moonLume;   // `let`: forceable via ?debugOptic=lunarhalo
   const lunarCorona=clamp(Math.max((clMid-0.08)/0.36,(D.humid-0.72)/0.24,(cls==="fog"?0.7:0)))*clamp((0.72-clMid)/0.5)*(1-0.45*clLow)*moonLume;
   // — crepuscular rays (light shafts): only when the sun is up, the deck is BROKEN (gaps to shine through),
@@ -1773,7 +1826,7 @@ function atmosphere(M){
   // LUNAR PARASELENAE / moondogs: the lunar analogue of sundogs — lateral spots at the moon's elevation, RARE,
   // needing a bright moon + thin ice cloud (cirrus). Lateral only when plausible.
   let moonParhelia=cirrus*moonLume*clamp((14-moonSky.alt)/16);
-  if(DEBUGOPTIC==="halo")sunHalo=0.95; else if(DEBUGOPTIC==="sundogs")sunDogs=0.95; else if(DEBUGOPTIC==="pillar")sunPillar=0.9; else if(DEBUGOPTIC==="anticrep")antiCrep=0.8; else if(DEBUGOPTIC==="paraselene")moonParhelia=0.9; else if(DEBUGOPTIC==="lunarhalo")lunarHalo=0.95;
+  if(DEBUGOPTIC==="halo")sunHalo=0.95; else if(DEBUGOPTIC==="sundogs")sunDogs=0.95; else if(DEBUGOPTIC==="pillar")sunPillar=0.9; else if(DEBUGOPTIC==="anticrep")antiCrep=0.8; else if(DEBUGOPTIC==="paraselene")moonParhelia=moonLightEligible?0.9:0; else if(DEBUGOPTIC==="lunarhalo")lunarHalo=moonLightEligible?0.95:0;
   const pillarCol=rgba([cloudSunCol[0],cloudSunCol[1],cloudSunCol[2],0.6]);
   // — finish (post): filmic grain a touch heavier in low light / murk for texture, lighter in bright day.
   const grain=clamp(0.34+0.26*(1-skyL)+0.18*D.haze);
@@ -1809,13 +1862,15 @@ function atmosphere(M){
   const _tm=(lin,L)=>rgb(lin.map(c=>Math.round(255*Math.pow(_aces(c*L),1/2.2))));  // tone-map a radiance → display colour
   let _sunmidB=mixRGB([255,150,70],[255,214,170],_noonS); _sunmidB=mixRGB(_sunmidB,[255,238,218],(1-_Tcloud)*0.45);   // SATURATED warm-gold BODY (cloud → warm-white)
   const sunCoreRGB=_tm(_cLin,6.0*_Tcloud*(0.22+0.78*_Tbeam)), sunMidRGB=rgb(_sunmidB);
+  const moonObservation=Object.freeze({...moonGeometryObservation(M),light:Object.freeze({eligibility:moonObject,eligible:moonLightEligible,reason:moonLightReason,
+    illumination:moonlight,beam:0.6*moonlight,cloudLight:moonlight,localStarWash:moonLocalWash,localGlow:moonGlow,halo:lunarHalo,corona:lunarCorona,paraselenae:moonParhelia})});
   return {
     // —— physical drivers (the source of truth) ——
     day, cls, info, code, wxTemp: weather?weather.temp:null,
     solarElevationDeg: sm.altDeg, skyLuminance: skyLum(sm.altDeg), sunX: sm.x, sunY: sm.y,
     sunCoreRGB, sunMidRGB, sunCloudT: _Tcloud,                   // tone-mapped corner-sun nucleus + body + cloud transmittance (paint() writes --suncore/--sunmid and uses sunCloudT for --sunray)
-    moonPhase: mFrac, moonAltitude: moonSky.alt, moonHourAngle: moonSky.H, moonSkyFresh: moonSky._min===Math.floor(M.nowMin),
-    moonObject, moonlightIntensity: moonlight,
+    moonPhase: mFrac, moonAltitude: moonSky.alt, moonHourAngle: moonSky.H, moonObservation,moonSkyFresh:moonObservation.fresh,
+    moonObject, moonlightIntensity: moonlight,moonGlow,moonLocalWash,
     cloudCover: D.cloud, windSpeed: D.wind, windDeg: weather&&weather.windDir!=null?weather.windDir:225,
     // —— sky gradient + glows ——
     skyTop: g1, skyMid: g2, skyHorizon: g3, glow, horizon: hor,
@@ -1910,12 +1965,14 @@ function paint(A){
   c.style.setProperty("--mw",A.milkyWayOpacity.toFixed(3));
   c.style.setProperty("--mwtilt",A.mwTilt.toFixed(1)+"deg");   // Milky Way band tilts with the galactic centre's hour angle
   c.style.setProperty("--star-turb",A.starTurb.toFixed(2));    // live scintillation amplitude (atmospheric turbulence)
-  c.style.setProperty("--moonocc",A.moonOcc.toFixed(3));        // tracks the disc opacity: a bright physical disc fully hides stars; a faint calendar ghost only dims them (no hard black hole)
+  c.style.setProperty("--moonocc",A.moonOcc.toFixed(3));        // solid night disc + occluder; atmospheric light permission never makes the calendar surface transparent
   c.style.setProperty("--starblur",A.starBlur.toFixed(2)+"px");
   c.style.setProperty("--moonfeat",A.moonDisc.toFixed(3));
   c.style.setProperty("--moonbeam",A.moonBeam.toFixed(3));
   c.style.setProperty("--moongrp",A.moonGrp.toFixed(3));        // lunar-calendar presence: never 0 at night (the Moon is always meaningfully present), even near-new or below horizon
   c.style.setProperty("--moon-sky",rgb(A.moonSky));             // occluder tracks the live sky colour
+  const mg=$(".mglow"); if(mg) mg.style.setProperty("--mgo",A.moonGlow.toFixed(3));   // physical glow only; never gate the opaque PBR/calendar surface
+  refreshStarAppearance(A);                                   // same consumed lunar permission, without moving held star positions
   c.style.setProperty("--mrad",(_REDUCED?1:1+0.10*Math.sin(simNow()/1000/17)+0.12*A.aerosolDensity).toFixed(3));   // moon-glow radiance: gentle simTime breathing, a touch stronger in haze (subtle, not the dominant element)
   c.style.setProperty("--heat",A.heat.toFixed(3));
   c.style.setProperty("--warm",A.warm.toFixed(3));
@@ -1960,7 +2017,19 @@ function paint(A){
     }
   }
 }
-function applyTheme(M){ paint(atmosphere(M)); }                 // physical state → render
+let _lastMoonPaint=null;                                       // small last-attempt summary, never recomputed by QA
+function applyTheme(M){
+  let observation=null,stage="atmosphere";
+  try{
+    const A=atmosphere(M); observation=A&&A.moonObservation||null; stage="paint";
+    paint(A);
+    _lastMoonPaint=Object.freeze({status:observation?"completed":"unavailable",stage,fresh:observation?observation.fresh:null,observation});
+    if(observation && observation.fresh===false && !_moonStaleWarned){ _moonStaleWarned=true; console.warn("salah_widget: paint consumed stale moon geometry — renderMoon() must run before atmosphere()/applyTheme() in the same time/location context."); }
+  }catch(e){
+    _lastMoonPaint=Object.freeze({status:"failed",stage,fresh:null,observation});
+    throw e;                                                    // preserve render error behavior; qaState remains nonthrowing
+  }
+}
 
 // Size the present-prayer name to the live arc: keep 1 M of clearance from the curve on each side
 // (the arc is narrower on short days, wider on long ones — so we fit per day, not a fixed size) and
@@ -2037,7 +2106,7 @@ function render(){
   setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)
   syncWeather();                                              // sim/fast-forward: pull weather from the forecast track at simTime
   const M=model();
-  const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin){ lastMoonMin=mm; renderMoon(); moonSky._min=mm; }   // re-render the moon each minute so its orientation/earthshine track the evening; stamp the minute so atmosphere() can detect a stale / out-of-order moonSky
+  const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin || moonGeometryObservation(M).fresh!==true){ renderMoon(); lastMoonMin=moonSky._min; }   // minute cadence + date/location invalidation; failed production never advances the success marker
   // REAL-TIME: star POSITIONS stay fixed (no record-player spin) — only CSS per-star scintillation varies. The sky
   // is re-projected ONLY under timeScale (ADVANCING), or once per new day, so fast-forward shows celestial motion.
   if(ADVANCING || !_starsProjected){ projectStars(simDate()); _starsProjected=true; }
@@ -2073,11 +2142,7 @@ function render(){
   const staleTag = _prayerStale ? `<span class="staletag" title="Prayer times may be out of date — couldn't refresh for the new day">stale</span> ` : "";
   $("#ah").innerHTML = ahH ? `${staleTag}<span class="er">ه</span>${fmtDate(ahH)}${tail}` : staleTag;
   $(".c").dataset.stale = _prayerStale ? "prayer" : "";
-  // SAFETY (moonSky coupling): renderMoon() must run before atmosphere() this tick. In correct render order
-  // moonSky._min===mm always; a mismatch means render() was reordered (atmosphere/applyTheme ahead of the
-  // renderMoon block) and the moon geometry would silently lag a minute — warn once. (atmosphere() stays pure;
-  // this side-effecting check lives in render(). The pure A.moonSkyFresh flag mirrors it for qaState/smoke.)
-  if(moonSky._min!==mm && !_moonStaleWarned){ _moonStaleWarned=true; console.warn("salah_widget: moonSky stale this tick (moonSky._min="+moonSky._min+", expected minute "+mm+") — renderMoon() must run before atmosphere()/applyTheme() within render()."); }
+  // applyTheme captures the geometry actually consumed; a later producer cannot erase stale/failure evidence.
   applyTheme(M);
   // OBSERVABILITY: capture the state actually rendered this tick (read by qaState().render — a real last-render
   // summary, not a recompute), so the next failure is diagnosable.
@@ -2145,7 +2210,9 @@ window.qaState=function(){
     // ── LUNAR PRESENCE diagnostics: physical sky-moon vs lunar-calendar moon (the slot must never be empty at night) ──
     moonTruth:(()=>{ const mp=moonNow(), alt=(A.moonAltitude!=null?A.moonAltitude:moonSky.alt), up=alt>-0.5;
       const phys=up && !A.day && (A.moonlightIntensity||0)>0.02, grp=+(A.moonGrp||0), disc=+(A.moonDisc||0);
-      return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:(A.moonSkyFresh!==false),
+      return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
+        lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
+        lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
         physicalMoonVisible:phys, calendarMoonVisible:grp>0.01,
         displayMode: A.day?"day-suppressed":(phys?"physical":(grp>0.01?"calendar-ghost":"debug-hidden")),
         moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
