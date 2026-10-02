@@ -173,10 +173,25 @@ const base = 'index.html#lat=24.47&lon=39.61&label=Madinah&method=4';
   });
   await check('source: six real force branches and unsupported-string mutant', () => {
     assert.deepEqual(forceNames, claimedNames);
+    // R0022 force branches consume the actual physical permission; older source has no such binding.
+    const eligibility = /^\s*const moonLightEligible\s*=/m.test(sources['index.html'])
+      ? region(sources['index.html'], '  const mFrac=clamp(moonSky.frac);', '\n  const moonLightReason') : '';
+    const clampLine = sources['index.html'].match(/^const clamp\s*=.*$/m)?.[0]; assert(clampLine, 'production clamp present');
+    const forced = (name, moonSky = { frac: 0.98, alt: 20 }, sm = { altDeg: -18 }) => vm.runInNewContext(
+      `${clampLine}\n${eligibility}\nlet sunHalo=0,sunDogs=0,sunPillar=0,antiCrep=0,moonParhelia=0,lunarHalo=0;\n${forceBlock}\n[sunHalo,sunDogs,sunPillar,antiCrep,moonParhelia,lunarHalo]`,
+      { DEBUGOPTIC: name, moonSky, sm });
     for (const name of forceNames) {
       const flags = parsed(`${base}&simTime=12:30&debugOptic=${name}`); assert.equal(flags.DEBUGOPTIC, name);
-      const state = vm.runInNewContext(`let sunHalo=0,sunDogs=0,sunPillar=0,antiCrep=0,moonParhelia=0,lunarHalo=0;\n${forceBlock}\n[sunHalo,sunDogs,sunPillar,antiCrep,moonParhelia,lunarHalo]`, { DEBUGOPTIC: name });
+      const state = forced(name);
       assert.equal(state.filter(x => x > 0).length, 1, `${name} has one actual force assignment`);
+    }
+    if (eligibility) for (const name of ['paraselene', 'lunarhalo']) {
+      for (const [reason, moonSky, sm] of [
+        ['near-new', { frac: 0.01, alt: 20 }, { altDeg: -18 }],
+        ['phase cutoff', { frac: 0.02, alt: 20 }, { altDeg: -18 }],
+        ['below-horizon', { frac: 0.98, alt: -10 }, { altDeg: -18 }],
+        ['daylight', { frac: 0.98, alt: 20 }, { altDeg: 20 }]
+      ]) assert(forced(name, moonSky, sm).every(x => x === 0), `${name} must preserve ${reason} ineligibility`);
     }
     assert.equal(parsed(`${base}&debugOptic=corona`).DEBUGOPTIC, 'corona');
     assert(!forceNames.includes('corona'));
