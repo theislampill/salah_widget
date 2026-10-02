@@ -130,16 +130,20 @@
   }
 
   // ---- localStorage (every access wrapped; never throws to the caller) -------
-  function storageAvailable() {
+  // Optional Storage-like input keeps characterization tests off the viewer's origin.
+  // Resolve the default getter inside each try: even accessing localStorage may throw.
+  function storageAvailable(storage) {
     try {
+      var store = storage === undefined ? root.localStorage : storage;
       var k = "__sw_probe__";
-      root.localStorage.setItem(k, "1"); root.localStorage.removeItem(k);
+      store.setItem(k, "1"); store.removeItem(k);
       return { ok: true };
     } catch (e) { return { ok: false, error: (e && e.name) || "error" }; }
   }
-  function loadLocal() {
+  function loadLocal(storage) {
     try {
-      var raw = root.localStorage.getItem(KEY);
+      var store = storage === undefined ? root.localStorage : storage;
+      var raw = store.getItem(KEY);
       if (!raw) return null;
       var j = JSON.parse(raw);
       if (!j || j.v !== 1) return null;            // version gate (future migrations)
@@ -150,15 +154,16 @@
       return c;
     } catch (e) { return null; }
   }
-  function saveLocal(cfg) {
+  function saveLocal(cfg, storage) {
     try {
+      var store = storage === undefined ? root.localStorage : storage;
       var c = normalize(cfg); c.v = 1; c.savedAt = Date.now();
-      root.localStorage.setItem(KEY, JSON.stringify(c));
+      store.setItem(KEY, JSON.stringify(c));
       return { ok: true, savedAt: c.savedAt };
     } catch (e) { return { ok: false, error: (e && e.name) || "error" }; }
   }
-  function clearLocal() {
-    try { root.localStorage.removeItem(KEY); return { ok: true }; }
+  function clearLocal(storage) {
+    try { var store = storage === undefined ? root.localStorage : storage; store.removeItem(KEY); return { ok: true }; }
     catch (e) { return { ok: false, error: (e && e.name) || "error" }; }
   }
 
@@ -229,7 +234,7 @@
   // Returns {mode, cfg|null, needsDetect, hashCfg, flags}. The async coarse-detect
   // path is run by the caller (index.html boot) when needsDetect is true, so hardcoded
   // mode stays fully synchronous at module load (preserving the historical boot timing).
-  function resolve(hashStr) {
+  function resolve(hashStr, storage) {
     var parsed = parseHash(hashStr), hashCfg = parsed.cfg, flags = parsed.flags;
     var mode, cfg = null, needsDetect = false;
     if (flags.local) mode = "local";
@@ -240,12 +245,12 @@
     if (mode === "hardcoded") {
       cfg = normalize(Object.assign({}, hashCfg, { source: "hash" }));
     } else if (mode === "preferLocal") {
-      var savedP = loadLocal();
+      var savedP = loadLocal(storage);
       if (savedP) cfg = savedP;
       else if (hashCfg.lat != null && hashCfg.lon != null) cfg = normalize(Object.assign({}, hashCfg, { source: "hash" }));
       else needsDetect = true;
     } else if (mode === "local") {
-      var savedL = loadLocal();
+      var savedL = loadLocal(storage);
       if (savedL) cfg = savedL; else needsDetect = true;
     }
     return { mode: mode, cfg: cfg, needsDetect: needsDetect, hashCfg: hashCfg, flags: flags };

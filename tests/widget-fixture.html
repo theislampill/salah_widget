@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'">
+<title>R0017 isolated widget fixture</title>
+</head>
+<body><pre id="fixture-error">Loading verified widget source…</pre>
+<script>
+// Test-only transport/document wrapper. Widget script bodies are never rewritten.
+(function(){
+  "use strict";
+  const nativeFetch=window.fetch.bind(window),NativeDate=window.Date;
+  const query=new URLSearchParams(location.search),mode=query.get("mode")||"healthy";
+  const attempt=Number(query.get("attempt")),hash=location.hash.slice(1);
+  const fixed=NativeDate.parse("2026-09-07T09:30:00.000Z"),rootURL=new URL("../",location.href);
+  const policy="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'";
+  const report=window.__widgetFixture={mode,attempt,hash,state:"setup",error:null,sourceSha256:null,weatherOracle:"baseline/synthetic; R0024 join pending",
+    storageIsolated:false,clockFixed:false,fetchIntercepted:false,initialStorageEntries:0,ledger:[],storageEvents:[],consoleErrors:[]};
+  function failure(error){report.error=String(error&&error.message||error);report.state="error";
+    const el=document.getElementById("fixture-error");if(el)el.textContent="Fixture bootstrap error: "+report.error;}
+  // Synthetic data only: Hijri fields are invented test inputs, not date conversions.
+  function prayerFixture(day){
+    if(day!=="07-09-2026"&&day!=="08-09-2026")throw Error("Unexpected fixture date: "+day);
+    const tomorrow=day==="08-09-2026";
+    return {data:{timings:{Fajr:"05:00",Sunrise:"06:00",Dhuhr:"12:00",Asr:"15:30",Sunset:"18:00",Maghrib:"18:00",Isha:"19:30"},
+      meta:{timezone:"Asia/Riyadh"},date:{
+        gregorian:{date:day,day:tomorrow?"08":"07",month:{number:9,en:"September"},year:"2026"},
+        hijri:{day:tomorrow?"02":"01",month:{number:1,en:"Synthetic month"},year:"1500"}
+      }}};
+  }
+  function fixtureFetch(input,init){
+    const u=new URL(typeof input==="string"||input instanceof URL?String(input):input.url,location.href);
+    const row={attempt,url:u.href,jsonReads:0,result:"requested",cache:init&&init.cache||null};report.ledger.push(row);
+    const day=u.pathname.slice("/v1/timings/".length),expected={latitude:"24.47",longitude:"39.61",method:"4",school:"0"};
+    const allowed=u.origin==="https://api.aladhan.com"&&u.pathname.startsWith("/v1/timings/")&&
+      Object.entries(expected).every(([k,v])=>u.searchParams.get(k)===v)&&[...u.searchParams.keys()].length===4&&
+      (day==="07-09-2026"||day==="08-09-2026");
+    if(!allowed){row.result="unexpected-request";failure("Unexpected fixture request: "+u.href);return Promise.reject(Error(report.error));}
+    if(mode==="reject"){row.result="rejected";return Promise.reject(Error("Controlled prayer rejection"));}
+    if(mode==="hang"){row.result="pending";return new Promise(()=>{});}
+    const response=new Response(JSON.stringify(prayerFixture(day)),{status:200,headers:{"Content-Type":"application/json"}});
+    const nativeJson=response.json.bind(response);
+    response.json=()=>{row.jsonReads++;row.result="json-consumed";return nativeJson();};
+    return Promise.resolve(response);
+  }
+  async function start(){
+    if(!["healthy","reject","hang","bootstrap-error"].includes(mode))throw Error("Unknown fixture mode: "+mode);
+    if(!Number.isSafeInteger(attempt)||attempt<1)throw Error("Fixture requires a positive unique attempt");
+    if(mode==="bootstrap-error")throw Error("Controlled fixture bootstrap failure before widget parsing");
+    const response=await nativeFetch(new URL("index.html",rootURL),{cache:"no-store",credentials:"same-origin"});
+    if(!response.ok)throw Error("Widget source fetch HTTP "+response.status);
+    const bytes=await response.arrayBuffer(),source=new TextDecoder("utf-8",{fatal:true}).decode(bytes);
+    report.sourceSha256=[...new Uint8Array(await crypto.subtle.digest("SHA-256",bytes))].map(b=>b.toString(16).padStart(2,"0")).join("");
+    if(!/^<!doctype html>/i.test(source)||!source.includes('<title>Prayer Times</title>'))throw Error("Widget document anchors changed");
+    const scripts=[...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+    if(scripts.length!==2||!/^\s+src="config\.js"\s*$/.test(scripts[0][1])||scripts[1][1].trim())throw Error("Unreviewed widget script anchors");
+    for(const anchor of ["async function fetchTimings(","async function loadPrayerData(","function model(","function render(","window.qaState=function()"])
+      if(!scripts[1][2].includes(anchor))throw Error("Missing widget script anchor: "+anchor);
+    // These hooks must exist before DOM parsing and before either widget script.
+    const data=new Map(),privateStore={
+      get length(){return data.size;},key(n){return [...data.keys()][n]??null;},
+      getItem(k){k=String(k);report.storageEvents.push(["get",k]);return data.has(k)?data.get(k):null;},
+      setItem(k,v){k=String(k);report.storageEvents.push(["set",k]);data.set(k,String(v));},
+      removeItem(k){k=String(k);report.storageEvents.push(["remove",k]);data.delete(k);},
+      clear(){report.storageEvents.push(["clear"]);data.clear();}
+    };
+    Object.defineProperty(window,"localStorage",{configurable:true,enumerable:true,get:()=>privateStore});
+    if(window.localStorage!==privateStore)throw Error("Cannot isolate localStorage before widget parsing");
+    class FixtureDate extends NativeDate{constructor(...args){super(...(args.length?args:[fixed]));}static now(){return fixed;}}
+    window.Date=FixtureDate;window.fetch=fixtureFetch;
+    report.initialStorageEntries=data.size;
+    function verifyHooks(){
+      report.storageIsolated=window.localStorage===privateStore;
+      report.clockFixed=window.Date===FixtureDate&&Date.now()===fixed&&+new Date()===fixed;
+      report.fetchIntercepted=window.fetch===fixtureFetch;
+      if(!report.storageIsolated||!report.clockFixed||!report.fetchIntercepted)throw Error("Fixture hooks were replaced");
+    }
+    verifyHooks();
+    const doc=new DOMParser().parseFromString(source,"text/html");
+    const fonts=new Map([
+      ["https://fonts.googleapis.com","preconnect"], ["https://fonts.gstatic.com","preconnect"],
+      ["https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap","stylesheet"]
+    ]);
+    let suppressed=0;
+    for(const el of doc.querySelectorAll("link[href]")){const href=el.getAttribute("href"),u=new URL(href,rootURL);
+      if(u.origin===rootURL.origin)continue;
+      if(fonts.get(href)!==el.getAttribute("rel"))throw Error("Unreviewed external resource anchor: "+href);
+      suppressed++;el.remove();
+    }
+    if(suppressed!==3)throw Error("Expected three known font resource anchors");
+    for(const el of doc.querySelectorAll("script[src],img[src],iframe[src],audio[src],video[src],source[src],object[data],embed[src],image[href]")){
+      const raw=el.getAttribute("src")||el.getAttribute("href")||el.getAttribute("data");if(!raw)continue;
+      const u=new URL(raw,rootURL);if(u.origin!==rootURL.origin&&u.protocol!=="data:")throw Error("Unreviewed external resource anchor: "+raw);
+    }
+    const base=doc.createElement("base");base.href=rootURL.href;
+    const csp=doc.createElement("meta");csp.httpEquiv="Content-Security-Policy";csp.content=policy;
+    doc.head.prepend(csp,base);
+    const html="<!doctype html>"+doc.documentElement.outerHTML;
+    const unchanged=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+    if(unchanged.length!==2||unchanged.some((s,i)=>s[2]!==scripts[i][2]))throw Error("Widget script body changed during document wrapping");
+    report.state="loading";
+    document.open();
+    window.addEventListener("error",event=>{report.consoleErrors.push(event.message||"Resource/script error");failure(event.message||"Widget resource/script error");});
+    window.addEventListener("unhandledrejection",event=>{report.consoleErrors.push(String(event.reason));failure(event.reason);});
+    document.addEventListener("securitypolicyviolation",event=>failure("Blocked unexpected resource: "+event.blockedURI));
+    document.addEventListener("DOMContentLoaded",()=>{try{
+      verifyHooks();if(!window.SalahConfig||typeof window.qaState!=="function")throw Error("Actual widget/config script did not initialize");
+      if(!report.error)report.state="ready";
+    }catch(e){failure(e);}},{once:true});
+    document.write(html);document.close();
+  }
+  start().catch(failure);
+})();
+</script>
+</body>
+</html>
