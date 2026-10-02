@@ -5,6 +5,7 @@
 const {fixture,readSource,deferred,drain}=require("./r000f-fixture.cjs");
 function widget(options={}) {
   const f=fixture("builder",{ref:options.ref}), page=readSource("index.html",options.ref);
+  f.buckle.querySelector=selector=>selector===".gear"?f.buckle.children.find(c=>c.className==="gear"||c.classList.contains("gear"))||null:null;
   f.sandbox.location.hash=options.hash || "#local=1";
   const config=readSource("config.js",options.ref);
   f.run(options.configMutate?options.configMutate(config):config);

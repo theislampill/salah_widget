@@ -280,6 +280,9 @@ body{color:#fff7df;
 .buckle .gear{position:absolute;inset:0;display:grid;place-items:center;z-index:2;font-size:13px;line-height:1;opacity:0;pointer-events:none;color:var(--text);filter:drop-shadow(0 1px 1px rgba(0,0,0,.34));transition:opacity .18s ease}
 .buckle.interactive:hover .wi,.buckle.interactive:focus-visible .wi{opacity:0}
 .buckle.interactive:hover .gear,.buckle.interactive:focus-visible .gear{opacity:1}
+.buckle.persist-warning .wi{opacity:0}
+.buckle.persist-warning .gear{opacity:1;color:#ffc08a}
+.set-live-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .buckle:focus{outline:none}
 .buckle.interactive:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
@@ -536,6 +539,7 @@ body{color:#fff7df;
     <p id="dateReason" aria-live="polite"></p>
   </dialog>
 
+  <div class="set-live-status" id="settings-persistence-status" role="status" aria-live="polite"></div>
   <!-- in-widget settings (local mode only; populated/wired lazily in JS). Overlays the prayer
        display inside the same card — never enlarges the iframe, never clips header/footer. -->
   <div class="settings" id="settings" role="dialog" aria-modal="true" aria-label="Widget settings">
@@ -2814,7 +2818,7 @@ async function applyConfig(cfg, opts){
   cfg=window.SalahConfig?SalahConfig.normalize(cfg):cfg;
   if(opts.save && window.SalahConfig){
     const r=SalahConfig.saveLocal(cfg);
-    _storageErr=r.ok?null:(r.error||"error");
+    _publishPersistence("save",r);                 // publish before any awaited provider work
     if(r.ok){ cfg.origin=cfg.source; cfg.source="localStorage"; cfg.savedAt=r.savedAt; }   // keep how the coords were obtained (pin reflects origin, not the storage marker)
   }
   beginRuntimeGeneration();
@@ -2919,10 +2923,37 @@ function closeSettings(){ _closeSettings(); }
 let _setWired=false, _setLastFocus=null, _setSearchSeq=0, _setCands=[], _setCandIdx=0, _setHomeCC="", _locSource="manual", _setDirty=false;
 let _setSession=0, _setEdit=0, _setOpen=false, _setCandOwner=null, _setFocusTimer=0;
 let _setPrefSeq=0, _setPrefVersions={};
+let _persistOutcome=null, _setHint={msg:"",isErr:false};
 const _SET_PREF_IDS={method:"set-method",school:"set-school",time:"set-time",units:"set-units",datefmt:"set-datefmt"};
 try{ _setHomeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}
 const _byId=id=>document.getElementById(id);
-function _setStatus(msg,isErr){ const s=_byId("set-status"); if(s){ s.textContent=msg||""; s.classList.toggle("err",!!isErr); } }
+function _persistenceMessage(){
+  if(!_persistOutcome) return "";
+  const {status,error}=_persistOutcome;
+  return status==="session-only" ? "Changes apply for this session only. Could not save settings ("+error+")."
+    : status==="reset-failed" ? "Could not clear saved settings ("+error+"). Your saved settings remain."
+    : status==="saved" ? "Settings saved in this browser." : "Saved settings cleared.";
+}
+function _renderSettingsStatus(){
+  const s=_byId("set-status"), message=_persistenceMessage();
+  if(s){ s.textContent=[message,_setHint.msg].filter(Boolean).join("\n"); s.classList.toggle("err",!!_storageErr||_setHint.isErr); }
+}
+function _renderPersistenceAffordance(){
+  const b=document.querySelector(".buckle"); if(!b) return;
+  const failed=!!_persistOutcome && (_persistOutcome.status==="session-only"||_persistOutcome.status==="reset-failed");
+  b.classList.toggle("persist-warning",failed);
+  const name=failed ? (_persistOutcome.status==="session-only" ? "Widget settings — changes not saved; session only" : "Widget settings — saved settings could not be cleared") : "Widget settings";
+  if(b.classList.contains("interactive")){ b.setAttribute("aria-label",name); b.title=name; }
+  const gear=b.querySelector(".gear"); if(gear) gear.textContent=failed?"!":"⚙";
+}
+function _publishPersistence(operation,result){
+  const error=String(result.error||"error").replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,40)||"error";
+  _persistOutcome={operation,status:result.ok?(operation==="save"?"saved":"cleared"):(operation==="save"?"session-only":"reset-failed"),error:result.ok?null:error};
+  _storageErr=result.ok?null:(result.error||"error");
+  const live=_byId("settings-persistence-status"); if(live) live.textContent=_persistenceMessage();
+  _renderPersistenceAffordance(); _renderSettingsStatus();
+}
+function _setStatus(msg,isErr){ _setHint={msg:msg||"",isErr:!!isErr}; _renderSettingsStatus(); }
 // A dialog session and location edit own every async lookup, including GPS and
 // reset detection. Query/coordinate equality cannot distinguish A → B → A.
 function _invalidateSetLocation(){ _setEdit++; _setSearchSeq++; _setCands=[]; _setCandOwner=null; }
@@ -2985,6 +3016,7 @@ function _enableSettingsAffordance(){
   b.classList.add("interactive");
   b.setAttribute("role","button"); b.setAttribute("tabindex","0"); b.setAttribute("aria-label","Widget settings");
   if(!b.querySelector(".gear")){ const g=document.createElement("span"); g.className="gear"; g.textContent="⚙"; g.setAttribute("aria-hidden","true"); b.appendChild(g); }
+  _renderPersistenceAffordance();
   b.addEventListener("click",_toggleSettings);
   b.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); _toggleSettings(); } });
 }
@@ -3084,8 +3116,10 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
 }
 async function _resetLocal(){
   _invalidateSetLocation(); const owner=_captureSetLookup(), prefOwner={..._setPrefVersions};
-  if(window.SalahConfig) SalahConfig.clearLocal();
-  _storageErr=null; _setStatus("Local settings cleared.");
+  const r=window.SalahConfig?SalahConfig.clearLocal():{ok:false,error:"unavailable"};
+  _publishPersistence("reset",r);
+  if(!r.ok) return;                         // a failed removal must not replace the saved target
+  _setStatus("Detecting your area…");
   let d=null; try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){}
   if(!_ownsSetLookup(owner)) return;
   if(d&&d.ok){ const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg);
@@ -3098,8 +3132,8 @@ async function _resetLocal(){
     _populateSettingsForm();
     Object.entries(prefs).forEach(([key,value])=>{ _byId(_SET_PREF_IDS[key]).value=value; });
     _syncDateFromBox(); _setDirty=Object.keys(prefs).length>0;
-    _setStatus("Reset — using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
-  else { _setStatus("Local settings cleared — enter your location.",true); }
+    _setStatus("Using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
+  else { _setStatus("Enter your location.",true); }
 }
 function _openSettings(){
   const c=document.querySelector(".c"); if(!c) return;

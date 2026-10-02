@@ -1,0 +1,3 @@
+"use strict";
+const assert=require("node:assert/strict"),{spawnSync}=require("node:child_process"),path=require("node:path");
+for(const [mutant,discriminator]of Object.entries({"save-result":"denied save applies session choice","reset-result":"denied reset preserves saved bytes","status-overwrite":"search and reopen retain failure"})){const r=spawnSync(process.execPath,[path.join(__dirname,"r0011-storage.cjs"),"--mutant",mutant],{encoding:"utf8"});assert.equal(r.status,1);assert.ok(r.stderr.includes("FAIL "+discriminator),r.stderr);assert.ok(!r.stderr.includes("TypeError")&&!r.stderr.includes("boundary missing"),"bootstrap is not mutation evidence");console.log("PASS mutant caught:",mutant);}
