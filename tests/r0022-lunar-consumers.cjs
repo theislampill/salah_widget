@@ -29,10 +29,28 @@ for(const [name,patch] of [['near-new','SIM.moon="0.01"'],['below-horizon','SIM.
 }
 for(const fraction of ['0.08','0.5','0.92','1'])test('eligible '+fraction+' preserves differentiated thin-high-cloud light',()=>{
   const h=fixture(); h.run('SIM.moon="'+fraction+'";render();');
+  assert.equal(h.run('weatherEligibility(weather).eligible'),true,'accepted model input');
+  assert.ok(h.run('selectedWeather()')!=null);
   assert.ok(+h.select('.c').style.getPropertyValue('--moonbeam')>0);
   assert.ok(+h.select('.c').style.getPropertyValue('--mhalo')>0);
   assert.equal(+h.select('.c').style.getPropertyValue('--mcorona'),0);
   assert.equal(+h.select('.c').style.getPropertyValue('--moongrp'),1);
+});
+for(const [name,patch] of [['missing source','weather.currentValidAt=null'],['expired source','weather.currentValidAt-=900001'],
+  ['expired receipt','weather.retrievedAt-=900001'],['missing interval','weather.currentIntervalSec=null']])
+  test(name+' cannot supply weather-dependent lunar optics',()=>{
+    const h=fixture();h.run('SIM.moon="1";'+patch+';render();');
+    assert.equal(h.run('weatherEligibility(weather).eligible'),false);assert.equal(h.run('selectedWeather()'),null);
+    for(const p of ['--mhalo','--mcorona','--mparhelia'])assert.equal(+h.select('.c').style.getPropertyValue(p),0,p);
+    assert.ok(+h.select('.c').style.getPropertyValue('--moonbeam')>0,'accepted geometry still supplies physical lunar beam');
+    assert.equal(+h.select('.c').style.getPropertyValue('--moongrp'),1,'opaque calendar presence survives unavailable weather');
+  });
+test('fresh model input recovers lunar optical conditions after source expiry',()=>{
+  const h=fixture();h.run('SIM.moon="1";render();globalThis.__healthyWx={...weather};');
+  assert.ok(+h.select('.c').style.getPropertyValue('--mhalo')>0);
+  h.run('weather.currentValidAt-=900001;render();');assert.equal(+h.select('.c').style.getPropertyValue('--mhalo'),0);
+  h.run('weather=__healthyWx;render();');assert.equal(h.run('weatherEligibility(weather).eligible'),true);
+  assert.ok(+h.select('.c').style.getPropertyValue('--mhalo')>0);
 });
 test('glints release wash with held star projection',()=>{
   const h=fixture();h.run('SIM.moon="1";render();');

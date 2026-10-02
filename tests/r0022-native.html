@@ -9,25 +9,43 @@
 // boundary bootstrap. Source SHA256 precedes injection; this is not a public-origin smoke.
 const frame=document.getElementById('widget'),statusEl=document.getElementById('status');
 let previousBlob=null;
-const digest=async s=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s))),v=>v.toString(16).padStart(2,'0')).join('');
-function boundaries(realTime){
-  const NativeDate=Date,epoch=NativeDate.parse('2026-09-08T19:00:00Z');
-  if(!realTime)window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:[epoch]));}static now(){return epoch;}};
+const digest=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),v=>v.toString(16).padStart(2,'0')).join('');
+function boundaries(realTime,prayerDelayMs){
+  const NativeDate=Date,epoch=NativeDate.parse('2026-09-08T19:00:00Z'),started=performance.now();
+  const fixtureNow=()=>Math.floor(epoch+(realTime?performance.now()-started:0));
+  window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:[fixtureNow()]));}static now(){return fixtureNow();}};
+  window.__fixtureClock={kind:realTime?'fixed base + native elapsed':'frozen base',epoch,started};
+  window.__fixturePrayerRequests=[];
   const memory=new Map();Object.defineProperty(window,'localStorage',{value:{getItem:k=>memory.get(k)||null,setItem:(k,v)=>memory.set(k,String(v)),removeItem:k=>memory.delete(k)}});
   window.fetch=async url=>{
-    if(!String(url).includes('api.aladhan.com/v1/timings/'))throw new Error('fixture denies external JavaScript network');
-    const next=String(url).includes('/09-09-2026');
-    return {ok:true,json:async()=>({code:200,data:{timings:{Fajr:next?'04:47':'04:46',Sunrise:'06:05',Dhuhr:'12:19',Asr:'15:48',Maghrib:'18:33',Sunset:'18:33',Isha:'20:03'},meta:{timezone:'Asia/Riyadh'},date:{gregorian:{day:next?'9':'8',month:{number:9,en:'September'},year:'2026'},hijri:{day:next?'27':'26',month:{number:3,en:'Rabi'},year:'1448'}}}})};
+    const u=new URL(String(url)),m=/^\/v1\/timings\/(\d{2})-(\d{2})-(\d{4})$/.exec(u.pathname);
+    if(u.hostname!=='api.aladhan.com'||!m)throw new Error('fixture denies external JavaScript network');
+    const [,ds,ms,ys]=m,dateStr=ds+'-'+ms+'-'+ys,day=+ds,month=+ms,year=+ys;
+    const date=new NativeDate(0);date.setUTCFullYear(year,month-1,day);
+    if(date.getUTCFullYear()!==year||date.getUTCMonth()+1!==month||date.getUTCDate()!==day)throw new Error('invalid requested fixture date');
+    window.__fixturePrayerRequests.push({url:String(url),date:dateStr});
+    if(prayerDelayMs)await new Promise(resolve=>setTimeout(resolve,prayerDelayMs));
+    const next=dateStr==='09-09-2026';
+    const data={timings:{Fajr:next?'04:47':'04:46',Sunrise:'06:05',Dhuhr:'12:19',Asr:'15:48',Maghrib:'18:33',Sunset:'18:33',Isha:'20:03'},
+      meta:{timezone:'Asia/Riyadh',method:{id:4,params:{Fajr:18.5,Isha:'90 min'}}},
+      date:{gregorian:{date:dateStr,day,month:{number:month,en:new Intl.DateTimeFormat('en',{month:'long',timeZone:'UTC'}).format(date)},year},
+        hijri:{day:next?27:26,month:{number:3,en:'Rabi'},year:1448}}};
+    return new Response(JSON.stringify({code:200,status:'OK',data}),{status:200,headers:{'Content-Type':'application/json'}});
   };
 }
 window.lunarFixture={
-  async open({fraction=.5,waxing=true,altitude=20,hourAngle=42,time='22:00',layers=[0,8,28],humidity=55,code=2,freeze=true,realTime=false,motion='full',source='../index.html',debugMoon=false,debugOptic=''}={}){
+  async open({fraction=.5,waxing=true,altitude=20,hourAngle=42,time='22:00',layers=[0,8,28],humidity=55,code=2,precip=0,freeze=true,realTime=false,motion='full',weatherLane='current-model',prayerDelayMs=0,source='../index.html',debugMoon=false,debugOptic=''}={}){
     const sourceUrl=new URL(source,location.href);if(sourceUrl.origin!==location.origin)throw new Error('local source only');
-    const [html,config]=await Promise.all([fetch(sourceUrl).then(r=>r.text()),fetch(new URL('config.js',sourceUrl)).then(r=>r.text())]);
-    const sourceSha256=await digest(html),configSha256=await digest(config);
-    const hash=new URLSearchParams({lat:'24.47',lon:'39.61',tz:'Asia/Riyadh',label:'Madinah',method:'4',units:'c',seed:'1',simWx:String(code),simCloud:'30',simMoon:String(fraction),simWax:waxing?'1':'0',simMoonAlt:String(altitude),simMoonH:String(hourAngle),qa:'1'});
+    if(!['current-model','preview'].includes(weatherLane))throw new Error('unsupported fixture weather lane');
+    const read=async url=>{const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('local source HTTP '+r.status);return new Uint8Array(await r.arrayBuffer());};
+    const [sourceBytes,configBytes]=await Promise.all([read(sourceUrl),read(new URL('config.js',sourceUrl))]);
+    const decode=new TextDecoder('utf-8',{fatal:true}),html=decode.decode(sourceBytes),config=decode.decode(configBytes);
+    const sourceSha256=await digest(sourceBytes),configSha256=await digest(configBytes);
+    window.__lunarSourceSnapshot={sourceUrl:String(sourceUrl),sourceBytes:sourceBytes.slice(),configBytes:configBytes.slice(),sourceSha256,configSha256};
+    const hash=new URLSearchParams({lat:'24.47',lon:'39.61',tz:'Asia/Riyadh',label:'Madinah',method:'4',units:'c',seed:'1',simTemp:'24',simHumid:String(humidity),simWind:'3',simMoon:String(fraction),simWax:waxing?'1':'0',simMoonAlt:String(altitude),simMoonH:String(hourAngle),qa:'1'});
+    if(weatherLane==='preview'){hash.set('simWx',String(code));hash.set('simCloud','30');hash.set('simPrecip',String(precip));}
     if(!realTime)hash.set('simTime',time);if(motion)hash.set('motion',motion);if(debugMoon)hash.set('debugMoon','1');if(debugOptic)hash.set('debugOptic',debugOptic);
-    const prefix='('+boundaries.toString()+')('+JSON.stringify(realTime)+');\n'+config;
+    const prefix='('+boundaries.toString()+')('+JSON.stringify(realTime)+','+JSON.stringify(prayerDelayMs)+');\n'+config;
     const injected=html.replace('<script src="config.js"><'+'/script>','<script>'+prefix+'<'+'/script>');
     if(injected===html)throw new Error('config bootstrap anchor missing');
     const blob=URL.createObjectURL(new Blob([injected],{type:'text/html'}));
@@ -35,17 +53,25 @@ window.lunarFixture={
     const started=performance.now();let w;
     for(;;){
       w=frame.contentWindow;
-      try{if(w.location.hash==='#'+hash.toString()&&w.qaState().cache.prayerLoaded&&w.eval('_pbrReady'))break;}catch(e){}
+      try{if(w.location.hash==='#'+hash.toString()&&w.qaState().cache.prayerLoaded&&w.qaState().moonTruth.moonSkyFresh===true&&w.eval('_pbrReady')&&w.document.querySelector('.mphoto').getAttribute('href'))break;}catch(e){}
       if(performance.now()-started>12000)throw new Error('fixture readiness unavailable');await new Promise(r=>setTimeout(r,50));
     }
     await w.document.fonts.ready;
-    const weather={code,cloud:30,cloudLow:layers[0],cloudMid:layers[1],cloudHigh:layers[2],precip:0,temp:24,feels:24,rh:humidity,dew:15,vis:20000,wind:3,windDir:225,gust:5,src:'synthetic-native-fixture'};
-    w.eval('weather='+JSON.stringify(weather)+';_cloudReady=false;renderMoon();render();paintClouds(simNow()/1000);');
+    const current={interval:900,weather_code:code,temperature_2m:24,apparent_temperature:24,relative_humidity_2m:humidity,dew_point_2m:15,
+      visibility:20000,wind_speed_10m:3,wind_direction_10m:225,wind_gusts_10m:5,precipitation:precip,rain:precip,showers:0,snowfall:0,is_day:1,
+      cloud_cover:30,cloud_cover_low:layers[0],cloud_cover_mid:layers[1],cloud_cover_high:layers[2]};
+    w.__fixtureCurrent=current;
+    w.eval('(()=>{const n=partsInTz(Date.now());__fixtureCurrent.time=n.y+"-"+pad(n.mo)+"-"+pad(n.d)+"T"+pad(n.h)+":"+pad(n.mi);weather=admitWeatherRecord(__fixtureCurrent,{lat,lon,units:"c",zone:tz,retrievedAt:Date.now()});if(!weather||!weatherEligibility(weather).eligible)throw new Error("fixture current model admission unavailable");weatherTrack=null;weatherRadar=null;siteElev=0;_cloudReady=false;cloudState.covLow=cloudState.covMid=cloudState.covHigh=0;render();paintClouds(simNow()/1000);})()');
     await new Promise(r=>setTimeout(r,2200));
     if(freeze)for(const a of w.document.getAnimations()){a.pause();a.currentTime=2000;}
     const q=w.qaState(),cs=w.getComputedStyle(w.document.querySelector('.c'));
     const opacities={};for(const key of ['--moonbeam','--mhalo','--mcorona','--mparhelia','--moongrp','--moonocc','--moonfeat'])opacities[key]=cs.getPropertyValue(key).trim();
-    const report={sourceUrl:String(sourceUrl),sourceSha256,configSha256,hash:hash.toString(),weather,viewport:{width:innerWidth,height:innerHeight},card:{width:325,height:530},dpr:devicePixelRatio,fonts:w.document.fonts.status,textureReady:w.eval('_pbrReady'),realTime,freeze,moonTruth:q.moonTruth,opacities,localGlow:w.getComputedStyle(w.document.querySelector('.mglow')).opacity,debugReadout:w.document.querySelector('.dbgmoon').textContent};
+    const report={sourceUrl:String(sourceUrl),sourceSha256,sourceByteLength:sourceBytes.length,configSha256,configByteLength:configBytes.length,
+      hash:hash.toString(),weatherLane,currentInput:w.__fixtureCurrent,acceptedWeather:w.eval('weather'),weatherEligibility:w.eval('weatherEligibility(weather)'),
+      fixtureClock:w.__fixtureClock,prayerRequests:w.__fixturePrayerRequests,prayerDelayMs,viewport:{width:innerWidth,height:innerHeight},
+      card:{width:325,height:530},dpr:devicePixelRatio,fonts:w.document.fonts.status,fontFaces:[...w.document.fonts].map(f=>({family:f.family,status:f.status})),textureReady:w.eval('_pbrReady'),
+      realTime,freeze,motionEvidence:'Requires actual elapsed crops/clip; readiness and hashes are not motion proof',sameTimeWeatherInjection:true,
+      moonTruth:q.moonTruth,opacities,localGlow:w.getComputedStyle(w.document.querySelector('.mglow')).opacity,debugReadout:w.document.querySelector('.dbgmoon').textContent};
     window.__lunarNative=report;statusEl.textContent=JSON.stringify(report,null,2);return report;
   }
 };

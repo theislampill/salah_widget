@@ -90,7 +90,11 @@ function load({sourcePath=path.join(root,'index.html'), source, debugMoon=false,
   const run=code=>vm.runInContext(code,ctx);
   ctx.__fixturePrayer=prayer;
   ctx.__fixtureNextPrayer=prayerForDate('09-09-2026');
-  run("today=__fixturePrayer; tomorrow=__fixtureNextPrayer; lastDate='08-09-2026'; _simBase=Date.parse('2026-09-08T19:00:00Z'); _simTz=tz; _rafT0=0; TIMESCALE=0; weather={code:2,cloud:30,cloudLow:0,cloudMid:8,cloudHigh:28,precip:0,temp:24,rh:55,dew:15,vis:20000,wind:3,windDir:225,gust:5,src:'synthetic-test'}; buildStars();");
+  ctx.__fixtureWeatherCurrent={time:'2026-09-08T22:00',interval:900,weather_code:2,
+    temperature_2m:24,apparent_temperature:24,relative_humidity_2m:55,dew_point_2m:15,
+    wind_speed_10m:3,wind_direction_10m:225,wind_gusts_10m:5,precipitation:0,rain:0,showers:0,snowfall:0,
+    is_day:1,cloud_cover:30,cloud_cover_low:0,cloud_cover_mid:8,cloud_cover_high:28,visibility:20000};
+  run("today=__fixturePrayer; tomorrow=__fixtureNextPrayer; lastDate='08-09-2026'; _simBase=Date.parse('2026-09-08T19:00:00Z'); _simTz=tz; _rafT0=0; TIMESCALE=0; weather=typeof admitWeatherRecord==='function'?admitWeatherRecord(__fixtureWeatherCurrent,{lat,lon,units:'c',zone:tz,retrievedAt:Date.now()}):{code:2,cloud:30,cloudLow:0,cloudMid:8,cloudHigh:28,precip:0,temp:24,feels:24,rh:55,dew:15,vis:20000,wind:3,windDir:225,gust:5,rain:0,showers:0,snow:0,isDay:1,units:'c',src:'synthetic-test'}; buildStars();");
   warnings.length=0;
   function advanceTimer(){
     const next=[...timers].sort((a,b)=>a[1].at-b[1].at||a[0]-b[0])[0]; if(!next)return false;
