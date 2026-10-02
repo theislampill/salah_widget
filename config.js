@@ -32,6 +32,7 @@
     time: "24",
     datefmt: "YYYY-MM-DD",
     units: "f",
+    appearance: "glass",
     lp: 0, seed: null,
     source: "fallback", savedAt: null, locationEvidence: null
   };
@@ -99,6 +100,7 @@
     if (q.has("time")) c.time = q.get("time") === "12" ? "12" : "24";
     if (q.has("datefmt")) c.datefmt = mapDatefmt(q.get("datefmt"));
     if (q.has("units")) c.units = String(q.get("units")).toLowerCase() === "c" ? "c" : "f";
+    if (q.has("appearance")) c.appearance = q.get("appearance") === "contrast" ? "contrast" : "glass";
     if (q.has("lp")) c.lp = clamp01(numOrNull(q.get("lp")) || 0);
     if (q.has("seed")) c.seed = numOrNull(q.get("seed"));
     return { cfg: c, flags: flags };
@@ -116,6 +118,7 @@
     c.school = (String(c.school) === "1") ? "1" : "0";
     c.time = (String(c.time) === "12") ? "12" : "24";
     c.units = (String(c.units).toLowerCase() === "c") ? "c" : "f";
+    c.appearance = c.appearance === "contrast" ? "contrast" : "glass";
     c.datefmt = (typeof c.datefmt === "string" && c.datefmt) ? c.datefmt : DEFAULTS.datefmt;
     c.lp = clamp01(numOrNull(c.lp) || 0);
     c.seed = numOrNull(c.seed);
@@ -135,6 +138,7 @@
     if (!(String(c.school) === "0" || String(c.school) === "1")) e.push("school");
     if (!(String(c.time) === "12" || String(c.time) === "24")) e.push("time");
     if (!(String(c.units) === "f" || String(c.units) === "c")) e.push("units");
+    if (c.appearance != null && c.appearance !== "glass" && c.appearance !== "contrast") e.push("appearance");
     if (c.lp != null && (c.lp < 0 || c.lp > 1)) e.push("lp");
     return { ok: e.length === 0, errors: e };
   }
@@ -142,8 +146,9 @@
   // ---- serialize: config → URL hash string ----------------------------------
   // opts.mode: "local" → generic "#local=1" (no coordinates); "preferLocal" → adds
   // preferLocal=1 + emits coordinates as defaults. opts.explicitPrefs may carry
-  // selected method/units even at their defaults. Default (portable/hardcoded)
-  // emits location + always method/school; portable snippets stay byte-identical.
+  // selected method/units even at their defaults in local mode. Explicit appearance
+  // also preserves a selected glass default in portable mode and after detection.
+  // Unselected defaults retain the historical portable hash shape.
   function serialize(cfg, opts) {
     opts = opts || {};
     var c = normalize(cfg), p = new URLSearchParams(), local = opts.mode === "local";
@@ -164,6 +169,7 @@
     if (c.time === "12") p.set("time", "12");
     if (c.datefmt && c.datefmt !== DEFAULTS.datefmt) p.set("datefmt", c.datefmt);
     if (c.units === "c" || explicit.indexOf("units") >= 0) p.set("units", c.units);
+    if (c.appearance !== DEFAULTS.appearance || Array.isArray(opts.explicitPrefs) && opts.explicitPrefs.indexOf("appearance") >= 0) p.set("appearance", c.appearance);
     if (c.lp > 0) p.set("lp", String(c.lp));
     if (c.seed != null) p.set("seed", String(c.seed));
     return p.toString();
@@ -314,7 +320,7 @@
   // Overlay explicitly-set hash PREFERENCES (not location) onto a detected/saved base,
   // so e.g. "#local=1&units=c" honours the unit even when the location comes from detect.
   function applyHashPrefs(base, hashCfg) {
-    var c = Object.assign({}, base), PK = ["method", "school", "time", "units", "datefmt", "lp", "seed"];
+    var c = Object.assign({}, base), PK = ["method", "school", "time", "units", "datefmt", "appearance", "lp", "seed"];
     PK.forEach(function (k) { if (hashCfg && hashCfg[k] !== undefined) c[k] = hashCfg[k]; });
     if (hashCfg && hashCfg.label !== undefined && hashCfg.label !== "") c.label = hashCfg.label;
     return normalize(c);

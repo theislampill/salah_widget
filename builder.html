@@ -146,6 +146,10 @@ iframe{box-shadow:0 18px 50px #0008}
       </div>
     </div>
     <p class="note" style="margin-top:6px;text-align:right">Custom dates use <a href="https://cldr.unicode.org/translation/date-time/date-time-symbols" target="_blank" rel="noreferrer">Unicode date symbols</a>.</p>
+    <div>
+      <label for="appearance">Timetable appearance</label>
+      <select id="appearance"><option value="glass">Liquid glass (default)</option><option value="contrast">High contrast</option></select>
+    </div>
   </form>
   <div class="install-row">
     <button id="install" type="button">Install widget</button>
@@ -192,7 +196,7 @@ iframe{box-shadow:0 18px 50px #0008}
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const fields=["label","lat","lon","method","school","time","units"];
+const fields=["label","lat","lon","method","school","time","units","appearance"];
 const base=location.href.replace(/builder\.html.*$/,"").replace(/[?#].*$/,"");
 
 // embed mode: "portable" (fixed lat/lon baked in) | "local" (generic #local=1 auto-detect)
@@ -200,10 +204,11 @@ let embedMode="portable", builderLocation=null;
 function formConfig(){
   return { lat:$("lat").value.trim(), lon:$("lon").value.trim(), label:$("label").value.trim(),
     method:$("method").value, school:$("school").value, time:$("time").value, units:$("units").value,
+    appearance:$("appearance").value,
     datefmt:$("dfcode").value.trim()||"YYYY-MM-DD", source:builderLocation?builderLocation.source:"manual", locationEvidence:builderLocation };
 }
 // SINGLE shared serializer (config.js) → builder and widget can't drift apart.
-function hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode==="local"?{mode:"local",explicitPrefs:["method","units"]}:{}) : ""; }
+function hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode==="local"?{mode:"local",explicitPrefs:["method","units","appearance"]}:{explicitPrefs:["appearance"]}) : ""; }
 let rev=0;
 function url(){ return base+"#"+hash(); }
 // the widget reads only location.hash, so a changing ?r= query is ignored by it but
@@ -228,7 +233,7 @@ function setMode(m){
   if(!chosen) return;
   embedMode=chosen.id==="mode-local"?"local":"portable";
   $("modenote").innerHTML = embedMode==="local"
-    ? 'Self-configuring location — each viewer’s area is <strong>auto-detected</strong> (approximate, IP/timezone-based, no permission prompt). The method and temperature units selected here are included for a fresh viewer; saved widget settings take precedence. Location fields are omitted. Viewers can change settings inside the widget (tap the header buckle); their choice is saved <strong>locally in their browser</strong>. The snippet adds <code>allow="geolocation"</code> so the in-widget location button can work. <strong>TablissNG</strong> may strip <code>allow</code> (precise location then unavailable — coarse auto-detect + manual still work). If storage is unavailable, settings apply for the session only.'
+    ? 'Self-configuring location — each viewer’s area is <strong>auto-detected</strong> (approximate, IP/timezone-based, no permission prompt). The method, temperature units and timetable appearance selected here are included for a fresh viewer; saved widget settings take precedence. Location fields are omitted. Viewers can change settings inside the widget (tap the header buckle); their choice is saved <strong>locally in their browser</strong>. The snippet adds <code>allow="geolocation"</code> so the in-widget location button can work. <strong>TablissNG</strong> may strip <code>allow</code> (precise location then unavailable — coarse auto-detect + manual still work). If storage is unavailable, settings apply for the session only.'
     : 'Fixed coordinates baked into the URL — works anywhere with no per-viewer setup. Best for one specific place.';
   ["lat","lon"].forEach(id=>{ $(id).style.opacity = embedMode==="local"?".5":"1"; });
   update();
