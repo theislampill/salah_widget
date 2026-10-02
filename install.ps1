@@ -318,13 +318,13 @@ function Select-TablissNgAsset([string]$Family) {
 
     if ($Family -eq "firefox") {
         $preferred = @(
-            $assets | Where-Object { $_.name -match "(?i)\.xpi$" -and $_.name -match "(?i)signed|firefox" -and $_.name -notmatch "(?i)unsigned|source" },
-            $assets | Where-Object { $_.name -match "(?i)\.xpi$" -and $_.name -notmatch "(?i)unsigned|source" },
+            $assets | Where-Object { $_.name -match "(?i)\.xpi$" -and $_.name -match "(?i)signed|firefox" -and $_.name -notmatch "(?i)unsigned|source" }
+            $assets | Where-Object { $_.name -match "(?i)\.xpi$" -and $_.name -notmatch "(?i)unsigned|source" }
             $assets | Where-Object { $_.name -match "(?i)firefox.*\.zip$" -and $_.name -notmatch "(?i)unsigned|source" }
         ) | ForEach-Object { $_ }
     } elseif ($Family -eq "chromium") {
         $preferred = @(
-            $assets | Where-Object { $_.name -match "(?i)chrom(e|ium).*\.zip$" -and $_.name -notmatch "(?i)firefox|safari|source" },
+            $assets | Where-Object { $_.name -match "(?i)chrom(e|ium).*\.zip$" -and $_.name -notmatch "(?i)firefox|safari|source" }
             $assets | Where-Object { $_.name -match "(?i)tabliss.*\.zip$" -and $_.name -notmatch "(?i)firefox|safari|source" }
         ) | ForEach-Object { $_ }
     } else {
@@ -532,7 +532,7 @@ foreach ($t in $targets) {
     } else {
         "TablissNG not detected"
     }
-    Write-Host ("[{0}] {1} / {2} — {3}" -f $t.Index, $t.Browser, $t.ProfileName, $status)
+    Write-Host ("[{0}] {1} / {2} - {3}" -f $t.Index, $t.Browser, $t.ProfileName, $status)
 }
 
 Write-Host ""
