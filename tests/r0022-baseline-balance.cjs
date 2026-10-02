@@ -6,6 +6,10 @@ const {load,sha,root}=require('./r001d-harness.cjs');
 const path=require('node:path');
 const baseCommit='fd2972ba64225fe9d6848e92497e6d0ed20ea624';
 const baseline=execFileSync('git',['show',baseCommit+':index.html'],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024});
+// R000A intentionally changes accepted marker classifications and descriptions.
+// Keep its exact accepted source identity and separately compare ALL arc geometry.
+const acceptedPrayerCommit='8b83df029966c203a503ab217d121c48b8ee6e8a';
+const acceptedPrayer=execFileSync('git',['show',acceptedPrayerCommit+':index.html'],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024});
 const sourcePath=process.argv[2]||path.join(root,'index.html'),candidate=fs.readFileSync(sourcePath,'utf8');
 let pass=0,fail=0;
 function test(name,fn){try{fn();pass++;console.log('PASS '+name);}catch(e){fail++;console.log('FAIL '+name+' :: '+e.message);}}
@@ -23,11 +27,47 @@ for(const frac of ['.08','.5','.92','1'])test('eligible '+frac+' matches baselin
 for(const [name,altitude,time] of [['daylight',20,'12:30'],['below horizon',-10,'22:00']])test(name+' keeps solar/sky/calendar outputs unchanged',()=>{
   const before=scene(baseline,'1',altitude,time),after=scene(candidate,'1',altitude,time);assert.deepEqual(after.css,before.css);
 });
-for(const [name,start,end] of [['PBR','function renderMoonPBR(','function moonNow('],['cloud raster','function paintClouds(','// ---- ATMOSPHERE STATE'],['solar arc','function drawArc(','// ---- continuous time-of-day sky']])test(name+' source remains byte-identical',()=>{
+for(const [name,start,end] of [['PBR','function renderMoonPBR(','function moonNow('],['cloud raster','function paintClouds(','// ---- ATMOSPHERE STATE']])test(name+' source remains byte-identical',()=>{
   const part=s=>s.slice(s.indexOf(start),s.indexOf(end,s.indexOf(start)));assert.ok(part(baseline).length>100);assert.equal(part(candidate),part(baseline));
+});
+const arcPart=s=>{const start=s.indexOf('function drawArc('),end=s.indexOf('// ---- continuous time-of-day sky',start);assert.ok(start>=0&&end>start);return s.slice(start,end);};
+test('solar arc source matches exact accepted R000A reference',()=>assert.equal(arcPart(candidate),arcPart(acceptedPrayer)));
+function arcGeometry(source,{lat,lon,epoch,record}){
+  const h=load({source});if(record)h.ctx.__geometryPrayer=record;
+  h.run('lat='+lat+';lon='+lon+';_simBase=Date.parse('+JSON.stringify(epoch)+');_simTz=tz;'+(record?'today=__geometryPrayer;tomorrow=__geometryPrayer;':''));
+  const output=h.run('drawArc(model())');
+  const geometry=[...output.matchAll(/<(line|path|circle)\b([^>]*?)\/?>/g)].map(([,tag,text])=>{
+    const attrs=Object.fromEntries([...text.matchAll(/([\w-]+)="([^"]*)"/g)].map(([,k,v])=>[k,v]));
+    if(tag==='circle'&&attrs.class?.split(/\s+/).includes('dot')){
+      attrs.class=attrs.class.split(/\s+/).filter(v=>v!=='adj').join(' ');
+      for(const k of ['data-adjustment','data-angle','data-solar-min','data-solar-max'])delete attrs[k];
+    }
+    return {tag,attrs};
+  });
+  assert.equal(geometry.filter(g=>g.tag==='circle').length,h.run('model().dots.length'));
+  assert.ok(geometry.some(g=>g.tag==='path'&&g.attrs.class==='rail'));
+  assert.ok(geometry.some(g=>g.tag==='line'&&g.attrs.class==='horizon'));
+  return {geometry,output};
+}
+const summer=JSON.parse(fs.readFileSync(path.join(root,'tests/r0002-tromso-summer.json'),'utf8')).data;
+const winter=JSON.parse(fs.readFileSync(path.join(root,'tests/r0002-tromso-winter.json'),'utf8')).data;
+const arcCases=[
+  ['Madinah noon',{lat:24.47,lon:39.61,epoch:'2026-09-08T09:30:00Z'}],
+  ['London shallow night',{lat:51.5,lon:-.12,epoch:'2026-06-21T21:00:00Z'}],
+  ['Tromso summer',{lat:69.6492,lon:18.9553,epoch:'2026-06-21T09:30:00Z',record:summer}],
+  ['Tromso winter',{lat:69.6492,lon:18.9553,epoch:'2026-12-21T09:30:00Z',record:winter}],
+];
+for(const [name,inputs] of arcCases)test(name+' actual solar path/horizon/marker geometry matches baseline',()=>{
+  const before=arcGeometry(baseline,inputs),after=arcGeometry(candidate,inputs);
+  assert.deepEqual(after.geometry,before.geometry);assert.ok(after.output.includes('data-adjustment='));
+});
+test('solar geometry guard detects displaced horizon despite accepted metadata',()=>{
+  const inputs=arcCases[0][1],anchor='H=180,hY=104,Ad=104';assert.ok(candidate.includes(anchor));
+  const mutant=candidate.replace(anchor,'H=180,hY=103,Ad=104');
+  assert.notDeepEqual(arcGeometry(mutant,inputs).geometry,arcGeometry(baseline,inputs).geometry);
 });
 for(const key of ['MOON_ALBEDO','MOON_NORMAL'])test(key+' payload/provenance line remains byte-identical',()=>{
   const line=s=>s.split('\n').find(l=>l.startsWith('const '+key+'='));assert.ok(line(baseline));assert.equal(line(candidate),line(baseline));
 });
-console.log(JSON.stringify({baseCommit,baselineSha256:sha(Buffer.from(baseline)),sourcePath,sourceSha256:sha(Buffer.from(candidate)),fixtureSha256:sha(fs.readFileSync(__filename)),pass,fail,limits:'matched VM/source controls, not native no-op/crops/performance'}));
+console.log(JSON.stringify({baseCommit,baselineSha256:sha(Buffer.from(baseline)),acceptedPrayerCommit,acceptedPrayerSha256:sha(Buffer.from(acceptedPrayer)),sourcePath,sourceSha256:sha(Buffer.from(candidate)),fixtureSha256:sha(fs.readFileSync(__filename)),pass,fail,limits:'matched VM/source controls, not native no-op/crops/performance'}));
 process.exitCode=fail?1:0;
