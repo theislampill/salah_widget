@@ -26,7 +26,7 @@
 </head>
 <body>
 <h1>salah_widget · characterization smokes</h1>
-<p class="sub">Serve a disposable tree on loopback and open <code>/tests/smoke.html</code>. PASS = complete deterministic execution. Frozen clock and blocked fonts do not prove appearance or live motion. Weather cases characterize the pinned baseline and synthetic scenes; the final R0024 weather oracle remains pending.</p>
+<p class="sub">Serve a disposable tree on loopback and open <code>/tests/smoke.html</code>. PASS = complete deterministic execution. Controlled clock and blocked fonts do not prove appearance or live motion. Weather checks retain useful model inputs, require admitted synthetic evidence for local particle positives, and exercise permission withdrawal.</p>
 <div id="sum" role="status" aria-live="polite">running…</div>
 <pre id="out"></pre>
 <iframe id="w" title="widget under test" referrerpolicy="no-referrer"
@@ -41,14 +41,21 @@ const CASES=[
   ["config parsing + precedence",14], ["config private persistence",8], ["config denied storage",4],
   ["weather gate availability",1], ["weather gate assertions",13], ["prayer transport + rendered countdown",4],
   ["dry forecast-thunder is downgraded",3], ["precip-supported rain is shown",1], ["fog code shows fog, not rain",2],
+  ["live model wet is useful; local particles off",9], ["live model expiry + admitted recovery",8],
+  ["live synthetic installation is refused",4], ["admitted synthetic wet overrides model dry",8],
+  ["admitted synthetic snow + lightning",6], ["synthetic exclusive lease expiry",5],
+  ["synthetic rain end + outage",8], ["synthetic target + coverage rejection",6],
+  ["synthetic underlying source age rejection",4], ["synthetic dry point + nearby are independent",4],
+  ["synthetic target generation clears permission",4],
   ["new/below-horizon moon: opaque calendar disc, NO moonlight",3], ["physical moon up: opaque + casts moonlight",4],
   ["no painted false/true dawn layers",2], ["cloud identity is stable (no reseed per read)",1],
   ["observability surface present",4], ["waxing moon orientation",2], ["waning moon orientation",1],
-  ["explicit reduced + full motion",3], ["motion=full overrides reduction",2], ["cloud continuity",2]
+  ["explicit reduced + full motion",3], ["motion=full overrides reduction",2], ["cloud continuity",3]
 ];
 const cases=CASES.map(([name,expected])=>({name,expected,assertions:0,state:"pending",reason:null}));
 const modes=["healthy","reject","hang","bootstrap-error"];
 const fixtureMode=new URLSearchParams(location.search).get("fixture")||"healthy";
+const smokeRun=Date.now().toString(36)+"-"+Math.random().toString(16).slice(2);
 const attempts=[];
 function line(cls,txt){ const s=document.createElement("span"); s.className=cls;
   s.textContent=(cls==="pass"?"✓ PASS  ":cls==="fail"?"✗ FAIL  ":cls==="skip"?"• MISSING  ":"        ")+txt+"\n";
@@ -77,19 +84,24 @@ function privateStorage(){const data=new Map();return {
   setItem(k,v){data.set(String(k),String(v));}, removeItem(k){data.delete(String(k));}
 };}
 const hashOf=w=>{try{return (w.location.hash||"").replace(/^#/,"");}catch(e){return "";}};
-let _r=0;
+let _r=0,expectedSourceSha=null;
 // A new attempt AND exact hash are required; an earlier loaded scene is inadmissible.
 function loadUntil(hash,ms,ready){ const want=hash+"&tz=Asia/Riyadh&qa=1",attempt=++_r;
-  fr.src="widget-fixture.html?mode="+encodeURIComponent(fixtureMode)+"&attempt="+attempt+"#"+want;
+  fr.src="widget-fixture.html?mode="+encodeURIComponent(fixtureMode)+"&run="+encodeURIComponent(smokeRun)+"&attempt="+attempt+"#"+want;
   const row={attempt,hash:want,mode:fixtureMode,result:"pending",reason:null};attempts.push(row);
   const t0=Date.now();
   return new Promise(resolve=>{(function poll(){let w=null;try{w=fr.contentWindow;}catch(e){}
     try{
       if(w && hashOf(w)===want){const f=w.__widgetFixture;
-        if(f && f.attempt===attempt && f.hash===want){
+        if(f && f.run===smokeRun && f.attempt===attempt && f.hash===want && /^[a-f0-9-]{36}$/.test(f.documentId||"")){
           if(f.error){row.result="bootstrap-error";row.reason=f.error;row.fixture=f;return resolve({w:null,error:f.error,reason:f.error});}
+          if(expectedSourceSha&&f.sourceSha256&&f.sourceSha256!==expectedSourceSha){row.result="source-mismatch";row.reason="Widget source changed within smoke run";row.fixture=f;return resolve({w:null,error:row.reason,reason:row.reason});}
           const consumed=f.ledger.some(r=>r.attempt===attempt && new URL(r.url).pathname==="/v1/timings/07-09-2026" && r.jsonReads>0 && r.result==="json-consumed");
-          if(f.state==="ready" && f.storageIsolated && f.clockFixed && f.fetchIntercepted && /^[a-f0-9]{64}$/.test(f.sourceSha256||"") && consumed && prayerReady(w) && ready(w)){
+          const bridge=w.__smokeWeather,owner=bridge&&typeof bridge.identity==="function"?bridge.identity():null;
+          const owned=owner&&owner.run===smokeRun&&owner.attempt===attempt&&owner.documentId===f.documentId&&owner.hash===want&&owner.sourceSha256===f.sourceSha256;
+          if(f.state==="ready" && f.storageIsolated && f.clockFixed && f.fetchIntercepted && /^[a-f0-9]{64}$/.test(f.sourceSha256||"") && /^[a-f0-9]{64}$/.test(f.bridgeSha256||"") && owned && typeof bridge.read==="function" && consumed && prayerReady(w) && ready(w)){
+            expectedSourceSha=f.sourceSha256;
+            row.documentId=f.documentId;row.sourceSha256=f.sourceSha256;
             row.result="ready";row.fixture=f;return resolve({w});
           }
         }
@@ -107,6 +119,135 @@ async function scene(hash,name,fn,ready=prayerReady){const result=await loadUnti
   await required(name,ok=>fn(result.w,result.w.qaState(),ok));
 }
 const base="lat=24.47&lon=39.61&label=Madinah&method=4";
+function weatherCurrent(ww,code=95,precip=5){const n=ww.partsInTz(ww.Date.now()),pad=v=>String(v).padStart(2,"0");return {
+  time:n.y+"-"+pad(n.mo)+"-"+pad(n.d)+"T"+pad(n.h)+":"+pad(n.mi),interval:900,weather_code:code,
+  temperature_2m:20,apparent_temperature:19,relative_humidity_2m:90,dew_point_2m:18,
+  wind_speed_10m:2,wind_direction_10m:180,wind_gusts_10m:4,cloud_cover:95,cloud_cover_low:60,cloud_cover_mid:60,cloud_cover_high:30,
+  visibility:20000,is_day:1,precipitation:precip,rain:precip,showers:0,snowfall:0};}
+function syntheticPresent(ww,target,present={state:"wet",type:"rain",lightning:"unavailable",quantity:null}){const now=ww.Date.now();return {
+  scope:"simulation-fixture",provider:"Synthetic QA",product:"present/nearby contract",policy:"synthetic-present-v1",
+  target:{generation:target.generation,lat:target.lat,lon:target.lon},measurementAt:now,validFrom:now,validUntil:now+60000,retrievedAt:now,frameAt:now,issuedAt:now,
+  units:"categorical",footprint:{kind:"point",lat:target.lat,lon:target.lon,coverage:"target"},
+  quality:{status:"qualified",sampling:"direct",localObservationAt:now,operationalHealth:"operational"},present};}
+const strong=state=>state.qa.wxTruth.activePrecip||state.qa.wxTruth.activeThunder||state.rainOpacity!==0;
+const liveWeatherReady=ww=>{try{const q=ww.qaState();return q.cache.currentEligible&&q.wxTruth.rawCode===95&&q.wxTruth.finalDataFx===q.wxTruth.displayCondition;}catch(e){return false;}};
+async function weatherScene(hash,name,fn,ready=prayerReady){return scene(hash,name,(ww,q,ok)=>fn(ww,ww.__smokeWeather,ww.__smokeWeather.identity(),ok),ready);}
+async function weatherConsumers(){
+  const live=base+"&units=c",synthetic=base+"&units=c&simWx=0";
+  await weatherScene(live,"live model wet is useful; local particles off",(ww,b,owner,ok)=>{
+    const s=b.read(owner),q=s.qa.wxTruth;
+    ok("current model passed actual admission",s.modelEligible&&s.qa.cache.currentEligible);
+    ok("model thunder category + amount remain useful",q.modelCondition==="thunder"&&q.modelPrecipMm===5);
+    ok("actual model temperature + estimate cue consumed",s.temperature==="20°"&&s.icon==="≈");
+    ok("current is estimated wet, local observation unavailable",q.current==="model-estimated-wet"&&!q.present.available&&q.localObservationAgeMs===null&&q.observedPrecipMm===null);
+    ok("all live strong permissions are off",!q.permissions.rain&&!q.permissions.snow&&!q.permissions.lightning);
+    ok("actual particle opacity is zero",!strong(s)&&q.finalDataFx==="overcast");
+    ok("no fabricated nearby or arrival",q.spatial.state==="unavailable"&&q.horizon.arrival===null);
+    ok("actual current transport JSON was consumed",ww.__widgetFixture.ledger.some(r=>new URL(r.url).origin==="https://api.open-meteo.com"&&r.jsonReads===1&&r.result==="json-consumed"));
+    ok("visible estimate is also accessible",/model estimate/i.test(ww.document.querySelector("#wi").getAttribute("aria-label"))&&/unobserved/i.test(ww.document.querySelector("#wi").title));
+  },liveWeatherReady);
+  await weatherScene(live,"live model expiry + admitted recovery",(ww,b,owner,ok)=>{
+    ok("fresh current model positive before expiry",b.read(owner).modelEligible);
+    const expired=b.advanceClock(owner,900001),q=expired.qa;
+    ok("source/receipt expiry removes current eligibility",!expired.modelEligible&&!q.cache.currentEligible);
+    ok("expired current temperature withdrawn",q.wx.temp===null&&expired.temperature===""&&expired.icon==="?");
+    ok("expired current physical inputs withdrawn",q.wx.cloud===null&&q.wx.wind===null&&q.wx.rh===null&&q.wx.vis===null);
+    ok("expiry cannot retain particles",!strong(expired)&&!q.wxTruth.present.available);
+    const recovered=b.installModel(owner,weatherCurrent(ww)).state;
+    ok("fresh admitted input restores model eligibility",recovered.modelEligible&&recovered.qa.cache.currentEligible);
+    ok("fresh admitted input restores actual chip",recovered.temperature==="20°"&&recovered.icon==="≈");
+    ok("recovered live model remains estimated wet/strong off",recovered.qa.wxTruth.current==="model-estimated-wet"&&!strong(recovered));
+  },liveWeatherReady);
+  await weatherScene(live,"live synthetic installation is refused",(ww,b,owner,ok)=>{
+    const before=b.read(owner),raw=syntheticPresent(ww,before.target),admitted=b.admitSynthetic(owner,raw);let reason="";
+    try{b.installSynthetic(owner,raw);}catch(e){reason=e.message;}
+    const after=b.read(owner),events=ww.__widgetFixture.weatherEvents;
+    ok("valid synthetic input is refused in ordinary live lane",admitted.ok&&/refused.*live/i.test(reason));
+    ok("refusal occurred before synthetic-state write",before.synthetic===null&&after.synthetic===null);
+    ok("refusal is logged for exact input",events.some(e=>e.action==="synthetic-refused-live"&&e.input.target.generation===before.target.generation));
+    ok("actual live model remains useful and strong off",after.modelEligible&&after.temperature==="20°"&&!strong(after));
+  },liveWeatherReady);
+  await weatherScene(synthetic,"admitted synthetic wet overrides model dry",(ww,b,owner,ok)=>{
+    const model=b.installModel(owner,weatherCurrent(ww,0,0));ok("model-clear input is actually admitted",model.ok&&model.state.modelEligible);
+    const result=b.installSynthetic(owner,syntheticPresent(ww,model.state.target)),s=result.state,q=s.qa.wxTruth;
+    ok("actual versioned present admission is positive",result.admission.ok&&result.admission.evidence.policy==="synthetic-present-v1");
+    ok("exact captured target generation is consumed",!!q.present.evidence&&q.present.evidence.target.generation===model.state.target.generation);
+    ok("supported wet records model-dry disagreement",q.current==="supported-wet"&&q.disagreement&&q.model.state==="dry");
+    ok("admitted wet reaches actual rain paint",q.displayCondition==="rain"&&q.finalDataFx==="rain"&&s.rainOpacity>0);
+    ok("permission is rain with no fabricated lightning",q.permissions.rain&&!q.permissions.lightning&&q.activePrecip&&!q.activeThunder);
+    ok("unknown amount remains null",q.observedPrecipMm===null);
+    ok("synthetic lane is visibly marked",q.lane==="simulation-fixture"&&/SIM supported-wet/.test(ww.document.querySelector("#wi").title));
+  });
+  await weatherScene(synthetic,"admitted synthetic snow + lightning",(ww,b,owner,ok)=>{
+    b.installModel(owner,weatherCurrent(ww,0,0));const target=b.read(owner).target;
+    const snow=b.installSynthetic(owner,syntheticPresent(ww,target,{state:"wet",type:"snow",lightning:"unavailable",quantity:null}));
+    ok("actual snow evidence admitted",snow.admission.ok);
+    ok("snow reaches actual snow paint",snow.state.qa.wxTruth.finalDataFx==="snow"&&snow.state.rainOpacity>0);
+    ok("snow cannot invent rain or lightning",snow.state.qa.wxTruth.permissions.snow&&!snow.state.qa.wxTruth.permissions.rain&&!snow.state.qa.wxTruth.permissions.lightning);
+    const thunder=b.installSynthetic(owner,syntheticPresent(ww,target,{state:"wet",type:"rain",lightning:"observed",quantity:null}));
+    ok("actual lightning evidence admitted",thunder.admission.ok);
+    ok("observed synthetic lightning reaches actual thunder paint",thunder.state.qa.wxTruth.finalDataFx==="thunder"&&thunder.state.rainOpacity>0);
+    ok("rain and lightning permissions independently consumed",thunder.state.qa.wxTruth.permissions.rain&&thunder.state.qa.wxTruth.permissions.lightning&&thunder.state.qa.wxTruth.activeThunder);
+  });
+  await weatherScene(synthetic,"synthetic exclusive lease expiry",(ww,b,owner,ok)=>{
+    const raw=syntheticPresent(ww,b.read(owner).target),positive=b.installSynthetic(owner,raw);
+    ok("admitted wet positive before lease end",positive.admission.ok&&strong(positive.state));
+    const before=b.advanceClock(owner,59999);ok("wet remains active one millisecond before end",before.qa.wxTruth.activePrecip&&before.rainOpacity>0);
+    const end=b.advanceClock(owner,1),q=end.qa.wxTruth;
+    ok("validUntil is exclusive",ww.Date.now()===raw.validUntil&&!q.present.available);
+    ok("actual paint withdraws immediately",!strong(end)&&q.finalDataFx!=="rain");
+    ok("readable expired evidence has no permission",end.synthetic.ok&&/expired/.test(q.present.reason)&&!q.permissions.rain);
+  });
+  await weatherScene(synthetic,"synthetic rain end + outage",(ww,b,owner,ok)=>{
+    b.installModel(owner,weatherCurrent(ww));const target=b.read(owner).target;
+    const wet=()=>b.installSynthetic(owner,syntheticPresent(ww,target));
+    ok("wet source starts actual rain",wet().state.qa.wxTruth.finalDataFx==="rain");
+    const dry=b.installSynthetic(owner,syntheticPresent(ww,target,{state:"dry",type:null,lightning:"not-observed",quantity:null}));
+    ok("operational direct dry evidence is admitted",dry.admission.ok);
+    ok("rain end is supported dry with model-wet disagreement",dry.state.qa.wxTruth.current==="supported-dry"&&dry.state.qa.wxTruth.disagreement);
+    ok("dry immediately withdraws actual particles",!strong(dry.state));
+    ok("fresh wet recovery restores actual rain",wet().state.qa.wxTruth.activePrecip);
+    const outage=b.installSynthetic(owner,null);
+    ok("null outage calls actual unavailable admission",!outage.admission.ok&&/source unavailable/.test(outage.admission.reason));
+    ok("outage remains fixture lane and model estimate",outage.state.qa.wxTruth.lane==="simulation-fixture"&&outage.state.qa.wxTruth.current==="model-estimated-wet");
+    ok("outage cannot resume preview particles",!strong(outage.state)&&!outage.state.qa.wxTruth.present.available);
+  });
+  await weatherScene(synthetic,"synthetic target + coverage rejection",(ww,b,owner,ok)=>{
+    const target=b.read(owner).target;
+    ok("wet positive precedes wrong-target control",b.installSynthetic(owner,syntheticPresent(ww,target)).state.qa.wxTruth.activePrecip);
+    const wrong=syntheticPresent(ww,target);wrong.target.generation++;
+    const rejected=b.installSynthetic(owner,wrong);ok("wrong generation rejected by actual admission",!rejected.admission.ok&&/target generation/.test(rejected.admission.reason));
+    ok("wrong target cannot retain particles",!strong(rejected.state));
+    ok("fresh wet positive recovers before coverage control",b.installSynthetic(owner,syntheticPresent(ww,target)).state.qa.wxTruth.activePrecip);
+    const outside=syntheticPresent(ww,target);outside.footprint.coverage="outside";
+    const covered=b.installSynthetic(owner,outside);ok("outside target coverage is unavailable",!covered.admission.ok&&/coverage/.test(covered.admission.reason));
+    ok("coverage rejection immediately withdraws particles",!strong(covered.state));
+  });
+  await weatherScene(synthetic,"synthetic underlying source age rejection",(ww,b,owner,ok)=>{
+    const target=b.read(owner).target;ok("fresh underlying observation positive",b.installSynthetic(owner,syntheticPresent(ww,target)).state.qa.wxTruth.activePrecip);
+    const old=syntheticPresent(ww,target);old.measurementAt-=18*60000;old.quality.localObservationAt=old.measurementAt;old.validFrom-=180000;
+    const result=b.installSynthetic(owner,old);ok("fresh receipt/frame does not renew old source",!result.admission.ok&&/time.*expired/.test(result.admission.reason));
+    ok("old source has no present authority",!result.state.qa.wxTruth.present.available);
+    ok("old source immediately withdraws actual particles",!strong(result.state));
+  });
+  await weatherScene(synthetic,"synthetic dry point + nearby are independent",(ww,b,owner,ok)=>{
+    const raw=syntheticPresent(ww,b.read(owner).target,{state:"dry",type:null,lightning:"not-observed",quantity:null}),now=ww.Date.now();
+    raw.spatial={state:"nearby-precipitation",distanceKm:[8,12],observedAt:now};raw.approach={from:now+600000,to:now+1800000,derivedFrom:"qualified-fixture-trajectory"};
+    const result=b.installSynthetic(owner,raw),q=result.state.qa.wxTruth;
+    ok("qualified point-dry is admitted",result.admission.ok&&q.current==="supported-dry");
+    ok("surrounding precipitation remains separately qualified",q.spatial.state==="nearby-precipitation");
+    ok("explicit trajectory supports only a later horizon interval",q.horizon.state==="approaching"&&q.horizon.arrival.from===now+600000);
+    ok("nearby/approach cannot rain at a supported-dry point",!strong(result.state));
+  });
+  await weatherScene(synthetic,"synthetic target generation clears permission",(ww,b,owner,ok)=>{
+    const target=b.read(owner).target,result=b.installSynthetic(owner,syntheticPresent(ww,target));
+    ok("actual wet positive precedes target supersession",result.admission.ok&&result.state.qa.wxTruth.activePrecip);
+    const next=b.nextGeneration(owner),q=next.qa.wxTruth;
+    ok("actual owner generation advanced",next.target.generation===target.generation+1);
+    ok("superseded evidence no longer available",!q.present.available&&/target/.test(q.present.reason));
+    ok("target supersession withdraws actual particles",!strong(next));
+  });
+}
 async function run(){
   if(!modes.includes(fixtureMode))throw Error("Unknown deterministic fixture mode: "+fixtureMode);
   head("local config contract (private stores; no origin storage)");
@@ -163,9 +304,9 @@ async function run(){
     ok("clear code unchanged",G(0,{})===0);
     ok("cloud/overcast codes are not precip-gated",G(3,{precip:0})===3&&G(2,{precip:0})===2);
     ok("wxClass mapping",C(95)==="thunder"&&C(3)==="overcast"&&C(0)==="clear"&&C(45)==="fog"&&C(63)==="rain"&&C(73)==="snow");
-    ok("radar confirms rain when nowcast is dry",C(G(63,{precip:0,cloud:90},2))==="rain");
+    ok("unsupported radar proxy2 cannot confirm dry-model rain",C(G(63,{precip:0,cloud:90},2))!=="rain");
     ok("no radar + dry nowcast still downgrades",C(G(63,{precip:0,cloud:90},0))!=="rain");
-    ok("heavy radar confirms thunder code",C(G(95,{precip:0},1.5))==="thunder");
+    ok("unsupported radar proxy1.5 cannot confirm thunder",C(G(95,{precip:0},1.5))!=="thunder");
     ok("light radar does NOT confirm thunder",C(G(95,{precip:0},0.3))!=="thunder");
     ok("radar never fabricates rain from a clear code",G(0,{},5)===0);
   });
@@ -186,6 +327,8 @@ async function run(){
   await scene(base+"&simWx=45&simHumid=96","fog code shows fog, not rain",(ww,q,ok)=>{
     ok("displayCondition is fog",q.wxTruth.displayCondition==="fog",q.wxTruth.displayCondition);ok("no active precip",q.wxTruth.activePrecip===false);
   });
+  head("R0024 actual model admission + independent synthetic present consumers");
+  await weatherConsumers();
   head("moon truthfulness + no painted dawn");
   await scene(base+"&simTime=01:00&simWx=0&simMoon=0.01&simWax=1&simMoonAlt=-20","new/below-horizon moon: opaque calendar disc, NO moonlight",(ww,q,ok)=>{
     ok("moonlightOpacity is 0",q.moonTruth.moonlightOpacity===0,q.moonTruth.moonlightOpacity);
@@ -241,12 +384,14 @@ async function run(){
     finally{ww.matchMedia=original;ww.applyTheme(ww.model());}
     ok("override fixture restores exact matchMedia function",ww.matchMedia===original);
   });
-  head("cloud continuity (controlled frames; NOT normal-live M0 evidence)");
-  await scene(base+"&simWx=3&simCloud=100","cloud continuity",(ww,q,ok)=>{
+  head("cloud continuity (bounded accelerated elapsed frames; NOT normal-live M0 evidence)");
+  await scene(base+"&simWx=3&simCloud=100&timeScale=1800&motion=full","cloud continuity",async(ww,q,ok)=>{
     const seed1=ww.qaState().wxTruth.cloudFieldSeed,cv=ww.document.querySelector(".cloudcanvas"),x=cv.getContext("2d");
     const grab=()=>{const d=x.getImageData(0,0,cv.width,cv.height).data;let a=0,h=0;for(let i=3;i<d.length;i+=4){a+=d[i];h=(h+d[i]*(((i>>2)*2654435761>>>20)&2047))%2147483647;}return {a,h};};
-    ww.paintClouds(10);const g1=grab();ww.paintClouds(40);const g2=grab();
-    ok("controlled overcast deck present + evolves",g1.a>0&&g1.h!==g2.h,"alpha="+g1.a+" changed="+(g1.h!==g2.h));
+    const start=ww.performance.now();ww.paintClouds(ww.simNow()/1000);const g1=grab();await new Promise(resolve=>setTimeout(resolve,350));
+    ww.paintClouds(ww.simNow()/1000);const g2=grab();
+    ok("actual monotonic interval elapsed",ww.performance.now()-start>=300);
+    ok("accelerated overcast deck present + evolves",g1.a>0&&g1.h!==g2.h,"alpha="+g1.a+" changed="+(g1.h!==g2.h));
     ok("cloudFieldSeed stable across controlled paints",seed1===ww.qaState().wxTruth.cloudFieldSeed);
   });
 }
@@ -255,7 +400,7 @@ function finalize(){const missingNames=cases.filter(c=>c.state==="pending"||c.st
   const status=fail?"FAIL":missingNames.length?"INCOMPLETE":"PASS";
   sumEl.textContent=status+" · "+executed+"/"+cases.length+" required executed · "+pass+" passed · "+fail+" failed · "+missingNames.length+" required missing"+(missingNames.length?" · missing: "+missingNames.join("; "):"");
   sumEl.className=status==="PASS"?"pass":"fail";
-  window.__smoke={pass,fail,skip,status,required:{total:cases.length,executed,failed,missing:missingNames,cases},fixture:{mode:fixtureMode,attempts},scope:"deterministic instrument; baseline/synthetic weather; R0024 join pending"};
+  window.__smoke={pass,fail,skip,status,required:{total:cases.length,executed,failed,missing:missingNames,cases},fixture:{run:smokeRun,mode:fixtureMode,attempts},scope:"deterministic instrument; joined R0024 model/admitted synthetic consumers; blocked fonts; no appearance or normal-live M0 qualification"};
 }
 (async()=>{try{await run();}catch(e){line("fail","harness error: "+e.message);}finally{finalize();}})();
 </script>

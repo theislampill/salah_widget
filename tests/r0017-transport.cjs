@@ -44,6 +44,26 @@ async function main(){
     assert.equal(a.data.date.gregorian.date,"07-09-2026");assert.equal(b.data.date.gregorian.date,"08-09-2026");assert.equal(b.data.date.gregorian.day,"08");
     assert.equal(h.report.ledger.length,2);assert.ok(h.report.ledger.every(r=>r.jsonReads===1&&r.result==="json-consumed"));assert.equal(h.sourceCalls,1);
   });
+  await check("private clock requires exact ready document/attempt/source and rejects omitted or stale ownership",async()=>{
+    const h=await setup(),control=h.ctx.__fixtureClock,owner=control.identity();
+    assert.match(owner.documentId,/^[a-f0-9-]{36}$/);assert.equal(owner.sourceSha256,h.report.sourceSha256);
+    // Parser-stop is a boundary control; mark only the instrument report ready so
+    // the actual private clock guard can be tested. No widget/native readiness claim.
+    h.report.state="ready";
+    const before=h.ctx.Date.now();assert.throws(()=>control.advance(null,1),/exact ready attempt/);
+    for(const field of ["run","attempt","documentId","hash","sourceSha256"]){
+      const wrong={...owner,[field]:field==="attempt"?2:"stale"};assert.throws(()=>control.advance(wrong,1),/exact ready attempt/);
+    }
+    assert.equal(h.ctx.Date.now(),before);assert.equal(h.report.weatherEvents.length,0);
+    control.advance(owner,59999);assert.equal(h.ctx.Date.now(),before+59999);control.advance(owner,1);assert.equal(h.ctx.Date.now(),before+60000);
+    assert.equal(h.report.weatherEvents.length,2);assert.equal(h.realStorageCalls,0);
+  });
+  await check("private clock rejects out-of-bound values and changed current document",async()=>{
+    const h=await setup(),control=h.ctx.__fixtureClock;h.report.state="ready";const owner=control.identity(),before=h.ctx.Date.now();
+    for(const ms of [-1,0.5,900002,NaN,Infinity])assert.throws(()=>control.advance(owner,ms),/0\.\.900001/);
+    const original=h.ctx.document;h.ctx.document={};assert.throws(()=>control.advance(owner,1),/exact ready attempt/);h.ctx.document=original;
+    assert.equal(h.ctx.Date.now(),before);assert.equal(h.report.weatherEvents.length,0);
+  });
   await check("controlled rejection has no JSON reads/network fallback",async()=>{
     const h=await setup("reject");await assert.rejects(h.ctx.fetch(todayURL),/Controlled prayer rejection/);
     assert.equal(h.report.ledger[0].result,"rejected");assert.equal(h.report.ledger[0].jsonReads,0);assert.equal(h.sourceCalls,1);

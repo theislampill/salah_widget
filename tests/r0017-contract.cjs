@@ -120,18 +120,29 @@ async function main(){
     assert.equal(h.ctx.__smoke.required.cases.find(c=>c.name==="weather gate availability").state,"executed");
     assert.ok(!h.ctx.__smoke.required.missing.includes("weather gate availability"),"named timeout oracle missed mutant");
   });
-  for(const control of ["stale-attempt","stale-hash","cache-without-json"])await check("readiness rejects "+control,async()=>{
+  for(const control of ["valid-instrument-frame","stale-attempt","stale-hash","cache-without-json","stale-run","missing-document","stale-document","stale-source","no-op-bridge"])await check("readiness "+control,async()=>{
     const h=helperHarness();h.ctx.__control=control;
-    // The adversarial frame deliberately pretends to have prayer/render state. It
-    // must be rejected BEFORE that fake state can become execution evidence.
+    // The controlled frame pretends to have prayer/render state. One fully bound
+    // envelope is the instrument positive; each stale edge must reject it. This
+    // characterizes readiness guards only and never supplies widget health evidence.
     const result=await vm.runInContext(`(async()=>{
       const want="fixture-scene&tz=Asia/Riyadh&qa=1";
-      fr.contentWindow={location:{hash:__control==="stale-hash"?"#old-scene":"#"+want},
-        __widgetFixture:{attempt:__control==="stale-attempt"?0:1,hash:want,state:"ready",sourceSha256:"a".repeat(64),storageIsolated:true,clockFixed:true,fetchIntercepted:true,
+      const f={run:__control==="stale-run"?"old-run":smokeRun,attempt:__control==="stale-attempt"?0:1,hash:want,state:"ready",sourceSha256:"a".repeat(64),bridgeSha256:"c".repeat(64),
+          documentId:__control==="missing-document"?null:"00000000-0000-4000-8000-000000000001",storageIsolated:true,clockFixed:true,fetchIntercepted:true,
           ledger:__control==="cache-without-json"?[]:[{attempt:1,url:"https://api.aladhan.com/v1/timings/07-09-2026",jsonReads:1,result:"json-consumed"}]},
+        bridge={identity:()=>({run:f.run,attempt:f.attempt,hash:f.hash,documentId:__control==="stale-document"?"00000000-0000-4000-8000-000000000002":f.documentId,
+          sourceSha256:__control==="stale-source"?"b".repeat(64):f.sourceSha256}),read(){}};
+      fr.contentWindow={location:{hash:__control==="stale-hash"?"#old-scene":"#"+want},__widgetFixture:f,__smokeWeather:__control==="no-op-bridge"?{}:bridge,
         qaState(){return {cache:{prayerLoaded:true},render:{currentKey:"Dhuhr",nextKey:"Asr"}};}};
       return await loadUntil("fixture-scene",300,()=>true);
-    })()`,h.ctx);assert.equal(result.w,null);
+    })()`,h.ctx);assert.equal(result.w!==null,control==="valid-instrument-frame");
+  });
+  await check("readiness rejects a changed source within the same run",async()=>{
+    const h=helperHarness();const result=await vm.runInContext(`(async()=>{
+      expectedSourceSha="a".repeat(64);const want="fixture-scene&tz=Asia/Riyadh&qa=1";
+      fr.contentWindow={location:{hash:"#"+want},__widgetFixture:{run:smokeRun,attempt:1,hash:want,documentId:"00000000-0000-4000-8000-000000000001",sourceSha256:"b".repeat(64),ledger:[]}};
+      return await loadUntil("fixture-scene",300,()=>true);
+    })()`,h.ctx);assert.equal(result.w,null);assert.equal(result.error,"Widget source changed within smoke run");
   });
   console.log(JSON.stringify({kind:"source-bound instrument/storage controls; no widget/browser qualification",root,results,
     unavailable:{summary:observed.summary,smoke:observed.smoke,realStorageCalls:observed.realStorageCalls},missingConfig:{summary:missingConfig.summary,smoke:missingConfig.smoke}},null,2));
