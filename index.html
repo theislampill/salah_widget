@@ -1175,6 +1175,12 @@ function wxUnitsMatch(meta,ctx){
     cloud_cover_low:"%",cloud_cover_mid:"%",cloud_cover_high:"%"};
   return Object.keys(expected).every(k=>meta[k]==null||meta[k]===expected[k]);
 }
+function wxResponseZoneMatches(j,zone){
+  if(!Object.prototype.hasOwnProperty.call(j,"timezone")) return true;
+  if(typeof j.timezone!=="string"||!j.timezone) return false;
+  try{ return zoneFormatter(j.timezone).resolvedOptions().timeZone===zoneFormatter(zone).resolvedOptions().timeZone; }
+  catch(e){ return false; }                          // invalid/contradictory supplied zone cannot relabel wall times
+}
 function wxEpoch(s,zone){
   if(typeof s!=="string") return null;
   const m=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(s); if(!m) return null;
@@ -1284,6 +1290,9 @@ async function fetchWeather(){
     const result=await wxFetchJson(op,a,u); if(!result.ok||!attemptEligible(op,a)) return;
     const j=result.data;
     if(!j||typeof j!=="object"||Array.isArray(j)||j.error===true) return;
+    if(!wxResponseZoneMatches(j,captured.zone)){
+      wxAttemptState(op,a,"unavailable","response timezone unavailable or contradicts captured request"); return;
+    }
     const ctx={...captured,retrievedAt:Date.now()}, current=wxUnitsMatch(j.current_units,ctx)?admitWeatherRecord(j.current,ctx):null;
     const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);
     if(!attemptEligible(op,a)) return;                     // includes delayed-timer absolute expiry after normalization
