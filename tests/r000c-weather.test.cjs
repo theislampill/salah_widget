@@ -10,13 +10,15 @@ const vm = require('node:vm');
 const crypto = require('node:crypto');
 const sourcePath = process.env.SALAH_WEATHER_SOURCE || path.join(__dirname, '..', 'index.html');
 const source = fs.readFileSync(sourcePath, 'utf8');
-const configSource = fs.readFileSync(path.join(__dirname, '..', 'config.js'), 'utf8');
+const configSourcePath = process.env.SALAH_CONFIG_SOURCE || path.join(__dirname, '..', 'config.js');
+const configSource = fs.readFileSync(configSourcePath, 'utf8');
 // During interface preparation the declared owner is an immutable source snapshot; after
 // integration its exact functions come from this same product source. No owner logic is copied.
 const requestOwnerSource = source.includes('function beginRequest(kind,') ? source :
   process.env.SALAH_REQUEST_OWNER_SOURCE ? fs.readFileSync(process.env.SALAH_REQUEST_OWNER_SOURCE, 'utf8') : null;
 const NOW = Date.parse('2026-09-07T21:00:00Z');
 console.log('WEATHER source ' + sourcePath + ' SHA256 ' + crypto.createHash('sha256').update(source).digest('hex'));
+console.log('WEATHER config source ' + configSourcePath + ' SHA256 ' + crypto.createHash('sha256').update(configSource).digest('hex'));
 if (requestOwnerSource) console.log('WEATHER request-owner SHA256 ' + crypto.createHash('sha256').update(requestOwnerSource).digest('hex'));
 
 function region(start, end, input = source) {
@@ -68,11 +70,11 @@ function fixture(options = {}) {
   }
   const nodes = new Map();
   function element() {
-    const props = new Map();
+    const props = new Map(), attributes = new Map();
     return { dataset: {}, textContent: '', title: '', style: {
       setProperty(k, v) { props.set(k, String(v)); },
       getPropertyValue(k) { return props.get(k) || ''; },
-    } };
+    }, setAttribute(k,v) { attributes.set(k,String(v)); }, getAttribute(k) { return attributes.get(k) ?? null; } };
   }
   const pixels = new Uint8ClampedArray(256 * 256 * 4);
   for (let i = 0; i < pixels.length; i += 4) pixels.set(opts.rgba || [82, 147, 196, 255], i);
@@ -131,13 +133,14 @@ function fixture(options = {}) {
     let moonSky={alt:20,H:0,_min:1260,sx:.84,sy:.1};
     let cloudState={covLow:0,covMid:0,covHigh:0}, _cloudReady=false, _cloudDirty=false, _cloudFieldSeed=1;
     let _starEls=[], _glintEls=[], lastDate=null, today=null, tomorrow=null, _prayerStale=false, _rolloverNextTry=0, _lastRender=null;
-    let _hashCfg={}, _cfgMode='hardcoded', CONFIG=null, label='', _autoDetectSource=null, _autoDetectStatus='idle';
+    let _hashCfg={}, _cfgMode='hardcoded', CONFIG=opts.config||null, label='', _autoDetectSource=null, _autoDetectStatus='idle';
     let _storageErr=null, _geoPermission='unknown', _geoLastError=null;
   ` + runtime + `
     globalThis.api={fetchWeather,fetchRadar,loadWx,wxAt,syncWeather,wxDrivers,gateWeatherCode,wxClass,radarPrecipNow,
       beginRuntimeGeneration:typeof beginRuntimeGeneration==='function'?beginRuntimeGeneration:null,
       read:()=>({weather,weatherTrack,weatherRadar,lastWxAt,lastWxTry,wxBusy,radarBusy,siteElev}),
       set:(values)=>{if('lat' in values)lat=values.lat;if('lon' in values)lon=values.lon;if('units' in values)units=values.units;
+        if('config' in values)CONFIG=values.config;
         if('zone' in values)tz=values.zone;if('weather' in values)weather=values.weather;if('lastWxAt' in values)lastWxAt=values.lastWxAt;
         if('weatherTrack' in values)weatherTrack=values.weatherTrack;if('wxBusy' in values)wxBusy=values.wxBusy;
         if('radarBusy' in values)radarBusy=values.radarBusy;if('lastWxTry' in values)lastWxTry=values.lastWxTry;
@@ -156,8 +159,10 @@ test('control: actual fresh acquisition, model gate, atmosphere and chip are rea
   const f = fixture(); await f.fetchWeather();
   assert.equal(f.read().weather.temp, 20); assert.equal(f.read().weatherTrack.ep[0], NOW);
   assert.equal(f.cache().w.temp, 20); assert.equal(f.read().wxBusy, false);
-  const view = f.view(); assert.equal(view.a.cls, 'thunder'); assert.equal(f.nodes.get('#wt').textContent, '20°');
-  assert.equal(view.qa.wxTruth.finalDataFx, 'thunder');
+  const view = f.view(); assert.equal(f.gateWeatherCode(95,f.read().weather,0),95);
+  assert.equal(view.qa.wxTruth.current,'model-estimated-wet'); assert.equal(view.qa.wxTruth.modelCondition,'thunder');
+  assert.equal(view.a.cls,'overcast'); assert.equal(f.nodes.get('#wt').textContent,'20°');
+  assert.equal(view.qa.wxTruth.finalDataFx,'overcast'); assert.equal(view.qa.wxTruth.activeThunder,false);
 });
 
 for (const [name, input, want] of [['null', null, null], ['missing', undefined, null], ['zero', 0, 0], ['negative', -12.5, -12]]) {
@@ -341,10 +346,12 @@ test('R000B current expires before offline refresh; fresh replacement restores e
     if (offline) throw Error('contained offline');
     return { ok: true, status: 200, json: async () => healthy({ time: offline ? 'invalid' : f.clock.now === NOW ? '2026-09-07T21:00' : '2026-09-07T21:16' }) };
   } });
-  await f.fetchWeather(); assert.equal(f.view().a.cls, 'thunder'); f.clock.now = NOW + 960000; offline = true;
+  await f.fetchWeather(); assert.equal(f.view().qa.cache.currentEligible,true); assert.equal(f.view().a.wxTemp,20);
+  assert.equal(f.view().qa.wxTruth.modelCondition,'thunder'); assert.equal(f.view().a.cls,'overcast'); f.clock.now = NOW + 960000; offline = true;
   await f.fetchWeather(); const view = f.view(); assert.equal(view.a.cls, 'clear'); assert.equal(view.a.wxTemp, null);
   assert.equal(view.a.windSpeed, 0); assert.equal(view.qa.wx.temp, null); assert.equal(view.qa.cache.weatherStale, true);
-  offline = false; f.clock.now += 60001; await f.fetchWeather(); assert.equal(f.view().a.cls, 'thunder');
+  offline = false; f.clock.now += 60001; await f.fetchWeather(); assert.equal(f.view().qa.cache.currentEligible,true);
+  assert.equal(f.view().a.wxTemp,20); assert.equal(f.view().qa.wxTruth.modelCondition,'thunder'); assert.equal(f.view().a.cls,'overcast');
 });
 test('control: real-time clear current never becomes hourly thunder; explicit preview does', async () => {
   const payload = healthy({ weather_code: 0, precipitation: 0 }); payload.hourly.weather_code = [95, 95];

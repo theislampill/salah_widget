@@ -1210,7 +1210,8 @@ function admitWeatherRecord(input,ctx,cached=false){
   if(!input||typeof input!=="object"||Array.isArray(input)) return null;
   const code=cached?input.code:input.weather_code;
   if(!_WX_CODES.has(code)||(cached&&input.units!=null&&input.units!==ctx.units)) return null;
-  const w={code,units:ctx.units,src:"current",admission:{}};
+  const w={code,units:ctx.units,src:"current",admission:{},target:ctx.target||currentWeatherTarget(),
+    provider:"Open-Meteo",product:"current weather model",quantityKind:"preceding-interval-amount",precipitationUnit:"mm"};
   for(const [field,key] of Object.entries(_WX_FIELDS)){
     const raw=input[cached?key:field], v=wxValue(field,raw);
     w[key]=key==="temp"&&v!=null?Math.round(v):v;
@@ -1228,7 +1229,8 @@ function admitWeatherTrack(h,ctx,meta){
   if(!h||typeof h!=="object"||!wxUnitsMatch(meta,ctx)||!Array.isArray(h.time)||!h.time.length) return null;
   const ep=h.time.map(s=>wxEpoch(s,ctx.zone)), len=ep.length;
   if(ep.some((v,i)=>v==null||(i>0&&v<=ep[i-1]))) return null;
-  const T={ep,units:ctx.units,zone:ctx.zone};
+  const T={ep,units:ctx.units,zone:ctx.zone,target:ctx.target||currentWeatherTarget(),retrievedAt:ctx.retrievedAt,
+    provider:"Open-Meteo",product:"hourly weather model",quantityKind:"preceding-hour-amount",precipitationUnit:"mm"};
   for(const k of _WX_HOURLY.split(",")){
     const a=h[k], required=k==="temperature_2m"||k==="weather_code";
     if(!Object.prototype.hasOwnProperty.call(h,k)&&!required){ T[k]=Array(len).fill(null); continue; }
@@ -1242,14 +1244,37 @@ function weatherEligibility(w,now=Date.now()){
   const sourceAge=w&&wxNumber(w.currentValidAt)!=null?now-w.currentValidAt:null;
   const receiptAge=w&&wxNumber(w.retrievedAt)!=null?now-w.retrievedAt:null;
   const interval=w&&wxNumber(w.currentIntervalSec);
-  const eligible=!!(w&&_WX_CODES.has(w.code)&&interval!=null&&interval>0&&sourceAge!=null&&receiptAge!=null&&
+  const targetMatches=!w||!w.target||weatherTargetSame(w.target,currentWeatherTarget());
+  const eligible=!!(w&&targetMatches&&_WX_CODES.has(w.code)&&interval!=null&&interval>0&&sourceAge!=null&&receiptAge!=null&&
     sourceAge>=0&&sourceAge<=_WX_CURRENT_TTL&&receiptAge>=0&&receiptAge<=_WX_CURRENT_TTL);
   return {eligible,sourceAgeMs:sourceAge,receiptAgeMs:receiptAge,
-    reason:eligible?null:"current model time/interval unavailable, future or expired"};
+    reason:eligible?null:!targetMatches?"current model belongs to another target generation":"current model time/interval unavailable, future or expired"};
 }
 function selectedWeather(now=Date.now()){
-  if(SIM.wx!=null||ADVANCING) return weather;      // explicit simulations retain their separate preview contract
+  if(SIM.wx!=null||ADVANCING) return weather&&(!weather.target||weatherTargetSame(weather.target,currentWeatherTarget()))?weather:null;
+  // Explicit previews retain their separate time contract, but cannot revive another target's admitted data.
   return weatherEligibility(weather,now).eligible?weather:null;
+}
+// A target describes the configured site or the actual device fix. Storage/save time never renews a fix.
+// Copy only the R0023 primitives: no retained mutable CONFIG/evidence reference and no inferred IP radius.
+function captureWeatherTarget(generation,la,lo){
+  const e=CONFIG&&CONFIG.locationEvidence||{}, bounds=e.bounds;
+  const b=bounds&&[bounds.south,bounds.north,bounds.west,bounds.east].every(v=>wxNumber(v)!=null)&&
+    bounds.south>=-90&&bounds.north<=90&&bounds.south<=bounds.north&&bounds.west>=-180&&bounds.east<=180&&bounds.west<=bounds.east?
+    {south:bounds.south,north:bounds.north,west:bounds.west,east:bounds.east}:null;
+  return {generation,lat:la,lon:lo,intent:["fixed-site","device-position","coarse-area","unknown"].includes(e.intent)?e.intent:"unknown",
+    source:["hash","manual","place","browser-geolocation","coarse-ip","legacy","unknown"].includes(e.source)?e.source:"unknown",
+    accuracyM:wxNumber(e.accuracyM,0),acquiredAt:wxNumber(e.acquiredAt,Number.MIN_VALUE,Date.now()),
+    provider:typeof e.provider==="string"?e.provider:null,area:typeof e.area==="string"?e.area:null,bounds:b};
+}
+function weatherTargetSame(a,b){ return !!(a&&b&&a.generation===b.generation&&a.lat===b.lat&&a.lon===b.lon); }
+let _wxTargetCache=null;
+function currentWeatherTarget(){
+  const generation=typeof _runtimeGeneration==="number"?_runtimeGeneration:null, evidence=CONFIG&&CONFIG.locationEvidence;
+  if(!_wxTargetCache||_wxTargetCache.config!==CONFIG||_wxTargetCache.evidence!==evidence||
+    _wxTargetCache.target.generation!==generation||_wxTargetCache.target.lat!==lat||_wxTargetCache.target.lon!==lon)
+    _wxTargetCache={config:CONFIG,evidence,target:captureWeatherTarget(generation,lat,lon)};
+  return _wxTargetCache.target;
 }
 function loadWx(){
   try{
@@ -1299,7 +1324,8 @@ async function fetchWeather(){
   if(selectedWeather(now) && weatherTrack && now-lastWxAt < _WX_CURRENT_TTL) return;   // need the hourly TRACK too — a fresh current-weather cache must not block timeScale demos
   if(now-lastWxTry < 60*1000) return;
   const op=beginRequest("weather"); if(!op) return;
-  const captured={lat:op.lat,lon:op.lon,units:op.units,zone:op.requestZone,cacheKey:op.weatherCacheKey};
+  const captured={lat:op.lat,lon:op.lon,units:op.units,zone:op.requestZone,cacheKey:op.weatherCacheKey,
+    target:captureWeatherTarget(op.generation,op.lat,op.lon)};
   const a=beginAttempt(op,_WX_BODY_WAIT); if(!a){ finishRequest(op); return; }
   lastWxTry=now; wxBusy=true;
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;
@@ -1331,7 +1357,8 @@ const _RADAR_Z=6, _RADAR_TTL=20*60*1000, _RADAR_REFRESH=10*60*1000;
 function radarEvidence(now=Date.now()){
   const frameAge=weatherRadar&&wxNumber(weatherRadar.frameGeneratedAt)!=null?now-weatherRadar.frameGeneratedAt:null;
   const receiptAge=weatherRadar&&wxNumber(weatherRadar.retrievedAt)!=null?now-weatherRadar.retrievedAt:null;
-  return {available:!!(SIM.wx==null&&weatherRadar&&weatherRadar.sample&&frameAge!=null&&receiptAge!=null&&
+  const targetMatches=!weatherRadar||!weatherRadar.target||weatherTargetSame(weatherRadar.target,currentWeatherTarget());
+  return {available:!!(SIM.wx==null&&targetMatches&&weatherRadar&&weatherRadar.sample&&frameAge!=null&&receiptAge!=null&&
     frameAge>=0&&frameAge<=_RADAR_TTL&&receiptAge>=0&&receiptAge<=_RADAR_TTL),frameAgeMs:frameAge,receiptAgeMs:receiptAge};
 }
 function radarPrecipNow(){ return 0; }              // compatibility shim: unsupported quantitative evidence contributes nothing
@@ -1369,7 +1396,7 @@ async function fetchRadar(){
   if(SIM.wx!=null || !usableWeatherCoordinates(lat,lon) || radarBusy) return;       // real mode only
   const now=Date.now(); if(now-lastRadarAt < _RADAR_REFRESH) return;   // radar updates ~10 min
   const op=beginRequest("radar"); if(!op) return;
-  const captured={lat:op.lat,lon:op.lon};
+  const captured={lat:op.lat,lon:op.lon,target:captureWeatherTarget(op.generation,op.lat,op.lon)};
   let a=beginAttempt(op,_RADAR_BODY_WAIT); if(!a){ finishRequest(op); return; }
   lastRadarAt=now; radarBusy=true;
   try{
@@ -1389,7 +1416,7 @@ async function fetchRadar(){
       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
       if(!image.ok||!attemptEligible(op,a)) return;
       const retrievedAt=Date.now();
-      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,frame:fr.time,frameGeneratedAt:fr.time*1000,
+      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt:fr.time*1000,
         indexGeneratedAt:j.generated*1000,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
     }
   }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
@@ -1399,7 +1426,7 @@ async function fetchRadar(){
 // unit-vectors so it wraps; weather_code is stepped — codes are categorical, not interpolable). Returns a
 // `weather`-shaped object, or null if there's no track. Clamps to the track's range (holds the endpoint).
 function wxAt(ms){
-  const T=weatherTrack; if(!T||!T.ep||!T.ep.length) return null;
+  const T=weatherTrack; if(!T||!T.ep||!T.ep.length||(T.target&&!weatherTargetSame(T.target,currentWeatherTarget()))) return null;
   let i=0; while(i<T.ep.length-1 && T.ep[i+1]<=ms) i++;
   const i0=i, i1=Math.min(T.ep.length-1,i+1), span=(T.ep[i1]-T.ep[i0])||1, f=clamp((ms-T.ep[i0])/span);
   const lp=k=>{ const A=T[k]||[], a=A[i0], b=A[i1]; return a==null?(b==null?null:b):(b==null?a:a+(b-a)*f); };
@@ -1410,7 +1437,8 @@ function wxAt(ms){
   return { code:(T.weather_code[f<0.5?i0:i1]), temp:temp==null?null:Math.round(temp), feels:lp("apparent_temperature"),
     rh:lp("relative_humidity_2m"), dew:lp("dew_point_2m"), wind:lp("wind_speed_10m"), windDir:wdir, gust:lp("wind_gusts_10m"),
     cloud:lp("cloud_cover"), cloudLow:lp("cloud_cover_low"), cloudMid:lp("cloud_cover_mid"), cloudHigh:lp("cloud_cover_high"),
-    precip:lp("precipitation"), vis:lp("visibility"), isDay:isDay==null?null:(isDay>=0.5?1:0), units:T.units, src:"forecast" };
+    precip:lp("precipitation"), vis:lp("visibility"), isDay:isDay==null?null:(isDay>=0.5?1:0), units:T.units, target:T.target,
+    provider:T.provider,product:T.product,src:"forecast" };
 }
 // in sim/fast-forward, derive `weather` from the forecast track by simTime (so weather evolves with the
 // sped-up clock). Explicit simWx always wins; real-time keeps the `current=` block. No track → hold state.
@@ -1455,6 +1483,126 @@ function wxInfo(code, day){
   if(c===85||c===86)   return {cond:"snow",    icon:"🌨️", label:"Snow showers"};
   if(c>=95)            return {cond:"thunder", icon:"⛈️", label:"Thunderstorm"};
   return {cond:"clear", icon:day?"☀️":"🌙", label:"—"};
+}
+
+// Live adapters are deliberately closed: Open-Meteo is a model; RainViewer alpha is a diagnostic.
+// This bounded adapter exists only for source-bound renderer QA in an explicit simulation lane.
+// No provider response, hash flag or `trusted:true` field is mapped into weatherSynthetic.
+const _WX_PRESENT_TTL=5*60*1000, _WX_DEVICE_ACCURACY=250, _WX_FORECAST_TTL=6*3600e3;
+let weatherSynthetic=null, _wxDecisionCache=null;
+function weatherPointTarget(target,now){
+  if(!target||!usableWeatherCoordinates(target.lat,target.lon)||wxNumber(target.generation,0)==null)
+    return {ok:false,reason:"target generation/coordinates unavailable"};
+  if(target.intent==="fixed-site") return {ok:true,kind:"configured-site",reason:"configured point, not a device-position claim"};
+  const age=wxNumber(target.acquiredAt)!=null?now-target.acquiredAt:null;
+  if(target.intent==="device-position"&&target.source==="browser-geolocation"&&wxNumber(target.accuracyM,0,_WX_DEVICE_ACCURACY)!=null&&
+    age!=null&&age>=0&&age<=_WX_PRESENT_TTL) return {ok:true,kind:"device-position",reason:"actual recent browser fix within fixture point policy"};
+  return {ok:false,reason:"device/coarse target precision or original fix age unavailable"};
+}
+function admitWeatherFixture(raw,target,now=Date.now()){
+  const reject=reason=>({ok:false,reason,evidence:null});
+  if(raw==null) return reject("synthetic source unavailable");
+  if(!raw||raw.scope!=="simulation-fixture"||raw.provider!=="Synthetic QA"||raw.product!=="present/nearby contract"||raw.policy!=="synthetic-present-v1")
+    return reject("no qualified live present adapter; fixture identity required");
+  if(!weatherTargetSame(raw.target,target)) return reject("fixture belongs to another target generation");
+  const point=weatherPointTarget(target,now); if(!point.ok) return reject(point.reason);
+  const q=raw.quality||{}, f=raw.footprint||{}, p=raw.present||{};
+  if(q.status!=="qualified"||q.sampling!=="direct"||q.operationalHealth!=="operational"||f.kind!=="point"||f.coverage!=="target"||f.lat!==target.lat||f.lon!==target.lon)
+    return reject("local coverage/quality/operational health unavailable");
+  const measurementAt=wxNumber(raw.measurementAt,0,now), localObservationAt=wxNumber(q.localObservationAt,0,now), retrievedAt=wxNumber(raw.retrievedAt,0,now);
+  const from=wxNumber(raw.validFrom,0,now), until=wxNumber(raw.validUntil,0);
+  if(measurementAt==null||localObservationAt==null||retrievedAt==null||from==null||until==null||until<=now||until<=from||until-from>_WX_PRESENT_TTL||
+    measurementAt<from||measurementAt>=until||retrievedAt<measurementAt||now-measurementAt>_WX_PRESENT_TTL||now-localObservationAt>_WX_PRESENT_TTL||now-retrievedAt>_WX_PRESENT_TTL)
+    return reject("local source/valid/receipt time unavailable, future or expired");
+  if((raw.frameAt!=null&&wxNumber(raw.frameAt,0,now)==null)||(raw.issuedAt!=null&&wxNumber(raw.issuedAt,0,now)==null))
+    return reject("supplied frame/issue time invalid or future");
+  if(raw.units!=="categorical"||!["wet","dry","conflicting","unknown"].includes(p.state)||
+    !["rain","snow",null].includes(p.type??null)||!["observed","not-observed","unavailable"].includes(p.lightning)) return reject("categorical present units/state unavailable");
+  let quantity=null;
+  if(p.quantity!=null){
+    const a=p.quantity, value=wxNumber(a.value,0), start=wxNumber(a.from,0,now), end=wxNumber(a.to,0,now);
+    if(value==null||start==null||end==null||end<start||(a.kind==="amount"?a.units!=="mm"||end===start:a.kind!=="rate"||a.units!=="mm/h"))
+      return reject("quantity kind/units/measurement interval invalid");
+    quantity={kind:a.kind,value,units:a.units,from:start,to:end};
+  }
+  let spatial={state:"unavailable",reason:"no qualified surrounding evidence"}, approach=null;
+  if(raw.spatial){
+    const s=raw.spatial, distance=s.distanceKm;
+    if(!["nearby-precipitation","observed-area-no-echo"].includes(s.state)||wxNumber(s.observedAt,now-_WX_PRESENT_TTL,now)==null||
+      !Array.isArray(distance)||distance.length!==2||wxNumber(distance[0],0)==null||wxNumber(distance[1],distance[0])==null)
+      spatial={state:"unavailable",reason:"surrounding evidence interval unavailable"};
+    else{
+      spatial={state:s.state,distanceKm:distance.slice(),observedAt:s.observedAt,expiresAt:s.observedAt+_WX_PRESENT_TTL+1,reason:"qualified synthetic surrounding evidence"};
+      const a=raw.approach;
+      if(s.state==="nearby-precipitation"&&a&&a.derivedFrom==="qualified-fixture-trajectory"&&wxNumber(a.from,now)!=null&&wxNumber(a.to,a.from)!=null)
+        approach={from:a.from,to:a.to,derivedFrom:a.derivedFrom};       // no motion/ETA inferred from model wind or proximity
+    }
+  }
+  const expiresAt=Math.min(until,measurementAt+_WX_PRESENT_TTL+1,localObservationAt+_WX_PRESENT_TTL+1,retrievedAt+_WX_PRESENT_TTL+1,
+    point.kind==="device-position"?target.acquiredAt+_WX_PRESENT_TTL+1:Infinity);
+  return {ok:true,reason:"synthetic-present-v1: direct, operational target evidence",evidence:{scope:raw.scope,provider:raw.provider,product:raw.product,policy:raw.policy,
+    target:{...target,bounds:target.bounds?{...target.bounds}:null},measurementAt,localObservationAt,retrievedAt,validFrom:from,validUntil:until,expiresAt,
+    frameAt:wxNumber(raw.frameAt,0,now),issuedAt:wxNumber(raw.issuedAt,0,now),units:raw.units,footprint:{kind:"point",lat:f.lat,lon:f.lon,coverage:f.coverage},
+    quality:{status:q.status,sampling:q.sampling,operationalHealth:q.operationalHealth},pointPolicy:point.reason,
+    present:{state:p.state,type:p.type??null,lightning:p.lightning,quantity},spatial,approach}};
+}
+function weatherFixtureEligibility(e,target,now){
+  const eligible=!!(e&&e.scope==="simulation-fixture"&&e.policy==="synthetic-present-v1"&&weatherTargetSame(e.target,target)&&
+    weatherPointTarget(target,now).ok&&now>=e.validFrom&&now>=e.measurementAt&&now>=e.localObservationAt&&now>=e.retrievedAt&&now<e.expiresAt);
+  return {eligible,reason:eligible?null:"qualified present source expired, unavailable or belongs to another target"};
+}
+function weatherForecast(T,target,now){
+  if(!T||!weatherTargetSame(T.target,target)||wxNumber(T.retrievedAt,now-_WX_FORECAST_TTL,now)==null) return null;
+  const i=T.ep.findIndex(ep=>ep>now); if(i<0) return null;
+  return {provider:T.provider,product:T.product,validFrom:T.ep[i]-3600e3,validUntil:T.ep[i],issuedAt:null,retrievedAt:T.retrievedAt,
+    amount:{kind:"preceding-hour-amount",value:wxNumber(T.precipitation[i],0),units:"mm"},probability:null,probabilityEvent:null,
+    code:T.weather_code[i],resolution:"native/interpolated provenance unavailable"};
+}
+// Pure reconciliation. Source eligibility is an input; the closed live lane cannot gain present permissions.
+function reconcileWeatherEvidence({target,model,modelCategory,present,presentRejection=null,forecast=null,lane="live"},now){
+  const p=model?wxNumber(model.precip,0):null, interval=model?wxNumber(model.currentIntervalSec,Number.MIN_VALUE):null;
+  const modelState=p==null?"unknown":p>0?"wet":"dry";
+  const simulated=model&&model.src==="sim", interpolated=model&&model.src==="forecast";
+  const modelEvidence={state:modelState,provider:model?model.provider||(simulated?"Synthetic preview":"Open-Meteo"):null,
+    product:model?model.product||(simulated?"explicit simulation":interpolated?"hourly forecast preview":"current weather model"):null,
+    code:model?model.code:null,category:modelCategory,sourceValidAt:model?model.currentValidAt??null:null,retrievedAt:model?model.retrievedAt??null:null,
+    quantity:p==null?null:{kind:simulated?"synthetic-preview-amount":interpolated?"interpolated-preview-amount":"preceding-interval-amount",value:p,units:"mm",from:interval!=null&&model.currentValidAt!=null?wxNumber(model.currentValidAt-interval*1000):null,
+      to:model.currentValidAt??null,averageRateMmH:interval==null?null:wxNumber(p*3600/interval,0),instantaneous:false},
+    resolution:"native/interpolated provenance unavailable",spatialSupport:"model-grid precision unavailable"};
+  const eligible=lane==="simulation-fixture"?weatherFixtureEligibility(present,target,now):{eligible:false,reason:"no qualified live present adapter"};
+  const e=eligible.eligible?present:null, state=e?e.present.state:null;
+  const current=state==="wet"?"supported-wet":state==="dry"?"supported-dry":state==="conflicting"?"conflicting":state==="unknown"?"unknown":
+    modelState==="wet"?"model-estimated-wet":modelState==="dry"?"model-estimated-dry":"unknown";
+  const disagreement=!!(e&&(state==="wet"||state==="dry")&&modelState!=="unknown"&&state!==modelState);
+  const spatial=e?(e.spatial.expiresAt!=null&&now>=e.spatial.expiresAt?{state:"unavailable",reason:"surrounding source expired"}:e.spatial):{state:"unavailable",reason:"no qualified live surrounding adapter"};
+  const horizon=e&&e.approach&&spatial.state==="nearby-precipitation"&&now<=e.approach.to?{state:"approaching",arrival:{...e.approach}}:spatial.state==="nearby-precipitation"?{state:"nearby-without-arrival",arrival:null}:
+    forecast?{state:"numerical-forecast-only",arrival:null}:spatial.state==="observed-area-no-echo"?{state:"none-supported",arrival:null}:{state:"unknown",arrival:null};
+  const preview=lane==="preview", wet=state==="wet";
+  const permissions={rain:e?wet&&e.present.type==="rain":preview&&["drizzle","rain","thunder"].includes(modelCategory),
+    snow:e?wet&&e.present.type==="snow":preview&&modelCategory==="snow",lightning:e?wet&&e.present.type==="rain"&&e.present.lightning==="observed":preview&&modelCategory==="thunder",
+    expiresAt:e?e.expiresAt:null,reason:e?"qualified synthetic present "+state:preview?"explicit simulation/forecast preview":presentRejection||eligible.reason};
+  return {lane,target,current,model:modelEvidence,present:{available:!!e,reason:e?e.pointPolicy:presentRejection||eligible.reason,evidence:e},
+    disagreement,spatial,horizon,forecast,permissions:Object.freeze(permissions)};
+}
+function weatherDecision(now=Date.now()){
+  const target=currentWeatherTarget(), current=selectedWeather(now), preview=SIM.wx!=null||ADVANCING;
+  const synthetic=preview?weatherSynthetic:null, cache=_wxDecisionCache;
+  if(cache&&cache.target===target&&cache.current===current&&cache.track===weatherTrack&&cache.synthetic===synthetic&&cache.preview===preview&&now>=cache.at&&now<cache.until) return cache.decision;
+  const modelCode=gateWeatherCode(current?current.code:null,current,0), modelCategory=wxClass(modelCode), modelDowngrade=_wxDowngrade;
+  const forecast=weatherForecast(weatherTrack,target,now), lane=synthetic?"simulation-fixture":preview?"preview":"live";
+  const decision=reconcileWeatherEvidence({target,model:current,modelCategory,present:synthetic&&synthetic.ok?synthetic.evidence:null,
+    presentRejection:synthetic&&!synthetic.ok?synthetic.reason:null,forecast,lane},now), permission=decision.permissions;
+  // Permission withdrawal is immediate; cloud smoothing and the raw/model WMO code cannot retain particles.
+  decision.renderCode=permission.rain?(permission.lightning?95:63):permission.snow?73:
+    ["drizzle","rain","snow","thunder"].includes(modelCategory)?_coverCode(current):modelCode;
+  if(lane==="preview") decision.renderCode=modelCode;
+  decision.modelCode=modelCode; decision.modelDowngrade=modelDowngrade;
+  const e=synthetic&&synthetic.ok?synthetic.evidence:null;
+  const until=Math.min(current&&wxNumber(current.currentValidAt)!=null?current.currentValidAt+_WX_CURRENT_TTL+1:Infinity,
+    current&&wxNumber(current.retrievedAt)!=null?current.retrievedAt+_WX_CURRENT_TTL+1:Infinity,e&&e.expiresAt>now?e.expiresAt:Infinity,
+    e&&e.spatial.expiresAt>now?e.spatial.expiresAt:Infinity,e&&e.approach&&e.approach.to>=now?e.approach.to+1:Infinity,
+    forecast?Math.min(forecast.validUntil,forecast.retrievedAt+_WX_FORECAST_TTL+1):Infinity);
+  _wxDecisionCache={target,current,track:weatherTrack,synthetic,preview,at:now,until,decision}; return decision;
 }
 
 // ---- accurate Moon position & orientation (SunCalc core, BSD-2, github.com/mourner/suncalc) ----
@@ -2334,9 +2482,11 @@ function tieRainToClouds(){
 // Nothing here is keyed to a prayer NAME. paint(A) below is the ONLY place this state touches the DOM.
 function atmosphere(M){
   const day=isDayNow(M.nowMin);
-  const current=selectedWeather(), rawCode=current?current.code:null;
-  const code=gateWeatherCode(rawCode,current,radarPrecipNow());   // final live-particle permission is supplied by the weather-policy owner
-  const info=current?wxInfo(code,day):{cond:"clear",icon:"",label:"Weather unavailable"}, cls=wxClass(code), w=WX[cls];
+  const current=selectedWeather(), decision=weatherDecision(), code=decision.renderCode;
+  const description=wxInfo(code,day), modelDescription=wxInfo(decision.modelCode,day);
+  const info=decision.lane==="live"?{...description,icon:current?"≈":"?",label:current?"Model estimate: "+modelDescription.label+"; local precipitation unobserved":"Weather unavailable"}:
+    {...description,label:decision.lane==="simulation-fixture"?"SIM "+decision.current+"; "+decision.permissions.reason:"SIM weather preview: "+description.label};
+  const cls=wxClass(code), w=WX[cls];
   const sm=sunMetrics(M);                                       // genuine solar altitude (deg) + screen x/y
   const S=physSky(M, sm);                                       // sky colours DERIVED from solar elevation
   const D=wxDrivers(current);                                   // the same eligible snapshot supplies every weather consumer
@@ -2461,9 +2611,10 @@ function atmosphere(M){
   // SIMULATED presence (true aurora needs Kp/solar-wind data we don't have) — gated so it NEVER shows at low lat.
   const aurDark=clamp(-(sm.altDeg+8)/6);   // needs a genuinely DARK sky (sun ≲ −10°): no aurora in bright twilight/white nights
   const aurora=(Math.abs(+lat||0)>=55?clamp((Math.abs(+lat||0)-55)/12):0)*aurDark*clamp(1-1.5*clLow)*(1-0.55*moonStrength)*(1-0.7*LPOLL)*0.5;
-  // precipitation AMOUNT (mm) → rain-streak opacity: light drizzle faint, heavy rain bold (was fetched-but-unused).
-  const pmm=current&&current.precip!=null?current.precip:null;
-  const rainOp=pmm==null?0.72:clamp(0.42+0.6*clamp((pmm-0.1)/6));
+  // Intensity changes only an already permitted effect. A model amount cannot grant present precipitation.
+  const presentQuantity=decision.present.evidence&&decision.present.evidence.present.quantity;
+  const pmm=decision.lane==="preview"&&current?wxNumber(current.precip,0):presentQuantity&&presentQuantity.kind==="amount"?presentQuantity.value:null;
+  const rainOp=decision.permissions.rain||decision.permissions.snow?(pmm==null?0.72:clamp(0.42+0.6*clamp((pmm-0.1)/6))):0;
   // ——— CORNER-SUN TONE-MAPPING (scene-referred radiance → Kasten–Young airmass + Beer–Lambert + per-class cloud
   // transmittance + CCT blackbody → ACES). LIFTED here from paint() so paint() only WRITES --suncore/--sunmid
   // (render-boundary purity). Math is byte-identical to the old paint() block; inputs (sm.altDeg, D.haze ≡ the
@@ -2487,7 +2638,7 @@ function atmosphere(M){
     illumination:moonlight,beam:0.6*moonlight,cloudLight:moonlight,localStarWash:moonLocalWash,localGlow:moonGlow,halo:lunarHalo,corona:lunarCorona,paraselenae:moonParhelia})});
   return {
     // —— physical drivers (the source of truth) ——
-    day, cls, info, code, wxTemp: current?current.temp:null,
+    day, cls, info, code, weatherDecision:decision, wxTemp: current?current.temp:null,
     solarElevationDeg: sm.altDeg, skyLuminance: skyLum(sm.altDeg), sunX: sm.x, sunY: sm.y,
     sunCoreRGB, sunMidRGB, sunCloudT: _Tcloud,                   // tone-mapped corner-sun nucleus + body + cloud transmittance (paint() writes --suncore/--sunmid and uses sunCloudT for --sunray)
     moonPhase: mFrac, moonAltitude: moonSky.alt, moonHourAngle: moonSky.H, moonObservation,moonSkyFresh:moonObservation.fresh,
@@ -2610,7 +2761,7 @@ function paint(A){
   c.style.setProperty("--wind-dir", A.windDirSign>=0?"1":"-1"); // wind FROM the west ⇒ clouds drift east(+)
   c.style.setProperty("--rain-slant",A.rainSlant.toFixed(0)+"px");
   c.style.setProperty("--snow-slant",A.snowSlant.toFixed(0)+"px");
-  c.style.setProperty("--rain-op",A.rainOp.toFixed(3));        // rain-streak opacity scales with precipitation amount (mm)
+  c.style.setProperty("--rain-op",A.rainOp.toFixed(3));        // zero immediately without present/explicit preview permission
   applyCloudState(A);   // MUTATE the shared cloud-canvas state (ease/snap coverage, wind, tints, sun/moon lighting) — a render-layer SIDE EFFECT kept out of the pure sky-CSS writes (extracted from paint for SRP; identical code, same call site)
   c.style.setProperty("--ray",A.rayIntensity.toFixed(3));
   c.style.setProperty("--grain",A.grainStrength.toFixed(3));
@@ -2630,7 +2781,7 @@ function paint(A){
   c.style.setProperty("--mcorona",Math.min(0.9,1.15*A.lunarCorona).toFixed(3)); // droplet corona aureole — only with thin water cloud / fog / humidity
   // (cloud morphology is no longer rewritten per class — the low/mid/high LAYERS carry the morphology; the
   //  turbulence filters are static, and only the per-layer coverage opacities + drift transforms change.)
-  const wi=$("#wi"); wi.textContent=A.info.icon; wi.title=A.info.label;
+  const wi=$("#wi"); wi.textContent=A.info.icon; wi.title=A.info.label; wi.setAttribute("role","img"); wi.setAttribute("aria-label",A.info.label);
   $("#wt").textContent=A.wxTemp!=null?`${A.wxTemp}°`:"";
   if(DEBUGLAYERS){ const dl=$(".dbglayers");
     if(dl){ if(dl.style.display!=="block") dl.style.display="block";
@@ -2791,15 +2942,23 @@ window.qaState=function(){
     sunEl:+(A.solarElevationDeg||0).toFixed(1),
     wx:{code:current?current.code:null, cloud:current&&current.cloud!=null?Math.round(current.cloud):null, temp:current?current.temp:null, rh:current&&current.rh!=null?Math.round(current.rh):null, vis:current?current.vis:null, wind:current&&current.wind!=null?+current.wind.toFixed(1):null},
     // ── WEATHER TRUTHFULNESS diagnostics: why the widget is / isn't showing rain or thunder ──
-    wxTruth:(()=>{ const raw=current?current.code:null, rp=radarPrecipNow(), g=gateWeatherCode(raw,current,rp), p=current?wxNumber(current.precip,0):null, radar=radarEvidence();
+    wxTruth:(()=>{ const raw=current?current.code:null, decision=weatherDecision(), p=current?wxNumber(current.precip,0):null, radar=radarEvidence();
       const fc=(()=>{ try{ const w=weatherTrack?wxAt(simNow()):null; return w?w.code:null; }catch(e){ return null; } })();
-      return { currentWeatherSource: current?(current.src||"current")+(current.src==="sim"?" (simulation)":" (Open-Meteo model estimate)"):"none (current unavailable)", forecastTrackSource: weatherTrack?"Open-Meteo hourly (forecast — sim/fast-forward only)":"none",
-        radarSource: weatherRadar?weatherRadar.source:"none (RainViewer unavailable / sim / coverage gap)", radarPrecipMm:0, radarAgeSec:radar.receiptAgeMs==null?null:Math.round(radar.receiptAgeMs/1000),
+      return { currentWeatherSource: current?(current.src||"current")+(current.src==="sim"?" (simulation)":" (Open-Meteo model estimate)"):"none (current unavailable)", forecastTrackSource: weatherTrack?"Open-Meteo hourly (forecast; particles in explicit preview only)":"none",
+        radarSource: weatherRadar?weatherRadar.source:"none (RainViewer unavailable / simulation)", radarPrecipMm:0, radarAgeSec:radar.receiptAgeMs==null?null:Math.round(radar.receiptAgeMs/1000),
         radarFrameAgeSec:radar.frameAgeMs==null?null:Math.round(radar.frameAgeMs/1000), radarAvailable:radar.available, radarConfirming:false,
         radarDiagnostic:weatherRadar?weatherRadar.sample:null, radarQuantitativeReason:"unavailable: uncalibrated palette/alpha; no on-site precipitation or lightning authority",
         requests:{weather:_wxRequests.weather,radar:_wxRequests.radar},
-        rawCode: raw, rawForecastCode: fc, observedPrecipMm:null, modelPrecipMm:p, effectivePrecipMm:p==null?null:+p.toFixed(2), activePrecip:p!=null&&p>=_PRECIP_MIN, activeThunder:(wxClass(raw)==="thunder"&&p!=null&&p>=_THUNDER_MIN),
-        displayCondition: wxClass(g), finalDataFx: (document.querySelector(".c").dataset.fx||null), downgradeReason: _wxDowngrade||null, advancing: ADVANCING, cloudFieldSeed: _cloudFieldSeed }; })(),
+        target:{...decision.target,fixAgeMs:decision.target.acquiredAt==null?null:Date.now()-decision.target.acquiredAt},
+        current:decision.current,model:decision.model,present:decision.present,disagreement:decision.disagreement,
+        spatial:decision.spatial,horizon:decision.horizon,forecast:decision.forecast,permissions:decision.permissions,lane:decision.lane,
+        localObservationAgeMs:decision.present.evidence?Date.now()-decision.present.evidence.localObservationAt:null,
+        localOperationalHealth:decision.present.evidence?decision.present.evidence.quality.operationalHealth:"unknown",
+        rawCode:raw,rawForecastCode:fc,observedPrecipMm:decision.present.evidence&&decision.present.evidence.present.quantity&&decision.present.evidence.present.quantity.kind==="amount"?decision.present.evidence.present.quantity.value:null,
+        modelPrecipMm:p,effectivePrecipMm:decision.lane==="preview"?p:null,activePrecip:decision.permissions.rain||decision.permissions.snow,activeThunder:decision.permissions.lightning,
+        displayCondition:wxClass(decision.renderCode),modelCondition:wxClass(decision.modelCode),finalDataFx:(document.querySelector(".c").dataset.fx||null),
+        downgradeReason:decision.lane==="live"?decision.permissions.reason:decision.modelDowngrade||decision.permissions.reason,
+        modelGateReason:decision.modelDowngrade||null,advancing:ADVANCING,cloudFieldSeed:_cloudFieldSeed }; })(),
     // ── CACHE / STALE-STATE diagnostics (BASE): what may be stale and how old ──
     cache:(()=>{ const eligibility=weatherEligibility(weather), wxAge=eligibility.receiptAgeMs==null?null:Math.round(eligibility.receiptAgeMs/1000);
       return { weatherSource: weather?(weather.src||"current"):"none", weatherAgeSec:wxAge, weatherSourceAgeSec:eligibility.sourceAgeMs==null?null:Math.round(eligibility.sourceAgeMs/1000),
