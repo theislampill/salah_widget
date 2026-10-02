@@ -195,9 +195,15 @@
     ];
     return (function next(i) {
       if (i >= providers.length) return Promise.resolve({ ok: false, source: "coarse-ip", status: "failed" });
-      var p = providers[i], ac = new AbortController(), to = setTimeout(function () { ac.abort(); }, timeoutMs);
-      return fetch(p.url, { signal: ac.signal, mode: "cors", referrerPolicy: "no-referrer", cache: "no-store" })
-        .then(function (r) { clearTimeout(to); if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+      var p = providers[i], ac = new AbortController(), to;
+      // Headers are not completion: the deadline owns the whole body/parse wait.
+      // Reject as well as abort so an abort-ignorant body cannot hold fallback.
+      var deadline = new Promise(function (_, reject) {
+        to = setTimeout(function () { reject(new Error("coarse location timeout")); ac.abort(); }, timeoutMs);
+      });
+      var work = Promise.resolve().then(function () {
+        return fetch(p.url, { signal: ac.signal, mode: "cors", referrerPolicy: "no-referrer", cache: "no-store" });
+      }).then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
         .then(function (j) {
           var d = p.parse(j);
           if (d.lat == null || d.lon == null || isNaN(d.lat) || isNaN(d.lon)) throw new Error("no coords");
@@ -205,8 +211,10 @@
             tz: tzIntl || d.tz || "", method: methodForCC(d.cc), units: unitsForCC(d.cc), source: "coarse-ip" });
           cfg.source = "coarse-ip"; cfg.detectProvider = p.name; cfg.accuracy = d.accuracy; cfg.area = d.area || cfg.label;
           return { ok: true, cfg: cfg, source: "coarse-ip", provider: p.name, status: "ok" };
-        })
-        .catch(function () { clearTimeout(to); return next(i + 1); });
+        });
+      // The race handles late work without another fallback or adoption effect.
+      return Promise.race([work, deadline]).then(function (result) { clearTimeout(to); return result; },
+        function () { clearTimeout(to); return next(i + 1); });
     })(0);
   }
 
