@@ -27,8 +27,26 @@ for(const frac of ['.08','.5','.92','1'])test('eligible '+frac+' matches baselin
 for(const [name,altitude,time] of [['daylight',20,'12:30'],['below horizon',-10,'22:00']])test(name+' keeps solar/sky/calendar outputs unchanged',()=>{
   const before=scene(baseline,'1',altitude,time),after=scene(candidate,'1',altitude,time);assert.deepEqual(after.css,before.css);
 });
-for(const [name,start,end] of [['PBR','function renderMoonPBR(','function moonNow('],['cloud raster','function paintClouds(','// ---- ATMOSPHERE STATE']])test(name+' source remains byte-identical',()=>{
+// R0025 intentionally changes travel/population/time and periodic copy orchestration.
+// Protect the unchanged art, with an explicit mutation control, instead of requiring
+// the entire old painter (and its epoch jump) to remain byte-identical.
+const protectedCloudParts=[['puff template','const _PUFF=[','function _drawPuff('],['puff shader','function _drawPuff(','// CLOUD ENGINE — clouds are']];
+for(const [name,start,end] of [['PBR','function renderMoonPBR(','function moonNow('],...protectedCloudParts])test(name+' source remains byte-identical',()=>{
   const part=s=>s.slice(s.indexOf(start),s.indexOf(end,s.indexOf(start)));assert.ok(part(baseline).length>100);assert.equal(part(candidate),part(baseline));
+});
+const decks=s=>{const start=s.indexOf('const decks=[',s.indexOf('function paintClouds('));assert.ok(start>0);return s.slice(start,s.indexOf('];',start)+2);};
+test('cloud deck sizes/bands/opacity/slots remain identical',()=>assert.equal(decks(candidate),decks(baseline)));
+const lighting=s=>{const start=s.indexOf('const sux=S.sunX*W-cx',s.indexOf('function paintClouds(')),end=s.indexOf('_drawPuff(ctx,px,py,pr,col,aBase);',start);assert.ok(start>0&&end>start);return s.slice(start,end).split('\n').map(l=>l.trim()).join('\n');};
+test('cloud colour/volume/sun/moon lighting equations remain identical',()=>assert.equal(lighting(candidate),lighting(baseline)));
+test('cloud growth/radius/coverage gate equations remain identical',()=>{
+  for(const prefix of ['const base=[tint','const gate=clamp((cov','const aMul=life*gate','const R=R0*']){
+    const line=s=>s.split('\n').map(l=>l.trim()).find(l=>l.startsWith(prefix));assert.ok(line(baseline));assert.equal(line(candidate),line(baseline));
+  }
+});
+test('protected cloud shader guard catches a flattened core gradient',()=>{
+  const start='function _drawPuff(',end='// CLOUD ENGINE — clouds are',part=s=>s.slice(s.indexOf(start),s.indexOf(end,s.indexOf(start)));
+  const shader=part(candidate),anchor='g.addColorStop(0.5';assert.ok(shader.includes(anchor));
+  assert.notEqual(part(candidate.replace(anchor,'g.addColorStop(0.4')),part(baseline));
 });
 const arcPart=s=>{const start=s.indexOf('function drawArc('),end=s.indexOf('// ---- continuous time-of-day sky',start);assert.ok(start>=0&&end>start);return s.slice(start,end);};
 test('solar arc source matches exact accepted R000A reference',()=>assert.equal(arcPart(candidate),arcPart(acceptedPrayer)));

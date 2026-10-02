@@ -154,8 +154,19 @@ body{color:#fff7df;
 /* battery: a 24/7 iframe must not repaint when the user can't see it. Paused when the tab is hidden
    OR the widget is scrolled offscreen (set by an IntersectionObserver + visibilitychange in JS). */
 .c.paused *,.c.paused{animation-play-state:paused!important}
+/* A pending target has no visible celestial/weather defaults. Prayer and settings stay usable.
+   The accepted first paint resolves real styles under this local transition suppression. */
+.c.sky-pending{background:#101725}
+.c.sky-pending .sky,.c.sky-pending .atmo,.c.sky-pending .wfx,.c.sky-pending .climate,.c.sky-pending .grain,.c.sky-pending .scrim{visibility:hidden}
+.c.sky-initializing,.c.sky-initializing .sky *,.c.sky-initializing .atmo *,.c.sky-initializing .wfx *,.c.sky-initializing .climate *,.c.sky-initializing .scrim{transition:none!important}
+.c:not(.moon-ready) .moon{visibility:hidden}
 .milkyway{opacity:var(--mw,0);transform-box:fill-box;transform-origin:center;transform:rotate(var(--mwtilt,0deg));transition:opacity 1.6s ease,transform 4s linear}
 .moon{opacity:var(--moongrp,1);transition:opacity 1.2s,transform 1.6s linear}   /* --moongrp = lunar-CALENDAR presence: kept >0 every night (subtle ashen "calendar moon" even near-new / below horizon) so the slot is never empty; physical moonlight is a SEPARATE var (--moonbeam). transform eases so the moon GLIDES along its path */
+.moon-mask-geometry{transition:transform 1.6s linear}
+/* Filtered stars/glints/dust are cut out independently of the moon group's twilight fade.
+   Keep the binary cutout through that existing 1.2s withdrawal; fast mode snaps both. */
+.moon-mask-disc{opacity:0;transition:opacity 0s linear 1.2s}
+.moon-mask-disc.mask-on{opacity:1;transition-delay:0s}
 .mbeam{fill:#cdd9f5;filter:blur(26px);mix-blend-mode:screen;opacity:var(--moonbeam,0);transition:opacity 1.4s}  /* directional moonlight: present only for a real above-horizon moon */
 /* debug fast-forward: a small simulated-clock read-out, only shown when ?timeScale= is set */
 .simclock{position:absolute;left:8px;top:6px;z-index:6;display:none;font:10px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#fff;background:rgba(8,11,20,.55);padding:2px 7px;border-radius:7px;letter-spacing:.02em;pointer-events:none;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
@@ -428,7 +439,7 @@ body{color:#fff7df;
 </style>
 </head>
 <body>
-<div class="c">
+<div class="c sky-pending sky-initializing">
   <div class="simclock" aria-hidden="true"></div>
   <div class="dbglayers" aria-hidden="true"></div>
   <div class="dbgmoon" aria-hidden="true"></div>
@@ -472,10 +483,16 @@ body{color:#fff7df;
         <stop offset="84%" stop-color="#ffc4a4" stop-opacity=".2"/>
         <stop offset="100%" stop-color="#ffc4a4" stop-opacity="0"/>
       </radialGradient>
+      <mask id="stellar-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="325" height="530" style="mask-type:luminance">
+        <rect width="325" height="530" fill="white"/>
+        <g class="moon-mask-geometry" transform="translate(250 64) scale(0.62)"><circle class="moon-mask-disc" r="46.08" fill="black"/></g>
+      </mask>
     </defs>
-    <g class="milkyway"></g>
-    <g class="stars"></g>
-    <g class="starglints"></g>
+    <g class="stellar-background" mask="url(#stellar-cutout)">
+      <g class="milkyway"></g>
+      <g class="stars"></g>
+      <g class="starglints"></g>
+    </g>
     <g class="moon" transform="translate(250 64) scale(0.62)">
       <circle class="mbeam" r="135"/>                 <!-- moonlight cast on the sky (only a real, above-horizon moon) -->
       <circle class="mhalo" r="120"/>                 <!-- 22° ICE-crystal halo ring (cirrus); shown only with thin high cloud -->
@@ -490,9 +507,9 @@ body{color:#fff7df;
   </svg>
 
   <div class="wfx" id="wxfx" aria-hidden="true">
-    <!-- CLOUD DECKS: an evolving 3D-noise density field painted to a small canvas (see the CLOUD ENGINE in JS).
-         Wind advects it while the time-axis morphs it in place — live cloud, not a scrolled static texture.
-         The buffer is tiny (72×118); CSS upscales + blurs it, which also hides any pixel structure. -->
+    <!-- CLOUD DECKS: soft puff clusters with noise-driven lifecycle on a small canvas (see CLOUD ENGINE).
+         Bounded wind travel and morphology keep each accepted population continuous.
+         The buffer is tiny (144×232); CSS upscales + blurs it, which also hides any pixel structure. -->
     <canvas class="cloudcanvas" width="144" height="232" aria-hidden="true"></canvas>
     <div class="veil"></div>
     <div class="sunhaze"></div>
@@ -1495,7 +1512,7 @@ const _MTW=160,_MTH=80,_MN=300,_MR=144,_RELIEF=1.9,_EXPO=1.55;   // _MN 300: hea
 let _mAlb=null,_mNrm=null,_moonCv=null,_moonCtx=null,_moonOut=null,_pbrReady=false,_pbrPending=null,_lastPbrFrac=-1,_lastPbrWax=null;
 (function loadMoonMaps(){
   function grab(src,cb){ const im=new Image(); im.onload=()=>{ const cv=document.createElement("canvas"); cv.width=_MTW; cv.height=_MTH; const cx=cv.getContext("2d"); cx.drawImage(im,0,0,_MTW,_MTH); cb(cx.getImageData(0,0,_MTW,_MTH).data); }; im.src=src; }
-  const done=()=>{ if(_mAlb&&_mNrm){ _pbrReady=true; if(_pbrPending!=null){ const p=_pbrPending; _pbrPending=null; renderMoonPBR(p.frac, p.waxing); } } };
+  const done=()=>{ if(_mAlb&&_mNrm){ _pbrReady=true; if(_pbrPending!=null){ const p=_pbrPending; _pbrPending=null; renderMoonPBR(p.frac, p.waxing); } updateSkySurface(); } };
   try{ grab(MOON_ALBEDO,d=>{_mAlb=d;done();}); grab(MOON_NORMAL,d=>{_mNrm=d;done();}); }catch(e){}
 })();
 function renderMoonPBR(frac, waxing){
@@ -1630,7 +1647,11 @@ function renderMoon(){
   const x=268 + hd*1.5;                                            // centred so the WHOLE disc has comfortable margin on the right (≈5px) — a thin WAXING crescent's lit right limb is clearly in frame, not at the edge — while the left limb clears the temperature strap row below
   const y=55 + 3*sweep - clamp((alt-6)/70)*3;                      // ≈55-58: dropped below the temp strap (y19-37) and above the arc (top y≈121 on the right) — its wide middle clears the strap, so the disc is large AND fully on-card
   const scale=1.11 + 0.02*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
-  const g=$(".moon"); if(g) g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`);
+  const transform=`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`;
+  const g=$(".moon"); if(g) g.setAttribute("transform",transform);
+  const mask=$(".moon-mask-geometry"); if(mask) mask.setAttribute("transform",transform);
+  const maskDisc=$(".moon-mask-disc"),photo=$(".mphoto");
+  if(maskDisc) maskDisc.setAttribute("r",(_MR*(+(photo&&photo.getAttribute("width"))||96)/_MN).toFixed(3));
   const feat=$(".mfeatures"); if(feat) feat.removeAttribute("transform");   // moon is upright (no parallactic rotation); the lit side is baked by renderMoonPBR per waxing/waning
   const gl=$(".mglow"); if(gl) gl.setAttribute("r",(56+34*frac).toFixed(1));   // geometry only; atmospheric glow permission is consumed from AtmosphereState in paint()
   const stamp=moonGeometryIdentity(date),valid=[alt,Hm,frac,up,x,y].every(Number.isFinite);
@@ -1652,11 +1673,16 @@ function renderMoon(){
 // (stars rise east, transit, set west), brightness follows a magnitude cascade + horizon EXTINCTION, and
 // scintillation rises toward the horizon. ?seed= varies the synthetic draw. NOT a fixed screen wallpaper.
 function _mb32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
-let _starCat=null, _starEls=[], _starsProjected=false, _brightIdx=[], _glintEls=[];
+let _starCat=null, _starEls=[], _starsProjected=false, _starProjectionKey=null, _brightIdx=[], _glintEls=[];
 let _starBase=[], _glintStarIdx=[], _starLightKey=null;        // held positions/extinction, refreshed light appearance
 const _SKYX=162, _SKYY=-30, _SKYR=270, _SKYK=0.8;            // azimuthal-equidistant dome anchor (zenith above card)
 function projectStars(date){
   if(!_starCat||!_starEls.length) return;
+  const key=skySceneIdentity();
+  if(key===null || !Number.isFinite(date.getTime())){
+    for(const el of [..._starEls,..._glintEls]) el.style.display="none";
+    _starProjectionKey=null; _starsProjected=false; return;
+  }
   const d=_toDays(date), lst=_sid(d,_RAD*-(+lon||0)), ph=_RAD*(+lat||0), sp=Math.sin(ph), cp=Math.cos(ph);
   for(let i=0;i<_starCat.length;i++){
     const s=_starCat[i], el=_starEls[i]; if(!el) continue;
@@ -1688,6 +1714,7 @@ function projectStars(date){
     g.style.setProperty("--go",op.toFixed(3)); g.style.opacity=op.toFixed(3);   // --go = the glint's base opacity; the glintpulse animation scintillates around it
   }
   _starLightKey=null;
+  _starProjectionKey=key; _starsProjected=true;
 }
 // Appearance changes independently of projection: ordinary real time holds star positions,
 // but must release yesterday's/earlier moon wash when phase, altitude or daylight permission changes.
@@ -1751,7 +1778,42 @@ function buildStars(){
   const glg=document.querySelector(".starglints");
   _brightIdx=_starCat.map((st,i)=>i).filter(i=>_starCat[i].mag<0.7);   // glint pool: a bit wider than the halo set, so 2–3 glints are usually on screen
   if(glg){ glg.innerHTML=Array.from({length:6},(_,k)=>`<g style="animation:glintpulse ${(2.4+0.7*k).toFixed(1)}s ease-in-out ${(-0.9*k).toFixed(1)}s infinite"><line x1="-7" y1="0" x2="7" y2="0"/><line x1="0" y1="-7" x2="0" y2="7"/></g>`).join(""); _glintEls=[...glg.querySelectorAll("g")]; }   // each glint pulses at its own phase/rate (see @keyframes glintpulse), modulating its projected base opacity --go
-  projectStars(simDate()); _starsProjected=true;
+  _starProjectionKey=null; _starsProjected=false; projectStars(simDate());
+}
+
+// Accepted target/explicit anchor, not ticking sidereal time. Ordinary positions remain held.
+function skySceneIdentity(){
+  if(lat==null || lon==null || !Number.isFinite(+lat) || !Number.isFinite(+lon) || !Number.isFinite(simNow())) return null;
+  return [lat,lon,tz,FOLLOW_WALL_CLOCK?"wall":[_simBase,_simTz,_rafT0,TIMESCALE].join(":")].join("|");
+}
+let _skySceneKey=null,_skyCommitted=false,_skyMoonPresence=0;
+// PRAYER owns calls at boot and after accepted configuration invalidation, before builders.
+function beginSkyScene(){
+  const c=$(".c"); if(c){ c.classList.add("sky-pending","sky-initializing"); c.classList.remove("moon-ready"); }
+  _skySceneKey=null; _skyCommitted=false; _skyMoonPresence=0; _starsProjected=false;
+  _cloudReady=false; cloudState.covLow=cloudState.covMid=cloudState.covHigh=0;
+  _cloudDirty=true; if(_colDens) _colDens.fill(0);
+  if(_cloudCtx&&_cloudCv) _cloudCtx.clearRect(0,0,_cloudCv.width,_cloudCv.height);
+  updateSkySurface();
+}
+// The real map completion calls this after the PBR href exists, including a frozen preview.
+// Failed/deferred decode keeps only the surface unavailable; it never stalls usable UI/sky.
+function updateSkySurface(){
+  const c=$(".c"),photo=$(".mphoto"),mask=$(".moon-mask-disc");
+  const ready=!!(_pbrReady && photo && photo.getAttribute("href") && _skySceneKey!==null);
+  if(c) c.classList.toggle("moon-ready",ready);
+  if(mask) mask.classList.toggle("mask-on",ready && _skyMoonPresence>0);
+}
+function commitSkyScene(A){
+  if(_skyCommitted || _skySceneKey===null || !A.moonObservation || A.moonObservation.fresh!==true || _starProjectionKey!==_skySceneKey) return;
+  paintClouds(simNow()/1000); tieRainToClouds();
+  const c=$(".c");
+  // Resolve both transform twins and typed sky colours before restoring transitions.
+  for(const selector of [".moon",".moon-mask-geometry",".suncorner",".c"]){
+    const el=$(selector); if(el){ const style=getComputedStyle(el); style.getPropertyValue("transform"); style.getPropertyValue("--g1"); }
+  }
+  c.classList.remove("sky-pending"); c.getBoundingClientRect();
+  c.classList.remove("sky-initializing"); _skyCommitted=true;
 }
 
 // build the animated weather overlay once (deterministic positions, no RNG)
@@ -2096,12 +2158,12 @@ const WX={
   thunder: {tint:[46,36,74],    ts:.50, gs:.18, hs:.16,st:.16, mn:.46, blur:.6,  at:[172,154,236], as:.70},
 };
 
-// ---- CLOUD ENGINE: an evolving density field on a small canvas (NOT a static texture being scrolled) ----
-// The old SVG feTurbulence deck was a FROZEN noise field advected by translateX — it read as a sliding photo
-// with tile seams. This replaces it with multi-octave 3D value-noise FBM whose THIRD axis is TIME: the field
-// MORPHS in place (clouds form/erode) while wind ADVECTS it in x/y. Together = live cloud, no scroll, no seam.
-// Coverage (low/mid/high, from the forecast) thresholds each deck. The buffer is tiny (72×118) and CSS-upscaled
-// + blurred, so it's cheap; a clear sky paints nothing. Time = simNow(), so fast-forward speeds cloud evolution.
+// ---- CLOUD ENGINE: evolving soft puff clusters on a small canvas ----
+// Coverage selects low/mid/high clusters; value-noise drives their birth/erosion and wander.
+// Bounded phases integrate wind travel independently of that morphology and retain the population.
+// The buffer is tiny (144×232) and CSS-upscaled
+// + blurred, so it's cheap; a clear sky paints nothing. Monotonic visual intervals consume the existing
+// preview rate; they never replace CLOCK's authoritative civil/prayer/solar time.
 const _h3=(x,y,z)=>{ let n=Math.imul((x|0),374761393)+Math.imul((y|0),668265263)+Math.imul((z|0),1274126177); n=Math.imul(n^(n>>>13),1274126177); return ((n^(n>>>16))>>>0)/4294967295; };
 function _vn3(x,y,z){ const xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z),xf=x-xi,yf=y-yi,zf=z-zi;
   const u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),w=zf*zf*(3-2*zf);
@@ -2117,9 +2179,9 @@ const _ssc=(a,b,x)=>{ x=(x-a)/(b-a); x=x<0?0:x>1?1:x; return x*x*(3-2*x); };
 // shifts — without any keyframe/bounce loop (value-noise on a monotonic time axis never repeats).
 function _airDrift(){ const td=simNow()/1000/1400, sd=(+lat||0)*0.131+(+lon||0)*0.071;
   let s=0,a=0.5,fr=1,n=0; for(let i=0;i<3;i++){ s+=a*_vn3(td*fr, sd, 11.7); n+=a; fr*=2.07; a*=0.5; } return s/n; }
-// CONTINUITY: the cloud field has a STABLE identity (location + day + optional ?seed) so the same place always
-// grows the same cloud population — it is advected/eroded smoothly, never reseeded on a weather refresh or render.
-const _cloudFieldSeed=((Math.abs(+lat||0)*12.9+Math.abs(+lon||0)*7.31+(+q.get("seed")||0)*4.7)%617);
+// The initial day's seed is captured ONCE per accepted signed target/explicit preview anchor.
+// Weather refresh and ordinary UTC/month/year changes retain that population.
+let _cloudFieldSeed=0;
 let _cloudReady=false;   // false until the deck is first established (then coverage changes EASE instead of snapping)
 // covLow/Mid/High are the LIVE coverages the renderer uses; tgt* are the targets from the latest weather. The live
 // values EASE toward the targets (paint) so a coverage change (15-min refetch) grows/erodes the deck smoothly
@@ -2128,6 +2190,48 @@ let cloudState={covLow:0,covMid:0,covHigh:0,tgtLow:0,tgtMid:0,tgtHigh:0,wx:-0.7,
   tLow:[208,214,226],tMid:[232,236,243],tHi:[233,238,247],sunX:0.5,sunY:0.3,sunUp:0,
   sunCol:[255,247,232],moonCol:[206,220,246],moonX:0.84,moonY:0.1,moonLit:0};
 let _cloudCv=null,_cloudCtx=null,_cloudImg=null,_cloudDirty=true,_colDens=null;
+const _CLOUD_NOISE_PERIOD=4294967296,_CLOUD_WRAP=1.25;
+const _cloudWrap=(v,p)=>{ const r=v%p; return r<0?r+p:r; };
+const _cloudMotion={key:null,population:0,lastRt:null,phase:[0,0,0],life:[0,0,0],wander:0,paused:false,reduced:null};
+function cloudSceneIdentity(){
+  if(lat==null || lon==null || !Number.isFinite(+lat) || !Number.isFinite(+lon)) return null;
+  const seed=Number.isFinite(+q.get("seed"))?+q.get("seed"):0;
+  return [lat,lon,seed,FOLLOW_WALL_CLOCK?"wall":[_simBase,_simTz,_rafT0,TIMESCALE].join(":")].join("|");
+}
+function syncCloudMotionPreference(reduced,rt=_RAFNOW()){
+  if(_cloudMotion.reduced!==reduced){ _cloudMotion.reduced=reduced; _cloudMotion.lastRt=rt; _cloudDirty=true; }
+}
+function rebaseCloudMotion(paused){
+  _cloudMotion.paused=paused; _cloudMotion.lastRt=_RAFNOW();
+}
+function advanceCloudMotion(civilSeconds){
+  const rt=_RAFNOW(),key=cloudSceneIdentity();
+  if(key===null || !Number.isFinite(civilSeconds) || !Number.isFinite(rt)){ _cloudMotion.lastRt=null; return false; }
+  if(key!==_cloudMotion.key){
+    const seed=Number.isFinite(+q.get("seed"))?+q.get("seed"):0;
+    _cloudFieldSeed=_cloudWrap(+lat*12.9+ +lon*7.31+seed*4.7,617);
+    _cloudMotion.key=key; _cloudMotion.population=_cloudWrap(_cloudFieldSeed+Math.floor(civilSeconds/86400)*3.13,617);
+    _cloudMotion.phase.fill(0); // Never velocity times epoch or accumulated session age.
+    for(let di=0;di<3;di++) _cloudMotion.life[di]=_cloudWrap(civilSeconds*(0.018+di*0.004),_CLOUD_NOISE_PERIOD);
+    _cloudMotion.wander=_cloudWrap(civilSeconds*0.011,_CLOUD_NOISE_PERIOD);
+    _cloudMotion.lastRt=rt; _cloudMotion.reduced=isMotionReduced(); return true;
+  }
+  syncCloudMotionPreference(isMotionReduced(),rt);
+  const elapsed=_cloudMotion.lastRt===null?0:(rt-_cloudMotion.lastRt)/1000; _cloudMotion.lastRt=rt;
+  // Hidden/reduced periods and missing-frame gaps >2s are suspension, not a travel backlog.
+  // Healthy intervals keep the old artistic rates; accelerated preview scales those intervals.
+  if(_cloudMotion.paused || _cloudMotion.reduced || elapsed<=0 || elapsed>2) return true;
+  const rate=FOLLOW_WALL_CLOCK?1:(Number.isFinite(TIMESCALE)?Math.max(0,TIMESCALE):0),dt=elapsed*rate;
+  if(!Number.isFinite(dt)) return true;
+  const wind=cloudState.wx*cloudState.wspd;
+  for(let di=0;di<3;di++){
+    const distance=wind*dt*(0.024+di*0.006);
+    if(Number.isFinite(distance)) _cloudMotion.phase[di]=_cloudWrap(_cloudMotion.phase[di]-distance,_CLOUD_WRAP);
+    _cloudMotion.life[di]=_cloudWrap(_cloudMotion.life[di]+dt*(0.018+di*0.004),_CLOUD_NOISE_PERIOD);
+  }
+  _cloudMotion.wander=_cloudWrap(_cloudMotion.wander+dt*0.011,_CLOUD_NOISE_PERIOD);
+  return true;
+}
 // puff template [dx,dy,r] (relative to cluster centre & R): a cumulus — wide flatter base, rounded "cauliflower" top
 const _PUFF=[
   [ 0.00, 0.30, 0.64],[-0.48,0.36,0.50],[ 0.48,0.36,0.50],[-0.80,0.42,0.34],[ 0.80,0.42,0.34],
@@ -2154,9 +2258,9 @@ function paintClouds(t){
   const W=_cloudCv.width,H=_cloudCv.height,S=cloudState,ctx=_cloudCtx;
   ctx.clearRect(0,0,W,H);
   const cols=(_colDens&&_colDens.length===W)?_colDens:(_colDens=new Float32Array(W)); cols.fill(0);
+  if(!advanceCloudMotion(t)){ _cloudDirty=false; return; }
   if(S.covLow+S.covMid+S.covHigh<0.02){ _cloudDirty=false; return; }   // clear sky → nothing
-  const _cs=((_cloudFieldSeed+Math.floor(t/86400)*3.13)%617);   // stable per location+day → the cloud population keeps its identity across refreshes/renders
-  const wind=S.wx*S.wspd;
+  const _cs=_cloudMotion.population;
   // decks: [coverage, clusterR(px), bandY(0..1), bandSpread, tint, deckOpacity, seed, nSlots]
   const decks=[
     [S.covLow, 31, 0.205, 0.05, S.tLow, 1.0, 19.1+_cs, 7],   // low cumulus deck — just above the dashed horizon
@@ -2169,30 +2273,36 @@ function paintClouds(t){
     const base=[tint[0]*0.6,tint[1]*0.6,tint[2]*0.64], top=[Math.min(255,tint[0]*1.14),Math.min(255,tint[1]*1.13),Math.min(255,tint[2]*1.1)];
     for(let i=0;i<n;i++){
       const sd=dseed+i*1.37;
-      const life=_ssc(0.30,0.62,_vn3(sd*1.7,7.3,5+t*(0.018+di*0.004)+i*0.5));  // noise(time) → birth/grow/erode. RATE CALIBRATED for a PERCEPTIBLE morph over 15-60s real-time (was 0.0042 → sub-pixel/min, read as frozen); high decks evolve a touch faster
+      const life=_ssc(0.30,0.62,_vn3(sd*1.7,7.3,5+_cloudMotion.life[di]+i*0.5)); // original lifecycle rate, bounded independently of coverage
       const gate=clamp((cov*n*1.25 - i)*1.2);                              // coverage decides how many clusters are active (smooth fade-in)
       const aMul=life*gate; if(aMul<0.02) continue;
       // ADVECTION: drift = wind·DRIFT·W px/s. DRIFT 0.024 (was 0.0016, ~15×) makes a moderate wind carry a cluster
       // ~25-30% of the card width per minute — clearly visible in a 15-60s watch, gentle in calm air, fast in a gale.
-      // High thin decks ride the wind a little faster (di term). t is simNow seconds, so fast-forward accelerates it.
-      let ux=((i*0.618+_vn3(sd,2,0) - wind*t*(0.024+di*0.006))%1.25); if(ux<0)ux+=1.25; ux-=0.12;   // drift across + in/out off the edges (wrap)
-      const cx=ux*W, cy=(bandY+(_vn3(sd,3,0)-0.5)*spread)*H + (_vn3(sd,4,t*0.011)-0.5)*7;
+      // High thin decks retain the original speed increment. Advance once OUTSIDE all cluster loops.
+      const ux=_cloudWrap(i*0.618+_vn3(sd,2,0)+_cloudMotion.phase[di],_CLOUD_WRAP)-0.12;
+      const centre=ux*W, cy=(bandY+(_vn3(sd,3,0)-0.5)*spread)*H + (_vn3(sd,4,_cloudMotion.wander)-0.5)*7;
       const R=R0*(0.6+0.5*life)*(0.78+0.5*_vn3(sd,5,0));                   // grows with life + per-cluster size variation
-      const sux=S.sunX*W-cx, suy=S.sunY*H-cy, suL=Math.hypot(sux,suy)||1, sl=Math.max(0,1-suL/(W*0.9))*S.sunUp;
-      const mux=S.moonX*W-cx, muy=S.moonY*H-cy, muL=Math.hypot(mux,muy)||1, ml=Math.max(0,1-muL/(W*0.6))*S.moonLit;
-      const aBase=dop*aMul*0.5*(1+0.7*clamp((cov-0.7)/0.3));            // OVERCAST FILL: at high coverage make puffs more opaque so the deck reads as a SOLID ceiling (fewer sky gaps); broken/clear (cov<0.7) unchanged
-      for(let pi=0;pi<_PUFF.length;pi++){
-        const p=_PUFF[pi], px=cx+p[0]*R, py=cy+p[1]*R, pr=p[2]*R, plen=Math.hypot(p[0],p[1])||1;
-        const tB=clamp(0.5-p[1]*0.95);                                     // top puffs lit, base puffs shaded → cumulus volume
-        let col=[base[0]+(top[0]-base[0])*tB, base[1]+(top[1]-base[1])*tB, base[2]+(top[2]-base[2])*tB];
-        const sCos=(p[0]*sux+p[1]*suy)/(suL*plen), rim=sl*Math.max(0,sCos)*0.85;          // SILVER/GOLD lining: puffs on the sun side catch a warm bright rim
-        col=[col[0]+(S.sunCol[0]-col[0])*rim, col[1]+(S.sunCol[1]-col[1])*rim, col[2]+(S.sunCol[2]-col[2])*rim];
-        const mCos=(p[0]*mux+p[1]*muy)/(muL*plen), mrim=ml*Math.max(0,mCos)*0.65;          // cool MOONLIT edge at night
-        col=[col[0]+(S.moonCol[0]-col[0])*mrim, col[1]+(S.moonCol[1]-col[1])*mrim, col[2]+(S.moonCol[2]-col[2])*mrim];
-        _drawPuff(ctx,px,py,pr,col,aBase);
+      // Periodic copies retain a cluster's visible wing through wrapping. 1.14R is the
+      // actual widest puff footprint; only intersecting copies paint or contribute rain columns.
+      for(let copy=-1;copy<=1;copy++){
+        const cx=centre+copy*_CLOUD_WRAP*W,extent=1.14*R;
+        if(cx+extent<0 || cx-extent>W) continue;
+        const sux=S.sunX*W-cx, suy=S.sunY*H-cy, suL=Math.hypot(sux,suy)||1, sl=Math.max(0,1-suL/(W*0.9))*S.sunUp;
+        const mux=S.moonX*W-cx, muy=S.moonY*H-cy, muL=Math.hypot(mux,muy)||1, ml=Math.max(0,1-muL/(W*0.6))*S.moonLit;
+        const aBase=dop*aMul*0.5*(1+0.7*clamp((cov-0.7)/0.3));            // OVERCAST FILL: at high coverage make puffs more opaque so the deck reads as a SOLID ceiling (fewer sky gaps); broken/clear (cov<0.7) unchanged
+        for(let pi=0;pi<_PUFF.length;pi++){
+          const p=_PUFF[pi], px=cx+p[0]*R, py=cy+p[1]*R, pr=p[2]*R, plen=Math.hypot(p[0],p[1])||1;
+          const tB=clamp(0.5-p[1]*0.95);                                     // top puffs lit, base puffs shaded → cumulus volume
+          let col=[base[0]+(top[0]-base[0])*tB, base[1]+(top[1]-base[1])*tB, base[2]+(top[2]-base[2])*tB];
+          const sCos=(p[0]*sux+p[1]*suy)/(suL*plen), rim=sl*Math.max(0,sCos)*0.85;          // SILVER/GOLD lining: puffs on the sun side catch a warm bright rim
+          col=[col[0]+(S.sunCol[0]-col[0])*rim, col[1]+(S.sunCol[1]-col[1])*rim, col[2]+(S.sunCol[2]-col[2])*rim];
+          const mCos=(p[0]*mux+p[1]*muy)/(muL*plen), mrim=ml*Math.max(0,mCos)*0.65;          // cool MOONLIT edge at night
+          col=[col[0]+(S.moonCol[0]-col[0])*mrim, col[1]+(S.moonCol[1]-col[1])*mrim, col[2]+(S.moonCol[2]-col[2])*mrim];
+          _drawPuff(ctx,px,py,pr,col,aBase);
+        }
+        const x0=Math.max(0,Math.floor(cx-extent)), x1=Math.min(W-1,Math.floor(cx+extent)); // actual visible copy footprint for rain coupling
+        for(let cxi=x0;cxi<=x1;cxi++) cols[cxi]+=aMul*dop*2.2;
       }
-      const x0=Math.max(0,(cx-R)|0), x1=Math.min(W-1,(cx+R)|0);            // column density (under the cluster) for the rain coupling
-      for(let cxi=x0;cxi<=x1;cxi++) cols[cxi]+=aMul*dop*2.2;
     }
   }
   _cloudDirty=false;
@@ -2247,14 +2357,11 @@ function atmosphere(M){
   const moonGlow=moonLightEligible?(0.03+0.24*mFrac*mFrac):0;    // retain the existing eligible-phase gain
   const moonlight=moonObject*(0.35+0.65*mFrac);                // PHYSICAL illumination ONLY — 0 below horizon / new / day, never faked for the calendar moon
   const moonStrength=moonlight;
-  // The Moon is an OPAQUE body — you NEVER see stars through it. So its disc and its star-occluder share ONE
-  // opacity (--moongrp = moonShow) that is FULL at night and only fades out by day (no daytime ghost). It is never
-  // a translucent hologram. The lunar-CALENDAR requirement (the Moon is meaningfully present EVERY night, even
-  // below the horizon or near-new) is met by rendering the real OPAQUE phase disc every night — a new moon is a
-  // DARK ASHEN disc, not a see-through one. The physical-vs-calendar distinction lives in MOONLIGHT (moonbeam,
-  // physical-only), NOT in transparency. Heavy cloud hides the Moon by drawing the cloud deck OVER it (layer
-  // order), not by fading the disc — so partial cloud never makes the Moon see-through either.
-  const moonShow=clamp(darkness*1.8);   // reaches FULL opacity by early nautical twilight (before stars are prominent) so the Moon is never see-through once stars are out; fades to 0 by day (no daytime ghost)
+  // The PBR calendar surface stays opaque/textured, including near-new/below-horizon Earthshine.
+  // Its existing group fade blends into twilight; the independent stellar-background cutout
+  // stays binary through that fade, so filtered stars/glints/Milky Way cannot shine through.
+  // Physical moonlight permission remains separate. Heavy cloud covers the surface by layer order.
+  const moonShow=clamp(darkness*1.8);   // full by early nautical twilight; withdrawn in daylight
   const moonPresence=moonShow;
   const directional=1-D.cloud*D.cloud;                          // hard sun when clear → flat/shadowless overcast
   // — sky gradient: physical sky → weather tint → moonlit lift —
@@ -2391,7 +2498,7 @@ function atmosphere(M){
     // —— night sky ——
     starOpacity: stars, milkyWayOpacity: milkyWay, mwTilt,
     starTurb: 0.62+0.62*clamp(0.5*D.humid+0.42*D.wind+0.3*D.haze),   // scintillation amplitude ← live air turbulence (humidity/wind/haze)
-    moonDisc: moon, moonOcc: moon, moonBeam: 0.6*moonlight, moonGrp: moonShow,   // disc+occluder fully opaque; group (moonShow) is full at night, fades by day — the Moon is solid, never see-through
+    moonDisc: moon, moonOcc: moon, moonBeam: 0.6*moonlight, moonGrp: moonShow,   // PBR surface/group presence; binary stellar occlusion is applied independently in paint()
     moonSky: mixRGB(g1,g2,0.22), starBlur: Math.max(0,Math.min(0.6, (w.blur + 0.6*D.humid)*(1-0.5*altClarity) + 0.3*(airDrift-0.5))), lunarHalo, lunarCorona,
     // —— accent / text ——
     accent, accent2, text: S.text,
@@ -2420,10 +2527,11 @@ function atmosphere(M){
 // the weather chip). The layer ORDER is fixed in markup: sky → horizon cloud deck → veil/fog → precip → moon → arc → text.
 // CLOUD-STATE side effect (extracted from paint for SRP): eases/snaps the canvas deck coverage toward A's targets,
 // and copies wind/tints/sun+moon lighting into the shared cloudState that paintClouds reads. NOT a sky-CSS write —
-// it is the one render-layer mutation paint performs. Behaviour is byte-identical to the old inline block (same
-// statements, same order); keeps the ease-vs-snap continuity invariant (no slideshow) and _cloudReady/_cloudDirty.
+// it is the one render-layer mutation paint performs. Coverage cadence/gains retain the original snap/ease
+// contract. Integrate the OLD velocity to its receipt time before installing newly accepted wind.
 function applyCloudState(A){
   const CS=cloudState;
+  advanceCloudMotion(simNow()/1000);
   CS.tgtLow=A.cloudLayerLow; CS.tgtMid=A.cloudLayerMid; CS.tgtHigh=A.cloudLayerHigh;
   // Establish the deck promptly the FIRST time clouds appear (snap), then EASE every later coverage change so a
   // 15-min refetch grows/erodes the EXISTING deck smoothly — no popping/slideshow. Fast-forward snaps (must track).
@@ -2437,6 +2545,12 @@ function applyCloudState(A){
 }
 function paint(A){
   const c=$(".c");
+  const sceneKey=skySceneIdentity();
+  if(sceneKey!==_skySceneKey){
+    beginSkyScene(); _skySceneKey=sceneKey;
+    // render() may already have projected this exact accepted target before entering paint().
+    if(sceneKey!==null && _starProjectionKey===sceneKey) _starsProjected=true;
+  }
   const _REDUCED = isMotionReduced();   // live per-paint (single source) → --sunpulse / --mrad freeze under OS reduced-motion unless ?motion=full
   c.style.setProperty("--accent",rgb(A.accent));
   c.style.setProperty("--accent2",rgb(A.accent2));
@@ -2484,6 +2598,7 @@ function paint(A){
   c.style.setProperty("--moonfeat",A.moonDisc.toFixed(3));
   c.style.setProperty("--moonbeam",A.moonBeam.toFixed(3));
   c.style.setProperty("--moongrp",A.moonGrp.toFixed(3));        // lunar-calendar presence: never 0 at night (the Moon is always meaningfully present), even near-new or below horizon
+  _skyMoonPresence=A.moonGrp; updateSkySurface();
   c.style.setProperty("--moon-sky",rgb(A.moonSky));             // occluder tracks the live sky colour
   const mg=$(".mglow"); if(mg) mg.style.setProperty("--mgo",A.moonGlow.toFixed(3));   // physical glow only; never gate the opaque PBR/calendar surface
   refreshStarAppearance(A);                                   // same consumed lunar permission, without moving held star positions
@@ -2530,6 +2645,7 @@ function paint(A){
         +`lp ${LPOLL.toFixed(2)}  elev ${siteElev|0}m`;
     }
   }
+  commitSkyScene(A);
 }
 let _lastMoonPaint=null;                                       // small last-attempt summary, never recomputed by QA
 function applyTheme(M){
@@ -2625,7 +2741,7 @@ function render(){
   const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin || moonGeometryObservation(M).fresh!==true){ renderMoon(); lastMoonMin=moonSky._min; }   // minute cadence + date/location invalidation; failed production never advances the success marker
   // REAL-TIME: star POSITIONS stay fixed (no record-player spin) — only CSS per-star scintillation varies. The sky
   // is re-projected ONLY under timeScale (ADVANCING), or once per new day, so fast-forward shows celestial motion.
-  if(ADVANCING || !_starsProjected){ projectStars(simDate()); _starsProjected=true; }
+  if(ADVANCING || !_starsProjected || _starProjectionKey!==skySceneIdentity()) projectStars(simDate());
   prefetchPrayerDay();                                        // civil-day/owner/cooldown checks also allow late midnight reclassification
   $(".cn").textContent = M.currentKey;
   if(Number.isFinite(M.leftMin)){
@@ -2821,6 +2937,7 @@ function resetForNewLocation(){
   weatherRadar=null; lastRadarAt=0;
   _starsProjected=false; _prayerStale=false; lastMoonMin=-1; _renderDirty=true;
   _rolloverBusy=false; _rolloverNextTry=0;
+  beginSkyScene();
   if(simulationReady()){ buildSceneOnce(); renderMoon(); }
 }
 // Apply a new WidgetConfig at RUNTIME (settings panel) — IN-MEMORY, no reload, so it still
@@ -2848,6 +2965,7 @@ async function applyConfig(cfg, opts){
 async function boot(){
   const generation=_runtimeGeneration;
   if(_cfgMode==="local"||_cfgMode==="preferLocal") enableSettingsAffordance();  // recovery controls do not depend on a valid scene
+  beginSkyScene();
   if(!simulationReady()) return;
   if(QA){ lastWxAt=0; lastWxTry=0; }                          // QA: always build a fresh forecast track on boot (cache must not block it)
   buildSceneOnce();
@@ -2908,16 +3026,17 @@ function startRenderLoop(){
     if(!ADVANCING && rt-_lastWx>30000){ _lastWx=rt; fetchWeather(); fetchRadar(); }    // refresh real weather ~½-min + radar (self-throttled ~10min); both held during a fast sweep
     const sec=Math.floor(simNow()/1000);
     if(sec!==_lastSec || _renderDirty){ _lastSec=sec; _renderDirty=false; render(); if(ADVANCING) updateSimClock(n); }
-    // cloud density field repaints ~13fps so it visibly EVOLVES + drifts (time = simNow, so fast-forward
-    // accelerates it). Reduced-motion: paint once per state change with frozen time (no animation).
-    if(isMotionReduced()){ if(_cloudDirty){ paintClouds(1000); tieRainToClouds(); _cloudN++; } }   // LIVE reduced-motion (single source; honours a mid-session OS toggle)
+    // Cloud evolution uses bounded visual intervals, with CLOCK's preview rate. Reduced-motion
+    // paints changed state at the same held axes, never a substitute epoch like 1000.
+    const reduced=isMotionReduced(); syncCloudMotionPreference(reduced,rt);
+    if(reduced){ if(_cloudDirty){ paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; } }
     else if(rt-_lastCloud>76){ _lastCloud=rt; paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; }
     if(rt-_tickAcc>=1000){ _rafPS=Math.round(_rafN*1000/(rt-_tickAcc)); _cloudPS=Math.round(_cloudN*1000/(rt-_tickAcc)); _rafN=0;_cloudN=0;_tickAcc=rt; if(DEBUGMOTION) updateMotionDbg(_rafPS,_cloudPS,cEl); }
     _raf=requestAnimationFrame(loop);
   }
   function start(){ if(!_raf) _raf=requestAnimationFrame(loop); }
   function stop(){ if(_raf){ cancelAnimationFrame(_raf); _raf=null; } }
-  function setVis(){ const on=visible(); if(cEl){ cEl.classList.toggle("paused",!on); if(ADVANCING) cEl.classList.add("fast"); } if(on) start(); else stop(); }
+  function setVis(){ const on=visible(); rebaseCloudMotion(!on); if(cEl){ cEl.classList.toggle("paused",!on); if(ADVANCING) cEl.classList.add("fast"); } if(on) start(); else stop(); }
   document.addEventListener("visibilitychange",setVis);
   if("IntersectionObserver" in window && cEl)
     new IntersectionObserver(es=>{ _onScreen=es[0].isIntersecting; setVis(); },{threshold:0}).observe(cEl);

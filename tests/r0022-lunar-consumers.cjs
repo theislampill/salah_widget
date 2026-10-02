@@ -5,6 +5,9 @@ const sourcePath=process.argv[2];
 let pass=0,fail=0;
 function test(name,fn){try{fn();pass++;console.log('PASS '+name);}catch(e){fail++;console.log('FAIL '+name+' :: '+e.message);}}
 function fixture(){return load({sourcePath});}
+// Ordinary elapsed time holds geometry; editing _simBase deliberately seeks the
+// explicit preview and now correctly invalidates its accepted projection.
+function ordinaryFixture(){return load({sourcePath,hash:'#lat=24.47&lon=39.61&tz=Asia%2FRiyadh&units=c&seed=1&simMoon=.5&simWax=1&simMoonAlt=20&simMoonH=42'});}
 function zeroConsumers(h,reason){
   const light=h.run('qaState().moonTruth.lunarLight');assert.equal(light.eligible,false);assert.equal(light.eligibility,0);assert.equal(light.reason,reason);
   for(const key of ['illumination','beam','cloudLight','localStarWash','localGlow','halo','corona','paraselenae'])assert.equal(light[key],0,key);
@@ -53,10 +56,10 @@ test('fresh model input recovers lunar optical conditions after source expiry',(
   assert.ok(+h.select('.c').style.getPropertyValue('--mhalo')>0);
 });
 test('glints release wash with held star projection',()=>{
-  const h=fixture();h.run('SIM.moon="1";render();');
+  const h=ordinaryFixture();assert.equal(h.run('FOLLOW_WALL_CLOCK'),true);h.run('SIM.moon="1";render();');
   const positions=h.run('JSON.stringify(_glintEls.map(e=>e.getAttribute("transform")))');
   const washed=h.run('JSON.stringify(_glintEls.map(e=>e.style.opacity))');
-  h.run('SIM.moon="0.01";_simBase+=60000;render();');
+  h.clock.wall+=60000;h.clock.now+=60000;h.run('SIM.moon="0.01";render();');
   assert.equal(h.run('JSON.stringify(_glintEls.map(e=>e.getAttribute("transform")))'),positions);
   assert.notEqual(h.run('JSON.stringify(_glintEls.map(e=>e.style.opacity))'),washed);
 });
@@ -84,10 +87,10 @@ test('low eligible moon retains rare lateral paraselenae distinct from droplet c
   assert.ok(+h.select('.c').style.getPropertyValue('--mparhelia')>0);assert.equal(+h.select('.c').style.getPropertyValue('--mcorona'),0);
 });
 test('ordinary render refreshes star appearance while held projection stays fixed',()=>{
-  const h=fixture(); h.run('SIM.moon="1";render();');
+  const h=ordinaryFixture();assert.equal(h.run('FOLLOW_WALL_CLOCK'),true);h.run('SIM.moon="1";render();');
   const before=h.run('JSON.stringify(_starEls.map(e=>[e.getAttribute("cx"),e.getAttribute("cy")]))');
   const bright=h.run('JSON.stringify(_starEls.map(e=>e.style.opacity))');
-  h.run('SIM.moon="0.01";_simBase+=60000;render();');
+  h.clock.wall+=60000;h.clock.now+=60000;h.run('SIM.moon="0.01";render();');
   assert.equal(h.run('JSON.stringify(_starEls.map(e=>[e.getAttribute("cx"),e.getAttribute("cy")]))'),before);
   assert.notEqual(h.run('JSON.stringify(_starEls.map(e=>e.style.opacity))'),bright,'held projector retained previous moon wash');
 });
