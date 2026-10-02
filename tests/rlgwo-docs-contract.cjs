@@ -49,12 +49,37 @@ function builder() {
   const values = { label: 'Madinah', lat: '24.4672', lon: '39.6142', method: '4', school: '0', time: '24', units: 'f', dfcode: 'YYYY-MM-DD', datefmt: 'YYYY-MM-DD' };
   const elements = new Map();
   function element(id) {
-    if (!elements.has(id)) elements.set(id, { value: values[id] || '', style: {}, listeners: {},
-      classList: { add() {}, remove() {}, toggle() {} }, setAttribute() {}, focus() {}, select() {},
-      addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); } });
+    if (!elements.has(id)) {
+      const classes = new Set();
+      elements.set(id, { id, value: values[id] || '', style: {}, listeners: {}, attributes: {}, disabled: false, tabIndex: 0,
+        classList: {
+          add(...names) { names.forEach(name => classes.add(name)); },
+          remove(...names) { names.forEach(name => classes.delete(name)); },
+          contains(name) { return classes.has(name); },
+          toggle(name, force = !classes.has(name)) { if (force) classes.add(name); else classes.delete(name); return force; }
+        },
+        setAttribute(name, value) { this.attributes[name] = String(value); if (name === 'tabindex') this.tabIndex = +value; },
+        getAttribute(name) { return name === 'tabindex' ? String(this.tabIndex) : this.attributes[name] ?? null; },
+        focus() { document.activeElement = this; }, select() {},
+        addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); } });
+    }
     return elements.get(id);
   }
-  const env = context({ document: { getElementById: element }, navigator: { language: 'en-CA', platform: 'Win32' },
+  // Derive the radio members from the actual group markup; run its production listener.
+  const groupMarkup = sources['builder.html'].match(/<div class="modebtns"[^>]*>([\s\S]*?)<\/div>/);
+  const modeGroup = groupMarkup ? element('mode-group') : null, modeButtons = [];
+  for (const match of groupMarkup?.[1].matchAll(/<button\b([^>]*)>/g) || []) {
+    const attrs = Object.fromEntries([...match[1].matchAll(/([\w-]+)="([^"]*)"/g)].map(m => [m[1], m[2]]));
+    if (!(attrs.class || '').split(/\s+/).includes('modebtn')) continue;
+    const button = element(attrs.id);
+    for (const [name, value] of Object.entries(attrs)) button.setAttribute(name, value);
+    button.classList.add(...attrs.class.split(/\s+/)); button.disabled = /(?:^|\s)disabled(?:\s|$|=)/.test(match[1]);
+    modeButtons.push(button);
+  }
+  if (modeGroup) modeGroup.querySelectorAll = selector => selector === '.modebtn' ? modeButtons : [];
+  const document = { activeElement: null, getElementById: element,
+    querySelector: selector => selector === '.modebtns' ? modeGroup : null };
+  const env = context({ document, navigator: { language: 'en-CA', platform: 'Win32' },
     location: { href: 'https://example.invalid/builder.html' } });
   const scripts = [...sources['builder.html'].matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].filter(m => !/\bsrc\s*=/.test(m[1]));
   assert.equal(scripts.length, 1, 'one production builder inline script');
