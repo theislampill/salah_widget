@@ -25,6 +25,9 @@ const runtime = [
   region('const lerp =', '// QUARANTINED:'),
   region('const _ss=t=>', '\n'),
   region('const _PRECIP_MIN=', '// ---- CLOUD ENGINE:'),
+  region('function moonGeometryIdentity(date){', '// Raw backing-canvas measurements only.'),
+  region('let _starBase=[],', 'const _SKYX='),
+  region('function refreshStarAppearance(A){', 'function buildStars(){'),
   region('function atmosphere(M){', '// paint(A)'),
   region('function applyCloudState(A){', '// Size the present-prayer name'),
   region('window.qaState=function(){', '// debugMotion telemetry'),
@@ -118,7 +121,7 @@ function fixture(options = {}) {
     const $=s=>document.querySelector(s), DEBUGOPTIC=null, DEBUGLAYERS=false, LPOLL=0;
     let moonSky={alt:20,H:0,_min:1260,sx:.84,sy:.1};
     let cloudState={covLow:0,covMid:0,covHigh:0}, _cloudReady=false, _cloudDirty=false, _cloudFieldSeed=1;
-    let _starEls=[], lastDate=null, today=null, tomorrow=null, _prayerStale=false, _rolloverNextTry=0, _lastRender=null;
+    let _starEls=[], _glintEls=[], lastDate=null, today=null, tomorrow=null, _prayerStale=false, _rolloverNextTry=0, _lastRender=null;
     let _hashCfg={}, _cfgMode='hardcoded', CONFIG=null, label='', _autoDetectSource=null, _autoDetectStatus='idle';
     let _storageErr=null, _geoPermission='unknown', _geoLastError=null;
   ` + runtime + `
@@ -345,6 +348,53 @@ test('R000C captured request fields survive asynchronous global unit/zone change
   deliver({ ok: true, status: 200, json: async () => healthy() }); await pending;
   assert(f.storage.has('salahwx:24.47|39.61|c')); assert(!f.storage.has('salahwx:24.47|39.61|f'));
   assert.equal(f.read().weather.units, 'c'); assert.equal(f.read().weather.currentZone, 'UTC');
+  assert.equal(f.read().weather.currentValidAt, NOW); assert.equal(f.read().weatherTrack.ep[0], NOW);
+});
+
+test('R0008 accepted converter uses captured New York zone after global zone changes', async () => {
+  let deliver;
+  const payload = healthy({ time: '2026-03-08T03:30' });
+  payload.hourly.time = ['2026-03-08T03:30', '2026-03-08T04:30'];
+  const f = fixture({ zone: 'America/New_York', fetch: () => new Promise(resolve => { deliver = resolve; }) });
+  f.clock.now = Date.parse('2026-03-08T07:30:00Z'); const pending = f.fetchWeather();
+  f.set({ zone: 'Asia/Riyadh' }); deliver({ ok: true, status: 200, json: async () => payload }); await pending;
+  assert.equal(f.read().weather.currentZone, 'America/New_York');
+  assert.equal(f.read().weather.currentValidAt, Date.parse('2026-03-08T07:30:00Z'));
+  assert.equal(f.read().weatherTrack.ep[0], Date.parse('2026-03-08T07:30:00Z'));
+  assert.equal(f.read().weatherTrack.ep[1], Date.parse('2026-03-08T08:30:00Z'));
+  assert.equal(f.view().qa.cache.currentEligible, true); assert.equal(f.view().a.wxTemp, 20);
+});
+for (const [name, wall, nextWall, utc] of [
+  ['spring gap', '2026-03-08T02:30', '2026-03-08T03:30', '2026-03-08T07:30:00Z'],
+  ['autumn fold', '2026-11-01T01:30', '2026-11-01T02:30', '2026-11-01T06:30:00Z'],
+]) test('R0008 unresolved New York ' + name + ' cannot authorize current or hourly consumers', async () => {
+  const payload = healthy({ time: wall }); payload.hourly.time = [wall, nextWall];
+  const f = fixture({ zone: 'America/New_York', payload }); f.clock.now = Date.parse(utc); await f.fetchWeather();
+  assert.equal(f.read().weather.currentValidAt, null); assert.equal(f.read().weatherTrack, null);
+  assert.equal(f.read().lastWxAt, 0); assert.equal(f.view().qa.cache.currentEligible, false); assert.equal(f.view().a.wxTemp, null);
+});
+test('R0008 invalid hourly gap preserves independently valid current', async () => {
+  const payload = healthy({ time: '2026-03-08T03:30' }); payload.hourly.time = ['2026-03-08T02:30', '2026-03-08T03:30'];
+  const f = fixture({ zone: 'America/New_York', payload }); f.clock.now = Date.parse('2026-03-08T07:30:00Z'); await f.fetchWeather();
+  assert.equal(f.read().weatherTrack, null); assert.equal(f.view().a.wxTemp, 20);
+  assert.equal(f.read().weather.currentValidAt, Date.parse('2026-03-08T07:30:00Z'));
+});
+test('R0008 unsupported captured timezone stays unavailable', async () => {
+  const f = fixture({ zone: 'Invalid/Unsupported_Zone' }); await f.fetchWeather();
+  assert.equal(f.read().weather.currentValidAt, null); assert.equal(f.read().weatherTrack, null);
+  assert.equal(f.view().qa.cache.currentEligible, false); assert.equal(f.view().a.wxTemp, null);
+});
+test('control: captured Riyadh midnight maps to preceding UTC date', async () => {
+  const payload = healthy({ time: '2026-09-08T00:00' }); payload.hourly.time = ['2026-09-08T00:00', '2026-09-08T01:00'];
+  const f = fixture({ zone: 'Asia/Riyadh', payload }); await f.fetchWeather();
+  assert.equal(f.read().weather.currentValidAt, NOW); assert.equal(f.read().weatherTrack.ep[0], NOW);
+  assert.equal(f.view().qa.cache.currentEligible, true); assert.equal(f.view().a.wxTemp, 20);
+});
+test('fixture reaches accepted SKY geometry observation without claiming produced geometry', async () => {
+  const f = fixture(); await f.fetchWeather(); const observation = f.view().a.moonObservation;
+  assert.equal(observation.expected.context, '24.47|39.61|UTC');
+  assert.equal(observation.expected.epochMinute, Math.floor(NOW / 60000));
+  assert.equal(observation.produced, null); assert.equal(observation.fresh, null);
 });
 
 for (const [name, rgba] of [['0dBZ', [130, 123, 105, 73]], ['15dBZ', [136, 221, 238, 255]],
@@ -429,7 +479,6 @@ test('R001E radar tile uses captured pair after async configuration change', asy
   assert.equal(f.images.length, 1); assert(f.images[0].includes('/256/6/37/32/'));
 });
 test.todo('R0003 join: obsolete acquisition cannot install/persist or clear successor attempt');
-test.todo('R0008 join: captured New York 2026-03-08T03:30 converts to 07:30Z after global zone change; gap/fold stay unavailable');
 test.todo('R000D join: unresolving JSON and image bodies settle within accepted deadline');
 test.todo('R0024 join: fresh current model eligibility remains positive while final live strong-particle permission is withheld');
 test.todo('native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence');
