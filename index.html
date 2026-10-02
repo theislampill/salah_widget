@@ -3132,7 +3132,9 @@ async function _resetLocal(){
   _invalidateSetLocation(); const owner=_captureSetLookup(), prefOwner={..._setPrefVersions};
   const r=window.SalahConfig?SalahConfig.clearLocal():{ok:false,error:"unavailable"};
   _publishPersistence("reset",r);
-  if(!r.ok) return;                         // a failed removal must not replace the saved target
+  if(!r.ok){
+    _setStatus("Enter to search a place · Shift+Enter to keep the typed name."); return; // the reset also cancelled any pending lookup
+  }
   _setStatus("Detecting your area…");
   let d=null; try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){}
   if(!_ownsSetLookup(owner)) return;

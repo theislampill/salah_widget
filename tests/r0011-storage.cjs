@@ -7,7 +7,8 @@ const detected={ok:true,cfg:{lat:24.47,lon:39.61,label:"Madinah",area:"Madinah, 
 const security=()=>{throw new DOMException("blocked","SecurityError");};
 function make(extra={}){
   const mutate=source=>mutant==="save-result"?source.replace('_publishPersistence("save",r);','_publishPersistence("save",{ok:true});')
-    :mutant==="reset-result"?source.replace('if(!r.ok) return;', 'if(false) return;')
+    :mutant==="reset-result"?source.replace('if(!r.ok){','if(false){')
+    :mutant==="cancel-hint"?source.replace('_setStatus("Enter to search a place · Shift+Enter to keep the typed name."); return;','return;')
     :mutant==="status-overwrite"?source.replace('s.textContent=[message,_setHint.msg].filter(Boolean).join("\\n");','s.textContent=_setHint.msg;'):source;
   return widget({ref,seed,...extra,mutate:mutant?mutate:undefined});
 }
@@ -62,5 +63,15 @@ test("failure error names are bounded literal text in feedback",()=>{
 test("outside polite status markup and warning overlay avoid a new stack row",()=>{
   const f=make(),before=f.page.slice(0,f.page.indexOf('<div class="settings"'));
   assert.ok(/<[^>]*id="settings-persistence-status"[^>]*aria-live="polite"/.test(before),"polite status is outside dialog");assert.ok(/\.buckle\.persist-warning \.gear[^}]*opacity:1/.test(f.page),"warning reuses overlaid gear");assert.ok(/\.set-live-status\{[^}]*position:absolute/.test(f.page),"status adds no flow row");
+});
+test("failed reset cancels pending search hint while keeping bytes and current config",async()=>{
+  const f=make(),key=f.sandbox.SalahConfig.KEY,old=f.storage.get(key),before=f.config();f.input("set-label","Berlin");f.key("set-label","Enter");assert.match(status(f),/Searching/);f.sandbox.localStorage.removeItem=security;f.click("set-reset");
+  assert.match(status(f),/saved settings remain/);assert.match(status(f),/Enter to search/);assert.doesNotMatch(status(f),/Searching/);assert.equal(f.storage.get(key),old);assert.deepEqual(f.config(),before);assert.equal(f.calls.coarse.length,0);const after=status(f);
+  await f.resolveCall("search",0,[{lat:52.52,lon:13.41,name:"Berlin",norm:"Berlin, Germany",cc:"de"}]);assert.equal(status(f),after);assert.deepEqual(f.config(),before);
+});
+test("failed reset cancels pending GPS hint and abandoned fix cannot revive it",async()=>{
+  const f=make(),key=f.sandbox.SalahConfig.KEY,old=f.storage.get(key),before=f.config();f.click("set-pin");assert.match(status(f),/Requesting.*location/);f.sandbox.localStorage.removeItem=security;f.click("set-reset");
+  assert.match(status(f),/saved settings remain/);assert.match(status(f),/Enter to search/);assert.doesNotMatch(status(f),/Requesting/);assert.equal(f.storage.get(key),old);assert.deepEqual(f.config(),before);assert.equal(f.calls.coarse.length,0);const after=status(f);
+  await f.resolveCall("gps",0,{coords:{latitude:52.52,longitude:13.41,accuracy:25},timestamp:Date.now()});assert.equal(status(f),after);assert.deepEqual(f.config(),before);
 });
 (async()=>{let failed=0;for(const c of cases){try{await c.body();console.log("PASS",c.name);}catch(e){failed++;console.error("FAIL",c.name,"\n",e.stack);}}console.log(JSON.stringify({cases:cases.length,passed:cases.length-failed,failed,ref:ref||"working-tree",mutant:mutant||null,native:"NOT_RUN"}));process.exitCode=failed?1:0;})();
