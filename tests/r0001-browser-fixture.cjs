@@ -27,15 +27,17 @@ function prayer(day, hostileMonth = false) {
 }
 function mutate(source, mutant) {
   const changes = {
-    ce:['${escHtml(fmtDate(g))}', '${fmtDate(g)}'],
-    ah:['${escHtml(fmtDate(ahH,"hijri"))}', '${fmtDate(ahH,"hijri")}'],
-    preview:['${escHtml(tomorrow.date.hijri.day)}', '${tomorrow.date.hijri.day}'],
-    past:['.p.past{', '.p.past{opacity:.42;'],
-    on:[',rgba(9,17,28,.90);border-color:', ';border-color:']
+    ce:[['${escHtml(projection.gregorianText)}','${projection.gregorianText}'],['${escHtml(fmtDate(g))}', '${fmtDate(g)}']],
+    ah:[['${escHtml(projection.hijriText)}','${projection.hijriText}'],['${escHtml(fmtDate(ahH,"hijri"))}', '${fmtDate(ahH,"hijri")}']],
+    preview:[['${escHtml(projection.previewDay)}','${projection.previewDay}'],['${escHtml(tomorrow.date.hijri.day)}', '${tomorrow.date.hijri.day}']],
+    past:[['.p.past{', '.p.past{opacity:.42;']],
+    on:[[',rgba(9,17,28,.90);border-color:', ';border-color:']]
   };
   if (!mutant) return source;
-  const change = changes[mutant];
-  if (!change || source.split(change[0]).length !== 2) throw new Error(`mutant ${mutant}: exact single target missing`);
+  const matches=(changes[mutant]||[]).filter(change=>source.includes(change[0]));
+  if(matches.length!==1)throw new Error(`mutant ${mutant}: exact single version target missing`);
+  const change=matches[0];
+  if(source.split(change[0]).length!==2)throw new Error(`mutant ${mutant}: exact single target missing`);
   return source.replace(change[0], change[1]);
 }
 function preload(testCase) {
@@ -65,9 +67,17 @@ function preload(testCase) {
 function hooks(testCase) {
   return `
 // TEST-ONLY admitted-state control; source admission is never weakened.
+// Selection now validates preview numbers; inject hostile text at the reached output boundary.
+if(window.__uiFixture.testCase==='preview-day' && typeof renderCalendarDates==='function'){
+  const uiFixtureDateSink=renderCalendarDates;
+  renderCalendarDates=function(projection){
+    if(projection.previewDay)projection={...projection,previewDay:window.__uiFixture.canary,previewText:phaseEmoji(moonNow().phase)+' '+window.__uiFixture.canary};
+    return uiFixtureDateSink(projection);
+  };
+}
 const uiFixtureRender=render;
 render=function(){
-  if(window.__uiFixture.testCase==='preview-day' && tomorrow && tomorrow.date) tomorrow.date.hijri.day=window.__uiFixture.canary;
+  if(window.__uiFixture.testCase==='preview-day' && typeof renderCalendarDates!=='function' && tomorrow && tomorrow.date) tomorrow.date.hijri.day=window.__uiFixture.canary;
   if(window.__uiFixture.testCase==='stale') _prayerStale=true;
   const result=uiFixtureRender();
   window.__uiFixture.renders++;

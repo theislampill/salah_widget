@@ -11,7 +11,8 @@ const config = fs.readFileSync(path.join(ROOT,'config.js'),'utf8');
 function run({source=html, format='YYYY-MM-DD', saved=false, month=false, preview=false, time='12:30', stale=false, missing=false}={}) {
   const nodes = new Map();
   const node = selector => {
-    if (!nodes.has(selector)) nodes.set(selector,{innerHTML:'',textContent:'',style:{setProperty(){}},dataset:{}});
+    if (!nodes.has(selector)) nodes.set(selector,{innerHTML:'',textContent:'',style:{setProperty(){}},dataset:{},attributes:{},
+      getAttribute(key){return this.attributes[key]??null;},setAttribute(key,value){this.attributes[key]=String(value);},addEventListener(){}});
     return nodes.get(selector);
   };
   const store = new Map();
@@ -30,12 +31,17 @@ function run({source=html, format='YYYY-MM-DD', saved=false, month=false, previe
   assert.equal(scripts[0].split('\nboot();').length,2,'Expected the real boot caller to suspend only async boot');
   vm.runInContext(scripts[0].replace('\nboot();','\n// admitted-state fixture suspends only boot'),context,{filename:'index.html:inline'});
   const today=prayer('07',month), tomorrow=prayer('08',month);
-  if(preview) tomorrow.date.hijri.day=CANARY;
+  if(preview && !source.includes('function renderCalendarDates(projection)')) tomorrow.date.hijri.day=CANARY;
   if(missing){delete today.date;delete tomorrow.date;}
   vm.runInContext(`
     // Art/layout are unrelated to the three recording DOM sinks. Keep model/formatter/render real.
     syncWeather=()=>{}; renderMoon=()=>{}; projectStars=()=>{};
     drawArc=()=>''; fitCn=()=>{}; applyTheme=()=>{};
+    // Guard the actual sink independently of selector/admission rejection.
+    if(${preview} && typeof renderCalendarDates==='function'){
+      const actualCalendarDateSink=renderCalendarDates;
+      renderCalendarDates=projection=>actualCalendarDateSink(projection.previewDay?{...projection,previewDay:${JSON.stringify(CANARY)},previewText:phaseEmoji(moonNow().phase)+' '+${JSON.stringify(CANARY)}}:projection);
+    }
     today=${JSON.stringify(today)}; tomorrow=${JSON.stringify(tomorrow)};
     _prayerStale=${stale};
     render();
@@ -61,7 +67,7 @@ test('after Maghrib selects tomorrow AH without preview',()=>{const o=run({forma
 test('ordinary held-out tokens stay plain text',()=>{const o=run({format:'YYYY YY MMMM MMM MM M DD D'});assert.equal(o.fmt({year:'1448',month:{number:2,en:'Safar'},day:'19'}),'1448 48 Safar Saf 02 2 19 19');assert.equal(o.fmt(null),'');});
 test('Arabic quotes ampersand angle literals encode exactly once',()=>{const o=run({format:'التاريخ "\' & < > YYYY'});assert.equal(o.ce,'التاريخ &quot;&#39; &amp; &lt; &gt; 2026<span class="er">CE</span>');assert.doesNotMatch(o.ce,/&amp;(?:lt|gt|amp|quot);/);});
 test('stale markup remains trusted alongside inert text',()=>{const o=run({format:CANARY,stale:true});safe(o,'ah');assert.match(o.ah,/class="staletag"/);assert.match(o.ah,/>stale<\/span>/);});
-test('missing dates preserve existing unavailable output',()=>{const o=run({missing:true});assert.equal(o.ce,'');assert.equal(o.ah,'');});
+test('missing dates expose explicit successor unavailable output',()=>{const o=run({missing:true});assert.equal(o.ce,'Gregorian date unavailable');assert.equal(o.ah,'Hijri date unavailable');});
 for(const field of (process.argv.includes('--baseline') ? [] : ['ce','ah','preview'])) test(`${field}-only encoding mutant is detected`,()=>{
   const source=mutate(html,field);
   const o=run({source,format:field==='preview'?'YYYY-MM-DD':CANARY,preview:field==='preview'});

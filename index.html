@@ -387,7 +387,21 @@ body{color:#fff7df;
 
 /* dates */
 .d{position:relative;z-index:1;direction:ltr;display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:8px;padding:0 10px;color:color-mix(in srgb,var(--text) 90%,transparent);font-size:11.5px;line-height:1.2}
-.d span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.date-trigger{min-inline-size:0;flex:0 1 auto;display:inline-flex;padding:0;border:0;border-radius:3px;background:none;color:inherit;font:inherit;line-height:inherit;text-align:left;text-shadow:inherit;cursor:pointer}
+.date-trigger:hover{color:var(--text);text-decoration:underline;text-underline-offset:3px}
+.date-trigger:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+.date-value{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.date-unavailable{font-size:.78em;font-weight:600;color:color-mix(in srgb,#ffc27a 76%,var(--text));unicode-bidi:isolate}
+.date-dialog{box-sizing:border-box;width:calc(100vw - 28px);max-width:297px;max-height:calc(100vh - 28px);margin:auto;padding:16px;border:1px solid #ffffff35;border-radius:16px;color:#f0edf8;background:rgba(9,17,28,.97);box-shadow:0 12px 32px #0006;font-family:Inter,system-ui,sans-serif;overflow-y:auto;overflow-x:hidden;text-align:left;direction:ltr}
+.date-dialog::backdrop{background:rgba(3,6,12,.42)}
+.date-dialog header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.date-dialog h2{margin:0;font-family:Fraunces,Georgia,serif;font-size:20px;font-weight:600}
+.date-dialog button{border:1px solid #ffffff35;border-radius:8px;padding:6px 9px;background:#ffffff10;color:inherit;font:inherit;font-size:12px;cursor:pointer}
+.date-dialog button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.date-dialog dl{margin:0;display:grid;gap:5px}
+.date-dialog dt{font-size:11px;font-weight:600;color:#c9c5d5}
+.date-dialog dd{margin:0 0 12px;font-size:14px;line-height:1.5;white-space:normal;overflow-wrap:anywhere;unicode-bidi:plaintext;user-select:text}
+.date-dialog p{margin:0;font-size:12px;line-height:1.5;white-space:normal;overflow-wrap:anywhere;user-select:text}
 .er{opacity:.55;font-size:.84em;margin:0 4px;letter-spacing:.05em;unicode-bidi:isolate}
 #ah .er{font-size:1.3em;opacity:.66}   /* the Arabic hāʾ (AH marker) reads small — give it a few pt */
 /* DAY-ROLLOVER STALE CUE: a quiet warm worded chip by the Hijri date (shown only when prayer times couldn't refresh
@@ -508,7 +522,19 @@ body{color:#fff7df;
 
   <div class="times"></div>
 
-  <div class="d"><span class="ce" id="ce"></span><span class="ah" id="ah"></span></div>
+  <div class="d">
+    <button type="button" class="date-trigger" id="ceDateButton" aria-haspopup="dialog" aria-controls="dateDialog" aria-label="Show complete Gregorian date"><span class="ce date-value" id="ce"></span></button>
+    <button type="button" class="date-trigger" id="ahDateButton" aria-haspopup="dialog" aria-controls="dateDialog" aria-label="Show complete Hijri date"><span class="ah date-value" id="ah"></span></button>
+  </div>
+  <dialog class="date-dialog" id="dateDialog" aria-labelledby="dateHeading">
+    <header><h2 id="dateHeading">Calendar dates</h2><button type="button" id="dateClose" autofocus>Close</button></header>
+    <dl>
+      <dt>Gregorian</dt><dd id="dateGregorian"></dd>
+      <dt>Hijri</dt><dd id="dateHijri"></dd>
+      <dt id="datePreviewLabel">Begins at sunset</dt><dd id="datePreview"></dd>
+    </dl>
+    <p id="dateReason" aria-live="polite"></p>
+  </dialog>
 
   <!-- in-widget settings (local mode only; populated/wired lazily in JS). Overlays the prayer
        display inside the same card — never enlarges the iframe, never clips header/footer. -->
@@ -712,6 +738,73 @@ const fmtDate = (o,calendar=null) => {
 };
 // Date formats and provider text stay literal; encode once only where trusted markup is assembled.
 const escHtml = v => String(v).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+// One ephemeral provider selection feeds compact text, full-value access and last-painted diagnostics.
+// No offset, increment, persisted hold or anomaly classifier is inferred from provider labels.
+let _lastDateTruth=null, _dateDisclosureBound=false, _dateInitiator=null;
+function calendarRecordDay(data){
+  const g=data&&data.date&&data.date.gregorian, f=calendarFields(g,"gregorian");
+  if(!f) return null;
+  const day=`${pad(f.d)}-${pad(f.mo)}-${String(f.y).padStart(4,"0")}`;
+  return g.date===day?day:null;
+}
+function selectCalendarDisplay(M){
+  const n=M?partsInTz(M.nowEpoch):null, requested=n?n.dateStr:null, loaded=calendarRecordDay(today);
+  let nextDay=null;
+  if(n){ const d=new Date(0); d.setUTCFullYear(n.y,n.mo-1,n.d+1); nextDay=`${pad(d.getUTCDate())}-${pad(d.getUTCMonth()+1)}-${String(d.getUTCFullYear()).padStart(4,"0")}`; }
+  const usable=(data,day)=>!!(day && calendarRecordDay(data)===day && data.meta&&data.meta.timezone===tz && calendarFields(data.date.hijri,"hijri"));
+  const currentContext=!!(M && loaded===requested && today.meta&&today.meta.timezone===tz);
+  const currentOk=currentContext&&usable(today,requested), nextOk=currentContext&&usable(tomorrow,nextDay);
+  const after=!!M&&M.nowMin>=mins(M.t.Maghrib), applied=after&&nextOk;
+  const selected=applied?tomorrow:currentOk?today:null, ahH=selected&&selected.date.hijri;
+  const g=today&&today.date&&today.date.gregorian;
+  const gregorianText=M?fmtDate(g,"gregorian"):"", hijriText=ahH?fmtDate(ahH,"hijri"):"";
+  const reason=!hijriText?"Hijri date unavailable":after&&!applied?"Sunset date update unavailable":null;
+  const selectedMethod=ahH&&typeof ahH.method==="string"&&ahH.method.trim()?ahH.method.trim():null;
+  const convention=selectedMethod?`Aladhan; ${selectedMethod}`:"calendar convention unavailable";
+  const boundary=!M?"Calendar state unavailable.":!hijriText?"Hijri date unavailable.":applied?"Advanced at Maghrib using the next day's payload.":after?"Sunset date update unavailable; the displayed date could not advance.":"Before Maghrib; the displayed Hijri date has not advanced.";
+  const previewDay=hijriText&&!after&&nextOk?String(tomorrow.date.hijri.day):null;
+  const previewText=previewDay?`${phaseEmoji(moonNow().phase)} ${previewDay}`:"";
+  const context=`Zone ${tz}; requested Gregorian day ${requested||"unavailable"}; loaded day ${loaded||"unavailable"}.`;
+  const prayerStatus=_prayerStale?" Prayer times are stale; the calendar update status is separate.":"";
+  return {gregorianText,hijriText,previewDay,previewText,explanation:`${boundary} ${convention}. ${context}${prayerStatus}`,
+    requestedGregorianDay:requested,loadedGregorianDay:loaded,selectedGregorianDay:selected?calendarRecordDay(selected):null,
+    timezone:tz,beforeOrAfterMaghrib:M?(after?"after":"before"):"unavailable",maghribRollAvailable:nextOk,maghribRollApplied:applied,
+    selectedSource:selected?(applied?"tomorrow":"today"):null,calendarSource:selected?"Aladhan":null,hijriMethod:selectedMethod,
+    unavailableReason:reason,selectionReason:!hijriText?"hijri-unavailable":after&&!applied?"sunset-update-unavailable":null,
+    staleDateState:_prayerStale?"prayer-stale":reason?"calendar-unavailable":"current",hijriAnomaly:null};
+}
+function bindDateDisclosure(){
+  if(_dateDisclosureBound) return;
+  const dialog=$("#dateDialog");
+  for(const id of ["ceDateButton","ahDateButton"]){
+    $("#"+id).addEventListener("click",()=>{ if(!dialog.open){ _dateInitiator=$("#"+id); dialog.showModal(); } });
+  }
+  $("#dateClose").addEventListener("click",()=>dialog.close());
+  dialog.addEventListener("close",()=>{ if(_dateInitiator&&_dateInitiator.isConnected) _dateInitiator.focus({preventScroll:true}); _dateInitiator=null; });
+  _dateDisclosureBound=true;
+}
+function renderCalendarDates(projection){
+  _lastDateTruth=projection;
+  const ceHtml=projection.gregorianText?`${escHtml(projection.gregorianText)}<span class="er">CE</span>`:"Gregorian date unavailable";
+  const staleTag=_prayerStale?`<span class="staletag" title="Prayer times may be out of date — couldn't refresh for the new day">stale</span> `:"";
+  const cue=projection.unavailableReason==="Sunset date update unavailable"?`<span class="date-unavailable">Sunset date update unavailable</span> `:"";
+  const tail=projection.previewDay?` <span class="mph pre">| ${escHtml(projection.previewText.slice(0,-projection.previewDay.length))}${escHtml(projection.previewDay)}</span>`:"";
+  const ahHtml=projection.hijriText?`${staleTag}${cue}<span class="er">ه</span>${escHtml(projection.hijriText)}${tail}`:`${staleTag}Hijri date unavailable`;
+  const html=(id,value)=>{ const el=$("#"+id); if(el.innerHTML!==value) el.innerHTML=value; };
+  const text=(id,value)=>{ const el=$("#"+id); if(el.textContent!==value) el.textContent=value; };
+  const attr=(id,key,value)=>{ const el=$("#"+id); if(el.getAttribute(key)!==value) el.setAttribute(key,value); };
+  html("ce",ceHtml); html("ah",ahHtml);
+  attr("ah","title",projection.explanation);
+  attr("ceDateButton","aria-label",`Show complete Gregorian date: ${projection.gregorianText||"Gregorian date unavailable"}`);
+  attr("ahDateButton","aria-label",`Show complete Hijri date: ${projection.hijriText||"Hijri date unavailable"}. ${projection.explanation}`);
+  text("dateGregorian",projection.gregorianText||"Gregorian date unavailable");
+  text("dateHijri",projection.hijriText||"Hijri date unavailable");
+  text("datePreview",projection.previewText);
+  for(const id of ["datePreview","datePreviewLabel"]){const el=$("#"+id),hidden=!projection.previewText;if(el.hidden!==hidden)el.hidden=hidden;}
+  text("dateReason",projection.explanation);
+  bindDateDisclosure();
+}
 
 // ---- SINGLE TEMPORAL SOURCE OF TRUTH -------------------------------------------------------------
 // Ordinary loads follow Date.now(); explicit previews use simBase + realElapsed·timeScale. EVERYTHING
@@ -2510,17 +2603,16 @@ function genLightning(seed){
 }
 let _lastBolt=-1, _lastRender=null;   // _lastRender: last actually-rendered state summary (observability, read by qaState)
 function render(){
-  if(!simulationReady()){ _lastRender=null; return; }
-  if(!today) return;
+  if(!simulationReady()){ renderCalendarDates(selectCalendarDisplay(null)); _lastRender=null; return; }
+  if(!today){ renderCalendarDates(selectCalendarDisplay(null)); return; }
   setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)
   syncWeather();                                              // sim/fast-forward: pull weather from the forecast track at simTime
   const M=model();
-  if(!M){ showError("Prayer times unavailable"); _lastRender=null; return; }
+  if(!M){ renderCalendarDates(selectCalendarDisplay(null)); showError("Prayer times unavailable"); _lastRender=null; return; }
   const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin || moonGeometryObservation(M).fresh!==true){ renderMoon(); lastMoonMin=moonSky._min; }   // minute cadence + date/location invalidation; failed production never advances the success marker
   // REAL-TIME: star POSITIONS stay fixed (no record-player spin) — only CSS per-star scintillation varies. The sky
   // is re-projected ONLY under timeScale (ADVANCING), or once per new day, so fast-forward shows celestial motion.
   if(ADVANCING || !_starsProjected){ projectStars(simDate()); _starsProjected=true; }
-  const afterMaghrib = M.nowMin >= mins(M.t.Maghrib);          // the Islamic (Hijri) day rolls over at Maghrib, not midnight
   prefetchPrayerDay();                                        // civil-day/owner/cooldown checks also allow late midnight reclassification
   $(".cn").textContent = M.currentKey;
   if(Number.isFinite(M.leftMin)){
@@ -2536,20 +2628,7 @@ function render(){
     const dim  = !now && !on;                        // anything that isn't present or next → dimmed
     return `<div class="p ${on?"on":""} ${now?"now":""} ${dim?"past":""}"><b>${k}</b><span class="tm">${fmt(M.t[k])}</span></div>`;
   }).join("");
-  const g=today.date&&today.date.gregorian, h=today.date&&today.date.hijri;
-  $("#ce").innerHTML = g ? `${escHtml(fmtDate(g))}<span class="er">CE</span>` : "";
-  // AH advances at Maghrib (not midnight). BEFORE Maghrib show today's Hijri plus a faint preview of
-  // the day that begins tonight — "| <moon-phase emoji> <that day's number>" at ~20% opacity. AFTER
-  // Maghrib the date itself becomes that next day and the preview/emoji is dropped entirely.
-  const tmrwH = tomorrow && tomorrow.date && tomorrow.date.hijri;
-  const ahH = (afterMaghrib && tmrwH) ? tomorrow.date.hijri : h;
-  const tail = (!afterMaghrib && tmrwH) ? ` <span class="mph pre">| ${phaseEmoji(moonNow().phase)} ${escHtml(tomorrow.date.hijri.day)}</span>` : "";
-  // DAY-ROLLOVER STALE CUE (prayer-only): if the day rolled over but the new day's timings could not be loaded, the
-  // shown times may be the previous day's — surface a quiet WORDED "stale" chip by the Hijri date + a faint date-row
-  // desaturation (via .c[data-stale]). Set from render() (where _prayerStale is known); NEVER read by atmosphere().
-  // Scope is prayer-time staleness ONLY — weather staleness stays in qaState, not on the card.
-  const staleTag = _prayerStale ? `<span class="staletag" title="Prayer times may be out of date — couldn't refresh for the new day">stale</span> ` : "";
-  $("#ah").innerHTML = ahH ? `${staleTag}<span class="er">ه</span>${escHtml(fmtDate(ahH,"hijri"))}${tail}` : staleTag;
+  renderCalendarDates(selectCalendarDisplay(M));
   $(".c").dataset.stale = _prayerStale ? "prayer" : "";
   // applyTheme captures the geometry actually consumed; a later producer cannot erase stale/failure evidence.
   applyTheme(M);
@@ -2579,6 +2658,7 @@ window.qaState=function(){
   const current=selectedWeather();
   return {
     sim:`${n.dateStr} ${pad(n.h)}:${pad(n.mi)}`,
+    dateTruth:_lastDateTruth?{..._lastDateTruth}:null,
     sunEl:+(A.solarElevationDeg||0).toFixed(1),
     wx:{code:current?current.code:null, cloud:current&&current.cloud!=null?Math.round(current.cloud):null, temp:current?current.temp:null, rh:current&&current.rh!=null?Math.round(current.rh):null, vis:current?current.vis:null, wind:current&&current.wind!=null?+current.wind.toFixed(1):null},
     // ── WEATHER TRUTHFULNESS diagnostics: why the widget is / isn't showing rain or thunder ──
