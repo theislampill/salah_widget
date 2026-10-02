@@ -198,6 +198,11 @@
     try {
       var store = storage === undefined ? root.localStorage : storage;
       var c = normalize(cfg); c.v = 1; c.savedAt = Date.now();
+      // Old readers derive their pin state from source and ignore fix age. Keep
+      // private acquisition evidence, but let them read a configured site.
+      if (c.source === "browser-geolocation" || c.origin === "browser-geolocation") {
+        c.origin = c.origin || c.source; c.source = "manual";
+      }
       store.setItem(KEY, JSON.stringify(c));
       return { ok: true, savedAt: c.savedAt };
     } catch (e) { return { ok: false, error: (e && e.name) || "error" }; }

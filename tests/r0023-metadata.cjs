@@ -2,11 +2,12 @@
 const assert=require("node:assert/strict"),{widget,drain}=require("./r0011-fixture.cjs"),{fixture,readSource}=require("./r000f-fixture.cjs");
 const ref=process.argv.includes("--ref")?process.argv[process.argv.indexOf("--ref")+1]:undefined;
 const mutant=process.argv.includes("--mutant")?process.argv[process.argv.indexOf("--mutant")+1]:undefined;
-const T=Date.parse("2026-10-02T12:00:00Z"),day=86400000;
+const T=Date.parse("2026-10-02T12:00:00Z"),day=86400000,older="fd2972ba64225fe9d6848e92497e6d0ed20ea624";
 const seed={lat:51.5,lon:-.12,label:"London",method:"3",units:"f",source:"manual"};
 const position=(accuracy=25,timestamp=T)=>({coords:{latitude:52.52,longitude:13.41,accuracy},timestamp});
 function configMutate(source){return mutant==="capture-time"?source.replace('acquiredAt: pos && pos.timestamp','acquiredAt: null')
-  :mutant==="fix-age"?source.replace('c.v = 1; c.savedAt = Date.now();','c.v = 1; c.savedAt = Date.now(); if(c.locationEvidence) c.locationEvidence.acquiredAt=c.savedAt;'):source;}
+  :mutant==="fix-age"?source.replace('c.v = 1; c.savedAt = Date.now();','c.v = 1; c.savedAt = Date.now(); if(c.locationEvidence) c.locationEvidence.acquiredAt=c.savedAt;')
+  :mutant==="legacy-source"?source.replace('c.origin = c.origin || c.source; c.source = "manual";','c.origin = c.origin || c.source;'):source;}
 function mutate(source){return mutant==="form-drop"?source.replace('locationEvidence:_setLocationEvidence,','locationEvidence:null,')
   :mutant==="label-clears"?source.replace('if(id!=="set-label"){','if(true){'):source;}
 function make(extra={}){return widget({ref,seed,now:T,...extra,configMutate:mutant?configMutate:undefined,mutate:mutant?mutate:undefined});}
@@ -14,6 +15,13 @@ async function acquire(f,pos=position()){f.click("set-pin");await f.resolveCall(
 function evidence(f){return f.config()?.locationEvidence;}
 function record(source,intent,accuracyM=null,acquiredAt=null,extra={}){return {intent,source,accuracyM,acquiredAt,provider:null,area:null,bounds:null,...extra};}
 function builder(){const f=fixture("builder",{ref});f.sandbox.Date=class extends Date{static now(){return T;}};return f;}
+function olderConsumer(raw){
+  const f=widget({ref:older,now:T+day,open:false}),key=f.sandbox.SalahConfig.KEY;
+  f.storage.set(key,raw);
+  f.run('const olderResolution=SalahConfig.resolve("#local=1"); bindConfig(olderResolution.cfg); _cfgMode=olderResolution.mode; _enableSettingsAffordance(); _openSettings();');
+  assert.equal(f.storage.get(key),raw,"reading through the older consumer must not rewrite saved bytes");
+  return f;
+}
 const cases=[],test=(name,body)=>cases.push({name,body});
 test("shared geolocation captures original measured accuracy and fix timestamp",async()=>{
   const f=make(),p=f.sandbox.SalahConfig.geolocate({});await f.resolveCall("gps",0,position());const r=await p;
@@ -101,5 +109,48 @@ test("portable and local serialization never emits private acquisition history",
   const f=make(),c={...seed,source:"browser-geolocation",locationEvidence:record("browser-geolocation","device-position",25,T)};
   for(const opts of [{},{mode:"preferLocal"},{mode:"local",explicitPrefs:["method","units"]}]){const h=f.sandbox.SalahConfig.serialize(c,opts);assert.doesNotMatch(h,/accuracy|acquiredAt|timestamp|locationEvidence|device-position|browser-geolocation/);if(opts.mode==="local")assert.equal(new URLSearchParams(h).has("lat"),false);}
   assert.equal(f.sandbox.SalahConfig.parseHash("#lat=1&lon=2&acquiredAt="+T+"&accuracyM=25").cfg.acquiredAt,undefined);
+});
+test("actual older consumer degrades a saved browser position to a configured site",async()=>{
+  const f=make();await acquire(f);f.click("setClose");const key=f.sandbox.SalahConfig.KEY,raw=f.storage.get(key),saved=JSON.parse(raw);
+  assert.deepEqual(evidence(f),record("browser-geolocation","device-position",25,T));
+  f.buckle.dispatch("click");assert.match(f.elements.get("set-pin").title,/^Saved browser position/);
+  const old=olderConsumer(raw),title=old.elements.get("set-pin").title;
+  console.log(JSON.stringify({consumer:older,storedSource:saved.source,storedOrigin:saved.origin||null,title,bytesUnchanged:old.storage.get(key)===raw,native:"NOT_RUN"}));
+  assert.match(title,/^Manual location/);assert.doesNotMatch(title,/^Using precise location/);
+  assert.deepEqual([old.config().lat,old.config().lon,old.config().method,old.config().units],[52.52,13.41,"3","f"]);
+  assert.equal(saved.source,"manual");assert.equal(saved.origin,"browser-geolocation");assert.deepEqual(saved.locationEvidence,record("browser-geolocation","device-position",25,T));
+  assert.deepEqual(JSON.parse(JSON.stringify(f.sandbox.SalahConfig.loadLocal().locationEvidence)),saved.locationEvidence);assert.equal(f.storage.get(key),raw);
+});
+test("later preference saves preserve private origin and fix while the older state stays manual",async()=>{
+  const f=make();await acquire(f);f.click("setClose");f.now(T+day);f.buckle.dispatch("click");f.input("set-label","Home");f.key("set-label","Enter",true);f.input("set-units","c","change");f.click("setClose");
+  const raw=f.storage.get(f.sandbox.SalahConfig.KEY),saved=JSON.parse(raw),old=olderConsumer(raw);
+  assert.match(old.elements.get("set-pin").title,/^Manual location/);assert.equal(saved.source,"manual");assert.equal(saved.origin,"browser-geolocation");assert.equal(saved.savedAt,T+day);assert.equal(saved.locationEvidence.acquiredAt,T);assert.equal(saved.locationEvidence.accuracyM,25);
+  assert.deepEqual([old.config().lat,old.config().lon,old.config().label,old.config().method,old.config().units],[52.52,13.41,"Home","3","c"]);assert.equal(f.calls.gps.length,1);
+});
+test("legacy browser record remains unchanged on read and conservatively migrates on explicit save",()=>{
+  const f=make({open:false}),key=f.sandbox.SalahConfig.KEY,raw=JSON.stringify({...seed,v:1,source:"browser-geolocation",savedAt:T-day});f.storage.set(key,raw);
+  f.run('const legacyResolution=SalahConfig.resolve("#local=1"); bindConfig(legacyResolution.cfg); _cfgMode=legacyResolution.mode; _enableSettingsAffordance(); _openSettings();');
+  assert.deepEqual(evidence(f),record("legacy","device-position"));assert.equal(f.storage.get(key),raw);assert.equal(f.config().savedAt,T-day);
+  f.input("set-units","c","change");f.click("setClose");const migrated=f.storage.get(key),saved=JSON.parse(migrated),old=olderConsumer(migrated);
+  assert.match(old.elements.get("set-pin").title,/^Manual location/);assert.equal(saved.origin,"browser-geolocation");assert.equal(saved.source,"manual");assert.deepEqual(saved.locationEvidence,record("legacy","device-position"));assert.deepEqual([old.config().lat,old.config().lon,old.config().method,old.config().units],[51.5,-.12,"3","c"]);assert.equal(f.calls.gps.length,0);
+});
+test("older preference rewrite remains usable with explicitly unknown acquisition evidence",async()=>{
+  const f=make();await acquire(f);f.click("setClose");const key=f.sandbox.SalahConfig.KEY,old=olderConsumer(f.storage.get(key));
+  assert.match(old.elements.get("set-pin").title,/^Manual location/);old.input("set-units","c","change");old.click("setClose");const rewritten=old.storage.get(key);f.storage.set(key,rewritten);
+  const loaded=f.sandbox.SalahConfig.loadLocal();assert.deepEqual([loaded.lat,loaded.lon,loaded.method,loaded.units],[52.52,13.41,"3","c"]);assert.deepEqual(JSON.parse(JSON.stringify(loaded.locationEvidence)),record("manual","fixed-site"));assert.equal(loaded.origin,"manual");assert.equal(loaded.savedAt,T+day);assert.equal(old.calls.gps.length,0);
+});
+test("manual place and coarse saved representations preserve their established source states",()=>{
+  for(const [source,intent] of [["manual","fixed-site"],["place","fixed-site"],["coarse-ip","coarse-area"]]){
+    const ev=record(source,intent),f=make({seed:{...seed,source,locationEvidence:ev}}),raw=f.storage.get(f.sandbox.SalahConfig.KEY),saved=JSON.parse(raw),old=olderConsumer(raw);
+    assert.equal(saved.source,source);assert.deepEqual(evidence(f),ev);assert.deepEqual([old.config().lat,old.config().lon,old.config().method,old.config().units],[51.5,-.12,"3","f"]);assert.match(old.elements.get("set-pin").title,source==="coarse-ip"?/^Estimated from your IP/:/^Manual location/);
+  }
+});
+test("default and explicit storage arguments encode conservatively without mutating live input",()=>{
+  for(const explicit of [false,true]){
+    const f=make(),cfg={...seed,source:"browser-geolocation",locationEvidence:record("browser-geolocation","device-position",25,T)},before=JSON.stringify(cfg),store=f.sandbox.localStorage,result=explicit?f.sandbox.SalahConfig.saveLocal(cfg,store):f.sandbox.SalahConfig.saveLocal(cfg),key=f.sandbox.SalahConfig.KEY;
+    assert.deepEqual(JSON.parse(JSON.stringify(result)),{ok:true,savedAt:T});assert.equal(JSON.stringify(cfg),before);
+    const saved=JSON.parse(f.storage.get(key));assert.equal(saved.source,"manual");assert.equal(saved.origin,"browser-geolocation");assert.deepEqual(saved.locationEvidence,cfg.locationEvidence);
+    const loaded=explicit?f.sandbox.SalahConfig.loadLocal(store):f.sandbox.SalahConfig.loadLocal();assert.equal(loaded.source,"localStorage");assert.equal(loaded.origin,"browser-geolocation");assert.deepEqual(JSON.parse(JSON.stringify(loaded.locationEvidence)),cfg.locationEvidence);
+  }
 });
 (async()=>{let failed=0;for(const c of cases){try{await c.body();console.log("PASS",c.name);}catch(e){failed++;console.error("FAIL",c.name,"\n",e.stack);}}console.log(JSON.stringify({cases:cases.length,passed:cases.length-failed,failed,ref:ref||"working-tree",mutant:mutant||null,native:"NOT_RUN"}));process.exitCode=failed?1:0;})();
