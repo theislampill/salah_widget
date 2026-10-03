@@ -38,7 +38,7 @@ function composition(html,state,backdrop=[255,255,255],appearance='glass'){
     composedBackground,composedText,ratio:contrast(composedText,composedBackground)};
 }
 function mutateTimetable(html,kind){
-  if(kind==='past'){assert.equal(html.split('.p.past{').length,2);return html.replace('.p.past{','.p.past{opacity:.42;');}
+  if(kind==='past'){const before='.c[data-appearance="contrast"] .p{opacity:1;';assert.equal(html.split(before).length,2);return html.replace(before,'.c[data-appearance="contrast"] .p{');}
   assert.equal(kind,'on');const before=rule(html,'.c[data-appearance="contrast"] .p.on').background;
   assert.equal(html.split(before).length,2,'One contrast-only next background');assert.match(before,/,rgba\(9,17,28,\.90\)$/);
   return html.replace(before,before.replace(/,rgba\(9,17,28,\.90\)$/,''));
@@ -50,8 +50,8 @@ const baseline=execFileSync('git',['show',`${BASE}:index.html`],{cwd:ROOT}).toSt
 const results=[];
 function test(name,body){try{const detail=body();results.push({name,status:'PASS',detail});}catch(error){results.push({name,status:'FAIL',error:error.message});}}
 test('composition calculator positive and negative controls',()=>{assert.equal(contrast([0,0,0],[255,255,255]),21);assert.equal(contrast([255,255,255],[255,255,255]),1);});
-test('default glass restores the actual main gradients and optical declarations',()=>{for(const selector of ['.p','.p.on'])assert.equal(rule(source,selector).background,rule(baseline,selector).background);for(const key of ['backdrop-filter','-webkit-backdrop-filter','box-shadow','border'])assert.equal(rule(source,'.p')[key],rule(baseline,'.p')[key]);});
-for(const state of ['normal','past','on'])test(`${state} timetable information stays fully opaque in default glass`,()=>{const c=composition(source,state);assert.equal(c.opacity,1);return c;});
+test('default glass restores all original timetable state styling',()=>{for(const selector of ['.times','.p','.p.on','.p.now','.p.past','.p b','.tm'])assert.deepEqual(rule(source,selector),rule(baseline,selector),selector);});
+for(const state of ['normal','past','on','now'])test(`${state} retains its original glass state emphasis`,()=>{const c=composition(source,state);assert.equal(c.opacity,state==='past'?.42:1);return c;});
 for(const state of ['normal','past','on']) test(`${state} opt-in contrast retains intended-color contrast on white stress backdrop`,()=>{const c=composition(source,state,[255,255,255],'contrast');assert.ok(c.ratio>=4.5,`${state}: ${c.ratio.toFixed(3)} < 4.5`);assert.equal(c.opacity,1,'Information stays at full group opacity');return c;});
 test('glass default has no superseded white-stress 4.5 claim',()=>{const c=composition(source,'normal');assert.ok(c.ratio<4.5,'Control must distinguish glass from contrast');return {...c,claim:'Glass aesthetic selected by owner; prior white-stress gate applies only to contrast'};});
 test('geometry and typography declarations preserved',()=>{
@@ -61,7 +61,7 @@ test('geometry and typography declarations preserved',()=>{
   }
 });
 if(!process.argv.includes('--baseline')){
-  test('past-only opacity mutant loses opt-in contrast independently',()=>{const c=composition(mutateTimetable(source,'past'),'past',[255,255,255],'contrast');assert.ok(c.ratio<4.5,`mutant unexpectedly ${c.ratio}`);return c;});
+  test('missing contrast opacity override exposes inactive-row attenuation',()=>{const c=composition(mutateTimetable(source,'past'),'past',[255,255,255],'contrast');assert.ok(c.ratio<4.5,`mutant unexpectedly ${c.ratio}`);assert.equal(c.opacity,.42);return c;});
   test('contrast next-only backing mutant loses contrast independently',()=>{const c=composition(mutateTimetable(source,'on'),'on',[255,255,255],'contrast');assert.ok(c.ratio<4.5,`mutant unexpectedly ${c.ratio}`);return c;});
 }
 return {sourceSha256:sha(source),baselineSha256:sha(baseline),limit:'Authored intended-color composition with white sky/accent bounds, no antialias/shadow/filter conformance claim. Native crops and text-free pixel pairs are required.',results};
