@@ -9,8 +9,8 @@ and don't expect this file to repeat them.
   weather-truthfulness policy, all URL/debug params, known approximations, QA matrix.
 - `AGENTS.md` — how to work here: review process, PASS/FAIL gates, **"screenshots override metrics"**, forbidden
   regressions, **commit policy (do not commit unless explicitly asked)**, and run/debug recipes.
-- Auto-memory: `C:\Users\theis\.claude\projects\C--workspace-ai-salah-widget\memory\` — `MEMORY.md` index +
-  `background-overhaul-progress.md` (a turn-by-turn log of the whole overhaul; the newest entries are this work).
+- [Implementation dossier](docs/rlgwo-implementation-dossier.md) — current 37-row/eight-join disposition,
+  bounded public receipts, actual reviewer records and remaining qualification cells.
 - Git history is the source of truth for *what changed*. Historical June main records (not the current HEAD
   or public-byte qualification):
   - `37084ae` — local self-configuring mode (`#local=1`) + shared `config.js` + in-widget settings + TablissNG wizard.
@@ -21,7 +21,7 @@ and don't expect this file to repeat them.
 
 ## Project shape
 
-`C:\workspace\ai\salah_widget\index.html` (runtime CSS + JS + atmospheric renderer inline) +
+`index.html` (runtime CSS + JS + atmospheric renderer inline) +
 **`config.js`** — the one shared module (`window.SalahConfig`: parse/validate/serialize/load-save-local/
 coarse-detect), loaded by both `index.html` and `builder.html`. **As of 2026-06-16 the "single self-contained
 index.html" invariant is deliberately relaxed** (maintainer decision) to keep config logic un-forkable; `config.js`
@@ -34,11 +34,18 @@ behavior require current checks; no local-observation or retention guarantee fol
 
 ## Working state
 
-**2026-10-02 source candidate — PARTIAL:** this documentation lease is bound to
-`b996f033e75ba959ab15ad5dcf38205a7de9ef0f`, tree `def57c3c8b22136dd93cc8c2909e41dc5b1991a2`.
-Root owns the subsequent composed freeze, independent review, native preview and integration. This prose
-does not qualify current Pages bytes, final native pixels/M0 or an installed extension. Reacquire actual
-HEAD/tree and affected evidence before resuming; do not restart the campaign or replay accepted units.
+**2026-10-03 integration runtime cut — PARTIAL:** runtime evidence is bound to
+`d054a96255de887d727330a833fb6556ad16c01a`, tree `6251683f0dc2f029980da6e466f079c165dbb9fe`.
+All 37 source implementations are joined. 23 work orders QUALIFIED and 14 PARTIAL; all 8 integrated joins PARTIAL (root-accepted bounded dispositions).
+Final publication adds only reconciled documentation/evidence; the d054 runtime remains unchanged.
+Read the [implementation dossier](docs/rlgwo-implementation-dossier.md) for current rows, joins,
+accepted native scopes, actual reviews and precise missing cells. Apple Bash 3.2/macOS, genuine touch,
+hidden/first-compositor-frame/mobile controls and inherited solar/sundog/cloud/gibbous art remain limited.
+Owner approval, release readiness, Pages/public repair and installed-extension qualification are unclaimed.
+The dated component and June snapshots below retain their historical capture/lease meaning; earlier
+pending statements do not reopen accepted receipts. Reacquire actual HEAD/tree and affected evidence
+before resuming; do not restart the campaign or replay accepted units. Final PR HEAD/tree stamps
+belong to external publication metadata, not this committed source.
 
 - **Clock/prayer:** ordinary loads follow `Date.now()`, including backward correction; explicit `timeScale=1`
   is anchored ADVANCING preview. Zoned inverse gaps/folds and unresolved intended endpoints remain unavailable.

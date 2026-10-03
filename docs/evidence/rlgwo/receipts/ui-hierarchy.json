@@ -1,0 +1,68 @@
+{
+  "schema": "salah-widget-public-bounded-receipt/v1",
+  "authoredAtUtc": "2026-10-03T08:24:25.671123+00:00",
+  "authorTask": "/root/closure_dossier",
+  "publicationStatus": "PROPOSED_DRAFT_PR_EVIDENCE",
+  "scopeLimit": "Authored summary of retained reviewed evidence; no recapture, replay, external readback, readiness or issue closure. Capture origins remain historical.",
+  "evidenceClass": "SOURCE_TEST_PLUS_NATIVE_SIM_PIXELS_SEPARATED",
+  "captureSourceCommit": "d054a96255de887d727330a833fb6556ad16c01a",
+  "captureSourceTree": "6251683f0dc2f029980da6e466f079c165dbb9fe",
+  "captureIndexSha256": "bffe1efe091c26cff139da5de9361bd7f389ff4d7ab3fec16024442c017511d8",
+  "nativeManifestSha256": "f69d4c09e1ff2a90ccbe6dd2c6e062871bedc3ecbac5ce84b74c6319d596ee13",
+  "sourceReviewSha256": "71a7fc6bd2641d25b4487115eb891d847c09bb3716b30ed81c66b180b3cde9bf",
+  "nativeReviewSha256": "bd1e8bfb68ff6e68e294d8a9617ee79c99b9569358181fbf04cb2f1598534015",
+  "sourceTests": {
+    "script": "tests/r0018-prayer-row-status.test.cjs",
+    "sha256": "02dd6f1fe9c0d5399d8de39834f144ae613651ff2c492cf18a3513e7ef6ec35f",
+    "recordedResults": "27/27 source-bound controls, including four mutants; held-out Riyadh/New York and real captured Tromso tied/reordered clocks. Not27 native cases.",
+    "predicate": "!now && !on && mins(M.t[k])<M.nowMin"
+  },
+  "native": {
+    "scenes": [
+      "noon-default",
+      "night-default",
+      "sunrise-default",
+      "noon-contrast"
+    ],
+    "geometryCssPx": [
+      325,
+      529.998046875
+    ],
+    "fonts": "Recorded actual Inter400/600 and Fraunces faces loaded; actual PBR output.",
+    "noonGlassOpacities": [
+      0.42,
+      0.42,
+      1,
+      1,
+      1,
+      1
+    ],
+    "nightGlassOpacities": [
+      1,
+      0.42,
+      0.42,
+      0.42,
+      0.42,
+      1
+    ],
+    "sunriseGlassOpacities": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "contrastOpacities": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "acceptance": "Only elapsed ordinary rows fade. Current prayer remains outlined; next prayer tinted; future ordinary rows normal. All six rows/footer readable in the four reviewed captures.",
+    "limits": "Frozen SIM prayer/weather clock fixtures. No full-scene contrast ratio, all-scenes layout, motion, religious calendar accuracy or whole sky-art PASS. Stress-test date literals in other captures are deliberate input, not settings errors."
+  },
+  "retainedPreparationAuthorTask": "/root/motion_review_resume"
+}
