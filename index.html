@@ -1112,6 +1112,11 @@ function adoptPrayerBundle(data,requestedDay,op=null,replaceCurrent=true,persist
   if(admitted.date===current){
     if(!replaceCurrent && prayerRecordReady(today,current)) return false;
     const changedDay=lastDate!==current;
+    // Successful day adoption retires an earlier day's cooldown. Keep a record for
+    // any owning loader's later .day update; failed same-day starts stay throttled.
+    if(changedDay && _prayerCooldown.current && _prayerCooldown.current.day!==current){
+      _prayerCooldown.current={day:current,nextTry:0};
+    }
     tz=admitted.timezone; today=admitted.data; lastDate=current; _prayerStale=false;
     if(!prayerRecordReady(tomorrow,next)) tomorrow=null;
     if(persist) saveCache(current,today,op?op.cacheKey:cacheKey());
