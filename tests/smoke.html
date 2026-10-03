@@ -118,6 +118,30 @@ async function scene(hash,name,fn,ready=prayerReady){const result=await loadUnti
   if(!result.w){if(result.error)line("fail",name+" — fixture bootstrap: "+result.error);missing(name,result.reason);return;}
   await required(name,ok=>fn(result.w,result.w.qaState(),ok));
 }
+// Elapsed cloud motion needs an in-view frame and the real observer's resume.
+async function withCloudFrameInView(ww,fn){
+  const doc=ww.document,f=ww.__widgetFixture,id=f&&f.documentId,want=hashOf(ww),attempt=_r,style=fr.getAttribute("style");
+  let active=true;
+  const owned=()=>{const current=ww.__widgetFixture;
+    if(!active || document.getElementById("w")!==fr || !fr.isConnected || fr.ownerDocument!==document || fr.contentWindow!==ww || ww.document!==doc ||
+      !current || current.state!=="ready" || current.run!==smokeRun || current.attempt!==attempt || _r!==attempt || current.documentId!==id ||
+      current.hash!==want || hashOf(ww)!==want || current.sourceSha256!==expectedSourceSha)throw Error("Cloud continuity lost its exact frame owner");
+  };
+  const visible=()=>{const r=fr.getBoundingClientRect(),card=doc.querySelector(".c");return document.visibilityState==="visible" && doc.visibilityState==="visible" &&
+    r.right>0 && r.bottom>0 && r.left<innerWidth && r.top<innerHeight && card && !card.classList.contains("paused");};
+  const sampleReady=()=>{owned();if(!visible())throw Error("Cloud continuity frame is no longer visible and resumed");};
+  owned();
+  try{
+    fr.setAttribute("style","position:fixed;left:20px;top:60px;width:325px;height:530px;border:0");
+    return await bounded((async()=>{
+      while(true){owned();if(visible())break;await new Promise(resolve=>setTimeout(resolve,25));}
+      sampleReady();return fn(sampleReady);
+    })(),2500,"cloud continuity visibility/sample");
+  }finally{
+    active=false;
+    if(style===null)fr.removeAttribute("style");else fr.setAttribute("style",style);
+  }
+}
 const base="lat=24.47&lon=39.61&label=Madinah&method=4";
 function weatherCurrent(ww,code=95,precip=5){const n=ww.partsInTz(ww.Date.now()),pad=v=>String(v).padStart(2,"0");return {
   time:n.y+"-"+pad(n.mo)+"-"+pad(n.d)+"T"+pad(n.h)+":"+pad(n.mi),interval:900,weather_code:code,
@@ -385,15 +409,15 @@ async function run(){
     ok("override fixture restores exact matchMedia function",ww.matchMedia===original);
   });
   head("cloud continuity (bounded accelerated elapsed frames; NOT normal-live M0 evidence)");
-  await scene(base+"&simWx=3&simCloud=100&timeScale=1800&motion=full","cloud continuity",async(ww,q,ok)=>{
+  await scene(base+"&simWx=3&simCloud=100&timeScale=1800&motion=full","cloud continuity",(ww,q,ok)=>withCloudFrameInView(ww,async sampleReady=>{
     const seed1=ww.qaState().wxTruth.cloudFieldSeed,cv=ww.document.querySelector(".cloudcanvas"),x=cv.getContext("2d");
     const grab=()=>{const d=x.getImageData(0,0,cv.width,cv.height).data;let a=0,h=0;for(let i=3;i<d.length;i+=4){a+=d[i];h=(h+d[i]*(((i>>2)*2654435761>>>20)&2047))%2147483647;}return {a,h};};
     const start=ww.performance.now();ww.paintClouds(ww.simNow()/1000);const g1=grab();await new Promise(resolve=>setTimeout(resolve,350));
-    ww.paintClouds(ww.simNow()/1000);const g2=grab();
+    sampleReady();ww.paintClouds(ww.simNow()/1000);const g2=grab();
     ok("actual monotonic interval elapsed",ww.performance.now()-start>=300);
     ok("accelerated overcast deck present + evolves",g1.a>0&&g1.h!==g2.h,"alpha="+g1.a+" changed="+(g1.h!==g2.h));
     ok("cloudFieldSeed stable across controlled paints",seed1===ww.qaState().wxTruth.cloudFieldSeed);
-  });
+  }));
 }
 function finalize(){const missingNames=cases.filter(c=>c.state==="pending"||c.state==="missing").map(c=>c.name);
   const executed=cases.filter(c=>c.state==="executed"||c.state==="failed").length,failed=cases.filter(c=>c.state==="failed").length;
