@@ -1788,9 +1788,12 @@ function renderMoonPBR(frac, waxing){
     const lit=a*refl, earth=es*a;   // es already carries the all-phase floor; multiply by albedo so the ashen side stays TEXTURED terrain
     // A below-horizon calendar disc uses existing Earthshine; the opaque surface rises with the same horizon envelope.
     const surfaceCeiling=earth+(1-earth)*up;
-    out[i]  =Math.min(255,Math.min(surfaceCeiling,Math.max(esFloor*a,lit+earth*0.42))*255*_EXPO);
-    out[i+1]=Math.min(255,Math.min(surfaceCeiling,Math.max(esFloor*a,lit*0.985+earth*0.50))*255*_EXPO);
-    out[i+2]=Math.min(255,Math.min(surfaceCeiling,Math.max(esFloor*a,lit*0.93+earth*0.66))*255*_EXPO);
+    // Display-transfer only the albedo floor in shadow; retain the existing Earthshine channel weights.
+    // Existing horizon/Lommel-Seeliger weights keep full moon and below-horizon calendar bytes unchanged.
+    const floor=esFloor*a, displayFloor=floor+(Math.pow(floor*_EXPO,1/2.2)/_EXPO-floor)*(1-clamp(lsf))*up;
+    out[i]  =Math.min(255,Math.min(surfaceCeiling,Math.max(floor,lit+earth*0.42,displayFloor*0.42))*255*_EXPO);
+    out[i+1]=Math.min(255,Math.min(surfaceCeiling,Math.max(floor,lit*0.985+earth*0.50,displayFloor*0.50))*255*_EXPO);
+    out[i+2]=Math.min(255,Math.min(surfaceCeiling,Math.max(floor,lit*0.93+earth*0.66,displayFloor*0.66))*255*_EXPO);
     // COVERAGE ANTIALIASING on the limb: alpha ramps over ~1.8 canvas px across the geometric edge, so the large
     // upscaled disc has a smooth circular edge — no jaggy stair-steps, no hard stroke. Outside the band the RGB is
     // still the bled limb colour (alpha 0), so any further browser resampling blends moon→moon, never moon→black.
