@@ -198,12 +198,15 @@ body{color:#fff7df;
 .wfx .cloudcanvas{position:absolute;inset:0;width:100%;height:100%;filter:blur(.55px);
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 3%,#000 24%,transparent 34%);
           mask-image:linear-gradient(180deg,transparent 0,#000 3%,#000 24%,transparent 34%)}
-/* The existing radiometric disc crosses the cloud layer only for overcast; corona/rays/optics stay behind it. */
-.wfx .sunbody{position:absolute;left:0;top:0;width:0;height:0;opacity:var(--sunamt,0);
+/* The existing radiometric disc crosses the cloud layer for overcast or a compact clear low sun; corona/rays/optics stay behind it. */
+.wfx .sunbody{position:absolute;left:0;top:0;width:0;height:0;opacity:var(--sunbodyamt,var(--sunamt,0));
   transform:translate(var(--sunx2,24px),var(--sunlift,14px));transition:opacity 1.5s ease,transform 2.4s ease}
 .wfx .sunbody .disc{position:absolute;left:0;top:0;border-radius:50%;opacity:0;mix-blend-mode:screen}
 .c[data-fx=overcast] .wfx .sunbody .disc{opacity:1}
 .c[data-fx=overcast] .atmo .suncorner .disc{opacity:0}
+/* A compact clear low sun uses this same radiant body; the original corona/rays keep their presence curve. */
+.c[data-fx=clear] .wfx .sunbody .disc{opacity:var(--sunlow,0)}
+.c[data-fx=clear] .atmo .suncorner .disc{opacity:calc(1 - var(--sunlow,0))}
 .wfx .sunhaze{position:absolute;left:var(--sunvx,5%);top:var(--sunvy,7%);width:300px;height:300px;transform:translate(-50%,-50%);
   background:radial-gradient(circle,var(--glow),transparent 56%);mix-blend-mode:screen;filter:blur(7px);opacity:0;transition:opacity 1s}
 /* CREPUSCULAR RAYS (light shafts): soft radial shafts emanating from the sun's screen position, revealed
@@ -2796,19 +2799,23 @@ function paint(A){
   c.style.setProperty("--sunx",A.sunX.toFixed(1)+"%");
   c.style.setProperty("--suny",A.sunY.toFixed(1)+"%");
   // —— CORNER SUN (.suncorner): nucleus + corona + rays, reading time-of-day & weather ——
-  { const e=A.solarElevationDeg, noon=clamp(e/40), sunAmt=clamp((e+1.5)/7);
+  { const e=A.solarElevationDeg, noon=clamp(e/40), sunAmt=clamp((e+1.5)/7), sunLow=1-clamp(e/5.5);
     // NUCLEUS + BODY colour are tone-mapped in atmosphere() (Kasten–Young airmass + Beer–Lambert + per-class cloud
     // transmittance + CCT blackbody → ACES); paint() only WRITES them. See atmosphere() for the math + rationale
     // (a DEFINED white nucleus even through cloud; cloud desaturates toward warm-white, never the old grey/purple blob).
     c.style.setProperty("--sunamt",sunAmt.toFixed(3));                            // PRESENCE only (is the sun up?) — NOT a brightness mute
+    c.style.setProperty("--sunbodyamt",clamp((e+1.5)/1.5).toFixed(3));              // radiant low-sun body only; zero at the existing -1.5° cutoff
+    c.style.setProperty("--sunlow",sunLow.toFixed(3));                            // return the clear disc to its original layer by the existing 5.5° full-presence boundary
     c.style.setProperty("--suncore",A.sunCoreRGB);                               // tone-mapped NUCLEUS colour (from atmosphere)
     c.style.setProperty("--sunmid",A.sunMidRGB);                                 // tone-mapped SATURATED warm-gold BODY/edge (from atmosphere)
-    c.style.setProperty("--sundisc",(1.10-0.24*noon).toFixed(3));                 // broad soft disc low → tighter bright nucleus high
-    // SOLAR PATH: the sun ENTERS from the left edge near the dashed horizon at sunrise (low e) and climbs UP-and-
-    // LEFT, cresting HIGH into the top-left corner near apex (mostly clipped → a powerful sliver, not a mid-corner
-    // blob). --sunlift=vertical (≈216px≈near the 228px horizon at sunrise → 22px high at noon), --sunx2=horizontal
-    // (settled ~16px in the corner at noon → ≈−22px off the left edge at sunrise).
-    const sunLiftPx=40+176*(1-noon), sunX2Px=20-40*(1-noon);   // noon: nucleus sits a touch more ON-card (≈20,40) so the bright core reads as a defined body, not a corner sliver; sunrise: enters from off the left edge near the dashed horizon (≈−20,216)
+    c.style.setProperty("--sundisc",(1.10-0.24*noon-0.75*sunLow).toFixed(3));      // compact low-sun body; original high-sun footprint and refraction
+    // The low-left nucleus belongs to the visible arc horizon, not the old fixed 216px layout.
+    // Read its existing geometry only below apex; noon placement remains unchanged.
+    let sunHorizonPx=216;
+    if(noon<1){ const hz=$(".arc .horizon"), atmo=$(".atmo");
+      if(hz&&atmo){ const hr=hz.getBoundingClientRect(), ar=atmo.getBoundingClientRect();
+        if(hr.width>0&&Number.isFinite(hr.top-ar.top))sunHorizonPx=hr.top-ar.top; } }
+    const sunLiftPx=40+(sunHorizonPx-40)*(1-noon), sunX2Px=20;   // on-card core, low at contact → existing top-left apex
     c.style.setProperty("--sunlift",sunLiftPx.toFixed(1)+"px");
     c.style.setProperty("--sunx2",sunX2Px.toFixed(1)+"px");
     // VISIBLE-SUN screen coordinate (the corner-sun disc centre). The DISCRETE solar optics (22° halo, sundogs,
