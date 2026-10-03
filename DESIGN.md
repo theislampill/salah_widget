@@ -141,10 +141,12 @@ and earns no textured calendar-disc success. Native first-compositor-frame evide
 
 ## Sun layers & optical phenomena
 
-- `.atmo .suncorner` is the large **clipped corner sun**: a **defined white nucleus** (a generous bright core) + a
-  warm-gold body edge + a broad corona + faint rays, screen-blended. It **enters from off the left edge** near the
-  dashed horizon at sunrise and climbs up-and-left, cresting high into the top-left corner at noon (driven by solar
-  elevation). It sits *behind* the cloud layer (clouds can occlude it).
+- The corner sun combines a **defined white nucleus**, warm-gold body edge, broad corona and faint rays,
+  screen-blended. Its centre stays **20 px from the left edge**; below 40° it rises from the actual rendered
+  dashed horizon toward the existing **(20 px, 40 px)** apex. The disc is compact below 5.5°, with the original
+  broad high-sun footprint retained. For overcast and clear low sun, `.wfx .sunbody` carries the radiant disc
+  above clouds; the clear disc blends back into `.atmo .suncorner` by 5.5°. Corona/rays remain behind clouds
+  with their existing presence curve. Solar colour, condition gates and refraction are unchanged.
 - **Solar tone-mapping / white-balance** (the disc colour discipline): the sun colour is **scene-referred, then
   tone-mapped** — never display-gamma colours multiplied by a weather "mute" (which produced a dim grey/purple
   blob). Pipeline: Kasten–Young **airmass** → Beer–Lambert **beam transmittance** × per-class **cloud
@@ -194,6 +196,8 @@ and earns no textured calendar-disc success. Native first-compositor-frame evide
 - **Earthshine**: a smooth curve `es = 0.09 + 0.34·(1−frac)^1.7` (steeper-than-linear toward full) × albedo —
   moderate ashen glow at thin crescent (the lit crescent still dominates), faint **textured** terrain at gibbous
   (never a black cutout), a small floor at full.
+  A display-transfer approximation of the existing albedo floor retains the cool Earthshine RGB weights and
+  original phase curve for shadow texture readability; it is not a radiometric calibration.
 - **Two distinct lunar optics**, gated by cloud type/humidity: a **22° ice halo** (`.mhalo`, a discrete ring with
   a dark inner gap, red-inner/blue-outer, from cirrus) vs a **droplet corona** (`.mcorona`, a small near-white
   aureole with pastel rings hugging the disc, from altostratus/fog/humidity). The generic `.mglow` is subtle and

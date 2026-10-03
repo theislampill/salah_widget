@@ -34,23 +34,19 @@ behavior require current checks; no local-observation or retention guarantee fol
 
 ## Working state
 
-**2026-10-03 same-campaign continuation — ACTIVE/PARTIAL:** all37 implementations are joined;
-31 work orders QUALIFIED and six PARTIAL, with four QUALIFIED/four PARTIAL joins.
-The six selected repairs are joined at runtime input `3960c62c2b30e2972872b1b927c0191fffde201c` / tree
-`0134c145b987320bc506ee822334d72093b2919f`; index SHA-256 `26cec992ec9816ba33bd50ce30c01f750fc2d2fbc080ade7f99b3b0da4666ac2`.
-Final six visual and two actual joined PBR documents have independent bounded review and immutable custody;
-R001D is qualified under its exact consumed-state/current-canvas sampler contract. Read the
-[implementation dossier](docs/rlgwo-implementation-dossier.md) and
-[continuation receipt](docs/evidence/rlgwo/receipts/continuation-native.md) for exact source, original images and reviewers.
-The only remaining required row cells are genuine Apple Bash3.2/macOS (three installer rows), genuine
-document-hidden recovery (R0025), and actual sunrise/clear-gibbous art (R0021/R0022). Real offscreen recovery
-is accepted separately. The floor improves the gibbous limb without passing its texture gate; rejected lowSun
-is excluded. Opt-in diagnostic footer occlusion/pre-paint CSS and truthful early pending-map limitations remain.
-The owner appearance preview on56666 is a frozen Sep7 synthetic fixture launched from clean3960; other
-campaign fixture listeners are retired and their URLs historical. Later docs-only HEAD association requires
-separate unchanged-runtime proof. Draft publication does not complete the campaign. Owner approval,
-release readiness, Pages repair and a full art/motion cycle remain unclaimed. June/component records below
-remain historical. Final HEAD/tree stamps belong to external publication metadata.
+**Same-campaign continuation — ACTIVE/PARTIAL:** All 37 implementations are joined; 36 work orders are QUALIFIED and one PARTIAL, with six QUALIFIED and two PARTIAL joins.
+Only genuine document-hidden→resume remains required for R0025 and J07/J08; actual offscreen recovery is accepted separately.
+Owner-amended controlled Git Bash35/native WSL installer evidence closes R0013/R0015/R0016/J05 without a Mac or NTFS equivalence claim.
+The adopted Solar low-left nucleus and cool weighted Moon floor close bounded R0021/R0022/J06; historical failed/rejected variants remain evidence.
+Runtime input is `6695f7451bd5b55a06c3f535b2d4020e56cd300a` / tree `2d990ac6b6d8fc06f085bf8d7d74199930553fa9`; index SHA-256 `4f893b21632ea18ece6b50df849aa5c36df8300047b1b0f44cb10df44b2a6c03`.
+Final composed source controls, three native visual documents and two actual-caller cost documents have bounded review/custody/Root association.
+The measured joined/cache cost increased in these sequential observations; unequal page ages preclude a causal/efficiency/GPU conclusion.
+Read the [implementation dossier](docs/rlgwo-implementation-dossier.md) and [current receipt](docs/evidence/rlgwo/receipts/continuation-native.md#current-runtime6695-qualification).
+Owner preview59948 is the native-verified frozen Sep7 synthetic default-Glass fixture on runtime6695; old56666 and other campaign fixture URLs are historical/retired.
+Approved DESIGN spacing/placement and display-only Earthshine wording are already applied by Root; substantive component records below remain historical.
+A later docs-only HEAD must separately prove unchanged runtime bytes; final HEAD/tree stamps belong outside the committed tree.
+Debug overlay/pre-paint CSS, font acquisition, early pending, clipped/approximate art and historical motion limits remain explicit.
+Campaign completion, owner approval, release readiness, full art/M0, merge/main/deployment and issue comments remain unclaimed.
 
 - **Clock/prayer:** ordinary loads follow `Date.now()`, including backward correction; explicit `timeScale=1`
   is anchored ADVANCING preview. Zoned inverse gaps/folds and unresolved intended endpoints remain unavailable.

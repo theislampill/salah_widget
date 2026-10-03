@@ -1,8 +1,77 @@
 # Continuation native qualification receipt
 
-This authored public receipt reconciles bounded immutable reviews from the same 37-work-order campaign. Runtime input `3960c62c2b30e2972872b1b927c0191fffde201c` / tree `0134c145b987320bc506ee822334d72093b2919f` has all 37 implementations joined, 31 QUALIFIED and six PARTIAL rows, and four QUALIFIED/four PARTIAL joins. Final six visual documents and two actual joined PBR documents are independently reviewed and root-accepted. The earlier d054/9e cuts and original23/14 audit remain historical. Final documentation/publication head and tree belong to external PR metadata.
+All 37 implementations are joined; 36 work orders are QUALIFIED and one PARTIAL, with six QUALIFIED and two PARTIAL joins. Current source-bound amendments, repairs, reviewer records and cost are stated first; the original3960 receipt below is immutable historical content apart from this framing. Final publication head/tree is external.
 
 The original 23/14 audit remains historical; later reviewed cells support only their explicit promotions. Shared root-owned captures are correlated. Reviewer tasks below independently inspected named subsets; this receipt author adds no visual-panel vote. Requested route was gpt-6.1-sol/max, with backend identity unexposed. Private harnesses, archives, full native JSON, tokens, logs and whole-app screenshots are excluded.
+
+## Current runtime6695 qualification
+
+All 37 implementations are joined; 36 work orders are QUALIFIED and one PARTIAL, with six QUALIFIED and two PARTIAL joins. Only R0025 and its J07/J08 interfaces retain the required genuine document-hidden→resume cell, unavailable in the current supported environment. Actual offscreen recovery is independently accepted. The finite hidden-route audit is not a permanent absence claim; ineffective protocol freeze is not suspension evidence. This records bounded Root acceptance, not campaign completion, owner approval, a full art/M0 cycle or deployment. The published1d/31–6 checkpoint and all earlier sections below retain their historical cuts.
+
+Runtime input is `6695f7451bd5b55a06c3f535b2d4020e56cd300a` / tree `2d990ac6b6d8fc06f085bf8d7d74199930553fa9`, index SHA-256 `4f893b21632ea18ece6b50df849aa5c36df8300047b1b0f44cb10df44b2a6c03` and unchanged config `91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81`. The later documentation/publication head belongs to external metadata, with a separate six-runtime-file equality proof. The approved DESIGN description is already applied by Root; no generic clean-checkout claim is made while docs are staged.
+
+<a id="current-installer"></a>### Amended installer execution
+
+Owner's exact successor choice is “Test Bash with controlled Linux fixtures; qualify native Linux behavior in WSL”. Authority SHA-256 `60c902412556cfc168f2b5f2d0c33776b6aa75365e069cf4b18fc040e4914db5` replaces only the former native Apple/macOS host cell. Actual Git for Windows Bash35 whole-entry cases pass:20 file/pipe previews and15 terminal/normal/input/cache-consumer cases. Real PTY/fd3/Ctrl-D EOF were exercised. Explicit Linux/profile/transport fixtures and the two admitted root-mode fields are controlled; actual UID/device/inode identities are retained. This is not native Windows/NTFS privacy or Linux equivalence. Native POSIX staging/DAC/retention remains the retained WSL23 entry/26 helper/49 peer checks and fresh post-EXIT consumer. PowerShell5.1/7 controls remain separate.
+
+R0013/R0015/R0016 and J05 are QUALIFIED under this adopted amendment. Bash3.2 language/source compatibility remains required and source-reviewed; no actual Apple Bash3.2 interpreter run is claimed. The unchanged install.sh SHA-256 is `9c3fd523bbd77f3080097ddbd142b7e966795befd008daa36fbfb9f8f1ca1cee`. Independent report `84d4e0fd05c4b248141cd73662ab15048039161e61f65679a693c2ef39fdb9aa` / receipt `9961bb33845ac05d9034039311e70cfb734caa936fcaffb55e1e6cb769d84435` is accepted by Root. Native MSYS refusal remains an expected unsupported-platform negative, not a positive fixture result or required Windows feature repair. The original394-member custody omitted nine nested manifests; additive408-member custody preserves the original bytes. Two failed attempts, nine truncated PTY snippets and missing raw before-state arrays remain limitations. Original issue/deferred bodies are unchanged history.
+
+<a id="current-visual-repair"></a>### Adopted Solar and Moon repairs
+
+R0021/R0022 and J06 are QUALIFIED after the retained unaffected contracts, scoped Solar10/Moon6 pixel reviews, actual9+33 joined source controls, final6695 sunrise/gibbous/near-new consumers and actual-caller cost/restoration are associated. Solar centre uses the actual dashed horizon below 40°, stays 20 px from the left edge and rises to the existing (20 px, 40 px) apex. The disc is compact below 5.5°; the original broad high-sun footprint remains. The clear low disc blends back behind clouds by 5.5°, while the overcast radiant body remains condition-gated. Global presence/corona/rays, tone-map, refraction and existing condition gates remain unchanged.
+
+The normal PBR shadow floor uses a display-transfer approximation through the original cool RGB Earthshine weights and phase curve. Meaningful but subtle .92 dark-side texture and .08/.5 phase balance are accepted from actual-size native crops. Near-new, full, below-horizon and procedural terminal fallback controls preserve their bounded roles. The rejected630 variant's taupe/flat crescent/half counterevidence is retained and not adopted. The earlier rejected lowSun washout is also historical. These repairs do not imply a radiometric recalibration, invented atmospheric moonlight, terrain when both maps fail or an all-scene art approval.
+
+<a id="current-applicability"></a>### Bounded source applicability
+
+Solar CSS and paint placement/body transfer, and normal renderMoonPBR shadow RGB, are the affected surfaces. Final composed controls and consumers cover those changes. Prayer/time/admission/HTTP/cache ownership, config/builder/installer/smoke, weather policy and cloud/time/media functions retain their exact unaffected source. Sampler coordinates/OOB/labels, lastConsumed freshness, phase/pose/alpha/mask, loader/fallback and physical-light gates remain unchanged. Old concrete PBR pixels and old timing values remain tied to their historical sources, not reissued as new measurements. Existing entry/mobile/local/pending, calendar touch/privacy, precipitation, seven cloud leaves and default cloud/star motion keep their original scopes without replay.
+
+Legacy opt-in CSS-now is a pre-paint snapshot, distinct from later actual DOM glow; the overlay can cover lower rows/footer. Early pending-map emptiness is truthful partial initialization, not settled-presence or first-ever proof. Recorded font-helper loads are not all-natural acquisition. The retained ordinary61s clear breathing visual FAIL does not invent an independent threshold under the unchanged slow palette/combined cloud-star contract.
+
+### Final actual-caller cost and custody
+
+The bounded native measurements retain an increase. After 24 warmups, 121 cached batches of 32 calls have median/p95 7.8/10.5 → 10.8/13.5 ms per batch; 21 material misses after 8 warmups have joined 8.4/9.4 → 11.6/13.1 ms and nested PBR 7.8/8.9 → 8.4/9.4 ms. Both documents use fixed Madinah 22:00/cloud55 at DPR 1.37; readiness ages differ 390.819/37.191 s. All 32 input actions and references restore. Positive/noop has zero rasters; each same-phase up transition has one raster, below light is zero and healthy positive returns. The measured synchronous model→renderMoon→atmosphere→paint/PBR path includes changed geometry/raster work. Serial order, document age, observer overhead and roughly 0.1 ms quantization limit causal attribution. No efficiency, GPU/compositor completion, battery, long-run leak, startup/fallback cost or new motion claim follows.
+
+Solar10 custody `3181e284a601b90106abf3ccfe5a870991dfacb9479b5aee2b51d5f0cdf6101f` and weightedMoon6 custody `c50266266852200e8b1b04dc9283eb091edfd5a65060f5891fa4cd89a1c06cda` retain their external3a/aa source identities. Across both packets there are31 unique native UUIDs,254 unique raw paths and64 unique original PNG paths; reused baseline gibbous members add no independence. Final composed visual custody `a86229814d38b93404af98299591a244b83d327b227509f71f900d44880b7cd9` and actual-caller cost custody `c07cceda0d75a1007d19fd6cba9c4290397fb31fb947aace5fe8b2ee6bf9f404` bind the final6695 cut. Final composition review `343520533344bf9c54f5aeebeb263dc71e8ad1c65af1537ab1616e9745dc3b33` and cost review `fae157aa6b77f46e79ce1c3d5eb5a0efadea04eddad2d339b422a0f0483a1681` support only their recorded scopes. Root acceptance `919862c35188afbade3bf69c6d51012987e481701d3e3509af67c92adc9bbc14` adopts the bounded36/1 and6/2 disposition. Five authored sceptic scopes use shared Root captures; this author adds no extra panel vote.
+
+### Current reviewer records
+
+| Reviewer task | Bounded source and scope | Original report SHA-256 |
+| --- | --- | --- |
+| /root/review_clock_native_resume | Amended installer:35 actual controlled Git Bash entries, retained native WSL and separate PS; no Apple/NTFS equivalence. | `84d4e0fd05c4b248141cd73662ab15048039161e61f65679a693c2ef39fdb9aa` |
+| /root/motion_review_resume | S1: sampled external Solar3a/weightedMoonaa actual-size repairs; clipping/subtle texture and rejected630 retained. | `2ad5abf393a4fa183280d3e9c0ae16bc59899ea60e5786b07461b54ffa07c7b7` |
+| /root/review_config_native_resume | S2: source-specific Sun/Moon pixels, unchanged Glass/hierarchy/buckle/footer; external variants keep null Git identities. | `422002149402645950d76147161cae9b9d68b43ce006ed4c4397305aefb1aed1` |
+| /root/review_weather_resume | S3: Solar10 scoped native repair; low-sun footprint remains approximate. | `cd5e73389030e70756bc07830a7ef259520b05adb61a44e2eb5fc830bd9c3a95` |
+| /root/review_weather_resume | S3: weightedMoon6 texture/phase/zero-light/calendar and model-only permissions; rejected630 retained. | `4b27249cc3bce8acf7b2a1d67ff04969842968e8a2dd64b99f6f68a9339972d9` |
+| /root/cloud_native_join_review | S4: final6695 composed3 visual cells, actual joined cost increase/restoration and19-function prior-cloud applicability; no global qualification. | `fae157aa6b77f46e79ce1c3d5eb5a0efadea04eddad2d339b422a0f0483a1681` |
+| /root/sky_qualification_prepare | S5: Solar10 source/UUID/capture acceptance at external3a. | `0b4fed0420185fbb6d4f7903a9cd406e003f08436e034a7d601c41bdf53e43fc` |
+| /root/sky_qualification_prepare | S5: weightedMoon6 cool texture and balanced phases; physical channels remain identical pairwise. | `d35309a6a66ef95d114d23e4718419d1b714d6d37eda8fb91136713225932398` |
+| /root/sky_qualification_prepare | S5 same-reader carry: final6695 sunrise/gibbous/near-new, seven originals/nine consumers; no extra panel vote or duplicated cost analysis. | `343520533344bf9c54f5aeebeb263dc71e8ad1c65af1537ab1616e9745dc3b33` |
+
+
+<a id="runtime6695-original-images"></a>### Current source-bound originals
+
+Three unmodified original native images below are controlled private-clock scene captures from final6695/index4f. Card CSS is325×530 with recorded DPR1.37; PNG dimensions are reported separately. They are not live-provider, default-motion, first-ever-frame or deployment evidence. Large/growing low-sun footprint, bright-body clipping, subtle lunar contrast and dim below-calendar presence remain disclosed visual approximations.
+
+![final6695-sunrise.png](../images/final6695-sunrise.png)
+
+Final6695 clear sunrise: defined warm-white nucleus enters low-left near the actual horizon. Growing footprint/bloom remains a stylized approximation; the owner elapsed-row hierarchy is preserved. Original SHA-256 `a062db97f334ce900df6eae0739849994875e5ccd3e2259bf8e933ceee349eb1`; 226447 bytes, PNG325×530.
+
+![final6695-gibbous.png](../images/final6695-gibbous.png)
+
+Final6695 clear gibbous: faint cool textured dark limb is meaningfully present at card scale. The weighted display floor preserves the Earthshine curve and phase balance; subtle contrast and bright-body clipping remain limits. Original SHA-256 `2b6910ed11f1d5cf4aa1ea20981832103e28b87e3fd1b47b1c23a49a0f667587`; 249722 bytes, PNG325×530.
+
+![final6695-near-new.png](../images/final6695-near-new.png)
+
+Final6695 near-new .01 Moon: decoded opaque ashen calendar presence with all physical lunar-light channels zero. This controlled scene does not claim atmosphere illumination or every-scene opacity/art. Original SHA-256 `845ae701e44652b04ab01f7093e48be9987564e176cd98c713290f42d48774c1`; 248694 bytes, PNG325×530.
+
+### Current owner preview
+
+[Owner default-Glass preview](http://127.0.0.1:59948/candidate/index.html?scene=noon&appearance=default&fresh=o-6695-a1aa35a2#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12%3A30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full) uses the unchanged existing appearance fixture on port59948, launched from runtime6695/index4f and verified natively with actual fonts/maps, six rows, visible progress and no unexpected fetch. The clock/prayer/weather scene is frozen synthetic Sep7 noon. It is not ordinary live acquisition or M0 evidence. Old56666 is retired under the exact-owned retirement receipt; old61317 and other recorded campaign fixture URLs are historical. A later docs-only head must prove equal runtime bytes separately.
+
+## Historical3960 qualification and review record
+
+The following sections preserve the accepted31/6,4/4 checkpoint at runtime3960. Their former Apple and art residuals describe that cut; the adopted amendment and repairs above supersede those current blockers without erasing old failures, images, comments, hashes or narrower limits.
 
 ## Newly qualified issue and join cells
 
