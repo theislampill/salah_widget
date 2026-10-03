@@ -34,18 +34,23 @@ behavior require current checks; no local-observation or retention guarantee fol
 
 ## Working state
 
-**2026-10-03 integration runtime cut — PARTIAL:** runtime evidence is bound to
-`d054a96255de887d727330a833fb6556ad16c01a`, tree `6251683f0dc2f029980da6e466f079c165dbb9fe`.
-All 37 source implementations are joined. 23 work orders QUALIFIED and 14 PARTIAL; all 8 integrated joins PARTIAL (root-accepted bounded dispositions).
-Final publication adds only reconciled documentation/evidence; the d054 runtime remains unchanged.
-Read the [implementation dossier](docs/rlgwo-implementation-dossier.md) for current rows, joins,
-accepted native scopes, actual reviews and precise missing cells. Apple Bash 3.2/macOS, genuine touch,
-hidden/first-compositor-frame/mobile controls and inherited solar/sundog/cloud/gibbous art remain limited.
-Owner approval, release readiness, Pages/public repair and installed-extension qualification are unclaimed.
-The dated component and June snapshots below retain their historical capture/lease meaning; earlier
-pending statements do not reopen accepted receipts. Reacquire actual HEAD/tree and affected evidence
-before resuming; do not restart the campaign or replay accepted units. Final PR HEAD/tree stamps
-belong to external publication metadata, not this committed source.
+**2026-10-03 same-campaign continuation — ACTIVE/PARTIAL:** all37 implementations are joined;
+31 work orders QUALIFIED and six PARTIAL, with four QUALIFIED/four PARTIAL joins.
+The six selected repairs are joined at runtime input `3960c62c2b30e2972872b1b927c0191fffde201c` / tree
+`0134c145b987320bc506ee822334d72093b2919f`; index SHA-256 `26cec992ec9816ba33bd50ce30c01f750fc2d2fbc080ade7f99b3b0da4666ac2`.
+Final six visual and two actual joined PBR documents have independent bounded review and immutable custody;
+R001D is qualified under its exact consumed-state/current-canvas sampler contract. Read the
+[implementation dossier](docs/rlgwo-implementation-dossier.md) and
+[continuation receipt](docs/evidence/rlgwo/receipts/continuation-native.md) for exact source, original images and reviewers.
+The only remaining required row cells are genuine Apple Bash3.2/macOS (three installer rows), genuine
+document-hidden recovery (R0025), and actual sunrise/clear-gibbous art (R0021/R0022). Real offscreen recovery
+is accepted separately. The floor improves the gibbous limb without passing its texture gate; rejected lowSun
+is excluded. Opt-in diagnostic footer occlusion/pre-paint CSS and truthful early pending-map limitations remain.
+The owner appearance preview on56666 is a frozen Sep7 synthetic fixture launched from clean3960; other
+campaign fixture listeners are retired and their URLs historical. Later docs-only HEAD association requires
+separate unchanged-runtime proof. Draft publication does not complete the campaign. Owner approval,
+release readiness, Pages repair and a full art/motion cycle remain unclaimed. June/component records below
+remain historical. Final HEAD/tree stamps belong to external publication metadata.
 
 - **Clock/prayer:** ordinary loads follow `Date.now()`, including backward correction; explicit `timeScale=1`
   is anchored ADVANCING preview. Zoned inverse gaps/folds and unresolved intended endpoints remain unavailable.
@@ -68,7 +73,7 @@ belong to external publication metadata, not this committed source.
   including glass, and saved preferences precede local/prefer-local defaults. Only the contrast option has the
   4.5:1 white-underlay stress gate; default glass earns no blanket ratio claim.
 - **Sky/clouds:** neutral first entry reveals on fresh consumed lunar geometry and matching stellar projection.
-  PBR decode/href readiness is separate; a failed surface cannot pass the calendar-disc gate. Independent
+  PBR decode/href readiness is separate. Terminal failure has a readable opaque procedural phase with no physical light; it cannot supply decoded terrain. Independent
   stellar masking covers stars/glints/Milky Way through twilight fade. Shared atmospheric lunar eligibility
   disables near-new/zero-horizon-permission/daylight atmospheric light while retaining opaque night-side/Earthshine. Signed cloud population
   survives ordinary day/zone/weather changes; old wind covers preceding monotonic intervals. Empty decks advance,
@@ -77,12 +82,12 @@ belong to external publication metadata, not this committed source.
 - **Held scope:** the round-4 adaptive-performance governor remains held. No governor/performance success,
   new provider, painted dawn or extra platform qualification belongs to this update.
 
-**Reviewed and joined smoke successor:** `48ba16e80f9715e40728349da8c8c5a26d2e4eaa`, tree
+**Historical reviewed and joined smoke successor:** `48ba16e80f9715e40728349da8c8c5a26d2e4eaa`, tree
 `d19b5b8a664059575615674f9561ed628d59ffd9` has **30 declared groups / 141 assertions**: 19 retained groups,
 11 actual-weather groups (66 assertions) and an added monotonic-cloud assertion. Root joined it at
 `64fdb1241bb3569c6519e39142cbe9e10a3e5872`; those TEST files are outside this documentation branch's older
 base. The subsequent PRAYER fixture join `65952878d16ebc4b5e77e4e689b0937311f99bfb` changes tests only;
-the runtime bytes remain the same pre-comment composition. Final native smoke execution is pending.
+the runtime bytes remain the same pre-comment composition. Final native smoke execution was pending at that historical cut. Later source-identical runtime smoke is accepted for R0017: three healthy sentinel runs,30 groups/141 assertions each and17 negative/fault/media controls. See the [current bounded smoke receipt](docs/evidence/rlgwo/receipts/smoke-runtime.json).
 The instrument runs automatically on navigation; private
 injected stores and preparse wrapper isolation persist. PASS requires the full declaration; assertion/bootstrap
 error is FAIL; missing callback/assertions/readiness is INCOMPLETE with declared/executed/missing names. The
@@ -197,8 +202,8 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
   geometry. The lit side **must** match the footer phase emoji (waxing→right, waning→left) — smoke-guarded.
 - **The Moon is OPAQUE.** Calendar/new-moon dimness belongs to PBR night-side/Earthshine, with no atmospheric
   lunar light. The existing twilight group fade is retained; its independent binary stellar cutout prevents
-  stars/glints/Milky Way showing through. Do not lower lunar opacity as a substitute for the mask or claim a
-  failed texture decode shows the calendar disc. Native edges and daytime no-hole controls remain required.
+  stars/glints/Milky Way showing through. Do not lower lunar opacity as a substitute for the mask. Terminal
+  fallback phase/presence is distinct from decoded terrain and never grants atmospheric moonlight. Native edges and daytime no-hole controls remain required.
 - `paint(A)` writes sky CSS/state, with an explicit cloud-state step; prayer/arc/date/moon/stellar DOM has other
   writers. Top-level `let`/`const` in the page ARE reachable from the historical `preview_eval`
   (global lexical env), which is how the live probes above work.
