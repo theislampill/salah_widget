@@ -2920,7 +2920,7 @@ function render(){
   $(".times").innerHTML = prayers.map(k=>{
     const on   = k===M.nextKey;                      // next → coloured (incl. tomorrow's Fajr overnight)
     const now  = k===M.currentKey;                   // present → bordered (not coloured)
-    const dim  = !now && !on;                        // anything that isn't present or next → dimmed
+    const dim  = !now && !on && mins(M.t[k])<M.nowMin; // only elapsed events fade; row order does not imply time
     return `<div class="p ${on?"on":""} ${now?"now":""} ${dim?"past":""}"><b>${k}</b><span class="tm">${fmt(M.t[k])}</span></div>`;
   }).join("");
   renderCalendarDates(selectCalendarDisplay(M));

@@ -46,8 +46,8 @@ the art is "realism-adjacent" (believable, never random). Two standing rules:
   the right edge clips the card). Large clipped **sun** in the **top-left**.
 - **Timetable appearance:** Liquid glass is the default (`appearance=glass`), including absent/legacy values.
   High contrast (`appearance=contrast`) adds local dark backing beneath both ordinary and upcoming cells.
-  Default glass retains the original faded inactive rows, current inset and next-prayer tint. High contrast
-  keeps every row at full opacity while retaining those current/next highlights. The **4.5:1 white-underlay
+  Default glass fades only elapsed prayers; future rows stay normal, with the current inset and next-prayer tint.
+  High contrast keeps every row at full opacity while retaining those current/next highlights. The **4.5:1 white-underlay
   stress gate applies to the contrast option**; default glass does not claim that guarantee. Actual crops still
   decide readability and geometry, not the authored backing ratio alone.
 

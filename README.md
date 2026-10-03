@@ -152,7 +152,7 @@ reports the persistence failure. Reset attempts to remove the saved configuratio
 if removal fails, it keeps the selected configuration and reports the failure.
 
 **Liquid glass** is the default appearance. Choose **High contrast** for a dark backing behind timetable
-text. Default glass fades inactive rows and gives the current and next prayers distinct highlights.
+text. Default glass fades only elapsed prayers; future rows stay normal, with distinct current/next highlights.
 High contrast keeps every row fully visible while preserving those highlights. The builder includes the
 selected appearance in portable and local exports, including explicit `appearance=glass` for its default;
 saved viewer settings take precedence in local/prefer-local mode.
@@ -281,7 +281,8 @@ Source trace: [config.js](config.js) (`coarseDetect`, `geocodeSearch`, `clearLoc
 - **Bounded recovery** — up to three ten-second prayer attempts with backoff; same-day retry starts are
   spaced by sixty seconds of real elapsed time while the visible loop runs. Hidden/offscreen pause does
   not provide background recovery.
-- The default Liquid glass timetable fades inactive rows, outlines the current prayer and tints the next.
+- The default Liquid glass timetable fades only elapsed prayers; future rows stay normal. It outlines the
+  current prayer and tints the next.
   High contrast adds local dark backing and full-opacity text while retaining the current/next highlights.
 - Gregorian (CE) and provider-selected Hijri (AH) dates use your `datefmt` (default ISO `YYYY-MM-DD`). Either
   footer button opens complete values and selection context. At/after Maghrib AH advances only using a
