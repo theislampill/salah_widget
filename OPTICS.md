@@ -3,7 +3,7 @@
 Every atmospheric phenomenon is classified by **physical family** and **gated by physical drivers before it
 renders** — this is a truthfulness + optical-coherence reference, not a VFX catalogue. If an effect cannot be made
 physically plausible inside a 2-D canvas/CSS widget, it is **removed from production or made debug-only** rather
-than left as a pretty lie. Gate formulas live in `atmosphere()` (index.html); DOM writes in `paint()`. The art is
+than left as a pretty lie. Gate formulas live in `atmosphere()` (index.html); sky writes in `paint()`. The art is
 "realism-adjacent": believable and physics-gated, never random, never decorative.
 
 **Families:** molecular (Rayleigh) · aerosol/haze (Mie) · volumetric water/ice cloud · ice-crystal geometric
@@ -11,6 +11,11 @@ optics · precipitation · thermal/material cues · celestial · visual-only UI.
 "glow effects."
 
 Contract per phenomenon: **family · inputs · gate · shape · NOT-shape · off-conditions · prod/debug · verdict**.
+
+Recipe suffixes below append to the existing configuration fragment after `#`.
+The six force names are `halo`, `sundogs`, `pillar`, `anticrep`, `paraselene` and `lunarhalo`;
+corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs.
+Complete activation/motion recipes are in [DESIGN.md](DESIGN.md#url--hash--debug-parameters).
 
 ---
 
@@ -52,12 +57,15 @@ Contract per phenomenon: **family · inputs · gate · shape · NOT-shape · off
 
 ### Clouds — *production*
 - **Family:** volumetric water/ice bodies, approximated as canvas puff-clusters with a time-noise lifecycle.
-- **Inputs:** low/mid/high cover, wind, humidity, sun/moon dir + up-ness, `cloudBase` tint, `simNow()`, a
-  location+day **stable seed**.
+- **Inputs:** eligible model/marked preview low/mid/high cover, wind, humidity, sun/moon dir + up-ness,
+  `cloudBase` tint and a signed target/seed/explicit preview identity. The initial day contribution is captured
+  once; ordinary day/month/year/zone/weather changes retain population.
 - **Gate:** clear (`cov<0.02`) paints nothing; lit-top/shaded-base volume; sun-side silver-lining rim
   (`sl·max(0,sCos)·0.85`); moon rim is **physical-only** (`moonLit`); per-class transmittance attenuates *flux*,
-  not colour; bounded top brightness; coverage eases (no reseed/slideshow); advection ~25–30%/min at moderate
-  wind + slow morph.
+  not colour; bounded top brightness; coverage eases (no reseed/slideshow). Travel/morph/wander use bounded
+  monotonic visual elapsed at the preview rate. Old wind covers the preceding interval before new wind applies;
+  empty decks still advance. Hidden/reduced state rebases/holds; gaps over two seconds discard suspended time.
+  An explicit seek reconstructs with zero initial displacement. Rates are artistic, not measured advection.
 - **NOT:** a scrolled static texture; a uniform grey blanket; pop-in on refresh; lamp-bright blobs; the moon
   showing through a heavy deck.  **Verdict:** keep (advection/continuity load-bearing).
 - *Improved (2026-06-16):* overcast now reads as a leaden ceiling — the sky tint behind the deck was neutralised +
@@ -88,6 +96,13 @@ Contract per phenomenon: **family · inputs · gate · shape · NOT-shape · off
 All discrete solar optics register to the **visible corner-sun** screen position (`--sunvx/--sunvy`), not the
 arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 
+One shared **`moonLightEligible`** decision governs all atmospheric lunar consumers: beam, cloud rim, local
+stellar wash, generic glow, corona, halo and paraselenae. Near-new fraction ≤0.02, zero horizon permission or
+daylight disables that light, including forced `lunarhalo`/`paraselene`. This permission cutoff leaves the
+opaque night PBR surface and its night-side **Earthshine** intact; it is not zero surface radiance. Stars,
+glints and Milky Way are masked independently through twilight fade. Failed/pending texture decode remains
+unavailable and cannot qualify the calendar-disc pixels.
+
 ### Crepuscular rays — *production*
 - **Family:** geometric shadowing / Mie shafts through broken-deck gaps.
 - **Gate:** `broken=clamp(1−|clMid−0.45|/0.42)`; `ray = min(0.5, clamp(e/8)·broken·(1−0.8·clLow)·clamp(0.3+0.7·
@@ -96,12 +111,12 @@ arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 - **Shape:** soft radial shafts from the visible sun, fading from source.  **NOT:** a hard conic sticker; a single
   diagonal slash; a lens flare.  **Verdict:** keep.
 
-### Anticrepuscular rays — *production + `?debugOptic=anticrep`*
+### Anticrepuscular rays — *production + `&debugOptic=anticrep`*
 - **Family:** the far end of the same shafts, converging by perspective at the antisolar point.
 - **Gate:** `antiCrep = ray·0.5` (inherits every crepuscular gate; strictly fainter), at `--antix=100−sm.x`.
 - **NOT:** brighter than crepuscular; centred on the sun; aurora/false-dawn-like.  **Verdict:** keep.
 
-### 22° sun halo — *production + `?debugOptic=halo`*
+### 22° sun halo — *production + `&debugOptic=halo`*
 - **Family:** ice-crystal refraction (cirrus).
 - **Gate:** `cirrus=clamp((clHigh−.06)/.34)·clamp((.72−clHigh)/.42)·(1−clLow)·(1−0.55·clMid)`; `sunHalo=cirrus·
   sunUpO`.
@@ -113,22 +128,24 @@ arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 - **Family:** ice-crystal refraction around a bright moon.
 - **Gate:** `lunarHalo = clamp((clHigh−.06)/.34)·clamp((.66−clHigh)/.42)·(1−clLow)·(1−0.7·clMid)·moonLume`.
 - **NOT:** an aureole hugging the disc (that is the droplet corona); by day / new moon / thick cloud.  **Verdict:**
-  keep. **`?debugOptic=lunarhalo`** now forces the moon halo independently for QA (the sun `halo` key is unchanged).
+  keep. **`&debugOptic=lunarhalo`** forces the moon halo only with shared physical lunar eligibility (the sun
+  `halo` key is unchanged). DESIGN supplies an eligible night positive and near-new negative.
   *Geometric limit (accepted by design):* the moon sits in the top-right pocket ~56 px from the top/right card edges,
   so a true-to-scale ring (r≈135 px) necessarily extends past them; the card's `overflow:hidden` clips it to a clean
   **partial arc**. A radius small enough to fit fully (≤~56 px) would collapse into a corona/aureole and break the
   "distinct 22° ring" contract, so the partial arc is kept — it reads as a coherent halo curving around the moon.
 
-### Parhelia / sundogs (+ parhelic band) — *production + `?debugOptic=sundogs`*
+### Parhelia / sundogs (+ parhelic band) — *production + `&debugOptic=sundogs`*
 - **Family:** plate-ice refraction; two spots flanking the sun at the **same elevation**, a low-sun phenomenon.
 - **Gate:** `sunDogs = cirrus·sunUpO·clamp((12−e)/12)`.
 - **NOT:** vertical; a full ring; saturated blobs; present at high sun.  **Verdict:** keep.
 
-### Paraselenae / moondogs — *production + `?debugOptic=paraselene`*
+### Paraselenae / moondogs — *production + `&debugOptic=paraselene`*
 - **Gate:** `moonParhelia = cirrus·moonLume·clamp((14−moonSky.alt)/16)` — rare; bright moon + cirrus + low moon.
+- **Force:** `&debugOptic=paraselene` retains shared physical lunar eligibility; it grants no near-new/day light.
 - **NOT:** vertical; a ring; rainbow.  **Verdict:** keep.
 
-### Sun pillar — *production + `?debugOptic=pillar`*
+### Sun pillar — *production + `&debugOptic=pillar`*
 - **Family:** reflection off oriented plate/column ice crystals (cirrus or cold diamond-dust).
 - **Gate:** `D.cold · clamp((6−e)/8) · clamp((e+5)/7) · (0.45+0.55·cirrus)` — cold air (ice-crystal proxy) + a low
   sun; the 0.45 floor admits a diamond-dust pillar without cirrus (physically real in very cold air).
@@ -151,17 +168,27 @@ Scene-referred radiance → attenuate → tone-map (not display-colour × a weat
 Beer–Lambert + per-class cloud transmittance + CCT(elevation) blackbody → ACES. The nucleus clips to a defined
 white body even through cloud; cloud desaturates toward **warm-white, never grey/purple**.  **Verdict:** keep.
 *Honest limit:* headroom/constants are tuned for a pleasing clipped nucleus, not radiometric; baked per
-gradient-stop in JS because CSS can't composite in linear light. *(SRP note: this math currently lives in `paint`;
-lifting it into `atmosphere` is a deferred follow-up — see ARCHITECTURE.md.)*
+gradient-stop in JS because CSS can't composite in linear light. Tone-map derivation lives in `atmosphere`;
+`paint` writes its returned colour/transmittance outputs.
 
 ## Validation smoke matrix (screenshots / `qaState` / `tests/smoke.html`)
 clear day (defined sun nucleus) · sunrise (low-left warm) · sunset (warm sky) · clear night (stars + twinkle) ·
 bright-moon night (local star wash, opaque disc) · cloudy night (moonlit rim) · overcast (warm-white sun, **no
 grey/purple blob**; **no Belt of Venus**) · fog/haze (desaturate, no fake cones) · rain & thunder (only with
-observed precip evidence) · snow · dawn/twilight (**no painted band/cone**; bright moon → no false-dawn) ·
-low-sun + cirrus (halo/sundogs ringing the **visible** sun) · debug-forced optics (`?debugOptic=…`).
+marked preview/qualified synthetic evidence) · snow preview · dawn/twilight (**no painted band/cone**; bright moon → no false-dawn) ·
+low-sun + cirrus (halo/sundogs ringing the **visible** sun) · debug-forced optics (`&debugOptic=…`, six names above).
+Flag activation alone does not prove visible motion or correct optical pixels; use recorded physical
+scene inputs for effects without a dedicated switch and a real-time 15–60 second watch for motion.
+Add first neutral/reveal, pending/failed PBR, twilight star/glint/Milky Way interior/edge/exterior and daytime
+no-hole controls; cloud signed target/day/wind/empty/seek/gap controls; default Liquid glass and optional High
+contrast with actual fonts. These are native validation requirements, not results awarded by source checks.
 
-## Truthfulness non-negotiables (upheld)
-No forecast-only data claims live rain/thunder; no rain/lightning without observed-precip support; ambiguous/stale
-→ fail safe to cloud/overcast/haze; `qaState().wxTruth` exposes the source chain; no random optics; no decorative
-diagonal slashes; no "physics" claim without a gate.
+## Truthfulness non-negotiables
+Eligible Open-Meteo current remains a useful **model estimate** (≈); absent/expired current is unknown and
+withdraws its weather inputs. Neither model amount/WMO code nor RainViewer palette/alpha establishes local
+wet/dry/lightning, nearby precipitation or arrival. Selected live adapters therefore keep strong effects off;
+unknown is not observed dry. Current amount is preceding-interval and forecast amount preceding-hour/stepped,
+not instantaneous intensity/onset/ETA/probability. Marked previews and separately admitted synthetic wet/dry/
+end/outage/expiry/target-generation controls remain useful QA; they do not establish live provider skill.
+`qaState().wxTruth` exposes these distinct authorities and actual permissions. No random optics, decorative
+diagonal slashes or physics claim without a gate.

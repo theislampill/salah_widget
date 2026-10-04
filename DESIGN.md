@@ -1,8 +1,8 @@
 # salah_widget — DESIGN
 
-A single self-contained `index.html` Islamic prayer-times widget, deployed via GitHub Pages and embedded as an
-iframe (e.g. in TablissNG). No build step, no dependencies. All logic, styles, and the atmospheric renderer live
-in one file. `builder.html` is a small config/URL generator.
+A static Islamic prayer-times widget, deployed via GitHub Pages and embedded as an iframe (e.g. in TablissNG).
+No build step or new dependency. Runtime styles, prayer logic and atmospheric rendering stay in `index.html`;
+`config.js` is the shared configuration module, and `builder.html` generates configuration URLs.
 
 **Companion docs:** [`ARCHITECTURE.md`](ARCHITECTURE.md) — the maintainer's responsibility/data-flow/contract map
 and risk list. [`OPTICS.md`](OPTICS.md) — the per-phenomenon physical-family taxonomy + gating. [`AGENTS.md`](AGENTS.md)
@@ -44,17 +44,42 @@ the art is "realism-adjacent" (believable, never random). Two standing rules:
 - Large **moon** lives in the **top-right** (mostly **in-frame** — the disc sits in the pocket *below* the
   temperature strap and *above* the arc so its right limb shows and the lunar phase is readable; only a sliver of
   the right edge clips the card). Large clipped **sun** in the **top-left**.
+- **Timetable appearance:** Liquid glass is the default (`appearance=glass`), including absent/legacy values.
+  High contrast (`appearance=contrast`) adds local dark backing beneath both ordinary and upcoming cells.
+  Default glass fades only elapsed prayers; future rows stay normal, with the current inset and next-prayer tint.
+  High contrast keeps every row at full opacity while retaining those current/next highlights. The **4.5:1 white-underlay
+  stress gate applies to the contrast option**; default glass does not claim that guarantee. Actual crops still
+  decide readability and geometry, not the authored backing ratio alone.
 
 ## Prayer-time logic & arc semantics
 
-- Times come from the **Aladhan API** (`fetchTimings`), cached in `localStorage`. The Islamic (Hijri) day rolls
-  over at **Maghrib**, not midnight; the AH date and the moon-phase preview update accordingly.
+- Times come from the **Aladhan API**, with admission before state/cache adoption. Only the selected original
+  timezone-bearing cache key is read; no zone-free scan, migration or deletion is implied. Cache-zone discovery
+  precedes current-day selection; an empty-cache hint response can discover the zone without painting its wrong
+  day. A single corrected-day fetch shares the total three-attempt budget.
+- **Calendar selection:** one `selectCalendarDisplay(M)` decision uses the captured model instant, strict
+  matching Gregorian record day and configured zone. Before Maghrib, usable current AH can show a matching
+  next-day preview. At/after Maghrib, AH advances only from usable matching tomorrow; otherwise it retains a
+  usable current value with **Sunset date update unavailable**, or says **Hijri date unavailable**. The selected
+  Aladhan payload supplies its calendar method; absent metadata says **calendar convention unavailable**.
+  Prayer method does not establish a calendar convention. No offset, persisted hold or anomaly detector is
+  added; backwards corrections/duplicate/skipped labels remain provider selections, with neutral anomaly data.
+- Either footer date button opens complete formatted values and this selection explanation in a stable native
+  dialog. Compact ellipsis stays within the fixed footer; literal format/provider text is encoded at markup
+  sinks. Selection changes update the open dialog without rebuilding its focused controls.
 - **Day-rollover stale cue:** if the calendar day rolls over but the new day's timings can't be loaded (offline /
-  fetch failure with no new-day cache), the widget keeps the prior day's times, does NOT advance the date, and sets
+  fetch failure with no new-day cache), the widget keeps usable prior timings and sets
   `_prayerStale` → a quiet worded **"stale"** chip (warm amber, not alarming) appears by the Hijri date + a faint
   date-row desaturation. Set from `render()` via `.c[data-stale="prayer"]` (never read by `atmosphere()`); scope is
-  **prayer-time staleness only** (weather staleness stays in `qaState`). `qaState().cache` exposes `prayerStale` +
-  `rolloverPendingMs`.
+  **prayer-time staleness only**. Calendar unavailability and current-model weather eligibility remain separate.
+  `qaState().cache` exposes `prayerStale` + `rolloverPendingMs`.
+- Late prefetch can become current after a day boundary; matching tomorrow is promoted before clearing it.
+  Accepted bundles and operation completion mark `_renderDirty`, consumed by the existing loop even in frozen
+  preview and on the first resumed visible frame. No async completion creates another animation loop.
+- Prayer attempts bound complete headers/body/parse/adoption to **10 seconds**, at most three attempts with
+  900/1800ms backoff. Same-day recovery starts use a **60-second real elapsed cooldown**; hidden/offscreen pause
+  stops those opportunities. Cancellation is cleanup; captured generation/operation/attempt/deadline identity
+  decides adoption. These policy values cannot preempt blocked JavaScript or guarantee provider timing.
 - The arc (`drawArc`) is **one continuous solar-elevation curve** built from real solar motion (hour angle +
   declination), NOT from prayer-to-prayer interpolation. Prayer events are *sampled onto* it. The declination is
   fit so elevation crosses **0° exactly at this date's sunrise/sunset** (the fit may slightly exceed the real
@@ -82,27 +107,46 @@ Islamically distinct — and represented honestly. **Neither false nor true dawn
   dark-sky gating, low/no moonlight, low light-pollution, clear sky / minimal low cloud, very faint opacity, no
   foreground-crossing streak, and it must never imply Fajr has entered. Until all of those hold, it stays unbuilt.
 - `trueDawnTwilight` exists only as a 0..1 **diagnostic scalar** (qaState); it paints nothing.
-- Debug: `?debugDawn=…` is a **deprecated no-op** — there is no painted dawn layer to force.
+- Debug: `&debugDawn=…` is a **deprecated no-op** — there is no painted dawn layer to force.
 
 ## Atmosphere state model
 
-There is **one** temporal source: `simTime = simBase + realElapsed*TIMESCALE` (`simNow()`/`simDate()`/`nowParts()`).
+There is **one civil scene API** (`simNow()`/`simDate()`/`nowParts()`) with two explicit authorities. Ordinary
+loads with neither `simTime` nor `timeScale` follow `Date.now()`, including backward corrections. Explicit
+preview intent uses an anchor plus monotonic elapsed × rate; **`timeScale=1` is an anchored 1× ADVANCING preview**.
+`simTime` without a rate freezes the clock-driven scene. Cloud decoration integrates bounded visual elapsed
+intervals in the existing loop; it does not determine prayer/solar/lunar civil time.
+
+`epochForTzTime` accepts only a unique Gregorian integer-minute inverse in its inspected ±24-hour offset domain.
+Gaps, folds and invalid/unsupported mappings remain unavailable; this is not universal historical timezone
+support. A rejected explicit anchor shows **Simulation time unavailable**, withdrawing clock-dependent output
+while preserving geometry and Settings access. A usable timetable with an unresolved intended endpoint shows
+**Countdown unavailable** instead of wall-minute subtraction.
+
 Each render tick:
 
 1. `atmosphere(M)` derives **one pure state vector** from the physical drivers (solar elevation, lunar geometry/
    phase, gated weather) in a fixed order — colours, opacities, light directions, optics strengths. It touches no
    DOM.
-2. `paint(A)` is the **only** place that writes to the DOM (typed `@property` custom props that interpolate, plus
-   a few SVG nodes and the canvas cloud state).
+2. `paint(A)` writes sky CSS/state (typed `@property` custom props plus its explicit cloud-state step).
+   Prayer, arc, calendar, moon geometry and stellar projection retain their own explicit DOM writers.
+
+**Initial reveal:** celestial/weather decorations start hidden over a neutral usable card. The initial commit
+requires a fresh consumed lunar observation and matching stellar projection, resolves the initial styles with
+transitions suppressed, then restores ordinary transitions. It does not wait for a guessed timer, fonts or
+weather. Real decoded PBR texture/href readiness is separate: a pending/failed lunar surface is unavailable
+and earns no textured calendar-disc success. Native first-compositor-frame evidence remains required.
 
 `physSky(elevation)` + `skyLum()` is the sole sky-colour source (no name→palette lookup).
 
 ## Sun layers & optical phenomena
 
-- `.atmo .suncorner` is the large **clipped corner sun**: a **defined white nucleus** (a generous bright core) + a
-  warm-gold body edge + a broad corona + faint rays, screen-blended. It **enters from off the left edge** near the
-  dashed horizon at sunrise and climbs up-and-left, cresting high into the top-left corner at noon (driven by solar
-  elevation). It sits *behind* the cloud layer (clouds can occlude it).
+- The corner sun combines a **defined white nucleus**, warm-gold body edge, broad corona and faint rays,
+  screen-blended. Its centre stays **20 px from the left edge**; below 40° it rises from the actual rendered
+  dashed horizon toward the existing **(20 px, 40 px)** apex. The disc is compact below 5.5°, with the original
+  broad high-sun footprint retained. For overcast and clear low sun, `.wfx .sunbody` carries the radiant disc
+  above clouds; the clear disc blends back into `.atmo .suncorner` by 5.5°. Corona/rays remain behind clouds
+  with their existing presence curve. Solar colour, condition gates and refraction are unchanged.
 - **Solar tone-mapping / white-balance** (the disc colour discipline): the sun colour is **scene-referred, then
   tone-mapped** — never display-gamma colours multiplied by a weather "mute" (which produced a dim grey/purple
   blob). Pipeline: Kasten–Young **airmass** → Beer–Lambert **beam transmittance** × per-class **cloud
@@ -125,15 +169,20 @@ Each render tick:
 
 ## Moon — PBR, earthshine, halo/corona
 
-- The Moon is an **OPAQUE body — you never see stars through it.** The disc (`.mphoto`) and its star-occluder
-  (`.moccluder`) share **one opacity** (`--moongrp = moonShow = clamp(darkness·1.8)`): **full at night**, fading
-  out only by day (no daytime ghost). It is never a translucent "hologram." (Heavy cloud hides the Moon by drawing
-  the cloud deck *over* it — layer order — not by fading the disc, so partial cloud never makes it see-through.)
+- The Moon is an **OPAQUE body — you never see stars through it.** Its decoded PBR calendar surface stays
+  opaque/textured at night; the existing group fade blends it into twilight. An independent luminance cutout
+  masks the filtered `.stellar-background` (stars, glints and Milky Way) through that fade. The cutout follows
+  the moon's transform and actual image radius; it is not a black lunar sprite. Daylight withdraws the surface
+  and cutout. Heavy cloud covers the Moon by layer order. Native edge/transition/day-no-hole controls must
+  verify this composition; opacity numbers or failed texture decode cannot pass the calendar-disc gate.
 - **Physical vs calendar moon.** This widget is also a **lunar-calendar** instrument, so the Moon stays
   meaningfully present **every night** — even when the physical Moon is below the horizon or near-new — by rendering
   the real **opaque phase disc** (a new moon is a *dark ashen disc*, not a blank slot or a transparent one). The
-  physical-vs-calendar distinction lives entirely in **moonlight** (`--moonbeam` / cloud moon-lighting), which is
-  **physical-only** — 0 below the horizon / new / day, **never faked** for the calendar moon. So the calendar moon
+  physical-vs-calendar distinction separates surface appearance from **all atmospheric moonlight consumers**.
+  Shared `moonLightEligible` gates the beam, cloud rim, local star wash, generic glow, halo/corona and paraselenae.
+  Near-new fraction ≤0.02, zero horizon permission or daylight gives no atmospheric lunar light, including
+  forced `lunarhalo`/`paraselene`. This cutoff does not mean zero surface radiance: PBR night-side/Earthshine
+  remains separate, **never faked atmospheric light** for the calendar moon. So the calendar moon
   informs the date **without lying about light**. `qaState().moonTruth` reports phase fraction, altitude,
   physical-vs-calendar visibility, displayMode, opacities, moonlight, and the reason any layer is dim.
 - `.mphoto` is a **physically-lit** disc: real LRO albedo + LOLA normals, Lommel-Seeliger + lunar-Lambert
@@ -147,6 +196,8 @@ Each render tick:
 - **Earthshine**: a smooth curve `es = 0.09 + 0.34·(1−frac)^1.7` (steeper-than-linear toward full) × albedo —
   moderate ashen glow at thin crescent (the lit crescent still dominates), faint **textured** terrain at gibbous
   (never a black cutout), a small floor at full.
+  A display-transfer approximation of the existing albedo floor retains the cool Earthshine RGB weights and
+  original phase curve for shadow texture readability; it is not a radiometric calibration.
 - **Two distinct lunar optics**, gated by cloud type/humidity: a **22° ice halo** (`.mhalo`, a discrete ring with
   a dark inner gap, red-inner/blue-outer, from cirrus) vs a **droplet corona** (`.mcorona`, a small near-white
   aureole with pastel rings hugging the disc, from altostratus/fog/humidity). The generic `.mglow` is subtle and
@@ -159,42 +210,61 @@ Each render tick:
   (grow/erode, no popping) and **wind advection**. Coverage decides how many clusters are active (broken → a few
   puffs with gaps; overcast → many overlapping into a solid deck). Clusters live **around/above the dashed 0°
   horizon**, above the hero.
-- **Perceptible live motion (calibrated).** Advection and lifecycle are tuned so the deck **visibly drifts/morphs
-  in a 15–60s real-time glance** — a moderate wind carries a cluster ~25–30% of the card width per minute (≈70
-  screen-px/min; gentle in calm air, fast in a gale), with a slower in-place grow/erode on top. (Earlier rates
-  were ~100× too slow → the deck read as a frozen wallpaper even though the QA hash "changed" every frame — see
-  "Live motion".) Time is `simNow` seconds, so `?timeScale=` accelerates it; reduced-motion paints one frozen frame.
+- **Visual time:** travel, lifecycle and wander advance from real monotonic visual intervals scaled by the
+  existing preview rate. The old wind covers the preceding interval before new wind controls future travel.
+  Empty decks advance the same state. Repeated reads at the same monotonic instant are idempotent; a repeated
+  civil timestamp is not an elapsed-time control. Hidden/reduced intervals hold and rebase; a missing-frame
+  gap over two seconds is discarded as suspension, without a travel backlog. An explicit seek/reanchor rebuilds
+  deterministically with zero initial displacement. Bounded phases and intersecting periodic copies handle
+  edge travel. Rates are artistic; only a real 15–60s watch/clip qualifies perceptible motion.
 - **Lighting**: warm sun rim / silver lining on the sun-facing side, cool moonlit edges at night, leaden
   undersides in storm, lit tops / shaded bases for volume; rain/fog diffuse.
-- **Continuity**: the cloud field has a **stable identity** (`_cloudFieldSeed` = location + day + optional
-  `?seed`) and is never reseeded on a weather refresh or render. Live coverage **eases** toward its target so a
+- **Continuity**: population identity uses signed accepted coordinates, explicit `seed` and the explicit preview
+  anchor/rate where applicable. The initial civil-day seed contribution is captured once: ordinary UTC
+  day/month/year changes, default-wall zone corrections and weather refresh retain population. Live coverage **eases** toward its target so a
   15-minute refetch grows/erodes the existing deck smoothly (snapping only on first establishment and under
   fast-forward) — no "slideshow".
-- **Rain** originates from the actual cloud columns (`_colDens`), fading before the prayer list, and scales by
-  WMO code / amount (drizzle → showers → steady → heavy → thunder).
+- **Rain** uses actual visible cloud footprints (`_colDens`), fading before the prayer list. Columns grant no
+  precipitation permission. Marked previews and separately admitted synthetic QA can exercise rain/snow/
+  lightning; ordinary selected live adapters cannot permit those strong local effects.
 - **Lightning** is a **procedural branching channel** (midpoint-displacement stepped leader + forks from the
   cloud base, sometimes reaching the lower third), regenerated each strike, with a persistent storm-glow so the
   storm reads between strikes — not a symbolic bolt.
 
 ### Weather truthfulness (critical)
 
-Open-Meteo is fetched once for both `current=` (**observed/nowcast**) and `hourly=` (**forecast track**). Rules:
+Open-Meteo `current=` and `hourly=` are **model products**. Eligible current data remains useful temperature/
+cloud/fog/visibility information, displayed with **≈** and a model-estimate/unobserved-local-precipitation
+accessible description. Absent/expired current shows **? / Weather unavailable**. Source and receipt ages must
+both be nonnegative and no older than fifteen minutes, with positive source interval, units and captured target
+identity. Expiry withdraws current temperature, wind, cloud and humidity inputs; readable retained data has no
+current render authority.
 
-- In normal **real-time**, the header label/icon, `data-fx`, and precip visuals use the **current/nowcast**
-  observed block only. `syncWeather()` only derives `weather` from the forecast track when **ADVANCING** (a
-  `?timeScale=` fast-forward/sim preview). A forecast rain/thunder code must **never** be presented as "currently
-  raining/storming."
-- **Conservative precip gate** (`gateWeatherCode(raw,w,radarMm)`): a precip/thunder code is honoured only with
-  **active observed precipitation** (`≥ 0.05 mm`; thunder additionally needs `≥ 0.8 mm`). The observed evidence is
-  `max(Open-Meteo nowcast, RainViewer radar)`. Otherwise the code is **downgraded** to the cloud state implied by
-  the observed cloud cover. No evidence ⇒ no rain/lightning/`data-fx="thunder"` (fail-safe).
-- **True radar (`fetchRadar`, RainViewer):** an INDEPENDENT observed-precip sensor — it samples the radar tile's
-  pixel-neighbourhood at the site (CORS-readable tiles) into a coarse mm proxy. **Confirm-only** (it can keep a
-  precip code the model nowcast missed, but the gate only ever gates DOWN, so radar never fabricates rain) and
-  **fail-closed** (error / coverage gap / stale > 20 min / sim ⇒ ignored ⇒ nowcast-only behaviour). `qaState().wxTruth`
-  exposes `radarSource`/`radarPrecipMm`/`radarAgeSec`/`radarConfirming`/`effectivePrecipMm` + the full source chain.
-  *Honest limit:* radar coverage has gaps and the mm proxy is alpha-density, not calibrated dBZ — both safe under
-  confirm-only + fail-closed.
+- **Strong local rain/snow/lightning permission is closed for the selected live adapters.** Model WMO codes/
+  amounts and RainViewer tile palette/alpha cannot establish supported wet, supported dry, lightning or arrival.
+  Unknown local observation is not observed dry. Live nearby/approach remains unavailable; no new provider,
+  radar motion estimator or ETA is introduced. RainViewer tile diagnostics/freshness remain inspectable without
+  calibrated mm authority or a confirm-only safety claim.
+- **Quantity windows:** current precipitation is a **preceding-interval** amount in mm; a derived mm/h value is
+  only an interval mean. Forecast precipitation is the stepped source amount for the **preceding-hour** window.
+  Neither supplies instantaneous intensity, onset, arrival or probability. Missing issue time, probability/event,
+  coverage/health and native/interpolated spatial precision remain unavailable.
+- **Explicit preview:** `SIM.wx` and ADVANCING hourly interpolation remain visibly marked SIM. Model thresholds
+  (`≥0.05mm` precipitation, `≥0.8mm` thunder) still distinguish preview/gated model categories; they do not grant
+  live present permission. The forecast track never becomes a local observation.
+- **Admitted synthetic QA:** `synthetic-present-v1` is a separate test lane, requiring exact synthetic identity,
+  target generation, qualified direct point coverage/operational health, measurement and underlying observation
+  times, receipt and an exclusive lease end. A fresh receipt cannot renew an old/unknown underlying observation.
+  Its fixture device-target policy additionally requires actual original browser fix age ≤5 minutes and reported
+  accuracy ≤250m; fixed sites are configured points, not device-presence claims. These are fixture policy bounds,
+  not a certified live provider radius. Wet/model-clear can render rain; dry/conflicting/unknown cannot borrow
+  model permission. Lightning additionally needs qualified synthetic lightning with current rain. Expiry, rain
+  end, outage and superseded generation withdraw particles immediately, independently of cloud easing.
+  No production network/hash setter or `trusted:true` field supplies this admission shortcut.
+
+`qaState().wxTruth` separates target/fix age, model/present/disagreement, spatial/horizon/forecast, source/receipt/
+quantity and permissions/lane/final paint. `observedPrecipMm` is populated only from qualified synthetic amount
+evidence; its legacy name does not reclassify the live model.
 
 ## Star / night-sky system
 
@@ -209,22 +279,22 @@ Open-Meteo is fetched once for both `current=` (**observed/nowcast**) and `hourl
   from live air turbulence `--star-turb`). **All bright anchors twinkle** (the eye tracks them) ~1.5× deeper than
   the dust bed, and their **4-ray glints scintillate** too (`@keyframes glintpulse` around each glint's projected
   base opacity `--go`) — so the luminaries shimmer instead of sitting static. CSS scintillation is disabled under
-  OS `prefers-reduced-motion` unless `?motion=full` overrides it.
+  OS `prefers-reduced-motion` unless `&motion=full` overrides it.
 
 ## Live motion & accessibility
 
 The default widget must **visibly animate in normal real-time** wherever the scene has animatable phenomena — a
 static-looking sky is a regression, not a "polish" gap.
 
-- **Pipeline.** One rAF loop. `render()` runs each sim-second (state/sky/marker/moon). The **cloud canvas repaints
+- **Pipeline.** One rAF loop. `render()` runs on changed civil seconds or accepted dirty state (state/sky/marker/moon). The **cloud canvas repaints
   ~13 fps** (`paintClouds(simNow()/1000)`); **star twinkle + glint scintillation, rain, fog, lightning** are CSS
   animations, independent of `render()`. The loop **pauses** (and CSS via `.c.paused`) when the iframe is hidden or
   scrolled offscreen (visibilitychange + IntersectionObserver) — battery for a 24/7 embed.
 - **Accessibility.** Under OS `prefers-reduced-motion: reduce` the CSS reduced-motion block stops all atmospheric/
-  weather animation and the cloud loop paints **one frozen frame** (no animation). `?motion=full` is an honest
+  weather animation and the cloud loop paints **one frozen frame** (no animation). `&motion=full` is an honest
   **override** (adds `.c.motionfull`, clears the JS `_RM`/`_REDUCED` flags) so motion runs even under the OS
   preference — for testing or for users who want it. The default still respects the preference.
-- **`?debugMotion=1`** overlays live telemetry: rAF ticks/s, cloud-paint/s, reduced-motion, `motion=full`, paused,
+- **`&debugMotion=1`** overlays live telemetry: rAF ticks/s, cloud-paint/s, reduced-motion, `motion=full`, paused,
   `timeScale`/advancing, **cloud Δ over 10s/60s**, **star Δ** + whether the twinkle animation is active, the
   weather source, and the reason motion is reduced (if any).
 - **The qaState-hash trap (read this).** `qaState().clouds.hash` is position-weighted and flips on sub-pixel change,
@@ -235,27 +305,64 @@ static-looking sky is a regression, not a "polish" gap.
 ## API & data sources
 
 - **Aladhan** `timings` — prayer times (cached per day in localStorage).
-- **Open-Meteo** `forecast` — `current=` (observed temp/humidity/wind/cloud layers/visibility/`weather_code`/
+- **Open-Meteo** `forecast` — `current=` (model temp/humidity/wind/cloud layers/visibility/`weather_code`/
   **precipitation**/rain/showers/snowfall/is_day) and `hourly=` 3-day track; plus grid-cell `elevation`.
-- Both are keyless and CORS-safe.
+- **RainViewer** — manifest/tile diagnostics; no supported local mm, observed-dry or arrival claim. Requests and
+  fields are disclosed in [README privacy](README.md#auto-detect-precise-location--privacy).
 
 ## URL / hash & debug parameters
 
-Config and debug are read from the URL **hash** (`#…`). Common:
+Configuration and diagnostics are read from the fragment after `#`. Append `&debugMotion=1` or
+`&motion=full` to that same fragment. A query-only `?debugMotion=1` is not read.
+The six `debugOptic` force names are `halo`, `sundogs`, `pillar`, `anticrep`, `paraselene` and `lunarhalo`.
+Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs;
+no dedicated `debugOptic` switch forces them.
 
-- `lat`, `lon`, `label`, `method`, `units` — location + calc method + °C/°F.
+Complete real-time motion recipes, relative to the served folder:
+
+```text
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full
+```
+
+Copyable force-activation example:
+
+```text
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo
+```
+
+For other switch branches, replace only `halo` with a supported name and select a recorded solar/lunar
+scene appropriate to its pixel check. The noon example proves neither lunar visibility nor every
+effect's appearance. simTime without timeScale freezes the clock-driven scene. Use the real-time
+recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels.
+
+Lunar force positive and near-new negative (new document for each boot flag set):
+
+```text
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=23:30&simMoon=0.98&simWax=1&simMoonAlt=20&simMoonH=42&debugOptic=lunarhalo
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=23:30&simMoon=0.01&simWax=1&simMoonAlt=20&simMoonH=42&debugOptic=lunarhalo
+```
+
+The negative must retain a decoded opaque Earthshine calendar disc while atmospheric lunar light and halo
+remain off. `paraselene` retains the same physical eligibility guard. Corona/Earthshine/refraction/crepuscular
+checks still need recorded physical scene inputs. Changing a forced `paintClouds(t)` timestamp does not prove
+elapsed cloud travel; its argument initializes/reconstructs civil scene state.
+
+Common fragment parameters:
+
+- `lat`, `lon`, `label`, `method`, `units`, `appearance=glass|contrast` — configured location/preferences.
 - `seed` — varies the synthetic star draw + cloud field identity.
-- `timeScale=<n>` — fast-forward (n× real time); enables ADVANCING (forecast-driven weather, re-projected stars,
+- `timeScale=<n>` — explicit anchored preview (n× real time; `1` is still preview); positive rate enables ADVANCING (forecast-driven weather, re-projected stars,
   the sim clock).
-- `simTime=HH:MM` — freeze the clock at a time (TIMESCALE 0).
-- `simWx=<wmo code>` — force a weather class; `simPrecip=<mm>` — force observed precip (to QA the precip gate,
+- `simTime=HH:MM` — freeze the clock at a time without `timeScale` (TIMESCALE 0).
+- `simWx=<wmo code>` — force a preview weather class; `simPrecip=<mm>` — synthetic preview amount (to QA the gate,
   e.g. `simWx=95&simPrecip=0` ⇒ dry forecast-thunder ⇒ downgraded). `simTemp`, `simFeels`, `simWind`,
   `simWindDir`, `simHumid`, `simCloud`, `simMoon`, `simWax`, `simMoonAlt`, `simMoonH`.
 - `qa=1` + `window.qaState()` — a structured snapshot (incl. `wxTruth`).
 - `debugLayers=1`, `debugMoon=1`, `debugMotion=1` — on-card readouts (layers / moon / live-motion telemetry).
   `debugDawn=…` — **deprecated no-op** (dawn is not a painted overlay; nothing to force).
   `motion=full` — force full animation even under OS `prefers-reduced-motion` (accessibility override; default respects it).
-- `debugOptic=halo|sundogs|pillar|anticrep|paraselene` — force a (normally condition-gated) optical phenomenon.
+- `debugOptic=halo|sundogs|pillar|anticrep|paraselene|lunarhalo` — the six supported optical force branches.
 - `local=1` — self-configuring mode (coarse auto-detect + in-widget settings, saved locally).
   `preferLocal=1` — hardcoded defaults that a saved local config may override (opt-in). `lp=0..1` — light-pollution dial.
 
@@ -266,20 +373,32 @@ inline page script by **both** `index.html` and `builder.html` — one un-forkab
 normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately relaxes the old "single self-contained
 `index.html`" rule; `index.html` keeps a one-line **legacy fallback** to hash-only parsing if `config.js` 404s.)
 
-- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, lp, seed, source, savedAt}`,
+- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, appearance, lp, seed, source, origin, savedAt, locationEvidence}`,
   `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, manual, fallback}`. Persisted under
   `salah_widget:config:v1` (separate from the prayer/weather caches; every access wrapped in try/catch).
+- **Private location evidence:** `locationEvidence` keeps intent (`fixed-site`, device-position, coarse-area or
+  unknown), acquisition source, `accuracyM`, original `acquiredAt`, provider/area/bounds or null unknowns.
+  Browser acquisition uses actual Position accuracy/timestamp, never decimal-derived precision or `savedAt` as
+  fix time. Preference/label/reverse-name changes keep original evidence; coordinate edits become manual
+  fixed-site. Saved browser positions remain usable targets, not “here now.” Current readers preserve origin
+  independently of the outer storage marker; stored browser-origin copies are conservative for older readers.
+  Portable/prefer-local/local fragments omit acquisition history. WEATHER captures normalized primitives
+  synchronously before awaits and binds consumption to the target generation.
 - **Precedence:** explicit hardcoded hash (unless `local`/`preferLocal`) → saved local → coarse IP/timezone detect
   → manual setup → safe error. **Stale localStorage never overrides an intentional hardcoded embed.**
-- **Sync vs async:** hardcoded resolves **synchronously at module load** (byte-identical boot timing — proven by
-  Smoke A/B equality of `qaState` stable fields). Only `local`/`preferLocal` **without** a saved config defer to
+- **Sync vs async:** hardcoded resolves **synchronously at module load**. Only `local`/`preferLocal` **without** a saved config defer to
   the async `coarseDetect()` in `boot()`; failure opens the manual settings panel (never crashes).
-- **Coarse detect:** GeoJS (`get.geojs.io/v1/ip/geo.json`) → ipinfo.io fallback, AbortController timeout, IANA tz
+- **Coarse detect:** GeoJS (`get.geojs.io/v1/ip/geo.json`) → ipinfo.io fallback, complete-response deadline with optional abort cleanup, IANA tz
   from the device (`Intl`) first. Approximate (IP-based) — surfaced as "estimated area," never "precise."
 - **Runtime apply** (`applyConfig`): the settings panel updates the live config **in-memory, no reload** (so it
   works when third-party-iframe storage is blocked). `cacheKey`/`wxKey` are **functions** (not consts) so the new
   location's caches are keyed correctly; the post-config pipeline (`startWeather`/`loadPrayerData`/`startRenderLoop`)
   is shared by `boot()` and apply.
+- **Persistence outcome:** save/reset results publish before provider awaits, including a warning available from
+  the closed Settings opener. Refused save retains session choices; refused reset retains selected config and
+  stops before re-detection. Successful reset removes only the config key. Writable partitioned storage is
+  distinct from denied storage. Builder local exports explicitly retain selected method/units/appearance;
+  portable and local builder defaults serialize `appearance=glass`, while saved local preferences take priority.
 - **Settings affordance:** the header buckle becomes a `role=button` (weather emoji ⇄ ⚙ gear on hover/focus; tap +
   `Enter`/`Space` work; not hover-dependent) **only in local/preferLocal mode** — hardcoded embeds are untouched.
   The panel overlays the prayer display inside the same 325×530 card (internal scroll; never resizes the iframe or
@@ -291,13 +410,18 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   margin, so the builder card/preview are matched to the *visible* widget (530px), not to an oversized box.
 - **Install wizard config-carry:** the builder's **Install widget** button copies the OS one-liner; when the config
   is non-default it prepends `SALAH_WIDGET_HASH='<hash>'`, which `install.sh`/`install.ps1` bake into the staged
-  preset's iframe (replacing `#local=1`) so the installed widget starts already configured (no re-setup). Bash note:
-  `install.sh` uses `shopt -u patsub_replacement` so the hash's `&` separators stay literal in the `${//}` replace
-  (bash 5.2+ otherwise treats `&` as the matched text); PowerShell's `.Replace` is already literal.
+  preset's iframe (replacing `#local=1`). Bash uses Python literal string replacement followed by JSON validation;
+  PowerShell's `.Replace` is literal. The copied command fetches published `main`, not a local candidate.
+  See [README installer usage](README.md#one-line-install-optional-setup-wizard) for reviewed-file execution,
+  offline/no-effect preview, terminal requirements and the manual file lifetime. The Bash private retained
+  bundle and same-attempt cache are separate from Windows TEMP staging; neither staging nor Enter confirms
+  browser installation/import.
 
 ## Known approximations (honest)
 
-- Weather "current" is a model **nowcast, not radar** — the precip gate is conservative, not ground-truth.
+- Weather current is a **model estimate**; live local observation/nearby/arrival is unavailable for these adapters.
+  Synthetic QA proves consumer behavior, not provider skill. The round-4 adaptive-performance governor remains
+  held; this continuity work adds no governor, new provider or measured CPU/battery claim.
 - The arc's declination fit absorbs refraction to make sunrise/sunset land on the line (a visual calibration).
 - Dhuhr's "hair past the apex" is a small deliberate offset (post-zawāl cue), since minute-resolution data can put
   Dhuhr exactly on solar noon.
@@ -319,23 +443,28 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   random) — corner sun + entry path + low-sun **refraction flattening**; crepuscular `.godray` + **anticrepuscular**
   rays; Belt of Venus; solar **22° halo**, **sundogs/parhelia + parhelic circle**, **sun pillar** (all ice-crystal/
   cirrus/cold gated, **registered to the visible corner sun** via `--sunvx/--sunvy`); lunar **22° halo + corona +
-  paraselenae** and earthshine. Each can be forced via `?debugOptic=`. They are **art-directed approximations
+  paraselenae** and earthshine. The six `debugOptic` names above force only their corresponding branches;
+  corona, earthshine, refraction and the crepuscular ray need physical scene inputs. They are **art-directed approximations
   (believable, not photometric)**; the moon's halo/pillar may show as partial arcs because the halo radius exceeds
   the (mostly in-frame) disc. The **corner-sun body stays top-left** in all states (a layout stylization — the moon
   owns top-right); the azimuthal horizon glow correctly moves left→right dawn→dusk.
 
 ## QA matrix (scenes to check before claiming done)
 
-Day: clear noon (**defined sun nucleus**, not a vague brush), sunrise (enters low from the left, warm), sunset
+Required native cells, not a PASS statement: clear noon (**defined sun nucleus**, not a vague brush), sunrise (enters low from the left, warm), sunset
 (warm sky, not generic daylight), broken-cloud golden hour, overcast (**warm-white sun through cloud, never a
-grey/purple blob**), daytime rain, thunderstorm. Night: clear (stars + scintillation), thin crescent (right limb
+grey/purple blob**), separately marked preview/admitted synthetic rain, snow and thunderstorm. Night: clear (stars + scintillation), thin crescent (right limb
 in frame, earthshine), gibbous (earthshine), full moon (bright opaque disc, local star wash), **new moon (a faint
-ashen OPAQUE calendar disc — never an empty slot, never moonlight), thin-cloud night (halo/corona).
+ashen OPAQUE calendar disc — never an empty slot, never moonlight)**, thin-cloud night (halo/corona).
 **Moon must be OPAQUE — no stars visible through the disc, in any phase.** Weather truth: `simWx=95&simPrecip=0`
-(must downgrade), `simWx=95&simPrecip=5` (thunder), `simWx=65&simPrecip=0` (downgrade), real-time live (source =
-current, not forecast). **Live motion (`?debugMotion=1`): a real 15–60s watch — clouds drift/morph, stars
+(must downgrade), `simWx=95&simPrecip=5` (preview thunder), `simWx=65&simPrecip=0` (downgrade), live fresh/expired
+model positives with strong effects off; admitted synthetic wet/dry/end/outage/exclusive-expiry/generation
+controls. First neutral/reveal and pending/failed texture, twilight interior/edge/exterior star/glint/Milky Way
+probes, no daytime hole; cloud wind/day/empty/seek/gap/hidden/reduced transitions. **Live motion (`&debugMotion=1`): a real 15–60s watch — clouds drift/morph, stars
 scintillate, sky breathes; cloud Δ 10s ≫ 0. "No visible motion in normal live view" is a FAIL (do NOT trust the
-qaState hash).** Optics: force each via `?debugOptic=` and confirm it rings the **visible** sun. Accessibility:
-`prefers-reduced-motion` freezes motion by default; `?motion=full` overrides. Layout: footer visible + header
-buckle cut-out (no strap through the buckle) + readability in every scene. Dawn: near-Fajr brightening comes only
+qaState hash).** Optics: use the six supported `&debugOptic=…` branches or controlled physical scene inputs;
+confirm solar optics register to the **visible** sun and lunar optics to the moon. Accessibility:
+`prefers-reduced-motion` freezes motion by default; `&motion=full` overrides. Layout: footer visible + header
+buckle cut-out (no strap through the buckle) + default glass/opt-in contrast readability and real-font/footer
+access in the actual 325×530 card. Dawn: near-Fajr brightening comes only
 from the real twilight sky (no painted band/cone), Fajr clear on the arc.
