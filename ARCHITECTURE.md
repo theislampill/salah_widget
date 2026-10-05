@@ -4,7 +4,20 @@ A maintainer's map of the widget: who owns what, where state flows, where patche
 contracts a future change must honor. Produced by a read-only multi-pass investigation (responsibility/GRASP,
 SOLID/CUPID, control-flow, data-lineage/SSA, BASE stale-state, ACID write-safety, normal-form/contracts,
 observability) — then a *minimal, justified* hardening pass. **Guardrails:** no rewrite, no abstraction-for-its-
-own-sake, preserve the static / no-build / no-dependency / single-file character. Line refs are approximate.
+own-sake, preserve static delivery and the prayer clock's authority. Line refs are approximate.
+
+## CP9 integration boundary
+
+See [current source ownership and qualification](docs/real-sky/INTEGRATION.md).
+The native pipeline below is retained context. `src/native/` owns authoring;
+root entries are generated. Accepted native UTC/observer/generation/elevation
+flows through `native-host-hooks.js` and `native-contract.mjs` to an optional
+physical worker. `native-lifecycle.mjs` fences jobs and withdrawals.
+`native-composition.mjs` joins physical sky, native opaque calendar Moon and
+clouds with one exposure equation. `native-encoding.mjs` preserves its quantized
+values. Scientific source is retained under `vendor/real-sky`; `real-sky/core`
+is generated. No separate sky clock, synthetic fallback, synchronous physical
+fallback or second cloud owner is admitted. Sky failure leaves prayer usable.
 
 ## Three artifacts, one config contract
 
@@ -25,7 +38,7 @@ invisible transparent margin (a `330×534` wrapper around the 325×530 card was 
 
 **2026-06-16 — the single-file rule was deliberately relaxed (by maintainer decision)** so config logic can never
 fork between widget and builder (the local-mode task's "do not fork config logic" requirement). `config.js` is the
-*only* extracted module; everything else stays inline. `index.html` keeps a one-line **legacy fallback** (hash-only
+shared configuration module; CP9 additionally extracts optional astronomy. `index.html` keeps a **legacy fallback** (hash-only
 parse) if `config.js` fails to load, so a 404 degrades instead of white-screening.
 
 The coupling is now the **`WidgetConfig` contract in `config.js`**: the builder serializes a config to the hash

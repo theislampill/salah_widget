@@ -1,0 +1,93 @@
+slow-assets FAIL 62.09 s
+Traceback (most recent call last):
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 156, in case
+    w=Widget(browser,root,out,name,**options);body(w);result=w.finish()
+                                              ^^^^^^^
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 169, in slow
+    w.wait("window.SalahRealSkyAssets?.state.status==='loading'");w.proof_ui();s=w.snap('loading-prayer-usable');w.check(s['visible']!='visible','No sky before bytes');w.release_asset();w.ready();w.snap('recovered')
+                                                                                                                                                                                          ^^^^^^^^^
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 119, in ready
+    def ready(self):self.wait("window.realSkyState?.().status==='ready'&&!!window.realSkyState().last")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 118, in wait
+    def wait(self,expression,timeout=60000):self.page.wait_for_function(expression,timeout=timeout)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\sync_api\_generated.py", line 11595, in wait_for_function
+    self._sync(
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_sync_base.py", line 115, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_page.py", line 1110, in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_frame.py", line 878, in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 60000ms exceeded.
+
+missing FAIL 61.62 s
+Traceback (most recent call last):
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 156, in case
+    w=Widget(browser,root,out,name,**options);body(w);result=w.finish()
+                                              ^^^^^^^
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 172, in retry
+    w.wait("window.realSkyState?.().status==='unavailable'");w.proof_ui();s=w.snap('unavailable-prayer-usable');w.check(s['visible']!='visible','No failed source light');w.mode='normal';w.page.evaluate('()=>{SalahRealSkyAssets.retry();}');w.ready();s=w.snap('recovered');w.check(s['canvasCount']==1,'One renderer after retry');w.check(s['sky']['last']['catalogue']['emitters']==8884,'Recovered admitted catalogue')
+                                                                                                                                                                                                                                               ^^^^^^^^^
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 119, in ready
+    def ready(self):self.wait("window.realSkyState?.().status==='ready'&&!!window.realSkyState().last")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 118, in wait
+    def wait(self,expression,timeout=60000):self.page.wait_for_function(expression,timeout=timeout)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\sync_api\_generated.py", line 11595, in wait_for_function
+    self._sync(
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_sync_base.py", line 115, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_page.py", line 1110, in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_frame.py", line 878, in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 60000ms exceeded.
+
+empty FAIL 61.73 s
+Traceback (most recent call last):
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 156, in case
+    w=Widget(browser,root,out,name,**options);body(w);result=w.finish()
+                                              ^^^^^^^
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 172, in retry
+    w.wait("window.realSkyState?.().status==='unavailable'");w.proof_ui();s=w.snap('unavailable-prayer-usable');w.check(s['visible']!='visible','No failed source light');w.mode='normal';w.page.evaluate('()=>{SalahRealSkyAssets.retry();}');w.ready();s=w.snap('recovered');w.check(s['canvasCount']==1,'One renderer after retry');w.check(s['sky']['last']['catalogue']['emitters']==8884,'Recovered admitted catalogue')
+                                                                                                                                                                                                                                               ^^^^^^^^^
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 119, in ready
+    def ready(self):self.wait("window.realSkyState?.().status==='ready'&&!!window.realSkyState().last")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theis\.codex\worktrees\cp9-real-sky-integration\salah_widget\tools\cp9\native_lifecycle_check.py", line 118, in wait
+    def wait(self,expression,timeout=60000):self.page.wait_for_function(expression,timeout=timeout)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\sync_api\_generated.py", line 11595, in wait_for_function
+    self._sync(
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_sync_base.py", line 115, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_page.py", line 1110, in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_frame.py", line 878, in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\cp9-integration-20261005\venv\Lib\site-packages\playwright\_impl\_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 60000ms exceeded.
+

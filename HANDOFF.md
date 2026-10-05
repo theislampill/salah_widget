@@ -3,6 +3,20 @@
 Context for a fresh agent picking up this repo. The durable design/process docs already exist — read those first
 and don't expect this file to repeat them.
 
+## Current CP9 candidate
+
+Start with `docs/real-sky/INTEGRATION.md`, its DAG ledger and qualification records.
+The base is main `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; this candidate is
+independent of PR #38 and is not deployed. Do not replay archive import or use
+PR #38 as a donor. Edit semantic owners under `src/native/` and authored
+`real-sky/native-*`, then regenerate with `python tools/build_native.py`.
+The forthcoming Moon-PBR package belongs on this candidate, at those owners.
+DAG gates remain subject to exact current evidence and independent review.
+
+The rest of this file is retained **pre-CP9 historical context**. Its old main
+SHAs, deployment statements, test totals and single-file assumptions are not
+current qualification or authorization for this branch.
+
 ## Read these first (do not duplicate)
 
 - `DESIGN.md` — architecture, layout invariants, arc/dawn semantics, atmosphere/sun/moon/cloud/star systems, the

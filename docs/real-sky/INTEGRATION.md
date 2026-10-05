@@ -18,8 +18,10 @@ The archive records native commit `205750350c64b77ebdc3ebcadcc39a6eb949994b`,
 parent CP8.3 archive `a056d3789cb614355cc27af286907add231293ba42b2288894cdd3edca8d29a3`,
 and scientific CP7.6 archive `f30470a68d02e47d83e5fd0d063a5320936802161e5d2b9ba701ba48d72f5e45`.
 These are **archive provenance**, not an assertion of independent ancestry.
-PR #38's branch, patch, commits and files were not acquired or used as donors;
-the implementation inputs are current main and the supplied CP9 archive.
+PR #38 was not fetched, changed or used as an implementation donor; the
+implementation inputs are current main and the supplied CP9 archive. Locally
+available archive-pinned historical commits were read only as test controls,
+as distinguished in the qualification report.
 
 There are two meaningful deltas:
 
@@ -51,6 +53,12 @@ and three mandatory OPEN nodes. N001 and N002 are independently ready; N003's
 final acceptance depends on both. Historical PASS does not qualify changed bytes.
 The per-node ledger and fresh command receipts record the final dispositions.
 
+See [qualification and remaining gates](QUALIFICATION.md), the
+[current DAG ledger](DAG_LEDGER.json), and the [evidence index](evidence/README.md).
+The runtime stays PARTIAL. No archive receipt has been promoted to current PASS.
+[`CANDIDATE_SOURCE_IDENTITY.json`](CANDIDATE_SOURCE_IDENTITY.json) inventories the
+final authored inputs and test/tool sources separately from the served runtime.
+
 ## Ownership and future Moon package
 
 Native authored HTML/CSS, lunar geometry/orientation, phase and terminator,
@@ -64,6 +72,23 @@ from the enlarged native calendar Moon. Composition is owned by
 `real-sky/native-composition.mjs`. The forthcoming Moon-PBR donor should be
 reconciled at those authored owners, then regenerate outputs and rerun lunar,
 material, opacity, composition, currentness and performance controls.
+
+More specifically: `moonNow()` / `renderMoon()` own the native calendar geometry
+and phase; `renderMoonPBR()` / `_prepMoonPBR()` / `MOON_ALBEDO` / `MOON_NORMAL`
+own the current material, Earthshine, terrain/normal textures and display mapping.
+`native-host-hooks.js` exposes the native lunar surface without replacing its
+owner. `native-contract.mjs` owns its calendar cutout; `native-composition.mjs`
+owns foreground combination and `native-encoding.mjs` the exact shared encoding.
+Physical lunar sky illumination/occultation is retained in the scientific
+`sky-state` / `physical-sky-renderer` owners, not inferred from the enlarged
+calendar-disc position. Tests in `tests/r0022*`, `tests/real-sky/`, and the material
+and composition probes in `tools/cp9/` are the affected qualification surfaces.
+
+The 186 retained scientific files include upstream inputs, provenance and older
+data fixtures consumed by the unchanged scientific suites. They are build/test
+inputs, not another deployed viewer. Root bundles and `offline.html` intentionally
+duplicate generated data for the two delivery forms; there is no copied `widget/`
+tree, archive gallery, reconciliation donor or earlier checkpoint archive in Git.
 
 ## Acceptance boundary
 
