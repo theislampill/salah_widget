@@ -56,6 +56,8 @@ iframe{box-shadow:0 18px 50px #0008}
 #modenote{margin-top:8px}
 .install-row{text-align:center;margin-top:14px}   /* match .preview gap so Install lines up with Refresh */
 .install-tip{margin-top:8px;min-height:18px;transition:color .15s}
+.manual-recovery{text-align:left;margin-top:10px}
+.manual-recovery textarea{min-height:90px;white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -71,7 +73,7 @@ iframe{box-shadow:0 18px 50px #0008}
     </div>
     <div class="locrow">
       <input id="label" placeholder="city, postcode, or place name" value="Madinah">
-      <button class="geo-pin" id="geo" type="button" aria-label="Use precise location" title="Estimated from your IP — click for precise location (GPS)">
+      <button class="geo-pin" id="geo" type="button" aria-label="Use browser location" title="Estimated from your IP — click to request browser location">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 2C7.6 2 4 5.6 4 10c0 5.2 7.1 11.6 7.5 11.9a.75.75 0 0 0 1 0C12.9 21.6 20 15.2 20 10 20 5.6 16.4 2 12 2ZM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
       </button>
     </div>
@@ -144,10 +146,18 @@ iframe{box-shadow:0 18px 50px #0008}
       </div>
     </div>
     <p class="note" style="margin-top:6px;text-align:right">Custom dates use <a href="https://cldr.unicode.org/translation/date-time/date-time-symbols" target="_blank" rel="noreferrer">Unicode date symbols</a>.</p>
+    <div>
+      <label for="appearance">Timetable appearance</label>
+      <select id="appearance"><option value="glass">Liquid glass (default)</option><option value="contrast">High contrast</option></select>
+    </div>
   </form>
   <div class="install-row">
     <button id="install" type="button">Install widget</button>
     <p class="note install-tip" id="installtip" role="status" aria-live="polite">copies terminal script for installation wizard</p>
+    <div class="manual-recovery" id="install-recovery-wrap" hidden>
+      <label for="install-recovery">Install command — copy manually</label>
+      <textarea id="install-recovery" readonly aria-describedby="installtip"></textarea>
+    </div>
   </div>
   </div>
 
@@ -162,8 +172,8 @@ iframe{box-shadow:0 18px 50px #0008}
   <div class="modewrap">
     <label>Embed type</label>
     <div class="modebtns" role="radiogroup" aria-label="Embed type">
-      <button type="button" class="modebtn active" id="mode-portable" role="radio" aria-checked="true">Portable — fixed location</button>
-      <button type="button" class="modebtn" id="mode-local" role="radio" aria-checked="false">Self-configuring — auto-detect</button>
+      <button type="button" class="modebtn active" id="mode-portable" role="radio" aria-checked="true" tabindex="0">Portable — fixed location</button>
+      <button type="button" class="modebtn" id="mode-local" role="radio" aria-checked="false" tabindex="-1">Self-configuring — auto-detect</button>
     </div>
     <p class="note" id="modenote"></p>
   </div>
@@ -173,27 +183,32 @@ iframe{box-shadow:0 18px 50px #0008}
     <button id="copy" type="button">Copy embed code</button>
     <button class="ghost" id="open" type="button">Open widget in new tab</button>
   </div>
+  <div class="manual-recovery" id="embed-recovery-wrap" hidden>
+    <label for="embed-recovery">Embed code — copy manually</label>
+    <textarea id="embed-recovery" readonly aria-describedby="copied"></textarea>
+  </div>
   <p class="note">Powered by the free <a href="https://aladhan.com/prayer-times-api" target="_blank" rel="noreferrer">Aladhan API</a>.
   Don't know your coordinates? Right-click your spot on <a href="https://www.openstreetmap.org" target="_blank" rel="noreferrer">OpenStreetMap</a> → “Show address”.</p>
-  <p class="note"><strong>Self-configuring embeds &amp; privacy:</strong> coarse auto-detect is <em>approximate</em> and IP/timezone-based (no permission prompt) — it sends the viewer’s IP to <a href="https://www.geojs.io/" target="_blank" rel="noreferrer">GeoJS</a> (this widget itself does no tracking). “Precise location” uses the browser’s permission prompt and may require the iframe’s <code>allow="geolocation"</code> (some hosts, including TablissNG, may strip it — coarse detect still works). Saved settings stay in the viewer’s own browser/profile and may be blocked by strict privacy/third-party-storage settings — the widget keeps working either way (session-only).</p>
+  <p class="note"><strong>Self-configuring embeds &amp; privacy:</strong> location is approximate and uses <a href="https://www.geojs.io/" target="_blank" rel="noreferrer">GeoJS</a>, with ipinfo.io as fallback. Place/postcode searches go to Nominatim and, for matching Canadian-style prefixes, Zippopotam. Builder reverse lookups send coordinates to BigDataCloud; the widget also requests prayer, weather, radar and font resources. Saved settings stay in your browser, which does not prevent these service requests. Precise location is optional and requires browser/host permission. An iframe host, including TablissNG, can strip <code>allow="geolocation"</code>; coarse/manual setup remain available. Storage policies can limit persistence. <a href="https://github.com/theislampill/salah_widget#auto-detect-precise-location--privacy" target="_blank" rel="noreferrer">Request details</a>.</p>
 </div>
 
 <script src="config.js"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const fields=["label","lat","lon","method","school","time","units"];
+const fields=["label","lat","lon","method","school","time","units","appearance"];
 const base=location.href.replace(/builder\.html.*$/,"").replace(/[?#].*$/,"");
 
 // embed mode: "portable" (fixed lat/lon baked in) | "local" (generic #local=1 auto-detect)
-let embedMode="portable";
+let embedMode="portable", builderLocation=null;
 function formConfig(){
   return { lat:$("lat").value.trim(), lon:$("lon").value.trim(), label:$("label").value.trim(),
     method:$("method").value, school:$("school").value, time:$("time").value, units:$("units").value,
-    datefmt:$("dfcode").value.trim()||"YYYY-MM-DD" };
+    appearance:$("appearance").value,
+    datefmt:$("dfcode").value.trim()||"YYYY-MM-DD", source:builderLocation?builderLocation.source:"manual", locationEvidence:builderLocation };
 }
 // SINGLE shared serializer (config.js) → builder and widget can't drift apart.
-function hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode==="local"?{mode:"local"}:{}) : ""; }
+function hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode==="local"?{mode:"local",explicitPrefs:["method","units","appearance"]}:{explicitPrefs:["appearance"]}) : ""; }
 let rev=0;
 function url(){ return base+"#"+hash(); }
 // the widget reads only location.hash, so a changing ?r= query is ignored by it but
@@ -209,19 +224,32 @@ function update(){
   $("pv").src=previewUrl();
 }
 function setMode(m){
-  embedMode = (m==="local") ? "local" : "portable";
-  $("mode-portable").classList.toggle("active",embedMode==="portable");
-  $("mode-local").classList.toggle("active",embedMode==="local");
-  $("mode-portable").setAttribute("aria-checked",embedMode==="portable"?"true":"false");
-  $("mode-local").setAttribute("aria-checked",embedMode==="local"?"true":"false");
+  const buttons=[$("mode-portable"),$("mode-local")], requested=m==="local"?"mode-local":"mode-portable";
+  const chosen=buttons.find(button=>!button.disabled && button.id===requested) || buttons.find(button=>!button.disabled);
+  buttons.forEach(button=>{ const selected=button===chosen;
+    button.classList.toggle("active",selected); button.setAttribute("aria-checked",selected?"true":"false");
+    button.tabIndex=selected?0:-1;
+  });
+  if(!chosen) return;
+  embedMode=chosen.id==="mode-local"?"local":"portable";
   $("modenote").innerHTML = embedMode==="local"
-    ? 'Generic embed — each viewer’s area is <strong>auto-detected</strong> (approximate, IP/timezone-based, no permission prompt) and they can change it inside the widget (tap the header buckle); their choice is saved <strong>locally in their browser</strong>. The snippet adds <code>allow="geolocation"</code> so the in-widget “use precise location” button can work. <strong>TablissNG</strong> may strip <code>allow</code> (precise location then unavailable — coarse auto-detect + manual still work) and may partition iframe storage (settings then apply for the session only). Location fields below are ignored in this mode.'
+    ? 'Self-configuring location — each viewer’s area is <strong>auto-detected</strong> (approximate, IP/timezone-based, no permission prompt). The method, temperature units and timetable appearance selected here are included for a fresh viewer; saved widget settings take precedence. Location fields are omitted. Viewers can change settings inside the widget (tap the header buckle); their choice is saved <strong>locally in their browser</strong>. The snippet adds <code>allow="geolocation"</code> so the in-widget location button can work. <strong>TablissNG</strong> may strip <code>allow</code> (precise location then unavailable — coarse auto-detect + manual still work). If storage is unavailable, settings apply for the session only.'
     : 'Fixed coordinates baked into the URL — works anywhere with no per-viewer setup. Best for one specific place.';
   ["lat","lon"].forEach(id=>{ $(id).style.opacity = embedMode==="local"?".5":"1"; });
   update();
 }
 $("mode-portable").addEventListener("click",()=>setMode("portable"));
 $("mode-local").addEventListener("click",()=>setMode("local"));
+const modeGroup=document.querySelector(".modebtns");
+modeGroup.addEventListener("keydown",e=>{
+  const direction=(e.key==="ArrowRight"||e.key==="ArrowDown")?1:(e.key==="ArrowLeft"||e.key==="ArrowUp")?-1:0;
+  if(!direction) return;                            // native Tab and button Enter/Space remain untouched
+  const buttons=[...modeGroup.querySelectorAll(".modebtn")].filter(button=>!button.disabled), index=buttons.indexOf(e.target);
+  if(index<0) return;
+  e.preventDefault();
+  const next=buttons[(index+direction+buttons.length)%buttons.length];
+  next.focus(); setMode(next.id==="mode-local"?"local":"portable");
+});
 fields.forEach(f=>$(f).addEventListener("input",update));
 fields.forEach(f=>$(f).addEventListener("change",update));
 
@@ -235,23 +263,29 @@ $("method").addEventListener("change",()=>{ methodAuto=false; });
 // Typing searches after a 1 s pause (Enter forces it / cycles matches); feedback shows in #geotip.
 // The pin (#geo) is the tri-state location indicator (same UI as the widget): lit red = IP estimate,
 // glow = precise GPS, grey outline = manual (typed/searched). Clicking it requests precise GPS.
-let srchDebounce=0, srchSeq=0, tipRevert=0, multiCands=[], multiIdx=0;
+let srchDebounce=0, srchSeq=0, tipRevert=0, geoTimer=0, locationEdit=0, multiCands=[], multiIdx=0, multiOwner=null;
 const TIP_DEFAULT="type a place, or use the pin →";
 let homeCC=""; try{ homeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}  // bias bare postcodes to the viewer's country
 function setGeoPin(state){
   const b=$("geo"); if(!b) return;
   b.classList.remove("lit","glow","off"); b.classList.add(state==="glow"?"glow":state==="lit"?"lit":"off");
-  b.title = state==="glow" ? "Using precise location (GPS) — click to refresh"
-          : state==="lit" ? "Estimated from your IP — click for precise location (GPS)"
-          : "Manual location — click for precise location (GPS)";
+  const accuracy=builderLocation && builderLocation.accuracyM!=null ? builderLocation.accuracyM+" m" : "unknown";
+  b.title = state==="glow" ? "Browser position · accuracy "+accuracy+" — click to refresh"
+          : state==="lit" ? "Estimated from your IP — click to request browser location"
+          : "Configured site — click to request browser location";
   b.setAttribute("aria-label", b.title);
 }
 function setTip(text){ $("geotip").textContent=text; }
 function startDots(){ $("geotip").textContent="Searching…"; }
 function stopDots(){}
-function searchReset(){ clearTimeout(srchDebounce); clearTimeout(tipRevert); srchSeq++; multiCands=[]; setTip(TIP_DEFAULT); }
-function searchFailed(){ setTip("Couldn’t find that — try the pin (precise GPS) or enter coordinates."); tipRevert=setTimeout(()=>setTip(TIP_DEFAULT),4000); }
+// All location operations share this form's edit owner; separate fetch counters
+// would still let an old GPS/coarse/reverse result overwrite a newer search.
+function searchReset(){ clearTimeout(srchDebounce); clearTimeout(tipRevert); clearTimeout(geoTimer); locationEdit++; srchSeq++; multiCands=[]; multiOwner=null; setTip(TIP_DEFAULT); }
+function captureLookup(){ return {edit:locationEdit,seq:++srchSeq}; }
+function ownsLookup(owner){ return owner.edit===locationEdit && owner.seq===srchSeq; }
+function searchFailed(owner){ setTip("Couldn’t find that — try the pin (browser location) or enter coordinates."); tipRevert=setTimeout(()=>{ if(ownsLookup(owner)) setTip(TIP_DEFAULT); },4000); }
 function applyCand(c){                                // push a candidate's coords (+ method) into the form & preview
+  builderLocation=window.SalahConfig?SalahConfig.placeLocationEvidence(c):null;
   $("lat").value=(+c.lat).toFixed(5); $("lon").value=(+c.lon).toFixed(5);
   if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";
   update();
@@ -264,45 +298,49 @@ function showMulti(){                                 // several distinct matche
 // Place/postcode search now lives in the shared module (SalahConfig.geocodeSearch) so the widget's
 // in-card settings panel and this builder use the SAME geocoder (Nominatim + Zippopotam, deduped).
 async function doSearch(q){
-  const seq=++srchSeq;
+  clearTimeout(tipRevert);
+  const owner=captureLookup(), bias=homeCC;
   let cands=[];
-  try{ cands = window.SalahConfig ? await SalahConfig.geocodeSearch(q,{homeCC}) : []; }catch(e){}
-  if(seq!==srchSeq) return;                          // a newer keystroke superseded this lookup
+  try{ cands = window.SalahConfig ? await SalahConfig.geocodeSearch(q,{homeCC:bias}) : []; }catch(e){}
+  if(!ownsLookup(owner)) return;
   stopDots();
-  if(!cands.length) searchFailed();
+  if(!cands.length) searchFailed(owner);
   else if(cands.length===1) foundSingle(cands[0]);
-  else { multiCands=cands; multiIdx=0; showMulti(); }
+  else { multiCands=cands; multiIdx=0; multiOwner={...owner,label:$("label").value}; showMulti(); }
 }
 $("label").addEventListener("input",()=>{
-  labelAuto=false; setGeoPin("off");                 // typing → manual (not location-sensing); programmatic .value sets don't fire 'input'
+  labelAuto=false;                                  // a display-name edit does not change the target's acquisition
   const q=$("label").value.trim();
-  clearTimeout(srchDebounce); clearTimeout(tipRevert); srchSeq++; multiCands=[];  // invalidate any in-flight lookup / cycling
-  if(q.length<2){ searchReset(); return; }           // nothing meaningful to search
+  searchReset();
+  if(q.length<2) return;                            // nothing meaningful to search
   startDots();                                        // "Searching…" immediately…
   srchDebounce=setTimeout(()=>doSearch(q), 1000);     // …but only fetch after a 1 s pause
 });
 $("label").addEventListener("keydown",(e)=>{          // Enter cycles matches, or forces the lookup now (no 1 s wait)
   if(e.key!=="Enter") return;
   e.preventDefault();
-  if(multiCands.length>1){ multiIdx=(multiIdx+1)%multiCands.length; showMulti(); return; }
+  if(multiCands.length>1 && multiOwner && ownsLookup(multiOwner) && multiOwner.label===$("label").value){ multiIdx=(multiIdx+1)%multiCands.length; showMulti(); return; }
+  multiCands=[]; multiOwner=null;
   const q=$("label").value.trim();
   if(q.length>=2){ clearTimeout(srchDebounce); startDots(); doSearch(q); }
 });
-let geoTimer=0;
-async function fillNameFromCoords(){
+async function fillNameFromCoords(edit=locationEdit){
+  if(edit!==locationEdit) return;
   if(!labelAuto && !methodAuto) return;
   const la=$("lat").value.trim(), lo=$("lon").value.trim();
   if(!la||!lo||isNaN(+la)||isNaN(+lo)) return;
+  const owner=captureLookup();
   try{
     const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(la)}&longitude=${encodeURIComponent(lo)}&localityLanguage=en`,{referrerPolicy:"no-referrer"});
     const j=await r.json();
+    if(!ownsLookup(owner)) return;
     if(j.countryCode) homeCC=j.countryCode.toLowerCase();   // upgrade the postcode-bias country to the actual detected location
     if(labelAuto){ const name=(j.city||j.locality||j.principalSubdivision||j.countryName||"").trim(); if(name) $("label").value=name; }
     if(methodAuto) $("method").value = (j.continentCode==="NA") ? "2" : "4";   // ISNA for North America
     update();
   }catch(e){}
 }
-["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ clearTimeout(geoTimer); geoTimer=setTimeout(fillNameFromCoords,700); }));
+["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ builderLocation=null; searchReset(); setGeoPin("off"); const edit=locationEdit; geoTimer=setTimeout(()=>fillNameFromCoords(edit),700); }));
 
 // ---- date format: preset dropdown <-> editable format-code box ------------
 const DF_PRESETS=["YYYY-MM-DD","MM/DD/YYYY","DD/MM/YYYY","DD MMMM YYYY"];
@@ -328,15 +366,10 @@ syncDateFromBox();
 
 $("reload").onclick=()=>{ $("pv").src=previewUrl(); };
 $("open").onclick=()=>window.open(url(),"_blank","noreferrer");
-$("copy").onclick=async()=>{
-  try{ await navigator.clipboard.writeText($("code").value); }
-  catch(e){ $("code").select(); document.execCommand("copy"); }
-  $("copied").textContent="copied ✓";
-  setTimeout(()=>$("copied").textContent="",1800);
-};
+$("copy").onclick=()=>copyArtifact("copy",$("code").value,false);
 // ---- "Install widget" → copy the one-line terminal command that runs the GitHub install wizard ----
-// The repo hosts install.ps1 (Windows) and install.sh (mac/Linux) at the root; the command pipes the
-// right one for the visitor's OS. (Scripts must be committed to the repo for the URL to resolve.)
+// The command pipes install.ps1 (Windows) or install.sh (mac/Linux) from published main, not a local candidate.
+// Normal execution is interactive; reviewed local-file and offline-preview instructions are in README.md.
 const INSTALL_REPO="theislampill/salah_widget";
 // Build the install one-liner. The wizard installs a generic auto-detect preset by default; if the user has
 // configured the widget here (anything other than the plain "#local=1" default), carry that config to the wizard
@@ -356,42 +389,79 @@ function installCmd(){
   }
   return { cmd, carry };
 }
-let installTipTimer=0;
-async function copyText(t){
+async function copyText(t,isCurrent=()=>true){
+  if(!isCurrent()) return false;
   try{ await navigator.clipboard.writeText(t); return true; }
-  catch(e){ const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.focus(); ta.select(); let ok=false; try{ ok=document.execCommand("copy"); }catch(_){} ta.remove(); return ok; }
+  catch(e){
+    if(!isCurrent()) return false;                  // an abandoned rejection must not start fallback effects
+    let ta=null, ok=false;
+    try{ ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0";
+      if(!isCurrent()) return false;
+      document.body.appendChild(ta);
+      if(!isCurrent()) return false;
+      ta.focus();
+      if(!isCurrent()) return false;
+      ta.select();
+      if(isCurrent()) ok=document.execCommand("copy")===true;
+    }catch(_){}
+    finally{ if(ta){ try{ ta.remove(); }catch(_){} } }
+    return ok;
+  }
 }
-$("install").onclick=async()=>{
-  const { cmd, carry }=installCmd();
-  const ok=await copyText(cmd);
-  const tip=$("installtip");
-  clearTimeout(installTipTimer);
-  if(ok){ tip.textContent = carry ? "Copied — with your settings! Paste into your terminal." : "Copied to clipboard! Paste into your terminal."; tip.style.color="#9be29b"; }
-  else { tip.textContent="Couldn’t copy — select the embed code box and copy manually."; tip.style.color="#ffb38a"; }
-  installTipTimer=setTimeout(()=>{ tip.textContent="copies terminal script for installation wizard"; tip.style.color=""; }, 8000);
+// Copy-result ownership is per button, independent of location edits. Recovery
+// retains the captured artifact even if the form regenerates while copying.
+const copyActions={copy:{seq:0,timer:0},install:{seq:0,timer:0}};
+async function copyArtifact(buttonId,payload,carry){
+  const state=copyActions[buttonId], attempt=++state.seq, button=$(buttonId);
+  const kind=buttonId==="copy"?"embed":"install", tip=$(buttonId==="copy"?"copied":"installtip");
+  clearTimeout(state.timer); $(kind+"-recovery-wrap").hidden=true;
+  tip.textContent=""; tip.style.color=""; button.disabled=true;
+  let ok=false;
+  try{ ok=await copyText(payload,()=>attempt===state.seq); }catch(_){}
+  finally{ if(attempt===state.seq) button.disabled=false; }
+  if(attempt!==state.seq) return;
+  if(ok){
+    tip.textContent=buttonId==="copy"?"copied ✓":carry?"Copied — with your settings! Paste into your terminal.":"Copied to clipboard! Paste into your terminal.";
+    tip.style.color="#9be29b"; button.focus();
+    state.timer=setTimeout(()=>{ if(attempt===state.seq){ tip.textContent=buttonId==="copy"?"":"copies terminal script for installation wizard"; tip.style.color=""; } },buttonId==="copy"?1800:8000);
+  } else {
+    tip.textContent="Couldn’t copy. Select the "+(buttonId==="copy"?"embed code":"install command")+" below and copy it manually.";
+    tip.style.color="#ffb38a";
+    const recovery=$(kind+"-recovery"); recovery.value=payload;
+    $(kind+"-recovery-wrap").hidden=false; recovery.focus(); recovery.select();
+  }
+}
+$("install").onclick=()=>{
+  const {cmd,carry}=installCmd(); return copyArtifact("install",cmd,carry);
 };
 function locate(auto){                                 // pin click → precise GPS (browser permission)
+  searchReset();
   if(!navigator.geolocation){ if(!auto) setTip("Geolocation isn't available in this browser."); return; }
-  searchReset(); setTip("Requesting precise location…");
+  const owner=captureLookup(); setTip("Requesting browser location…");
   navigator.geolocation.getCurrentPosition(
-    pos=>{ $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
-           setGeoPin("glow"); setTip("Using your precise location."); update(); fillNameFromCoords(); },
-    err=>{ if(!auto) setTip("Precise location unavailable ("+err.message+"). Type a place, or it stays estimated."); },
+    pos=>{ if(!ownsLookup(owner)) return;
+           builderLocation=window.SalahConfig?SalahConfig.browserLocationEvidence(pos):null;
+           $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
+           setGeoPin("glow"); setTip("Using browser position · accuracy "+(builderLocation && builderLocation.accuracyM!=null?builderLocation.accuracyM+" m":"unknown")+"."); update(); fillNameFromCoords(owner.edit); },
+    err=>{ if(ownsLookup(owner) && !auto) setTip("Browser location unavailable ("+err.message+"). Type a place, or keep the selected location."); },
     {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
   );
 }
 $("geo").onclick=()=>locate(false);
 // coarse IP auto-detect on load (no permission prompt) — same default as the widget; the pin lits on success.
 async function detectArea(){
+  const owner=captureLookup();
   if(!window.SalahConfig){ setGeoPin("off"); setTip(TIP_DEFAULT); return; }
   setTip("Detecting your area…");
   let d=null; try{ d=await SalahConfig.coarseDetect(); }catch(e){}
+  if(!ownsLookup(owner)) return;
   if(d&&d.ok){
+    builderLocation=SalahConfig.normalize(d.cfg).locationEvidence;
     $("lat").value=(+d.cfg.lat).toFixed(5); $("lon").value=(+d.cfg.lon).toFixed(5);
     if(labelAuto && d.cfg.label) $("label").value=d.cfg.label;
     if(methodAuto && d.cfg.method) $("method").value=d.cfg.method;
     setGeoPin("lit"); setTip("Detected: "+(d.cfg.label||"your area")+" (approx.)"); update();
-  } else { setGeoPin("off"); setTip("Couldn’t detect — type a place, or click the pin for precise GPS."); }
+  } else { setGeoPin("off"); setTip("Couldn’t detect — type a place, or click the pin for browser location."); }
 }
 
 // on load: coarse IP auto-detect (no prompt) fills the form and lits the pin; precise GPS is opt-in via

@@ -13,7 +13,7 @@
  * load, so a 404 degrades instead of white-screening.
  *
  * Sources of a resolved config (the `source` field): hash | localStorage | coarse-ip
- * | browser-geolocation | manual | fallback.
+ * | browser-geolocation | place | manual | fallback.
  * ========================================================================== */
 (function (root) {
   "use strict";
@@ -32,8 +32,9 @@
     time: "24",
     datefmt: "YYYY-MM-DD",
     units: "f",
+    appearance: "glass",
     lp: 0, seed: null,
-    source: "fallback", savedAt: null
+    source: "fallback", savedAt: null, locationEvidence: null
   };
 
   // Back-compat date-format preset keys (old embeds) → Unicode token strings.
@@ -44,6 +45,44 @@
   function clampN(x, a, b) { return Math.min(b, Math.max(a, x)); }
   function clamp01(x) { return clampN(x, 0, 1); }
   function mapDatefmt(raw) { if (!raw) return DEFAULTS.datefmt; return DATEFMT_PRESETS[String(raw).toLowerCase()] || String(raw); }
+  function finiteNumber(x) { return typeof x === "number" && isFinite(x) ? x : null; }
+  function boundsNumber(x) { return typeof x === "number" || typeof x === "string" && x.trim() ? numOrNull(x) : null; }
+  function textOrNull(x, max) { return typeof x === "string" && x ? x.slice(0, max) : null; }
+  function locationBounds(b) {
+    if (!b || [b.south,b.north,b.west,b.east].some(function (n) { return finiteNumber(n) === null; })) return null;
+    if (b.south < -90 || b.north > 90 || b.south > b.north || b.west < -180 || b.east > 180 || b.west > b.east) return null;
+    return { south:b.south, north:b.north, west:b.west, east:b.east };
+  }
+  // Coordinates select a target. Evidence describes acquisition, never presence
+  // "here now". No decimal-derived accuracy or savedAt-derived fix timestamp.
+  function normalizeLocationEvidence(raw, cfg) {
+    cfg = cfg || {};
+    var origins = ["hash","manual","place","browser-geolocation","coarse-ip","legacy","unknown"];
+    var original = cfg.origin || cfg.source, source = raw && origins.indexOf(raw.source) >= 0 ? raw.source : original;
+    var intent = source === "browser-geolocation" ? "device-position" : source === "coarse-ip" ? "coarse-area"
+      : ["hash","manual","place"].indexOf(source) >= 0 ? "fixed-site" : "unknown";
+    if (source === "browser-geolocation" && (!raw || raw.source !== source)) source = "legacy";
+    if (source === "localStorage") source = "legacy";
+    if (origins.indexOf(source) < 0) source = "unknown";
+    if (source === "legacy" && raw && ["fixed-site","device-position","coarse-area","unknown"].indexOf(raw.intent) >= 0) intent = raw.intent;
+    var accuracy = source === "browser-geolocation" && raw ? finiteNumber(raw.accuracyM) : null;
+    var acquired = source === "browser-geolocation" && raw ? finiteNumber(raw.acquiredAt) : null;
+    if (accuracy !== null && accuracy < 0) accuracy = null;
+    // Zero skew allowance: future/nonpositive epochs remain unknown, not age 0.
+    if (acquired !== null && (acquired <= 0 || acquired > Date.now())) acquired = null;
+    return { intent:intent, source:source, accuracyM:accuracy, acquiredAt:acquired,
+      provider:textOrNull(raw && raw.provider || (source === "coarse-ip" && cfg.detectProvider), 80),
+      area:textOrNull(raw && raw.area || (source === "coarse-ip" && cfg.area), 240),
+      bounds:locationBounds(raw && raw.bounds) };
+  }
+  // Both one-shot acquisition callers consume this exact Position contract.
+  function browserLocationEvidence(pos) {
+    return normalizeLocationEvidence({ source:"browser-geolocation", accuracyM:pos && pos.coords && pos.coords.accuracy,
+      acquiredAt: pos && pos.timestamp }, {});
+  }
+  function placeLocationEvidence(c) {
+    return normalizeLocationEvidence({ source:"place", provider:c && c.provider, area:c && c.norm, bounds:c && c.bounds }, {});
+  }
 
   // ---- parse: URL hash → partial config (present keys only) + mode flags -----
   function parseHash(hashStr) {
@@ -61,6 +100,7 @@
     if (q.has("time")) c.time = q.get("time") === "12" ? "12" : "24";
     if (q.has("datefmt")) c.datefmt = mapDatefmt(q.get("datefmt"));
     if (q.has("units")) c.units = String(q.get("units")).toLowerCase() === "c" ? "c" : "f";
+    if (q.has("appearance")) c.appearance = q.get("appearance") === "contrast" ? "contrast" : "glass";
     if (q.has("lp")) c.lp = clamp01(numOrNull(q.get("lp")) || 0);
     if (q.has("seed")) c.seed = numOrNull(q.get("seed"));
     return { cfg: c, flags: flags };
@@ -78,11 +118,13 @@
     c.school = (String(c.school) === "1") ? "1" : "0";
     c.time = (String(c.time) === "12") ? "12" : "24";
     c.units = (String(c.units).toLowerCase() === "c") ? "c" : "f";
+    c.appearance = c.appearance === "contrast" ? "contrast" : "glass";
     c.datefmt = (typeof c.datefmt === "string" && c.datefmt) ? c.datefmt : DEFAULTS.datefmt;
     c.lp = clamp01(numOrNull(c.lp) || 0);
     c.seed = numOrNull(c.seed);
     c.source = (typeof c.source === "string" && c.source) ? c.source : "fallback";
     c.savedAt = numOrNull(c.savedAt);
+    c.locationEvidence = normalizeLocationEvidence(c.locationEvidence, c);
     c.v = 1;
     return c;
   }
@@ -96,18 +138,21 @@
     if (!(String(c.school) === "0" || String(c.school) === "1")) e.push("school");
     if (!(String(c.time) === "12" || String(c.time) === "24")) e.push("time");
     if (!(String(c.units) === "f" || String(c.units) === "c")) e.push("units");
+    if (c.appearance != null && c.appearance !== "glass" && c.appearance !== "contrast") e.push("appearance");
     if (c.lp != null && (c.lp < 0 || c.lp > 1)) e.push("lp");
     return { ok: e.length === 0, errors: e };
   }
 
   // ---- serialize: config → URL hash string ----------------------------------
   // opts.mode: "local" → generic "#local=1" (no coordinates); "preferLocal" → adds
-  // preferLocal=1 + emits coordinates as defaults. Default (portable/hardcoded) emits
-  // location + always method/school — matching builder.html's historical output so
-  // existing portable snippets stay byte-identical.
+  // preferLocal=1 + emits coordinates as defaults. opts.explicitPrefs may carry
+  // selected method/units even at their defaults in local mode. Explicit appearance
+  // also preserves a selected glass default in portable mode and after detection.
+  // Unselected defaults retain the historical portable hash shape.
   function serialize(cfg, opts) {
     opts = opts || {};
     var c = normalize(cfg), p = new URLSearchParams(), local = opts.mode === "local";
+    var explicit = local && Array.isArray(opts.explicitPrefs) ? opts.explicitPrefs : [];
     if (local) p.set("local", "1");
     else if (opts.mode === "preferLocal") p.set("preferLocal", "1");
     if (!local) {
@@ -117,48 +162,59 @@
       p.set("method", c.method);
       p.set("school", c.school);
     } else {
-      // generic local snippet: only carry non-default *preferences*, never coordinates
-      if (c.method !== DEFAULTS.method) p.set("method", c.method);
+      // Local: non-default or explicitly selected preferences, never coordinates.
+      if (c.method !== DEFAULTS.method || explicit.indexOf("method") >= 0) p.set("method", c.method);
       if (c.school !== DEFAULTS.school) p.set("school", c.school);
     }
     if (c.time === "12") p.set("time", "12");
     if (c.datefmt && c.datefmt !== DEFAULTS.datefmt) p.set("datefmt", c.datefmt);
-    if (c.units === "c") p.set("units", "c");
+    if (c.units === "c" || explicit.indexOf("units") >= 0) p.set("units", c.units);
+    if (c.appearance !== DEFAULTS.appearance || Array.isArray(opts.explicitPrefs) && opts.explicitPrefs.indexOf("appearance") >= 0) p.set("appearance", c.appearance);
     if (c.lp > 0) p.set("lp", String(c.lp));
     if (c.seed != null) p.set("seed", String(c.seed));
     return p.toString();
   }
 
   // ---- localStorage (every access wrapped; never throws to the caller) -------
-  function storageAvailable() {
+  // Optional Storage-like input keeps characterization tests off the viewer's origin.
+  // Resolve the default getter inside each try: even accessing localStorage may throw.
+  function storageAvailable(storage) {
     try {
+      var store = storage === undefined ? root.localStorage : storage;
       var k = "__sw_probe__";
-      root.localStorage.setItem(k, "1"); root.localStorage.removeItem(k);
+      store.setItem(k, "1"); store.removeItem(k);
       return { ok: true };
     } catch (e) { return { ok: false, error: (e && e.name) || "error" }; }
   }
-  function loadLocal() {
+  function loadLocal(storage) {
     try {
-      var raw = root.localStorage.getItem(KEY);
+      var store = storage === undefined ? root.localStorage : storage;
+      var raw = store.getItem(KEY);
       if (!raw) return null;
       var j = JSON.parse(raw);
       if (!j || j.v !== 1) return null;            // version gate (future migrations)
       var c = normalize(j);
       if (!validate(c).ok) return null;            // corrupt/partial → ignore (fall through to detect)
-      c.origin = c.source;                         // how the coords were obtained (coarse-ip / browser-geolocation / manual) — survives the storage marker
+      c.origin = c.origin || c.source;             // preserve acquisition origin independently of the storage marker
       c.source = "localStorage"; c.savedAt = numOrNull(j.savedAt);
       return c;
     } catch (e) { return null; }
   }
-  function saveLocal(cfg) {
+  function saveLocal(cfg, storage) {
     try {
+      var store = storage === undefined ? root.localStorage : storage;
       var c = normalize(cfg); c.v = 1; c.savedAt = Date.now();
-      root.localStorage.setItem(KEY, JSON.stringify(c));
+      // Old readers derive their pin state from source and ignore fix age. Keep
+      // private acquisition evidence, but let them read a configured site.
+      if (c.source === "browser-geolocation" || c.origin === "browser-geolocation") {
+        c.origin = c.origin || c.source; c.source = "manual";
+      }
+      store.setItem(KEY, JSON.stringify(c));
       return { ok: true, savedAt: c.savedAt };
     } catch (e) { return { ok: false, error: (e && e.name) || "error" }; }
   }
-  function clearLocal() {
-    try { root.localStorage.removeItem(KEY); return { ok: true }; }
+  function clearLocal(storage) {
+    try { var store = storage === undefined ? root.localStorage : storage; store.removeItem(KEY); return { ok: true }; }
     catch (e) { return { ok: false, error: (e && e.name) || "error" }; }
   }
 
@@ -189,18 +245,27 @@
     ];
     return (function next(i) {
       if (i >= providers.length) return Promise.resolve({ ok: false, source: "coarse-ip", status: "failed" });
-      var p = providers[i], ac = new AbortController(), to = setTimeout(function () { ac.abort(); }, timeoutMs);
-      return fetch(p.url, { signal: ac.signal, mode: "cors", referrerPolicy: "no-referrer", cache: "no-store" })
-        .then(function (r) { clearTimeout(to); if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+      var p = providers[i], ac = new AbortController(), to;
+      // Headers are not completion: the deadline owns the whole body/parse wait.
+      // Reject as well as abort so an abort-ignorant body cannot hold fallback.
+      var deadline = new Promise(function (_, reject) {
+        to = setTimeout(function () { reject(new Error("coarse location timeout")); ac.abort(); }, timeoutMs);
+      });
+      var work = Promise.resolve().then(function () {
+        return fetch(p.url, { signal: ac.signal, mode: "cors", referrerPolicy: "no-referrer", cache: "no-store" });
+      }).then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
         .then(function (j) {
           var d = p.parse(j);
           if (d.lat == null || d.lon == null || isNaN(d.lat) || isNaN(d.lon)) throw new Error("no coords");
           var cfg = normalize({ lat: d.lat, lon: d.lon, label: d.label || "",
-            tz: tzIntl || d.tz || "", method: methodForCC(d.cc), units: unitsForCC(d.cc), source: "coarse-ip" });
+            tz: tzIntl || d.tz || "", method: methodForCC(d.cc), units: unitsForCC(d.cc), source: "coarse-ip",
+            detectProvider:p.name, area:d.area || d.label || "" });
           cfg.source = "coarse-ip"; cfg.detectProvider = p.name; cfg.accuracy = d.accuracy; cfg.area = d.area || cfg.label;
           return { ok: true, cfg: cfg, source: "coarse-ip", provider: p.name, status: "ok" };
-        })
-        .catch(function () { clearTimeout(to); return next(i + 1); });
+        });
+      // The race handles late work without another fallback or adoption effect.
+      return Promise.race([work, deadline]).then(function (result) { clearTimeout(to); return result; },
+        function () { clearTimeout(to); return next(i + 1); });
     })(0);
   }
 
@@ -210,8 +275,9 @@
     return new Promise(function (resolve) {
       if (!root.navigator || !root.navigator.geolocation) { resolve({ ok: false, error: "unsupported" }); return; }
       root.navigator.geolocation.getCurrentPosition(
-        function (pos) { resolve({ ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude,
-          accuracy: pos.coords.accuracy, source: "browser-geolocation" }); },
+        function (pos) { var evidence = browserLocationEvidence(pos);
+          resolve({ ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude,
+            accuracy:evidence.accuracyM, acquiredAt:evidence.acquiredAt, locationEvidence:evidence, source:"browser-geolocation" }); },
         function (err) { resolve({ ok: false, error: (err && err.message) || "denied", code: err && err.code }); },
         { enableHighAccuracy: false, timeout: opts.timeoutMs || 10000, maximumAge: 600000 }
       );
@@ -229,7 +295,7 @@
   // Returns {mode, cfg|null, needsDetect, hashCfg, flags}. The async coarse-detect
   // path is run by the caller (index.html boot) when needsDetect is true, so hardcoded
   // mode stays fully synchronous at module load (preserving the historical boot timing).
-  function resolve(hashStr) {
+  function resolve(hashStr, storage) {
     var parsed = parseHash(hashStr), hashCfg = parsed.cfg, flags = parsed.flags;
     var mode, cfg = null, needsDetect = false;
     if (flags.local) mode = "local";
@@ -240,12 +306,12 @@
     if (mode === "hardcoded") {
       cfg = normalize(Object.assign({}, hashCfg, { source: "hash" }));
     } else if (mode === "preferLocal") {
-      var savedP = loadLocal();
+      var savedP = loadLocal(storage);
       if (savedP) cfg = savedP;
       else if (hashCfg.lat != null && hashCfg.lon != null) cfg = normalize(Object.assign({}, hashCfg, { source: "hash" }));
       else needsDetect = true;
     } else if (mode === "local") {
-      var savedL = loadLocal();
+      var savedL = loadLocal(storage);
       if (savedL) cfg = savedL; else needsDetect = true;
     }
     return { mode: mode, cfg: cfg, needsDetect: needsDetect, hashCfg: hashCfg, flags: flags };
@@ -254,7 +320,7 @@
   // Overlay explicitly-set hash PREFERENCES (not location) onto a detected/saved base,
   // so e.g. "#local=1&units=c" honours the unit even when the location comes from detect.
   function applyHashPrefs(base, hashCfg) {
-    var c = Object.assign({}, base), PK = ["method", "school", "time", "units", "datefmt", "lp", "seed"];
+    var c = Object.assign({}, base), PK = ["method", "school", "time", "units", "datefmt", "appearance", "lp", "seed"];
     PK.forEach(function (k) { if (hashCfg && hashCfg[k] !== undefined) c[k] = hashCfg[k]; });
     if (hashCfg && hashCfg.label !== undefined && hashCfg.label !== "") c.label = hashCfg.label;
     return normalize(c);
@@ -272,7 +338,8 @@
       var place = a.city || a.town || a.village || a.hamlet || a.municipality || a.suburb || a.county || res.name || "";
       return { lat: parseFloat(res.lat), lon: parseFloat(res.lon), name: place,
         norm: [place, a.state || a.region || a.province || "", a.country || ""].filter(Boolean).join(", "),
-        cc: (a.country_code || "").toLowerCase() };
+        cc: (a.country_code || "").toLowerCase(), provider:"Nominatim",
+        bounds:Array.isArray(res.boundingbox) && res.boundingbox.length === 4 ? locationBounds({south:boundsNumber(res.boundingbox[0]),north:boundsNumber(res.boundingbox[1]),west:boundsNumber(res.boundingbox[2]),east:boundsNumber(res.boundingbox[3])}) : null };
     });
   }
   function _zipCand(j) {
@@ -280,7 +347,7 @@
     var p = j.places[0], place = (p["place name"] || "").split(" (")[0].trim();
     return { lat: +p.latitude, lon: +p.longitude, name: place,
       norm: [place, p.state || "", j.country || ""].filter(Boolean).join(", "),
-      cc: (j["country abbreviation"] || "").toLowerCase() };
+      cc: (j["country abbreviation"] || "").toLowerCase(), provider:"Zippopotam", bounds:null };
   }
   function _dedupeCands(cs) {
     var out = [];
@@ -310,7 +377,7 @@
 
   root.SalahConfig = {
     KEY: KEY, DEFAULTS: DEFAULTS, DATEFMT_PRESETS: DATEFMT_PRESETS,
-    geocodeSearch: geocodeSearch,
+    geocodeSearch: geocodeSearch, browserLocationEvidence:browserLocationEvidence, placeLocationEvidence:placeLocationEvidence,
     parseHash: parseHash, normalize: normalize, validate: validate, serialize: serialize,
     storageAvailable: storageAvailable, loadLocal: loadLocal, saveLocal: saveLocal, clearLocal: clearLocal,
     coarseDetect: coarseDetect, geolocate: geolocate, permissionState: permissionState,
