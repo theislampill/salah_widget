@@ -46,3 +46,12 @@ test('a backward seek without generation change clears rate diagnostics and fenc
  h.jobs[1].resolve({status:'ready',raster:{}});await settle();assert.equal(h.painted.length,0);
  await h.finish();assert.equal(h.painted.length,1);assert.equal(h.c.state.availability.status,'available');h.c.dispose();
 });
+
+test('source reload during acceleration disposes the old queue before successor acceptance',async()=>{
+ const old=fixture(60);old.c.request();old.advance(700);old.c.dispose();
+ const next=fixture(60);next.c.request();next.advance(100);await next.finish();
+ await old.finish();
+ assert.equal(old.painted.length,0);assert.equal(old.c.state.disposed,true);
+ assert.equal(next.painted.length,1);assert.equal(next.c.state.availability.status,'available');
+ next.c.dispose();
+});

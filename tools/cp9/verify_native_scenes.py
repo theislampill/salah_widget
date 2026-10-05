@@ -27,6 +27,6 @@ def verify(path):
  check('admitted low visibility reaches aerosol assumption',by['fog-twilight']['state']['sky']['last']['atmosphere']['aerosolTau550']==.33)
  check('accepted local-light control reaches physical budget',by['urban-night']['state']['native']['lp']==1 and by['urban-night']['state']['sky']['last']['atmosphere']['lightPollutionCdM2']==.003)
  check('actual partial and overcast native cloud alpha present',by['partial-cloud-night']['state']['sky']['last']['composition']['meanCloudAlpha']>0 and by['overcast-day']['state']['sky']['last']['composition']['meanCloudAlpha']>0)
- return {'status':'PASS','sceneCount':len(rows),'checks':checks,'checkCount':len(checks),'pageErrors':0,'boundary':'Native Linux Chromium embedded-app evidence with controlled prayer/weather inputs. Source/geometry assumptions remain inherited.'}
+ return {'status':'PASS','sceneCount':len(rows),'checks':checks,'checkCount':len(checks),'pageErrors':0,'boundary':'Native embedded-app evidence (OS/engine recorded on each scene) with controlled prayer/weather inputs. Source/geometry assumptions remain inherited.'}
 if __name__=='__main__':
  a=argparse.ArgumentParser();a.add_argument('results',type=Path);a.add_argument('--output',type=Path,required=True);x=a.parse_args();r=verify(x.results);x.output.write_text(json.dumps(r,indent=2));print('Native matrix PASS:',r['sceneCount'],'scenes;',r['checkCount'],'assertions')

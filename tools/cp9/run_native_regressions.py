@@ -14,14 +14,12 @@ NAMED=['r0001-date-sinks.cjs','r0007-countdown.cjs','r0008-timezone.cjs','r0009-
  'r0019-date-disclosure.cjs','r001a-radio.cjs','r001d-lifecycle.cjs','r001f-deadline.cjs',
  'r0020-clock.cjs','r0021-reveal.cjs','r0022-baseline-balance.cjs','r0022-lunar-consumers.cjs',
  'r0023-metadata.cjs','r0025-continuity.cjs','r0025-lifecycle.cjs']
-HISTORICAL={
- 'r0018-timetable-contrast.cjs':'Requires unsupplied historical commit fd2972ba64225fe9d6848e92497e6d0ed20ea624; current pinned-baseline preservation is checked separately.',
- 'r0022-baseline-balance.cjs':'Requires unsupplied historical commits fd2972ba64225fe9d6848e92497e6d0ed20ea624 and 8b83df029966c203a503ab217d121c48b8ee6e8a; CP8 does not reacquire or substitute them.'}
-SNAPSHOT_ONLY={'r0021-reveal.cjs','r0022-lunar-consumers.cjs','r0023-metadata.cjs'}
+HISTORICAL={}
+SNAPSHOT_ONLY={'r0021-reveal.cjs','r0022-lunar-consumers.cjs'}
 def run(root,out):
  out.mkdir(parents=True,exist_ok=True);records=[]
- commands=[('native-test-glob',['node','--test','--test-concurrency=1',*map(str,sorted((root/'tests').glob('*.test.cjs')))])]
- commands += [(Path(n).stem,['node','tests/'+n]+(['--cp8-snapshot-only'] if n in SNAPSHOT_ONLY else [])) for n in NAMED if n not in HISTORICAL]
+ commands=[('native-test-glob',['node','--test','--test-reporter=tap','--test-concurrency=1',*map(str,sorted((root/'tests').glob('*.test.cjs')))])]
+ commands += [(Path(n).stem,['node','--test-reporter=tap','tests/'+n]+(['--cp8-snapshot-only'] if n in SNAPSHOT_ONLY else [])) for n in NAMED if n not in HISTORICAL]
  for name,cmd in commands:
   start=time.monotonic();log=out/(name+'.log')
   try:
@@ -43,6 +41,6 @@ def run(root,out):
   records.append({'name':name,'command':cmd,'exitCode':code,'seconds':time.monotonic()-start,'counts':counts,'log':log.name,'explicitExclusions':exclusions})
   (out/'results.json').write_text(json.dumps({'status':'RUNNING','commands':records},indent=2));print(name,code,counts,flush=True)
  status='PASS' if all(x['exitCode']==0 for x in records) else 'FAIL'
- result={'status':status,'commands':records,'notRunHistorical':HISTORICAL,'scope':'Applicable current-snapshot native regression gates. Historical Git comparisons and removed synthetic-array producers are explicitly excluded, not reported passed.'};(out/'results.json').write_text(json.dumps(result,indent=2));return result
+ result={'status':status,'commands':records,'notRunHistorical':HISTORICAL,'scope':'Applicable current-snapshot native regression gates. Locally available archive-pinned historical comparisons are executed; their commits are not asserted to be main ancestors. Only removed synthetic-array producers are explicitly excluded, not reported passed.'};(out/'results.json').write_text(json.dumps(result,indent=2));return result
 if __name__=='__main__':
  a=argparse.ArgumentParser();a.add_argument('--root',type=Path,default=ROOT);a.add_argument('--output',type=Path,required=True);x=a.parse_args();sys.exit(0 if run(x.root.resolve(),x.output)['status']=='PASS' else 1)

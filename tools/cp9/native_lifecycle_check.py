@@ -7,11 +7,24 @@ provider, worker-fault and visibility controls are test instrumentation, not
 product code. Every successful render is observed at the actual canvas sink.
 """
 from pathlib import Path
-import argparse,copy,hashlib,json,mimetypes,sys,time,traceback
+import argparse,copy,hashlib,json,math,mimetypes,sys,time,traceback
 from urllib.parse import urlparse
 from browser_runtime import launch_browser, browser_identity
 from playwright.sync_api import sync_playwright
 from native_browser_check import INIT,ROOT
+def report_json(report):
+ # Invalid-input controls can expose NaN prayer diagnostics through the browser
+ # protocol. Preserve their location/value explicitly, without emitting invalid
+ # JSON or changing the in-memory assertions or original acquired observation.
+ nonfinite=[]
+ def clean(value,path=''):
+  if isinstance(value,dict):return {k:clean(v,path+'/'+str(k).replace('~','~0').replace('/','~1')) for k,v in value.items()}
+  if isinstance(value,list):return [clean(v,path+'/'+str(i)) for i,v in enumerate(value)]
+  if isinstance(value,float) and not math.isfinite(value):nonfinite.append({'pointer':path,'value':str(value)});return None
+  return value
+ result=clean(report)
+ if nonfinite:result['serialization']={'nonFiniteObservations':nonfinite,'representation':'null at the original pointer; non-finite value retained here; assertions unchanged'}
+ return json.dumps(result,indent=2,allow_nan=False)
 CLOCK=INIT.replace("const NativeDate=Date,base=NativeDate.parse('2026-09-07T20:30:00Z');", "const NativeDate=Date;window.__testWall=NativeDate.parse('2026-09-07T20:30:00Z');")
 CLOCK=CLOCK.replace('[base]','[window.__testWall]').replace('return base;','return window.__testWall;')
 # Deliberately distinguish fixture calendar days; this is not an Islamic-calendar calculation.
@@ -95,6 +108,10 @@ class Widget:
   self.page.set_content(source,wait_until='domcontentloaded',timeout=60000)
  def route(self,r):
   u=urlparse(r.request.url);self.requests.append(r.request.url)
+  # WebKit exposes local Blob-worker requests to this route; other engines do
+  # not. They are the exact product/instrument bytes, not an external provider.
+  # Aborting them as a foreign hostname fabricates a worker-startup failure.
+  if u.scheme in ['blob','data']:r.continue_();return
   if u.hostname!='native.cp8.test':r.abort();return
   f=self.root/'.'/u.path.lstrip('/')
   if not f.is_file() or self.root.resolve() not in f.resolve().parents:r.fulfill(status=404,body='Missing fixture asset');return
@@ -162,7 +179,7 @@ def run(root,out,group='all'):
      result=w.finish(error)
     else:result={'name':name,'passed':False,'error':error,'assertions':0,'pageErrors':[]}
    result['seconds']=time.monotonic()-start;results.append(result)
-   (out/'results.json').write_text(json.dumps({'status':'RUNNING','cases':results},indent=2));print(name,'PASS' if result['passed'] else 'FAIL',round(result['seconds'],2),'s',flush=True)
+   (out/'results.json').write_text(report_json({'status':'RUNNING','cases':results}),encoding='utf-8');print(name,'PASS' if result['passed'] else 'FAIL',round(result['seconds'],2),'s',flush=True)
    if not result['passed']:print(result.get('error') or result['pageErrors'],flush=True)
   if group in ['all','assets']:
    def slow(w):
@@ -227,6 +244,6 @@ def run(root,out,group='all'):
   browser.close()
  assert runtime_hashes=={n:hashlib.sha256((root/'.'/n).read_bytes()).hexdigest() for n in runtime_files},'Runtime changed during browser qualification'
  result={'runtimeSha256':runtime_hashes,'testHarnessSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'status':'PASS' if results and all(c['passed'] for c in results) else 'FAIL','group':group,'assertions':sum(c['assertions'] for c in results),'cases':results,'sourceSha256':hashlib.sha256((root/'index.html').read_bytes()).hexdigest(),'harness':'Actual native index, config, native bundle, local data and real Blob worker; reserved-origin intercepted subresources. Controlled prayer/calendar dates. Worker exception is actual worker-thread exception; held messages/messageerror and visibility are explicit fault/event controls. No live provider or OS/browser-hidden-state certification.'}
- (out/'results.json').write_text(json.dumps(result,indent=2));print('LIFECYCLE',result['status'],len(results),'cases',result['assertions'],'assertions',flush=True);return result
+ (out/'results.json').write_text(report_json(result),encoding='utf-8');print('LIFECYCLE',result['status'],len(results),'cases',result['assertions'],'assertions',flush=True);return result
 if __name__=='__main__':
  a=argparse.ArgumentParser();a.add_argument('--root',type=Path,default=ROOT);a.add_argument('--output',type=Path,required=True);a.add_argument('--group',choices=['all','assets','worker','temporal','prayer'],default='all');x=a.parse_args();sys.exit(0 if run(x.root.resolve(),x.output,x.group)['status']=='PASS' else 1)

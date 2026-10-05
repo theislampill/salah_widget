@@ -59,7 +59,7 @@ def run(root,output,baseline=False,scenes=None):
     # Terminal state rather than a claim about a single captured screenshot.
     page.screenshot(path=str(output/(scene['name']+'.png')))
     state=page.evaluate("""()=>({qa:window.qaState?.(),sky:window.realSkyState?.(),native:window.SalahNativeSkyHost?.capture(),pbr:{hrefBytes:document.querySelector('.mphoto').getAttribute('href').length,ready:document.querySelector('.c').classList.contains('moon-ready')},prayerRows:document.querySelectorAll('.p').length,classes:document.querySelector('.c').className,syntheticPoints:document.querySelectorAll('.stars circle,.milkyway circle,.starglints line').length,fetches:window.__testRequests})""")
-    result={'scene':scene,'seconds':time.monotonic()-started,'error':error,'pageErrors':errors,'state':state,'requests':requests,'sourceSha256':hashlib.sha256((root/folder/'index.html').read_bytes()).hexdigest(),'harness':'actual native app expanded inline on about:blank; inline fixture route; not actual HTTP/file-entry qualification; controlled prayer/weather fixtures' }
+    result={'browser':browser_identity(browser),'scene':scene,'seconds':time.monotonic()-started,'error':error,'pageErrors':errors,'state':state,'requests':requests,'sourceSha256':hashlib.sha256((root/folder/'index.html').read_bytes()).hexdigest(),'harness':'actual native app expanded inline on about:blank; inline fixture route; not actual HTTP/file-entry qualification; controlled prayer/weather fixtures' }
     results.append(result);(output/'results.json').write_text(json.dumps(results,indent=2))
     print(scene['name'],result['seconds'],'rows',state['prayerRows'],'sky',(state.get('sky') or {}).get('status'),'errors',errors,flush=True)
     if error:print(error,flush=True)

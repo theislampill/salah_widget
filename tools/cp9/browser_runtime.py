@@ -14,7 +14,10 @@ def browser_options():
  elif family=='chromium':
   found=shutil.which('chromium') or shutil.which('chromium-browser')
   if found:options['executable_path']=found
- if family=='chromium':options['args']=['--no-sandbox','--disable-dev-shm-usage']
+ if family=='chromium':
+  options['args']=['--disable-dev-shm-usage']
+  # Playwright otherwise adds --no-sandbox even when it is absent from args.
+  options['chromium_sandbox']=True
  return family,options
 
 def launch_browser(playwright):
@@ -22,4 +25,4 @@ def launch_browser(playwright):
  return getattr(playwright,family).launch(**options)
 
 def browser_identity(browser):
- return {'family':os.environ.get('SALAH_BROWSER','chromium'),'version':browser.version,'os':platform.system(),'machine':platform.machine(),'executable':os.environ.get('SALAH_BROWSER_EXECUTABLE') or 'explicit system chromium if available; otherwise Playwright managed engine'}
+ return {'family':os.environ.get('SALAH_BROWSER','chromium'),'version':browser.version,'os':platform.system(),'machine':platform.machine(),'executable':os.environ.get('SALAH_BROWSER_EXECUTABLE') or 'explicit system chromium if available; otherwise Playwright managed engine','chromiumSandboxRequested':browser_options()[1].get('chromium_sandbox')}
