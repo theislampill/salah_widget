@@ -1,0 +1,15 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {splatGaussian,createLinearBuffer,encodeFrame,renderStars} from '../src/renderer.mjs';
+const sum=(b,k=0)=>b.reduce((s,v,i)=>s+(i%3===k?v:0),0);
+const near=(a,b,t=1e-5)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`);
+test('integrated PSF conserves flux at subpixel positions',()=>{for(const x of [20,20.01,20.25,20.5,20.99]){const b=createLinearBuffer(41,41);splatGaussian(b,41,41,x,20.5,[1,2,3],.55);near(sum(b),1);near(sum(b,1),2);near(sum(b,2),3);}});
+test('PSF width does not secretly multiply total flux',()=>{for(const sig of [.25,.5,1,2,4]){const b=createLinearBuffer(70,70);splatGaussian(b,70,70,35,35,[1,1,1],sig);near(sum(b),1);}});
+test('cropped border loses energy, not renormalised to a bright border artefact',()=>{const b=createLinearBuffer(41,41);splatGaussian(b,41,41,0,20,[1,1,1],1);near(sum(b),.5);});
+test('overlapping sources add in linear light',()=>{const b=createLinearBuffer(41,41);for(let i=0;i<2;i++)splatGaussian(b,41,41,20,20,[1,1,1],1);near(sum(b),2);});
+test('high-DPR raster keeps the same CSS-surface radiance',()=>{for(const dpr of [1,1.37,2,3]){const w=Math.round(60*dpr),b=createLinearBuffer(w,w);splatGaussian(b,w,w,30*dpr,30*dpr,[dpr*dpr,dpr*dpr,dpr*dpr],dpr);near(sum(b)/(dpr*dpr),1);}});
+test('final output is opaque with background integrated before tone mapping',()=>{const b=createLinearBuffer(2,2,[.001,.002,.003]);const p=encodeFrame(b,10);assert.equal(p.length,16);assert.equal(p[3],255);assert.ok(p[2]>p[0]);});
+test('renderer honours an opaque physical source mask',()=>{const stars=[{hip:1,x:20,y:20,altDeg:45,vmag:0,bv:0}];const a=renderStars(stars,{width:40,height:40,transmissionAt:()=>0});assert.equal(sum(a.linear),0);assert.equal(a.drawn,0);});
+test('renderer cannot resurrect stars below horizon',()=>{const a=renderStars([{hip:1,x:20,y:20,altDeg:-1,vmag:-1,bv:0}],{width:40,height:40});assert.equal(sum(a.linear),0);});
+test('reduced-motion mode does not alter positions or remove stars',()=>{const stars=[{hip:1,x:20.123,y:20.234,altDeg:45,vmag:0,bv:0}];const a=renderStars(stars,{width:40,height:40,reducedMotion:true,utcMs:1}),b=renderStars(stars,{width:40,height:40,reducedMotion:true,utcMs:100});assert.deepEqual(a.linear,b.linear);});
+test('unknown colour remains visibly distinct in metadata',()=>{const a=renderStars([{hip:81693,x:10,y:10,altDeg:40,vmag:2.81,bv:null}],{width:30,height:30});assert.equal(a.colourFallbacks,1);});
+test('screen-space opaque mask cuts PSF wings but preserves background',()=>{const r=renderStars([{hip:1,x:18,y:20,altDeg:45,vmag:-1,bv:0}],{width:40,height:40,background:[.01,.02,.03],pixelTransmissionAt:(x,y)=>x>=20?0:1});for(let y=0;y<40;y++)for(let x=20;x<40;x++)for(let k=0;k<3;k++)near(r.linear[(y*40+x)*3+k],[.01,.02,.03][k],1e-14);assert.ok(r.linear[(20*40+18)*3]>.01);});

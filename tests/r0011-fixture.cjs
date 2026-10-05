@@ -42,9 +42,9 @@ function widget(options={}) {
   for(const pattern of [/^let today=/m,/^let weather=null/m,/^let weatherTrack=null/m,/^let weatherRadar=null/m,/^let _prayerStale=/m])load(declaration(pattern));
   if(/^let _renderDirty=/m.test(page))load(declaration(/^let _renderDirty=/m));
   if(page.includes("function beginSkyScene(")){
-    for(const pattern of [/^let _skySceneKey=/m,/^let _starCat=/m,/^let _mAlb=/m,/^let _cloudReady=/m,/^let cloudState=/m,/^let _cloudCv=/m])load(declaration(pattern));
+    for(const pattern of [/^let _skySceneKey=/m,/^let _starEls=/m,/^let _mAlb=/m,/^let _pbrFailed=/m,/^let _cloudReady=/m,/^let cloudState=/m,/^let _cloudCv=/m])load(declaration(pattern));
     load(helper("updateSkySurface"));load(helper("beginSkyScene"));
-  }else if(/^let _starCat=/m.test(page))load(declaration(/^let _starCat=/m));
+  }else if(/^let _starEls=/m.test(page))load(declaration(/^let _starEls=/m));
   if(page.includes("function simulationReady()")){
     f.sandbox.SIM={time:null};f.run("const _simHidden=new Map(); let _simClockDisplay=null;");load(helper("simulationReady"));
   }

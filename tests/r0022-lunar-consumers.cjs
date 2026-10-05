@@ -1,9 +1,10 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {load,sha}=require('./r001d-harness.cjs');
-const sourcePath=process.argv[2];
+const sourcePath=process.argv[2]?.startsWith("--")?undefined:process.argv[2];
 let pass=0,fail=0;
-function test(name,fn){try{fn();pass++;console.log('PASS '+name);}catch(e){fail++;console.log('FAIL '+name+' :: '+e.message);}}
+const cp8SnapshotOnly=process.argv.includes("--cp8-snapshot-only"),cp8Synthetic=new Set(["glints release wash with held star projection", "ordinary render refreshes star appearance while held projection stays fixed"]);
+function test(name,fn){if(cp8SnapshotOnly&&cp8Synthetic.has(name)){console.log("SKIP_SUPERSEDED",name,"— real catalogue/physical compositor replaces synthetic arrays; see CP8 tests");return;}try{fn();pass++;console.log('PASS '+name);}catch(e){fail++;console.log('FAIL '+name+' :: '+e.message);}}
 function fixture(){return load({sourcePath});}
 // Ordinary elapsed time holds geometry; editing _simBase deliberately seeks the
 // explicit preview and now correctly invalidates its accepted projection.

@@ -1,0 +1,43 @@
+{
+  "verifiedOn": "2026-10-04",
+  "methods": [
+    {
+      "topic": "Current leap-second announcement",
+      "url": "https://datacenter.iers.org/data/16/bulletinc-072.txt",
+      "use": "IERS BulletinC72 states no leap second at endDecember2026; TAI\u2212UTC37s since2017-01-01. Runtime deliberately warns from2027-01-01 onward rather than forecast indefinite validity."
+    },
+    {
+      "topic": "Historical UTC drift/leaps",
+      "url": "https://maia.usno.navy.mil/ser7/tai-utc.dat",
+      "use": "1961\u20131971 drift segments and1972\u20132017 steps; TT=TAI+32.184s."
+    },
+    {
+      "topic": "Before historical UTC",
+      "url": "https://eclipse.gsfc.nasa.gov/SEcat5/deltatpoly.html",
+      "use": "Espenak/Meeus1900\u20131961 historicalDeltaT polynomials, explicitly estimated, not observedUTC."
+    },
+    {
+      "topic": "Analytic Earth state",
+      "url": "https://aa.usno.navy.mil/faq/sun_approx",
+      "use": "USNO low-order solar anomaly/longitude/radius; approximately undo solar aberration, invert vector, rotate to meanJ2000, central-difference velocity. Not a DE or barycentric ephemeris."
+    },
+    {
+      "topic": "Standards boundary",
+      "url": "https://www.iausofa.org/current-software",
+      "use": "SOFA supports modern IAU2006/2000A models; this runtime retains validated IAU1976/four-term nutation and DOES NOT claim SOFA-equivalent precision."
+    },
+    {
+      "topic": "Independent reference",
+      "url": "https://www.astro.com/swisseph/swephprg.htm",
+      "use": "Swiss2.10.03 fixed-star and topocentric/horizon APIs; installed test oracle only."
+    },
+    {
+      "topic": "Oracle input convention",
+      "url": "https://github.com/aloistr/swisseph/blob/master/ephe/sefstars.txt",
+      "gitBlobReviewed": "0c6a40a880c4fa9d1b93d09474c923a3284f81e2",
+      "use": "Read file format and muAlpha*cosDec convention; generated our own temporary records from authenticatedHYG, did not bundle Swiss star file."
+    }
+  ],
+  "noBundledRuntimeDependencies": true,
+  "noGitHubWrites": true
+}

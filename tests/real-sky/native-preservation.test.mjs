@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+const R=new URL('../../',import.meta.url),read=p=>fs.readFileSync(new URL(p,R),'utf8');
+const b=read('src/native/index.html'),raw=read('index.html');
+const elevationHandoff="    // CP9 elevation custody: notify only after this operation's eligible native weather adoption.\n    if((current||track)&&elevation!=null&&attemptEligible(op,a)&&selectedWeather()) window.SalahNativeSkyHost?.acceptedElevation(elevation,op.generation,captured.lat,captured.lon);\n";
+assert.equal(raw.split(elevationHandoff).length,2,'Exactly one authorised CP9 elevation handoff');
+const w=raw.replace(elevationHandoff,'');
+const section=(s,a,z)=>{const i=s.indexOf(a),j=s.indexOf(z,i);assert.ok(i>=0&&j>i);return s.slice(i,j);};
+test('native config and builder preserved byte for byte',()=>{for(const p of ['config.js','builder.html'])assert.equal(read(''+p),read('src/native/'+p));});
+test('native PBR maps, phase, Earthshine, material and calendar renderer unchanged',()=>assert.equal(section(w,'const MOON_ALBEDO=', '// REAL CATALOGUE:'),section(b,'const MOON_ALBEDO=','// PROJECTED STARFIELD:')));
+test('native weather admission/cloud painting and atmosphere derivation unchanged',()=>{assert.equal(section(w,'// ---- weather (Open-Meteo:', '// ---- accurate Moon position'),section(b,'// ---- weather (Open-Meteo:','// ---- accurate Moon position'));assert.equal(section(w,'// ---- CLOUD ENGINE:', '// paint(A)'),section(b,'// ---- CLOUD ENGINE:', '// paint(A)'));});
+test('native prayer fetching, accepted clock and settings source unchanged',()=>{assert.equal(section(w,'// ---- SINGLE TEMPORAL SOURCE OF TRUTH','// ---- weather (Open-Meteo:'),section(b,'// ---- SINGLE TEMPORAL SOURCE OF TRUTH','// ---- weather (Open-Meteo:'));assert.equal(section(w,'// ——————————————————————— in-widget settings','\n// CP8 host owns'),section(b,'// ——————————————————————— in-widget settings','\nboot();'));});

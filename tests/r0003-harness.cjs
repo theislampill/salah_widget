@@ -83,7 +83,7 @@ function harness(options={}){
     // Exact production declarations/helpers: no copied ready flags or boundary substitutes.
     slice("const _RAD=Math.PI/180,","function _sunCoords(d){")+"\n"+
     slice("let _mAlb=null,","(function loadMoonMaps(){")+"\n"+
-    slice("let _starCat=null,","// Appearance changes independently of projection:")+"\n"+
+    slice("let _starEls=[],","function refreshStarAppearance(A){")+"\n"+
     slice("function skySceneIdentity(){","function commitSkyScene(A){")+"\n"+
     slice("let _cloudFieldSeed=0;","function advanceCloudMotion(civilSeconds){")+"\n"+
     slice("// ---- state ----","// ---- continuous time-of-day sky")+"\n"+

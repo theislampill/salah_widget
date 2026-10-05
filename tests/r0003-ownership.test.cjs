@@ -145,7 +145,7 @@ test("R0003 SKY actual visibility rebases real elapsed cloud time and preserves 
 
 test("R0003 SKY same-day provider-zone reanchor reaches the actual projection identity guard",{timeout:5000},async()=>{
   const h=harness({hash:"#lat=10&lon=10&tz=UTC&method=2&simTime=12:00"});h.seed(record(),record("08-09-2026"));
-  h.run('_starCat=[{ra:0,sd:0,cd:1,b:1,tw:false,bright:false}];_starEls=[document.querySelector(".fixture-star")];projectStars(simDate());');
+  h.run('_starEls=[];projectStars(simDate());');
   const old=h.run("_starProjectionKey");assert.equal(h.run("_starsProjected"),true);
   const loaded=h.run("loadPrayerData()");req(h).ok(record(undefined,"Asia/Tokyo","same-day-Tokyo"));await loaded;
   assert.equal(h.state().lastDate,"07-09-2026");assert.equal(h.state().tz,"Asia/Tokyo");
@@ -172,7 +172,7 @@ for(const target of ["reset-begin","surface-drop","elapsed-rebase","projection-i
     if(target==="projection-identity")raw=ownerEdit(raw,"function render(){","function updateSimClock(n){"," || _starProjectionKey!==skySceneIdentity()","");
     const h=harness({source:raw,...(target==="projection-identity"?{hash:"#lat=10&lon=10&tz=UTC&method=2&simTime=12:00"}:{})});
     if(target==="projection-identity"){
-      h.seed(record(),record("08-09-2026"));h.run('_starCat=[{ra:0,sd:0,cd:1,b:1,tw:false,bright:false}];_starEls=[document.querySelector(".fixture-star")];projectStars(simDate());');
+      h.seed(record(),record("08-09-2026"));h.run('_starEls=[];projectStars(simDate());');
       const old=h.run("_starProjectionKey"),loaded=h.run("loadPrayerData()");req(h).ok(record(undefined,"Asia/Tokyo","same-day-Tokyo"));await loaded;
       assert.throws(()=>assert.notEqual(h.run("_starProjectionKey"),old),assert.AssertionError);return;
     }

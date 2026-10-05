@@ -16,7 +16,7 @@ function makeElement(tag = 'div') {
     classList: {add(...s){s.forEach(v=>classes.add(v));}, remove(...s){s.forEach(v=>classes.delete(v));},
       contains(s){return classes.has(s);}, toggle(s,on){if(on)classes.add(s);else classes.delete(s);}},
     setAttribute(k,v){attrs.set(k,String(v));}, getAttribute(k){return attrs.get(k)||null;},
-    removeAttribute(k){attrs.delete(k);}, appendChild(c){this.children.push(c);return c;},
+    removeAttribute(k){attrs.delete(k);}, replaceChildren(...nodes){this.innerHTML='';for(const node of nodes)this.appendChild(node);}, appendChild(c){this.children.push(c);return c;},
     addEventListener(){}, removeEventListener(){}, focus(){},
     getBoundingClientRect(){return {x:0,y:0,top:0,left:0,right:325,bottom:530,width:325,height:530};},
     getTotalLength(){return 295;}, getPointAtLength(x){return {x,y:104};}, getScreenCTM(){return {};},

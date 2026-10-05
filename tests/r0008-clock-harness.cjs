@@ -28,7 +28,7 @@ const persistenceSource = source.includes('function _publishPersistence(')
 // Accepted SKY gates run unchanged. Catalog/canvas producers remain outside these CLOCK source tests.
 const skySources = source.includes('function beginSkyScene()') ? {
   astronomy: slice('const _RAD=', '// ---- moon phase'),
-  stars: slice('let _starCat=null', 'function buildStars()'),
+  stars: slice('let _starEls=[]', 'function buildStars()'),
   moonSurface: slice('let _mAlb=null', '(function loadMoonMaps()'),
   moonGeometry: slice('let moonSky=', '// Raw backing-canvas'),
   cloudMotion: slice('let _cloudFieldSeed=0', '// puff template'),
@@ -166,7 +166,8 @@ function loadRender(r, block = renderSource) {
   r=loadSkyBindings(loadPrayerPipeline(r));
   Object.assign(r.context, {lastMoonMin: -1,
     _prayerStale: false, _moonStaleWarned: false,
-    setLocLabel() {}, syncWeather() {}, renderMoon() {},
+    // CP8 catalogue/canvas producers are outside this CLOCK-only source fixture.
+    projectStars() {}, setLocLabel() {}, syncWeather() {}, renderMoon() {},
     fitCn() {}, drawArc: () => '<svg>fixture arc dependency</svg>', applyTheme() {},
     moonNow: () => ({phase: 0.5}), phaseEmoji: () => '◐', console});
   if(!skySources)Object.assign(r.context,{moonSky:{},_starsProjected:true,projectStars(){}});

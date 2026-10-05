@@ -38,7 +38,7 @@ const runtime = [
   region('let _mAlb=', '\n'),
   region('let _pbrFailed=', '\n'),
   region('function moonGeometryIdentity(date){', '// Raw backing-canvas measurements only.'),
-  region('let _starCat=null,', 'const _SKYX='),
+  region('let _starEls=[],', 'function projectStars(date){'),
   region('function refreshStarAppearance(A){', 'function buildStars(){'),
   region('function skySceneIdentity(){', '// build the animated weather overlay'),
   region('function atmosphere(M){', '// paint(A)'),

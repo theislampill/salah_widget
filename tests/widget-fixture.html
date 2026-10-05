@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'">
 <title>R0017 isolated widget fixture</title>
 </head>
 <body><pre id="fixture-error">Loading verified widget source…</pre>
@@ -16,7 +16,7 @@
   const fixed=NativeDate.parse("2026-09-07T09:30:00.000Z"),rootURL=new URL("../",location.href);
   let clockNow=fixed;
   const documentId=crypto.randomUUID(),ownedDocument=document;
-  const policy="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'";
+  const policy="default-src 'none'; script-src 'self' 'unsafe-inline' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'";
   const report=window.__widgetFixture={mode,run,attempt,documentId,hash,state:"setup",error:null,sourceSha256:null,
     weatherOracle:"joined R0024: useful model; local permission requires admitted synthetic fixture",bridgeSha256:null,
     storageIsolated:false,clockFixed:false,clockNow:fixed,fetchIntercepted:false,initialStorageEntries:0,ledger:[],storageEvents:[],consoleErrors:[],weatherEvents:[]};
@@ -110,7 +110,7 @@
     report.sourceSha256=[...new Uint8Array(await crypto.subtle.digest("SHA-256",bytes))].map(b=>b.toString(16).padStart(2,"0")).join("");
     if(!/^<!doctype html>/i.test(source)||!source.includes('<title>Prayer Times</title>'))throw Error("Widget document anchors changed");
     const scripts=[...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
-    if(scripts.length!==2||!/^\s+src="config\.js"\s*$/.test(scripts[0][1])||scripts[1][1].trim())throw Error("Unreviewed widget script anchors");
+    if(scripts.length!==3||!/^\s+src="real-sky\/native-sky\.js"\s*$/.test(scripts[2][1])||!/^\s+src="config\.js"\s*$/.test(scripts[0][1])||scripts[1][1].trim())throw Error("Unreviewed widget script anchors");
     for(const anchor of ["async function fetchTimings(","async function loadPrayerData(","function model(","function render(","window.qaState=function()"])
       if(!scripts[1][2].includes(anchor))throw Error("Missing widget script anchor: "+anchor);
     // These hooks must exist before DOM parsing and before either widget script.
@@ -157,12 +157,12 @@
     doc.head.prepend(csp,base);
     let html="<!doctype html>"+doc.documentElement.outerHTML;
     const unchanged=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
-    if(unchanged.length!==2||unchanged.some((s,i)=>s[2]!==scripts[i][2]))throw Error("Widget script body changed during document wrapping");
+    if(unchanged.length!==3||unchanged.some((s,i)=>s[2]!==scripts[i][2]))throw Error("Widget script body changed during document wrapping");
     const bridge="("+installWeatherBridge.toString()+")();",hook=doc.createElement("script");hook.id="r0017-weather-test-bridge";hook.textContent=bridge;doc.body.append(hook);
     report.bridgeSha256=[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(bridge)))].map(b=>b.toString(16).padStart(2,"0")).join("");
     html="<!doctype html>"+doc.documentElement.outerHTML;
     const wrapped=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
-    if(wrapped.length!==3||scripts.some((s,i)=>wrapped[i][2]!==s[2])||wrapped[2][2]!==bridge)throw Error("Unchanged product / labeled bridge identity mismatch");
+    if(wrapped.length!==4||scripts.some((s,i)=>wrapped[i][2]!==s[2])||wrapped[3][2]!==bridge)throw Error("Unchanged product / labeled bridge identity mismatch");
     report.state="loading";
     document.open();
     window.addEventListener("error",event=>{report.consoleErrors.push(event.message||"Resource/script error");failure(event.message||"Widget resource/script error");});

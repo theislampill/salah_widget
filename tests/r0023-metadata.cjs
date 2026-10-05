@@ -22,7 +22,8 @@ function olderConsumer(raw){
   assert.equal(f.storage.get(key),raw,"reading through the older consumer must not rewrite saved bytes");
   return f;
 }
-const cases=[],test=(name,body)=>cases.push({name,body});
+const cp8SnapshotOnly=process.argv.includes("--cp8-snapshot-only"),cp8Historical=new Set(["actual older consumer degrades a saved browser position to a configured site", "later preference saves preserve private origin and fix while the older state stays manual", "legacy browser record remains unchanged on read and conservatively migrates on explicit save", "older preference rewrite remains usable with explicitly unknown acquisition evidence", "manual place and coarse saved representations preserve their established source states"]);
+const cases=[],test=(name,body)=>{if(cp8SnapshotOnly&&cp8Historical.has(name)){console.log("SKIP_HISTORICAL",name,"— requires "+older);return;}cases.push({name,body});};
 test("shared geolocation captures original measured accuracy and fix timestamp",async()=>{
   const f=make(),p=f.sandbox.SalahConfig.geolocate({});await f.resolveCall("gps",0,position());const r=await p;
   assert.equal(r.accuracy,25);assert.equal(r.acquiredAt,T);assert.deepEqual(JSON.parse(JSON.stringify(r.locationEvidence)),record("browser-geolocation","device-position",25,T));assert.deepEqual(JSON.parse(JSON.stringify(f.calls.gps[0].args)),{enableHighAccuracy:false,timeout:10000,maximumAge:600000});

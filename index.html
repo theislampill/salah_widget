@@ -452,6 +452,7 @@ body{color:#fff7df;
 /* tabular figures so the per-second countdown, times and dates never jitter */
 .foc .nt,.left,.tm,.d,.wt{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 </style>
+<link rel="stylesheet" href="real-sky/native-sky.css">
 </head>
 <body>
 <div class="c sky-pending sky-initializing">
@@ -1370,6 +1371,8 @@ async function fetchWeather(){
       try{ if(attemptEligible(op,a)) localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}
     }
     if(track&&attemptEligible(op,a)) weatherTrack=track;
+    // CP9 elevation custody: notify only after this operation's eligible native weather adoption.
+    if((current||track)&&elevation!=null&&attemptEligible(op,a)&&selectedWeather()) window.SalahNativeSkyHost?.acceptedElevation(elevation,op.generation,captured.lat,captured.lon);
   }catch(e){}
   finally{ finishAttempt(op,a); if(finishRequest(op)) wxBusy=false; }
 }
@@ -1898,118 +1901,17 @@ function renderMoon(){
   }
 }
 
-// PROJECTED STARFIELD: a fixed synthetic CATALOG on the celestial sphere (the sky is universal), projected to
-// the local dome by sidereal time + latitude every tick. So different LOCATIONS see different stars (the zenith
-// declination = latitude → Madinah vs Reykjavik overhead skies differ), the sky ROTATES under simTime/timeScale
-// (stars rise east, transit, set west), brightness follows a magnitude cascade + horizon EXTINCTION, and
-// scintillation rises toward the horizon. ?seed= varies the synthetic draw. NOT a fixed screen wallpaper.
+// REAL CATALOGUE: optional worker projection; accepted native inputs own the scene.
 function _mb32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
-let _starCat=null, _starEls=[], _starsProjected=false, _starProjectionKey=null, _brightIdx=[], _glintEls=[];
-let _starBase=[], _glintStarIdx=[], _starLightKey=null;        // held positions/extinction, refreshed light appearance
-const _SKYX=162, _SKYY=-30, _SKYR=270, _SKYK=0.8;            // azimuthal-equidistant dome anchor (zenith above card)
+let _starEls=[],_starsProjected=false,_starProjectionKey=null;
 function projectStars(date){
-  if(!_starCat||!_starEls.length) return;
-  const key=skySceneIdentity();
-  if(key===null || !Number.isFinite(date.getTime())){
-    for(const el of [..._starEls,..._glintEls]) el.style.display="none";
-    _starProjectionKey=null; _starsProjected=false; return;
-  }
-  const d=_toDays(date), lst=_sid(d,_RAD*-(+lon||0)), ph=_RAD*(+lat||0), sp=Math.sin(ph), cp=Math.cos(ph);
-  for(let i=0;i<_starCat.length;i++){
-    const s=_starCat[i], el=_starEls[i]; if(!el) continue;
-    const H=lst-s.ra, cH=Math.cos(H), sH=Math.sin(H);
-    const sinAlt=sp*s.sd+cp*s.cd*cH, altDeg=Math.asin(sinAlt)/_RAD;
-    if(altDeg<-1){ if(el.style.display!=="none") el.style.display="none"; continue; }
-    const az=Math.atan2(sH, cH*sp-(s.sd/s.cd)*cp);
-    const r=(90-altDeg)/90*_SKYR, x=_SKYX+r*Math.sin(az), y=_SKYY-r*Math.cos(az)*_SKYK;
-    if(x<-24||x>349||y<-24||y>250){ if(el.style.display!=="none") el.style.display="none"; continue; }
-    // atmospheric EXTINCTION via Rozenberg airmass X (finite at the horizon): transparency = 10^(−0.4·k·X), k≈0.2.
-    const X=1/(Math.max(0.02,sinAlt)+0.025*Math.exp(-11*Math.max(0,sinAlt))), ext=Math.pow(10,-0.08*X);
-    let o=(0.10+1.05*s.b*ext); if(o>1)o=1;   // brighter, higher-contrast field (was a dim background)
-    _starBase[i]={opacity:o,x,y};                             // physical local wash is applied later from the SAME state paint consumes
-    el.style.display=""; el.setAttribute("cx",x.toFixed(1)); el.setAttribute("cy",y.toFixed(1));
-    el.style.setProperty("--o",o.toFixed(3)); el.style.opacity=o.toFixed(3);
-    if(s.tw) el.style.setProperty("--amp",((0.12+0.45*(1-ext))*(s.bright?1.5:1)).toFixed(3));   // anchors scintillate ~1.5× deeper than the dust bed
-  }
-  // assign the 6 glints to the BRIGHTEST currently-visible anchor stars (so a few always land on what's up)
-  const upBright=[];
-  for(const i of _brightIdx){ const el=_starEls[i]; if(el && el.style.display!=="none") upBright.push(i); }
-  upBright.sort((a,b)=>(+_starCat[b].b)-(+_starCat[a].b));
-  for(let k=0;k<_glintEls.length;k++){
-    const g=_glintEls[k]; if(!g) continue;
-    const i=upBright[k];
-    _glintStarIdx[k]=i;
-    if(i==null){ if(g.style.display!=="none") g.style.display="none"; continue; }
-    const el=_starEls[i], sz=0.6+1.15*(+_starCat[i].b), op=(+el.style.opacity||0)*0.8;
-    g.style.display=""; g.setAttribute("transform",`translate(${el.getAttribute("cx")} ${el.getAttribute("cy")}) scale(${sz.toFixed(2)})`);
-    g.style.setProperty("--go",op.toFixed(3)); g.style.opacity=op.toFixed(3);   // --go = the glint's base opacity; the glintpulse animation scintillates around it
-  }
-  _starLightKey=null;
-  _starProjectionKey=key; _starsProjected=true;
+ const key=skySceneIdentity();_starProjectionKey=key;_starsProjected=key!==null&&Number.isFinite(date.getTime());
+ if(!_starsProjected)window.SalahRealSky?.invalidate('invalid native projection input');
 }
-// Appearance changes independently of projection: ordinary real time holds star positions,
-// but must release yesterday's/earlier moon wash when phase, altitude or daylight permission changes.
-function refreshStarAppearance(A){
-  const mw=A.moonLocalWash,mx=A.cloudMoonX*325,my=A.cloudMoonY*530,key=[mw,mx,my].join("|");
-  if(key===_starLightKey) return;
-  for(let i=0;i<_starEls.length;i++){
-    const el=_starEls[i],base=_starBase[i]; if(!base || !el || el.style.display==="none") continue;
-    let o=base.opacity;
-    if(mw>0.12){ const dr=Math.hypot(base.x-mx,base.y-my); o*=(1-0.92*mw*Math.max(0,1-dr/175)); if(dr<58) o*=0.10; }
-    el.style.setProperty("--o",o.toFixed(3)); el.style.opacity=o.toFixed(3);
-  }
-  for(let k=0;k<_glintEls.length;k++){
-    const g=_glintEls[k],el=_starEls[_glintStarIdx[k]]; if(!g||!el||g.style.display==="none") continue;
-    const op=(+el.style.opacity||0)*0.8; g.style.setProperty("--go",op.toFixed(3)); g.style.opacity=op.toFixed(3);
-  }
-  _starLightKey=key;
-}
+function refreshStarAppearance(A){ /* Physical lunar sky wash belongs to Real-Sky, not a second per-star dimmer. */ }
 function buildStars(){
-  const g=document.querySelector(".stars"); if(!g) return;
-  // ---- Milky Way: a faint diffuse band of star-dust (stylised; gated by --mw, tilted by --mwtilt) ----
-  const mwg=document.querySelector(".milkyway");
-  if(mwg){
-    const rnd=(i,k)=>{ const v=Math.sin((i+1)*k)*43758.5453; return v-Math.floor(v); };
-    const W=325,H=300,nx=0.62,ny=0.78; let mw="";
-    for(const b of [[40,250],[120,176],[200,102],[280,40]])
-      mw+=`<ellipse cx="${b[0]}" cy="${b[1]}" rx="78" ry="30" fill="url(#mwglow)" transform="rotate(-26 ${b[0]} ${b[1]})"/>`;
-    for(let i=0;i<150;i++){
-      const t=rnd(i,1.73), gp=(rnd(i,4.31)+rnd(i,9.81)+rnd(i,2.27)-1.5)*22;
-      const px=(30+t*252)+nx*gp, py=(258-t*206)+ny*gp;
-      if(px<-4||px>W+4||py<-4||py>H+4) continue;
-      mw+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${(0.35+0.55*rnd(i,7.7)).toFixed(2)}" fill="#dde4f5" opacity="${(0.08+0.20*rnd(i,6.13)).toFixed(2)}"/>`;
-    }
-    mwg.innerHTML=mw;
-  }
-  // ---- synthetic catalog: STAR FAMILIES. A wide, fixed dynamic range — a few RARE bright luminaries (mag<0,
-  //   blue / white / amber, with a halo + glint) read as anchors over a LARGE faint dust bed (→ mag 6.3), so the
-  //   field never looks like one uniform rotating wallpaper. Colour temperature spans O/B blue → K/M amber/red. ----
-  const COL=["#9db4ff","#bcd0ff","#dbe6ff","#f4f4ff","#fff6e8","#ffe2bf","#ffc89a","#ff9d7a"];
-  const CW =[ .04,.10,.24,.30,.16,.09,.05,.02 ]; const cdf=[]; let acc=0; for(const w of CW){ acc+=w; cdf.push(acc); }
-  const rng=_mb32((0x9e3779b9 ^ Math.imul((+q.get("seed")||1),2654435761))>>>0);
-  const N=420; _starCat=[]; let s="";
-  for(let i=0;i<N;i++){
-    const ra=rng()*Math.PI*2, dec=Math.asin(2*rng()-1);                 // uniform over the sphere
-    const mag=-1.3+7.6*Math.pow(rng(),0.52);                            // a few very bright (mag<0) over a large faint bed (→+6.3)
-    const br=clamp((6.7-mag)/8.0), br2=br*br;
-    const bright=mag<0.45;                                              // RARE anchor stars (~18-20): halo + glint — enough to read as varied luminaries, still over a large faint bed
-    const rr=bright? (2.4+2.3*br2) : Math.max(0.4,0.5+1.5*br2);         // luminaries noticeably BIGGER so size + colour read at widget scale; dust bed stays tiny
-    const cu=rng(); let ci=cdf.findIndex(c=>cu<=c); if(ci<0)ci=3;
-    let fill=COL[ci];
-    if(bright){ const BC=["#a8c4ff","#e6efff","#fff0cf","#ffce98","#ffb6a6"]; fill=BC[(rng()*BC.length)|0]; }   // vivid, distinct luminary hues (blue / white / amber / red)
-    const twr=rng()>0.4, tw= bright||twr, dur=(1.6+3.8*rng()).toFixed(1), del=(-rng()*6).toFixed(1);   // ALL bright anchors scintillate (the eye tracks them); ~60% of the dust bed too
-    _starCat.push({ra, sd:Math.sin(dec), cd:Math.cos(dec), b:0.14+0.86*br2, tw, bright, mag});
-    let sty=""; if(tw) sty+=`--o:.5;--amp:.2;animation:tw ${dur}s ease-in-out ${del}s infinite;`; if(bright) sty+=`--hc:${fill};`;   // --hc = this luminary's own colour → a COLOURED halo (see .br)
-    s+=`<circle r="${rr.toFixed(2)}" fill="${fill}"${bright?' class="br"':''}${sty?` style="${sty}"`:""}/>`;
-  }
-  g.innerHTML=s;
-  _starEls=[...g.querySelectorAll("circle")];
-  // 4-ray diffraction glints: 6 elements, re-assigned each projection to the brightest VISIBLE anchor stars
-  // (so a few glints are always on screen rather than tied to fixed stars that may be below the horizon).
-  const glg=document.querySelector(".starglints");
-  _brightIdx=_starCat.map((st,i)=>i).filter(i=>_starCat[i].mag<0.7);   // glint pool: a bit wider than the halo set, so 2–3 glints are usually on screen
-  if(glg){ glg.innerHTML=Array.from({length:6},(_,k)=>`<g style="animation:glintpulse ${(2.4+0.7*k).toFixed(1)}s ease-in-out ${(-0.9*k).toFixed(1)}s infinite"><line x1="-7" y1="0" x2="7" y2="0"/><line x1="0" y1="-7" x2="0" y2="7"/></g>`).join(""); _glintEls=[...glg.querySelectorAll("g")]; }   // each glint pulses at its own phase/rate (see @keyframes glintpulse), modulating its projected base opacity --go
-  _starProjectionKey=null; _starsProjected=false; projectStars(simDate());
+ for(const selector of ['.stars','.starglints','.milkyway']){const el=document.querySelector(selector);if(el)el.replaceChildren();}
+ projectStars(simDate());
 }
 
 // Accepted target/explicit anchor, not ticking sidereal time. Ordinary positions remain held.
@@ -2020,6 +1922,7 @@ function skySceneIdentity(){
 let _skySceneKey=null,_skyCommitted=false,_skyMoonPresence=0;
 // PRAYER owns calls at boot and after accepted configuration invalidation, before builders.
 function beginSkyScene(){
+  window.SalahRealSky?.invalidate("native beginSkyScene");
   const c=$(".c"); if(c){ c.classList.add("sky-pending","sky-initializing"); c.classList.remove("moon-ready"); }
   _skySceneKey=null; _skyCommitted=false; _skyMoonPresence=0; _starsProjected=false;
   _cloudReady=false; cloudState.covLow=cloudState.covMid=cloudState.covHigh=0;
@@ -2889,6 +2792,7 @@ function paint(A){
     }
   }
   commitSkyScene(A);
+  window.SalahNativeSkyHost?.notify();
 }
 let _lastMoonPaint=null;                                       // small last-attempt summary, never recomputed by QA
 function applyTheme(M){
@@ -3557,7 +3461,43 @@ function _closeSettings(){
 }
 function _toggleSettings(){ const c=document.querySelector(".c"); if(!c) return; c.classList.contains("settings-open")?_closeSettings():_openSettings(); }
 
+// CP8 host owns time/config/weather acceptance; the optional renderer only reads this boundary.
+// CP9: independent custody of an elevation admitted for this exact native target.
+// The native legacy scalar is not reused as accepted astronomical metadata.
+let _cp9SiteElevation=null;
+window.SalahNativeSkyHost=Object.freeze({
+ acceptedElevation(heightM,generation,latitude,longitude){
+  if(typeof heightM!=='number'||!Number.isFinite(heightM)||heightM<-500||heightM>10000||generation!==_runtimeGeneration||latitude!==lat||longitude!==lon)return false;
+  _cp9SiteElevation=Object.freeze({heightM,generation,lat:latitude,lon:longitude});return true;
+ },
+ lunarSurface(){return (_pbrReady||_moonFallbackReady)?_moonCv:null;},
+ capture(){
+  const identity=simulationReady()?skySceneIdentity():null;
+  const cw=selectedWeather();
+  const elevation=cw&&_cp9SiteElevation&&_cp9SiteElevation.generation===_runtimeGeneration&&_cp9SiteElevation.lat===lat&&_cp9SiteElevation.lon===lon?_cp9SiteElevation:null;
+  const cameraNumber=(name,fallback)=>q.has(name)?(q.get(name).trim()===''?NaN:Number(q.get(name))):fallback;
+  return {utcMs:simNow(),lat,lon,heightM:elevation?.heightM??0,elevationSource:elevation?'native response elevation bound to this target generation':'default zero; no bound eligible weather height',elevationOwner:elevation?{...elevation}:null,generation:_runtimeGeneration,sceneIdentity:identity,
+   tz,timeScale:TIMESCALE,units,lp:LPOLL,reducedMotion:isMotionReduced(),paused:document.hidden||!!$('.c')?.classList.contains('paused'),
+   camera:{azDeg:cameraNumber('skyAz',180),altDeg:cameraNumber('skyAlt',45),fovYDeg:cameraNumber('skyFov',90),rollDeg:cameraNumber('skyRoll',0)},allowEstimates:q.get('skyEstimates')!=='off',
+   weather:cw?{src:cw.src??'accepted-native',temp:cw.temp??null,rh:cw.rh??null,vis:cw.vis??null,cloud:cw.cloud??null,code:cw.code??null,wind:cw.wind??null}:null,
+   prayerReady:!!today,moonReady:!!(_pbrReady||_moonFallbackReady),pbrFailed:_pbrFailed};
+ },
+ notify(){window.SalahRealSky?.request();}
+});
+// CP9 additive diagnostic join, adopted from the donor's native-QA integration.
+// Original prayer/weather/calendar fields remain untouched; this is not render authority.
+if(typeof window.qaState==='function'){
+ const nativeQA=window.qaState;
+ window.qaState=function(...args){
+  const original=nativeQA.apply(this,args);let realSky;
+  try{const s=window.realSkyState?.();realSky=s?{checkpoint:s.checkpoint,status:s.status,renders:s.renders,frameUtcMs:s.last?.utcMs??null,catalogue:s.last?.catalogue??null,generation:s.last?.native?.generation??null,assumptions:s.last?.native?.assumptions??null,composition:s.last?.composition??null,errors:s.errors??[]}:{checkpoint:'9',status:'loading',frameUtcMs:null};}
+  catch(e){realSky={checkpoint:'9',status:'unavailable',frameUtcMs:null,error:String(e?.message??e)};}
+  return {...original,realSky,legacySyntheticStarTelemetry:{active:false,replacement:'realSky; raster diagnostics, not old synthetic DOM arrays'}};
+ };
+}
+
 boot();
 </script>
+<script src="real-sky/native-sky.js"></script>
 </body>
 </html>
