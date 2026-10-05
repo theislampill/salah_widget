@@ -1406,6 +1406,49 @@ class LatestRenderQueue{
  dispose(){if(this.#disposed)return;this.#disposed=true;this.#next++;if(this.#pending){this.#pending.resolve({status:'disposed',id:this.#pending.id});this.#pending=null;}}
 }
 
+// real-sky/native-encoding.mjs
+
+
+// N001: the immutable encoder is monotone and quantizes to 256 byte values.
+// Locate its exact binary64 transition points using that SAME numerical oracle
+// on this JS engine. No approximate LUT/interpolation, new exposure or tolerance.
+// The multiplication exposure*max(0,channel) keeps the reference's evaluation order.
+let nativeEncodeEdges=null;
+const nativeOracleCode=y=>Math.round(255*linearToSrgb(-Math.expm1(-y)));
+function nativeEncodingThresholds(){
+ if(!nativeEncodeEdges){
+  const edges=new Float64Array(256);
+  for(let code=1;code<256;code++){
+   let low=0,high=32;
+   for(;;){
+    const middle=low+(high-low)/2;
+    if(middle===low||middle===high)break;
+    if(nativeOracleCode(middle)<code)low=middle;else high=middle;
+   }
+   edges[code]=high;
+  }
+  nativeEncodeEdges=edges;
+ }
+ // Diagnostic callers cannot corrupt the private encoding table.
+ return nativeEncodeEdges.slice();
+}
+function encodeNativeFrame(linear,exposure=12){
+ finite(exposure,'exposure',0,100000);
+ if(linear.length%3)throw new RangeError('RGB buffer required');
+ if(!nativeEncodeEdges)nativeEncodingThresholds();
+ const edges=nativeEncodeEdges,bytes=new Uint8ClampedArray(linear.length/3*4);
+ for(let i=0,j=0;i<linear.length;i+=3,j+=4){
+  for(let c=0;c<3;c++){
+   const y=exposure*Math.max(0,finite(linear[i+c],'linear channel'));
+   let low=0,high=256;
+   while(high-low>1){const middle=(low+high)>>>1;if(y<edges[middle])high=middle;else low=middle;}
+   bytes[j+c]=low;
+  }
+  bytes[j+3]=255;
+ }
+ return bytes;
+}
+
 // real-sky/native-composition.mjs
 /** CP8.2 native foreground operator.
  * Input sky has received molecular/aerosol transport, NOT cloud attenuation.
@@ -1516,24 +1559,38 @@ function requireNativeWorker(_pack){
  * Monotonic time detects wall-clock discontinuities; it is never a render UTC.
  */
 class NativeSkyLifecycle {
- constructor({capture,execute,onResult=()=>{},onInvalidate=()=>{},onError=()=>{},now=()=>performance.now(),physical=true,intervalMs=4000}) {
+ constructor({capture,execute,onResult=()=>{},onInvalidate=()=>{},onError=()=>{},onAvailability=()=>{},now=()=>performance.now(),physical=true,intervalMs=4000}) {
   this.capture=capture;this.now=now;this.physical=physical;this.intervalMs=intervalMs;
-  this.hooks={onResult,onInvalidate,onError};this.epoch=0;this.identity=null;this.observed=null;
+  this.hooks={onResult,onInvalidate,onError,onAvailability};this.epoch=0;this.identity=null;this.observed=null;
+  this.availability={status:'pending',reason:'initial'};this.durations=new WeakMap();
   this.displayed=null;this.latest=null;this.pending=null;this.lastSubmit=-Infinity;this.disposed=false;
   this.counts={requests:0,accepted:0,superseded:0,rejected:0,invalidations:0};
-  this.queue=new LatestRenderQueue(execute,{
+  this.queue=new LatestRenderQueue(async(job,id)=>{
+   const started=this.now(),result=await execute(job,id);this.durations.set(job,this.now()-started);return result;
+  },{
    onResult:(result,id,job)=>{
-    if(!this.current(job)){this.counts.rejected++;return;}
+    const state=this.capture();
+    if(!this.current(job,state)){
+     this.counts.rejected++;
+     // Only the still-owned request may report a throughput limitation. A late
+     // result from another target/epoch never overwrites successor diagnostics.
+     if(!this.disposed&&!state.paused&&job.native.lifecycleEpoch===this.epoch&&job.native.identity===nativeIdentity(state)&&Math.abs(state.timeScale)>1&&Math.abs(state.utcMs-job.observer.utcMs)>30000){
+      this.setAvailability({status:'unavailable',reason:'rate-throughput',rate:state.timeScale,wallBudgetMs:30000/Math.abs(state.timeScale),executionMs:this.durations.get(job)});
+     }
+     return;
+    }
     if(result.status!=='ready'||!result.raster)throw new Error(result.error??'Native real sky unavailable');
+    this.setAvailability({status:'available',reason:'current-frame',rate:state.timeScale??1,executionMs:this.durations.get(job)});
     this.displayed=job;this.hooks.onResult(result,id,job);this.counts.accepted++;
    },
    onError:(error,id)=>{if(this.current(this.latest))this.hooks.onError(error,id);else this.counts.rejected++;}
   });
  }
- get state(){return {...this.counts,epoch:this.epoch,disposed:this.disposed,pending:!!this.pending,paused:!!this.observed?.paused};}
+ get state(){return {...this.counts,epoch:this.epoch,disposed:this.disposed,pending:!!this.pending,paused:!!this.observed?.paused,availability:{...this.availability}};}
+ setAvailability(value){this.availability=value;this.hooks.onAvailability({...value});}
  invalidate(reason='native invalidation') {
   if(this.disposed)return;
-  this.epoch++;this.displayed=null;this.counts.invalidations++;this.hooks.onInvalidate(reason);
+  this.epoch++;this.displayed=null;this.counts.invalidations++;this.setAvailability({status:'pending',reason});this.hooks.onInvalidate(reason);
  }
  observe(state=this.capture()) {
   if(this.disposed)return null;
@@ -1550,7 +1607,11 @@ class NativeSkyLifecycle {
   if(key!==this.identity)reason='new accepted native scene';
   else if(prior&&!!state.paused!==prior.paused)reason=state.paused?'native hidden/paused':'native visible/resumed';
   else if(jump)reason='native clock discontinuity';
-  else if(this.displayed&&!nativeResultCurrent(this.displayed,state))reason='native frame expired';
+  else if(this.displayed&&!nativeResultCurrent(this.displayed,state)){
+   // Expiration withdraws the visible frame, not a newer in-flight computation
+   // of the same accepted scene. Its own UTC/identity/epoch is checked at publish.
+   this.displayed=null;this.hooks.onInvalidate('native frame expired');
+  }
   this.identity=key;this.observed={now,utcMs:state.utcMs,rate,paused:!!state.paused};
   if(reason)this.invalidate(reason);
   return state;
@@ -1568,9 +1629,11 @@ class NativeSkyLifecycle {
   if(!state){this.hooks.onError(new Error('Invalid accepted native input'));return Promise.resolve({status:'invalid'});}
   if(state.paused)return Promise.resolve({status:'paused'});
   const changed=!this.latest||this.latest.native.lifecycleEpoch!==this.epoch;
+  if(!changed&&this.pending?.observer.utcMs===state.utcMs)return Promise.resolve({status:'pending'});
   if(!force&&!changed&&this.pending)return Promise.resolve({status:'pending'});
   if(!force&&!changed&&this.displayed?.observer.utcMs===state.utcMs)return Promise.resolve({status:'unchanged'});
-  if(!force&&!changed&&this.now()-this.lastSubmit<this.intervalMs)return Promise.resolve({status:'throttled'});
+  const interval=Math.min(this.intervalMs,15000/Math.max(1,Math.abs(state.timeScale??1)));
+  if(!force&&!changed&&this.now()-this.lastSubmit<interval)return Promise.resolve({status:'throttled'});
   const job=nativeJob(state,this.physical);job.native.lifecycleEpoch=this.epoch;
   this.latest=job;this.pending=job;this.lastSubmit=this.now();this.counts.requests++;
   return this.queue.submit(job).then(result=>{
@@ -1669,7 +1732,7 @@ function startNativeSky(pack,workerSource,physical){
  const foreground=physical?new NativeForegroundCapture(canvas):null;
  const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
  let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,previousPresentation=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
- function publish(){badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent';canvas.dataset.status=status.status;}
+ function publish(){badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':status.availability?.reason==='rate-throughput'?`Real sky unavailable at ${status.availability.rate}×`:'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent';canvas.dataset.status=status.status;}
  function clear(reason='invalidated'){card.classList.remove('real-sky-composed');frame=null;job=null;status.last=null;paintedFrame=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;publish();}
  function snapshot(){return host.capture();}
  function calendarGeometry(rows=530){
@@ -1687,7 +1750,7 @@ function startNativeSky(pack,workerSource,physical){
    if(foreground){
     // Full physical frames change only on worker acceptance. Native clouds/Moon
     // can move independently; repaint their entire old/new support, not all 530 rows.
-    if(paintedFrame!==frame){ctx.putImageData(new ImageData(encodeFrame(frame.raster.linear,frame.raster.effectiveExposure),325,530),0,0);paintedFrame=frame;}
+    if(paintedFrame!==frame){ctx.putImageData(new ImageData(encodeNativeFrame(frame.raster.linear,frame.raster.effectiveExposure),325,530),0,0);paintedFrame=frame;}
     const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom);previousMoonBottom=bottom;
     const capture=foreground.capture(rows),geometry=calendarGeometry(rows);
     const presentation={frame,rows,maskKey:geometry.key,cloudRGBA:capture.cloudRGBA,moonRGBA:capture.moonRGBA};
@@ -1700,11 +1763,11 @@ function startNativeSky(pack,workerSource,physical){
     }
     const base=nativeCalendarRegion(frame.raster,geometry.mask(),rows);
     const joined=nativeForeground(base,{...capture,exposure:frame.raster.effectiveExposure});
-    ctx.putImageData(new ImageData(encodeFrame(joined.linear,frame.raster.effectiveExposure),325,rows),0,0);
+    ctx.putImageData(new ImageData(encodeNativeFrame(joined.linear,frame.raster.effectiveExposure),325,rows),0,0);
     previousPresentation=presentation;status.presentationDraws++;
     status.last.composition={...joined.diagnostics,meanCloudAlpha:joined.diagnostics.meanCloudAlpha*rows/530,...capture.native,updatedRows:rows,totalRows:530};card.classList.add('real-sky-composed');
    }else{
-    const bytes=encodeFrame(nativeCalendarComposite(frame.raster,calendarGeometry().mask()),frame.raster.effectiveExposure);ctx.putImageData(new ImageData(bytes,325,530),0,0);
+    const bytes=encodeNativeFrame(nativeCalendarComposite(frame.raster,calendarGeometry().mask()),frame.raster.effectiveExposure);ctx.putImageData(new ImageData(bytes,325,530),0,0);
    }
    canvas.style.visibility='visible';lastCompose=performance.now();
    if(status.last.composition)status.last.composition.lastComposeMs=lastCompose-started;
@@ -1718,7 +1781,7 @@ function startNativeSky(pack,workerSource,physical){
  }
  function failure(e){if(disposed)return;clear('render failure');status.status='unavailable';const message=String(e?.message??e);if(status.errors.at(-1)!==message)status.errors.push(message);status.errors=status.errors.slice(-12);publish();}
  client=new ReferenceRenderClient(pack,{workerFactory:()=>{workerUrl=URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'}));return new Worker(workerUrl);},fallbackFactory:requireNativeWorker,timeoutMs:15000});
- lifecycle=new NativeSkyLifecycle({capture:snapshot,physical,execute:request=>client.run(request),onResult:accept,onInvalidate:clear,onError:failure});
+ lifecycle=new NativeSkyLifecycle({capture:snapshot,physical,execute:request=>client.run(request),onResult:accept,onInvalidate:clear,onError:failure,onAvailability:value=>{status.availability=value;if(value.status==='unavailable'&&!frame){status.status='unavailable';status.reason=value.reason;publish();}}});
  const request=(force=false)=>lifecycle.request(force);
  // Presentation sampling is not an astronomical clock. It samples native painter
  // output and native SVG transforms; only accepted host UTC drives physics jobs.

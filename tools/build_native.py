@@ -27,7 +27,7 @@ self.onmessage=async e=>{const m=e.data;try{if(m.kind==='boot'){nativeWorkerEngi
 self.addEventListener('unhandledrejection',e=>{self.postMessage({kind:'fatal',error:String(e.reason)});});
 '''
 (N/'native-worker.js').write_text(worker,encoding='utf-8',newline='\n')
-extra=['core/src/reference-worker-client.mjs','core/src/latest-render-queue.mjs']
+extra=['core/src/reference-worker-client.mjs','core/src/latest-render-queue.mjs','native-encoding.mjs']
 if (N/'native-composition.mjs').exists():extra.append('native-composition.mjs')
 extra.extend(['native-worker-policy.mjs','native-lifecycle.mjs','native-assets.mjs','native-host.mjs'])
 boot='''
