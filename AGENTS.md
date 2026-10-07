@@ -135,3 +135,11 @@ Serve the folder statically and open `index.html#lat=24.47&lon=39.61&label=Madin
   `moonTruth`). `&debugDawn=…` is a deprecated no-op (dawn is not painted).
 - Preview gotcha: `simTime` without `timeScale` freezes the clock (TIMESCALE 0), so cloud drift won't be visible
   in a still test — use the direct `paintClouds(t)` probe or a real-time / `timeScale` watch to see motion.
+
+## Frozen V1 compatibility snapshot
+
+v1/ is the frozen pre-overhaul compatibility snapshot. Normal builds and renderer integrations must neither regenerate, overwrite nor delete it. Any deliberate change requires explicit owner authority and disclosure.
+
+Run `python tools/verify_v1.py` after builds/integrations. It verifies V1 independently
+of the current root runtime. See `docs/V1_PRESERVATION.md` for provenance, storage
+isolation, focused comparison checks and the pending deployment smoke procedure.

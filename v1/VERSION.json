@@ -1,0 +1,122 @@
+{
+  "format": 1,
+  "name": "Salah widget pre-overhaul compatibility snapshot",
+  "urlPath": "/salah_widget/v1/",
+  "source": {
+    "repository": "https://github.com/theislampill/salah_widget",
+    "commit": "fd2972ba64225fe9d6848e92497e6d0ed20ea624",
+    "tree": "c5382ee6cb32e71992da963f56b00c2eaa091d1c",
+    "donor": "main, independently matched to production; no renderer PR used"
+  },
+  "deployment": {
+    "observedAt": "2026-10-07T06:48:27.863780+00:00",
+    "rootUrl": "https://theislampill.github.io/salah_widget/",
+    "publishing": {
+      "buildType": "legacy",
+      "branch": "main",
+      "path": "/"
+    },
+    "buildId": 1049380309,
+    "deploymentId": 5087774417,
+    "status": "success",
+    "sha": "fd2972ba64225fe9d6848e92497e6d0ed20ea624",
+    "builtAt": "2026-06-17T00:35:36Z",
+    "correspondence": "HTTP 200 response bodies for root index.html and config.js equal pinned Git blobs byte-for-byte; no runtime deployment transformation observed"
+  },
+  "payload": [
+    {
+      "sourcePath": "index.html",
+      "v1Path": "v1/index.html",
+      "sourceBytes": 267280,
+      "sourceSha256": "446453b522f56f5f1bc0afd1a3abd09b73756754fa58a6b3b0ff09ce953a2eec",
+      "bytes": 267313,
+      "sha256": "99d930297deb2755205930c7850b89584e03f431ced0671638071162732ef766",
+      "adaptations": [
+        "Prayer cache prefix salah: -> salah_widget:v1:prayer:",
+        "Weather cache prefix salahwx: -> salah_widget:v1:weather:"
+      ]
+    },
+    {
+      "sourcePath": "config.js",
+      "v1Path": "v1/config.js",
+      "sourceBytes": 17516,
+      "sourceSha256": "fc8d80f3cd1baa31b3ace7e9e9cefad7add69695deaa042402bb4d78c293734f",
+      "bytes": 18281,
+      "sha256": "f169d26ad015d3fcb6b5782fde43a83e0f31275bbbeb80c94c51a6c3bc4aa56d",
+      "adaptations": [
+        "V1-only settings key and storage probe",
+        "One-time import of valid schema-1 root settings into V1; root is read-only",
+        "V1 reset retains import marker to prevent resurrection; caches are not imported"
+      ]
+    }
+  ],
+  "storage": {
+    "settings": "salah_widget:v1:config:v1",
+    "prayerPrefix": "salah_widget:v1:prayer:",
+    "weatherPrefix": "salah_widget:v1:weather:",
+    "probe": "__sw_v1_probe__",
+    "importMarker": "salah_widget:v1:imported-root-config:v1",
+    "legacyReadOnly": "salah_widget:config:v1",
+    "migration": "Once on first local/preferLocal load with no V1 settings or marker, validate schema 1 and copy normalized settings. Missing/invalid data is not retried. Reset retains marker. Root data is never changed. No cache migration.",
+    "limitations": "Same-origin namespace isolation is not a security boundary. Browser partitioning or blocked/quota-limited storage can prevent migration/persistence; existing session/coarse/manual fallback remains. Schema-1 validity cannot prove an arbitrary future root writer's semantics."
+  },
+  "externalDependencies": [
+    {
+      "service": "Aladhan",
+      "urls": [
+        "https://api.aladhan.com/v1/timings/"
+      ],
+      "purpose": "Prayer times, timezone and Hijri date"
+    },
+    {
+      "service": "Open-Meteo",
+      "urls": [
+        "https://api.open-meteo.com/v1/forecast"
+      ],
+      "purpose": "Weather nowcast and forecast"
+    },
+    {
+      "service": "RainViewer",
+      "urls": [
+        "https://api.rainviewer.com/public/weather-maps.json",
+        "Provider-returned radar tile host/path"
+      ],
+      "purpose": "Optional observed radar precipitation"
+    },
+    {
+      "service": "GeoJS / ipinfo",
+      "urls": [
+        "https://get.geojs.io/v1/ip/geo.json",
+        "https://ipinfo.io/json"
+      ],
+      "purpose": "Coarse IP location"
+    },
+    {
+      "service": "Nominatim / Zippopotam",
+      "urls": [
+        "https://nominatim.openstreetmap.org/search",
+        "https://api.zippopotam.us/ca/"
+      ],
+      "purpose": "Manual place/postcode search"
+    },
+    {
+      "service": "Google Fonts",
+      "urls": [
+        "https://fonts.googleapis.com/",
+        "https://fonts.gstatic.com/"
+      ],
+      "purpose": "Fraunces and Inter CSS/font bytes"
+    }
+  ],
+  "localDependencyAudit": "index.html -> relative config.js only. CSS, scripts, SVG filters and Moon image data are inline. No base, imports, workers, service worker, Cache API, IndexedDB or cookies. External social links remain external. Builder/installers are not runtime dependencies.",
+  "notices": "Original file comments and embedded attribution preserved. No LICENSE/NOTICE file exists in the pinned source tree. Original credits identify Aladhan and Open-Meteo; remote font/assets remain provider-hosted.",
+  "knownLimitations": [
+    "Clock, location, prayer dates, weather and external services remain live/mutable",
+    "Existing legacy appearance, browser behavior and fallback choices are preserved, including shadows",
+    "Public V1 deployment is pending an owner-authorized merge and successful Pages deployment"
+  ],
+  "manifest": {
+    "file": "MANIFEST.sha256",
+    "scope": "index.html, config.js, VERSION.json; excludes itself and checkout-only .gitattributes; verifier anchors manifest digest outside v1"
+  }
+}
