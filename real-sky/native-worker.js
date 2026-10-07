@@ -1032,7 +1032,12 @@ function renderDiffuseLayer(model,mapping,{widthPx,heightPx,dpr=1,displayTransmi
 
 function skyProjection(view={}){
  const width=finite(view.width??325,'width CSS',8,4096),height=finite(view.height??530,'height CSS',8,4096),type=view.type??'camera',c={...view,width,height};
- if(type==='camera'){const unproject=prepareInverseProjection({...c,type});const f=cameraGeometry(c).focalPixels,cx=width/2,cy=height/2,fw=unprojectPerspective(cx,cy,c).enu,right=unprojectPerspective(cx+f,cy,c).enu.map((x,i)=>x*Math.SQRT2-fw[i]),up=unprojectPerspective(cx,cy-f,c).enu.map((x,i)=>x*Math.SQRT2-fw[i]);return {width,height,unproject,solidAngle:(x,y)=>f/(f*f+(x-cx)**2+(y-cy)**2)**1.5,above:(x,y)=>fw[2]+(x-cx)/f*right[2]+(cy-y)/f*up[2]>=0};}
+ if(type==='camera'){const unproject=prepareInverseProjection({...c,type});const f=cameraGeometry(c).focalPixels,cx=width/2,cy=height/2,fw=unprojectPerspective(cx,cy,c).enu,right=unprojectPerspective(cx+f,cy,c).enu.map((x,i)=>x*Math.SQRT2-fw[i]),up=unprojectPerspective(cx,cy-f,c).enu.map((x,i)=>x*Math.SQRT2-fw[i]);return {width,height,unproject,solidAngle:(x,y)=>f/(f*f+(x-cx)**2+(y-cy)**2)**1.5,above:(x,y)=>{
+  // Reconstructed basis roundoff must not zero an exact-horizon grid row.
+  // The uncertainty band selects the exact existing ray test, not an altitude tolerance.
+  const z=fw[2]+(x-cx)/f*right[2]+(cy-y)/f*up[2];
+  return Math.abs(z)>1e-12?z>0:unproject(x,y).altDeg>=0;
+ }};}
  if(type==='allsky'){const unproject=prepareInverseProjection({...c,type});const padding=finite(view.padding??4,'all-sky padding',0,Math.min(width,height)/2-1e-9),R=Math.min(width,height)/2-padding,k=Math.PI/2/R;return {width,height,unproject,solidAngle:(x,y)=>{const t=Math.hypot(x-width/2,y-height/2)*k;return k*k*(t<1e-10?1:Math.sin(t)/t);},above:(x,y)=>Math.hypot(x-width/2,y-height/2)<=R};}
  if(type==='legacy'){if(width!==325||height!==530)throw new RangeError('Legacy crop requires 325x530');const k=Math.PI/2/270;return {width,height,unproject:(x,y)=>{const dx=162-x,dy=(y+30)/.8,r=Math.hypot(dx,dy);return {altDeg:90-r/270*90,azDeg:wrapDeg(Math.atan2(dx,dy)/DEG)};},solidAngle:(x,y)=>{const t=Math.hypot(x-162,(y+30)/.8)*k;return k*k/.8*(t<1e-10?1:Math.sin(t)/t);},above:(x,y)=>Math.hypot(x-162,(y+30)/.8)<=270};}
  throw new RangeError('Unknown sky projection');

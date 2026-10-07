@@ -40,10 +40,10 @@ INSTRUMENT=r'''(() => {
    if(ctl.mode==='constructor-failure')throw new Error('Controlled Worker constructor failure');
    const text='importScripts('+JSON.stringify(url)+');self.addEventListener("message",e=>{if(e.data.kind==="qa-uncaught-crash")setTimeout(()=>{throw new Error("Controlled actual worker exception")},0);});';
    this.testURL=URL.createObjectURL(new Blob([text],{type:'text/javascript'}));
-   this.actual=new ActualWorker(this.testURL,options);this.terminated=false;ctl.instances.push(this);
+   this.actual=new ActualWorker(this.testURL,options);this.terminated=false;this.isMoon=false;
    this.actual.onmessage=e=>{
-    if(e.data?.kind==='ready'&&ctl.mode==='startup-hang')return;
-    if(e.data?.kind==='result'){
+    if(!this.isMoon&&e.data?.kind==='ready'&&ctl.mode==='startup-hang')return;
+    if(!this.isMoon&&e.data?.kind==='result'){
      ctl.rawResults++;
      if(ctl.hold){ctl.held.push({owner:this,event:e});return;}
     }
@@ -53,7 +53,10 @@ INSTRUMENT=r'''(() => {
    this.actual.onmessageerror=e=>this.onmessageerror?.(e);
   }
   postMessage(m){
-   if(m.kind==='render'){
+   // This instrument owns CP9 faults. The separate Moon worker has a different
+   // render protocol and dedicated fault/currentness tests; pass it unchanged.
+   if(m.kind==='boot'){this.isMoon='offline' in m;if(!this.isMoon)ctl.instances.push(this);}
+   if(m.kind==='render'&&!this.isMoon){
     ctl.submissions.push({utcMs:m.job.observer.utcMs,lat:m.job.observer.latDeg,generation:m.job.native.generation,epoch:m.job.native.lifecycleEpoch});
     if(ctl.mode==='post-failure')throw new Error('Controlled worker postMessage failure');
     if(ctl.mode==='render-hang')return;

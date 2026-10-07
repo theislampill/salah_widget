@@ -1743,6 +1743,10 @@ function renderMoonCalendarFallback(frac,waxing){
 }
 let _lastPbrUp=-1;  // surface appearance also follows the existing horizon envelope
 function renderMoonPBR(frac, waxing){
+  if(window.SalahMoonRuntime?.request()) return;
+  renderMoonLegacyPBR(frac,waxing);
+}
+function renderMoonLegacyPBR(frac, waxing){
   const up=moonSky.up;
   if(!_pbrReady){ _pbrPending={frac,waxing}; return; }
   if(_moonCv && Math.abs(frac-_lastPbrFrac)<0.004 && waxing===_lastPbrWax && up===_lastPbrUp) return;
@@ -1834,10 +1838,11 @@ function sampleMoonPixel(data,width,height,x,y){
   return {x,y,status:"ok",lum:Math.round((data[i]+data[i+1]+data[i+2])/3),alpha:data[i+3]};
 }
 function moonDebugSamples(){
-  const width=_moonCv?_moonCv.width:null,height=_moonCv?_moonCv.height:null,radius=_MR,cx=width/2,cy=Math.round(height/2);
+  const currentSurface=window.SalahMoonRuntime?.surface()??_moonCv;
+  const width=currentSurface?currentSurface.width:null,height=currentSurface?currentSurface.height:null,radius=_MR,cx=width/2,cy=Math.round(height/2);
   try{
-    if(!_moonCv) throw new Error("canvas absent");
-    const ctx=_moonCv.getContext("2d"); if(!ctx) throw new Error("context absent");
+    if(!currentSurface) throw new Error("canvas absent");
+    const ctx=currentSurface.getContext("2d"); if(!ctx) throw new Error("context absent");
     const image=ctx.getImageData(0,0,width,height),data=image&&image.data;
     if(!data||data.length<width*height*4) throw new Error("image unavailable");
     const points=[["inner",Math.round(cx+0.5*radius)],["limb",Math.round(cx+0.99*radius)],["edge",Math.round(cx+radius)],
@@ -1889,7 +1894,7 @@ function renderMoon(){
   const stamp=moonGeometryIdentity(date),valid=[alt,Hm,frac,up,x,y].every(Number.isFinite);
   moonSky={alt,H:Hm,frac,waxing,up,sx:x/325,sy:y/530,_min:valid?stamp.minute:null,_epochMin:valid?stamp.epochMinute:null,_context:valid?stamp.context:null};   // sx/sy = card-fraction centre; stamp ONLY this successfully produced finite geometry
   renderMoonPBR(frac, waxing);                                     // light the real LRO albedo + LOLA normals → .mphoto canvas
-  if(_pbrFailed) renderMoonCalendarFallback(frac,waxing);
+  if(_pbrFailed&&!window.SalahMoonRuntime?.surface()) renderMoonCalendarFallback(frac,waxing);
   if(DEBUGMOON){ const dm=$(".dbgmoon");
     if(dm){ if(dm.style.display!=="block") dm.style.display="block";
       const pixels=moonDebugSamples(),ring=pixels.status==="ok"?pixels.samples.map(p=>`${p.label} (${p.x},${p.y}) ${p.status==="ok"?p.lum+"/"+p.alpha:p.status}`).join("  "):"unavailable (pbr not painted)";
@@ -1923,6 +1928,7 @@ let _skySceneKey=null,_skyCommitted=false,_skyMoonPresence=0;
 // PRAYER owns calls at boot and after accepted configuration invalidation, before builders.
 function beginSkyScene(){
   window.SalahRealSky?.invalidate("native beginSkyScene");
+  window.SalahMoonRuntime?.invalidate("native beginSkyScene");
   const c=$(".c"); if(c){ c.classList.add("sky-pending","sky-initializing"); c.classList.remove("moon-ready"); }
   _skySceneKey=null; _skyCommitted=false; _skyMoonPresence=0; _starsProjected=false;
   _cloudReady=false; cloudState.covLow=cloudState.covMid=cloudState.covHigh=0;
@@ -1934,7 +1940,7 @@ function beginSkyScene(){
 // Pending decode remains unavailable; accepted UI/sky never waits for the lunar maps.
 function updateSkySurface(){
   const c=$(".c"),photo=$(".mphoto"),mask=$(".moon-mask-disc");
-  const ready=!!((_pbrReady||_moonFallbackReady) && photo && photo.getAttribute("href") && _skySceneKey!==null);
+  const ready=!!((_pbrReady||_moonFallbackReady||!!window.SalahMoonRuntime?.surface()) && photo && photo.getAttribute("href") && _skySceneKey!==null);
   if(c) c.classList.toggle("moon-ready",ready);
   if(mask) mask.classList.toggle("mask-on",ready && _skyMoonPresence>0);
 }
@@ -3461,6 +3467,23 @@ function _closeSettings(){
 }
 function _toggleSettings(){ const c=document.querySelector(".c"); if(!c) return; c.classList.contains("settings-open")?_closeSettings():_openSettings(); }
 
+// Authored MB1 boundary: this is the only producer of native phase/time identity.
+window.SalahMoonHost=Object.freeze({
+ capture(){
+  const identity=skySceneIdentity();
+  return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
+   fraction:moonSky.frac,waxing:!!moonSky.waxing,up:moonSky.up,
+   dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
+   paused:document.hidden||!!$('.c')?.classList.contains('paused')};
+ },
+ publish(canvas){const ph=$('.mphoto');if(ph)ph.setAttribute('href',canvas.toDataURL());updateSkySurface();},
+ fallback(){
+  if(!Number.isFinite(moonSky.frac))return;
+  _lastPbrFrac=-1;renderMoonLegacyPBR(moonSky.frac,!!moonSky.waxing);
+  if(_pbrFailed)renderMoonCalendarFallback(moonSky.frac,!!moonSky.waxing);
+ },
+});
+
 // CP8 host owns time/config/weather acceptance; the optional renderer only reads this boundary.
 // CP9: independent custody of an elevation admitted for this exact native target.
 // The native legacy scalar is not reused as accepted astronomical metadata.
@@ -3470,7 +3493,7 @@ window.SalahNativeSkyHost=Object.freeze({
   if(typeof heightM!=='number'||!Number.isFinite(heightM)||heightM<-500||heightM>10000||generation!==_runtimeGeneration||latitude!==lat||longitude!==lon)return false;
   _cp9SiteElevation=Object.freeze({heightM,generation,lat:latitude,lon:longitude});return true;
  },
- lunarSurface(){return (_pbrReady||_moonFallbackReady)?_moonCv:null;},
+ lunarSurface(){return window.SalahMoonRuntime?.surface()??((_pbrReady||_moonFallbackReady)?_moonCv:null);},
  capture(){
   const identity=simulationReady()?skySceneIdentity():null;
   const cw=selectedWeather();
@@ -3480,7 +3503,7 @@ window.SalahNativeSkyHost=Object.freeze({
    tz,timeScale:TIMESCALE,units,lp:LPOLL,reducedMotion:isMotionReduced(),paused:document.hidden||!!$('.c')?.classList.contains('paused'),
    camera:{azDeg:cameraNumber('skyAz',180),altDeg:cameraNumber('skyAlt',45),fovYDeg:cameraNumber('skyFov',90),rollDeg:cameraNumber('skyRoll',0)},allowEstimates:q.get('skyEstimates')!=='off',
    weather:cw?{src:cw.src??'accepted-native',temp:cw.temp??null,rh:cw.rh??null,vis:cw.vis??null,cloud:cw.cloud??null,code:cw.code??null,wind:cw.wind??null}:null,
-   prayerReady:!!today,moonReady:!!(_pbrReady||_moonFallbackReady),pbrFailed:_pbrFailed};
+   prayerReady:!!today,moonReady:!!(window.SalahMoonRuntime?.surface()||_pbrReady||_moonFallbackReady),pbrFailed:_pbrFailed};
  },
  notify(){window.SalahRealSky?.request();}
 });
@@ -3492,12 +3515,16 @@ if(typeof window.qaState==='function'){
   const original=nativeQA.apply(this,args);let realSky;
   try{const s=window.realSkyState?.();realSky=s?{checkpoint:s.checkpoint,status:s.status,renders:s.renders,frameUtcMs:s.last?.utcMs??null,catalogue:s.last?.catalogue??null,generation:s.last?.native?.generation??null,assumptions:s.last?.native?.assumptions??null,composition:s.last?.composition??null,errors:s.errors??[]}:{checkpoint:'9',status:'loading',frameUtcMs:null};}
   catch(e){realSky={checkpoint:'9',status:'unavailable',frameUtcMs:null,error:String(e?.message??e)};}
-  return {...original,realSky,legacySyntheticStarTelemetry:{active:false,replacement:'realSky; raster diagnostics, not old synthetic DOM arrays'}};
+  const m=window.SalahMoonRuntime?.state;
+  const moonRenderer=m?{backend:m.backend,status:m.status,quality:m.quality,legacyFallback:m.legacyFallback,currentNativeFraction:m.currentNativeFraction,renderedFraction:m.accepted?.scene?.fraction??null,calendarProxyWeight:m.calendarProxyWeight,profile:m.accepted?.profile??null,errors:m.errors}:null;
+  return {...original,realSky,moonRenderer,legacySyntheticStarTelemetry:{active:false,replacement:'realSky; raster diagnostics, not old synthetic DOM arrays'}};
  };
 }
 
 boot();
 </script>
 <script src="real-sky/native-sky.js"></script>
+<script>if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;</script>
+<script src="moon/moon-host.js"></script>
 </body>
 </html>

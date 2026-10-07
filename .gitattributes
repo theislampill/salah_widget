@@ -8,6 +8,19 @@ vendor/real-sky/** -text
 docs/real-sky/archive/** -text
 # Raw qualification receipts are hash-bound; never convert their line endings.
 docs/real-sky/evidence/** -text
+# The supplied Moon assets, sources and generated chunks are hash-bound too.
+moon/** -text
+docs/moon/evidence/** -text
+# Receiving receipts retain Windows CRLF bytes; CR is a line ending, not whitespace damage.
+docs/moon/evidence/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Raw test output includes intentional indented blank lines and DOM text spacing.
+docs/moon/evidence/**/*.log -whitespace
+docs/moon/evidence/**/rendered.txt -whitespace
+docs/moon/CANDIDATE_RUNTIME_IDENTITY.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/moon/donor/** -text
+# Unified patch context and sealed donor EOFs must survive byte-for-byte.
+docs/moon/receiving/*.patch -text -whitespace
+moon/src/** whitespace=-blank-at-eof
 index.html text eol=lf
 offline.html text eol=lf
 config.js text eol=lf
