@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
-const src=path.join(__dirname,'../src');
-function rig({inline=false}={}){
+const src=process.env.SALAH_MOON_SOURCE_DIR||path.join(__dirname,'../src');
+function rig({inline=false,diameter=104}={}){
  let clock=0,id=0;const jobs=new Map(),workers=[],nodes=new Map(),events=new Map();let published=0,fallbacks=0;
  const state={utcMs:1000,generation:0,sceneIdentity:'A',fraction:.5,waxing:false,up:1,dpr:1,timeScale:0,paused:false};
  for(let i=0;i<2;i++)nodes.set('moon-embedded-'+i,{textContent:'AAAA',remove(){nodes.delete('moon-embedded-'+i)}});
@@ -9,7 +9,7 @@ function rig({inline=false}={}){
  class Worker{constructor(){this.sent=[];this.terminated=false;workers.push(this)}postMessage(m){if(this.terminated)throw Error('worker closed');this.sent.push(m)}terminate(){this.terminated=true}emit(m){this.onmessage?.({data:m})}}
  class U extends URL{};U.createObjectURL=()=> 'blob:mock/'+(++id);U.revokeObjectURL=()=>{};
  const w={__SALAH_MOON_OFFLINE__:true,__SALAH_MOON_EMBEDDED__:true,SalahMoonHost:{capture:()=>({...state}),publish:()=>published++,fallback:()=>fallbacks++},SalahRealSky:{compose(){}}};
- const doc={currentScript:{src:inline?'':'https://test/moon/moon-host.js'},baseURI:inline?'about:blank':'https://test/',hidden:false,getElementById:k=>nodes.get(k),createElement:()=>({width:0,height:0,style:{},getContext:()=>({putImageData(){}}),remove(){}}),head:{append(){}},addEventListener:(n,f)=>events.set(n,f),removeEventListener:n=>events.delete(n)};
+ const doc={currentScript:{src:inline?'':'https://test/moon/moon-host.js'},baseURI:inline?'about:blank':'https://test/',hidden:false,querySelector:()=>({getBoundingClientRect:()=>({width:diameter,height:diameter})}),getElementById:k=>nodes.get(k),createElement:()=>({width:0,height:0,style:{},getContext:()=>({putImageData(){}}),remove(){}}),head:{append(){}},addEventListener:(n,f)=>events.set(n,f),removeEventListener:n=>events.delete(n)};
  const c=vm.createContext({window:w,document:doc,URL:U,Blob,Worker,performance:{now:()=>clock},structuredClone,Uint8ClampedArray,Float32Array,ImageData:class{constructor(d,w,h){this.data=d;this.width=w;this.height=h}},startMoonDetail:()=>detail,blendCalendarBytes:a=>a,setTimeout:(f,ms)=>{const n=++id;jobs.set(n,{f,ms});return n},clearTimeout:n=>jobs.delete(n),setInterval:()=>++id,clearInterval:()=>{},MOON_DEFAULT_PROFILE:{profile_id:'calendar-neutral-v5-01',mode:'calendar'},MOON_WORKER_SOURCE:'',MOON_OFFLINE_CHUNKS:[{name:'dem',index:0,last:true},{name:'colour',index:0,last:true}]});
  vm.runInContext(fs.readFileSync(path.join(src,'moon-precision.mjs'),'utf8')+'\n'+fs.readFileSync(path.join(src,'moon-native.mjs'),'utf8'),c);
  const flush=()=>{for(let guard=0;guard<20;guard++){const j=[...jobs].find(([,v])=>v.ms===0);if(!j)break;jobs.delete(j[0]);j[1].f()}};
@@ -34,3 +34,47 @@ test('wrong surface extent is rejected before publication',()=>{const r=rig();r.
 test('wrong output footprint is rejected before publication',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const m=r.response();m.width=m.height=8;m.rgba=new Uint8ClampedArray(256);m.calendarRgba=new Uint8ClampedArray(256);r.workers[0].emit(m);assert.equal(r.published,0);assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');});
 test('startup deadline triggers fallback, not a main-thread solver',()=>{const r=rig();const d=[...r.jobs.values()].find(v=>v.ms===120000);assert.ok(d);d.f();assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');assert.equal(r.published,0);assert.equal(r.workers[0].terminated,true);});
 test('refinement deadline withdraws preview safely',()=>{const r=rig();r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response('preview'));[...r.jobs.values()].find(v=>v.ms===240000).f();assert.equal(r.w.SalahMoonRuntime.surface(),null);assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');});
+
+test('normal 1x observed Firefox sequence admits the 169-second refinement within the original display error',()=>{
+ for(const dpr of [1,1.25,2,3]){
+  const r=rig();r.state.dpr=dpr;r.state.timeScale=1;r.state.fraction=.0815410407195768;r.workers[0].emit({kind:'ready'});
+  const start=r.request(),final=r.response();r.workers[0].emit(r.response('preview'));
+  for(let sec=1;sec<=169;sec++){
+   r.advance(1000);r.state.utcMs+=1000;
+   // The recorded native phase updates at 60-second intervals; the Moon host polls faster.
+   r.state.fraction=sec<60?.0815410407195768:sec<120?.0814985561:.08145601121898355;
+   r.w.SalahMoonRuntime.request();
+   assert.equal(r.request().id,start.id,`unnecessary phase cancellation at ${sec}s / DPR ${dpr}`);
+   const angleError=Math.abs(Math.acos(2*start.scene.fraction-1)-Math.acos(2*r.state.fraction-1));
+   assert.ok(104*dpr/2*angleError<=.041600001,'projected terminator displacement exceeds existing budget');
+  }
+  r.workers[0].emit(final);assert.equal(r.w.SalahMoonRuntime.state.status,'ready');assert.equal(r.w.SalahMoonRuntime.state.pending,false);
+  r.advance(600000);r.state.utcMs+=600000;r.state.fraction=.0809;r.w.SalahMoonRuntime.request();
+  assert.notEqual(r.request().id,start.id,'phase must not freeze permanently');
+ }
+});
+
+test('forward and backward seeks reject obsolete results even before the next poll',()=>{
+ for(const delta of [-60000,60000]){const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});const old=r.response();r.state.utcMs+=delta;r.workers[0].emit(old);assert.equal(r.published,0);r.w.SalahMoonRuntime.request();assert.notEqual(r.request().id,old.id);}
+});
+
+test('waxing and reference changes reject old epochs',()=>{
+ const r=rig();r.workers[0].emit({kind:'ready'});const old=r.response();r.state.waxing=!r.state.waxing;r.w.SalahMoonRuntime.request();r.workers[0].emit(old);assert.equal(r.published,0);
+ const prior=r.response();r.w.SalahMoonRuntime.setReferenceScene({mode:'physical-reference',size:32,outSize:32,basis:[0,1,0,0,0,1,1,0,0],sun:[1,0,0],earth:[384400,0,0],distance:384400,extent:1.08});r.workers[0].emit(prior);assert.equal(r.published,0);
+});
+
+test('crescent half gibbous and near-full 1x sequences complete at both senses and DPR 1 through 3',()=>{
+ for(const fraction of [.01,.12,.5,.75,.99])for(const waxing of [false,true])for(const dpr of [1,1.25,2,3]){
+  const r=rig(),alpha=Math.acos(2*fraction-1);Object.assign(r.state,{fraction,waxing,dpr,timeScale:1});r.workers[0].emit({kind:'ready'});
+  let request=r.request(),since=0,complete=false;
+  for(let sec=1;sec<=480;sec++){
+   r.advance(1000);r.state.utcMs+=1000;
+   const a=Math.max(0,Math.min(Math.PI,alpha+(waxing?-1:1)*2.7e-6*Math.floor(sec/60)*60));r.state.fraction=(1+Math.cos(a))/2;
+   r.w.SalahMoonRuntime.request();
+   if(r.request().id!==request.id){request=r.request();since=sec;}
+   const error=104*dpr/2*Math.abs(Math.acos(2*request.scene.fraction-1)-a);assert.ok(error<=.041600001);
+   if(sec-since>=169){r.workers[0].emit(r.response());complete=r.w.SalahMoonRuntime.state.status==='ready';break;}
+  }
+  assert.ok(complete,`${fraction} / ${waxing} / ${dpr} starved`);
+ }
+});

@@ -14,6 +14,17 @@ test('same material coordinates are used for waxing and waning',()=>{const a=api
 test('scene rejects handedness reversal',()=>{const s=api.canonicalScene({fraction:.5});s.basis[1]=-1;assert.throws(()=>api.admitScene(s),/right-handed/);});
 test('phase vector mismatch refused',()=>{const s=api.canonicalScene({fraction:.5});s.fraction=.9;assert.throws(()=>api.admitScene(s),/phase\/vector/);});
 test('phase precision preserves endpoints and declared geometric bound',()=>{for(let i=0;i<=10000;i++){const f=i/10000;assert.ok(Math.abs(api.canonicalFraction(f)-f)*416<=.041600001);}assert.equal(api.canonicalFraction(0),0);assert.equal(api.canonicalFraction(1),1);});
+
+test('display-aware phase preserves the original .0416 device-pixel angular displacement bound',()=>{
+ assert.notEqual(api.canonicalFraction(.0815410407195768,104),api.canonicalFraction(.0815410407195768,416));
+ // Independent rotation/chord bound, including endpoint caps and both phase senses.
+ for(const diameter of [52,104,130,208,312,416,624])for(let i=0;i<=20000;i++){
+  const alpha=Math.PI*i/20000,f=(1+Math.cos(alpha))/2,q=api.canonicalFraction(f,diameter),beta=Math.acos(2*q-1);
+  const displacement=diameter*Math.sin(Math.abs(alpha-beta)/2);
+  assert.ok(displacement<=.04160001,`${diameter} / ${alpha}: ${displacement}`);
+  assert.ok(diameter*Math.abs(q-f)<=.04160001);
+ }
+});
 test('black opaque Moon suppresses stars even during calendar fade',()=>{for(const opacity of [0,.5,1]){const r=api.joinLunarPixel({gas:[0,0,0],direct:[1,1,1],premult:[0,0,0],coverage:1,opacity,cloud:[0,0,0,0],exposure:12});assert.deepEqual(r,[0,0,0]);}});
 test('zero coverage leaves direct sky intact',()=>{const r=api.joinLunarPixel({gas:[.1,.2,.3],direct:[1,1,1],premult:[0,0,0],coverage:0,opacity:1,cloud:[0,0,0,0],exposure:12});assert.deepEqual(r,[1.1,1.2,1.3]);});
 test('cloud foreground is applied once',()=>{const r=api.joinLunarPixel({gas:[1,1,1],direct:[0,0,0],premult:[0,0,0],coverage:0,opacity:1,cloud:[.2,.2,.2,.5],exposure:12});for(const x of r)assert.equal(x,.6);});

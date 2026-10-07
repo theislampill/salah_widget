@@ -78,9 +78,11 @@ def run(root,out,refs):
             report['adoptionObserverInstalledAtStatus']=q.evaluate("()=>{const detail=SalahMoonDetail,adopt=detail.adopt;detail.adopt=s=>{window.__visualAdopt=s;return adopt(s);};return SalahMoonRuntime.state.status;}")
             q.add_style_tag(content='*{animation-play-state:paused!important;transition:none!important}')
             report['captureMotionControl']='Frozen simulation clock and paused CSS animations for differential screenshots; no runtime source changes.'
-            for name,fraction in [('wax_012',.12),('wax_050',.5),('wax_075',.75),('wax_099',.99)]:
+            for name,fraction,wax in [('wax_012',.12,1),('wax_050',.5,1),('wax_075',.75,1),('wax_099',.99,1),
+                                      ('wane_012',.12,0),('wane_050',.5,0),('wane_075',.75,0),('wane_099',.99,0),('new',0,1)]:
                 if rows:
-                    start=time.monotonic();q.evaluate("f=>{SIM.moon=String(f);renderMoon();render();SalahMoonRuntime.request();}",fraction)
+                    start=time.monotonic();q.evaluate("s=>{SIM.moon=String(s[0]);SIM.wax=String(s[1]);renderMoon();render();SalahMoonRuntime.request();}",[fraction,wax])
+                print(name,'waiting for actual refined terrain',flush=True)
                 wait(q,"SalahMoonRuntime.state.status==='ready'&&!SalahMoonRuntime.state.pending",290)
                 state=q.evaluate(STATE);quality=state['moon']['last']['quality']
                 assert state['moon']['quality']=='empirical-adaptive' and quality['unsettled']==0 and len(quality['history'])>=2,(name,quality)
@@ -96,10 +98,10 @@ def run(root,out,refs):
                 assert proof['publishedCanvasSha256']!=proof['legacyCanvasSha256'] and proof['opaqueDifferences']==0 and proof['alphaDifferences']==0 and proof['maxPremultipliedDifference']<=1
                 assert proof['workerProfileIdentity']==custody['profileIdentity']
                 assert proof['nodes']['.mphoto']['visibility']=='hidden' and proof['nodes']['.moccluder']['visibility']=='hidden'
-                assert proof['nodes']['.moon-detail-canvas']['visibility']=='visible' and proof['nativeForegroundMoonPixels']>0
+                assert proof['nodes']['.moon-detail-canvas']['visibility']=='visible' and proof['nativeForegroundMoonPixels']==0
                 rect=proof['nodes']['.moon-detail-canvas']['rect'];clip={k:rect[k] for k in ['x','y','width','height']}
                 q.locator('.c').screenshot(path=str(out/(name+'-widget.png')));q.screenshot(path=str(out/(name+'-crop.png')),clip=clip)
-                # Both base and DPR paths use the accepted terrain. Poison the old
+                # The device layer is the sole Moon owner. Poison the old
                 # fallback canvas AND hidden SVG, forcing composition, then restore.
                 old=q.evaluate("()=>{const e=document.querySelector('.mphoto'),s=e.getAttribute('href'),x=_moonCv.getContext('2d');window.__legacySave=x.getImageData(0,0,_moonCv.width,_moonCv.height);x.fillStyle='#ff00ff';x.fillRect(0,0,_moonCv.width,_moonCv.height);e.setAttribute('href',_moonCv.toDataURL());SalahRealSky.compose();return s;}")
                 q.screenshot(path=str(out/(name+'-diagnostic-legacy-poison.png')),clip=clip)
@@ -111,15 +113,26 @@ def run(root,out,refs):
                 poisoned=difference(out/(name+'-crop.png'),out/(name+'-diagnostic-legacy-poison.png'));removed=difference(out/(name+'-crop.png'),out/(name+'-diagnostic-detail-hidden.png'));restored=difference(out/(name+'-crop.png'),out/(name+'-restored.png'))
                 assert poisoned['changedPixels']==0 and restored['changedPixels']==0 and removed['changedPixels']>1000
                 assert q.evaluate("SalahMoonRuntime.state.status==='ready'&&!SalahMoonRuntime.state.legacyFallback&&!SalahMoonRuntime.state.pending")
-                ref=refs/(name+'-reference.png');assert hashlib.sha256(ref.read_bytes()).hexdigest()==reference[name]['sha256']
-                im=Image.open(ref);assert im.width==im.height
-                linear=np.frombuffer(linear_bytes,dtype='<f4').reshape(proof['size'],proof['size'],3)
-                Image.fromarray(project_black(linear,proof['extent'],im.width)).save(out/(name+'-worker-D208.png'))
-                delta=difference(out/(name+'-worker-D208.png'),ref)
-                row=dict(name=name,requestedFraction=fraction,refinedSeconds=refined_seconds,state=state,sourceProof=proof,legacyPoisonControl=poisoned,detailHiddenControl=removed,restoreControl=restored,reference=reference[name]['originalPath'],referenceComparison=delta,
-                         detailHiddenScope='Negative control exposes the CP9 raster of the SAME accepted terrain, not legacy PBR. Its changed pixels distinguish the visible DPR refinement.',
+                delta=None
+                if name in reference:
+                    ref=refs/(name+'-reference.png');assert hashlib.sha256(ref.read_bytes()).hexdigest()==reference[name]['sha256']
+                    im=Image.open(ref);assert im.width==im.height
+                    linear=np.frombuffer(linear_bytes,dtype='<f4').reshape(proof['size'],proof['size'],3)
+                    Image.fromarray(project_black(linear,proof['extent'],im.width)).save(out/(name+'-worker-D208.png'))
+                    delta=difference(out/(name+'-worker-D208.png'),ref)
+                # Retain this real solver result outside the repository for
+                # identical-scene presentation sweeps, avoiding repeated solves.
+                cache=q.evaluate(r'''()=>{const m=__mq.lastResult,arrays={},metadata={};for(const [k,v] of Object.entries(m)){if(ArrayBuffer.isView(v)){const u=new Uint8Array(v.buffer,v.byteOffset,v.byteLength);let s='';for(let i=0;i<u.length;i+=32768)s+=String.fromCharCode(...u.subarray(i,i+32768));arrays[k]={type:v.constructor.name,data:btoa(s)};}else metadata[k]=v;}return {metadata,arrays};}''')
+                cache_file=out/(name+'-worker.json');cache_file.write_text(json.dumps(cache),encoding='utf-8')
+                row=dict(name=name,requestedFraction=fraction,waxing=bool(wax),refinedSeconds=refined_seconds,state=state,sourceProof=proof,legacyPoisonControl=poisoned,detailHiddenControl=removed,restoreControl=restored,reference=reference.get(name,{}).get('originalPath'),referenceComparison=delta,cacheSha256=hashlib.sha256(cache_file.read_bytes()).hexdigest(),
+                         detailHiddenScope='Negative control exposes the Moon-free CP9 background. No lower-resolution Moon remains underneath the device layer.',
                          referenceScope='Independent linear area integration of actual WASM surface at reference D208 footprint on black. Phase-angle buckets/adaptive angular rules differ; errors recorded, not a new dense-reference certificate.',captures={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.glob(name+'*.png')},passed=True)
                 rows.append(row);save();print(name,'refined; layer controls pass; reference',delta,flush=True)
+            q.evaluate("()=>{SIM.moonAlt='-20';renderMoon();render();SalahRealSky.compose();}")
+            wait(q,'SalahMoonDetail.state.visible',60)
+            report['belowHorizon']=q.evaluate(STATE)
+            assert q.evaluate('qaState().moonTruth.moonlightOpacity===0&&SalahMoonRuntime.state.calendarProxyWeight===1')
+            q.locator('.c').screenshot(path=out/'below-horizon-widget.png');q.locator('.moon-detail-canvas').screenshot(path=out/'below-horizon-crop.png')
             assert not errors and runtime_identity(root)==before
             c.close();b.close();report['status']='PASS_SCOPED'
     except Exception:

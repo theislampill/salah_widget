@@ -46,17 +46,22 @@ function startMoonDetail(){
  const stat={renders:0,skips:0,totalMs:0,maxMs:0,dpr:0,pixels:0,mode:'local-device-resolution; inherited physics grid unchanged'};
  const clear=()=>{cv.style.visibility='hidden';last=null;};
  function geometry(){
-  const card=document.querySelector('.c'),photo=document.querySelector('.mphoto'),group=document.querySelector('.moon'),features=document.querySelector('.mfeatures'),disc=document.querySelector('.moon-mask-disc'),t=photo?.getScreenCTM(),rect=card?.getBoundingClientRect();
-  if(!surface||!table||!t||!rect||!(rect.width>0)||!card.classList.contains('moon-ready')||!disc?.classList.contains('mask-on')||+getComputedStyle(disc).opacity===0||t.a<=0||t.d<=0||Math.abs(t.b)>1e-8||Math.abs(t.c)>1e-8)return null;
-  const x=t.a*Number(photo.getAttribute('x'))+t.e-rect.left,y=t.d*Number(photo.getAttribute('y'))+t.f-rect.top,w=t.a*Number(photo.getAttribute('width')),h=t.d*Number(photo.getAttribute('height')),dpr=Math.max(.5,Math.min(4,devicePixelRatio||1));
+  const card=document.querySelector('.c'),photo=document.querySelector('.mphoto'),group=document.querySelector('.moon'),features=document.querySelector('.mfeatures'),disc=document.querySelector('.moon-mask-disc'),t=photo?.getScreenCTM(),cardRect=card?.getBoundingClientRect(),rect=document.querySelector('.real-sky-canvas')?.getBoundingClientRect();
+  if(!surface||!table||!t||!rect||!(rect.width>0&&rect.height>0)||!cardRect||!card.classList.contains('moon-ready')||!disc?.classList.contains('mask-on')||+getComputedStyle(disc).opacity===0||t.a<=0||t.d<=0||Math.abs(t.b)>1e-8||Math.abs(t.c)>1e-8)return null;
+  // Sample in viewport device pixels, then convert to the absolute child's
+  // containing block. Its origin is inside the card border, not cardRect.left.
+  // Including the viewport origin also preserves fractional card placement.
+  const x=t.a*Number(photo.getAttribute('x'))+t.e,y=t.d*Number(photo.getAttribute('y'))+t.f,w=t.a*Number(photo.getAttribute('width')),h=t.d*Number(photo.getAttribute('height')),dpr=Math.max(.5,Math.min(4,devicePixelRatio||1));
+  const scaleX=cardRect.width/card.offsetWidth,scaleY=cardRect.height/card.offsetHeight;
+  const originX=cardRect.left+card.clientLeft*scaleX,originY=cardRect.top+card.clientTop*scaleY;
   const opacity=Math.max(0,Math.min(1,+getComputedStyle(group).opacity*+getComputedStyle(features).opacity));
   if(w<=0||h<=0||opacity===0)return null;
   const left=Math.floor(x*dpr)-1,top=Math.floor(y*dpr)-1,width=Math.ceil((x+w)*dpr)-left+1,height=Math.ceil((y+h)*dpr)-top+1;
   if(width*height>1024*1024)throw new Error('Moon detail viewport budget');
   const up=Math.max(0,Math.min(1,window.SalahMoonRuntime?.presentationUp??window.SalahMoonHost?.capture()?.up??1));
-  return {card,photo,rect,x,y,w,h,dpr,opacity,left,top,width,height,up};
+  return {card,photo,rect,x,y,w,h,dpr,opacity,left,top,width,height,up,originX,originY,scaleX,scaleY};
  }
- function available(){try{return !!geometry();}catch{return false;}}
+ function available(){try{return !disposed&&!!context&&!!cx&&!!geometry();}catch{return false;}}
  function compose(frame,encode){
   if(disposed||!frame||!window.SalahMoonRuntime?.surface()||!context||!cx){clear();return;}
   const g=geometry();if(!g||!g.card.classList.contains('real-sky-composed')){clear();return;}
@@ -68,12 +73,13 @@ function startMoonDetail(){
   const cloud=document.querySelector('.cloudcanvas');
   if(cloud){
    const f=getComputedStyle(cloud).filter,b=/^blur\(([\d.]+)px\)$/.exec(f);if(f!=='none'&&!b)throw new Error('Unsupported lunar cloud filter');
-   cx.filter=b?`blur(${+b[1]*dpr}px)`:'none';cx.drawImage(cloud,-g.left,-g.top,g.rect.width*dpr,g.rect.height*dpr);cx.filter='none';
-   const grad=cx.createLinearGradient(0,-g.top,0,g.rect.height*dpr-g.top);for(const [at,c] of [[0,'rgba(0,0,0,0)'],[.03,'#000'],[.24,'#000'],[.34,'rgba(0,0,0,0)'],[1,'rgba(0,0,0,0)']])grad.addColorStop(at,c);
+   const cr=cloud.getBoundingClientRect();
+   cx.filter=b?`blur(${+b[1]*dpr*g.scaleX}px)`:'none';cx.drawImage(cloud,cr.left*dpr-g.left,cr.top*dpr-g.top,cr.width*dpr,cr.height*dpr);cx.filter='none';
+   const grad=cx.createLinearGradient(0,cr.top*dpr-g.top,0,cr.bottom*dpr-g.top);for(const [at,c] of [[0,'rgba(0,0,0,0)'],[.03,'#000'],[.24,'#000'],[.34,'rgba(0,0,0,0)'],[1,'rgba(0,0,0,0)']])grad.addColorStop(at,c);
    cx.globalCompositeOperation='destination-in';cx.fillStyle=grad;cx.fillRect(0,0,W,H);cx.globalCompositeOperation='source-over';
   }
   const cloudRGBA=cx.getImageData(0,0,W,H).data;
-  const key=JSON.stringify([surface.identity,W,H,g.left,g.top,g.x,g.y,g.w,g.h,g.opacity,dpr,r.effectiveExposure,g.up]);
+  const key=JSON.stringify([surface.identity,W,H,g.left,g.top,g.x,g.y,g.w,g.h,g.rect.left,g.rect.top,g.rect.width,g.rect.height,g.opacity,dpr,r.effectiveExposure,g.up]);
   if(last&&last.frame===frame&&last.key===key&&last.cloud.length===cloudRGBA.length&&last.cloud.every((x,i)=>x===cloudRGBA[i])){stat.skips++;return;}
   const exposure=r.effectiveExposure,inv=new Float64Array(256);for(let i=0;i<256;i++){const c=i/255,l=c<=.04045?c/12.92:((c+.055)/1.055)**2.4;inv[i]=-Math.log1p(-Math.min(1-1/131072,l))/exposure;}
   const linear=new Float64Array(W*H*3);
@@ -86,7 +92,7 @@ function startMoonDetail(){
     const sp=boxSurface(g.up===0&&calendarTable?calendarTable:table,x0,y0,x1,y1),a=sp[3];
     if(a<=1e-10)continue;covered[i]=1;
     if(g.up>0&&g.up<1&&calendarTable){const token=boxSurface(calendarTable,x0,y0,x1,y1);for(let k=0;k<3;k++)sp[k]=g.up*sp[k]+(1-g.up)*token[k];}
-    const px=(g.left+x+.5)/dpr*r.width/g.rect.width-.5,py=(g.top+y+.5)/dpr*r.height/g.rect.height-.5;
+    const px=((g.left+x+.5)/dpr-g.rect.left)*r.width/g.rect.width-.5,py=((g.top+y+.5)/dpr-g.rect.top)*r.height/g.rect.height-.5;
     const gas=sampleField(sky,r.width,r.height,px,py),stars=sampleField(r.stellarLinear,r.width,r.height,px,py),diffuse=sampleField(r.diffusePhysicalLinear,r.width,r.height,px,py);
     before.set(joinLunarPixel({gas,direct:stars.map((v,k)=>v+diffuse[k]),premult:sp,coverage:a,opacity:g.opacity,cloud:[0,0,0,0],exposure}),3*i);
    }
@@ -99,7 +105,7 @@ function startMoonDetail(){
   const rgba=encode(linear,exposure);for(let i=0;i<covered.length;i++)rgba[4*i+3]=covered[i]?255:0;
   if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}
   context.putImageData(new ImageData(rgba,W,H),0,0);
-  Object.assign(cv.style,{left:`${g.left/dpr}px`,top:`${g.top/dpr}px`,width:`${W/dpr}px`,height:`${H/dpr}px`,visibility:'visible'});
+  Object.assign(cv.style,{left:`${(g.left/dpr-g.originX)/g.scaleX}px`,top:`${(g.top/dpr-g.originY)/g.scaleY}px`,width:`${W/dpr/g.scaleX}px`,height:`${H/dpr/g.scaleY}px`,visibility:'visible'});
   last={frame,key,cloud:cloudRGBA};stat.renders++;stat.totalMs=performance.now()-began;stat.maxMs=Math.max(stat.maxMs,stat.totalMs);stat.dpr=dpr;stat.pixels=W*H;
  }
  return {adopt(s){table=prefixSurface(s);calendarTable=s.calendarLinear?prefixSurface({size:s.size,linear:s.calendarLinear,coverage:s.coverage}):null;surface=s;last=null;prepared=null;},clear,compose,get available(){return available();},get state(){return {...stat,visible:cv.style.visibility==='visible'};},dispose(){disposed=true;clear();cv.remove();table=null;calendarTable=null;surface=null;prepared=null;}};
@@ -112,4 +118,3 @@ function projectSurfaceCodes({size,linear,coverage,extent},diameter=312,shift=[0
   for(let k=0;k<3;k++){const v=Math.max(0,Math.min(1,c[k]));out[3*(y*N+x)+k]=(v<=.0031308?12.92*v:1.055*v**(1/2.4)-.055)*255;}
  }return out;
 }
-

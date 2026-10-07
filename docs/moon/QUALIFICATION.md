@@ -1,6 +1,12 @@
 # CP9 dependent Moon candidate — receiving qualification
 
-**PARTIAL overall; dependent Draft PR only. No merge or deployment.** The supplied
+**Corrected candidate, 2026-10-07:** see the [release qualification](RELEASE_CANDIDATE.md),
+[rim correction](RIM_CORRECTION.md) and [normal-clock currentness fix](CLOCK_CURRENTNESS.md).
+The receipts below describe the preceding candidate. The follow-up qualifies
+the corrected runtime in Windows Chromium and Firefox for the user's bounded
+normal-clock rollout. Historical N001/N002/N003 statuses are unchanged.
+
+**Original receiving qualification: PARTIAL overall; dependent Draft PR only.** The supplied
 Moon implementation passes the scoped receiving checks below. This does not
 close CP9-N001, N002 or N003, certify all visual gates, or repeat the V5 research
 programme. Measurements are from Windows on 2026-10-07.
