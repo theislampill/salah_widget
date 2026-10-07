@@ -1,7 +1,19 @@
 # salah_widget — AGENTS
 
-How agents (human or AI) should work on this repo. The widget is one self-contained `index.html`; changes are
+How agents (human or AI) should work on this repo. The runtime entry is generated `index.html`; changes are
 visual and physics-adjacent, so **review is dominated by looking at rendered pixels**, not by reading metrics.
+
+## CP9 source ownership and qualification
+
+Read `docs/real-sky/INTEGRATION.md` and the retained post-CP9 DAG before changing
+this candidate. Edit native UI, prayer/weather, geometry, PBR, Earthshine and
+embedded lunar textures in `src/native/index.html`; edit config and builder in
+`src/native/`. Integration owners are `real-sky/native-*.mjs` and
+`native-host-hooks.js`. Rebuild with `python tools/build_native.py`; never patch
+generated root entries, bundles, worker, data, CSS or copied `real-sky/core`.
+`vendor/real-sky` retains immutable scientific source and oracle fixtures.
+Run its builders/tests in a disposable copy. Historical PASS does not qualify
+this candidate. The existing gates below remain requirements, not blanket PASS.
 
 ## Golden rules
 

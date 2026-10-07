@@ -1,0 +1,72 @@
+{
+  "status": "PASS",
+  "controls": [
+    {
+      "name": "remove-frame-age",
+      "test": "an unchanged scene cannot admit a frame two minutes out of date",
+      "cleanExit": 0,
+      "mutantExit": 1,
+      "detectedAtNamedAssertion": true,
+      "source": "native-contract.mjs",
+      "replace": "Math.abs(current.utcMs-job.observer.utcMs)<=30000",
+      "with": "true",
+      "mutantSha256": "19242a6ba8ca47ac319a8182799a4553cbeb770844034f3d5f344f84690476d6"
+    },
+    {
+      "name": "remove-invalidation-epoch",
+      "test": "explicit invalidation fences a pending completion even when identity is reused",
+      "cleanExit": 0,
+      "mutantExit": 1,
+      "detectedAtNamedAssertion": true,
+      "source": "native-lifecycle.mjs",
+      "replace": "job.native.lifecycleEpoch===this.epoch",
+      "with": "true",
+      "mutantSha256": "31594644e08401180775fe7b4e2f60057c3e34d646901004b3aaef927dcc6543"
+    },
+    {
+      "name": "ignore-wall-discontinuity",
+      "test": "wall-clock backward discontinuity is caught even without a timer poll",
+      "cleanExit": 0,
+      "mutantExit": 1,
+      "detectedAtNamedAssertion": true,
+      "source": "native-lifecycle.mjs",
+      "replace": "*prior.rate)>1000",
+      "with": "*prior.rate)>1e20",
+      "mutantSha256": "7c439525ca8625b534c5a48aa18c945971e27acc710d755c5a76336b717a12da"
+    },
+    {
+      "name": "allow-hidden-work",
+      "test": "hidden state refuses forced work and obsolete completions",
+      "cleanExit": 0,
+      "mutantExit": 1,
+      "detectedAtNamedAssertion": true,
+      "source": "native-lifecycle.mjs",
+      "replace": "if(state.paused)return Promise.resolve({status:'paused'});",
+      "with": "if(false)return Promise.resolve({status:'paused'});",
+      "mutantSha256": "de7fd2f9a4ef173633a7c2a4d86951e162fdfb506b83a5fa7f94d5ad574351b9"
+    },
+    {
+      "name": "reuse-asset-attempt",
+      "test": "retry supplies a distinct generation to the request factory so pending script requests cannot coalesce",
+      "cleanExit": 0,
+      "mutantExit": 1,
+      "detectedAtNamedAssertion": true,
+      "source": "native-assets.mjs",
+      "replace": "this.load(controller.signal,generation)",
+      "with": "this.load(controller.signal)",
+      "mutantSha256": "249039d35e9485703baf4af62671a4575f6edda019917dccaa27da9a61b81656"
+    },
+    {
+      "name": "admit-obsolete-asset",
+      "test": "late A completion cannot replace B after retry",
+      "cleanExit": 0,
+      "mutantExit": 1,
+      "detectedAtNamedAssertion": true,
+      "source": "native-assets.mjs",
+      "replace": "generation!==this.generation",
+      "with": "false",
+      "mutantSha256": "ad8bd7fa368892288841cf53656c433e1cf6539e8ccecdb71cadd2815bf9a990"
+    }
+  ],
+  "scope": "Six isolated native lifecycle/asset negative controls; passing clean control paired with each deliberately broken variant. Candidate untouched."
+}

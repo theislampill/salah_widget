@@ -1,8 +1,12 @@
 # salah_widget — DESIGN
 
-A single self-contained `index.html` Islamic prayer-times widget, deployed via GitHub Pages and embedded as an
-iframe (e.g. in TablissNG). No build step, no dependencies. All logic, styles, and the atmospheric renderer live
-in one file. `builder.html` is a small config/URL generator.
+A static Islamic prayer-times widget embedded as an iframe (e.g. in TablissNG).
+This branch is the CP9 candidate; deployment remains separate. Native authoring
+lives in `src/native/`; `python tools/build_native.py` generates the root entries,
+worker and offline expansion. See [current ownership and qualification](docs/real-sky/INTEGRATION.md).
+The native design below predates CP9: synthetic star/glint producers are
+superseded by the admitted catalogue and registered diffuse field. Historical
+motion claims do not qualify the new renderer.
 
 **Companion docs:** [`ARCHITECTURE.md`](ARCHITECTURE.md) — the maintainer's responsibility/data-flow/contract map
 and risk list. [`OPTICS.md`](OPTICS.md) — the per-phenomenon physical-family taxonomy + gating. [`AGENTS.md`](AGENTS.md)

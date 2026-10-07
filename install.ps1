@@ -5,6 +5,7 @@
 # Usage:
 #   powershell -ExecutionPolicy Bypass -File .\install.ps1
 #   powershell -ExecutionPolicy Bypass -File .\install.ps1 -PresetUrl "https://raw.githubusercontent.com/YOU/REPO/main/presets/salah-widget.tablissng.json"
+#   powershell -File .\install.ps1 -DryRun  # offline local discovery; no writes, network, clipboard or browser opens
 #
 # Environment overrides:
 #   SALAH_WIDGET_HASH        Optional URL-hash config (lat=..&lon=..&method=..) baked into the widget iframe
@@ -40,7 +41,10 @@ $EdgeStoreUrl    = "https://microsoftedge.microsoft.com/addons/detail/tablissng/
 $WorkRoot = Join-Path $env:TEMP "SalahWidgetInstaller"
 $DownloadRoot = Join-Path $WorkRoot "downloads"
 $PresetRoot = Join-Path $WorkRoot "presets"
-New-Item -ItemType Directory -Force -Path $DownloadRoot, $PresetRoot | Out-Null
+function Initialize-Staging {
+    if ($DryRun) { throw "Offline preview does not create staging directories." }
+    New-Item -ItemType Directory -Force -Path $DownloadRoot, $PresetRoot | Out-Null
+}
 
 function Write-Section([string]$Text) {
     Write-Host ""
@@ -79,6 +83,7 @@ function Open-TargetUrl($Target, [string]$Url) {
 }
 
 function Copy-Text([string]$Text) {
+    if ($DryRun) { Write-Host "[dry-run] Clipboard copy suppressed."; return $false }
     try {
         Set-Clipboard -Value $Text
         return $true
@@ -292,17 +297,15 @@ function Get-Targets {
             })
         }
     }
-    return @($targets)
+    return $targets.ToArray()
 }
 
 $script:LatestRelease = $null
 function Get-LatestRelease {
+    if ($DryRun) { throw "Offline preview cannot resolve remote GitHub releases or use cached metadata." }
     if ($script:LatestRelease) { return $script:LatestRelease }
     $uri = "https://api.github.com/repos/$TablissNgRepo/releases/latest"
     Write-Host "Resolving latest TablissNG release from $uri"
-    if ($DryRun) {
-        throw "Dry-run cannot resolve remote GitHub releases."
-    }
     $headers = @{
         "Accept" = "application/vnd.github+json"
         "User-Agent" = "salah-widget-installer"
@@ -312,19 +315,20 @@ function Get-LatestRelease {
 }
 
 function Select-TablissNgAsset([string]$Family) {
+    if ($DryRun) { throw "Offline preview leaves release assets unresolved." }
     $release = Get-LatestRelease
     $assets = @($release.assets)
     if ($assets.Count -eq 0) { throw "Latest release '$($release.tag_name)' has no assets." }
 
     if ($Family -eq "firefox") {
         $preferred = @(
-            $assets | Where-Object { $_.name -match "(?i)\.xpi$" -and $_.name -match "(?i)signed|firefox" -and $_.name -notmatch "(?i)unsigned|source" },
-            $assets | Where-Object { $_.name -match "(?i)\.xpi$" -and $_.name -notmatch "(?i)unsigned|source" },
+            $assets | Where-Object { $_.name -match "(?i)\.xpi$" -and $_.name -match "(?i)signed|firefox" -and $_.name -notmatch "(?i)unsigned|source" }
+            $assets | Where-Object { $_.name -match "(?i)\.xpi$" -and $_.name -notmatch "(?i)unsigned|source" }
             $assets | Where-Object { $_.name -match "(?i)firefox.*\.zip$" -and $_.name -notmatch "(?i)unsigned|source" }
         ) | ForEach-Object { $_ }
     } elseif ($Family -eq "chromium") {
         $preferred = @(
-            $assets | Where-Object { $_.name -match "(?i)chrom(e|ium).*\.zip$" -and $_.name -notmatch "(?i)firefox|safari|source" },
+            $assets | Where-Object { $_.name -match "(?i)chrom(e|ium).*\.zip$" -and $_.name -notmatch "(?i)firefox|safari|source" }
             $assets | Where-Object { $_.name -match "(?i)tabliss.*\.zip$" -and $_.name -notmatch "(?i)firefox|safari|source" }
         ) | ForEach-Object { $_ }
     } else {
@@ -339,6 +343,7 @@ function Select-TablissNgAsset([string]$Family) {
 }
 
 function Download-Asset($Asset) {
+    if ($DryRun) { throw "Offline preview does not download or return cached asset paths." }
     $release = Get-LatestRelease
     $tag = Sanitize-FilePart $release.tag_name
     $name = Sanitize-FilePart $Asset.name
@@ -351,15 +356,12 @@ function Download-Asset($Asset) {
     }
     Write-Host "Downloading $($Asset.name)"
     Write-Host "  $($Asset.browser_download_url)"
-    if ($DryRun) {
-        Write-Host "[dry-run] Would download to $dest"
-        return $dest
-    }
     Invoke-WebRequest -UseBasicParsing -Uri $Asset.browser_download_url -OutFile $dest
     return $dest
 }
 
 function Expand-ChromiumAsset([string]$ZipPath) {
+    if ($DryRun) { throw "Offline preview does not extract assets." }
     $leaf = [IO.Path]::GetFileNameWithoutExtension($ZipPath)
     $extractRoot = Join-Path (Split-Path -Parent $ZipPath) "$leaf-unpacked"
     if (Test-Path -LiteralPath $extractRoot) {
@@ -379,6 +381,7 @@ function Expand-ChromiumAsset([string]$ZipPath) {
 }
 
 function Download-Preset {
+    if ($DryRun) { Write-Host "[dry-run] Preset staging suppressed."; return $null }
     if (-not $PresetUrl) {
         Write-Warn "No preset URL configured. Set -PresetUrl or SALAH_WIDGET_PRESET_URL."
         return $null
@@ -387,10 +390,6 @@ function Download-Preset {
     $presetFile = Join-Path $PresetRoot "salah-widget.tablissng.json"
     Write-Host "Downloading Salah Widget preset:"
     Write-Host "  $PresetUrl"
-    if ($DryRun) {
-        Write-Host "[dry-run] Would download to $presetFile"
-        return $presetFile
-    }
 
     try {
         Invoke-WebRequest -UseBasicParsing -Uri $PresetUrl -OutFile $presetFile
@@ -416,6 +415,7 @@ function Download-Preset {
 }
 
 function Show-ImportInstructions($Target, [string]$PresetFile) {
+    if ($DryRun) { Write-Host "[dry-run] Would guide manual preset import; no artifact resolved."; return }
     Write-Section "Import Salah Widget preset for $($Target.Browser) / $($Target.ProfileName)"
     if ($PresetFile) {
         Write-Host "Preset file:"
@@ -436,11 +436,13 @@ function Show-ImportInstructions($Target, [string]$PresetFile) {
     Write-Host ""
     Write-Host "This wizard does not directly write into browser extension storage."
     Write-Host "That avoids corrupting profiles and avoids touching legacy Tabliss."
+    Write-Warn "Importing the preset replaces your current TablissNG dashboard."
 
-    Open-TargetUrl $Target $Target.NewTabUrl
+    Open-TargetUrl $Target $Target.Config.NewTabUrl
 }
 
 function Install-TablissNG($Target) {
+    if ($DryRun) { Write-Host "[dry-run] Manual installation actions suppressed; release and paths unresolved."; return }
     $source = $InstallSource
     if ($source -eq "ask") {
         Write-Host ""
@@ -517,7 +519,7 @@ Write-Host ""
 Write-Host "It will not silently force-install extensions or write directly into extension storage."
 
 Write-Section "Detecting browsers"
-$targets = Get-Targets
+$targets = @(Get-Targets)
 
 if ($targets.Count -eq 0) {
     Write-Err "No supported browser profiles or installs were detected."
@@ -532,7 +534,30 @@ foreach ($t in $targets) {
     } else {
         "TablissNG not detected"
     }
-    Write-Host ("[{0}] {1} / {2} — {3}" -f $t.Index, $t.Browser, $t.ProfileName, $status)
+    Write-Host ("[{0}] {1} / {2} - {3}" -f $t.Index, $t.Browser, $t.ProfileName, $status)
+}
+
+# Preview is a whole-entry boundary: no terminal prompts or artifact helpers run.
+if ($DryRun) {
+    Write-Section "Offline preview"
+    $eligibleCount=0
+    foreach ($target in $targets) {
+        if ($target.HasLegacyTabliss) { Write-Warn "Legacy Tabliss: refusing $($target.Browser) / $($target.ProfileName)."; continue }
+        $eligibleCount++
+        Write-Host "Would prepare $($target.Browser) / $($target.ProfileName)."
+        if (-not $target.HasTablissNG) {
+            if ($InstallSource -eq "ask") { Write-Host "Install source unresolved: GitHub manual route or official store page." }
+            elseif ($InstallSource -eq "store") { Write-Host "Would open official store: $($target.Config.StoreUrl)" }
+            else { Write-Host "Would resolve/download GitHub release; release/version/path unresolved until execution." }
+        }
+        if ($PresetUrl) { Write-Host "Would stage configured preset and guide manual import; path unresolved until execution." }
+        else { Write-Warn "No preset URL configured; preset import cannot be prepared." }
+        Write-Host "Would open the browser's manual installation/import pages and offer clipboard paths."
+    }
+    Write-Warn "Importing the preset replaces your current TablissNG dashboard."
+    if ($eligibleCount -eq 0) { Write-Err "No eligible target; preview made no changes."; exit 1 }
+    Write-Host "Preview only; no changes made. No network requests were made."
+    exit 0
 }
 
 Write-Host ""
@@ -551,6 +576,12 @@ if ($selected.Count -eq 0) {
     Write-Err "No valid targets selected."
     exit 1
 }
+
+if (@($selected | Where-Object {-not $_.HasLegacyTabliss}).Count -eq 0) {
+    Write-Err "No eligible target selected; legacy Tabliss profiles are refused."
+    exit 1
+}
+Initialize-Staging
 
 $presetFile = $null
 
@@ -577,7 +608,7 @@ foreach ($target in $selected) {
 }
 
 Write-Section "Done"
-Write-Host "Downloads and presets were staged in:"
+Write-Host "Manual browser installation/import remain pending. Staging directory:"
 Write-Host "  $WorkRoot"
 Write-Host ""
 Write-Host "Review this script before publishing it. The preset URL should point at your real raw JSON file."

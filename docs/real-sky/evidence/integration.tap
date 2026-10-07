@@ -1,0 +1,664 @@
+TAP version 13
+# Subtest: CP9 F01 unowned old scalar is not an accepted elevation
+ok 1 - CP9 F01 unowned old scalar is not an accepted elevation
+  ---
+  duration_ms: 1.8734
+  type: 'test'
+  ...
+# Subtest: CP9 F01 A to B with missing and simulated weather never inherits A height
+ok 2 - CP9 F01 A to B with missing and simulated weather never inherits A height
+  ---
+  duration_ms: 0.747
+  type: 'test'
+  ...
+# Subtest: CP9 F01 A to B to A requires new-generation elevation even at same coordinates
+ok 3 - CP9 F01 A to B to A requires new-generation elevation even at same coordinates
+  ---
+  duration_ms: 0.5208
+  type: 'test'
+  ...
+# Subtest: CP9 F01 late A callback cannot replace legitimate B elevation
+ok 4 - CP9 F01 late A callback cannot replace legitimate B elevation
+  ---
+  duration_ms: 0.5169
+  type: 'test'
+  ...
+# Subtest: CP9 F01 legitimate accepted zero is distinguished from unknown zero
+ok 5 - CP9 F01 legitimate accepted zero is distinguished from unknown zero
+  ---
+  duration_ms: 1.2992
+  type: 'test'
+  ...
+# Subtest: CP9 F01 invalid height and mismatched longitude refused
+ok 6 - CP9 F01 invalid height and mismatched longitude refused
+  ---
+  duration_ms: 2.7878
+  type: 'test'
+  ...
+# Subtest: CP9 F01 ineligible weather withdraws bound height; eligible same-target restoration retains provenance
+ok 7 - CP9 F01 ineligible weather withdraws bound height; eligible same-target restoration retains provenance
+  ---
+  duration_ms: 0.7821
+  type: 'test'
+  ...
+# Subtest: CP9 F01 subsequent B adoption reaches geometry and atmosphere once
+ok 8 - CP9 F01 subsequent B adoption reaches geometry and atmosphere once
+  ---
+  duration_ms: 0.6372
+  type: 'test'
+  ...
+# Subtest: CP9 Moon mask reads each native matrix coefficient once, not per raster sample
+ok 9 - CP9 Moon mask reads each native matrix coefficient once, not per raster sample
+  ---
+  duration_ms: 6.2242
+  type: 'test'
+  ...
+# Subtest: CP9 hoisted mask is bit-identical to the CP8.3 equation across affine transforms and display scales
+ok 10 - CP9 hoisted mask is bit-identical to the CP8.3 equation across affine transforms and display scales
+  ---
+  duration_ms: 194.4261
+  type: 'test'
+  ...
+# Subtest: CP9 mask hoisting does not cache across moved Moon transforms or swallow singular input
+ok 11 - CP9 mask hoisting does not cache across moved Moon transforms or swallow singular input
+  ---
+  duration_ms: 0.5385
+  type: 'test'
+  ...
+# Subtest: native QA gains a real-sky summary without replacing any original owner fields
+ok 12 - native QA gains a real-sky summary without replacing any original owner fields
+  ---
+  duration_ms: 1.3914
+  type: 'test'
+  ...
+# Subtest: optional sky diagnostics cannot make native QA throw
+ok 13 - optional sky diagnostics cannot make native QA throw
+  ---
+  duration_ms: 0.616
+  type: 'test'
+  ...
+# Subtest: CP9 currentness adopts donor 30 second ceiling, inclusive boundary, no 60 second stale admission
+ok 14 - CP9 currentness adopts donor 30 second ceiling, inclusive boundary, no 60 second stale admission
+  ---
+  duration_ms: 1.0893
+  type: 'test'
+  ...
+# Subtest: CP9 native worker refuses a second cloud transmission owner
+ok 15 - CP9 native worker refuses a second cloud transmission owner
+  ---
+  duration_ms: 135.5292
+  type: 'test'
+  ...
+# Subtest: CP9 native worker refuses an added physical cloud glow; accepted local light keeps its existing owner
+ok 16 - CP9 native worker refuses an added physical cloud glow; accepted local light keeps its existing owner
+  ---
+  duration_ms: 110.0219
+  type: 'test'
+  ...
+# Subtest: page suspension aborts acquisition and fences its late result
+ok 17 - page suspension aborts acquisition and fences its late result
+  ---
+  duration_ms: 1.0362
+  type: 'test'
+  ...
+# Subtest: return resumes once with a new asset generation, not old work
+ok 18 - return resumes once with a new asset generation, not old work
+  ---
+  duration_ms: 0.2421
+  type: 'test'
+  ...
+# Subtest: permanent dispose cannot be reversed by a page return
+ok 19 - permanent dispose cannot be reversed by a page return
+  ---
+  duration_ms: 0.1361
+  type: 'test'
+  ...
+# Subtest: host lifecycle wires paired pagehide/pageshow and removes both on explicit dispose
+ok 20 - host lifecycle wires paired pagehide/pageshow and removes both on explicit dispose
+  ---
+  duration_ms: 0.4758
+  type: 'test'
+  ...
+# Subtest: CP9 exact same worker frame, geometry and native pixel bytes permit a redundant presentation skip
+ok 21 - CP9 exact same worker frame, geometry and native pixel bytes permit a redundant presentation skip
+  ---
+  duration_ms: 1.1422
+  type: 'test'
+  ...
+# Subtest: CP9 new physical frame is never skipped even when the native foreground matches
+ok 22 - CP9 new physical frame is never skipped even when the native foreground matches
+  ---
+  duration_ms: 0.0949
+  type: 'test'
+  ...
+# Subtest: CP9 changed native cloud opacity or colour is never skipped
+ok 23 - CP9 changed native cloud opacity or colour is never skipped
+  ---
+  duration_ms: 0.1292
+  type: 'test'
+  ...
+# Subtest: CP9 changed PBR pixel or phase opacity is never skipped
+ok 24 - CP9 changed PBR pixel or phase opacity is never skipped
+  ---
+  duration_ms: 0.0709
+  type: 'test'
+  ...
+# Subtest: CP9 moved calendar cutout and changed support rows invalidate the exact presentation cache
+ok 25 - CP9 moved calendar cutout and changed support rows invalidate the exact presentation cache
+  ---
+  duration_ms: 0.0585
+  type: 'test'
+  ...
+# Subtest: CP9 absent prior presentation and changed capture length are never reused
+ok 26 - CP9 absent prior presentation and changed capture length are never reused
+  ---
+  duration_ms: 0.0666
+  type: 'test'
+  ...
+# Subtest: native disabled scintillation uses the real strength contract, not an ignored enabled flag
+ok 27 - native disabled scintillation uses the real strength contract, not an ignored enabled flag
+  ---
+  duration_ms: 0.7135
+  type: 'test'
+  ...
+# Subtest: CP9 F03 worker loss withdraws optional physical sky instead of executing synchronous physics
+ok 28 - CP9 F03 worker loss withdraws optional physical sky instead of executing synchronous physics
+  ---
+  duration_ms: 0.8
+  type: 'test'
+  ...
+# Subtest: CP9 F03 native host uses mandatory worker policy; no NativeSkyEngine main-thread fallback
+ok 29 - CP9 F03 native host uses mandatory worker policy; no NativeSkyEngine main-thread fallback
+  ---
+  duration_ms: 0.4248
+  type: 'test'
+  ...
+# Subtest: slow optional asset stays loading until it is admitted
+ok 30 - slow optional asset stays loading until it is admitted
+  ---
+  duration_ms: 1.1475
+  type: 'test'
+  ...
+# Subtest: missing data is explicit unavailable and permits successful retry
+ok 31 - missing data is explicit unavailable and permits successful retry
+  ---
+  duration_ms: 0.4869
+  type: 'test'
+  ...
+# Subtest: corrupt decoder/start cannot become ready
+ok 32 - corrupt decoder/start cannot become ready
+  ---
+  duration_ms: 0.3878
+  type: 'test'
+  ...
+# Subtest: late A completion cannot replace B after retry
+ok 33 - late A completion cannot replace B after retry
+  ---
+  duration_ms: 0.2792
+  type: 'test'
+  ...
+# Subtest: late obsolete rejection cannot erase successful recovery
+ok 34 - late obsolete rejection cannot erase successful recovery
+  ---
+  duration_ms: 0.3208
+  type: 'test'
+  ...
+# Subtest: hung load has a bounded timeout and abort
+ok 35 - hung load has a bounded timeout and abort
+  ---
+  duration_ms: 8.3225
+  type: 'test'
+  ...
+# Subtest: disposal prevents resurrection by any obsolete completion
+ok 36 - disposal prevents resurrection by any obsolete completion
+  ---
+  duration_ms: 0.2588
+  type: 'test'
+  ...
+# Subtest: retry supplies a distinct generation to the request factory so pending script requests cannot coalesce
+ok 37 - retry supplies a distinct generation to the request factory so pending script requests cannot coalesce
+  ---
+  duration_ms: 0.1537
+  type: 'test'
+  ...
+# Subtest: native linear composition module exists
+ok 38 - native linear composition module exists
+  ---
+  duration_ms: 0.6725
+  type: 'test'
+  ...
+# Subtest: actual native alpha attenuates direct light once, not twice
+ok 39 - actual native alpha attenuates direct light once, not twice
+  ---
+  duration_ms: 0.3254
+  type: 'test'
+  ...
+# Subtest: zero-alpha native cloud leaves physical sky byte-identical
+ok 40 - zero-alpha native cloud leaves physical sky byte-identical
+  ---
+  duration_ms: 0.4233
+  type: 'test'
+  ...
+# Subtest: fully opaque native colour appears once at the shared exposure
+ok 41 - fully opaque native colour appears once at the shared exposure
+  ---
+  duration_ms: 0.2043
+  type: 'test'
+  ...
+# Subtest: native PBR material is in front of stars but behind the cloud screen
+ok 42 - native PBR material is in front of stars but behind the cloud screen
+  ---
+  duration_ms: 0.2679
+  type: 'test'
+  ...
+# Subtest: cloud colour is not multiplied by a second source-alpha factor
+ok 43 - cloud colour is not multiplied by a second source-alpha factor
+  ---
+  duration_ms: 0.116
+  type: 'test'
+  ...
+# Subtest: native cloud vertical mask reproduces the existing support, not a whole-card veil
+ok 44 - native cloud vertical mask reproduces the existing support, not a whole-card veil
+  ---
+  duration_ms: 0.128
+  type: 'test'
+  ...
+# Subtest: invalid foreground buffers or exposures are rejected
+ok 45 - invalid foreground buffers or exposures are rejected
+  ---
+  duration_ms: 0.1641
+  type: 'test'
+  ...
+# Subtest: PBR transparent edge does not punch a dark halo in the physical sky
+ok 46 - PBR transparent edge does not punch a dark halo in the physical sky
+  ---
+  duration_ms: 0.4588
+  type: 'test'
+  ...
+# Subtest: region calendar join is exactly the corresponding full-frame prefix
+ok 47 - region calendar join is exactly the corresponding full-frame prefix
+  ---
+  duration_ms: 0.4426
+  type: 'test'
+  ...
+# Subtest: foreground region includes current and previous Moon extents, with whole-frame bound
+ok 48 - foreground region includes current and previous Moon extents, with whole-frame bound
+  ---
+  duration_ms: 0.3052
+  type: 'test'
+  ...
+# Subtest: regional foreground retains identical encoded pixel values
+ok 49 - regional foreground retains identical encoded pixel values
+  ---
+  duration_ms: 0.6858
+  type: 'test'
+  ...
+# Subtest: native contract is implemented
+ok 50 - native contract is implemented
+  ---
+  duration_ms: 0.7342
+  type: 'test'
+  ...
+# Subtest: accepted UTC and generation are retained exactly
+ok 51 - accepted UTC and generation are retained exactly
+  ---
+  duration_ms: 0.3078
+  type: 'test'
+  ...
+# Subtest: invalid/missing observer or scene is not coerced to a valid sky
+ok 52 - invalid/missing observer or scene is not coerced to a valid sky
+  ---
+  duration_ms: 0.3695
+  type: 'test'
+  ...
+# Subtest: weather and camera change invalidate a target even at the same coordinates
+ok 53 - weather and camera change invalidate a target even at the same coordinates
+  ---
+  duration_ms: 0.1066
+  type: 'test'
+  ...
+# Subtest: new target rejects a late prior-generation result
+ok 54 - new target rejects a late prior-generation result
+  ---
+  duration_ms: 0.2184
+  type: 'test'
+  ...
+# Subtest: diffuse mode replaces natural night budget and preserves source estimates
+ok 55 - diffuse mode replaces natural night budget and preserves source estimates
+  ---
+  duration_ms: 0.0923
+  type: 'test'
+  ...
+# Subtest: actual widget no longer constructs the fictitious stellar population
+ok 56 - actual widget no longer constructs the fictitious stellar population
+  ---
+  duration_ms: 1.3958
+  type: 'test'
+  ...
+# Subtest: native visibility assumption actually reaches the CP7 aerosol owner
+ok 57 - native visibility assumption actually reaches the CP7 aerosol owner
+  ---
+  duration_ms: 0.2389
+  type: 'test'
+  ...
+# Subtest: calendar transform includes native CSS scaling and card placement
+ok 58 - calendar transform includes native CSS scaling and card placement
+  ---
+  duration_ms: 0.3745
+  type: 'test'
+  ...
+# Subtest: calendar cutout changes direct light only, not sky or exposure
+ok 59 - calendar cutout changes direct light only, not sky or exposure
+  ---
+  duration_ms: 0.8138
+  type: 'test'
+  ...
+# Subtest: estimate-support selection is a distinct render identity
+ok 60 - estimate-support selection is a distinct render identity
+  ---
+  duration_ms: 0.1173
+  type: 'test'
+  ...
+# Subtest: native encoder exactly matches all 255 quantization boundaries and adjacent doubles
+ok 61 - native encoder exactly matches all 255 quantization boundaries and adjacent doubles
+  ---
+  duration_ms: 4.8846
+  type: 'test'
+  ...
+# Subtest: native encoder matches the oracle across exposures, negative channels, saturation and random doubles
+ok 62 - native encoder matches the oracle across exposures, negative channels, saturation and random doubles
+  ---
+  duration_ms: 43.5316
+  type: 'test'
+  ...
+# Subtest: native encoder keeps boundary equality after rounded exposure multiplication
+ok 63 - native encoder keeps boundary equality after rounded exposure multiplication
+  ---
+  duration_ms: 5.9332
+  type: 'test'
+  ...
+# Subtest: native encoder retains invalid-buffer/channel/exposure rejection
+ok 64 - native encoder retains invalid-buffer/channel/exposure rejection
+  ---
+  duration_ms: 0.4034
+  type: 'test'
+  ...
+# Subtest: native engine renders only the admitted actual catalogue
+ok 65 - native engine renders only the admitted actual catalogue
+  ---
+  duration_ms: 641.7379
+  type: 'test'
+  ...
+# Subtest: same-length corrupt catalogue is rejected before native rendering
+ok 66 - same-length corrupt catalogue is rejected before native rendering
+  ---
+  duration_ms: 97.0016
+  type: 'test'
+  ...
+# Subtest: wrong manifest is rejected rather than repaired or replaced
+ok 67 - wrong manifest is rejected rather than repaired or replaced
+  ---
+  duration_ms: 0.3478
+  type: 'test'
+  ...
+# Subtest: native geometry changes with accepted time and observer
+ok 68 - native geometry changes with accepted time and observer
+  ---
+  duration_ms: 971.2042
+  type: 'test'
+  ...
+# Subtest: native physical mode admits the retained real diffuse source with gas-only worker transport
+ok 69 - native physical mode admits the retained real diffuse source with gas-only worker transport
+  ---
+  duration_ms: 1548.6775
+  type: 'test'
+  ...
+# Subtest: missing native map yields fresh explicitly labelled CP6 sky at current native UTC
+ok 70 - missing native map yields fresh explicitly labelled CP6 sky at current native UTC
+  ---
+  duration_ms: 311.7996
+  type: 'test'
+  ...
+# Subtest: same-byte-count corrupt map is not displayed or silently replaced
+ok 71 - same-byte-count corrupt map is not displayed or silently replaced
+  ---
+  duration_ms: 399.1443
+  type: 'test'
+  ...
+# Subtest: rejecting map estimates keeps incomplete exposure explicit in native mode
+ok 72 - rejecting map estimates keeps incomplete exposure explicit in native mode
+  ---
+  duration_ms: 1687.8506
+  type: 'test'
+  ...
+# Subtest: an unchanged scene cannot admit a frame two minutes out of date
+ok 73 - an unchanged scene cannot admit a frame two minutes out of date
+  ---
+  duration_ms: 0.8553
+  type: 'test'
+  ...
+# Subtest: ordinary short worker latency remains eligible
+ok 74 - ordinary short worker latency remains eligible
+  ---
+  duration_ms: 0.1188
+  type: 'test'
+  ...
+# Subtest: frozen preview result at the exact accepted time is eligible
+ok 75 - frozen preview result at the exact accepted time is eligible
+  ---
+  duration_ms: 0.0722
+  type: 'test'
+  ...
+# Subtest: initial request renders once and retains captured input
+ok 76 - initial request renders once and retains captured input
+  ---
+  duration_ms: 1.7202
+  type: 'test'
+  ...
+# Subtest: A→B obsolete successful completion cannot paint A
+ok 77 - A→B obsolete successful completion cannot paint A
+  ---
+  duration_ms: 0.2678
+  type: 'test'
+  ...
+# Subtest: A→B→A coalesces to newest A generation without painting first A
+ok 78 - A→B→A coalesces to newest A generation without painting first A
+  ---
+  duration_ms: 0.8
+  type: 'test'
+  ...
+# Subtest: obsolete rejection cannot report error over newer target
+ok 79 - obsolete rejection cannot report error over newer target
+  ---
+  duration_ms: 0.6213
+  type: 'test'
+  ...
+# Subtest: explicit invalidation fences a pending completion even when identity is reused
+ok 80 - explicit invalidation fences a pending completion even when identity is reused
+  ---
+  duration_ms: 0.2853
+  type: 'test'
+  ...
+# Subtest: wall-clock forward discontinuity fences late completion with same scene identity
+ok 81 - wall-clock forward discontinuity fences late completion with same scene identity
+  ---
+  duration_ms: 0.3423
+  type: 'test'
+  ...
+# Subtest: wall-clock backward discontinuity is caught even without a timer poll
+ok 82 - wall-clock backward discontinuity is caught even without a timer poll
+  ---
+  duration_ms: 0.4617
+  type: 'test'
+  ...
+# Subtest: short explicit seek changing native anchor also fences
+ok 83 - short explicit seek changing native anchor also fences
+  ---
+  duration_ms: 0.3913
+  type: 'test'
+  ...
+# Subtest: normal wall time and monotonic time advancement does not repeatedly supersede slow job
+ok 84 - normal wall time and monotonic time advancement does not repeatedly supersede slow job
+  ---
+  duration_ms: 0.3234
+  type: 'test'
+  ...
+# Subtest: invalid input clears and cannot retain old diagnostic authority
+ok 85 - invalid input clears and cannot retain old diagnostic authority
+  ---
+  duration_ms: 0.307
+  type: 'test'
+  ...
+# Subtest: hidden state refuses forced work and obsolete completions
+ok 86 - hidden state refuses forced work and obsolete completions
+  ---
+  duration_ms: 0.1533
+  type: 'test'
+  ...
+# Subtest: reduced motion invalidates but does not freeze accepted astronomical time
+ok 87 - reduced motion invalidates but does not freeze accepted astronomical time
+  ---
+  duration_ms: 0.1462
+  type: 'test'
+  ...
+# Subtest: timezone-only update invalidates even with unchanged coordinates
+ok 88 - timezone-only update invalidates even with unchanged coordinates
+  ---
+  duration_ms: 0.1201
+  type: 'test'
+  ...
+# Subtest: expired accepted frame clears before a refresh
+ok 89 - expired accepted frame clears before a refresh
+  ---
+  duration_ms: 0.4521
+  type: 'test'
+  ...
+# Subtest: dispose fences all callbacks and never restarts
+ok 90 - dispose fences all callbacks and never restarts
+  ---
+  duration_ms: 0.1027
+  type: 'test'
+  ...
+# Subtest: timetable CSS and geometry equal the user-supplied 2057503 snapshot
+ok 91 - timetable CSS and geometry equal the user-supplied 2057503 snapshot
+  ---
+  duration_ms: 1.9698
+  type: 'test'
+  ...
+# Subtest: native opt-in contrast normal retains the existing white-backdrop 4.5 bound
+ok 92 - native opt-in contrast normal retains the existing white-backdrop 4.5 bound
+  ---
+  duration_ms: 0.5647
+  type: 'test'
+  ...
+# Subtest: native opt-in contrast past retains the existing white-backdrop 4.5 bound
+ok 93 - native opt-in contrast past retains the existing white-backdrop 4.5 bound
+  ---
+  duration_ms: 0.2232
+  type: 'test'
+  ...
+# Subtest: native opt-in contrast on retains the existing white-backdrop 4.5 bound
+ok 94 - native opt-in contrast on retains the existing white-backdrop 4.5 bound
+  ---
+  duration_ms: 0.3411
+  type: 'test'
+  ...
+# Subtest: glass comparison preserves the pinned aesthetic without inventing an accessibility claim
+ok 95 - glass comparison preserves the pinned aesthetic without inventing an accessibility claim
+  ---
+  duration_ms: 0.6204
+  type: 'test'
+  ...
+# Subtest: native contrast past attenuation mutation is detected
+ok 96 - native contrast past attenuation mutation is detected
+  ---
+  duration_ms: 0.6061
+  type: 'test'
+  ...
+# Subtest: native contrast on attenuation mutation is detected
+ok 97 - native contrast on attenuation mutation is detected
+  ---
+  duration_ms: 0.5233
+  type: 'test'
+  ...
+# Subtest: native config and builder preserved byte for byte
+ok 98 - native config and builder preserved byte for byte
+  ---
+  duration_ms: 2.256
+  type: 'test'
+  ...
+# Subtest: native PBR maps, phase, Earthshine, material and calendar renderer unchanged
+ok 99 - native PBR maps, phase, Earthshine, material and calendar renderer unchanged
+  ---
+  duration_ms: 0.6304
+  type: 'test'
+  ...
+# Subtest: native weather admission/cloud painting and atmosphere derivation unchanged
+ok 100 - native weather admission/cloud painting and atmosphere derivation unchanged
+  ---
+  duration_ms: 0.2137
+  type: 'test'
+  ...
+# Subtest: native prayer fetching, accepted clock and settings source unchanged
+ok 101 - native prayer fetching, accepted clock and settings source unchanged
+  ---
+  duration_ms: 0.2309
+  type: 'test'
+  ...
+# Subtest: 10x cadence refreshes before the accepted frame exhausts its thirty-second age budget
+ok 102 - 10x cadence refreshes before the accepted frame exhausts its thirty-second age budget
+  ---
+  duration_ms: 1.5273
+  type: 'test'
+  ...
+# Subtest: a completed frame outside the rate envelope reports finite unavailability and never publishes
+ok 103 - a completed frame outside the rate envelope reports finite unavailability and never publishes
+  ---
+  duration_ms: 0.2715
+  type: 'test'
+  ...
+# Subtest: expiration of the displayed frame does not invalidate a newer current refresh
+ok 104 - expiration of the displayed frame does not invalidate a newer current refresh
+  ---
+  duration_ms: 0.2928
+  type: 'test'
+  ...
+# Subtest: repeated force notifications coalesce identical in-flight UTC instead of starving completion
+ok 105 - repeated force notifications coalesce identical in-flight UTC instead of starving completion
+  ---
+  duration_ms: 0.2365
+  type: 'test'
+  ...
+# Subtest: an unsupported moving rate recovers at frozen time with fresh identity and no stale error
+ok 106 - an unsupported moving rate recovers at frozen time with fresh identity and no stale error
+  ---
+  duration_ms: 0.3349
+  type: 'test'
+  ...
+# Subtest: A to B to A during a rate change admits only the new generation
+ok 107 - A to B to A during a rate change admits only the new generation
+  ---
+  duration_ms: 0.3763
+  type: 'test'
+  ...
+# Subtest: a backward seek without generation change clears rate diagnostics and fences completion
+ok 108 - a backward seek without generation change clears rate diagnostics and fences completion
+  ---
+  duration_ms: 0.2769
+  type: 'test'
+  ...
+# Subtest: source reload during acceleration disposes the old queue before successor acceptance
+ok 109 - source reload during acceleration disposes the old queue before successor acceptance
+  ---
+  duration_ms: 0.2098
+  type: 'test'
+  ...
+1..109
+# tests 109
+# suites 0
+# pass 109
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7347.2811

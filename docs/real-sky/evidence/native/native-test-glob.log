@@ -1,0 +1,2515 @@
+TAP version 13
+# {"sourceSHA256":"8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643","ordinaryFixtureSHA256":"40c6412a36a4644ec9db9a5c92ae2e682aa22dfd6bac45be249886cfe7e76282"}
+# Subtest: source and ordinary synthetic fixture identities
+ok 1 - source and ordinary synthetic fixture identities
+  ---
+  duration_ms: 5.2983
+  type: 'test'
+  ...
+# Subtest: ordinary record reaches real loader/cache/model/arc
+ok 2 - ordinary record reaches real loader/cache/model/arc
+  ---
+  duration_ms: 115.5423
+  type: 'test'
+  ...
+# Subtest: ordinary provider 400 envelope stays rejected
+ok 3 - ordinary provider 400 envelope stays rejected
+  ---
+  duration_ms: 6.7767
+  type: 'test'
+  ...
+# Subtest: empty timings rejected before adoption/persistence
+ok 4 - empty timings rejected before adoption/persistence
+  ---
+  duration_ms: 5.8467
+  type: 'test'
+  ...
+# Subtest: missing Fajr rejected before adoption/persistence
+ok 5 - missing Fajr rejected before adoption/persistence
+  ---
+  duration_ms: 6.6484
+  type: 'test'
+  ...
+# Subtest: nonfinite exponent Dhuhr rejected before adoption/persistence
+ok 6 - nonfinite exponent Dhuhr rejected before adoption/persistence
+  ---
+  duration_ms: 6.0842
+  type: 'test'
+  ...
+# Subtest: out-of-range clock rejected before adoption/persistence
+ok 7 - out-of-range clock rejected before adoption/persistence
+  ---
+  duration_ms: 6.0134
+  type: 'test'
+  ...
+# Subtest: extra clock component rejected before adoption/persistence
+ok 8 - extra clock component rejected before adoption/persistence
+  ---
+  duration_ms: 5.7309
+  type: 'test'
+  ...
+# Subtest: missing clock component rejected before adoption/persistence
+ok 9 - missing clock component rejected before adoption/persistence
+  ---
+  duration_ms: 5.6446
+  type: 'test'
+  ...
+# Subtest: clock nonstring rejected before adoption/persistence
+ok 10 - clock nonstring rejected before adoption/persistence
+  ---
+  duration_ms: 5.4675
+  type: 'test'
+  ...
+# Subtest: wrong requested Gregorian date rejected before adoption/persistence
+ok 11 - wrong requested Gregorian date rejected before adoption/persistence
+  ---
+  duration_ms: 5.144
+  type: 'test'
+  ...
+# Subtest: contradictory Gregorian primitives rejected before adoption/persistence
+ok 12 - contradictory Gregorian primitives rejected before adoption/persistence
+  ---
+  duration_ms: 4.7472
+  type: 'test'
+  ...
+# Subtest: normalized impossible Gregorian date rejected before adoption/persistence
+ok 13 - normalized impossible Gregorian date rejected before adoption/persistence
+  ---
+  duration_ms: 6.8746
+  type: 'test'
+  ...
+# Subtest: invalid timezone rejected before adoption/persistence
+ok 14 - invalid timezone rejected before adoption/persistence
+  ---
+  duration_ms: 6.4619
+  type: 'test'
+  ...
+# Subtest: offset string is not an IANA timezone rejected before adoption/persistence
+ok 15 - offset string is not an IANA timezone rejected before adoption/persistence
+  ---
+  duration_ms: 5.5038
+  type: 'test'
+  ...
+# Subtest: malformed optional Sunset rejected before adoption/persistence
+ok 16 - malformed optional Sunset rejected before adoption/persistence
+  ---
+  duration_ms: 5.8343
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":false,"httpStatus":500,"body":{"code":500,"status":"ERR
+ok 17 - HTTP/envelope contradiction {"httpOk":false,"httpStatus":500,"body":{"code":500,"status":"ERR
+  ---
+  duration_ms: 5.2534
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":false,"httpStatus":500,"body":{"code":200,"status":"OK"
+ok 18 - HTTP/envelope contradiction {"httpOk":false,"httpStatus":500,"body":{"code":200,"status":"OK"
+  ---
+  duration_ms: 4.8401
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":true,"body":{"code":500,"status":"ERROR","data":{"timin
+ok 19 - HTTP/envelope contradiction {"httpOk":true,"body":{"code":500,"status":"ERROR","data":{"timin
+  ---
+  duration_ms: 4.9885
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":true,"body":{"code":200,"status":"ERROR","data":{"timin
+ok 20 - HTTP/envelope contradiction {"httpOk":true,"body":{"code":200,"status":"ERROR","data":{"timin
+  ---
+  duration_ms: 5.2194
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":null,"body":{"code":200,"status":"OK","data":{"timings"
+ok 21 - HTTP/envelope contradiction {"httpOk":null,"body":{"code":200,"status":"OK","data":{"timings"
+  ---
+  duration_ms: 5.3786
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":true,"body":[]}
+ok 22 - HTTP/envelope contradiction {"httpOk":true,"body":[]}
+  ---
+  duration_ms: 5.7483
+  type: 'test'
+  ...
+# Subtest: corrupt matching cache misses and healthy live source recovers
+ok 23 - corrupt matching cache misses and healthy live source recovers
+  ---
+  duration_ms: 48.2511
+  type: 'test'
+  ...
+# Subtest: invalid cache is a miss
+ok 24 - invalid cache is a miss
+  ---
+  duration_ms: 42.4495
+  type: 'test'
+  ...
+# Subtest: invalid cache is a miss
+ok 25 - invalid cache is a miss
+  ---
+  duration_ms: 60.1541
+  type: 'test'
+  ...
+# Subtest: legacy valid cache survives denied network and writes
+ok 26 - legacy valid cache survives denied network and writes
+  ---
+  duration_ms: 47.6178
+  type: 'test'
+  ...
+# Subtest: valid live record survives storage denial
+ok 27 - valid live record survives storage denial
+  ---
+  duration_ms: 41.6124
+  type: 'test'
+  ...
+# Subtest: suffix clocks and absent Sunset remain compatible
+ok 28 - suffix clocks and absent Sunset remain compatible
+  ---
+  duration_ms: 41.3656
+  type: 'test'
+  ...
+# Subtest: complete Tromso summer network consumer replay
+ok 29 - complete Tromso summer network consumer replay
+  ---
+  duration_ms: 57.0385
+  type: 'test'
+  ...
+# Subtest: complete Tromso summer offline-cache consumer replay
+ok 30 - complete Tromso summer offline-cache consumer replay
+  ---
+  duration_ms: 49.1627
+  type: 'test'
+  ...
+# Subtest: complete Tromso winter network consumer replay
+ok 31 - complete Tromso winter network consumer replay
+  ---
+  duration_ms: 54.4421
+  type: 'test'
+  ...
+# Subtest: complete Tromso winter offline-cache consumer replay
+ok 32 - complete Tromso winter offline-cache consumer replay
+  ---
+  duration_ms: 69.479
+  type: 'test'
+  ...
+# Subtest: missing optional AH does not discard usable timings
+ok 33 - missing optional AH does not discard usable timings
+  ---
+  duration_ms: 62.6654
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {}
+ok 34 - malformed optional AH remains unavailable {}
+  ---
+  duration_ms: 51.9289
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {"year":"1448","day":"bad","month":{"number":2,"en":"Safar"}}
+ok 35 - malformed optional AH remains unavailable {"year":"1448","day":"bad","month":{"number":2,"en":"Safar"}}
+  ---
+  duration_ms: 58.2765
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {"year":"1448","day":"99","month":{"number":99,"en":"Safar"}}
+ok 36 - malformed optional AH remains unavailable {"year":"1448","day":"99","month":{"number":99,"en":"Safar"}}
+  ---
+  duration_ms: 109.5587
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {"year":"1e999","day":"19","month":{"number":2,"en":"Safar"}}
+ok 37 - malformed optional AH remains unavailable {"year":"1e999","day":"19","month":{"number":2,"en":"Safar"}}
+  ---
+  duration_ms: 85.845
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {"year":"1448","day":"19","month":{"number":2,"en":7}}
+ok 38 - malformed optional AH remains unavailable {"year":"1448","day":"19","month":{"number":2,"en":7}}
+  ---
+  duration_ms: 106.2454
+  type: 'test'
+  ...
+# Subtest: longest formatter tokens preserved
+ok 39 - longest formatter tokens preserved
+  ---
+  duration_ms: 12.093
+  type: 'test'
+  ...
+# Subtest: numeric formatter needs no optional month name
+ok 40 - numeric formatter needs no optional month name
+  ---
+  duration_ms: 7.2497
+  type: 'test'
+  ...
+# Subtest: optional AH 31 is unavailable while real Gregorian 31 remains valid
+ok 41 - optional AH 31 is unavailable while real Gregorian 31 remains valid
+  ---
+  duration_ms: 68.0608
+  type: 'test'
+  ...
+# Subtest: valid AH month 2 day 30 stays displayable before explicit calendar caller joins
+ok 42 - valid AH month 2 day 30 stays displayable before explicit calendar caller joins
+  ---
+  duration_ms: 106.8499
+  type: 'test'
+  ...
+# Subtest: missing-config format literal constructor
+ok 43 - missing-config format literal constructor
+  ---
+  duration_ms: 7.2259
+  type: 'test'
+  ...
+# Subtest: missing-config format literal __proto__
+ok 44 - missing-config format literal __proto__
+  ---
+  duration_ms: 9.561
+  type: 'test'
+  ...
+# Subtest: missing-config format literal toString
+ok 45 - missing-config format literal toString
+  ---
+  duration_ms: 8.0036
+  type: 'test'
+  ...
+# Subtest: missing-config format literal valueOf
+ok 46 - missing-config format literal valueOf
+  ---
+  duration_ms: 8.4273
+  type: 'test'
+  ...
+# Subtest: missing-config format literal hasOwnProperty
+ok 47 - missing-config format literal hasOwnProperty
+  ---
+  duration_ms: 5.2802
+  type: 'test'
+  ...
+# Subtest: format alias iso, config=true
+ok 48 - format alias iso, config=true
+  ---
+  duration_ms: 5.569
+  type: 'test'
+  ...
+# Subtest: format alias iso, config=false
+ok 49 - format alias iso, config=false
+  ---
+  duration_ms: 5.7854
+  type: 'test'
+  ...
+# Subtest: format alias us, config=true
+ok 50 - format alias us, config=true
+  ---
+  duration_ms: 5.3154
+  type: 'test'
+  ...
+# Subtest: format alias us, config=false
+ok 51 - format alias us, config=false
+  ---
+  duration_ms: 8.2411
+  type: 'test'
+  ...
+# Subtest: format alias eu, config=true
+ok 52 - format alias eu, config=true
+  ---
+  duration_ms: 5.8783
+  type: 'test'
+  ...
+# Subtest: format alias eu, config=false
+ok 53 - format alias eu, config=false
+  ---
+  duration_ms: 5.0627
+  type: 'test'
+  ...
+# Subtest: format alias long, config=true
+ok 54 - format alias long, config=true
+  ---
+  duration_ms: 6.1458
+  type: 'test'
+  ...
+# Subtest: format alias long, config=false
+ok 55 - format alias long, config=false
+  ---
+  duration_ms: 6.159
+  type: 'test'
+  ...
+# Subtest: mutant bypassing network admission is killed by retries while bundle admission still contains it
+ok 56 - mutant bypassing network admission is killed by retries while bundle admission still contains it
+  ---
+  duration_ms: 10.2392
+  type: 'test'
+  ...
+# Subtest: mutant removing required clocks is killed before model consumption
+ok 57 - mutant removing required clocks is killed before model consumption
+  ---
+  duration_ms: 12.4695
+  type: 'test'
+  ...
+# Subtest: mutant bypassing selected-envelope admission is killed by cache miss oracle; bundle still contains it
+ok 58 - mutant bypassing selected-envelope admission is killed by cache miss oracle; bundle still contains it
+  ---
+  duration_ms: 69.0629
+  type: 'test'
+  ...
+# Subtest: mutant removing own-key alias guard is killed by literal output
+ok 59 - mutant removing own-key alias guard is killed by literal output
+  ---
+  duration_ms: 7.5745
+  type: 'test'
+  ...
+# Subtest: mutant strict ordering is killed by complete summer captured record
+ok 60 - mutant strict ordering is killed by complete summer captured record
+  ---
+  duration_ms: 9.0003
+  type: 'test'
+  ...
+# Subtest: mutant strict ordering is killed by complete winter captured record
+ok 61 - mutant strict ordering is killed by complete winter captured record
+  ---
+  duration_ms: 7.3203
+  type: 'test'
+  ...
+# Subtest: mutant dropping HTTP gate is killed independently of provider envelope
+ok 62 - mutant dropping HTTP gate is killed independently of provider envelope
+  ---
+  duration_ms: 8.8093
+  type: 'test'
+  ...
+# Subtest: R0003 actual applyConfig A then B: obsolete A cannot change current data, zone or B cache
+ok 63 - R0003 actual applyConfig A then B: obsolete A cannot change current data, zone or B cache
+  ---
+  duration_ms: 79.0393
+  type: 'test'
+  ...
+# Subtest: R0003 positive actual applyConfig: later B succeeds after early A completion
+ok 64 - R0003 positive actual applyConfig: later B succeeds after early A completion
+  ---
+  duration_ms: 62.4164
+  type: 'test'
+  ...
+# Subtest: R0003 ABA identity: original A remains obsolete when coordinates return to A
+ok 65 - R0003 ABA identity: original A remains obsolete when coordinates return to A
+  ---
+  duration_ms: 58.3604
+  type: 'test'
+  ...
+# Subtest: R0003 same coordinates method-only owns its captured request and cache
+ok 66 - R0003 same coordinates method-only owns its captured request and cache
+  ---
+  duration_ms: 56.2983
+  type: 'test'
+  ...
+# Subtest: R0003 same coordinates school-only owns its captured request and cache
+ok 67 - R0003 same coordinates school-only owns its captured request and cache
+  ---
+  duration_ms: 48.0507
+  type: 'test'
+  ...
+# Subtest: R0003 obsolete rejection and retained old timer cannot release or report over B
+ok 68 - R0003 obsolete rejection and retained old timer cannot release or report over B
+  ---
+  duration_ms: 47.7316
+  type: 'test'
+  ...
+# Subtest: R0003 obsolete tomorrow body cannot enter new selection or its cache
+ok 69 - R0003 obsolete tomorrow body cannot enter new selection or its cache
+  ---
+  duration_ms: 56.117
+  type: 'test'
+  ...
+# Subtest: R0003 winning response persists and reloads through actual selected-cache loader
+ok 70 - R0003 winning response persists and reloads through actual selected-cache loader
+  ---
+  duration_ms: 107.015
+  type: 'test'
+  ...
+# Subtest: R0003 independent central slots retain B owners after A cleanup for all remote kinds
+ok 71 - R0003 independent central slots retain B owners after A cleanup for all remote kinds
+  ---
+  duration_ms: 8.4703
+  type: 'test'
+  ...
+# Subtest: R0003 abort removal leaves stale rejection and healthy B commitment intact
+ok 72 - R0003 abort removal leaves stale rejection and healthy B commitment intact
+  ---
+  duration_ms: 64.6197
+  type: 'test'
+  ...
+# Subtest: R0003 mutant unconditional finally is killed by replacement-slot ownership
+ok 73 - R0003 mutant unconditional finally is killed by replacement-slot ownership
+  ---
+  duration_ms: 9.5789
+  type: 'test'
+  ...
+# Subtest: R0003 historical Madinah/Riyadh to New York race preserves exact winning zone and Asr
+ok 74 - R0003 historical Madinah/Riyadh to New York race preserves exact winning zone and Asr
+  ---
+  duration_ms: 60.7015
+  type: 'test'
+  ...
+# Subtest: R0003 equator/prime-meridian current acquisition preserves numeric zero coordinates
+ok 75 - R0003 equator/prime-meridian current acquisition preserves numeric zero coordinates
+  ---
+  duration_ms: 57.2646
+  type: 'test'
+  ...
+# Subtest: R0003 recording DOM seeds actual SKY markup classes before source callers
+ok 76 - R0003 recording DOM seeds actual SKY markup classes before source callers
+  ---
+  duration_ms: 4.5785
+  type: 'test'
+  ...
+# Subtest: R0003 SKY natural cold boot retains authored pending state through builders and acquisition
+ok 77 - R0003 SKY natural cold boot retains authored pending state through builders and acquisition
+  ---
+  duration_ms: 49.9034
+  type: 'test'
+  ...
+# Subtest: R0003 SKY invalid boot reentry drops explicitly seeded prior-scene permission before its guard
+ok 78 - R0003 SKY invalid boot reentry drops explicitly seeded prior-scene permission before its guard
+  ---
+  duration_ms: 6.0452
+  type: 'test'
+  ...
+# Subtest: R0003 SKY accepted reset clears old scene after config and generation change
+ok 79 - R0003 SKY accepted reset clears old scene after config and generation change
+  ---
+  duration_ms: 45.6017
+  type: 'test'
+  ...
+# Subtest: R0003 SKY actual visibility rebases real elapsed cloud time and preserves held axes
+ok 80 - R0003 SKY actual visibility rebases real elapsed cloud time and preserves held axes
+  ---
+  duration_ms: 49.611
+  type: 'test'
+  ...
+# Subtest: R0003 SKY same-day provider-zone reanchor reaches the actual projection identity guard
+ok 81 - R0003 SKY same-day provider-zone reanchor reaches the actual projection identity guard
+  ---
+  duration_ms: 125.0187
+  type: 'test'
+  ...
+# Subtest: R0003 SKY cold boot hook omission is non-discriminating with authored initial classes
+ok 82 - R0003 SKY cold boot hook omission is non-discriminating with authored initial classes
+  ---
+  duration_ms: 147.5429
+  type: 'test'
+  ...
+# Subtest: R0003 SKY reset-begin mutation is killed by the actual boundary effect
+ok 83 - R0003 SKY reset-begin mutation is killed by the actual boundary effect
+  ---
+  duration_ms: 180.5673
+  type: 'test'
+  ...
+# Subtest: R0003 SKY surface-drop mutation is killed by the actual boundary effect
+ok 84 - R0003 SKY surface-drop mutation is killed by the actual boundary effect
+  ---
+  duration_ms: 67.9115
+  type: 'test'
+  ...
+# Subtest: R0003 SKY elapsed-rebase mutation is killed by the actual boundary effect
+ok 85 - R0003 SKY elapsed-rebase mutation is killed by the actual boundary effect
+  ---
+  duration_ms: 7.2344
+  type: 'test'
+  ...
+# Subtest: R0003 SKY projection-identity mutation is killed by the actual boundary effect
+ok 86 - R0003 SKY projection-identity mutation is killed by the actual boundary effect
+  ---
+  duration_ms: 120.7285
+  type: 'test'
+  ...
+# Subtest: R0004 empty Tokyo cache: first accepted current paint is resolved-zone day 8
+ok 87 - R0004 empty Tokyo cache: first accepted current paint is resolved-zone day 8
+  ---
+  duration_ms: 144.5146
+  type: 'test'
+  ...
+# Subtest: R0004 selected main cache: valid resolved day 8 cache survives offline wrong hint
+ok 88 - R0004 selected main cache: valid resolved day 8 cache survives offline wrong hint
+  ---
+  duration_ms: 81.517
+  type: 'test'
+  ...
+# Subtest: R0004 positive explicitly matching Tokyo day 8 cache survives offline refresh
+ok 89 - R0004 positive explicitly matching Tokyo day 8 cache survives offline refresh
+  ---
+  duration_ms: 69.1472
+  type: 'test'
+  ...
+# Subtest: R0004 wrong-day valid Tokyo cache cannot paint as current while offline
+ok 90 - R0004 wrong-day valid Tokyo cache cannot paint as current while offline
+  ---
+  duration_ms: 7.6278
+  type: 'test'
+  ...
+# Subtest: R0004 zone-free-only cache remains a miss; no scanning or deletion
+ok 91 - R0004 zone-free-only cache remains a miss; no scanning or deletion
+  ---
+  duration_ms: 7.04
+  type: 'test'
+  ...
+# Subtest: R0004 both key variants choose only valid main envelope and preserve its bytes
+ok 92 - R0004 both key variants choose only valid main envelope and preserve its bytes
+  ---
+  duration_ms: 158.7023
+  type: 'test'
+  ...
+# Subtest: R0004 corrupt selected envelope cannot establish zone; healthy corrected body recovers
+ok 93 - R0004 corrupt selected envelope cannot establish zone; healthy corrected body recovers
+  ---
+  duration_ms: 168.5062
+  type: 'test'
+  ...
+# Subtest: R0004 correction still validates body identity; budget cannot make a third day request
+ok 94 - R0004 correction still validates body identity; budget cannot make a third day request
+  ---
+  duration_ms: 97.9281
+  type: 'test'
+  ...
+# {"warmLoop":{"frames":100,"elapsed":1600,"intl":105,"admission":0,"paints":1,"requests":0,"stale":false}}
+# Subtest: R0005 completed prefetch promotes at midnight while network is offline
+ok 95 - R0005 completed prefetch promotes at midnight while network is offline
+  ---
+  duration_ms: 171.0312
+  type: 'test'
+  ...
+# Subtest: R0005 positive normal next-day prefetch remains tomorrow before midnight
+ok 96 - R0005 positive normal next-day prefetch remains tomorrow before midnight
+  ---
+  duration_ms: 103.3696
+  type: 'test'
+  ...
+# Subtest: R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day
+ok 97 - R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day
+  ---
+  duration_ms: 87.3784
+  type: 'test'
+  ...
+# Subtest: R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF
+ok 98 - R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF
+  ---
+  duration_ms: 157.8405
+  type: 'test'
+  ...
+# Subtest: R0005 held-out warm 100-frame control avoids repeated admission/Intl construction
+ok 99 - R0005 held-out warm 100-frame control avoids repeated admission/Intl construction
+  ---
+  duration_ms: 98.7297
+  type: 'test'
+  ...
+# Subtest: R0005 late next-day prefetch rescues current when midnight acquisition exhausts
+ok 100 - R0005 late next-day prefetch rescues current when midnight acquisition exhausts
+  ---
+  duration_ms: 151.4441
+  type: 'test'
+  ...
+# Subtest: R0005 payload neither current nor successor is discarded after further day movement
+ok 101 - R0005 payload neither current nor successor is discarded after further day movement
+  ---
+  duration_ms: 53.1832
+  type: 'test'
+  ...
+# Subtest: R0005 backward correction reclassifies and acquires the actual earlier civil day
+ok 102 - R0005 backward correction reclassifies and acquires the actual earlier civil day
+  ---
+  duration_ms: 107.7801
+  type: 'test'
+  ...
+# Subtest: R0005 hidden next-day completion marks dirty and paints once on frozen visible resume
+ok 103 - R0005 hidden next-day completion marks dirty and paints once on frozen visible resume
+  ---
+  duration_ms: 60.3091
+  type: 'test'
+  ...
+# Subtest: R0005 usable next-day record suppresses redundant work; promotion allows one new successor
+ok 104 - R0005 usable next-day record suppresses redundant work; promotion allows one new successor
+  ---
+  duration_ms: 105.3289
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC
+ok 105 - R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC
+  ---
+  duration_ms: 60.591
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC
+ok 106 - R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC
+  ---
+  duration_ms: 59.5068
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York
+ok 107 - R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York
+  ---
+  duration_ms: 54.1662
+  type: 'test'
+  ...
+# Subtest: R0005 mutant removing promotion is killed by offline completed prefetch
+ok 108 - R0005 mutant removing promotion is killed by offline completed prefetch
+  ---
+  duration_ms: 95.7602
+  type: 'test'
+  ...
+# Subtest: R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate
+ok 109 - R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate
+  ---
+  duration_ms: 52.3757
+  type: 'test'
+  ...
+# Subtest: R0005 mutant removing dirty consumer is killed by frozen async visible resume
+ok 110 - R0005 mutant removing dirty consumer is killed by frozen async visible resume
+  ---
+  duration_ms: 50.6043
+  type: 'test'
+  ...
+# {"dayReturnSourceSha256":"8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643","evidence":"source-bound only; native repair verification remains separate"}
+# {"removedRetirementSha256":"aa18b4352cab68b85a413f32ed5bb72d8f412cbafc70a31d3e9410ff176d1a99","killedBy":"actual reverse acquisition in both formats"}
+# {"nullRetirementSha256":"ab0e35d6eb87eaa32a97399ea0384cfb76c39d6141b129929a38c41c4bc6d14f","killedBy":"actual pending current loader after late prefetch promotion"}
+# Subtest: R0005/R0020 accepted forward day permits prompt return and painted270m in 24h
+ok 111 - R0005/R0020 accepted forward day permits prompt return and painted270m in 24h
+  ---
+  duration_ms: 103.1265
+  type: 'test'
+  ...
+# Subtest: R0005/R0020 accepted forward day permits prompt return and painted270m in 12h
+ok 112 - R0005/R0020 accepted forward day permits prompt return and painted270m in 12h
+  ---
+  duration_ms: 68.8699
+  type: 'test'
+  ...
+# Subtest: R0006 failed same-day attempts retain60s cooldown through repeated frames
+ok 113 - R0006 failed same-day attempts retain60s cooldown through repeated frames
+  ---
+  duration_ms: 89.5779
+  type: 'test'
+  ...
+# Subtest: R0005/R0006 late prefetch promotion preserves owning current loader and finally
+ok 114 - R0005/R0006 late prefetch promotion preserves owning current loader and finally
+  ---
+  duration_ms: 98.4409
+  type: 'test'
+  ...
+# Subtest: R0005 remove-retirement mutant recreates the prompt reverse-day failure
+ok 115 - R0005 remove-retirement mutant recreates the prompt reverse-day failure
+  ---
+  duration_ms: 129.4747
+  type: 'test'
+  ...
+# Subtest: R0006 null-retirement mutant loses the actual owning loader's corrected-day request
+ok 116 - R0006 null-retirement mutant loses the actual owning loader's corrected-day request
+  ---
+  duration_ms: 94.1115
+  type: 'test'
+  ...
+# {"cooldownMutantRequests":65}
+# Subtest: R0006 stalled headers settle three whole attempts by 32.7 seconds and start recovery loop
+ok 117 - R0006 stalled headers settle three whole attempts by 32.7 seconds and start recovery loop
+  ---
+  duration_ms: 22.4767
+  type: 'test'
+  ...
+# Subtest: R0006 stalled body is covered by same whole-attempt deadline
+ok 118 - R0006 stalled body is covered by same whole-attempt deadline
+  ---
+  duration_ms: 5.0265
+  type: 'test'
+  ...
+# Subtest: R0006 positive two prompt failures preserve third success with 900/1800 backoffs
+ok 119 - R0006 positive two prompt failures preserve third success with 900/1800 backoffs
+  ---
+  duration_ms: 46.5808
+  type: 'test'
+  ...
+# Subtest: R0006 same-day cold failure recovers at real elapsed 60s without midnight or wall clock
+ok 120 - R0006 same-day cold failure recovers at real elapsed 60s without midnight or wall clock
+  ---
+  duration_ms: 5.6882
+  type: 'test'
+  ...
+# Subtest: R0006 deadline trace is 0/10900/22700; terminal operation clears timers and busy
+ok 121 - R0006 deadline trace is 0/10900/22700; terminal operation clears timers and busy
+  ---
+  duration_ms: 5.174
+  type: 'test'
+  ...
+# Subtest: R0006 late old body after timeout cannot overwrite healthy retry or produce an unhandled rejection
+ok 122 - R0006 late old body after timeout cannot overwrite healthy retry or produce an unhandled rejection
+  ---
+  duration_ms: 42.0144
+  type: 'test'
+  ...
+# Subtest: R0006 delayed timeout callback cannot admit a body beyond real elapsed deadline
+ok 123 - R0006 delayed timeout callback cannot admit a body beyond real elapsed deadline
+  ---
+  duration_ms: 44.1387
+  type: 'test'
+  ...
+# Subtest: R0006 recovered same-day network at elapsed60s paints without reload or midnight
+ok 124 - R0006 recovered same-day network at elapsed60s paints without reload or midnight
+  ---
+  duration_ms: 43.9841
+  type: 'test'
+  ...
+# Subtest: R0006 forward wall retains real elapsed cold retry eligibility
+ok 125 - R0006 forward wall retains real elapsed cold retry eligibility
+  ---
+  duration_ms: 5.4161
+  type: 'test'
+  ...
+# Subtest: R0006 backward wall retains real elapsed cold retry eligibility
+ok 126 - R0006 backward wall retains real elapsed cold retry eligibility
+  ---
+  duration_ms: 6.8067
+  type: 'test'
+  ...
+# Subtest: R0006 frozen scene retains real elapsed cold retry eligibility
+ok 127 - R0006 frozen scene retains real elapsed cold retry eligibility
+  ---
+  duration_ms: 43.0363
+  type: 'test'
+  ...
+# Subtest: R0006 accelerated same-day scene retains real elapsed cold retry eligibility
+ok 128 - R0006 accelerated same-day scene retains real elapsed cold retry eligibility
+  ---
+  duration_ms: 37.3899
+  type: 'test'
+  ...
+# Subtest: R0006 hidden cooldown schedules one current operation on eligible visible resume
+ok 129 - R0006 hidden cooldown schedules one current operation on eligible visible resume
+  ---
+  duration_ms: 6.8156
+  type: 'test'
+  ...
+# Subtest: R0006 66 actual render opportunities with real retry delays make exactly six low-level starts
+ok 130 - R0006 66 actual render opportunities with real retry delays make exactly six low-level starts
+  ---
+  duration_ms: 218.5285
+  type: 'test'
+  ...
+# Subtest: R0006 mutant removing cooldown is killed by the same 66-opportunity schedule
+ok 131 - R0006 mutant removing cooldown is killed by the same 66-opportunity schedule
+  ---
+  duration_ms: 243.7086
+  type: 'test'
+  ...
+# Subtest: R0006 mutant removing cold branch is killed by same-day recovery
+ok 132 - R0006 mutant removing cold branch is killed by same-day recovery
+  ---
+  duration_ms: 7.5986
+  type: 'test'
+  ...
+# Subtest: R0006 mutant removing deadline recreates indefinitely pending headers
+ok 133 - R0006 mutant removing deadline recreates indefinitely pending headers
+  ---
+  duration_ms: 6.078
+  type: 'test'
+  ...
+# Subtest: R0006 headers-only deadline mutant is killed by stalled actual response body
+ok 134 - R0006 headers-only deadline mutant is killed by stalled actual response body
+  ---
+  duration_ms: 5.9303
+  type: 'test'
+  ...
+# Subtest: London accepted 18/17 method gains both adjusted markers, retains geometry
+ok 135 - London accepted 18/17 method gains both adjusted markers, retains geometry
+  ---
+  duration_ms: 55.9646
+  type: 'test'
+  ...
+# Subtest: complete Tromso summer retains both adjusted rings
+ok 136 - complete Tromso summer retains both adjusted rings
+  ---
+  duration_ms: 37.9638
+  type: 'test'
+  ...
+# Subtest: Madinah angle remains reachable, 90 min Isha is explicit unknown
+ok 137 - Madinah angle remains reachable, 90 min Isha is explicit unknown
+  ---
+  duration_ms: 38.4142
+  type: 'test'
+  ...
+# Subtest: independent angle/range boundary -17.5/40/{"Fajr":18,"Isha":17}
+ok 138 - independent angle/range boundary -17.5/40/{"Fajr":18,"Isha":17}
+  ---
+  duration_ms: 36.1832
+  type: 'test'
+  ...
+# Subtest: independent angle/range boundary -17.5/40/{"Fajr":17,"Isha":18}
+ok 139 - independent angle/range boundary -17.5/40/{"Fajr":17,"Isha":18}
+  ---
+  duration_ms: 36.5774
+  type: 'test'
+  ...
+# Subtest: independent angle/range boundary -18/40/{"Fajr":18,"Isha":18}
+ok 140 - independent angle/range boundary -18/40/{"Fajr":18,"Isha":18}
+  ---
+  duration_ms: 37.1343
+  type: 'test'
+  ...
+# Subtest: independent angle/range boundary -17.999/40/{"Fajr":18,"Isha":18}
+ok 141 - independent angle/range boundary -17.999/40/{"Fajr":18,"Isha":18}
+  ---
+  duration_ms: 37.5759
+  type: 'test'
+  ...
+# Subtest: independent angle/range boundary -18.001/40/{"Fajr":18,"Isha":18}
+ok 142 - independent angle/range boundary -18.001/40/{"Fajr":18,"Isha":18}
+  ---
+  duration_ms: 33.0063
+  type: 'test'
+  ...
+# Subtest: independent angle/range boundary -40/-20/{"Fajr":18,"Isha":18}
+ok 143 - independent angle/range boundary -40/-20/{"Fajr":18,"Isha":18}
+  ---
+  duration_ms: 35.9347
+  type: 'test'
+  ...
+# Subtest: unsupported method parameter stays unknown: 90 min
+ok 144 - unsupported method parameter stays unknown: 90 min
+  ---
+  duration_ms: 38.9886
+  type: 'test'
+  ...
+# Subtest: unsupported method parameter stays unknown: 18
+ok 145 - unsupported method parameter stays unknown: 18
+  ---
+  duration_ms: 42.2547
+  type: 'test'
+  ...
+# Subtest: unsupported method parameter stays unknown: null
+ok 146 - unsupported method parameter stays unknown: null
+  ---
+  duration_ms: 41.4057
+  type: 'test'
+  ...
+# Subtest: unsupported method parameter stays unknown: 0
+ok 147 - unsupported method parameter stays unknown: 0
+  ---
+  duration_ms: 40.1404
+  type: 'test'
+  ...
+# Subtest: unsupported method parameter stays unknown: -18
+ok 148 - unsupported method parameter stays unknown: -18
+  ---
+  duration_ms: 41.3741
+  type: 'test'
+  ...
+# Subtest: unsupported method parameter stays unknown: abc
+ok 149 - unsupported method parameter stays unknown: abc
+  ---
+  duration_ms: 34.0832
+  type: 'test'
+  ...
+# Subtest: unsupported method parameter stays unknown: 90 mins <img>
+ok 150 - unsupported method parameter stays unknown: 90 mins <img>
+  ---
+  duration_ms: 40.6058
+  type: 'test'
+  ...
+# Subtest: nonfinite and missing method metadata stays unknown
+ok 151 - nonfinite and missing method metadata stays unknown
+  ---
+  duration_ms: 45.186
+  type: 'test'
+  ...
+# Subtest: new accepted payload parameters are consumed on next synchronous arc
+ok 152 - new accepted payload parameters are consumed on next synchronous arc
+  ---
+  duration_ms: 43.1008
+  type: 'test'
+  ...
+# Subtest: mutant restoring universal 14 is killed by actual London marker classes
+ok 153 - mutant restoring universal 14 is killed by actual London marker classes
+  ---
+  duration_ms: 48.419
+  type: 'test'
+  ...
+# Subtest: mutant sharing Fajr result is killed by asymmetric Isha
+ok 154 - mutant sharing Fajr result is killed by asymmetric Isha
+  ---
+  duration_ms: 38.6796
+  type: 'test'
+  ...
+# Subtest: mutant parseFloat interval is killed by actual unknown class/description
+ok 155 - mutant parseFloat interval is killed by actual unknown class/description
+  ---
+  duration_ms: 43.018
+  type: 'test'
+  ...
+# Subtest: mutant description-only change is killed by actual class output
+ok 156 - mutant description-only change is killed by actual class output
+  ---
+  duration_ms: 43.2306
+  type: 'test'
+  ...
+# Subtest: mutant claiming unknown reachable is killed by status
+ok 157 - mutant claiming unknown reachable is killed by status
+  ---
+  duration_ms: 35.7152
+  type: 'test'
+  ...
+# Subtest: mutant ignoring maximum is killed by range wholly below target
+ok 158 - mutant ignoring maximum is killed by range wholly below target
+  ---
+  duration_ms: 36.5957
+  type: 'test'
+  ...
+# Subtest: mutant strict equality is killed by boundary
+ok 159 - mutant strict equality is killed by boundary
+  ---
+  duration_ms: 35.6482
+  type: 'test'
+  ...
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\index.html SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# Subtest: control: actual fresh acquisition, model gate, atmosphere and chip are reached
+ok 160 - control: actual fresh acquisition, model gate, atmosphere and chip are reached
+  ---
+  duration_ms: 55.8052
+  type: 'test'
+  ...
+# Subtest: R000C temperature null survives acquisition/cache/paint without coercion
+ok 161 - R000C temperature null survives acquisition/cache/paint without coercion
+  ---
+  duration_ms: 34.6527
+  type: 'test'
+  ...
+# Subtest: R000C temperature missing survives acquisition/cache/paint without coercion
+ok 162 - R000C temperature missing survives acquisition/cache/paint without coercion
+  ---
+  duration_ms: 34.0026
+  type: 'test'
+  ...
+# Subtest: R000C temperature zero survives acquisition/cache/paint without coercion
+ok 163 - R000C temperature zero survives acquisition/cache/paint without coercion
+  ---
+  duration_ms: 31.5506
+  type: 'test'
+  ...
+# Subtest: R000C temperature negative survives acquisition/cache/paint without coercion
+ok 164 - R000C temperature negative survives acquisition/cache/paint without coercion
+  ---
+  duration_ms: 32.8215
+  type: 'test'
+  ...
+# Subtest: R000C negative Fahrenheit remains request-bound
+ok 165 - R000C negative Fahrenheit remains request-bound
+  ---
+  duration_ms: 31.9953
+  type: 'test'
+  ...
+# Subtest: R000C HTTP 500 healthy-shaped body cannot mutate any admitted state
+ok 166 - R000C HTTP 500 healthy-shaped body cannot mutate any admitted state
+  ---
+  duration_ms: 3.5961
+  type: 'test'
+  ...
+# Subtest: R000C historical malformed 500 lookalike is rejected before mutation
+ok 167 - R000C historical malformed 500 lookalike is rejected before mutation
+  ---
+  duration_ms: 3.64
+  type: 'test'
+  ...
+# Subtest: control: ordinary HTTP 400 provider error is unavailable
+ok 168 - control: ordinary HTTP 400 provider error is unavailable
+  ---
+  duration_ms: 3.2236
+  type: 'test'
+  ...
+# Subtest: R000C successful transport with null root does not renew prior valid state
+ok 169 - R000C successful transport with null root does not renew prior valid state
+  ---
+  duration_ms: 36.6343
+  type: 'test'
+  ...
+# Subtest: R000C successful transport with array root does not renew prior valid state
+ok 170 - R000C successful transport with array root does not renew prior valid state
+  ---
+  duration_ms: 39.176
+  type: 'test'
+  ...
+# Subtest: R000C successful transport with provider error does not renew prior valid state
+ok 171 - R000C successful transport with provider error does not renew prior valid state
+  ---
+  duration_ms: 33.4532
+  type: 'test'
+  ...
+# Subtest: R000C successful transport with bad JSON does not renew prior valid state
+ok 172 - R000C successful transport with bad JSON does not renew prior valid state
+  ---
+  duration_ms: 34.8398
+  type: 'test'
+  ...
+# Subtest: R000C invalid current WMO code 999 never becomes current
+ok 173 - R000C invalid current WMO code 999 never becomes current
+  ---
+  duration_ms: 33.7707
+  type: 'test'
+  ...
+# Subtest: R000C invalid current WMO code 95 never becomes current
+ok 174 - R000C invalid current WMO code 95 never becomes current
+  ---
+  duration_ms: 31.1921
+  type: 'test'
+  ...
+# Subtest: R000C invalid current WMO code -1 never becomes current
+ok 175 - R000C invalid current WMO code -1 never becomes current
+  ---
+  duration_ms: 34.4839
+  type: 'test'
+  ...
+# Subtest: R000C invalid current WMO code 95.5 never becomes current
+ok 176 - R000C invalid current WMO code 95.5 never becomes current
+  ---
+  duration_ms: 42.7057
+  type: 'test'
+  ...
+# Subtest: R000C precipitation string preserves unknown versus quantitative zero
+ok 177 - R000C precipitation string preserves unknown versus quantitative zero
+  ---
+  duration_ms: 37.2768
+  type: 'test'
+  ...
+# Subtest: R000C precipitation nan preserves unknown versus quantitative zero
+ok 178 - R000C precipitation nan preserves unknown versus quantitative zero
+  ---
+  duration_ms: 35.1159
+  type: 'test'
+  ...
+# Subtest: R000C precipitation infinite preserves unknown versus quantitative zero
+ok 179 - R000C precipitation infinite preserves unknown versus quantitative zero
+  ---
+  duration_ms: 33.928
+  type: 'test'
+  ...
+# Subtest: R000C precipitation negative preserves unknown versus quantitative zero
+ok 180 - R000C precipitation negative preserves unknown versus quantitative zero
+  ---
+  duration_ms: 32.9452
+  type: 'test'
+  ...
+# Subtest: R000C precipitation missing preserves unknown versus quantitative zero
+ok 181 - R000C precipitation missing preserves unknown versus quantitative zero
+  ---
+  duration_ms: 33.6991
+  type: 'test'
+  ...
+# Subtest: R000C precipitation zero preserves unknown versus quantitative zero
+ok 182 - R000C precipitation zero preserves unknown versus quantitative zero
+  ---
+  duration_ms: 33.8605
+  type: 'test'
+  ...
+# Subtest: R000C invalid optional fields and elevation cannot poison drivers
+ok 183 - R000C invalid optional fields and elevation cannot poison drivers
+  ---
+  duration_ms: 29.0737
+  type: 'test'
+  ...
+# Subtest: control: field domain boundaries and negative elevation remain valid
+ok 184 - control: field domain boundaries and negative elevation remain valid
+  ---
+  duration_ms: 31.0061
+  type: 'test'
+  ...
+# Subtest: R000C contradictory current units reject only that block
+ok 185 - R000C contradictory current units reject only that block
+  ---
+  duration_ms: 31.062
+  type: 'test'
+  ...
+# Subtest: R000C contradictory hourly units reject only that block
+ok 186 - R000C contradictory hourly units reject only that block
+  ---
+  duration_ms: 34.1383
+  type: 'test'
+  ...
+# Subtest: R000C advertised radians cannot be consumed as degrees in current
+ok 187 - R000C advertised radians cannot be consumed as degrees in current
+  ---
+  duration_ms: 34.606
+  type: 'test'
+  ...
+# Subtest: control: advertised degrees keep current wind direction usable
+ok 188 - control: advertised degrees keep current wind direction usable
+  ---
+  duration_ms: 29.3441
+  type: 'test'
+  ...
+# Subtest: control: missing direction units keep current wind direction usable
+ok 189 - control: missing direction units keep current wind direction usable
+  ---
+  duration_ms: 30.1974
+  type: 'test'
+  ...
+# Subtest: R000C advertised radians cannot be consumed as degrees in hourly
+ok 190 - R000C advertised radians cannot be consumed as degrees in hourly
+  ---
+  duration_ms: 29.1526
+  type: 'test'
+  ...
+# Subtest: control: advertised degrees keep hourly wind direction usable
+ok 191 - control: advertised degrees keep hourly wind direction usable
+  ---
+  duration_ms: 34.6349
+  type: 'test'
+  ...
+# Subtest: control: missing direction units keep hourly wind direction usable
+ok 192 - control: missing direction units keep hourly wind direction usable
+  ---
+  duration_ms: 31.7596
+  type: 'test'
+  ...
+# Subtest: R000C bad hourly mismatched required array cannot discard good current
+ok 193 - R000C bad hourly mismatched required array cannot discard good current
+  ---
+  duration_ms: 31.9347
+  type: 'test'
+  ...
+# Subtest: R000C bad hourly mismatched optional array cannot discard good current
+ok 194 - R000C bad hourly mismatched optional array cannot discard good current
+  ---
+  duration_ms: 30.9109
+  type: 'test'
+  ...
+# Subtest: R000C bad hourly non-array optional cannot discard good current
+ok 195 - R000C bad hourly non-array optional cannot discard good current
+  ---
+  duration_ms: 31.3877
+  type: 'test'
+  ...
+# Subtest: R000C bad hourly null optional array cannot discard good current
+ok 196 - R000C bad hourly null optional array cannot discard good current
+  ---
+  duration_ms: 37.0683
+  type: 'test'
+  ...
+# Subtest: R000C bad hourly invalid calendar cannot discard good current
+ok 197 - R000C bad hourly invalid calendar cannot discard good current
+  ---
+  duration_ms: 30.9442
+  type: 'test'
+  ...
+# Subtest: R000C bad hourly duplicate epoch cannot discard good current
+ok 198 - R000C bad hourly duplicate epoch cannot discard good current
+  ---
+  duration_ms: 31.0919
+  type: 'test'
+  ...
+# Subtest: R000C bad hourly decreasing epoch cannot discard good current
+ok 199 - R000C bad hourly decreasing epoch cannot discard good current
+  ---
+  duration_ms: 30.4357
+  type: 'test'
+  ...
+# Subtest: R000C bad hourly malformed time cannot discard good current
+ok 200 - R000C bad hourly malformed time cannot discard good current
+  ---
+  duration_ms: 31.2715
+  type: 'test'
+  ...
+# Subtest: R000C missing optional arrays and two null endpoints stay null at actual wxAt
+ok 201 - R000C missing optional arrays and two null endpoints stay null at actual wxAt
+  ---
+  duration_ms: 30.0331
+  type: 'test'
+  ...
+# Subtest: R000C invalid optional hourly elements cannot fabricate measurements at wxAt
+ok 202 - R000C invalid optional hourly elements cannot fabricate measurements at wxAt
+  ---
+  duration_ms: 33.4639
+  type: 'test'
+  ...
+# Subtest: control: one interpolation neighbour and wrapping wind remain usable
+ok 203 - control: one interpolation neighbour and wrapping wind remain usable
+  ---
+  duration_ms: 31.7666
+  type: 'test'
+  ...
+# Subtest: R000C cache normalization contains malformed code but healthy fetch recovers
+ok 204 - R000C cache normalization contains malformed code but healthy fetch recovers
+  ---
+  duration_ms: 35.9298
+  type: 'test'
+  ...
+# Subtest: R000B legacy zero-valued cache is retained without current authority and does not suppress fetch
+ok 205 - R000B legacy zero-valued cache is retained without current authority and does not suppress fetch
+  ---
+  duration_ms: 39.0188
+  type: 'test'
+  ...
+# Subtest: R000B future cache receipt cannot become current weather
+ok 206 - R000B future cache receipt cannot become current weather
+  ---
+  duration_ms: 3.3307
+  type: 'test'
+  ...
+# Subtest: R000B five-hour retained legacy cache stays unavailable after 24h outage
+ok 207 - R000B five-hour retained legacy cache stays unavailable after 24h outage
+  ---
+  duration_ms: 11.5817
+  type: 'test'
+  ...
+# Subtest: R000B fresh metadata cache remains eligible and still fetches its missing hourly track
+ok 208 - R000B fresh metadata cache remains eligible and still fetches its missing hourly track
+  ---
+  duration_ms: 41.0598
+  type: 'test'
+  ...
+# Subtest: R000B old source with fresh download never reaches current consumers
+ok 209 - R000B old source with fresh download never reaches current consumers
+  ---
+  duration_ms: 42.7962
+  type: 'test'
+  ...
+# Subtest: R000B missing time cannot supply current chip or effects
+ok 210 - R000B missing time cannot supply current chip or effects
+  ---
+  duration_ms: 41.8221
+  type: 'test'
+  ...
+# Subtest: R000B bad interval cannot supply current chip or effects
+ok 211 - R000B bad interval cannot supply current chip or effects
+  ---
+  duration_ms: 42.6829
+  type: 'test'
+  ...
+# Subtest: R000B future source cannot supply current chip or effects
+ok 212 - R000B future source cannot supply current chip or effects
+  ---
+  duration_ms: 40.5642
+  type: 'test'
+  ...
+# Subtest: R000B source-age inclusive boundary 899999
+ok 213 - R000B source-age inclusive boundary 899999
+  ---
+  duration_ms: 41.8576
+  type: 'test'
+  ...
+# Subtest: R000B receipt-age inclusive boundary 899999
+ok 214 - R000B receipt-age inclusive boundary 899999
+  ---
+  duration_ms: 51.2097
+  type: 'test'
+  ...
+# Subtest: R000B source-age inclusive boundary 900000
+ok 215 - R000B source-age inclusive boundary 900000
+  ---
+  duration_ms: 71.9797
+  type: 'test'
+  ...
+# Subtest: R000B receipt-age inclusive boundary 900000
+ok 216 - R000B receipt-age inclusive boundary 900000
+  ---
+  duration_ms: 61.5388
+  type: 'test'
+  ...
+# Subtest: R000B source-age inclusive boundary 900001
+ok 217 - R000B source-age inclusive boundary 900001
+  ---
+  duration_ms: 47.4405
+  type: 'test'
+  ...
+# Subtest: R000B receipt-age inclusive boundary 900001
+ok 218 - R000B receipt-age inclusive boundary 900001
+  ---
+  duration_ms: 46.6653
+  type: 'test'
+  ...
+# Subtest: R000B source-age inclusive boundary -1
+ok 219 - R000B source-age inclusive boundary -1
+  ---
+  duration_ms: 36.9195
+  type: 'test'
+  ...
+# Subtest: R000B receipt-age inclusive boundary -1
+ok 220 - R000B receipt-age inclusive boundary -1
+  ---
+  duration_ms: 38.4499
+  type: 'test'
+  ...
+# Subtest: R000B current expires before offline refresh; fresh replacement restores eligibility
+ok 221 - R000B current expires before offline refresh; fresh replacement restores eligibility
+  ---
+  duration_ms: 52.8284
+  type: 'test'
+  ...
+# Subtest: control: real-time clear current never becomes hourly thunder; explicit preview does
+ok 222 - control: real-time clear current never becomes hourly thunder; explicit preview does
+  ---
+  duration_ms: 76.9703
+  type: 'test'
+  ...
+# Subtest: R000C captured request fields survive asynchronous global unit/zone changes
+ok 223 - R000C captured request fields survive asynchronous global unit/zone changes
+  ---
+  duration_ms: 34.3917
+  type: 'test'
+  ...
+# Subtest: R0008 accepted converter uses captured New York zone after global zone changes
+ok 224 - R0008 accepted converter uses captured New York zone after global zone changes
+  ---
+  duration_ms: 38.0475
+  type: 'test'
+  ...
+# Subtest: R0008 unresolved New York spring gap cannot authorize current or hourly consumers
+ok 225 - R0008 unresolved New York spring gap cannot authorize current or hourly consumers
+  ---
+  duration_ms: 33.5116
+  type: 'test'
+  ...
+# Subtest: R0008 unresolved New York autumn fold cannot authorize current or hourly consumers
+ok 226 - R0008 unresolved New York autumn fold cannot authorize current or hourly consumers
+  ---
+  duration_ms: 35.9496
+  type: 'test'
+  ...
+# Subtest: R0008 invalid hourly gap preserves independently valid current
+ok 227 - R0008 invalid hourly gap preserves independently valid current
+  ---
+  duration_ms: 37.8523
+  type: 'test'
+  ...
+# Subtest: R0008 unsupported captured timezone stays unavailable
+ok 228 - R0008 unsupported captured timezone stays unavailable
+  ---
+  duration_ms: 6.0019
+  type: 'test'
+  ...
+# Subtest: control: captured Riyadh midnight maps to preceding UTC date
+ok 229 - control: captured Riyadh midnight maps to preceding UTC date
+  ---
+  duration_ms: 31.9073
+  type: 'test'
+  ...
+# Subtest: fixture reaches accepted SKY geometry observation without claiming produced geometry
+ok 230 - fixture reaches accepted SKY geometry observation without claiming produced geometry
+  ---
+  duration_ms: 33.4248
+  type: 'test'
+  ...
+# Subtest: R000E 0dBZ actual tile sampler never contributes quantitative authority
+ok 231 - R000E 0dBZ actual tile sampler never contributes quantitative authority
+  ---
+  duration_ms: 3.3177
+  type: 'test'
+  ...
+# Subtest: R000E 15dBZ actual tile sampler never contributes quantitative authority
+ok 232 - R000E 15dBZ actual tile sampler never contributes quantitative authority
+  ---
+  duration_ms: 3.1575
+  type: 'test'
+  ...
+# Subtest: R000E 20dBZ actual tile sampler never contributes quantitative authority
+ok 233 - R000E 20dBZ actual tile sampler never contributes quantitative authority
+  ---
+  duration_ms: 3.0075
+  type: 'test'
+  ...
+# Subtest: R000E 45dBZ actual tile sampler never contributes quantitative authority
+ok 234 - R000E 45dBZ actual tile sampler never contributes quantitative authority
+  ---
+  duration_ms: 2.8925
+  type: 'test'
+  ...
+# Subtest: R000E transparent actual tile sampler never contributes quantitative authority
+ok 235 - R000E transparent actual tile sampler never contributes quantitative authority
+  ---
+  duration_ms: 2.9285
+  type: 'test'
+  ...
+# Subtest: R000E lower-level model control 63/0/2 -> 3
+ok 236 - R000E lower-level model control 63/0/2 -> 3
+  ---
+  duration_ms: 1.9203
+  type: 'test'
+  ...
+# Subtest: R000E lower-level model control 95/0/5 -> 3
+ok 237 - R000E lower-level model control 95/0/5 -> 3
+  ---
+  duration_ms: 1.8307
+  type: 'test'
+  ...
+# Subtest: R000E lower-level model control 95/0.3/5 -> 63
+ok 238 - R000E lower-level model control 95/0.3/5 -> 63
+  ---
+  duration_ms: 1.8107
+  type: 'test'
+  ...
+# Subtest: R000E lower-level model control 95/2/0 -> 95
+ok 239 - R000E lower-level model control 95/2/0 -> 95
+  ---
+  duration_ms: 1.7182
+  type: 'test'
+  ...
+# Subtest: R000E lower-level model control 0/0/5 -> 0
+ok 240 - R000E lower-level model control 0/0/5 -> 0
+  ---
+  duration_ms: 1.8773
+  type: 'test'
+  ...
+# Subtest: R000E nearby sparse echoes with dry centre stay diagnostic
+ok 241 - R000E nearby sparse echoes with dry centre stay diagnostic
+  ---
+  duration_ms: 2.2728
+  type: 'test'
+  ...
+# Subtest: R000E radar HTTP failure cannot become a readable current mosaic
+ok 242 - R000E radar HTTP failure cannot become a readable current mosaic
+  ---
+  duration_ms: 1.9242
+  type: 'test'
+  ...
+# Subtest: R000E radar missing frame cannot become a readable current mosaic
+ok 243 - R000E radar missing frame cannot become a readable current mosaic
+  ---
+  duration_ms: 2.5692
+  type: 'test'
+  ...
+# Subtest: R000E radar missing frame time cannot become a readable current mosaic
+ok 244 - R000E radar missing frame time cannot become a readable current mosaic
+  ---
+  duration_ms: 2.0751
+  type: 'test'
+  ...
+# Subtest: R000E image error remains unavailable and releases settled attempt
+ok 245 - R000E image error remains unavailable and releases settled attempt
+  ---
+  duration_ms: 2.594
+  type: 'test'
+  ...
+# Subtest: R000E canvas error remains unavailable and releases settled attempt
+ok 246 - R000E canvas error remains unavailable and releases settled attempt
+  ---
+  duration_ms: 2.1895
+  type: 'test'
+  ...
+# Subtest: R000B repeat-download old radar cannot renew frame validity
+ok 247 - R000B repeat-download old radar cannot renew frame validity
+  ---
+  duration_ms: 9.0491
+  type: 'test'
+  ...
+# Subtest: R000B radar frame-age inclusive boundary 1199999
+ok 248 - R000B radar frame-age inclusive boundary 1199999
+  ---
+  duration_ms: 5.0101
+  type: 'test'
+  ...
+# Subtest: R000B radar receipt-age inclusive boundary 1199999
+ok 249 - R000B radar receipt-age inclusive boundary 1199999
+  ---
+  duration_ms: 4.9181
+  type: 'test'
+  ...
+# Subtest: R000B radar frame-age inclusive boundary 1200000
+ok 250 - R000B radar frame-age inclusive boundary 1200000
+  ---
+  duration_ms: 4.1779
+  type: 'test'
+  ...
+# Subtest: R000B radar receipt-age inclusive boundary 1200000
+ok 251 - R000B radar receipt-age inclusive boundary 1200000
+  ---
+  duration_ms: 4.4243
+  type: 'test'
+  ...
+# Subtest: R000B radar frame-age inclusive boundary 1200001
+ok 252 - R000B radar frame-age inclusive boundary 1200001
+  ---
+  duration_ms: 4.227
+  type: 'test'
+  ...
+# Subtest: R000B radar receipt-age inclusive boundary 1200001
+ok 253 - R000B radar receipt-age inclusive boundary 1200001
+  ---
+  duration_ms: 4.2017
+  type: 'test'
+  ...
+# Subtest: R000B radar frame-age inclusive boundary -1
+ok 254 - R000B radar frame-age inclusive boundary -1
+  ---
+  duration_ms: 4.8275
+  type: 'test'
+  ...
+# Subtest: R000B radar receipt-age inclusive boundary -1
+ok 255 - R000B radar receipt-age inclusive boundary -1
+  ---
+  duration_ms: 4.5253
+  type: 'test'
+  ...
+# Subtest: R001E both real acquisitions preserve coordinate 0,30
+ok 256 - R001E both real acquisitions preserve coordinate 0,30
+  ---
+  duration_ms: 37.4668
+  type: 'test'
+  ...
+# Subtest: R001E both real acquisitions preserve coordinate 30,0
+ok 257 - R001E both real acquisitions preserve coordinate 30,0
+  ---
+  duration_ms: 40.4859
+  type: 'test'
+  ...
+# Subtest: R001E both real acquisitions preserve coordinate 0,0
+ok 258 - R001E both real acquisitions preserve coordinate 0,0
+  ---
+  duration_ms: 34.6623
+  type: 'test'
+  ...
+# Subtest: R001E both real acquisitions preserve coordinate 0,0
+ok 259 - R001E both real acquisitions preserve coordinate 0,0
+  ---
+  duration_ms: 33.3721
+  type: 'test'
+  ...
+# Subtest: R001E both real acquisitions preserve coordinate 0.000001,30
+ok 260 - R001E both real acquisitions preserve coordinate 0.000001,30
+  ---
+  duration_ms: 33.1725
+  type: 'test'
+  ...
+# Subtest: R001E both real acquisitions preserve coordinate 24.47,39.61
+ok 261 - R001E both real acquisitions preserve coordinate 24.47,39.61
+  ---
+  duration_ms: 32.6674
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair null,30 never dispatches
+ok 262 - R001E direct invalid runtime pair null,30 never dispatches
+  ---
+  duration_ms: 2.0983
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair undefined,30 never dispatches
+ok 263 - R001E direct invalid runtime pair undefined,30 never dispatches
+  ---
+  duration_ms: 2.9027
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair NaN,30 never dispatches
+ok 264 - R001E direct invalid runtime pair NaN,30 never dispatches
+  ---
+  duration_ms: 2.5306
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair Infinity,30 never dispatches
+ok 265 - R001E direct invalid runtime pair Infinity,30 never dispatches
+  ---
+  duration_ms: 1.9413
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair -Infinity,30 never dispatches
+ok 266 - R001E direct invalid runtime pair -Infinity,30 never dispatches
+  ---
+  duration_ms: 1.9432
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair 91,30 never dispatches
+ok 267 - R001E direct invalid runtime pair 91,30 never dispatches
+  ---
+  duration_ms: 1.7703
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair -91,30 never dispatches
+ok 268 - R001E direct invalid runtime pair -91,30 never dispatches
+  ---
+  duration_ms: 1.8949
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair 30,181 never dispatches
+ok 269 - R001E direct invalid runtime pair 30,181 never dispatches
+  ---
+  duration_ms: 1.8449
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair 30,-181 never dispatches
+ok 270 - R001E direct invalid runtime pair 30,-181 never dispatches
+  ---
+  duration_ms: 2.0314
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair 30,null never dispatches
+ok 271 - R001E direct invalid runtime pair 30,null never dispatches
+  ---
+  duration_ms: 1.7959
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair 30,NaN never dispatches
+ok 272 - R001E direct invalid runtime pair 30,NaN never dispatches
+  ---
+  duration_ms: 2.2986
+  type: 'test'
+  ...
+# Subtest: R001E direct invalid runtime pair 0,30 never dispatches
+ok 273 - R001E direct invalid runtime pair 0,30 never dispatches
+  ---
+  duration_ms: 1.8149
+  type: 'test'
+  ...
+# Subtest: R001E real config normalizer still admits raw string zero and preserves clamping
+ok 274 - R001E real config normalizer still admits raw string zero and preserves clamping
+  ---
+  duration_ms: 30.3607
+  type: 'test'
+  ...
+# Subtest: control: existing busy eligibility still suppresses both requests
+ok 275 - control: existing busy eligibility still suppresses both requests
+  ---
+  duration_ms: 2.0001
+  type: 'test'
+  ...
+# Subtest: control: existing SIM eligibility still suppresses both requests
+ok 276 - control: existing SIM eligibility still suppresses both requests
+  ---
+  duration_ms: 1.9
+  type: 'test'
+  ...
+# Subtest: control: existing throttle eligibility still suppresses both requests
+ok 277 - control: existing throttle eligibility still suppresses both requests
+  ---
+  duration_ms: 1.8582
+  type: 'test'
+  ...
+# Subtest: R001E radar tile uses captured pair after async configuration change
+ok 278 - R001E radar tile uses captured pair after async configuration change
+  ---
+  duration_ms: 2.1617
+  type: 'test'
+  ...
+# Subtest: R0003 join: obsolete acquisition cannot install/persist or clear successor attempt
+ok 279 - R0003 join: obsolete acquisition cannot install/persist or clear successor attempt # TODO
+  ---
+  duration_ms: 0.0691
+  type: 'test'
+  ...
+# Subtest: R000D join: unresolving JSON and image bodies settle within accepted deadline
+ok 280 - R000D join: unresolving JSON and image bodies settle within accepted deadline # TODO
+  ---
+  duration_ms: 0.0299
+  type: 'test'
+  ...
+# Subtest: R0024 join: fresh current model eligibility remains positive while final live strong-particle permission is withheld
+ok 281 - R0024 join: fresh current model eligibility remains positive while final live strong-particle permission is withheld # TODO
+  ---
+  duration_ms: 0.0198
+  type: 'test'
+  ...
+# Subtest: native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence
+ok 282 - native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence # TODO
+  ---
+  duration_ms: 0.018
+  type: 'test'
+  ...
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\index.html SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# Subtest: control: healthy weather and readable tile reach actual current consumers
+ok 283 - control: healthy weather and readable tile reach actual current consumers
+  ---
+  duration_ms: 54.9097
+  type: 'test'
+  ...
+# Subtest: R000D weather headers is busy at 9999ms and released at 10000ms
+ok 284 - R000D weather headers is busy at 9999ms and released at 10000ms
+  ---
+  duration_ms: 8.7939
+  type: 'test'
+  ...
+# Subtest: R000D weather headers timeout permits healthy retry only after existing throttle
+ok 285 - R000D weather headers timeout permits healthy retry only after existing throttle
+  ---
+  duration_ms: 34.8096
+  type: 'test'
+  ...
+# Subtest: R000D weather body is busy at 9999ms and released at 10000ms
+ok 286 - R000D weather body is busy at 9999ms and released at 10000ms
+  ---
+  duration_ms: 2.6381
+  type: 'test'
+  ...
+# Subtest: R000D weather body timeout permits healthy retry only after existing throttle
+ok 287 - R000D weather body timeout permits healthy retry only after existing throttle
+  ---
+  duration_ms: 36.1454
+  type: 'test'
+  ...
+# Subtest: R000D radar headers is busy at 9999ms and released at 10000ms
+ok 288 - R000D radar headers is busy at 9999ms and released at 10000ms
+  ---
+  duration_ms: 3.3093
+  type: 'test'
+  ...
+# Subtest: R000D radar headers timeout permits healthy retry only after existing throttle
+ok 289 - R000D radar headers timeout permits healthy retry only after existing throttle
+  ---
+  duration_ms: 4.203
+  type: 'test'
+  ...
+# Subtest: R000D radar body is busy at 9999ms and released at 10000ms
+ok 290 - R000D radar body is busy at 9999ms and released at 10000ms
+  ---
+  duration_ms: 2.2429
+  type: 'test'
+  ...
+# Subtest: R000D radar body timeout permits healthy retry only after existing throttle
+ok 291 - R000D radar body timeout permits healthy retry only after existing throttle
+  ---
+  duration_ms: 5.7456
+  type: 'test'
+  ...
+# Subtest: R000D delayed timer delivery cannot admit weather body after absolute elapsed deadline
+ok 292 - R000D delayed timer delivery cannot admit weather body after absolute elapsed deadline
+  ---
+  duration_ms: 3.2562
+  type: 'test'
+  ...
+# Subtest: R000D timeout reason cannot renew stale current, accepted timestamp or cache
+ok 293 - R000D timeout reason cannot renew stale current, accepted timestamp or cache
+  ---
+  duration_ms: 35.3301
+  type: 'test'
+  ...
+# Subtest: R000D explicit advancing scene still uses ten seconds of real elapsed attempt time
+ok 294 - R000D explicit advancing scene still uses ten seconds of real elapsed attempt time
+  ---
+  duration_ms: 3.427
+  type: 'test'
+  ...
+# Subtest: R000D radar image deadline detaches handlers and retained callbacks cannot install
+ok 295 - R000D radar image deadline detaches handlers and retained callbacks cannot install
+  ---
+  duration_ms: 3.3782
+  type: 'test'
+  ...
+# Subtest: control: manifest 9999ms then image 9999ms succeeds within combined bound
+ok 296 - control: manifest 9999ms then image 9999ms succeeds within combined bound
+  ---
+  duration_ms: 3.7452
+  type: 'test'
+  ...
+# Subtest: R000D image absolute deadline rejects late load even before its timer callback
+ok 297 - R000D image absolute deadline rejects late load even before its timer callback
+  ---
+  duration_ms: 3.9158
+  type: 'test'
+  ...
+# Subtest: R000D saved old timeout after success cannot clear a new active weather owner
+ok 298 - R000D saved old timeout after success cannot clear a new active weather owner
+  ---
+  duration_ms: 33.38
+  type: 'test'
+  ...
+# Subtest: R0003 weather obsolete error/finally cannot release successor
+ok 299 - R0003 weather obsolete error/finally cannot release successor
+  ---
+  duration_ms: 32.7626
+  type: 'test'
+  ...
+# Subtest: R0003 radar obsolete error/finally cannot release successor
+ok 300 - R0003 radar obsolete error/finally cannot release successor
+  ---
+  duration_ms: 2.6619
+  type: 'test'
+  ...
+# Subtest: R0003 old weather success cannot install or persist after target/unit replacement
+ok 301 - R0003 old weather success cannot install or persist after target/unit replacement
+  ---
+  duration_ms: 32.902
+  type: 'test'
+  ...
+# Subtest: R0003 old image onload cannot install or clear current target image attempt
+ok 302 - R0003 old image onload cannot install or clear current target image attempt
+  ---
+  duration_ms: 2.5703
+  type: 'test'
+  ...
+# Subtest: control: ordinary weather rejection releases its timers and slots
+ok 303 - control: ordinary weather rejection releases its timers and slots
+  ---
+  duration_ms: 3.808
+  type: 'test'
+  ...
+# Subtest: control: ordinary malformed JSON releases its timers and slots
+ok 304 - control: ordinary malformed JSON releases its timers and slots
+  ---
+  duration_ms: 3.9984
+  type: 'test'
+  ...
+# Subtest: control: ordinary image error releases its timers and slots
+ok 305 - control: ordinary image error releases its timers and slots
+  ---
+  duration_ms: 34.9502
+  type: 'test'
+  ...
+# Subtest: control: ordinary canvas failure releases its timers and slots
+ok 306 - control: ordinary canvas failure releases its timers and slots
+  ---
+  duration_ms: 32.9982
+  type: 'test'
+  ...
+# Subtest: midday fades only Fajr/Sunrise; future Maghrib/Isha remain normal
+ok 307 - midday fades only Fajr/Sunrise; future Maghrib/Isha remain normal
+  ---
+  duration_ms: 59.3477
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 00:00:00 preserves elapsed/current/upcoming hierarchy
+ok 308 - actual clock boundary 00:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.8905
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 04:59:59 preserves elapsed/current/upcoming hierarchy
+ok 309 - actual clock boundary 04:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.5585
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 05:00:00 preserves elapsed/current/upcoming hierarchy
+ok 310 - actual clock boundary 05:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 38.3758
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 05:59:59 preserves elapsed/current/upcoming hierarchy
+ok 311 - actual clock boundary 05:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.7776
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 06:00:00 preserves elapsed/current/upcoming hierarchy
+ok 312 - actual clock boundary 06:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 41.0145
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 06:19:59 preserves elapsed/current/upcoming hierarchy
+ok 313 - actual clock boundary 06:19:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 39.3351
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 06:20:00 preserves elapsed/current/upcoming hierarchy
+ok 314 - actual clock boundary 06:20:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 35.7802
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 11:59:59 preserves elapsed/current/upcoming hierarchy
+ok 315 - actual clock boundary 11:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 36.0312
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 12:00:00 preserves elapsed/current/upcoming hierarchy
+ok 316 - actual clock boundary 12:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 41.1013
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 15:29:59 preserves elapsed/current/upcoming hierarchy
+ok 317 - actual clock boundary 15:29:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 38.2458
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 15:30:00 preserves elapsed/current/upcoming hierarchy
+ok 318 - actual clock boundary 15:30:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.5791
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 17:59:59 preserves elapsed/current/upcoming hierarchy
+ok 319 - actual clock boundary 17:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 36.0304
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 18:00:00 preserves elapsed/current/upcoming hierarchy
+ok 320 - actual clock boundary 18:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 34.2552
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 19:29:59 preserves elapsed/current/upcoming hierarchy
+ok 321 - actual clock boundary 19:29:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 35.9562
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 19:30:00 preserves elapsed/current/upcoming hierarchy
+ok 322 - actual clock boundary 19:30:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.8545
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 23:59:59 preserves elapsed/current/upcoming hierarchy
+ok 323 - actual clock boundary 23:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.3987
+  type: 'test'
+  ...
+# Subtest: actual midnight adoption resets elapsed statuses for the new civil day
+ok 324 - actual midnight adoption resets elapsed statuses for the new civil day
+  ---
+  duration_ms: 46.3176
+  type: 'test'
+  ...
+# Subtest: equal admitted clocks are normal at the event instant and past one second later
+ok 325 - equal admitted clocks are normal at the event instant and past one second later
+  ---
+  duration_ms: 38.4495
+  type: 'test'
+  ...
+# Subtest: all equal polar clocks preserve exact-instant and elapsed states without row ordering
+ok 326 - all equal polar clocks preserve exact-instant and elapsed states without row ordering
+  ---
+  duration_ms: 36.5163
+  type: 'test'
+  ...
+# Subtest: reordered admitted clocks classify elapsed time independently of displayed row index
+ok 327 - reordered admitted clocks classify elapsed time independently of displayed row index
+  ---
+  duration_ms: 39.2982
+  type: 'test'
+  ...
+# Subtest: annotated admitted clocks use the same source clock parser as the model
+ok 328 - annotated admitted clocks use the same source clock parser as the model
+  ---
+  duration_ms: 37.4754
+  type: 'test'
+  ...
+# Subtest: missing tomorrow preserves next-key precedence while actual countdown stays unavailable
+ok 329 - missing tomorrow preserves next-key precedence while actual countdown stays unavailable
+  ---
+  duration_ms: 6.8713
+  type: 'test'
+  ...
+# Subtest: mutant fading every inactive row is rejected by the actual midday caller
+ok 330 - mutant fading every inactive row is rejected by the actual midday caller
+  ---
+  duration_ms: 43.2132
+  type: 'test'
+  ...
+# Subtest: mutant inferring elapsed state by row index is rejected by reordered timings
+ok 331 - mutant inferring elapsed state by row index is rejected by reordered timings
+  ---
+  duration_ms: 42.5488
+  type: 'test'
+  ...
+# Subtest: mutant fading equal-time events at the exact instant is rejected
+ok 332 - mutant fading equal-time events at the exact instant is rejected
+  ---
+  duration_ms: 41.8174
+  type: 'test'
+  ...
+# Subtest: mutant dropping current/next precedence is rejected after Isha
+ok 333 - mutant dropping current/next precedence is rejected after Isha
+  ---
+  duration_ms: 39.9519
+  type: 'test'
+  ...
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\index.html SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# Subtest: R0024 actual cloud consumer withdraws at first source-expired paint after inclusive TTL
+ok 334 - R0024 actual cloud consumer withdraws at first source-expired paint after inclusive TTL
+  ---
+  duration_ms: 60.8673
+  type: 'test'
+  ...
+# Subtest: R0024 actual expired-source outage clears painter and cannot renew accepted cache or timestamp
+ok 335 - R0024 actual expired-source outage clears painter and cannot renew accepted cache or timestamp
+  ---
+  duration_ms: 38.4891
+  type: 'test'
+  ...
+# Subtest: R0024 returning healthy source establishes its first cloud deck promptly without population reset
+ok 336 - R0024 returning healthy source establishes its first cloud deck promptly without population reset
+  ---
+  duration_ms: 40.7821
+  type: 'test'
+  ...
+# Subtest: control: healthy admitted-clear cloud refresh retains ordinary .08 easing and useful model data
+ok 337 - control: healthy admitted-clear cloud refresh retains ordinary .08 easing and useful model data
+  ---
+  duration_ms: 39.3588
+  type: 'test'
+  ...
+# Subtest: control: unavailable temperature does not erase clouds from an eligible current model
+ok 338 - control: unavailable temperature does not erase clouds from an eligible current model
+  ---
+  duration_ms: 35.1684
+  type: 'test'
+  ...
+# Subtest: R0024 actual cloud painter excludes obsolete generation with same coordinates
+ok 339 - R0024 actual cloud painter excludes obsolete generation with same coordinates
+  ---
+  duration_ms: 42.0636
+  type: 'test'
+  ...
+# Subtest: R0024 actual cloud painter excludes obsolete generation with changed coordinates
+ok 340 - R0024 actual cloud painter excludes obsolete generation with changed coordinates
+  ---
+  duration_ms: 40.9583
+  type: 'test'
+  ...
+# Subtest: control: explicit advancing forecast preview keeps its admitted cloud painter positive
+ok 341 - control: explicit advancing forecast preview keeps its admitted cloud painter positive
+  ---
+  duration_ms: 37.2383
+  type: 'test'
+  ...
+# Subtest: control: raw qualified SIM wet and its exact rain expiry preserve explicit model clouds
+ok 342 - control: raw qualified SIM wet and its exact rain expiry preserve explicit model clouds
+  ---
+  duration_ms: 36.801
+  type: 'test'
+  ...
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\index.html SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# Subtest: R0003 response zone contradictory Riyadh cannot mutate current, track, elevation, accepted time or cache
+ok 343 - R0003 response zone contradictory Riyadh cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 17.3042
+  type: 'test'
+  ...
+# Subtest: R0003 response zone invalid IANA cannot mutate current, track, elevation, accepted time or cache
+ok 344 - R0003 response zone invalid IANA cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 4.3092
+  type: 'test'
+  ...
+# Subtest: R0003 response zone empty cannot mutate current, track, elevation, accepted time or cache
+ok 345 - R0003 response zone empty cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 3.7431
+  type: 'test'
+  ...
+# Subtest: R0003 response zone null cannot mutate current, track, elevation, accepted time or cache
+ok 346 - R0003 response zone null cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 3.1876
+  type: 'test'
+  ...
+# Subtest: R0003 response zone non-string cannot mutate current, track, elevation, accepted time or cache
+ok 347 - R0003 response zone non-string cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 1.9217
+  type: 'test'
+  ...
+# Subtest: control: R0003 absent New York response metadata preserves captured DST conversion
+ok 348 - control: R0003 absent New York response metadata preserves captured DST conversion
+  ---
+  duration_ms: 41.1843
+  type: 'test'
+  ...
+# Subtest: control: R0003 matching New York response metadata preserves captured DST conversion
+ok 349 - control: R0003 matching New York response metadata preserves captured DST conversion
+  ---
+  duration_ms: 35.193
+  type: 'test'
+  ...
+# Subtest: control: R0003 canonical alias New York response metadata preserves captured DST conversion
+ok 350 - control: R0003 canonical alias New York response metadata preserves captured DST conversion
+  ---
+  duration_ms: 35.5666
+  type: 'test'
+  ...
+# Subtest: control: R0003 Etc/UTC canonical alias preserves a UTC request
+ok 351 - control: R0003 Etc/UTC canonical alias preserves a UTC request
+  ---
+  duration_ms: 31.7729
+  type: 'test'
+  ...
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\index.html SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643
+# Subtest: R0024 live model rain remains useful but cannot emit strong local particles
+ok 352 - R0024 live model rain remains useful but cannot emit strong local particles
+  ---
+  duration_ms: 57.2668
+  type: 'test'
+  ...
+# Subtest: R0024 live model snow remains useful but cannot emit strong local particles
+ok 353 - R0024 live model snow remains useful but cannot emit strong local particles
+  ---
+  duration_ms: 35.1309
+  type: 'test'
+  ...
+# Subtest: R0024 live model thunder remains useful but cannot emit strong local particles
+ok 354 - R0024 live model thunder remains useful but cannot emit strong local particles
+  ---
+  duration_ms: 36.0888
+  type: 'test'
+  ...
+# Subtest: R0024 eligible model-clear chip visibly distinguishes estimate from local observation
+ok 355 - R0024 eligible model-clear chip visibly distinguishes estimate from local observation
+  ---
+  duration_ms: 36.2553
+  type: 'test'
+  ...
+# Subtest: R0024 no current data is visible unknown, with no retained weather consumers
+ok 356 - R0024 no current data is visible unknown, with no retained weather consumers
+  ---
+  duration_ms: 6.4407
+  type: 'test'
+  ...
+# Subtest: control: explicit advancing forecast retains its marked preview positive
+ok 357 - control: explicit advancing forecast retains its marked preview positive
+  ---
+  duration_ms: 34.7485
+  type: 'test'
+  ...
+# Subtest: R0024 A qualified synthetic present wet reaches actual rain with model dry disagreement
+ok 358 - R0024 A qualified synthetic present wet reaches actual rain with model dry disagreement
+  ---
+  duration_ms: 36.7503
+  type: 'test'
+  ...
+# Subtest: R0024 qualified synthetic present snow and observed lightning have separate actual positives
+ok 359 - R0024 qualified synthetic present snow and observed lightning have separate actual positives
+  ---
+  duration_ms: 109.5021
+  type: 'test'
+  ...
+# Subtest: R0024 synthetic input cannot upgrade the ordinary live lane
+ok 360 - R0024 synthetic input cannot upgrade the ordinary live lane
+  ---
+  duration_ms: 32.2927
+  type: 'test'
+  ...
+# Subtest: R0024 source-bound positive expires at its exact lease end without cloud smoothing
+ok 361 - R0024 source-bound positive expires at its exact lease end without cloud smoothing
+  ---
+  duration_ms: 37.8661
+  type: 'test'
+  ...
+# Subtest: R0024 rain end, source outage and target supersession each withdraw the actual wet consumer
+ok 362 - R0024 rain end, source outage and target supersession each withdraw the actual wet consumer
+  ---
+  duration_ms: 45.5925
+  type: 'test'
+  ...
+# Subtest: R0024 B operational qualified negative retains model rain as disagreement with no particles
+ok 363 - R0024 B operational qualified negative retains model rain as disagreement with no particles
+  ---
+  duration_ms: 32.5621
+  type: 'test'
+  ...
+# Subtest: R0024 C dry point plus qualified nearby arrival stays independent and cannot rain locally
+ok 364 - R0024 C dry point plus qualified nearby arrival stays independent and cannot rain locally
+  ---
+  duration_ms: 34.2439
+  type: 'test'
+  ...
+# Subtest: R0024 current synthetic rain and later approach coexist without WMO veto
+ok 365 - R0024 current synthetic rain and later approach coexist without WMO veto
+  ---
+  duration_ms: 32.2466
+  type: 'test'
+  ...
+# Subtest: R0024 missing or invalid surrounding quality cannot veto separately qualified present wet
+ok 366 - R0024 missing or invalid surrounding quality cannot veto separately qualified present wet
+  ---
+  duration_ms: 33.9497
+  type: 'test'
+  ...
+# Subtest: R0024 D no decoded radar observation plus model rain is estimated wet, never confirmed dry
+ok 367 - R0024 D no decoded radar observation plus model rain is estimated wet, never confirmed dry
+  ---
+  duration_ms: 33.5463
+  type: 'test'
+  ...
+# Subtest: R0024 E 18-minute mosaic remains diagnostic while fresh receipt grants no local observation or ETA
+ok 368 - R0024 E 18-minute mosaic remains diagnostic while fresh receipt grants no local observation or ETA
+  ---
+  duration_ms: 33.1668
+  type: 'test'
+  ...
+# Subtest: R0024 G no coverage cannot acquire present wet or strong negative from a fresh composite
+ok 369 - R0024 G no coverage cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 73.649
+  type: 'test'
+  ...
+# Subtest: R0024 G unknown health cannot acquire present wet or strong negative from a fresh composite
+ok 370 - R0024 G unknown health cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 78.7013
+  type: 'test'
+  ...
+# Subtest: R0024 G stale underlying observation cannot acquire present wet or strong negative from a fresh composite
+ok 371 - R0024 G stale underlying observation cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 77.8192
+  type: 'test'
+  ...
+# Subtest: R0024 G unknown underlying age cannot acquire present wet or strong negative from a fresh composite
+ok 372 - R0024 G unknown underlying age cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 76.369
+  type: 'test'
+  ...
+# Subtest: R0024 G weak returns cannot acquire present wet or strong negative from a fresh composite
+ok 373 - R0024 G weak returns cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 73.6597
+  type: 'test'
+  ...
+# Subtest: R0024 G interpolated returns cannot acquire present wet or strong negative from a fresh composite
+ok 374 - R0024 G interpolated returns cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 75.1871
+  type: 'test'
+  ...
+# Subtest: R0024 F fixed site unknown precision has honest point admission
+ok 375 - R0024 F fixed site unknown precision has honest point admission
+  ---
+  duration_ms: 2.574
+  type: 'test'
+  ...
+# Subtest: R0024 F recent precise device has honest point admission
+ok 376 - R0024 F recent precise device has honest point admission
+  ---
+  duration_ms: 2.0103
+  type: 'test'
+  ...
+# Subtest: R0024 F device accuracy boundary has honest point admission
+ok 377 - R0024 F device accuracy boundary has honest point admission
+  ---
+  duration_ms: 1.9534
+  type: 'test'
+  ...
+# Subtest: R0024 F broad device fix has honest point admission
+ok 378 - R0024 F broad device fix has honest point admission
+  ---
+  duration_ms: 4.0708
+  type: 'test'
+  ...
+# Subtest: R0024 F coarse IP unknown accuracy has honest point admission
+ok 379 - R0024 F coarse IP unknown accuracy has honest point admission
+  ---
+  duration_ms: 5.2386
+  type: 'test'
+  ...
+# Subtest: R0024 F saved device unknown original fix has honest point admission
+ok 380 - R0024 F saved device unknown original fix has honest point admission
+  ---
+  duration_ms: 4.2732
+  type: 'test'
+  ...
+# Subtest: R0024 F expired original device fix has honest point admission
+ok 381 - R0024 F expired original device fix has honest point admission
+  ---
+  duration_ms: 4.7288
+  type: 'test'
+  ...
+# Subtest: R0024 F unknown intent has honest point admission
+ok 382 - R0024 F unknown intent has honest point admission
+  ---
+  duration_ms: 3.9887
+  type: 'test'
+  ...
+# Subtest: R0024 original device fix lease expires independently of a fresh weather download
+ok 383 - R0024 original device fix lease expires independently of a fresh weather download
+  ---
+  duration_ms: 37.6365
+  type: 'test'
+  ...
+# Subtest: R0024 future valid interval rejects an apparent current fixture before the actual renderer
+ok 384 - R0024 future valid interval rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 36.8562
+  type: 'test'
+  ...
+# Subtest: R0024 future measurement rejects an apparent current fixture before the actual renderer
+ok 385 - R0024 future measurement rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 35.737
+  type: 'test'
+  ...
+# Subtest: R0024 future receipt rejects an apparent current fixture before the actual renderer
+ok 386 - R0024 future receipt rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 34.3773
+  type: 'test'
+  ...
+# Subtest: R0024 future frame rejects an apparent current fixture before the actual renderer
+ok 387 - R0024 future frame rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 39.2311
+  type: 'test'
+  ...
+# Subtest: R0024 future issue rejects an apparent current fixture before the actual renderer
+ok 388 - R0024 future issue rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 37.2629
+  type: 'test'
+  ...
+# Subtest: R0024 expired valid interval rejects an apparent current fixture before the actual renderer
+ok 389 - R0024 expired valid interval rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 35.8384
+  type: 'test'
+  ...
+# Subtest: R0024 unbounded lease rejects an apparent current fixture before the actual renderer
+ok 390 - R0024 unbounded lease rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 35.3702
+  type: 'test'
+  ...
+# Subtest: R0024 null source time rejects an apparent current fixture before the actual renderer
+ok 391 - R0024 null source time rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 36.6353
+  type: 'test'
+  ...
+# Subtest: R0024 wrong source/product rejects an apparent current fixture before the actual renderer
+ok 392 - R0024 wrong source/product rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 36.6892
+  type: 'test'
+  ...
+# Subtest: R0024 unitless amount rejects an apparent current fixture before the actual renderer
+ok 393 - R0024 unitless amount rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 39.2971
+  type: 'test'
+  ...
+# Subtest: R0024 wrong target generation rejects an apparent current fixture before the actual renderer
+ok 394 - R0024 wrong target generation rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 40.2939
+  type: 'test'
+  ...
+# Subtest: R0024 model amount keeps its preceding interval and average rate, never instantaneous onset
+ok 395 - R0024 model amount keeps its preceding interval and average rate, never instantaneous onset
+  ---
+  duration_ms: 44.3232
+  type: 'test'
+  ...
+# Subtest: R0024 qualified measured rate and interval amount retain different physical quantities
+ok 396 - R0024 qualified measured rate and interval amount retain different physical quantities
+  ---
+  duration_ms: 75.8467
+  type: 'test'
+  ...
+# Subtest: R0024 future forecast amount is stepped with its own window, no interpolated onset or fabricated probability
+ok 397 - R0024 future forecast amount is stepped with its own window, no interpolated onset or fabricated probability
+  ---
+  duration_ms: 34.7901
+  type: 'test'
+  ...
+# Subtest: R0024 null precipitation is unknown while actual zero remains an estimated dry model value
+ok 398 - R0024 null precipitation is unknown while actual zero remains an estimated dry model value
+  ---
+  duration_ms: 66.561
+  type: 'test'
+  ...
+# Subtest: R0024 new target generation excludes retained current, track and radar diagnostics
+ok 399 - R0024 new target generation excludes retained current, track and radar diagnostics
+  ---
+  duration_ms: 34.7422
+  type: 'test'
+  ...
+# Subtest: R0024 synchronous acquisition captures original evidence primitives before the body can mutate config
+ok 400 - R0024 synchronous acquisition captures original evidence primitives before the body can mutate config
+  ---
+  duration_ms: 31.2886
+  type: 'test'
+  ...
+# Subtest: R0024 provider trusted flags and dense/empty/sparse palette input have no production permission path
+ok 401 - R0024 provider trusted flags and dense/empty/sparse palette input have no production permission path
+  ---
+  duration_ms: 99.9954
+  type: 'test'
+  ...
+# Subtest: R0024 stable inputs reuse pure reconciliation until the next eligibility boundary
+ok 402 - R0024 stable inputs reuse pure reconciliation until the next eligibility boundary
+  ---
+  duration_ms: 33.0917
+  type: 'test'
+  ...
+# Subtest: R0024 browser source with missing original fix time cannot borrow a recent settings savedAt
+ok 403 - R0024 browser source with missing original fix time cannot borrow a recent settings savedAt
+  ---
+  duration_ms: 5.7048
+  type: 'test'
+  ...
+# Subtest: R0024 conflict or unknown present states cannot borrow wet model permission
+ok 404 - R0024 conflict or unknown present states cannot borrow wet model permission
+  ---
+  duration_ms: 65.2416
+  type: 'test'
+  ...
+# Subtest: R0024 qualified area negative and invalid approach remain independent from current phase
+ok 405 - R0024 qualified area negative and invalid approach remain independent from current phase
+  ---
+  duration_ms: 32.9614
+  type: 'test'
+  ...
+# Subtest: R0024 earlier surrounding expiry cannot withdraw a still-qualified current wet point
+ok 406 - R0024 earlier surrounding expiry cannot withdraw a still-qualified current wet point
+  ---
+  duration_ms: 34.4199
+  type: 'test'
+  ...
+# Subtest: R0024 reversed time cannot resurrect a future local observation and future forecast is never current
+ok 407 - R0024 reversed time cannot resurrect a future local observation and future forecast is never current
+  ---
+  duration_ms: 34.1714
+  type: 'test'
+  ...
+# Subtest: R0024 model data expiring after resume removes every current atmosphere input and keeps forecast separate
+ok 408 - R0024 model data expiring after resume removes every current atmosphere input and keeps forecast separate
+  ---
+  duration_ms: 31.2863
+  type: 'test'
+  ...
+# Subtest: R0024 unrepresentable derived average or interval stays null rather than infinity
+ok 409 - R0024 unrepresentable derived average or interval stays null rather than infinity
+  ---
+  duration_ms: 67.2147
+  type: 'test'
+  ...
+# Subtest: R0024 caller-provided synthetic probability zero stays distinct from unavailable and grants no current condition
+ok 410 - R0024 caller-provided synthetic probability zero stays distinct from unavailable and grants no current condition
+  ---
+  duration_ms: 3.37
+  type: 'test'
+  ...
+# Subtest: R0024 dry centre with three wet palette neighbours remains estimated dry with unknown local evidence
+ok 411 - R0024 dry centre with three wet palette neighbours remains estimated dry with unknown local evidence
+  ---
+  duration_ms: 33.0644
+  type: 'test'
+  ...
+# Subtest: R0024 explicit SIM wet positives and dry negatives retain their own source label
+ok 412 - R0024 explicit SIM wet positives and dry negatives retain their own source label
+  ---
+  duration_ms: 20.3849
+  type: 'test'
+  ...
+# Subtest: R0024 actual accepted CONFIG hash parser supplies a configured site without manufactured fix precision
+ok 413 - R0024 actual accepted CONFIG hash parser supplies a configured site without manufactured fix precision
+  ---
+  duration_ms: 33.0391
+  type: 'test'
+  ...
+# Subtest: R0024 actual accepted CONFIG save/load preserves original browser epoch while WEATHER declines an expired device claim
+ok 414 - R0024 actual accepted CONFIG save/load preserves original browser epoch while WEATHER declines an expired device claim
+  ---
+  duration_ms: 34.1292
+  type: 'test'
+  ...
+1..414
+# tests 414
+# suites 0
+# pass 410
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 4
+# duration_ms 16030.2216

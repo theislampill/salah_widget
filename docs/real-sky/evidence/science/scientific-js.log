@@ -1,0 +1,1841 @@
+TAP version 13
+# Subtest: J2000 UTC Julian day
+ok 1 - J2000 UTC Julian day
+  ---
+  duration_ms: 1.0513
+  type: 'test'
+  ...
+# Subtest: Greenwich mean sidereal J2000 anchor
+ok 2 - Greenwich mean sidereal J2000 anchor
+  ---
+  duration_ms: 0.096
+  type: 'test'
+  ...
+# Subtest: UTC instant must be explicit numeric or Date, never ambiguous civil text
+ok 3 - UTC instant must be explicit numeric or Date, never ambiguous civil text
+  ---
+  duration_ms: 0.16
+  type: 'test'
+  ...
+# Subtest: equatorial transit is zenith at equator
+ok 4 - equatorial transit is zenith at equator
+  ---
+  duration_ms: 0.3863
+  type: 'test'
+  ...
+# Subtest: rising east and setting west have correct signs
+ok 5 - rising east and setting west have correct signs
+  ---
+  duration_ms: 0.1999
+  type: 'test'
+  ...
+# Subtest: north pole height equals latitude
+ok 6 - north pole height equals latitude
+  ---
+  duration_ms: 0.1736
+  type: 'test'
+  ...
+# Subtest: all observer poles and zeniths remain finite
+ok 7 - all observer poles and zeniths remain finite
+  ---
+  duration_ms: 0.6756
+  type: 'test'
+  ...
+# Subtest: reject invalid terrestrial latitude
+ok 8 - reject invalid terrestrial latitude
+  ---
+  duration_ms: 0.1714
+  type: 'test'
+  ...
+# Subtest: precession at J2000 is identity
+ok 9 - precession at J2000 is identity
+  ---
+  duration_ms: 0.3929
+  type: 'test'
+  ...
+# Subtest: precession changes zero RA to positive RA and declination after J2000
+ok 10 - precession changes zero RA to positive RA and declination after J2000
+  ---
+  duration_ms: 0.3469
+  type: 'test'
+  ...
+# Subtest: proper motion uses mu_alpha*cos(delta) and is stable at poles
+ok 11 - proper motion uses mu_alpha*cos(delta) and is stable at poles
+  ---
+  duration_ms: 0.2361
+  type: 'test'
+  ...
+# Subtest: unknown proper motion is flagged, not claimed zero measurement
+ok 12 - unknown proper motion is flagged, not claimed zero measurement
+  ---
+  duration_ms: 1.2006
+  type: 'test'
+  ...
+# Subtest: location longitude acts east-positive
+ok 13 - location longitude acts east-positive
+  ---
+  duration_ms: 0.3513
+  type: 'test'
+  ...
+# Subtest: time changes even when scene identity does not
+ok 14 - time changes even when scene identity does not
+  ---
+  duration_ms: 0.2017
+  type: 'test'
+  ...
+# Subtest: refraction is optional and cannot be used outside model domain
+ok 15 - refraction is optional and cannot be used outside model domain
+  ---
+  duration_ms: 0.1181
+  type: 'test'
+  ...
+# Subtest: azimuthal projection round trips cardinal and intermediate directions
+ok 16 - azimuthal projection round trips cardinal and intermediate directions
+  ---
+  duration_ms: 0.4011
+  type: 'test'
+  ...
+# Subtest: legacy widget dome has precisely documented axes
+ok 17 - legacy widget dome has precisely documented axes
+  ---
+  duration_ms: 0.1015
+  type: 'test'
+  ...
+# Subtest: perspective camera looks along its specified azimuth and altitude
+ok 18 - perspective camera looks along its specified azimuth and altitude
+  ---
+  duration_ms: 0.3306
+  type: 'test'
+  ...
+# Subtest: slerp crosses RA wrap locally rather than traversing the whole sky
+ok 19 - slerp crosses RA wrap locally rather than traversing the whole sky
+  ---
+  duration_ms: 0.1128
+  type: 'test'
+  ...
+# Subtest: angular separation accepts differently scaled finite direction vectors
+ok 20 - angular separation accepts differently scaled finite direction vectors
+  ---
+  duration_ms: 0.0562
+  type: 'test'
+  ...
+# Subtest: 520 unique measured HIP catalogue sources, no Sun
+ok 21 - 520 unique measured HIP catalogue sources, no Sun
+  ---
+  duration_ms: 1.2869
+  type: 'test'
+  ...
+# Subtest: known positions and measured colour contrasts retained
+ok 22 - known positions and measured colour contrasts retained
+  ---
+  duration_ms: 0.0916
+  type: 'test'
+  ...
+# Subtest: upstream substituted colour is explicitly unknown
+ok 23 - upstream substituted colour is explicitly unknown
+  ---
+  duration_ms: 0.0534
+  type: 'test'
+  ...
+# Subtest: motion and distances absent from derivative are not manufactured
+ok 24 - motion and distances absent from derivative are not manufactured
+  ---
+  duration_ms: 0.0541
+  type: 'test'
+  ...
+# Subtest: duplicate identities and NaNs reject, no silent catalogue repairs
+ok 25 - duplicate identities and NaNs reject, no silent catalogue repairs
+  ---
+  duration_ms: 2.5093
+  type: 'test'
+  ...
+# Subtest: RA=360 is rejected at the schema boundary
+ok 26 - RA=360 is rejected at the schema boundary
+  ---
+  duration_ms: 0.7882
+  type: 'test'
+  ...
+# Subtest: schema 2 retains 8920 magnitude-selected records, one faint endpoint, fifty without HIP
+ok 27 - schema 2 retains 8920 magnitude-selected records, one faint endpoint, fifty without HIP
+  ---
+  duration_ms: 6.2267
+  type: 'test'
+  ...
+# Subtest: duplicate stable identities are rejected even without a HIP
+ok 28 - duplicate stable identities are rejected even without a HIP
+  ---
+  duration_ms: 32.1379
+  type: 'test'
+  ...
+# Subtest: duplicate HIP remains rejected when HYG keys differ
+ok 29 - duplicate HIP remains rejected when HYG keys differ
+  ---
+  duration_ms: 25.6568
+  type: 'test'
+  ...
+# Subtest: partial/malformed motion and missing B-V never default to synthetic colours
+ok 30 - partial/malformed motion and missing B-V never default to synthetic colours
+  ---
+  duration_ms: 26.2661
+  type: 'test'
+  ...
+# Subtest: real source preserves proper motions and contemporary-relevant reference photometry
+ok 31 - real source preserves proper motions and contemporary-relevant reference photometry
+  ---
+  duration_ms: 0.2382
+  type: 'test'
+  ...
+# Subtest: every constellation endpoint resolves to a measured star
+ok 32 - every constellation endpoint resolves to a measured star
+  ---
+  duration_ms: 1.4001
+  type: 'test'
+  ...
+# Subtest: projection same inputs is deterministic with no seed
+ok 33 - projection same inputs is deterministic with no seed
+  ---
+  duration_ms: 81.5489
+  type: 'test'
+  ...
+# Subtest: same location and scene ID do not freeze wall-clock geometry
+ok 34 - same location and scene ID do not freeze wall-clock geometry
+  ---
+  duration_ms: 40.7346
+  type: 'test'
+  ...
+# Subtest: backward time jump reprojects rather than reuses future geometry
+ok 35 - backward time jump reprojects rather than reuses future geometry
+  ---
+  duration_ms: 70.3249
+  type: 'test'
+  ...
+# Subtest: invalid accepted observer clears previous geometry, terminally unavailable
+ok 36 - invalid accepted observer clears previous geometry, terminally unavailable
+  ---
+  duration_ms: 19.1122
+  type: 'test'
+  ...
+# Subtest: equator and Greenwich are valid, not missing data
+ok 37 - equator and Greenwich are valid, not missing data
+  ---
+  duration_ms: 17.3855
+  type: 'test'
+  ...
+# Subtest: cloud/appearance changes never require a catalogue rebuild
+ok 38 - cloud/appearance changes never require a catalogue rebuild
+  ---
+  duration_ms: 52.2684
+  type: 'test'
+  ...
+# Subtest: generation ownership rejects late catalogue arrival
+ok 39 - generation ownership rejects late catalogue arrival
+  ---
+  duration_ms: 43.4948
+  type: 'test'
+  ...
+# Subtest: failed catalogue replacement clears stale old-location sources
+ok 40 - failed catalogue replacement clears stale old-location sources
+  ---
+  duration_ms: 1.8942
+  type: 'test'
+  ...
+# Subtest: annotation segments clip at the horizon and do not invent visible endpoints
+ok 41 - annotation segments clip at the horizon and do not invent visible endpoints
+  ---
+  duration_ms: 28.1237
+  type: 'test'
+  ...
+# Subtest: physical occultation uses angular disc, independent of luminous fraction
+ok 42 - physical occultation uses angular disc, independent of luminous fraction
+  ---
+  duration_ms: 0.1568
+  type: 'test'
+  ...
+# Subtest: southern cross is always below Reykjavik geometric horizon across one day
+ok 43 - southern cross is always below Reykjavik geometric horizon across one day
+  ---
+  duration_ms: 419.7982
+  type: 'test'
+  ...
+# Subtest: time policy contains historical leap steps and confirmed2026 offset
+ok 44 - time policy contains historical leap steps and confirmed2026 offset
+  ---
+  duration_ms: 0.7132
+  type: 'test'
+  ...
+# Subtest: USNO pre1972 UTC drift is honoured rather than a constant modern offset
+ok 45 - USNO pre1972 UTC drift is honoured rather than a constant modern offset
+  ---
+  duration_ms: 0.6299
+  type: 'test'
+  ...
+# Subtest: unknown future leap history and preUTC dates are warnings, not fictitious time measurements
+ok 46 - unknown future leap history and preUTC dates are warnings, not fictitious time measurements
+  ---
+  duration_ms: 0.1503
+  type: 'test'
+  ...
+# Subtest: supplied time offsets including truezero override defaults
+ok 47 - supplied time offsets including truezero override defaults
+  ---
+  duration_ms: 0.0759
+  type: 'test'
+  ...
+# Subtest: invalid pressure/temp/vector inputs reject even when below horizon
+ok 48 - invalid pressure/temp/vector inputs reject even when below horizon
+  ---
+  duration_ms: 0.8416
+  type: 'test'
+  ...
+# Subtest: bounded dates accept1900 and2100calendar boundaries, reject outside
+ok 49 - bounded dates accept1900 and2100calendar boundaries, reject outside
+  ---
+  duration_ms: 0.2974
+  type: 'test'
+  ...
+# Subtest: Earth state returns physical AU and AU/day scales
+ok 50 - Earth state returns physical AU and AU/day scales
+  ---
+  duration_ms: 0.084
+  type: 'test'
+  ...
+# Subtest: frame contains precomputed rotation and automatically applied annual/diurnal velocity
+ok 51 - frame contains precomputed rotation and automatically applied annual/diurnal velocity
+  ---
+  duration_ms: 0.094
+  type: 'test'
+  ...
+# Subtest: shared frame snapshots input ownership rather than aliasing mutable observer
+ok 52 - shared frame snapshots input ownership rather than aliasing mutable observer
+  ---
+  duration_ms: 0.8273
+  type: 'test'
+  ...
+# Subtest: annual aberration is tens of arcseconds, not degrees or missing
+ok 53 - annual aberration is tens of arcseconds, not degrees or missing
+  ---
+  duration_ms: 0.4553
+  type: 'test'
+  ...
+# Subtest: nearby sources receive parallax without altering their catalogue magnitude
+ok 54 - nearby sources receive parallax without altering their catalogue magnitude
+  ---
+  duration_ms: 0.3035
+  type: 'test'
+  ...
+# Subtest: missing parallax remains explicit and exact zero proper motion is valid
+ok 55 - missing parallax remains explicit and exact zero proper motion is valid
+  ---
+  duration_ms: 0.4481
+  type: 'test'
+  ...
+# Subtest: external barycentric state requires timestamp/frame and displaces analytic state
+ok 56 - external barycentric state requires timestamp/frame and displaces analytic state
+  ---
+  duration_ms: 0.0951
+  type: 'test'
+  ...
+# Subtest: refracted ENU agrees with displayed altitude, geometric ENU retained
+ok 57 - refracted ENU agrees with displayed altitude, geometric ENU retained
+  ---
+  duration_ms: 0.1428
+  type: 'test'
+  ...
+# Subtest: perspective forward/inverse roundtrips at poles and camera roll
+ok 58 - perspective forward/inverse roundtrips at poles and camera roll
+  ---
+  duration_ms: 0.6607
+  type: 'test'
+  ...
+# Subtest: projection refuses impossible dimensions and invalid directions
+ok 59 - projection refuses impossible dimensions and invalid directions
+  ---
+  duration_ms: 0.2107
+  type: 'test'
+  ...
+# Subtest: camera orientation and field of view do not relocate stars
+ok 60 - camera orientation and field of view do not relocate stars
+  ---
+  duration_ms: 0.0666
+  type: 'test'
+  ...
+# Subtest: physical newMoon is opaque regardless illumination/calendarMoon screen position
+ok 61 - physical newMoon is opaque regardless illumination/calendarMoon screen position
+  ---
+  duration_ms: 0.0676
+  type: 'test'
+  ...
+# Subtest: typed correction switches reject strings instead of turning false text into true
+ok 62 - typed correction switches reject strings instead of turning false text into true
+  ---
+  duration_ms: 0.0924
+  type: 'test'
+  ...
+# Subtest: legacy projection also rejects invalid standalone directions
+ok 63 - legacy projection also rejects invalid standalone directions
+  ---
+  duration_ms: 0.1859
+  type: 'test'
+  ...
+# Subtest: one provided total velocity is never double-added to analytic annual/diurnal terms
+ok 64 - one provided total velocity is never double-added to analytic annual/diurnal terms
+  ---
+  duration_ms: 0.131
+  type: 'test'
+  ...
+# Subtest: external reference state does not masquerade as ordinary static epoch data
+ok 65 - external reference state does not masquerade as ordinary static epoch data
+  ---
+  duration_ms: 0.0695
+  type: 'test'
+  ...
+# Subtest: Independent CP4 horizontalArcsec <= 5
+ok 66 - Independent CP4 horizontalArcsec <= 5
+  ---
+  duration_ms: 0.8323
+  type: 'test'
+  ...
+# Subtest: Independent CP4 equatorialArcsec <= 5
+ok 67 - Independent CP4 equatorialArcsec <= 5
+  ---
+  duration_ms: 0.0668
+  type: 'test'
+  ...
+# Subtest: Independent CP4 motionOnlyArcsec <= 0.1
+ok 68 - Independent CP4 motionOnlyArcsec <= 0.1
+  ---
+  duration_ms: 0.0385
+  type: 'test'
+  ...
+# Subtest: Independent CP4 wholeCatalogueEquatorialArcsec <= 5
+ok 69 - Independent CP4 wholeCatalogueEquatorialArcsec <= 5
+  ---
+  duration_ms: 0.043
+  type: 'test'
+  ...
+# Subtest: Independent CP4 earthPositionAu <= 0.003
+ok 70 - Independent CP4 earthPositionAu <= 0.003
+  ---
+  duration_ms: 0.0405
+  type: 'test'
+  ...
+# Subtest: Independent CP4 earthVelocityAuDay <= 0.00005
+ok 71 - Independent CP4 earthVelocityAuDay <= 0.00005
+  ---
+  duration_ms: 0.0318
+  type: 'test'
+  ...
+# Subtest: Independent matrix covers every current catalogue source at three epochs
+ok 72 - Independent matrix covers every current catalogue source at three epochs
+  ---
+  duration_ms: 0.1134
+  type: 'test'
+  ...
+# Subtest: Independent selected-source matrix covers24epochs×8sites×72sources
+ok 73 - Independent selected-source matrix covers24epochs×8sites×72sources
+  ---
+  duration_ms: 0.0423
+  type: 'test'
+  ...
+# Subtest: all seven Orion anchors aboveFlorida and in a single south-pointing camera
+ok 74 - all seven Orion anchors aboveFlorida and in a single south-pointing camera
+  ---
+  duration_ms: 1.9131
+  type: 'test'
+  ...
+# Subtest: same real Orion sources are not artificially inserted in northern legacy crop
+ok 75 - same real Orion sources are not artificially inserted in northern legacy crop
+  ---
+  duration_ms: 1.5376
+  type: 'test'
+  ...
+# Subtest: physical source catalogue stable whileFlorida andMadinah sky geometry differs
+ok 76 - physical source catalogue stable whileFlorida andMadinah sky geometry differs
+  ---
+  duration_ms: 0.2428
+  type: 'test'
+  ...
+# Subtest: Polaris tracks northern latitude to within its polar separation across24hours
+ok 77 - Polaris tracks northern latitude to within its polar separation across24hours
+  ---
+  duration_ms: 2.5656
+  type: 'test'
+  ...
+# Subtest: Canopus and mainCrux never rise inReykjavik over a sidereal-day sample
+ok 78 - Canopus and mainCrux never rise inReykjavik over a sidereal-day sample
+  ---
+  duration_ms: 3.5814
+  type: 'test'
+  ...
+# Subtest: Crux has a real rising/visible window inSydney, not a latitude-only switch
+ok 79 - Crux has a real rising/visible window inSydney, not a latitude-only switch
+  ---
+  duration_ms: 2.925
+  type: 'test'
+  ...
+# Subtest: observer longitude+180 and-180 are the same meridian
+ok 80 - observer longitude+180 and-180 are the same meridian
+  ---
+  duration_ms: 0.323
+  type: 'test'
+  ...
+# Subtest: clock seek forward then back recovers exact state despite constant scene identity
+ok 81 - clock seek forward then back recovers exact state despite constant scene identity
+  ---
+  duration_ms: 92.0895
+  type: 'test'
+  ...
+# Subtest: midnight does not reset or jump the sidereal sky
+ok 82 - midnight does not reset or jump the sidereal sky
+  ---
+  duration_ms: 0.3822
+  type: 'test'
+  ...
+# Subtest: hidden-return caller can sample currentUTC directly without integrating a backlog
+ok 83 - hidden-return caller can sample currentUTC directly without integrating a backlog
+  ---
+  duration_ms: 67.1383
+  type: 'test'
+  ...
+# Subtest: accepted external current barycentric state owns position and velocity
+ok 84 - accepted external current barycentric state owns position and velocity
+  ---
+  duration_ms: 0.2997
+  type: 'test'
+  ...
+# Subtest: apparent horizon/refraction and geometric horizon are separately exposed
+ok 85 - apparent horizon/refraction and geometric horizon are separately exposed
+  ---
+  duration_ms: 0.2273
+  type: 'test'
+  ...
+# Subtest: catalogue is seed-independent and produces no new synthetic source identifiers
+ok 86 - catalogue is seed-independent and produces no new synthetic source identifiers
+  ---
+  duration_ms: 64.7725
+  type: 'test'
+  ...
+# Subtest: CP5 optical API exists
+ok 87 - CP5 optical API exists
+  ---
+  duration_ms: 0.8292
+  type: 'test'
+  ...
+# Subtest: every optical preset redistributes rather than creates flux
+ok 88 - every optical preset redistributes rather than creates flux
+  ---
+  duration_ms: 0.3168
+  type: 'test'
+  ...
+# Subtest: wavelength-dependent diffraction is explicit, not bright-star class
+ok 89 - wavelength-dependent diffraction is explicit, not bright-star class
+  ---
+  duration_ms: 0.0814
+  type: 'test'
+  ...
+# Subtest: invalid optics fail instead of silently creating huge or negative kernels
+ok 90 - invalid optics fail instead of silently creating huge or negative kernels
+  ---
+  duration_ms: 0.1741
+  type: 'test'
+  ...
+# Subtest: new optical renderer preserves flux across subpixel positions and DPR
+ok 91 - new optical renderer preserves flux across subpixel positions and DPR
+  ---
+  duration_ms: 46.0373
+  type: 'test'
+  ...
+# Subtest: close pair is sum of two sources, not distance-rescaled/deduplicated light
+ok 92 - close pair is sum of two sources, not distance-rescaled/deduplicated light
+  ---
+  duration_ms: 0.4761
+  type: 'test'
+  ...
+# Subtest: border crops flux without renormalising a PSF fragment
+ok 93 - border crops flux without renormalising a PSF fragment
+  ---
+  duration_ms: 0.2469
+  type: 'test'
+  ...
+# Subtest: display saturation is bounded and monotone, linear buffer is unclipped
+ok 94 - display saturation is bounded and monotone, linear buffer is unclipped
+  ---
+  duration_ms: 0.8736
+  type: 'test'
+  ...
+# Subtest: CP5 spectral API exists (not the CP4 blackbody-only path)
+ok 95 - CP5 spectral API exists (not the CP4 blackbody-only path)
+  ---
+  duration_ms: 0.8774
+  type: 'test'
+  ...
+# Subtest: V is an actual named passband, separate from photopic Y
+ok 96 - V is an actual named passband, separate from photopic Y
+  ---
+  duration_ms: 2.7489
+  type: 'test'
+  ...
+# Subtest: magnitude anchors received V flux without distance dimming
+ok 97 - magnitude anchors received V flux without distance dimming
+  ---
+  duration_ms: 1.7122
+  type: 'test'
+  ...
+# Subtest: verified standard belongs to its own HIP identity
+ok 98 - verified standard belongs to its own HIP identity
+  ---
+  duration_ms: 0.6102
+  type: 'test'
+  ...
+# Subtest: quality-rejected Denebola standard stays rejected, not silently repaired
+ok 99 - quality-rejected Denebola standard stays rejected, not silently repaired
+  ---
+  duration_ms: 0.7047
+  type: 'test'
+  ...
+# Subtest: template is a declared estimate, never a measurement of another star
+ok 100 - template is a declared estimate, never a measurement of another star
+  ---
+  duration_ms: 0.5198
+  type: 'test'
+  ...
+# Subtest: peculiar/composite/wrong class cannot borrow template by colour alone
+ok 101 - peculiar/composite/wrong class cannot borrow template by colour alone
+  ---
+  duration_ms: 0.7138
+  type: 'test'
+  ...
+# Subtest: unknown B-V and spectrum remain unknown, with neutral-display proxy
+ok 102 - unknown B-V and spectrum remain unknown, with neutral-display proxy
+  ---
+  duration_ms: 0.0824
+  type: 'test'
+  ...
+# Subtest: blackbody family is numerically constrained to measured B-V
+ok 103 - blackbody family is numerically constrained to measured B-V
+  ---
+  duration_ms: 0.6795
+  type: 'test'
+  ...
+# Subtest: out-of-range colour does not become a fabricated temperature
+ok 104 - out-of-range colour does not become a fabricated temperature
+  ---
+  duration_ms: 0.2354
+  type: 'test'
+  ...
+# Subtest: provided spectra require provenance and contain positive energy
+ok 105 - provided spectra require provenance and contain positive energy
+  ---
+  duration_ms: 0.2413
+  type: 'test'
+  ...
+# Subtest: provided measured spectrum overrides defaults and is V-normalised
+ok 106 - provided measured spectrum overrides defaults and is V-normalised
+  ---
+  duration_ms: 0.0632
+  type: 'test'
+  ...
+# Subtest: tabulated CIE values replace analytic fitting error
+ok 107 - tabulated CIE values replace analytic fitting error
+  ---
+  duration_ms: 0.087
+  type: 'test'
+  ...
+# Subtest: wavelength extinction dims and reddens without colour renormalisation
+ok 108 - wavelength extinction dims and reddens without colour renormalisation
+  ---
+  duration_ms: 0.1371
+  type: 'test'
+  ...
+# Subtest: cloud factor is linear once and below-horizon light is zero
+ok 109 - cloud factor is linear once and below-horizon light is zero
+  ---
+  duration_ms: 0.2504
+  type: 'test'
+  ...
+# Subtest: monochrome V detector preserves V ordering and has no fictional colour
+ok 110 - monochrome V detector preserves V ordering and has no fictional colour
+  ---
+  duration_ms: 0.0932
+  type: 'test'
+  ...
+# Subtest: gamut mapping preserves XYZ-Y rather than arbitrary peak normalisation
+ok 111 - gamut mapping preserves XYZ-Y rather than arbitrary peak normalisation
+  ---
+  duration_ms: 0.0992
+  type: 'test'
+  ...
+# Subtest: borrowed template is colour-constrained rather than replacing measured B-V
+ok 112 - borrowed template is colour-constrained rather than replacing measured B-V
+  ---
+  duration_ms: 0.8938
+  type: 'test'
+  ...
+# Subtest: CP6 defaults are explicit assumptions, not observed local weather
+ok 113 - CP6 defaults are explicit assumptions, not observed local weather
+  ---
+  duration_ms: 0.6264
+  type: 'test'
+  ...
+# Subtest: pressure and elevation affect molecular optical depth exactly once
+ok 114 - pressure and elevation affect molecular optical depth exactly once
+  ---
+  duration_ms: 0.2174
+  type: 'test'
+  ...
+# Subtest: molecular 550nm optical depth agrees with published polynomial
+ok 115 - molecular 550nm optical depth agrees with published polynomial
+  ---
+  duration_ms: 0.1279
+  type: 'test'
+  ...
+# Subtest: invalid atmosphere and ambiguous cloud inputs rejected
+ok 116 - invalid atmosphere and ambiguous cloud inputs rejected
+  ---
+  duration_ms: 0.1954
+  type: 'test'
+  ...
+# Subtest: direct attenuation finite at horizon and zero below it
+ok 117 - direct attenuation finite at horizon and zero below it
+  ---
+  duration_ms: 0.1443
+  type: 'test'
+  ...
+# Subtest: blue extinction stronger; haze reduces transmitted source
+ok 118 - blue extinction stronger; haze reduces transmitted source
+  ---
+  duration_ms: 0.1103
+  type: 'test'
+  ...
+# Subtest: cloud scalar and optical-depth inputs each attenuate only once
+ok 119 - cloud scalar and optical-depth inputs each attenuate only once
+  ---
+  duration_ms: 0.1388
+  type: 'test'
+  ...
+# Subtest: cloud map owns total cloud transmission instead of compounding scalar
+ok 120 - cloud map owns total cloud transmission instead of compounding scalar
+  ---
+  duration_ms: 0.0791
+  type: 'test'
+  ...
+# Subtest: phase functions integrate to unity and aerosol scattering is forward
+ok 121 - phase functions integrate to unity and aerosol scattering is forward
+  ---
+  duration_ms: 4.695
+  type: 'test'
+  ...
+# Subtest: physical solar state changes with location and time independent of calendar display
+ok 122 - physical solar state changes with location and time independent of calendar display
+  ---
+  duration_ms: 1.463
+  type: 'test'
+  ...
+# Subtest: topocentric lunar position differs by observer and supports backward seeks
+ok 123 - topocentric lunar position differs by observer and supports backward seeks
+  ---
+  duration_ms: 0.3068
+  type: 'test'
+  ...
+# Subtest: surface magnitude and luminance conversions round trip
+ok 124 - surface magnitude and luminance conversions round trip
+  ---
+  duration_ms: 0.1052
+  type: 'test'
+  ...
+# Subtest: Patat total zenith V fit reproduces published coefficients in fitted range
+ok 125 - Patat total zenith V fit reproduces published coefficients in fitted range
+  ---
+  duration_ms: 0.1517
+  type: 'test'
+  ...
+# Subtest: twilight residual subtracts reference night floor, not counting it twice
+ok 126 - twilight residual subtracts reference night floor, not counting it twice
+  ---
+  duration_ms: 0.0449
+  type: 'test'
+  ...
+# Subtest: moon model agrees with original paper Table2, no arbitrary screen hole
+ok 127 - moon model agrees with original paper Table2, no arbitrary screen hole
+  ---
+  duration_ms: 0.2856
+  type: 'test'
+  ...
+# Subtest: moon below horizon or zero-scattering atmosphere contributes no lunar sky
+ok 128 - moon below horizon or zero-scattering atmosphere contributes no lunar sky
+  ---
+  duration_ms: 0.0648
+  type: 'test'
+  ...
+# Subtest: lunar aureole is finite and continuous at branch transition
+ok 129 - lunar aureole is finite and continuous at branch transition
+  ---
+  duration_ms: 0.0556
+  type: 'test'
+  ...
+# Subtest: single scattering has no solar light in deep night or vacuum
+ok 130 - single scattering has no solar light in deep night or vacuum
+  ---
+  duration_ms: 0.2168
+  type: 'test'
+  ...
+# Subtest: daylight single-scattering luminance positive and blue-rich away from Sun
+ok 131 - daylight single-scattering luminance positive and blue-rich away from Sun
+  ---
+  duration_ms: 0.6985
+  type: 'test'
+  ...
+# Subtest: time-dependent sky really becomes brighter in twilight and daylight
+ok 132 - time-dependent sky really becomes brighter in twilight and daylight
+  ---
+  duration_ms: 5.6771
+  type: 'test'
+  ...
+# Subtest: moon changes background by angular separation even outside camera
+ok 133 - moon changes background by angular separation even outside camera
+  ---
+  duration_ms: 0.1303
+  type: 'test'
+  ...
+# Subtest: cloud background and source are distinct, explicit cloud glow can add light
+ok 134 - cloud background and source are distinct, explicit cloud glow can add light
+  ---
+  duration_ms: 0.1815
+  type: 'test'
+  ...
+# Subtest: zero clouds transmit no direct star and sky black without additive local light
+ok 135 - zero clouds transmit no direct star and sky black without additive local light
+  ---
+  duration_ms: 0.1188
+  type: 'test'
+  ...
+# Subtest: scintillation deterministic, bounded, zero-mean and exposure-averaged
+ok 136 - scintillation deterministic, bounded, zero-mean and exposure-averaged
+  ---
+  duration_ms: 5.1108
+  type: 'test'
+  ...
+# Subtest: display contrast declines against brighter background without altering source flux
+ok 137 - display contrast declines against brighter background without altering source flux
+  ---
+  duration_ms: 0.1478
+  type: 'test'
+  ...
+# Subtest: CP6 empirical twilight also vanishes in vacuum
+ok 138 - CP6 empirical twilight also vanishes in vacuum
+  ---
+  duration_ms: 0.7
+  type: 'test'
+  ...
+# Subtest: CP6 callers cannot bypass atmospheric validation with an internal marker
+ok 139 - CP6 callers cannot bypass atmospheric validation with an internal marker
+  ---
+  duration_ms: 0.0758
+  type: 'test'
+  ...
+# Subtest: CP6 absorbing-only atmosphere cannot create scattered moonlight
+ok 140 - CP6 absorbing-only atmosphere cannot create scattered moonlight
+  ---
+  duration_ms: 0.1118
+  type: 'test'
+  ...
+# Subtest: CP6 bridge uses a single height input for stellar and sky observer
+ok 141 - CP6 bridge uses a single height input for stellar and sky observer
+  ---
+  duration_ms: 4.5175
+  type: 'test'
+  ...
+# Subtest: CP6 bridge rejects contradictory explicit elevations and clears previous raster
+ok 142 - CP6 bridge rejects contradictory explicit elevations and clears previous raster
+  ---
+  duration_ms: 1.0286
+  type: 'test'
+  ...
+# Subtest: CP6 bridge respects accepted clock changes and reports unavailable catalogue
+ok 143 - CP6 bridge respects accepted clock changes and reports unavailable catalogue
+  ---
+  duration_ms: 1.7991
+  type: 'test'
+  ...
+# Subtest: CP6 bridge preserves estimated-pressure provenance across normalisation
+ok 144 - CP6 bridge preserves estimated-pressure provenance across normalisation
+  ---
+  duration_ms: 0.9086
+  type: 'test'
+  ...
+# Subtest: CP6 display changes do not alter physical catalogue flux
+ok 145 - CP6 display changes do not alter physical catalogue flux
+  ---
+  duration_ms: 14.5267
+  type: 'test'
+  ...
+# Subtest: CP6 direct cloud attenuation occurs exactly once in complete composition
+ok 146 - CP6 direct cloud attenuation occurs exactly once in complete composition
+  ---
+  duration_ms: 9.673
+  type: 'test'
+  ...
+# Subtest: CP6 source plus background composition is linear, not screen blending
+ok 147 - CP6 source plus background composition is linear, not screen blending
+  ---
+  duration_ms: 5.5893
+  type: 'test'
+  ...
+# Subtest: CP6 no arbitrary solar-altitude multiplier on physical source photons
+ok 148 - CP6 no arbitrary solar-altitude multiplier on physical source photons
+  ---
+  duration_ms: 53.0384
+  type: 'test'
+  ...
+# Subtest: CP6 calendar display mask removes only stellar layer, not physical illumination
+ok 149 - CP6 calendar display mask removes only stellar layer, not physical illumination
+  ---
+  duration_ms: 8.1942
+  type: 'test'
+  ...
+# Subtest: CP6 rejects stale physical ephemeris rather than drawing wrong Moon glare
+ok 150 - CP6 rejects stale physical ephemeris rather than drawing wrong Moon glare
+  ---
+  duration_ms: 2.5177
+  type: 'test'
+  ...
+# Subtest: CP6 opaque physical Moon blocks source independently of illuminated fraction
+ok 151 - CP6 opaque physical Moon blocks source independently of illuminated fraction
+  ---
+  duration_ms: 4.8696
+  type: 'test'
+  ...
+# Subtest: CP6 reduced motion suppresses scintillation without freezing ephemeris
+ok 152 - CP6 reduced motion suppresses scintillation without freezing ephemeris
+  ---
+  duration_ms: 12.8306
+  type: 'test'
+  ...
+# Subtest: CP6 inverse maps and solid angle are consistent, horizon masked
+ok 153 - CP6 inverse maps and solid angle are consistent, horizon masked
+  ---
+  duration_ms: 0.3186
+  type: 'test'
+  ...
+# Subtest: CP6 DPR changes raster density not source energy per CSS area
+ok 154 - CP6 DPR changes raster density not source energy per CSS area
+  ---
+  duration_ms: 17.9338
+  type: 'test'
+  ...
+# Subtest: CP6 reported display contrast respects an opaque calendar/foreground mask
+ok 155 - CP6 reported display contrast respects an opaque calendar/foreground mask
+  ---
+  duration_ms: 2.5632
+  type: 'test'
+  ...
+# Subtest: CP6 observer elevation supplies atmosphere and physical topocentre consistently
+ok 156 - CP6 observer elevation supplies atmosphere and physical topocentre consistently
+  ---
+  duration_ms: 1.1695
+  type: 'test'
+  ...
+# Subtest: CP6 mismatched explicit observer and atmospheric elevation is rejected
+ok 157 - CP6 mismatched explicit observer and atmospheric elevation is rejected
+  ---
+  duration_ms: 0.2477
+  type: 'test'
+  ...
+# Subtest: CP6 all 6912 independent Sun/Moon directions meet predefined bounds
+ok 158 - CP6 all 6912 independent Sun/Moon directions meet predefined bounds
+  ---
+  duration_ms: 30.6237
+  type: 'test'
+  ...
+# Subtest: real retained diagnostic asset validates without becoming a survey
+ok 159 - real retained diagnostic asset validates without becoming a survey
+  ---
+  duration_ms: 7.8957
+  type: 'test'
+  ...
+# Subtest: constant field remains constant at seam and both poles
+ok 160 - constant field remains constant at seam and both poles
+  ---
+  duration_ms: 0.4042
+  type: 'test'
+  ...
+# Subtest: cell-centre sampling returns the retained cell value
+ok 161 - cell-centre sampling returns the retained cell value
+  ---
+  duration_ms: 0.1653
+  type: 'test'
+  ...
+# Subtest: periodic seam interpolates neighbouring first and last columns
+ok 162 - periodic seam interpolates neighbouring first and last columns
+  ---
+  duration_ms: 0.0956
+  type: 'test'
+  ...
+# Subtest: longitude variation vanishes at a pole
+ok 163 - longitude variation vanishes at a pole
+  ---
+  duration_ms: 0.0977
+  type: 'test'
+  ...
+# Subtest: pole limits are continuous for actual diagnostic
+ok 164 - pole limits are continuous for actual diagnostic
+  ---
+  duration_ms: 1.9001
+  type: 'test'
+  ...
+# Subtest: missing value remains unavailable, not zero or an inpainted estimate
+ok 165 - missing value remains unavailable, not zero or an inpainted estimate
+  ---
+  duration_ms: 0.1475
+  type: 'test'
+  ...
+# Subtest: partial support is not renormalised into full brightness
+ok 166 - partial support is not renormalised into full brightness
+  ---
+  duration_ms: 0.0823
+  type: 'test'
+  ...
+# Subtest: unavailable cap data does not become a complete pole
+ok 167 - unavailable cap data does not become a complete pole
+  ---
+  duration_ms: 0.1848
+  type: 'test'
+  ...
+# Subtest: sampler copies data and does not depend on later caller mutations
+ok 168 - sampler copies data and does not depend on later caller mutations
+  ---
+  duration_ms: 0.2476
+  type: 'test'
+  ...
+# Subtest: production claims, unknown role and unsupported units are refused
+ok 169 - production claims, unknown role and unsupported units are refused
+  ---
+  duration_ms: 0.262
+  type: 'test'
+  ...
+# Subtest: bad numeric values and contradictory masks are refused
+ok 170 - bad numeric values and contradictory masks are refused
+  ---
+  duration_ms: 0.1952
+  type: 'test'
+  ...
+# Subtest: bad shapes and finite grid spacing are refused
+ok 171 - bad shapes and finite grid spacing are refused
+  ---
+  duration_ms: 0.1198
+  type: 'test'
+  ...
+# Subtest: declared total cannot silently disagree with array
+ok 172 - declared total cannot silently disagree with array
+  ---
+  duration_ms: 0.0682
+  type: 'test'
+  ...
+# Subtest: all-sphere constant radiance has 4pi integrated flux
+ok 173 - all-sphere constant radiance has 4pi integrated flux
+  ---
+  duration_ms: 0.0797
+  type: 'test'
+  ...
+# Subtest: map coordinates reject nonfinite directions and impossible declinations
+ok 174 - map coordinates reject nonfinite directions and impossible declinations
+  ---
+  duration_ms: 0.1543
+  type: 'test'
+  ...
+# Subtest: controlled analytic transit and rising-east orientation anchors
+ok 175 - controlled analytic transit and rising-east orientation anchors
+  ---
+  duration_ms: 0.7555
+  type: 'test'
+  ...
+# Subtest: controlled north pole is at observer latitude
+ok 176 - controlled north pole is at observer latitude
+  ---
+  duration_ms: 0.3888
+  type: 'test'
+  ...
+# Subtest: controlled inverse horizon east has RA=LST+90 at equator
+ok 177 - controlled inverse horizon east has RA=LST+90 at equator
+  ---
+  duration_ms: 0.2634
+  type: 'test'
+  ...
+# Subtest: full frame round trips directions across locations, dates and sky poles
+ok 178 - full frame round trips directions across locations, dates and sky poles
+  ---
+  duration_ms: 3.814
+  type: 'test'
+  ...
+# Subtest: fixed infinite-distance catalogue direction follows exactly the shared astrometry
+ok 179 - fixed infinite-distance catalogue direction follows exactly the shared astrometry
+  ---
+  duration_ms: 0.602
+  type: 'test'
+  ...
+# Subtest: inverse uses aberration as well as precession-nutation
+ok 180 - inverse uses aberration as well as precession-nutation
+  ---
+  duration_ms: 0.1159
+  type: 'test'
+  ...
+# Subtest: optional refraction is inverted rather than applied a second time
+ok 181 - optional refraction is inverted rather than applied a second time
+  ---
+  duration_ms: 0.6743
+  type: 'test'
+  ...
+# Subtest: map parallax is not borrowed from a nearby star
+ok 182 - map parallax is not borrowed from a nearby star
+  ---
+  duration_ms: 0.2241
+  type: 'test'
+  ...
+# Subtest: perspective forward/inverse registration respects camera roll
+ok 183 - perspective forward/inverse registration respects camera roll
+  ---
+  duration_ms: 0.5423
+  type: 'test'
+  ...
+# Subtest: all-sky registration preserves east-left handedness
+ok 184 - all-sky registration preserves east-left handedness
+  ---
+  duration_ms: 0.1782
+  type: 'test'
+  ...
+# Subtest: below horizon rays are separate, not sampled as celestial zeros
+ok 185 - below horizon rays are separate, not sampled as celestial zeros
+  ---
+  duration_ms: 0.0787
+  type: 'test'
+  ...
+# Subtest: constant diagnostic render is stable across fractional and integer DPR
+ok 186 - constant diagnostic render is stable across fractional and integer DPR
+  ---
+  duration_ms: 51.2648
+  type: 'test'
+  ...
+# Subtest: footprint supersampling preserves a constant surface field
+ok 187 - footprint supersampling preserves a constant surface field
+  ---
+  duration_ms: 50.0056
+  type: 'test'
+  ...
+# Subtest: time and longitude change map directions; backward seek restores
+ok 188 - time and longitude change map directions; backward seek restores
+  ---
+  duration_ms: 11.5793
+  type: 'test'
+  ...
+# Subtest: render reports data holes without silently darkening them
+ok 189 - render reports data holes without silently darkening them
+  ---
+  duration_ms: 2.8136
+  type: 'test'
+  ...
+# Subtest: invalid observer, oversize raster and sample counts are refused
+ok 190 - invalid observer, oversize raster and sample counts are refused
+  ---
+  duration_ms: 0.2005
+  type: 'test'
+  ...
+# Subtest: diagnostic raster never claims physical composition or source admission
+ok 191 - diagnostic raster never claims physical composition or source admission
+  ---
+  duration_ms: 3.9203
+  type: 'test'
+  ...
+# Subtest: sampling implementation has no procedural population or private clock
+ok 192 - sampling implementation has no procedural population or private clock
+  ---
+  duration_ms: 0.2573
+  type: 'test'
+  ...
+# Subtest: portable SHA256 matches independent Node crypto, padding boundaries and unicode
+ok 193 - portable SHA256 matches independent Node crypto, padding boundaries and unicode
+  ---
+  duration_ms: 92.2759
+  type: 'test'
+  ...
+# Subtest: binding verifies the actual catalogue bytes and freezes catalogue identity
+ok 194 - binding verifies the actual catalogue bytes and freezes catalogue identity
+  ---
+  duration_ms: 196.0121
+  type: 'test'
+  ...
+# Subtest: binding does not accept a forged descriptor or old HYG diagnostic
+ok 195 - binding does not accept a forged descriptor or old HYG diagnostic
+  ---
+  duration_ms: 105.0029
+  type: 'test'
+  ...
+# Subtest: diffuse-off is bit-identical to all 12 captured CP6 cases
+ok 196 - diffuse-off is bit-identical to all 12 captured CP6 cases
+  ---
+  duration_ms: 18546.2528
+  type: 'test'
+  ...
+# Subtest: real-source light enters the linear frame once, and encoding happens only at the end
+ok 197 - real-source light enters the linear frame once, and encoding happens only at the end
+  ---
+  duration_ms: 24.5003
+  type: 'test'
+  ...
+# Subtest: radiance-to-pixel conversion uses V zero point and the solid angle exactly once
+ok 198 - radiance-to-pixel conversion uses V zero point and the solid angle exactly once
+  ---
+  duration_ms: 14.7814
+  type: 'test'
+  ...
+# Subtest: gas/cloud transport is once-only in the joined diffuse buffer
+ok 199 - gas/cloud transport is once-only in the joined diffuse buffer
+  ---
+  duration_ms: 33.7607
+  type: 'test'
+  ...
+# Subtest: daylight and added local light change contrast but do not delete extraterrestrial flux
+ok 200 - daylight and added local light change contrast but do not delete extraterrestrial flux
+  ---
+  duration_ms: 93.3953
+  type: 'test'
+  ...
+# Subtest: display mask removes direct diffuse light, not sky scattering or physical exposure
+ok 201 - display mask removes direct diffuse light, not sky scattering or physical exposure
+  ---
+  duration_ms: 32.3075
+  type: 'test'
+  ...
+# Subtest: physical Moon occultation masks the map by angular footprint without cutting out atmospheric sky
+ok 202 - physical Moon occultation masks the map by angular footprint without cutting out atmospheric sky
+  ---
+  duration_ms: 59.9982
+  type: 'test'
+  ...
+# Subtest: strict source support remains missing and flags exposure as incomplete
+ok 203 - strict source support remains missing and flags exposure as incomplete
+  ---
+  duration_ms: 20.2433
+  type: 'test'
+  ...
+# Subtest: diffuse light never scintillates; backward seeks reconstruct the same physical field
+ok 204 - diffuse light never scintillates; backward seeks reconstruct the same physical field
+  ---
+  duration_ms: 43.0694
+  type: 'test'
+  ...
+# Subtest: bridge enforces actual bound catalogue identity, not only a claimed digest
+ok 205 - bridge enforces actual bound catalogue identity, not only a claimed digest
+  ---
+  duration_ms: 166.0962
+  type: 'test'
+  ...
+# Subtest: source contrast includes registered background and reports missing support
+ok 206 - source contrast includes registered background and reports missing support
+  ---
+  duration_ms: 9.514
+  type: 'test'
+  ...
+# Subtest: fractional DPR keeps the same physical footprint and integrated diffuse light
+ok 207 - fractional DPR keeps the same physical footprint and integrated diffuse light
+  ---
+  duration_ms: 241.3189
+  type: 'test'
+  ...
+# Subtest: zenith readback includes direct diffuse radiance and distinguishes its support
+ok 208 - zenith readback includes direct diffuse radiance and distinguishes its support
+  ---
+  duration_ms: 5.4283
+  type: 'test'
+  ...
+# Subtest: unknown zenith diffuse support stays null rather than becoming measured darkness
+ok 209 - unknown zenith diffuse support stays null rather than becoming measured darkness
+  ---
+  duration_ms: 149.4673
+  type: 'test'
+  ...
+# Subtest: active diffuse memory budget is rejected before invoking any sky callbacks
+ok 210 - active diffuse memory budget is rejected before invoking any sky callbacks
+  ---
+  duration_ms: 0.7763
+  type: 'test'
+  ...
+# Subtest: custom all-sky padding shares the inverse-projection horizon
+ok 211 - custom all-sky padding shares the inverse-projection horizon
+  ---
+  duration_ms: 0.1216
+  type: 'test'
+  ...
+# Subtest: V transport is a declared in-band assumption and equals CP5 Vega V transport
+ok 212 - V transport is a declared in-band assumption and equals CP5 Vega V transport
+  ---
+  duration_ms: 8.3767
+  type: 'test'
+  ...
+# Subtest: directional cloud transmission replaces rather than multiplies the scalar cloud
+ok 213 - directional cloud transmission replaces rather than multiplies the scalar cloud
+  ---
+  duration_ms: 3.8005
+  type: 'test'
+  ...
+# Subtest: zero transmission is known darkness; strict missing support remains explicitly missing
+ok 214 - zero transmission is known darkness; strict missing support remains explicitly missing
+  ---
+  duration_ms: 1.5099
+  type: 'test'
+  ...
+# Subtest: angular physical Moon blocks all direct light independent of lunar phase
+ok 215 - angular physical Moon blocks all direct light independent of lunar phase
+  ---
+  duration_ms: 1.8878
+  type: 'test'
+  ...
+# Subtest: physical Moon compares geometric directions even when map rays are refracted
+ok 216 - physical Moon compares geometric directions even when map rays are refracted
+  ---
+  duration_ms: 1.141
+  type: 'test'
+  ...
+# Subtest: the old night floor is replaced, not added to the nonstellar residual
+ok 217 - the old night floor is replaced, not added to the nonstellar residual
+  ---
+  duration_ms: 1.1446
+  type: 'test'
+  ...
+# Subtest: an unlabelled or overlapping night residual is rejected
+ok 218 - an unlabelled or overlapping night residual is rejected
+  ---
+  duration_ms: 0.7075
+  type: 'test'
+  ...
+# Subtest: invalid sampling settings, fake binding and non-geometric lunar state fail
+ok 219 - invalid sampling settings, fake binding and non-geometric lunar state fail
+  ---
+  duration_ms: 0.3176
+  type: 'test'
+  ...
+# Subtest: grey optical depth is used once in the actual direct diffuse path
+ok 220 - grey optical depth is used once in the actual direct diffuse path
+  ---
+  duration_ms: 1.0543
+  type: 'test'
+  ...
+# Subtest: asset store verifies manifest pin, exact catalogue bytes, freezes fallback and begins unavailable
+ok 221 - asset store verifies manifest pin, exact catalogue bytes, freezes fallback and begins unavailable
+  ---
+  duration_ms: 267.6855
+  type: 'test'
+  ...
+# Subtest: valid tier load has content-addressed identity; repeat request reuses bound source without stale frame cache
+ok 222 - valid tier load has content-addressed identity; repeat request reuses bound source without stale frame cache
+  ---
+  duration_ms: 303.0261
+  type: 'test'
+  ...
+# Subtest: missing and corrupt data are failed closed per requested tier; no previous binding survives as current
+ok 223 - missing and corrupt data are failed closed per requested tier; no previous binding survives as current
+  ---
+  duration_ms: 299.6096
+  type: 'test'
+  ...
+# Subtest: wrong version, unsupported source, paths and descriptor grid mismatch are rejected
+ok 224 - wrong version, unsupported source, paths and descriptor grid mismatch are rejected
+  ---
+  duration_ms: 210.3042
+  type: 'test'
+  ...
+# Subtest: wrong tier bytes and radiance/mask changes are caught before binding despite equal total
+ok 225 - wrong tier bytes and radiance/mask changes are caught before binding despite equal total
+  ---
+  duration_ms: 150.284
+  type: 'test'
+  ...
+# Subtest: stale asynchronous success and stale failure cannot replace newest ready tier
+ok 226 - stale asynchronous success and stale failure cannot replace newest ready tier
+  ---
+  duration_ms: 561.1593
+  type: 'test'
+  ...
+# Subtest: invalid tier invalidates the preceding selection and reports an explicit error
+ok 227 - invalid tier invalidates the preceding selection and reports an explicit error
+  ---
+  duration_ms: 255.073
+  type: 'test'
+  ...
+# Subtest: reload verifies again and drops the old cached identity; recovery returns actual verified data
+ok 228 - reload verifies again and drops the old cached identity; recovery returns actual verified data
+  ---
+  duration_ms: 400.7993
+  type: 'test'
+  ...
+# Subtest: dispose aborts active fetch, clears source cache, and late result cannot resurrect the store
+ok 229 - dispose aborts active fetch, clears source cache, and late result cannot resurrect the store
+  ---
+  duration_ms: 147.275
+  type: 'test'
+  ...
+# Subtest: diffuse-only failure preserves a fresh CP6 sky but invalid observer still clears all raster output
+ok 230 - diffuse-only failure preserves a fresh CP6 sky but invalid observer still clears all raster output
+  ---
+  duration_ms: 737.1103
+  type: 'test'
+  ...
+# Subtest: successful recovery uses the correct bound tier and does not conceal invalid physical configuration
+ok 231 - successful recovery uses the correct bound tier and does not conceal invalid physical configuration
+  ---
+  duration_ms: 376.0528
+  type: 'test'
+  ...
+# Subtest: equal-byte mask-only tampering cannot hide behind a preserved integrated radiance
+ok 232 - equal-byte mask-only tampering cannot hide behind a preserved integrated radiance
+  ---
+  duration_ms: 144.4951
+  type: 'test'
+  ...
+# Subtest: serialisable reference engine admits exact bytes and transfers unique linear buffers without duplicate aliases
+ok 233 - serialisable reference engine admits exact bytes and transfers unique linear buffers without duplicate aliases
+  ---
+  duration_ms: 784.6935
+  type: 'test'
+  ...
+# Subtest: missing/corrupt/wrong-version drills degrade only diffuse light, and a valid retry restores exact output
+ok 234 - missing/corrupt/wrong-version drills degrade only diffuse light, and a valid retry restores exact output
+  ---
+  duration_ms: 1326.6123
+  type: 'test'
+  ...
+# Subtest: new accepted time/location/weather/camera always reprojects; returning to exact inputs restores the frame
+ok 235 - new accepted time/location/weather/camera always reprojects; returning to exact inputs restores the frame
+  ---
+  duration_ms: 1017.5332
+  type: 'test'
+  ...
+# Subtest: prepared inverse projection preserves the reference arithmetic across camera and all-sky inputs
+ok 236 - prepared inverse projection preserves the reference arithmetic across camera and all-sky inputs
+  ---
+  duration_ms: 9.8887
+  type: 'test'
+  ...
+# Subtest: prepared projections own an immutable snapshot and refuse invalid construction/coordinates
+ok 237 - prepared projections own an immutable snapshot and refuse invalid construction/coordinates
+  ---
+  duration_ms: 0.3457
+  type: 'test'
+  ...
+# Subtest: prepared inverse frame exactly matches unprepared astrometry including refraction and time changes
+ok 238 - prepared inverse frame exactly matches unprepared astrometry including refraction and time changes
+  ---
+  duration_ms: 4.5501
+  type: 'test'
+  ...
+# Subtest: latest-only queue executes at most one job and one replacement, never publishes a stale result
+ok 239 - latest-only queue executes at most one job and one replacement, never publishes a stale result
+  ---
+  duration_ms: 1.5626
+  type: 'test'
+  ...
+# Subtest: submitted observer/options are snapshotted before execution
+ok 240 - submitted observer/options are snapshotted before execution
+  ---
+  duration_ms: 0.1574
+  type: 'test'
+  ...
+# Subtest: worker errors cannot hang queue; later valid submission recovers
+ok 241 - worker errors cannot hang queue; later valid submission recovers
+  ---
+  duration_ms: 0.1917
+  type: 'test'
+  ...
+# Subtest: disposal cancels pending and suppresses all late publishing
+ok 242 - disposal cancels pending and suppresses all late publishing
+  ---
+  duration_ms: 0.1682
+  type: 'test'
+  ...
+# Subtest: uncloneable newest input immediately supersedes an already pending job rather than spending CPU on it
+ok 243 - uncloneable newest input immediately supersedes an already pending job rather than spending CPU on it
+  ---
+  duration_ms: 0.7053
+  type: 'test'
+  ...
+# Subtest: streamed UTF-8 rejects invalid encoding and enforces actual bytes even without Content-Length
+ok 244 - streamed UTF-8 rejects invalid encoding and enforces actual bytes even without Content-Length
+  ---
+  duration_ms: 31.4092
+  type: 'test'
+  ...
+# Subtest: oversized declared body is cancelled immediately, not left downloading after rejection
+ok 245 - oversized declared body is cancelled immediately, not left downloading after rejection
+  ---
+  duration_ms: 0.6261
+  type: 'test'
+  ...
+# Subtest: HTTP errors and absent bodies fail explicitly
+ok 246 - HTTP errors and absent bodies fail explicitly
+  ---
+  duration_ms: 0.2213
+  type: 'test'
+  ...
+# Subtest: worker client pairs result IDs and labels real worker execution
+ok 247 - worker client pairs result IDs and labels real worker execution
+  ---
+  duration_ms: 0.7769
+  type: 'test'
+  ...
+# Subtest: unavailable worker uses explicit fallback and captures why
+ok 248 - unavailable worker uses explicit fallback and captures why
+  ---
+  duration_ms: 1.8384
+  type: 'test'
+  ...
+# Subtest: worker failure in flight retries same accepted job in fallback, without a hung promise
+ok 249 - worker failure in flight retries same accepted job in fallback, without a hung promise
+  ---
+  duration_ms: 1.1343
+  type: 'test'
+  ...
+# Subtest: render errors are surfaced, not disguised as worker failure or a fallback sky
+ok 250 - render errors are surfaced, not disguised as worker failure or a fallback sky
+  ---
+  duration_ms: 0.5449
+  type: 'test'
+  ...
+# Subtest: worker startup timeout recovers explicitly and disposal prohibits new submissions
+ok 251 - worker startup timeout recovers explicitly and disposal prohibits new submissions
+  ---
+  duration_ms: 31.6455
+  type: 'test'
+  ...
+# Subtest: fatal worker promise rejection retries the same job instead of leaving a stale worker
+ok 252 - fatal worker promise rejection retries the same job instead of leaving a stale worker
+  ---
+  duration_ms: 14.5005
+  type: 'test'
+  ...
+# Subtest: actual asset admitted without promoting old HYG diagnostic
+ok 253 - actual asset admitted without promoting old HYG diagnostic
+  ---
+  duration_ms: 8.6031
+  type: 'test'
+  ...
+# Subtest: source metadata fails closed for frame, order, unit and catalogue binding
+ok 254 - source metadata fails closed for frame, order, unit and catalogue binding
+  ---
+  duration_ms: 9.9579
+  type: 'test'
+  ...
+# Subtest: bad data and bad estimated masks are rejected
+ok 255 - bad data and bad estimated masks are rejected
+  ---
+  duration_ms: 6.8963
+  type: 'test'
+  ...
+# Subtest: RA seam and poles are continuous, not mirrored or longitude-dependent at poles
+ok 256 - RA seam and poles are continuous, not mirrored or longitude-dependent at poles
+  ---
+  duration_ms: 2.9775
+  type: 'test'
+  ...
+# Subtest: equal field stays constant and interpolation does not create negative light
+ok 257 - equal field stays constant and interpolation does not create negative light
+  ---
+  duration_ms: 3.583
+  type: 'test'
+  ...
+# Subtest: masked estimates remain visible to consumers and strict mode marks them absent
+ok 258 - masked estimates remain visible to consumers and strict mode marks them absent
+  ---
+  duration_ms: 2.8911
+  type: 'test'
+  ...
+# Subtest: native HEALPix centres sample exact values with nearest sampling
+ok 259 - native HEALPix centres sample exact values with nearest sampling
+  ---
+  duration_ms: 2.9469
+  type: 'test'
+  ...
+# Subtest: time seeks reversible and locations affect real map
+ok 260 - time seeks reversible and locations affect real map
+  ---
+  duration_ms: 16.9791
+  type: 'test'
+  ...
+# Subtest: invalid projection and excessive raster allocations fail before rendering
+ok 261 - invalid projection and excessive raster allocations fail before rendering
+  ---
+  duration_ms: 2.3404
+  type: 'test'
+  ...
+# Subtest: roll, horizon, fractional DPR and footprint supersampling preserve geometry
+ok 262 - roll, horizon, fractional DPR and footprint supersampling preserve geometry
+  ---
+  duration_ms: 59.4322
+  type: 'test'
+  ...
+# Subtest: bridge reports terminal readiness without taking Moon ownership
+ok 263 - bridge reports terminal readiness without taking Moon ownership
+  ---
+  duration_ms: 46.1768
+  type: 'test'
+  ...
+# Subtest: missing catalogue reaches explicit empty terminal state, no synthetic fallback
+ok 264 - missing catalogue reaches explicit empty terminal state, no synthetic fallback
+  ---
+  duration_ms: 0.131
+  type: 'test'
+  ...
+# Subtest: bridge separates physical lunar occultation from calendar display mask
+ok 265 - bridge separates physical lunar occultation from calendar display mask
+  ---
+  duration_ms: 25.8591
+  type: 'test'
+  ...
+# Subtest: rendering into a supplied linear background does not modify that input
+ok 266 - rendering into a supplied linear background does not modify that input
+  ---
+  duration_ms: 500.7223
+  type: 'test'
+  ...
+# Subtest: constellation membership handles poles, RA wrap, deterministic boundaries
+ok 267 - constellation membership handles poles, RA wrap, deterministic boundaries
+  ---
+  duration_ms: 7.3479
+  type: 'test'
+  ...
+# Subtest: reference-frame-aware catalogue membership finds real bright sources
+ok 268 - reference-frame-aware catalogue membership finds real bright sources
+  ---
+  duration_ms: 50.4642
+  type: 'test'
+  ...
+# Subtest: 88 regions cover full sphere and every source-pattern endpoint resolves
+ok 269 - 88 regions cover full sphere and every source-pattern endpoint resolves
+  ---
+  duration_ms: 46.6409
+  type: 'test'
+  ...
+# Subtest: all record memberships are geometric; historical invalid tokens are retained separately
+ok 270 - all record memberships are geometric; historical invalid tokens are retained separately
+  ---
+  duration_ms: 54.6513
+  type: 'test'
+  ...
+# Subtest: system records and components cannot both contribute duplicated flux
+ok 271 - system records and components cannot both contribute duplicated flux
+  ---
+  duration_ms: 20.2219
+  type: 'test'
+  ...
+# Subtest: names are aliases returning all records rather than masquerading as identities
+ok 272 - names are aliases returning all records rather than masquerading as identities
+  ---
+  duration_ms: 17.6188
+  type: 'test'
+  ...
+# Subtest: small-circle boundaries are sampled in their defining frame
+ok 273 - small-circle boundaries are sampled in their defining frame
+  ---
+  duration_ms: 1.0574
+  type: 'test'
+  ...
+# Subtest: suppressed inventory record cannot leak into renderer
+ok 274 - suppressed inventory record cannot leak into renderer
+  ---
+  duration_ms: 6.3946
+  type: 'test'
+  ...
+# Independent Swiss Ephemeris residual maxima: {"precessionArcsec":0.30653857597540524,"precessionNutationArcsec":0.5011048184511365,"gastArcsec":2.2393790854948747,"horizontalArcsec":1.3812950783176348e-9}
+# Subtest: 72 independent rotation samples: precession <=0.5 arcsec over 1901–2099
+ok 275 - 72 independent rotation samples: precession <=0.5 arcsec over 1901–2099
+  ---
+  duration_ms: 0.4931
+  type: 'test'
+  ...
+# Subtest: 72 independent rotation samples: truncated nutation+precession <=2 arcsec
+ok 276 - 72 independent rotation samples: truncated nutation+precession <=2 arcsec
+  ---
+  duration_ms: 0.0739
+  type: 'test'
+  ...
+# Subtest: independent GAST sampled agreement <=3 arcsec (long-term oracle model differs)
+ok 277 - independent GAST sampled agreement <=3 arcsec (long-term oracle model differs)
+  ---
+  duration_ms: 0.0468
+  type: 'test'
+  ...
+# Subtest: 105 independent horizon samples <=0.0001 arcsec
+ok 278 - 105 independent horizon samples <=0.0001 arcsec
+  ---
+  duration_ms: 0.0505
+  type: 'test'
+  ...
+# Subtest: 2026 GAST samples independently agree within 0.3 arcsec
+ok 279 - 2026 GAST samples independently agree within 0.3 arcsec
+  ---
+  duration_ms: 0.1638
+  type: 'test'
+  ...
+# Subtest: five magnitudes are a factor of one hundred in received flux
+ok 280 - five magnitudes are a factor of one hundred in received flux
+  ---
+  duration_ms: 0.6081
+  type: 'test'
+  ...
+# Subtest: one magnitude is not a linear opacity decrement
+ok 281 - one magnitude is not a linear opacity decrement
+  ---
+  duration_ms: 0.0756
+  type: 'test'
+  ...
+# Subtest: null colour is not interpreted as B-V=0
+ok 282 - null colour is not interpreted as B-V=0
+  ---
+  duration_ms: 0.0765
+  type: 'test'
+  ...
+# Subtest: colour index proxy orders red and blue stars
+ok 283 - colour index proxy orders red and blue stars
+  ---
+  duration_ms: 0.0451
+  type: 'test'
+  ...
+# Subtest: Kasten Young airmass finite at horizon, near 1 at zenith
+ok 284 - Kasten Young airmass finite at horizon, near 1 at zenith
+  ---
+  duration_ms: 0.1903
+  type: 'test'
+  ...
+# Subtest: Beer Lambert transmission vanishes with large optical depth; no floor
+ok 285 - Beer Lambert transmission vanishes with large optical depth; no floor
+  ---
+  duration_ms: 0.0668
+  type: 'test'
+  ...
+# Subtest: extinction is stronger in blue than red with Rayleigh and aerosol
+ok 286 - extinction is stronger in blue than red with Rayleigh and aerosol
+  ---
+  duration_ms: 0.1126
+  type: 'test'
+  ...
+# Subtest: flux lost to extinction is not renormalised back into view
+ok 287 - flux lost to extinction is not renormalised back into view
+  ---
+  duration_ms: 1.0422
+  type: 'test'
+  ...
+# Subtest: red star differs from blue using spectra, not a random palette
+ok 288 - red star differs from blue using spectra, not a random palette
+  ---
+  duration_ms: 0.2855
+  type: 'test'
+  ...
+# Subtest: zero cloud transmission means exactly zero stellar photons
+ok 289 - zero cloud transmission means exactly zero stellar photons
+  ---
+  duration_ms: 0.7726
+  type: 'test'
+  ...
+# Subtest: below horizon yields zero, with no minimum opacity
+ok 290 - below horizon yields zero, with no minimum opacity
+  ---
+  duration_ms: 0.1074
+  type: 'test'
+  ...
+# Subtest: sRGB round trips linear values and encodes once
+ok 291 - sRGB round trips linear values and encodes once
+  ---
+  duration_ms: 0.1098
+  type: 'test'
+  ...
+# Subtest: CIE y fit is close to unity at 555 nm
+ok 292 - CIE y fit is close to unity at 555 nm
+  ---
+  duration_ms: 0.041
+  type: 'test'
+  ...
+# Subtest: photometry rejects non-finite and negative optical parameters
+ok 293 - photometry rejects non-finite and negative optical parameters
+  ---
+  duration_ms: 0.0855
+  type: 'test'
+  ...
+# Subtest: scintillation is a zero-mean bounded perturbation, never an identity change
+ok 294 - scintillation is a zero-mean bounded perturbation, never an identity change
+  ---
+  duration_ms: 2.2595
+  type: 'test'
+  ...
+# Subtest: integrated PSF conserves flux at subpixel positions
+ok 295 - integrated PSF conserves flux at subpixel positions
+  ---
+  duration_ms: 3.0006
+  type: 'test'
+  ...
+# Subtest: PSF width does not secretly multiply total flux
+ok 296 - PSF width does not secretly multiply total flux
+  ---
+  duration_ms: 2.117
+  type: 'test'
+  ...
+# Subtest: cropped border loses energy, not renormalised to a bright border artefact
+ok 297 - cropped border loses energy, not renormalised to a bright border artefact
+  ---
+  duration_ms: 0.1423
+  type: 'test'
+  ...
+# Subtest: overlapping sources add in linear light
+ok 298 - overlapping sources add in linear light
+  ---
+  duration_ms: 0.1527
+  type: 'test'
+  ...
+# Subtest: high-DPR raster keeps the same CSS-surface radiance
+ok 299 - high-DPR raster keeps the same CSS-surface radiance
+  ---
+  duration_ms: 2.4053
+  type: 'test'
+  ...
+# Subtest: final output is opaque with background integrated before tone mapping
+ok 300 - final output is opaque with background integrated before tone mapping
+  ---
+  duration_ms: 0.1905
+  type: 'test'
+  ...
+# Subtest: renderer honours an opaque physical source mask
+ok 301 - renderer honours an opaque physical source mask
+  ---
+  duration_ms: 0.3107
+  type: 'test'
+  ...
+# Subtest: renderer cannot resurrect stars below horizon
+ok 302 - renderer cannot resurrect stars below horizon
+  ---
+  duration_ms: 0.1057
+  type: 'test'
+  ...
+# Subtest: reduced-motion mode does not alter positions or remove stars
+ok 303 - reduced-motion mode does not alter positions or remove stars
+  ---
+  duration_ms: 2.7936
+  type: 'test'
+  ...
+# Subtest: unknown colour remains visibly distinct in metadata
+ok 304 - unknown colour remains visibly distinct in metadata
+  ---
+  duration_ms: 0.5192
+  type: 'test'
+  ...
+# Subtest: screen-space opaque mask cuts PSF wings but preserves background
+ok 305 - screen-space opaque mask cuts PSF wings but preserves background
+  ---
+  duration_ms: 1.1492
+  type: 'test'
+  ...
+1..305
+# tests 305
+# suites 0
+# pass 305
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 31869.0641

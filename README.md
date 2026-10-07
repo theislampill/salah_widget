@@ -1,12 +1,20 @@
 # 🕌 Salah Widget
 
-A tiny, self-contained prayer-times widget you can embed anywhere that accepts an
+A compact prayer-times widget you can embed anywhere that accepts an
 `<iframe>` — built for [TablissNG](https://github.com/BookCatKid/TablissNG) new-tab
 dashboards, but works in Notion, a personal site, or anywhere else.
 
-No build step, no dependencies, no tracking. One static HTML file that reads its
-configuration from the URL and fetches times from the free
-[Aladhan API](https://aladhan.com/prayer-times-api).
+Static delivery, no server runtime or tracking. Configuration comes from the URL;
+prayer times come from the free [Aladhan API](https://aladhan.com/prayer-times-api).
+This **CP9 integration candidate is not the deployed main version**. It adds an
+admitted star catalogue and physical sky in an optional worker while preserving
+the prayer widget. See [integration, evidence and open gates](docs/real-sky/INTEGRATION.md).
+
+For development, edit `src/native/` and the authored `real-sky/native-*` adapters,
+then run `python tools/build_native.py`. Serve with `python -m http.server 8000`
+and open `http://localhost:8000/index.html`. `offline.html` embeds sky assets for
+local file entry; live prayer/weather and fonts still need network access.
+Root entries and sky bundles are generated; do not hand-edit them.
 
 **Live widget:** <https://theislampill.github.io/salah_widget/>
 **Build your own embed:** <https://theislampill.github.io/salah_widget/builder.html>

@@ -1,0 +1,18 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import * as F from '../src/photometry.mjs';
+const near=(a,b,t=1e-6)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`);
+test('five magnitudes are a factor of one hundred in received flux',()=>near(F.magnitudeFlux(0)/F.magnitudeFlux(5),100));
+test('one magnitude is not a linear opacity decrement',()=>near(F.magnitudeFlux(1),.3981071705534972));
+test('null colour is not interpreted as B-V=0',()=>{assert.equal(F.colourTemperature(null),null);assert.ok(F.colourTemperature(0)>9000);});
+test('colour index proxy orders red and blue stars',()=>assert.ok(F.colourTemperature(-.2)>F.colourTemperature(1.5)));
+test('Kasten Young airmass finite at horizon, near 1 at zenith',()=>{near(F.airmass(90),.9997119918558381);assert.ok(F.airmass(0)>37&&F.airmass(0)<39);assert.throws(()=>F.airmass(-.1));});
+test('Beer Lambert transmission vanishes with large optical depth; no floor',()=>{near(F.transmission(1,0),1);assert.ok(F.transmission(38,5)<1e-70);});
+test('extinction is stronger in blue than red with Rayleigh and aerosol',()=>assert.ok(F.opticalDepth(440,{rayleighTau550:.1,aerosolTau550:.05})>F.opticalDepth(650,{rayleighTau550:.1,aerosolTau550:.05})));
+test('flux lost to extinction is not renormalised back into view',()=>{const s={vmag:2,bv:.3};const a=F.starRgbFlux(s,90,{rayleighTau550:0,aerosolTau550:0}),b=F.starRgbFlux(s,3,{rayleighTau550:.1,aerosolTau550:.05});assert.ok(F.luminance(b.rgb)<F.luminance(a.rgb)*.2);});
+test('red star differs from blue using spectra, not a random palette',()=>{const a=F.starRgbFlux({vmag:0,bv:1.5},90,{rayleighTau550:0,aerosolTau550:0}).rgb,b=F.starRgbFlux({vmag:0,bv:-.2},90,{rayleighTau550:0,aerosolTau550:0}).rgb;assert.ok(a[0]/a[2]>b[0]/b[2]*2);});
+test('zero cloud transmission means exactly zero stellar photons',()=>assert.deepEqual(F.starRgbFlux({vmag:0,bv:0},45,{cloudTransmission:0}).rgb,[0,0,0]));
+test('below horizon yields zero, with no minimum opacity',()=>assert.deepEqual(F.starRgbFlux({vmag:0,bv:0},-.001,{}).rgb,[0,0,0]));
+test('sRGB round trips linear values and encodes once',()=>{for(const x of [0,.0001,.0031308,.18,.5,1])near(F.srgbToLinear(F.linearToSrgb(x)),x);});
+test('CIE y fit is close to unity at 555 nm',()=>assert.ok(Math.abs(F.cie1931(555)[1]-1)<.01));
+test('photometry rejects non-finite and negative optical parameters',()=>{assert.throws(()=>F.magnitudeFlux(NaN));assert.throws(()=>F.opticalDepth(550,{rayleighTau550:-1}));assert.throws(()=>F.starRgbFlux({vmag:0,bv:0},45,{cloudTransmission:2}));});
+test('scintillation is a zero-mean bounded perturbation, never an identity change',()=>{let sum=0;for(let i=0;i<10000;i++)sum+=F.scintillation(32349,i/10,20,.15);near(sum/10000,1,.002);assert.equal(F.scintillation(32349,1,20,0),1);});

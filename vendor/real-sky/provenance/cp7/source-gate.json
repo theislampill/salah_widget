@@ -1,0 +1,132 @@
+{
+  "schema": "salah-real-sky/cp7-source-gate/1",
+  "stageStatus": "PARTIAL",
+  "checkpoint7Status": "OPEN",
+  "productionSourceAdmitted": false,
+  "admittedSurvey": null,
+  "candidates": [
+    {
+      "id": "pioneer-ipp-gordon",
+      "name": "Pioneer 10/11 IPP first-iteration B/R maps",
+      "urls": [
+        "https://karllark.github.io/data_pioneer10_11_ipp.html",
+        "https://www.stsci.edu/~kgordon/pioneer_ipp/P_all_1_B.fits",
+        "https://www.stsci.edu/~kgordon/pioneer_ipp/P_all_1_R.fits",
+        "https://arxiv.org/abs/astro-ph/9712032"
+      ],
+      "primaryDescription": {
+        "bandsAngstrom": [
+          4370,
+          6441
+        ],
+        "widthsAngstrom": [
+          826,
+          968
+        ],
+        "units": "S10(G2V)",
+        "processing": "First iteration is straight coaddition of 11 outside-zodiacal-cloud maps; author recommends it rather than higher MCM iteration"
+      },
+      "localScienceBytesAcquired": false,
+      "redistribution": "Not established for these author-hosted derivative maps. Web-template licence is not the data licence.",
+      "status": "BLOCKED",
+      "blockers": [
+        "FITS science arrays not downloaded into runtime",
+        "No source-specific redistribution permission established",
+        "Exact released-file WCS, validity masks and residual star treatment cannot be authenticated without file bytes"
+      ],
+      "authentication": {
+        "authorPageGitBlobReportedByConnector": "fde0bf4ba222aeb07dbe1bbcb42c7ac838d49e99",
+        "meaning": "Connector-reported page identity; NOT an authenticated science-array hash"
+      }
+    },
+    {
+      "id": "mellinger-panorama",
+      "name": "Mellinger optical Milky Way panorama",
+      "urls": [
+        "https://milkywaysky.com/licenses.html",
+        "https://arxiv.org/abs/0908.4360"
+      ],
+      "localScienceBytesAcquired": false,
+      "redistribution": "Author describes licensing/permission for intended redistribution; permission was not obtained.",
+      "status": "NOT_ADMITTED",
+      "blockers": [
+        "Redistribution approval absent",
+        "No retained calibrated array; do not infer absolute radiance from an illustration"
+      ]
+    },
+    {
+      "id": "gambons",
+      "name": "GAMBONS outside-atmosphere multiband radiance table",
+      "urls": [
+        "https://arxiv.org/abs/2101.01500",
+        "https://gambons.fqa.ub.edu",
+        "https://academic.oup.com/mnras/article/501/4/5443/6056493"
+      ],
+      "localScienceBytesAcquired": false,
+      "redistribution": "Specific full-product terms not established here; paper availability is not proof of permission for every derivative.",
+      "status": "BLOCKED",
+      "blockers": [
+        "Full supplementary table not acquired",
+        "Whole-table calibration, masks, bright-catalogue subtraction and source terms not verified locally"
+      ],
+      "primaryDescription": {
+        "quantity": "Radiance W m^-2 sr^-1 outside Earth atmosphere",
+        "components": [
+          "integrated starlight",
+          "diffuse Galactic light",
+          "extragalactic background"
+        ],
+        "bands": [
+          "Johnson V",
+          "Gaia G",
+          "scotopic",
+          "photopic"
+        ]
+      }
+    }
+  ],
+  "retainedDiagnostic": {
+    "source": "HYG4.0 retained in CP6",
+    "path": "upstream/hygdata_v40.csv.gz",
+    "redistribution": "CC-BY-SA-4.0; retain existing LICENSE-DATA.md and provenance/hyg-primary-acquisition.json",
+    "purpose": "Finite listed-source contribution and engineering fixtures ONLY",
+    "notIncluded": [
+      "unlisted faint stars",
+      "diffuse dust-scattered light",
+      "extended red emission",
+      "nebulae",
+      "galaxies",
+      "airglow",
+      "zodiacal light",
+      "extragalactic background"
+    ],
+    "notAClaim": "No newly acquired diffuse survey, no calibrated total diffuse sky, no lower bound on a de-duplicated true sky where unidentified source duplication remains possible"
+  },
+  "attempts": [
+    {
+      "route": "container requests / download, author page and FITS",
+      "result": "DNS/download failure; no science file produced"
+    },
+    {
+      "route": "web FITS read",
+      "result": "Unsupported binary type / no reusable local array"
+    },
+    {
+      "route": "GitHub author-page and source-file lookup",
+      "result": "Documentation text only, not FITS science data"
+    },
+    {
+      "route": "Existing GitHub workflow-artifact discovery for data carrier",
+      "result": "No qualifying science-data artifact acquired; no workflow created or modified"
+    },
+    {
+      "route": "Leinert1998 reference and CDS tables",
+      "result": "CDS retained catalogue points to infrared maps, not admitted as optical; no optical table acquired"
+    }
+  ],
+  "resumption": [
+    "Supply/acquire the actual admissible optical array plus source-specific redistribution terms",
+    "Verify complete array bytes, coordinate/pixel metadata, units, processing and bright-star treatment",
+    "Run the survey adapter and catalogue-overlap qualification before setting productionSourceAdmitted=true"
+  ]
+}
