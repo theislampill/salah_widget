@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const { nativeInlineRuntime } = require('./native-inline-runtime.cjs');
 const { ROOT, CLOCK, CANARY, HASH, prayer, mutate, sha } = require('./r0001-browser-fixture.cjs');
 const html = fs.readFileSync(process.argv[2] || path.join(ROOT,'index.html'),'utf8');
 const config = fs.readFileSync(path.join(ROOT,'config.js'),'utf8');
@@ -26,10 +27,8 @@ function run({source=html, format='YYYY-MM-DD', saved=false, month=false, previe
     fetch(){throw new Error('Unexpected network in admitted-state source control');}});
   context.window=context;
   vm.runInContext(config,context,{filename:'config.js'});
-  const scripts=Array.from(source.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g),m=>m[1]).filter(s=>s.trim());
-  assert.equal(scripts.length,1,'Expected the real inline runtime');
-  assert.equal(scripts[0].split('\nboot();').length,2,'Expected the real boot caller to suspend only async boot');
-  vm.runInContext(scripts[0].replace('\nboot();','\n// admitted-state fixture suspends only boot'),context,{filename:'index.html:inline'});
+  const nativeScript=nativeInlineRuntime(source);
+  vm.runInContext(nativeScript.replace('\nboot();','\n// admitted-state fixture suspends only boot'),context,{filename:'index.html:inline'});
   const today=prayer('07',month), tomorrow=prayer('08',month);
   if(preview && !source.includes('function renderCalendarDates(projection)')) tomorrow.date.hijri.day=CANARY;
   if(missing){delete today.date;delete tomorrow.date;}

@@ -1,6 +1,7 @@
 'use strict';
 // Actual-source admitted-state controls; not a DOM, accessibility or wall-clock certification.
 const fs=require('node:fs'), path=require('node:path'), vm=require('node:vm'), assert=require('node:assert/strict');
+const {nativeInlineRuntime}=require('./native-inline-runtime.cjs');
 const {ROOT,sha,CANARY}=require('./r0001-browser-fixture.cjs');
 const text=html=>String(html).replace(/<[^>]*>/g,'').replace(/&(amp|lt|gt|quot|#39);/g,(_,v)=>({amp:'&',lt:'<',gt:'>',quot:'"','#39':"'"}[v]));
 const encodeText=value=>String(value).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
@@ -47,9 +48,8 @@ function session({sourcePath=path.join(ROOT,'index.html'),source,format='YYYY-MM
     fetch(){effects.fetches++;throw Error('Unexpected transport in admitted-state fixture');}});
   context.window=context;
   vm.runInContext(config,context,{filename:'config.js'});
-  const scripts=Array.from(source.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g),m=>m[1]).filter(s=>s.trim());
-  assert.equal(scripts.length,1,'Actual single inline runtime');assert.equal(scripts[0].split('\nboot();').length,2,'Actual boot caller');
-  vm.runInContext(scripts[0].replace('\nboot();','\n// admitted-state fixture suspends async boot only'),context,{filename:'index.html:inline'});
+  const nativeScript=nativeInlineRuntime(source);
+  vm.runInContext(nativeScript.replace('\nboot();','\n// admitted-state fixture suspends async boot only'),context,{filename:'index.html:inline'});
   // Fixed Date is installed before initialization; real clock/model/partsInTz/render remain.
   // Async boot and unrelated art are suspended; this earns no clock/load/native qualification.
   vm.runInContext('syncWeather=()=>{};renderMoon=()=>{};projectStars=()=>{};drawArc=()=>"";fitCn=()=>{};applyTheme=()=>{};',context);

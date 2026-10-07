@@ -12,8 +12,20 @@ embedded lunar textures in `src/native/index.html`; edit config and builder in
 `native-host-hooks.js`. Rebuild with `python tools/build_native.py`; never patch
 generated root entries, bundles, worker, data, CSS or copied `real-sky/core`.
 `vendor/real-sky` retains immutable scientific source and oracle fixtures.
+The requested bottom-border fix is authored in `tools/native_core_horizon.py`;
+the builder applies that one digest-guarded horizon-predicate correction while
+copying the core. Keep its boundary and drift regression tests with the change.
 Run its builders/tests in a disposable copy. Historical PASS does not qualify
 this candidate. The existing gates below remain requirements, not blanket PASS.
+
+The dependent Moon candidate adds authored `moon/src/`, lossless `moon/assets/`
+and the supplied `moon/moon_kernel.wasm`. `tools/build_moon.py` runs through the
+native builder; never edit its generated host/worker/chunks or expanded entries.
+Native phase/time/configuration still belong to `src/native/index.html`; the
+device-resolution lunar foreground belongs to `moon/src/moon-detail.mjs`.
+Read `docs/moon/QUALIFICATION.md` for this candidate's evidence and limitations.
+The CP9 comparison ledger remains PARTIAL/BLOCKED; Moon integration does not
+close N001/N002/N003 or authorize merge/deployment.
 
 ## Golden rules
 

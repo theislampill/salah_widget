@@ -1,5 +1,12 @@
 # CP9 candidate qualification
 
+**Comparison-revision record:** the results below belong to PR #39 at
+`1977217cc2ac26fcc436b991aff498d306a0cd26`. This dependent branch adds the supplied
+Moon implementation; see [its receiving qualification](../moon/QUALIFICATION.md)
+for current affected observations. Retaining this record does not requalify
+changed lunar, composition, performance or platform bytes. The N001/N002/N003
+dispositions below remain unchanged.
+
 **Overall: PARTIAL; Draft PR only.** This records implementation and observations,
 not merge/release approval. The authoritative starting graph, findings and matrix
 are retained unchanged in [`archive/`](archive/POST_CP9_IMPLEMENTATION_DAG.md).

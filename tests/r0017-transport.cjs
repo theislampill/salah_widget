@@ -88,6 +88,13 @@ async function main(){
     const changed=index.toString("utf8").replace('<script src="config.js"></script>','<script src="other.js"></script>');
     const h=await setup("healthy",{source:changed});assert.match(h.report.error,/Unreviewed widget script anchors/);assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
   });
+  for(const changed of [
+    index.toString('utf8').replace('window.__SALAH_MOON_OFFLINE__=true;','window.__SALAH_MOON_OFFLINE__=false;'),
+    index.toString('utf8').replace('src="moon/moon-host.js"','src="moon/unreviewed.js"'),
+    index.toString('utf8').replace('</body>','<script>window.unreviewed=true;</script></body>')
+  ])await check("unreviewed Moon or extra script fails before hook installation",async()=>{
+    const h=await setup('healthy',{source:changed});assert.match(h.report.error,/Unreviewed widget script anchors/);assert.equal(h.report.storageIsolated,false);
+  });
   console.log(JSON.stringify({kind:"source-bound wrapper transport/hooks; controlled parser stop, no widget/native qualification",root,
     indexSha256:crypto.createHash("sha256").update(index).digest("hex"),wrapperSha256:crypto.createHash("sha256").update(wrapper).digest("hex"),results},null,2));
   if(results.some(r=>r.result==="FAIL"))process.exitCode=1;

@@ -7,7 +7,7 @@ window.SalahNativeSkyHost=Object.freeze({
   if(typeof heightM!=='number'||!Number.isFinite(heightM)||heightM<-500||heightM>10000||generation!==_runtimeGeneration||latitude!==lat||longitude!==lon)return false;
   _cp9SiteElevation=Object.freeze({heightM,generation,lat:latitude,lon:longitude});return true;
  },
- lunarSurface(){return (_pbrReady||_moonFallbackReady)?_moonCv:null;},
+ lunarSurface(){return window.SalahMoonRuntime?.surface()??((_pbrReady||_moonFallbackReady)?_moonCv:null);},
  capture(){
   const identity=simulationReady()?skySceneIdentity():null;
   const cw=selectedWeather();
@@ -17,7 +17,7 @@ window.SalahNativeSkyHost=Object.freeze({
    tz,timeScale:TIMESCALE,units,lp:LPOLL,reducedMotion:isMotionReduced(),paused:document.hidden||!!$('.c')?.classList.contains('paused'),
    camera:{azDeg:cameraNumber('skyAz',180),altDeg:cameraNumber('skyAlt',45),fovYDeg:cameraNumber('skyFov',90),rollDeg:cameraNumber('skyRoll',0)},allowEstimates:q.get('skyEstimates')!=='off',
    weather:cw?{src:cw.src??'accepted-native',temp:cw.temp??null,rh:cw.rh??null,vis:cw.vis??null,cloud:cw.cloud??null,code:cw.code??null,wind:cw.wind??null}:null,
-   prayerReady:!!today,moonReady:!!(_pbrReady||_moonFallbackReady),pbrFailed:_pbrFailed};
+   prayerReady:!!today,moonReady:!!(window.SalahMoonRuntime?.surface()||_pbrReady||_moonFallbackReady),pbrFailed:_pbrFailed};
  },
  notify(){window.SalahRealSky?.request();}
 });
@@ -29,6 +29,8 @@ if(typeof window.qaState==='function'){
   const original=nativeQA.apply(this,args);let realSky;
   try{const s=window.realSkyState?.();realSky=s?{checkpoint:s.checkpoint,status:s.status,renders:s.renders,frameUtcMs:s.last?.utcMs??null,catalogue:s.last?.catalogue??null,generation:s.last?.native?.generation??null,assumptions:s.last?.native?.assumptions??null,composition:s.last?.composition??null,errors:s.errors??[]}:{checkpoint:'9',status:'loading',frameUtcMs:null};}
   catch(e){realSky={checkpoint:'9',status:'unavailable',frameUtcMs:null,error:String(e?.message??e)};}
-  return {...original,realSky,legacySyntheticStarTelemetry:{active:false,replacement:'realSky; raster diagnostics, not old synthetic DOM arrays'}};
+  const m=window.SalahMoonRuntime?.state;
+  const moonRenderer=m?{backend:m.backend,status:m.status,quality:m.quality,legacyFallback:m.legacyFallback,currentNativeFraction:m.currentNativeFraction,renderedFraction:m.accepted?.scene?.fraction??null,calendarProxyWeight:m.calendarProxyWeight,profile:m.accepted?.profile??null,errors:m.errors}:null;
+  return {...original,realSky,moonRenderer,legacySyntheticStarTelemetry:{active:false,replacement:'realSky; raster diagnostics, not old synthetic DOM arrays'}};
  };
 }

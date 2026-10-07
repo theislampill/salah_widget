@@ -1,0 +1,208 @@
+TAP version 13
+# Subtest: embedded source survives boot-error and a retry replays every chunk
+ok 1 - embedded source survives boot-error and a retry replays every chunk
+  ---
+  duration_ms: 3.4552
+  type: 'test'
+  ...
+# Subtest: malformed numeric surface withdraws safely without publishing
+ok 2 - malformed numeric surface withdraws safely without publishing
+  ---
+  duration_ms: 2.0383
+  type: 'test'
+  ...
+# Subtest: complete result becomes current, preview remains pending
+ok 3 - complete result becomes current, preview remains pending
+  ---
+  duration_ms: 33.9358
+  type: 'test'
+  ...
+# Subtest: A B A generations cannot publish the original request
+ok 4 - A B A generations cannot publish the original request
+  ---
+  duration_ms: 1.4235
+  type: 'test'
+  ...
+# Subtest: profile change rejects predecessor even at identical phase
+ok 5 - profile change rejects predecessor even at identical phase
+  ---
+  duration_ms: 1.2028
+  type: 'test'
+  ...
+# Subtest: DPR change rejects predecessor
+ok 6 - DPR change rejects predecessor
+  ---
+  duration_ms: 1.0212
+  type: 'test'
+  ...
+# Subtest: native invalid input withdraws accepted surface
+ok 7 - native invalid input withdraws accepted surface
+  ---
+  duration_ms: 14.3417
+  type: 'test'
+  ...
+# Subtest: native time seek invalidates same-geometry work
+ok 8 - native time seek invalidates same-geometry work
+  ---
+  duration_ms: 1.1523
+  type: 'test'
+  ...
+# Subtest: hide return does not retain a predecessor
+ok 9 - hide return does not retain a predecessor
+  ---
+  duration_ms: 3.1546
+  type: 'test'
+  ...
+# Subtest: dead-worker cleanup is nonthrowing and bounded retries
+ok 10 - dead-worker cleanup is nonthrowing and bounded retries
+  ---
+  duration_ms: 1.2109
+  type: 'test'
+  ...
+# Subtest: dispose revokes publication and further retry
+ok 11 - dispose revokes publication and further retry
+  ---
+  duration_ms: 0.9834
+  type: 'test'
+  ...
+# Subtest: fully embedded document needs no relative resource base
+ok 12 - fully embedded document needs no relative resource base
+  ---
+  duration_ms: 0.6391
+  type: 'test'
+  ...
+# Subtest: wrong surface extent is rejected before publication
+ok 13 - wrong surface extent is rejected before publication
+  ---
+  duration_ms: 0.9125
+  type: 'test'
+  ...
+# Subtest: wrong output footprint is rejected before publication
+ok 14 - wrong output footprint is rejected before publication
+  ---
+  duration_ms: 1.2685
+  type: 'test'
+  ...
+# Subtest: startup deadline triggers fallback, not a main-thread solver
+ok 15 - startup deadline triggers fallback, not a main-thread solver
+  ---
+  duration_ms: 0.7868
+  type: 'test'
+  ...
+# Subtest: refinement deadline withdraws preview safely
+ok 16 - refinement deadline withdraws preview safely
+  ---
+  duration_ms: 14.0469
+  type: 'test'
+  ...
+# Subtest: WASM checksum matches the bound original kernel
+ok 17 - WASM checksum matches the bound original kernel
+  ---
+  duration_ms: 1.8137
+  type: 'test'
+  ...
+# Subtest: truncated material is rejected before decompression
+ok 18 - truncated material is rejected before decompression
+  ---
+  duration_ms: 13.969
+  type: 'test'
+  ...
+# Subtest: corrupt terrain of correct length is rejected
+ok 19 - corrupt terrain of correct length is rejected
+  ---
+  duration_ms: 24.8288
+  type: 'test'
+  ...
+# Subtest: WASM corruption is rejected
+ok 20 - WASM corruption is rejected
+  ---
+  duration_ms: 23.874
+  type: 'test'
+  ...
+# Subtest: same material coordinates are used for waxing and waning
+ok 21 - same material coordinates are used for waxing and waning
+  ---
+  duration_ms: 1.3294
+  type: 'test'
+  ...
+# Subtest: scene rejects handedness reversal
+ok 22 - scene rejects handedness reversal
+  ---
+  duration_ms: 0.3206
+  type: 'test'
+  ...
+# Subtest: phase vector mismatch refused
+ok 23 - phase vector mismatch refused
+  ---
+  duration_ms: 0.1708
+  type: 'test'
+  ...
+# Subtest: phase precision preserves endpoints and declared geometric bound
+ok 24 - phase precision preserves endpoints and declared geometric bound
+  ---
+  duration_ms: 2.2667
+  type: 'test'
+  ...
+# Subtest: black opaque Moon suppresses stars even during calendar fade
+ok 25 - black opaque Moon suppresses stars even during calendar fade
+  ---
+  duration_ms: 0.7659
+  type: 'test'
+  ...
+# Subtest: zero coverage leaves direct sky intact
+ok 26 - zero coverage leaves direct sky intact
+  ---
+  duration_ms: 0.2989
+  type: 'test'
+  ...
+# Subtest: cloud foreground is applied once
+ok 27 - cloud foreground is applied once
+  ---
+  duration_ms: 0.1673
+  type: 'test'
+  ...
+# Subtest: fractional area filtering retains constant field and coverage
+ok 28 - fractional area filtering retains constant field and coverage
+  ---
+  duration_ms: 0.7879
+  type: 'test'
+  ...
+# Subtest: unknown NaN lighting never becomes an alpha hole
+ok 29 - unknown NaN lighting never becomes an alpha hole
+  ---
+  duration_ms: 0.0982
+  type: 'test'
+  ...
+# Subtest: real assets decode, actual terrain renders and cancels
+ok 30 - real assets decode, actual terrain renders and cancels
+  ---
+  duration_ms: 730.9275
+  type: 'test'
+  ...
+# Subtest: V5 grey remains neutral over weak and strong Earthlight
+ok 31 - V5 grey remains neutral over weak and strong Earthlight
+  ---
+  duration_ms: 0.3131
+  type: 'test'
+  ...
+# Subtest: V5 display does not depend on Sun/Earth partition of identical light
+ok 32 - V5 display does not depend on Sun/Earth partition of identical light
+  ---
+  duration_ms: 0.3879
+  type: 'test'
+  ...
+# Subtest: V5 luminance does not fall when neutral illumination increases
+ok 33 - V5 luminance does not fall when neutral illumination increases
+  ---
+  duration_ms: 0.2988
+  type: 'test'
+  ...
+1..33
+# tests 33
+# suites 0
+# pass 33
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 895.9162

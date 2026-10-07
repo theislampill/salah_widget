@@ -1,0 +1,32 @@
+        
+— local config contract (private stores; no origin storage) —
+✓ PASS  hardcoded: mode + coords + source=hash
+✓ PASS  hardcoded: historical defaults (units f, 24h, school 0, iso date)
+✓ PASS  hardcoded: resolves synchronously (not needsDetect)
+✓ PASS  serialize portable is byte-identical to the legacy builder format
+✓ PASS  bare: mode=bare, no cfg, no detect
+✓ PASS  local (no saved): needsDetect=true
+✓ PASS  preferLocal (no saved): falls back to hash coords
+✓ PASS  serialize local generic = just local=1
+✓ PASS  serialize local keeps a non-default preference
+✓ PASS  datefmt preset back-compat (eu→token)
+✓ PASS  lat=0/lon=0 is a VALID hardcoded location
+✓ PASS  validate rejects a config with no coordinates
+✓ PASS  normalize clamps out-of-range lat/lon
+✓ PASS  applyHashPrefs overlays prefs but keeps the detected location
+✓ PASS  private storageAvailable
+✓ PASS  loadLocal empty after private clear
+✓ PASS  saveLocal ok + savedAt stamped
+✓ PASS  loadLocal returns saved (source=localStorage)
+✓ PASS  local mode uses private saved config
+✓ PASS  preferLocal uses the same private saved config
+✓ PASS  hardcoded ignores private saved config
+✓ PASS  clearLocal removes the private saved config
+✓ PASS  storageAvailable under denial returns {ok:false}
+✓ PASS  loadLocal under denial returns null
+✓ PASS  saveLocal under denial returns {ok:false}
+✓ PASS  clearLocal under denial returns {ok:false}
+        
+— actual fixture transport + weather gate —
+✗ FAIL  fixture bootstrap: Widget script body changed during document wrapping
+• MISSING  weather gate availability — Widget script body changed during document wrapping

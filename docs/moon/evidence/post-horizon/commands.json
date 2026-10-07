@@ -1,0 +1,336 @@
+[
+  {
+    "name": "package",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\Salah_Moon_CP9_Integration\\verify_package.py"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.1720000000004802,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "build-1",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "tools/build_native.py"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 1.0150000000003274,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "build-2",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "tools/build_native.py"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.9530000000004293,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "moon",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "tools/test_moon.py",
+      "--node",
+      "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\moon"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.7970000000004802,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "moon-build",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "moon/tests/test_build.py"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.14099999999962165,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "integration",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+      "--test",
+      "--test-reporter=tap",
+      "--test-concurrency=1",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\cp9-elevation.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\cp9-mask-performance.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\cp9-native-qa.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\cp9-ownership-age.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\cp9-page-lifecycle.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\cp9-presentation-cache.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\cp9-scintillation.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\cp9-worker-policy.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\moon-worker-fixture.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-assets.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-composition.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-contract.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-encoding.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-engine.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-lifecycle.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-pinned-contrast.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-preservation.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-rate-availability.test.mjs",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget\\tests\\real-sky\\native-horizon.test.mjs"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 6.188000000000102,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "browser-runtime",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "tests/real-sky/cp9_browser_runtime_test.py"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.15599999999994907,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "collector",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "tests/real-sky/platform_acceptance_test.py"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.23400000000037835,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "moon-runtime-identity",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "tests/real-sky/moon_runtime_identity_test.py"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.14100000000053114,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "fixture-transport",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+      "tests/r0017-transport.cjs"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.11000000000058208,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "fixture-anchors",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+      "--test",
+      "tests/moon-fixture-anchors.test.cjs"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.07799999999951979,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "horizon-build-guard",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "tests/real-sky/native_horizon_build_test.py"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 0.0929999999998472,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "original-postimage-expected-drift",
+    "command": [
+      "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\Salah_Moon_CP9_Integration\\install.py",
+      "--repo",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--verify-installed"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "seconds": 0.3279999999995198,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "horizon-browser",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/cp9/horizon_browser_check.py",
+      "--root",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--parent",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\horizon-browser"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 9.155999999999949,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "cp9-composition",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/cp9/native_composition_check.py",
+      "--root",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\cp9-composition"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 14.719000000000051,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "cp9-material",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/cp9/native_material_check.py",
+      "--root",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\cp9-material"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 13.640000000000327,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "cp9-presentation",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/cp9/cp9_presentation_check.py",
+      "--root",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\cp9-presentation"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 6.5,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "cp9-controls",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/cp9/cp9_native_controls.py",
+      "--root",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\cp9-controls"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 25.98399999999947,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "native-smoke",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/cp9/native_smoke_check.py",
+      "--root",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\native-smoke"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 6.469000000000051,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "cp9-lifecycle",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/cp9/native_lifecycle_check.py",
+      "--root",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\cp9-lifecycle"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 162.84400000000005,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "moon-http",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/cp9/moon_receiving_check.py",
+      "--root",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\moon-http",
+      "--entry",
+      "http",
+      "--no-phase-series"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 62.28200000000015,
+    "runtimeUnchanged": true
+  },
+  {
+    "name": "moon-file",
+    "command": [
+      "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Scripts\\python.exe",
+      "-B",
+      "tools/cp9/moon_receiving_check.py",
+      "--root",
+      "C:\\Users\\theis\\.codex\\worktrees\\cp9-moon-v5-integration\\salah_widget",
+      "--output",
+      "C:\\Users\\theis\\Documents\\Codex\\moon-cp9-integration-20261007\\post-horizon\\moon-file",
+      "--entry",
+      "file-offline",
+      "--no-phase-series"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "seconds": 62.67199999999957,
+    "runtimeUnchanged": true
+  }
+]

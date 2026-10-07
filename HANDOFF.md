@@ -10,8 +10,19 @@ The base is main `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; this candidate is
 independent of PR #38 and is not deployed. Do not replay archive import or use
 PR #38 as a donor. Edit semantic owners under `src/native/` and authored
 `real-sky/native-*`, then regenerate with `python tools/build_native.py`.
-The forthcoming Moon-PBR package belongs on this candidate, at those owners.
-DAG gates remain subject to exact current evidence and independent review.
+This branch now carries the supplied Moon-PBR donor on top of PR #39 head
+`1977217cc2ac26fcc436b991aff498d306a0cd26`. PR #39 remains the comparison candidate.
+Continue from `docs/moon/QUALIFICATION.md`; do not replay the guarded install or
+reprocess the 15-part research archive. Moon authoring is under `moon/src/`, with
+the native owners retained and deterministic expansion through the same builder.
+The parent CP9 ledger and evidence describe the comparison revision. Its
+N001/N002/N003 dispositions remain open; only the explicitly rerun Moon/CP9
+observations qualify this dependent candidate. No merge/deployment is authorized.
+The user also requested the inherited black bottom strip be fixed here. Its
+authored owner is `tools/native_core_horizon.py`, applied by the native builder
+to the digest-pinned CP9 core input. Never edit the generated core by hand.
+Only Part01 gallery/metadata was consulted for the requested original V5 phase
+comparison; Parts02–15 remain unopened and no research campaign was rerun.
 
 The rest of this file is retained **pre-CP9 historical context**. Its old main
 SHAs, deployment statements, test totals and single-file assumptions are not

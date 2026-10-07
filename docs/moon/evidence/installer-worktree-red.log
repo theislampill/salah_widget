@@ -1,0 +1,40 @@
+F.                                                                       [100%]
+================================== FAILURES ===================================
+___________ test_linked_worktree_applies_and_preserves_git_metadata ___________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-804/test_linked_worktree_applies_a0/repo'), Win...': '4b86025751adeb905f17c3e09a709a16c389a970', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+tmp_path = WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-804/test_linked_worktree_applies_a0')
+
+    def test_linked_worktree_applies_and_preserves_git_metadata(case,tmp_path):
+     r,p,m=case
+     w=tmp_path/'linked';git(r,'worktree','add','-b','moon-work',str(w))
+     before=(w/'.git').read_bytes()
+>    result=load().install(w,p,mode='apply')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:117: in install
+    original=inventory(root)
+             ^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:43: in inventory
+    key=p.relative_to(root).as_posix();secure(root,key);result[key]=digest(p)
+                                       ^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:24: in secure
+    safe_key(key);p=root
+    ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+s = '.git'
+
+    def safe_key(s):
+     if not isinstance(s,str) or not s or '\\' in s or ':' in s or s.startswith('/') or '\x00' in s:raise ValueError('unsafe path '+repr(s))
+     p=PurePosixPath(s)
+>    if s!=p.as_posix() or any(x in ('..','.git','') for x in p.parts):raise ValueError('unsafe path '+s)
+                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    ValueError: unsafe path .git
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:18: ValueError
+=========================== short test summary info ===========================
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py::test_linked_worktree_applies_and_preserves_git_metadata
+1 failed, 1 passed, 20 deselected in 0.80s

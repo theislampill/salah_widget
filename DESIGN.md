@@ -8,6 +8,20 @@ The native design below predates CP9: synthetic star/glint producers are
 superseded by the admitted catalogue and registered diffuse field. Historical
 motion claims do not qualify the new renderer.
 
+This dependent candidate adds the supplied V5 terrain Moon to CP9. Native phase,
+prayer and settings ownership is retained; a WebAssembly worker produces a
+terrain preview and then angular refinement. The original native PBR remains
+the startup/failure fallback. The fixed V5 profile, metric data and kernel are
+unchanged. A current terrain result supplies both the CP9 base compositor and
+the device-resolution detail canvas; the legacy SVG surface is hidden while
+CP9 composition is active. Final visual acceptance requires `ready`, no pending
+work and the completed adaptive quality criterion, with worker-to-pixel evidence;
+loading and preview screenshots are not final qualification.
+See [Moon integration](docs/moon/INTEGRATION.md) and the
+[receiving qualification](docs/moon/QUALIFICATION.md) for measured latency,
+opaque composition, file entry and remaining limits. Final refinement takes
+seconds to about a minute on the measured host; it is not a 60fps renderer.
+
 **Companion docs:** [`ARCHITECTURE.md`](ARCHITECTURE.md) — the maintainer's responsibility/data-flow/contract map
 and risk list. [`OPTICS.md`](OPTICS.md) — the per-phenomenon physical-family taxonomy + gating. [`AGENTS.md`](AGENTS.md)
 — how to work here + PASS/FAIL gates. [`tests/smoke.html`](tests/smoke.html) — no-build characterization smokes.

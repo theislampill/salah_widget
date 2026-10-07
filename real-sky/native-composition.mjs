@@ -66,14 +66,18 @@ export class NativeForegroundCapture{
   }
   mx.resetTransform();mx.clearRect(0,0,325,530);mx.globalAlpha=1;
   const surface=window.SalahNativeSkyHost.lunarSurface();
-  const ready=!!(card?.classList.contains('moon-ready')&&photo?.getAttribute('href')&&surface);
+  // A current device-resolution join owns the complete lunar footprint. Leaving
+  // a resampled copy below it exposes a second edge outside its covered pixels.
+  // Loading, failure and unsupported detail geometry retain the native path.
+  const detail=!!window.SalahMoonRuntime?.detailEnabled;
+  const ready=!!(!detail&&card?.classList.contains('moon-ready')&&photo?.getAttribute('href')&&surface);
   let moonAlpha=0;
   if(ready){const t=photo.getScreenCTM();if(!t)throw new Error('Native Moon transform unavailable');moonAlpha=Math.max(0,Math.min(1,Number(getComputedStyle(group).opacity)*Number(getComputedStyle(features).opacity)));
    if(moonAlpha>0){const sx=325/rect.width,sy=530/rect.height;mx.setTransform(t.a*sx,t.b*sy,t.c*sx,t.d*sy,(t.e-rect.left)*sx,(t.f-rect.top)*sy);mx.globalAlpha=moonAlpha;
     mx.drawImage(surface,Number(photo.getAttribute('x')),Number(photo.getAttribute('y')),Number(photo.getAttribute('width')),Number(photo.getAttribute('height')));mx.resetTransform();mx.globalAlpha=1;
    }
   }
-  return {cloudRGBA:cx.getImageData(0,0,325,rows).data,moonRGBA:mx.getImageData(0,0,325,rows).data,native:{moonSurface:ready?'native-300px-backing-canvas':'unavailable',moonAlpha,cloudBuffer:cloud?{width:cloud.width,height:cloud.height}:null,maskStops:[0,.03,.24,.34,1],cloudSource:getComputedStyle(cloud).visibility}};
+  return {cloudRGBA:cx.getImageData(0,0,325,rows).data,moonRGBA:mx.getImageData(0,0,325,rows).data,native:{moonSurface:detail?'device-resolution-owned':ready?'native-300px-backing-canvas':'unavailable',moonAlpha,cloudBuffer:cloud?{width:cloud.width,height:cloud.height}:null,maskStops:[0,.03,.24,.34,1],cloudSource:getComputedStyle(cloud).visibility}};
  }
 }
 

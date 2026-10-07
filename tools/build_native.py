@@ -2,12 +2,15 @@
 """Deterministic offline native integration. No network, package install, or source reconstruction."""
 from pathlib import Path
 import re,json,shutil,hashlib
+from native_core_horizon import correct_horizon
 R=Path(__file__).resolve().parents[1]; S=R/'vendor/real-sky'; W=R; N=W/'real-sky'
 physical=(N/'checkpoint.json').exists() and json.loads((N/'checkpoint.json').read_text(encoding='utf-8'))['physical']
 # Same dependency ordering as the retained CP7.5 build, plus bounded native interfaces.
 core=['src/time-scales.mjs','src/astronomy.mjs','src/projection.mjs','src/photometry.mjs','src/spectral-tables.mjs','src/spectral.mjs','src/optics.mjs','src/renderer.mjs','src/atmosphere.mjs','src/sky-state.mjs','src/visibility.mjs','src/sky-background.mjs','src/catalogue.mjs','src/scene.mjs','src/sha256.mjs','src/diffuse-map.mjs','src/registered-starlight.mjs','src/diffuse-binding.mjs','src/diffuse-transport.mjs','src/physical-sky-renderer.mjs','integration/physical-sky-bridge.mjs','src/diffuse-assets.mjs','src/diffuse-manifest-pin.mjs','integration/resilient-sky-bridge.mjs','src/reference-engine.mjs']
 for p in core+['src/reference-worker-client.mjs','src/latest-render-queue.mjs']:
- target=N/'core'/p; target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(S/p,target)
+ target=N/'core'/p; target.parent.mkdir(parents=True,exist_ok=True)
+ if p=='src/physical-sky-renderer.mjs':target.write_bytes(correct_horizon((S/p).read_bytes()))
+ else:shutil.copyfile(S/p,target)
 # Preserve the already retained notices beside a separately copied widget too.
 for name in ['LICENSE-CODE.txt','LICENSE-DATA.md','THIRD_PARTY_NOTICES.md',
  'upstream/ASTROPY_LICENSE.rst','vendor/spectral/IRAF-LICENSE.txt',
@@ -86,3 +89,7 @@ standalone=s.replace('<script src="config.js"></script>','<script>'+inline_js((W
 standalone=standalone.replace('<link rel="stylesheet" href="real-sky/native-sky.css">','<style>'+css+'</style>')
 standalone=standalone.replace('<script src="real-sky/native-sky.js"></script>','<script>'+inline_js((N/'native-data.js').read_text(encoding='utf-8'))+'</script><script>'+inline_js((N/'native-sky.js').read_text(encoding='utf-8'))+'</script>')
 (W/'offline.html').write_text(standalone,encoding='utf-8',newline='\n')
+
+# Moon MB1: authored Moon sources/assets; deterministic generated entries.
+from build_moon import build_moon
+build_moon(R)
