@@ -1454,12 +1454,38 @@ function encodeNativeFrame(linear,exposure=12){
  return bytes;
 }
 
+// real-sky/native-cloud-transfer.mjs
+/** Native clouds are an 8-bit display-referred painting, not HDR radiance.
+ * Canvas unpremultiplication can return code 255 at alpha 1/255. Inverting that
+ * colour BEFORE coverage interprets rounding as a nearly infinite emitter.
+ * Join bounded display-linear colour after the sky/lunar tone map, then return
+ * to the existing shared encoder's input space. No second cloud application.
+ */
+const nativeCloudDisplay=Float64Array.from({length:256},(_,i)=>{
+ const s=i/255;return s<=.04045?s/12.92:((s+.055)/1.055)**2.4;
+});
+function nativeCloudChannel(base,code,alpha,exposure){
+ if(!Number.isFinite(base)||base<0||!Number.isInteger(code)||code<0||code>255||!Number.isFinite(alpha)||alpha<0||alpha>1||!Number.isFinite(exposure)||exposure<=0||exposure>100000)throw new RangeError('Invalid native cloud channel');
+ if(alpha===0)return base;
+ const display=-Math.expm1(-exposure*base)*(1-alpha)+nativeCloudDisplay[code]*alpha;
+ return -Math.log1p(-Math.min(1-1/131072,display))/exposure;
+}
+function validateNativeRGBA(data,pixels){
+ if(!data||data.length!==pixels*4)throw new RangeError('Native foreground dimensions');
+ // getImageData owns a complete byte snapshot. Test/adaptor arrays must obey
+ // the same contract; NaN must never silently become black in an output byte.
+ if(!(data instanceof Uint8ClampedArray))for(const v of data)
+  if(!Number.isInteger(v)||v<0||v>255)throw new RangeError('Invalid native RGBA');
+ return data;
+}
+
 // real-sky/native-composition.mjs
-/** CP8.2 native foreground operator.
+
+/** Native foreground operator.
  * Input sky has received molecular/aerosol transport, NOT cloud attenuation.
  * Painted native cloud alpha is the sole total cloud transmission owner. Native
- * RGB/PBR are display-referred presentations, not measured radiance; inversion of
- * the SAME exposure/encoding places them in one explicit linear compositing space.
+ * RGB/PBR are display-referred presentations, not measured radiance. Clouds join
+ * in bounded display-linear light; opaque lunar material retains its transfer.
  */
 function nativeInverseCode(code,exposure){
  if(!Number.isFinite(exposure)||exposure<=0||exposure>100000)throw new RangeError('Positive shared native exposure required');
@@ -1472,19 +1498,19 @@ function nativeInverseCode(code,exposure){
 function nativeCloudMaskAt(y){if(!Number.isFinite(y))throw new RangeError('Cloud mask coordinate');return y<=0||y>=.34?0:y<.03?y/.03:y<=.24?1:(.34-y)/.10;}
 function nativeForeground(base,{cloudRGBA=null,moonRGBA=null,exposure}={}){
  if(!base||base.length%3)throw new RangeError('Native linear RGB input required');
- const pixels=base.length/3;for(const a of [cloudRGBA,moonRGBA])if(a&&a.length!==pixels*4)throw new RangeError('Native foreground dimensions');
+ const pixels=base.length/3;for(const a of [cloudRGBA,moonRGBA])if(a)validateNativeRGBA(a,pixels);
  const inv=Float64Array.from({length:256},(_,i)=>nativeInverseCode(i,exposure)),out=new Float64Array(base.length);
  let cloudAlphaSum=0,maxAlpha=0,moonPixels=0;
  for(let p=0;p<pixels;p++){
-  const ci=p*4,li=p*3,ma=moonRGBA?moonRGBA[ci+3]/255:0,ca=cloudRGBA?cloudRGBA[ci+3]/255:0,T=1-ca;
+  const ci=p*4,li=p*3,ma=moonRGBA?moonRGBA[ci+3]/255:0,ca=cloudRGBA?cloudRGBA[ci+3]/255:0;
   cloudAlphaSum+=ca;maxAlpha=Math.max(maxAlpha,ca);if(ma>0)moonPixels++;
   for(let k=0;k<3;k++){
    const v=base[li+k];if(!Number.isFinite(v)||v<0)throw new RangeError('Nonphysical native base channel');
    const lunar=ma? v*(1-ma)+inv[moonRGBA[ci+k]]*ma:v;
-   out[li+k]=lunar*T+(ca?inv[cloudRGBA[ci+k]]*ca:0);
+   out[li+k]=ca?nativeCloudChannel(lunar,cloudRGBA[ci+k],ca,exposure):lunar;
   }
  }
- return {linear:out,diagnostics:{cloudApplications:1,meanCloudAlpha:cloudAlphaSum/Math.max(1,pixels),maxCloudAlpha:maxAlpha,moonPixels,cloudTransmissionOwner:'1 - native painted alpha after native blur and vertical mask',order:'gas-transported sky → calendar direct-light cutout → native PBR material → native cloud screen → one shared encode',cloudColour:'display-referred native painter; inverse shared tone map; not measured cloud radiance',exposureOwner:'CP7 sky+diffuse meter before calendar/foreground; native foreground excluded',saturation:'native code 255 uses 1 - 1/131072 in inverse tone map'}};
+ return {linear:out,diagnostics:{cloudApplications:1,meanCloudAlpha:cloudAlphaSum/Math.max(1,pixels),maxCloudAlpha:maxAlpha,moonPixels,cloudTransmissionOwner:'1 - native painted alpha after native blur and vertical mask',order:'gas-transported sky → calendar direct-light cutout → native PBR material → bounded display-linear cloud screen → shared encode',cloudColour:'display-referred native painter; coverage before inverse tone map; not measured cloud radiance',exposureOwner:'CP7 sky+diffuse meter before calendar/foreground; native foreground excluded',saturation:'bounded cloud display energy; native lunar code 255 uses 1 - 1/131072'}};
 }
 /** Exact leading-row restriction of the calendar/direct-light join. */
 function nativeCalendarRegion(raster,mask=null,rows=raster.height){
@@ -1739,10 +1765,10 @@ function startNativeSky(pack,workerSource,physical){
  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas 2D unavailable');
  const badge=document.createElement('span');badge.className='real-sky-status';badge.setAttribute('role','status');card.append(badge);
  const foreground=physical?new NativeForegroundCapture(canvas):null;
- const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
- let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,previousPresentation=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
+ const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,presentationRejections:0,presentationUtcMs:null,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
+ let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,paintedJob=null,previousPresentation=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
  function publish(){badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':status.availability?.reason==='rate-throughput'?`Real sky unavailable at ${status.availability.rate}×`:'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent';canvas.dataset.status=status.status;}
- function clear(reason='invalidated'){window.SalahMoonDetail?.clear();card.classList.remove('real-sky-composed');frame=null;job=null;status.last=null;paintedFrame=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;publish();}
+ function clear(reason='invalidated'){window.SalahMoonDetail?.clear();card.classList.remove('real-sky-composed');frame=null;job=null;status.last=null;paintedFrame=null;paintedJob=null;status.presentationUtcMs=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;publish();}
  function snapshot(){return host.capture();}
  function calendarGeometry(rows=530){
   if(window.SalahMoonRuntime?.detailEnabled)return {key:'separate-device-resolution-moon',mask:()=>null};
@@ -1760,8 +1786,7 @@ function startNativeSky(pack,workerSource,physical){
    if(foreground){
     // Full physical frames change only on worker acceptance. Native clouds/Moon
     // can move independently; repaint their entire old/new support, not all 530 rows.
-    if(paintedFrame!==frame){ctx.putImageData(new ImageData(encodeNativeFrame(frame.raster.linear,frame.raster.effectiveExposure),325,530),0,0);paintedFrame=frame;}
-    const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom);previousMoonBottom=bottom;
+    const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom);
     const capture=foreground.capture(rows),geometry=calendarGeometry(rows);
     const presentation={frame,rows,maskKey:geometry.key,cloudRGBA:capture.cloudRGBA,moonRGBA:capture.moonRGBA};
     // Unlike the donor cloud-only guard, this also fences physical frame, PBR
@@ -1773,7 +1798,13 @@ function startNativeSky(pack,workerSource,physical){
     }
     const base=nativeCalendarRegion(frame.raster,geometry.mask(),rows);
     const joined=nativeForeground(base,{...capture,exposure:frame.raster.effectiveExposure});
-    ctx.putImageData(new ImageData(encodeNativeFrame(joined.linear,frame.raster.effectiveExposure),325,rows),0,0);
+    // Prepare/validate the entire update before touching the visible framebuffer.
+    // A failed capture must not expose an uncomposed base (or partial cloud data).
+    const region=new ImageData(encodeNativeFrame(joined.linear,frame.raster.effectiveExposure),325,rows);
+    const full=paintedFrame!==frame?new ImageData(encodeNativeFrame(frame.raster.linear,frame.raster.effectiveExposure),325,530):null;
+    if(full)ctx.putImageData(full,0,0);
+    ctx.putImageData(region,0,0);
+    paintedFrame=frame;paintedJob=job;status.presentationUtcMs=job.observer.utcMs;previousMoonBottom=bottom;
     previousPresentation=presentation;status.presentationDraws++;
     status.last.composition={...joined.diagnostics,meanCloudAlpha:joined.diagnostics.meanCloudAlpha*rows/530,...capture.native,updatedRows:rows,totalRows:530};card.classList.add('real-sky-composed');
    }else{
@@ -1781,7 +1812,14 @@ function startNativeSky(pack,workerSource,physical){
    }
    canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeFrame);lastCompose=performance.now();
    if(status.last.composition)status.last.composition.lastComposeMs=lastCompose-started;
-  }catch(e){failure(e);}
+  }catch(e){
+   // Retention is allowed only under the ORIGINAL visible job's fences and
+   // 30-second age limit. A seek/configuration/epoch change still clears now.
+   if(paintedJob&&lifecycle.current(paintedJob)){
+    status.presentationRejections++;status.lastPresentationError=String(e?.message??e);lastCompose=performance.now();return;
+   }
+   failure(e);
+  }
  }
 
  function accept(result,_id,request){

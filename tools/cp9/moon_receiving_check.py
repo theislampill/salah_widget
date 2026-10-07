@@ -139,10 +139,10 @@ def run(root, out, entry='http', phases=True):
  const a=cloudCode[3]/255;let maxCloud=0,samples=0,wrongDoubleTransmission=0;
  for(let y=Math.floor(H*.35);y<H*.65;y++)for(let x=Math.floor(W*.35);x<W*.65;x++){
   const i=4*(y*W+x);if(before[i+3]!==255)continue;samples++;
-  for(let k=0;k<3;k++){const b=inv(before[i+k]),f=inv(cloudCode[k]),expected=code(b*(1-a)+f*a);maxCloud=Math.max(maxCloud,Math.abs(expected-joined[i+k]));if(code(b*(1-a)*(1-a)+f*a)!==expected)wrongDoubleTransmission++;}
+  for(let k=0;k<3;k++){const b=-Math.expm1(-E*inv(before[i+k])),f=-Math.expm1(-E*inv(cloudCode[k])),scene=d=>-Math.log1p(-Math.min(1-1/131072,d))/E,expected=code(scene(b*(1-a)+f*a));maxCloud=Math.max(maxCloud,Math.abs(expected-joined[i+k]));if(code(scene(b*(1-a)*(1-a)+f*a))!==expected)wrongDoubleTransmission++;}
  }
  c.putImageData(saved,0,0);SalahRealSky.compose();
- return {innerOpaquePixels:inner,maximumInteriorStarDifference:maxInner,changedBoundaryChannels:changed,cloudSamples:samples,maximumCloudCodeDifference:maxCloud,wrongDoubleTransmission,cloudCode:[...cloudCode],cloudToleranceCodes:1,scope:'Synthetic direct-light and constant-cloud controls; exact interior star rejection, independent scalar foreground equation with one code of 8-bit reference quantization'};
+ return {innerOpaquePixels:inner,maximumInteriorStarDifference:maxInner,changedBoundaryChannels:changed,cloudSamples:samples,maximumCloudCodeDifference:maxCloud,wrongDoubleTransmission,cloudCode:[...cloudCode],cloudToleranceCodes:1,scope:'Synthetic direct-light and constant-cloud controls; exact interior star rejection, independent bounded display-linear foreground equation with one code of 8-bit reference quantization'};
 }''')
             check('opaque-to-stars-and-cloud-once',proof['innerOpaquePixels']>100 and proof['maximumInteriorStarDifference']==0 and proof['changedBoundaryChannels']>0 and proof['cloudSamples']>100 and proof['maximumCloudCodeDifference']<=1 and proof['wrongDoubleTransmission']>0,proof=proof)
             page.locator('.c').screenshot(path=str(out/'opacity-control-restored.png'))

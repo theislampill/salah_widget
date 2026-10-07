@@ -1,8 +1,9 @@
-/** CP8.2 native foreground operator.
+import {nativeCloudChannel,validateNativeRGBA} from './native-cloud-transfer.mjs';
+/** Native foreground operator.
  * Input sky has received molecular/aerosol transport, NOT cloud attenuation.
  * Painted native cloud alpha is the sole total cloud transmission owner. Native
- * RGB/PBR are display-referred presentations, not measured radiance; inversion of
- * the SAME exposure/encoding places them in one explicit linear compositing space.
+ * RGB/PBR are display-referred presentations, not measured radiance. Clouds join
+ * in bounded display-linear light; opaque lunar material retains its transfer.
  */
 export function nativeInverseCode(code,exposure){
  if(!Number.isFinite(exposure)||exposure<=0||exposure>100000)throw new RangeError('Positive shared native exposure required');
@@ -15,19 +16,19 @@ export function nativeInverseCode(code,exposure){
 export function nativeCloudMaskAt(y){if(!Number.isFinite(y))throw new RangeError('Cloud mask coordinate');return y<=0||y>=.34?0:y<.03?y/.03:y<=.24?1:(.34-y)/.10;}
 export function nativeForeground(base,{cloudRGBA=null,moonRGBA=null,exposure}={}){
  if(!base||base.length%3)throw new RangeError('Native linear RGB input required');
- const pixels=base.length/3;for(const a of [cloudRGBA,moonRGBA])if(a&&a.length!==pixels*4)throw new RangeError('Native foreground dimensions');
+ const pixels=base.length/3;for(const a of [cloudRGBA,moonRGBA])if(a)validateNativeRGBA(a,pixels);
  const inv=Float64Array.from({length:256},(_,i)=>nativeInverseCode(i,exposure)),out=new Float64Array(base.length);
  let cloudAlphaSum=0,maxAlpha=0,moonPixels=0;
  for(let p=0;p<pixels;p++){
-  const ci=p*4,li=p*3,ma=moonRGBA?moonRGBA[ci+3]/255:0,ca=cloudRGBA?cloudRGBA[ci+3]/255:0,T=1-ca;
+  const ci=p*4,li=p*3,ma=moonRGBA?moonRGBA[ci+3]/255:0,ca=cloudRGBA?cloudRGBA[ci+3]/255:0;
   cloudAlphaSum+=ca;maxAlpha=Math.max(maxAlpha,ca);if(ma>0)moonPixels++;
   for(let k=0;k<3;k++){
    const v=base[li+k];if(!Number.isFinite(v)||v<0)throw new RangeError('Nonphysical native base channel');
    const lunar=ma? v*(1-ma)+inv[moonRGBA[ci+k]]*ma:v;
-   out[li+k]=lunar*T+(ca?inv[cloudRGBA[ci+k]]*ca:0);
+   out[li+k]=ca?nativeCloudChannel(lunar,cloudRGBA[ci+k],ca,exposure):lunar;
   }
  }
- return {linear:out,diagnostics:{cloudApplications:1,meanCloudAlpha:cloudAlphaSum/Math.max(1,pixels),maxCloudAlpha:maxAlpha,moonPixels,cloudTransmissionOwner:'1 - native painted alpha after native blur and vertical mask',order:'gas-transported sky → calendar direct-light cutout → native PBR material → native cloud screen → one shared encode',cloudColour:'display-referred native painter; inverse shared tone map; not measured cloud radiance',exposureOwner:'CP7 sky+diffuse meter before calendar/foreground; native foreground excluded',saturation:'native code 255 uses 1 - 1/131072 in inverse tone map'}};
+ return {linear:out,diagnostics:{cloudApplications:1,meanCloudAlpha:cloudAlphaSum/Math.max(1,pixels),maxCloudAlpha:maxAlpha,moonPixels,cloudTransmissionOwner:'1 - native painted alpha after native blur and vertical mask',order:'gas-transported sky → calendar direct-light cutout → native PBR material → bounded display-linear cloud screen → shared encode',cloudColour:'display-referred native painter; coverage before inverse tone map; not measured cloud radiance',exposureOwner:'CP7 sky+diffuse meter before calendar/foreground; native foreground excluded',saturation:'bounded cloud display energy; native lunar code 255 uses 1 - 1/131072'}};
 }
 /** Exact leading-row restriction of the calendar/direct-light join. */
 export function nativeCalendarRegion(raster,mask=null,rows=raster.height){

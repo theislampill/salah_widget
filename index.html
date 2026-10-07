@@ -2901,7 +2901,10 @@ function render(){
     $(".nt").textContent = fmt(M.nextTime);
     $(".left").innerHTML = `<span class="until-time">${dur(M.leftMin)}</span> <span class="until-label">left</span> <span class="until-label">until</span> <span class="until-prayer">${M.nextKey}</span>`;
   }else showError("Countdown unavailable");
-  $(".bar>i").style.width = (M.progress*100).toFixed(1)+"%";
+  const progress=$(".bar>i"),width=(M.progress*100).toFixed(1)+"%";
+  // Hydrate the first prayer value directly. The clock bar is not a loader.
+  if(!progress.style.width){progress.style.transition="none";progress.style.width=width;void progress.offsetWidth;progress.style.transition="";}
+  else progress.style.width=width;
   $(".arc").innerHTML = drawArc(M);
   fitCn(M);
   $(".times").innerHTML = prayers.map(k=>{

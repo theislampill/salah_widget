@@ -133,7 +133,7 @@ function sha256Hex(data){
 // moon-detail.mjs
 /** DPR-aware local lunar join. Physics stays in the existing sky raster; only
  * the lunar region is sampled at device resolution. No UI-thread terrain solver.
- * Native cloud pixels keep their one explicit inverse-transfer/foreground owner.
+ * Native cloud pixels use the same bounded display-transfer owner as the sky.
  */
 function prefixSurface({size,linear,coverage}){
  if(!Number.isInteger(size)||size<1||size>768||linear?.length!==size*size*3||coverage?.length!==size*size)throw new RangeError('surface prefix shape');
@@ -211,10 +211,10 @@ function startMoonDetail(){
    const grad=cx.createLinearGradient(0,cr.top*dpr-g.top,0,cr.bottom*dpr-g.top);for(const [at,c] of [[0,'rgba(0,0,0,0)'],[.03,'#000'],[.24,'#000'],[.34,'rgba(0,0,0,0)'],[1,'rgba(0,0,0,0)']])grad.addColorStop(at,c);
    cx.globalCompositeOperation='destination-in';cx.fillStyle=grad;cx.fillRect(0,0,W,H);cx.globalCompositeOperation='source-over';
   }
-  const cloudRGBA=cx.getImageData(0,0,W,H).data;
+  const cloudRGBA=validateNativeRGBA(cx.getImageData(0,0,W,H).data,W*H);
   const key=JSON.stringify([surface.identity,W,H,g.left,g.top,g.x,g.y,g.w,g.h,g.rect.left,g.rect.top,g.rect.width,g.rect.height,g.opacity,dpr,r.effectiveExposure,g.up]);
   if(last&&last.frame===frame&&last.key===key&&last.cloud.length===cloudRGBA.length&&last.cloud.every((x,i)=>x===cloudRGBA[i])){stat.skips++;return;}
-  const exposure=r.effectiveExposure,inv=new Float64Array(256);for(let i=0;i<256;i++){const c=i/255,l=c<=.04045?c/12.92:((c+.055)/1.055)**2.4;inv[i]=-Math.log1p(-Math.min(1-1/131072,l))/exposure;}
+  const exposure=r.effectiveExposure;
   const linear=new Float64Array(W*H*3);
   if(!prepared||prepared.frame!==frame||prepared.key!==key){
    const covered=new Uint8Array(W*H),before=new Float64Array(W*H*3),ss=surface.size/(.96*surface.extent),ox=surface.size/2-.5*ss,oy=ox;
@@ -233,7 +233,7 @@ function startMoonDetail(){
   }
   const covered=prepared.covered,before=prepared.before;
   for(let i=0;i<covered.length;i++){if(!covered[i])continue;const ci=4*i,alpha=cloudRGBA[ci+3]/255;
-   for(let k=0;k<3;k++)linear[3*i+k]=before[3*i+k]*(1-alpha)+inv[cloudRGBA[ci+k]]*alpha;
+   for(let k=0;k<3;k++)linear[3*i+k]=nativeCloudChannel(before[3*i+k],cloudRGBA[ci+k],alpha,exposure);
   }
   const rgba=encode(linear,exposure);for(let i=0;i<covered.length;i++)rgba[4*i+3]=covered[i]?255:0;
   if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}

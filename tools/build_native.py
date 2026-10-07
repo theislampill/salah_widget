@@ -30,7 +30,7 @@ self.onmessage=async e=>{const m=e.data;try{if(m.kind==='boot'){nativeWorkerEngi
 self.addEventListener('unhandledrejection',e=>{self.postMessage({kind:'fatal',error:String(e.reason)});});
 '''
 (N/'native-worker.js').write_text(worker,encoding='utf-8',newline='\n')
-extra=['core/src/reference-worker-client.mjs','core/src/latest-render-queue.mjs','native-encoding.mjs']
+extra=['core/src/reference-worker-client.mjs','core/src/latest-render-queue.mjs','native-encoding.mjs','native-cloud-transfer.mjs']
 if (N/'native-composition.mjs').exists():extra.append('native-composition.mjs')
 extra.extend(['native-worker-policy.mjs','native-lifecycle.mjs','native-assets.mjs','native-host.mjs'])
 boot='''
@@ -71,10 +71,17 @@ s=s.replace('</head>','<link rel="stylesheet" href="real-sky/native-sky.css">\n<
 s=s.replace('</body>','<script src="real-sky/native-sky.js"></script>\n</body>',1)
 (W/'index.html').write_text(s,encoding='utf-8',newline='\n')
 css='''.real-sky-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}.real-sky-status{position:absolute;bottom:3px;left:0;width:100%;text-align:center;font:8px sans-serif;color:#aaa;z-index:3;pointer-events:none}.milkyway,.stars,.starglints{display:none!important}
+/* Current shell owns startup too: no legacy sky/veil/grain while workers load. */
+.c{background:#101725}
+.real-sky-canvas{opacity:0;transition:opacity .18s linear}
+.c.real-sky-composed .real-sky-canvas{opacity:1}
+@media(prefers-reduced-motion:reduce){.real-sky-canvas{transition:none}}
+.wfx .cloudcanvas{visibility:hidden!important}
+.wfx .fog,.wfx .veil,.wfx .sunhaze,.c>.grain,.c>.climate{display:none!important}
 /* Broad sky radiance is now physical. Native discs and discrete optical presentations stay native. */
 .atmo .airglow,.atmo .aurora,.atmo .scatter,.atmo .belt,.atmo .anticrep,.atmo>.sun{display:none!important}
 '''
-if physical:css+='''/* Painter remains live for transfer and rain; its alpha/colour is composed in linear light exactly once. */
+if physical:css+='''/* Painter remains live for transfer and rain; bounded display colour is composed exactly once. */
 .c.real-sky-composed .wfx .cloudcanvas{visibility:hidden!important}
 .c.real-sky-composed .sky .mphoto,.c.real-sky-composed .sky .moccluder,.c.real-sky-composed .sky .mbeam,.c.real-sky-composed .sky .mglow{visibility:hidden!important}
 /* Discrete native solar/lunar optics remain condition-gated presentation layers, not diffuse/background meters. */

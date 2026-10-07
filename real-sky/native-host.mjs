@@ -12,10 +12,10 @@ export function startNativeSky(pack,workerSource,physical){
  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas 2D unavailable');
  const badge=document.createElement('span');badge.className='real-sky-status';badge.setAttribute('role','status');card.append(badge);
  const foreground=physical?new NativeForegroundCapture(canvas):null;
- const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
- let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,previousPresentation=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
+ const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,presentationRejections:0,presentationUtcMs:null,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
+ let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,paintedJob=null,previousPresentation=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
  function publish(){badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':status.availability?.reason==='rate-throughput'?`Real sky unavailable at ${status.availability.rate}×`:'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent';canvas.dataset.status=status.status;}
- function clear(reason='invalidated'){window.SalahMoonDetail?.clear();card.classList.remove('real-sky-composed');frame=null;job=null;status.last=null;paintedFrame=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;publish();}
+ function clear(reason='invalidated'){window.SalahMoonDetail?.clear();card.classList.remove('real-sky-composed');frame=null;job=null;status.last=null;paintedFrame=null;paintedJob=null;status.presentationUtcMs=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;publish();}
  function snapshot(){return host.capture();}
  function calendarGeometry(rows=530){
   if(window.SalahMoonRuntime?.detailEnabled)return {key:'separate-device-resolution-moon',mask:()=>null};
@@ -33,8 +33,7 @@ export function startNativeSky(pack,workerSource,physical){
    if(foreground){
     // Full physical frames change only on worker acceptance. Native clouds/Moon
     // can move independently; repaint their entire old/new support, not all 530 rows.
-    if(paintedFrame!==frame){ctx.putImageData(new ImageData(encodeNativeFrame(frame.raster.linear,frame.raster.effectiveExposure),325,530),0,0);paintedFrame=frame;}
-    const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom);previousMoonBottom=bottom;
+    const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom);
     const capture=foreground.capture(rows),geometry=calendarGeometry(rows);
     const presentation={frame,rows,maskKey:geometry.key,cloudRGBA:capture.cloudRGBA,moonRGBA:capture.moonRGBA};
     // Unlike the donor cloud-only guard, this also fences physical frame, PBR
@@ -46,7 +45,13 @@ export function startNativeSky(pack,workerSource,physical){
     }
     const base=nativeCalendarRegion(frame.raster,geometry.mask(),rows);
     const joined=nativeForeground(base,{...capture,exposure:frame.raster.effectiveExposure});
-    ctx.putImageData(new ImageData(encodeNativeFrame(joined.linear,frame.raster.effectiveExposure),325,rows),0,0);
+    // Prepare/validate the entire update before touching the visible framebuffer.
+    // A failed capture must not expose an uncomposed base (or partial cloud data).
+    const region=new ImageData(encodeNativeFrame(joined.linear,frame.raster.effectiveExposure),325,rows);
+    const full=paintedFrame!==frame?new ImageData(encodeNativeFrame(frame.raster.linear,frame.raster.effectiveExposure),325,530):null;
+    if(full)ctx.putImageData(full,0,0);
+    ctx.putImageData(region,0,0);
+    paintedFrame=frame;paintedJob=job;status.presentationUtcMs=job.observer.utcMs;previousMoonBottom=bottom;
     previousPresentation=presentation;status.presentationDraws++;
     status.last.composition={...joined.diagnostics,meanCloudAlpha:joined.diagnostics.meanCloudAlpha*rows/530,...capture.native,updatedRows:rows,totalRows:530};card.classList.add('real-sky-composed');
    }else{
@@ -54,7 +59,14 @@ export function startNativeSky(pack,workerSource,physical){
    }
    canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeFrame);lastCompose=performance.now();
    if(status.last.composition)status.last.composition.lastComposeMs=lastCompose-started;
-  }catch(e){failure(e);}
+  }catch(e){
+   // Retention is allowed only under the ORIGINAL visible job's fences and
+   // 30-second age limit. A seek/configuration/epoch change still clears now.
+   if(paintedJob&&lifecycle.current(paintedJob)){
+    status.presentationRejections++;status.lastPresentationError=String(e?.message??e);lastCompose=performance.now();return;
+   }
+   failure(e);
+  }
  }
 
  function accept(result,_id,request){
