@@ -215,3 +215,27 @@ config → coarse IP/timezone detect → manual setup → safe error state.
 Prayer time calculations by the [Aladhan API](https://aladhan.com/prayer-times-api), and
 weather by [Open-Meteo](https://open-meteo.com) — both free and key-less. The widget makes
 direct browser requests to these APIs and stores nothing about you.
+
+## Preserved V1 compatibility URL
+
+After the preservation PR is merged and Pages deploys, `/salah_widget/v1/` serves
+the frozen pre-overhaul application. The root URL remains the current version.
+V1's clock, location, prayer timetable, weather and externally hosted fonts remain
+live. Local settings and caches use V1-specific keys; valid existing root settings
+are copied once without changing root data.
+
+```html
+<iframe
+  title="Prayer Times"
+  referrerpolicy="no-referrer"
+  allow="geolocation"
+  src="https://theislampill.github.io/salah_widget/v1/#local=1"
+  style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden"
+  scrolling="no">
+</iframe>
+```
+
+For the current version, change only `src` to
+`https://theislampill.github.io/salah_widget/#local=1`.
+The iframe dimensions and internal card layout are unchanged.
+See [preservation provenance, validation and limitations](docs/V1_PRESERVATION.md).
