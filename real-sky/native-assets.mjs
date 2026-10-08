@@ -38,7 +38,7 @@ export class NativeAssetLoader {
 export function startNativeSkyAssets(start,scriptUrl) {
  const inline=window.__SALAH_REAL_SKY_PACK__;delete window.__SALAH_REAL_SKY_PACK__;
  let badge=null,loader;
- const reset=()=>{window.SalahRealSky?.dispose();window.SalahRealSky=null;window.realSkyFrame=()=>null;};
+ const reset=()=>{window.SalahRealSky?.dispose();window.SalahRealSky=null;window.realSkyFrame=()=>null;window.SalahSkyPreview?.admitCatalogue(null);};
  const state=asset=>{
   if(asset.status==='ready'){badge?.remove();badge=null;return;}
   window.realSkyState=()=>({checkpoint:'9',status:loader.state.status,assets:loader.state,errors:loader.state.error?[loader.state.error]:[],last:null});
@@ -60,7 +60,7 @@ export function startNativeSkyAssets(start,scriptUrl) {
    try{const url=new URL('native-data.js',scriptUrl);url.searchParams.set('nativeSkyGeneration',String(generation));el.src=url.href;document.head.append(el);}catch(error){cleanup();reject(error);}
   });
  };
- loader=new NativeAssetLoader({load,start,onState:state,onReset:reset});
+ loader=new NativeAssetLoader({load,start:pack=>{window.SalahSkyPreview?.admitCatalogue(pack);start(pack);},onState:state,onReset:reset});
  const pagehide=()=>loader.suspend(),pageshow=event=>{if(event.persisted)loader.resume();};
  window.addEventListener('pagehide',pagehide);window.addEventListener('pageshow',pageshow);
  window.SalahRealSkyAssets={retry:()=>loader.retry(),dispose:()=>{window.removeEventListener('pagehide',pagehide);window.removeEventListener('pageshow',pageshow);loader.dispose();},get state(){return loader.state;}};

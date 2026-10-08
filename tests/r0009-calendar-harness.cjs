@@ -13,7 +13,7 @@ function record(gDay='07',hDay='19',method='HJCoSA'){
 function session({sourcePath=path.join(ROOT,'index.html'),source,format='YYYY-MM-DD',at='2026-09-07T17:59:59Z',saved=false,zone='UTC'}={}){
   source=source||fs.readFileSync(sourcePath,'utf8');
   const config=fs.readFileSync(path.join(ROOT,'config.js'),'utf8'), nodes=new Map(), effects={storageWrites:0,fetches:0,timers:0};
-  const body=source.slice(source.indexOf('<body'),source.indexOf('<script src="config.js">'));
+  const start=source.indexOf('<body'),body=source.slice(start,source.indexOf('<script',start));
   const attributes=s=>Object.fromEntries(Array.from(s.matchAll(/([\w-]+)\s*=\s*"([^"]*)"/g),m=>[m[1],m[2]]));
   const document={activeElement:null};
   function make(selector,tag='div',attrs={},connected=true){
@@ -64,7 +64,7 @@ function session({sourcePath=path.join(ROOT,'index.html'),source,format='YYYY-MM
       title:node('#ah').getAttribute('title')||node('#ah').title||'',prayerStale:qa.cache.prayerStale,dateTruth:qa.dateTruth||null,
       ceButtonLabel:node('#ceDateButton')?.getAttribute('aria-label')||'',ahButtonLabel:node('#ahDateButton')?.getAttribute('aria-label')||'',
       dialog:{gregorian:node('#dateGregorian')?.textContent||'',hijri:node('#dateHijri')?.textContent||'',preview:node('#datePreview')?.textContent||'',reason:node('#dateReason')?.textContent||'',previewHidden:node('#datePreview')?.hidden},
-      current:node('.cn').textContent,rows:(node('.times').innerHTML.match(/class="p /g)||[]).length,effects:consumerEffects,qaProbeEffects:{before:consumerEffects,after:{...effects}},qa};
+      current:node('.cn').textContent,rows:(node('.times').innerHTML.match(/class="p(?:\s|")/g)||[]).length,effects:consumerEffects,qaProbeEffects:{before:consumerEffects,after:{...effects}},qa};
   }
   const render=()=>{vm.runInContext('render()',context);const s=snapshot();assert.equal(s.rows,6,'Actual six-row renderer positive');assert.ok(s.current,'Actual prayer model positive');return s;};
   return {source,sourceSha256:sha(source),configSha256:sha(config),context,nodes,triggers,document,effects,state,render,snapshot,storageState:()=>Array.from(storage.entries()),setClock:instant=>{wall=Date.parse(instant);},evaluate:js=>vm.runInContext(js,context)};

@@ -14,12 +14,27 @@ function rig({inline=false,diameter=104}={}){
  vm.runInContext(fs.readFileSync(path.join(src,'moon-precision.mjs'),'utf8')+'\n'+fs.readFileSync(path.join(src,'moon-native.mjs'),'utf8'),c);
  const flush=()=>{for(let guard=0;guard<20;guard++){const j=[...jobs].find(([,v])=>v.ms===0);if(!j)break;jobs.delete(j[0]);j[1].f()}};
  const request=()=>workers.at(-1).sent.findLast(m=>m.kind==='render');
- const response=(kind='result')=>{const r=request(),n=r.scene.size,out=r.scene.outSize;return {kind,id:r.id,identity:r.identity,scene:structuredClone(r.scene),width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:n,surfaceExtent:r.scene.extent,surfaceLinear:new Float32Array(n*n*3),calendarLinear:new Float32Array(n*n*3),surfaceCoverage:new Float32Array(n*n),physicalIdentity:'physical',profileIdentity:'profile',diagnostics:{kernel:'metric-radial-terrain-wasm-mb1',quality:{status:'PASS'}}}};
+ const response=(kind='result')=>{const r=request(),n=r.scene.size,out=r.scene.outSize;return {kind,id:r.id,identity:r.identity,scene:structuredClone(r.scene),width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:n,surfaceExtent:r.scene.extent,surfaceLinear:new Float32Array(n*n*3),calendarLinear:new Float32Array(n*n*3),surfaceCoverage:new Float32Array(n*n),physicalIdentity:'physical',profileIdentity:'profile',diagnostics:{kernel:'metric-radial-terrain-wasm-mb1',quality:{status:kind==='preview'?'preview':'empirical-adaptive'}}}};
  return {w,workers,state,detail,nodes,events,jobs,flush,request,response,get published(){return published},get fallbacks(){return fallbacks},advance:t=>clock+=t};
 }
 test('embedded source survives boot-error and a retry replays every chunk',()=>{const r=rig();r.flush();assert.equal(r.workers[0].sent.filter(m=>m.kind==='asset-chunk').length,2);r.workers[0].emit({kind:'boot-error',error:'controlled'});assert.equal(r.w.SalahMoonRuntime.retry(),true);r.flush();assert.equal(r.workers[1].sent.filter(m=>m.kind==='asset-chunk').length,2);assert.equal(r.nodes.size,2);});
-test('malformed numeric surface withdraws safely without publishing',()=>{const r=rig();r.flush();r.workers[0].emit({kind:'ready'});const m=r.response();m.surfaceLinear[0]=NaN;assert.doesNotThrow(()=>r.workers[0].emit(m));assert.equal(r.published,0);assert.equal(r.w.SalahMoonRuntime.state.legacyFallback,true);assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');assert.equal(r.workers[0].terminated,true);});
-test('complete result becomes current, preview remains pending',()=>{const r=rig();r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response('preview'));assert.equal(r.w.SalahMoonRuntime.state.status,'refining');assert.equal(r.w.SalahMoonRuntime.state.pending,true);assert.ok(r.w.SalahMoonRuntime.surface());r.workers[0].emit(r.response());assert.equal(r.w.SalahMoonRuntime.state.status,'ready');assert.equal(r.w.SalahMoonRuntime.state.pending,false);r.w.SalahMoonRuntime.dispose();});
+
+test('normal loading and preview cannot publish an inferior Moon before refined terrain',()=>{
+ const r=rig();assert.equal(r.w.SalahMoonRuntime.surface(),null);
+ r.workers[0].emit({kind:'ready'});const p=r.response('preview');p.diagnostics.quality.status='preview';r.workers[0].emit(p);
+ assert.equal(r.w.SalahMoonRuntime.state.status,'refining');
+ assert.equal(r.w.SalahMoonRuntime.surface(),null,'Unqualified preview must not become visible');
+ assert.equal(r.published,0);assert.equal(r.detail.available,false);
+ const f=r.response();f.diagnostics.quality.status='empirical-adaptive';r.workers[0].emit(f);
+ assert.ok(r.w.SalahMoonRuntime.surface());assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'refined-terrain');
+});
+
+test('unsettled final result is never called a refined visible Moon',()=>{
+ const r=rig();r.workers[0].emit({kind:'ready'});const f=r.response();f.diagnostics.quality.status='limit-reached';r.workers[0].emit(f);
+ assert.equal(r.w.SalahMoonRuntime.surface(),null);assert.equal(r.published,0);
+});
+test('malformed numeric surface withdraws safely without publishing',()=>{const r=rig();r.flush();r.workers[0].emit({kind:'ready'});const m=r.response();m.surfaceLinear[0]=NaN;assert.doesNotThrow(()=>r.workers[0].emit(m));assert.equal(r.published,0);assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'withheld-until-refined');assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');assert.equal(r.workers[0].terminated,true);});
+test('complete result becomes current, preview remains pending',()=>{const r=rig();r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response('preview'));assert.equal(r.w.SalahMoonRuntime.state.status,'refining');assert.equal(r.w.SalahMoonRuntime.state.pending,true);assert.equal(r.w.SalahMoonRuntime.surface(),null);r.workers[0].emit(r.response());assert.equal(r.w.SalahMoonRuntime.state.status,'ready');assert.equal(r.w.SalahMoonRuntime.state.pending,false);r.w.SalahMoonRuntime.dispose();});
 test('A B A generations cannot publish the original request',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const stale=r.response();r.state.generation=1;r.state.sceneIdentity='B';r.w.SalahMoonRuntime.request();r.state.generation=2;r.state.sceneIdentity='A';r.w.SalahMoonRuntime.request();r.workers[0].emit(stale);assert.equal(r.published,0);assert.equal(r.w.SalahMoonRuntime.state.rejected,1);});
 test('profile change rejects predecessor even at identical phase',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const stale=r.response();r.w.SalahMoonRuntime.setProfile('reference');r.workers[0].emit(stale);assert.equal(r.published,0);assert.equal(r.request().scene.profile.lift,0);});
 test('DPR change rejects predecessor',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const m=r.response();r.state.dpr=3;r.w.SalahMoonRuntime.request();r.workers[0].emit(m);assert.equal(r.published,0);});

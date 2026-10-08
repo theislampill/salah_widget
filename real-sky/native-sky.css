@@ -1,9 +1,10 @@
 .real-sky-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}.real-sky-status{position:absolute;bottom:3px;left:0;width:100%;text-align:center;font:8px sans-serif;color:#aaa;z-index:3;pointer-events:none}.milkyway,.stars,.starglints{display:none!important}
-/* Current shell owns startup too: no legacy sky/veil/grain while workers load. */
-.c{background:#101725}
-.real-sky-canvas{opacity:0;transition:opacity .18s linear}
-.c.real-sky-composed .real-sky-canvas{opacity:1}
-@media(prefers-reduced-motion:reduce){.real-sky-canvas{transition:none}}
+/* A valid accepted atmosphere owns the first visible sky. No timer or worker
+   readiness can turn an accepted daytime target into a dark placeholder. */
+.c{background:#273445}
+.real-sky-preview{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}
+.c.real-sky-composed .real-sky-preview{display:none}
+.c.real-sky-preview-ready .sky .mphoto,.c.real-sky-preview-ready .sky .moccluder,.c.real-sky-preview-ready .sky .mbeam,.c.real-sky-preview-ready .sky .mglow{visibility:hidden!important}
 .wfx .cloudcanvas{visibility:hidden!important}
 .wfx .fog,.wfx .veil,.wfx .sunhaze,.c>.grain,.c>.climate{display:none!important}
 /* Broad sky radiance is now physical. Native discs and discrete optical presentations stay native. */

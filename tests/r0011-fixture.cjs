@@ -28,6 +28,8 @@ function widget(options={}) {
   Object.assign(f.sandbox,{
     QA:false, buildStars:()=>calls.stars++, buildWeather:()=>calls.buildWeather++,renderMoon:()=>{},
     startWeather:()=>calls.weather++,
+    // Explicit UI/condition boundary doubles; storage and config remain actual source.
+    withdrawPrayerPresentation(){}, weatherDecision:()=>({record:null}), weatherHeader:()=>({}), paintWeatherHeader(){},
     loadPrayerData:()=>queue("prayer",{}),startRenderLoop:()=>calls.loop++,
     render:()=>calls.render++,showError:msg=>calls.errors.push(msg)
   });

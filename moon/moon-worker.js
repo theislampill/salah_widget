@@ -166,8 +166,10 @@ function joinLunarPixel({gas,direct,premult,coverage:a,opacity,cloud,exposure}){
  const ma=a*opacity,ca=cloud[3],out=[0,0,0];
  for(let k=0;k<3;k++){
   const surface=a>0?Math.max(0,Math.min(1-1/131072,premult[k]/a)):0;
-  // Suppress direct background exactly once, independently of the group fade.
-  const beforeCloud=gas[k]*(1-ma)+direct[k]*(1-a)+(-Math.log1p(-surface)/exposure)*ma;
+  // Gas is foreground atmospheric path radiance, not distant background.
+  // Opaque terrain blocks stars/diffuse sources, never the air in front of it.
+  // Calendar opacity scales surface emphasis only; it cannot grant star leaks.
+  const beforeCloud=gas[k]+direct[k]*(1-a)+(-Math.log1p(-surface)/exposure)*ma;
   out[k]=beforeCloud*(1-ca)+cloud[k]*ca;
  }return out;
 }
@@ -179,7 +181,7 @@ function startMoonDetail(){
  const stat={renders:0,skips:0,totalMs:0,maxMs:0,dpr:0,pixels:0,mode:'local-device-resolution; inherited physics grid unchanged'};
  const clear=()=>{cv.style.visibility='hidden';last=null;};
  function geometry(){
-  const card=document.querySelector('.c'),photo=document.querySelector('.mphoto'),group=document.querySelector('.moon'),features=document.querySelector('.mfeatures'),disc=document.querySelector('.moon-mask-disc'),t=photo?.getScreenCTM(),cardRect=card?.getBoundingClientRect(),rect=document.querySelector('.real-sky-canvas')?.getBoundingClientRect();
+  const card=document.querySelector('.c'),photo=document.querySelector('.mphoto'),group=document.querySelector('.moon'),features=document.querySelector('.mfeatures'),disc=document.querySelector('.moon-mask-disc'),t=photo?.getScreenCTM(),cardRect=card?.getBoundingClientRect(),rect=document.querySelector(card?.classList.contains('real-sky-composed')?'.real-sky-canvas':'.real-sky-preview')?.getBoundingClientRect();
   if(!surface||!table||!t||!rect||!(rect.width>0&&rect.height>0)||!cardRect||!card.classList.contains('moon-ready')||!disc?.classList.contains('mask-on')||+getComputedStyle(disc).opacity===0||t.a<=0||t.d<=0||Math.abs(t.b)>1e-8||Math.abs(t.c)>1e-8)return null;
   // Sample in viewport device pixels, then convert to the absolute child's
   // containing block. Its origin is inside the card border, not cardRect.left.
@@ -197,9 +199,16 @@ function startMoonDetail(){
  function available(){try{return !disposed&&!!context&&!!cx&&!!geometry();}catch{return false;}}
  function compose(frame,encode){
   if(disposed||!frame||!window.SalahMoonRuntime?.surface()||!context||!cx){clear();return;}
-  const g=geometry();if(!g||!g.card.classList.contains('real-sky-composed')){clear();return;}
+  const g=geometry();if(!g||!(g.card.classList.contains('real-sky-composed')||frame.preview&&g.card.classList.contains('real-sky-preview-ready'))){clear();return;}
   const began=performance.now(),r=frame.raster;
-  if(!cv.isConnected){const base=document.querySelector('.real-sky-canvas');if(base)base.after(cv);else g.card.prepend(cv);}
+  const base=document.querySelector(frame.preview?'.real-sky-preview':'.real-sky-canvas');
+  // Native lunar optics precede the original opaque SVG photo. Preserve that
+  // ownership when the photo is replaced: placing this canvas immediately
+  // after the base sky put the WHOLE native SVG (including its bright-centred
+  // corona) over refined Earthshine. Clouds are already in this local join;
+  // foreground weather/UI retain their later/higher layers.
+  const behind=g.card.querySelector('.sky')??base;
+  if(behind&&cv.previousSibling!==behind)behind.after(cv);else if(!cv.isConnected)g.card.prepend(cv);
   const {width:W,height:H,dpr}=g;
   if(cloudCv.width!==W||cloudCv.height!==H){cloudCv.width=W;cloudCv.height=H;}
   cx.resetTransform();cx.clearRect(0,0,W,H);cx.globalCompositeOperation='source-over';cx.globalAlpha=1;
@@ -236,10 +245,11 @@ function startMoonDetail(){
    for(let k=0;k<3;k++)linear[3*i+k]=nativeCloudChannel(before[3*i+k],cloudRGBA[ci+k],alpha,exposure);
   }
   const rgba=encode(linear,exposure);for(let i=0;i<covered.length;i++)rgba[4*i+3]=covered[i]?255:0;
+  if(frame.preview&&!frame.current()){clear();return;}
   if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}
   context.putImageData(new ImageData(rgba,W,H),0,0);
   Object.assign(cv.style,{left:`${(g.left/dpr-g.originX)/g.scaleX}px`,top:`${(g.top/dpr-g.originY)/g.scaleY}px`,width:`${W/dpr/g.scaleX}px`,height:`${H/dpr/g.scaleY}px`,visibility:'visible'});
-  last={frame,key,cloud:cloudRGBA};stat.renders++;stat.totalMs=performance.now()-began;stat.maxMs=Math.max(stat.maxMs,stat.totalMs);stat.dpr=dpr;stat.pixels=W*H;
+  last={frame,key,cloud:cloudRGBA};stat.renders++;stat.totalMs=performance.now()-began;stat.maxMs=Math.max(stat.maxMs,stat.totalMs);stat.dpr=dpr;stat.pixels=W*H;stat.skyOwner=frame.preview?'atmospheric-preview':'refined-sky';stat.atmosphereOwner='foreground path radiance, never lunar-occluded';
  }
  return {adopt(s){table=prefixSurface(s);calendarTable=s.calendarLinear?prefixSurface({size:s.size,linear:s.calendarLinear,coverage:s.coverage}):null;surface=s;last=null;prepared=null;},clear,compose,get available(){return available();},get state(){return {...stat,visible:cv.style.visibility==='visible'};},dispose(){disposed=true;clear();cv.remove();table=null;calendarTable=null;surface=null;prepared=null;}};
 }
@@ -254,16 +264,21 @@ function projectSurfaceCodes({size,linear,coverage,extent},diameter=312,shift=[0
 // moon-calendar.mjs
 
 /** Explicit BELOW-HORIZON CALENDAR TOKEN, not physical Earthlight or an
- * astronomical irradiance floor. Above-horizon reference pixels remain exact.
- * Existing native up only blends these display surfaces; coverage stays opaque.
+ * astronomical irradiance floor. Preserve the refined phase/relief at no more
+ * than the old .020 x material token's integrated display luminance. This is
+ * one scalar emphasis change, not albedo substituted for terrain lighting.
+ * Above-horizon reference pixels remain exact; coverage stays opaque.
  */
-function calendarProxy(material,coverage){
- if(material.length!==coverage.length*3)throw new RangeError('calendar material');
- const out=new Float32Array(material.length);
+function calendarProxy(material,coverage,refined){
+ if(material.length!==coverage.length*3||refined?.length!==material.length)throw new RangeError('calendar material');
+ const out=new Float32Array(material.length),Y=[.2126,.7152,.0722];let ceiling=0,total=0;
  for(let i=0;i<coverage.length;i++){
   const a=coverage[i];if(!Number.isFinite(a)||a<0||a>1)throw new RangeError('calendar coverage');
-  for(let k=0;k<3;k++){const c=material[3*i+k];if(!Number.isFinite(c)||c<0||c>1)throw new RangeError('calendar colour');out[3*i+k]=.020*c*a;}
- }return out;
+  for(let k=0;k<3;k++){const c=material[3*i+k],v=refined[3*i+k];if(!Number.isFinite(c)||c<0||c>1||!Number.isFinite(v)||v<0||v>a+1e-6)throw new RangeError('calendar colour');ceiling+=Y[k]*.020*c*a;total+=Y[k]*v;}
+ }
+ const gain=total>0?Math.min(1,ceiling/total):0;
+ for(let i=0;i<out.length;i++)out[i]=refined[i]*gain;
+ return out;
 }
 function blendCalendarBytes(upper,lower,up){
  if(!Number.isFinite(up)||up<0||up>1||upper.length!==lower.length||upper.length%4)throw new RangeError('calendar blend');
@@ -282,7 +297,7 @@ function blendCalendarBytes(upper,lower,up){
 function nativeCalendarResult(engine,result){
  const N=result.surfaceSize,pix=new Float64Array(engine.e.memory.buffer,engine.e.get_pixels(),N*N*24),material=new Float32Array(N*N*3);
  for(let i=0;i<N*N;i++)for(let k=0;k<3;k++)material[3*i+k]=pix[24*i+6+k];
- const linear=calendarProxy(material,result.surfaceCoverage),table=prefixSurface({size:N,linear,coverage:result.surfaceCoverage}),M=result.width,scale=N/(result.scene.diameter*result.surfaceExtent),o=N/2-M*scale/2,rgba=new Uint8ClampedArray(result.rgba.length);
+ const linear=calendarProxy(material,result.surfaceCoverage,result.surfaceLinear),table=prefixSurface({size:N,linear,coverage:result.surfaceCoverage}),M=result.width,scale=N/(result.scene.diameter*result.surfaceExtent),o=N/2-M*scale/2,rgba=new Uint8ClampedArray(result.rgba.length);
  for(let y=0;y<M;y++)for(let x=0;x<M;x++){
   const i=y*M+x,c=boxSurface(table,o+x*scale,o+y*scale,o+(x+1)*scale,o+(y+1)*scale),a=c[3];rgba[4*i+3]=result.rgba[4*i+3];
   for(let k=0;k<3;k++){const v=a?c[k]/a:0;rgba[4*i+k]=Math.floor(255*(v<=.0031308?12.92*v:1.055*v**(1/2.4)-.055)+.5);}

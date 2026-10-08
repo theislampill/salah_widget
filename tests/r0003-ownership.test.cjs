@@ -95,6 +95,10 @@ function pendingSky(h){
 function previousSky(h){
   // Explicit prior-scene input at the owned boundary, not a natural cold boot or
   // native paint witness. Its card has already left the authored pending state.
+  // Decoded legacy maps no longer grant lunar publication permission. Supply
+  // an accepted terrain-service boundary double; beginSkyScene must withdraw
+  // it, and the existing mutation controls still test the actual native sinks.
+  h.run('var priorTerrainSurface={fixture:"accepted terrain"}; window.SalahMoonRuntime={surface:()=>priorTerrainSurface,invalidate(){priorTerrainSurface=null;}};');
   h.document.querySelector(".c").classList.remove("sky-pending","sky-initializing");
   h.document.querySelector(".mphoto").setAttribute("href","fixture:decoded-map");
   h.run('_pbrReady=true;_skySceneKey="old";_skyCommitted=true;_skyMoonPresence=1;_starProjectionKey="old";_starsProjected=true;_cloudReady=true;cloudState.covLow=30;cloudState.covMid=40;cloudState.covHigh=50;_colDens=new Float32Array([0.4,0.8]);_cloudCv={width:325,height:185};_cloudCtx={clearRect:recordCloudClear};updateSkySurface();');

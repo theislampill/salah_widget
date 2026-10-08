@@ -36,6 +36,9 @@ if(process.argv.includes('--missing-terminal-control'))return;
     assert.equal(h.run('today.date.gregorian.date'),'09-09-2026');
     if(cached){assert.equal(h.run('today.timings.Fajr'),'04:51');assert.equal(h.requests.some(r=>r.dateStr==='09-09-2026'),false);}
     else assert.ok(h.requests.some(r=>r.dateStr==='09-09-2026'));
+    // Network adoption settles after the previous rAF; the next actual frame
+    // produces the new Moon before consuming it. A wrong-date model is withheld.
+    h.rafs.shift()();await h.drain();
     h.run('applyTheme(model())');assert.equal(h.run('qaState().moonTruth.moonSkyFresh'),true);
     assert.equal(h.run('qaState().moonTruth.lastConsumed.observation.produced.epochMinute'),29816340);
     assert.equal(h.run('_prayerStale'),false);

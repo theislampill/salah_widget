@@ -9,7 +9,7 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
  const canvas=document.createElement('canvas');canvas.width=300;canvas.height=300;
  let worker=null,url=null,disposed=false,ready=false,pending=null,accepted=null,serial=0,epoch=0,retryCount=0,clock=null,referenceScene=null,profileMode='calendar';
  let timer=null,deadline=null,lastError=null,chunkScript=null,upperBytes=null,calendarBytes=null,textureUp=null;
- const status={status:'loading',backend:'metric-terrain-wasm-mb1',renders:0,rejected:0,cancelled:0,errors:[],legacyFallback:true,quality:'pending'};
+ const status={status:'loading',backend:'metric-terrain-wasm-mb1',renders:0,rejected:0,cancelled:0,errors:[],legacyFallback:false,quality:'pending',visibleSource:'withheld-until-refined'};
  const profile=()=>profileMode==='reference'?{...MOON_DEFAULT_PROFILE,profile_id:'unboosted-v5-01',mode:'reference',lift:0}:{...MOON_DEFAULT_PROFILE};
  function capture(){
   const h=window.SalahMoonHost;if(!h)return null;let s;try{s=h.capture();}catch{return null;}
@@ -29,7 +29,7 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
  // Check at publication/read time as well as polling: a seek cannot slip an
  // otherwise identical result through the interval before the next host poll.
  const matches=(record,s)=>!!record&&!!s&&!s.paused&&!clockDiscontinuous(s)&&record.epoch===epoch&&record.key===key(s);
- function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=true;status.reason=reason;window.SalahMoonHost?.fallback();window.SalahMoonDetail?.clear();}
+ function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.visibleSource='withheld-until-refined';status.reason=reason;window.SalahMoonHost?.fallback();window.SalahMoonDetail?.clear();}
  function clear(reason){
   epoch++;serial++;pending=null;clearTimeout(deadline);deadline=null;try{worker?.postMessage({kind:'cancel'});}catch{/* A crashed worker cannot veto withdrawal. */}status.cancelled++;fallback(reason);
  }
@@ -108,11 +108,16 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
     }
     if(!(m.surfaceLinear instanceof Float32Array)||!(m.surfaceCoverage instanceof Float32Array)||m.surfaceSize!==pending.scene.size||m.surfaceLinear.length!==m.surfaceSize*m.surfaceSize*3||m.surfaceCoverage.length!==m.surfaceSize*m.surfaceSize){failed(new Error('Moon linear surface shape'));return;}
     if(!(m.calendarLinear instanceof Float32Array)||m.calendarLinear.length!==m.surfaceLinear.length||!(m.calendarRgba instanceof Uint8ClampedArray)||m.calendarRgba.length!==m.rgba.length){failed(new Error('Calendar presentation contract'));return;}
+    // A preview is computation progress, not permission to replace the visible
+    // Moon with a weaker image. Keep the accepted current final surface during
+    // an explicit same-target refresh; otherwise leave the slot unpresented.
+    if(m.kind==='preview'){status.status='refining';status.progressQuality=m.diagnostics.quality;return;}
+    if(m.diagnostics.quality?.status!=='empirical-adaptive'){failed(new Error('Moon refinement did not meet the admitted quality criterion'));return;}
     window.SalahMoonDetail?.adopt({linear:m.surfaceLinear,calendarLinear:m.calendarLinear,coverage:m.surfaceCoverage,size:m.surfaceSize,extent:m.surfaceExtent,identity:m.physicalIdentity});
     // Validate/adopt the whole surface before advancing its publication state.
     canvas.width=m.width;canvas.height=m.height;upperBytes=m.rgba;calendarBytes=m.calendarRgba;textureUp=null;
     accepted={id:pending.id,key:pending.key,epoch:pending.epoch,scene:m.scene,physicalIdentity:m.physicalIdentity,profileIdentity:m.profileIdentity};
-    status.status=m.kind==='preview'?'refining':'ready';status.quality=m.diagnostics.quality?.status??'unqualified';status.legacyFallback=false;status.renders++;status.last=m.diagnostics;status.phase=m.scene.fraction;
+    status.status='ready';status.quality=m.diagnostics.quality.status;status.legacyFallback=false;status.visibleSource='refined-terrain';status.renders++;status.last=m.diagnostics;status.phase=m.scene.fraction;
 
     if(m.kind==='result'){clearTimeout(deadline);deadline=null;pending=null;}
     syncTexture(capture());window.SalahRealSky?.compose();
@@ -140,7 +145,7 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
   setProfile(mode){if(!['calendar','reference'].includes(mode))throw new RangeError('Moon profile');if(mode===profileMode)return;profileMode=mode;clear('profile changed');poll();},
   setReferenceScene(value){referenceScene=value===null?null:admitReference(value);clear('reference view changed');poll();},
   retry(){if(disposed||worker||retryCount>=3)return false;retryCount++;start();return true;},
-  get state(){const s=capture(),target=(accepted??pending)?.scene;return structuredClone({...status,epoch,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'native below-horizon display token .020×material; not physical irradiance'});},
+  get state(){const s=capture(),target=(accepted??pending)?.scene;return structuredClone({...status,epoch,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});},
   dispose(){if(disposed)return;clear('disposed');disposed=true;clearInterval(timer);clearTimeout(deadline);document.removeEventListener('visibilitychange',visibility);closeWorker();window.SalahMoonDetail?.dispose();status.status='disposed';}
  };
  timer=setInterval(()=>poll(),250);start();

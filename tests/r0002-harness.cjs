@@ -52,7 +52,7 @@ function recordingDocument(raw, {nodes=new Map(),onHtml=()=>{},onText=()=>{}}={}
     Object.defineProperty(n,"textContent",{get:()=>text,set:value=>{text=String(value);html=encode(text);onText(selector,text);}});
     nodes.set(selector,n);return n;
   }
-  const start=raw.indexOf("<body"),end=raw.indexOf('<script src="config.js">',start);
+  const start=raw.indexOf("<body"),end=raw.indexOf('<script',start);
   assert.ok(start>=0&&end>start,"actual widget body owners missing");
   for(const match of raw.slice(start,end).matchAll(/<([a-z][\w-]*)\b([^>]*\bid="[^"]+"[^>]*)>/gi)) {
     const attrs=Object.fromEntries(Array.from(match[2].matchAll(/([\w-]+)\s*=\s*"([^"]*)"/g),m=>[m[1],m[2]]));
@@ -102,7 +102,7 @@ function harness(options = {}) {
   context=vm.createContext(sandbox);
   function run(code) { return vm.runInContext(code,context,{timeout:300}); }
   if(options.config !== false) run(fs.readFileSync(path.resolve(__dirname,"../config.js"),"utf8"));
-  const prefix=sliceBetween(raw,'"use strict";',"// ---- weather (Open-Meteo:");
+  const prefix='"use strict";\n'+sliceBetween(raw,'// ---- config:',"// ---- weather (Open-Meteo:");
   const state=sliceBetween(raw,"// ---- state ----","// ---- continuous time-of-day sky");
   const solar=sliceBetween(raw,"function solarElevationDeg(M,a){","function sunAltAt(M,a){");
   const loader=sliceBetween(raw,"async function loadPrayerData(){","// clear per-location state");

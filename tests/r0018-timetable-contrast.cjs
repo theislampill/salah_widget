@@ -40,6 +40,14 @@ function composition(html,state,backdrop=[255,255,255],appearance='glass'){
 function mutateTimetable(html,kind){
   if(kind==='past'){const before='.c[data-appearance="contrast"] .p{opacity:1;';assert.equal(html.split(before).length,2);return html.replace(before,'.c[data-appearance="contrast"] .p{');}
   assert.equal(kind,'on');const before=rule(html,'.c[data-appearance="contrast"] .p.on').background;
+  if(rule(html,'.c[data-appearance="contrast"] .p.on').color==='#211d15'){
+    // PR42 replaces translucent next-row glass with an opaque accent plate.
+    // The corresponding fault is its old pale foreground, not removal of the
+    // former dark backing. Keep the historical mutation for old-source controls.
+    const selector='.c[data-appearance="contrast"] .p.on{color:#211d15;';
+    assert.equal(html.split(selector).length,2);
+    return html.replace(selector,'.c[data-appearance="contrast"] .p.on{color:#f0edf8;');
+  }
   assert.equal(html.split(before).length,2,'One contrast-only next background');assert.match(before,/,rgba\(9,17,28,\.90\)$/);
   return html.replace(before,before.replace(/,rgba\(9,17,28,\.90\)$/,''));
 }
@@ -50,7 +58,11 @@ const baseline=execFileSync('git',['show',`${BASE}:index.html`],{cwd:ROOT}).toSt
 const results=[];
 function test(name,body){try{const detail=body();results.push({name,status:'PASS',detail});}catch(error){results.push({name,status:'FAIL',error:error.message});}}
 test('composition calculator positive and negative controls',()=>{assert.equal(contrast([0,0,0],[255,255,255]),21);assert.equal(contrast([255,255,255],[255,255,255]),1);});
-test('default glass restores all original timetable state styling',()=>{for(const selector of ['.times','.p','.p.on','.p.now','.p.past','.p b','.tm'])assert.deepEqual(rule(source,selector),rule(baseline,selector),selector);});
+test('glass retains original non-next state styling',()=>{for(const selector of ['.times','.p','.p.now','.p.past','.p b','.tm'])assert.deepEqual(rule(source,selector),rule(baseline,selector),selector);});
+test('owner-authorized next emphasis is stronger without relabelling future rows',()=>{
+  const check=html=>{const r=rule(html,'.p.on');assert.match(r.background,/var\(--accent\) 88%/);assert.equal(r.color,'#211d15');assert.match(r['box-shadow'],/inset 3px 0/);assert.equal(rule(html,'.p.on b')['font-weight'],'700');};
+  check(source);assert.throws(()=>check(baseline),assert.AssertionError,'Old weak next styling is the negative control');
+});
 for(const state of ['normal','past','on','now'])test(`${state} retains its original glass state emphasis`,()=>{const c=composition(source,state);assert.equal(c.opacity,state==='past'?.42:1);return c;});
 for(const state of ['normal','past','on']) test(`${state} opt-in contrast retains intended-color contrast on white stress backdrop`,()=>{const c=composition(source,state,[255,255,255],'contrast');assert.ok(c.ratio>=4.5,`${state}: ${c.ratio.toFixed(3)} < 4.5`);assert.equal(c.opacity,1,'Information stays at full group opacity');return c;});
 test('glass default has no superseded white-stress 4.5 claim',()=>{const c=composition(source,'normal');assert.ok(c.ratio<4.5,'Control must distinguish glass from contrast');return {...c,claim:'Glass aesthetic selected by owner; prior white-stress gate applies only to contrast'};});
@@ -62,7 +74,7 @@ test('geometry and typography declarations preserved',()=>{
 });
 if(!process.argv.includes('--baseline')){
   test('missing contrast opacity override exposes inactive-row attenuation',()=>{const c=composition(mutateTimetable(source,'past'),'past',[255,255,255],'contrast');assert.ok(c.ratio<4.5,`mutant unexpectedly ${c.ratio}`);assert.equal(c.opacity,.42);return c;});
-  test('contrast next-only backing mutant loses contrast independently',()=>{const c=composition(mutateTimetable(source,'on'),'on',[255,255,255],'contrast');assert.ok(c.ratio<4.5,`mutant unexpectedly ${c.ratio}`);return c;});
+  test('contrast next-only presentation mutant loses contrast independently',()=>{const c=composition(mutateTimetable(source,'on'),'on',[255,255,255],'contrast');assert.ok(c.ratio<4.5,`mutant unexpectedly ${c.ratio}`);return c;});
 }
 return {sourceSha256:sha(source),baselineSha256:sha(baseline),limit:'Authored intended-color composition with white sky/accent bounds, no antialias/shadow/filter conformance claim. Native crops and text-free pixel pairs are required.',results};
 }

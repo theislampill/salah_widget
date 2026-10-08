@@ -110,10 +110,16 @@
     report.sourceSha256=[...new Uint8Array(await crypto.subtle.digest("SHA-256",bytes))].map(b=>b.toString(16).padStart(2,"0")).join("");
     if(!/^<!doctype html>/i.test(source)||!source.includes('<title>Prayer Times</title>'))throw Error("Widget document anchors changed");
     const scripts=[...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
-    const moonScripts=scripts.length===5&&!scripts[3][1].trim()&&scripts[3][2].trim()==='if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;'&&/^\s+src="moon\/moon-host\.js"\s*$/.test(scripts[4][1]);
-    if((scripts.length!==3&&!moonScripts)||!/^\s+src="real-sky\/native-sky\.js"\s*$/.test(scripts[2][1])||!/^\s+src="config\.js"\s*$/.test(scripts[0][1])||scripts[1][1].trim())throw Error("Unreviewed widget script anchors");
+    const pre=scripts[1]?.[1].includes('id="native-first-paint-code"')?1:0;
+    if(pre){
+      const digest=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(scripts[1][2])))].map(b=>b.toString(16).padStart(2,'0')).join('');
+      if(!scripts[1][1].includes('data-sha256="'+digest+'"')||!scripts[1][2].includes('function prepareNativeFirstPaint()'))throw Error('First-paint source identity mismatch');
+      report.firstPaintSourceSha256=digest;
+    }
+    const moonScripts=scripts.length===5+pre&&!scripts[3+pre][1].trim()&&scripts[3+pre][2].trim()==='if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;'&&/^\s+src="moon\/moon-host\.js"\s*$/.test(scripts[4+pre][1]);
+    if((scripts.length!==3+pre&&!moonScripts)||!/^\s+src="real-sky\/native-sky\.js"\s*$/.test(scripts[2+pre][1])||!/^\s+src="config\.js"\s*$/.test(scripts[0][1])||scripts[1+pre][1].trim())throw Error("Unreviewed widget script anchors");
     for(const anchor of ["async function fetchTimings(","async function loadPrayerData(","function model(","function render(","window.qaState=function()"])
-      if(!scripts[1][2].includes(anchor))throw Error("Missing widget script anchor: "+anchor);
+      if(!scripts[1+pre][2].includes(anchor))throw Error("Missing widget script anchor: "+anchor);
     // These hooks must exist before DOM parsing and before either widget script.
     const data=new Map(),privateStore={
       get length(){return data.size;},key(n){return [...data.keys()][n]??null;},

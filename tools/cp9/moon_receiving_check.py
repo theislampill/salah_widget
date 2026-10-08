@@ -160,9 +160,9 @@ def run(root, out, entry='http', phases=True):
             aba=page.evaluate(r'''async()=>{
  const stale=__mq.lastResult,w=__mq.workers.findLast(w=>w.isMoon),before=SalahMoonRuntime.state.rejected;
  await applyConfig({...CONFIG,label:'Moon B'},{save:false});await applyConfig({...CONFIG,label:'Moon receiving'},{save:false});
- w.onmessage({data:stale});return {rejected:SalahMoonRuntime.state.rejected-before,epoch:SalahMoonRuntime.state.epoch,staleEpoch:stale.identity.epoch,pending:SalahMoonRuntime.state.pending,legacyFallback:SalahMoonRuntime.state.legacyFallback};
+ w.onmessage({data:stale});return {rejected:SalahMoonRuntime.state.rejected-before,epoch:SalahMoonRuntime.state.epoch,staleEpoch:stale.identity.epoch,pending:SalahMoonRuntime.state.pending,withheld:SalahMoonRuntime.surface()===null};
 }''')
-            check('native-A-B-A-rejects-original-result',aba['rejected']>=1 and aba['epoch']>aba['staleEpoch'] and aba['legacyFallback'],observation=aba)
+            check('native-A-B-A-rejects-original-result',aba['rejected']>=1 and aba['epoch']>aba['staleEpoch'] and aba['withheld'],observation=aba)
             wait(page,"SalahMoonRuntime.state.status==='ready'",60)
             malformed=page.evaluate(r'''()=>{
  const stale=structuredClone(__mq.lastResult);SalahMoonRuntime.refresh();const w=__mq.workers.findLast(w=>w.isMoon);
@@ -171,7 +171,7 @@ def run(root, out, entry='http', phases=True):
  const handler=w.onmessage;w.onmessage=e=>{if(e.data.kind==='result'){w.onmessage=handler;const m=structuredClone(e.data);m.surfaceLinear[0]=NaN;handler({data:m});}else handler(e);};return {armed:true};
 }''')
             wait(page,"SalahMoonRuntime.state.status==='unavailable'",60)
-            check('matching-malformed-result-withdraws',page.evaluate("SalahMoonRuntime.state.legacyFallback&&SalahMoonRuntime.surface()===null&&document.querySelectorAll('.p').length===6"),state=page.evaluate(STATE))
+            check('matching-malformed-result-withdraws',page.evaluate("SalahMoonRuntime.state.visibleSource==='withheld-until-refined'&&SalahMoonRuntime.surface()===null&&document.querySelectorAll('.p').length===6"),state=page.evaluate(STATE))
             check('retry-starts',page.evaluate('SalahMoonRuntime.retry()'));wait(page,"SalahMoonRuntime.state.status==='ready'",60)
             check('retry-recovers-refined-surface',page.evaluate('!!SalahMoonRuntime.surface()&&!SalahMoonRuntime.state.legacyFallback'))
             report['workerEvents']=page.evaluate('__mq.events');report['serverRequests']=served

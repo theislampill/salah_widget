@@ -3,6 +3,20 @@ import {nativeJob,nativeIdentity} from '../../real-sky/native-contract.mjs';
 const hook=fs.readFileSync(new URL('../../real-sky/native-host-hooks.js',import.meta.url),'utf8');
 function fixture(){const s={window:{},document:{hidden:false},$ :()=>null,q:new URLSearchParams(),simulationReady:()=>true,skySceneIdentity:()=> 'native-A',selectedWeather:()=>({src:'current',vis:20000}),simNow:()=>Date.parse('2026-09-07T20:30:00Z'),lat:28.54,lon:-81.38,siteElev:900,_runtimeGeneration:1,tz:'America/New_York',TIMESCALE:1,units:'c',LPOLL:0,isMotionReduced:()=>true,today:{},_pbrReady:false,_moonFallbackReady:false,_pbrFailed:false};vm.createContext(s);vm.runInContext(hook,s);return {s,h:s.window.SalahNativeSkyHost};}
 function accept(f,value=900,g=f.s._runtimeGeneration,lat=f.s.lat,lon=f.s.lon){assert.equal(typeof f.h.acceptedElevation,'function','Accepted elevation must have an explicit target-bound handoff');return f.h.acceptedElevation(value,g,lat,lon);}
+test('physical cloud direction reads accepted inputs without forcing solar presentation layout',()=>{
+ const f=fixture();accept(f,25);let supplied;
+ const card={style:{getPropertyValue:()=>0},classList:{contains:()=>false},getBoundingClientRect(){throw Error('unrelated presentation layout read');}};
+ f.s.$=()=>card;f.s.getComputedStyle=()=>{throw Error('unrelated computed style read');};
+ f.s.window.SalahNativeCloudLighting=s=>{supplied=s;return nativeJob(s,true);};
+ const job=f.h.cloudLighting();assert.equal(job.observer.utcMs,f.s.simNow());assert.equal(job.observer.latDeg,f.s.lat);assert.equal(job.observer.heightM,25);assert.equal(supplied.generation,1);assert.equal(supplied.solarAnchor,null);
+ assert.throws(()=>f.h.capture(),/presentation layout/,'the full presentation boundary still reads actual displayed solar geometry');
+});
+test('native paint notification does not duplicate the preview animation-frame producer',()=>{
+ const f=fixture();let requests=0;
+ f.s.window.SalahSkyPreview={update(){throw Error('duplicate synchronous preview');}};
+ f.s.window.SalahRealSky={request(){requests++;}};
+ f.h.notify();assert.equal(requests,1);
+});
 test('CP9 F01 unowned old scalar is not an accepted elevation',()=>{const f=fixture();assert.equal(f.h.capture().heightM,0);assert.match(f.h.capture().elevationSource,/default zero/);});
 test('CP9 F01 A to B with missing and simulated weather never inherits A height',()=>{const f=fixture();accept(f);assert.equal(f.h.capture().heightM,900);f.s._runtimeGeneration=2;f.s.lat=-33.87;f.s.lon=151.21;f.s.selectedWeather=()=>null;assert.equal(f.h.capture().heightM,0);f.s.selectedWeather=()=>({src:'sim',vis:20000});assert.equal(f.h.capture().heightM,0);});
 test('CP9 F01 A to B to A requires new-generation elevation even at same coordinates',()=>{const f=fixture();accept(f);f.s._runtimeGeneration=2;f.s.lat=0;assert.equal(f.h.capture().heightM,0);f.s._runtimeGeneration=3;f.s.lat=28.54;assert.equal(f.h.capture().heightM,0);accept(f,12);assert.equal(f.h.capture().heightM,12);});

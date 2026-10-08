@@ -91,6 +91,9 @@ test("actual boot and apply execute scene reset and surface gates with faithful 
   const f=make(),photo=f.elements.get("mphoto"),mask=f.elements.get("moon-mask-disc");
   assert.equal(f.run('$(".c")===document.querySelector(".c")'),true);assert.equal(f.card.classList.contains("sky-pending"),true);assert.equal(f.card.dataset.appearance,"glass");
   photo.setAttribute("href","fixture-owned-pixels");
+  // A decoded legacy map no longer owns visible Moon readiness. This storage
+  // fixture supplies the already accepted terrain boundary, not rendered pixels.
+  f.run('var fixtureTerrain={};window.SalahMoonRuntime={surface:()=>fixtureTerrain,invalidate(){fixtureTerrain=null;}};');
   f.run('_pbrReady=true;_skySceneKey="old";_skyMoonPresence=1;updateSkySurface()');
   assert.equal(f.card.classList.contains("moon-ready"),true);assert.equal(mask.classList.contains("mask-on"),true);
   f.sandbox.sceneClearCalls=[];
@@ -101,7 +104,7 @@ test("actual boot and apply execute scene reset and surface gates with faithful 
     assert.equal(f.card.classList.contains("sky-pending"),true);assert.equal(f.card.classList.contains("sky-initializing"),true);assert.equal(f.card.classList.contains("moon-ready"),false);assert.equal(mask.classList.contains("mask-on"),false);
   };
   dirtyScene();const boot=f.boot();clearedScene();assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);f.calls.prayer[0].resolve();await boot;
-  f.run('_skySceneKey="second-old";_skyMoonPresence=1;updateSkySurface()');dirtyScene();
+  f.run('fixtureTerrain={};_skySceneKey="second-old";_skyMoonPresence=1;updateSkySurface()');dirtyScene();
   f.sandbox.sceneNext={...f.config(),appearance:"contrast"};const apply=f.run('applyConfig(sceneNext,{save:false})');clearedScene();
   assert.equal(f.card.dataset.appearance,"contrast");assert.equal(f.card.getAttribute("data-appearance"),"contrast");assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);f.calls.prayer[1].resolve();await apply;
 });

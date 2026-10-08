@@ -97,7 +97,7 @@ function nodes() {
   };
   // Read actual opening-tag attributes once; ID/class aliases share one node. This does not model layout,
   // parsed generated SVG, CSS or canvas, and cannot manufacture a successful celestial production.
-  for(const match of slice('<body>', '<script src="config.js"></script>').matchAll(/<[a-z][\w:-]*\b([^>]*)>/gi)){
+  for(const match of slice('<body>', '<script').matchAll(/<[a-z][\w:-]*\b([^>]*)>/gi)){
     const element=createElement();
     for(const attribute of match[1].matchAll(/([\w:-]+)\s*=\s*(["'])(.*?)\2/g)) element.setAttribute(attribute[1],attribute[3]);
     const id=element.getAttribute('id'); if(id&&!store.has('#'+id))store.set('#'+id,element);
@@ -120,6 +120,7 @@ function loadSkyBindings(r) {
 function modelRealm(options = {}) {
   const dom = nodes();
   const globals = {document: dom, fmt24: true, datefmtStr: 'YYYY-MM-DD',
+    _runtimeGeneration: 0, _prayerRecordsGeneration: 0,
     prayers: ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'],
     today: prayerRecord('2026-09-07', options.zone), tomorrow: null,
     ...options.globals};
@@ -168,6 +169,8 @@ function loadRender(r, block = renderSource) {
     _prayerStale: false, _moonStaleWarned: false,
     // CP8 catalogue/canvas producers are outside this CLOCK-only source fixture.
     projectStars() {}, setLocLabel() {}, syncWeather() {}, renderMoon() {},
+    // Weather admission/paint has independent complete-runtime coverage.
+    weatherDecision: () => ({record:null}), weatherHeader: () => ({}), paintWeatherHeader() {},
     fitCn() {}, drawArc: () => '<svg>fixture arc dependency</svg>', applyTheme() {},
     moonNow: () => ({phase: 0.5}), phaseEmoji: () => '◐', console});
   if(!skySources)Object.assign(r.context,{moonSky:{},_starsProjected:true,projectStars(){}});

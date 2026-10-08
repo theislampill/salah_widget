@@ -1,26 +1,49 @@
 # salah_widget — DESIGN
 
 A static Islamic prayer-times widget embedded as an iframe (e.g. in TablissNG).
-This branch is the CP9 candidate; deployment remains separate. Native authoring
+PR39/40/41 are deployed; PR42 repairs the current root without changing frozen V1. Native authoring
 lives in `src/native/`; `python tools/build_native.py` generates the root entries,
 worker and offline expansion. See [current ownership and qualification](docs/real-sky/INTEGRATION.md).
 The native design below predates CP9: synthetic star/glint producers are
 superseded by the admitted catalogue and registered diffuse field. Historical
 motion claims do not qualify the new renderer.
 
-This dependent candidate adds the supplied V5 terrain Moon to CP9. Native phase,
+The deployed renderer includes the supplied V5 terrain Moon on CP9. Native phase,
 prayer and settings ownership is retained; a WebAssembly worker produces a
-terrain preview and then angular refinement. The original native PBR remains
-the startup/failure fallback. The fixed V5 profile, metric data and kernel are
-unchanged. A current terrain result supplies both the CP9 base compositor and
-the device-resolution detail canvas; the legacy SVG surface is hidden while
-CP9 composition is active. Final visual acceptance requires `ready`, no pending
+terrain preview and then angular refinement. Deployed main still uses the original
+PBR during loading/failure. PR42 withholds that inferior substitution and the
+intermediate terrain preview from the visible slot, preserving retry and UI
+availability until a current refined surface is admitted. The fixed V5 profile,
+metric data and kernel are unchanged. A current terrain result supplies the device-resolution detail canvas;
+the base excludes the duplicate Moon and the legacy SVG surface is hidden while
+the detail result is current. Final visual acceptance requires `ready`, no pending
 work and the completed adaptive quality criterion, with worker-to-pixel evidence;
 loading and preview screenshots are not final qualification.
 See [Moon integration](docs/moon/INTEGRATION.md) and the
 [receiving qualification](docs/moon/QUALIFICATION.md) for measured latency,
 opaque composition, file entry and remaining limits. Final refinement takes
-seconds to about a minute on the measured host; it is not a 60fps renderer.
+seconds to minutes depending on browser; it is not a 60fps renderer.
+
+PR42's immediate atmosphere and final sky share one explicit display policy:
+median atmospheric luminance metering and chromaticity-preserving compression.
+Twilight limits automatic exposure around a declared 9% civil-twilight display
+reference; it does not normalize falling radiance into a constant bright card.
+A display-only colour ratio uses CP6's retained Patat near-zenith B/V reference,
+preserving directional variation and luminance. Applying that site/zenith fit at
+other locations and angles is a presentation approximation, not local spectral
+calibration or a replacement multiple-scattering model. Its influence smoothly
+releases into the established daytime path by +10 degrees. Prayer names have
+no authority over this mapping. Physical twilight remains after the body sets.
+Only the solar aerosol forward excess above isotropic phase density registers
+to the native corner Sun; the non-forward atmospheric wing stays in camera space.
+Perspective background flux is converted to display surface brightness before
+metering. Raw reference radiance, physical observer/Sun, Rayleigh/path
+extinction, horizon, Moon and star projection remain unchanged. This is a calendar
+presentation adaptation, not a new calibrated radiance model. The head computes
+the bounded atmosphere before static markup paints, from the shared accepted
+saved/manual configuration and native wall clock; no optional catalogue, diffuse
+asset or Moon solve gates prayer controls. See the H1–H8 repair record in
+[STARTUP_CLOUD_HOTFIX.md](docs/real-sky/STARTUP_CLOUD_HOTFIX.md).
 
 **Companion docs:** [`ARCHITECTURE.md`](ARCHITECTURE.md) — the maintainer's responsibility/data-flow/contract map
 and risk list. [`OPTICS.md`](OPTICS.md) — the per-phenomenon physical-family taxonomy + gating. [`AGENTS.md`](AGENTS.md)
@@ -67,12 +90,15 @@ the art is "realism-adjacent" (believable, never random). Two standing rules:
 
 - Times come from the **Aladhan API** (`fetchTimings`), cached in `localStorage`. The Islamic (Hijri) day rolls
   over at **Maghrib**, not midnight; the AH date and the moon-phase preview update accordingly.
-- **Day-rollover stale cue:** if the calendar day rolls over but the new day's timings can't be loaded (offline /
-  fetch failure with no new-day cache), the widget keeps the prior day's times, does NOT advance the date, and sets
-  `_prayerStale` → a quiet worded **"stale"** chip (warm amber, not alarming) appears by the Hijri date + a faint
-  date-row desaturation. Set from `render()` via `.c[data-stale="prayer"]` (never read by `atmosphere()`); scope is
-  **prayer-time staleness only** (weather staleness stays in `qaState`). `qaState().cache` exposes `prayerStale` +
-  `rolloverPendingMs`.
+- **Day rollover:** cached-to-fresh promotion must admit the requested civil date,
+  zone and target generation. While the next day's timetable is unavailable,
+  old rows cannot nominate a current next prayer: values/highlights/countdown
+  withdraw to an explicit unavailable state. Calendar source disclosure remains
+  independent. `qaState().cache` exposes `prayerStale` and `rolloverPendingMs`.
+- **Next and current:** `.p.on` is the next event and uses a stable accent plate
+  with dark text; `.p.now` independently outlines the current prayer. Future rows
+  stay readable glass, elapsed rows are subdued, and Forenoon has no current row.
+  Tomorrow's Fajr row, countdown and next arc marker use the same admitted target.
 - The arc (`drawArc`) is **one continuous solar-elevation curve** built from real solar motion (hour angle +
   declination), NOT from prayer-to-prayer interpolation. Prayer events are *sampled onto* it. The declination is
   fit so elevation crosses **0° exactly at this date's sunrise/sunset** (the fit may slightly exceed the real
@@ -113,22 +139,28 @@ Each render tick:
 2. `paint(A)` is the **only** place that writes to the DOM (typed `@property` custom props that interpolate, plus
    a few SVG nodes and the canvas cloud state).
 
-`physSky(elevation)` + `skyLum()` is the sole sky-colour source (no name→palette lookup).
+The CP9 spectral atmosphere plus the declared native display policy owns broad
+sky colour. The retained `physSky()` state still supplies native foreground
+lighting; its former broad CSS background/veil layers are not painted twice.
 
 ## Sun layers & optical phenomena
 
-- `.atmo .suncorner` is the large **clipped corner sun**: a **defined white nucleus** (a generous bright core) + a
-  warm-gold body edge + a broad corona + faint rays, screen-blended. It **enters from off the left edge** near the
-  dashed horizon at sunrise and climbs up-and-left, cresting high into the top-left corner at noon (driven by solar
-  elevation). It sits *behind* the cloud layer (clouds can occlude it).
-- **Solar tone-mapping / white-balance** (the disc colour discipline): the sun colour is **scene-referred, then
-  tone-mapped** — never display-gamma colours multiplied by a weather "mute" (which produced a dim grey/purple
-  blob). Pipeline: Kasten–Young **airmass** → Beer–Lambert **beam transmittance** × per-class **cloud
-  transmittance** → a **CCT(elevation)** blackbody colour (≈2000 K horizon → ≈5500 K noon) → **ACES** (Narkowicz)
-  tone-map. The nucleus carries enough radiance to **clip to a defined white body even through cloud**; the corona/
-  body carries the colour and the dimming; cloud **desaturates toward warm-white, never cold grey/purple**. A small
-  transmittance floor keeps the horizon sun a glowing warm disc (not a dark smudge); `--sunflat` ovalises it near
-  the horizon (refraction).
+- `.atmo .sunbody` owns one enlarged, partly clipped solar body. Its restored V1
+  diameter is `240*(1.10-.24*clamp(elevation/40))`:264px at the horizon and206.4px
+  at high Sun. Presence, position, refraction flattening and clipping are separate;
+  a rising Sun does not inflate from a small button. `.suncorner` supplies the
+  retained corona/rays, with its duplicate disc disabled throughout the handoff.
+- The whole body shares one attenuated spectrum with a modest limb falloff:
+  Kasten–Young airmass, Beer–Lambert beam response, elevation-dependent CCT and
+  ACES display mapping. No unconditional white CSS centre bypasses attenuation,
+  and no independently orange collar bypasses the body spectrum. Natural low-Sun
+  warming/dimming remain; this enlarged display treatment is not calibrated
+  angular solar radiance. The approved body size does not change with glow size.
+- Body and corona/rays join the existing atmospheric light group, retaining
+  foreground air instead of replacing it with a flat orange surface. One mask
+  from the **same painted cloud alpha** obstructs these light contributions;
+  it paints no second cloud colour. An opaque cloud can hide the body completely.
+  The old category multiplier no longer attenuates direct light a second time.
 - **Optics coordinate (important):** the **discrete** solar optics that ring/emanate from the sun — 22° halo,
   sundogs, sun pillar, the `.sun` bloom, `.wfx .godray` crepuscular shafts, `.sunhaze` — are registered to the
   **visible corner-sun** screen position (`--sunvx/--sunvy`, the corner-sun disc centre), so e.g. the halo arcs
@@ -142,6 +174,14 @@ Each render tick:
   right (west) via the azimuthal scatter while the sun body remains the top-left luminary.
 
 ## Moon — PBR, earthshine, halo/corona
+
+The accepted device-resolution terrain layer follows the native SVG optical
+background. The older SVG photo was opaque over those optics; placing its
+replacement canvas before the SVG instead overlaid the bright corona centre
+on Earthshine. Keep this order through preview/refined handoffs. Native cloud
+foreground remains composed once by the shared display-linear join. A high
+dew point alone is not a water-droplet column and cannot enable a corona.
+
 
 - The Moon is an **OPAQUE body — you never see stars through it.** The disc (`.mphoto`) and its star-occluder
   (`.moccluder`) share **one opacity** (`--moongrp = moonShow = clamp(darkness·1.8)`): **full at night**, fading
@@ -165,9 +205,9 @@ Each render tick:
 - **Earthshine**: a smooth curve `es = 0.09 + 0.34·(1−frac)^1.7` (steeper-than-linear toward full) × albedo —
   moderate ashen glow at thin crescent (the lit crescent still dominates), faint **textured** terrain at gibbous
   (never a black cutout), a small floor at full.
-- **Two distinct lunar optics**, gated by cloud type/humidity: a **22° ice halo** (`.mhalo`, a discrete ring with
+- **Two distinct lunar optics**, gated by admitted cloud type/fog: a **22° ice halo** (`.mhalo`, a discrete ring with
   a dark inner gap, red-inner/blue-outer, from cirrus) vs a **droplet corona** (`.mcorona`, a small near-white
-  aureole with pastel rings hugging the disc, from altostratus/fog/humidity). The generic `.mglow` is subtle and
+  aureole with pastel rings hugging the disc, from altostratus/fog, not humidity alone). The generic `.mglow` is subtle and
   breathes gently with simTime/haze — it is **not** the dominant element and does not flatten the whole sky.
 
 ## Cloud & weather engine
@@ -196,23 +236,28 @@ Each render tick:
 
 ### Weather truthfulness (critical)
 
-Open-Meteo is fetched once for both `current=` (**observed/nowcast**) and `hourly=` (**forecast track**). Rules:
+Open-Meteo `current=` is a current MODEL ESTIMATE, not a direct local observation.
+The owner's PR42 policy supersedes both the old observed/nowcast wording and the
+later policy that suppressed all model precipitation when no observation adapter
+was connected. One admitted decision supplies icon, temperature, condition,
+effect permissions and provenance. A usable condition survives a missing
+temperature or amount; no old temperature survives a rejected record.
 
-- In normal **real-time**, the header label/icon, `data-fx`, and precip visuals use the **current/nowcast**
-  observed block only. `syncWeather()` only derives `weather` from the forecast track when **ADVANCING** (a
-  `?timeScale=` fast-forward/sim preview). A forecast rain/thunder code must **never** be presented as "currently
-  raining/storming."
-- **Conservative precip gate** (`gateWeatherCode(raw,w,radarMm)`): a precip/thunder code is honoured only with
-  **active observed precipitation** (`≥ 0.05 mm`; thunder additionally needs `≥ 0.8 mm`). The observed evidence is
-  `max(Open-Meteo nowcast, RainViewer radar)`. Otherwise the code is **downgraded** to the cloud state implied by
-  the observed cloud cover. No evidence ⇒ no rain/lightning/`data-fx="thunder"` (fail-safe).
-- **True radar (`fetchRadar`, RainViewer):** an INDEPENDENT observed-precip sensor — it samples the radar tile's
-  pixel-neighbourhood at the site (CORS-readable tiles) into a coarse mm proxy. **Confirm-only** (it can keep a
-  precip code the model nowcast missed, but the gate only ever gates DOWN, so radar never fabricates rain) and
-  **fail-closed** (error / coverage gap / stale > 20 min / sim ⇒ ignored ⇒ nowcast-only behaviour). `qaState().wxTruth`
-  exposes `radarSource`/`radarPrecipMm`/`radarAgeSec`/`radarConfirming`/`effectivePrecipMm` + the full source chain.
-  *Honest limit:* radar coverage has gaps and the mm proxy is alpha-density, not calibrated dBZ — both safe under
-  confirm-only + fail-closed.
+- Fresh, correct-target `current` WMO categories supply condition emojis and
+  `data-fx`. Titles/accessible labels/QA disclose provider, model status and the
+  absence of direct local observation. Unknown weather is an em dash with no
+  temperature, not a sunny substitute or epistemic glyph in the condition slot.
+- Supported current-model quantities can enable bounded model-estimated rain
+  or snow in ordinary real time. Missing, invalid or contradictory amounts leave
+  the condition visible with explicit uncertainty but do not invent particles.
+  `visualPermissions` are distinct from observed-present `permissions`.
+- Thunder codes do not authorize observed strikes. Lightning retains its
+  independent evidence and reduced-motion/flash gates; the live adapter remains
+  unqualified. `observedPresent` is false for the current model lane.
+- Hourly forecasts remain forecast/preview data, never a live-current replacement.
+  Existing source-age, receipt-age, unit, target and generation fences remain.
+- RainViewer palette alpha is unitless imagery, never millimetres or local
+  observation authority. A newly fetched mosaic cannot renew old source evidence.
 
 ## Star / night-sky system
 
@@ -253,7 +298,7 @@ static-looking sky is a regression, not a "polish" gap.
 ## API & data sources
 
 - **Aladhan** `timings` — prayer times (cached per day in localStorage).
-- **Open-Meteo** `forecast` — `current=` (observed temp/humidity/wind/cloud layers/visibility/`weather_code`/
+- **Open-Meteo** `forecast` — `current=` (model-estimated temp/humidity/wind/cloud layers/visibility/`weather_code`/
   **precipitation**/rain/showers/snowfall/is_day) and `hourly=` 3-day track; plus grid-cell `elevation`.
 - Both are keyless and CORS-safe.
 
@@ -266,7 +311,7 @@ Config and debug are read from the URL **hash** (`#…`). Common:
 - `timeScale=<n>` — fast-forward (n× real time); enables ADVANCING (forecast-driven weather, re-projected stars,
   the sim clock).
 - `simTime=HH:MM` — freeze the clock at a time (TIMESCALE 0).
-- `simWx=<wmo code>` — force a weather class; `simPrecip=<mm>` — force observed precip (to QA the precip gate,
+- `simWx=<wmo code>` — force a weather class; `simPrecip=<mm>` — force synthetic preview precip (to QA the precip gate,
   e.g. `simWx=95&simPrecip=0` ⇒ dry forecast-thunder ⇒ downgraded). `simTemp`, `simFeels`, `simWind`,
   `simWindDir`, `simHumid`, `simCloud`, `simMoon`, `simWax`, `simMoonAlt`, `simMoonH`.
 - `qa=1` + `window.qaState()` — a structured snapshot (incl. `wxTruth`).

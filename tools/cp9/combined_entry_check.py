@@ -14,7 +14,7 @@ from moon_receiving_check import OBSERVER, MONITOR, STATE, wait, small_scene
 from runtime_identity import runtime_identity
 
 
-def run(root, out, font_source):
+def run(root, out, font_source, dpr=1):
     sys.path.insert(0,str(root/'tests'))
     from v1_browser import fonts, fixture, SETTINGS, ROOT_KEY, V1_KEY, FONT_CSS
     out.mkdir(parents=True,exist_ok=True)
@@ -34,14 +34,14 @@ def run(root, out, font_source):
             return str(root/path.split('?',1)[0][len('/salah_widget/'):])
     server=http.server.ThreadingHTTPServer(('127.0.0.1',0),Server);threading.Thread(target=server.serve_forever,daemon=True).start()
     origin=f'http://127.0.0.1:{server.server_port}'
-    report={'status':'RUNNING','runtime':runtime_identity(root),'checks':{},'errors':[],'assetFailures':[],
+    report={'status':'RUNNING','runtime':runtime_identity(root),'dpr':dpr,'checks':{},'errors':[],'assetFailures':[],
             'scope':'Pages-shaped actual iframe; controlled providers/fonts/location and 1x clock from 2026-10-07T20:30Z. Not live providers or physical GPS.',
             'v1Hashes':{n:hashlib.sha256((root/'v1'/n).read_bytes()).hexdigest() for n in ['index.html','config.js','VERSION.json','MANIFEST.sha256']}}
     def save():(out/'results.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     try:
         with sync_playwright() as pw:
             b=launch_browser(pw);report['browser']=browser_identity(b)
-            c=b.new_context(viewport={'width':390,'height':600},device_scale_factor=1,timezone_id='Asia/Riyadh',locale='en-US',reduced_motion='reduce')
+            c=b.new_context(viewport={'width':390,'height':600},device_scale_factor=dpr,timezone_id='Asia/Riyadh',locale='en-US',reduced_motion='reduce')
             requests=[]
             def route(r):
                 u=r.request.url;requests.append(u)
@@ -100,7 +100,7 @@ def run(root, out, font_source):
             f.evaluate('(s)=>SalahMoonRuntime.setReferenceScene(s)',small_scene());wait(f,"SalahMoonRuntime.state.status==='ready'",60)
             f.evaluate("__mq.workers.findLast(w=>w.isMoon).onerror({message:'controlled worker failure'})")
             wait(f,"SalahMoonRuntime.state.status==='unavailable'",20)
-            assert f.evaluate('SalahMoonRuntime.state.legacyFallback&&SalahMoonRuntime.surface()===null')
+            assert f.evaluate("SalahMoonRuntime.state.visibleSource==='withheld-until-refined'&&SalahMoonRuntime.surface()===null")
             q.wait_for_timeout(200);report['failureState']=f.evaluate(STATE)
             q.locator('iframe').screenshot(path=out/'root-fallback-control.png')
             assert f.evaluate('SalahMoonRuntime.retry()');wait(f,"SalahMoonRuntime.state.status==='ready'&&!SalahMoonRuntime.state.legacyFallback",60)
@@ -132,5 +132,5 @@ def run(root, out, font_source):
     return report['status']=='PASS_SCOPED'
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--root',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--fonts',required=True,type=Path);a=p.parse_args()
-    raise SystemExit(0 if run(a.root.resolve(),a.output,a.fonts) else 1)
+    p=argparse.ArgumentParser();p.add_argument('--root',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--fonts',required=True,type=Path);p.add_argument('--dpr',type=float,default=1);a=p.parse_args()
+    raise SystemExit(0 if run(a.root.resolve(),a.output,a.fonts,a.dpr) else 1)

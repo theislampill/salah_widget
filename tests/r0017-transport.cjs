@@ -10,7 +10,7 @@ const tomorrowURL="https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&
 async function setup(mode="healthy",options={}){
   let sourceCalls=0,realStorageCalls=0;const errorEl={};
   const source=options.source??index;
-  const ctx=vm.createContext({URL,URLSearchParams,Date,DOMException,Response,TextDecoder,Uint8Array,console,
+  const ctx=vm.createContext({URL,URLSearchParams,Date,DOMException,Response,TextDecoder,TextEncoder,Uint8Array,console,
     crypto:crypto.webcrypto,location:{search:"?mode="+mode+"&attempt=1",hash:"#lat=24.47&lon=39.61&method=4&simWx=0&tz=Asia/Riyadh&qa=1",href:"http://127.0.0.1:8765/tests/widget-fixture.html"},
     document:{getElementById(){return errorEl;}},
     DOMParser:class{parseFromString(){throw Error("Controlled parser stop: VM is not a browser");}},

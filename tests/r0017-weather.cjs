@@ -59,10 +59,10 @@ async function main(){
     h.run('__fixtureWeatherCurrent.weather_code=95;__fixtureWeatherCurrent.precipitation=5;weather=admitWeatherRecord(__fixtureWeatherCurrent,{lat,lon,units:"c",zone:tz,retrievedAt:Date.now()});render();');
     const q=h.ctx.qaState();
     assert.equal(q.cache.currentEligible,true);assert.equal(q.wxTruth.modelCondition,"thunder");
-    assert.equal(h.select('#wt').textContent,"24°");assert.equal(h.select('#wi').textContent,"≈");
+    assert.equal(h.select('#wt').textContent,"24°");assert.equal(h.select('#wi').textContent,"⛈️");
     assert.equal(q.wxTruth.current,"model-estimated-wet");assert.equal(q.wxTruth.permissions.rain,false);
-    assert.equal(q.wxTruth.permissions.lightning,false);assert.equal(q.wxTruth.activePrecip,false);
-    assert.equal(+h.select('.c').style.getPropertyValue('--rain-op'),0);
+    assert.equal(q.wxTruth.permissions.lightning,false);assert.equal(q.wxTruth.activePrecip,true);assert.equal(q.wxTruth.observedPresent,false);
+    assert.ok(+h.select('.c').style.getPropertyValue('--rain-op')>0);
   });
   await check("all eleven actual shared-smoke weather consumer callbacks reach their required assertions",async()=>{
     const groups=consumerGroups=await consumers();assert.equal(groups.length,11);assert.equal(groups.reduce((n,g)=>n+g.assertions.length,0),66);
@@ -73,13 +73,13 @@ async function main(){
     const from='if(SIM.wx==null&&!ADVANCING){log("synthetic-refused-live"';assert.equal(wrapper.split(from).length,2);
     const groups=await consumers(wrapper.replace(from,'if(false){log("synthetic-refused-live"'));
     const failed=failures(groups);assert(failed.some(a=>a.label==="refusal occurred before synthetic-state write"));
-    assert(groups.find(g=>g.name==="live model wet is useful; local particles off").assertions.every(a=>a.condition));
+    assert(groups.find(g=>g.name==="live model wet is useful; model particles labelled").assertions.every(a=>a.condition));
   });
   await check("mutant killed: synthetic bridge never admits wet; model positives remain",async()=>{
     const from='const result=admitWeatherFixture(raw,currentWeatherTarget(),Date.now());weatherSynthetic=result;';assert.equal(wrapper.split(from).length,2);
     const groups=await consumers(wrapper.replace(from,'const result=admitWeatherFixture(null,currentWeatherTarget(),Date.now());weatherSynthetic=result;'));
     assert(failures(groups).some(a=>a.label==="actual versioned present admission is positive"));
-    assert(groups.find(g=>g.name==="live model wet is useful; local particles off").assertions.every(a=>a.condition));
+    assert(groups.find(g=>g.name==="live model wet is useful; model particles labelled").assertions.every(a=>a.condition));
   });
   await check("mutant killed: target generation bridge is a no-op after admitted wet positive",async()=>{
     const from='control.assertOwned(owner);beginRuntimeGeneration();render();';assert.equal(wrapper.split(from).length,2);
