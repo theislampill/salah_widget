@@ -5305,6 +5305,10 @@ async function boot(){
   if(!simulationReady()) return;                            // coordinate detection may have changed the explicit scene's zone
   startWeather();
   render(); // Current shell/header and explicit pending prayer rows precede network settlement.
+  // The first native paint adopts its scene key and invalidates the head
+  // preview. Republish accepted inputs before yielding: a cache-warm browser
+  // can present this turn before the first rAF, exposing the dark base colour.
+  window.SalahSkyPreview?.update();
   await loadPrayerData();
   if(generation!==_runtimeGeneration) return;
   startRenderLoop();

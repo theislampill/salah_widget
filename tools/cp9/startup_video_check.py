@@ -51,7 +51,14 @@ async def run(a):
    local=datetime.fromisoformat(stamp.replace('Z','+00:00')).astimezone(timezone(timedelta(hours=-4)))
    local_interval=local.replace(minute=local.minute//15*15,second=0,microsecond=0).strftime('%Y-%m-%dT%H:%M')
    v['current'].update(time=local_interval,interval=900,weather_code=wx,cloud_cover=cloud,cloud_cover_low=cloud,cloud_cover_mid=0,cloud_cover_high=0,precipitation=2 if wx==63 else 0,rain=2 if wx==63 else 0,visibility=500 if wx==45 else 20000)
-   v['current_units']={'time':'iso8601','interval':'seconds','temperature_2m':'°C','wind_speed_10m':'m/s','precipitation':'mm','rain':'mm','showers':'mm','snowfall':'cm'}
+   # An acquiring (unsaved) widget keeps its configured Fahrenheit default.
+   # Honour the actual request rather than serving contradictory Celsius
+   # metadata, which the product correctly rejects as an invalid snapshot.
+   fahrenheit=parse_qs(urlsplit(u).query).get('temperature_unit')==['fahrenheit']
+   if fahrenheit:
+    for field in ['temperature_2m','apparent_temperature','dew_point_2m']:
+     if v['current'].get(field) is not None:v['current'][field]=v['current'][field]*9/5+32
+   v['current_units']={'time':'iso8601','interval':'seconds','temperature_2m':'°F' if fahrenheit else '°C','apparent_temperature':'°F' if fahrenheit else '°C','dew_point_2m':'°F' if fahrenheit else '°C','wind_speed_10m':'m/s','precipitation':'mm','rain':'mm','showers':'mm','snowfall':'cm'}
   if host in ['get.geojs.io','ipinfo.io']:
    if a.acquiring:time.sleep(1.5)
    v={'latitude':'28.5383','longitude':'-81.3792','loc':'28.5383,-81.3792','city':'Orlando fixture','country':'United States','country_code':'US','timezone':'America/New_York'}
@@ -195,7 +202,8 @@ async def run(a):
    save();print(mode,'first visible',run['firstVisibleMs'],'ms; daylight failures',len(run['daylightFailures']),'cache hits',len(run['cacheHits']),flush=True)
   report['checks']={'noPageErrors':not report['errors'],'noLocalAssetFailures':not report['assetFailures'] and not failures,'prayerReady':all(r['final']['prayerReady'] for r in report['runs']),'visibleFramesCaptured':all(r['daylightFramesChecked']>0 for r in report['runs']),'daylightEveryVisibleFrame':all(not r['daylightFailures'] for r in report['runs']),'genuineWarmRuntimeCache':bool(report['runs'][1]['cacheHits'])}
   report['checks']['fixturesActuallyConsumed']=all((r['fixtureController'] or not with_video) and r['final']['render'] and r['final']['render']['nextTime']=='13:17' for r in report['runs']) if a.scene not in ['night','twilight'] and not a.v1 else bool(external)
-  report['checks']['currentWeatherAdmitted']=all(r['final']['weatherHeader'] and r['final']['weatherHeader']['rawCode']==wx and r['final']['weatherHeader']['temperature']==28 and r['final']['accepted']['weather']['cloud']==cloud and r['final']['accepted']['weather']['vis']==(500 if wx==45 else 20000) for r in report['runs']) if not a.v1 else True
+  # The native header/accepted display snapshot rounds degrees (82.4F -> 82F).
+  report['checks']['currentWeatherAdmitted']=all(r['final']['weatherHeader'] and r['final']['weatherHeader']['rawCode']==wx and r['final']['weatherHeader']['temperature']==(28 if r['final']['accepted']['units']=='c' else 82) and r['final']['accepted']['weather'] and r['final']['accepted']['weather']['cloud']==cloud and r['final']['accepted']['weather']['vis']==(500 if wx==45 else 20000) for r in report['runs']) if not a.v1 else True
   report['checks']['runtimeUnchanged']=report['runtime']==runtime_identity(a.root)
   report['acquiringLocation']=a.acquiring
   report.update(externalRequests=external,serverFailures=failures);report['status']='REFERENCE' if a.v1 else 'PASS' if all(report['checks'].values()) else 'FAIL';save();await ctx.close();await browser.close()

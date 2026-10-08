@@ -130,7 +130,7 @@ def payload(stamp,family='rain',night=False,track=False,track_family=None):
 class Entry:
  def __init__(self,browser,root,out,fonts,*,v1=False,rate=None,start='2026-10-07T15:09:00Z',family='rain',direct=False,dpr=1,offset=0,live=False,seed=1,steady=False,overrides=''):
   self.root,self.out,self.family,self.live=root,out,family,live;out.mkdir(parents=True,exist_ok=True)
-  self.anchor=datetime.fromisoformat(start.replace('Z','+00:00')).timestamp()*1000;self.started=time.monotonic();self.errors=[];self.requests=[];self.responses=[];self.failures=[];self.mode='healthy';self.frozen_response=None
+  self.anchor=datetime.fromisoformat(start.replace('Z','+00:00')).timestamp()*1000;self.started=time.monotonic();self.errors=[];self.requests=[];self.responses=[];self.failures=[];self.provider_failures=[];self.mode='healthy';self.frozen_response=None
   self.suffix=('v1/' if v1 else '')+'#local=1&motion=full&seed='+str(seed)+('' if rate is None else '&timeScale='+str(rate))+('&'+overrides if overrides else '')
   wrapper='<!doctype html><meta charset="utf-8"><body style="margin:8px;background:#1a2335"><iframe title="Prayer Times" referrerpolicy="no-referrer" allow="geolocation" src="/salah_widget/'+self.suffix+'" style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden;position:relative;left:'+str(offset)+'px" scrolling="no"></iframe>'
   class Handler(http.server.SimpleHTTPRequestHandler):
@@ -154,7 +154,9 @@ class Entry:
    elif u in fonts:r.fulfill(body=fonts[u].read_bytes(),content_type='text/css' if u==FONT_CSS else 'font/woff2',headers={'Access-Control-Allow-Origin':'*'})
    elif live and host in ['api.open-meteo.com','api.aladhan.com']:r.continue_()
    elif host=='api.open-meteo.com':
-    if self.mode=='failure':r.fulfill(status=503,body='controlled temporary provider failure');return
+    if self.mode=='failure':
+     self.provider_failures.append({'atWall':time.monotonic()-self.started,'request':u,'status':503})
+     r.fulfill(status=503,body='controlled temporary provider failure');return
     stamp=self.anchor+(time.monotonic()-self.started)*1000
     p=self.frozen_response or payload(stamp,self.family,not 7<=datetime.fromtimestamp(stamp/1000,EDT).hour<19,track=rate is not None,track_family=self.family if steady else None)
     if self.mode=='missing':p={**p,'current':None}
@@ -253,9 +255,13 @@ def replay(a,browser,fonts):
  return {'status':'PASS' if expected and control else 'FAIL','cases':rows,'oldFailsReplay':control,'historicalIncident':'Original owner provider payload/site/cache were not captured in the available incident screenshots. This is an explicitly substituted Orlando fixture, not a reconstruction or dispute of reported rain.'}
 
 def playback(a,browser,fonts):
- e=Entry(browser,a.root,a.out,fonts,rate=a.rate,start=a.start,family=a.family,direct=a.direct,dpr=a.dpr,offset=a.offset,seed=a.seed,steady=a.steady,overrides=a.overrides);rows=[];begin=time.monotonic();nextshot=begin;end=begin+a.hours*3600/a.rate
+ # The original 26h Central Florida window (05:00 -> next 07:00) ended
+ # BEFORE the following sunrise. Retain those runs as partial-cycle evidence;
+ # the full-cycle campaign runs at least 27h, without pausing or lowering rate.
+ duration_hours=max(27,a.hours) if a.hours>=24 else a.hours
+ e=Entry(browser,a.root,a.out,fonts,rate=a.rate,start=a.start,family=a.family,direct=a.direct,dpr=a.dpr,offset=a.offset,seed=a.seed,steady=a.steady,overrides=a.overrides);rows=[];begin=time.monotonic();nextshot=begin;end=begin+duration_hours*3600/a.rate
  try:
-  initial=e.snap('initial');report={'status':'RUNNING','clockMode':'actual continuous native timeScale; real rAF/workers/deadlines/Date receipts, no pause or awaited frame','requestedRate':a.rate,'requestedHours':a.hours,'captureCadenceSeconds':a.cadence,'initial':initial}
+  initial=e.snap('initial');report={'status':'RUNNING','clockMode':'actual continuous native timeScale; real rAF/workers/deadlines/Date receipts, no pause or awaited frame','requestedRate':a.rate,'requestedHours':a.hours,'campaignHours':duration_hours,'captureCadenceSeconds':a.cadence,'initial':initial}
   with (a.out/'frames.jsonl').open('w',encoding='utf-8') as file:
    while time.monotonic()<end:
     if time.monotonic()<nextshot:e.page.wait_for_timeout(max(1,(nextshot-time.monotonic())*1000))
@@ -340,17 +346,23 @@ def controls(a,browser,fonts):
 def availability(a,browser,fonts):
  # Start ten seconds before this valid quarter-hour source expires. Receipt,
  # expiry, failure/retry cooldown and worker elapsed time all remain real 1x.
- e=Entry(browser,a.root,a.out,fonts,start=a.start,family='rain',dpr=a.dpr,offset=a.offset);rows=[];begin=time.monotonic();e.mode='failure'
+ e=Entry(browser,a.root,a.out,fonts,start=a.start,family='rain',dpr=a.dpr,offset=a.offset);rows=[];begin=time.monotonic();e.mode='failure';failure_seen=None
  try:
   with (a.out/'frames.jsonl').open('w',encoding='utf-8') as file:
-   while time.monotonic()-begin<150:
+   while time.monotonic()-begin<240:
     elapsed=time.monotonic()-begin
-    if elapsed>80:e.mode='healthy'
+    # The native 30s poll and 60s retry throttle can put the first request at
+    # 90s. Restore only after the actual HTTP fault was consumed and captured;
+    # an outage that ended at 80s never exercised transport recovery.
+    if failure_seen is not None and elapsed-failure_seen>=5:e.mode='healthy'
     s=e.snap(f'frame-{len(rows):05}');s.update(wallElapsed=elapsed,checks=semantic(s));rows.append(s);file.write(json.dumps(s)+'\n');file.flush();e.page.wait_for_timeout(1000)
-  wet=[r for r in rows if r['fx']=='rain' and r['precip']=='on'];unknown=[r for r in rows if r['fx']=='unavailable'];recovered=[r for r in wet if r['wallElapsed']>80]
+    if e.provider_failures and s['weather']['truth']['requests']['weather'].get('state')=='unavailable' and failure_seen is None:failure_seen=elapsed
+    if failure_seen is not None and e.mode=='healthy' and s['fx']=='rain' and s['precip']=='on' and s['weather']['truth']['requests']['weather'].get('state')=='received':break
+  wet=[r for r in rows if r['fx']=='rain' and r['precip']=='on'];unknown=[r for r in rows if r['fx']=='unavailable'];recovered=[r for r in wet if failure_seen is not None and r['wallElapsed']>failure_seen+5]
   checks={'initialWet':bool(wet and wet[0]['wallElapsed']<10),'expiredUnknown':bool(unknown),'coherentUnknown':all(r['header']['icon']=='—' and r['header']['temp']=='' and r['precip']=='off' for r in unknown),'recovery':bool(recovered),'noObservedClaim':all(not r['weather']['truth']['observedPresent'] for r in rows),'stateAgreement':all(all(r['checks'].values()) for r in rows),'providerFailureReached':any(r['weather']['truth']['requests']['weather'].get('state')=='unavailable' for r in rows if r['weather']['truth']['requests']['weather'])}
   dump(a.out/'worker-and-cadence.json',e.frame.evaluate('__h8'))
-  return {'status':'PASS' if all(checks.values()) and not e.errors else 'FAIL','checks':checks,'wallSeconds':time.monotonic()-begin,'frames':len(rows),'firstUnavailable':unknown[0]['wallElapsed'] if unknown else None,'recoveryAt':recovered[0]['wallElapsed'] if recovered else None,'requests':e.requests,'responses':e.responses,'errors':e.errors}
+  checks['provider503Consumed']=bool(e.provider_failures and failure_seen is not None)
+  return {'status':'PASS' if all(checks.values()) and not e.errors else 'FAIL','checks':checks,'wallSeconds':time.monotonic()-begin,'frames':len(rows),'firstUnavailable':unknown[0]['wallElapsed'] if unknown else None,'failureConsumedAt':failure_seen,'recoveryAt':recovered[0]['wallElapsed'] if recovered else None,'providerFailures':e.provider_failures,'requests':e.requests,'responses':e.responses,'errors':e.errors}
  finally:e.close()
 
 def matrix(a,browser,fonts):

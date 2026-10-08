@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
 import {prepareNativeFirstPaint} from '../../real-sky/native-first-paint.mjs';
 
 test('head presentation accepts only a resolved site and native ordinary wall time',()=>{
@@ -18,4 +20,19 @@ test('head presentation accepts only a resolved site and native ordinary wall ti
   assert.match(styles[0].textContent,/--moon:0/);
   location.hash='#local=1&simTime=11:00';prepareNativeFirstPaint();assert.equal(styles.length,1,'Explicit temporal owner is not replaced with wall UTC');
  }finally{Date.now=now;for(const [k,v] of Object.entries(restore))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
+});
+
+test('boot republishes the accepted preview after native scene invalidation before yielding to prayer transport',()=>{
+ const source=fs.readFileSync(new URL('../../src/native/index.html',import.meta.url),'utf8');
+ const boot=source.slice(source.indexOf('async function boot(){'),source.indexOf('// SINGLE rAF render clock'));
+ const events=[];let visible=true;
+ const context={_runtimeGeneration:0,_cfgMode:'bare',QA:false,lat:28.5,lon:-81.4,
+  beginSkyScene(){},simulationReady:()=>true,buildSceneOnce(){},renderMoon(){},startWeather(){events.push('weather');},
+  // paint() invalidates the bootstrap scene when it first adopts its scene key.
+  render(){visible=false;events.push('native-render');},
+  window:{SalahSkyPreview:{update(){visible=true;events.push('preview');}}},
+  loadPrayerData(){events.push('prayer-await');return new Promise(()=>{});},startRenderLoop(){}};
+ vm.createContext(context);vm.runInContext(boot+'\nboot();',context);
+ assert.equal(visible,true,'A valid daytime sky must exist at the first asynchronous yield');
+ assert.deepEqual(events,['weather','native-render','preview','prayer-await']);
 });

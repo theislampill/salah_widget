@@ -2,15 +2,31 @@
 
 ## Current frontier — joined qualification remains open
 
-**Current runtime candidate: V37, following rejected f05f1dc8.** Main remains
+**Current runtime candidate: V38, following published V37 `dbc0387` and rejected f05f1dc8.** Main remains
 `c1a480c97e9af188cf57704502d818c0584cf265`. No merge is authorised. The spatial H7 repair remains
 in the final runtime; recolouring alone was not accepted. Chromium/Firefox
 V35b camera/dusk comparisons completed; V36 repeated Chromium after repairing
 the native solar-presence boundary. V37 additionally repairs the demonstrated
 lunar veil, with joined qualification still in progress. Runtime tree SHA-256:
-`814dadc44c413bb177571a59b74ef00c71e1a9c5d4bbd7ebd3c768ad5a6e0246`.
+`053c073f1a54a0b0f2dc44c685758100fe9d4353b23de0612c55b0d5bacbd0b3`.
 The final served entry hashes to
-`be483ce7123fe3873021264f1b16ea80661f8ef4934de4807f0e1c5aaf8161c1`.
+`da902b46adb8486c1ccbe4ccdb2e86a7669eeb1c402bccc6a6096bd419efc2ed`.
+
+The V37 joined run found a real Firefox cache-warm first-frame defect: native
+`paint()` invalidated the bootstrap preview and yielded to prayer transport
+before the next rAF republished it. The captured frame was RGB39/52/69 despite
+accepted daylight. V38 republishes the accepted preview immediately after the
+initial native render, before that asynchronous wait. The old boot fails the
+new boundary test; the correction passes. No visibility timer, identity fence
+or sky model changed. Repeated Firefox cold/warm captures and the affected joined
+campaign are running. V37 settled lunar/atmospheric ablations retain their narrow
+scope: every renderer owner is unchanged; only index/offline runtime bytes differ.
+
+Two harness gaps are also corrected, without changing product admission: acquiring
+location fixtures honour the requested Fahrenheit units; an outage stays active
+until an HTTP503 is actually consumed before testing recovery. The original
+26-hour window ended before the following sunrise and remains partial-cycle
+evidence. Fresh full-cycle runs use27 hours at the requested60x/600x rates.
 
 The new lunar ablation uses the exact half-waning Maghrib fixture. Physical
 sky Moon altitude is -29.59 degrees; the explicitly declared native lunar
