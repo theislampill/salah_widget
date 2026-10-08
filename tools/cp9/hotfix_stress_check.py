@@ -275,6 +275,17 @@ def replay(a,browser,fonts):
  control=any(r['family']=='rain' and r['fx']!='rain' and r['particles']==0 for r in rows if r['version']=='B-deployed-c1')
  return {'status':'PASS' if expected and control else 'FAIL','cases':rows,'oldFailsReplay':control,'historicalIncident':'Original owner provider payload/site/cache were not captured in the available incident screenshots. This is an explicitly substituted Orlando fixture, not a reconstruction or dispute of reported rain.'}
 
+def playback_publication_failures(report):
+ # Screenshot sampling can miss a brief withdrawal. The final-document rAF
+ # observations are an additional gate, never a replacement for actual PNGs.
+ p=report.get('presentedAge',{});failures=[]
+ if not isinstance(p.get('samples'),int) or p['samples']<=0:failures.append({'check':'continuous presentation observations missing'})
+ for key in ['expiredFrames','unavailableFrames']:
+  if p.get(key)!=0:failures.append({'check':key,'observed':p.get(key)})
+ age=p.get('maximumCurrentAgeMs')
+ if not isinstance(age,(int,float)) or not math.isfinite(age) or age>30000:failures.append({'check':'current frame age bound','observed':age})
+ return failures
+
 def playback(a,browser,fonts):
  # The original 26h Central Florida window (05:00 -> next 07:00) ended
  # BEFORE the following sunrise. Retain those runs as partial-cycle evidence;
@@ -1005,6 +1016,7 @@ def run(a):
    modes['current-boundaries']=current_boundaries;modes['cpu-pressure']=cpu_pressure;modes['geometry-edges']=geometry_edges;modes['amber-moon']=amber_moon;modes['twilight-joined']=twilight_joined;modes['lunar-layers']=lunar_layers
    report.update(modes[a.mode](a,b,ff));b.close()
  except Exception:report.update(status='FAIL',exception=traceback.format_exc())
+ if a.mode=='playback':report['failures']=[*report.get('failures',[]),*playback_publication_failures(report)]
  if report.get('failures'):report['status']='FAIL'
  report['runtimeUnchanged']=report['runtime']==runtime_identity(a.root)
  if not report['runtimeUnchanged']:report.update(status='FAIL',runtimeFailure='Runtime changed during campaign; receipt excluded')

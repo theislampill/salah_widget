@@ -7,6 +7,22 @@
 const nativeCloudDisplay=Float64Array.from({length:256},(_,i)=>{
  const s=i/255;return s<=.04045?s/12.92:((s+.055)/1.055)**2.4;
 });
+const displayRound=v=>Math.round(255*(v<=.0031308?12.92*v:1.055*v**(1/2.4)-.055));
+const displayGuess=Uint8Array.from({length:4097},(_,i)=>displayRound(i/4096));
+const displayBoundary=Float64Array.from({length:256},(_,i)=>{
+ const s=(i+.5)/255;return s<=.04045?s/12.92:((s+.055)/1.055)**2.4;
+});
+/** Exact byte quantization, not a coarser colour curve. A table supplies only
+ * a bracket; the actual linear value decides the sRGB half-code boundary.
+ * At binary64 inverse/forward rounding ties use the original expression.
+ * This removes three pow calls per cloud pixel from the publication deadline. */
+export function nativeDisplayCode(v){
+ let c=displayGuess[Math.min(4096,Math.max(0,Math.floor(v*4096)))];
+ if(c<255&&v>=displayBoundary[c])c++;
+ if(c>0&&v<displayBoundary[c-1])c--;
+ if(Math.abs(v-displayBoundary[c])<1e-12||c>0&&Math.abs(v-displayBoundary[c-1])<1e-12)return displayRound(v);
+ return c;
+}
 export function nativeCloudChannel(base,code,alpha,exposure){
  if(!Number.isFinite(base)||base<0||!Number.isInteger(code)||code<0||code>255||!Number.isFinite(alpha)||alpha<0||alpha>1||!Number.isFinite(exposure)||exposure<=0||exposure>100000)throw new RangeError('Invalid native cloud channel');
  if(alpha===0)return base;
@@ -38,7 +54,7 @@ export function nativeCloudDisplayFrame(base,cloud,moon=null){
    // sources with the opaque calendar geometry when stars are available.
    const lunar=ma?1-(1-gas)*Math.pow(1-surface,ma):gas;
    const v=lunar*(1-a)+nativeCloudDisplay[cloud[i+k]]*a;
-   out[i+k]=Math.round(255*(v<=.0031308?12.92*v:1.055*v**(1/2.4)-.055));
+   out[i+k]=nativeDisplayCode(v);
   }
  }
  return out;

@@ -17,6 +17,18 @@ test('native paint notification does not duplicate the preview animation-frame p
  f.s.window.SalahRealSky={request(){requests++;}};
  f.h.notify();assert.equal(requests,1);
 });
+
+test('numerical currentness captures cannot force lunar layout or republish its texture',()=>{
+ const f=fixture();let reads=0;
+ f.s.window.SalahMoonRuntime={surface(){reads++;throw Error('lunar presentation/layout read');}};
+ // This path runs after each composed buffer and must be a pure native-state
+ // read. Lunar readiness is diagnostic presentation data, not sky identity.
+ const current=f.h.capture(false);
+ assert.equal(reads,0);assert.equal(current.moonReady,null);
+ assert.equal(nativeJob(current,true).observer.utcMs,f.s.simNow());
+ assert.throws(()=>f.h.capture(),/lunar presentation\/layout/);
+ assert.equal(reads,1,'full diagnostic capture still inspects the real lunar owner');
+});
 test('CP9 F01 unowned old scalar is not an accepted elevation',()=>{const f=fixture();assert.equal(f.h.capture().heightM,0);assert.match(f.h.capture().elevationSource,/default zero/);});
 test('CP9 F01 A to B with missing and simulated weather never inherits A height',()=>{const f=fixture();accept(f);assert.equal(f.h.capture().heightM,900);f.s._runtimeGeneration=2;f.s.lat=-33.87;f.s.lon=151.21;f.s.selectedWeather=()=>null;assert.equal(f.h.capture().heightM,0);f.s.selectedWeather=()=>({src:'sim',vis:20000});assert.equal(f.h.capture().heightM,0);});
 test('CP9 F01 A to B to A requires new-generation elevation even at same coordinates',()=>{const f=fixture();accept(f);f.s._runtimeGeneration=2;f.s.lat=0;assert.equal(f.h.capture().heightM,0);f.s._runtimeGeneration=3;f.s.lat=28.54;assert.equal(f.h.capture().heightM,0);accept(f,12);assert.equal(f.h.capture().heightM,12);});

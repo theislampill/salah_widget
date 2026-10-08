@@ -14,7 +14,17 @@ export function startNativeSkyPreview(){
  const ctx=canvas.getContext('2d',{alpha:false}),foreground=new NativeForegroundCapture(canvas);
  const background=document.createElement('canvas'),back=background.getContext('2d');background.width=325;background.height=530;
  let value=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0;
- const status={status:'pending',quality:'physical-background-preview',utcMs:null,reason:null,draws:0};
+ // The retained final-rAF observer measured up to3.3ms after publication.
+ // Reserve5ms of wall time inside (never beyond) the30 accepted-second fence.
+ // This is admission headroom, not a guarantee under arbitrary OS stalls.
+ const publicationReserveMs=5;
+ const status={status:'pending',quality:'physical-background-preview',utcMs:null,reason:null,draws:0,publicationReserveMs,deadlineRetries:0,deadlineMisses:[]};
+ const publishable=(next,s)=>nativeResultCurrent(next.job,s)&&Math.abs(s.utcMs-next.utcMs)+publicationReserveMs*Math.abs(s.timeScale??1)<=30000;
+ function missed(next,reason,current=host.capture(false)){
+  status.deadlineMisses.push({reason,originalUtcMs:next.utcMs,acceptedUtcMs:current.utcMs,ageMs:Math.abs(current.utcMs-next.utcMs),at:performance.now()});
+  if(status.deadlineMisses.length>8)status.deadlineMisses.shift();return false;
+ }
+ function retain(reason,s){status.retained=true;status.reason=reason;status.publication={utcMs:s.utcMs,ageMs:Math.abs(s.utcMs-value.utcMs),at:performance.now(),retained:true};}
  function retireFirstPaint(){document.querySelector('#native-first-paint')?.remove();window.SalahFirstPaint=null;}
  function clear(reason){if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
  function prepareForeground(){
@@ -28,13 +38,13 @@ export function startNativeSkyPreview(){
  }
  function paint(next=value,pixels=null,prepared=null){
   if(!next||disposed)return;
-  const current=host.capture(false);if(current.paused||!nativeResultCurrent(next.job,current)){clear('preview target changed, hidden or expired');return;}
+  const current=host.capture(false);if(current.paused||!nativeResultCurrent(next.job,current))return missed(next,'preview target changed, hidden or expired',current);
   try{
    const {bottom,rows,capture,mask,solarMask}=prepared??prepareForeground(),base=pixels?pixels.data:baseBytes;
    let region=base.subarray(0,325*rows*4);
    if(next.raster.starPreview)region=nativeStarPreviewRegion(next,mask,rows);
    const bytes=nativeCloudDisplayFrame(region,capture.cloudRGBA,capture.moonRGBA);
-   if(!nativeResultCurrent(next.job,host.capture(false))){clear('preview superseded during cloud composition');return;}
+   if(!nativeResultCurrent(next.job,host.capture(false)))return missed(next,'preview superseded during cloud composition');
    // Prepare both buffers before publication: invalid foreground cannot expose
    // a half-composed new background. Retain only the old, still-current image.
    if(pixels)ctx.putImageData(pixels,0,0);
@@ -48,23 +58,28 @@ export function startNativeSkyPreview(){
    // real time. Check the ORIGINAL job again before this JS turn can present.
    // A late join must not leave an expired base visible until the next rAF.
    const published=host.capture(false);
-   if(!nativeResultCurrent(next.job,published)){clear('preview superseded during final publication');return;}
+   if(!publishable(next,published))return missed(next,'preview final publication lacks currentness headroom',published);
    status.publication={utcMs:published.utcMs,ageMs:published.utcMs-next.utcMs,at:performance.now()};
    status.composition={...capture.native,updatedRows:rows,atmosphere:'foreground path retained',cloudApplications:1};status.draws++;lastPaint=performance.now();
   }catch(e){
    // Readback may itself consume the remaining age budget. Retain only the
    // ORIGINAL displayed target while it still qualifies after that failure.
    const reason=String(e.message??e);
-   if(value&&nativeResultCurrent(value.job,host.capture(false))){status.retained=true;status.reason=reason;}
+   if(value){const retained=host.capture(false);if(publishable(value,retained))retain(reason,retained);else return missed(value,'preview exception lacks currentness headroom: '+reason,retained);}
    else clear(reason);
   }
  }
- function update(){
+ function update(retried=false){
   if(disposed)return;
   const s=host.capture(false);
   if(!s.sceneIdentity||s.lat==null||s.lon==null||s.paused){clear('accepted target unavailable or hidden');card.classList.add('real-sky-awaiting-input');return;}
   card.classList.remove('real-sky-awaiting-input');
   if(card.classList.contains('real-sky-composed'))return;
+  // A transient layout/readback stall must not expose an intermediate blank
+  // frame. Retry once in this SAME synchronous presentation turn, with a fresh
+  // complete native snapshot and its real UTC. Never relabel the old result.
+  // If the second attempt also fails, the existing fail-closed policy applies.
+  const retry=()=>{if(!retried){status.deadlineRetries++;update(true);}else clear(status.deadlineMisses.at(-1)?.reason??'preview deadline');};
   try{
    if(value&&!nativeResultCurrent(value.job,s))clear('preview target changed or expired');
    // Fast playback needs room for calculation AND the next compositor turn
@@ -77,16 +92,16 @@ export function startNativeSkyPreview(){
     const prepared=prepareForeground(),anchor=host.capture().solarAnchor,fresh=host.capture(false);
     const first=window.SalahFirstPaint?.value;
     let next=first&&nativeResultCurrent(first.job,fresh)?first:renderNativeBackgroundPreview({...fresh,solarAnchor:anchor});
-    if(!nativeResultCurrent(next.job,host.capture(false))){clear('preview superseded before publication');return;}
+    if(!nativeResultCurrent(next.job,host.capture(false))){missed(next,'preview superseded before publication');retry();return;}
     const image=new ImageData(encodeNativeFrame(next.raster.linear,next.raster.effectiveExposure),next.raster.width,next.raster.height);
     const tile=document.createElement('canvas');tile.width=image.width;tile.height=image.height;tile.getContext('2d').putImageData(image,0,0);
     back.drawImage(tile,0,0,325,530);let pixels=back.getImageData(0,0,325,530);
     if(catalogue){const stars=catalogue.render(next.job,next.raster.physicalState,{background:pixels.data,exposure:next.raster.effectiveExposure});next=joinNativeStarPreview(next,pixels.data,stars);pixels=new ImageData(next.rgba,325,530);}
-    if(!nativeResultCurrent(next.job,host.capture(false))){clear('preview superseded during display preparation');return;}
-    paint(next,pixels,prepared);return;
+    if(!nativeResultCurrent(next.job,host.capture(false))){missed(next,'preview superseded during display preparation');retry();return;}
+    if(paint(next,pixels,prepared)===false)retry();return;
    }
-   paint();
-  }catch(e){const reason=String(e.message??e);if(value&&nativeResultCurrent(value.job,host.capture(false))){status.retained=true;status.reason=reason;}else clear(reason);}
+   if(paint()===false)retry();
+  }catch(e){const reason=String(e.message??e);if(value){const retained=host.capture(false);if(publishable(value,retained))retain(reason,retained);else{missed(value,'preview preparation exception lacks currentness headroom: '+reason,retained);retry();}}else clear(reason);}
  }
  function present(now){if(disposed)return;const s=host.capture(false);if(!card.classList.contains('real-sky-composed')&&(catalogueRevision!==paintedCatalogueRevision||Math.abs(s.timeScale??1)>10||!value||!nativeResultCurrent(value.job,s)||now-lastPaint>100))update();}
  function tick(now){if(disposed||nativeDriven)return;present(now);raf=requestAnimationFrame(tick);}

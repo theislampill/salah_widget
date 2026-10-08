@@ -33,7 +33,11 @@ window.SalahNativeSkyHost=Object.freeze({
    camera:{azDeg:cameraNumber('skyAz',180),altDeg:cameraNumber('skyAlt',45),fovYDeg:cameraNumber('skyFov',90),rollDeg:cameraNumber('skyRoll',0)},allowEstimates:q.get('skyEstimates')!=='off',
    weather:cw?{src:cw.src??'accepted-native',temp:cw.temp??null,rh:cw.rh??null,vis:cw.vis??null,cloud:cw.cloud??null,code:cw.code??null,wind:cw.wind??null}:null,
    solarAnchor,
-   prayerReady:!!today,moonReady:!!window.SalahMoonRuntime?.surface(),pbrFailed:_pbrFailed};
+   // Numerical/currentness reads must not query layout or publish a lunar
+   // texture. surface() does both; after sky DOM writes that forced layout
+   // consumed the remaining fast-clock publication budget. Read the real
+   // lunar owner only for the full presentation/diagnostic snapshot.
+   prayerReady:!!today,moonReady:includePresentation?!!window.SalahMoonRuntime?.surface():null,pbrFailed:_pbrFailed};
  },
  // Preview has its own accepted-input/expiry check on every animation frame.
  // A synchronous second producer here ran during native paint, before clouds,
