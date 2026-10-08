@@ -13,6 +13,7 @@ from playwright.async_api import async_playwright
 from browser_runtime import launch_browser,browser_identity
 from runtime_identity import runtime_identity
 from daylight_startup_check import SNAP,SCENES
+from moon_continuity_check import STATE as MOON_STATE
 
 SCENES.update(rain=('2026-10-07T15:09:00Z',63,85),fog=('2026-10-07T15:09:00Z',45,100))
 TIMER=r"""(()=>{if(window!==top)return;document.addEventListener('DOMContentLoaded',()=>{const el=document.createElement('canvas');el.width=344;el.height=20;el.style='position:fixed;left:0;top:566px;width:344px;height:20px;z-index:2147483647;pointer-events:none';document.body.append(el);const c=el.getContext('2d');function tick(){const n=Math.floor(performance.now());c.fillStyle='#ff00ff';c.fillRect(0,0,344,20);for(let i=0;i<16;i++){c.fillStyle=(n>>i)&1?'white':'black';c.fillRect(8+i*20,0,20,20);}requestAnimationFrame(tick);}tick();},{once:true});})();"""
@@ -159,11 +160,32 @@ async def run(a):
    if cdp:await cdp.send('Page.stopScreencast')
    final=await frame.evaluate(TRACE);element=frame.locator('.c') if a.direct else page.locator('iframe');rect=await element.bounding_box();await element.screenshot(path=a.out/f'{mode}-final.png')
    run={'name':mode,'fixtureController':await frame.evaluate('navigator.serviceWorker.controller?.scriptURL'),'captureMethod':'Chromium video' if with_video else 'Firefox concurrent framebuffer PNG samples; native video API unavailable on this Windows build','final':final,'rect':rect,'ownerTrace':await frame.evaluate('__startupOwners'),'paintEvents':await frame.evaluate('__firstPaint'),'parentTimeOrigin':await page.evaluate('performance.timeOrigin'),'resources':await frame.evaluate("performance.getEntriesByType('resource').map(x=>({name:x.name,transferSize:x.transferSize,encodedBodySize:x.encodedBodySize,decodedBodySize:x.decodedBodySize,duration:x.duration}))"),'serverRequests':requests[mark:]}
+   if a.moon_duration and not a.v1:
+    lunar=[];first=None
+    while await frame.evaluate('performance.now()')<a.moon_duration*1000:
+     state=await frame.evaluate(MOON_STATE)
+     state['capture']=f'{mode}-moon-{len(lunar):04}.png'
+     await element.screenshot(path=a.out/state['capture']);state['capturedAt']=await frame.evaluate('performance.now()')
+     lunar.append(state)
+     if state['surface'] and first is None:first=state['at']
+     await page.wait_for_timeout(1000)
+    run['lunarContinuity']={'frames':lunar,'firstObservedSurfaceMs':first,'blankAfterSurface':[x['at'] for x in lunar if first is not None and x['at']>first and not x['surface']],'refinedObserved':any(x['moon']['quality']=='empirical-adaptive' for x in lunar)}
+    run['resources']=await frame.evaluate("performance.getEntriesByType('resource').map(x=>({name:x.name,transferSize:x.transferSize,encodedBodySize:x.encodedBodySize,decodedBodySize:x.decodedBodySize,duration:x.duration}))")
    report['runs'].append(run);save();video=page.video;await page.close()
    if with_video:
     await video.save_as(a.out/f'{mode}.webm');frames=[]
-    for raw,presentation_stamp in presented:
-     im=Image.open(io.BytesIO(base64.b64decode(raw))).convert('RGB');r,g,b=im.getpixel((3,576))
+    run['incompleteViewportFrames']=[]
+    for event_index,(raw,presentation_stamp) in enumerate(presented):
+     im=Image.open(io.BytesIO(base64.b64decode(raw))).convert('RGB')
+     # CDP may emit the initial blank surface before its viewport resize.
+     # Preserve it rather than indexing outside its bounds or stretching it
+     # into purported widget evidence. A non-blank incomplete surface makes
+     # this run inconclusive; only a uniform pre-layout surface is excluded.
+     if im.size!=(390,600):
+      name=f'{mode}-incomplete-viewport-{event_index}.png';im.save(a.out/name)
+      run['incompleteViewportFrames'].append({'file':name,'size':list(im.size),'timestamp':presentation_stamp,'uniformBlank':max(ImageStat.Stat(im).stddev)<1})
+      continue
+     r,g,b=im.getpixel((3,576))
      if r>170 and b>170 and g<90:
       ms=sum((1<<i) if sum(im.getpixel((18+i*20,576)))>400 else 0 for i in range(16));frames.append((len(frames),ms,im))
     run['captureMethod']='Chromium lossless compositor PNG events; WebM retained separately for motion, not threshold colour measurement'
@@ -204,7 +226,9 @@ async def run(a):
   report['checks']['fixturesActuallyConsumed']=all((r['fixtureController'] or not with_video) and r['final']['render'] and r['final']['render']['nextTime']=='13:17' for r in report['runs']) if a.scene not in ['night','twilight'] and not a.v1 else bool(external)
   # The native header/accepted display snapshot rounds degrees (82.4F -> 82F).
   report['checks']['currentWeatherAdmitted']=all(r['final']['weatherHeader'] and r['final']['weatherHeader']['rawCode']==wx and r['final']['weatherHeader']['temperature']==(28 if r['final']['accepted']['units']=='c' else 82) and r['final']['accepted']['weather'] and r['final']['accepted']['weather']['cloud']==cloud and r['final']['accepted']['weather']['vis']==(500 if wx==45 else 20000) for r in report['runs']) if not a.v1 else True
+  if a.moon_duration:report['checks']['coldWarmLunarContinuity']=all(r.get('lunarContinuity',{}).get('refinedObserved') and not r['lunarContinuity']['blankAfterSurface'] for r in report['runs'])
   report['checks']['runtimeUnchanged']=report['runtime']==runtime_identity(a.root)
+  report['checks']['completeViewportEvidence']=all(x['uniformBlank'] for r in report['runs'] for x in r.get('incompleteViewportFrames',[]))
   report['acquiringLocation']=a.acquiring
   report.update(externalRequests=external,serverFailures=failures);report['status']='REFERENCE' if a.v1 else 'PASS' if all(report['checks'].values()) else 'FAIL';save();await ctx.close();await browser.close()
  server.shutdown();captures=report['runs'][0]['captures'];sheet=Image.new('RGB',(330*len(captures),564),'#1a2335');draw=ImageDraw.Draw(sheet)
@@ -212,4 +236,4 @@ async def run(a):
  sheet.save(a.out/'startup-sequence.png');print(json.dumps({'status':report['status'],'checks':report['checks'],'out':str(a.out)},indent=2));return int(report['status']=='FAIL')
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--fonts',type=Path,required=True);p.add_argument('--scene',choices=SCENES,default='partial');p.add_argument('--dpr',type=float,default=1);p.add_argument('--offset',type=float,default=0);p.add_argument('--weather-delay',type=float,default=0);p.add_argument('--acquiring',action='store_true');p.add_argument('--v1',action='store_true');p.add_argument('--direct',action='store_true');p.add_argument('--ffmpeg',type=Path,default=shutil.which('ffmpeg'));raise SystemExit(asyncio.run(run(p.parse_args())))
+ p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--fonts',type=Path,required=True);p.add_argument('--scene',choices=SCENES,default='partial');p.add_argument('--dpr',type=float,default=1);p.add_argument('--offset',type=float,default=0);p.add_argument('--moon-duration',type=float,default=0);p.add_argument('--weather-delay',type=float,default=0);p.add_argument('--acquiring',action='store_true');p.add_argument('--v1',action='store_true');p.add_argument('--direct',action='store_true');p.add_argument('--ffmpeg',type=Path,default=shutil.which('ffmpeg'));raise SystemExit(asyncio.run(run(p.parse_args())))

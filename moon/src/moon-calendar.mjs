@@ -31,8 +31,8 @@ function blendCalendarBytes(upper,lower,up){
 /** Adds a display-only native calendar token without touching V5 source fields,
  * primary surface, or quality images. Called only at worker publication. */
 function nativeCalendarResult(engine,result){
- const N=result.surfaceSize,pix=new Float64Array(engine.e.memory.buffer,engine.e.get_pixels(),N*N*24),material=new Float32Array(N*N*3);
- for(let i=0;i<N*N;i++)for(let k=0;k<3;k++)material[3*i+k]=pix[24*i+6+k];
+ const N=result.surfaceSize,material=engine.material??new Float32Array(N*N*3);
+ if(!engine.material){const pix=new Float64Array(engine.e.memory.buffer,engine.e.get_pixels(),N*N*24);for(let i=0;i<N*N;i++)for(let k=0;k<3;k++)material[3*i+k]=pix[24*i+6+k];}
  const linear=calendarProxy(material,result.surfaceCoverage,result.surfaceLinear),table=prefixSurface({size:N,linear,coverage:result.surfaceCoverage}),M=result.width,scale=N/(result.scene.diameter*result.surfaceExtent),o=N/2-M*scale/2,rgba=new Uint8ClampedArray(result.rgba.length);
  for(let y=0;y<M;y++)for(let x=0;x<M;x++){
   const i=y*M+x,c=boxSurface(table,o+x*scale,o+y*scale,o+(x+1)*scale,o+(y+1)*scale),a=c[3];rgba[4*i+3]=result.rgba[4*i+3];

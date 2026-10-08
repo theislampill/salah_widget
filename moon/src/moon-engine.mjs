@@ -50,7 +50,16 @@ async function decodeAsset(bytes,spec){
  if(await digestBytes(new Uint8Array(raw.buffer))!==spec.rawSha256)throw new Error('Decoded Moon asset identity mismatch');
  return raw;
 }
-const pause=()=>new Promise(resolve=>setTimeout(resolve,0));
+// Yield a WORKER task, not a microtask. Nested zero-delay timers add a browser
+// clamp after each ~8 ms slice (measured ~300 ms per 640 ms of useful work).
+// MessageChannel keeps cancellation/messages serviceable without that delay;
+// numerical ordering, sampling, quality gates and elapsed deadlines are unchanged.
+const lunarYieldQueue=[],lunarYieldChannel=typeof MessageChannel==='function'?new MessageChannel():null;
+if(lunarYieldChannel){
+ lunarYieldChannel.port1.onmessage=()=>{const wake=lunarYieldQueue.shift();wake?.();if(!lunarYieldQueue.length)lunarYieldChannel.port1.unref?.();};
+ lunarYieldChannel.port1.unref?.();lunarYieldChannel.port2.unref?.();
+}
+const pause=()=>new Promise(resolve=>{if(!lunarYieldChannel){setTimeout(resolve,0);return;}lunarYieldQueue.push(resolve);lunarYieldChannel.port1.ref?.();lunarYieldChannel.port2.postMessage(0);});
 class MoonEngine{
  static async create({wasm,dem,colour,manifest}){
   if(manifest.schema!=='moon-worker-assets/1'||manifest.codec!=='u16le-left-delta-byteplanes-gzip/1')throw new Error('Moon asset contract');

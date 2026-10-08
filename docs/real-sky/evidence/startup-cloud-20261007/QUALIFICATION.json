@@ -1,344 +1,40 @@
 {
-  "schema": "startup-cloud-hotfix/1",
+  "schema": "startup-cloud-hotfix/2",
   "base": "c1a480c97e9af188cf57704502d818c0584cf265",
-  "runtimeSha256": "90576a5396548e1deb3f0bcf405f0d2a824113181d3a0f189f51b09bd20c63f5",
-  "status": "PASS_SCOPED",
-  "cloudCases": [
-    {
-      "case": "accepted-chromium-day-dpr1",
-      "status": "PASS",
-      "browser": {
-        "family": "chromium",
-        "version": "148.0.7778.96",
-        "os": "Windows",
-        "machine": "AMD64",
-        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
-        "chromiumSandboxRequested": true
-      },
-      "dpr": 1,
-      "entry": "330x534 iframe",
-      "lighting": "day",
-      "checks": {
-        "currentShellFromFirstPaint": true,
-        "progressHydratesWithoutLoadingSweep": true,
-        "boundedCloudTransfer": true,
-        "invalidCaptureRetainsGoodCurrentFrame": true,
-        "recoversAfterBadCapture": true,
-        "noUnexpectedErrors": true,
-        "runtimeUnchangedDuringTest": true,
-        "startupObservationComplete": true,
-        "cloudMotion": true,
-        "edgeStability": true
-      },
-      "edgeTemporal": {
-        "oldStep": 132,
-        "newStep": 52,
-        "changedSamples": 389393,
-        "referenceError": 0,
-        "scope": "Same live native cloud captures replayed over fixed dark background; old inverse-HDR vs corrected display transfer; <=8% alpha edge pixels, real 1x motion"
-      },
-      "maxCloudEdgeCodeError": 0,
-      "unexpectedPageErrors": [],
-      "localAssetFailures": [],
-      "harnessSha256": "2198601edbac657443c17e6b4fe676c13c201a9349346c0e4f72097f896703b8",
-      "harnessNote": null
-    },
-    {
-      "case": "qualified-chromium-night-dpr2",
-      "status": "PASS",
-      "browser": {
-        "family": "chromium",
-        "version": "148.0.7778.96",
-        "os": "Windows",
-        "machine": "AMD64",
-        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
-        "chromiumSandboxRequested": true
-      },
-      "dpr": 2.0,
-      "entry": "330x534 iframe",
-      "lighting": "night",
-      "checks": {
-        "currentShellFromFirstPaint": true,
-        "progressHydratesWithoutLoadingSweep": true,
-        "boundedCloudTransfer": true,
-        "invalidCaptureRetainsGoodCurrentFrame": true,
-        "recoversAfterBadCapture": true,
-        "noUnexpectedErrors": true,
-        "cloudMotion": true,
-        "edgeStability": true
-      },
-      "edgeTemporal": {
-        "oldStep": 104,
-        "newStep": 29,
-        "changedSamples": 204350,
-        "referenceError": 0,
-        "scope": "Same live native cloud captures replayed over fixed dark background; old inverse-HDR vs corrected display transfer; <=8% alpha edge pixels, real 1x motion"
-      },
-      "maxCloudEdgeCodeError": 0,
-      "unexpectedPageErrors": [],
-      "localAssetFailures": [],
-      "harnessSha256": null,
-      "harnessNote": "Older matrix cells predate the added harness hash/startup-observer diagnostics; their exact runtime is pinned. Latest accepted cases record both hashes."
-    },
-    {
-      "case": "qualified-chromium-day-dpr3-root",
-      "status": "PASS",
-      "browser": {
-        "family": "chromium",
-        "version": "148.0.7778.96",
-        "os": "Windows",
-        "machine": "AMD64",
-        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
-        "chromiumSandboxRequested": true
-      },
-      "dpr": 3.0,
-      "entry": "direct",
-      "lighting": "day",
-      "checks": {
-        "currentShellFromFirstPaint": true,
-        "progressHydratesWithoutLoadingSweep": true,
-        "boundedCloudTransfer": true,
-        "invalidCaptureRetainsGoodCurrentFrame": true,
-        "recoversAfterBadCapture": true,
-        "noUnexpectedErrors": true,
-        "cloudMotion": true,
-        "edgeStability": true
-      },
-      "edgeTemporal": {
-        "oldStep": 131,
-        "newStep": 41,
-        "changedSamples": 413671,
-        "referenceError": 0,
-        "scope": "Same live native cloud captures replayed over fixed dark background; old inverse-HDR vs corrected display transfer; <=8% alpha edge pixels, real 1x motion"
-      },
-      "maxCloudEdgeCodeError": 0,
-      "unexpectedPageErrors": [],
-      "localAssetFailures": [],
-      "harnessSha256": null,
-      "harnessNote": "Older matrix cells predate the added harness hash/startup-observer diagnostics; their exact runtime is pinned. Latest accepted cases record both hashes."
-    },
-    {
-      "case": "accepted-firefox-day-dpr1",
-      "status": "PASS",
-      "browser": {
-        "family": "firefox",
-        "version": "150.0.2",
-        "os": "Windows",
-        "machine": "AMD64",
-        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\firefox-1522\\firefox\\firefox.exe",
-        "chromiumSandboxRequested": null
-      },
-      "dpr": 1,
-      "entry": "330x534 iframe",
-      "lighting": "day",
-      "checks": {
-        "currentShellFromFirstPaint": true,
-        "progressHydratesWithoutLoadingSweep": true,
-        "boundedCloudTransfer": true,
-        "invalidCaptureRetainsGoodCurrentFrame": true,
-        "recoversAfterBadCapture": true,
-        "noUnexpectedErrors": true,
-        "runtimeUnchangedDuringTest": true,
-        "startupObservationComplete": true,
-        "cloudMotion": true,
-        "edgeStability": true
-      },
-      "edgeTemporal": {
-        "oldStep": 136,
-        "newStep": 47,
-        "changedSamples": 367936,
-        "referenceError": 0,
-        "scope": "Same live native cloud captures replayed over fixed dark background; old inverse-HDR vs corrected display transfer; <=8% alpha edge pixels, real 1x motion"
-      },
-      "maxCloudEdgeCodeError": 0,
-      "unexpectedPageErrors": [],
-      "localAssetFailures": [],
-      "harnessSha256": "2198601edbac657443c17e6b4fe676c13c201a9349346c0e4f72097f896703b8",
-      "harnessNote": null
-    },
-    {
-      "case": "accepted-firefox-night-dpr2",
-      "status": "PASS",
-      "browser": {
-        "family": "firefox",
-        "version": "150.0.2",
-        "os": "Windows",
-        "machine": "AMD64",
-        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\firefox-1522\\firefox\\firefox.exe",
-        "chromiumSandboxRequested": null
-      },
-      "dpr": 2.0,
-      "entry": "330x534 iframe",
-      "lighting": "night",
-      "checks": {
-        "currentShellFromFirstPaint": true,
-        "progressHydratesWithoutLoadingSweep": true,
-        "boundedCloudTransfer": true,
-        "invalidCaptureRetainsGoodCurrentFrame": true,
-        "recoversAfterBadCapture": true,
-        "noUnexpectedErrors": true,
-        "runtimeUnchangedDuringTest": true,
-        "startupObservationComplete": true,
-        "cloudMotion": true,
-        "edgeStability": true
-      },
-      "edgeTemporal": {
-        "oldStep": 77,
-        "newStep": 25,
-        "changedSamples": 212614,
-        "referenceError": 0,
-        "scope": "Same live native cloud captures replayed over fixed dark background; old inverse-HDR vs corrected display transfer; <=8% alpha edge pixels, real 1x motion"
-      },
-      "maxCloudEdgeCodeError": 0,
-      "unexpectedPageErrors": [],
-      "localAssetFailures": [],
-      "harnessSha256": "2198601edbac657443c17e6b4fe676c13c201a9349346c0e4f72097f896703b8",
-      "harnessNote": null
-    },
-    {
-      "case": "qualified-firefox-night-dpr3-root",
-      "status": "PASS",
-      "browser": {
-        "family": "firefox",
-        "version": "150.0.2",
-        "os": "Windows",
-        "machine": "AMD64",
-        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\firefox-1522\\firefox\\firefox.exe",
-        "chromiumSandboxRequested": null
-      },
-      "dpr": 3.0,
-      "entry": "direct",
-      "lighting": "night",
-      "checks": {
-        "currentShellFromFirstPaint": true,
-        "progressHydratesWithoutLoadingSweep": true,
-        "boundedCloudTransfer": true,
-        "invalidCaptureRetainsGoodCurrentFrame": true,
-        "recoversAfterBadCapture": true,
-        "noUnexpectedErrors": true,
-        "runtimeUnchangedDuringTest": true,
-        "observedFirstPaint": true,
-        "cloudMotion": true,
-        "edgeStability": true
-      },
-      "edgeTemporal": {
-        "oldStep": 77,
-        "newStep": 28,
-        "changedSamples": 211308,
-        "referenceError": 0,
-        "scope": "Same live native cloud captures replayed over fixed dark background; old inverse-HDR vs corrected display transfer; <=8% alpha edge pixels, real 1x motion"
-      },
-      "maxCloudEdgeCodeError": 0,
-      "unexpectedPageErrors": [],
-      "localAssetFailures": [],
-      "harnessSha256": null,
-      "harnessNote": "Older matrix cells predate the added harness hash/startup-observer diagnostics; their exact runtime is pinned. Latest accepted cases record both hashes."
-    }
+  "publishedStartingHead": "fd7db992ee946fabe9852499c884e24af1ff0275",
+  "runtimeSha256": "0876e05e00dd84aa5bec03aa668591ef9e928ba2c11876b61649d8f5ed40b636",
+  "status": "JOINED_QUALIFICATION_OPEN",
+  "publication": "Existing Draft PR42 only; no merge or deployment authorized.",
+  "historicalOriginal": "historical-f05/QUALIFICATION.json",
+  "historicalScope": "Original startup PASS was rejected; useful cloud operator controls are retained only in their recorded scope.",
+  "register": "../../STARTUP_CLOUD_HOTFIX.md",
+  "pending": [
+    "Complete current serial joined browser campaign and visual review",
+    "Publish final source-bound evidence and head-pinned instructions"
   ],
-  "combinedEntries": {
-    "combined-chromium": {
-      "status": "PASS_SCOPED",
-      "browser": {
-        "family": "chromium",
-        "version": "148.0.7778.96",
-        "os": "Windows",
-        "machine": "AMD64",
-        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
-        "chromiumSandboxRequested": true
-      },
-      "scope": "Pages-shaped actual iframe; controlled providers/fonts/location and 1x clock from 2026-10-07T20:30Z. Not live providers or physical GPS.",
-      "checks": {
-        "settingsDuringRefinement": true,
-        "normalClock": {
-          "before": {
-            "now": 1791405045114.6,
-            "left": 329.2480899983724,
-            "sky": 1791405043004.3
-          },
-          "after": {
-            "now": 1791405060130.5,
-            "left": 328.997825,
-            "sky": 1791405055899.7,
-            "scale": 1
-          }
-        },
-        "phaseDisplayBound": {
-          "diameterDevicePixels": 107,
-          "quantumRadians": 0.0015551401869158877,
-          "bucket": 1648,
-          "maximumPositionErrorDevicePixels": 0.0416,
-          "targetPositionErrorBound": 0.023904223246818068
-        },
-        "retry": true,
-        "v1DependencyStorageReload": true
-      },
-      "prayerSeconds": 0.7969999999986612,
-      "previewSeconds": 6.796999999998661,
-      "refinedSeconds": 45.015999999995984,
-      "errors": [],
-      "assetFailures": [],
-      "v1Hashes": {
-        "index.html": "99d930297deb2755205930c7850b89584e03f431ced0671638071162732ef766",
-        "config.js": "f169d26ad015d3fcb6b5782fde43a83e0f31275bbbeb80c94c51a6c3bc4aa56d",
-        "VERSION.json": "dda56a94c56ec6295e8eb9af890e6913878731385cc180c250fff3d532b2d330",
-        "MANIFEST.sha256": "aa4bfcbc54f838e93d8ab41e58845efd753fcea80e8ebef3a784acf304e6a4cb"
-      }
-    },
-    "combined-firefox": {
-      "status": "PASS_SCOPED",
-      "browser": {
-        "family": "firefox",
-        "version": "150.0.2",
-        "os": "Windows",
-        "machine": "AMD64",
-        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\firefox-1522\\firefox\\firefox.exe",
-        "chromiumSandboxRequested": null
-      },
-      "scope": "Pages-shaped actual iframe; controlled providers/fonts/location and 1x clock from 2026-10-07T20:30Z. Not live providers or physical GPS.",
-      "checks": {
-        "settingsDuringRefinement": true,
-        "normalClock": {
-          "before": {
-            "now": 1791405143053,
-            "left": 327.61578333333335,
-            "sky": 1791405140721
-          },
-          "after": {
-            "now": 1791405158064,
-            "left": 327.3656,
-            "sky": 1791405157004,
-            "scale": 1
-          }
-        },
-        "phaseDisplayBound": {
-          "diameterDevicePixels": 107,
-          "quantumRadians": 0.0015551401869158877,
-          "bucket": 1648,
-          "maximumPositionErrorDevicePixels": 0.0416,
-          "targetPositionErrorBound": 0.007293941871506782
-        },
-        "retry": true,
-        "v1DependencyStorageReload": true
-      },
-      "prayerSeconds": 0.5780000000013388,
-      "previewSeconds": 18.31300000000192,
-      "refinedSeconds": 143.09399999999732,
-      "errors": [],
-      "assetFailures": [],
-      "v1Hashes": {
-        "index.html": "99d930297deb2755205930c7850b89584e03f431ced0671638071162732ef766",
-        "config.js": "f169d26ad015d3fcb6b5782fde43a83e0f31275bbbeb80c94c51a6c3bc4aa56d",
-        "VERSION.json": "dda56a94c56ec6295e8eb9af890e6913878731385cc180c250fff3d532b2d330",
-        "MANIFEST.sha256": "aa4bfcbc54f838e93d8ab41e58845efd753fcea80e8ebef3a784acf304e6a4cb"
-      }
-    }
+  "inherited": {
+    "N001": "PARTIAL",
+    "N002": "PARTIAL",
+    "N003": "BLOCKED"
   },
-  "limits": [
-    "Controlled time, observer, provider and font fixtures; not live-provider accuracy.",
-    "Warm navigation retains context/storage, but routing disables HTTP cache.",
-    "Startup shell is immediate; physical sky and terrain still refine asynchronously.",
-    "Native broad-suite historical failures remain: r0021-reveal 1, r0022-baseline-balance 7; 4 TODOs.",
-    "N001/N002 PARTIAL and N003 BLOCKED remain unchanged.",
-    "Public repaired runtime is not deployed by this PR task."
-  ]
+  "currentControl": "continuity-v44/REGRESSION.json",
+  "knownFailures": "Eight historical native assertions, individually identified in the register; no new native failure.",
+  "componentChecks": {
+    "node": {
+      "tests": 599,
+      "pass": 595,
+      "todo": 4,
+      "fail": 0
+    },
+    "moon": {
+      "tests": 54,
+      "pass": 54
+    },
+    "python": {
+      "tests": 18,
+      "pass": 18
+    },
+    "deterministicBuilds": 2,
+    "v1": "anchored payload + disposable tamper PASS"
+  }
 }

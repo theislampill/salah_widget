@@ -13,7 +13,7 @@ export function startNativeSkyPreview(){
  const canvas=document.createElement('canvas');canvas.className='real-sky-preview';canvas.width=325;canvas.height=530;canvas.setAttribute('aria-hidden','true');card.prepend(canvas);
  const ctx=canvas.getContext('2d',{alpha:false}),foreground=new NativeForegroundCapture(canvas);
  const background=document.createElement('canvas'),back=background.getContext('2d');background.width=325;background.height=530;
- let value=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=null,nativeDriven=false;
+ let value=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0;
  const status={status:'pending',quality:'physical-background-preview',utcMs:null,reason:null,draws:0};
  function retireFirstPaint(){document.querySelector('#native-first-paint')?.remove();window.SalahFirstPaint=null;}
  function clear(reason){if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
@@ -41,7 +41,8 @@ export function startNativeSkyPreview(){
    ctx.putImageData(new ImageData(bytes,325,rows),0,0);
    card.style.setProperty('--native-sun-cloud-mask',solarMask);
    previousMoonBottom=bottom;if(pixels||!previewFrame)previewFrame={preview:true,raster:next.raster,current:()=>nativeResultCurrent(next.job,host.capture(false))};
-   value=next;baseBytes=base;Object.assign(status,{status:'ready',quality:next.quality,retained:false,utcMs:next.utcMs,native:next.native,solarAltitudeDeg:next.raster.physicalState.sun.altDeg,display:next.raster.displayPresentation,diagnostics:next.diagnostics,reason:null});
+   value=next;baseBytes=base;if(pixels)paintedCatalogueRevision=catalogueRevision;
+   Object.assign(status,{status:'ready',quality:next.quality,retained:false,utcMs:next.utcMs,native:next.native,solarAltitudeDeg:next.raster.physicalState.sun.altDeg,display:next.raster.displayPresentation,diagnostics:next.diagnostics,catalogue:next.raster.starPreview??null,reason:null});
    canvas.style.visibility='visible';retireFirstPaint();card.classList.add('real-sky-preview-ready');window.SalahMoonDetail?.compose(previewFrame,encodeNativeFrame);
    // Device-resolution detail work and final canvas publication also consume
    // real time. Check the ORIGINAL job again before this JS turn can present.
@@ -68,7 +69,7 @@ export function startNativeSkyPreview(){
    if(value&&!nativeResultCurrent(value.job,s))clear('preview target changed or expired');
    // Fast playback needs room for calculation AND the next compositor turn
    // inside the unchanged 30 accepted-second fence. Do not wait until 20s old.
-   if(!value||!nativeResultCurrent(value.job,s)||Math.abs(s.utcMs-value.utcMs)>(Math.abs(s.timeScale??1)>10?10000:20000)){
+   if(!value||catalogueRevision!==paintedCatalogueRevision||!nativeResultCurrent(value.job,s)||Math.abs(s.utcMs-value.utcMs)>(Math.abs(s.timeScale??1)>10?10000:20000)){
     // Read native foreground/layout BEFORE starting the numerical job. These
     // synchronous presentation snapshots cannot change target in this turn,
     // and must not consume its30s accepted-UTC budget at accelerated rates.
@@ -87,13 +88,24 @@ export function startNativeSkyPreview(){
    paint();
   }catch(e){const reason=String(e.message??e);if(value&&nativeResultCurrent(value.job,host.capture(false))){status.retained=true;status.reason=reason;}else clear(reason);}
  }
- function present(now){if(disposed)return;const s=host.capture(false);if(!card.classList.contains('real-sky-composed')&&(Math.abs(s.timeScale??1)>10||!value||!nativeResultCurrent(value.job,s)||now-lastPaint>100))update();}
+ function present(now){if(disposed)return;const s=host.capture(false);if(!card.classList.contains('real-sky-composed')&&(catalogueRevision!==paintedCatalogueRevision||Math.abs(s.timeScale??1)>10||!value||!nativeResultCurrent(value.job,s)||now-lastPaint>100))update();}
  function tick(now){if(disposed||nativeDriven)return;present(now);raf=requestAnimationFrame(tick);}
  window.SalahSkyPreview={update,clear,present(now){
   // Native's final paint opportunity follows its UI and cloud updates. Once
   // available it owns ongoing presentation; independent bootstrap rAF must
   // not run before native paint and spend the current sky's remaining age.
   if(!nativeDriven){nativeDriven=true;cancelAnimationFrame(raf);}present(now);
- },admitCatalogue(pack){catalogue=null;clear('catalogue admission changed');if(pack)catalogue=new NativeStarPreview(pack);status.catalogue=catalogue?.identity??null;update();},get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
+ },async admitCatalogue(pack){
+  // Validation/parsing and first stellar composition must not occupy the same
+  // startup task. Keep the ORIGINAL current atmosphere until the next native
+  // paint atomically replaces it; that paint rechecks target/epoch/30s age.
+  // Clearing the preview here both stalled controls and caused a needless gap.
+  catalogue=null;const revision=++catalogueRevision;status.catalogueError=null;
+  try{
+   const next=pack?await NativeStarPreview.create(pack):null;
+   if(disposed||revision!==catalogueRevision)return;
+   catalogue=next;catalogueRevision++;
+  }catch(error){if(!disposed&&revision===catalogueRevision)status.catalogueError=String(error.message??error);}
+ },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
  update();raf=requestAnimationFrame(tick);
 }

@@ -1,4 +1,5 @@
-import {DiffuseAssetStore} from './core/src/diffuse-assets.mjs';
+import {DiffuseAssetStore,parseDiffuseManifest} from './core/src/diffuse-assets.mjs';
+import {validateCatalogue} from './core/src/catalogue.mjs';
 import {DIFFUSE_MANIFEST_SHA256} from './core/src/diffuse-manifest-pin.mjs';
 import {projectCatalogue,discOccults} from './core/src/scene.mjs';
 import {projectPerspective} from './core/src/projection.mjs';
@@ -53,6 +54,23 @@ export function renderPreviewStars(sources,fluxAt,visible){
  * catalogue/diffuse quality tier. No prayer/solar-altitude visibility switch.
  */
 export class NativeStarPreview {
+ static async create(pack){
+  // The same pinned byte/hash/schema admission, with the large catalogue hash
+  // off the UI thread. The reference store's synchronous JS SHA-256 blocked
+  // Firefox's startup controls before any Moon surface was published.
+  if(!globalThis.crypto?.subtle)return new NativeStarPreview(pack);
+  const manifest=parseDiffuseManifest(pack.manifestText,DIFFUSE_MANIFEST_SHA256);
+  if(typeof pack.catalogueText!=='string')throw new TypeError('catalogue must be exact UTF-8 text');
+  const bytes=new TextEncoder().encode(pack.catalogueText);
+  if(bytes.byteLength!==manifest.catalogue.bytes)throw new RangeError('catalogue byte size mismatch');
+  const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));
+  if(Array.from(digest,x=>x.toString(16).padStart(2,'0')).join('')!==manifest.catalogue.sha256)throw new TypeError('catalogue content hash mismatch');
+  const catalogue=validateCatalogue(JSON.parse(pack.catalogueText)),renderer=Object.create(NativeStarPreview.prototype);
+  const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){for(const v of Object.values(x))freeze(v);Object.freeze(x);}return x;};
+  renderer.catalogue=freeze({...catalogue,stars:catalogue.stars.filter(s=>s.emission?.enabled!==false&&s.vmag<=4.5)});
+  renderer.identity={sha256:manifest.catalogue.sha256,totalRecords:catalogue.stars.length,previewRecords:renderer.catalogue.stars.length,maximumMagnitude:4.5};
+  return renderer;
+ }
  constructor(pack){
   const store=new DiffuseAssetStore(pack.manifestText,DIFFUSE_MANIFEST_SHA256,pack.catalogueText);
   this.catalogue={...store.catalogue,stars:store.catalogue.stars.filter(s=>s.emission?.enabled!==false&&s.vmag<=4.5)};

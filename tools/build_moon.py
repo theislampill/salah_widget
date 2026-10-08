@@ -7,7 +7,7 @@ WASM is source-bound; recompilation is optional and separately qualified.
 from pathlib import Path
 import base64, hashlib, json, re
 
-WORKER_UNITS=['asset-digest.mjs','surface_v5.mjs','moon-detail.mjs','moon-calendar.mjs','moon-engine.mjs','moon-quality.mjs','moon-worker.mjs']
+WORKER_UNITS=['asset-digest.mjs','surface_v5.mjs','moon-detail.mjs','moon-calendar.mjs','moon-engine.mjs','moon-quality.mjs','moon-pool.mjs','moon-worker.mjs']
 HOST_UNITS=['moon-detail.mjs','moon-calendar.mjs','moon-precision.mjs','moon-native.mjs']
 PROFILE={'schema':'lunar-presentation/5','profile_id':'calendar-neutral-v5-01','mode':'calendar','exposure':2.9195482731525044,'lift':0.003,'knee':5.388411226362526e-6,'colour_basis':'linear-sRGB','gamut':'luminance-preserving-neutral-axis'}
 CHUNK_BYTES=786432  # independently padded base64 chunks, 1 MiB script text

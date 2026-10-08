@@ -98,11 +98,13 @@ def run(root, out, font_source, dpr=1):
             # Bounded protocol failure/recovery uses a small actual solver after
             # the full native refinement capture, not as its substitute.
             f.evaluate('(s)=>SalahMoonRuntime.setReferenceScene(s)',small_scene());wait(f,"SalahMoonRuntime.state.status==='ready'",60)
+            retained=f.evaluate('SalahMoonRuntime.state.accepted.identity')
             f.evaluate("__mq.workers.findLast(w=>w.isMoon).onerror({message:'controlled worker failure'})")
             wait(f,"SalahMoonRuntime.state.status==='unavailable'",20)
-            assert f.evaluate("SalahMoonRuntime.state.visibleSource==='withheld-until-refined'&&SalahMoonRuntime.surface()===null")
+            assert f.evaluate('id=>SalahMoonRuntime.state.accepted.identity===id&&!!SalahMoonRuntime.surface()',retained)
             q.wait_for_timeout(200);report['failureState']=f.evaluate(STATE)
             q.locator('iframe').screenshot(path=out/'root-fallback-control.png')
+            f.evaluate("SalahMoonRuntime.setProfile('reference')");assert f.evaluate('SalahMoonRuntime.surface()===null')
             assert f.evaluate('SalahMoonRuntime.retry()');wait(f,"SalahMoonRuntime.state.status==='ready'&&!SalahMoonRuntime.state.legacyFallback",60)
             report['checks']['retry']=True
             original=f.evaluate('localStorage.getItem('+json.dumps(ROOT_KEY)+')')

@@ -9,6 +9,17 @@ const read=p=>fs.readFileSync(new URL('../../vendor/real-sky/'+p,import.meta.url
 const pack={catalogueText:read('data/bright-stars.json'),manifestText:read('data/registered-starlight/runtime-manifest.json')};
 const s=t=>({utcMs:Date.parse(t),lat:28.5383,lon:-81.3792,heightM:0,generation:1,sceneIdentity:'star-preview-test',camera:{azDeg:180,altDeg:45,fovYDeg:90,rollDeg:0},weather:{vis:20000,cloud:0,code:0,temp:24},units:'c',lp:0});
 
+test('asynchronous catalogue admission keeps exact pinned sources and rejects equal-length tampering',async()=>{
+ assert.equal(typeof NativeStarPreview.create,'function');
+ const sync=new NativeStarPreview(pack),async=await NativeStarPreview.create(pack);
+ assert.deepEqual(async.catalogue,sync.catalogue);assert.deepEqual(async.identity,sync.identity);
+ const p=renderNativeBackgroundPreview(s('2026-10-08T00:00:00Z'));
+ assert.deepEqual(async.render(p.job,p.raster.physicalState).linear,sync.render(p.job,p.raster.physicalState).linear);
+ await assert.rejects(NativeStarPreview.create({...pack,catalogueText:pack.catalogueText.replace('hyg:','xyz:')}),/hash mismatch/);
+ await assert.rejects(NativeStarPreview.create({...pack,catalogueText:pack.catalogueText+' '}),/byte size mismatch/);
+ await assert.rejects(NativeStarPreview.create({...pack,manifestText:pack.manifestText+' '}),/manifest hash mismatch/i);
+});
+
 test('separable preview PSF preserves every reference linear sample, including fractional and clipped sources',()=>{
  assert.equal(typeof previewModule.renderPreviewStars,'function');
  const stars=Array.from({length:40},(_,i)=>({x:(i*17.137)%329-2,y:(i*41.371)%534-2,altDeg:i===1?-1:20,visible:i!==2,emission:{enabled:i!==3},rgb:[(i%7)*.07,(i%5)*.031,(i%3)*.9]}));

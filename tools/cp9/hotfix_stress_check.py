@@ -22,7 +22,8 @@ FAMILIES={
  'showers':(81,80,1,9000), 'snow':(73,95,1,6000), 'thunder':(95,100,3,6000),
  'contradictory-rain':(63,90,0,9000), 'partial-rain':(63,90,None,9000)}
 MONITOR=r'''(()=>{
- const W=Worker;window.__h8={events:[],raf:0,gaps:[],last:performance.now(),start:performance.now()};
+ const W=Worker;window.__h8={events:[],raf:0,gaps:[],longTasks:[],last:performance.now(),start:performance.now()};
+ try{new PerformanceObserver(list=>{for(const e of list.getEntries())__h8.longTasks.push({at:e.startTime,ms:e.duration,name:e.name,attribution:e.attribution?.map(a=>({name:a.name,containerType:a.containerType,containerSrc:a.containerSrc}))});}).observe({type:'longtask',buffered:true});}catch{} // Firefox does not expose this optional metric.
  window.Worker=class extends W{constructor(u,o){super(u,o);let moon=false;const submitted=new Map(),post=this.postMessage.bind(this);
   this.postMessage=(m,t)=>{if(m.kind==='boot'){moon='offline' in m;if(moon)window.__h8MoonWorker=this;}if(m.kind==='render'||m.kind==='cancel'){const at=performance.now();if(m.kind==='render')submitted.set(m.id,at);__h8.events.push({direction:'submit',moon,at,kind:m.kind,id:m.id,utc:m.job?.observer?.utcMs,identity:m.job?.native?.identity??m.identity,phase:m.scene?.fraction,reason:m.reason??null});}return t?post(m,t):post(m);};
   this.addEventListener('message',e=>{const m=e.data,r=m.result??m,at=performance.now();if(moon&&m.kind==='result')window.__h8MoonSolved=m;if(['result','preview','error','cancelled','fatal','boot-error'].includes(m.kind))__h8.events.push({direction:'receive',moon,at,elapsed:submitted.has(m.id)?at-submitted.get(m.id):null,kind:m.kind,id:m.id,utc:r.utcMs,identity:r.native??m.identity,status:r.status,quality:r.diagnostics?.quality,acceptedNativeUtc:window.SalahNativeSkyHost?.capture()?.utcMs,error:m.error??null});if(m.kind==='result'||m.kind==='error')submitted.delete(m.id);});
@@ -90,8 +91,8 @@ def surface_replay_script(path):
  packed=json.loads(path.read_text(encoding='utf-8'))
  return r'''(()=>{const packed='''+json.dumps(packed,separators=(',',':'))+r''';
  const solved={...packed.metadata};for(const[k,v]of Object.entries(packed.arrays)){const s=atob(v.data),u=Uint8Array.from(s,c=>c.charCodeAt(0));solved[k]=new window[v.type](u.buffer);}
- const W=Worker,key=JSON.stringify(solved.scene);window.__surfaceReplay={matched:0,rejected:0,sourceIdentity:solved.physicalIdentity};
- window.Worker=class extends W{constructor(u,o){super(u,o);const post=this.postMessage.bind(this);this.postMessage=(m,t)=>{if(m.kind==='render'&&m.scene){if(JSON.stringify(m.scene)===key){__surfaceReplay.matched++;setTimeout(()=>this.dispatchEvent(new MessageEvent('message',{data:{...solved,id:m.id,identity:m.identity}})),0);return;}__surfaceReplay.rejected++;}return t?post(m,t):post(m);};}};
+ const fields=['size','outSize','diameter','basis','sun','earth','distance','extent','profile','mode','fraction','waxing','tilt'];const physicalKey=s=>JSON.stringify(fields.map(k=>s[k]));const W=Worker,key=physicalKey(solved.scene);window.__surfaceReplay={matched:0,rejected:0,sourceIdentity:solved.physicalIdentity};
+ window.Worker=class extends W{constructor(u,o){super(u,o);const post=this.postMessage.bind(this);this.postMessage=(m,t)=>{if(m.kind==='render'&&m.scene){if(physicalKey(m.scene)===key){__surfaceReplay.matched++;setTimeout(()=>this.dispatchEvent(new MessageEvent('message',{data:{...solved,scene:m.scene,id:m.id,identity:m.identity}})),0);return;}__surfaceReplay.rejected++;}return t?post(m,t):post(m);};}};
 })();'''
 def dump(path,value):path.write_text(json.dumps(value,indent=2,allow_nan=False)+'\n',encoding='utf-8')
 def vertical_streak(diff):
@@ -128,7 +129,7 @@ def payload(stamp,family='rain',night=False,track=False,track_family=None):
  return result
 
 class Entry:
- def __init__(self,browser,root,out,fonts,*,v1=False,rate=None,start='2026-10-07T15:09:00Z',family='rain',direct=False,dpr=1,offset=0,live=False,seed=1,steady=False,overrides=''):
+ def __init__(self,browser,root,out,fonts,*,v1=False,rate=None,start='2026-10-07T15:09:00Z',family='rain',direct=False,dpr=1,offset=0,live=False,seed=1,steady=False,overrides='',observer=None,prayer_fixture=None):
   self.root,self.out,self.family,self.live=root,out,family,live;out.mkdir(parents=True,exist_ok=True)
   self.anchor=datetime.fromisoformat(start.replace('Z','+00:00')).timestamp()*1000;self.started=time.monotonic();self.errors=[];self.requests=[];self.responses=[];self.failures=[];self.provider_failures=[];self.mode='healthy';self.frozen_response=None
   self.suffix=('v1/' if v1 else '')+'#local=1&motion=full&seed='+str(seed)+('' if rate is None else '&timeScale='+str(rate))+('&'+overrides if overrides else '')
@@ -142,10 +143,11 @@ class Entry:
     elif handler.path=='/favicon.ico':handler.send_response(204);handler.end_headers()
     else:super().do_GET()
   self.server=http.server.ThreadingHTTPServer(('127.0.0.1',0),Handler);threading.Thread(target=self.server.serve_forever,daemon=True).start();self.origin=f'http://127.0.0.1:{self.server.server_port}'
-  self.context=browser.new_context(viewport={'width':390,'height':600},device_scale_factor=dpr,timezone_id='America/New_York',locale='en-US',reduced_motion='no-preference')
+  site=observer or {'lat':28.5383,'lon':-81.3792,'tz':'America/New_York','label':'Central Florida fixture'}
+  self.context=browser.new_context(viewport={'width':390,'height':600},device_scale_factor=dpr,timezone_id=site['tz'],locale='en-US',reduced_motion='no-preference')
   self.context.add_init_script(MONITOR)
   sys.path.insert(0,str(ROOT/'tests'));from v1_browser import SETTINGS,ROOT_KEY,V1_KEY,FONT_CSS,fixture
-  settings={**SETTINGS,'lat':28.5383,'lon':-81.3792,'tz':'America/New_York','label':'Central Florida fixture','method':'2','units':'c','seed':seed}
+  settings={**SETTINGS,'method':'2',**site,'units':'c','seed':seed}
   self.context.add_init_script('if(location.protocol==="http:")localStorage.setItem('+json.dumps(V1_KEY if v1 else ROOT_KEY)+','+json.dumps(json.dumps(settings))+');')
   if not live:self.context.add_init_script('(()=>{const D=Date,base='+str(self.anchor)+',start=D.now();window.Date=class extends D{constructor(...a){super(...(a.length?a:[base+D.now()-start]));}static now(){return base+D.now()-start;}};})();')
   def route(r):
@@ -162,7 +164,10 @@ class Entry:
     if self.mode=='missing':p={**p,'current':None}
     data=json.dumps(p,separators=(',',':'));self.responses.append({'receivedWall':time.monotonic()-self.started,'request':u,'sha256':sha(data.encode()),'payload':p});r.fulfill(body=data,content_type='application/json',headers={'Access-Control-Allow-Origin':'*'})
    elif host=='api.aladhan.com':
-    p=fixture(u,False);date=urlsplit(u).path.rstrip('/').split('/')[-1];d,m,y=date.split('-');p['data']['date']['gregorian'].update(date=date,day=d,month={'number':int(m)},year=y);p['data']['meta']['timezone']='America/New_York';p['data']['timings'].update(Fajr='06:21',Sunrise='07:26',Dhuhr='13:17',Asr='16:38',Maghrib='19:08',Sunset='19:08',Isha='20:13');r.fulfill(json=p)
+    p=json.loads(prayer_fixture.read_text(encoding='utf-8')) if prayer_fixture else fixture(u,False)
+    date=urlsplit(u).path.rstrip('/').split('/')[-1];d,m,y=date.split('-');p['data']['date']['gregorian'].update(date=date,day=d,month={'number':int(m)},year=y);p['data']['meta'].update(timezone=site['tz'],latitude=site['lat'],longitude=site['lon'])
+    if not prayer_fixture:p['data']['timings'].update(Fajr='06:21',Sunrise='07:26',Dhuhr='13:17',Asr='16:38',Maghrib='19:08',Sunset='19:08',Isha='20:13')
+    r.fulfill(json=p)
    elif host=='api.rainviewer.com':r.fulfill(json={'radar':{'past':[]}})
    else:r.abort()
   self.context.route('**/*',route)
@@ -375,12 +380,94 @@ def matrix(a,browser,fonts):
    hours=[9.5,11.35,13,17.3,20,23,23.5,27] if family in ['clear','partial','overcast','fog','rain'] else [15,27]
    for hour in hours:
     target=datetime.fromisoformat('2026-10-07T00:00:00+00:00').timestamp()*1000+hour*3600000
-    e.frame.evaluate('t=>{_simBase=t;_rafT0=_RAFNOW();render();maintainPrayerDay();SalahRealSky.request(true);}',target);e.frame.wait_for_function('()=>!!window.model?.()',polling=100,timeout=30000);e.ready();e.page.wait_for_timeout(100)
+    # Prayer readiness may precede optional sky-module initialization. Use
+    # the supported clock boundary; it notifies an existing host and a later
+    # host starts from that accepted target. Never dereference an absent host.
+    e.frame.evaluate('utcMs=>SalahClock.set({utcMs,rate:0})',target);e.frame.wait_for_function('()=>!!window.model?.()',polling=100,timeout=30000);e.ready();e.page.wait_for_timeout(100)
     name=f'{hour:.2f}';s=e.snap(name);s.update(family=family,targetUtc=target,checks=semantic(s))
     s['checks']['requestedWeatherConsumed']=s['weather']['selected'] is not None and s['weather']['selected']['code']==FAMILIES[family][0] and s['weather']['selected']['cloud']==FAMILIES[family][1]
+    s['checks']['declaredPreviewLane']=s['weather']['selected'] is not None and s['weather']['selected']['src']=='forecast' and s['weather']['truth']['lane']=='preview'
     rows.append(s);dump(a.out/'matrix.json',rows);print('MATRIX',family,hour,s['fx'],flush=True)
   finally:e.close()
  return {'status':'MEASURED','scope':'Awaited physical-sky stills with weather held fixed; NOT live weather chronology or continuous playback. Full Moon solves are qualified separately.','cases':len(rows),'failures':[{'case':i,'family':r['family'],'utc':r['utc'],'checks':r['checks']} for i,r in enumerate(rows) if not all(r['checks'].values())]}
+
+def current_boundaries(a,browser,fonts):
+ """Missing/contradictory precipitation through the ordinary current lane.
+
+ Separate from matrix's explicit forecast-time preview. An absent or zero
+ amount with a wet code retains the condition, but cannot manufacture particles.
+ """
+ rows=[]
+ for family in ['contradictory-rain','partial-rain']:
+  e=Entry(browser,a.root,a.out/family,fonts,start='2026-10-07T15:09:00Z',family=family)
+  try:
+   e.ready();e.frame.wait_for_function("window.qaState?.().weatherHeader?.rawCode===63",timeout=30000)
+   s=e.snap('current-widget');truth=s['weather']['truth'];selected=s['weather']['selected'];checks=semantic(s)
+   checks.update(currentLane=selected is not None and selected['src']=='current' and truth['lane']=='live',conditionRetained=s['fx']=='rain' and s['weather']['header']['code']==63 and s['header']['icon']=='🌧️',temperatureCoherent=s['weather']['header']['temperature']==selected['temp']==24 and s['header']['temp']=='24°',uncertaintyDisclosed=bool(truth['visualPermissions']['quantitativeSupport']) and 'model estimate' in s['header']['label'],noInventedEffect=s['precip']=='off' and s['visibleParticles']==0 and not truth['visualPermissions']['rain'],noObservedClaim=truth['observedPresent'] is False)
+   rows.append({'family':family,'state':s,'checks':checks,'responses':e.responses});dump(a.out/'current-boundaries.json',rows)
+  finally:e.close()
+ return {'status':'PASS' if all(all(r['checks'].values()) for r in rows) else 'FAIL','scope':'Ordinary1x current-provider admission; no simWx, no forecast track, no application clock seek. Contradictory and missing interval amounts do not fabricate rainfall.','cases':len(rows),'failures':[{'family':r['family'],'checks':r['checks']} for r in rows if not all(r['checks'].values())]}
+
+
+def cpu_pressure(a,browser,fonts):
+ """Bounded Chromium CPU pressure after a fresh ordinary-clock terrain solve.
+
+ The emulation affects only this isolated test browser. It is not a Firefox
+ policy or a substitute for that engine's independently measured full solves.
+ """
+ if browser.browser_type.name!='chromium':raise ValueError('CDP CPU pressure requires Chromium; never substitute an engine')
+ e=Entry(browser,a.root,a.out,fonts,start=a.start,family='partial');session=None;rows=[]
+ try:
+  e.ready();e.frame.wait_for_function("SalahMoonRuntime.state.status==='ready'&&SalahMoonDetail.state.visible",timeout=300000)
+  initial=e.snap('initial-refined');session=e.context.new_cdp_session(e.page)
+  session.send('Emulation.setCPUThrottlingRate',{'rate':2});begin=time.monotonic()
+  e.frame.evaluate('()=>{_enableSettingsAffordance();document.querySelector(".buckle").click();}')
+  settings=e.frame.locator('.c').evaluate('(e)=>e.classList.contains("settings-open")');e.frame.locator('#setClose').click()
+  with (a.out/'frames.jsonl').open('w',encoding='utf-8') as f:
+   while time.monotonic()-begin<35:
+    at=time.monotonic();s=e.snap(f'frame-{len(rows):05}');s.update(wallElapsed=time.monotonic()-begin,checks=semantic(s));rows.append(s);f.write(json.dumps(s)+'\n');f.flush()
+    e.page.wait_for_timeout(max(1,1000-(time.monotonic()-at)*1000))
+  session.send('Emulation.setCPUThrottlingRate',{'rate':1});e.page.wait_for_timeout(1500);final=e.snap('recovered')
+  telemetry=e.frame.evaluate('__h8');dump(a.out/'worker-and-cadence.json',telemetry)
+  checks={'settingsUsable':settings,'ordinaryClock':final['host']['timeScale']==1,'clockAdvanced':final['utc']-initial['utc']>35000,'currentRefinedMoon':final['moon']['status']=='ready' and final['moon']['visibleSource']=='refined-terrain','sampledSemantics':all(all(r['checks'].values()) for r in rows)}
+  return {'status':'PASS' if all(checks.values()) else 'FAIL','scope':'Isolated Chromium CDP2x CPU slowdown; ordinary1x application clock, fresh native terrain beforehand, current-provider fixture,35s real motion plus recovery. Not a thermal/OS-wide stress claim.','cpuRate':2,'frames':len(rows),'wallSeconds':time.monotonic()-begin,'checks':checks,'initial':initial,'final':final,'errors':e.errors}
+ finally:
+  if session:session.send('Emulation.setCPUThrottlingRate',{'rate':1})
+  e.close()
+
+
+def geometry_edges(a,browser,fonts):
+ """Actual-entry stills supplement the independent 2900-direction sweep.
+
+ Explicit clear simulation isolates geometry; not live-weather or Moon-quality
+ evidence. Polar timetable fixtures retain adjusted events, never solar gates.
+ """
+ cases=[
+  ('north-equinox',28.5383,-81.3792,'America/New_York','2026-03-20',[10,16,23],None),
+  ('south-solstice',-33.8688,151.2093,'Australia/Sydney','2026-12-21',[1,8,11],None),
+  ('equator-zenith',0,0,'UTC','2026-03-20',[11.9,12.1,12.3,18.1],None),
+  ('arctic-summer',69.6492,18.9553,'Europe/Oslo','2026-06-21',[0,12,23],'summer'),
+  ('arctic-winter',69.6492,18.9553,'Europe/Oslo','2026-12-21',[0,12,23],'winter'),
+  ('antarctic-summer',-78.2232,15.6469,'UTC','2026-12-21',[0,12,23],None),
+ ]
+ rows=[]
+ for name,lat,lon,zone,date,hours,polar in cases:
+  observer={'lat':lat,'lon':lon,'tz':zone,'label':name+' fixture','method':'3' if polar else '2'}
+  fixture=a.root/'tests'/('r0002-tromso-'+polar+'.json') if polar else None
+  e=Entry(browser,a.root,a.out/name,fonts,start=date+'T00:00:00Z',rate=0,family='clear',observer=observer,prayer_fixture=fixture,overrides='simWx=0&simCloud=0&simPrecip=0')
+  try:
+   for hour in hours:
+    target=e.anchor+hour*3600000;e.frame.evaluate('utcMs=>SalahClock.set({utcMs,rate:0})',target);e.ready();e.page.wait_for_timeout(500)
+    s=e.snap(str(hour));sun=s['sun']['physical'];checks=semantic(s)
+    checks['acceptedGeometry']=s['host']['lat']==lat and s['host']['lon']==lon and abs(s['utc']-target)<1
+    checks['finiteSolarDirection']=all(math.isfinite(sun[k]) for k in ['altDeg','azDeg'])
+    styles=e.frame.evaluate("()=>{const s=getComputedStyle(document.querySelector('.c'));return {body:+s.getPropertyValue('--sunbodyamt'),corner:+s.getPropertyValue('--sunamt')};}")
+    checks['noBodyBelowHorizon']=sun['altDeg']>-1.5 or max(styles.values())==0
+    if name in ['arctic-summer','antarctic-summer']:checks['polarDay']=sun['altDeg']>0
+    if name=='arctic-winter':checks['polarNight']=sun['altDeg']<0
+    rows.append({'case':name,'hour':hour,'state':s,'solarStyle':styles,'checks':checks});dump(a.out/'geometry.json',rows)
+  finally:e.close()
+ return {'status':'PASS' if all(all(r['checks'].values()) for r in rows) else 'FAIL','cases':len(rows),'failures':[{'case':r['case'],'hour':r['hour'],'checks':r['checks']} for r in rows if not all(r['checks'].values())],'scope':'Actual Pages-shaped iframe; explicit fixed clear weather, paused critical-time stills. Not live weather, continuous playback or lunar refinement. Captured polar timetable values remain adjusted prayer events, not asserted sunrises.'}
 
 def boundaries(a,browser,fonts):
  e=Entry(browser,a.root,a.out,fonts,start='2026-10-07T15:09:00Z',family=a.family,dpr=a.dpr,offset=a.offset);rows=[]
@@ -600,6 +687,9 @@ def lunar_layers(a,browser,fonts):
   if a.rate!=1:e.frame.evaluate('utcMs=>SalahClock.set({utcMs,rate:0})',e.anchor)
   e.frame.wait_for_function("SalahMoonRuntime.state.status==='ready'&&SalahMoonDetail.state.visible&&realSkyState().status==='ready'",timeout=600000,polling=1000)
   e.page.wait_for_timeout(1800);state=e.snap('complete');dump(a.out/'state.json',state)
+  if not a.surface_replay:
+   packed=e.frame.evaluate(r'''()=>{const arrays={},metadata={};for(const[k,v]of Object.entries(__h8MoonSolved)){if(ArrayBuffer.isView(v)){const u=new Uint8Array(v.buffer,v.byteOffset,v.byteLength);let t='';for(let i=0;i<u.length;i+=32768)t+=String.fromCharCode(...u.subarray(i,i+32768));arrays[k]={type:v.constructor.name,data:btoa(t)};}else metadata[k]=v;}return{metadata,arrays};}''')
+   dump(a.out/'fresh-worker-result.json',packed)
   layers=e.frame.evaluate(r'''()=>{const c=document.querySelector('.c'),cs=getComputedStyle(c);return{runtime:SalahMoonRuntime.state,presentationUp:SalahMoonRuntime.presentationUp,physicalMoon:realSkyState().last.physicalState.moon,host:SalahMoonHost.capture(),domOrder:[...c.children].map(e=>({tag:e.tagName,cls:typeof e.className==='string'?e.className:null,z:getComputedStyle(e).zIndex})),optics:[...document.querySelectorAll('.mhalo,.mcorona,.mparhelia,.mglow,.mbeam')].map(e=>({cls:e.className.baseVal,opacity:getComputedStyle(e).opacity,visibility:getComputedStyle(e).visibility,fill:getComputedStyle(e).fill,filter:getComputedStyle(e).filter})),replay:window.__surfaceReplay??null};}''')
   layers['nativeOpticsBeforeTerrain']=e.frame.evaluate("!!(document.querySelector('.sky').compareDocumentPosition(document.querySelector('.moon-detail-canvas'))&Node.DOCUMENT_POSITION_FOLLOWING)")
   dump(a.out/'layers.json',layers)
@@ -883,7 +973,7 @@ def run(a):
   with sync_playwright() as pw:
    b=launch_browser(pw);report['browser']=browser_identity(b)
    modes={'replay':replay,'settled':settled,'playback':playback,'weather':weather_sequence,'controls':controls,'availability':availability,'matrix':matrix,'boundaries':boundaries,'live':live_provider,'profile':profile,'directional':directional,'evening-stars':evening_stars,'star-preview-control':star_preview_control,'solar':solar_size,'dawn':dawn_comparison,'preview-failure':preview_failure,'solar-cloud':solar_cloud,'solar-air':solar_air,'row-contrast':row_contrast}
-   modes['amber-moon']=amber_moon;modes['twilight-joined']=twilight_joined;modes['lunar-layers']=lunar_layers
+   modes['current-boundaries']=current_boundaries;modes['cpu-pressure']=cpu_pressure;modes['geometry-edges']=geometry_edges;modes['amber-moon']=amber_moon;modes['twilight-joined']=twilight_joined;modes['lunar-layers']=lunar_layers
    report.update(modes[a.mode](a,b,ff));b.close()
  except Exception:report.update(status='FAIL',exception=traceback.format_exc())
  if report.get('failures'):report['status']='FAIL'
@@ -892,4 +982,4 @@ def run(a):
  dump(a.out/'results.json',report);print(json.dumps({k:report.get(k) for k in ['status','browser','wallSeconds','frames','failures','exception']},indent=2),flush=True);return report['status'] not in ['FAIL'] and not report.get('failures')
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--root',type=Path,default=ROOT);p.add_argument('--deployed',type=Path);p.add_argument('--out',type=Path,required=True);p.add_argument('--fonts',type=Path,required=True);p.add_argument('--mode',choices=['lunar-layers','twilight-joined','amber-moon','replay','playback','settled','weather','controls','availability','matrix','boundaries','live','profile','directional','evening-stars','star-preview-control','solar','dawn','preview-failure','solar-cloud','solar-air','row-contrast'],required=True);p.add_argument('--rate',type=float,default=600);p.add_argument('--hours',type=float,default=26);p.add_argument('--step',type=int,default=60);p.add_argument('--family',choices=FAMILIES,default='clear');p.add_argument('--cadence',type=float,default=2);p.add_argument('--start',default='2026-10-07T10:00:00Z');p.add_argument('--direct',action='store_true');p.add_argument('--dpr',type=float,default=1);p.add_argument('--offset',type=float,default=0);p.add_argument('--seed',type=int,default=1);p.add_argument('--steady',action='store_true');p.add_argument('--overrides',default='');p.add_argument('--comparison-source',type=Path);p.add_argument('--surface-replay',type=Path);p.add_argument('--duration',type=float,default=0);raise SystemExit(0 if run(p.parse_args()) else 1)
+ p=argparse.ArgumentParser();p.add_argument('--root',type=Path,default=ROOT);p.add_argument('--deployed',type=Path);p.add_argument('--out',type=Path,required=True);p.add_argument('--fonts',type=Path,required=True);p.add_argument('--mode',choices=['cpu-pressure','current-boundaries','geometry-edges','lunar-layers','twilight-joined','amber-moon','replay','playback','settled','weather','controls','availability','matrix','boundaries','live','profile','directional','evening-stars','star-preview-control','solar','dawn','preview-failure','solar-cloud','solar-air','row-contrast'],required=True);p.add_argument('--rate',type=float,default=600);p.add_argument('--hours',type=float,default=26);p.add_argument('--step',type=int,default=60);p.add_argument('--family',choices=FAMILIES,default='clear');p.add_argument('--cadence',type=float,default=2);p.add_argument('--start',default='2026-10-07T10:00:00Z');p.add_argument('--direct',action='store_true');p.add_argument('--dpr',type=float,default=1);p.add_argument('--offset',type=float,default=0);p.add_argument('--seed',type=int,default=1);p.add_argument('--steady',action='store_true');p.add_argument('--overrides',default='');p.add_argument('--comparison-source',type=Path);p.add_argument('--surface-replay',type=Path);p.add_argument('--duration',type=float,default=0);raise SystemExit(0 if run(p.parse_args()) else 1)

@@ -6,8 +6,8 @@ import vm from 'node:vm';
 // Exercise the actual host with deterministic stage costs. Foreground capture
 // is presentation work, while the astronomical job must keep its original UTC.
 const source=fs.readFileSync(new URL('../../real-sky/native-preview-host.mjs',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replace('export function startNativeSkyPreview','function startNativeSkyPreview');
-function host({foregroundMs=25,skyMs=30}={}){
- let now=0,raf=null,cancelled=0;const classes=new Set(),draws=[],rgba=new Uint8ClampedArray(325*530*4);for(let i=3;i<rgba.length;i+=4)rgba[i]=255;
+function host({foregroundMs=25,skyMs=30,timeScale=600,parseMs=0,starMs=0}={}){
+ let now=0,raf=null,cancelled=0,starRenders=0;const classes=new Set(),draws=[],rgba=new Uint8ClampedArray(325*530*4);for(let i=3;i<rgba.length;i+=4)rgba[i]=255;
  const ctx={putImageData(){draws.push(now);},drawImage(){},getImageData:()=>({data:rgba})};
  const canvas=()=>({style:{},setAttribute(){},getContext:()=>ctx,remove(){}});
  const card={prepend(){},style:{setProperty(){},removeProperty(){}},classList:{contains:x=>classes.has(x),add:x=>classes.add(x),remove:x=>classes.delete(x)}};
@@ -15,10 +15,12 @@ function host({foregroundMs=25,skyMs=30}={}){
   nativeResultCurrent:(j,c)=>j.generation===c.generation&&Math.abs(c.utcMs-j.utcMs)<=30000,
   NativeForegroundCapture:class{bottom(){return 0;}capture(){now+=foregroundMs;return {cloudRGBA:new Uint8ClampedArray(rgba.length),moonRGBA:new Uint8ClampedArray(rgba.length),native:{}};}prepareSolarMask(){return 'test-mask';}},
   nativeForegroundRows:()=>530,nativeCloudDisplayFrame:x=>x,encodeNativeFrame:()=>rgba,
+  NativeStarPreview:class{static async create(pack){if(pack.wait)await pack.wait;return new this(pack);}constructor(pack){now+=parseMs;if(pack.invalid)throw new Error('Invalid catalogue');this.identity={sha256:pack.sha256};}render(){now+=starMs;starRenders++;return {diagnostics:this.identity};}},
+  joinNativeStarPreview:(next,bytes,stars)=>({...next,rgba:bytes,raster:{...next.raster,starPreview:stars.diagnostics}}),nativeStarPreviewRegion:()=>rgba,
   renderNativeBackgroundPreview(c){now+=skyMs;return {job:{utcMs:c.utcMs,generation:c.generation},utcMs:c.utcMs,quality:'test',raster:{linear:new Float64Array(3),width:325,height:530,physicalState:{sun:{altDeg:30}}}};}};
- s.window.SalahNativeSkyHost={capture:()=>({utcMs:now*600,generation:1,timeScale:600,sceneIdentity:'A',lat:1,lon:2})};
+ s.window.SalahNativeSkyHost={capture:()=>({utcMs:now*timeScale,generation:1,timeScale,sceneIdentity:'A',lat:1,lon:2})};
  vm.createContext(s);vm.runInContext(source+'\nstartNativeSkyPreview();',s);
- return {s,classes,draws,get now(){return now;},get cancelled(){return cancelled;},get state(){return s.window.SalahSkyPreview.state;},tick(t,actual){now=actual;raf(t);},present(t,actual){now=actual;s.window.SalahSkyPreview.present(t);}};
+ return {s,classes,draws,get now(){return now;},get starRenders(){return starRenders;},get cancelled(){return cancelled;},get state(){return s.window.SalahSkyPreview.state;},tick(t,actual){now=actual;raf(t);},present(t,actual){now=actual;s.window.SalahSkyPreview.present(t);}};
 }
 test('foreground preparation cannot consume the new astronomical calculation age budget',()=>{
  const h=host();assert.equal(h.state.status,'ready');assert.ok(h.classes.has('real-sky-preview-ready'));
@@ -37,4 +39,32 @@ test('native presentation handoff stops the duplicate loop and timestamps after 
  h.present(32,50);assert.equal(h.cancelled,1);assert.equal(h.state.utcMs,52*600);
  assert.ok(h.now*600-h.state.utcMs<=30000);h.present(66,90);assert.equal(h.cancelled,1,'one permanent loop handoff');
  assert.equal(h.state.utcMs,92*600);
+});
+
+test('catalogue admission preserves the current atmosphere and defers first stellar paint to a separate native turn',async()=>{
+ const h=host({foregroundMs:20,skyMs:30,timeScale:1,parseMs:125,starMs:41});
+ const before=h.now,draws=h.draws.length,utc=h.state.utcMs;
+ await h.s.window.SalahSkyPreview.admitCatalogue({sha256:'pinned'});
+ assert.equal(h.now-before,125,'Parsing must not synchronously include sky, stars, foreground and detail publication');
+ assert.equal(h.starRenders,0);assert.equal(h.draws.length,draws);
+ assert.equal(h.state.status,'ready');assert.equal(h.state.utcMs,utc);assert.ok(h.classes.has('real-sky-preview-ready'));
+ h.present(h.now+1,h.now+1);
+ assert.equal(h.starRenders,1);assert.equal(h.state.catalogue.sha256,'pinned');assert.ok(h.draws.length>draws);
+ await h.s.window.SalahSkyPreview.admitCatalogue(null);
+ assert.equal(h.state.catalogue.sha256,'pinned','Diagnostics still identify the displayed frame until atomic replacement');
+ h.present(h.now+1,h.now+1);assert.equal(h.state.catalogue,null);assert.equal(h.starRenders,1);
+});
+
+test('invalid catalogue cannot become the displayed identity or defer currentness validation',async()=>{
+ const h=host({foregroundMs:0,skyMs:10,timeScale:1});
+ await h.s.window.SalahSkyPreview.admitCatalogue({invalid:true});assert.match(h.state.catalogueError,/Invalid catalogue/);
+ h.present(20,20);assert.equal(h.state.catalogue,null);assert.equal(h.starRenders,0);
+ h.present(31000,31000);assert.ok(h.state.utcMs>30000,'Deferred admission does not retain an expired original sky');
+});
+
+test('late catalogue hash completion cannot resurrect a revoked asset admission',async()=>{
+ const h=host({foregroundMs:0,skyMs:1,timeScale:1});let release;
+ const late=h.s.window.SalahSkyPreview.admitCatalogue({sha256:'old',wait:new Promise(r=>release=r)});
+ await h.s.window.SalahSkyPreview.admitCatalogue(null);release();await late;
+ h.present(10,10);assert.equal(h.state.catalogue,null);assert.equal(h.starRenders,0);
 });

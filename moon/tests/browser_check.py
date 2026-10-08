@@ -5,9 +5,11 @@
 Neither is a live provider observation. Browser process sandbox policy is explicit.
 """
 from pathlib import Path
-import argparse, ast, functools, hashlib, http.server, json, mimetypes, os, threading, time, traceback
+import argparse, ast, functools, hashlib, http.server, json, mimetypes, os, sys, threading, time, traceback
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(ROOT/'tools/cp9'))
+from browser_runtime import browser_options, browser_identity
 # Fixture data is installed before product execution, never inside product files.
 INIT=r'''(()=>{
 const NativeDate=Date,base=NativeDate.parse('2026-09-07T20:30:00Z');window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:[base]));}static now(){return base;}};
@@ -41,8 +43,11 @@ def run(root,out,entry,transport,dpr,quick,sandbox,executable,initial_fault=None
  started=time.monotonic()
  try:
   with sync_playwright() as p:
-   b=p.chromium.launch(executable_path=executable,headless=True,chromium_sandbox=sandbox,args=['--disable-dev-shm-usage'])
-   record['browser']=b.version
+   family,options=browser_options()
+   if executable:options['executable_path']=executable
+   if family=='chromium':options['chromium_sandbox']=sandbox
+   b=getattr(p,family).launch(**options)
+   record['browser']=browser_identity(b)
    c=b.new_context(viewport={'width':700,'height':720},device_scale_factor=dpr,reduced_motion='reduce')
    page=c.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
    fault={'mode':initial_fault}
@@ -75,7 +80,10 @@ def run(root,out,entry,transport,dpr,quick,sandbox,executable,initial_fault=None
    if quick:page.evaluate('(s)=>SalahMoonRuntime.setReferenceScene(s)',refscene())
    if initial_fault:
     wait(page,'SalahMoonRuntime.state.status==="unavailable"',60)
-    fail=page.evaluate(STATE);assert fail['rows']==6 and fail['moon']['legacyFallback'];records.append({'name':'asset-'+initial_fault+'-refused','status':'PASS','state':fail})
+    fail=page.evaluate(STATE)
+    assert fail['rows']==6 and not fail['moon']['legacyFallback'] and fail['moon']['visibleSource']=='awaiting-terrain'
+    assert page.evaluate('SalahMoonRuntime.surface()===null')
+    records.append({'name':'asset-'+initial_fault+'-refused-without-old-Moon-substitution','status':'PASS','state':fail})
     fault['mode']=None;assert page.evaluate('SalahMoonRuntime.retry()')
    wait(page,'SalahMoonRuntime.state.status==="ready"',280)
    wait(page,'document.querySelectorAll(".p").length===6',20)
@@ -90,10 +98,16 @@ def run(root,out,entry,transport,dpr,quick,sandbox,executable,initial_fault=None
    page.screenshot(path=str(out/'ready.png'),timeout=30000)
    page.evaluate('window.__heartbeats=[]')
    if not quick:page.evaluate('(s)=>SalahMoonRuntime.setReferenceScene(s)',refscene()) ; wait(page,'SalahMoonRuntime.state.status==="ready"',90)
-   # Terminal real-worker failure; retry must read retained embedded payloads.
+   # A failed replacement retains the original independently validated current
+   # surface; a target change below must still revoke it immediately.
+   retained=page.evaluate('SalahMoonRuntime.state.accepted.identity')
    page.evaluate('''()=>{const w=__moonTestWorkers.filter(w=>w.__moon).at(-1);w.postMessage({kind:'__moon_test_crash'});}''')
    wait(page,'SalahMoonRuntime.state.status==="unavailable"',10)
-   s=page.evaluate(STATE);assert s['rows']==6 and s['moon']['legacyFallback'];records.append({'name':'actual-worker-exception-native-fallback','status':'PASS','state':s})
+   s=page.evaluate(STATE)
+   assert s['rows']==6 and not s['moon']['legacyFallback'] and s['moon']['accepted']['identity']==retained
+   assert page.evaluate('!!SalahMoonRuntime.surface() && SalahMoonRuntime.state.quality==="empirical-adaptive"')
+   records.append({'name':'actual-worker-exception-retains-only-original-current-terrain','status':'PASS','state':s})
+   page.evaluate("SalahMoonRuntime.setProfile('reference')");assert page.evaluate('SalahMoonRuntime.surface()===null')
    assert page.evaluate('SalahMoonRuntime.retry()')
    wait(page,'SalahMoonRuntime.state.status==="ready"',90)
    s=page.evaluate(STATE);assert not s['moon']['legacyFallback'];records.append({'name':'real-worker-retry','status':'PASS','state':s})

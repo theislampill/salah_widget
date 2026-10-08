@@ -1886,6 +1886,7 @@ function moonDebugSamples(){
     return {status:"ok",width,height,radius,cx,cy,samples:points.map(([label,x])=>({label,...(label==="canvas exterior"&&x<=cx+radius?{x,y:cy,status:"unavailable",lum:null,alpha:null}:sampleMoonPixel(data,width,height,x,cy))}))};
   }catch(e){ return {status:"unavailable",width,height,radius,cx,cy,samples:[]}; }
 }
+const MOON_SCALE_MIN=1.11,MOON_SCALE_MAX=1.13;
 function renderMoon(){
   let frac, waxing;
   const date=simDate();                                            // moon phase advances with simTime (debug fast-forward spans days)
@@ -1919,7 +1920,7 @@ function renderMoon(){
   // now only adds a small rise/settle for life; it no longer flings the disc off-card.
   const x=268 + hd*1.5;                                            // centred so the WHOLE disc has comfortable margin on the right (≈5px) — a thin WAXING crescent's lit right limb is clearly in frame, not at the edge — while the left limb clears the temperature strap row below
   const y=55 + 3*sweep - clamp((alt-6)/70)*3;                      // ≈55-58: dropped below the temp strap (y19-37) and above the arc (top y≈121 on the right) — its wide middle clears the strap, so the disc is large AND fully on-card
-  const scale=1.11 + 0.02*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
+  const scale=MOON_SCALE_MIN + (MOON_SCALE_MAX-MOON_SCALE_MIN)*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
   const transform=`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`;
   const g=$(".moon"); if(g) g.setAttribute("transform",transform);
   const mask=$(".moon-mask-geometry"); if(mask) mask.setAttribute("transform",transform);
@@ -2072,8 +2073,8 @@ function beginSkyScene(){
   if(_cloudCtx&&_cloudCv) _cloudCtx.clearRect(0,0,_cloudCv.width,_cloudCv.height);
   updateSkySurface();
 }
-// The optional terrain service must publish a current, qualified surface before
-// any lunar pixels or cutout become visible. Decoded legacy maps are not readiness.
+// The terrain service publishes a current full-spatial V5 preview or refined
+// surface. Decoded legacy maps are not terrain readiness; quality stays explicit.
 // Prayer/sky remain usable while terrain initializes or recovers.
 function updateSkySurface(){
   const c=$(".c"),photo=$(".mphoto"),mask=$(".moon-mask-disc");
@@ -3184,7 +3185,7 @@ window.qaState=function(){
     clouds:{low:+(A.cloudLayerLow||0).toFixed(2), mid:+(A.cloudLayerMid||0).toFixed(2), high:+(A.cloudLayerHigh||0).toFixed(2), hash:cloudHash, alpha:cloudAlpha,lighting:A.cloudLighting?{owner:A.cloudLighting.owner,utcMs:A.cloudLighting.utcMs,sun:A.cloudLighting.sun,camera:A.cloudLighting.camera,warmth:A.cloudWarmth}:null},
     stars:{op:+(cs.getPropertyValue("--stars").trim()||0), visible:starsVis, blur:cs.getPropertyValue("--starblur").trim(), mw:+(cs.getPropertyValue("--mw").trim()||0)},
     sky:{airglow:cs.getPropertyValue("--airglow").trim(), haze:+(A.aerosolDensity||0).toFixed(2), airDrift:+(A.airDrift||0).toFixed(3), moonBeam:+(A.moonBeam||0).toFixed(2), lunarCorona:+(A.lunarCorona||0).toFixed(2), aurora:+(A.aurora||0).toFixed(2)},
-    // Visible owner, not legacy decode status. Pending/failed terrain is withheld;
+    // Visible owner, not legacy decode status. Current terrain preview and final
     // accepted physical and below-horizon calendar presentations remain distinct.
     moonTruth:(()=>{ const mp=moonNow(), alt=(A.moonAltitude!=null?A.moonAltitude:moonSky.alt), up=alt>-0.5;
       const runtime=window.SalahMoonRuntime,refined=!!runtime?.surface(),lunarState=runtime?.state;
@@ -3194,12 +3195,12 @@ window.qaState=function(){
       return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
         lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
         lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
-        surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?"refined-terrain":"withheld-until-refined",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?"V5 DEM intersections, terrain shadows and colour":"unavailable"},
+        surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?"V5 DEM intersections, terrain shadows and colour":"unavailable"},
         physicalMoonVisible:phys, calendarMoonVisible:surfaceVisible && grp>0.01,
         displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?"refined-calendar":"debug-hidden"),
         moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
         moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only":"surface unavailable",
-        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?"awaiting current qualified terrain; no legacy substitution":phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
+        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?"awaiting current terrain; no legacy substitution":phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
     })()
   };
 };
@@ -3691,6 +3692,7 @@ window.SalahMoonHost=Object.freeze({
   const identity=skySceneIdentity();
   return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
    fraction:moonSky.frac,waxing:!!moonSky.waxing,up:moonSky.up,
+   maximumPresentationRatio:MOON_SCALE_MAX/(MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*clamp(moonSky.up)),
    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
    paused:document.hidden||!!$('.c')?.classList.contains('paused')};
  },

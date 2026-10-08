@@ -464,7 +464,7 @@ body{color:#fff7df;
 </style>
 <link rel="stylesheet" href="real-sky/native-sky.css">
 <script src="config.js"></script>
-<script id="native-first-paint-code" data-sha256="a67a7e30736ec0cff4547ed75c0f0f462ef2e0a6762d2bd04faed0ddc845a20d">(function(){"use strict";
+<script id="native-first-paint-code" data-sha256="582430405f7d36ead6af8f882d43f251aae4485ce89da54647729aef6caaeed0">(function(){"use strict";
 // real-sky/core/src/time-scales.mjs
 /** Time policy: USNO TAI-UTC table, IERS Bulletin C72 (2026-07-06), NASA historical DeltaT.
  * See docs/CHECKPOINT_4.md. Numeric POSIX milliseconds cannot represent a leap-second label.
@@ -2249,6 +2249,7 @@ function renderNativeBackgroundPreview(snapshot){
 
 
 
+
 let previewEdges=null;
 function previewCode(value,exposure){
  if(!previewEdges)previewEdges=nativeEncodingThresholds();
@@ -2293,6 +2294,23 @@ function renderPreviewStars(sources,fluxAt,visible){
  * catalogue/diffuse quality tier. No prayer/solar-altitude visibility switch.
  */
 class NativeStarPreview {
+ static async create(pack){
+  // The same pinned byte/hash/schema admission, with the large catalogue hash
+  // off the UI thread. The reference store's synchronous JS SHA-256 blocked
+  // Firefox's startup controls before any Moon surface was published.
+  if(!globalThis.crypto?.subtle)return new NativeStarPreview(pack);
+  const manifest=parseDiffuseManifest(pack.manifestText,DIFFUSE_MANIFEST_SHA256);
+  if(typeof pack.catalogueText!=='string')throw new TypeError('catalogue must be exact UTF-8 text');
+  const bytes=new TextEncoder().encode(pack.catalogueText);
+  if(bytes.byteLength!==manifest.catalogue.bytes)throw new RangeError('catalogue byte size mismatch');
+  const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));
+  if(Array.from(digest,x=>x.toString(16).padStart(2,'0')).join('')!==manifest.catalogue.sha256)throw new TypeError('catalogue content hash mismatch');
+  const catalogue=validateCatalogue(JSON.parse(pack.catalogueText)),renderer=Object.create(NativeStarPreview.prototype);
+  const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){for(const v of Object.values(x))freeze(v);Object.freeze(x);}return x;};
+  renderer.catalogue=freeze({...catalogue,stars:catalogue.stars.filter(s=>s.emission?.enabled!==false&&s.vmag<=4.5)});
+  renderer.identity={sha256:manifest.catalogue.sha256,totalRecords:catalogue.stars.length,previewRecords:renderer.catalogue.stars.length,maximumMagnitude:4.5};
+  return renderer;
+ }
  constructor(pack){
   const store=new DiffuseAssetStore(pack.manifestText,DIFFUSE_MANIFEST_SHA256,pack.catalogueText);
   this.catalogue={...store.catalogue,stars:store.catalogue.stars.filter(s=>s.emission?.enabled!==false&&s.vmag<=4.5)};
@@ -2371,7 +2389,7 @@ function startNativeSkyPreview(){
  const canvas=document.createElement('canvas');canvas.className='real-sky-preview';canvas.width=325;canvas.height=530;canvas.setAttribute('aria-hidden','true');card.prepend(canvas);
  const ctx=canvas.getContext('2d',{alpha:false}),foreground=new NativeForegroundCapture(canvas);
  const background=document.createElement('canvas'),back=background.getContext('2d');background.width=325;background.height=530;
- let value=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=null,nativeDriven=false;
+ let value=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0;
  const status={status:'pending',quality:'physical-background-preview',utcMs:null,reason:null,draws:0};
  function retireFirstPaint(){document.querySelector('#native-first-paint')?.remove();window.SalahFirstPaint=null;}
  function clear(reason){if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
@@ -2399,7 +2417,8 @@ function startNativeSkyPreview(){
    ctx.putImageData(new ImageData(bytes,325,rows),0,0);
    card.style.setProperty('--native-sun-cloud-mask',solarMask);
    previousMoonBottom=bottom;if(pixels||!previewFrame)previewFrame={preview:true,raster:next.raster,current:()=>nativeResultCurrent(next.job,host.capture(false))};
-   value=next;baseBytes=base;Object.assign(status,{status:'ready',quality:next.quality,retained:false,utcMs:next.utcMs,native:next.native,solarAltitudeDeg:next.raster.physicalState.sun.altDeg,display:next.raster.displayPresentation,diagnostics:next.diagnostics,reason:null});
+   value=next;baseBytes=base;if(pixels)paintedCatalogueRevision=catalogueRevision;
+   Object.assign(status,{status:'ready',quality:next.quality,retained:false,utcMs:next.utcMs,native:next.native,solarAltitudeDeg:next.raster.physicalState.sun.altDeg,display:next.raster.displayPresentation,diagnostics:next.diagnostics,catalogue:next.raster.starPreview??null,reason:null});
    canvas.style.visibility='visible';retireFirstPaint();card.classList.add('real-sky-preview-ready');window.SalahMoonDetail?.compose(previewFrame,encodeNativeFrame);
    // Device-resolution detail work and final canvas publication also consume
    // real time. Check the ORIGINAL job again before this JS turn can present.
@@ -2426,7 +2445,7 @@ function startNativeSkyPreview(){
    if(value&&!nativeResultCurrent(value.job,s))clear('preview target changed or expired');
    // Fast playback needs room for calculation AND the next compositor turn
    // inside the unchanged 30 accepted-second fence. Do not wait until 20s old.
-   if(!value||!nativeResultCurrent(value.job,s)||Math.abs(s.utcMs-value.utcMs)>(Math.abs(s.timeScale??1)>10?10000:20000)){
+   if(!value||catalogueRevision!==paintedCatalogueRevision||!nativeResultCurrent(value.job,s)||Math.abs(s.utcMs-value.utcMs)>(Math.abs(s.timeScale??1)>10?10000:20000)){
     // Read native foreground/layout BEFORE starting the numerical job. These
     // synchronous presentation snapshots cannot change target in this turn,
     // and must not consume its30s accepted-UTC budget at accelerated rates.
@@ -2445,14 +2464,25 @@ function startNativeSkyPreview(){
    paint();
   }catch(e){const reason=String(e.message??e);if(value&&nativeResultCurrent(value.job,host.capture(false))){status.retained=true;status.reason=reason;}else clear(reason);}
  }
- function present(now){if(disposed)return;const s=host.capture(false);if(!card.classList.contains('real-sky-composed')&&(Math.abs(s.timeScale??1)>10||!value||!nativeResultCurrent(value.job,s)||now-lastPaint>100))update();}
+ function present(now){if(disposed)return;const s=host.capture(false);if(!card.classList.contains('real-sky-composed')&&(catalogueRevision!==paintedCatalogueRevision||Math.abs(s.timeScale??1)>10||!value||!nativeResultCurrent(value.job,s)||now-lastPaint>100))update();}
  function tick(now){if(disposed||nativeDriven)return;present(now);raf=requestAnimationFrame(tick);}
  window.SalahSkyPreview={update,clear,present(now){
   // Native's final paint opportunity follows its UI and cloud updates. Once
   // available it owns ongoing presentation; independent bootstrap rAF must
   // not run before native paint and spend the current sky's remaining age.
   if(!nativeDriven){nativeDriven=true;cancelAnimationFrame(raf);}present(now);
- },admitCatalogue(pack){catalogue=null;clear('catalogue admission changed');if(pack)catalogue=new NativeStarPreview(pack);status.catalogue=catalogue?.identity??null;update();},get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
+ },async admitCatalogue(pack){
+  // Validation/parsing and first stellar composition must not occupy the same
+  // startup task. Keep the ORIGINAL current atmosphere until the next native
+  // paint atomically replaces it; that paint rechecks target/epoch/30s age.
+  // Clearing the preview here both stalled controls and caused a needless gap.
+  catalogue=null;const revision=++catalogueRevision;status.catalogueError=null;
+  try{
+   const next=pack?await NativeStarPreview.create(pack):null;
+   if(disposed||revision!==catalogueRevision)return;
+   catalogue=next;catalogueRevision++;
+  }catch(error){if(!disposed&&revision===catalogueRevision)status.catalogueError=String(error.message??error);}
+ },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
  update();raf=requestAnimationFrame(tick);
 }
 
@@ -3914,6 +3944,7 @@ function moonDebugSamples(){
     return {status:"ok",width,height,radius,cx,cy,samples:points.map(([label,x])=>({label,...(label==="canvas exterior"&&x<=cx+radius?{x,y:cy,status:"unavailable",lum:null,alpha:null}:sampleMoonPixel(data,width,height,x,cy))}))};
   }catch(e){ return {status:"unavailable",width,height,radius,cx,cy,samples:[]}; }
 }
+const MOON_SCALE_MIN=1.11,MOON_SCALE_MAX=1.13;
 function renderMoon(){
   let frac, waxing;
   const date=simDate();                                            // moon phase advances with simTime (debug fast-forward spans days)
@@ -3947,7 +3978,7 @@ function renderMoon(){
   // now only adds a small rise/settle for life; it no longer flings the disc off-card.
   const x=268 + hd*1.5;                                            // centred so the WHOLE disc has comfortable margin on the right (≈5px) — a thin WAXING crescent's lit right limb is clearly in frame, not at the edge — while the left limb clears the temperature strap row below
   const y=55 + 3*sweep - clamp((alt-6)/70)*3;                      // ≈55-58: dropped below the temp strap (y19-37) and above the arc (top y≈121 on the right) — its wide middle clears the strap, so the disc is large AND fully on-card
-  const scale=1.11 + 0.02*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
+  const scale=MOON_SCALE_MIN + (MOON_SCALE_MAX-MOON_SCALE_MIN)*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
   const transform=`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`;
   const g=$(".moon"); if(g) g.setAttribute("transform",transform);
   const mask=$(".moon-mask-geometry"); if(mask) mask.setAttribute("transform",transform);
@@ -4001,8 +4032,8 @@ function beginSkyScene(){
   if(_cloudCtx&&_cloudCv) _cloudCtx.clearRect(0,0,_cloudCv.width,_cloudCv.height);
   updateSkySurface();
 }
-// The optional terrain service must publish a current, qualified surface before
-// any lunar pixels or cutout become visible. Decoded legacy maps are not readiness.
+// The terrain service publishes a current full-spatial V5 preview or refined
+// surface. Decoded legacy maps are not terrain readiness; quality stays explicit.
 // Prayer/sky remain usable while terrain initializes or recovers.
 function updateSkySurface(){
   const c=$(".c"),photo=$(".mphoto"),mask=$(".moon-mask-disc");
@@ -5114,7 +5145,7 @@ window.qaState=function(){
     clouds:{low:+(A.cloudLayerLow||0).toFixed(2), mid:+(A.cloudLayerMid||0).toFixed(2), high:+(A.cloudLayerHigh||0).toFixed(2), hash:cloudHash, alpha:cloudAlpha,lighting:A.cloudLighting?{owner:A.cloudLighting.owner,utcMs:A.cloudLighting.utcMs,sun:A.cloudLighting.sun,camera:A.cloudLighting.camera,warmth:A.cloudWarmth}:null},
     stars:{op:+(cs.getPropertyValue("--stars").trim()||0), visible:starsVis, blur:cs.getPropertyValue("--starblur").trim(), mw:+(cs.getPropertyValue("--mw").trim()||0)},
     sky:{airglow:cs.getPropertyValue("--airglow").trim(), haze:+(A.aerosolDensity||0).toFixed(2), airDrift:+(A.airDrift||0).toFixed(3), moonBeam:+(A.moonBeam||0).toFixed(2), lunarCorona:+(A.lunarCorona||0).toFixed(2), aurora:+(A.aurora||0).toFixed(2)},
-    // Visible owner, not legacy decode status. Pending/failed terrain is withheld;
+    // Visible owner, not legacy decode status. Current terrain preview and final
     // accepted physical and below-horizon calendar presentations remain distinct.
     moonTruth:(()=>{ const mp=moonNow(), alt=(A.moonAltitude!=null?A.moonAltitude:moonSky.alt), up=alt>-0.5;
       const runtime=window.SalahMoonRuntime,refined=!!runtime?.surface(),lunarState=runtime?.state;
@@ -5124,12 +5155,12 @@ window.qaState=function(){
       return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
         lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
         lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
-        surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?"refined-terrain":"withheld-until-refined",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?"V5 DEM intersections, terrain shadows and colour":"unavailable"},
+        surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?"V5 DEM intersections, terrain shadows and colour":"unavailable"},
         physicalMoonVisible:phys, calendarMoonVisible:surfaceVisible && grp>0.01,
         displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?"refined-calendar":"debug-hidden"),
         moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
         moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only":"surface unavailable",
-        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?"awaiting current qualified terrain; no legacy substitution":phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
+        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?"awaiting current terrain; no legacy substitution":phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
     })()
   };
 };
@@ -5622,6 +5653,7 @@ window.SalahMoonHost=Object.freeze({
   const identity=skySceneIdentity();
   return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
    fraction:moonSky.frac,waxing:!!moonSky.waxing,up:moonSky.up,
+   maximumPresentationRatio:MOON_SCALE_MAX/(MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*clamp(moonSky.up)),
    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
    paused:document.hidden||!!$('.c')?.classList.contains('paused')};
  },
