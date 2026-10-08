@@ -122,6 +122,8 @@ async def run(a):
   clock_origin=time.time()*1000
   await ctx.add_init_script("(()=>{const D=Date,s="+str(clock_origin)+",t=D.parse("+json.dumps(stamp)+");window.Date=class extends D{constructor(...a){super(...(a.length?a:[t+D.now()-s]));}static now(){return t+D.now()-s;}};})();")
   await ctx.add_init_script(TIMER)
+  if a.trace_bootstrap:
+   await ctx.add_init_script(r"""(()=>{window.__bootstrapTrace=[];let owner;Object.defineProperty(window,'SalahSkyPreview',{configurable:true,get(){return owner;},set(next){owner=next;for(const name of ['clear','update']){const original=next[name];next[name]=function(...args){const event={name,args,at:performance.now(),stack:new Error().stack,accepted:window.SalahNativeSkyHost?.capture(false),before:{...next.state}};const result=original.apply(this,args);event.after={...next.state};event.classes=document.querySelector('.c')?.className;__bootstrapTrace.push(event);return result;};}}});})();""")
   await ctx.add_init_script('window.__startupOwners=[];window.__firstPaint=[];try{new PerformanceObserver(l=>__firstPaint.push(...l.getEntries().map(x=>({name:x.name,startTime:x.startTime})))).observe({type:"paint",buffered:true});}catch{}const _trace=setInterval(()=>{if(document.querySelector(".c"))__startupOwners.push(('+TRACE+')());if(performance.now()>14000)clearInterval(_trace);},100);')
   for mode in ['cold','warm']:
    mark=len(requests);page=await ctx.new_page();page.on('pageerror',lambda e:report['errors'].append(str(e)));page.on('response',lambda r:report['assetFailures'].append([r.url,r.status]) if r.url.startswith(origin) and r.status>=400 else None)
@@ -171,6 +173,7 @@ async def run(a):
      await page.wait_for_timeout(1000)
     run['lunarContinuity']={'frames':lunar,'firstObservedSurfaceMs':first,'blankAfterSurface':[x['at'] for x in lunar if first is not None and x['at']>first and not x['surface']],'refinedObserved':any(x['moon']['quality']=='empirical-adaptive' for x in lunar)}
     run['resources']=await frame.evaluate("performance.getEntriesByType('resource').map(x=>({name:x.name,transferSize:x.transferSize,encodedBodySize:x.encodedBodySize,decodedBodySize:x.decodedBodySize,duration:x.duration}))")
+   if a.trace_bootstrap:run['bootstrapTrace']=await frame.evaluate('window.__bootstrapTrace??[]')
    report['runs'].append(run);save();video=page.video;await page.close()
    if with_video:
     await video.save_as(a.out/f'{mode}.webm');frames=[]
@@ -231,9 +234,9 @@ async def run(a):
   report['checks']['completeViewportEvidence']=all(x['uniformBlank'] for r in report['runs'] for x in r.get('incompleteViewportFrames',[]))
   report['acquiringLocation']=a.acquiring
   report.update(externalRequests=external,serverFailures=failures);report['status']='REFERENCE' if a.v1 else 'PASS' if all(report['checks'].values()) else 'FAIL';save();await ctx.close();await browser.close()
- server.shutdown();captures=report['runs'][0]['captures'];sheet=Image.new('RGB',(330*len(captures),564),'#1a2335');draw=ImageDraw.Draw(sheet)
+ server.shutdown();captures=sorted(report['runs'][0]['captures'],key=lambda r:r['actualPresentedMs']);sheet=Image.new('RGB',(330*len(captures),564),'#1a2335');draw=ImageDraw.Draw(sheet)
  for i,r in enumerate(captures):sheet.paste(Image.open(a.out/r['file']),(330*i,30));draw.text((330*i+8,8),f"{r['actualPresentedMs']} ms actual ({r['requestedMs']})",fill='white')
  sheet.save(a.out/'startup-sequence.png');print(json.dumps({'status':report['status'],'checks':report['checks'],'out':str(a.out)},indent=2));return int(report['status']=='FAIL')
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--fonts',type=Path,required=True);p.add_argument('--scene',choices=SCENES,default='partial');p.add_argument('--dpr',type=float,default=1);p.add_argument('--offset',type=float,default=0);p.add_argument('--moon-duration',type=float,default=0);p.add_argument('--weather-delay',type=float,default=0);p.add_argument('--acquiring',action='store_true');p.add_argument('--v1',action='store_true');p.add_argument('--direct',action='store_true');p.add_argument('--ffmpeg',type=Path,default=shutil.which('ffmpeg'));raise SystemExit(asyncio.run(run(p.parse_args())))
+ p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--fonts',type=Path,required=True);p.add_argument('--scene',choices=SCENES,default='partial');p.add_argument('--dpr',type=float,default=1);p.add_argument('--offset',type=float,default=0);p.add_argument('--moon-duration',type=float,default=0);p.add_argument('--weather-delay',type=float,default=0);p.add_argument('--acquiring',action='store_true');p.add_argument('--v1',action='store_true');p.add_argument('--direct',action='store_true');p.add_argument('--trace-bootstrap',action='store_true');p.add_argument('--ffmpeg',type=Path,default=shutil.which('ffmpeg'));raise SystemExit(asyncio.run(run(p.parse_args())))

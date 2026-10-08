@@ -220,6 +220,23 @@ class Entry:
   self.context.close();self.server.shutdown()
   if self.errors or self.failures:raise RuntimeError('Unexpected page/local-asset errors: '+json.dumps([self.errors,self.failures]))
 
+def displayed_sky_currentness(s):
+ # A screenshot's paired marker is authoritative for its displayed owner.
+ # The earlier DOM snapshot may describe a refined frame already replaced by
+ # a current preview before that screenshot. Never qualify hidden metadata as
+ # visible pixels; never exempt the owner actually captured from the age fence.
+ presented=s.get('presentedFrame')
+ if presented:
+  owner=presented.get('owner');age=presented.get('ageMs')
+  current=isinstance(age,(int,float)) and math.isfinite(age) and 0<=age<=30000
+  return {'noStaleSky':owner!='refined' or current,
+          'previewCurrent':owner!='preview' or current,
+          'presentedOwnerKnown':owner in ['refined','preview','unavailable']}
+ owner=s.get('displayedOwner')
+ sky=s.get('sky') or {};preview=s.get('preview') or {}
+ return {'noStaleSky':owner!='refined' or sky.get('age') is not None and abs(sky['age'])<=30000,
+         'previewCurrent':owner!='preview' or preview.get('utcMs') is not None and abs(s['utc']-preview['utcMs'])<=30000}
+
 def semantic(s):
  m=s.get('model');rows=s['rows'];on=[r['key'] for r in rows if 'on' in r['cls'].split()];now=[r['key'] for r in rows if 'now' in r['cls'].split()]
  # qa.render is the snapshot actually consumed by the DOM painter. Calling
@@ -236,8 +253,7 @@ def semantic(s):
  # codes in the retained dawn control. This is a regional pixel gate, not a
  # claim of measured atmospheric radiance or a whole-frame average.
  test_air=alt is not None and -14<alt<-3 and baseY>50 and air.get('maskOpacity',0)>.15 and 'browserMinusBaseLuma' in air
- presented=s.get('presentedFrame');frame_current=presented['ageMs']<=30000 if presented else None
- return {'sixRows':len(rows)==6,'nextAgreement':not m or on==[m['next']] and m['next'] in s['countdown'] and s['nextMarkers']==[m['next']], 'currentAgreement':not m or now==([] if m['current']=='Forenoon' else [m['current']]),'noStaleSky':frame_current if presented and presented['owner']=='refined' else not s.get('sky') or s['sky'].get('age') is None or abs(s['sky']['age'])<=30000,'previewCurrent':frame_current if presented and presented['owner']=='preview' else not preview_visible or abs(s['utc']-s['preview']['utcMs'])<=30000,'daylightIdentity':not day or rgb[2]>=100 and (not ordinary or rgb[2]-rgb[0]>=10),'lunarForegroundAir':not test_air or air['browserMinusBaseLuma']>=-16,'geometry':s['card']['w']==325 and s['card']['h']==530,'noInventedLightning':s.get('lightning')!='on'}
+ return {'sixRows':len(rows)==6,'nextAgreement':not m or on==[m['next']] and m['next'] in s['countdown'] and s['nextMarkers']==[m['next']], 'currentAgreement':not m or now==([] if m['current']=='Forenoon' else [m['current']]),**displayed_sky_currentness(s),'daylightIdentity':not day or rgb[2]>=100 and (not ordinary or rgb[2]-rgb[0]>=10),'lunarForegroundAir':not test_air or air['browserMinusBaseLuma']>=-16,'geometry':s['card']['w']==325 and s['card']['h']==530,'noInventedLightning':s.get('lightning')!='on'}
 
 def replay(a,browser,fonts):
  rows=[]
@@ -343,9 +359,12 @@ def controls(a,browser,fonts):
     s=e.snap(f'frame-{len(rows):05}');s.update(wallElapsed=time.monotonic()-begin,checks=semantic(s));rows.append(s);file.write(json.dumps(s)+'\n');file.flush()
     if s['moon']['status']=='ready' and not s['moon']['legacyFallback'] and s['sky']['status']=='ready':break
     e.page.wait_for_timeout(1000)
-  checks['refinementRecovered']=rows[-1]['moon']['status']=='ready' and not rows[-1]['moon']['legacyFallback'];checks['prayerAgreement']=all(all(r.get('checks',semantic(r)).values()) for r in rows)
+  checks['refinementRecovered']=rows[-1]['moon']['status']=='ready' and not rows[-1]['moon']['legacyFallback']
+  scene_checks=[r.get('checks',semantic(r)) for r in rows]
+  checks['prayerAgreement']=all(all(c[k] for k in ['sixRows','nextAgreement','currentAgreement']) for c in scene_checks)
+  checks['sceneAgreement']=all(all(c.values()) for c in scene_checks)
   dump(a.out/'states.json',rows);dump(a.out/'worker-and-cadence.json',e.frame.evaluate('__h8'))
-  return {'status':'PASS' if all(checks.values()) and not e.errors else 'FAIL','checks':checks,'recoveryWallSeconds':time.monotonic()-begin,'errors':e.errors,'requests':e.requests,'responses':e.responses}
+  return {'status':'PASS' if all(checks.values()) and not e.errors else 'FAIL','checks':checks,'failures':[{'index':i,'control':rows[i].get('control'),'checks':c} for i,c in enumerate(scene_checks) if not all(c.values())],'recoveryWallSeconds':time.monotonic()-begin,'errors':e.errors,'requests':e.requests,'responses':e.responses}
  finally:e.close()
 
 def availability(a,browser,fonts):
@@ -392,21 +411,31 @@ def matrix(a,browser,fonts):
  return {'status':'MEASURED','scope':'Awaited physical-sky stills with weather held fixed; NOT live weather chronology or continuous playback. Full Moon solves are qualified separately.','cases':len(rows),'failures':[{'case':i,'family':r['family'],'utc':r['utc'],'checks':r['checks']} for i,r in enumerate(rows) if not all(r['checks'].values())]}
 
 def current_boundaries(a,browser,fonts):
- """Missing/contradictory precipitation through the ordinary current lane.
+ """Representative conditions through the ordinary current lane.
 
  Separate from matrix's explicit forecast-time preview. An absent or zero
  amount with a wet code retains the condition, but cannot manufacture particles.
  """
  rows=[]
- for family in ['contradictory-rain','partial-rain']:
+ expected={
+  'clear':('clear','☀️'), 'partial':('cloud','⛅'), 'overcast':('overcast','☁️'),
+  'fog':('fog','🌫️'), 'haze':('cloud','⛅'), 'drizzle':('drizzle','🌦️'),
+  'light-rain':('rain','🌧️'), 'rain':('rain','🌧️'), 'heavy-rain':('rain','🌧️'),
+  'showers':('rain','🌦️'), 'snow':('snow','🌨️'), 'thunder':('thunder','⛈️'),
+  'contradictory-rain':('rain','🌧️'), 'partial-rain':('rain','🌧️')}
+ for family,(category,icon) in expected.items():
   e=Entry(browser,a.root,a.out/family,fonts,start='2026-10-07T15:09:00Z',family=family)
   try:
-   e.ready();e.frame.wait_for_function("window.qaState?.().weatherHeader?.rawCode===63",timeout=30000)
+   code,cloud,amount,_=FAMILIES[family];effect=amount is not None and amount>0 and category in ['drizzle','rain','snow','thunder']
+   e.ready();e.frame.wait_for_function("code=>window.qaState?.().weatherHeader?.rawCode===code",arg=code,timeout=30000)
+   if effect:e.frame.wait_for_function("()=>[...document.querySelectorAll('.drop,.flake')].some(e=>{const s=getComputedStyle(e);return s.visibility==='visible'&&s.display!=='none'&&+s.opacity>.03;})",timeout=10000)
    s=e.snap('current-widget');truth=s['weather']['truth'];selected=s['weather']['selected'];checks=semantic(s)
-   checks.update(currentLane=selected is not None and selected['src']=='current' and truth['lane']=='live',conditionRetained=s['fx']=='rain' and s['weather']['header']['code']==63 and s['header']['icon']=='🌧️',temperatureCoherent=s['weather']['header']['temperature']==selected['temp']==24 and s['header']['temp']=='24°',uncertaintyDisclosed=bool(truth['visualPermissions']['quantitativeSupport']) and 'model estimate' in s['header']['label'],noInventedEffect=s['precip']=='off' and s['visibleParticles']==0 and not truth['visualPermissions']['rain'],noObservedClaim=truth['observedPresent'] is False)
+   temp=-2 if family=='snow' else 24
+   checks.update(currentLane=selected is not None and selected['src']=='current' and truth['lane']=='live',conditionRetained=s['fx']==category and s['weather']['header']['code']==code and s['header']['icon']==icon,temperatureCoherent=s['weather']['header']['temperature']==selected['temp']==temp and s['header']['temp']==str(temp)+'°',provenanceDisclosed='model estimate' in s['header']['label'],quantitativeEffect=(s['precip']=='on' and s['visibleParticles']>0) if effect else (s['precip']=='off' and s['visibleParticles']==0),noObservedClaim=truth['observedPresent'] is False,noFabricatedLightning=s['lightning']=='off')
+   if family in ['contradictory-rain','partial-rain']:checks.update(uncertaintyDisclosed=bool(truth['visualPermissions']['quantitativeSupport']),noInventedEffect=not truth['visualPermissions']['rain'])
    rows.append({'family':family,'state':s,'checks':checks,'responses':e.responses});dump(a.out/'current-boundaries.json',rows)
   finally:e.close()
- return {'status':'PASS' if all(all(r['checks'].values()) for r in rows) else 'FAIL','scope':'Ordinary1x current-provider admission; no simWx, no forecast track, no application clock seek. Contradictory and missing interval amounts do not fabricate rainfall.','cases':len(rows),'failures':[{'family':r['family'],'checks':r['checks']} for r in rows if not all(r['checks'].values())]}
+ return {'status':'PASS' if all(all(r['checks'].values()) for r in rows) else 'FAIL','scope':'Ordinary1x current-provider admission; no simWx, no forecast track, no application clock seek. WMO condition, temperature, disclosed model provenance and actual precipitation particles checked together. Contradictory and missing interval amounts do not fabricate rainfall. Not Moon refinement or continuous weather-motion evidence.','cases':len(rows),'failures':[{'family':r['family'],'checks':r['checks']} for r in rows if not all(r['checks'].values())]}
 
 
 def cpu_pressure(a,browser,fonts):

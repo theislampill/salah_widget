@@ -58,3 +58,13 @@ test('a failed row cancels its sibling before waiting for the joined result',asy
  if(result==='hung')release(new Error('test cleanup'));
  assert.equal(cancelled,true);assert.match(result.message,/controlled row failure/);
 });
+test('row workers get a locally owned Blob instead of reusing an opaque parent URL',async()=>{
+ const priorWorker=global.Worker,priorSelf=global.self,urls=[];global.self={location:{href:'blob:null/document-owned'}};
+ global.Worker=class{
+  constructor(url){assert.notEqual(url,global.self.location.href,'opaque ancestor URL is inaccessible from a file worker');urls.push(url);}
+  postMessage(m){if(m.kind==='shard-boot')queueMicrotask(()=>this.onmessage({data:{kind:'shard-ready',id:m.id,result:true}}));}
+  terminate(){}
+ };
+ try{const pool=await api.MoonPool.create({},'/* same authored worker source */');assert.equal(urls.length,2);assert.ok(urls.every(x=>x.startsWith('blob:')));for(const w of pool.workers)w.dispose();}
+ finally{global.Worker=priorWorker;global.self=priorSelf;}
+});

@@ -5217,7 +5217,12 @@ async function loadPrayerData(){
       tz=cached.timezone;                                    // validated selected-envelope metadata, before requested-day filtering
       if(!simulationReady()) return;
       const day=prayerCivilDay();
-      if(cached.date===day && adoptPrayerBundle(cached.data,day,op,true,false) && !_loopStarted){ render(); _renderDirty=false; }
+      if(cached.date===day && adoptPrayerBundle(cached.data,day,op,true,false) && !_loopStarted){
+        render();
+        // Adopting the first prayer scene clears the earlier sky preview.
+        // Republish its accepted target in this turn, before network/rAF yield.
+        window.SalahSkyPreview?.update(); _renderDirty=false;
+      }
     }
     if(!requestEligible(op)) return;
     let requested=prayerCivilDay(); op.requestedDay=requested; op.requestZone=tz;
@@ -5234,7 +5239,9 @@ async function loadPrayerData(){
       if(!simulationReady()) return;
       day=prayerCivilDay(); _prayerCooldown.current.day=day;
     }
-    if(adoptPrayerBundle(data,requested,op) && !_loopStarted){ render(); _renderDirty=false; }
+    if(adoptPrayerBundle(data,requested,op) && !_loopStarted){
+      render(); window.SalahSkyPreview?.update(); _renderDirty=false;
+    }
     else if(!today && requestEligible(op)) showError("Could not load prayer times");
   }catch(e){
     if(requestEligible(op) && !today) showError("Could not load prayer times");

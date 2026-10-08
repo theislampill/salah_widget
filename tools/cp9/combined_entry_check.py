@@ -35,7 +35,7 @@ def run(root, out, font_source, dpr=1):
     server=http.server.ThreadingHTTPServer(('127.0.0.1',0),Server);threading.Thread(target=server.serve_forever,daemon=True).start()
     origin=f'http://127.0.0.1:{server.server_port}'
     report={'status':'RUNNING','runtime':runtime_identity(root),'dpr':dpr,'checks':{},'errors':[],'assetFailures':[],
-            'scope':'Pages-shaped actual iframe; controlled providers/fonts/location and 1x clock from 2026-10-07T20:30Z. Not live providers or physical GPS.',
+            'scope':'Pages-shaped actual iframe; controlled providers/fonts/location and 1x clock from 2026-10-07T20:30Z. Current weather includes explicit timezone, interval and units; admission is asserted. Not live providers or physical GPS.',
             'v1Hashes':{n:hashlib.sha256((root/'v1'/n).read_bytes()).hexdigest() for n in ['index.html','config.js','VERSION.json','MANIFEST.sha256']}}
     def save():(out/'results.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     try:
@@ -52,6 +52,13 @@ def run(root, out, font_source, dpr=1):
                     if urlsplit(u).hostname=='api.aladhan.com':
                         date=urlsplit(u).path.rstrip('/').split('/')[-1];day,month,year=date.split('-')
                         value['data']['date']['gregorian'].update(date=date,day=day,month={'number':int(month)},year=year)
+                    if urlsplit(u).hostname=='api.open-meteo.com':
+                        # The preservation fixture predates current-record admission.
+                        # Keep its values, but supply the provider's required time/
+                        # unit envelope; V1 and root receive the identical payload.
+                        value.update(latitude=24.47,longitude=39.61,timezone='Asia/Riyadh',utc_offset_seconds=10800)
+                        value['current'].update(time='2026-10-07T23:30',interval=900)
+                        value['current_units']={'time':'iso8601','interval':'seconds','weather_code':'wmo code','temperature_2m':'°C','apparent_temperature':'°C','relative_humidity_2m':'%','dew_point_2m':'°C','wind_speed_10m':'m/s','wind_direction_10m':'°','wind_gusts_10m':'m/s','cloud_cover':'%','cloud_cover_low':'%','cloud_cover_mid':'%','cloud_cover_high':'%','precipitation':'mm','rain':'mm','showers':'mm','snowfall':'cm','visibility':'m','is_day':''}
                     r.fulfill(json=value,headers={'Access-Control-Allow-Origin':'*'})
             c.route('**/*',route)
             c.add_init_script(OBSERVER)
@@ -83,6 +90,10 @@ def run(root, out, font_source, dpr=1):
             assert all(any(a['type']==k and a['status']=='refining' for a in perf['actions']) for k in ['date','settings'])
             report['checks']['settingsDuringRefinement']=True
             before=f.evaluate(STATE);report['root']=before
+            report['weatherAdmission']=f.evaluate('({selected:selectedWeather(),eligibility:weatherEligibility(weather),header:qaState().weatherHeader})')
+            admitted=report['weatherAdmission'];assert admitted['selected'] and admitted['selected']['code']==2 and admitted['selected']['temp']==28
+            assert admitted['header']['rawCode']==2 and admitted['header']['temperature']==28
+            report['checks']['currentWeatherAdmitted']=True
             report['workerEvents']=f.evaluate('__mq.events')
             assert before['rows']==6 and before['host']['timeScale']==1 and not before['moon']['legacyFallback'] and before['moon']['quality']=='empirical-adaptive'
             precision=before['moon']['phasePrecision']
@@ -112,6 +123,8 @@ def run(root, out, font_source, dpr=1):
             f.wait_for_function("typeof qaState==='function'&&qaState().cache.prayerLoaded",timeout=30000);f.evaluate('document.fonts.ready')
             q.wait_for_timeout(1500);q.locator('iframe').screenshot(path=out/'v1-iframe.png')
             report['v1']={'qa':f.evaluate('qaState()'),'geometry':f.locator('.c').bounding_box(),'footer':f.locator('.d').bounding_box(),'localRequests':[u.replace(origin,'') for u in requests[request_start:] if u.startswith(origin)]}
+            report['v1']['weather']=f.evaluate('({code:weather.code,temp:weather.temp,icon:document.querySelector("#wi").textContent,temperature:document.querySelector("#wt").textContent})')
+            assert report['v1']['weather']['code']==2 and report['v1']['weather']['temp']==28
             assert report['v1']['geometry']['width']==325 and report['v1']['geometry']['height']==530
             assert '/salah_widget/v1/config.js' in report['v1']['localRequests'] and '/salah_widget/config.js' not in report['v1']['localRequests']
             f.locator('.buckle').click(force=True);f.locator('#set-label').fill('V1 separate');f.locator('#set-time').select_option('12');f.locator('#setClose').click(force=True)

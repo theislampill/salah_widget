@@ -13,7 +13,7 @@ async function boot(m){
  const manifest=MOON_ASSET_MANIFEST;
  const from=(name,max)=>m.offline?new Promise((resolve,reject)=>offlineParts.set(name,{resolve,reject,bytes:new Uint8Array(max),at:0,index:0})):m.embedded?Promise.resolve(unbase64(m.embedded[name])):read(new URL(name,m.base),max);
  const wasm=unbase64(MOON_WASM_BASE64),[dem,colour]=await Promise.all([from(manifest.assets.dem.path,manifest.assets.dem.bytes),from(manifest.assets.colour.path,manifest.assets.colour.bytes)]);
- return MoonPool.create({wasm,dem,colour,manifest});
+ return MoonPool.create({wasm,dem,colour,manifest},m.workerSource);
 }
 async function pump(){
  if(running||!latest||!enginePromise)return;running=true;

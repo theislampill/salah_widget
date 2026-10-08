@@ -11,14 +11,18 @@ motion claims do not qualify the new renderer.
 The deployed renderer includes the supplied V5 terrain Moon on CP9. Native phase,
 prayer and settings ownership is retained; a WebAssembly worker produces a
 terrain preview and then angular refinement. Deployed main still uses the original
-PBR during loading/failure. PR42 withholds that inferior substitution and the
-intermediate terrain preview from the visible slot, preserving retry and UI
-availability until a current refined surface is admitted. The fixed V5 profile,
+PBR during loading/failure. PR42 withholds that inferior substitution, retains
+an independently current refined surface during replacement, and can bridge
+with the same full-spatial V5 terrain's explicitly labelled angular preview.
+The preview uses the same material, relief, Earthshine and display mapping;
+it is not called completed adaptive refinement. The fixed V5 profile,
 metric data and kernel are unchanged. A current terrain result supplies the device-resolution detail canvas;
 the base excludes the duplicate Moon and the legacy SVG surface is hidden while
-the detail result is current. Final visual acceptance requires `ready`, no pending
-work and the completed adaptive quality criterion, with worker-to-pixel evidence;
-loading and preview screenshots are not final qualification.
+the detail result is current. Final visual acceptance requires a current surface
+meeting the completed adaptive quality criterion, with worker-to-pixel evidence;
+a pending replacement does not invalidate an otherwise eligible full surface.
+Loading and preview screenshots are not final qualification. Target, seek and
+epoch fences and the original 0.0416-device-pixel geometric limit still apply.
 See [Moon integration](docs/moon/INTEGRATION.md) and the
 [receiving qualification](docs/moon/QUALIFICATION.md) for measured latency,
 opaque composition, file entry and remaining limits. Final refinement takes
@@ -42,7 +46,10 @@ extinction, horizon, Moon and star projection remain unchanged. This is a calend
 presentation adaptation, not a new calibrated radiance model. The head computes
 the bounded atmosphere before static markup paints, from the shared accepted
 saved/manual configuration and native wall clock; no optional catalogue, diffuse
-asset or Moon solve gates prayer controls. See the H1–H8 repair record in
+asset or Moon solve gates prayer controls. Cached and network prayer bootstrap
+must also republish the accepted atmosphere before yielding after native scene
+adoption; ordinary animation still has one final presentation opportunity.
+See the H1–H8 repair record in
 [STARTUP_CLOUD_HOTFIX.md](docs/real-sky/STARTUP_CLOUD_HOTFIX.md).
 
 **Companion docs:** [`ARCHITECTURE.md`](ARCHITECTURE.md) — the maintainer's responsibility/data-flow/contract map

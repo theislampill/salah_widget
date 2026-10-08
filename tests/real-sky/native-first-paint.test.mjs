@@ -36,3 +36,27 @@ test('boot republishes the accepted preview after native scene invalidation befo
  assert.equal(visible,true,'A valid daytime sky must exist at the first asynchronous yield');
  assert.deepEqual(events,['weather','native-render','preview','prayer-await']);
 });
+
+for(const cached of [true,false])test(`${cached?'cached':'network'} prayer bootstrap cannot expose a cleared daytime preview`,async()=>{
+ const source=fs.readFileSync(new URL('../../src/native/index.html',import.meta.url),'utf8');
+ const load=source.slice(source.indexOf('async function loadPrayerData(){'),source.indexOf('// Invalid explicit boot postpones'));
+ let visible=true,resolve,updates=0,renders=0;
+ const day='07-10-2026',data={meta:{timezone:'America/New_York'}};
+ const s={simulationReady:()=>true,lat:28.5,lon:-81.4,tz:'America/New_York',today:null,
+  _loopStarted:false,_renderDirty:true,_prayerCooldown:{current:{}},
+  beginPrayerRequest:()=>({}),prayerCivilDay:()=>day,requestEligible:()=>true,prayerResultEligible:()=>true,
+  readPrayerCache:()=>cached?{date:day,timezone:s.tz,data}:null,
+  adoptPrayerBundle(){s.today=data;return true;},
+  // Actual native paint adopts the scene key and clears the earlier preview.
+  render(){renders++;visible=false;},
+  window:{SalahSkyPreview:{update(){updates++;visible=true;}}},
+  fetchTimings:()=>new Promise(r=>resolve=r),showError(){throw Error('unexpected');},finishPrayerRequest(){}};
+ vm.createContext(s);vm.runInContext(load+'\npending=loadPrayerData();',s);
+ if(cached)assert.equal(visible,true,'Cached prayer paint must republish before yielding to network/rAF');
+ resolve(data);await s.pending;
+ assert.equal(visible,true,'Fresh prayer paint must republish before yielding to the first native rAF');
+ assert.equal(updates,renders);assert.ok(renders>0);
+ // Once running, the existing final native rAF remains the sole presenter.
+ const before={updates,renders};s._loopStarted=true;vm.runInContext('pending=loadPrayerData();',s);resolve(data);await s.pending;
+ assert.deepEqual({updates,renders},before,'No extra synchronous render or presenter in ordinary operation');
+});

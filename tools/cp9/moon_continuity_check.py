@@ -4,12 +4,43 @@ Uses isolated profiles and the existing current-provider fixture lane. A public
 entry is fetched from Pages, with an explicitly labelled Orlando/time fixture;
 it is not a reconstruction of the owner's unrecorded weather or location.
 """
-import argparse, hashlib, json, shutil, sys, time, traceback
+import argparse, hashlib, json, math, shutil, sys, time, traceback
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import hotfix_stress_check as h
 from browser_runtime import launch_browser, browser_identity
 from runtime_identity import runtime_identity
+
+def observer_coverage(telemetry, rows, expected_seconds=None):
+ """Fail closed if the visibility observer died or stopped covering the capture.
+
+ Ownership changes are observed on rAF; unchanged ownership is persisted at
+ one-second intervals. These are DOM ownership receipts, not a claim of
+ per-rAF framebuffer capture. Allow 500ms scheduling slack for the heartbeat
+ and 500ms beyond the two-second screenshot cadence for full-duration tails.
+ """
+ frames=telemetry.get('frames',[])
+ finite=lambda x:isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x)
+ times=[x.get('at') for x in frames]
+ valid=bool(times) and all(map(finite,times))
+ gaps=[b-a for a,b in zip(times,times[1:])] if valid else []
+ start=rows[0].get('at') if rows else None
+ end=rows[-1].get('capturedAt') if rows else None
+ endpoints=finite(start) and finite(end) and end>=start
+ checks={
+  'observerNoError':not telemetry.get('error'),
+  'observerOrdered':valid and all(gap>0 for gap in gaps),
+  'observerHeartbeat':valid and all(0<gap<=1500 for gap in gaps),
+  'observerCoversCaptures':bool(valid and endpoints and times[0]<=start+1500 and times[-1]>=end-1500),
+ }
+ if expected_seconds is not None:
+  checks['observerFullDuration']=bool(endpoints and end-start>=expected_seconds*1000-2500)
+ return {'checks':checks,'maxOwnershipGapMs':max(gaps,default=None),
+         'captureSpanMs':end-start if endpoints else None,
+         'firstOwnershipAt':times[0] if valid else None,
+         'lastOwnershipAt':times[-1] if valid else None,
+         'scope':'rAF ownership observer with 1s stored heartbeat; pixels sampled separately',
+         'limitsMs':{'heartbeat':1500,'captureEdges':1500,'fullDurationTail':2500}}
 
 OBSERVE=r'''(()=>{
  const W=Worker;window.__lunarContinuity={events:[],surfaces:{},frames:[]};
@@ -109,9 +140,12 @@ def run(a):
     layer_gaps=[x for x in telemetry['frames'] if first_visible is not None and x['at']>first_visible and not x['visible']]
     checks={'refinedObserved':first_ready is not None,'noWithdrawalAfterCurrentSurface':not blanks,'originalGeometryBound':all(not x['surface'] or x['moon']['phasePrecision']['targetPositionErrorBound']<=.041600001 for x in rows),'noPageErrors':not e.errors,'noLocalAssetFailures':not e.failures,'currentProviderConsumed':bool(e.responses)}
     checks['visibleLayerContinuity']=first_visible is not None and not layer_gaps
+    coverage=observer_coverage(telemetry,rows,a.duration if a.full_duration else None)
+    checks.update(coverage['checks'])
+    checks['captureFilesPresent']=bool(rows) and all((a.out/x['capture']).is_file() and (a.out/x['capture']).stat().st_size>0 for x in rows)
     if a.transitions:checks['weatherHorizonFailureRecovery']=len(actions)==7 and rows[-1]['moon']['renders']>=2 and not blanks
     if a.transitions:checks['currentWeatherSequenceConsumed']=len(weather_history)==3 and all(x.get('acceptedAt') is not None and not x['observedPresent'] for x in weather_history)
-    report.update(actions=actions,weatherHistory=weather_history,status='PASS_SCOPED' if all(checks.values()) else 'FAIL',checks=checks,firstSurfaceSeconds=first_surface,unexpectedWithdrawals=blanks,visibleLayerGaps=layer_gaps,firstRefinedSeconds=first_ready,wallSeconds=time.monotonic()-begin,captures=len(rows),errors=e.errors,requests=e.requests,responses=e.responses,initial=rows[0],final=rows[-1])
+    report.update(actions=actions,weatherHistory=weather_history,observerCoverage=coverage,status='PASS_SCOPED' if all(checks.values()) else 'FAIL',checks=checks,firstSurfaceSeconds=first_surface,unexpectedWithdrawals=blanks,visibleLayerGaps=layer_gaps,firstRefinedSeconds=first_ready,wallSeconds=time.monotonic()-begin,captures=len(rows),errors=e.errors,requests=e.requests,responses=e.responses,initial=rows[0],final=rows[-1])
     # Save true worker surfaces as crops for independent pixel comparison. No
     # material, exposure, geometry or lighting is changed for this diagnostic.
     import base64

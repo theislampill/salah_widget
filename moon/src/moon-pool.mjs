@@ -26,14 +26,19 @@ function moonRowBridge(worker){
 }
 class MoonPool {
  constructor(workers){if(workers.length!==2)throw new RangeError('Two lunar row owners required');this.workers=workers;this.lightKey=null;this.material=null;this.serial=0;}
- static async create(assets){
-  const bridges=[];
+ static async create(assets,workerSource){
+  if(typeof workerSource!=='string'||!workerSource.length)throw new Error('Owned lunar worker source required');
+  // A file document's blob URL belongs to its opaque origin. A nested worker
+  // cannot reuse that ancestor URL; create an identical source Blob owned by
+  // this worker instead. No network fetch or relaxed browser security.
+  const bridges=[],url=URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'}));
   try{
    for(let i=0;i<2;i++){
-    const bridge=moonRowBridge(new Worker(self.location.href));bridge.ready=bridge.boot(assets);bridges.push(bridge);
+    const bridge=moonRowBridge(new Worker(url));bridge.ready=bridge.boot(assets);bridges.push(bridge);
    }
    await Promise.all(bridges.map(b=>b.ready));return new MoonPool(bridges);
   }catch(error){for(const b of bridges)b.dispose();throw error;}
+  finally{URL.revokeObjectURL(url);}
  }
  cancel(){this.serial++;for(const w of this.workers)w.cancel();}
  async render(scene,options={}){

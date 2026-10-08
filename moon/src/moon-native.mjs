@@ -176,7 +176,7 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
     }catch(error){failed(error);}
    };
    const offline=!!window.__SALAH_MOON_OFFLINE__;
-   w.postMessage({kind:'boot',base,offline});if(offline)offlineTransport(w);
+   w.postMessage({kind:'boot',base,offline,workerSource:MOON_WORKER_SOURCE});if(offline)offlineTransport(w);
    clearTimeout(deadline);deadline=setTimeout(()=>{if(worker===w&&!ready)failed(new Error('Moon asset startup deadline exceeded'));},120000);
   }catch(e){failed(e);}
  }
