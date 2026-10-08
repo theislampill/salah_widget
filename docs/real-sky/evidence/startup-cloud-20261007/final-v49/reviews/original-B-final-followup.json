@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "reviewer": "B",
+  "followup": "Bounded V46 weather/entry read-only reconciliation",
+  "target": {
+    "runtime": "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+    "index_sha256": "e01d8320cd08da3d20e725286d7937eb6fb0312ad535e9a81265e4fd187c7fb9",
+    "published_head": "d42f31e6fbc55b735ab06d6189462aba182e5fed",
+    "worktree": "workspace"
+  },
+  "activity": "Read source/diffs/receipts and view existing images only. No browser, solver, tests, source/Git changes or campaign expansion.",
+  "material_new_runtime_findings": [],
+  "confirmed": [
+    {
+      "claim": "V46 runtime changes only index.html/offline.html versus V45;133 runtime files unchanged.",
+      "basis": "Compared every path/hash in runtime-v45.json and runtime-v46.json. Live index hash matches V46. Native authored diff only republishes accepted sky synchronously after two pre-loop prayer adoption renders.",
+      "source": [
+        "workspace/src/native/index.html:3257",
+        "workspace/src/native/index.html:3279"
+      ],
+      "evidence": [
+        "local:h8/runtime-v45.json",
+        "local:h8/runtime-v46.json",
+        "local:h8/v45-v46-reuse.json"
+      ],
+      "limit": "Runtime manifest comparison and current source diff; no fresh full-tree hash recomputation by reviewer."
+    },
+    {
+      "claim": "A/V1-B/c1-C/V46 rain replay uses identical provider bytes per family and demonstrates a presentation-permission divergence.",
+      "rain_response_sha256": "7d8a4b4be845fad4c61c8f7e783ddcc243d1d48e29ca2cf6d8869c9897b93463",
+      "clear_response_sha256": "021ef82c111288cda352e473766022404c0e0433185243adfd5292d0a605be76",
+      "observed": {
+        "rain": {
+          "A": {
+            "fx": "rain",
+            "icon": "🌧️",
+            "particles": 27
+          },
+          "B": {
+            "fx": "overcast",
+            "icon": "≈",
+            "particles": 0
+          },
+          "C": {
+            "fx": "rain",
+            "icon": "🌧️",
+            "particles": 29
+          }
+        },
+        "clear": {
+          "A": {
+            "fx": "clear",
+            "icon": "☀️",
+            "particles": 0
+          },
+          "B": {
+            "fx": "clear",
+            "icon": "≈",
+            "particles": 0
+          },
+          "C": {
+            "fx": "clear",
+            "icon": "☀️",
+            "particles": 0
+          }
+        }
+      },
+      "basis": "Read all six result.json response hashes and identities; inspected all six widget PNGs plus C rain particle-difference PNG. B selected current code63/2mm but presented overcast; C selected identical code63/2mm with labelled model estimate and rain permission, lightning off.",
+      "evidence": [
+        "local:h8/joined-v46-firefox-rain-abc/results.json",
+        "local:h8/joined-v46-firefox-rain-abc/A-frozen-V1-rain/widget.png",
+        "local:h8/joined-v46-firefox-rain-abc/B-deployed-c1-rain/widget.png",
+        "local:h8/joined-v46-firefox-rain-abc/C-PR42-rain/widget.png",
+        "local:h8/joined-v46-firefox-rain-abc/A-frozen-V1-clear/widget.png",
+        "local:h8/joined-v46-firefox-rain-abc/B-deployed-c1-clear/widget.png",
+        "local:h8/joined-v46-firefox-rain-abc/C-PR42-clear/widget.png"
+      ],
+      "limit": "Controlled Orlando substitution. Not reconstruction of original personal site/cache/provider event, numerical particle-count equality, or visual/pixel identity with V1."
+    },
+    {
+      "claim": "Corrected root/V1 caller supplies the same valid weather envelope to both sides; current admission succeeds in both engines without weakening product admission.",
+      "basis": "Caller now augments preservation fixture with Asia/Riyadh,2026-10-07T23:30,interval900 and explicit units. Both receipts record root selected current code2,temp28,eligibility true and header rawCode2/temp28. Both record V1 code2/temp28/icon cloud/temperature28°. The old unsupported missing-envelope root fixture is superseded for weather only.",
+      "source": [
+        "workspace/tools/cp9/combined_entry_check.py:55",
+        "workspace/tools/cp9/combined_entry_check.py:93",
+        "workspace/tools/cp9/combined_entry_check.py:126"
+      ],
+      "caller_sha256": "41ecd469d39248a2624f9d28db89900b88de54bfd421de40608f1c3aa3eaeb5b",
+      "evidence": [
+        "local:h8/joined-v46-firefox-normal-root-v1/results.json",
+        "local:h8/joined-v46-chromium-normal-root-v1-current/results.json",
+        "local:h8/joined-v46-firefox-normal-root-v1/root-iframe.png",
+        "local:h8/joined-v46-firefox-normal-root-v1/v1-iframe.png",
+        "local:h8/joined-v46-chromium-normal-root-v1-current/root-iframe.png",
+        "local:h8/joined-v46-chromium-normal-root-v1-current/v1-iframe.png"
+      ],
+      "limit": "Matches admitted condition/temperature for this controlled dry partly-cloudy fixture. Root PNGs show the settings cog over the weather slot after interaction; V1 PNGs show its cloud icon. These PNGs cannot support visible icon or pixel equality. Existing hover/focus affordance is intentional, not a new weather defect.",
+      "affordance_source": "workspace/src/native/index.html:310"
+    },
+    {
+      "claim": "Final V46 Firefox consumes actual live current weather while the hourly drizzle forecast stays out of current effects.",
+      "observed": {
+        "source": "Open-Meteo current model",
+        "current_code": 3,
+        "temperature_c": 25,
+        "precipitation_mm": 0,
+        "interval_seconds": 900,
+        "condition": "model-estimated-overcast",
+        "icon": "☁️",
+        "lane": "live",
+        "hourly_code": 51,
+        "precip_effect": "off",
+        "visible_particles": 0,
+        "observed_present": false,
+        "final_source_age_ms": 852429
+      },
+      "basis": "Read16 live samples and results; inspected live-15.png. Current record remains eligible inside900000ms source TTL. No weather-response interception according to live caller path; received hourly code51 does not replace current code3 or manufacture particles.",
+      "evidence": [
+        "local:h8/joined-v46-firefox-live-provider/results.json",
+        "local:h8/joined-v46-firefox-live-provider/live.json",
+        "local:h8/joined-v46-firefox-live-provider/live-15.png"
+      ],
+      "limit": "Fresh live dry/overcast model compatibility and lane separation, not a live wet-rain witness, direct local observation, exact owner location, or deployment verification."
+    }
+  ],
+  "disposition": "No new material runtime defect or admission weakening identified in this follow-up. Preserve confirmed claim limits; no extra scenario or test requested.",
+  "automatic_pass": false,
+  "merge_release_authority": false
+}

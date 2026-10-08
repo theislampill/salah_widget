@@ -11,6 +11,7 @@ import {nativeInverseCode} from './native-composition.mjs';
 import {nativeEncodingThresholds} from './native-encoding.mjs';
 
 let previewEdges=null;
+const preparedFields=new WeakMap();
 function previewCode(value,exposure){
  if(!previewEdges)previewEdges=nativeEncodingThresholds();
  const y=exposure*Math.max(0,value);let low=0,high=256;
@@ -107,16 +108,29 @@ export class NativeStarPreview {
  * a lookup reverses their shared encoding, then stars join before encoding.
  */
 export function joinNativeStarPreview(preview,background,stars){
- if(background.length!==325*530*4||stars.linear.length!==325*530*3)throw new RangeError('Catalogue preview dimensions');
- const E=preview.raster.effectiveExposure,decode=Float64Array.from({length:256},(_,i)=>nativeInverseCode(i,E)),gas=new Float64Array(stars.linear.length),linear=new Float64Array(gas.length),rgba=new Uint8ClampedArray(background);
+ if(!(background instanceof Uint8ClampedArray)||background.length!==325*530*4||stars.linear.length!==325*530*3)throw new RangeError('Catalogue preview dimensions');
+ const E=preview.raster.effectiveExposure,decode=Float64Array.from({length:256},(_,i)=>nativeInverseCode(i,E)),source=new Uint8ClampedArray(background),stellar=new Float64Array(stars.linear.length),rgba=new Uint8ClampedArray(source);
  for(let p=0;p<325*530;p++)for(let k=0;k<3;k++){
   const i=3*p+k,v=stars.linear[i];if(!Number.isFinite(v)||v<0)throw new RangeError('Catalogue preview channel');
-  gas[i]=decode[background[4*p+k]];linear[i]=gas[i]+v;
+  stellar[i]=v;
   // Unchanged atmospheric bytes already passed the SAME encoder. Re-encode
   // only actual PSF support, rather than all517k channels twice per preview.
-  if(v>0)rgba[4*p+k]=previewCode(linear[i],E);
+  if(v>0)rgba[4*p+k]=previewCode(decode[source[4*p+k]]+v,E);
  }
- return {...preview,rgba,atmosphereRGBA:background,quality:'physical-background-and-bright-catalogue-preview',raster:{...preview.raster,width:325,height:530,linear,backgroundLinear:gas,skyBackgroundLinear:gas,stellarLinear:stars.linear,starPreview:stars.diagnostics},diagnostics:{...preview.diagnostics,stars:stars.diagnostics}};
+ // Display preparation does not need two more full raw planes. Materialize
+ // them only for a raw-field consumer (including device-resolution Moon gas).
+ // Own the inputs first and validate EVERY stellar channel before returning;
+ // this is scheduling/allocation only, never a star or atmosphere quality cut.
+ let gas=null,linear=null;
+ const atmosphere=()=>{
+  if(!gas){gas=new Float64Array(stellar.length);for(let p=0;p<325*530;p++)for(let k=0;k<3;k++)gas[3*p+k]=decode[source[4*p+k]];}
+  return gas;
+ };
+ const raster={...preview.raster,width:325,height:530,
+  get linear(){if(!linear){const g=atmosphere();linear=new Float64Array(stellar.length);for(let i=0;i<linear.length;i++)linear[i]=g[i]+stellar[i];}return linear;},
+  get backgroundLinear(){return atmosphere();},get skyBackgroundLinear(){return atmosphere();},stellarLinear:stellar,starPreview:stars.diagnostics};
+ preparedFields.set(raster,{source,decode});
+ return {...preview,rgba,atmosphereRGBA:source,quality:'physical-background-and-bright-catalogue-preview',raster,diagnostics:{...preview.diagnostics,stars:stars.diagnostics}};
 }
 
 /** Exact display-byte counterpart of nativeCalendarRegion. Only the moving
@@ -126,10 +140,10 @@ export function joinNativeStarPreview(preview,background,stars){
 export function nativeStarPreviewRegion(preview,mask,rows){
  const r=preview.raster,n=325*rows;if(!Number.isInteger(rows)||rows<1||rows>530||mask&&mask.length!==n)throw new RangeError('Catalogue preview mask dimensions');
  const base=preview.rgba.subarray(0,n*4);if(!mask)return base;
- const out=new Uint8ClampedArray(base);
+ const out=new Uint8ClampedArray(base),prepared=preparedFields.get(r);
  for(let p=0;p<n;p++){
   const m=mask[p];if(!Number.isFinite(m)||m<0||m>1)throw new RangeError('Catalogue preview mask');if(m===1)continue;
-  for(let k=0;k<3;k++)out[4*p+k]=m===0?preview.atmosphereRGBA[4*p+k]:previewCode(r.skyBackgroundLinear[3*p+k]+r.stellarLinear[3*p+k]*m,r.effectiveExposure);
+  for(let k=0;k<3;k++)out[4*p+k]=m===0?preview.atmosphereRGBA[4*p+k]:previewCode((prepared?prepared.decode[prepared.source[4*p+k]]:r.skyBackgroundLinear[3*p+k])+r.stellarLinear[3*p+k]*m,r.effectiveExposure);
  }
  return out;
 }

@@ -1,79 +1,122 @@
-# Current-widget repair — PR42
+# Current-widget repair â€” PR42
 
 ## Current frontier
 
-**Joined qualification is OPEN.** The latest published continuity repair is
-`d42f31e6fbc55b735ab06d6189462aba182e5fed` on
-`codex/hotfix-startup-clouds`. PR42 remains OPEN/DRAFT against main
-`c1a480c97e9af188cf57704502d818c0584cf265`. PR41/39/40 are already merged.
-This work authorizes follow-up commits/pushes to PR42, **not merge or deployment**.
-No PR38 donor, archive reprocessing, main write or branch deletion is involved.
+**The finite H1â€“H8 repair is qualified for owner review, with the limitations
+below. PR42 remains Draft; this is not a merge, deployment or completion of the
+scientific qualification programme.** Branch `codex/hotfix-startup-clouds`, base
+`c1a480c97e9af188cf57704502d818c0584cf265`. The final follow-up retains published
+ancestor `ded843848111c2094f9a3ad4f61cb3098b4bc86a`. The exact final Git head is
+reported in PR42's body/readback; the noncircular runtime manifest binds its bytes.
+PR39/40/41 were already merged. PR38 and frozen V1 are untouched.
 
-Local V46 runtime tree SHA-256:
-`f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05`.
-Final served index SHA-256:
-`e01d8320cd08da3d20e725286d7937eb6fb0312ad535e9a81265e4fd187c7fb9`.
-The native builder's intermediate entry hash is not the final Moon-expanded entry.
+Final V49 runtime tree SHA-256: `f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260`.
+Final Moon-expanded index SHA-256: `ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee`.
+The native builder's intermediate entry hash is not the deployed entry hash.
+See the [runtime manifest](evidence/startup-cloud-20261007/final-v49/CANDIDATE_RUNTIME.json),
+[175-row qualification matrix](evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json) and
+[curated evidence manifest](evidence/startup-cloud-20261007/final-v49/MANIFEST.json). Full timestamped captures and
+raw traces remain under `C:/Users/theis/Documents/Codex/startup-cloud-hotfix-20261007/h8/`.
+Each retained result keeps its original runtime; scheduling/entry evidence is
+not silently relabelled as fresh V49 evidence.
 
-Both V38 27-hour60x/600x and49-hour600x traversals, ordinary day/night weather
-sequences, root/V1 entries, DPR rim controls, rain replay and startup families
-returned. They are historical controls for the subsequent continuity repair,
-not a blanket qualification of the latest local runtime. No old controller is
-running. One historical Chromium60x document pause remains under traced replay. The
-Firefox startup stall is fixed and its actual-entry controls now pass; its
-negative receipts remain explicit adverse evidence for the older runtime.
+The final interruption repair addresses a real 600x deadline failure. V48 Firefox
+49-hour traversal had one unavailable final-document frame: a 29,400 ms-old
+preparation and its 28,800 ms retry lacked the unchanged 5 ms wall-time
+publication reserve inside the 30-second age limit.
+Repeated fixed-camera angular calculations consumed the retry budget. V49 caches
+only exact private pixel rays/solid angles, keyed by every camera degree of
+freedom and bounded to four native-sized entries. Solar direction, UTC, weather,
+radiance, exposure, admitted frames and currentness are never cached there.
+V48's validated lazy star/background planes remain. Full Moon gas fields are
+still materialized when needed. The old source fails the repeated-ray control;
+24 paired raw binary64/encoded/display-receipt comparisons are exact. Actual
+Firefox 49-hour and Chromium 27-hour replays at 600x replays have zero expired/unavailable observations.
+This is measured headroom, not a universal guarantee against arbitrary OS stalls.
 
-The local V45 iteration preserves the V37 material/layer correction and adds
-bounded lunar continuity, row scheduling, worker task yielding and separated
-star-catalogue startup admission. These iteration labels are not PR numbers.
-V43 FAILED the near-half/DPR3 Firefox normal-clock control: no final terrain
-result in660 seconds, with withdrawals when the unchanged phase allowance
-expired. This is a blocking negative control, not a performance exemption.
-The final V45 Firefox near-half/DPR3 replay produced three full results over
-660.109 seconds without withdrawal after its first terrain preview. V45 also
-repairs the Chromium file-origin child-worker boot and passes actual offline
-refinement in both engines. V45's joined Firefox rain case exposed one dark
-first-visible warm frame: cached prayer adoption cleared the first preview,
-then yielded before the native loop. The network prayer path had the same gap.
-V46 republishes after both startup-only prayer renders in the same JS turn;
-the original failure, call-stack trace and two failing-before/passing-after
-controls are retained. All16 V46 startup case pairs pass across both engines,
-including genuine cache-warm entry. All10 fresh entry/recovery runs and24 lunar
-state runs have returned successfully. The corrected root/V1 weather fixture now
-asserts consumption of the same valid current envelope; its earlier incomplete
-fixture is excluded from weather-comparison claims. Matched richness passes in
-both engines, including complete pixels and discriminating negative controls.
-Final uninterrupted traversals are running; their cadence and joined motion
-reconciliation remain pending. A tracing-callback harness error occurred before
-measurement and is retained separately; only that unfinished phase was resumed.
-Cold asset/preview latency is separately recorded, not called an instantaneous
-refined Moon. Existing complete V38/V44 campaigns remain labelled historical.
+The owner's `SIMÃ—600 /4Â°` screenshot is exactly retained V47 frame 161: WMO73
+synthetic snow, 40 native flakes, accepted UTC 2026-10-08T12:14:01.640Z,
+solar altitude 10.349713Â°, azimuth102.7270Â°. Its badge had last painted 08:12:56;
+13:17 is the next Dhuhr time. Astronomical canvases were withdrawn in that failing
+frame; its white specks were **not** demonstrated daytime stars. The dark backing
+was nevertheless a real failure. The exact changing snowâ†’thunder fixture yields
+4Â°C while still selecting snow. Both final browsers reproduce the consumed
+fixture, remove the specks with precipitation-only isolation and show zero
+visible catalogue contribution in preview/refined daylight. Open-sky median
+143/151/158 replaces the rejected 47/58/72. This is not the owner's live rain.
 
-Local evidence custody:
-`C:/Users/theis/Documents/Codex/startup-cloud-hotfix-20261007/h8/`.
-`joined-v45-continuity-queue.json`, `joined-v45-joined-queue.json` and the subsequent
-V46 startup/entry/lunar-state/traversal ledgers distinguish running, returned and visually
-inspected work. A successful process or MEASURED receipt is not visual acceptance.
+## H1â€“H8 obligation register
 
-## H1–H8 obligation register
-
-| ID | Demonstrated cause / authored repair | Final joined disposition |
+| ID | Demonstrated owner and repair | Final disposition |
 |---|---|---|
-| H1 | f05 hid daytime presentation before a worker frame existed. Accepted-site first paint and ongoing preview share the final atmospheric policy. V46 also republishes after cached/network prayer bootstrap adopts its scene key; no extra presenter runs in the ordinary loop. Prayer progress hydrates independently. | V45 warm-rain negative retained; V46 all16 cold/warm startup pairs pass. Joined entry review open. |
-| H2 | Whole-field mean metering, independent channel compression and perspective pixel flux darkened/desaturated ordinary open sky. Display-only surface-brightness conversion, median metering and common luminance mapping preserve raw reference fields. | Matched daytime/dawn profiles retained; whole-day/weather review open. No measured-atmosphere calibration claim. |
-| H3 | HDR inversion amplified rounded saturated RGB in low-alpha unassociated cloud pixels. Shared bounded display-linear transfer and whole-buffer validation protect both base sky and lunar detail. | Component and invalid-retention controls pass; final moving/browser review open. |
-| H4 | The same amplification created coloured edge beads/crawling. Preserve real motion, masks and one colour application; retain a good frame only while its own target/epoch/age qualifies. | DPR1/1.25/2/3, moving-edge and seeded dusk tests in joined campaign. |
-| H5 | Deployed c1 replaced useful condition icons with provenance symbols and downgraded current-model rain through a direct-observation gate. One admitted decision now owns condition, temperature, effects and separate provenance. | A/B/C replay passes both engines; ordinary wet/dry/expiry/recovery and live-provider checks still required. |
-| H6 | Model/DOM semantics were independently tested; a correct selected class could still lose emphasis over a bright horizon. Opaque next-row accent and dark text make it distinct from the independently outlined current row. | Boundary controls returned; final background/normal-size review open. No all-row WCAG claim. |
-| H7 | A >10x raw twilight horizon maximum became a timetable spotlight. A solar-only display contrast shoulder reduces concentration at fixed geometry/exposure, and the deep-twilight handoff no longer restores uncorrected solar light. | Exact −8.64° atmosphere/widget and camera controls retained; joined dusk/dawn review open. Recolouring alone was rejected. |
-| H8 | Current preview now meets the existing fast-clock age contract; lunar composition retains foreground atmosphere while blocking distant stars. Solar body size/obstruction/geometry and the lunar veil corrections remain joined. | 27h60x/600x, 49h600x, normal1x recovery, fresh terrain in both engines, weather and geometry/failure matrix remain distinct gates. |
+| H1 | Accepted-site native first paint and ongoing preview share the final atmospheric policy. Cached/network prayer bootstrap republishes before yielding; bar hydration is independent. | Supported: 16 cold/warm pairs, direct/iframe, acquisition and admitted weather. No fabricated0ms or unknown-location daylight. |
+| H2 | Display surface-brightness conversion, median metering and common-luminance mapping correct charcoal/grey daylight while retaining raw fields. | Supported: final daytime controls, full trajectories and exact-source reuse; not photometric calibration. |
+| H3 | Shared bounded display-linear cloud transfer prevents low-alpha HDR inversion from amplifying rounded edge channels; full buffers validate atomically. | Supported: malformed/stale controls, both engines, final moving composition and same-operator Moon join. |
+| H4 | Same cloud transfer removes colour beads/crawling; movement and once-only composition remain. Retention uses the original frame's fences. | Supported: original moving-edge controls, DPR1/1.25/2/3 and seeded replay; final normal/accelerated pixels reviewed. |
+| H5 | One admitted record supplies WMO icon, temperature, provenance and effects. Supported current-model precipitation is shown as a model estimate, independently of observation authority. | Supported: ordinary current-provider families, expiry/recovery, A/B/C rain replay, final cold/warm rain and separate live-provider readback. |
+| H6 | Model/DOM agreement is preserved; opaque next accent stays distinct from current outline. Tomorrow's Fajr displays its own source-day time. | Supported: second-level event controls, both browser geography tables, target/day changes and visible row hierarchy. Six rows unchanged. |
+| H7 | Solar-only display shoulder bounds the concentrated twilight maximum; deep-twilight handoff no longer restores uncorrected solar light. Clear-air corona no longer veils terrain. | Supported: exactâˆ’8.64Â° atmosphere/widget, camera rotations, dusk/dawn sequences and final composition. Legitimate horizon light remains. |
+| H8 | Current preview meets existing age/identity fences; current V5 surfaces bridge ordinary replacement within the existing geometric budget. Sun size/shading and foreground air/cloud ownership remain joined. | Supported for the finite ordinary-mode and preview availability matrix. Full-tier60x/600x throughput remains separate; N001/N002 PARTIAL, N003 BLOCKED. |
+
+## Retained negative controls and review reconciliation
+
+The original f05 dark shell, V43 Firefox 660-second no-refinement run, V45 warm-rain
+bootstrap flash, V46 expired/withdrawn600x output, V47 snow-frame withdrawal and
+V48 Firefox retry overrun remain labelled failures. None is counted as a final
+PASS. The successive bounded repairs and affected replays are in the matrix.
+The first Firefox service-worker fixture run did not consume its intended
+responses and is excluded. Chromium geography's old oracle mistook the defined
+night cloud icon and tomorrow-Fajr promotion, then assumed a noon seek survived
+configuration rebinding. The captured product states were correct. Original
+receipts remain; Chromium's 30 states are explicitly reanalysed, while Firefox
+ran the corrected oracle directly. Those are harness corrections, not hidden
+runtime changes or a fabricated fresh Chromium run.
+
+Three original independent reviewers are retained, plus the two Sol 6.1/Max
+geography supplements. Astronomy review required matched richness/current-runtime
+evidence; weather review separated model condition from observation and retained
+the real availability failure; lifecycle review exposed a false-green visibility
+oracle, a bootstrap gap, an exception reserve bypass and telemetry-only omissions.
+All material findings have source-bound resolutions in the final matrix. Review
+opinions are not release authority. Explicit-zero-cloud wet-particle origin and
+synthetic contradictory provider-response coordinates remain nonblocking boundary
+gaps, without a demonstrated real provider failure. Real OS/BFCache remains N003.
+
+## Compact geographical qualification
+
+Both Windows engines exercised 30 dated event anchors each: Fajr, sunrise, the
+provider Dhuhr midday anchor, sunset and Isha + 30 minutes. Each request/record/DOM snapshot is tied to the
+same accepted observer, IANA zone, policy and UTC. Captured Aladhan calendar
+objects are wrapped as timing responses without editing their clocks or dates.
+Weather is explicitly synthetic and uses evolving local timestamps: rainy Florida
+and Sydney, partly cloudy Phoenix, clear Berlin, hazy Makkah, overcast TromsÃ¸.
+These are stress fixtures, not climate assumptions or live observations.
+
+| Fixture | Coordinates | IANA zone | Aladhan method |
+|---|---|---|---|
+| Public Orlando substitute |28.5383,âˆ’81.3792|America/New_York|2|
+| Phoenix |33.4484,âˆ’112.0740|America/Phoenix|2|
+| Berlin |52.5244,13.4105|Europe/Berlin|2|
+| Makkah |21.4266,39.8256|Asia/Riyadh|4|
+| TromsÃ¸ |69.6492,18.9553|Europe/Oslo|3, provider angle-based high-latitude rule|
+| Sydney |âˆ’33.8688,151.2093|Australia/Sydney|2|
+
+4350 independent NOAA-compatible directions across 30 site/date cases stay within
+the predeclared0.6Â° tolerance (maximum0.455181Â°). Eight DST boundaries, seasonal
+offsets, azimuth wrap/zenith and polar day/night are separate scalar controls.
+Undefined polar timetable records remain unavailable; no new prayer rule or
+invented sunrise is introduced. 33 weather/identity scalar cases and 12 negative
+consumer predicates pass. Aâ†’Berlinâ†’new-A browser runs reject old target influence;
+aborted transports are not misrepresented as delivered late bodies. Separate
+component tests cover post-parse late generation rejection. Short paused city
+captures do not claim full terrain solves at every city or continuous playback.
 
 ## Lunar dark-side veil: owner, correction and reference
 
-The exact half-waning Maghrib fixture is sanitized Orlando 28.5383,−81.3792,
+The exact half-waning Maghrib fixture is sanitized Orlando 28.5383,âˆ’81.3792,
 height 25m, UTC 2026-10-07T23:40:00Z, camera 180/45/90. The physical sky's real Moon
-is altitude−29.5947° and fraction 0.08094. The deliberately declared native lunar
-presentation overrides are fraction 0.5, waning, altitude +25° and H 42°.
+is altitudeâˆ’29.5947Â° and fraction 0.08094. The deliberately declared native lunar
+presentation overrides are fraction 0.5, waning, altitude +25Â° and H 42Â°.
 Consequently `presentationUp=1`, calendar blend=0. This is a controlled phase
 fixture, not an assertion that the real Moon was above the Orlando horizon.
 
@@ -122,7 +165,7 @@ preview and must be measured separately from refresh continuity.
 
 For moving accepted phases, the new request is a leading-edge spatial
 approximation inside the unchanged geometric interval. It uses the accepted
-native phase, no future UTC or private clock. The native1.11→1.13 horizon-scale
+native phase, no future UTC or private clock. The native1.11â†’1.13 horizon-scale
 range is reserved up front. Every admission/read checks the original bound at
 the actual footprint; a meaningful geometry change still cancels work. Final
 quality, failure/retry, normal1x recovery and60x/600x throughput remain separate.
@@ -206,21 +249,21 @@ Neither the CP9 sky-age limit 30s nor the lunar geometric budget 0.0416 device p
 has been widened. Lunar actual-source/quality/phase/altitude/calendar weight are
 recorded per capture; a refined sky alone does not qualify the Moon.
 
-## Matched night-sky richness
+## Matched night-sky richness â€” retained reference and final repeat
 
 The owner's unlabelled night screenshot resembles retained V38 `star-6.png`,
 but its exact capture identity is unverified. Comparing that approximately
-−13.03° evening with a newer −8.8° twilight image would conflate observing
+âˆ’13.03Â° evening with a newer âˆ’8.8Â° twilight image would conflate observing
 conditions. The controlled comparison uses the retained scene's UTC
-2026-10-08T00:00Z, sanitized Orlando site, south-facing45°/90° camera, DPR1,
-zero added artificial skyglow, and explicitly declared half-waning/+25° lunar
+2026-10-08T00:00Z, sanitized Orlando site, south-facing45Â°/90Â° camera, DPR1,
+zero added artificial skyglow, and explicitly declared half-waning/+25Â° lunar
 presentation overrides. Clear, partial and overcast inputs match in each pair.
 This fixed-time geometry comparison uses the labelled forecast-preview lane;
 the ordinary current-weather acceptance is a separate campaign.
 
 Both Windows engines reproduce the reference's six raw astronomical fields
 exactly, including registered stellar and diffuse contributions. Exposure,
-captured cloud buffers, lunar phase/profile and footprint also match. Actual
+post-capture cloud-buffer diagnostics, lunar phase/profile and footprint also match. Actual
 unobscured catalogue contributions in the displayed canvas match within the
 predeclared one-code tolerance: Chromium1041/961/925 and Firefox1041/960/924
 for clear/partial/overcast. These are attribution counts at sampled catalogue
@@ -230,6 +273,11 @@ or changing the cloud buffer, fails the negative controls.
 
 The complete-widget side-by-sides retain numerous faint points and diffuse
 background depth; no current-candidate loss was found in this matched scene.
+Five complete card pairs are pixel-identical. Chromium's partial-cloud pair
+differs in13942 upper-band pixels by at most8 codes; the lower stellar field
+is unchanged. Its precise capture-stage cause is unidentified. A later buffer
+digest does not prove screenshot-synchronous cloud equality, and whole-frame
+equality is not claimed for that pair.
 The initial921-source bright-star preview is explicitly a smaller catalogue
 tier than the settled field. Preview/refined state and earlier twilight are
 real confounders in unmatched images, not proof of the exact cause of the
@@ -239,13 +287,13 @@ Receipts and actual pairs are in `h8/joined-v46-{chromium,firefox}-matched-richn
 
 ## Twilight spotlight: spatial brightness, not just hue
 
-In the exact −8.63985° scene, physical solar azimuth is 268.065°. The reported
-lower-right ray is altitude~4.24°, azimuth 198.75°: over 60° from the Sun. Its dominant
+In the exact âˆ’8.63985Â° scene, physical solar azimuth is 268.065Â°. The reported
+lower-right ray is altitude~4.24Â°, azimuth 198.75Â°: over 60Â° from the Sun. Its dominant
 component is single-scattered solar light, not artificial skyglow, a row glow,
-attached decorative glare or an invented ground term. At azimuth 198.75°/altitude 5°,
-the coarse model gives 0.31944 cd/m² against zenith 0.02423. Direct128x128 quadrature
+attached decorative glare or an invented ground term. At azimuth 198.75Â°/altitude 5Â°,
+the coarse model gives 0.31944 cd/mÂ² against zenith 0.02423. Direct128x128 quadrature
 gives 0.29936; removing aerosols retains coarse 0.31944; the empirical residual is
-zero at that knot. The raw maximum at4–5° arises where the line of sight reaches
+zero at that knot. The raw maximum at4â€“5Â° arises where the line of sight reaches
 sunlit atmosphere beyond Earth's shadow. Numerical convergence does not establish
 measured angular twilight or justify a conspicuous display spotlight.
 
@@ -254,11 +302,11 @@ highlight shoulder starts half a stop above the atmospheric median and asymptote
 one stop above it. Ray coordinates, raw radiance, exposure and independently owned
 non-solar light remain unchanged. This is an explicit calendar/display bound,
 not a claimed physical calibration. Daylight and the upper controlRGB21/27/46 are
-unchanged. The −12..−18° handoff now restores only non-solar background, preventing
+unchanged. The âˆ’12..âˆ’18Â° handoff now restores only non-solar background, preventing
 uncorrected solar light from reappearing as a late-dusk patch.
 
-Matched final display profiles at x280 change peakY0.0387773→0.0214641 and
-peak/upper-sky ratio3.664→2.028. At x305 the ratio is3.392→1.817. The left control
+Matched final display profiles at x280 change peakY0.0387773â†’0.0214641 and
+peak/upper-sky ratio3.664â†’2.028. At x305 the ratio is3.392â†’1.817. The left control
 x30 is unchanged. `h8/spatial-v38-proof/` contains the same-scene atmosphere-only,
 complete-widget and luminance/chroma plots. V37 camera/dusk comparisons retain
 identical V38 renderer owners and current half-waning terrain. No field has been
@@ -269,7 +317,7 @@ calibration remain limitations.
 ## Solar body, dawn and lower horizon
 
 The restored V1 size curve is `1.10-.24*clamp(e/40)` (264px at horizon,
-206.4 px at 40°). CP9's additional low-Sun subtraction had reduced 0° to 84 px.
+206.4 px at 40Â°). CP9's additional low-Sun subtraction had reduced 0Â° to 84 px.
 Size and shading are separate gates. The former white 19% core/unattenuated orange
 collar is replaced by a shared attenuated warm spectrum and modest limb falloff,
 with `closest-side` radial extent. One body removes the low/high-layer doubling.
@@ -284,15 +332,15 @@ whole-scene warm intermediates remain historical controls, not accepted designs.
 
 A separate sunset mismatch was found: native `sunMetrics` fitted altitude to
 prayer-table events while the physical sky used accepted astronomy. At physical
-−2.07°, the native fit still gave−0.4°. `atmosphere()` now uses the already accepted
+âˆ’2.07Â°, the native fit still gaveâˆ’0.4Â°. `atmosphere()` now uses the already accepted
 physical Sun for body/horizon presence and lunar daylight fade. Prayer times/arc,
 decorative placement, camera and stars remain independent and unchanged. The old
 boundary fails a discriminating control. Atmospheric twilight may remain after
 the body sets; it is not gated by prayer labels or body visibility.
 
-The11:01–11:15 lower band samples near-horizon viewing directions in the 45°/90°
-camera, not the Sun's43–45° altitude. Raw profiles retain neutral/warm horizon
-light and show zero cloud alpha below support. A diagnostic 55° camera shifts the
+The11:01â€“11:15 lower band samples near-horizon viewing directions in the 45Â°/90Â°
+camera, not the Sun's43â€“45Â° altitude. Raw profiles retain neutral/warm horizon
+light and show zero cloud alpha below support. A diagnostic 55Â° camera shifts the
 band with the physical horizon; the top-only scrim is not its owner. Row glass
 changes local row pixels. Preserve legitimate haze/horizon light while assessing
 the mapped spatial concentration separately. The production camera is unchanged.
@@ -313,7 +361,7 @@ are used. No fabricated0ms capture or unobserved interval is claimed. Cache-warm
 runs retain HTTP caching: Chromium remote fixtures use a verified service-worker
 transport; Firefox uses a fetch transport fixture because its controlling worker
 did not consume the intended remote responses. Consumed payloads, units and cache
-resource timings—not registration alone—are checked. Fonts are pinned fixtures.
+resource timingsâ€”not registration aloneâ€”are checked. Fonts are pinned fixtures.
 An incomplete CDP viewport event is retained, never stretched into widget evidence;
 only a uniform blank pre-layout surface may be excluded.
 
@@ -340,60 +388,77 @@ calling future rows past. Six rows including Sunrise remain. Forenoon has no
 current timetable row. Timetable/date/zone, countdown and next marker are sampled
 around each second-level event and tomorrow-Fajr promotion.
 
-## Tests, limitations and publication boundary
+## Final tests, limitations and publication boundary
 
-Current V46 targeted discovery:601 Node tests,597 pass,4 TODO,0fail; Python28 pass;
-Moon55 pass; independent NOAA-compatible solar sweep 2900 samples/20site-date cases,
-maximum direction error 0.45556° against declared 0.6° tolerance. Two deterministic
-builds and `verify_v1.py --check-pages --negative-control` pass. Never use
-`--check-root` after the overhaul. Full runtime/hash receipts qualify generated
-postimages; old donor byte-identity receipts do not qualify edited owners.
+Final affected Node discovery: 613 tests, 609 pass,
+4 TODO, 0 new failures. Python discovery passes 33 tests
+and the Moon component suite passes 55. The independent solar regression checks
+2900 directions separately from the geographical supplement. Native regression
+commands and their exact historical failures are recorded individually in
+the final matrix. Two disposable deterministic builds reproduce every final
+runtime hash. `verify_v1.py --check-pages --negative-control` passes; the tamper
+control fails a changed frozen payload as required. Do not use `--check-root`
+after the overhaul. Public readback still matches c1root and the exact frozen
+V1 index/config/version/manifest; PR42 is not live yet.
 
-The separate native legacy suite retains exactly eight historical failures:
-R0021 `moon PBR shader and embedded payloads retain exact accepted bytes`;
-R0022 four phase gain cases0.08/0.5/0.92/1 and two daylight/below-horizon cases
-reference removed `_glintEls`; plus R0022 `PBR source remains byte-identical`.
-Those same failures were established on c1. The four Node TODOs are obsolete
-R0003 acquisition, R000D unresolved bodies, R0024 model/direct permission, and
-native browser-fixture chip layout. They are not a bucket for new failures.
-N001/N002 remain PARTIAL and N003 BLOCKED. Fast current preview is not full-tier
-60x/600x scientific throughput or every-frame terrain qualification.
+The eight retained native failures are named individually in
+[historical accounting](evidence/startup-cloud-20261007/final-v49/receipts/historical-failures-v49-final.json):
+R0021old PBR-source byte guard; R0022phase0.08/0.5/0.92/1, daylight and
+below-horizon samplers reference removed `_glintEls`; R0022old PBR-source byte
+guard. Identical failures exist on c1. Four explicit TODOs remain, not a bucket
+for new failures. N001/N002 are PARTIAL and N003 BLOCKED.
 
-Commands use installed Python/Node and explicit `SALAH_BROWSER` plus
-`SALAH_BROWSER_EXECUTABLE`. Costly browser/terrain campaigns run serially:
+Current preview is distinct from full registered diffuse/terrain throughput at
+60x/600x. Ordinary cold lunar acquisition takes seconds and Firefox takes longer;
+actual current terrain subsequently supersedes preview. Availability after first
+eligible publication, initial acquisition and full terrain quality have separate
+receipts. Below-horizon calendar terrain has zero physical moonlight. No partial
+or fallback-only image closes refined-lunar acceptance. Framebuffer gaps and
+sampled visual coverage are reported; no unseen display-refresh claim is made.
+
+The new final matched V38/V49 clear/partial/overcast comparisons in both engines
+are in [richness results](evidence/startup-cloud-20261007/final-v49/runs/), alongside full raw-field, attributed-star
+and complete-widget pixels. All six pairs retain exact raw fields, exposure and
+captured cloud buffers, with no unobscured-star display mismatch. Five of six
+325Ã—530 card images are pixel-exact; Chromium partial retains the previously
+identified 13942 upper-cloud pixels differing by at most eight codes, with the
+lower starfield unchanged. The nine changing pixels outside the card belong to
+the test's document counter; original full PNGs are retained. This scoped result
+does not claim universal compositor equality. The older paragraph above retains V46's exact scope;
+the owner attachment still lacks a recoverable capture identity. No fictitious
+stars, count gain, global exposure adjustment or cloud/Moon transparency was
+introduced for the richness comparison.
+
+Run one browser/terrain campaign at a time using the installed Python/Node,
+Playwright engines and pinned font directory. Set `SALAH_BROWSER` and
+`SALAH_BROWSER_EXECUTABLE` explicitly for each engine. Reproduction examples:
 
 ```powershell
 python tools/build_native.py
 python tools/verify_v1.py --check-pages --negative-control
-python tools/test_moon.py --output <evidence>/moon-components
-node tools/cp9/moon_pool_parity.cjs . <evidence>/production-row-parity
-python tools/cp9/startup_video_check.py --root . --fonts <fonts> --out <out> --scene clear --ffmpeg <ffmpeg>
-python tools/cp9/hotfix_stress_check.py --root . --fonts <fonts> --out <out> --mode replay --deployed <c1-control>
-python tools/cp9/hotfix_stress_check.py --root . --fonts <fonts> --out <out> --mode playback --hours 27 --rate 60 --start 2026-10-07T09:00:00Z --cadence 1
-python tools/cp9/hotfix_stress_check.py --root . --fonts <fonts> --out <out> --mode playback --hours 27 --rate 600 --start 2026-10-07T09:00:00Z --cadence 1
-python tools/cp9/hotfix_stress_check.py --root . --fonts <fonts> --out <out> --mode lunar-layers --rate 1 --start 2026-10-07T23:40:00Z --family clear --duration 30
+python -m unittest discover -s tests/real-sky -p '*_test.py'
+node --test --test-concurrency=1 tests/real-sky/native-preview.test.mjs tests/real-sky/native-star-preview.test.mjs
+python tools/test_moon.py --output <out>/moon-components
+python tools/cp9/startup_video_check.py --root . --fonts <fonts> --out <out> --scene rain
+python tools/cp9/startup_video_check.py --root . --fonts <fonts> --out <out> --scene night --moon-duration 240
 python tools/cp9/combined_entry_check.py --root . --fonts <fonts> --output <out>
+python tools/cp9/moon_receiving_check.py --root . --output <out> --entry file-offline --no-phase-series
+python tools/cp9/hotfix_stress_check.py --root . --fonts <fonts> --out <out> --mode replay --deployed <c1-control>
+python tools/cp9/hotfix_stress_check.py --root . --fonts <fonts> --out <out> --mode live
+python tools/cp9/hotfix_stress_check.py --root . --fonts <fonts> --out <out> --mode playback --hours 27 --rate 60 --start 2026-10-07T09:00:00Z --cadence 1
+python tools/cp9/hotfix_stress_check.py --root . --fonts <fonts> --out <out> --mode playback --hours 49 --rate 600 --start 2026-10-07T03:00:00Z --cadence 2
+python tools/cp9/geography_entry_check.py --root . --fonts <fonts> --out <out> --fixtures docs/real-sky/evidence/startup-cloud-20261007/final-v49/geography-fixtures
 ```
 
-The final command ledger will bind exact arguments, engine version, source/runtime,
-wall/simulated durations, capture gaps and consumed fixtures. The original26-hour
-window ended before the following sunrise; final traversals use 27 hours. Interrupted
-V12/V18 and uncontrolled Firefox fixture runs stay partial/excluded. No claims are
-inferred from their old PASS totals. The original f05 evidence folder is historical
-and its startup qualification is explicitly rejected.
+Exact executed commands, browser versions, input hashes, wall/simulated duration,
+cadence, gaps, worker/owner state and source-bound reuse are in the matrix and
+ledgers. Missing historical personal weather/cache data are not reconstructed;
+the live provider check uses a labelled public Orlando substitute.
 
-Next: finish serial joined/supplement/lunar-state jobs, inspect their presented
-pixels/motion, resolve new defects, publish compact source-bound evidence and
-follow-up commits to PR42. Recheck main/head/checks and provide final-head-pinned
-merge/Pages verification instructions for the owner. Until an authorized merge
-and its exact deployment, the public root still serves c1; V1 stays byte-frozen.
-
-The final V44 Firefox near-half/DPR3 control completed660.094 seconds with361
-captures, a first terrain preview at23.360 seconds and first full refinement
-at188.657 seconds. Three full results published; no surface or per-frame
-visible-layer gap followed initial publication. The matched V43 negative had
-zero full results and gaps around240 and480 seconds. See
-[before/after](evidence/startup-cloud-20261007/continuity-v44/before-after.png),
-[complete timeline](evidence/startup-cloud-20261007/continuity-v44/timeline.png)
-and [state receipt](evidence/startup-cloud-20261007/continuity-v44/REGRESSION.json).
-This closes that discriminating control only; the joined campaign remains open.
+Owner publication sequence: independently review this Draft PR; recheck main,
+PR head and repository rules; mark PR42 ready; merge only its final qualified head
+with a merge commit and `--match-head-commit`. Do not squash/rebase or bypass
+protections. Wait for the Pages build whose commit is that merge, then compare
+published root runtime hashes and frozen V1 hashes and smoke both actual iframes.
+The exact head-pinned commands are provided in PR42's final body and delivery.
+No merge, deployment, branch deletion or PR38 change was executed by this repair.

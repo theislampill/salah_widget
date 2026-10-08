@@ -6,6 +6,30 @@ import {encodeNativeFrame} from '../../real-sky/native-encoding.mjs';
 import {nativeSkyPresentation,renderNativeBackgroundPreview,nativeSolarRegistration,nativeAtmosphereFields,nativeCloudSolarLighting} from '../../real-sky/native-preview.mjs';
 import {luminanceToSurfaceMagnitude} from '../../real-sky/core/src/sky-background.mjs';
 import {physicalSkyState} from '../../real-sky/core/src/sky-state.mjs';
+import {skyProjection} from '../../real-sky/core/src/physical-sky-renderer.mjs';
+import {horizontalDirection,phaseHG} from '../../real-sky/core/src/atmosphere.mjs';
+
+test('ordinary solar progression reuses exact rigid camera rays instead of retracing every display pixel',()=>{
+ const view={type:'camera',width:65,height:106,azDeg:181,altDeg:44,fovYDeg:91,rollDeg:.25};
+ const make=alt=>nativeSolarRegistration({width:65,height:106,physicalState:{sun:{altDeg:alt,azDeg:110}},atmosphere:{aerosolG:.76}},view,{x:4,y:12});
+ const warm=make(25);for(let y=0;y<106;y++)for(let x=0;x<65;x++)warm.gain(x+.5,y+.5);
+ const original=Math.atan2;let calls=0,changed;
+ try{Math.atan2=(...a)=>{calls++;return original(...a);};const next=make(25.01);for(let y=0;y<106;y++)for(let x=0;x<65;x++)next.gain(x+.5,y+.5);changed=next.gain(32.5,50.5);}
+ finally{Math.atan2=original;}
+ assert.ok(calls<100,`Unchanged camera retraced ${calls} angular coordinates inside the fast-clock deadline`);
+ assert.notEqual(changed,warm.gain(32.5,50.5),'solar motion must still be evaluated from the new Sun');
+});
+
+test('rigid ray reuse preserves direct projection and rejects reuse across each camera degree of freedom',()=>{
+ const base={type:'camera',width:65,height:106,azDeg:181,altDeg:44,fovYDeg:91,rollDeg:.25},sun={altDeg:25,azDeg:110},anchor={x:4,y:12,presence:1};
+ for(const change of [{},{width:66},{height:107},{azDeg:271},{altDeg:40},{fovYDeg:80},{rollDeg:2}]){
+  const view={...base,...change},r=nativeSolarRegistration({width:view.width,height:view.height,physicalState:{sun},atmosphere:{aerosolG:.76}},view,anchor),mapping=skyProjection(view),physical=horizontalDirection(sun),display=horizontalDirection(mapping.unproject(anchor.x,anchor.y));
+  for(const [x,y] of [[.5,.5],[32.5,50.5],[64.5,105.5],[23.125,41.875]]){
+   const ray=horizontalDirection(mapping.unproject(x,y)),dot=v=>Math.max(-1,Math.min(1,ray.reduce((a,b,i)=>a+b*v[i],0))),a=phaseHG(dot(physical),.76),b=phaseHG(dot(display),.76),isotropic=1/(4*Math.PI);
+   assert.equal(r.gain(x,y),1+((Math.min(a,isotropic)+Math.max(0,b-isotropic))/a-1));
+  }
+ }
+});
 
 const state=(utc='2026-10-07T15:09:00Z')=>({utcMs:Date.parse(utc),lat:28.5383,lon:-81.3792,heightM:0,generation:2,sceneIdentity:'accepted-Orlando',camera:{azDeg:180,altDeg:45,fovYDeg:90,rollDeg:0},weather:{vis:20000,cloud:60,code:2,temp:72},units:'f',lp:0});
 test('accepted daytime preview is blue and readable before catalogue/worker readiness',()=>{

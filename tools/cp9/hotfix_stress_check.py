@@ -129,7 +129,7 @@ def payload(stamp,family='rain',night=False,track=False,track_family=None):
  return result
 
 class Entry:
- def __init__(self,browser,root,out,fonts,*,v1=False,rate=None,start='2026-10-07T15:09:00Z',family='rain',direct=False,dpr=1,offset=0,live=False,seed=1,steady=False,overrides='',observer=None,prayer_fixture=None):
+ def __init__(self,browser,root,out,fonts,*,v1=False,rate=None,start='2026-10-07T15:09:00Z',family='rain',direct=False,dpr=1,offset=0,live=False,seed=1,steady=False,overrides='',observer=None,prayer_fixture=None,provider_route=None):
   self.root,self.out,self.family,self.live=root,out,family,live;out.mkdir(parents=True,exist_ok=True)
   self.anchor=datetime.fromisoformat(start.replace('Z','+00:00')).timestamp()*1000;self.started=time.monotonic();self.errors=[];self.requests=[];self.responses=[];self.failures=[];self.provider_failures=[];self.mode='healthy';self.frozen_response=None
   self.suffix=('v1/' if v1 else '')+'#local=1&motion=full&seed='+str(seed)+('' if rate is None else '&timeScale='+str(rate))+('&'+overrides if overrides else '')
@@ -154,6 +154,10 @@ class Entry:
    u=r.request.url;host=urlsplit(u).hostname;self.requests.append({'atWall':time.monotonic()-self.started,'url':u})
    if u.startswith(self.origin):r.continue_()
    elif u in fonts:r.fulfill(body=fonts[u].read_bytes(),content_type='text/css' if u==FONT_CSS else 'font/woff2',headers={'Access-Control-Allow-Origin':'*'})
+   # Optional target/date-bound geography fixtures bypass the deliberately
+   # fixed Florida timetable below. The callback must consume or reject each
+   # provider request; it cannot silently fall through to relabelled timings.
+   elif provider_route is not None and host in ['api.open-meteo.com','api.aladhan.com']:provider_route(r,self)
    elif live and host in ['api.open-meteo.com','api.aladhan.com']:r.continue_()
    elif host=='api.open-meteo.com':
     if self.mode=='failure':

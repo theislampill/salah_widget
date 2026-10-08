@@ -1,0 +1,3880 @@
+{
+  "status": "PASS_SCOPED",
+  "scope": "Reviewer A scalar/reference/timezone checks only; no pixels, prayer ephemeris, refined sky, Moon or release qualification.",
+  "runtimeTree": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+  "versions": {
+    "node": "24.14.0",
+    "icu": "78.2",
+    "tz": "2025c"
+  },
+  "sourceIndexSha256": "7deab74a08c8f6724a24d1eafb3a96f2e797643c3a3bf94a30b144b317c8cd99",
+  "temporalBlockSha256": "298d6047e02dd1c3edc52a38352b0d6dd62fd8d395693d481cc14b4af4688764",
+  "solarSamples": 4350,
+  "sites": [
+    {
+      "name": "CentralFlorida",
+      "lat": 28.5383,
+      "lon": -81.3792,
+      "tz": "America/New_York",
+      "method": 2,
+      "source": "https://www.geonames.org/4167147/orlando.html",
+      "note": "Retained public Orlando substitute, not owner personal location."
+    },
+    {
+      "name": "Phoenix",
+      "lat": 33.4484,
+      "lon": -112.074,
+      "tz": "America/Phoenix",
+      "method": 2,
+      "source": "https://www.geonames.org/5308655/phoenix.html",
+      "note": "Rounded public city representative."
+    },
+    {
+      "name": "Berlin",
+      "lat": 52.5244,
+      "lon": 13.4105,
+      "tz": "Europe/Berlin",
+      "method": 2,
+      "source": "https://www.geonames.org/2950159/berlin.html",
+      "note": "Rounded public city representative; method2 is a declared test configuration, not a local mosque claim."
+    },
+    {
+      "name": "Makkah",
+      "lat": 21.4266,
+      "lon": 39.8256,
+      "tz": "Asia/Riyadh",
+      "method": 4,
+      "source": "https://gazetteer.dainst.org/doc/2283160.html",
+      "note": "Rounded public city representative; Asia/Riyadh is the Saudi zone, not a Riyadh observer."
+    },
+    {
+      "name": "Tromso",
+      "lat": 69.6492,
+      "lon": 18.9553,
+      "tz": "Europe/Oslo",
+      "method": 3,
+      "source": "https://www.geonames.org/3133895/tromso.html",
+      "note": "Retained public fixture, about35m from gazetteer coordinate; Europe/Oslo remains a supported IANA link."
+    },
+    {
+      "name": "Sydney",
+      "lat": -33.8688,
+      "lon": 151.2093,
+      "tz": "Australia/Sydney",
+      "method": 2,
+      "source": "https://www.geonames.org/2147714/sydney.html",
+      "note": "Retained public fixture, about210m from gazetteer coordinate."
+    }
+  ],
+  "cases": [
+    {
+      "site": "CentralFlorida",
+      "date": "2026-03-20",
+      "localDayUtcStart": "2026-03-20T04:00:00.000Z",
+      "localDayUtcEnd": "2026-03-21T04:00:00.000Z",
+      "minAltitudeDeg": -61.60208046426188,
+      "maxAltitudeDeg": 61.50080086681594,
+      "maxReferenceDeg": 0.45251983227084,
+      "maxTenMinuteDirectionDeg": 2.5006085255977872,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-03-20T10:10:48.954Z",
+          "local": "2026-03-20, 06:10:48 GMT-04:00",
+          "alt": -17.999998971401588
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-03-20T11:05:48.436Z",
+          "local": "2026-03-20, 07:05:48 GMT-04:00",
+          "alt": -6.000000119430175
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-03-20T11:29:19.654Z",
+          "local": "2026-03-20, 07:29:19 GMT-04:00",
+          "alt": -0.8332985938970654
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-03-20T11:33:07.125Z",
+          "local": "2026-03-20, 07:33:07 GMT-04:00",
+          "alt": -1.19522132116805e-08
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-03-20T17:33:03.810Z",
+        "local": "2026-03-20, 13:33:03 GMT-04:00",
+        "altDeg": 61.51023111077461,
+        "azDeg": 180.07158311804594,
+        "enu": [
+          -0.0005959473695196942,
+          -0.477001453019596,
+          0.8789023032532837
+        ],
+        "raDeg": 0.11468144831997051,
+        "decDeg": 0.04854984904449465,
+        "distanceKm": 148979662.07960248,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9959050315535641
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-03-20T23:36:57.635Z",
+          "local": "2026-03-20, 19:36:57 GMT-04:00",
+          "alt": -0.8333000557161819
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-03-21T00:55:36.143Z",
+          "local": "2026-03-20, 20:55:36 GMT-04:00",
+          "alt": -18.000001012561867
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-03-20T05:30:00.000Z",
+        "local": "2026-03-20, 01:30:00 GMT-04:00",
+        "alt": -61.60208046426188
+      },
+      "pass": true
+    },
+    {
+      "site": "CentralFlorida",
+      "date": "2026-06-21",
+      "localDayUtcStart": "2026-06-21T04:00:00.000Z",
+      "localDayUtcEnd": "2026-06-22T04:00:00.000Z",
+      "minAltitudeDeg": -38.02374133089068,
+      "maxAltitudeDeg": 84.86402041444563,
+      "maxReferenceDeg": 0.12357384515895103,
+      "maxTenMinuteDirectionDeg": 2.293494485654871,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-06-21T08:54:20.851Z",
+          "local": "2026-06-21, 04:54:20 GMT-04:00",
+          "alt": -17.999999470747646
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-06-21T10:01:37.822Z",
+          "local": "2026-06-21, 06:01:37 GMT-04:00",
+          "alt": -6.000000371353381
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-06-21T10:28:33.763Z",
+          "local": "2026-06-21, 06:28:33 GMT-04:00",
+          "alt": -0.8332989142786658
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-06-21T10:32:49.698Z",
+          "local": "2026-06-21, 06:32:49 GMT-04:00",
+          "alt": 2.609499367222537e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-06-21T17:27:25.118Z",
+        "local": "2026-06-21, 13:27:25 GMT-04:00",
+        "altDeg": 84.89684079020066,
+        "azDeg": 179.99950229590058,
+        "enu": [
+          7.72664065975844e-07,
+          -0.08894921705052533,
+          0.9960361623884454
+        ],
+        "raDeg": 90.39900000296166,
+        "decDeg": 23.435140790384747,
+        "distanceKm": 152023017.42470777,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.0162535489937032
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-06-22T00:26:16.243Z",
+          "local": "2026-06-21, 20:26:16 GMT-04:00",
+          "alt": -0.833298435053859
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-06-22T02:00:28.936Z",
+          "local": "2026-06-21, 22:00:28 GMT-04:00",
+          "alt": -18.000001394863997
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-06-21T05:30:00.000Z",
+        "local": "2026-06-21, 01:30:00 GMT-04:00",
+        "alt": -38.02374133089068
+      },
+      "pass": true
+    },
+    {
+      "site": "CentralFlorida",
+      "date": "2026-09-23",
+      "localDayUtcStart": "2026-09-23T04:00:00.000Z",
+      "localDayUtcEnd": "2026-09-24T04:00:00.000Z",
+      "minAltitudeDeg": -61.54396644798229,
+      "maxAltitudeDeg": 61.176047513790316,
+      "maxReferenceDeg": 0.4433741399495723,
+      "maxTenMinuteDirectionDeg": 2.500673857177496,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-09-23T09:55:55.911Z",
+          "local": "2026-09-23, 05:55:55 GMT-04:00",
+          "alt": -18.00000180390965
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-09-23T10:50:58.516Z",
+          "local": "2026-09-23, 06:50:58 GMT-04:00",
+          "alt": -5.9999999376173845
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-09-23T11:14:31.252Z",
+          "local": "2026-09-23, 07:14:31 GMT-04:00",
+          "alt": -0.8332999037956942
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-09-23T11:18:18.983Z",
+          "local": "2026-09-23, 07:18:18 GMT-04:00",
+          "alt": -1.2088512648079595e-06
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-09-23T17:17:41.161Z",
+        "local": "2026-09-23, 13:17:41 GMT-04:00",
+        "altDeg": 61.18137236529897,
+        "azDeg": 179.92949442865188,
+        "enu": [
+          0.0005931744874962544,
+          -0.48203818285164085,
+          0.8761500090835561
+        ],
+        "raDeg": 180.64397558997027,
+        "decDeg": -0.280309264161504,
+        "distanceKm": 150101531.2079105,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.0034041468331831
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-09-23T23:20:41.773Z",
+          "local": "2026-09-23, 19:20:41 GMT-04:00",
+          "alt": -0.833300624489422
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-09-24T00:39:09.589Z",
+          "local": "2026-09-23, 20:39:09 GMT-04:00",
+          "alt": -17.999998400571872
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-09-23T05:20:00.000Z",
+        "local": "2026-09-23, 01:20:00 GMT-04:00",
+        "alt": -61.54396644798229
+      },
+      "pass": true
+    },
+    {
+      "site": "CentralFlorida",
+      "date": "2026-12-21",
+      "localDayUtcStart": "2026-12-21T05:00:00.000Z",
+      "localDayUtcEnd": "2026-12-22T05:00:00.000Z",
+      "minAltitudeDeg": -84.8369916212035,
+      "maxAltitudeDeg": 38.01633152995218,
+      "maxReferenceDeg": 0.06538537904350078,
+      "maxTenMinuteDirectionDeg": 2.293008289198866,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-12-21T10:49:37.772Z",
+          "local": "2026-12-21, 05:49:37 GMT-05:00",
+          "alt": -17.99999963952198
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-12-21T11:47:57.851Z",
+          "local": "2026-12-21, 06:47:57 GMT-05:00",
+          "alt": -5.999999720918827
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-12-21T12:13:54.989Z",
+          "local": "2026-12-21, 07:13:54 GMT-05:00",
+          "alt": -0.8333012708383398
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-12-21T12:18:09.830Z",
+          "local": "2026-12-21, 07:18:09 GMT-05:00",
+          "alt": -5.8382546392588305e-08
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-12-21T17:23:43.029Z",
+        "local": "2026-12-21, 12:23:43 GMT-05:00",
+        "altDeg": 38.024037015887174,
+        "azDeg": 179.99979797191406,
+        "enu": [
+          2.777658505877411e-06,
+          -0.7877523988406732,
+          0.6159920114035975
+        ],
+        "raDeg": 269.8446898732864,
+        "decDeg": -23.437662983844177,
+        "distanceKm": 147163240.5311873,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9837518404107709
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-12-21T22:33:31.080Z",
+          "local": "2026-12-21, 17:33:31 GMT-05:00",
+          "alt": -0.8333012756626955
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-12-21T23:57:48.302Z",
+          "local": "2026-12-21, 18:57:48 GMT-05:00",
+          "alt": -17.99999844082512
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-12-21T05:20:00.000Z",
+        "local": "2026-12-21, 00:20:00 GMT-05:00",
+        "alt": -84.8369916212035
+      },
+      "pass": true
+    },
+    {
+      "site": "CentralFlorida",
+      "date": "2026-10-08",
+      "localDayUtcStart": "2026-10-08T04:00:00.000Z",
+      "localDayUtcEnd": "2026-10-09T04:00:00.000Z",
+      "minAltitudeDeg": -67.3386802811387,
+      "maxAltitudeDeg": 55.373861134405814,
+      "maxReferenceDeg": 0.4317266524277883,
+      "maxTenMinuteDirectionDeg": 2.4872790466018775,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-10-08T10:04:02.235Z",
+          "local": "2026-10-08, 06:04:02 GMT-04:00",
+          "alt": -17.999999475276727
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-10-08T10:58:43.637Z",
+          "local": "2026-10-08, 06:58:43 GMT-04:00",
+          "alt": -6.000001042745957
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-10-08T11:22:21.137Z",
+          "local": "2026-10-08, 07:22:21 GMT-04:00",
+          "alt": -0.8333015087407715
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-10-08T11:26:10.394Z",
+          "local": "2026-10-08, 07:26:10 GMT-04:00",
+          "alt": -1.6031543805105502e-06
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-10-08T17:12:51.427Z",
+        "local": "2026-10-08, 13:12:51 GMT-04:00",
+        "altDeg": 55.38070951238084,
+        "azDeg": 179.93106106744858,
+        "enu": [
+          0.0006835692914559773,
+          -0.568120437254204,
+          0.8229451388197854
+        ],
+        "raDeg": 194.22355646254022,
+        "decDeg": -6.080969671080642,
+        "distanceKm": 149461941.9514748,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9991265004611269
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-10-08T23:03:16.253Z",
+          "local": "2026-10-08, 19:03:16 GMT-04:00",
+          "alt": -0.8333017264741175
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-10-09T00:21:30.393Z",
+          "local": "2026-10-08, 20:21:30 GMT-04:00",
+          "alt": -17.999999559857418
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-10-08T05:10:00.000Z",
+        "local": "2026-10-08, 01:10:00 GMT-04:00",
+        "alt": -67.3386802811387
+      },
+      "pass": true
+    },
+    {
+      "site": "Phoenix",
+      "date": "2026-03-20",
+      "localDayUtcStart": "2026-03-20T07:00:00.000Z",
+      "localDayUtcEnd": "2026-03-21T07:00:00.000Z",
+      "minAltitudeDeg": -56.651593031551705,
+      "maxAltitudeDeg": 56.61936692062979,
+      "maxReferenceDeg": 0.45207150387033174,
+      "maxTenMinuteDirectionDeg": 2.500602502481941,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-03-20T12:08:56.753Z",
+          "local": "2026-03-20, 05:08:56 GMT-07:00",
+          "alt": -18.000001327470006
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-03-20T13:07:02.858Z",
+          "local": "2026-03-20, 06:07:02 GMT-07:00",
+          "alt": -6.000000105556606
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-03-20T13:31:48.969Z",
+          "local": "2026-03-20, 06:31:48 GMT-07:00",
+          "alt": -0.8332998293785515
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-03-20T13:35:48.438Z",
+          "local": "2026-03-20, 06:35:48 GMT-07:00",
+          "alt": -3.4640623863983196e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-03-20T19:35:50.801Z",
+        "local": "2026-03-20, 12:35:50 GMT-07:00",
+        "altDeg": 56.633644159027725,
+        "azDeg": 180.0753675385137,
+        "enu": [
+          -0.0007234636244873973,
+          -0.5499899455908722,
+          0.8351709623480293
+        ],
+        "raDeg": 0.19241333186562315,
+        "decDeg": 0.0820669066892676,
+        "distanceKm": 148983507.11937818,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.995928877123983
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-03-21T01:40:04.418Z",
+          "local": "2026-03-20, 18:40:04 GMT-07:00",
+          "alt": -0.8332988367669797
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-03-21T03:03:06.869Z",
+          "local": "2026-03-20, 20:03:06 GMT-07:00",
+          "alt": -18.000001194286597
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-03-20T07:40:00.000Z",
+        "local": "2026-03-20, 00:40:00 GMT-07:00",
+        "alt": -56.651593031551705
+      },
+      "pass": true
+    },
+    {
+      "site": "Phoenix",
+      "date": "2026-06-21",
+      "localDayUtcStart": "2026-06-21T07:00:00.000Z",
+      "localDayUtcEnd": "2026-06-22T07:00:00.000Z",
+      "minAltitudeDeg": -33.117749969894156,
+      "maxAltitudeDeg": 79.98617488165769,
+      "maxReferenceDeg": 0.12355949041346254,
+      "maxTenMinuteDirectionDeg": 2.2934980606127637,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-06-21T10:35:37.732Z",
+          "local": "2026-06-21, 03:35:37 GMT-07:00",
+          "alt": -18.00000078230241
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-06-21T11:50:05.471Z",
+          "local": "2026-06-21, 04:50:05 GMT-07:00",
+          "alt": -5.999999847149096
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-06-21T12:19:02.861Z",
+          "local": "2026-06-21, 05:19:02 GMT-07:00",
+          "alt": -0.8333015523071367
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-06-21T12:23:36.377Z",
+          "local": "2026-06-21, 05:23:36 GMT-07:00",
+          "alt": 2.931811928296161e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-06-21T19:30:12.966Z",
+        "local": "2026-06-21, 12:30:12 GMT-07:00",
+        "altDeg": 79.98628700110301,
+        "azDeg": 179.9993760243234,
+        "enu": [
+          1.893670155231358e-06,
+          -0.17388387359543916,
+          0.9847661643760204
+        ],
+        "raDeg": 90.48768886814514,
+        "decDeg": 23.434687001640313,
+        "distanceKm": 152023912.7206113,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.016259055120677
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-06-22T02:41:22.737Z",
+          "local": "2026-06-21, 19:41:22 GMT-07:00",
+          "alt": -0.8333009165969386
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-06-22T04:24:47.487Z",
+          "local": "2026-06-21, 21:24:47 GMT-07:00",
+          "alt": -17.999999485630724
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-06-21T07:30:00.000Z",
+        "local": "2026-06-21, 00:30:00 GMT-07:00",
+        "alt": -33.117749969894156
+      },
+      "pass": true
+    },
+    {
+      "site": "Phoenix",
+      "date": "2026-09-23",
+      "localDayUtcStart": "2026-09-23T07:00:00.000Z",
+      "localDayUtcEnd": "2026-09-24T07:00:00.000Z",
+      "minAltitudeDeg": -56.70796620065446,
+      "maxAltitudeDeg": 56.23777858452084,
+      "maxReferenceDeg": 0.443585115616088,
+      "maxTenMinuteDirectionDeg": 2.5006615714124445,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-09-23T11:54:17.159Z",
+          "local": "2026-09-23, 04:54:17 GMT-07:00",
+          "alt": -17.99999865095506
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-09-23T12:52:26.559Z",
+          "local": "2026-09-23, 05:52:26 GMT-07:00",
+          "alt": -6.00000071977653
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-09-23T13:17:14.540Z",
+          "local": "2026-09-23, 06:17:14 GMT-07:00",
+          "alt": -0.8333014998004716
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-09-23T13:21:14.343Z",
+          "local": "2026-09-23, 06:21:14 GMT-07:00",
+          "alt": -2.059823080591336e-08
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-09-23T19:20:24.378Z",
+        "local": "2026-09-23, 12:20:24 GMT-07:00",
+        "altDeg": 56.237913836842814,
+        "azDeg": 179.9257624763809,
+        "enu": [
+          0.0007200733967717186,
+          -0.5557451471399197,
+          0.8313523999632962
+        ],
+        "raDeg": 180.72051679480415,
+        "decDeg": -0.3136638612486646,
+        "distanceKm": 150098242.27228275,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.0033802594921748
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-09-24T01:23:22.908Z",
+          "local": "2026-09-23, 18:23:22 GMT-07:00",
+          "alt": -0.8333003001182783
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-09-24T02:46:10.454Z",
+          "local": "2026-09-23, 19:46:10 GMT-07:00",
+          "alt": -18.000000933833704
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-09-24T07:00:00.000Z",
+        "local": "2026-09-24, 00:00:00 GMT-07:00",
+        "alt": -56.70796620065446
+      },
+      "pass": true
+    },
+    {
+      "site": "Phoenix",
+      "date": "2026-12-21",
+      "localDayUtcStart": "2026-12-21T07:00:00.000Z",
+      "localDayUtcEnd": "2026-12-22T07:00:00.000Z",
+      "minAltitudeDeg": -79.95366087214151,
+      "maxAltitudeDeg": 33.107781948786084,
+      "maxReferenceDeg": 0.06590787604483829,
+      "maxTenMinuteDirectionDeg": 2.293000175074274,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-12-21T12:59:28.294Z",
+          "local": "2026-12-21, 05:59:28 GMT-07:00",
+          "alt": -17.999998897455136
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-12-21T14:00:54.212Z",
+          "local": "2026-12-21, 07:00:54 GMT-07:00",
+          "alt": -6.0000006344069785
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-12-21T14:28:28.631Z",
+          "local": "2026-12-21, 07:28:28 GMT-07:00",
+          "alt": -0.8332985779455878
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-12-21T14:33:00.591Z",
+          "local": "2026-12-21, 07:33:00 GMT-07:00",
+          "alt": -1.4202286809443395e-06
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-12-21T19:26:32.348Z",
+        "local": "2026-12-21, 12:26:32 GMT-07:00",
+        "altDeg": 33.11374868460189,
+        "azDeg": 179.99991777149717,
+        "enu": [
+          1.2020707123952874e-06,
+          -0.8375876499775574,
+          0.5463029641175561
+        ],
+        "raDeg": 269.9393563068827,
+        "decDeg": -23.437851315353168,
+        "distanceKm": 147162827.3162373,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9837461191007522
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-12-22T00:24:36.069Z",
+          "local": "2026-12-21, 17:24:36 GMT-07:00",
+          "alt": -0.8333005459076918
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-12-22T01:53:36.407Z",
+          "local": "2026-12-21, 18:53:36 GMT-07:00",
+          "alt": -17.999999329682478
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-12-21T07:30:00.000Z",
+        "local": "2026-12-21, 00:30:00 GMT-07:00",
+        "alt": -79.95366087214151
+      },
+      "pass": true
+    },
+    {
+      "site": "Phoenix",
+      "date": "2026-10-08",
+      "localDayUtcStart": "2026-10-08T07:00:00.000Z",
+      "localDayUtcEnd": "2026-10-09T07:00:00.000Z",
+      "minAltitudeDeg": -62.60946665806114,
+      "maxAltitudeDeg": 50.42414802325496,
+      "maxReferenceDeg": 0.4317064832505848,
+      "maxTenMinuteDirectionDeg": 2.487063704637289,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-10-08T12:05:19.045Z",
+          "local": "2026-10-08, 05:05:19 GMT-07:00",
+          "alt": -17.999999490152145
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-10-08T13:02:55.528Z",
+          "local": "2026-10-08, 06:02:55 GMT-07:00",
+          "alt": -5.999998828957565
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-10-08T13:27:48.234Z",
+          "local": "2026-10-08, 06:27:48 GMT-07:00",
+          "alt": -0.8332991804740576
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-10-08T13:31:49.820Z",
+          "local": "2026-10-08, 06:31:49 GMT-07:00",
+          "alt": 1.6975661119806285e-06
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-10-08T19:15:35.054Z",
+        "local": "2026-10-08, 12:15:35 GMT-07:00",
+        "altDeg": 50.4380049430345,
+        "azDeg": 179.92743037815694,
+        "enu": [
+          0.0008067000070144661,
+          -0.6369122484754597,
+          0.7709358838301879
+        ],
+        "raDeg": 194.30163721048973,
+        "decDeg": -6.1135704940904,
+        "distanceKm": 149458612.0595681,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.999102033112958
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-10-09T01:03:14.786Z",
+          "local": "2026-10-08, 18:03:14 GMT-07:00",
+          "alt": -0.8332983389956888
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-10-09T02:25:37.464Z",
+          "local": "2026-10-08, 19:25:37 GMT-07:00",
+          "alt": -17.999998850808968
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-10-09T07:00:00.000Z",
+        "local": "2026-10-09, 00:00:00 GMT-07:00",
+        "alt": -62.60946665806114
+      },
+      "pass": true
+    },
+    {
+      "site": "Berlin",
+      "date": "2026-03-20",
+      "localDayUtcStart": "2026-03-19T23:00:00.000Z",
+      "localDayUtcEnd": "2026-03-20T23:00:00.000Z",
+      "minAltitudeDeg": -37.72390772147496,
+      "maxAltitudeDeg": 37.412056268837496,
+      "maxReferenceDeg": 0.45166738998832173,
+      "maxTenMinuteDirectionDeg": 2.5005785134412024,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-03-20T03:12:59.529Z",
+          "local": "2026-03-20, 04:12:59 GMT+01:00",
+          "alt": -17.99999976581943
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-03-20T04:35:14.421Z",
+          "local": "2026-03-20, 05:35:14 GMT+01:00",
+          "alt": -5.999999131081896
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-03-20T05:09:15.842Z",
+          "local": "2026-03-20, 06:09:15 GMT+01:00",
+          "alt": -0.8333002642176299
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-03-20T05:14:44.019Z",
+          "local": "2026-03-20, 06:14:44 GMT+01:00",
+          "alt": -6.828913453157836e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-03-20T11:14:10.458Z",
+        "local": "2026-03-20, 12:14:10 GMT+01:00",
+        "altDeg": 37.41933972091181,
+        "azDeg": 180.10336934749526,
+        "enu": [
+          -0.0014328608530945414,
+          -0.7942082680077592,
+          0.6076439532636614
+        ],
+        "raDeg": 359.87478867080796,
+        "decDeg": -0.05621522106695384,
+        "distanceKm": 148970388.11068496,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9958315005748892
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-03-20T17:19:28.414Z",
+          "local": "2026-03-20, 18:19:28 GMT+01:00",
+          "alt": -0.8333003396246563
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-03-20T19:16:17.924Z",
+          "local": "2026-03-20, 20:16:17 GMT+01:00",
+          "alt": -17.999999094716937
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-03-19T23:10:00.000Z",
+        "local": "2026-03-20, 00:10:00 GMT+01:00",
+        "alt": -37.72390772147496
+      },
+      "pass": true
+    },
+    {
+      "site": "Berlin",
+      "date": "2026-06-21",
+      "localDayUtcStart": "2026-06-20T22:00:00.000Z",
+      "localDayUtcEnd": "2026-06-21T22:00:00.000Z",
+      "minAltitudeDeg": -14.041423690085175,
+      "maxAltitudeDeg": 60.90822210462635,
+      "maxReferenceDeg": 0.12282973090299855,
+      "maxTenMinuteDirectionDeg": 2.293474235674998,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": false,
+      "astronomicalDawn": [],
+      "civilDawn": [
+        {
+          "utc": "2026-06-21T01:52:51.448Z",
+          "local": "2026-06-21, 03:52:51 GMT+02:00",
+          "alt": -6.0000002734562745
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-06-21T02:43:06.117Z",
+          "local": "2026-06-21, 04:43:06 GMT+02:00",
+          "alt": -0.8333007850674052
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-06-21T02:50:25.376Z",
+          "local": "2026-06-21, 04:50:25 GMT+02:00",
+          "alt": 2.5247458066953865e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-06-21T11:08:12.135Z",
+        "local": "2026-06-21, 13:08:12 GMT+02:00",
+        "altDeg": 60.91024552466796,
+        "azDeg": 179.9997785735685,
+        "enu": [
+          1.878897711294081e-06,
+          -0.48617912632230337,
+          0.873859174652845
+        ],
+        "raDeg": 90.12510821223043,
+        "decDeg": 23.4346455248059,
+        "distanceKm": 152021219.3927845,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.0162363313622358
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-06-21T19:33:17.934Z",
+          "local": "2026-06-21, 21:33:17 GMT+02:00",
+          "alt": -0.8332992661887727
+        }
+      ],
+      "astronomicalDusk": [],
+      "darkestSample": {
+        "utc": "2026-06-20T23:10:00.000Z",
+        "local": "2026-06-21, 01:10:00 GMT+02:00",
+        "alt": -14.041423690085175
+      },
+      "pass": true
+    },
+    {
+      "site": "Berlin",
+      "date": "2026-09-23",
+      "localDayUtcStart": "2026-09-22T22:00:00.000Z",
+      "localDayUtcEnd": "2026-09-23T22:00:00.000Z",
+      "minAltitudeDeg": -37.45949759212868,
+      "maxAltitudeDeg": 37.29597865355358,
+      "maxReferenceDeg": 0.44410090479636405,
+      "maxTenMinuteDirectionDeg": 2.5006636082467737,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-09-23T02:57:04.534Z",
+          "local": "2026-09-23, 04:57:04 GMT+02:00",
+          "alt": -17.999999391383852
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-09-23T04:19:39.765Z",
+          "local": "2026-09-23, 06:19:39 GMT+02:00",
+          "alt": -6.0000003642021245
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-09-23T04:53:47.338Z",
+          "local": "2026-09-23, 06:53:47 GMT+02:00",
+          "alt": -0.8333000403665277
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-09-23T04:59:16.441Z",
+          "local": "2026-09-23, 06:59:16 GMT+02:00",
+          "alt": 1.084677050560505e-06
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-09-23T10:58:25.895Z",
+        "local": "2026-09-23, 12:58:25 GMT+02:00",
+        "altDeg": 37.297005390833384,
+        "azDeg": 179.89821559557402,
+        "enu": [
+          0.0014131926685950447,
+          -0.79550389698108,
+          0.6059468233883205
+        ],
+        "raDeg": 180.40745981231672,
+        "decDeg": -0.17855085082697306,
+        "distanceKm": 150114286.72117916,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.0034779184674345
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-09-23T17:02:41.642Z",
+          "local": "2026-09-23, 19:02:41 GMT+02:00",
+          "alt": -0.8332987307727354
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-09-23T18:58:52.044Z",
+          "local": "2026-09-23, 20:58:52 GMT+02:00",
+          "alt": -18.00000034807104
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-09-22T23:00:00.000Z",
+        "local": "2026-09-23, 01:00:00 GMT+02:00",
+        "alt": -37.45949759212868
+      },
+      "pass": true
+    },
+    {
+      "site": "Berlin",
+      "date": "2026-12-21",
+      "localDayUtcStart": "2026-12-20T23:00:00.000Z",
+      "localDayUtcEnd": "2026-12-21T23:00:00.000Z",
+      "minAltitudeDeg": -60.89886837283536,
+      "maxAltitudeDeg": 14.031906726481742,
+      "maxReferenceDeg": 0.06430284289441611,
+      "maxTenMinuteDirectionDeg": 2.2929820866594888,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-12-21T05:07:01.796Z",
+          "local": "2026-12-21, 06:07:01 GMT+01:00",
+          "alt": -17.999999307715314
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-12-21T06:33:13.615Z",
+          "local": "2026-12-21, 07:33:13 GMT+01:00",
+          "alt": -6.000000190123671
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-12-21T07:14:55.423Z",
+          "local": "2026-12-21, 08:14:55 GMT+01:00",
+          "alt": -0.833299242026988
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-12-21T07:22:05.400Z",
+          "local": "2026-12-21, 08:22:05 GMT+01:00",
+          "alt": -2.2344210223168722e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-12-21T11:04:25.480Z",
+        "local": "2026-12-21, 12:04:25 GMT+01:00",
+        "altDeg": 14.03804662525473,
+        "azDeg": 179.99917194090654,
+        "enu": [
+          1.4020735998244908e-05,
+          -0.9701348667170979,
+          0.24256615630218797
+        ],
+        "raDeg": 269.55235411396274,
+        "decDeg": -23.437553370895767,
+        "distanceKm": 147168293.81739753,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9837697365379339
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-12-21T14:53:55.517Z",
+          "local": "2026-12-21, 15:53:55 GMT+01:00",
+          "alt": -0.8333005057383764
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-12-21T17:01:49.094Z",
+          "local": "2026-12-21, 18:01:49 GMT+01:00",
+          "alt": -18.000000095197766
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-12-21T23:00:00.000Z",
+        "local": "2026-12-22, 00:00:00 GMT+01:00",
+        "alt": -60.89886837283536
+      },
+      "pass": true
+    },
+    {
+      "site": "Berlin",
+      "date": "2026-10-08",
+      "localDayUtcStart": "2026-10-07T22:00:00.000Z",
+      "localDayUtcEnd": "2026-10-08T22:00:00.000Z",
+      "minAltitudeDeg": -43.25756732305315,
+      "maxAltitudeDeg": 31.489197889870518,
+      "maxReferenceDeg": 0.4330916427987827,
+      "maxTenMinuteDirectionDeg": 2.4877270033429864,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-10-08T03:25:31.246Z",
+          "local": "2026-10-08, 05:25:31 GMT+02:00",
+          "alt": -18.0000005831806
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-10-08T04:45:13.751Z",
+          "local": "2026-10-08, 06:45:13 GMT+02:00",
+          "alt": -5.999999812836196
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-10-08T05:19:23.984Z",
+          "local": "2026-10-08, 07:19:23 GMT+02:00",
+          "alt": -0.8333001648236278
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-10-08T05:24:57.349Z",
+          "local": "2026-10-08, 07:24:57 GMT+02:00",
+          "alt": -4.112908325056959e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-10-08T10:53:35.264Z",
+        "local": "2026-10-08, 12:53:35 GMT+02:00",
+        "altDeg": 31.494181892785154,
+        "azDeg": 179.90036572912732,
+        "enu": [
+          0.0014827867754376232,
+          -0.8526919278977735,
+          0.5224119805683602
+        ],
+        "raDeg": 193.98234461684314,
+        "decDeg": -5.981372918040256,
+        "distanceKm": 149475166.9912324,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9992021209273615
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-10-08T16:27:31.381Z",
+          "local": "2026-10-08, 18:27:31 GMT+02:00",
+          "alt": -0.8332992408886004
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-10-08T18:21:02.765Z",
+          "local": "2026-10-08, 20:21:02 GMT+02:00",
+          "alt": -17.999999271926807
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-10-07T22:50:00.000Z",
+        "local": "2026-10-08, 00:50:00 GMT+02:00",
+        "alt": -43.25756732305315
+      },
+      "pass": true
+    },
+    {
+      "site": "Makkah",
+      "date": "2026-03-20",
+      "localDayUtcStart": "2026-03-19T21:00:00.000Z",
+      "localDayUtcEnd": "2026-03-20T21:00:00.000Z",
+      "minAltitudeDeg": -68.8509916309576,
+      "maxAltitudeDeg": 68.48518421967682,
+      "maxReferenceDeg": 0.45294622269290286,
+      "maxTenMinuteDirectionDeg": 2.5006111921965677,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-03-20T02:11:05.613Z",
+          "local": "2026-03-20, 05:11:05 GMT+03:00",
+          "alt": -18.00000082922777
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-03-20T03:02:48.370Z",
+          "local": "2026-03-20, 06:02:48 GMT+03:00",
+          "alt": -5.999998244829133
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-03-20T03:24:59.932Z",
+          "local": "2026-03-20, 06:24:59 GMT+03:00",
+          "alt": -0.833301419002184
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-03-20T03:28:34.637Z",
+          "local": "2026-03-20, 06:28:34 GMT+03:00",
+          "alt": 1.1637444489482e-06
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-03-20T09:28:18.380Z",
+        "local": "2026-03-20, 12:28:18 GMT+03:00",
+        "altDeg": 68.48915770412447,
+        "azDeg": 180.06756923256074,
+        "enu": [
+          -0.0004324244703379015,
+          -0.36667703159698195,
+          0.9303481969178548
+        ],
+        "raDeg": 359.8077536096036,
+        "decDeg": -0.08422869626660953,
+        "distanceKm": 148965264.022577,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9958109691481012
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-03-20T15:31:43.715Z",
+          "local": "2026-03-20, 18:31:43 GMT+03:00",
+          "alt": -0.8333009330879758
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-03-20T16:45:43.176Z",
+          "local": "2026-03-20, 19:45:43 GMT+03:00",
+          "alt": -18.000000221503893
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-03-19T21:30:00.000Z",
+        "local": "2026-03-20, 00:30:00 GMT+03:00",
+        "alt": -68.8509916309576
+      },
+      "pass": true
+    },
+    {
+      "site": "Makkah",
+      "date": "2026-06-21",
+      "localDayUtcStart": "2026-06-20T21:00:00.000Z",
+      "localDayUtcEnd": "2026-06-21T21:00:00.000Z",
+      "minAltitudeDeg": -45.136091052269826,
+      "maxAltitudeDeg": 87.90760183102815,
+      "maxReferenceDeg": 0.12343277895916484,
+      "maxTenMinuteDirectionDeg": 2.2934854470663386,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-06-21T01:13:55.473Z",
+          "local": "2026-06-21, 04:13:55 GMT+03:00",
+          "alt": -18.000000896163247
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-06-21T02:14:26.619Z",
+          "local": "2026-06-21, 05:14:26 GMT+03:00",
+          "alt": -5.999998562658432
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-06-21T02:39:20.013Z",
+          "local": "2026-06-21, 05:39:20 GMT+03:00",
+          "alt": -0.8333009630446538
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-06-21T02:43:18.026Z",
+          "local": "2026-06-21, 05:43:18 GMT+03:00",
+          "alt": 9.651332464112173e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-06-21T09:22:31.581Z",
+        "local": "2026-06-21, 12:22:31 GMT+03:00",
+        "altDeg": 87.99066306532188,
+        "azDeg": 359.9999453821333,
+        "enu": [
+          -3.342359888874298e-08,
+          0.03506235721955692,
+          0.9993851265184042
+        ],
+        "raDeg": 90.04878111394504,
+        "decDeg": 23.435936934676892,
+        "distanceKm": 152019694.05865657,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.016231475792444
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-06-21T16:05:43.124Z",
+          "local": "2026-06-21, 19:05:43 GMT+03:00",
+          "alt": -0.8332995690127107
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-06-21T17:31:07.645Z",
+          "local": "2026-06-21, 20:31:07 GMT+03:00",
+          "alt": -17.999999649757406
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-06-20T21:20:00.000Z",
+        "local": "2026-06-21, 00:20:00 GMT+03:00",
+        "alt": -45.136091052269826
+      },
+      "pass": true
+    },
+    {
+      "site": "Makkah",
+      "date": "2026-09-23",
+      "localDayUtcStart": "2026-09-22T21:00:00.000Z",
+      "localDayUtcEnd": "2026-09-23T21:00:00.000Z",
+      "minAltitudeDeg": -68.67823488744413,
+      "maxAltitudeDeg": 68.41174597083752,
+      "maxReferenceDeg": 0.4430517179872695,
+      "maxTenMinuteDirectionDeg": 2.500701428047238,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-09-23T01:55:44.166Z",
+          "local": "2026-09-23, 04:55:44 GMT+03:00",
+          "alt": -18.000001075063256
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-09-23T02:47:30.323Z",
+          "local": "2026-09-23, 05:47:30 GMT+03:00",
+          "alt": -5.999999041284801
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-09-23T03:09:43.049Z",
+          "local": "2026-09-23, 06:09:43 GMT+03:00",
+          "alt": -0.8333012994842243
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-09-23T03:13:17.929Z",
+          "local": "2026-09-23, 06:13:17 GMT+03:00",
+          "alt": -8.879284685649336e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-09-23T09:13:01.372Z",
+        "local": "2026-09-23, 12:13:01 GMT+03:00",
+        "altDeg": 68.4243658354551,
+        "azDeg": 179.93346099771088,
+        "enu": [
+          0.0004270528019984164,
+          -0.3677288709181025,
+          0.9299329519482583
+        ],
+        "raDeg": 180.34172874551479,
+        "decDeg": -0.14902093862067514,
+        "distanceKm": 150115291.26099557,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.0034984088220478
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-09-23T15:16:12.954Z",
+          "local": "2026-09-23, 18:16:12 GMT+03:00",
+          "alt": -0.8333006201480057
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-09-23T16:30:06.800Z",
+          "local": "2026-09-23, 19:30:06 GMT+03:00",
+          "alt": -18.000000188057825
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-09-23T21:00:00.000Z",
+        "local": "2026-09-24, 00:00:00 GMT+03:00",
+        "alt": -68.67823488744413
+      },
+      "pass": true
+    },
+    {
+      "site": "Makkah",
+      "date": "2026-12-21",
+      "localDayUtcStart": "2026-12-20T21:00:00.000Z",
+      "localDayUtcEnd": "2026-12-21T21:00:00.000Z",
+      "minAltitudeDeg": -87.96425519762619,
+      "maxAltitudeDeg": 45.13568953356818,
+      "maxReferenceDeg": 0.06341341074625448,
+      "maxTenMinuteDirectionDeg": 2.2930326815140667,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-12-21T02:34:23.567Z",
+          "local": "2026-12-21, 05:34:23 GMT+03:00",
+          "alt": -18.000000613366364
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-12-21T03:29:33.674Z",
+          "local": "2026-12-21, 06:29:33 GMT+03:00",
+          "alt": -6.000000431153082
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-12-21T03:53:51.006Z",
+          "local": "2026-12-21, 06:53:51 GMT+03:00",
+          "alt": -0.8333003128099505
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-12-21T03:57:48.358Z",
+          "local": "2026-12-21, 06:57:48 GMT+03:00",
+          "alt": 2.3970007203444396e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-12-21T09:18:43.760Z",
+        "local": "2026-12-21, 12:18:43 GMT+03:00",
+        "altDeg": 45.1367550702205,
+        "azDeg": 179.99935760804658,
+        "enu": [
+          7.909033198758052e-06,
+          -0.7054170275506276,
+          0.708792506435476
+        ],
+        "raDeg": 269.4708929777791,
+        "decDeg": -23.436644927202085,
+        "distanceKm": 147166083.9902792,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9837747848484738
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-12-21T14:43:36.566Z",
+          "local": "2026-12-21, 17:43:36 GMT+03:00",
+          "alt": -0.8333014142292777
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-12-21T16:03:04.035Z",
+          "local": "2026-12-21, 19:03:04 GMT+03:00",
+          "alt": -17.99999951418547
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-12-20T21:20:00.000Z",
+        "local": "2026-12-21, 00:20:00 GMT+03:00",
+        "alt": -87.96425519762619
+      },
+      "pass": true
+    },
+    {
+      "site": "Makkah",
+      "date": "2026-10-08",
+      "localDayUtcStart": "2026-10-07T21:00:00.000Z",
+      "localDayUtcEnd": "2026-10-08T21:00:00.000Z",
+      "minAltitudeDeg": -74.58694927579428,
+      "maxAltitudeDeg": 62.617177912911565,
+      "maxReferenceDeg": 0.4321000721252653,
+      "maxTenMinuteDirectionDeg": 2.4877664200991547,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-10-08T02:00:05.829Z",
+          "local": "2026-10-08, 05:00:05 GMT+03:00",
+          "alt": -18.000001284399943
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-10-08T02:51:42.425Z",
+          "local": "2026-10-08, 05:51:42 GMT+03:00",
+          "alt": -6.000000013788119
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-10-08T03:13:59.860Z",
+          "local": "2026-10-08, 06:13:59 GMT+03:00",
+          "alt": -0.8332990989852029
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-10-08T03:17:35.985Z",
+          "local": "2026-10-08, 06:17:35 GMT+03:00",
+          "alt": 4.2921900420534425e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-10-08T09:08:10.146Z",
+        "local": "2026-10-08, 12:08:10 GMT+03:00",
+        "altDeg": 62.62086043096989,
+        "azDeg": 179.9348717563057,
+        "enu": [
+          0.0005227425751639657,
+          -0.459876218518554,
+          0.8879828773018517
+        ],
+        "raDeg": 193.91532035168206,
+        "decDeg": -5.952523636970486,
+        "distanceKm": 149475986.5038465,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9992231417412296
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-10-08T15:02:17.136Z",
+          "local": "2026-10-08, 18:02:17 GMT+03:00",
+          "alt": -0.8332987513245319
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-10-08T16:16:08.379Z",
+          "local": "2026-10-08, 19:16:08 GMT+03:00",
+          "alt": -18.000001640785584
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-10-08T21:00:00.000Z",
+        "local": "2026-10-09, 00:00:00 GMT+03:00",
+        "alt": -74.58694927579428
+      },
+      "pass": true
+    },
+    {
+      "site": "Tromso",
+      "date": "2026-03-20",
+      "localDayUtcStart": "2026-03-19T23:00:00.000Z",
+      "localDayUtcEnd": "2026-03-20T23:00:00.000Z",
+      "minAltitudeDeg": -20.59533566541717,
+      "maxAltitudeDeg": 20.287031389673384,
+      "maxReferenceDeg": 0.45129150926547357,
+      "maxTenMinuteDirectionDeg": 2.50055029587799,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-03-20T00:46:16.792Z",
+          "local": "2026-03-20, 01:46:16 GMT+01:00",
+          "alt": -17.999999714775345
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-03-20T03:43:49.739Z",
+          "local": "2026-03-20, 04:43:49 GMT+01:00",
+          "alt": -6.000000594191288
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-03-20T04:43:55.772Z",
+          "local": "2026-03-20, 05:43:55 GMT+01:00",
+          "alt": -0.8333004612579022
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-03-20T04:53:29.107Z",
+          "local": "2026-03-20, 05:53:29 GMT+01:00",
+          "alt": 6.49438617682674e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-03-20T10:52:20.980Z",
+        "local": "2026-03-20, 11:52:20 GMT+01:00",
+        "altDeg": 20.28814837136754,
+        "azDeg": 180.18083888186004,
+        "enu": [
+          -0.0029604183779295594,
+          -0.9379560062755847,
+          0.3467416418813624
+        ],
+        "raDeg": 359.860969027956,
+        "decDeg": -0.06255853842699234,
+        "distanceKm": 148971420.54022774,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9958272675140285
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-03-20T17:01:35.860Z",
+          "local": "2026-03-20, 18:01:35 GMT+01:00",
+          "alt": -0.8333003733029299
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-03-20T21:04:49.853Z",
+          "local": "2026-03-20, 22:04:49 GMT+01:00",
+          "alt": -17.99999986587312
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-03-19T23:00:00.000Z",
+        "local": "2026-03-20, 00:00:00 GMT+01:00",
+        "alt": -20.59533566541717
+      },
+      "pass": true
+    },
+    {
+      "site": "Tromso",
+      "date": "2026-06-21",
+      "localDayUtcStart": "2026-06-20T22:00:00.000Z",
+      "localDayUtcEnd": "2026-06-21T22:00:00.000Z",
+      "minAltitudeDeg": 3.0850437394214545,
+      "maxAltitudeDeg": 43.7810712192096,
+      "maxReferenceDeg": 0.12224068638209398,
+      "maxTenMinuteDirectionDeg": 2.293456535785039,
+      "finite": true,
+      "regime": "polar-day",
+      "astronomicalNightPossible": false,
+      "astronomicalDawn": [],
+      "civilDawn": [],
+      "conventionalSunrise": [],
+      "geometricRise": [],
+      "solarNoon": {
+        "utc": "2026-06-21T10:46:01.147Z",
+        "local": "2026-06-21, 12:46:01 GMT+02:00",
+        "altDeg": 43.78489023596529,
+        "azDeg": 179.99966674069174,
+        "enu": [
+          4.199159822335136e-06,
+          -0.7219427316145719,
+          0.6919528107112922
+        ],
+        "raDeg": 90.10908594820614,
+        "decDeg": 23.43409023623049,
+        "distanceKm": 152022228.61645553,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.0162353141765121
+      },
+      "conventionalSunset": [],
+      "astronomicalDusk": [],
+      "darkestSample": {
+        "utc": "2026-06-20T22:50:00.000Z",
+        "local": "2026-06-21, 00:50:00 GMT+02:00",
+        "alt": 3.0850437394214545
+      },
+      "pass": true
+    },
+    {
+      "site": "Tromso",
+      "date": "2026-09-23",
+      "localDayUtcStart": "2026-09-22T22:00:00.000Z",
+      "localDayUtcEnd": "2026-09-23T22:00:00.000Z",
+      "minAltitudeDeg": -20.44044696542979,
+      "maxAltitudeDeg": 20.174519984625107,
+      "maxReferenceDeg": 0.44445954798796733,
+      "maxTenMinuteDirectionDeg": 2.5006370384725005,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-09-23T00:26:08.480Z",
+          "local": "2026-09-23, 02:26:08 GMT+02:00",
+          "alt": -18.000000136394316
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-09-23T03:27:21.959Z",
+          "local": "2026-09-23, 05:27:21 GMT+02:00",
+          "alt": -5.999999447873889
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-09-23T04:27:52.758Z",
+          "local": "2026-09-23, 06:27:52 GMT+02:00",
+          "alt": -0.8333003801353874
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-09-23T04:37:29.483Z",
+          "local": "2026-09-23, 06:37:29 GMT+02:00",
+          "alt": -7.806474486197873e-08
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-09-23T10:35:54.787Z",
+        "local": "2026-09-23, 12:35:54 GMT+02:00",
+        "altDeg": 20.17789690836797,
+        "azDeg": 179.8219121840641,
+        "enu": [
+          0.002917450725709149,
+          -0.9386216251633716,
+          0.3449361292426963
+        ],
+        "raDeg": 180.39341806278023,
+        "decDeg": -0.17281274779576214,
+        "distanceKm": 150116608.02284598,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.003482296318518
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-09-23T16:43:08.408Z",
+          "local": "2026-09-23, 18:43:08 GMT+02:00",
+          "alt": -0.8332999087717321
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-09-23T20:39:33.992Z",
+          "local": "2026-09-23, 22:39:33 GMT+02:00",
+          "alt": -17.999999869985853
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-09-23T22:00:00.000Z",
+        "local": "2026-09-24, 00:00:00 GMT+02:00",
+        "alt": -20.44044696542979
+      },
+      "pass": true
+    },
+    {
+      "site": "Tromso",
+      "date": "2026-12-21",
+      "localDayUtcStart": "2026-12-20T23:00:00.000Z",
+      "localDayUtcEnd": "2026-12-21T23:00:00.000Z",
+      "minAltitudeDeg": -43.78685468671245,
+      "maxAltitudeDeg": -3.087644054824723,
+      "maxReferenceDeg": 0.0645211136194945,
+      "maxTenMinuteDirectionDeg": 2.2929542541131958,
+      "finite": true,
+      "regime": "polar-night",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-12-21T05:28:20.261Z",
+          "local": "2026-12-21, 06:28:20 GMT+01:00",
+          "alt": -17.99999979355935
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-12-21T08:31:14.569Z",
+          "local": "2026-12-21, 09:31:14 GMT+01:00",
+          "alt": -6.000000211954562
+        }
+      ],
+      "conventionalSunrise": [],
+      "geometricRise": [],
+      "solarNoon": {
+        "utc": "2026-12-21T10:42:14.086Z",
+        "local": "2026-12-21, 11:42:14 GMT+01:00",
+        "altDeg": -3.0867742682411268,
+        "azDeg": 179.9984959304536,
+        "enu": [
+          2.621287894057462e-05,
+          -0.9985491265303166,
+          -0.053848316765027715
+        ],
+        "raDeg": 269.5352518995761,
+        "decDeg": -23.437574260769114,
+        "distanceKm": 147170344.4255614,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9837707941760583
+      },
+      "conventionalSunset": [],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-12-21T15:56:07.723Z",
+          "local": "2026-12-21, 16:56:07 GMT+01:00",
+          "alt": -18.000000077251933
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-12-21T22:40:00.000Z",
+        "local": "2026-12-21, 23:40:00 GMT+01:00",
+        "alt": -43.78685468671245
+      },
+      "pass": true
+    },
+    {
+      "site": "Tromso",
+      "date": "2026-10-08",
+      "localDayUtcStart": "2026-10-07T22:00:00.000Z",
+      "localDayUtcEnd": "2026-10-08T22:00:00.000Z",
+      "minAltitudeDeg": -26.29824924314667,
+      "maxAltitudeDeg": 14.374783897594215,
+      "maxReferenceDeg": 0.4335264455207582,
+      "maxTenMinuteDirectionDeg": 2.487751794467779,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-10-08T01:59:20.123Z",
+          "local": "2026-10-08, 03:59:20 GMT+02:00",
+          "alt": -17.9999999945857
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-10-08T04:26:12.113Z",
+          "local": "2026-10-08, 06:26:12 GMT+02:00",
+          "alt": -5.999999814559938
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-10-08T05:26:29.804Z",
+          "local": "2026-10-08, 07:26:29 GMT+02:00",
+          "alt": -0.833300129870798
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-10-08T05:36:29.808Z",
+          "local": "2026-10-08, 07:36:29 GMT+02:00",
+          "alt": -3.659227135294891e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-10-08T10:31:04.529Z",
+        "local": "2026-10-08, 12:31:04 GMT+02:00",
+        "altDeg": 14.375009238499057,
+        "azDeg": 179.82568415492608,
+        "enu": [
+          0.002947128486736868,
+          -0.9686870571715687,
+          0.24826739556770028
+        ],
+        "raDeg": 193.9680312374483,
+        "decDeg": -5.9757009439719075,
+        "distanceKm": 149477588.7564479,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.999206609874155
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-10-08T15:35:12.428Z",
+          "local": "2026-10-08, 17:35:12 GMT+02:00",
+          "alt": -0.8333001483607677
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-10-08T19:00:34.854Z",
+          "local": "2026-10-08, 21:00:34 GMT+02:00",
+          "alt": -17.999999427442727
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-10-08T22:00:00.000Z",
+        "local": "2026-10-09, 00:00:00 GMT+02:00",
+        "alt": -26.29824924314667
+      },
+      "pass": true
+    },
+    {
+      "site": "Sydney",
+      "date": "2026-03-20",
+      "localDayUtcStart": "2026-03-19T13:00:00.000Z",
+      "localDayUtcEnd": "2026-03-20T13:00:00.000Z",
+      "minAltitudeDeg": -55.7216821210573,
+      "maxAltitudeDeg": 56.330003863707134,
+      "maxReferenceDeg": 0.4551810005071455,
+      "maxTenMinuteDirectionDeg": 2.500586607166815,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-03-19T18:34:30.969Z",
+          "local": "2026-03-20, 05:34:30 GMT+11:00",
+          "alt": -18.000000037683808
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-03-19T19:33:04.787Z",
+          "local": "2026-03-20, 06:33:04 GMT+11:00",
+          "alt": -6.000000834188434
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-03-19T19:58:00.866Z",
+          "local": "2026-03-20, 06:58:00 GMT+11:00",
+          "alt": -0.833301537722217
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-03-19T20:02:01.874Z",
+          "local": "2026-03-20, 07:02:01 GMT+11:00",
+          "alt": 6.483269793820589e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-03-20T02:02:35.744Z",
+        "local": "2026-03-20, 13:02:35 GMT+11:00",
+        "altDeg": 56.33551059582443,
+        "azDeg": 0.07576107503115281,
+        "enu": [
+          0.0007329776464468648,
+          0.5543282104384173,
+          0.832297842034876
+        ],
+        "raDeg": 359.52549773788235,
+        "decDeg": -0.20433365018232616,
+        "distanceKm": 148952966.03615925,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9957246004402142
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-03-20T08:06:58.528Z",
+          "local": "2026-03-20, 19:06:58 GMT+11:00",
+          "alt": -0.8333014497809028
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-03-20T09:30:17.860Z",
+          "local": "2026-03-20, 20:30:17 GMT+11:00",
+          "alt": -17.999999001993714
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-03-19T14:00:00.000Z",
+        "local": "2026-03-20, 01:00:00 GMT+11:00",
+        "alt": -55.7216821210573
+      },
+      "pass": true
+    },
+    {
+      "site": "Sydney",
+      "date": "2026-06-21",
+      "localDayUtcStart": "2026-06-20T14:00:00.000Z",
+      "localDayUtcEnd": "2026-06-21T14:00:00.000Z",
+      "minAltitudeDeg": -79.5471127151738,
+      "maxAltitudeDeg": 32.68889208279838,
+      "maxReferenceDeg": 0.1228419509107549,
+      "maxTenMinuteDirectionDeg": 2.293445396645527,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-06-20T19:30:31.975Z",
+          "local": "2026-06-21, 05:30:31 GMT+10:00",
+          "alt": -17.999998573866357
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-06-20T20:32:15.553Z",
+          "local": "2026-06-21, 06:32:15 GMT+10:00",
+          "alt": -6.000000177706317
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-06-20T20:59:59.311Z",
+          "local": "2026-06-21, 06:59:59 GMT+10:00",
+          "alt": -0.8333013535090757
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-06-20T21:04:32.927Z",
+          "local": "2026-06-21, 07:04:32 GMT+10:00",
+          "alt": -8.021190655308339e-08
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-06-21T01:56:55.372Z",
+        "local": "2026-06-21, 11:56:55 GMT+10:00",
+        "altDeg": 32.69356567781137,
+        "azDeg": 0.0003466215764547087,
+        "enu": [
+          5.0912444801819775e-06,
+          0.8415714456694714,
+          0.5401458153201553
+        ],
+        "raDeg": 89.7269248417316,
+        "decDeg": 23.437634321390107,
+        "distanceKm": 152019502.4614841,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.0162107256587438
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-06-21T06:53:51.437Z",
+          "local": "2026-06-21, 16:53:51 GMT+10:00",
+          "alt": -0.8332990985526426
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-06-21T08:23:18.774Z",
+          "local": "2026-06-21, 18:23:18 GMT+10:00",
+          "alt": -17.999998568720876
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-06-21T14:00:00.000Z",
+        "local": "2026-06-22, 00:00:00 GMT+10:00",
+        "alt": -79.5471127151738
+      },
+      "pass": true
+    },
+    {
+      "site": "Sydney",
+      "date": "2026-09-23",
+      "localDayUtcStart": "2026-09-22T14:00:00.000Z",
+      "localDayUtcEnd": "2026-09-23T14:00:00.000Z",
+      "minAltitudeDeg": -56.17609610382405,
+      "maxAltitudeDeg": 56.15392162270493,
+      "maxReferenceDeg": 0.4407548945806273,
+      "maxTenMinuteDirectionDeg": 2.500699825792993,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-09-22T18:20:41.191Z",
+          "local": "2026-09-23, 04:20:41 GMT+10:00",
+          "alt": -18.000001540789928
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-09-22T19:19:04.893Z",
+          "local": "2026-09-23, 05:19:04 GMT+10:00",
+          "alt": -6.0000012744623685
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-09-22T19:43:58.202Z",
+          "local": "2026-09-23, 05:43:58 GMT+10:00",
+          "alt": -0.8332996450689667
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-09-22T19:47:58.833Z",
+          "local": "2026-09-23, 05:47:58 GMT+10:00",
+          "alt": -1.565838413819766e-06
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-09-23T01:47:51.637Z",
+        "local": "2026-09-23, 11:47:51 GMT+10:00",
+        "altDeg": 56.15764531340851,
+        "azDeg": 359.9254317068446,
+        "enu": [
+          -0.0007247968036505586,
+          0.5569092793978114,
+          0.8305730125583204
+        ],
+        "raDeg": 180.06416660844087,
+        "decDeg": -0.02646775139728865,
+        "distanceKm": 150128857.75748274,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.003584877977423
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-09-23T07:51:56.841Z",
+          "local": "2026-09-23, 17:51:56 GMT+10:00",
+          "alt": -0.8333006945732099
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-09-23T09:15:24.137Z",
+          "local": "2026-09-23, 19:15:24 GMT+10:00",
+          "alt": -18.00000063918644
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-09-22T14:00:00.000Z",
+        "local": "2026-09-23, 00:00:00 GMT+10:00",
+        "alt": -56.17609610382405
+      },
+      "pass": true
+    },
+    {
+      "site": "Sydney",
+      "date": "2026-12-21",
+      "localDayUtcStart": "2026-12-20T13:00:00.000Z",
+      "localDayUtcEnd": "2026-12-21T13:00:00.000Z",
+      "minAltitudeDeg": -32.70014915380635,
+      "maxAltitudeDeg": 79.54290550926297,
+      "maxReferenceDeg": 0.06084854482801577,
+      "maxTenMinuteDirectionDeg": 2.2930882817295974,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-12-20T16:56:17.501Z",
+          "local": "2026-12-21, 03:56:17 GMT+11:00",
+          "alt": -18.000000674748875
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-12-20T18:11:30.876Z",
+          "local": "2026-12-21, 05:11:30 GMT+11:00",
+          "alt": -6.000000636869139
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-12-20T18:40:40.678Z",
+          "local": "2026-12-21, 05:40:40 GMT+11:00",
+          "alt": -0.8333006309573145
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-12-20T18:45:15.982Z",
+          "local": "2026-12-21, 05:45:15 GMT+11:00",
+          "alt": -5.262681840078807e-07
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-12-21T01:53:02.625Z",
+        "local": "2026-12-21, 12:53:02 GMT+11:00",
+        "altDeg": 79.56412328726519,
+        "azDeg": 359.9988232619081,
+        "enu": [
+          -3.720142108513486e-06,
+          0.1811349895457942,
+          0.9834582429103971
+        ],
+        "raDeg": 269.1274093410369,
+        "decDeg": -23.432923289245963,
+        "distanceKm": 147167571.8059906,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9837963656265135
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-12-21T09:05:25.219Z",
+          "local": "2026-12-21, 20:05:25 GMT+11:00",
+          "alt": -0.8332994355376999
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-12-21T10:49:49.143Z",
+          "local": "2026-12-21, 21:49:49 GMT+11:00",
+          "alt": -18.000001015271437
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-12-20T13:50:00.000Z",
+        "local": "2026-12-21, 00:50:00 GMT+11:00",
+        "alt": -32.70014915380635
+      },
+      "pass": true
+    },
+    {
+      "site": "Sydney",
+      "date": "2026-10-08",
+      "localDayUtcStart": "2026-10-07T13:00:00.000Z",
+      "localDayUtcEnd": "2026-10-08T13:00:00.000Z",
+      "minAltitudeDeg": -50.4845640105007,
+      "maxAltitudeDeg": 61.95506541503803,
+      "maxReferenceDeg": 0.4305234006794419,
+      "maxTenMinuteDirectionDeg": 2.488343293094014,
+      "finite": true,
+      "regime": "rises-and-sets",
+      "astronomicalNightPossible": true,
+      "astronomicalDawn": [
+        {
+          "utc": "2026-10-07T17:58:14.341Z",
+          "local": "2026-10-08, 04:58:14 GMT+11:00",
+          "alt": -18.000001193702584
+        }
+      ],
+      "civilDawn": [
+        {
+          "utc": "2026-10-07T18:58:13.754Z",
+          "local": "2026-10-08, 05:58:13 GMT+11:00",
+          "alt": -5.999998348999425
+        }
+      ],
+      "conventionalSunrise": [
+        {
+          "utc": "2026-10-07T19:23:25.658Z",
+          "local": "2026-10-08, 06:23:25 GMT+11:00",
+          "alt": -0.8333010420940948
+        }
+      ],
+      "geometricRise": [
+        {
+          "utc": "2026-10-07T19:27:28.208Z",
+          "local": "2026-10-08, 06:27:28 GMT+11:00",
+          "alt": -1.0832835721403516e-06
+        }
+      ],
+      "solarNoon": {
+        "utc": "2026-10-08T01:42:58.802Z",
+        "local": "2026-10-08, 12:42:58 GMT+11:00",
+        "altDeg": 61.96358011451552,
+        "azDeg": 359.9269004582476,
+        "enu": [
+          -0.0005996805827603412,
+          0.47003232827263636,
+          0.8826489963523458
+        ],
+        "raDeg": 193.6323806222422,
+        "decDeg": -5.832398408236266,
+        "distanceKm": 149489302.60046488,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 0.9993119222068327
+      },
+      "conventionalSunset": [
+        {
+          "utc": "2026-10-08T08:02:48.344Z",
+          "local": "2026-10-08, 19:02:48 GMT+11:00",
+          "alt": -0.833301007920816
+        }
+      ],
+      "astronomicalDusk": [
+        {
+          "utc": "2026-10-08T09:28:13.958Z",
+          "local": "2026-10-08, 20:28:13 GMT+11:00",
+          "alt": -17.999999056302467
+        }
+      ],
+      "darkestSample": {
+        "utc": "2026-10-07T13:40:00.000Z",
+        "local": "2026-10-08, 00:40:00 GMT+11:00",
+        "alt": -50.4845640105007
+      },
+      "pass": true
+    }
+  ],
+  "timezoneCases": [
+    {
+      "site": "CentralFlorida",
+      "tz": "America/New_York",
+      "expectedJanuaryJulyOffsetMinutes": [
+        -300,
+        -240
+      ],
+      "actualJanuaryJulyOffsetMinutes": [
+        -300,
+        -240
+      ],
+      "pass": true
+    },
+    {
+      "site": "Phoenix",
+      "tz": "America/Phoenix",
+      "expectedJanuaryJulyOffsetMinutes": [
+        -420,
+        -420
+      ],
+      "actualJanuaryJulyOffsetMinutes": [
+        -420,
+        -420
+      ],
+      "pass": true
+    },
+    {
+      "site": "Berlin",
+      "tz": "Europe/Berlin",
+      "expectedJanuaryJulyOffsetMinutes": [
+        60,
+        120
+      ],
+      "actualJanuaryJulyOffsetMinutes": [
+        60,
+        120
+      ],
+      "pass": true
+    },
+    {
+      "site": "Makkah",
+      "tz": "Asia/Riyadh",
+      "expectedJanuaryJulyOffsetMinutes": [
+        180,
+        180
+      ],
+      "actualJanuaryJulyOffsetMinutes": [
+        180,
+        180
+      ],
+      "pass": true
+    },
+    {
+      "site": "Tromso",
+      "tz": "Europe/Oslo",
+      "expectedJanuaryJulyOffsetMinutes": [
+        60,
+        120
+      ],
+      "actualJanuaryJulyOffsetMinutes": [
+        60,
+        120
+      ],
+      "pass": true
+    },
+    {
+      "site": "Sydney",
+      "tz": "Australia/Sydney",
+      "expectedJanuaryJulyOffsetMinutes": [
+        660,
+        600
+      ],
+      "actualJanuaryJulyOffsetMinutes": [
+        660,
+        600
+      ],
+      "pass": true
+    }
+  ],
+  "transitions": [
+    {
+      "tz": "America/New_York",
+      "type": "gap",
+      "beforeUtc": "2026-03-08T06:59:00Z",
+      "beforeLocal": "2026-03-08, 01:59:00 GMT-05:00",
+      "afterUtc": "2026-03-08T07:00:00Z",
+      "afterLocal": "2026-03-08, 03:00:00 GMT-04:00",
+      "beforeOffsetMinutes": -300,
+      "afterOffsetMinutes": -240,
+      "wall": [
+        2026,
+        3,
+        8,
+        2,
+        30
+      ],
+      "ambiguousOrMissingWallRejected": true,
+      "pass": true
+    },
+    {
+      "tz": "America/New_York",
+      "type": "fold",
+      "beforeUtc": "2026-11-01T05:59:00Z",
+      "beforeLocal": "2026-11-01, 01:59:00 GMT-04:00",
+      "afterUtc": "2026-11-01T06:00:00Z",
+      "afterLocal": "2026-11-01, 01:00:00 GMT-05:00",
+      "beforeOffsetMinutes": -240,
+      "afterOffsetMinutes": -300,
+      "wall": [
+        2026,
+        11,
+        1,
+        1,
+        30
+      ],
+      "ambiguousOrMissingWallRejected": true,
+      "pass": true
+    },
+    {
+      "tz": "Europe/Berlin",
+      "type": "gap",
+      "beforeUtc": "2026-03-29T00:59:00Z",
+      "beforeLocal": "2026-03-29, 01:59:00 GMT+01:00",
+      "afterUtc": "2026-03-29T01:00:00Z",
+      "afterLocal": "2026-03-29, 03:00:00 GMT+02:00",
+      "beforeOffsetMinutes": 60,
+      "afterOffsetMinutes": 120,
+      "wall": [
+        2026,
+        3,
+        29,
+        2,
+        30
+      ],
+      "ambiguousOrMissingWallRejected": true,
+      "pass": true
+    },
+    {
+      "tz": "Europe/Berlin",
+      "type": "fold",
+      "beforeUtc": "2026-10-25T00:59:00Z",
+      "beforeLocal": "2026-10-25, 02:59:00 GMT+02:00",
+      "afterUtc": "2026-10-25T01:00:00Z",
+      "afterLocal": "2026-10-25, 02:00:00 GMT+01:00",
+      "beforeOffsetMinutes": 120,
+      "afterOffsetMinutes": 60,
+      "wall": [
+        2026,
+        10,
+        25,
+        2,
+        30
+      ],
+      "ambiguousOrMissingWallRejected": true,
+      "pass": true
+    },
+    {
+      "tz": "Europe/Oslo",
+      "type": "gap",
+      "beforeUtc": "2026-03-29T00:59:00Z",
+      "beforeLocal": "2026-03-29, 01:59:00 GMT+01:00",
+      "afterUtc": "2026-03-29T01:00:00Z",
+      "afterLocal": "2026-03-29, 03:00:00 GMT+02:00",
+      "beforeOffsetMinutes": 60,
+      "afterOffsetMinutes": 120,
+      "wall": [
+        2026,
+        3,
+        29,
+        2,
+        30
+      ],
+      "ambiguousOrMissingWallRejected": true,
+      "pass": true
+    },
+    {
+      "tz": "Europe/Oslo",
+      "type": "fold",
+      "beforeUtc": "2026-10-25T00:59:00Z",
+      "beforeLocal": "2026-10-25, 02:59:00 GMT+02:00",
+      "afterUtc": "2026-10-25T01:00:00Z",
+      "afterLocal": "2026-10-25, 02:00:00 GMT+01:00",
+      "beforeOffsetMinutes": 120,
+      "afterOffsetMinutes": 60,
+      "wall": [
+        2026,
+        10,
+        25,
+        2,
+        30
+      ],
+      "ambiguousOrMissingWallRejected": true,
+      "pass": true
+    },
+    {
+      "tz": "Australia/Sydney",
+      "type": "fold",
+      "beforeUtc": "2026-04-04T15:59:00Z",
+      "beforeLocal": "2026-04-05, 02:59:00 GMT+11:00",
+      "afterUtc": "2026-04-04T16:00:00Z",
+      "afterLocal": "2026-04-05, 02:00:00 GMT+10:00",
+      "beforeOffsetMinutes": 660,
+      "afterOffsetMinutes": 600,
+      "wall": [
+        2026,
+        4,
+        5,
+        2,
+        30
+      ],
+      "ambiguousOrMissingWallRejected": true,
+      "pass": true
+    },
+    {
+      "tz": "Australia/Sydney",
+      "type": "gap",
+      "beforeUtc": "2026-10-03T15:59:00Z",
+      "beforeLocal": "2026-10-04, 01:59:00 GMT+10:00",
+      "afterUtc": "2026-10-03T16:00:00Z",
+      "afterLocal": "2026-10-04, 03:00:00 GMT+11:00",
+      "beforeOffsetMinutes": 600,
+      "afterOffsetMinutes": 660,
+      "wall": [
+        2026,
+        10,
+        4,
+        2,
+        30
+      ],
+      "ambiguousOrMissingWallRejected": true,
+      "pass": true
+    }
+  ],
+  "bindings": [
+    {
+      "path": "index.html",
+      "sha256": "7deab74a08c8f6724a24d1eafb3a96f2e797643c3a3bf94a30b144b317c8cd99",
+      "expected": "7deab74a08c8f6724a24d1eafb3a96f2e797643c3a3bf94a30b144b317c8cd99",
+      "match": true
+    },
+    {
+      "path": "config.js",
+      "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "expected": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "match": true
+    },
+    {
+      "path": "real-sky/core/src/sky-state.mjs",
+      "sha256": "4f3187db2fb967cb09c3a6a261c0fd351b5afbb9e195d7dbb3da473e0b2f2ab7",
+      "expected": "4f3187db2fb967cb09c3a6a261c0fd351b5afbb9e195d7dbb3da473e0b2f2ab7",
+      "match": true
+    },
+    {
+      "path": "real-sky/core/src/astronomy.mjs",
+      "sha256": "491c39dfc4ca12caeec3cc782d8658486f8b41d5ed543daf7e550a8ae7dffff4",
+      "expected": "491c39dfc4ca12caeec3cc782d8658486f8b41d5ed543daf7e550a8ae7dffff4",
+      "match": true
+    },
+    {
+      "path": "real-sky/core/src/time-scales.mjs",
+      "sha256": "2c02d0edfff55973b7ea6fe393d9ec3c7107dce99218b98dc84ad5d6606aeb0b",
+      "expected": "2c02d0edfff55973b7ea6fe393d9ec3c7107dce99218b98dc84ad5d6606aeb0b",
+      "match": true
+    },
+    {
+      "path": "real-sky/core/src/projection.mjs",
+      "sha256": "d76857e2b12889f2848a62861aab4c089cf86fce1559a343036e096765438343",
+      "expected": "d76857e2b12889f2848a62861aab4c089cf86fce1559a343036e096765438343",
+      "match": true
+    },
+    {
+      "path": "real-sky/native-host-hooks.js",
+      "sha256": "03bacb3987ebbba5430e649b810b0df5c1b4ac4bcdab006719b1095e3b1c51cd",
+      "expected": "03bacb3987ebbba5430e649b810b0df5c1b4ac4bcdab006719b1095e3b1c51cd",
+      "match": true
+    },
+    {
+      "path": "real-sky/native-preview.mjs",
+      "sha256": "93672ddd9bfce3847ac6e846d10eb94368f7228a23fe0e7046e6ff967ecbe192",
+      "expected": "93672ddd9bfce3847ac6e846d10eb94368f7228a23fe0e7046e6ff967ecbe192",
+      "match": true
+    },
+    {
+      "path": "real-sky/native-star-preview.mjs",
+      "sha256": "3fc38a0788f1b23e85469086bbbf6e6c21f6aa03f4d5c6b9e0339b3b79a6493b",
+      "expected": "3fc38a0788f1b23e85469086bbbf6e6c21f6aa03f4d5c6b9e0339b3b79a6493b",
+      "match": true
+    }
+  ],
+  "inherited": [
+    {
+      "engine": "chromium",
+      "tree": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "receiptSha256": "4ca139e9328b4793192a47f297b2fb8c965bc45dbf4119d9da1655aee2ef312f",
+      "geometrySha256": "13a210852795211ba74d6f7bcac6f49ffb6e952ab30e4e7ea4ee572925361af3",
+      "status": "PASS",
+      "rows": 19,
+      "checksFailed": [],
+      "unchangedScalarOwners": [
+        {
+          "path": "real-sky/core/src/sky-state.mjs",
+          "match": true
+        },
+        {
+          "path": "real-sky/core/src/astronomy.mjs",
+          "match": true
+        },
+        {
+          "path": "real-sky/core/src/time-scales.mjs",
+          "match": true
+        },
+        {
+          "path": "real-sky/core/src/projection.mjs",
+          "match": true
+        }
+      ],
+      "scope": "Inherited physical geometry/body-gate stills only; fixed nonpolar CentralFlorida timetable is not city/date prayer evidence.",
+      "samples": [
+        {
+          "case": "north-equinox",
+          "hour": 10,
+          "utc": 1774000800000,
+          "lat": 28.5383,
+          "lon": -81.3792,
+          "sun": {
+            "altDeg": -20.335183654225446,
+            "azDeg": 78.46658404231897,
+            "enu": [
+              0.9187424132940306,
+              0.1874783298264591,
+              -0.3475115161547055
+            ],
+            "raDeg": 359.8298049415422,
+            "decDeg": -0.07579920645928218,
+            "distanceKm": 148974338.03114492,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958171149734917,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "north-equinox",
+          "hour": 16,
+          "utc": 1774022400000,
+          "lat": 28.5383,
+          "lon": -81.3792,
+          "sun": {
+            "altDeg": 53.84505125121835,
+            "azDeg": 138.0295901231301,
+            "enu": [
+              0.3945411586822626,
+              -0.4386376969094961,
+              0.8074244515467629
+            ],
+            "raDeg": 0.05661412428980839,
+            "decDeg": 0.023008287880822174,
+            "distanceKm": 148977415.3320067,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958869633402905,
+            "projection": {
+              "x": 43.83750276682456,
+              "y": 186.57013187508255,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "north-equinox",
+          "hour": 23,
+          "utc": 1774047600000,
+          "lat": 28.5383,
+          "lon": -81.3792,
+          "sun": {
+            "altDeg": 7.275808529441968,
+            "azDeg": 266.1776840488196,
+            "enu": [
+              -0.9897414943201402,
+              -0.0661257594627131,
+              0.1266457988107592
+            ],
+            "raDeg": 0.31951887542516033,
+            "decDeg": 0.13826591674388636,
+            "distanceKm": 148993964.96136177,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9959685437440102,
+            "projection": {
+              "x": 2086.6533975110615,
+              "y": 181.80406294957453,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "south-solstice",
+          "hour": 1,
+          "utc": 1797814800000,
+          "lat": -33.8688,
+          "lon": 151.2093,
+          "sun": {
+            "altDeg": 74.39870166547013,
+            "azDeg": 51.47451508633446,
+            "enu": [
+              0.21040143733248037,
+              0.16751371325779774,
+              0.9631564727701366
+            ],
+            "raDeg": 269.0870466825685,
+            "decDeg": -23.432668922037596,
+            "distanceKm": 147168090.38343447,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837989656682987,
+            "projection": {
+              "x": 63.395937146211836,
+              "y": -111.58559160526846,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "south-solstice",
+          "hour": 8,
+          "utc": 1797840000000,
+          "lat": -33.8688,
+          "lon": 151.2093,
+          "sun": {
+            "altDeg": 11.472253391461361,
+            "azDeg": 249.3595435896386,
+            "enu": [
+              -0.9171144312795567,
+              -0.3454599108405939,
+              0.198893363239662
+            ],
+            "raDeg": 269.407967277281,
+            "decDeg": -23.433394946998867,
+            "distanceKm": 147169917.64626455,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837785625377697,
+            "projection": {
+              "x": 793.8985202460458,
+              "y": 336.3509718112224,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "south-solstice",
+          "hour": 11,
+          "utc": 1797850800000,
+          "lat": -33.8688,
+          "lon": 151.2093,
+          "sun": {
+            "altDeg": -19.43638258568416,
+            "azDeg": 221.8636407092869,
+            "enu": [
+              -0.62932826969696,
+              -0.7022938889316181,
+              -0.3327600074070418
+            ],
+            "raDeg": 269.54740098938436,
+            "decDeg": -23.433281908233127,
+            "distanceKm": 147172023.32923892,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837699473370307,
+            "projection": {
+              "x": 800.7397499990168,
+              "y": 1007.2574660762275,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "equator-zenith",
+          "hour": 11.9,
+          "utc": 1774007640000,
+          "lat": 0,
+          "lon": 0,
+          "sun": {
+            "altDeg": 86.62963973271835,
+            "azDeg": 90.73733365887063,
+            "enu": [
+              0.058785097299995606,
+              -0.0007565413042947101,
+              0.998270374187617
+            ],
+            "raDeg": 359.9001521473407,
+            "decDeg": -0.04334662789835146,
+            "distanceKm": 148969060.62983516,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958392257752683,
+            "projection": {
+              "x": 140.44785070037096,
+              "y": 0.40135744598899237,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "equator-zenith",
+          "hour": 12.1,
+          "utc": 1774008360000,
+          "lat": 0,
+          "lon": 0,
+          "sun": {
+            "altDeg": 89.62849688276378,
+            "azDeg": 96.18929618929701,
+            "enu": [
+              0.006446113245532739,
+              -0.0006990535644257085,
+              0.9999789792531341
+            ],
+            "raDeg": 359.9076219296974,
+            "decDeg": -0.04005282215731152,
+            "distanceKm": 148969397.978135,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958415536529929,
+            "projection": {
+              "x": 160.08584896787607,
+              "y": 0.37024734929173064,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "equator-zenith",
+          "hour": 12.3,
+          "utc": 1774009080000,
+          "lat": 0,
+          "lon": 0,
+          "sun": {
+            "altDeg": 87.36833716060262,
+            "azDeg": 269.199385957945,
+            "enu": [
+              -0.04591055060153071,
+              -0.0006415659982119868,
+              0.9989453487236097
+            ],
+            "raDeg": 359.91509163275015,
+            "decDeg": -0.03675902649835653,
+            "distanceKm": 148969752.82809746,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958438816113107,
+            "projection": {
+              "x": 179.7128510542917,
+              "y": 0.34017049847727776,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "equator-zenith",
+          "hour": 18.1,
+          "utc": 1774029960000,
+          "lat": 0,
+          "lon": 0,
+          "sun": {
+            "altDeg": 0.34838563654777555,
+            "azDeg": 270.0587529304577,
+            "enu": [
+              -0.9999809882144701,
+              0.0010254129457979175,
+              0.006080438956392367
+            ],
+            "raDeg": 0.13308186084969975,
+            "decDeg": 0.05875184434828448,
+            "distanceKm": 148986190.01104534,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9959114272970584,
+            "projection": {
+              "x": 74298.51201286272,
+              "y": -107.51059641115688,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 0.264
+          }
+        },
+        {
+          "case": "arctic-summer",
+          "hour": 0,
+          "utc": 1782000000000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": 4.030802486855443,
+            "azDeg": 16.98657979327112,
+            "enu": [
+              0.29142504931565927,
+              0.9540075307257252,
+              0.07029275887294556
+            ],
+            "raDeg": 89.64276064545146,
+            "decDeg": 23.433071544998874,
+            "distanceKm": 152021701.36785266,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 1.0162052072244525,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 0.79
+          }
+        },
+        {
+          "case": "arctic-summer",
+          "hour": 12,
+          "utc": 1782043200000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": 42.491149723390414,
+            "azDeg": 203.24504571849124,
+            "enu": [
+              -0.2910183060906113,
+              -0.6775249762828053,
+              0.6754763149312752
+            ],
+            "raDeg": 90.1622303147924,
+            "decDeg": 23.434026788987488,
+            "distanceKm": 152022840.85357824,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 1.0162387021943433,
+            "projection": {
+              "x": 243.10889526259353,
+              "y": 265.4012525794918,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "arctic-summer",
+          "hour": 23,
+          "utc": 1782082800000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": 3.114873647527771,
+            "azDeg": 3.185653980700522,
+            "enu": [
+              0.055489406934431544,
+              0.9969795909208519,
+              0.054338025409062574
+            ],
+            "raDeg": 90.63925469551748,
+            "decDeg": 23.432160662265993,
+            "distanceKm": 152031254.41981763,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 1.0162683831943435,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 0.659
+          }
+        },
+        {
+          "case": "arctic-winter",
+          "hour": 0,
+          "utc": 1797811200000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": -42.35078079536835,
+            "azDeg": 24.476173282598268,
+            "enu": [
+              0.3061928524579403,
+              0.6726199979344193,
+              -0.673667778272326
+            ],
+            "raDeg": 269.04060695914256,
+            "decDeg": -23.43466002374946,
+            "distanceKm": 147178965.04236895,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9838019147765477,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "arctic-winter",
+          "hour": 12,
+          "utc": 1797854400000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": -4.130513948793844,
+            "azDeg": 197.82152891343225,
+            "enu": [
+              -0.30525809324780495,
+              -0.949541663917123,
+              -0.07202864008306337
+            ],
+            "raDeg": 269.59487329821064,
+            "decDeg": -23.437720590770972,
+            "distanceKm": 147169907.00935858,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837670928151702,
+            "projection": {
+              "x": 292.8690461554455,
+              "y": 573.5038320881295,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "arctic-winter",
+          "hour": 23,
+          "utc": 1797894000000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": -43.71456159585374,
+            "azDeg": 5.558038386335909,
+            "enu": [
+              0.07000525191987429,
+              0.7193934039762746,
+              -0.691066129266269
+            ],
+            "raDeg": 270.10395840112415,
+            "decDeg": -23.43753961042496,
+            "distanceKm": 147169254.76402766,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837362615907442,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "antarctic-summer",
+          "hour": 0,
+          "utc": 1797811200000,
+          "lat": -78.2232,
+          "lon": 15.6469,
+          "sun": {
+            "altDeg": 12.088271132870926,
+            "azDeg": 164.83623698299562,
+            "enu": [
+              0.2557785819651037,
+              -0.9437802981238553,
+              0.2094183990989502
+            ],
+            "raDeg": 269.0404464237273,
+            "decDeg": -23.430440027021525,
+            "distanceKm": 147173348.17951238,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9838019147765477,
+            "projection": {
+              "x": 79.37705837732493,
+              "y": 433.7531417701565,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "antarctic-summer",
+          "hour": 12,
+          "utc": 1797854400000,
+          "lat": -78.2232,
+          "lon": 15.6469,
+          "sun": {
+            "altDeg": 34.69503801731096,
+            "azDeg": 341.94493109993095,
+            "enu": [
+              -0.25482315769161956,
+              0.7817077749201673,
+              0.5692083212088812
+            ],
+            "raDeg": 269.5950334615668,
+            "decDeg": -23.433239369270755,
+            "distanceKm": 147165836.74266833,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837670928151702,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "antarctic-summer",
+          "hour": 23,
+          "utc": 1797894000000,
+          "lat": -78.2232,
+          "lon": 15.6469,
+          "sun": {
+            "altDeg": 11.658432037111249,
+            "azDeg": 178.99981530967807,
+            "enu": [
+              0.017095514086620304,
+              -0.9792204567965299,
+              0.2020768180403419
+            ],
+            "raDeg": 270.10389669868505,
+            "decDeg": -23.433330207210382,
+            "distanceKm": 147163573.58077025,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837362615907442,
+            "projection": {
+              "x": 157.07644766995696,
+              "y": 439.3363577121847,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "tree": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "receiptSha256": "2e1ba8fe53454ee997d98cb5b4daeff7a2f9113beb1ca7eee90e36d3fe51cc85",
+      "geometrySha256": "43f442f79b202783cf90a4b15d104d98b33283681c3d1db0cdbc02d95cad82c2",
+      "status": "PASS",
+      "rows": 19,
+      "checksFailed": [],
+      "unchangedScalarOwners": [
+        {
+          "path": "real-sky/core/src/sky-state.mjs",
+          "match": true
+        },
+        {
+          "path": "real-sky/core/src/astronomy.mjs",
+          "match": true
+        },
+        {
+          "path": "real-sky/core/src/time-scales.mjs",
+          "match": true
+        },
+        {
+          "path": "real-sky/core/src/projection.mjs",
+          "match": true
+        }
+      ],
+      "scope": "Inherited physical geometry/body-gate stills only; fixed nonpolar CentralFlorida timetable is not city/date prayer evidence.",
+      "samples": [
+        {
+          "case": "north-equinox",
+          "hour": 10,
+          "utc": 1774000800000,
+          "lat": 28.5383,
+          "lon": -81.3792,
+          "sun": {
+            "altDeg": -20.335183654225446,
+            "azDeg": 78.46658404231897,
+            "enu": [
+              0.9187424132940306,
+              0.1874783298264591,
+              -0.3475115161547055
+            ],
+            "raDeg": 359.8298049415422,
+            "decDeg": -0.07579920645928218,
+            "distanceKm": 148974338.03114492,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958171149734917,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "north-equinox",
+          "hour": 16,
+          "utc": 1774022400000,
+          "lat": 28.5383,
+          "lon": -81.3792,
+          "sun": {
+            "altDeg": 53.84505125121835,
+            "azDeg": 138.0295901231301,
+            "enu": [
+              0.3945411586822626,
+              -0.4386376969094961,
+              0.8074244515467629
+            ],
+            "raDeg": 0.05661412428980839,
+            "decDeg": 0.023008287880822174,
+            "distanceKm": 148977415.3320067,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958869633402905,
+            "projection": {
+              "x": 43.83750276682456,
+              "y": 186.57013187508255,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "north-equinox",
+          "hour": 23,
+          "utc": 1774047600000,
+          "lat": 28.5383,
+          "lon": -81.3792,
+          "sun": {
+            "altDeg": 7.275808529441968,
+            "azDeg": 266.1776840488196,
+            "enu": [
+              -0.9897414943201402,
+              -0.0661257594627131,
+              0.1266457988107592
+            ],
+            "raDeg": 0.31951887542516033,
+            "decDeg": 0.13826591674388636,
+            "distanceKm": 148993964.96136177,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9959685437440102,
+            "projection": {
+              "x": 2086.6533975110615,
+              "y": 181.8040629495746,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "south-solstice",
+          "hour": 1,
+          "utc": 1797814800000,
+          "lat": -33.8688,
+          "lon": 151.2093,
+          "sun": {
+            "altDeg": 74.39870166547013,
+            "azDeg": 51.47451508633446,
+            "enu": [
+              0.21040143733248037,
+              0.16751371325779774,
+              0.9631564727701366
+            ],
+            "raDeg": 269.0870466825685,
+            "decDeg": -23.432668922037596,
+            "distanceKm": 147168090.38343447,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837989656682987,
+            "projection": {
+              "x": 63.395937146211864,
+              "y": -111.5855916052684,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "south-solstice",
+          "hour": 8,
+          "utc": 1797840000000,
+          "lat": -33.8688,
+          "lon": 151.2093,
+          "sun": {
+            "altDeg": 11.472253391461361,
+            "azDeg": 249.3595435896386,
+            "enu": [
+              -0.9171144312795567,
+              -0.3454599108405939,
+              0.198893363239662
+            ],
+            "raDeg": 269.407967277281,
+            "decDeg": -23.433394946998867,
+            "distanceKm": 147169917.64626455,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837785625377697,
+            "projection": {
+              "x": 793.8985202460458,
+              "y": 336.35097181122245,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "south-solstice",
+          "hour": 11,
+          "utc": 1797850800000,
+          "lat": -33.8688,
+          "lon": 151.2093,
+          "sun": {
+            "altDeg": -19.43638258568416,
+            "azDeg": 221.8636407092869,
+            "enu": [
+              -0.62932826969696,
+              -0.7022938889316181,
+              -0.3327600074070418
+            ],
+            "raDeg": 269.54740098938436,
+            "decDeg": -23.433281908233127,
+            "distanceKm": 147172023.32923895,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837699473370308,
+            "projection": {
+              "x": 800.7397499990168,
+              "y": 1007.2574660762275,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "equator-zenith",
+          "hour": 11.9,
+          "utc": 1774007640000,
+          "lat": 0,
+          "lon": 0,
+          "sun": {
+            "altDeg": 86.62963973271835,
+            "azDeg": 90.73733365887063,
+            "enu": [
+              0.058785097299995606,
+              -0.0007565413042947101,
+              0.998270374187617
+            ],
+            "raDeg": 359.9001521473407,
+            "decDeg": -0.04334662789835146,
+            "distanceKm": 148969060.62983516,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958392257752683,
+            "projection": {
+              "x": 140.44785070037096,
+              "y": 0.4013574459890492,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "equator-zenith",
+          "hour": 12.1,
+          "utc": 1774008360000,
+          "lat": 0,
+          "lon": 0,
+          "sun": {
+            "altDeg": 89.62849688276378,
+            "azDeg": 96.18929618929701,
+            "enu": [
+              0.006446113245532739,
+              -0.0006990535644257086,
+              0.9999789792531341
+            ],
+            "raDeg": 359.9076219296974,
+            "decDeg": -0.04005282215731153,
+            "distanceKm": 148969397.97813496,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958415536529928,
+            "projection": {
+              "x": 160.08584896787607,
+              "y": 0.37024734929173064,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "equator-zenith",
+          "hour": 12.3,
+          "utc": 1774009080000,
+          "lat": 0,
+          "lon": 0,
+          "sun": {
+            "altDeg": 87.36833716060262,
+            "azDeg": 269.199385957945,
+            "enu": [
+              -0.04591055060153071,
+              -0.0006415659982119868,
+              0.9989453487236097
+            ],
+            "raDeg": 359.91509163275015,
+            "decDeg": -0.03675902649835653,
+            "distanceKm": 148969752.82809746,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9958438816113107,
+            "projection": {
+              "x": 179.7128510542917,
+              "y": 0.3401704984773346,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "equator-zenith",
+          "hour": 18.1,
+          "utc": 1774029960000,
+          "lat": 0,
+          "lon": 0,
+          "sun": {
+            "altDeg": 0.34838563654777555,
+            "azDeg": 270.0587529304577,
+            "enu": [
+              -0.9999809882144701,
+              0.0010254129457979175,
+              0.006080438956392367
+            ],
+            "raDeg": 0.13308186084969975,
+            "decDeg": 0.05875184434828448,
+            "distanceKm": 148986190.01104534,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9959114272970584,
+            "projection": {
+              "x": 74298.51201286269,
+              "y": -107.51059641115683,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 0.264
+          }
+        },
+        {
+          "case": "arctic-summer",
+          "hour": 0,
+          "utc": 1782000000000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": 4.030802486855443,
+            "azDeg": 16.98657979327112,
+            "enu": [
+              0.29142504931565927,
+              0.9540075307257252,
+              0.07029275887294556
+            ],
+            "raDeg": 89.64276064545146,
+            "decDeg": 23.433071544998874,
+            "distanceKm": 152021701.36785266,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 1.0162052072244525,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 0.79
+          }
+        },
+        {
+          "case": "arctic-summer",
+          "hour": 12,
+          "utc": 1782043200000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": 42.491149723390414,
+            "azDeg": 203.24504571849124,
+            "enu": [
+              -0.2910183060906113,
+              -0.6775249762828053,
+              0.6754763149312752
+            ],
+            "raDeg": 90.1622303147924,
+            "decDeg": 23.434026788987488,
+            "distanceKm": 152022840.85357824,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 1.0162387021943433,
+            "projection": {
+              "x": 243.10889526259353,
+              "y": 265.4012525794919,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "arctic-summer",
+          "hour": 23,
+          "utc": 1782082800000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": 3.114873647527768,
+            "azDeg": 3.185653980700522,
+            "enu": [
+              0.055489406934431544,
+              0.9969795909208519,
+              0.05433802540906252
+            ],
+            "raDeg": 90.63925469551748,
+            "decDeg": 23.43216066226599,
+            "distanceKm": 152031254.4198176,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 1.0162683831943433,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 0.659
+          }
+        },
+        {
+          "case": "arctic-winter",
+          "hour": 0,
+          "utc": 1797811200000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": -42.35078079536835,
+            "azDeg": 24.476173282598268,
+            "enu": [
+              0.3061928524579403,
+              0.6726199979344193,
+              -0.673667778272326
+            ],
+            "raDeg": 269.04060695914256,
+            "decDeg": -23.43466002374946,
+            "distanceKm": 147178965.04236895,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9838019147765478,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "arctic-winter",
+          "hour": 12,
+          "utc": 1797854400000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": -4.130513948793844,
+            "azDeg": 197.82152891343225,
+            "enu": [
+              -0.30525809324780495,
+              -0.949541663917123,
+              -0.07202864008306337
+            ],
+            "raDeg": 269.59487329821064,
+            "decDeg": -23.437720590770972,
+            "distanceKm": 147169907.00935858,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837670928151702,
+            "projection": {
+              "x": 292.8690461554455,
+              "y": 573.5038320881295,
+              "inFrame": false,
+              "visible": false
+            }
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "arctic-winter",
+          "hour": 23,
+          "utc": 1797894000000,
+          "lat": 69.6492,
+          "lon": 18.9553,
+          "sun": {
+            "altDeg": -43.71456159585374,
+            "azDeg": 5.558038386335909,
+            "enu": [
+              0.07000525191987429,
+              0.7193934039762746,
+              -0.691066129266269
+            ],
+            "raDeg": 270.10395840112415,
+            "decDeg": -23.43753961042496,
+            "distanceKm": 147169254.76402766,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837362615907442,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 0,
+            "corner": 0
+          }
+        },
+        {
+          "case": "antarctic-summer",
+          "hour": 0,
+          "utc": 1797811200000,
+          "lat": -78.2232,
+          "lon": 15.6469,
+          "sun": {
+            "altDeg": 12.088271132870926,
+            "azDeg": 164.83623698299562,
+            "enu": [
+              0.2557785819651037,
+              -0.9437802981238553,
+              0.2094183990989502
+            ],
+            "raDeg": 269.0404464237273,
+            "decDeg": -23.430440027021525,
+            "distanceKm": 147173348.17951238,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9838019147765478,
+            "projection": {
+              "x": 79.37705837732493,
+              "y": 433.7531417701565,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "antarctic-summer",
+          "hour": 12,
+          "utc": 1797854400000,
+          "lat": -78.2232,
+          "lon": 15.6469,
+          "sun": {
+            "altDeg": 34.69503801731096,
+            "azDeg": 341.94493109993095,
+            "enu": [
+              -0.25482315769161956,
+              0.7817077749201673,
+              0.5692083212088812
+            ],
+            "raDeg": 269.5950334615668,
+            "decDeg": -23.433239369270755,
+            "distanceKm": 147165836.74266833,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837670928151702,
+            "projection": null
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        },
+        {
+          "case": "antarctic-summer",
+          "hour": 23,
+          "utc": 1797894000000,
+          "lat": -78.2232,
+          "lon": 15.6469,
+          "sun": {
+            "altDeg": 11.658432037111249,
+            "azDeg": 178.99981530967807,
+            "enu": [
+              0.017095514086620304,
+              -0.9792204567965299,
+              0.2020768180403419
+            ],
+            "raDeg": 270.10389669868505,
+            "decDeg": -23.433330207210382,
+            "distanceKm": 147163573.58077025,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 0.9837362615907442,
+            "projection": {
+              "x": 157.07644766995696,
+              "y": 439.33635771218474,
+              "inFrame": true,
+              "visible": true
+            }
+          },
+          "solarStyle": {
+            "body": 1,
+            "corner": 1
+          }
+        }
+      ]
+    }
+  ],
+  "retainedReviewers": [
+    {
+      "reviewer": "A",
+      "path": "local:h8\\review-v45\\A\\findings.md",
+      "sha256": "c89aebf6f62a1ea0c57dd9a012e65874f7667b30a57ec6fe66c3a8694b44226a",
+      "role": "Original retained V45 review; not redone by this supplement."
+    },
+    {
+      "reviewer": "B",
+      "path": "local:h8\\review-v45\\B\\findings.md",
+      "sha256": "260144b0ccf740d2b89376cca5853001574b366bbd02d69ec8a3aeed8687e349",
+      "role": "Original retained V45 review; not redone by this supplement."
+    },
+    {
+      "reviewer": "C",
+      "path": "local:h8\\review-v45\\C\\findings.md",
+      "sha256": "c791efe76339a46a6384d2b5f67547daa7bdc26fc122782c55878b9027c9ade1",
+      "role": "Original retained V45 review; not redone by this supplement."
+    }
+  ],
+  "limitations": [
+    "NOAA low-order approximation tolerance0.6deg is a coarse direction discriminator, not sunrise minute accuracy.",
+    "Conventional sunrise uses geometric centre-0.8333deg with standard sea-level refraction/disc convention; no terrain/height/real-atmosphere correction.",
+    "Computed Sun-event timestamps are browser-scene anchors only, never prayer times.",
+    "Polar/nonastronomical-night absences are null/empty events, not fabricated times.",
+    "No browser was run; old geometry stills are inherited under unchanged scalar owners; current full composition remains primary work."
+  ]
+}

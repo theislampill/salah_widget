@@ -1642,6 +1642,30 @@ function sameNativePresentation(a,b){
 
 
 
+// Only rigid pixel geometry is reusable. No UTC, celestial direction, radiance,
+// exposure, weather or admitted frame is cached here. At600x the old display
+// pass retraced thousands of identical camera rays on each publication and
+// could exhaust the unchanged30-second age fence. Keep the exact reference
+// arithmetic (including its angular round trip), bounded to four native-sized
+// cameras. Camera changes invalidate the key; arbitrary sample positions still
+// use the direct inverse projection. Arrays stay private to this module.
+const displayGeometryCache=new Map();
+function displayGeometry(view){
+ const c={type:view.type??'camera',width:view.width??325,height:view.height??530,azDeg:view.azDeg??180,altDeg:view.altDeg??35,fovYDeg:view.fovYDeg??90,rollDeg:view.rollDeg??0};
+ const key=JSON.stringify(c),cached=displayGeometryCache.get(key);
+ if(c.type==='camera'&&cached)return cached;
+ const mapping=skyProjection(view),w=mapping.width,h=mapping.height,reference=mapping.solidAngle(w/2,h/2),bounded=c.type==='camera'&&Number.isInteger(w)&&Number.isInteger(h)&&w*h<=325*530;
+ const rays=bounded?new Float64Array(w*h*3):null,scales=bounded?new Float64Array(w*h):null,ready=bounded?new Uint8Array(w*h):null;
+ const value={mapping,scale(x,y){const p=(y-.5)*w+x-.5;if(!bounded)return reference/mapping.solidAngle(x,y);return scales[p]||(scales[p]=reference/mapping.solidAngle(x,y));},cosine(x,y,v){
+  const px=x-.5,py=y-.5,p=py*w+px;
+  if(!bounded||!Number.isInteger(px)||!Number.isInteger(py)||px<0||py<0||px>=w||py>=h){const ray=horizontalDirection(mapping.unproject(x,y));return Math.max(-1,Math.min(1,ray[0]*v[0]+ray[1]*v[1]+ray[2]*v[2]));}
+  const i=p*3;if(!ready[p]){rays.set(horizontalDirection(mapping.unproject(x,y)),i);ready[p]=1;}
+  return Math.max(-1,Math.min(1,rays[i]*v[0]+rays[i+1]*v[1]+rays[i+2]*v[2]));
+ }};
+ if(bounded){if(displayGeometryCache.size===4)displayGeometryCache.delete(displayGeometryCache.keys().next().value);displayGeometryCache.set(key,value);}
+ return value;
+}
+
 // The native Sun is an intentionally enlarged body in a fixed display slot.
 // Register its aerosol aureole's angular presentation to that slot as well.
 // Rayleigh/path extinction/physical Sun and catalogue remain unchanged. Move
@@ -1655,11 +1679,10 @@ function nativeSolarRegistration(raster,view={type:'camera',width:325,height:530
  // or off: that produced a second white centre and a 22-code jump at x=0.
  const active=!!(sun?.altDeg>10&&Number.isFinite(sun?.azDeg)&&view.type==='camera'&&target.x>0&&target.y>0&&target.x<raster.width&&target.y<raster.height);
  const presence=Math.min(1,Math.max(0,anchor?.presence??((sun?.altDeg??-90)+1.5)/7));
- const projection=active?skyProjection(view):null,physical=active?horizontalDirection(sun):null,display=active?horizontalDirection(projection.unproject(target.x,target.y)):null,g=raster.atmosphere?.aerosolG??.76;
- const cosine=(a,b)=>Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2]));
+ const geometry=active?displayGeometry(view):null,physical=active?horizontalDirection(sun):null,display=active?horizontalDirection(geometry.mapping.unproject(target.x,target.y)):null,g=raster.atmosphere?.aerosolG??.76;
  return {active,source,target,presence,gain:(x,y)=>{
   if(!active)return 1;
-  const v=horizontalDirection(projection.unproject(x,y)),original=phaseHG(cosine(v,physical),g),relocated=phaseHG(cosine(v,display),g),isotropic=1/(4*Math.PI);
+  const original=phaseHG(geometry.cosine(x,y,physical),g),relocated=phaseHG(geometry.cosine(x,y,display),g),isotropic=1/(4*Math.PI);
   // Only the forward excess above the isotropic phase density belongs to
   // the enlarged Sun's presentation aureole. Relocating the whole HG field
   // also moved its broad non-forward wing, warming open sky and changing
@@ -1717,9 +1740,9 @@ function nativeSkyPresentation(raster,view,anchor){
  // widget presents surface brightness, not a lens with solid-angle vignetting.
  // Normalize this display copy to the central pixel's solid angle before
  // metering. Keep raw flux, point-source photometry and camera rays intact.
- const metered=Float64Array.from(source),camera=view??{type:'camera',width:w,height:h,azDeg:180,altDeg:45,fovYDeg:90},projection=w>=8&&h>=8&&camera.type==='camera'?skyProjection({...camera,width:w,height:h}):null;
- if(projection){const reference=projection.solidAngle(w/2,h/2);
-  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const gain=reference/projection.solidAngle(x+.5,y+.5),i=(y*w+x)*3;for(let c=0;c<3;c++){shown[i+c]*=gain;metered[i+c]*=gain;if(solarShown)solarShown[i+c]*=gain;}}
+ const metered=Float64Array.from(source),camera=view??{type:'camera',width:w,height:h,azDeg:180,altDeg:45,fovYDeg:90},geometry=w>=8&&h>=8&&camera.type==='camera'?displayGeometry({...camera,width:w,height:h}):null,projection=geometry?.mapping;
+ if(projection){
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const gain=geometry.scale(x+.5,y+.5),i=(y*w+x)*3;for(let c=0;c<3;c++){shown[i+c]*=gain;metered[i+c]*=gain;if(solarShown)solarShown[i+c]*=gain;}}
  }
  // CP6's empirical twilight fills a luminance deficit only. When spherical
  // single scattering already meets that V luminance, its much redder colour
@@ -1792,7 +1815,7 @@ function nativeSkyPresentation(raster,view,anchor){
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){
    const i=3*(y*w+x),S=.2126*solarShown[i]+.7152*solarShown[i+1]+.0722*solarShown[i+2];
    if(S<=0||solarShown[i]*white[2]<=solarShown[i+2]*white[0])continue;
-   const ray=horizontalDirection(projection.unproject(x+.5,y+.5)),cos=Math.max(-1,Math.min(1,ray.reduce((v,a,k)=>v+a*sun[k],0)));
+   const cos=geometry.cosine(x+.5,y+.5,sun);
    const forward=phaseHG(cos,g),weight=shoulderWeight*Math.min(1,1/(4*Math.PI*forward));
    for(let k=0;k<3;k++){
     const delta=weight*(S*white[k]-solarShown[i+k]);

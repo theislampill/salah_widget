@@ -464,7 +464,7 @@ body{color:#fff7df;
 </style>
 <link rel="stylesheet" href="real-sky/native-sky.css">
 <script src="config.js"></script>
-<script id="native-first-paint-code" data-sha256="9d993bb923b8ceda58810ff14eec2fe972b2a5b9b5e47ec342ecabe558ecfb27">(function(){"use strict";
+<script id="native-first-paint-code" data-sha256="ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d">(function(){"use strict";
 // real-sky/core/src/time-scales.mjs
 /** Time policy: USNO TAI-UTC table, IERS Bulletin C72 (2026-07-06), NASA historical DeltaT.
  * See docs/CHECKPOINT_4.md. Numeric POSIX milliseconds cannot represent a leap-second label.
@@ -2020,6 +2020,30 @@ function sameNativePresentation(a,b){
 
 
 
+// Only rigid pixel geometry is reusable. No UTC, celestial direction, radiance,
+// exposure, weather or admitted frame is cached here. At600x the old display
+// pass retraced thousands of identical camera rays on each publication and
+// could exhaust the unchanged30-second age fence. Keep the exact reference
+// arithmetic (including its angular round trip), bounded to four native-sized
+// cameras. Camera changes invalidate the key; arbitrary sample positions still
+// use the direct inverse projection. Arrays stay private to this module.
+const displayGeometryCache=new Map();
+function displayGeometry(view){
+ const c={type:view.type??'camera',width:view.width??325,height:view.height??530,azDeg:view.azDeg??180,altDeg:view.altDeg??35,fovYDeg:view.fovYDeg??90,rollDeg:view.rollDeg??0};
+ const key=JSON.stringify(c),cached=displayGeometryCache.get(key);
+ if(c.type==='camera'&&cached)return cached;
+ const mapping=skyProjection(view),w=mapping.width,h=mapping.height,reference=mapping.solidAngle(w/2,h/2),bounded=c.type==='camera'&&Number.isInteger(w)&&Number.isInteger(h)&&w*h<=325*530;
+ const rays=bounded?new Float64Array(w*h*3):null,scales=bounded?new Float64Array(w*h):null,ready=bounded?new Uint8Array(w*h):null;
+ const value={mapping,scale(x,y){const p=(y-.5)*w+x-.5;if(!bounded)return reference/mapping.solidAngle(x,y);return scales[p]||(scales[p]=reference/mapping.solidAngle(x,y));},cosine(x,y,v){
+  const px=x-.5,py=y-.5,p=py*w+px;
+  if(!bounded||!Number.isInteger(px)||!Number.isInteger(py)||px<0||py<0||px>=w||py>=h){const ray=horizontalDirection(mapping.unproject(x,y));return Math.max(-1,Math.min(1,ray[0]*v[0]+ray[1]*v[1]+ray[2]*v[2]));}
+  const i=p*3;if(!ready[p]){rays.set(horizontalDirection(mapping.unproject(x,y)),i);ready[p]=1;}
+  return Math.max(-1,Math.min(1,rays[i]*v[0]+rays[i+1]*v[1]+rays[i+2]*v[2]));
+ }};
+ if(bounded){if(displayGeometryCache.size===4)displayGeometryCache.delete(displayGeometryCache.keys().next().value);displayGeometryCache.set(key,value);}
+ return value;
+}
+
 // The native Sun is an intentionally enlarged body in a fixed display slot.
 // Register its aerosol aureole's angular presentation to that slot as well.
 // Rayleigh/path extinction/physical Sun and catalogue remain unchanged. Move
@@ -2033,11 +2057,10 @@ function nativeSolarRegistration(raster,view={type:'camera',width:325,height:530
  // or off: that produced a second white centre and a 22-code jump at x=0.
  const active=!!(sun?.altDeg>10&&Number.isFinite(sun?.azDeg)&&view.type==='camera'&&target.x>0&&target.y>0&&target.x<raster.width&&target.y<raster.height);
  const presence=Math.min(1,Math.max(0,anchor?.presence??((sun?.altDeg??-90)+1.5)/7));
- const projection=active?skyProjection(view):null,physical=active?horizontalDirection(sun):null,display=active?horizontalDirection(projection.unproject(target.x,target.y)):null,g=raster.atmosphere?.aerosolG??.76;
- const cosine=(a,b)=>Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2]));
+ const geometry=active?displayGeometry(view):null,physical=active?horizontalDirection(sun):null,display=active?horizontalDirection(geometry.mapping.unproject(target.x,target.y)):null,g=raster.atmosphere?.aerosolG??.76;
  return {active,source,target,presence,gain:(x,y)=>{
   if(!active)return 1;
-  const v=horizontalDirection(projection.unproject(x,y)),original=phaseHG(cosine(v,physical),g),relocated=phaseHG(cosine(v,display),g),isotropic=1/(4*Math.PI);
+  const original=phaseHG(geometry.cosine(x,y,physical),g),relocated=phaseHG(geometry.cosine(x,y,display),g),isotropic=1/(4*Math.PI);
   // Only the forward excess above the isotropic phase density belongs to
   // the enlarged Sun's presentation aureole. Relocating the whole HG field
   // also moved its broad non-forward wing, warming open sky and changing
@@ -2095,9 +2118,9 @@ function nativeSkyPresentation(raster,view,anchor){
  // widget presents surface brightness, not a lens with solid-angle vignetting.
  // Normalize this display copy to the central pixel's solid angle before
  // metering. Keep raw flux, point-source photometry and camera rays intact.
- const metered=Float64Array.from(source),camera=view??{type:'camera',width:w,height:h,azDeg:180,altDeg:45,fovYDeg:90},projection=w>=8&&h>=8&&camera.type==='camera'?skyProjection({...camera,width:w,height:h}):null;
- if(projection){const reference=projection.solidAngle(w/2,h/2);
-  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const gain=reference/projection.solidAngle(x+.5,y+.5),i=(y*w+x)*3;for(let c=0;c<3;c++){shown[i+c]*=gain;metered[i+c]*=gain;if(solarShown)solarShown[i+c]*=gain;}}
+ const metered=Float64Array.from(source),camera=view??{type:'camera',width:w,height:h,azDeg:180,altDeg:45,fovYDeg:90},geometry=w>=8&&h>=8&&camera.type==='camera'?displayGeometry({...camera,width:w,height:h}):null,projection=geometry?.mapping;
+ if(projection){
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const gain=geometry.scale(x+.5,y+.5),i=(y*w+x)*3;for(let c=0;c<3;c++){shown[i+c]*=gain;metered[i+c]*=gain;if(solarShown)solarShown[i+c]*=gain;}}
  }
  // CP6's empirical twilight fills a luminance deficit only. When spherical
  // single scattering already meets that V luminance, its much redder colour
@@ -2170,7 +2193,7 @@ function nativeSkyPresentation(raster,view,anchor){
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){
    const i=3*(y*w+x),S=.2126*solarShown[i]+.7152*solarShown[i+1]+.0722*solarShown[i+2];
    if(S<=0||solarShown[i]*white[2]<=solarShown[i+2]*white[0])continue;
-   const ray=horizontalDirection(projection.unproject(x+.5,y+.5)),cos=Math.max(-1,Math.min(1,ray.reduce((v,a,k)=>v+a*sun[k],0)));
+   const cos=geometry.cosine(x+.5,y+.5,sun);
    const forward=phaseHG(cos,g),weight=shoulderWeight*Math.min(1,1/(4*Math.PI*forward));
    for(let k=0;k<3;k++){
     const delta=weight*(S*white[k]-solarShown[i+k]);
@@ -2267,6 +2290,7 @@ function renderNativeBackgroundPreview(snapshot){
 
 
 let previewEdges=null;
+const preparedFields=new WeakMap();
 function previewCode(value,exposure){
  if(!previewEdges)previewEdges=nativeEncodingThresholds();
  const y=exposure*Math.max(0,value);let low=0,high=256;
@@ -2363,16 +2387,29 @@ class NativeStarPreview {
  * a lookup reverses their shared encoding, then stars join before encoding.
  */
 function joinNativeStarPreview(preview,background,stars){
- if(background.length!==325*530*4||stars.linear.length!==325*530*3)throw new RangeError('Catalogue preview dimensions');
- const E=preview.raster.effectiveExposure,decode=Float64Array.from({length:256},(_,i)=>nativeInverseCode(i,E)),gas=new Float64Array(stars.linear.length),linear=new Float64Array(gas.length),rgba=new Uint8ClampedArray(background);
+ if(!(background instanceof Uint8ClampedArray)||background.length!==325*530*4||stars.linear.length!==325*530*3)throw new RangeError('Catalogue preview dimensions');
+ const E=preview.raster.effectiveExposure,decode=Float64Array.from({length:256},(_,i)=>nativeInverseCode(i,E)),source=new Uint8ClampedArray(background),stellar=new Float64Array(stars.linear.length),rgba=new Uint8ClampedArray(source);
  for(let p=0;p<325*530;p++)for(let k=0;k<3;k++){
   const i=3*p+k,v=stars.linear[i];if(!Number.isFinite(v)||v<0)throw new RangeError('Catalogue preview channel');
-  gas[i]=decode[background[4*p+k]];linear[i]=gas[i]+v;
+  stellar[i]=v;
   // Unchanged atmospheric bytes already passed the SAME encoder. Re-encode
   // only actual PSF support, rather than all517k channels twice per preview.
-  if(v>0)rgba[4*p+k]=previewCode(linear[i],E);
+  if(v>0)rgba[4*p+k]=previewCode(decode[source[4*p+k]]+v,E);
  }
- return {...preview,rgba,atmosphereRGBA:background,quality:'physical-background-and-bright-catalogue-preview',raster:{...preview.raster,width:325,height:530,linear,backgroundLinear:gas,skyBackgroundLinear:gas,stellarLinear:stars.linear,starPreview:stars.diagnostics},diagnostics:{...preview.diagnostics,stars:stars.diagnostics}};
+ // Display preparation does not need two more full raw planes. Materialize
+ // them only for a raw-field consumer (including device-resolution Moon gas).
+ // Own the inputs first and validate EVERY stellar channel before returning;
+ // this is scheduling/allocation only, never a star or atmosphere quality cut.
+ let gas=null,linear=null;
+ const atmosphere=()=>{
+  if(!gas){gas=new Float64Array(stellar.length);for(let p=0;p<325*530;p++)for(let k=0;k<3;k++)gas[3*p+k]=decode[source[4*p+k]];}
+  return gas;
+ };
+ const raster={...preview.raster,width:325,height:530,
+  get linear(){if(!linear){const g=atmosphere();linear=new Float64Array(stellar.length);for(let i=0;i<linear.length;i++)linear[i]=g[i]+stellar[i];}return linear;},
+  get backgroundLinear(){return atmosphere();},get skyBackgroundLinear(){return atmosphere();},stellarLinear:stellar,starPreview:stars.diagnostics};
+ preparedFields.set(raster,{source,decode});
+ return {...preview,rgba,atmosphereRGBA:source,quality:'physical-background-and-bright-catalogue-preview',raster,diagnostics:{...preview.diagnostics,stars:stars.diagnostics}};
 }
 
 /** Exact display-byte counterpart of nativeCalendarRegion. Only the moving
@@ -2382,10 +2419,10 @@ function joinNativeStarPreview(preview,background,stars){
 function nativeStarPreviewRegion(preview,mask,rows){
  const r=preview.raster,n=325*rows;if(!Number.isInteger(rows)||rows<1||rows>530||mask&&mask.length!==n)throw new RangeError('Catalogue preview mask dimensions');
  const base=preview.rgba.subarray(0,n*4);if(!mask)return base;
- const out=new Uint8ClampedArray(base);
+ const out=new Uint8ClampedArray(base),prepared=preparedFields.get(r);
  for(let p=0;p<n;p++){
   const m=mask[p];if(!Number.isFinite(m)||m<0||m>1)throw new RangeError('Catalogue preview mask');if(m===1)continue;
-  for(let k=0;k<3;k++)out[4*p+k]=m===0?preview.atmosphereRGBA[4*p+k]:previewCode(r.skyBackgroundLinear[3*p+k]+r.stellarLinear[3*p+k]*m,r.effectiveExposure);
+  for(let k=0;k<3;k++)out[4*p+k]=m===0?preview.atmosphereRGBA[4*p+k]:previewCode((prepared?prepared.decode[prepared.source[4*p+k]]:r.skyBackgroundLinear[3*p+k])+r.stellarLinear[3*p+k]*m,r.effectiveExposure);
  }
  return out;
 }
