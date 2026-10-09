@@ -13,7 +13,7 @@ export function startNativeSkyPreview(){
  const canvas=document.createElement('canvas');canvas.className='real-sky-preview';canvas.width=325;canvas.height=530;canvas.setAttribute('aria-hidden','true');card.prepend(canvas);
  const ctx=canvas.getContext('2d',{alpha:false}),foreground=new NativeForegroundCapture(canvas);
  const background=document.createElement('canvas'),back=background.getContext('2d');background.width=325;background.height=530;
- let value=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0;
+ let value=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=window.SalahStarBootstrap??null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0,catalogueRequest=0;
  // The retained final-rAF observer measured up to3.3ms after publication.
  // Reserve5ms of wall time inside (never beyond) the30 accepted-second fence.
  // This is admission headroom, not a guarantee under arbitrary OS stalls.
@@ -93,10 +93,16 @@ export function startNativeSkyPreview(){
     const first=window.SalahFirstPaint?.value;
     let next=first&&nativeResultCurrent(first.job,fresh)?first:renderNativeBackgroundPreview({...fresh,solarAnchor:anchor});
     if(!nativeResultCurrent(next.job,host.capture(false))){missed(next,'preview superseded before publication');retry();return;}
-    const image=new ImageData(encodeNativeFrame(next.raster.linear,next.raster.effectiveExposure),next.raster.width,next.raster.height);
-    const tile=document.createElement('canvas');tile.width=image.width;tile.height=image.height;tile.getContext('2d').putImageData(image,0,0);
-    back.drawImage(tile,0,0,325,530);let pixels=back.getImageData(0,0,325,530);
-    if(catalogue){const stars=catalogue.render(next.job,next.raster.physicalState,{background:pixels.data,exposure:next.raster.effectiveExposure});next=joinNativeStarPreview(next,pixels.data,stars);pixels=new ImageData(next.rgba,325,530);}
+    const image=new ImageData(next.rgba??encodeNativeFrame(next.raster.linear,next.raster.effectiveExposure),next.raster.width,next.raster.height);
+    // The ordinary raster is already at the card footprint. Preserve its
+    // encoded bytes directly; a canvas upload/readback adds no information.
+    // Accelerated-clock rasters still use the existing resampling path.
+    let pixels=image;
+    if(image.width!==325||image.height!==530){
+     const tile=document.createElement('canvas');tile.width=image.width;tile.height=image.height;tile.getContext('2d').putImageData(image,0,0);
+     back.drawImage(tile,0,0,325,530);pixels=back.getImageData(0,0,325,530);
+    }
+    if(catalogue&&!next.raster.starPreview){const stars=catalogue.render(next.job,next.raster.physicalState,{background:pixels.data,exposure:next.raster.effectiveExposure});next=joinNativeStarPreview(next,pixels.data,stars);pixels=new ImageData(next.rgba,325,530);}
     if(!nativeResultCurrent(next.job,host.capture(false))){missed(next,'preview superseded during display preparation');retry();return;}
     if(paint(next,pixels,prepared)===false)retry();return;
    }
@@ -115,12 +121,14 @@ export function startNativeSkyPreview(){
   // startup task. Keep the ORIGINAL current atmosphere until the next native
   // paint atomically replaces it; that paint rechecks target/epoch/30s age.
   // Clearing the preview here both stalled controls and caused a needless gap.
-  catalogue=null;const revision=++catalogueRevision;status.catalogueError=null;
+   const revision=++catalogueRequest;status.catalogueError=null;
   try{
-   const next=pack?await NativeStarPreview.create(pack):null;
-   if(disposed||revision!==catalogueRevision)return;
-   catalogue=next;catalogueRevision++;
-  }catch(error){if(!disposed&&revision===catalogueRevision)status.catalogueError=String(error.message??error);}
+   const next=pack?await NativeStarPreview.create(pack):window.SalahStarBootstrap??null;
+   if(disposed||revision!==catalogueRequest)return;
+   // Asset reset revokes pending admission, but the same bootstrap is not a
+   // new displayed catalogue. Avoid rebuilding a current sky before first paint.
+   if(catalogue!==next){catalogue=next;catalogueRevision++;}
+  }catch(error){if(!disposed&&revision===catalogueRequest)status.catalogueError=String(error.message??error);}
  },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
  update();raf=requestAnimationFrame(tick);
 }

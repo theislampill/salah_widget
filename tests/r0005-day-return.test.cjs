@@ -16,7 +16,7 @@ function fixture(raw=source(),format="24",extra={}){
   return harness({source:raw,epoch:base,hash:`#lat=40.7128&lon=-74.006&tz=${zone}&method=2&time=${format}&datefmt=YYYY-MM-DD`,...extra});
 }
 async function bootDay(raw=source(),format="24"){
-  const h=fixture(raw,format),boot=h.boot();
+  const h=fixture(raw,format),boot=(await h.startBoot()).pending;
   req(h,day7).ok(prayer(day7));await settle();await boot;
   req(h,day8).ok(prayer(day8));await settle();await h.frame();
   assert.equal(h.run("model().leftMin"),270);
@@ -58,7 +58,7 @@ for(const format of ["24","12"])test(`R0005/R0020 accepted forward day permits p
 });
 
 test("R0006 failed same-day attempts retain60s cooldown through repeated frames",async()=>{
-  const h=fixture(),boot=h.boot();h.requests[0].fail();
+  const h=fixture(),boot=(await h.startBoot()).pending;h.requests[0].fail();
   await h.advance(900);h.requests[1].fail();
   await h.advance(2700);h.requests[2].fail();await settle();await boot;
   assert.deepEqual(h.requests.map(r=>r.at),[0,900,2700]);

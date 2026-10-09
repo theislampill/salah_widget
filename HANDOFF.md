@@ -3,7 +3,45 @@
 Context for a fresh agent picking up this repo. The durable design/process docs already exist — read those first
 and don't expect this file to repeat them.
 
-## Current PR42 repair frontier
+## Current R0021 startup successor
+
+**2026-10-09 PR43 review revision:** consume the
+[active R1/R2 amendment](docs/real-sky/PR43_REVIEW_REVISION.md) and its portable
+evidence before using the preceding qualification. Runtime`040192b5…` bounds
+initial HTML delivery and fixes deferred-font fitting. R1/S1 remains PARTIAL
+with five current strict startup failures; R2 passes its actual-consumer scope.
+The same213-node/409-edge execution programme continues; no duplicate planning
+or attribution, main merge, deployment or #33/#34 closure is authorized. The
+current coordinator is sole integrator; Mac is owner-deferred and actual parent
+is unavailable. The identities/results below describe the preceding candidate.
+
+PR42 is merged at `18ff14860ff41c084b1db5f396bb62aa9c22b1be`; do not replay it.
+The isolated `codex/celestial-startup-repair` branch supplies same-catalogue
+initial stars and a source-bound V5 receiver tier, followed by unchanged full
+terrain/catalogue/diffuse refinement. Read
+[the current specification](docs/real-sky/CELESTIAL_STARTUP_RLGWO.md) and its
+qualification/evidence links before repeating work. The original 37-issue audit
+is independently pinned to evidence commit `b879573c298f19189d1f2392108b8b9f3b2cda0b`.
+Its coordinator owns the single #33/#34 comments and closure DAG.
+
+The supplied left-hotspot/grey-wash images are unchanged PR42 baseline. Matched
+layer controls attribute both to the physical lunar atmosphere/display field;
+the startup change does not remove that field or claim visual acceptance. The
+open settled-display increment is [R0022-L1](docs/real-sky/R0022_L1_DISPLAY_INCREMENT.md)
+under existing #34, linked to #33/S10. Initial lunar pixel agreement does not close
+that complete-scene obligation. V1 and approved body sizes remain frozen. A
+separate Draft PR is authorized; merge and deployment are not.
+
+Final runtime `4c764068d0d19afe4d440376ed765a373c7afead594b5d16ef22402dd02ef799`
+is bound in the [qualification record](docs/real-sky/CELESTIAL_STARTUP_QUALIFICATION.md)
+and [portable evidence index](docs/real-sky/startup-evidence/README.md). The 679
+passing focused tests and 40 initial-Moon comparisons do not close S1: Chromium
+cold accepted-to-receipt is 289.1 ms versus 250; reload adds 276.5 ms versus 250,
+and sparse native capture leaves coverage gaps. Callback costs, actual native
+parent and R0022-L1/S10 remain explicit review/execution obligations. Consume
+completed derivation, attribution and retained controls instead of repeating them.
+
+## Historical PR42 repair frontier
 
 PR39, PR40 and PR41 are already merged. Main is
 `c1a480c97e9af188cf57704502d818c0584cf265`; the existing repair is PR42,

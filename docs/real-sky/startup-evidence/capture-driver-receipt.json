@@ -1,0 +1,8 @@
+{
+  "purpose": "Raw frames already received by the video recorder, before its 25fps resampling; capture receipt is an upper bound on visible time, never application publication. Firefox source clock is monotonic rather than Unix UTC.",
+  "sourceBundleSha256": "f74353fcb8e406756a70a6af0dfc4a5069acd577e35ec9d923ccf36ac009c2f5",
+  "modifiedBundleSha256": "c34d9e9d56fe0a8fb0e9e5eac15be4841a11f222bc0c29a2d17ccc6eece8c9f8",
+  "patch": "        if (process.env.SALAH_CAPTURE_NATIVE_FRAMES === '1') {\n          const fs = require('node:fs'), path = require('node:path');\n          const seq = this._salahSeq = (this._salahSeq || 0) + 1;\n          const folder = this._outputFile + '.frames', file = String(seq).padStart(6,'0') + '.jpeg';\n          const record = {seq, sourceTimeSeconds: timestamp, receiptUtcMs: Date.now(), file, bytes: frame.length};\n          if (seq === 1) fs.mkdirSync(folder, {recursive: true});\n          fs.appendFileSync(this._outputFile + '.frames.jsonl', JSON.stringify(record) + '\\n');\n          fs.writeFileSync(path.join(folder,file), frame);\n        }\n",
+  "source": "C:\\Users\\theis\\AppData\\Local\\Microsoft\\WinGet\\Packages\\OpenJS.NodeJS.LTS_Microsoft.Winget.Source_8wekyb3d8bbwe\\node-v24.15.0-win-x64\\node_modules\\playwright\\node_modules\\playwright-core",
+  "destination": "C:\\Users\\theis\\Documents\\Codex\\celestial-startup-repair-20261008\\capture-driver"
+}

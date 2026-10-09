@@ -1,0 +1,17 @@
+# Final startup / DAG binding — coordinator acknowledgement
+
+**ACKNOWLEDGED: compatible for owner-authorized execution intake.** No blocking compatibility finding. This is independent of the startup implementation author; it is not independent code review or product/merge/closure acceptance.
+
+Exact reviewed manifest: `4ffe4e69aaf962f17f722ed3d35a6191e1be57ec5bf28d0a3e1f329fbfbdac28`; execution bindings: `9d5b60112d046fe43f7dfd1473394717cc1bf22a4ab4419b726be25430b9e06b`; compatibility: `539fb6c8b8041f85bcce449ecd4c1fe52000dddf367f0d5f9c66407c2e1f5870`.
+
+Fresh verification checked all 17 supplement files, 430 immutable package files, 139 product files against the committed runtime inventory, actual PR43 Draft/head/base and all 37 issue states. #33/#34 bodies and complete discussion are unchanged. The original graph has only 117 permitted relative-link substitutions from the independently reviewed graph. Fresh structural validation passes 213 nodes / 409 typed edges, 111 original residual rows plus L1, and 26 open issues. Exact checks and reuse boundaries are in `COORDINATOR_ACK.json` and its three hash-bound receipts.
+
+The owner launch instruction was independently read as user message `01a11f1e-3f9e-79a2-ab49-f82615f355e3` in the startup thread. No authority is inferred merely from another agent's claim. The startup thread may proceed with its already owner-authorized single new executor after publishing/readback of the docs-only supplement. The executor must distinguish final documentation head, product/evidence commit `e3b042f17048fce8577cd08140f306cbce2d7f3c`, runtime `4c764068d0d19afe4d440376ed765a373c7afead594b5d16ef22402dd02ef799`, delivered main `18ff14860ff41c084b1db5f396bb62aa9c22b1be` and original package `21e7a84365fae37a86cae5c7d5e41008c0adc53f`.
+
+S1 cold/reload/coverage failures, callback costs, actual extension parent, original R0022 balance/cost, L1/S10 full-scene correction, independent code review, separate release approval and delivery remain open. The completed derivative/catalogue work and bounded proofs can be consumed without a research restart. Numerical lunar equivalence does not accept the complete scene.
+
+One nonblocking scheduling clarification: the optional font stylesheet is now nonblocking. Existing R0019/#25 delayed/missing/loaded-font consumer tests must bind the exact selected source; old first-layout receipts are not automatically equivalent. This needs no new graph node or acceptance criterion.
+
+**Publication ownership:** after the new executor identifies itself and completes exact intake, it owns the active programme and designates single issue writers. It should append the final #33 and #34 source-binding handoff addenda as its first coordinated GitHub action, linking the immutable supplement and preserving all open gates, original specifications and proof history. The startup thread does not publish those comments; this previous coordinator has no pending competing writes and relinquishes that publication lease at acknowledged intake. No issue closes from this acknowledgement or unmerged Draft work.
+
+The heavy-browser lease is released; the new executor must acquire and serialize the capacity-one queue. Source writes stay isolated with one shared integrator. New merges/deployments still require exact-head owner approval. The reviewed packet was not edited; no product tests, browsers, GitHub mutations or duplicate executor were run by this review.

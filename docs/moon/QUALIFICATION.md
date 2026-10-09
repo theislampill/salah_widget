@@ -1,5 +1,22 @@
 # CP9 dependent Moon candidate — receiving qualification
 
+**2026-10-09 review revision:** the [PR43 amendment](../real-sky/PR43_REVIEW_REVISION.md)
+qualifies a changed compact initial receiver against the retained40 references
+and binds decoder-only equivalence separately. It preserves full final V5 and
+frozen V1. Its actual entry/font captures do not close strict S1, L1/S10 or the
+actual-parent gate. Historical results below retain their original source scope.
+
+**Current-root startup successor:** [R0021 specification](../real-sky/CELESTIAL_STARTUP_RLGWO.md)
+separates first scene availability from full terrain convergence. Its V5-derived
+receiver tier is qualified against retained full adaptive references at the actual
+footprint; it is not relabelled final V5 science. Original renderer/platform limits
+below remain. The independent [R0022-L1 display obligation](../real-sky/R0022_L1_DISPLAY_INCREMENT.md)
+prevents a lunar-only comparison from closing whole-scene visual acceptance.
+The successor's [final qualification and evidence index](../real-sky/CELESTIAL_STARTUP_QUALIFICATION.md)
+records exact runtime identity, 40 initial comparisons, both-engine final V5
+recovery and retained strict timing/coverage failures. It supersedes no historical
+scientific limitation below; document byte counts below describe their own build.
+
 **PR42 follow-up:** the [current hotfix register](../real-sky/STARTUP_CLOUD_HOTFIX.md)
 owns the later lunar calendar/composition, bounded terrain-preview/refined
 continuity and native corona-order changes. Refined-only withholding was rejected

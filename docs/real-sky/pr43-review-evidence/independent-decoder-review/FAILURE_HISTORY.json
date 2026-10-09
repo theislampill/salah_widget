@@ -1,0 +1,28 @@
+{
+  "status": "PRESERVED_REVIEW_HARNESS_API_ASSUMPTION_FAILURE",
+  "cause": "The first independent control expected a flat identity.parentReceiverSha256 property. Candidate03 already exposes nested identity.parent.initialReceiverSha256 and initialManifestSha256 through the unchanged builder/factory API.",
+  "sourceReadback": "tools/build_moon.py lines62-65 defines the nested parent; moon/src/moon-initial.mjs line35 returns the exact pin identity.",
+  "repair": "Bind the existing nested receiver and manifest SHA fields; retain the exact before/after identity equality assertion. No product/test source or gate was changed.",
+  "files": [
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\pr43-decoder-review\\attempt-01-HARNESS-IDENTITY-ASSUMPTION\\check_decoder.cjs",
+      "sha256": "5e7ff7451e2d7354d6313f6215efd0f83e38a3ed882ba9e9cf29749f2ca7a381",
+      "bytes": 6758
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\pr43-decoder-review\\attempt-01-HARNESS-IDENTITY-ASSUMPTION\\controls.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\pr43-decoder-review\\attempt-01-HARNESS-IDENTITY-ASSUMPTION\\controls.stderr.log",
+      "sha256": "6d009489d9daabd018aff4adc5251272a08fa83cdc6f0ac56ca41fdb476557eb",
+      "bytes": 1213
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\pr43-decoder-review\\attempt-01-HARNESS-IDENTITY-ASSUMPTION\\CONTROL_COMMAND.json",
+      "sha256": "1a5cb35e513d2b6aa5f23b8bb81531a7e26b9ad192d5b3b56ac40f588a45dda2",
+      "bytes": 472
+    }
+  ]
+}

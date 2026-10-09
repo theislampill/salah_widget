@@ -44,7 +44,7 @@ test("R0003 obsolete tomorrow body cannot enter new selection or its cache",asyn
 test("R0003 winning response persists and reloads through actual selected-cache loader",async()=>{
   const h=harness(),a=h.apply(cfg(10,"A")),old=req(h),b=h.apply(cfg(20,"B"));req(h,undefined,20).ok(record(undefined,"UTC","B"));await settle();await b;old.ok(record(undefined,"UTC","A"));await settle();await a;
   const reload=harness({hash:"#lat=20&lon=20&tz=UTC&method=2",offline:true});for(const [k,v]of h.storage)reload.storage.set(k,v);
-  const boot=reload.boot();await reload.advance(2700);await boot;assert.equal(reload.state().today.tag,"B");assert.equal(reload.writes.length,0);assert.ok(reload.paints.length>0);
+  const boot=(await reload.startBoot()).pending;await reload.advance(2700);await boot;assert.equal(reload.state().today.tag,"B");assert.equal(reload.writes.length,0);assert.ok(reload.paints.length>0);
 });
 test("R0003 independent central slots retain B owners after A cleanup for all remote kinds",()=>{
   const h=harness();
@@ -120,6 +120,7 @@ test("R0003 recording DOM seeds actual SKY markup classes before source callers"
 test("R0003 SKY natural cold boot retains authored pending state through builders and acquisition",{timeout:5000},async()=>{
   const h=harness(),boot=h.boot();await Promise.race([boot,settle()]);pendingSky(h);
   assert.deepEqual(h.skyBuilders.map(b=>[b.kind,b.pending,b.sceneKey,b.projected]),[["stars",true,null,false],["weather",true,null,false]]);
+  assert.equal(h.requests.length,0,'transport starts outside the first celestial rendering turn');await h.paintBoot();
   assert.equal(h.requests.length,1);req(h).ok(record(undefined,"UTC","boot-current"));await boot;
   assert.equal(h.state().today.tag,"boot-current");assert.equal(h.state()._loopStarted,true);
 });
@@ -163,6 +164,7 @@ test("R0003 SKY cold boot hook omission is non-discriminating with authored init
     ...copy(h.run("({sceneKey:_skySceneKey,committed:_skyCommitted,moonPresence:_skyMoonPresence,projected:_starsProjected,cloudReady:_cloudReady,coverage:[cloudState.covLow,cloudState.covMid,cloudState.covHigh]})")),
     builders:copy(h.skyBuilders),cloudClears:copy(h.cloudClears),requestUrls:h.requests.map(r=>r.url)});
   pendingSky(healthy);pendingSky(mutant);assert.deepEqual(consumed(mutant),consumed(healthy));
+  await healthy.paintBoot();await mutant.paintBoot();
   req(healthy).ok(record(undefined,"UTC","cold-current"));req(mutant).ok(record(undefined,"UTC","cold-current"));await Promise.all(boots);
   assert.deepEqual(mutant.state(),healthy.state());assert.equal(healthy.state().today.tag,"cold-current");
 });
@@ -186,6 +188,6 @@ for(const target of ["reset-begin","surface-drop","elapsed-rebase","projection-i
     }
     previousSky(h);
     const pending=target==="reset-begin"?h.apply(cfg(20,"B")):h.boot();await Promise.race([pending,settle()]);
-    assert.throws(()=>pendingSky(h),assert.AssertionError);req(h,undefined,target==="reset-begin"?20:null).ok(record());await pending;
+    assert.throws(()=>pendingSky(h),assert.AssertionError);if(target==='surface-drop')await h.paintBoot();req(h,undefined,target==="reset-begin"?20:null).ok(record());await pending;
   });
 }

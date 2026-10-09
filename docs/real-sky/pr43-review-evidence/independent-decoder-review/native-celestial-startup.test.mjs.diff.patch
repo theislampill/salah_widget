@@ -1,0 +1,11 @@
+--- candidate03/tests/real-sky/native-celestial-startup.test.mjs
++++ candidate04/tests/real-sky/native-celestial-startup.test.mjs
+@@ -3,7 +3,7 @@
+ import fs from 'node:fs';
+ import vm from 'node:vm';
+ const html=fs.readFileSync(new URL('../../src/native/index.html',import.meta.url),'utf8');
+-const code=html.slice(html.indexOf('function lunarPresentation('),html.indexOf('function atmosphere('));
++const code=html.slice(html.indexOf('function nativeLunarPresentation('),html.indexOf('function atmosphere('));
+ function rig(){
+  const properties={},classes=new Set(['sky-pending','sky-initializing']),events=[];
+  const c={style:{setProperty:(k,v)=>properties[k]=v},classList:{remove:(...names)=>names.forEach(n=>classes.delete(n))}};
