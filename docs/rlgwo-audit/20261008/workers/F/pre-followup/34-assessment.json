@@ -1,0 +1,498 @@
+{
+  "schema": "rlgwo-closure-assessment-v1",
+  "reviewer": "F",
+  "issueNumber": 34,
+  "canonicalId": "R0022",
+  "title": "R0022 — Share physical lunar-light eligibility across sky, clouds, stars and optics",
+  "originalBodySha256": "f83c765845894cd8fc184e35ca3cc70a841e925cb4d05a3bf03d367bae8f5d76",
+  "originalUpdatedAt": "2026-09-08T10:50:29Z",
+  "packetCapturedAtUtc": "2026-10-09T00:41:33.674578+00:00",
+  "commentRevisions": [],
+  "fullPacketRead": true,
+  "discussionAmendments": "No comments; renamed/referenced events read without treating them as authority.",
+  "target": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "auditDate": "2026-10-08"
+  },
+  "targetCustody": "Clean reviewed head 4bccdf43363926c3077f60de87e5617ccb9abcb9 has identical merge tree; source read there.",
+  "model": {
+    "requested": "gpt-6.1-sol",
+    "requestedEffort": "max",
+    "effectiveConfigurationConfirmed": false
+  },
+  "scopeOfDone": "The native atmospheric path shares phase/altitude eligibility across beam/cloud light/local glow/optics, separates opaque calendar/PBR presence, and refreshes appearance independently of held synthetic projection. The scientific sky/catalogue now has a distinct astronomical Moon state.",
+  "requirementMatrix": [
+    {
+      "id": "22-01",
+      "obligation": "Enumerate all actual writers/consumers and use consumed accepted phase/altitude without new clock/ephemeris; separate physical light/calendar surface.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2633,
+            2653
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2633-L2653"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4667,
+            4687
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4667-L4687"
+        },
+        {
+          "path": "real-sky/native-contract.mjs",
+          "lines": [
+            11,
+            24
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/real-sky/native-contract.mjs#L11-L24"
+        },
+        {
+          "path": "real-sky/core/src/sky-background.mjs",
+          "lines": [
+            39,
+            45
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/real-sky/core/src/sky-background.mjs#L39-L45"
+        }
+      ],
+      "discriminator": "Compare native consumed light summary with actual scientific sky/star/background owners.",
+      "expected": "One accepted physical permission for all enumerated atmospheric consumers.",
+      "observed": "Native summary is explicit. Scientific nativeJob carries no lunar eligibility; independent astronomical Moon term enters sky-background. Strict original shared-zero obligation has no supplied equivalent or amendment.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "22-02",
+      "obligation": "Daylight/below-horizon/near-new zero EVERY physical illumination/star wash/halo/corona/paraselenae/local glow; calendar disc remains opaque/textured.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2633,
+            2653
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2633-L2653"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4667,
+            4687
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4667-L4687"
+        }
+      ],
+      "discriminator": "Native zero matrix plus actual current scientific sky/star contributions and canvas crops.",
+      "expected": "All enumerated contributionszero in ineligible states; calendar does not inheritzero.",
+      "observed": "Final native 24-case suite verifies native zero consumers. Scientific moonSkyLuminance only gates ground/below-disc/extinction, with no nearnew/daylight zero; native phase presentation override is not passed to that function.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r0022-lunar-consumers.log.gz",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r0022-lunar-consumers.log.gz"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "24 actual native paint/consumer VM cases; removed syntheticstar cases explicitly excluded"
+        }
+      ]
+    },
+    {
+      "id": "22-03",
+      "obligation": "No prior-frame eligibility leaks; refresh later star appearance while held positions remain deliberate, including glints.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2633,
+            2653
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2633-L2653"
+        },
+        {
+          "path": "real-sky/native-star-preview.mjs",
+          "lines": [
+            78,
+            86
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/real-sky/native-star-preview.mjs#L78-L86"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "real-sky/core/src/physical-sky-renderer.mjs",
+          "lines": [
+            61,
+            72
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/real-sky/core/src/physical-sky-renderer.mjs#L61-L72"
+        }
+      ],
+      "discriminator": "Actual displayed catalogue Moon-state/currentness release negative, with positions/inputs held.",
+      "expected": "Appearance uses same current physical light without forced positional animation.",
+      "observed": "Old synthetic _starEls/_glintEls proofs explicitly excluded. Real catalogue state has physical Moon; no final actual star wash release replacement mapped to original gate was found.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "22-04",
+      "obligation": "Local .mglow and each distinct conditional optic sharezero permission; forced optic cannot bypasszero.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2633,
+            2653
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2633-L2653"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4667,
+            4687
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4667-L4687"
+        }
+      ],
+      "discriminator": "Restoreglowfloor/independentoptics envelope mutants; near-new forcedhalo/paraselene.",
+      "expected": "Native consumerszero while physical eligibilityzero.",
+      "observed": "Actual paint writes --mgo and all native optic values from light; retained 24 cases include forced zero and accepted weather-expiry gates. Final semantic mutation receipt unverified.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r0022-lunar-consumers.log.gz",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r0022-lunar-consumers.log.gz"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Nativezero/optics control scope"
+        }
+      ]
+    },
+    {
+      "id": "22-05",
+      "obligation": "Eligible crescent/half/gibbous/full baseline balance preserved unless optional phase refinement has matched independent adopted evidence; do not require Lambert.",
+      "authoredOwners": [
+        {
+          "path": "moon/src/moon-native.mjs",
+          "lines": [
+            59,
+            82
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-native.mjs#L59-L82"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "moon/src/moon-detail.mjs",
+          "lines": [
+            96,
+            118
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-detail.mjs#L96-L118"
+        }
+      ],
+      "discriminator": "Actual matched phase/material/source/encoding/crop lineage; no-op positive and old policy fault.",
+      "expected": "Readable uprighttexture/phase and differentiated optics; changed curve honestly bounded.",
+      "observed": "New V5 terrain/material has separate receiving/phase proof; six old balance cases stop at removed _glintEls and PBR byteguards differ. They do not demonstrate original eligible-layer balance. No mandatory Lambert replacement invented.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/controls/lunar-veil-v37-comparison/before-after-actual-crops.png",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/controls/lunar-veil-v37-comparison/before-after-actual-crops.png"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Same-current-terrain corona order correction, not allphase balance"
+        }
+      ]
+    },
+    {
+      "id": "22-06",
+      "obligation": "Eligible weather controls clear/ice/droplet/overcast retain distinct halo/corona/rare lateral paraselenae and lunar source position.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2633,
+            2653
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2633-L2653"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4667,
+            4687
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4667-L4687"
+        }
+      ],
+      "discriminator": "Actual weather-layer inputs plus forced condition pixels and native consumedopacities.",
+      "expected": "Condition gates distinct and registered; cloud source unavailable failsclosed.",
+      "observed": "24-case suite checks these native conditions. PR42 additionally requires actual admitted midwater cloud/fog for corona instead of humidity only; matched layer controls support that correction.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r0022-lunar-consumers.log.gz",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r0022-lunar-consumers.log.gz"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Native weather-optics consumers"
+        },
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/controls/lunar-veil-v37-comparison/before-after-actual-crops.png",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/controls/lunar-veil-v37-comparison/before-after-actual-crops.png"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Retained matched current terrain/corona layer correction"
+        }
+      ]
+    },
+    {
+      "id": "22-07",
+      "obligation": "Current/new/below/daylight opaque disc and outside-star-positive control, no black limb or spin; no genericglow/dawn/palette change.",
+      "authoredOwners": [
+        {
+          "path": "moon/src/moon-detail.mjs",
+          "lines": [
+            31,
+            40
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-detail.mjs#L31-L40"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            5218,
+            5232
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5218-L5232"
+        }
+      ],
+      "discriminator": "Actual current Moon composition/starpositive and edge/interior phase crops.",
+      "expected": "Zero physicalpermission never removes/transparently fades calendar surface.",
+      "observed": "Detail blocksdirect regardlessgroup emphasis; final cold/warm calendarsurface persists afterfirstterrain. Current comprehensive actualstarpositive opacity matrix unverified.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "22-08",
+      "obligation": "15-60s real elapsed cloud/glint motion, reduced/fullfresh docs; header/footer/prayer/sun/weather truth preserved; no added loops/network/readback/texture allocation; warmed paint cost comparison.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2633,
+            2653
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2633-L2653"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "moon/src/moon-detail.mjs",
+          "lines": [
+            91,
+            120
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-detail.mjs#L91-L120"
+        },
+        {
+          "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/motion/chromium-normal1x-cold.webm",
+          "lines": null,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/motion/chromium-normal1x-cold.webm"
+        }
+      ],
+      "discriminator": "Current actual elapsed clip/branch plus same-scene cost and boundedstate.",
+      "expected": "No motion/art/UI regression and no physical authority leakage.",
+      "observed": "Final normal imagery/sourceboundmotion and broadcost receipts are narrowerthan original all-consumer controls; exact warmedbeforeafter comparison forshared eligibility not identified.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "22-09",
+      "obligation": "DESIGN/OPTICS/HANDOFF/high-valuecomments current; independentcompleteconsumer enumeration and exact before/after evidence before closure.",
+      "authoredOwners": [
+        {
+          "path": "DESIGN.md",
+          "lines": [
+            198,
+            204
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L198-L204"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "OPTICS.md",
+          "lines": [
+            157,
+            167
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/OPTICS.md#L157-L167"
+        },
+        {
+          "path": "HANDOFF.md",
+          "lines": [
+            111,
+            118
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/HANDOFF.md#L111-L118"
+        }
+      ],
+      "discriminator": "Explicit policy/currentconsumer documentation and independentreview.",
+      "expected": "No old calendar variable silently equated to current physical astronomy.",
+      "observed": "Docs retain zero calendar physical-light wording; supplied brief has model/iframe amendments but no explicit lunar gate supersession. Primary must reconcile exact policy/interface gap.",
+      "status": "unverified",
+      "evidence": []
+    }
+  ],
+  "negativeControls": [
+    "Retained24 native positives/negatives are meaningful at their actual paint path.",
+    "Six _glintEls failures are setup failures, not detections or evidence of bad current stars.",
+    "Newcorona clear humid/droplet layer order controls are relevant improvements but do not substitute for completephysicalconsumergate."
+  ],
+  "gaps": [
+    "Native24-case controls do not enumerate the later scientific Moon sky/background/catalogue consumer; strict original day/nearnew/allphysicalzero policy is not demonstrated across those interfaces.",
+    "Removed synthetic-star and PBR-byteguard failures need actual current-state/phase-balance replacement discriminators; a label saying obsolete is insufficient.",
+    "Final semantic mutation, actualstarpositive opacity/phase/optics and warmed paint proofs are incomplete."
+  ],
+  "dependencies": [
+    "R001D owns consumed native geometry diagnostic; V5 material currentness and realastronomy are separate inputs.",
+    "R0021 owns stellarocclusion/initialreveal, R0009 calendar truth, R0008/R0020 time authority; do not absorb them.",
+    "Ownercurrent modelprecip amendment does not itself amend lunar eligibility."
+  ],
+  "improvements": [
+    "PR42 excludes humidity-only corona and places currentopaque terrain after nativeoptics background, removing the dark side veil without material gain."
+  ],
+  "ownerDecisions": [
+    "Need exact trusted lunar policy supersession/equivalentgate if the scientific astronomical term is intentionally exempt from original day/nearnew categoricalzero. No new astrophysical defect is asserted solely from tiny nonzero rawradiance."
+  ],
+  "verdict": "LEAVE OPEN",
+  "proposedNextRlgwoIncrement": {
+    "owner": "Native physical-light eligibility in src/native/index.html plus authored real-sky integration boundaries; immutable scientific oracle must not be casually edited",
+    "steps": [
+      "Reconcile whether the original categorical light gate remains binding for scientific astronomy; identify exact trusted policy if replaced, never infer permission from a new ephemeris.",
+      "Enumerate native and scientific current lunar consumers with produced/consumed identity; supply direct zero/eligible/star-wash/fault controls for the selected policy.",
+      "Retaincurrent V5 material/calendar presence; run matchedphase/optics/opacity/motion and warmedcost controls; amend docs and repair only proven gaps under fresh authorization."
+    ],
+    "acceptance": "Every still-binding physical consumer obeys the same acceptedeligibility and allzero/eligible/forced/weatherfault controls discriminate; any changed policy has exact authority and demonstrated equivalent consumer behavior; calendar opaque textured presence and current V5 quality remain.",
+    "nonGoals": "No Lambert mandate, empiricalcalibration programme, native presentation override silently treated as astronomy, flattened sprite, maria spin, newclock/network/loop or calendartransparency."
+  },
+  "missingChecksRequested": [
+    {
+      "name": "scientific/native lunar permission map",
+      "command": "On exact current source, trace nativeJob -> accepted astronomical state -> sky-background/catalogue and native consumed-light summary; run bounded source-level zero/eligiblecontrols plus actual-star wash/currentness negative before any native visual matrix.",
+      "reason": "Laterconsumer is outside old24-case native test; strictsharedgate replacement proof required."
+    }
+  ],
+  "freshExecution": {
+    "productTests": [],
+    "browsers": [],
+    "reason": "Primary resource-release message was not received; read-only source/evidence inspection only."
+  },
+  "reuseBasis": "Final-v49 receipts retain the exact ff7285 index and f443cf runtime. Earlier Moon/CP9 receipts retain their earlier identities and qualify only mapped unchanged mechanisms; no old aggregate PASS is promoted to current closure.",
+  "inheritedQualification": {
+    "N001": "PARTIAL",
+    "N002": "PARTIAL",
+    "N003": "BLOCKED",
+    "scope": "Only mapped mandatory obligations are affected; these are not blanket blockers."
+  },
+  "publication": {
+    "reconciledByPrimary": false,
+    "approved": false,
+    "posted": false,
+    "hold": "Primary must establish delivered baseline and reconcile each comment before any GitHub effect."
+  },
+  "risks": "Evidence gaps are not all product defects. Source mechanics, raw numerical equality, displayed pixels, native default actions and real OS lifecycle are distinct claims.",
+  "inspectionReceipt": "inspection-receipt.json",
+  "executedCommands": [
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "18ff14860ff41c084b1db5f396bb62aa9c22b1be^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only identity",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only reviewed-source equivalence",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only dirty state",
+      "expected": "",
+      "observed": "",
+      "exitCode": 0
+    },
+    {
+      "command": "SHA-256 of actual index.html bytes and complete issue body UTF-8 bytes",
+      "environment": "Python -I -S -B, hashlib/JSON; no network/browser",
+      "kind": "fresh read-only byte binding",
+      "expected": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "f83c765845894cd8fc184e35ca3cc70a841e925cb4d05a3bf03d367bae8f5d76"
+      },
+      "observed": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "f83c765845894cd8fc184e35ca3cc70a841e925cb4d05a3bf03d367bae8f5d76"
+      },
+      "exitCode": 0
+    },
+    {
+      "command": "Read authored source, delivered consumers, exact assertions and retained final-v49 gzip/JSON receipts",
+      "environment": "PowerShell UTF-8 reads + Python standard-library gzip/json/hashlib",
+      "kind": "fresh inspection of historical execution",
+      "expected": "Preserve scope and original source/runtime identities; do not invent execution",
+      "observed": "inspection-receipt.json records bytes, receipt hashes and original terminal/case counts; zero fresh product/browser test commands",
+      "exitCode": 0
+    }
+  ]
+}

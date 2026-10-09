@@ -1,0 +1,597 @@
+{
+  "schema": "rlgwo-delivered-issue-assessment/1",
+  "worker": "B",
+  "issueNumber": 8,
+  "canonicalId": "R0008",
+  "title": "R0008: Round-trip valid simulated wall times through timezone transitions",
+  "issueUrl": "https://github.com/theislampill/salah_widget/issues/8",
+  "originalBodySha256": "dcaecdc1b1712865927b32623400ed07b269c6b799ab3c85ac16c7c22eb3dfac",
+  "originalUpdatedAt": "2026-09-08T06:24:43Z",
+  "packetCapturedAtUtc": "2026-10-09T00:41:30.712685+00:00",
+  "commentRevisions": [],
+  "amendments": [],
+  "requestedConfiguration": {
+    "model": "gpt-6.1-sol",
+    "reasoningEffort": "max"
+  },
+  "effectiveConfigurationConfirmation": {
+    "status": "CONFIRMED_LOCAL_CLIENT",
+    "confirmationKind": "supported spawn configuration plus local recorded turn_context; not independent hardware/backend attestation",
+    "sessionId": "01a11e26-069a-7591-9db6-f6a3d122fd11",
+    "agentPath": "/root/rlgwo_b",
+    "recordedTurns": [
+      {
+        "turn_id": "01a11e26-077a-7b32-a6dc-a8fc8e27c2a8",
+        "model": "gpt-6.1-sol",
+        "effort": "max",
+        "collaboration_mode": {
+          "mode": "default",
+          "settings": {
+            "model": "gpt-6.1-sol",
+            "reasoning_effort": "max",
+            "developer_instructions": null
+          }
+        }
+      },
+      {
+        "turn_id": "01a11e41-3b94-7c40-b1fd-dc399a9ee560",
+        "model": "gpt-6.1-sol",
+        "effort": "max",
+        "collaboration_mode": {
+          "mode": "default",
+          "settings": {
+            "model": "gpt-6.1-sol",
+            "reasoning_effort": "max",
+            "developer_instructions": null
+          }
+        }
+      }
+    ],
+    "receipt": "reviewer-model-settings.json",
+    "boundary": "Local recorded client turn_context and supported spawn configuration; no independent hardware/backend attestation."
+  },
+  "target": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "runtimeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "rootIndexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "date": "2026-10-08"
+  },
+  "custody": {
+    "sourceWorktree": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+    "observedHead": "4bccdf43363926c3077f60de87e5617ccb9abcb9",
+    "clean": true,
+    "targetTreeEqualsReviewedHead": true,
+    "generatedOwner": "tools/build_native.py",
+    "authoredOwner": "src/native/index.html and src/native/config.js",
+    "sourceUnmodified": true,
+    "publicDeliveryBaseline": {
+      "status": "DELIVERED_VERIFIED",
+      "verifiedAt": "2026-10-09T01:34:55.876184+00:00",
+      "pagesBuild": "https://api.github.com/repos/theislampill/salah_widget/pages/builds/1270547036",
+      "pagesCommit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "publicBrowserCases": 16,
+      "origin": "Primary release.json readback; no independently executed worker browser/public-write effect",
+      "publicDocumentDistribution": "public-document-distribution.json:16 raw/Pages responses HTTP200 and exact byte hashes"
+    }
+  },
+  "scopeOfDone": "Exact-target source and executed/reused evidence reviewed; primary Astra reconciled every binding row and the stated verdict. Completed native controls remain scoped; open gaps are retained precisely.",
+  "fullRequirementMatrix": [
+    {
+      "contractReference": "Numeric compatibility interface",
+      "mandatory": true,
+      "obligation": "epochForTzTime returns a finite epoch only for exactly one strictly matching supported inverse; all invalid/gap/fold/unsupported inputs return NaN.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 924,
+        "end": 929,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L924-L929"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3048,
+        "end": 3053,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3048-L3053"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 40,
+        "end": 73,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L40-L73"
+      },
+      "expected": "NY 2026-03-08 03:30=07:30Z; pretransition01:30=06:30Z; ordinary03:30=07:30Z; fold03:30=08:30Z; gap02:30 and fold01:30 unavailable.",
+      "observed": "Fresh literal-oracle conversions and fail-closed cases pass.",
+      "disposition": "satisfied",
+      "id": "R0008-O01"
+    },
+    {
+      "contractReference": "Precision domain",
+      "mandatory": true,
+      "obligation": "Validate Gregorian fields, finite integer h/m, positive representable year and explicit usable zone; preserve years1-99 and never accept device-zone fallback.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 880,
+        "end": 898,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L880-L898"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3004,
+        "end": 3022,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3004-L3022"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 42,
+        "end": 63,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L42-L63"
+      },
+      "expected": "Kathmandu prior UTC day21:45Z, leap day, years1/99 exact; Feb30, NaN, fractions,24:00,minute60,year0 and invalid zone fail closed.",
+      "observed": "Fresh exact outputs/rejections pass.",
+      "disposition": "satisfied",
+      "id": "R0008-O02"
+    },
+    {
+      "contractReference": "Algorithm steps1-4",
+      "mandatory": true,
+      "obligation": "Index every UTC minute U-24 h through U+48 h inclusive,4321 projections, h23/Gregorian/Latin formatting, strict full-field final round trip; no sparse offsets or first-fold choice.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 888,
+        "end": 929,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L888-L929"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3012,
+        "end": 3053,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3012-L3053"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 75,
+        "end": 86,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L75-L86"
+      },
+      "expected": "Supported profile covers full bounded window; zero/multiple entries unavailable; seconds/non-minute/>24 h offsets unsupported.",
+      "observed": "Source implements the bound; fresh count/unsupported-profile controls pass; first-fold mutant is detected.",
+      "disposition": "satisfied",
+      "id": "R0008-O03"
+    },
+    {
+      "contractReference": "Algorithm step5",
+      "mandatory": true,
+      "obligation": "At most four in-memory exact-zone/day profiles, unsupported profiles cached, reuse same-day callers and simple eviction; no storage/schema/scheduler addition.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 903,
+        "end": 922,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L903-L922"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3027,
+        "end": 3046,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3027-L3046"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 65,
+        "end": 86,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L65-L86"
+      },
+      "expected": "First successful day has4321 profile projections+one final check;23 further hourly conversions add23 projections; fifth day evicts; invalid profile not rescanned.",
+      "observed": "Fresh counting/eviction controls pass; no localStorage profile owner exists.",
+      "disposition": "satisfied",
+      "id": "R0008-O04"
+    },
+    {
+      "contractReference": "initSim validity",
+      "mandatory": true,
+      "obligation": "Assign anchor/timezone/monotonic base only after valid explicit resolution; rejected scene cannot retain prior anchor as new scene.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 931,
+        "end": 947,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L931-L947"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3055,
+        "end": 3071,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3055-L3071"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 88,
+        "end": 104,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L88-L104"
+      },
+      "expected": "Rejected NY spring02:30 has no finite anchor; valid UTC recovers; return to bad zone rejects; existing27:30 parsing/frozen/accelerated modes survive.",
+      "observed": "Fresh validity/legacy-mode cases pass.",
+      "disposition": "satisfied",
+      "id": "R0008-O05"
+    },
+    {
+      "contractReference": "Consumer boot/apply/adoption guards",
+      "mandatory": true,
+      "obligation": "Guard explicit validity before first celestial work, reset/config and eligible provider-zone adoption; ordinary no-sim loads remain usable.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 3251,
+        "end": 3327,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3251-L3327"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 5280,
+        "end": 5356,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5280-L5356"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 107,
+        "end": 139,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L107-L139"
+      },
+      "expected": "Invalid boot has0 stars / 0 moon calls / 0 requests, nt em dash, left Simulation time unavailable and SIM unavailable; valid configuration restores prior visibility.",
+      "observed": "Fresh actual-boundary cases pass; guard-bypass mutant is detected. Provider adoption guards source-read; native browser adoption picture not implied.",
+      "disposition": "satisfied",
+      "id": "R0008-O06"
+    },
+    {
+      "contractReference": "Invalid visible scene and recovery",
+      "mandatory": true,
+      "obligation": "A scene invalidated after valid state withdraws prior clock-dependent sky/weather/arc/prayer/date outputs; fixed geometry/settings survive and valid config can initialize builders once.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 950,
+        "end": 966,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L950-L966"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3074,
+        "end": 3090,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3074-L3090"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 117,
+        "end": 139,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L117-L139"
+      },
+      "expected": "Old moon/cloud callback count does not increase; clock-dependent surfaces hidden; header/settings remain reachable; valid recovery restores prior visibility.",
+      "observed": "Fresh invalid-after-valid, settings local/preferLocal and once-only builder controls pass.",
+      "disposition": "satisfied",
+      "id": "R0008-O07"
+    },
+    {
+      "contractReference": "Captured-zone hourly interface",
+      "mandatory": true,
+      "obligation": "Async weather retains requestZone and passes sixth argument, checks operation ownership before adopting, rejects any invalid/ambiguous/non-increasing track without sorting NaNs.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 1236,
+        "end": 1242,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1236-L1242"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3387,
+        "end": 3400,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3387-L3400"
+      },
+      "discriminator": {
+        "path": "tests/r0017-weather.cjs",
+        "start": 1,
+        "end": 20,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0017-weather.cjs#L1-L20"
+      },
+      "expected": "A NY03:30 request completed after global zone changes still converts07:30Z; obsolete generation cannot commit; gap/fold track unavailable.",
+      "observed": "Source reads captured ctx.zone and all ep values must be finite and strictly increasing. Dedicated combined captured-zone async control was not freshly executed or established from a mapped retained assertion here.",
+      "disposition": "unverified",
+      "id": "R0008-O08"
+    },
+    {
+      "contractReference": "Current-weather independence/source age",
+      "mandatory": true,
+      "obligation": "Rejecting hourly track must not discard independently valid current model data or let invalid time become age evidence; approved owner model presentation remains model estimate.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 1263,
+        "end": 1286,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1263-L1286"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3498,
+        "end": 3509,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3498-L3509"
+      },
+      "discriminator": {
+        "path": "tests/r0017-weather.cjs",
+        "start": 1,
+        "end": 20,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0017-weather.cjs#L1-L20"
+      },
+      "expected": "Track rejection is independent of admitted current, and no invalid epoch can qualify interpolation/source age.",
+      "observed": "Current and track admitted separately at src1374-1383; track rejection leaves current eligible under its own TTL. Current-policy amendment is unrelated to inversion precision. Full combined issue-specific negative control remains unmapped.",
+      "disposition": "unverified",
+      "id": "R0008-O09"
+    },
+    {
+      "contractReference": "Countdown interface",
+      "mandatory": true,
+      "obligation": "Actual elapsed endpoint caller uses the same inverse and branches on finite endpoints; gap/fold produces Countdown unavailable rather than approximate duration.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 2164,
+        "end": 2167,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2164-L2167"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 4191,
+        "end": 4194,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4191-L4194"
+      },
+      "discriminator": {
+        "path": "tests/r0007-countdown.cjs",
+        "start": 47,
+        "end": 60,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0007-countdown.cjs#L47-L60"
+      },
+      "expected": "Unresolved endpoint cannot create finite elapsed duration; next actual render states Countdown unavailable.",
+      "observed": "Source model gates nextEpoch and render gates leftMin. Dedicated gap/fold assertions read in countdown fixture; not rerun by this worker.",
+      "disposition": "satisfied",
+      "id": "R0008-O10"
+    },
+    {
+      "contractReference": "Independent mutants",
+      "mandatory": true,
+      "obligation": "Single offset, first fold, ignored sixth-zone argument and invalid consumer bypass each must be discriminated on reached owners.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 924,
+        "end": 961,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L924-L961"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3048,
+        "end": 3085,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3048-L3085"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 146,
+        "end": 175,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L146-L175"
+      },
+      "expected": "Ordinary control remains healthy while corresponding spring/fold/zone/boot violation is detected.",
+      "observed": "Fresh four mutation controls pass; spring mutant08:30Z differs from literal07:30Z, ignored-zone mutant returns Riyadh00:30Z.",
+      "disposition": "satisfied",
+      "id": "R0008-O11"
+    },
+    {
+      "contractReference": "Browser/currentness acceptance",
+      "mandatory": true,
+      "obligation": "Actual browser requested clock/error/recovery, settled provider-zone reinitialization, frozen/accelerated controls must use valid pre-script setup and matching accepted input days.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 931,
+        "end": 969,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L931-L969"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3055,
+        "end": 3093,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3055-L3093"
+      },
+      "discriminator": {
+        "path": "tests/r0008-clock-harness.cjs",
+        "start": 1,
+        "end": 30,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-clock-harness.cjs#L1-L30"
+      },
+      "expected": "Browser shows valid NY03:30 and explicit invalid gap/fold; invalid-to-valid reload/config and adoption work without stale scene.",
+      "observed": "Fresh tests are source slices/recording DOM. Final-v49 geo gap/fold records are explicitly source/scalar, and generic lifecycle or native clock seek is not this browser pathway.",
+      "disposition": "unverified",
+      "id": "R0008-O12"
+    },
+    {
+      "contractReference": "Browser cold-build/reuse responsiveness",
+      "mandatory": true,
+      "obligation": "Record profile-build count in repeated actual same-day model/hourly calls and actual supported-browser responsiveness; stop if cold cost unacceptable.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 903,
+        "end": 929,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L903-L929"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3027,
+        "end": 3053,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3027-L3053"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 75,
+        "end": 86,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L75-L86"
+      },
+      "expected": "Four-profile bound/reuse observable in real callers; browser remains responsive without claiming an unmeasured deadline.",
+      "observed": "Node projection counts pass. No mapped browser build-count/cold inverse responsiveness receipt established; generic Moon/sky heartbeat measurements do not isolate inverse builds.",
+      "disposition": "unverified",
+      "id": "R0008-O13"
+    },
+    {
+      "contractReference": "Valid scene regressions",
+      "mandatory": true,
+      "obligation": "Keep default real motion/reduction override, opaque calendar moon, readable card and no invalid scene credited as normal motion/empty night.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 950,
+        "end": 966,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L950-L966"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3074,
+        "end": 3090,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3074-L3090"
+      },
+      "discriminator": {
+        "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json",
+        "start": 1,
+        "end": 12,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json#L1-L12"
+      },
+      "expected": "Valid scenes retain visual invariants; invalid scenes remain explicitly unavailable.",
+      "observed": "General final-v49 scenes are retained for broader owners. No issue-specific invalid/recovered browser crop or matched motion control qualified here.",
+      "disposition": "unverified",
+      "id": "R0008-O14"
+    },
+    {
+      "contractReference": "Documentation obligation",
+      "mandatory": true,
+      "obligation": "DESIGN explicitly states minute precision, whole-minute offsets within24h, gap/fold unavailable, explicit invalid-scene boundary and revised two-authority clock description.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 900,
+        "end": 902,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L900-L902"
+      },
+      "deliveredConsumer": {
+        "path": "DESIGN.md",
+        "start": 138,
+        "end": 143,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L138-L143"
+      },
+      "discriminator": {
+        "path": "DESIGN.md",
+        "start": 318,
+        "end": 320,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L318-L320"
+      },
+      "expected": "User/developer design matches actual resolver domain and ordinary wall versus explicit preview behavior.",
+      "observed": "Source comments describe inverse domain, but DESIGN still describes a universal anchored formula and contains no resolver minute/gap/fold/error boundary contract.",
+      "disposition": "unmet",
+      "id": "R0008-O15"
+    },
+    {
+      "contractReference": "Ownership/effects/closure",
+      "mandatory": true,
+      "obligation": "No dependency/provider/config schema/cache/scheduler redesign; overlapping semantic owners integrated; final source/caller review plus browser proof before closure.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 924,
+        "end": 947,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L924-L947"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3048,
+        "end": 3071,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3048-L3071"
+      },
+      "discriminator": {
+        "path": "docs/real-sky/INTEGRATION.md",
+        "start": 79,
+        "end": 90,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/INTEGRATION.md#L79-L90"
+      },
+      "expected": "Preserve actual captured-zone/time/day interfaces and prior completed work; publication is separate.",
+      "observed": "Read-only source review complete; generated consumers match target. Missing interface/browser/docs proof prevents closure; no new owner decision is required.",
+      "disposition": "unverified",
+      "id": "R0008-O16"
+    }
+  ],
+  "commandsExecuted": [
+    {
+      "test": "r0008-timezone.cjs",
+      "command": [
+        "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+        "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r0008-timezone.cjs"
+      ],
+      "exitCode": 0,
+      "startedAtUtc": "2026-10-09T00:56:59.6437463Z",
+      "seconds": 1.0756801,
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\B\\r0008-timezone.cjs.log",
+      "expectedExit": 0
+    }
+  ],
+  "freshExecution": {
+    "nodeVersion": "v22.16.0",
+    "os": "Microsoft Windows NT 10.0.26200.0",
+    "caseCount": 37,
+    "failures": 0,
+    "expectedExit": 0,
+    "observedExit": 0,
+    "scope": "Actual temporal source and actual boot/apply/render/loop boundary slices with recording DOM and real prayer transport owner; excluded art/catalogue/canvas producers are explicit. Intl is native Node Intl except declared offset/counting controls.",
+    "receipt": "r0008-timezone.cjs.log"
+  },
+  "historicalReuse": {
+    "kind": "Retained exact-root final-v49 source logs and narrowly mapped actual native browser cases; read here, not newly browser-executed by reviewer",
+    "basis": "For r0001/r0008/r0009/r0019/r0020, retained log sourceSha256 or SOURCE equals exact final rootIndexSha256 ff728552...; fresh tests independently reconfirm applicable source assertions. Final native-lifecycle sourceSha256 is also exact ff728552. Source equivalence is narrow, not host/input equivalence.",
+    "location": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/",
+    "nativeReceipt": {
+      "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-native-lifecycle/results.json",
+      "start": 15934,
+      "end": 15939,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-native-lifecycle/results.json#L15934-L15939"
+    },
+    "nativeCaseReuse": [],
+    "browserBoundary": "Mapped ordinary native/calendar or wall-step receipts are retained where applicable; they do not contain the complete required hostile/unavailable/correction/accessibility/scheduled-day matrices. Native calendar/wall PNGs are local h8 evidence; public JSON is not falsely described as already public PNG proof. No old native bundle hash is mistaken for a root-index hash."
+  },
+  "negativeControls": {
+    "suite": "Immutable tests linked per matrix; fresh corresponding in-memory/disposable mutants detected.",
+    "dateMutations": null,
+    "health": "Actual non-empty prayer/date render and independent positive controls prevent empty/no-render false greens.",
+    "nativeBoundary": "Recording DOM does not establish browser event execution, native keyboard/touch/focus/overflow or pixels."
+  },
+  "dependencies": [
+    "R0003 captures requestZone and owns commit eligibility; source ctx propagation is present.",
+    "R0007 consumes finite endpoint; source Number.isFinite gate and exact Countdown unavailable branch are present.",
+    "R000B consumes source epoch; invalid hourly tracks are rejected. Source admission is separate from approved model weather presentation.",
+    "R0004/R0005 share provider-zone adoption/day identity; R0020 supplies ordinary wall instant. No whole-issue administrative predecessor is invented."
+  ],
+  "gaps": [
+    "Mandatory DESIGN precision/domain/error-boundary/two-authority update is absent.",
+    "Actual browser explicit-clock invalid/error/recovery and settled-provider-zone readback is missing from mapped issue evidence.",
+    "Real-caller profile-build count/cold browser responsiveness and combined captured-zone async hourly/current-independence controls remain unverified."
+  ],
+  "verdict": "LEAVE OPEN",
+  "proposedBoundedNextIncrement": "Preserve the exhaustive four-day profile and all validity guards. Add the narrow DESIGN domain/error/clock clarification; qualify the actual final generated consumer in a serial disposable browser with pre-script clock and day-matching responses. Run NY spring/fold, Kathmandu/leap/year controls, captured-zone held completion/current independence, invalid-before-first-render and valid recovery. Instrument profile builds only in the isolated fixture and retain measured responsiveness without changing thresholds or production precision.",
+  "missingChecksRequested": [
+    {
+      "purpose": "Browser clock/error/recovery and bounded resolver cost with captured hourly zones",
+      "command": "No existing complete issue-specific browser driver was established. Use primary serial browser on unchanged final root/index with a pre-script Date/performance fixture; preserve node tests/r0008-timezone.cjs as source discriminator.",
+      "driverRequired": "Record requested clock/zone/day, render readiness, first-celestial ordering, explicit SIM unavailable, recovered crop, actual profile builds, held captured-zone hourly/current controls."
+    }
+  ],
+  "ownerDecision": "No new owner decision needed for in-contract missing proof/narrow required docs. Any later production edit or external publication remains separately authorized by primary/user.",
+  "legacyFailureDisposition": "Eight legacy native failures and four TODOs were inspected through the final qualification/runner scope. They map to retired synthetic-glint/pre-CP9 PBR comparisons or placeholder callbacks, not a blanket failure of these calendar/clock obligations. Unmet native issue-specific proofs remain independently unverified.",
+  "reviewerVsPrimary": "Reviewer B findings and complete mandatory matrix reconciled and approved by primary Astra; close1/9/10, leave8/25/32 open. This worker makes no GitHub writes.",
+  "rollbackOrContainment": "This audit makes no production change. Preserve completed source/security/calendar/clock work; keep issues open while proof/docs gaps remain. A later authorized increment should roll back only its failed narrow test/docs/disclosure delta, never remove admission, encoding, gap/fold rejection or truthful unavailable output to make a gate pass.",
+  "primaryReconciliation": {
+    "status": "APPROVED",
+    "reviewer": "primary Astra",
+    "authority": "Parent explicitly confirmed full-contract and native-proof review; independent visual observations retained in primary-visual-review.json",
+    "approvedVerdict": "LEAVE OPEN"
+  },
+  "publicationPrecondition": "Primary must replace AUDIT_EVIDENCE_COMMIT with the approved immutable evidence SHA, verify linked file hashes/readback, publish the evidence comment before any manual closure. No publication performed by reviewer B.",
+  "publicationTextStatus": "PRIMARY_RECONCILED_AWAITING_IMMUTABLE_SHA_BINDING",
+  "immutableFreshEvidenceLinks": {
+    "assessment": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+    "sourceReceipts": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/B/fresh-test-receipts.json",
+    "sourceLog": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/B/r0008-timezone.cjs.log",
+    "rawNativeReceipts": [],
+    "capturedImages": [],
+    "reconciliation": null,
+    "shaBinding": "AUDIT_EVIDENCE_COMMIT literal to be replaced by primary after immutable SHA/hash approval"
+  }
+}

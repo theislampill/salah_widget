@@ -1,0 +1,127 @@
+{
+  "schema": "rlgwo-C-final-bounded-reconciliation-v1",
+  "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "results": {
+    "11": {
+      "canonicalId": "R000B",
+      "title": "R000B: Expire weather and radar authority using source age as well as retrieval time",
+      "verdict": "LEAVE OPEN",
+      "matrixRows": 18,
+      "counts": {
+        "satisfied": 12,
+        "unverified": 5,
+        "unmet": 1
+      },
+      "gap": "README temporal/unavailable contract remains unmet. Required hostile metadata and independent mutants remain unverified; actual1x expiry/outage/retry sequence now covered by source-equivalent historical browser evidence.",
+      "assessment": "11-assessment.json",
+      "comment": "11-comment.md",
+      "primaryReconciliation": "APPROVED LEAVE OPEN WITH EXACT GAPS"
+    },
+    "12": {
+      "canonicalId": "R000C",
+      "title": "R000C: Reject malformed weather measurements without coercing missing values into observations",
+      "verdict": "LEAVE OPEN",
+      "matrixRows": 18,
+      "counts": {
+        "satisfied": 13,
+        "unverified": 4,
+        "unmet": 1
+      },
+      "gap": "README does not explain unavailable values; four mandatory source mutations and real-browser null/zero/malformed-precipitation acquisition/consumer pixels remain unverified.",
+      "assessment": "12-assessment.json",
+      "comment": "12-comment.md",
+      "primaryReconciliation": "APPROVED LEAVE OPEN WITH EXACT GAPS"
+    },
+    "13": {
+      "canonicalId": "R000D",
+      "title": "R000D: Ensure stalled weather requests and radar images release their owned refresh attempts",
+      "verdict": "LEAVE OPEN",
+      "matrixRows": 15,
+      "counts": {
+        "satisfied": 10,
+        "unverified": 4,
+        "unmet": 1
+      },
+      "gap": "README omits stage bounds/backoff/suspension semantics; mandatory body/owner/Image mutations and real-browser held-operation→deadline→eligible replacement→consumer recovery proof absent.",
+      "assessment": "13-assessment.json",
+      "comment": "13-comment.md",
+      "primaryReconciliation": "APPROVED LEAVE OPEN WITH EXACT GAPS"
+    },
+    "14": {
+      "canonicalId": "R000E",
+      "title": "R000E: Stop interpreting radar alpha density as quantitative storm-strength evidence",
+      "verdict": "CLOSE — SATISFIED",
+      "matrixRows": 13,
+      "counts": {
+        "satisfied": 13
+      },
+      "gap": null,
+      "assessment": "14-assessment.json",
+      "comment": "14-comment.md",
+      "originalBrowserResult": "FAIL preserved; incorrect raw-condition oracle separately reconciled, nine exact quantitative-effect/custody predicates true",
+      "primaryReconciliation": "APPROVED CLOSE — SATISFIED"
+    },
+    "30": {
+      "canonicalId": "R001E",
+      "title": "R001E: Allow valid equator and prime-meridian coordinates to reach weather and radar acquisition",
+      "verdict": "CLOSE — SATISFIED",
+      "matrixRows": 12,
+      "counts": {
+        "satisfied": 12
+      },
+      "gap": null,
+      "assessment": "30-assessment.json",
+      "comment": "30-comment.md",
+      "nativeBrowserResult": "3/3 PASS,57assertions; actual image/consumer/crops read independently",
+      "primaryReconciliation": "APPROVED CLOSE — SATISFIED"
+    },
+    "36": {
+      "canonicalId": "R0024",
+      "title": "R0024 — Separate current precipitation evidence from nearby, approaching and forecast states",
+      "verdict": "LEAVE OPEN",
+      "matrixRows": 25,
+      "counts": {
+        "satisfied": 18,
+        "validly superseded": 2,
+        "unmet": 2,
+        "unverified": 3
+      },
+      "gap": "A–G logic scaffold and amended model-effect policy are implemented. Surviving nearby/approach/forecast information is absent from weatherHeader; mandatory equivalent browser/state pixels and scoped CPU/memory/network baseline proof remain unverified. README semantics are incomplete.",
+      "assessment": "36-assessment.json",
+      "comment": "36-comment.md",
+      "primaryReconciliation": "APPROVED LEAVE OPEN WITH EXACT GAPS"
+    }
+  },
+  "totals": {
+    "issues": 6,
+    "closable": 2,
+    "leaveOpen": 4,
+    "matrixRows": 101,
+    "freshTests": 249,
+    "pass": 245,
+    "fail": 0,
+    "todo": 4,
+    "matrixStatuses": {
+      "satisfied": 78,
+      "validly superseded": 2,
+      "unmet": 5,
+      "unverified": 16
+    },
+    "verdicts": {
+      "CLOSE — SATISFIED": 2,
+      "LEAVE OPEN": 4
+    }
+  },
+  "receipts": {
+    "mutation": "workers/C/mutation-receipts.json",
+    "sourceEquivalence": "workers/C/historical-source-equivalence.json",
+    "R000E": "workers/C/browser14-v2-semantic-reconciliation.json",
+    "R001E": "workers/C/browser30-chromium-v2/results.json",
+    "pixels": "workers/C/browser-pixel-review.json",
+    "config": "workers/C/config-confirmation.json"
+  },
+  "primaryApproval": "Primary Astra independently reconciled and approved all recorded dispositions",
+  "publication": "HELD FOR IMMUTABLE EVIDENCE COMMIT/PER-FILE HASH VERIFICATION; no GitHub effects by C",
+  "productionMutation": false,
+  "browserLaunchByC": false
+}

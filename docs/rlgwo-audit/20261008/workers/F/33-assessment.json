@@ -1,0 +1,702 @@
+{
+  "schema": "rlgwo-closure-assessment-v1",
+  "reviewer": "F",
+  "issueNumber": 33,
+  "canonicalId": "R0021",
+  "title": "R0021 — Keep sky-object reveal coherent through initialization and twilight",
+  "originalBodySha256": "f20911aed758257b44e82ec8e4b581d6179dd0b65dd43839dc923932a2185ac2",
+  "originalUpdatedAt": "2026-09-08T10:50:28Z",
+  "packetCapturedAtUtc": "2026-10-09T00:41:33.520164+00:00",
+  "commentRevisions": [],
+  "fullPacketRead": true,
+  "discussionAmendments": "No comments; renamed/referenced events read without treating them as authority. Owner excludes growing/zooming V1 captures; actual root concern is atmosphere-only first scene followed seconds later by Moon/obvious stars. New first-complete-celestial-scene requirement at main18ff/runtimef443. Separate source-only repair lane is unmerged and cannot change this audit target or issue disposition.",
+  "target": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "auditDate": "2026-10-08"
+  },
+  "targetCustody": "Clean reviewed head 4bccdf43363926c3077f60de87e5617ccb9abcb9 has identical merge tree; source read there.",
+  "model": {
+    "requested": "gpt-6.1-sol",
+    "requestedEffort": "max",
+    "effectiveConfigurationConfirmed": true,
+    "confirmationKind": "supported spawn configuration plus local recorded turn_context; not independent hardware/backend attestation",
+    "recordedSessionId": "01a11e27-0cc9-7e73-a2e2-a9f2ec7bcc32",
+    "recordSha256": "183999c426f808271a5ebbcc529daed738b528b5bda6cc6c25dadf29a1947235"
+  },
+  "scopeOfDone": "Accepted-scene pending/initializing coordination, independent lunar background cutout, correct target projection and current terrain publication boundary are implemented. PR42 adds measured first-paint preview republishing and bounded current terrain continuity rather than broad transition removal.",
+  "requirementMatrix": [
+    {
+      "id": "21-01",
+      "obligation": "Before first visible sky exposure, position/size/visibility/light eligibility share accepted scene; retain intermittent baseline and repeat new documents.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2060,
+            2094
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2060-L2094"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4092,
+            4119
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4092-L4119"
+        }
+      ],
+      "discriminator": "Repeated cold/warm native entry with captured first-visible transforms/images and timing.",
+      "expected": "No small-to-final moon growth or daytime night-layer flash; accepted geometry first.",
+      "observed": "Exact final-v49 sixteen cold/warm scene pairs, successful native lifecycle and current public16 cases establish committed geometry and normal acquisition/retention. Current source suppresses initial transforms and forces style resolution before reveal; old intermittent CSS growth is not a current-source counterexample. This credits the original coherent-neutral acquisition requirement, not the newly amended first-complete celestial scene.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "16 final cold/warm pairs retain exact runtime and sampling limits"
+        }
+      ]
+    },
+    {
+      "id": "21-02",
+      "obligation": "Initial scene suppressed only until accepted astronomical state; no wait for all fonts/weather/network or whole-widget hidden; unresolved location neutral usable UI.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2060,
+            2094
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2060-L2094"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4112,
+            4121
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4112-L4121"
+        }
+      ],
+      "discriminator": "Pending fonts/weather/coordinates/failed first paint and healthy recovery.",
+      "expected": "Truthful finite partial state; prayer/settings usable; no prior-target precip.",
+      "observed": "Source pending decorations and commit require strict geometry/scene identity. Final native lifecycle 386 assertions and startup acquiring/missing/recovery cases prove scoped native behavior.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-firefox-native-lifecycle/results.json",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-firefox-native-lifecycle/results.json"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Actual native entries/workers; event/transport doubles, no real OS/BFCache"
+        }
+      ]
+    },
+    {
+      "id": "21-03",
+      "obligation": "Initial stars use accepted local target/time after async resolution; never retain fallback 0/0; config reinit clears all layers coherently.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2060,
+            2094
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2060-L2094"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "real-sky/native-host-hooks.js",
+          "lines": [
+            11,
+            39
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/real-sky/native-host-hooks.js#L11-L39"
+        },
+        {
+          "path": "real-sky/native-star-preview.mjs",
+          "lines": [
+            61,
+            86
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/real-sky/native-star-preview.mjs#L61-L86"
+        }
+      ],
+      "discriminator": "Wrong/late accepted target and first native catalogue sink/current scene discriminator.",
+      "expected": "Actual displayed catalogue belongs to accepted observer/time, not old fallback.",
+      "observed": "Accepted host/nativeJob/currentResult interfaces bind UTC/target/generation; actual catalogue tests reject malformed/currentness inputs. Final acquiring/config/target lifecycle proves replacement of obsolete initial fallback projection; no removed synthetic-array success is inferred.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "21-04",
+      "obligation": "Twilight fade natural but stars/glints/MilkyWay cannot pass through visible moon; correct geometry/AA and no blackcutout/day hole.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2060,
+            2094
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2060-L2094"
+        },
+        {
+          "path": "moon/src/moon-detail.mjs",
+          "lines": [
+            31,
+            40
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-detail.mjs#L31-L40"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4106,
+            4112
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4106-L4112"
+        }
+      ],
+      "discriminator": "Interior3px and outside-positive star probes at actual displayed sinks across densely sampled dawn/dusk phases.",
+      "expected": "Interior rejected through fade, outside preserved, continuous natural transition/no mask hole.",
+      "observed": "Actual local detail join blocks direct stars/diffuse at coverage independently of calendar fade;4 fresh interface controls include bright inside/outside positive and a detected fade-scaled leak mutation. Current catalogue opaque-cutout/once-only-cloud/prepared-source controls3/3 and composition/current-terrain controls27/27 combine with exact current final-v49 source/layer/native imagery. This is bounded equivalent compositing proof, not a claim that a new arbitrary SVG star screenshot was captured.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "21-05",
+      "obligation": "Settled opaque textured calendar moon every night inclnew/below; daytime hidden; sun nucleus/low-left/flattening/registered optics preserved.",
+      "authoredOwners": [
+        {
+          "path": "moon/src/moon-native.mjs",
+          "lines": [
+            75,
+            90
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-native.mjs#L75-L90"
+        },
+        {
+          "path": "moon/src/moon-detail.mjs",
+          "lines": [
+            96,
+            118
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-detail.mjs#L96-L118"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            5218,
+            5232
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5218-L5232"
+        }
+      ],
+      "discriminator": "Current actual phase/sun/no-star-through crops, genuine outside-star control.",
+      "expected": "No vanished calendar slot, black limb or solar regression.",
+      "observed": "Current source-bound material/presentation/admission and final/public normal surface references preserve current V5 textured calendar presence; public refinement/refresh has no withdrawal after acquisition. Authorised V5/camera composition replaces old PBR byte identity; exact reference/kernel/linear+encoded composition controls, not the obsolete string guard, discriminate preservation. First-complete celestial startup remains open in new row21-10.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/visual-review/chromium-moon-cold-motion.png",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/visual-review/chromium-moon-cold-motion.png"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Actual20..98s current calendar continuity; not every phase or initial acquisition"
+        }
+      ]
+    },
+    {
+      "id": "21-06",
+      "obligation": "Cloud/rain truth retained; missing/delayed providers recover current scene; supported rain positive and dry negatives.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            3068,
+            3080
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3068-L3080"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            5096,
+            5108
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5096-L5108"
+        }
+      ],
+      "discriminator": "Startuprain, unavailable assets/provider and target/currentness rejection.",
+      "expected": "No stale-location rain or invented precip; partial UI recovers.",
+      "observed": "Final startup and lifecycle consume controlled finite current records; owner model-estimate policy is explicit separate amendment. No actual observation claim made.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-firefox-startup-rain/results.json",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-firefox-startup-rain/results.json"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Exact runtime supported current-model rain fixture"
+        }
+      ]
+    },
+    {
+      "id": "21-07",
+      "obligation": "Visible15-60s normal elapsed cloud/star motion; reduced/full fresh docs; later weather/config transition survives.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            3208,
+            3235
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3208-L3235"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            5427,
+            5446
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5427-L5446"
+        }
+      ],
+      "discriminator": "Normal1x clip/pixels plus reduced/full native branch.",
+      "expected": "No wallpaper, hash-only proof or global animation ban.",
+      "observed": "Final normal1x WebM/contact sheets show real visible cloud position/shape change over20..98s; public normal1x clock/unchanged-scene replacement evidence and final native reduced/full lifecycle source controls are reused. No cloud hash is motion proof and no repeat motion campaign is requested.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/motion/chromium-normal1x-cold.webm",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/motion/chromium-normal1x-cold.webm"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Retained actual normal1x clip; this audit inspected sheet, not all video frames"
+        }
+      ]
+    },
+    {
+      "id": "21-08",
+      "obligation": "Card/header/buckle/footer/prayer bounds and at least one mobile/constrained native embed; no extra loop/allocation or startup/steady cost regression.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2065,
+            2094
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2065-L2094"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-startup-direct/results.json",
+          "lines": null,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-startup-direct/results.json"
+        },
+        {
+          "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-startup-warm-moon/results.json",
+          "lines": null,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-startup-warm-moon/results.json"
+        }
+      ],
+      "discriminator": "Native constrained iframe plus baseline/current callback/cost and first-frame geometry.",
+      "expected": "Card325x530 and owner-amended production iframe 330x534 remain usable; no extra render loop.",
+      "observed": "Public root/V1 geometry, mobile/constrained wrapper and one-loop source checks are satisfied. Original one-quiescent setup startup/steady callback-cost comparison is not identified; broad loaded N001 status is not this measurement.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "21-09",
+      "obligation": "Update high-value DESIGN/ARCHITECTURE/HANDOFF statements; preserve accepted clock/config sources and independent exact-tree review.",
+      "authoredOwners": [
+        {
+          "path": "docs/real-sky/STARTUP_CLOUD_HOTFIX.md",
+          "lines": [
+            347,
+            376
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/STARTUP_CLOUD_HOTFIX.md#L347-L376"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "ARCHITECTURE.md",
+          "lines": [
+            11,
+            20
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/ARCHITECTURE.md#L11-L20"
+        }
+      ],
+      "discriminator": "Documentation/currentness trace and returned review reconciliation.",
+      "expected": "First compositor timing and captured gaps explicit; no historical failure relabel.",
+      "observed": "Current comments/docs retain truthful neutral acquisition/current terrain/independent occlusion and qualified approximations. Original old-PBR byteguard failure is accounted with actual accepted V5/current composition replacements; existing evidence is preserved under the new startup successor.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "21-10",
+      "obligation": "Owner amendment2026-10-08: the first visibly exposed celestial scene is complete; root must not expose atmosphere alone then pop in Moon/obvious stars seconds later. V1 growing/zooming captures are excluded from this new root concern.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2060,
+            2094
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2060-L2094"
+        },
+        {
+          "path": "moon/src/moon-native.mjs",
+          "lines": [
+            70,
+            98
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-native.mjs#L70-L98"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            2060,
+            2094
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L2060-L2094"
+        },
+        {
+          "path": "moon/moon-host.js",
+          "lines": null,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/moon-host.js"
+        }
+      ],
+      "discriminator": "Actual same-document first atmospheric/celestial exposure sequence at exact current root, cold and warm; retain the supplied owner scene and current public first-surface timings.",
+      "expected": "First visible complete astronomical scene/current calendar source appears coherently; usable prayer UI remains independent while acquisition occurs.",
+      "observed": "Current public root cold scene acquires Moon after seconds (Chromium first visible7.3847s); source commitSkyScene does not require a current V5 surface. Existing rollout proves acquisition then no withdrawal, not immediate complete first celestial exposure. Owner-requested successor repair is not merged.",
+      "status": "unmet",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-startup-warm-moon/results.json",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-startup-warm-moon/results.json"
+          },
+          "freshness": "exact-current retained native startup plus fresh common public receipt summarized inline",
+          "scope": "Acquisition and retention are distinct from new first-complete startup acceptance."
+        }
+      ]
+    }
+  ],
+  "negativeControls": [
+    "Final startup retains rejected dark shell/warm gap as failures, not final PASS.",
+    "Legacy PBR-source byte equality is superseded only by actual current terrain/material/crop evidence; removed synthetic-array tests require actual catalogue sink controls."
+  ],
+  "gaps": [
+    "New verified owner requirement21-10 is unmet at this audited target: root exposes an atmospheric scene before current Moon/obvious stars arrive. Existing no-withdrawal evidence remains valid after first acquisition.",
+    "Original scoped startup/steady callback-cost comparison remains unverified; do not convert loaded N001 PARTIAL into a blanket blocker or a cost PASS."
+  ],
+  "dependencies": [
+    "R0003/R0004 accepted target/attempt/day consumed at interfaces; not whole-issue gates.",
+    "R001D consumed diagnostic and R0022 physical/calendar policies share integration writers.",
+    "R0025 established wind/day cloud continuity remains separate; N003 real OS/BFCache is not automatically required by these controlled startup claims."
+  ],
+  "improvements": [
+    "PR42 current preview republishing repairs a measured Firefox cache-warm first-paint gap; current terrain bridge avoids later phasebucket/footprint withdrawal within unchanged bounds."
+  ],
+  "ownerDecisions": [],
+  "verdict": "LEAVE OPEN",
+  "proposedNextRlgwoIncrement": {
+    "owner": "Named startup successor Fix Moon and star startup pop-in; src/native initial scene/real-sky preview/current Moon presentation boundary",
+    "preserve": "All current accepted-source fences, V5 material/opacity, neutral usable prayer UI, normal motion and current post-acquisition continuity. Audit target18ff remains immutable; separate source-only repair is unmerged.",
+    "steps": [
+      "Under the verified owner amendment, implement a first-complete celestial scene commit at the actual root interfaces without hiding usable prayer information or fabricating Moon/stars.",
+      "Use the owner-supplied root scene and exact cold/warm current-source timeline to distinguish first atmosphere exposure from first complete celestial scene. Exclude V1 zoom/growth as instructed; retain existing no-withdrawal proof.",
+      "Qualify only affected entry/reinit/transition and one-quiescent startup/steady callback cost; reuse unchanged current V5/opacity/motion/UI evidence narrowly."
+    ],
+    "acceptance": "The first exposed celestial scene is complete and coherent; subsequent normal source changes/motion/current terrain remain; cost/retained state does not regress materially in the original scoped comparison.",
+    "nonGoals": "No V1 edit, Moon material/profile rewrite, ephemeris/prayer/clock redesign, fake early object, whole-widget loading hide or closure by this audit of an unmerged successor."
+  },
+  "missingChecksRequested": [
+    {
+      "name": "startup successor first-complete scene discriminator",
+      "command": "Future exact successor cold/warm native first-exposure captures on the verified owner root scene, plus one-quiescent callback inventory/cost comparison.",
+      "reason": "A named owner-authorized source-only lane is already active; no duplicate repair/campaign in this audit."
+    }
+  ],
+  "freshExecution": {
+    "productTests": [
+      {
+        "issue": 33,
+        "name": "r0021-reveal-current-boundary",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r0021-reveal.cjs",
+          "--cp8-snapshot-only"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "fixtureSha256": "c66a0b967fd2de957c656f33ad32d9b84099ed7e3ce7f4c0841ac780918f76ca",
+        "freshExecution": true,
+        "seconds": 1.957101,
+        "exitCode": 1,
+        "terminal": {
+          "terminal": true,
+          "declared": 15,
+          "executed": 15,
+          "missing": 0,
+          "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+          "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+          "fixtureSha256": "c66a0b967fd2de957c656f33ad32d9b84099ed7e3ce7f4c0841ac780918f76ca",
+          "pass": 14,
+          "fail": 1,
+          "limits": "actual state/source/CSS geometry controls; first compositor frame and occlusion pixels unrun"
+        },
+        "failures": [
+          "FAIL moon PBR shader and embedded payloads retain exact accepted bytes :: Expected values to be strictly equal:"
+        ],
+        "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r0021-reveal-current-boundary.log",
+        "logSha256": "0fcc7d23b81db1392b5d56b30549ae5cd2191017dde050658f88de6e09ede9ac",
+        "error": null
+      }
+    ],
+    "browsers": [],
+    "scope": "F ran bounded Node/VM/command controls only after resource authorization. All actual browser launches below were executed serially by primary; F inspected receipts and crops.",
+    "replacementControls": {
+      "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "scope": "No browsers/terrain/solvers; bounded replacement controls for actual accepted host, astronomical source, catalogue and local opacity join. Current real-sky source is called, not removed synthetic arrays. Numerical encoded frame data are not native screenshots.",
+      "commands": [
+        {
+          "name": "lunar-interface-controls",
+          "command": [
+            "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+            "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\lunar-interface-controls.cjs"
+          ],
+          "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+          "freshExecution": true,
+          "exitCode": 0,
+          "seconds": 0.239006,
+          "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\lunar-interface-controls.log",
+          "logSha256": "5528cc0c2c64aa70ae6a0632e4425712c8be21ee484ae8e8fc2d91137444ccd9",
+          "tail": [
+            "PASS actual accepted host never promotes calendar phase/altitude to physical astronomical state",
+            "PASS late physical source cannot remain current after accepted UTC/target changes",
+            "PASS real local Moon join blocks direct starlight independent of calendar fade with outside positive",
+            "PASS restoring fade-scaled star leakage is detected by identical inside/outside probe",
+            "{\"sourceIndexSha256\":\"ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee\",\"detailSha256\":\"3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0\",\"fixtureSha256\":\"8c3609830205f3fea9fb2983278bb1ded210fba5c8466025d693ef4b7ef344ff\",\"passed\":4,\"failed\":0,\"limits\":\"Actual whole-source accepted host/native paint plus numerical astronomical and local join controls. Not a native hostile-star screenshot or phase campaign.\"}"
+          ]
+        },
+        {
+          "name": "native-catalogue-currentness-opacity",
+          "command": [
+            "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+            "--test",
+            "--test-name-pattern=current bright-catalogue|preview rejects corrupt catalogue|prepared sky owns",
+            "tests/real-sky/native-star-preview.test.mjs"
+          ],
+          "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+          "freshExecution": true,
+          "exitCode": 0,
+          "seconds": 1.924794,
+          "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\native-catalogue-currentness-opacity.log",
+          "logSha256": "1fc317fb1f60b381713e56b1759f2e2e61c7a12769312e57673db8db7a630453",
+          "tail": [
+            "  duration_ms: 279.081",
+            "  type: 'test'",
+            "  ...",
+            "1..3",
+            "# tests 3",
+            "# suites 0",
+            "# pass 3",
+            "# fail 0",
+            "# cancelled 0",
+            "# skipped 0",
+            "# todo 0",
+            "# duration_ms 1872.513"
+          ]
+        }
+      ],
+      "setupAttempts": [
+        {
+          "result": "fixture setup error, no product conclusion",
+          "reason": "First custom adapter re-injected native-host hooks that the whole-source harness already executes, causing duplicate _cp9SiteElevation declaration. Removed the redundant injection."
+        },
+        {
+          "result": "fixture input-order failure, no product conclusion",
+          "reason": "A same-minute in-memory boot-flag change was initially followed only by render(), which deliberately reuses geometry. Corrected the test to call the actual renderMoon producer before actual render; no assertion/production code changed."
+        }
+      ],
+      "earlierFreshToolReceipt": {
+        "command": [
+          "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+          "--test",
+          "tests/real-sky/native-contract.test.mjs",
+          "tests/real-sky/native-composition.test.mjs",
+          "tests/real-sky/native-moon-admission.test.mjs"
+        ],
+        "exitCode": 0,
+        "tests": 27,
+        "pass": 27,
+        "fail": 0,
+        "durationMs": 91.7811,
+        "kind": "Fresh execution in tool output, summarized here without claiming a retained full stdout log"
+      }
+    }
+  },
+  "reuseBasis": "Final-v49 receipts retain the exact ff7285 index and f443cf runtime. Earlier Moon/CP9 receipts retain their earlier identities and qualify only mapped unchanged mechanisms; no old aggregate PASS is promoted to current closure. Follow-up credits final normal1x images/public replacement proof for actual motion and current surface continuity. Owner-adopted physical astronomical scattering is distinct from native calendar-derived light. No complete Moon phase campaign is inferred from the opt-in raw sampler.",
+  "inheritedQualification": {
+    "N001": "PARTIAL",
+    "N002": "PARTIAL",
+    "N003": "BLOCKED",
+    "scope": "Only mapped mandatory obligations are affected; these are not blanket blockers."
+  },
+  "publication": {
+    "reconciledByPrimary": true,
+    "approved": false,
+    "posted": false,
+    "hold": "Primary Astra reconciled all mandatory rows and conclusions. Substitute immutable evidence commit SHA, independently approve exact comment hash, publish comment then any approved closure. No GitHub effect yet.",
+    "deliveredBaseline": "DELIVERED_VERIFIED; 16 public browser cases PASS; root/V1 actual sources and 330x534 wrapper checked",
+    "publicEvidenceLinksPending": true,
+    "conclusionsApprovedByPrimary": true,
+    "commentHashApproved": false,
+    "evidenceBasePlaceholder": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/",
+    "preparedCommentSha256": "e1583d7b091007e6d9ba7fc4d90bc6b77eb28b63b850b8392531386c25901095"
+  },
+  "risks": "Evidence gaps are not all product defects. Source mechanics, raw numerical equality, displayed pixels, native default actions and real OS lifecycle are distinct claims.",
+  "inspectionReceipt": "inspection-receipt.json",
+  "executedCommands": [
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "18ff14860ff41c084b1db5f396bb62aa9c22b1be^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only identity",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only reviewed-source equivalence",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only dirty state",
+      "expected": "",
+      "observed": "",
+      "exitCode": 0
+    },
+    {
+      "command": "SHA-256 of actual index.html bytes and complete issue body UTF-8 bytes",
+      "environment": "Python -I -S -B, hashlib/JSON; no network/browser",
+      "kind": "fresh read-only byte binding",
+      "expected": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "f20911aed758257b44e82ec8e4b581d6179dd0b65dd43839dc923932a2185ac2"
+      },
+      "observed": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "f20911aed758257b44e82ec8e4b581d6179dd0b65dd43839dc923932a2185ac2"
+      },
+      "exitCode": 0
+    },
+    {
+      "command": "Read authored source, delivered consumers, exact assertions and retained final-v49 gzip/JSON receipts",
+      "environment": "PowerShell UTF-8 reads + Python standard-library gzip/json/hashlib",
+      "kind": "fresh inspection of historical execution",
+      "expected": "Preserve scope and original source/runtime identities; do not invent execution",
+      "observed": "inspection-receipt.json records bytes, receipt hashes and original terminal/case counts; zero fresh product/browser test commands",
+      "exitCode": 0
+    },
+    {
+      "issue": 33,
+      "name": "r0021-reveal-current-boundary",
+      "command": [
+        "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+        "tests/r0021-reveal.cjs",
+        "--cp8-snapshot-only"
+      ],
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "fixtureSha256": "c66a0b967fd2de957c656f33ad32d9b84099ed7e3ce7f4c0841ac780918f76ca",
+      "freshExecution": true,
+      "seconds": 1.957101,
+      "exitCode": 1,
+      "terminal": {
+        "terminal": true,
+        "declared": 15,
+        "executed": 15,
+        "missing": 0,
+        "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+        "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "fixtureSha256": "c66a0b967fd2de957c656f33ad32d9b84099ed7e3ce7f4c0841ac780918f76ca",
+        "pass": 14,
+        "fail": 1,
+        "limits": "actual state/source/CSS geometry controls; first compositor frame and occlusion pixels unrun"
+      },
+      "failures": [
+        "FAIL moon PBR shader and embedded payloads retain exact accepted bytes :: Expected values to be strictly equal:"
+      ],
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r0021-reveal-current-boundary.log",
+      "logSha256": "0fcc7d23b81db1392b5d56b30549ae5cd2191017dde050658f88de6e09ede9ac",
+      "error": null
+    }
+  ],
+  "ownerAmendments": [
+    {
+      "kind": "verified direct human-owner instruction reported by primary",
+      "date": "2026-10-08",
+      "threadId": "01a11e50-a65e-7e30-a8e6-202f4490f31f",
+      "threadTitle": "Fix Moon and star startup pop-in",
+      "authority": "Primary verified direct owner request in the separate chat; not inferred from code, issue events or model output. F applies parent-confirmed authority; fresh pixels do not prove the requested repair.",
+      "scope": "Owner excludes growing/zooming V1 captures; actual root concern is atmosphere-only first scene followed seconds later by Moon/obvious stars. New first-complete-celestial-scene requirement at main18ff/runtimef443. Separate source-only repair lane is unmerged and cannot change this audit target or issue disposition."
+    }
+  ]
+}

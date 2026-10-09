@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:32.847168+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/28",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/28/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/28/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/28/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/28",
+    "id": 5381808722,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfiUg",
+    "number": 28,
+    "title": "R001C: Make optical and motion diagnostic recipes match the actual hash parser and force options",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:56Z",
+    "updated_at": "2026-09-08T06:25:28Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-028 -->\n# R001C: Make optical and motion diagnostic recipes match the actual hash parser and force options\n\n**Repository-local identity:** `R001C` in `theislampill/salah_widget`; existing tracker [#28](https://github.com/theislampill/salah_widget/issues/28). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-028. Diagnostic-documentation defect; proposed P2. This work order repairs existing recipes, including AGENTS.md; it grants no implementation or publication authority.\n\n## The literal recipes fail their stated purpose\n\nThe preserved 7 September 2026 controlled-source check recorded the same result on main fd2972ba64225fe9d6848e92497e6d0ed20ea624 and unmerged candidate 9d9c43649748555afbe09e3ca49bc47db2d7e7bb:\n\n| Exact public fixture URL | Parsed debugMotion |\n|---|---|\n| https://example.invalid/?debugMotion=1#lat=24.4672&lon=39.6142 | null |\n| https://example.invalid/#lat=24.4672&lon=39.6142&debugMotion=1 | \"1\" |\n\nThis was original-source hash parsing in a controlled Node VM, not browser motion or optical-pixel evidence. [index.html:593](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L593) constructs q from location.hash.slice(1); it never reads the query for these options. A contributor can therefore follow a literal ?debugMotion or ?motion recipe while the claimed override remains inactive.\n\nThe [optical switch](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1718) accepts exactly **halo, sundogs, pillar, anticrep, paraselene, lunarhalo**. It does not individually force corona, earthshine, refraction or the crepuscular ray. A parsed unsupported string is not an implemented force branch.\n\nDESIGN already says configuration is hash-based; that is a real contrary control and limits severity. It does not repair its copyable query-style examples or \"Each can be forced\" statement. The same faulty syntax occurs in AGENTS's motion-auditor/M0/forbidden-regression instructions. Correcting only DESIGN and OPTICS would leave the failure in contributor guidance.\n\n## Re-anchor and make the exact small documentation edit\n\nBefore authorized editing, record repository root, remote, HEAD and dirty paths. Expect theislampill/salah_widget; do not infer the defect persists on arbitrary future HEAD.\n\n~~~sh\ngit rev-parse --show-toplevel\ngit remote get-url origin\ngit rev-parse HEAD\ngit status --short\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- AGENTS.md DESIGN.md OPTICS.md index.html\n~~~\n\nStop on incompatible parser/enum changes and revise the affected recipe from that evidence. The candidate is comparison evidence, not an adoption instruction: [candidate parser](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L593).\n\nOne documentation integrator owns these edits:\n\n- [AGENTS.md](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/AGENTS.md): replace affected ?debugMotion/?motion examples in the auditor, M0 and forbidden-regression prose. Keep the existing base-hash-plus-& convention in Running/debugging and all screenshot/no-cloud-hash gates.\n- [DESIGN.md motion/debug section](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md#L223): repair query-style examples; include lunarhalo in the enum near line258. Replace the all-effects force claim in [the approximations section](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md#L318).\n- [OPTICS.md](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/OPTICS.md#L99): correct query-style headings and the validation-matrix recipe. index.html remains a verification owner only.\n\nUse this exact explanatory text with the runnable examples below:\n\n> Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them.\n\nReplace \"Each can be forced via ?debugOptic=\" with the six-name statement. Do not globally rewrite question marks: builder's cache-busting query is intentional, and negative examples must stay visibly labeled negative.\n\nUse these complete motion recipes, relative to the served folder:\n\n~~~text\nindex.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1\nindex.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full\n~~~\n\nFor a copyable force-activation example use:\n\n~~~text\nindex.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo\n~~~\n\nFor other switch branches, replace only halo with a supported name and select a recorded solar/lunar scene appropriate to its pixel check. The noon example proves neither lunar visibility nor every effect's appearance. State: **\"simTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels.\"**\n\nA vague hash reminder without fixing literal URLs is insufficient. Adding query parsing or force-everything branches changes runtime behavior to vindicate old prose. A renderer overhaul or new diagnostic framework is unnecessary for this exact documentation failure.\n\n## Public discriminator and validation\n\nFor each changed literal URL, use this small proposed fixture and compare it with the actual source q expression at the bound tree:\n\n~~~js\nfunction parsed(recipe) {\n  const u = new URL(recipe, \"https://example.invalid/\");\n  return new URLSearchParams(u.hash.slice(1));\n}\nconst bad = \"index.html?debugMotion=1#lat=24.4672&lon=39.6142\";\nconst good = \"index.html#lat=24.4672&lon=39.6142&debugMotion=1\";\nif (parsed(bad).get(\"debugMotion\") !== null) throw Error(\"negative control\");\nif (parsed(good).get(\"debugMotion\") !== \"1\") throw Error(\"fragment recipe\");\n~~~\n\nThis is proposed recipe validation, not an executed test result. Include every changed AGENTS/DESIGN/OPTICS occurrence in the readback. For motion=full examples assert the parsed value is \"full\"; compare all six claimed force names against the real DEBUGOPTIC branches. Negative controls: move the positive flag before # and the positive assertion must fail; propose corona as an implemented branch and the enum comparison must fail even though q can contain the string \"corona\". Do not test only a manually corrected URL while leaving a broken published example unexamined.\n\nThen open the actual complete real-time recipe on a disposable local browser origin and confirm the production q value and debugMotion readout are active. A visual claim additionally needs an actual 15–60 second watch/clip or diagnostic delta and the relevant crop, performed by one browser owner. **Never use qaState().clouds.hash as motion proof.** Full motion under OS reduced-motion requires the explicit motion=full case and its readback; normal mode retains accessibility reduction.\n\nThis issue qualifies syntax and advertised forceability. For physically driven effects without dedicated switches, retain the existing physical-scene requirements and identify their fixture inputs when claiming pixels; do not invent a passing fixture here. Keep visible-corner-sun registration, opaque calendar moon, fixed325×530/readability and fail-closed painted dawn unchanged.\n\n## Boundaries, rollback and closure\n\nThe accepted AGENTS-owner correction remains included. No typed-edge or write-domain delta is proposed; shared guidance changes stay with the documentation integrator. No index/builder/config behavior, installer, preset, permission or regional-policy change is required. README changes only if an affected link needs correction.\n\nRevert inaccurate recipe text if validation fails while retaining correct hash/enum statements. Stop if current source exposes different options or the required browser readback is unavailable; parser-only evidence remains parser-only. DONE requires exact final text, literal-recipe/enum controls and an evidence comment; published-document claims also require rendered public readback. Use non-closing Implements #28 PR wording and manual closure after evidence. This work order is not an independent PASS or a runtime repair.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/28/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/28/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733558773,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfiUs8AAAAHJ9zj9Q",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733558773",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:28Z",
+      "rename": {
+        "from": "SW-028: Make optical and motion diagnostic recipes match the actual hash parser and force options",
+        "to": "R001C: Make optical and motion diagnostic recipes match the actual hash parser and force options"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R001C",
+    "bodySha256": "1329c559c41f5c6b8573c4d76cbec871fbe16337f1c3a5906002bdd40740f7ea",
+    "updatedAt": "2026-09-08T06:25:28Z",
+    "commentRevisions": []
+  }
+}

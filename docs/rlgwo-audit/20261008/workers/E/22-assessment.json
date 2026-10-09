@@ -1,0 +1,1525 @@
+{
+  "schema": "rlgwo.closure.worker-assessment.v1",
+  "worker": "E",
+  "assessedAtUtc": "2026-10-09T01:21:18.536321+00:00",
+  "issue": 22,
+  "canonicalId": "R0016",
+  "issueTitle": "R0016: Give both installer dry-run switches an explicit no-effect boundary",
+  "issueUrl": "https://github.com/theislampill/salah_widget/issues/22",
+  "originalBodySha256": "8a9fefff1e14257bc28e53f04767f9741d8d58111884aec9854fb14cfde01a79",
+  "originalBodyRevision": "2026-09-08T06:25:14Z",
+  "packetCapturedAtUtc": "2026-10-09T00:41:33.057737+00:00",
+  "commentsRead": [],
+  "eventsRead": [
+    {
+      "id": 30733547434,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfdR88AAAAHJ9y3qg",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733547434",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:14Z",
+      "rename": {
+        "from": "SW-022: Give both installer dry-run switches an explicit no-effect boundary",
+        "to": "R0016: Give both installer dry-run switches an explicit no-effect boundary"
+      },
+      "performed_via_github_app": null
+    },
+    {
+      "id": 32419791216,
+      "node_id": "REFE_lADOS6MzkM8AAAABQMfdR88AAAAHjF7BcA",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/32419791216",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "referenced",
+      "commit_id": "daa42b229b0617ab54ef136d894945726c773afb",
+      "commit_url": "https://api.github.com/repos/theislampill/salah_widget/commits/daa42b229b0617ab54ef136d894945726c773afb",
+      "created_at": "2026-10-03T23:25:02Z",
+      "performed_via_github_app": null
+    }
+  ],
+  "target": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "runtimeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "examinedCheckoutHead": "4bccdf43363926c3077f60de87e5617ccb9abcb9",
+    "examinedCheckoutTree": "35208181eea714c17f5e77b2644e76434345db60",
+    "checkoutStatus": "",
+    "origin": "https://github.com/theislampill/salah_widget.git"
+  },
+  "authority": {
+    "objective": "Bounded delivered-target closure audit of exactly #19,#20,#21,#22,#27,#28.",
+    "authority": "WORKER_BRIEF.md and assigned parent scope; read-only source/evidence; only workers/E outputs.",
+    "assumptions": [
+      "Supplied initial full issue packets are the audit contract; no comments/amendments beyond captured bodies/events and supplied owner policy.",
+      "Native receipt reuse is narrow exact source/fixture/environment equivalence, not fresh execution or current fixture liveness.",
+      "No mandatory native Apple host equivalence is accepted from GNU Bash/PLATFORM mocks or disabledbuiltins."
+    ],
+    "acceptance": "Six full per-issue matrices/comments plus summary and source/receipt custody; no unsupported closure or publication claim.",
+    "compensation": "Outputs are reversible local reviewer artifacts. Preserve source and all original retained evidence; corrections replace only E assessment/comment files.",
+    "doneWhen": "Ready final six-packet return and per-file hashes; primary evidence publication and individual comment approval remain separate.",
+    "requestedModel": "gpt-6.1-sol",
+    "requestedReasoning": "max",
+    "actualBackendModel": "NOT_INDEPENDENTLY_ATTESTED",
+    "actualEffectiveReasoning": "max (confirmed by client-recorded turn_context)",
+    "modelNote": "The local client turn_context confirms gpt-6.1-sol/max for this reviewer; this is not independent hardware/backend attestation.",
+    "testsExecuted": "NONE by E; fresh primary docs-contract execution is separately attributed in the matching issue evidence.",
+    "browsers": "NONE",
+    "installerEffects": "NONE",
+    "sourceMutations": "NONE",
+    "gitMutations": "NONE",
+    "githubWrites": "NONE",
+    "subagents": "NONE",
+    "clientRecordedModel": "gpt-6.1-sol",
+    "clientRecordedReasoning": "max",
+    "modelConfigurationReceipt": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\reviewer-model-settings.json",
+      "sha256": "183999c426f808271a5ebbcc529daed738b528b5bda6cc6c25dadf29a1947235",
+      "confirmationKind": "supported spawn configuration plus local recorded turn_context; not independent hardware/backend attestation",
+      "agentPath": "/root/rlgwo_e",
+      "sessionId": "01a11e26-bb0a-7351-b068-b780b30f9126",
+      "turnConfigurations": [
+        {
+          "turn_id": "01a11e26-bbdb-72f1-925c-61e1f6029331",
+          "model": "gpt-6.1-sol",
+          "effort": "max",
+          "collaboration_mode": {
+            "mode": "default",
+            "settings": {
+              "model": "gpt-6.1-sol",
+              "reasoning_effort": "max",
+              "developer_instructions": null
+            }
+          }
+        }
+      ]
+    }
+  },
+  "amendments": [
+    {
+      "scope": "Outer production iframe geometry only",
+      "text": "The supplied owner amendment permits a production 330x534 iframe around the 325x530 card. Only the older wrapper-size obligation is superseded; card size, geolocation scope, encoding and readability remain binding. The audited source currently uses 325x530 snippets. This review does not demand a geometry change for an unrelated installer/docs issue."
+    }
+  ],
+  "requirementMatrix": [
+    {
+      "id": "22-01",
+      "obligation": "Validate options and platform before effects; preview performs local discovery and exits before terminal, staging or installation, with legacy/no-target refusals and unresolved remote choices.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 52,
+          "end": 61,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L52-L61"
+        },
+        {
+          "path": "install.sh",
+          "start": 678,
+          "end": 703,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L678-L703"
+        },
+        {
+          "path": "install.ps1",
+          "start": 18,
+          "end": 27,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L18-L27"
+        },
+        {
+          "path": "install.ps1",
+          "start": 540,
+          "end": 584,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L540-L584"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 126,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L126-L138"
+        },
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 133,
+          "end": 149,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L133-L149"
+        }
+      ],
+      "expected": "No confirmations or staging; eligible plans only, explicit non-success for no eligible target; ask/version/path stay unresolved.",
+      "observed": "Retained Linux ten offline cases and Windows ten dry/refusal cases per host record zero effects and unchanged subjects. Source returns before terminal acquisition and staging; ask remains unresolved.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-02",
+      "obligation": "Offline preview makes no metadata, provider, download or network availability requests and does not adopt cached metadata as authority.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 386,
+          "end": 388,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L386-L388"
+        },
+        {
+          "path": "install.sh",
+          "start": 421,
+          "end": 423,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L421-L423"
+        },
+        {
+          "path": "install.ps1",
+          "start": 303,
+          "end": 318,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L303-L318"
+        },
+        {
+          "path": "install.ps1",
+          "start": 345,
+          "end": 346,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L345-L346"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 55,
+          "end": 72,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L55-L72"
+        },
+        {
+          "path": "tests/install-powershell-guards.ps1",
+          "start": 14,
+          "end": 44,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-powershell-guards.ps1#L14-L44"
+        }
+      ],
+      "expected": "Zero network-boundary calls; release/cache helpers suppress before returning metadata or artifact paths.",
+      "observed": "Retained Windows guard suites pass 10/10 each, including preloaded metadata. Whole-entry cached/source cases show zero effects. Current guards precede cached metadata lookup; no preview network path was identified.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-03",
+      "obligation": "Guard every alternate effect site, including staging, writes, copy, removal, extraction, clipboard, browser launch and cleanup; suppressed copy must be false.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 155,
+          "end": 177,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L155-L177"
+        },
+        {
+          "path": "install.sh",
+          "start": 202,
+          "end": 241,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L202-L241"
+        },
+        {
+          "path": "install.sh",
+          "start": 421,
+          "end": 566,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L421-L566"
+        },
+        {
+          "path": "install.ps1",
+          "start": 44,
+          "end": 46,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L44-L46"
+        },
+        {
+          "path": "install.ps1",
+          "start": 65,
+          "end": 93,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L65-L93"
+        },
+        {
+          "path": "install.ps1",
+          "start": 345,
+          "end": 418,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L345-L418"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-bash.py",
+          "start": 94,
+          "end": 129,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-bash.py#L94-L129"
+        },
+        {
+          "path": "tests/install-powershell-guards.ps1",
+          "start": 25,
+          "end": 46,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-powershell-guards.ps1#L25-L46"
+        }
+      ],
+      "expected": "No helper effects or sentinel changes; no successful Copied claim under preview.",
+      "observed": "Retained Bash helper and Windows 10/10 guard suites pass; clipboard returns false and cached sentinels remain unchanged. Current guards are before effects and cache returns.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-04",
+      "obligation": "Return no usable artifact from preview helpers and prevent expansion, copy or store fallback from consuming proposed paths.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 421,
+          "end": 485,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L421-L485"
+        },
+        {
+          "path": "install.sh",
+          "start": 533,
+          "end": 566,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L533-L566"
+        },
+        {
+          "path": "install.ps1",
+          "start": 345,
+          "end": 364,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L345-L364"
+        },
+        {
+          "path": "install.ps1",
+          "start": 383,
+          "end": 418,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L383-L418"
+        },
+        {
+          "path": "install.ps1",
+          "start": 444,
+          "end": 445,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L444-L445"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-bash.py",
+          "start": 94,
+          "end": 129,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-bash.py#L94-L129"
+        },
+        {
+          "path": "tests/install-powershell-guards.ps1",
+          "start": 25,
+          "end": 44,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-powershell-guards.ps1#L25-L44"
+        }
+      ],
+      "expected": "Preview prints its own plan; guarded download/preset/extraction/install/import never pass a pretend existing file.",
+      "observed": "Retained guards show null/false or empty artifact stdout with no effects. Current entry bypasses those artifact-returning helpers.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-05",
+      "obligation": "Cover fresh and cached Chromium/Firefox, metadata/unpacked/preset sentinels, store/ask/fallback, already installed, missing preset, mixed/legacy/zero and malformed options.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 678,
+          "end": 700,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L678-L700"
+        },
+        {
+          "path": "install.ps1",
+          "start": 540,
+          "end": 560,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L540-L560"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 20,
+          "end": 78,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L20-L78"
+        },
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 182,
+          "end": 186,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L182-L186"
+        },
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 76,
+          "end": 103,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L76-L103"
+        },
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 147,
+          "end": 149,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L147-L149"
+        }
+      ],
+      "expected": "All preview branches remain plans; cached sentinels unchanged; no store opening or installed confirmation.",
+      "observed": "Retained whole-entry matrices cover fresh/cached/store/ask/installed/mixed/legacy/none/missing-preset/bad-option. The entry return makes metadata-error fallback unreachable in preview; separate real Install helper guards cover ask/fallback suppression.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-06",
+      "obligation": "Combine independent subject filesystem snapshots with effect/transport interception; separate harness logs and host startup writes from installer state.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 13,
+          "end": 18,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L13-L18"
+        },
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 36,
+          "end": 41,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L36-L41"
+        },
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 123,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L123-L138"
+        },
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 60,
+          "end": 112,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L60-L112"
+        }
+      ],
+      "discriminator": [],
+      "expected": "Subject names/modes/contents unchanged and zero effect calls, including cached/unpacked/preset state; denied network transport.",
+      "observed": "Retained Linux and Windows observations record snapshotUnchanged=true and zero effects. Logs/readiness are outside the subject. CLR startup caches are separately recorded; this proves zero installer effects, not zero OS activity.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-07",
+      "obligation": "Normal positive and NO_OPEN/NoOpen controls must still reach exact downloads, staging, configuration, clipboard and manual consumers.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 202,
+          "end": 224,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L202-L224"
+        },
+        {
+          "path": "install.ps1",
+          "start": 65,
+          "end": 83,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L65-L83"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 152,
+          "end": 174,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L152-L174"
+        },
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 115,
+          "end": 132,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L115-L132"
+        }
+      ],
+      "expected": "Opening alone is suppressed under NoOpen; normal operations remain reachable with correct arguments.",
+      "observed": "Retained Linux normal/NO_OPEN counts are 28/24; Windows counts are 21/17 per host. Exact configured preset, assets, copy, metadata, extraction and manual manager/new-tab assertions pass.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-08",
+      "obligation": "Detect eager initialization, cached early return, preview copy and EXIT cleanup mutants, using the relevant cached/positive controls and excluding bootstrap failures.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "tests/install-mutations.py",
+          "start": 15,
+          "end": 33,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-mutations.py#L15-L33"
+        },
+        {
+          "path": "tests/install-mutations.py",
+          "start": 41,
+          "end": 61,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-mutations.py#L41-L61"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 105,
+          "end": 142,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L105-L142"
+        }
+      ],
+      "expected": "Each valid mutant fails its specific effect or changed-sentinel oracle; normal positives remain healthy.",
+      "observed": "Retained eight Bash and six Windows mutation controls are source-bound. Direct native eager/copy mutants reject sixteen dry cases across both hosts while all four normal/NoOpen positives pass; filesystem and clipboard-only effects are distinguished.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-09",
+      "obligation": "Qualify complete whole-entry behavior on actual Apple Bash 3.2/macOS and modern Linux, plus exact-file native PS5.1/supported7 after launch prerequisites.",
+      "status": "unverified",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 52,
+          "end": 57,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L52-L57"
+        },
+        {
+          "path": "install.sh",
+          "start": 678,
+          "end": 731,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L678-L731"
+        },
+        {
+          "path": "install.ps1",
+          "start": 16,
+          "end": 16,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L16-L16"
+        },
+        {
+          "path": "install.ps1",
+          "start": 540,
+          "end": 584,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L540-L584"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 84,
+          "end": 115,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L84-L115"
+        },
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 100,
+          "end": 151,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L100-L151"
+        }
+      ],
+      "expected": "Actual claimed platforms execute preview/refusal/cache and normal-positive matrices; no emulated-host substitution.",
+      "observed": "Retained modern Linux 23 cases and native Windows 24 direct cases bind unchanged source. Actual Apple/macOS remains explicitly BLOCKED; GNU stat, disabled mapfile or PLATFORM=mac helper execution is not equivalent.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-10",
+      "obligation": "Join the private staging/lifetime, normal terminal input and Windows encoding/selector interfaces without allowing preview initializer or cleanup effects.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 155,
+          "end": 177,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L155-L177"
+        },
+        {
+          "path": "install.sh",
+          "start": 678,
+          "end": 731,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L678-L731"
+        },
+        {
+          "path": "install.ps1",
+          "start": 44,
+          "end": 46,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L44-L46"
+        },
+        {
+          "path": "install.ps1",
+          "start": 303,
+          "end": 346,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L303-L346"
+        },
+        {
+          "path": "install.ps1",
+          "start": 540,
+          "end": 584,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L540-L584"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-powershell-guards.ps1",
+          "start": 25,
+          "end": 46,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-powershell-guards.ps1#L25-L46"
+        }
+      ],
+      "expected": "One composed source preserves the sibling contracts; individual interfaces are assessed rather than administrative issue states.",
+      "observed": "Delivered installers and native fixtures match reviewed objects. Early return precedes normal terminal/staging and cleanup is guarded. Actual Mac prerequisite interfaces remain unqualified.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-11",
+      "obligation": "Keep mode-specific completion honest: would/unresolved/preview-only, explicit refusal, dashboard replacement warning, and normal manual installation/import pending.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 678,
+          "end": 700,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L678-L700"
+        },
+        {
+          "path": "install.sh",
+          "start": 760,
+          "end": 767,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L760-L767"
+        },
+        {
+          "path": "install.ps1",
+          "start": 540,
+          "end": 560,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L540-L560"
+        },
+        {
+          "path": "install.ps1",
+          "start": 610,
+          "end": 612,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L610-L612"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 133,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L133-L138"
+        },
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 132,
+          "end": 142,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L132-L142"
+        }
+      ],
+      "expected": "No swallowed error or empty eligible set becomes installed success; preview describes unresolved facts.",
+      "observed": "Current source prints the required would/unresolved, warning and pending messages. Retained controls assert those messages alongside post-state; no real browser installation is claimed.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-12",
+      "obligation": "Keep both script usage and README/builder exposure consistent about offline, no effects, no artifacts, no prompts, unresolved choices, and NoOpen behavior.",
+      "status": "unmet",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 5,
+          "end": 14,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L5-L14"
+        },
+        {
+          "path": "install.ps1",
+          "start": 5,
+          "end": 14,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L5-L14"
+        },
+        {
+          "path": "README.md",
+          "start": 49,
+          "end": 76,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L49-L76"
+        },
+        {
+          "path": "src/native/builder.html",
+          "start": 370,
+          "end": 372,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L370-L372"
+        }
+      ],
+      "discriminator": [],
+      "expected": "Public README states DRY_RUN=1/-DryRun and the same precise policy as actual script headers.",
+      "observed": "Script headers accurately describe offline preview. Delivered README has no DRY_RUN/-DryRun/offline instructions in the installer section. Builder comment L372 refers to local/offline instructions that README does not supply.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-13",
+      "obligation": "Preserve preset configuration, manual dashboard boundary, card and permissions; apply only the later outer-wrapper amendment.",
+      "status": "validly superseded",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "src/native/builder.html",
+          "start": 204,
+          "end": 219,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L204-L219"
+        },
+        {
+          "path": "README.md",
+          "start": 66,
+          "end": 76,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L66-L76"
+        },
+        {
+          "path": "install.sh",
+          "start": 550,
+          "end": 562,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L550-L562"
+        },
+        {
+          "path": "install.ps1",
+          "start": 395,
+          "end": 441,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L395-L441"
+        }
+      ],
+      "discriminator": [],
+      "expected": "Keep the original configuration/manual permission contract and 325x530 card under the 330x534 wrapper amendment.",
+      "observed": "The supplied owner amendment permits a production 330x534 iframe around the 325x530 card. Only the older wrapper-size obligation is superseded; card size, geolocation scope, encoding and readability remain binding. The audited source currently uses 325x530 snippets. This review does not demand a geometry change for an unrelated installer/docs issue. No UI or network policy change is proposed by this preview repair.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-14",
+      "obligation": "Bind the delivered public script/document and generated-command source bytes to the exact reviewed target.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 1,
+          "end": 16,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L1-L16"
+        },
+        {
+          "path": "install.ps1",
+          "start": 1,
+          "end": 27,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L1-L27"
+        },
+        {
+          "path": "README.md",
+          "start": 49,
+          "end": 76,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L49-L76"
+        },
+        {
+          "path": "src/native/builder.html",
+          "start": 377,
+          "end": 390,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L377-L390"
+        }
+      ],
+      "discriminator": [],
+      "expected": "Pinned raw and Pages acquisitions return HTTP 200 with exact target SHA256 for each named owner; preserve all separately mapped native, behavior, text and rendered obligations.",
+      "observed": "Primary public-document-distribution.json records HTTP 200 and expected=observed SHA256 at both origins for install.sh, install.ps1, README.md, builder.html, config.js. E independently compared those expected hashes with immutable Git bytes. The exact installer bytes reuse their existing native parser/consumer receipts. Byte identity settles distribution only; remaining cells retain their own gaps.",
+      "evidence_basis": "Fresh primary public acquisition, independently rebound by E to exact Git source; no repeated HTTP or new native execution by E.",
+      "evidenceReceipt": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\public-document-distribution.json",
+        "sha256": "1749a5eeeb0eed23a32d4f481957b2637f257ca46260eb2c2767ccb44f190556"
+      }
+    }
+  ],
+  "evidenceSource": "native-rebind.json plus inline comment receipt core and immutable target blob/ranges",
+  "executedCommands": [
+    {
+      "command": "git show <AUDIT_SHA>:<listed source/test/doc>; git rev-parse <AUDIT_SHA>:<listed path>; git rev-parse b2dc8b36:<installer/test>; git status --short; Get-Content retained receipts; Get-FileHash SHA256",
+      "scope": "fresh read-only acquisition, not product/native execution",
+      "expected": "Exact target/readable contract and sources; unchanged native object equivalence",
+      "observed": "Targettree35208181, clean examined checkout at4bccdf43; all eight installer/test objects match b2dc8b36; nativeBash/PSsourcehashes matchretained receipts; issuebodyhashes match6of6."
+    }
+  ],
+  "historicalCommands": [
+    {
+      "command": "powershell.exe/pwsh.exe -NoProfile -File tests/install-powershell.ps1; python tests/install-entry-native.py install.ps1",
+      "environment": "Actual retained WindowsPowerShell5.1.26100.9444 and PowerShell7.6.6",
+      "expected": "Nativeexactfile/selector/caller/directentry controls",
+      "observed": "18/18each;24directcasesallpass; normal21/NoOpen17effectsperhost; no freshEexecution."
+    },
+    {
+      "command": "python3 tests/install-bash.py install.sh; python3 tests/install-entry-bash.py install.sh",
+      "environment": "Actual retained WSL2Linux Bash5.2.21 native /tmp ext2/ext3, notDrvFS",
+      "expected": "Helperconfinement/cache/lifetime;actualPTYentry/preview/normalcontrols",
+      "observed": "26helpers/23entrypass; normal28/NO_OPEN24effects; missingactualApplehostnotwaived."
+    }
+  ],
+  "reuseBasis": "Current installer and native fixture Gitobjects exactly equal b2dc8b36; receipt sourceSHA matches. Every credited result remains historical time/environment/fixture bound. README/docs do not match previously reviewed corrected docs and their prior PASS is not reused as final prose proof.",
+  "negativeControls": [
+    {
+      "id": "22-01",
+      "obligation": "Validate options and platform before effects; preview performs local discovery and exits before terminal, staging or installation, with legacy/no-target refusals and unresolved remote choices.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 52,
+          "end": 61,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L52-L61"
+        },
+        {
+          "path": "install.sh",
+          "start": 678,
+          "end": 703,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L678-L703"
+        },
+        {
+          "path": "install.ps1",
+          "start": 18,
+          "end": 27,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L18-L27"
+        },
+        {
+          "path": "install.ps1",
+          "start": 540,
+          "end": 584,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L540-L584"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 126,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L126-L138"
+        },
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 133,
+          "end": 149,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L133-L149"
+        }
+      ],
+      "expected": "No confirmations or staging; eligible plans only, explicit non-success for no eligible target; ask/version/path stay unresolved.",
+      "observed": "Retained Linux ten offline cases and Windows ten dry/refusal cases per host record zero effects and unchanged subjects. Source returns before terminal acquisition and staging; ask remains unresolved.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-08",
+      "obligation": "Detect eager initialization, cached early return, preview copy and EXIT cleanup mutants, using the relevant cached/positive controls and excluding bootstrap failures.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "tests/install-mutations.py",
+          "start": 15,
+          "end": 33,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-mutations.py#L15-L33"
+        },
+        {
+          "path": "tests/install-mutations.py",
+          "start": 41,
+          "end": 61,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-mutations.py#L41-L61"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 105,
+          "end": 142,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L105-L142"
+        }
+      ],
+      "expected": "Each valid mutant fails its specific effect or changed-sentinel oracle; normal positives remain healthy.",
+      "observed": "Retained eight Bash and six Windows mutation controls are source-bound. Direct native eager/copy mutants reject sixteen dry cases across both hosts while all four normal/NoOpen positives pass; filesystem and clipboard-only effects are distinguished.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    },
+    {
+      "id": "22-11",
+      "obligation": "Keep mode-specific completion honest: would/unresolved/preview-only, explicit refusal, dashboard replacement warning, and normal manual installation/import pending.",
+      "status": "satisfied",
+      "authored_owner_and_delivered_consumer": [
+        {
+          "path": "install.sh",
+          "start": 678,
+          "end": 700,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L678-L700"
+        },
+        {
+          "path": "install.sh",
+          "start": 760,
+          "end": 767,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L760-L767"
+        },
+        {
+          "path": "install.ps1",
+          "start": 540,
+          "end": 560,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L540-L560"
+        },
+        {
+          "path": "install.ps1",
+          "start": 610,
+          "end": 612,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1#L610-L612"
+        }
+      ],
+      "discriminator": [
+        {
+          "path": "tests/install-entry-bash.py",
+          "start": 133,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py#L133-L138"
+        },
+        {
+          "path": "tests/install-entry-native.py",
+          "start": 132,
+          "end": 142,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-native.py#L132-L142"
+        }
+      ],
+      "expected": "No swallowed error or empty eligible set becomes installed success; preview describes unresolved facts.",
+      "observed": "Current source prints the required would/unresolved, warning and pending messages. Retained controls assert those messages alongside post-state; no real browser installation is claimed.",
+      "evidence_basis": "fresh source examination; historical execution only where explicitly named"
+    }
+  ],
+  "gaps": [
+    "Actual Apple Bash 3.2/macOS whole-entry matrix and native launch/staging prerequisites are missing.",
+    "README lacks the offline no-effect/no-artifact/no-prompt policy and NoOpen distinction."
+  ],
+  "verdict": "LEAVE OPEN",
+  "proposedNextIncrement": {
+    "gaps": [
+      "Actual Apple Bash 3.2/macOS whole-entry matrix and native launch/staging prerequisites are missing.",
+      "README lacks the offline no-effect/no-artifact/no-prompt policy and NoOpen distinction."
+    ],
+    "scope": "README offline preview usage and missing actual macOS contained whole-entry matrix; preserve established Linux/Windows source and entry receipts.",
+    "steps": [
+      "Describe the same offline policy in README and exposed usage surfaces: local discovery only; no filesystem/network/clipboard/process/cleanup; no usable artifacts or confirmations; remote version/path/ask choice unresolved. Explain that NoOpen suppresses opening only.",
+      "After actual Mac launch/staging prerequisites pass, run the complete Apple Bash 3.2 fresh/cached/store/ask/installed/mixed/missing-preset/legacy/none/options matrix with subject snapshots, denied transport, effect spies, normal/NO_OPEN positives and valid targeted mutants.",
+      "Reuse Windows direct -File and modern Linux receipts through exact source/fixture equivalence. Do not weaken expectations or restart unrelated sky qualification.",
+      "Credit the supplied current raw/Pages script/usage byte identities. After the missing native and README legs are addressed, reconcile affected integrated effects and final changed usage before primary decides closure."
+    ],
+    "acceptance": "All claimed platforms show zero installer effects and unchanged subjects in preview while exact normal/NoOpen consumers work; helpers return no usable artifacts, mutations fail, and public usage agrees with distributed bytes.",
+    "dependencies": [
+      "#19 actual Bash launch/terminal; #20 Windows minimum-host/selector; #21 private roots and retained/scratch lifetimes. Assess interfaces, not administrative closed states."
+    ]
+  },
+  "publicationStatus": "PRIMARY_RECONCILED_EVIDENCE_URLS_PREPARED_FROZEN_FOR_SHA_BINDING_NOT_POSTED",
+  "primaryReconciliation": "COMPLETED: Primary Astra independently reconciled the mandatory matrix and LEAVE OPEN conclusion. This evidence comment precedes any approved action and does not assert issue closure.",
+  "residualLimits": [
+    "No product/native/browser execution by E; exact source and independently rebound receipts only.",
+    "Current raw/Pages byte equality is demonstrated. Rendered legibility and actual browser consumer behavior require their own evidence.",
+    "Missing actual Apple proof is an unverified platform cell, not a demonstrated platform defect."
+  ],
+  "matrixReconciliationNote": "The former combined distribution row is narrowed to the demonstrated public-byte leg. Its native, behavior, documentation and closure legs remain in the other original matrix rows and the publication hold; none is waived.",
+  "reconciledEvidenceAtUtc": "2026-10-09T01:38:46.354688+00:00",
+  "documentDistributionEvidence": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\public-document-distribution.json",
+    "sha256": "1749a5eeeb0eed23a32d4f481957b2637f257ca46260eb2c2767ccb44f190556",
+    "checks": [
+      {
+        "file": "install.sh",
+        "url": "https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "9c3fd523bbd77f3080097ddbd142b7e966795befd008daa36fbfb9f8f1ca1cee",
+        "observed": "9c3fd523bbd77f3080097ddbd142b7e966795befd008daa36fbfb9f8f1ca1cee",
+        "match": true
+      },
+      {
+        "file": "install.sh",
+        "url": "https://theislampill.github.io/salah_widget/install.sh?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "9c3fd523bbd77f3080097ddbd142b7e966795befd008daa36fbfb9f8f1ca1cee",
+        "observed": "9c3fd523bbd77f3080097ddbd142b7e966795befd008daa36fbfb9f8f1ca1cee",
+        "match": true
+      },
+      {
+        "file": "install.ps1",
+        "url": "https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215",
+        "observed": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215",
+        "match": true
+      },
+      {
+        "file": "install.ps1",
+        "url": "https://theislampill.github.io/salah_widget/install.ps1?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215",
+        "observed": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215",
+        "match": true
+      },
+      {
+        "file": "README.md",
+        "url": "https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "f5814fc8aaaca89210e10434efc3f03faeb30556f5f86b0f3f10278dffc60b22",
+        "observed": "f5814fc8aaaca89210e10434efc3f03faeb30556f5f86b0f3f10278dffc60b22",
+        "match": true
+      },
+      {
+        "file": "README.md",
+        "url": "https://theislampill.github.io/salah_widget/README.md?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "f5814fc8aaaca89210e10434efc3f03faeb30556f5f86b0f3f10278dffc60b22",
+        "observed": "f5814fc8aaaca89210e10434efc3f03faeb30556f5f86b0f3f10278dffc60b22",
+        "match": true
+      },
+      {
+        "file": "builder.html",
+        "url": "https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+        "observed": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+        "match": true
+      },
+      {
+        "file": "builder.html",
+        "url": "https://theislampill.github.io/salah_widget/builder.html?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+        "observed": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+        "match": true
+      },
+      {
+        "file": "config.js",
+        "url": "https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+        "observed": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+        "match": true
+      },
+      {
+        "file": "config.js",
+        "url": "https://theislampill.github.io/salah_widget/config.js?audit=18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "status": 200,
+        "expected": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+        "observed": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+        "match": true
+      }
+    ],
+    "scope": "Primary executed HTTP acquisition; E read the complete record and independently compared exact Git bytes. E did not repeat HTTP.",
+    "limit": "HTTP 200 plus SHA256 equality proves distributed bytes; it does not prove rendered legibility, a generated command interaction, or native platform execution."
+  },
+  "finalizedAtUtc": "2026-10-09T02:10:20.091172+00:00",
+  "publicBaseline": {
+    "status": "DELIVERED_VERIFIED",
+    "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "verifiedAt": "2026-10-09T01:34:55.876184+00:00",
+    "releaseReceipt": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\release.json",
+      "sha256": "1325b6d8dfa0e14f5bdeac21d651d5a8ce9efe0eb9e69aaa99adfcfdaf3dcdd2"
+    },
+    "browserReceipt": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\public-browser-summary.json",
+      "sha256": "a58b99cc6c6d210f055ccdb02349dd1f908bc8154c425f7d7d472dcb81a533dc"
+    },
+    "runtimeReceipt": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\public-runtime.json",
+      "sha256": "23ad4aa1bacf55bb73edf4fc6358f95717bff634294e8aa73d4b321ce5e8fd60"
+    },
+    "documentReceipt": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\public-document-distribution.json",
+      "sha256": "1749a5eeeb0eed23a32d4f481957b2637f257ca46260eb2c2767ccb44f190556"
+    },
+    "pagesBuild": 1270547036,
+    "runtimeAndV1FilesMatched": 139,
+    "publicRawPagesDocumentsMatched": 16,
+    "browserCases": 16,
+    "browserAllPass": true,
+    "browserCaseChecks": [
+      {
+        "browser": "chromium",
+        "name": "root-iframe-cold",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "moonObserverNoError": true,
+          "noVisibleMoonWithdrawal": true,
+          "surfaceAcquired": true,
+          "fullTerrain": true,
+          "currentReplacement": true
+        },
+        "receipt": "public-chromium/root-iframe-cold/results.json"
+      },
+      {
+        "browser": "chromium",
+        "name": "root-iframe-warm",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "moonObserverNoError": true,
+          "noVisibleMoonWithdrawal": true,
+          "surfaceAcquired": true,
+          "fullTerrain": true,
+          "currentReplacement": true
+        },
+        "receipt": "public-chromium/root-iframe-warm/results.json"
+      },
+      {
+        "browser": "chromium",
+        "name": "root-direct-cold",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "moonObserverNoError": true,
+          "noVisibleMoonWithdrawal": true,
+          "surfaceAcquired": true
+        },
+        "receipt": "public-chromium-continuation/root-direct-cold/results.json"
+      },
+      {
+        "browser": "chromium",
+        "name": "root-direct-warm",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "moonObserverNoError": true,
+          "noVisibleMoonWithdrawal": true,
+          "surfaceAcquired": true
+        },
+        "receipt": "public-chromium-continuation/root-direct-warm/results.json"
+      },
+      {
+        "browser": "chromium",
+        "name": "v1-direct-cold",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "v1RootStorageIsolation": true,
+          "v1SavedOwnKey": true,
+          "v1AssetsScoped": true
+        },
+        "receipt": "public-chromium-continuation/v1-direct-cold/results.json"
+      },
+      {
+        "browser": "chromium",
+        "name": "v1-direct-warm",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "v1RootStorageIsolation": true,
+          "v1SavedOwnKey": true,
+          "v1AssetsScoped": true
+        },
+        "receipt": "public-chromium-continuation/v1-direct-warm/results.json"
+      },
+      {
+        "browser": "chromium",
+        "name": "v1-iframe-cold",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "v1RootStorageIsolation": true,
+          "v1SavedOwnKey": true,
+          "v1AssetsScoped": true
+        },
+        "receipt": "public-chromium-continuation/v1-iframe-cold/results.json"
+      },
+      {
+        "browser": "chromium",
+        "name": "v1-iframe-warm",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "v1RootStorageIsolation": true,
+          "v1SavedOwnKey": true,
+          "v1AssetsScoped": true
+        },
+        "receipt": "public-chromium-continuation/v1-iframe-warm/results.json"
+      },
+      {
+        "browser": "firefox",
+        "name": "root-iframe-cold",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "moonObserverNoError": true,
+          "noVisibleMoonWithdrawal": true,
+          "surfaceAcquired": true,
+          "fullTerrain": true,
+          "currentReplacement": true
+        },
+        "receipt": "public-firefox/root-iframe-cold/results.json"
+      },
+      {
+        "browser": "firefox",
+        "name": "root-iframe-warm",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "moonObserverNoError": true,
+          "noVisibleMoonWithdrawal": true,
+          "surfaceAcquired": true,
+          "fullTerrain": true,
+          "currentReplacement": true
+        },
+        "receipt": "public-firefox/root-iframe-warm/results.json"
+      },
+      {
+        "browser": "firefox",
+        "name": "root-direct-cold",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "moonObserverNoError": true,
+          "noVisibleMoonWithdrawal": true,
+          "surfaceAcquired": true
+        },
+        "receipt": "public-firefox-continuation/root-direct-cold/results.json"
+      },
+      {
+        "browser": "firefox",
+        "name": "root-direct-warm",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "moonObserverNoError": true,
+          "noVisibleMoonWithdrawal": true,
+          "surfaceAcquired": true
+        },
+        "receipt": "public-firefox-continuation/root-direct-warm/results.json"
+      },
+      {
+        "browser": "firefox",
+        "name": "v1-direct-cold",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "v1RootStorageIsolation": true,
+          "v1SavedOwnKey": true,
+          "v1AssetsScoped": true
+        },
+        "receipt": "public-firefox-continuation/v1-direct-cold/results.json"
+      },
+      {
+        "browser": "firefox",
+        "name": "v1-direct-warm",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "v1RootStorageIsolation": true,
+          "v1SavedOwnKey": true,
+          "v1AssetsScoped": true
+        },
+        "receipt": "public-firefox-continuation/v1-direct-warm/results.json"
+      },
+      {
+        "browser": "firefox",
+        "name": "v1-iframe-cold",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "v1RootStorageIsolation": true,
+          "v1SavedOwnKey": true,
+          "v1AssetsScoped": true
+        },
+        "receipt": "public-firefox-continuation/v1-iframe-cold/results.json"
+      },
+      {
+        "browser": "firefox",
+        "name": "v1-iframe-warm",
+        "status": "PASS",
+        "checks": {
+          "cardGeometry": true,
+          "sixRows": true,
+          "countdown": true,
+          "date": true,
+          "prayerReady": true,
+          "settingsUsable": true,
+          "normal1x": true,
+          "noRuntimeErrors": true,
+          "noLocalAssetFailures": true,
+          "localAssetHTTP": true,
+          "v1RootStorageIsolation": true,
+          "v1SavedOwnKey": true,
+          "v1AssetsScoped": true
+        },
+        "receipt": "public-firefox-continuation/v1-iframe-warm/results.json"
+      }
+    ],
+    "limits": [
+      "Public provider check is current model weather at sanitized public Orlando coordinates, not the owner precise site or historical incident.",
+      "Direct Firefox smoke covers current terrain preview; completed full terrain and current replacement are observed in iframe cold/warm.",
+      "Replacement was explicitly requested at the unchanged normal1x accepted scene; it is not claimed as a natural phase-bucket crossing.",
+      "No request interception/service worker/fake clock. Pixel captures are timestamped samples, rAF records ownership with stored1s heartbeat.",
+      "Initial V1 harness failures used nonexistent new-date-dialog selector and called legacy model before prayer readiness; corrected separately without rerunning the completed root cases.",
+      "Prior reviewed H1-H8 evidence is reused only because delivered runtime is exactly qualified runtime; this bounded rollout does not recertify all science/backlog gates."
+    ],
+    "scope": "Primary established the exact public release baseline. E verified receipt/target identities and all recorded case checks read-only; this does not recertify every backlog/native/diagnostic/documentation obligation."
+  },
+  "publicationApproval": {
+    "shaPlaceholder": "AUDIT_EVIDENCE_COMMIT",
+    "repoRelativePrefix": "docs/rlgwo-audit/20261008",
+    "primaryReconciled": true,
+    "exactCommentHashApproval": false,
+    "externalEffects": "NONE",
+    "proofBeforeAction": true
+  },
+  "primaryReconciled": true,
+  "publicationLinks": [
+    {
+      "relativePath": "issues/22.json",
+      "label": "Original complete issue packet",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/issues/22.json"
+    },
+    {
+      "relativePath": "workers/E/22-assessment.json",
+      "label": "Full mandatory matrix and issue evidence",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/22-assessment.json"
+    },
+    {
+      "relativePath": "workers/E/native-rebind.json",
+      "label": "Exact source and receipt binding",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/native-rebind.json"
+    },
+    {
+      "relativePath": "release.json",
+      "label": "Primary verified release",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/release.json"
+    },
+    {
+      "relativePath": "public-runtime.json",
+      "label": "139-file runtime and V1 readback",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/public-runtime.json"
+    },
+    {
+      "relativePath": "public-browser-summary.json",
+      "label": "16-case public rollout summary",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/public-browser-summary.json"
+    },
+    {
+      "relativePath": "public-document-distribution.json",
+      "label": "Raw and Pages script/document bytes",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/public-document-distribution.json"
+    },
+    {
+      "relativePath": "reviewer-model-settings.json",
+      "label": "Client-recorded reviewer model and effort",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/reviewer-model-settings.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/CUSTODY.json",
+      "label": "Retained receipt byte-custody manifest",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/CUSTODY.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/host-inventory-final.json",
+      "label": "host-inventory-final.json",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/host-inventory-final.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/native-applicability-2fafcbf.json",
+      "label": "native-applicability-2fafcbf.json",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/native-applicability-2fafcbf.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/bash-helper-archived-source.json",
+      "label": "bash-helper-archived-source.json",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-helper-archived-source.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/bash-entry-archived-source.json",
+      "label": "bash-entry-archived-source.json",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-entry-archived-source.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/bash-mutations-archived-source.json",
+      "label": "bash-mutations-archived-source.json",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-mutations-archived-source.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/final-r0014-ps51.txt",
+      "label": "final-r0014-ps51.txt",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/final-r0014-ps51.txt"
+    },
+    {
+      "relativePath": "workers/E/retained-install/final-r0014-ps7.txt",
+      "label": "final-r0014-ps7.txt",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/final-r0014-ps7.txt"
+    },
+    {
+      "relativePath": "workers/E/retained-install/direct-native-final.json",
+      "label": "direct-native-final.json",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/direct-native-final.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/ps51-mutations-qualified.json",
+      "label": "ps51-mutations-qualified.json",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/ps51-mutations-qualified.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/ps7-mutations-final-source.json",
+      "label": "ps7-mutations-final-source.json",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/ps7-mutations-final-source.json"
+    },
+    {
+      "relativePath": "workers/E/retained-install/direct-native-mutants.json",
+      "label": "direct-native-mutants.json",
+      "urlTemplate": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/E/retained-install/direct-native-mutants.json"
+    }
+  ],
+  "publicationWordingPreparedAtUtc": "2026-10-09T02:22:02.153859+00:00"
+}

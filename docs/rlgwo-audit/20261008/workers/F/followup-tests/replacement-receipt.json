@@ -1,0 +1,81 @@
+{
+  "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+  "scope": "No browsers/terrain/solvers; bounded replacement controls for actual accepted host, astronomical source, catalogue and local opacity join. Current real-sky source is called, not removed synthetic arrays. Numerical encoded frame data are not native screenshots.",
+  "commands": [
+    {
+      "name": "lunar-interface-controls",
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\lunar-interface-controls.cjs"
+      ],
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "freshExecution": true,
+      "exitCode": 0,
+      "seconds": 0.239006,
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\lunar-interface-controls.log",
+      "logSha256": "5528cc0c2c64aa70ae6a0632e4425712c8be21ee484ae8e8fc2d91137444ccd9",
+      "tail": [
+        "PASS actual accepted host never promotes calendar phase/altitude to physical astronomical state",
+        "PASS late physical source cannot remain current after accepted UTC/target changes",
+        "PASS real local Moon join blocks direct starlight independent of calendar fade with outside positive",
+        "PASS restoring fade-scaled star leakage is detected by identical inside/outside probe",
+        "{\"sourceIndexSha256\":\"ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee\",\"detailSha256\":\"3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0\",\"fixtureSha256\":\"8c3609830205f3fea9fb2983278bb1ded210fba5c8466025d693ef4b7ef344ff\",\"passed\":4,\"failed\":0,\"limits\":\"Actual whole-source accepted host/native paint plus numerical astronomical and local join controls. Not a native hostile-star screenshot or phase campaign.\"}"
+      ]
+    },
+    {
+      "name": "native-catalogue-currentness-opacity",
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "--test",
+        "--test-name-pattern=current bright-catalogue|preview rejects corrupt catalogue|prepared sky owns",
+        "tests/real-sky/native-star-preview.test.mjs"
+      ],
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "freshExecution": true,
+      "exitCode": 0,
+      "seconds": 1.924794,
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\native-catalogue-currentness-opacity.log",
+      "logSha256": "1fc317fb1f60b381713e56b1759f2e2e61c7a12769312e57673db8db7a630453",
+      "tail": [
+        "  duration_ms: 279.081",
+        "  type: 'test'",
+        "  ...",
+        "1..3",
+        "# tests 3",
+        "# suites 0",
+        "# pass 3",
+        "# fail 0",
+        "# cancelled 0",
+        "# skipped 0",
+        "# todo 0",
+        "# duration_ms 1872.513"
+      ]
+    }
+  ],
+  "setupAttempts": [
+    {
+      "result": "fixture setup error, no product conclusion",
+      "reason": "First custom adapter re-injected native-host hooks that the whole-source harness already executes, causing duplicate _cp9SiteElevation declaration. Removed the redundant injection."
+    },
+    {
+      "result": "fixture input-order failure, no product conclusion",
+      "reason": "A same-minute in-memory boot-flag change was initially followed only by render(), which deliberately reuses geometry. Corrected the test to call the actual renderMoon producer before actual render; no assertion/production code changed."
+    }
+  ],
+  "earlierFreshToolReceipt": {
+    "command": [
+      "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+      "--test",
+      "tests/real-sky/native-contract.test.mjs",
+      "tests/real-sky/native-composition.test.mjs",
+      "tests/real-sky/native-moon-admission.test.mjs"
+    ],
+    "exitCode": 0,
+    "tests": 27,
+    "pass": 27,
+    "fail": 0,
+    "durationMs": 91.7811,
+    "kind": "Fresh execution in tool output, summarized here without claiming a retained full stdout log"
+  }
+}

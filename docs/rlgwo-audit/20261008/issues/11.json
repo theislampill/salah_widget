@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:30.768711+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/11",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/11/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/11/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/11/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/11",
+    "id": 5381805516,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfVzA",
+    "number": 11,
+    "title": "R000B: Expire weather and radar authority using source age as well as retrieval time",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:26Z",
+    "updated_at": "2026-09-08T06:24:50Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-011 -->\n# R000B: Expire weather and radar authority using source age as well as retrieval time\n\n**Repository-local identity:** `R000B` in `theislampill/salah_widget`; existing tracker [#11](https://github.com/theislampill/salah_widget/issues/11). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-011. Proposed priority P1; product defect. This owner joins the distinct W002 source-age and W003 runtime-retention witnesses because both require the same authority boundary. Publishing this work order neither repairs nor deploys the widget.\n\n## The failure and its evidence boundary\n\nA successful download currently renews weather authority even when it contains old information. Later, a failed refresh leaves the old record available to the precipitation gate indefinitely. The missing contract is therefore **source-valid time → admission → current consumer**, not simply a cache TTL.\n\nThe preserved 7 September 2026 controlled-source run executed unmodified bounded functions from main `fd2972ba64225fe9d6848e92497e6d0ed20ea624` and candidate `9d9c43649748555afbe09e3ca49bc47db2d7e7bb`. Both produced:\n\n| Input/sequence at clock `2026-09-07T21:00:00Z` | Historical result |\n|---|---|\n| Successful current payload with `current.time=\"2026-09-07T17:00\"`, UTC request, code 95, precipitation 2, cloud 95 | Source age 14,400 s; retrieval age 0; source time absent from installed weather; gate condition thunder |\n| Manifest frame time `NOW/1000-14400`, readable dense tile; download same frame again after 600,000 ms | First pseudo-precipitation 4.3; later frame age 15,000 s but download age reset to 0 and value still 4.3 |\n| Cache `{w:{code:95,precip:2},ts:NOW+86400000}` | Accepted at age −86,400 s; thunder |\n| Cache timestamp five hours old, load it, advance clock a further 24 hours, reject refresh as offline | Retained weather age 104,400 s; thunder; `wxBusy=false` |\n\nThese are Node VM results with controlled Date, fetch, Image, canvas and storage; they are not a 24-hour browser watch, local rainfall measurements or screenshots. The recorded old-source/current and old-frame inputs are independently useful from the outage sequence. A freshness indicator alone cannot repair any of them.\n\n[Weather acquisition and cache](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L761-L840) installs `lastWxAt=Date.now()`, persists `{w,ts}`, retains `fr.time` but checks only radar download age. [Atmosphere](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1606-L1613) passes retained weather directly to the gate. [Diagnostics](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2050-L2061) report weather staleness without enforcing it. The [candidate acquisition](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L775-L854) has the same causal paths; it is not a repair to cherry-pick wholesale.\n\nProvider semantics were preserved on 7 September, not freshly verified for this work order. [Open-Meteo](https://open-meteo.com/en/docs) describes model current valid time and a backward aggregation interval: a 900-second precipitation interval is not an instantaneous on-site observation. `generationtime_ms` is processing duration. Local timestamps use the requested zone. [RainViewer](https://www.rainviewer.com/api/weather-maps-api.html) distinguishes index `generated` from frame `past[].time`; frame time dates a mosaic generation, not each contributing radar measurement. Source expiry can reject an old composite; it cannot certify current rain at the selected point.\n\n## Re-anchor and reconstruct RED before editing\n\nIn the intended authorized checkout run:\n\n```powershell\ngit --no-optional-locks rev-parse --show-toplevel\ngit --no-optional-locks rev-parse HEAD\ngit --no-optional-locks status --short\ngit --no-optional-locks diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- index.html tests/smoke.html DESIGN.md README.md\n```\n\nBind the actual base, dirty paths and final test tree. Read only the named acquisition/cache/consumer hunks; stop and reconcile a changed timestamp, attempt, cache or forecast interface. Do not overwrite unrelated edits or assume an arbitrary future HEAD has this defect.\n\nBuild an isolated regression fixture that executes the actual `loadWx`, `fetchWeather`, `fetchRadar`, `radarPrecipNow` and `gateWeatherCode` declarations, with the real timezone converter and controlled dependencies. A fixture which substitutes a corrected gate is invalid. Freeze `Date.now()` to `Date.parse(\"2026-09-07T21:00:00Z\")`, use `lat=24.47,lon=39.61,units=\"c\",tz=\"UTC\",SIM.wx=null,ADVANCING=false`. The current response is status 200 with `elevation:100` and:\n\n```js\ncurrent: {\n  time: \"2026-09-07T17:00\", interval: 900,\n  weather_code: 95, temperature_2m: 20,\n  precipitation: 2, cloud_cover: 95\n}\n```\n\nSupply two aligned hourly rows if the fixture exercises the current-plus-track refresh shortcut. For radar return `{generated:frameTime,host:\"https://tilecache.rainviewer.com\",radar:{past:[{time:frameTime,path:\"/v2/radar/\"+frameTime}]}}` and resolve the controlled image with uniform RGBA `[82,147,196,255]`. This colour is the historical density witness, not a calibrated intensity. Seed the two cache sequences above under `salahwx:24.47|39.61|c`. Preserve the defective outputs before repair. The original private probe is supplementary, not a required public executable.\n\n## Minimal implementation and the decisions it carries\n\n1. **Separate times without introducing a second cache system.** Within existing weather record/envelope ownership retain proposed named metadata `currentValidAt`, `currentIntervalSec` and `retrievedAt`. Retain `frameGeneratedAt=fr.time*1000` and `indexGeneratedAt=j.generated*1000` separately from radar retrieval. These are proposed field names, not fields already present in the source. Keep existing `ts` as the retrieval alias when reading/writing the existing `{w,ts}` cache envelope; add metadata there rather than changing keys or introducing a persisted schema framework. Never set source time from `Date.now()` when metadata is missing.\n\n2. **Admit finite metadata using the agreed temporal interface.** [R000C](https://github.com/theislampill/salah_widget/issues/12) owns measurement/shape admission. This owner consumes its admitted record and verifies finite time/interval semantics and age. Parse current/hourly wall strings through the explicit request-zone converter contract supplied by [R0008](https://github.com/theislampill/salah_widget/issues/8), using the immutable zone captured by [R0003](https://github.com/theislampill/salah_widget/issues/3). An epoch which is finite only because a nonexistent local time normalized into another time is not accepted. A gap or unresolved fold remains unavailable. Interval must be finite and positive; retain it to describe the period, not to turn it into an extra arbitrary freshness allowance. Frame seconds must be finite and valid before multiplication. Index generation cannot substitute for missing frame time.\n\n3. **Make the initial age policy executable.** Use named constants: proposed current authority maximum 15 minutes, matching existing weather-stale diagnostics/refresh intent; radar retrieval and frame maximum 20 minutes, retaining `_RADAR_TTL`; six hours remains only legacy cache retention, not current authority. Accept age `0 <= now-time <= maximum`, reject maximum+1 ms and any future timestamp. The proposed initial future-skew allowance is explicitly zero, a conservative application policy rather than a provider guarantee. This can temporarily hide otherwise useful data on a skewed client clock; any later nonzero allowance must be a named bounded policy with ±boundary tests and owner agreement, never `Math.max(0,age)`. Do not subtract aggregation duration or index processing time from age to make old data pass.\n\n4. **Enforce the same decision at use.** Introduce one small current-weather selection function reachable from `atmosphere` and `qaState`. In real time it returns the validated, nonexpired current record or unavailable, evaluated from the current wall instant every consumption. Thread that snapshot into `wxDrivers` and the existing direct atmosphere uses for cloud layers, precipitation amount, temperature and wind; otherwise expired rain can disappear from `data-fx` while still driving wetness or temperature. Retain raw record/metadata only for diagnostics/cache inspection. Radar's authority accessor checks source and retrieval ages at every call; repeat downloads can change only retrieval time, so an identical expired frame remains ineligible.\n\n5. **Choose a narrow unavailable presentation.** Expired or timestamp-less real-time records do not supply current weather chip text, a current-condition tooltip or wet/storm effects. Use the existing chip geometry with blank weather values and an unavailable label/title; do not relabel unavailable as measured clear weather or add a new badge. The ordinary neutral sky remains decorative. Leave the prayer footer's stale-state system alone: [its source explicitly scopes that row to prayers](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2014). Preserve SIM overrides and ADVANCING forecast-preview behavior as explicit simulations; real-time may not fall back to hourly weather.\n\n6. **Join cache and consumer changes before relying on them.** A structurally valid older cache with no source timestamp is a compatible cache read but not authoritative weather; leave its bytes intact, allow refresh, and replace the existing envelope only after a valid owned response commits. A cache hit must still allow acquisition of the hourly track. Keep request success bookkeeping distinct from source validity; a recently fetched rejected/old record cannot advance the accepted-current timestamp. Deadline release belongs to [R000D](https://github.com/theislampill/salah_widget/issues/13) and radar evidence meaning to [R000E](https://github.com/theislampill/salah_widget/issues/14); freshness must work with ordinary failure even before timeout integration.\n\nAn admission-only check misses the 104,400-second outage witness. Deleting every cache on startup would mask that witness while losing offline compatibility. Treating retrieval time as a source substitute recreates W002. Using a stale weather code plus a fresh radar scalar can still mislabel the present: both the raw current code and any confirming evidence need authority. Keeping stale temperature visibly current conflicts with honest unavailable behavior. These are reasons for the small consumer selection boundary, not a reason to add a provider, service worker or scheduler.\n\n## Final-tree discrimination\n\nAll cases below are **future required tests**, not already executed GREEN. Exercise actual acquisition → installed state → `atmosphere`/`paint`, not only an age helper.\n\n| Case/control | Required outcome |\n|---|---|\n| Four-hour old current and radar; repeat same frame at +10 min | No fresh current/storm authority, distinct source/retrieval ages retained |\n| Fresh `21:00` current, retrieval at `21:00`, code 95/precipitation 2/cloud 95 | Eligible current record; existing model-based thunder policy still works |\n| Current source and retrieval ages 899,999 / 900,000 / 900,001 ms; radar 1,199,999 / 1,200,000 / 1,200,001 ms | First two eligible, last unavailable under the proposed inclusive bound |\n| Missing time, NaN epoch, future +1 ms, cache future +24 h | No fresh admission; no negative age silently clamped to fresh |\n| Fresh wet record, advance past bound, reject refresh; then provide fresh wet replacement | Expiry withdraws effects before network recovery; valid replacement restores eligibility |\n| Legacy main/candidate `{w,ts}` with valid measurements but no source metadata | No destructive migration and no fresh precipitation; refresh still attempted |\n| Invalid/unresolved calendar, DST gap/fold, or interval | No fresh authority from a normalized finite timestamp |\n| Real-time current clear 0 plus hourly thunder 95 | Current remains clear; ADVANCING positive control uses forecast and labels its provenance |\n| SIM wet/dry scenes | Existing simulated gates work; live radar remains excluded |\n\nThe combined temporal fixture must retain hourly `2026-03-08T03:30` from a request in `America/New_York`, change global configuration to `Asia/Riyadh` before completion, and call the converter with the captured New York zone. The required instant is `07:30Z`, not `08:30Z` or a Riyadh-derived epoch. An obsolete attempt still must not commit; a current-generation control may. This is proposed combined acceptance joining [R0008](https://github.com/theislampill/salah_widget/issues/8) qualification and [R0003](https://github.com/theislampill/salah_widget/issues/3) ownership, not a newly executed historical result. Structural validation by [R000C](https://github.com/theislampill/salah_widget/issues/12) does not discharge it.\n\nMutation controls in an authorized isolated fixture: replace source time with retrieval time and require the old-current/repeated-frame cases to fail; bypass consumer expiry and require the outage case to fail; read global zone and require the transition/context case to fail. In a disposable browser origin supply the controlled fresh→expired→recovered sequence, capture the weather chip and actual `.c.dataset.fx`, and show no rain/thunder after expiry. Check footer/header readability and fixed 325×530 card; preserve opaque moon and cloud continuity when scenes change. A `qaState` number is supporting evidence, not a visual PASS.\n\n## Integration, compatibility and closure\n\nExact shared writers are [R0003](https://github.com/theislampill/salah_widget/issues/3), [R0008](https://github.com/theislampill/salah_widget/issues/8), [R000C](https://github.com/theislampill/salah_widget/issues/12), [R000D](https://github.com/theislampill/salah_widget/issues/13), [R000E](https://github.com/theislampill/salah_widget/issues/14) and [R001E](https://github.com/theislampill/salah_widget/issues/30). One integrator owns shared weather/radar/cache/gate hunks. The existing directed qualifications from admission and timezone conversion remain; no whole-issue sequencing or new dependency is added. Publishable prose can exist before those implementations.\n\nUpdate [DESIGN weather truthfulness](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md#L179-L197), [README](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/README.md) and diagnostics through the shared documentation owner: model valid time, interval, retrieval, mosaic generation and unavailable are different. Do not promise ground observation, universal radar coverage or a self-contained offline app. No builder option, config migration, installer, preset or generated distribution edit is required by this repair.\n\nRollback schema/consumer changes together if healthy supported records become unusable; retain conservative unavailability and cache bytes rather than restore false freshness. Stop on incompatible temporal ownership, unresolved gap/fold semantics, or a policy change beyond these bounded defaults. Partial state such as “metadata retained, consumer still unguarded” is not repaired.\n\nDONE requires exact final-tree RED→GREEN/control evidence, independent review of joined temporal/cache/consumer behavior, and an evidence comment before manual closure. Use non-closing `Implements #N` PR wording. Only claim public repair after matching served-source and consumer readback; otherwise report not deployed. The preserved private companion `basis/finding-records/SW-011.json` is supplemental provenance, SHA256 `f54bdc21ce9316592cf6f7fbaa651faf3b4e69daa0ab0113ef373bceb078bb74`.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/11/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/11/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733528758,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfVzM8AAAAHJ9xutg",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733528758",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:50Z",
+      "rename": {
+        "from": "SW-011: Expire weather and radar authority using source age as well as retrieval time",
+        "to": "R000B: Expire weather and radar authority using source age as well as retrieval time"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R000B",
+    "bodySha256": "f83c4f3516b63a068dc768b16d64e14cb970cf41ea074e240e73dcffda6d0bcc",
+    "updatedAt": "2026-09-08T06:24:50Z",
+    "commentRevisions": []
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:30.705357+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/9",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/9/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/9/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/9/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/9",
+    "id": 5381805111,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfUNw",
+    "number": 9,
+    "title": "R0009: Make Hijri display provenance, rollover and unavailable-state claims truthful",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:22Z",
+    "updated_at": "2026-09-08T06:24:45Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-009 -->\n# R0009: Make Hijri display provenance, rollover and unavailable-state claims truthful\n\n**Repository-local identity:** `R0009` in `theislampill/salah_widget`; existing tracker [#9](https://github.com/theislampill/salah_widget/issues/9). The SW identifier is historical draft provenance.\n\n\nAfter Maghrib, a missing tomorrow payload can leave yesterday-relative AH selection on screen while the candidate says it has already advanced. The candidate also makes a monotonic/anomaly promise its ordinal guard cannot support. Make the actual selected value, source convention, boundary and unavailable reason one decision used by the footer and diagnostics. Retain provider-derived dates; do not convert an unverified calendar disagreement into an automatic correction.\n\nCampaign draft alias: SW-009. Existing GitHub owner: #9. P1, product defect and its associated truth instrument. This work order grants no implementation, policy-change or publication authority.\n\n## Bound state and distinguish the incidents\n\nHistorical main: `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; candidate: `9d9c43649748555afbe09e3ca49bc47db2d7e7bb`. In a future authorized checkout record `git rev-parse --show-toplevel`, `git remote get-url origin`, `git status --short`, and `git rev-parse HEAD`; then inspect `git diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- index.html tests/smoke.html README.md AGENTS.md ARCHITECTURE.md HANDOFF.md`. Expected repository is `theislampill/salah_widget`. Stop and reconcile incompatible date-owner drift; never label arbitrary future source with this historical defect.\n\nThe relevant source is [main date selection](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1986), [candidate guard state](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L1205), and [candidate selection/title/dateTruth](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L2033). These are narrow candidate choices, not a mandate to adopt the whole audit branch.\n\n| Evidence | Observed result | Claim limit |\n|---|---|---|\n| Controlled clock `2026-09-07T18:01:00Z`, zone UTC, Maghrib `18:00`, today's Gregorian `07-09-2026`, AH `19-02-1448`, no tomorrow | Both trees show `ه1448-02-19`, `_prayerStale=false`. Candidate reports `beforeOrAfterMaghrib=\"after\"`, `maghribRollApplied=false`, `staleDateState=\"current\"`; title says the date already advanced at sunset. | Exact source fragments with controlled clock/fetch/storage/DOM stubs. No browser screenshot is claimed for this witness. |\n| Consecutive controlled civil days, same-month AH `08→10` or `10→10` | Candidate `_hijriAnomaly=null` in both cases. | The code tests an ordinal increase of 31; ordinary `+2` and duplicate transitions are not detected. Main has no such instrument. |\n| Candidate AH `10→09` | It keeps displaying `10` and reports backward. | The hold operates, but that is not proof that holding the future value is correct after an upstream or clock correction. |\n| AH `29-11-1447→01-12-1447`; `30-12-1447→01-01-1448` | No anomaly in retained controls. | Keep valid month/year transitions; do not replace the defect with a fixed-30-day rule. |\n\nThe owner separately reported seeing roughly **26** while expecting roughly **24**. Status: **UNVERIFIED**. The exact instant, selected location/zone, reference calendar/authority and sunset-versus-midnight boundary were not supplied. The captured browser long-format row containing 26 is evidence of a displayed value, not proof that a same-context authoritative value was 24. It must not become a golden “24th” fixture or a `-2` adjustment.\n\nThe captured provider control showed `date.hijri.method=\"HJCoSA\"` by default, while explicit `calendarMethod=UAQ` identified a different convention without changing prayer times in that sample. The widget request omitted `calendarMethod`; prayer method 4 is not proof of UAQ calendar selection. HJCoSA and UAQ must not be conflated in the tooltip. These are historical provider observations, not a current-provider census or a religious adjudication.\n\n## Causal contract and chosen small repair\n\nToday, three facts are calculated independently: `ahH` selects today/tomorrow, the title uses only `afterMaghrib`, and stale status uses only `_prayerStale`. The candidate then changes `ahH` through `_lastHijriShown` while still deriving parts of provenance from today's `h`. Thus a syntactically valid date, a successfully refreshed prayer day, and an advanced AH display are incorrectly treated as equivalent.\n\nUse one ephemeral display decision in the existing `render()` date block. It is a proposed internal result, not a new persisted schema or provider response. Capture the accepted current-day/request context and its AH metadata once, select a value once, then derive footer text, preview, explanation and `_lastDateTruth` from it. Its information must include the selected payload/day, the requested and loaded Gregorian day, the configured location zone, before/after-Maghrib, selected AH convention, advance availability/application and any inability-to-select reason. Preserve existing diagnostic field names where truthful; add only an explicit unavailable/selection reason when needed. Do not use a separately recomputed `qaState()` calendar to describe already-painted output.\n\nImplement in this order:\n\n1. Prepare the deterministic selector fixtures below against the actual render owner. Preserve existing provider acquisition/cache identities and the prayer-only meaning of `_prayerStale` and `.c[data-stale]`.\n2. Resolve AH selection from current accepted state. Before Maghrib, select today's usable AH and optionally preview a usable, day/context-matching tomorrow AH. After Maghrib, select that tomorrow AH when available. Otherwise keep today's usable value with explicit wording such as **“Sunset date update unavailable”**. When neither selected value is usable, expose **“Hijri date unavailable”** rather than a fabricated date. An invalid or wrong-day tomorrow must behave as unavailable even if its object is truthy.\n3. Generate the explanation from the selection result: before boundary, it has not advanced; after boundary with tomorrow selected, it advanced using that payload; after boundary without it, it could not advance. Say “Aladhan; HJCoSA” or the actual selected method code when reported, and “calendar convention unavailable” when absent. Do not hardcode today's convention if tomorrow is selected. Missing convention metadata does not itself require hiding an otherwise usable provider date.\n4. Supersede the unsupported candidate monotonic/anomaly guarantee. Preferred scope is to remove the date hold and ordinal anomaly policy, plus claims that arbitrary backwards motion is impossible or duplicates/skips are reliably detected. Continue to show the accepted provider selection and truthful provenance. If existing diagnostics retain `hijriAnomaly` for compatibility, return neutral/null and explicitly document that anomaly classification is unsupported; do not invent a new calendar detector. Remove orphan guard state/reset code only where it has no remaining consumer.\n5. Project the same selected formatted value and reason into the existing footer and diagnostic snapshot. Keep the small unavailable cue separate from prayer staleness. Integrate complete keyboard/touch access through [R0019](https://github.com/theislampill/salah_widget/issues/25) rather than creating a second disclosure mechanism. When delayed tomorrow data arrives, the next actual render selects it and clears only the sunset-unavailable condition. No new fetch or retry loop belongs here.\n\nThis chosen removal is deliberate: a packed `year/month/day` ordinal is useful for sorting labels but is not elapsed calendar days. A global never-backwards hold can freeze a provider error and misread a long sleep or backwards wall-clock correction. Repairing it into a continuity detector would require source transition identity, elapsed civil-day accounting and authoritative month lengths, expanding this correction into a policy framework. Changing calendar authority, adding manual offsets or selecting a “cleaner” provider convention would alter user-visible religious policy and requires a separate explicit decision.\n\n## Standalone deterministic acceptance\n\nUse a disposable origin and freeze time before script initialization. A synthetic accepted response for Gregorian day `07-09-2026` has timezone `UTC`; Fajr `05:00`, Sunrise `06:00`, Dhuhr `12:00`, Asr `15:00`, Sunset/Maghrib `18:00`, Isha `20:00`; Gregorian day/month/year `07/9/2026`; AH `19-02-1448`, day `19`, month `{number:2,en:\"Safar\"}`, year `1448`, method `HJCoSA`. Tomorrow is Gregorian `08-09-2026` with AH `20-02-1448`. These are controlled values, not certified prayer or Hijri calculations. Serve each under the request's matching Gregorian day. Use `datefmt=YYYY-MM-DD`.\n\n| Clock/state sequence | Required footer/decision result |\n|---|---|\n| `17:59:59Z`, valid today and tomorrow | AH value `1448-02-19`; next-day preview `20`; boundary “before”; no claim that advance happened. |\n| `18:00:00Z`, same inputs | AH value `1448-02-20`; preview removed; selected source is tomorrow's day and convention; applied=true. |\n| `18:01:00Z`, tomorrow missing/rejected | AH value remains `1448-02-19`; sunset update unavailable is visible/accessibly described; applied=false even with prayerStale=false. This is the principal historical RED. |\n| Resolve valid tomorrow at the same instant, then render twice | Value becomes `1448-02-20` once in selection terms; both renders agree, unavailable cue clears, and no synthetic further increment occurs. |\n| Midnight promotion to Gregorian `08-09-2026` with AH `20-02-1448` | Morning selection remains 20, not an additional 21. Old/late payload must not be mislabeled current. |\n| Selected tomorrow reports `UAQ`, today reports `HJCoSA` | Explanation and diagnostics identify selected tomorrow's UAQ; prayer method is unchanged. Missing selected method reports unknown convention, not inherited HJCoSA. |\n| Accepted same-day correction `10→09`; wall clock corrected from post-Maghrib back to before | No future value stays silently locked in place; the actual selection and boundary are disclosed. |\n| Consecutive civil days `08→10`, `10→10`; repeat same render; long sleep then new accepted day | Display the accepted selection without unsupported anomaly certainty. Under the chosen removal route, neutral anomaly output is expected and the old promise is absent. |\n| Valid 29/30-day month and year boundary; missing/invalid AH; hostile month/format text | Normal transitions remain literal; unavailable input is handled by the agreed validity contract; all output remains inert. |\n\nAdvance the controlled date across days, not only `simTime` within an unpinned current day. Hold fetches where needed so missing-tomorrow is real. In an isolated mutant, restore the title's `afterMaghrib`-only branch: the unavailable test must fail despite correct text content. Restore the global backwards hold: the correction test must fail. A selector unit test alone cannot close this issue; compare real footer text/cue, accessible explanation and `dateTruth` from the same final render, with a crop at the fixed 325×530 size.\n\n## Interfaces, public effects and closure\n\nExisting qualification edges remain: [R0005](https://github.com/theislampill/salah_widget/issues/5) supplies correct day promotion/late routing; [R0002](https://github.com/theislampill/salah_widget/issues/2) supplies usable date admission; [R0001](https://github.com/theislampill/salah_widget/issues/1) supplies inert output; [R0020](https://github.com/theislampill/salah_widget/issues/32) supplies the current wall instant. These are integrated acceptance dependencies, not a requirement to finish all predecessors before writing fixtures. This owner does not change their loaders, clocks or cache namespaces. The shared `runtime/date-output` hunk with [R0019](https://github.com/theislampill/salah_widget/issues/25) needs one integrator. Preserve main's existing timezone-bearing cache format under [R0004](https://github.com/theislampill/salah_widget/issues/4). Do not adopt, migrate or delete the audit-only zone-free namespace; it remains a negative namespace control. Any later actually shipped incompatible schema requires separate re-anchoring and reconciliation through that cache owner. Do not persist selector/hold state.\n\nIMPLEMENTAUDIT R001D projection: update date explanations and diagnostic claims in the existing [README](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/README.md), [AGENTS](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/AGENTS.md), [ARCHITECTURE](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/ARCHITECTURE.md) and [HANDOFF](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/HANDOFF.md) only where affected. Configuration, builder method choices, installer and preset interfaces do not change. No astronomy-derived date drives prayer clocks. IMPLEMENTAUDIT R001E requires actual footer/diagnostic consumers to use the decision, not an unused truth helper.\n\nDONE requires final-tree RED→GREEN and mutation/control evidence, independent review of selection/claims, and browser footer/accessibility readback. Record the exact tree, clock/zone/source fixtures, results and remaining limits in an evidence comment before manual #9 closure; use non-closing `Implements #9`. A work-order publication is not a product repair; served-date claims require later authorized deployment and matching served-source/readback.\n\nRollback narrowly to provider-derived selection with explicit unavailable status if the new projection fails; do not restore the unsupported universal/monotonic promise. STOP on unresolved day-validity/context interfaces, relevant clock drift, or a request to choose religious policy. The owner’s 24-versus-26 report remains UNVERIFIED until both references are captured at the same instant, location, calendar authority and boundary; that missing field evidence does not block the independently demonstrated disclosure repair.\n\nMethodology references (separate repository, not Salah work owners): [R001D in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/155), [R001E in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/157).\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/9/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/9/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733525112,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfUN88AAAAHJ9xgeA",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733525112",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:45Z",
+      "rename": {
+        "from": "SW-009: Make Hijri display provenance, rollover and unavailable-state claims truthful",
+        "to": "R0009: Make Hijri display provenance, rollover and unavailable-state claims truthful"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0009",
+    "bodySha256": "cd63bf2069a5f17a8b6cfd669b05e756c8b8e952c714ad92066b96585719663d",
+    "updatedAt": "2026-09-08T06:24:45Z",
+    "commentRevisions": []
+  }
+}

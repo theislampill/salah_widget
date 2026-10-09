@@ -1,0 +1,1581 @@
+{
+  "schema": "rlgwo-closure-assessment/1",
+  "worker": "D",
+  "issueNumber": 18,
+  "canonicalId": "R0012",
+  "title": "R0012: Make copy success and manual recovery correspond to the requested payload",
+  "originalBodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+  "initialRevision": "2026-09-08T06:25:06Z",
+  "issuePacketCapturedAtUtc": "2026-10-09T00:41:31.451080+00:00",
+  "completeBodyAndDiscussionRead": true,
+  "commentRevisions": [],
+  "events": "Renaming events only for15/16/17/18/31;35 has none. No additional binding issue comments in captured packets.",
+  "target": {
+    "repo": "theislampill/salah_widget",
+    "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "checkoutHead": "4bccdf43363926c3077f60de87e5617ccb9abcb9",
+    "checkoutTree": "35208181eea714c17f5e77b2644e76434345db60",
+    "checkoutDirtyPaths": [],
+    "sourceReadRoot": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+    "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "deliveredIndexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "sourceConfigSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "deliveredConfigSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "sourceBuilderSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "deliveredBuilderSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "currentness": "Fresh read-only git/object/hash verification; exact-ref source executions; mutation children use clean same-tree root consumers.",
+    "publicBaseline": {
+      "status": "DELIVERED_VERIFIED",
+      "primaryReleaseReceipt": "release.json",
+      "inspectedByD": "readbacks-validation.json",
+      "verifiedAt": "2026-10-09T01:34:55.876184+00:00",
+      "pagesBuild": 1270547036,
+      "publicRuntimeAndV1Files": 139,
+      "publicSmokeCases": 16,
+      "publicSmokeAllPass": true,
+      "rawAndPagesDocumentScriptMatches": 16,
+      "scope": "Primary provided current merge/runtime/V1/public smoke and public raw/Pages document/script readbacks; D verified receipt identities and local corresponding source hashes. Controlled race/storage/copy/native-stream negatives are separate."
+    },
+    "attribution": "Config and builder last changed in CP9 integration 7fe3ba1dc8c83604a04cab24a7e4307b6779df7e. Existing repairs are credited as preserved pre-PR42 work; no claim that PR42 first implemented them."
+  },
+  "reviewerConfiguration": {
+    "requested": {
+      "model": "gpt-6.1-sol",
+      "reasoningEffort": "max"
+    },
+    "effective": {
+      "model": "gpt-6.1-sol",
+      "reasoningEffort": "max",
+      "confirmation": "CONFIRMED_RECORDED_CLIENT_CONFIGURATION"
+    },
+    "evidence": "Primary reviewer-model-settings.json and D independently inspected own session turn_context 01a11e26-77d9-7bc0-b18d-f4fb2ac3b10a: model gpt-6.1-sol, effort max and collaboration settings match. Supported spawn plus local client recording is confirmation; no independent hardware/backend attestation claimed.",
+    "sessionId": "01a11e26-76ef-7583-b53a-d9c4abeec9f0",
+    "verificationReceipt": "readbacks-validation.json"
+  },
+  "recommendation": "CLOSE — SATISFIED WITH DEMONSTRATED IMPROVEMENTS",
+  "recommendationScope": "Every mapped mandatory original obligation qualifies on exact target, including the formerly missing minimum native bridge; inherited repair attribution and controls remain explicit.",
+  "requirementMatrix": [
+    {
+      "obligation": "Capture Embed current code or Install current installCmd payload exactly once at activation; both use existing boolean copy helper.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY",
+        "B-EXPORT"
+      ],
+      "discriminator": "T-18 exact byte recovery and pending form change.",
+      "expected": "Action payload is not reconstructed after await.",
+      "observed": "Button captures canonical embed/code or command before await; pending embed failure recovers original bytes while canonical current embed remains separate.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O01",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Success only after primary resolution or fallback true; primary reject + false/thrown fallback never says copied/checkmark.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY"
+      ],
+      "discriminator": "T-18 primary/no-fallback, fallbacktrue, false/thrown controls; success mutant.",
+      "expected": "No false success; successful paths preserved.",
+      "observed": "All four outcome classes pass for both buttons; unconditional-success mutation fails false/thrown fallback assertion.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O02",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Clipboard API absent uses same true/false fallback, thrown execCommand cleanup leaves no temporary textarea and no uncaught error.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY"
+      ],
+      "discriminator": "T-18 absent API and thrown fallback.",
+      "expected": "Boolean result remains truthful and temporary element always removed.",
+      "observed": "Both buttons pass absent-API true/false outcomes; temporary body children count0 after failure/throw.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O03",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Manual recovery exposes exact requested kind and captured bytes; Install never points at iframe, canonical embed textarea remains embed-only.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY",
+        "B-RECOVERY",
+        "B-EXPORT"
+      ],
+      "discriminator": "T-18 verifyRecovery, Windows/MacIntel/Linux exact commands; install-recovery mutant.",
+      "expected": "Label/name/payload association matches action.",
+      "observed": "Recovery byte-equals payload for each platform; dedicated labelled readonly install/embed surfaces; wrong-install-artifact mutation caught.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O04",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "If form changes during pending embed copy, retain captured original iframe in labelled recovery instead of selecting regenerated canonical output.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER",
+        "B-EXPORT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY",
+        "B-RECOVERY",
+        "B-EXPORT"
+      ],
+      "discriminator": "T-18 pending embed failure/form change.",
+      "expected": "Canonical current output differs; failure selects old captured payload.",
+      "observed": "Captured!=current fixture; recovery equals captured, code remains current, recovery id embed-recovery.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O05",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Per-button attempt owns completion and status timeout; button disabled while pending/restored in cleanup; separate Embed/Install ownership.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY"
+      ],
+      "discriminator": "T-18 programmatic reentry, status timer and independent buttons; stale mutant.",
+      "expected": "No old result or timer clears newer failure; other action unaffected.",
+      "observed": "Newer failure survives old completion and9s timer; disabled restored; independent statuses/payloads preserved; stale mutation caught.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O06",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Obsolete rejected primary must not initiate fallback side effects or steal latest recovery focus/selection.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY"
+      ],
+      "discriminator": "T-18-EFFECT and fallback-owner mutant.",
+      "expected": "No obsolete fallback call/write/focus effect even if result UI is guarded.",
+      "observed": "Both-button controlled sink retains latest bytes and latest focus; omitting helper ownership gate fails both intended assertions.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O07",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Manual payload persists until new same-kind action or dismissal; no automatic eight-second hiding; success restores initiating button, failure focuses/selects recovery.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY",
+        "B-RECOVERY"
+      ],
+      "discriminator": "T-18 recovery after9s; primary/fallback success focus objects.",
+      "expected": "No expiry of manual recovery; correct focus/selection association.",
+      "observed": "Controlled DOM selections span0..payload.length; manual text/status stays after9s; success focus object is button. Native selection/focus now qualified by the four fresh actual-button cases.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O08",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Windows/Bash command grammar and actual generated local fragment preserved; generic local command carries no settings; hostile-looking label bytes remain encoded literal data.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER",
+        "C-SERIAL-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY",
+        "C-SERIAL"
+      ],
+      "discriminator": "T-18 platform bytes/generic/API and apostrophe/quotes/ampersand/newline/Unicode/substitution-looking literal.",
+      "expected": "No quote breakout, execution or alternate payload; adapt expected bytes to approved current serializer.",
+      "observed": "Exact generated strings including appearance=glass pass; generic deliberately calls shared serializer and omits env payload; decoded hostile label exact, %27/%0A preserved. No command executed.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O09",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Public fixture uses production button handlers, controlled clipboard and execCommand doubles; relevant false-success/wrong-recovery mutations fail.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY"
+      ],
+      "discriminator": "T-FIXTURE/T-18/M-18 and T-18-EFFECT.",
+      "expected": "No owner clipboard sink; final-tree positive+mutation controls.",
+      "observed": "Fresh11+3 cases,3 core mutants+1 effect mutant pass/catch; fixture explicitly bypasses disabled button only for programmatic reentry control.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O10",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Minimum browser bridge: actual buttons with denied-copy doubles installed before page, native textarea focus/select, readable failure/selected payload, Tab onward, narrow/mobile long command without overflow.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY",
+        "B-RECOVERY"
+      ],
+      "discriminator": "Original minimum browser contract; Node native NOT_RUN. Fresh primary native cases: 18-denied-copy-responsive-Windows-payload, 18-pending-captured-copy-Bash-payload, 18-success-then-failure-old-timers, 18-absent-clipboard-true-fallback; exact guards, raw receipts and crops archived.",
+      "expected": "Native events/selection/readability/responsiveness and action bytes recorded.",
+      "observed": "4/4 fresh native cases pass: real Embed/Install buttons, denied/absent/held/success clipboard and true/false/throw fallback doubles; exact captured readonly native selection0..length; changed-current output retained; Windows/Bash carried bytes; Tab onward; 390px long command without page overflow; recovery survives9s/old success timers. Primary inspected actual narrow selected recovery/error crops.",
+      "status": "satisfied",
+      "scope": "fresh exact-target native bridge plus source/VM controls",
+      "id": "R0012-O11",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "R0010 may change fragment; compare actual captured artifact. R0013/R0014 installer execution remains independent; no new clipboard permissions/library/global scheduler.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER",
+        "B-EXPORT-OWNER",
+        "C-SERIAL-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY",
+        "B-EXPORT",
+        "C-SERIAL"
+      ],
+      "discriminator": "Current generated bytes and R0010 consumer tests; source local per-action state.",
+      "expected": "Copy/recovery does not certify install execution.",
+      "observed": "Actual updated artifact bytes are compared; no installer execution/native host success claim; no permission prompt/library added by copy owner.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O12",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Keep canonical payload, URL encoding, core card geometry and geolocation attribute scope; README copy text only if necessary; served builder readback for public claim.",
+      "authoredOwnerRefs": [
+        "B-EXPORT-OWNER",
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-EXPORT",
+        "B-COPY"
+      ],
+      "discriminator": "Source canonical output; T-18 current bytes; verified primary public distribution/rollout baseline.",
+      "expected": "No config/index/installer/preset change required from this issue.",
+      "observed": "Handler/recovery code preserves canonical payload; no published copy-success claim by worker. Public source distribution and the required native recovery bridge are verified.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O13",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Coherent handler+recovery rollback preserves canonical embed; independent exact-tree evidence/manual closure after public readback; stop if command/focus contract incompatible.",
+      "authoredOwnerRefs": [
+        "B-COPY-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-COPY",
+        "B-RECOVERY"
+      ],
+      "discriminator": "Target source review and audit hold.",
+      "expected": "Do not relabel logic-only result as whole completion.",
+      "observed": "Delivered logic independently reviewed and tested; source, mutation, native and delivered distribution scopes independently established; publication remains the primary’s action.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0012-O14",
+      "contractBinding": {
+        "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+        "revision": "2026-09-08T06:25:06Z",
+        "comments": []
+      }
+    }
+  ],
+  "evidenceSources": [
+    {
+      "id": "C-SERIAL-OWNER",
+      "path": "src/native/config.js",
+      "startLine": 146,
+      "endLine": 176,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L146-L176",
+      "purpose": "Authored canonical serializer"
+    },
+    {
+      "id": "C-SERIAL",
+      "path": "config.js",
+      "startLine": 146,
+      "endLine": 176,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L146-L176",
+      "purpose": "Delivered canonical serializer"
+    },
+    {
+      "id": "B-EXPORT-OWNER",
+      "path": "src/native/builder.html",
+      "startLine": 204,
+      "endLine": 239,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L204-L239",
+      "purpose": "Authored form/export/preview and local explanatory text"
+    },
+    {
+      "id": "B-EXPORT",
+      "path": "builder.html",
+      "startLine": 204,
+      "endLine": 239,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L204-L239",
+      "purpose": "Delivered form, canonical hash, snippet and preview"
+    },
+    {
+      "id": "B-COPY-OWNER",
+      "path": "src/native/builder.html",
+      "startLine": 369,
+      "endLine": 436,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L369-L436",
+      "purpose": "Authored exact command, guarded copy and persistent recovery"
+    },
+    {
+      "id": "B-COPY",
+      "path": "builder.html",
+      "startLine": 369,
+      "endLine": 436,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L369-L436",
+      "purpose": "Delivered button/copy/command consumers"
+    },
+    {
+      "id": "B-RECOVERY",
+      "path": "builder.html",
+      "startLine": 157,
+      "endLine": 190,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L157-L190",
+      "purpose": "Delivered labelled readonly install/embed recovery markup"
+    },
+    {
+      "id": "T-FIXTURE",
+      "path": "tests/r000f-fixture.cjs",
+      "startLine": 1,
+      "endLine": 161,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000f-fixture.cjs#L1-L161",
+      "purpose": "Production source handlers; VM DOM/provider/timer/storage doubles; settings applyConfig is a double"
+    },
+    {
+      "id": "T-18",
+      "path": "tests/r0012-clipboard.cjs",
+      "startLine": 16,
+      "endLine": 101,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0012-clipboard.cjs#L16-L101",
+      "purpose": "Through-button primary/fallback/recovery/action identity controls"
+    },
+    {
+      "id": "M-18",
+      "path": "tests/r0012-mutations.cjs",
+      "startLine": 1,
+      "endLine": 10,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0012-mutations.cjs#L1-L10",
+      "purpose": "False success, wrong artifact and stale status controls"
+    },
+    {
+      "id": "T-18-EFFECT",
+      "path": "tests/r0012-effects.cjs",
+      "startLine": 1,
+      "endLine": 38,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0012-effects.cjs#L1-L38",
+      "purpose": "Obsolete fallback cannot change latest sink or focus in controlled fixture"
+    },
+    {
+      "id": "M-18-EFFECT",
+      "path": "tests/r0012-effects-mutations.cjs",
+      "startLine": 1,
+      "endLine": 8,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0012-effects-mutations.cjs#L1-L8",
+      "purpose": "Fallback ownership mutation detected by both effects assertions"
+    },
+    {
+      "id": "L-18",
+      "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/MANIFEST.json",
+      "startLine": 1238,
+      "endLine": 1253,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/MANIFEST.json#L1238-L1253",
+      "purpose": "Public lossless final clipboard/effects VM receipts"
+    }
+  ],
+  "freshExecution": {
+    "environment": {
+      "node": "22.16.0",
+      "launcher": "PowerShell7.6.6",
+      "os": "Windows",
+      "sourceBinding": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "browser": "NOT_RUN"
+    },
+    "receipts": [
+      {
+        "name": "r0012-clipboard",
+        "startedAtUtc": "2026-10-09T00:57:57.6292179Z",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r0012-clipboard.cjs",
+          "--ref",
+          "18ff14860ff41c084b1db5f396bb62aa9c22b1be"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "stdout": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0012-clipboard.stdout.log",
+        "stderr": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0012-clipboard.stderr.log",
+        "stdoutSha256": "deef54dc98a8c404388bff8e3a621ec4e11a465dee68ec8edf94b2a7eb6d208e",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tail": "PASS hostile-looking labels stay encoded literal clipboard data\n{\"cases\":11,\"passed\":11,\"failed\":0,\"ref\":\"18ff14860ff41c084b1db5f396bb62aa9c22b1be\",\"mutant\":null,\"native\":\"NOT_RUN\"}"
+      },
+      {
+        "name": "r0012-effects",
+        "startedAtUtc": "2026-10-09T00:57:59.2134294Z",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r0012-effects.cjs",
+          "--ref",
+          "18ff14860ff41c084b1db5f396bb62aa9c22b1be"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "stdout": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0012-effects.stdout.log",
+        "stderr": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0012-effects.stderr.log",
+        "stdoutSha256": "a50528eefd17b57544c696fdd29bcbab5b10089f4af9ff3f0e64df9af2f365c7",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tail": "PASS positive: current rejected primary still copies exact fallback payload\n{\"cases\":3,\"passed\":3,\"failed\":0,\"ref\":\"18ff14860ff41c084b1db5f396bb62aa9c22b1be\",\"mutant\":null,\"native\":\"NOT_RUN\",\"reentry\":\"PROGRAMMATIC_DISABLED_BUTTON_BYPASS\"}"
+      },
+      {
+        "name": "r0012-mutations",
+        "startedAtUtc": "2026-10-09T00:58:35.1402794Z",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r0012-mutations.cjs"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "sourceBinding": "Clean checkout at 4bccdf43363926c3077f60de87e5617ccb9abcb9; same tree 35208181eea714c17f5e77b2644e76434345db60 as target merge",
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "stdout": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0012-mutations.stdout.log",
+        "stderr": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0012-mutations.stderr.log",
+        "stdoutSha256": "f748f04fb750479677e52669486a89cc6a1f0354852924929493b2fa883d7558",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "PASS mutant caught: success by both false or thrown fallback\nPASS mutant caught: install-recovery by install recovery is platform-specific\nPASS mutant caught: stale by new same-button attempt owns\n"
+      },
+      {
+        "name": "r0012-effects-mutations",
+        "startedAtUtc": "2026-10-09T00:58:35.4099326Z",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r0012-effects-mutations.cjs"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "sourceBinding": "Clean checkout at 4bccdf43363926c3077f60de87e5617ccb9abcb9; same tree 35208181eea714c17f5e77b2644e76434345db60 as target merge",
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "stdout": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0012-effects-mutations.stdout.log",
+        "stderr": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0012-effects-mutations.stderr.log",
+        "stdoutSha256": "d05dfd9bc77cdd42b02167e82c4fed789ff9ef04481c4cb5e1f352cab29f045e",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "PASS mutant caught: fallback owner omitted; newest clipboard payload and recovery focus assertions fail\n"
+      }
+    ],
+    "extraReceipts": [],
+    "expected": "All positive commands exit0; mutation runner exits0 only when intended child behavior fails with exit1 and expected FAIL name, excluding bootstrap failures.",
+    "observed": "14/14 primary controlled cases pass; 4/4 included behavioral mutations detected; all recorded exits0."
+  },
+  "historicalReuse": {
+    "classification": "SUPPLEMENTARY_ONLY",
+    "basis": "Public final-v49 gzip logs count the same named production-source suites and explicitly native NOT_RUN. Fresh exact-ref reruns supersede them for current logic. No old whole-runtime browser identity is promoted to target-native proof.",
+    "sourceEquivalence": "Authored/delivered config and builder are byte-identical; reviewed head tree equals actual merge tree. Older fd2972 reader used only as explicitly identified compatibility control in #35.",
+    "notReused": "Historical broad native-smoke config callbacks verify helper APIs only; they do not reach these required actual race/storage feedback/copy selection/stream/metadata interactions."
+  },
+  "negativeControls": {
+    "suites": [
+      "r0012-mutations",
+      "r0012-effects-mutations"
+    ],
+    "qualifier": "Through-handler behavioral controls; exact FAIL names verified by their harnesses; no empty fixture/helper-only mutation is accepted as whole native proof."
+  },
+  "demonstratedImprovements": [
+    "A same-button obsolete primary rejection cannot initiate fallback effects over the latest successful payload or steal current manual recovery focus/selection; dedicated effect mutation detects both.",
+    "Current complete-script native bridge qualified with source hash/anchor/body guards, isolated real DOM consumers and exact action/native stream receipts; original failure controls and all earlier accepted tests retained."
+  ],
+  "gaps": [],
+  "boundedNextIncrement": null,
+  "rollbackOrContainment": "Preserve completed source and all stored owner data. Next increment is proposed only; evidence fixture/README edits must remain narrow. On reproduced defect, retain failing case and stop for primary scope/owner review rather than broaden repair.",
+  "externalEffects": "None by worker: no browser/build/solver/source mutation/commit/push/GitHub comment/closure/deployment. Primary controls reconciliation/publication.",
+  "publicationStatus": "FROZEN_PRIMARY_RECONCILED_AWAITING_IMMUTABLE_EVIDENCE_BINDING_AND_HASH_APPROVAL",
+  "freshPrimaryNativeEvidence": {
+    "executor": "Primary Astra in exclusive serial browser lease; no browser run by reviewer D",
+    "browser": {
+      "family": "chromium",
+      "version": "148.0.7778.96",
+      "os": "Windows",
+      "machine": "AMD64",
+      "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+      "chromiumSandboxRequested": true
+    },
+    "cases": {
+      "18-denied-copy-responsive-Windows-payload": {
+        "name": "18-denied-copy-responsive-Windows-payload",
+        "case": {
+          "name": "18-denied-copy-responsive-Windows-payload",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "builder",
+            "copy": "deny",
+            "fallback": "false",
+            "platform": "Win32",
+            "hold": "search"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 2,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "copy truthful failure",
+              "passed": true,
+              "detail": {
+                "rendered": "COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.",
+                "raw": "Couldn’t copy. Select the embed code below and copy it manually."
+              }
+            },
+            {
+              "name": "copy native readonly exact selection",
+              "passed": true,
+              "detail": {
+                "id": "embed-recovery",
+                "value": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "readonly": true,
+                "start": 0,
+                "end": 994
+              }
+            },
+            {
+              "name": "install truthful failure",
+              "passed": true,
+              "detail": {
+                "rendered": "Couldn’t copy. Select the install command below and copy it manually.",
+                "raw": "Couldn’t copy. Select the install command below and copy it manually."
+              }
+            },
+            {
+              "name": "install native readonly exact selection",
+              "passed": true,
+              "detail": {
+                "id": "install-recovery",
+                "value": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "readonly": true,
+                "start": 0,
+                "end": 906
+              }
+            },
+            {
+              "name": "Windows carried command exact fixture",
+              "passed": true,
+              "detail": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex"
+            },
+            {
+              "name": "native Tab moves onward",
+              "passed": true,
+              "detail": {
+                "id": "pv",
+                "value": null,
+                "readonly": null,
+                "start": null,
+                "end": null
+              }
+            },
+            {
+              "name": "copy truthful failure",
+              "passed": true,
+              "detail": {
+                "rendered": "COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.",
+                "raw": "Couldn’t copy. Select the embed code below and copy it manually."
+              }
+            },
+            {
+              "name": "copy native readonly exact selection",
+              "passed": true,
+              "detail": {
+                "id": "embed-recovery",
+                "value": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "readonly": true,
+                "start": 0,
+                "end": 994
+              }
+            },
+            {
+              "name": "install truthful failure",
+              "passed": true,
+              "detail": {
+                "rendered": "Couldn’t copy. Select the install command below and copy it manually.",
+                "raw": "Couldn’t copy. Select the install command below and copy it manually."
+              }
+            },
+            {
+              "name": "install native readonly exact selection",
+              "passed": true,
+              "detail": {
+                "id": "install-recovery",
+                "value": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "readonly": true,
+                "start": 0,
+                "end": 906
+              }
+            },
+            {
+              "name": "narrow page avoids horizontal overflow",
+              "passed": true,
+              "detail": {
+                "width": 390,
+                "body": 390,
+                "root": 390,
+                "areas": [
+                  {
+                    "id": "install-recovery",
+                    "client": 352,
+                    "scroll": 352,
+                    "left": 18,
+                    "right": 372
+                  },
+                  {
+                    "id": "embed-recovery",
+                    "client": 352,
+                    "scroll": 352,
+                    "left": 18,
+                    "right": 372
+                  }
+                ]
+              }
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [
+            {
+              "button": "copy",
+              "captured": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+              "selected": {
+                "id": "embed-recovery",
+                "value": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "readonly": true,
+                "start": 0,
+                "end": 994
+              },
+              "status": "COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.",
+              "rawDOMStatus": "Couldn’t copy. Select the embed code below and copy it manually."
+            },
+            {
+              "button": "install",
+              "captured": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+              "selected": {
+                "id": "install-recovery",
+                "value": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "readonly": true,
+                "start": 0,
+                "end": 906
+              },
+              "status": "Couldn’t copy. Select the install command below and copy it manually.",
+              "rawDOMStatus": "Couldn’t copy. Select the install command below and copy it manually."
+            },
+            {
+              "button": "copy",
+              "captured": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+              "selected": {
+                "id": "embed-recovery",
+                "value": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "readonly": true,
+                "start": 0,
+                "end": 994
+              },
+              "status": "COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.",
+              "rawDOMStatus": "Couldn’t copy. Select the embed code below and copy it manually."
+            },
+            {
+              "button": "install",
+              "captured": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+              "selected": {
+                "id": "install-recovery",
+                "value": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "readonly": true,
+                "start": 0,
+                "end": 906
+              },
+              "status": "Couldn’t copy. Select the install command below and copy it manually.",
+              "rawDOMStatus": "Couldn’t copy. Select the install command below and copy it manually."
+            }
+          ],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 2,
+          "entry": "http://127.0.0.1:60683/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&copy=deny&fallback=false&platform=Win32&hold=search",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 2,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "geometry": {
+            "width": 390,
+            "body": 390,
+            "root": 390,
+            "areas": [
+              {
+                "id": "install-recovery",
+                "client": 352,
+                "scroll": 352,
+                "left": 18,
+                "right": 372
+              },
+              {
+                "id": "embed-recovery",
+                "client": 352,
+                "scroll": 352,
+                "left": 18,
+                "right": 372
+              }
+            ]
+          },
+          "finalApplication": {
+            "inputs": {
+              "label": "Long display <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' <&\" apostrophe' ",
+              "lat": "24.47000",
+              "lon": "39.61000",
+              "method": "4",
+              "school": "0",
+              "time": "24",
+              "units": "f",
+              "appearance": "glass",
+              "dfcode": "YYYY-MM-DD"
+            },
+            "config": null,
+            "status": "Searching…",
+            "pin": {
+              "classes": "geo-pin lit",
+              "title": "Estimated from your IP — click to request browser location",
+              "name": "Estimated from your IP — click to request browser location"
+            },
+            "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+            "previewSrc": "http://127.0.0.1:60683/?r=3#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass",
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "at": 1790942400000,
+                "state": "returned",
+                "status": 200,
+                "signalAborted": false
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [
+              {
+                "index": 0,
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "state": "deny"
+              },
+              {
+                "index": 1,
+                "payload": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "state": "deny"
+              },
+              {
+                "index": 2,
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "state": "deny"
+              },
+              {
+                "index": 3,
+                "payload": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "state": "deny"
+              }
+            ],
+            "fallbackCalls": [
+              {
+                "command": "copy",
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "selectionStart": 0,
+                "selectionEnd": 994
+              },
+              {
+                "command": "copy",
+                "payload": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "selectionStart": 0,
+                "selectionEnd": 906
+              },
+              {
+                "command": "copy",
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "selectionStart": 0,
+                "selectionEnd": 994
+              },
+              {
+                "command": "copy",
+                "payload": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Long+display+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27+%3C%26%22+apostrophe%27&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "selectionStart": 0,
+                "selectionEnd": 906
+              }
+            ],
+            "errors": [],
+            "storageEvents": []
+          },
+          "fontStatus": "settled",
+          "screenshot": "18-denied-copy-responsive-Windows-payload.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-three-primary/results.json",
+        "receiptSha256": "897db23c3ba70ca822c2cf7a16e9df1088005bae0a3062286afcd28c6662044e",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-three-primary/18-denied-copy-responsive-Windows-payload.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-three-primary/18-denied-copy-responsive-Windows-payload.png",
+        "screenshotSha256": "59e679702bdbc8174c751e392953deaf980a0f79524652841bb6d317690fcfbc",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-three-primary\\results.json"
+      },
+      "18-pending-captured-copy-Bash-payload": {
+        "name": "18-pending-captured-copy-Bash-payload",
+        "case": {
+          "name": "18-pending-captured-copy-Bash-payload",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "builder",
+            "copy": "hold",
+            "fallback": "throw",
+            "platform": "MacIntel",
+            "hold": "search"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 2,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "native button disabled while awaiting",
+              "passed": true,
+              "detail": null
+            },
+            {
+              "name": "pending form really changes canonical output",
+              "passed": true,
+              "detail": {
+                "captured": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "current": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Changed+after+capture&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>"
+              }
+            },
+            {
+              "name": "native recovery selects captured old iframe",
+              "passed": true,
+              "detail": {
+                "id": "embed-recovery",
+                "value": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "readonly": true,
+                "start": 0,
+                "end": 269
+              }
+            },
+            {
+              "name": "canonical output stays current",
+              "passed": true,
+              "detail": null
+            },
+            {
+              "name": "install truthful failure",
+              "passed": true,
+              "detail": "Couldn’t copy. Select the install command below and copy it manually."
+            },
+            {
+              "name": "install native readonly exact selection",
+              "passed": true,
+              "detail": {
+                "id": "install-recovery",
+                "value": "curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Changed+after+capture&method=4&school=0&appearance=glass' bash",
+                "readonly": true,
+                "start": 0,
+                "end": 196
+              }
+            },
+            {
+              "name": "Bash carried command exact fixture",
+              "passed": true,
+              "detail": "curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Changed+after+capture&method=4&school=0&appearance=glass' bash"
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [
+            {
+              "button": "install",
+              "captured": "curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Changed+after+capture&method=4&school=0&appearance=glass' bash",
+              "selected": {
+                "id": "install-recovery",
+                "value": "curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Changed+after+capture&method=4&school=0&appearance=glass' bash",
+                "readonly": true,
+                "start": 0,
+                "end": 196
+              },
+              "status": "Couldn’t copy. Select the install command below and copy it manually."
+            }
+          ],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 6,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&copy=hold&fallback=throw&platform=MacIntel&hold=search",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 2,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "finalApplication": {
+            "inputs": {
+              "label": "Changed after capture",
+              "lat": "24.47000",
+              "lon": "39.61000",
+              "method": "4",
+              "school": "0",
+              "time": "24",
+              "units": "f",
+              "appearance": "glass",
+              "dfcode": "YYYY-MM-DD"
+            },
+            "config": null,
+            "status": "Searching…",
+            "pin": {
+              "classes": "geo-pin lit",
+              "title": "Estimated from your IP — click to request browser location",
+              "name": "Estimated from your IP — click to request browser location"
+            },
+            "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Changed+after+capture&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+            "previewSrc": "http://127.0.0.1:54231/?r=3#lat=24.47&lon=39.61&label=Changed+after+capture&method=4&school=0&appearance=glass",
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "at": 1790942400000,
+                "state": "returned",
+                "status": 200,
+                "signalAborted": false
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [
+              {
+                "index": 0,
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "state": "denied"
+              },
+              {
+                "index": 1,
+                "payload": "curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Changed+after+capture&method=4&school=0&appearance=glass' bash",
+                "state": "deny"
+              }
+            ],
+            "fallbackCalls": [
+              {
+                "command": "copy",
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "selectionStart": 0,
+                "selectionEnd": 269
+              },
+              {
+                "command": "copy",
+                "payload": "curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Changed+after+capture&method=4&school=0&appearance=glass' bash",
+                "selectionStart": 0,
+                "selectionEnd": 196
+              }
+            ],
+            "errors": [],
+            "storageEvents": []
+          },
+          "fontStatus": "settled",
+          "screenshot": "18-pending-captured-copy-Bash-payload.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/18-pending-captured-copy-Bash-payload.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/18-pending-captured-copy-Bash-payload.png",
+        "screenshotSha256": "020b25488b28003054762ad6bdbd6b0a7b2945c8b9ecdde0fed0ce70cf50e139",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      },
+      "18-success-then-failure-old-timers": {
+        "name": "18-success-then-failure-old-timers",
+        "case": {
+          "name": "18-success-then-failure-old-timers",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "builder",
+            "copy": "success",
+            "fallback": "false"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 2,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "copy current success restores button focus",
+              "passed": true,
+              "detail": {
+                "id": "copy",
+                "value": "",
+                "readonly": null,
+                "start": null,
+                "end": null
+              }
+            },
+            {
+              "name": "copy truthful failure",
+              "passed": true,
+              "detail": {
+                "rendered": "COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.",
+                "raw": "Couldn’t copy. Select the embed code below and copy it manually."
+              }
+            },
+            {
+              "name": "copy native readonly exact selection",
+              "passed": true,
+              "detail": {
+                "id": "embed-recovery",
+                "value": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "readonly": true,
+                "start": 0,
+                "end": 269
+              }
+            },
+            {
+              "name": "install current success restores button focus",
+              "passed": true,
+              "detail": {
+                "id": "install",
+                "value": "",
+                "readonly": null,
+                "start": null,
+                "end": null
+              }
+            },
+            {
+              "name": "install truthful failure",
+              "passed": true,
+              "detail": {
+                "rendered": "Couldn’t copy. Select the install command below and copy it manually.",
+                "raw": "Couldn’t copy. Select the install command below and copy it manually."
+              }
+            },
+            {
+              "name": "install native readonly exact selection",
+              "passed": true,
+              "detail": {
+                "id": "install-recovery",
+                "value": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "readonly": true,
+                "start": 0,
+                "end": 181
+              }
+            },
+            {
+              "name": "embed manual recovery and failure persist beyond old timer",
+              "passed": true,
+              "detail": "COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY."
+            },
+            {
+              "name": "install manual recovery and failure persist beyond old timer",
+              "passed": true,
+              "detail": "Couldn’t copy. Select the install command below and copy it manually."
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [
+            {
+              "button": "copy",
+              "captured": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+              "selected": {
+                "id": "embed-recovery",
+                "value": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "readonly": true,
+                "start": 0,
+                "end": 269
+              },
+              "status": "COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.",
+              "rawDOMStatus": "Couldn’t copy. Select the embed code below and copy it manually."
+            },
+            {
+              "button": "install",
+              "captured": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+              "selected": {
+                "id": "install-recovery",
+                "value": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "readonly": true,
+                "start": 0,
+                "end": 181
+              },
+              "status": "Couldn’t copy. Select the install command below and copy it manually.",
+              "rawDOMStatus": "Couldn’t copy. Select the install command below and copy it manually."
+            }
+          ],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 3,
+          "entry": "http://127.0.0.1:60683/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&copy=success&fallback=false",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 2,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "finalApplication": {
+            "inputs": {
+              "label": "Madinah",
+              "lat": "24.47000",
+              "lon": "39.61000",
+              "method": "4",
+              "school": "0",
+              "time": "24",
+              "units": "f",
+              "appearance": "glass",
+              "dfcode": "YYYY-MM-DD"
+            },
+            "config": null,
+            "status": "Detected: Madinah (approx.)",
+            "pin": {
+              "classes": "geo-pin lit",
+              "title": "Estimated from your IP — click to request browser location",
+              "name": "Estimated from your IP — click to request browser location"
+            },
+            "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+            "previewSrc": "http://127.0.0.1:60683/?r=1#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass",
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "at": 1790942400000,
+                "state": "returned",
+                "status": 200,
+                "signalAborted": false
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [
+              {
+                "index": 0,
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "state": "success"
+              },
+              {
+                "index": 1,
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "state": "deny"
+              },
+              {
+                "index": 2,
+                "payload": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "state": "success"
+              },
+              {
+                "index": 3,
+                "payload": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "state": "deny"
+              }
+            ],
+            "fallbackCalls": [
+              {
+                "command": "copy",
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:60683/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "selectionStart": 0,
+                "selectionEnd": 269
+              },
+              {
+                "command": "copy",
+                "payload": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "selectionStart": 0,
+                "selectionEnd": 181
+              }
+            ],
+            "errors": [],
+            "storageEvents": []
+          },
+          "fontStatus": "settled",
+          "screenshot": "18-success-then-failure-old-timers.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-three-primary/results.json",
+        "receiptSha256": "897db23c3ba70ca822c2cf7a16e9df1088005bae0a3062286afcd28c6662044e",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-three-primary/18-success-then-failure-old-timers.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-three-primary/18-success-then-failure-old-timers.png",
+        "screenshotSha256": "19569e22dabfd32b0c27ba4c0250da029ac8ca9e60847ebbb99cf5c62b40306b",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-three-primary\\results.json"
+      },
+      "18-absent-clipboard-true-fallback": {
+        "name": "18-absent-clipboard-true-fallback",
+        "case": {
+          "name": "18-absent-clipboard-true-fallback",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "builder",
+            "copy": "absent",
+            "fallback": "true"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 2,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "copy native textarea fallback exact bytes",
+              "passed": true,
+              "detail": {
+                "command": "copy",
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "selectionStart": 0,
+                "selectionEnd": 269
+              }
+            },
+            {
+              "name": "copy true fallback reports success and returns focus",
+              "passed": true,
+              "detail": {
+                "id": "copy",
+                "value": "",
+                "readonly": null,
+                "start": null,
+                "end": null
+              }
+            },
+            {
+              "name": "install native textarea fallback exact bytes",
+              "passed": true,
+              "detail": {
+                "command": "copy",
+                "payload": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "selectionStart": 0,
+                "selectionEnd": 181
+              }
+            },
+            {
+              "name": "install true fallback reports success and returns focus",
+              "passed": true,
+              "detail": {
+                "id": "install",
+                "value": "",
+                "readonly": null,
+                "start": null,
+                "end": null
+              }
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 8,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&copy=absent&fallback=true",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 2,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "finalApplication": {
+            "inputs": {
+              "label": "Madinah",
+              "lat": "24.47000",
+              "lon": "39.61000",
+              "method": "4",
+              "school": "0",
+              "time": "24",
+              "units": "f",
+              "appearance": "glass",
+              "dfcode": "YYYY-MM-DD"
+            },
+            "config": null,
+            "status": "Detected: Madinah (approx.)",
+            "pin": {
+              "classes": "geo-pin lit",
+              "title": "Estimated from your IP — click to request browser location",
+              "name": "Estimated from your IP — click to request browser location"
+            },
+            "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+            "previewSrc": "http://127.0.0.1:54231/?r=1#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass",
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "at": 1790942400000,
+                "state": "returned",
+                "status": 200,
+                "signalAborted": false
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [],
+            "fallbackCalls": [
+              {
+                "command": "copy",
+                "payload": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "selectionStart": 0,
+                "selectionEnd": 269
+              },
+              {
+                "command": "copy",
+                "payload": "$env:SALAH_WIDGET_HASH='lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex",
+                "selectionStart": 0,
+                "selectionEnd": 181
+              }
+            ],
+            "errors": [],
+            "storageEvents": []
+          },
+          "fontStatus": "settled",
+          "screenshot": "18-absent-clipboard-true-fallback.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/18-absent-clipboard-true-fallback.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/18-absent-clipboard-true-fallback.png",
+        "screenshotSha256": "6a692a043b3f2467695f62491d698859609e248ce97a4e604672d531b92cb905",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      }
+    },
+    "reconciliationReceipt": "native-reconciliation.json",
+    "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-reconciliation.json",
+    "scope": "Required native bridge",
+    "harnessRepairsAndRetainedCounterexamples": {
+      "repairs": [
+        "CSP string eval rejected: bounded browser-protocol evaluate(function) polling; unchanged CSP without unsafe-eval.",
+        "Idless Settings footer anchors: native element handles and exact activeElement identity; no assigned ids/production DOM mutation.",
+        "builder.html19 text-transform uppercase: keep raw+rendered text, normalize letter case only; require manual failure and reject copied/checkmark success."
+      ],
+      "failures": [
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-all-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-all-primary/results.json",
+          "name": "15-settings-display-close-session",
+          "error": "Page.wait_for_function: EvalError: Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:\".\n\n    at eval (<anonymous>)\n    at predicate (eval at evaluate (:290:30), <anonymous>:4:56)\n    at next (eval at evaluate (:290:30), <anonymous>:29:29)",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        },
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+          "name": "15-settings-display-close-session",
+          "error": "Locator.focus: Unexpected token \"#\" while parsing css selector \"#\". Did you mean to CSS.escape it?\nCall log:\n  - waiting for #\n",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        },
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+          "name": "18-denied-copy-responsive-Windows-payload",
+          "error": "copy truthful failure: 'COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.'",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        },
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+          "name": "18-success-then-failure-old-timers",
+          "error": "copy truthful failure: 'COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.'",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        }
+      ]
+    },
+    "limitations": [
+      "Synthetic service/GPS/clipboard doubles do not prove real provider/clipboard permissions or native installer execution.",
+      "Original fallback fonts and fixed synthetic UTC epoch are disclosed; no science or production-font requalification.",
+      "No native denied-storage/iframe permission matrix or selected local preference matrix claimed for conclusively open documentation issues.",
+      "Evidence URLs use AUDIT_EVIDENCE_COMMIT placeholder until primary publishes, verifies and substitutes immutable public evidence identity."
+    ]
+  },
+  "publicEvidenceURLState": "AUDIT_EVIDENCE_COMMIT_PLACEHOLDER_MUST_BE_REPLACED_BEFORE_PUBLICATION",
+  "primaryReconciliation": {
+    "status": "ACCEPTED_BY_PRIMARY",
+    "basis": "Primary explicitly reviewed and accepted all51 closure rows for15/18/31 plus exact native receipts/crops;16/17/35 retained open for conclusively verified specific documentation/remaining consumer gaps.",
+    "externalHumanApprovalClaimed": false
+  }
+}

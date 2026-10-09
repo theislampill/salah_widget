@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:31.321829+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/13",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/13/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/13/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/13/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/13",
+    "id": 5381805971,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfXkw",
+    "number": 13,
+    "title": "R000D: Ensure stalled weather requests and radar images release their owned refresh attempts",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:29Z",
+    "updated_at": "2026-09-08T06:24:54Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-013 -->\n# R000D: Ensure stalled weather requests and radar images release their owned refresh attempts\n\n**Repository-local identity:** `R000D` in `theislampill/salah_widget`; existing tracker [#13](https://github.com/theislampill/salah_widget/issues/13). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-013. Proposed priority P2; product defect. W005 owns bounded lifetime and resource cleanup of the existing weather/radar attempts. It consumes [R0003](https://github.com/theislampill/salah_widget/issues/3) request ownership; it does not introduce a scheduler or choose a new weather provider.\n\n## The blocked refresh sequence\n\nBoth preserved source trees set `wxBusy`/`radarBusy` before awaiting external work and clear them only in `finally`. If the await never settles, later calls return at the busy guard forever. Advancing the application clock or having a refresh loop is insufficient: the loop reaches a guard that cannot clear itself.\n\nThe 7 September 2026 Node VM run bound main `fd2972ba64225fe9d6848e92497e6d0ed20ea624` and candidate `9d9c43649748555afbe09e3ca49bc47db2d7e7bb` and recorded:\n\n| Saved controlled sequence | Historical result on both trees |\n|---|---|\n| Fetch promises for weather and radar never resolve/reject; advance fake `Date.now` 24 hours; call both again | Two fetch calls total, one per source; `wxBusy=true,radarBusy=true` |\n| Radar manifest resolves, created Image never calls load/error; advance fake clock 24 hours and retry | One manifest call, one image, `radarBusy=true` |\n| Normal image `onerror` | `radarBusy=false` and radar contribution zero |\n| Ordinary failed weather request | `finally` releases busy; failure does not renew data |\n\nThe fake clock advance is not a claim that a native browser hung for 24 hours. The saved probe does **not** contain a separately executed hung-JSON-body case. That path is source-inferred because the same unbounded function awaits `r.json()`; it must get its own future fixture below. This correction limits the earlier wording “headers/body/image” without weakening the body-lifetime requirement.\n\nThe source also demonstrates why blind clearing is unsafe. In the preserved ownership probe, a pending Madinah Celsius request completes after configuration changes to London Fahrenheit; the replacement request is blocked, then the old 20°C value is persisted under `salahwx:51.48|-0.001|f`. A held old radar image can restore 4.3 after the location reset. These W004 outputs belong to [R0003](https://github.com/theislampill/salah_widget/issues/3) and are an interface reason for this repair, not a second claim to own stale-response rejection.\n\nRead [weather acquisition](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L771-L801), [radar manifest and Image acquisition](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L816-L840), [reset](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2157-L2163), and [existing render-loop refresh call](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2256). [Candidate acquisition](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L785-L854) shares the causal waits.\n\n## Re-anchor and obtain the RED evidence\n\nBefore editing an authorized checkout, bind `git --no-optional-locks rev-parse --show-toplevel`, `rev-parse HEAD` and `status --short`; inspect `git --no-optional-locks diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- index.html tests/smoke.html README.md`. Read only relevant changed functions and stop on incompatible attempt/reset interfaces. Candidate presence is not authority to merge it.\n\nUse actual source functions in an isolated fixture, with controlled fetch, Image, canvas, storage and wall clock. Set `NOW=Date.parse(\"2026-09-07T21:00:00Z\")`, `lat=24.47,lon=39.61,units=\"c\",tz=\"UTC\",SIM.wx=null,ADVANCING=false`. Use these externally observable doubles:\n\n```js\n// Headers never arrive:\nfetch = () => new Promise(() => {});\n\n// Headers arrive, JSON body never finishes (new required case):\nfetch = async () => ({\n  ok: true, status: 200, json: () => new Promise(() => {})\n});\n\n// Tile remains pending: retain the object but call neither handler.\nclass HeldImage {\n  set src(value) { this.requestedURL = value; heldImages.push(this); }\n}\n```\n\nFor the tile case first resolve status-200 manifest JSON `{generated:NOW/1000,host:\"https://tilecache.rainviewer.com\",radar:{past:[{time:NOW/1000,path:\"/v2/radar/\"+NOW/1000}]}}`. Start the actual functions without awaiting their hung promise, flush microtasks, advance only the clock 24 hours, then call again. The historical RED is the table above. A fake clock which changes `Date.now` but never dispatches timers cannot verify the future deadline: the repaired fixture must control timers as well as promise queues and advance both deterministically.\n\n## Ordered lifetime design\n\n1. **Use the existing owner, then attach a lifetime.** Agree the attempt context supplied by [R0003](https://github.com/theislampill/salah_widget/issues/3): captured configuration/generation, a per-source attempt identity, and a predicate identifying the active owner. These are interface requirements, not names of preexisting functions. Install an attempt in its source's slot before dispatch, so a synchronous failure still owns its cleanup. Busy is derived from that live slot or maintained consistently with it. Never create a separate timer-generation system that can disagree with the configuration generation.\n\n2. **Set named stage bounds.** Use a proposed `10_000 ms` fetch-and-body bound for weather, another `10_000 ms` fetch-and-body bound for the radar manifest, and `10_000 ms` for the tile Image stage beginning when its source is assigned. Thus weather has at most 10 seconds of application wait; radar manifest plus image has at most 20 seconds, not an unbounded timer reset during progress. These are proposed recovery policy constants, not measured provider guarantees. Retain the existing weather minimum retry spacing of 60 seconds, accepted-current/track shortcut of 15 minutes, radar refresh spacing of 10 minutes, and existing approximately 30-second render-loop opportunity to call the self-throttled functions.\n\n3. **Bound the awaited operation itself.** A timeout callback must terminalize the wrapper and release its owner even if fetch or its body ignores abort. Race the entire fetch-plus-`json()` operation against a deadline promise; keep the same timer through headers and body. AbortController is best-effort transport cleanup, not the proof that the promise settles. Observe losing promise rejection so late abort/body errors do not become unhandled rejections. Check the absolute deadline and ownership again before committing; timer delivery may be delayed by a suspended tab.\n\n4. **Make settlement exactly once.** For weather, success/error/timeout/cancel converge on an idempotent finalizer that clears its timer, removes listeners and clears only the slot still owned by that attempt. On timeout mark the attempt terminal before aborting, because abort may synchronously trigger another completion path. Every late success checks terminal state and ownership before touching weather, elevation, track, cache or accepted timestamps. A stale `finally{wxBusy=false}` is forbidden: it can clear a successor's slot even when stale data was correctly rejected.\n\n5. **Cover the Image independently.** Create and retain the Image within the radar attempt. Both handlers, decode/canvas exceptions, timeout and cancellation use one settlement routine. After settlement clear the image timer and detach `onload`/`onerror`. Best-effort stop/clear the image source only in a way verified not to issue a new request in the target browser; detaching handlers alone must not be described as physically cancelling an in-flight network download. A retained old callback invoked after timeout must be harmless. Canvas read failure remains unavailable evidence. The existing error path produces zero; normal load/error must continue to settle without waiting for the deadline.\n\n6. **Preserve eligibility, not false recovery.** The deadline releases an owned slot and records an inspectable reason such as fetch timeout, body timeout or image timeout; it does not mark provider data fresh or assert clear weather. Keep old data only under [R000B](https://github.com/theislampill/salah_widget/issues/11) source/consumption validity. For unchanged configuration, the next existing eligible poll may retry; no immediate retry loop or new global interval. Configuration supersession can cancel the old attempt and permit the new one under [R0003](https://github.com/theislampill/salah_widget/issues/3)'s reset contract. Distinguish successful new acquisition from merely releasing a busy flag.\n\nThe intermediate states are directly testable: `active(owner,deadline)`; `terminal(timeout|error|cancel)` with owner released; `new-active(newOwner)`; `success(newOwner)` with admitted data. These labels describe a minimal lifecycle, not a proposed exported class or persisted queue.\n\nA bare `AbortController` still depends on the transport/body honouring cancellation. `Promise.race` without cleanup leaves handlers/timers and late writes alive. Clearing the timer after headers misses the body hang. Resetting busy from any finalizer violates ownership. Clearing busy on every render would allow duplicate requests and discard the existing throttle. A provider-wide download manager would add more scope than the two fetch/body paths and one Image require.\n\n## Required deadline, ownership and consumer matrix\n\nThe following tests are future acceptance; only the saved header-fetch and tile-hang REDs above were executed historically.\n\n| Case in controlled clock/timer fixture | Expected result |\n|---|---|\n| Hang weather headers; separately hang weather JSON body | Own busy true at 9,999 ms; terminal at 10,000 ms plus microtask flush; no commit |\n| Hang radar manifest headers; separately hang manifest body | No image created; radar attempt terminal at 10,000 ms |\n| Manifest succeeds immediately, image hangs | One image; terminal at image deadline; handlers detached |\n| Manifest completes at 9,999 ms, image at 9,999 ms into its stage | Healthy owned success before 20-second combined maximum; no timer left |\n| Resolve a stage after its absolute deadline before delayed timer callback runs | Reject late commit even if browser scheduling delayed timeout |\n| Ordinary rejected fetch, malformed JSON, image error, canvas read exception | Terminal once, timer/listeners removed, unavailable evidence; no unhandled rejection |\n| Healthy current/hourly payload and healthy image within deadlines | Accepted once under existing admission/semantic policy; slot released |\n| Deadline expires, clock reaches existing retry eligibility, healthy replacement arrives | A new dispatch occurs and real state recovers; retry is not claimed at 10 seconds merely because slot is free |\n| Config A cancelled, config B is active, then A timeout/finally/load/rejection fires | B stays busy and owns state/cache; A cannot commit or clear B |\n| A succeeds just before deadline, then stale timeout callback fires | Exactly one success; no rollback of its state or clearing a newer owner |\n| SIM weather or ADVANCING scheduling control | Existing suppression remains; no new timer/polling subsystem |\n\nFor weather retry, use the initial attempt's existing `lastWxTry`: after timeout at 10 seconds, no new call before 60 seconds since that attempt; at the next eligible existing poll a healthy fetch may proceed. For radar, maintain `lastRadarAt` and the 10-minute interval unless configuration supersession explicitly resets it. This issue removes permanent blocking, not normal bounded backoff.\n\nUse isolated mutation controls: remove the body from the raced operation, remove owner-check from cleanup, and omit image timeout in separate variants. Each corresponding case must turn RED. Count active timers and handlers, but also assert installed state, captured cache key, next-call eligibility and late-callback rejection. A helper tested without the production call sites is not evidence.\n\nIn a disposable browser origin, hold one request/image, permit the application timeout, then release a healthy eligible replacement. Capture actual weather chip/`data-fx` and network attempt identity; distinguish timeout, slot release and successful consumer recovery. No claim of native cancellation, memory recovery, offline capability or live provider health follows from a Node double. Preserve fixed 325×530 layout, readable header/footer and existing motion/opaque-moon behavior; do not add a status overlay that changes the stack.\n\n## Shared work, rollback and closure\n\nThe existing interface edge [R0003](https://github.com/theislampill/salah_widget/issues/3) → this owner remains. Serially integrate shared acquisition hunks with [R000B](https://github.com/theislampill/salah_widget/issues/11), [R000C](https://github.com/theislampill/salah_widget/issues/12), [R000E](https://github.com/theislampill/salah_widget/issues/14) and [R001E](https://github.com/theislampill/salah_widget/issues/30). Admission and freshness failures may use this terminal path but keep their own invariants. Existing document lifecycle/render-loop cancellation is retained counterevidence; this issue does not redesign scheduling.\n\nUpdate [README](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/README.md) and diagnostic descriptions only to state bounded application waits and existing retry opportunities. Browser suspension can delay timer callbacks; immediate wall-clock recovery while JavaScript is suspended is not promised. No builder preference, dependency, persisted queue, installer, preset or generated output is needed.\n\nRollback lifetime/finalizer edits together if healthy completion regresses; never leave new attempt identities with old unconditional busy clears. Preserve explicit unavailable behavior and recorded failed cases. Stop on missing ownership contract or inability to test delayed/late callbacks; serialize partial state such as “fetch bounded, body still unbounded” as incomplete. DONE requires exact integrated RED→GREEN/control evidence, independent review of timeout/cleanup races, and an evidence comment before manual closure. Use non-closing `Implements #N`. Public recovery claims additionally require matching served source and real consumer readback; otherwise report not deployed.\n\nSupplementary companion `basis/finding-records/SW-013.json` has SHA256 `653d3ae81daa7d9d2edaa4b312c12c4e339e83eee9e68c2ba557526bbcc11a3a`. It preserves W005 and the limits above; this author's prose is not independent PASS.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/13/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/13/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733532053,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfXk88AAAAHJ9x7lQ",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733532053",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:54Z",
+      "rename": {
+        "from": "SW-013: Ensure stalled weather requests and radar images release their owned refresh attempts",
+        "to": "R000D: Ensure stalled weather requests and radar images release their owned refresh attempts"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R000D",
+    "bodySha256": "08eafbfcd121aa53f380d0522041a16a388ac46777d9154aa013a3394864e863",
+    "updatedAt": "2026-09-08T06:24:54Z",
+    "commentRevisions": []
+  }
+}

@@ -1,0 +1,2362 @@
+{
+  "schema": "calendar-browser-offline-reconciliation/1",
+  "status": "PASS FOR R0005 REQUIRED CONSUMERS",
+  "executionOwner": "primary; worker only read/hashed/inspected retained output",
+  "targetCommit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+  "rawReceiptSha256": "d256fdfc4e796696fa540cf480acd49e0e2b91fe7d88bfd087b2853febb07649",
+  "driverSha256": "557616a98a30c70b6c724d0d09c551df760526f1f7da641ca0a8f07e2113ce78",
+  "adapterSha256": "70a1e3069443a9bb6196f99056a262d85100ec7e5ec94397470e11074778204b",
+  "positiveCases": 3,
+  "mutantsWithOriginalOracleFailure": 3,
+  "capturesVerified": 24,
+  "reviewerAImagesInspected": [
+    "completed-offline/before.png",
+    "completed-offline/after.png",
+    "late-duplicate/next-maghrib.png",
+    "late-rescue-hidden/hidden-adoption.png",
+    "late-rescue-hidden/first-resumed-frame.png",
+    "no-dirty-control/first-resumed-frame.png"
+  ],
+  "visualFinding": "Actual date/prayer/footer output readable inside325x530. Offline AH20 held across midnight; hidden unavailable state replaced by CE2026-09-08/AH20 at first resumed native paint; dirty mutant retains unavailable output. All inspected frames show explicit optional-sky refining status; these short fixed-clock probes are not fresh lunar physics or motion qualification.",
+  "observations": [
+    {
+      "name": "completed-offline",
+      "status": "PASS",
+      "error": null,
+      "browser": {
+        "family": "chromium",
+        "version": "148.0.7778.96",
+        "os": "Windows",
+        "machine": "AMD64",
+        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+        "chromiumSandboxRequested": true
+      },
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "fixtureSha256": "abc6ef795bf43650d69e12137beefe1de4b387da104b1d06e72a18f69c4a2ede",
+      "mutantSourceSha256": null,
+      "realSeconds": 1.2339999999967404,
+      "states": [
+        {
+          "stage": "before",
+          "state": {
+            "utcMs": 1788825599000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": {
+              "date": "08-09-2026",
+              "tag": "day8-old"
+            },
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-07CE",
+            "ah": "ه1448-02-20",
+            "countdown": "5h 0m left until Fajr",
+            "slots": {
+              "current": null,
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "tomorrow",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825599000,
+              "generation": 0,
+              "acceptedDay": "07-09-2026",
+              "today": {
+                "date": "07-09-2026",
+                "tag": "day7"
+              },
+              "tomorrow": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-07CE",
+              "ah": "Sunset date update unavailable ه1448-02-19",
+              "countdown": "Countdown unavailable",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "07-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "after",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-old"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-20",
+            "countdown": "4h 59m left until Fajr",
+            "slots": {
+              "current": null,
+              "prefetch": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "09-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "09-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "c74e772cf55a1105eadd16cf81350623f399c3da7dea71b193e531e21bb3aa1d"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825599000,
+              "generation": 0,
+              "acceptedDay": "07-09-2026",
+              "today": {
+                "date": "07-09-2026",
+                "tag": "day7"
+              },
+              "tomorrow": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-07CE",
+              "ah": "Sunset date update unavailable ه1448-02-19",
+              "countdown": "Countdown unavailable",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "07-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "terminal",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-old"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-20",
+            "countdown": "4h 59m left until Fajr",
+            "slots": {
+              "current": null,
+              "prefetch": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "09-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "09-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "c74e772cf55a1105eadd16cf81350623f399c3da7dea71b193e531e21bb3aa1d"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825599000,
+              "generation": 0,
+              "acceptedDay": "07-09-2026",
+              "today": {
+                "date": "07-09-2026",
+                "tag": "day7"
+              },
+              "tomorrow": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-07CE",
+              "ah": "Sunset date update unavailable ه1448-02-19",
+              "countdown": "Countdown unavailable",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "07-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        }
+      ],
+      "captures": [
+        {
+          "stage": "before",
+          "path": "before.png",
+          "sha256": "3f8d2b0b3b7690fc3d94c0adb25c990c9f2177a4f993d165232a0507593daefd",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "after",
+          "path": "after.png",
+          "sha256": "b418eaf5e69ea30c9156dd0a0b431b3027968adf56c17c60fb0fa8ea97644863",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "terminal",
+          "path": "terminal.png",
+          "sha256": "b418eaf5e69ea30c9156dd0a0b431b3027968adf56c17c60fb0fa8ea97644863",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        }
+      ]
+    },
+    {
+      "name": "late-duplicate",
+      "status": "PASS",
+      "error": null,
+      "browser": {
+        "family": "chromium",
+        "version": "148.0.7778.96",
+        "os": "Windows",
+        "machine": "AMD64",
+        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+        "chromiumSandboxRequested": true
+      },
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "fixtureSha256": "930c5166e95dd0f25c449f4c12de2095fddcf6448732785a7361d1d4bb15c000",
+      "mutantSourceSha256": null,
+      "realSeconds": 1.0469999999913853,
+      "states": [
+        {
+          "stage": "before",
+          "state": {
+            "utcMs": 1788825599000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-07CE",
+            "ah": "Sunset date update unavailable ه1448-02-19",
+            "countdown": "Countdown unavailable",
+            "slots": {
+              "current": null,
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "07-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "midnight-stale",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": true,
+            "dirty": false,
+            "rows": 6,
+            "ce": "Gregorian date unavailable",
+            "ah": "stale Hijri date unavailable",
+            "countdown": "Prayer times unavailable",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": null,
+            "selectedSource": null,
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "winner",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-winner"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-20",
+            "countdown": "4h 59m left until Fajr",
+            "slots": {
+              "current": null,
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "8cad85038c8f5e72135e03dade9c0045a1b9e129ae27a3c880eeb90d99ef7a03"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "late-release",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-winner"
+            },
+            "tomorrow": {
+              "date": "09-09-2026",
+              "tag": "day9"
+            },
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-20 | 🌘 21",
+            "countdown": "4h 59m left until Fajr",
+            "slots": {
+              "current": null,
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026",
+              "09-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "8cad85038c8f5e72135e03dade9c0045a1b9e129ae27a3c880eeb90d99ef7a03"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": null,
+              "stale": false,
+              "dirty": false,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            },
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": {
+                "date": "09-09-2026",
+                "tag": "day9"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 4,
+                  "generation": 0,
+                  "requestedDay": "09-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026",
+                "09-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "next-maghrib",
+          "state": {
+            "utcMs": 1788890460000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-winner"
+            },
+            "tomorrow": {
+              "date": "09-09-2026",
+              "tag": "day9"
+            },
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-21",
+            "countdown": "1h 29m left until Isha",
+            "slots": {
+              "current": null,
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "09-09-2026",
+            "selectedSource": "tomorrow",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026",
+              "09-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "8cad85038c8f5e72135e03dade9c0045a1b9e129ae27a3c880eeb90d99ef7a03"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": null,
+              "stale": false,
+              "dirty": false,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            },
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": {
+                "date": "09-09-2026",
+                "tag": "day9"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 4,
+                  "generation": 0,
+                  "requestedDay": "09-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026",
+                "09-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "terminal",
+          "state": {
+            "utcMs": 1788890460000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-winner"
+            },
+            "tomorrow": {
+              "date": "09-09-2026",
+              "tag": "day9"
+            },
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-21",
+            "countdown": "1h 29m left until Isha",
+            "slots": {
+              "current": null,
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "09-09-2026",
+            "selectedSource": "tomorrow",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026",
+              "09-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "8cad85038c8f5e72135e03dade9c0045a1b9e129ae27a3c880eeb90d99ef7a03"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": null,
+              "stale": false,
+              "dirty": false,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            },
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": {
+                "date": "09-09-2026",
+                "tag": "day9"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 4,
+                  "generation": 0,
+                  "requestedDay": "09-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026",
+                "09-09-2026"
+              ]
+            }
+          ]
+        }
+      ],
+      "captures": [
+        {
+          "stage": "before",
+          "path": "before.png",
+          "sha256": "ff0ca2d81af0f79bec2a75ef5a3e3372e099b79be15ae16092f1ffc10830813e",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "winner",
+          "path": "winner.png",
+          "sha256": "b418eaf5e69ea30c9156dd0a0b431b3027968adf56c17c60fb0fa8ea97644863",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "late-release",
+          "path": "late-release.png",
+          "sha256": "09ddc6302e936eecdf80ee89ce0353dab102405fce40e490fb6f0646ec74f2ac",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "next-maghrib",
+          "path": "next-maghrib.png",
+          "sha256": "3716d802dec0532c8bd72fb8e4cf1ec0a6c00c08fd90f3847e305f964f97e75a",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "terminal",
+          "path": "terminal.png",
+          "sha256": "86f3ac82d98d61e80e4f8e0df0bf3e44954fe4fbeb205351e9b9422f85c00b7a",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        }
+      ]
+    },
+    {
+      "name": "late-rescue-hidden",
+      "status": "PASS",
+      "error": null,
+      "browser": {
+        "family": "chromium",
+        "version": "148.0.7778.96",
+        "os": "Windows",
+        "machine": "AMD64",
+        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+        "chromiumSandboxRequested": true
+      },
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "fixtureSha256": "0975e282748be3838da06f9fb97b75d7a398ff97ba6aecd1c43f7a58ee7938cf",
+      "mutantSourceSha256": null,
+      "realSeconds": 0.875,
+      "states": [
+        {
+          "stage": "before",
+          "state": {
+            "utcMs": 1788825599000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-07CE",
+            "ah": "Sunset date update unavailable ه1448-02-19",
+            "countdown": "Countdown unavailable",
+            "slots": {
+              "current": null,
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "07-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "midnight-stale",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": true,
+            "dirty": false,
+            "rows": 6,
+            "ce": "Gregorian date unavailable",
+            "ah": "stale Hijri date unavailable",
+            "countdown": "Prayer times unavailable",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": null,
+            "selectedSource": null,
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "hidden-adoption",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-old"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": true,
+            "rows": 6,
+            "ce": "Gregorian date unavailable",
+            "ah": "stale Hijri date unavailable",
+            "countdown": "Prayer times unavailable",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": null,
+            "selectedSource": null,
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "c74e772cf55a1105eadd16cf81350623f399c3da7dea71b193e531e21bb3aa1d"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "tomorrow": null,
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "Gregorian date unavailable",
+              "ah": "stale Hijri date unavailable",
+              "countdown": "Prayer times unavailable",
+              "slots": {
+                "current": {
+                  "operationId": 3,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": null,
+              "selectedSource": null,
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "first-resumed-frame",
+          "state": null,
+          "first": {
+            "utcMs": 1788825601000,
+            "index": 4,
+            "paint": {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "tomorrow": null,
+              "stale": false,
+              "dirty": false,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": {
+                  "operationId": 3,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "prefetch": {
+                  "operationId": 4,
+                  "generation": 0,
+                  "requestedDay": "09-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026",
+                "09-09-2026"
+              ]
+            }
+          },
+          "prayerCaches": null
+        },
+        {
+          "stage": "twenty-more-frames",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-old"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-20",
+            "countdown": "4h 59m left until Fajr",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": {
+                "operationId": 4,
+                "generation": 0,
+                "requestedDay": "09-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026",
+              "09-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "c74e772cf55a1105eadd16cf81350623f399c3da7dea71b193e531e21bb3aa1d"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "tomorrow": null,
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "Gregorian date unavailable",
+              "ah": "stale Hijri date unavailable",
+              "countdown": "Prayer times unavailable",
+              "slots": {
+                "current": {
+                  "operationId": 3,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": null,
+              "selectedSource": null,
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "terminal",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-old"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-20",
+            "countdown": "4h 59m left until Fajr",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": {
+                "operationId": 4,
+                "generation": 0,
+                "requestedDay": "09-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026",
+              "09-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "c74e772cf55a1105eadd16cf81350623f399c3da7dea71b193e531e21bb3aa1d"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "tomorrow": null,
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "Gregorian date unavailable",
+              "ah": "stale Hijri date unavailable",
+              "countdown": "Prayer times unavailable",
+              "slots": {
+                "current": {
+                  "operationId": 3,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": null,
+              "selectedSource": null,
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        }
+      ],
+      "captures": [
+        {
+          "stage": "before",
+          "path": "before.png",
+          "sha256": "ff0ca2d81af0f79bec2a75ef5a3e3372e099b79be15ae16092f1ffc10830813e",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "hidden-adoption",
+          "path": "hidden-adoption.png",
+          "sha256": "590cde5512f0bf014f06d49031db5520db0515655aa78cefc9f0db9329298a8b",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "first-resumed-frame",
+          "path": "first-resumed-frame.png",
+          "sha256": "b418eaf5e69ea30c9156dd0a0b431b3027968adf56c17c60fb0fa8ea97644863",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "twenty-more-frames",
+          "path": "twenty-more-frames.png",
+          "sha256": "b418eaf5e69ea30c9156dd0a0b431b3027968adf56c17c60fb0fa8ea97644863",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "terminal",
+          "path": "terminal.png",
+          "sha256": "b418eaf5e69ea30c9156dd0a0b431b3027968adf56c17c60fb0fa8ea97644863",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        }
+      ]
+    },
+    {
+      "name": "no-promotion-control",
+      "status": "EXPECTED_FAILURE",
+      "error": "promotion accepted date",
+      "browser": {
+        "family": "chromium",
+        "version": "148.0.7778.96",
+        "os": "Windows",
+        "machine": "AMD64",
+        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+        "chromiumSandboxRequested": true
+      },
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "fixtureSha256": "c4d0b8e9f6cf49c9dbec875ffe779570a5325648f6239f03cb6ede4d2119e2d0",
+      "mutantSourceSha256": "fb977602a9aa6005e1ff9415af7d29abff81c0390b1da0c0bd614b296a2dca35",
+      "realSeconds": 0.6400000000139698,
+      "states": [
+        {
+          "stage": "before",
+          "state": {
+            "utcMs": 1788825599000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": {
+              "date": "08-09-2026",
+              "tag": "day8-old"
+            },
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-07CE",
+            "ah": "ه1448-02-20",
+            "countdown": "5h 0m left until Fajr",
+            "slots": {
+              "current": null,
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "tomorrow",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825599000,
+              "generation": 0,
+              "acceptedDay": "07-09-2026",
+              "today": {
+                "date": "07-09-2026",
+                "tag": "day7"
+              },
+              "tomorrow": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-07CE",
+              "ah": "Sunset date update unavailable ه1448-02-19",
+              "countdown": "Countdown unavailable",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "07-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "after",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": true,
+            "dirty": false,
+            "rows": 6,
+            "ce": "Gregorian date unavailable",
+            "ah": "stale Hijri date unavailable",
+            "countdown": "Prayer times unavailable",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": null,
+            "selectedSource": null,
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825599000,
+              "generation": 0,
+              "acceptedDay": "07-09-2026",
+              "today": {
+                "date": "07-09-2026",
+                "tag": "day7"
+              },
+              "tomorrow": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-07CE",
+              "ah": "Sunset date update unavailable ه1448-02-19",
+              "countdown": "Countdown unavailable",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "07-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "terminal",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": true,
+            "dirty": false,
+            "rows": 6,
+            "ce": "Gregorian date unavailable",
+            "ah": "stale Hijri date unavailable",
+            "countdown": "Prayer times unavailable",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": null,
+            "selectedSource": null,
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825599000,
+              "generation": 0,
+              "acceptedDay": "07-09-2026",
+              "today": {
+                "date": "07-09-2026",
+                "tag": "day7"
+              },
+              "tomorrow": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-07CE",
+              "ah": "Sunset date update unavailable ه1448-02-19",
+              "countdown": "Countdown unavailable",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "07-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        }
+      ],
+      "captures": [
+        {
+          "stage": "before",
+          "path": "before.png",
+          "sha256": "3f8d2b0b3b7690fc3d94c0adb25c990c9f2177a4f993d165232a0507593daefd",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "after",
+          "path": "after.png",
+          "sha256": "590cde5512f0bf014f06d49031db5520db0515655aa78cefc9f0db9329298a8b",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "terminal",
+          "path": "terminal.png",
+          "sha256": "590cde5512f0bf014f06d49031db5520db0515655aa78cefc9f0db9329298a8b",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        }
+      ]
+    },
+    {
+      "name": "unconditional-next-control",
+      "status": "EXPECTED_FAILURE",
+      "error": "late callback never puts current into tomorrow",
+      "browser": {
+        "family": "chromium",
+        "version": "148.0.7778.96",
+        "os": "Windows",
+        "machine": "AMD64",
+        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+        "chromiumSandboxRequested": true
+      },
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "fixtureSha256": "b81c2f3bb0c1d43de51fdf0da728c094f8a42fe3c269dc893f54f9f5a75f8c4b",
+      "mutantSourceSha256": "37a6958474b072f6d9fe3e8a712f87d54f07410dd2c9a35fd2f98b6c088c9103",
+      "realSeconds": 0.7349999999860302,
+      "states": [
+        {
+          "stage": "before",
+          "state": {
+            "utcMs": 1788825599000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-07CE",
+            "ah": "Sunset date update unavailable ه1448-02-19",
+            "countdown": "Countdown unavailable",
+            "slots": {
+              "current": null,
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "07-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "midnight-stale",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": true,
+            "dirty": false,
+            "rows": 6,
+            "ce": "Gregorian date unavailable",
+            "ah": "stale Hijri date unavailable",
+            "countdown": "Prayer times unavailable",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": null,
+            "selectedSource": null,
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "winner",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-winner"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-20",
+            "countdown": "4h 59m left until Fajr",
+            "slots": {
+              "current": null,
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "8cad85038c8f5e72135e03dade9c0045a1b9e129ae27a3c880eeb90d99ef7a03"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "late-release",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-winner"
+            },
+            "tomorrow": {
+              "date": "09-09-2026",
+              "tag": "day9"
+            },
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-20 | 🌘 21",
+            "countdown": "4h 59m left until Fajr",
+            "slots": {
+              "current": null,
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026",
+              "09-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "8cad85038c8f5e72135e03dade9c0045a1b9e129ae27a3c880eeb90d99ef7a03"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            },
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": {
+                "date": "09-09-2026",
+                "tag": "day9"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 4,
+                  "generation": 0,
+                  "requestedDay": "09-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026",
+                "09-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "terminal",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-winner"
+            },
+            "tomorrow": {
+              "date": "09-09-2026",
+              "tag": "day9"
+            },
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-08CE",
+            "ah": "ه1448-02-20 | 🌘 21",
+            "countdown": "4h 59m left until Fajr",
+            "slots": {
+              "current": null,
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "08-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026",
+              "09-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "8cad85038c8f5e72135e03dade9c0045a1b9e129ae27a3c880eeb90d99ef7a03"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            },
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-winner"
+              },
+              "tomorrow": {
+                "date": "09-09-2026",
+                "tag": "day9"
+              },
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "2026-09-08CE",
+              "ah": "ه1448-02-20",
+              "countdown": "4h 59m left until Fajr",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "operationId": 4,
+                  "generation": 0,
+                  "requestedDay": "09-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": "08-09-2026",
+              "selectedSource": "today",
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026",
+                "09-09-2026"
+              ]
+            }
+          ]
+        }
+      ],
+      "captures": [
+        {
+          "stage": "before",
+          "path": "before.png",
+          "sha256": "ff0ca2d81af0f79bec2a75ef5a3e3372e099b79be15ae16092f1ffc10830813e",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "winner",
+          "path": "winner.png",
+          "sha256": "b418eaf5e69ea30c9156dd0a0b431b3027968adf56c17c60fb0fa8ea97644863",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "late-release",
+          "path": "late-release.png",
+          "sha256": "09ddc6302e936eecdf80ee89ce0353dab102405fce40e490fb6f0646ec74f2ac",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "terminal",
+          "path": "terminal.png",
+          "sha256": "09ddc6302e936eecdf80ee89ce0353dab102405fce40e490fb6f0646ec74f2ac",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        }
+      ]
+    },
+    {
+      "name": "no-dirty-control",
+      "status": "EXPECTED_FAILURE",
+      "error": "first resumed frame paints current",
+      "browser": {
+        "family": "chromium",
+        "version": "148.0.7778.96",
+        "os": "Windows",
+        "machine": "AMD64",
+        "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+        "chromiumSandboxRequested": true
+      },
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "fixtureSha256": "36980895075bad76cc4a6d6924d5282fb9b42c248acac7fb99e23d58c7ba5cdc",
+      "mutantSourceSha256": "8e8c52e1c6c2aae4ad10d0ace381c4cb0ae65c0afcdd8172598c60b3cd44e30f",
+      "realSeconds": 0.9070000000065193,
+      "states": [
+        {
+          "stage": "before",
+          "state": {
+            "utcMs": 1788825599000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": false,
+            "rows": 6,
+            "ce": "2026-09-07CE",
+            "ah": "Sunset date update unavailable ه1448-02-19",
+            "countdown": "Countdown unavailable",
+            "slots": {
+              "current": null,
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": "07-09-2026",
+            "selectedSource": "today",
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "midnight-stale",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "07-09-2026",
+            "today": {
+              "date": "07-09-2026",
+              "tag": "day7"
+            },
+            "tomorrow": null,
+            "stale": true,
+            "dirty": false,
+            "rows": 6,
+            "ce": "Gregorian date unavailable",
+            "ah": "stale Hijri date unavailable",
+            "countdown": "Prayer times unavailable",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": {
+                "operationId": 2,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": null,
+            "selectedSource": null,
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "07-09-2026",
+              "bytesSha256": "acc1314dc9e1fc7469a3c0cdde8cc53d7be5f7368136cda8e905fcdef3ac41ed"
+            }
+          ],
+          "settlements": []
+        },
+        {
+          "stage": "hidden-adoption",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-old"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": true,
+            "rows": 6,
+            "ce": "Gregorian date unavailable",
+            "ah": "stale Hijri date unavailable",
+            "countdown": "Prayer times unavailable",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": null,
+            "selectedSource": null,
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "c74e772cf55a1105eadd16cf81350623f399c3da7dea71b193e531e21bb3aa1d"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "tomorrow": null,
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "Gregorian date unavailable",
+              "ah": "stale Hijri date unavailable",
+              "countdown": "Prayer times unavailable",
+              "slots": {
+                "current": {
+                  "operationId": 3,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": null,
+              "selectedSource": null,
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        },
+        {
+          "stage": "first-resumed-frame",
+          "state": null,
+          "first": {
+            "utcMs": 1788825601000,
+            "index": 4,
+            "paint": null
+          },
+          "prayerCaches": null
+        },
+        {
+          "stage": "terminal",
+          "state": {
+            "utcMs": 1788825601000,
+            "generation": 0,
+            "acceptedDay": "08-09-2026",
+            "today": {
+              "date": "08-09-2026",
+              "tag": "day8-old"
+            },
+            "tomorrow": null,
+            "stale": false,
+            "dirty": true,
+            "rows": 6,
+            "ce": "Gregorian date unavailable",
+            "ah": "stale Hijri date unavailable",
+            "countdown": "Prayer times unavailable",
+            "slots": {
+              "current": {
+                "operationId": 3,
+                "generation": 0,
+                "requestedDay": "08-09-2026"
+              },
+              "prefetch": null,
+              "weather": null,
+              "radar": null
+            },
+            "selectedGregorianDay": null,
+            "selectedSource": null,
+            "prayerRequestDates": [
+              "07-09-2026",
+              "08-09-2026",
+              "08-09-2026"
+            ]
+          },
+          "first": null,
+          "prayerCaches": [
+            {
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "date": "08-09-2026",
+              "bytesSha256": "c74e772cf55a1105eadd16cf81350623f399c3da7dea71b193e531e21bb3aa1d"
+            }
+          ],
+          "settlements": [
+            {
+              "utcMs": 1788825601000,
+              "generation": 0,
+              "acceptedDay": "08-09-2026",
+              "today": {
+                "date": "08-09-2026",
+                "tag": "day8-old"
+              },
+              "tomorrow": null,
+              "stale": false,
+              "dirty": true,
+              "rows": 6,
+              "ce": "Gregorian date unavailable",
+              "ah": "stale Hijri date unavailable",
+              "countdown": "Prayer times unavailable",
+              "slots": {
+                "current": {
+                  "operationId": 3,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "prefetch": {
+                  "operationId": 2,
+                  "generation": 0,
+                  "requestedDay": "08-09-2026"
+                },
+                "weather": null,
+                "radar": null
+              },
+              "selectedGregorianDay": null,
+              "selectedSource": null,
+              "prayerRequestDates": [
+                "07-09-2026",
+                "08-09-2026",
+                "08-09-2026"
+              ]
+            }
+          ]
+        }
+      ],
+      "captures": [
+        {
+          "stage": "before",
+          "path": "before.png",
+          "sha256": "ff0ca2d81af0f79bec2a75ef5a3e3372e099b79be15ae16092f1ffc10830813e",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "hidden-adoption",
+          "path": "hidden-adoption.png",
+          "sha256": "590cde5512f0bf014f06d49031db5520db0515655aa78cefc9f0db9329298a8b",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "first-resumed-frame",
+          "path": "first-resumed-frame.png",
+          "sha256": "590cde5512f0bf014f06d49031db5520db0515655aa78cefc9f0db9329298a8b",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        },
+        {
+          "stage": "terminal",
+          "path": "terminal.png",
+          "sha256": "590cde5512f0bf014f06d49031db5520db0515655aa78cefc9f0db9329298a8b",
+          "scope": "Actual 325x530 product card including header/prayers/footer; controlled fixture input, no terrain-ready wait",
+          "width": 325,
+          "height": 530
+        }
+      ]
+    }
+  ],
+  "publicProof": "Necessary exact inputs, release order, first-render/slot/cache/date outcomes and mutant failures are suitable for inline comment receipts. Actual retained captures must accompany the approved evidence presentation if image proof is published; no nonexistent public image URL is invented.",
+  "limitations": [
+    "Injected document visibility event, not OS-hidden-tab proof",
+    "Fixed synthetic UTC calendar/provider values, not a calendar convention claim",
+    "Transparent prefetch settlement observer adds one microtask before existing cleanup; never directly renders or changes data",
+    "No optional terrain-ready wait; Moon/motion preservation inherits unchanged qualified owners and separate exact-source public baseline",
+    "No R0003 deferred settings/weather/radar/browser proof is inferred from R0005"
+  ]
+}

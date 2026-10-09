@@ -1,0 +1,623 @@
+{
+  "schema": "rlgwo-delivered-issue-assessment/1",
+  "worker": "B",
+  "issueNumber": 32,
+  "canonicalId": "R0020",
+  "title": "R0020: Make default real-time mode follow device wall-clock corrections",
+  "issueUrl": "https://github.com/theislampill/salah_widget/issues/32",
+  "originalBodySha256": "5996e99716e206c19053d0a8eac38d5d38e29d4d4fbffb53e846e49670e8cb52",
+  "originalUpdatedAt": "2026-09-08T06:25:37Z",
+  "packetCapturedAtUtc": "2026-10-09T00:41:33.499822+00:00",
+  "commentRevisions": [],
+  "amendments": [],
+  "requestedConfiguration": {
+    "model": "gpt-6.1-sol",
+    "reasoningEffort": "max"
+  },
+  "effectiveConfigurationConfirmation": {
+    "status": "CONFIRMED_LOCAL_CLIENT",
+    "confirmationKind": "supported spawn configuration plus local recorded turn_context; not independent hardware/backend attestation",
+    "sessionId": "01a11e26-069a-7591-9db6-f6a3d122fd11",
+    "agentPath": "/root/rlgwo_b",
+    "recordedTurns": [
+      {
+        "turn_id": "01a11e26-077a-7b32-a6dc-a8fc8e27c2a8",
+        "model": "gpt-6.1-sol",
+        "effort": "max",
+        "collaboration_mode": {
+          "mode": "default",
+          "settings": {
+            "model": "gpt-6.1-sol",
+            "reasoning_effort": "max",
+            "developer_instructions": null
+          }
+        }
+      },
+      {
+        "turn_id": "01a11e41-3b94-7c40-b1fd-dc399a9ee560",
+        "model": "gpt-6.1-sol",
+        "effort": "max",
+        "collaboration_mode": {
+          "mode": "default",
+          "settings": {
+            "model": "gpt-6.1-sol",
+            "reasoning_effort": "max",
+            "developer_instructions": null
+          }
+        }
+      }
+    ],
+    "receipt": "reviewer-model-settings.json",
+    "boundary": "Local recorded client turn_context and supported spawn configuration; no independent hardware/backend attestation."
+  },
+  "target": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "runtimeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "rootIndexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "date": "2026-10-08"
+  },
+  "custody": {
+    "sourceWorktree": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+    "observedHead": "4bccdf43363926c3077f60de87e5617ccb9abcb9",
+    "clean": true,
+    "targetTreeEqualsReviewedHead": true,
+    "generatedOwner": "tools/build_native.py",
+    "authoredOwner": "src/native/index.html and src/native/config.js",
+    "sourceUnmodified": true,
+    "publicDeliveryBaseline": {
+      "status": "DELIVERED_VERIFIED",
+      "verifiedAt": "2026-10-09T01:34:55.876184+00:00",
+      "pagesBuild": "https://api.github.com/repos/theislampill/salah_widget/pages/builds/1270547036",
+      "pagesCommit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "publicBrowserCases": 16,
+      "origin": "Primary release.json readback; no independently executed worker browser/public-write effect",
+      "publicDocumentDistribution": "public-document-distribution.json:16 raw/Pages responses HTTP200 and exact byte hashes"
+    }
+  },
+  "scopeOfDone": "Exact-target source and executed/reused evidence reviewed; primary Astra reconciled every binding row and the stated verdict. Completed native controls remain scoped; open gaps are retained precisely.",
+  "fullRequirementMatrix": [
+    {
+      "contractReference": "Authority predicate",
+      "mandatory": true,
+      "obligation": "Ordinary no-sim/no-scale mode returns current Date.now on every simNow call before anchor/zone reinit; explicit1x keeps anchored preview/ADVANCING compatibility.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 858,
+        "end": 869,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L858-L869"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 2982,
+        "end": 2993,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L2982-L2993"
+      },
+      "discriminator": {
+        "path": "tests/r0020-clock.cjs",
+        "start": 7,
+        "end": 16,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0020-clock.cjs#L7-L16"
+      },
+      "expected": "0,+/-1 h,+/-2 h wall steps observed immediately; zone changes affect display only; simDate/nowParts share same current instant.",
+      "observed": "Fresh default5 step cases pass; Kathmandu reformat does not reanchor current epoch.",
+      "disposition": "satisfied",
+      "id": "R0020-O01"
+    },
+    {
+      "contractReference": "Single temporal API",
+      "mandatory": true,
+      "obligation": "nowParts/simDate/model/prayer/day/sky use same simNow authority; do not fix only clock text or add separate clocks/rAF.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 942,
+        "end": 969,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L942-L969"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3066,
+        "end": 3093,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3066-L3093"
+      },
+      "discriminator": {
+        "path": "tests/r0020-clock.cjs",
+        "start": 7,
+        "end": 16,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0020-clock.cjs#L7-L16"
+      },
+      "expected": "Corrected current instant reaches actual model/parts/date consumers.",
+      "observed": "Fresh simNow/nowParts/simDate and actual prayer-model/loop cases pass; one existing rAF owner retained.",
+      "disposition": "satisfied",
+      "id": "R0020-O02"
+    },
+    {
+      "contractReference": "Explicit mode table",
+      "mandatory": true,
+      "obligation": "Explicit scale 1/60/no-sim anchor; simTime frozen or rate 1/60 independent; scale 0/empty/invalid/negative retain parsed frozen semantics.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 863,
+        "end": 947,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L863-L947"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 2987,
+        "end": 3071,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L2987-L3071"
+      },
+      "discriminator": {
+        "path": "tests/r0020-clock.cjs",
+        "start": 61,
+        "end": 75,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0020-clock.cjs#L61-L75"
+      },
+      "expected": "Each mode unchanged under +/-1 h/+/-2 h steps; actual ADVANCING flag agrees with parameter presence/rate.",
+      "observed": "Fresh36 explicit-mode controls pass; no query parser or forecast intent change.",
+      "disposition": "satisfied",
+      "id": "R0020-O03"
+    },
+    {
+      "contractReference": "Converter rejected scene",
+      "mandatory": true,
+      "obligation": "Explicit inverse invalidity cannot retain old numeric anchor; shared R0008 entry guards stay intact.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 931,
+        "end": 966,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L931-L966"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3055,
+        "end": 3090,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3055-L3090"
+      },
+      "discriminator": {
+        "path": "tests/r0008-timezone.cjs",
+        "start": 88,
+        "end": 139,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L88-L139"
+      },
+      "expected": "Invalid explicit scene unavailable before celestial/render/time use; valid recovery allowed.",
+      "observed": "Fresh R0008 validity/recovery controls pass; no blanket Date.now default branch for explicit simTime.",
+      "disposition": "satisfied",
+      "id": "R0020-O04"
+    },
+    {
+      "contractReference": "Forward/backward scheduled render",
+      "mandatory": true,
+      "obligation": "Preserve sec!==lastSec, not increasing-only; next scheduled visible render reflects either wall direction and same coherent model snapshot.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 3407,
+        "end": 3415,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3407-L3415"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 5436,
+        "end": 5444,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5436-L5444"
+      },
+      "discriminator": {
+        "path": "tests/r0020-clock.cjs",
+        "start": 18,
+        "end": 34,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0020-clock.cjs#L18-L34"
+      },
+      "expected": "15:29:59 Dhuhr/Asr ->15:30:01 Asr/Maghrib ->15:29:59 Dhuhr/Asr; backward countdown1/60 min.",
+      "observed": "Fresh actual loop/model/recording DOM boundary case passes; increasing-only mutant retains future Asr and is detected.",
+      "disposition": "satisfied",
+      "id": "R0020-O05"
+    },
+    {
+      "contractReference": "Day correction actual interface",
+      "mandatory": true,
+      "obligation": "Forward midnight adopts day-matching completed prefetch; late old request not current; backward day acquisition/reclassification preserves actual day and owning slots/cache identity.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 1129,
+        "end": 1189,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1129-L1189"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3253,
+        "end": 3318,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3253-L3318"
+      },
+      "discriminator": {
+        "path": "tests/r0005-day-return.test.cjs",
+        "start": 21,
+        "end": 105,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0005-day-return.test.cjs#L21-L105"
+      },
+      "expected": "No yesterday/future labeled current; request finally cannot clear newer owner; prompt reverse day returns correct countdown/date.",
+      "observed": "Source day classifier/cooldown retirement/ownership inspected; dedicated actual-loop forward/reverse tests read. Worker 44 clock cases alone do not qualify every full day/late/cache release sequence; retained exact relevant browser proof not established.",
+      "disposition": "unverified",
+      "id": "R0020-O06"
+    },
+    {
+      "contractReference": "Hijri reverse policy",
+      "mandatory": true,
+      "obligation": "Backward instant must not hide restored selection behind future Hijri hold; actual provider selection and boundary disclosed.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 791,
+        "end": 824,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L791-L824"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 2915,
+        "end": 2948,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L2915-L2948"
+      },
+      "discriminator": {
+        "path": "tests/r0009-date-selection.cjs",
+        "start": 25,
+        "end": 39,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0009-date-selection.cjs#L25-L39"
+      },
+      "expected": "Post-Maghrib tomorrow 20 returns pre-Maghrib today 19; no monotonic clamp; wrong day unavailable.",
+      "observed": "Fresh R0009 correction/reverse/context cases pass; neutral anomaly/no hold source preserved.",
+      "disposition": "satisfied",
+      "id": "R0020-O07"
+    },
+    {
+      "contractReference": "Real-elapsed prayer eligibility/ownership",
+      "mandatory": true,
+      "obligation": "R0006 prayer current/prefetch/rollover cooldown stays on _RAFNOW, not wall/simulated minutes; preserve busy operation and one eligible retry, no request storm.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 1158,
+        "end": 1178,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1158-L1178"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3280,
+        "end": 3300,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3280-L3300"
+      },
+      "discriminator": {
+        "path": "tests/r0005-day-return.test.cjs",
+        "start": 60,
+        "end": 76,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0005-day-return.test.cjs#L60-L76"
+      },
+      "expected": "Failed acquisition remains60s monotonic cooldown and starts at next eligible visible opportunity even wall correction; old finally cannot clear new slot.",
+      "observed": "Source beginPrayerRequest uses elapsed+60000 and independent ownership; dedicated source cooldown/return assertions inspected. Full required combined wall-step/deferred release browser evidence remains unverified.",
+      "disposition": "unverified",
+      "id": "R0020-O08"
+    },
+    {
+      "contractReference": "Hidden/offscreen resume",
+      "mandatory": true,
+      "obligation": "Keep visibility/IntersectionObserver cancellation; first resumed callback reads current wall, one existing eligible opportunity, no missed-second/day catchup or second loop.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 3427,
+        "end": 3434,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3427-L3434"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 5456,
+        "end": 5463,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5456-L5463"
+      },
+      "discriminator": {
+        "path": "tests/r0020-clock.cjs",
+        "start": 36,
+        "end": 47,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0020-clock.cjs#L36-L47"
+      },
+      "expected": "Hidden pending 0, resume pending 1, new wall18:00:01 renders Maghrib/Isha once and retains one callback.",
+      "observed": "Fresh controlled visibility source test passes. Actual native sleep/wake remains expressly outside claimed scope.",
+      "disposition": "satisfied",
+      "id": "R0020-O09"
+    },
+    {
+      "contractReference": "Fallback host precision",
+      "mandatory": true,
+      "obligation": "Where performance.now absent and _RAFNOW fallback is Date.now, monotonic independent-preview guarantees require actual host qualification; no universal native sleep/NTP claim.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 863,
+        "end": 863,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L863"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 2987,
+        "end": 2987,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L2987"
+      },
+      "discriminator": {
+        "path": "tests/r0020-clock.cjs",
+        "start": 1,
+        "end": 4,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0020-clock.cjs#L1-L4"
+      },
+      "expected": "Scope clock guarantees to supported monotonic fixture/host; no OS clock mutation or invented actualNTP/sleep incident.",
+      "observed": "Fixture explicitly provides independent performance.now; no native fallback/suspend result claimed. This limitation is preserved, not waived.",
+      "disposition": "satisfied",
+      "id": "R0020-O10"
+    },
+    {
+      "contractReference": "Independent mutants",
+      "mandatory": true,
+      "obligation": "Old anchor formula,broad default predicate,increasing-only loop each fail default-step,explicit-frozen,backward actual-render controls respectively.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 867,
+        "end": 947,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L867-L947"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 2991,
+        "end": 3071,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L2991-L3071"
+      },
+      "discriminator": {
+        "path": "tests/r0020-clock.cjs",
+        "start": 49,
+        "end": 60,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0020-clock.cjs#L49-L60"
+      },
+      "expected": "Default skew repaired without sacrificing explicit modes or backward consumer scheduling.",
+      "observed": "Fresh all three mutants detected with healthy ordinary/explicit controls.",
+      "disposition": "satisfied",
+      "id": "R0020-O11"
+    },
+    {
+      "contractReference": "Browser pre-script authority setup",
+      "mandatory": true,
+      "obligation": "Install independent Date/performance before widget initialization; real boot/render/loop/provider/storage consumer integration must be read back.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 858,
+        "end": 969,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L858-L969"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 2982,
+        "end": 3093,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L2982-L3093"
+      },
+      "discriminator": {
+        "path": "tests/r0008-clock-harness.cjs",
+        "start": 34,
+        "end": 55,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-clock-harness.cjs#L34-L55"
+      },
+      "expected": "Actual browser consumer current/next/countdown/date/cache/request identities move under wall steps; mutating captured state after boot or using SalahClock seek is not equivalent.",
+      "observed": "Retained exact-root wall-clock-and-reduced-motion installs controlled Date before real boot, retains independent browser performance.now, and checks actual model/host/sky UTC after +120000ms/-30000ms wall changes (27 assertions, zero page errors). This is valid narrow pre-script caller proof. Direct render/request calls within one day do not establish the complete scheduled loop/cache/day/release matrix.",
+      "disposition": "unverified",
+      "partialEvidence": {
+        "preInitializationDateAuthority": "satisfied by retained actual browser",
+        "independentPerformanceAuthority": "satisfied by native unchanged performance.now",
+        "actualModelHostSkyInstant": "satisfied for +120000ms/-30000ms direct-render controls",
+        "scheduledLoopCacheDayRequestReadback": "unverified in this specific case; see next obligation"
+      },
+      "id": "R0020-O12"
+    },
+    {
+      "contractReference": "Browser required boundary/day/visibility matrix",
+      "mandatory": true,
+      "obligation": "Actual prayer boundary forward/reverse,completed day 8 prefetch,held day 7 response,backward day 8 late reply,nextDay reclassification,hidden/show and explicit-rate/frozen modes require matched DOM/caches/slots/crops.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 1129,
+        "end": 1189,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1129-L1189"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 3253,
+        "end": 3318,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3253-L3318"
+      },
+      "discriminator": {
+        "path": "tests/r0020-clock.cjs",
+        "start": 18,
+        "end": 75,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0020-clock.cjs#L18-L75"
+      },
+      "expected": "Each actual release point has correct selected/loaded day,current/next,countdown,cache writes and owner; no acquisition storm.",
+      "observed": "Source support is substantial; complete issue-specific native-browser transition/release matrix not established. Generic lifecycle/native-clock seek or source helper PASS cannot substitute.",
+      "disposition": "unverified",
+      "id": "R0020-O13"
+    },
+    {
+      "contractReference": "Visual regression controls",
+      "mandatory": true,
+      "obligation": "Retain readable325×530 card,opaque calendar moon,visible real motion,reduced-motion and offscreen pause on valid corrected scenes; no cloud hash as motion proof.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 3394,
+        "end": 3434,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3394-L3434"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 5423,
+        "end": 5463,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5423-L5463"
+      },
+      "discriminator": {
+        "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json",
+        "start": 1,
+        "end": 12,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json#L1-L12"
+      },
+      "expected": "Corrected actual scenes remain readable/opaque and visibly alive where allowed; scopes native suspend separately.",
+      "observed": "Retained exact-root wall-forward/backward full-renderer crops and full/reduced media controls exist locally; their public JSON readback is narrowly reusable. General final-v49 visual/motion receipts remain broader owners. Matched prayer-boundary/deferred-day corrected-clock output crops remain unverified.",
+      "disposition": "unverified",
+      "id": "R0020-O14"
+    },
+    {
+      "contractReference": "Documentation obligation",
+      "mandatory": true,
+      "obligation": "Revise DESIGN universal one-formula description to one API/two authorities; explicitly clarify absent overrides wall clock and timeScale1 anchored preview.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 858,
+        "end": 867,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L858-L867"
+      },
+      "deliveredConsumer": {
+        "path": "DESIGN.md",
+        "start": 138,
+        "end": 143,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L138-L143"
+      },
+      "discriminator": {
+        "path": "DESIGN.md",
+        "start": 318,
+        "end": 320,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L318-L320"
+      },
+      "expected": "Design matches actual current-wall default and parameter-presence preview compatibility.",
+      "observed": "Source comments corrected; DESIGN:140 still universally says simBase+realElapsed*TIMESCALE, and parameter paragraph does not state the required ordinary-vs-explicit1 distinction.",
+      "disposition": "unmet",
+      "id": "R0020-O15"
+    },
+    {
+      "contractReference": "Scope/effects/closure",
+      "mandatory": true,
+      "obligation": "No new clock preference/provider/config/preset/installer/OS setting/framework or religious policy; final-tree independent caller review+browser evidence before manual closure.",
+      "authoredOwner": {
+        "path": "src/native/index.html",
+        "start": 858,
+        "end": 969,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L858-L969"
+      },
+      "deliveredConsumer": {
+        "path": "index.html",
+        "start": 2982,
+        "end": 3093,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L2982-L3093"
+      },
+      "discriminator": {
+        "path": "docs/real-sky/INTEGRATION.md",
+        "start": 79,
+        "end": 90,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/INTEGRATION.md#L79-L90"
+      },
+      "expected": "Preserve semantic-owner completed work and requested bounded correction scope; public source/readback and publication separate.",
+      "observed": "Read-only exact source review and fresh 44 clock cases complete; docs/browser gaps prevent closure. No source/GitHub/OS changes performed.",
+      "disposition": "unverified",
+      "id": "R0020-O16"
+    }
+  ],
+  "commandsExecuted": [
+    {
+      "test": "r0020-clock.cjs",
+      "command": [
+        "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+        "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r0020-clock.cjs"
+      ],
+      "exitCode": 0,
+      "startedAtUtc": "2026-10-09T00:57:03.4810805Z",
+      "seconds": 0.60567,
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\B\\r0020-clock.cjs.log",
+      "expectedExit": 0
+    }
+  ],
+  "freshExecution": {
+    "nodeVersion": "v22.16.0",
+    "os": "Microsoft Windows NT 10.0.26200.0",
+    "caseCount": 44,
+    "failures": 0,
+    "expectedExit": 0,
+    "observedExit": 0,
+    "scope": "Actual temporal source, real model/render/boot/apply/loop source boundaries with injected independent Date/performance and recording DOM; real prayer admission/transport owner, excluded art explicit. Controlled visibility callbacks are not native sleep or operating-system clock changes.",
+    "receipt": "r0020-clock.cjs.log"
+  },
+  "historicalReuse": {
+    "kind": "Retained exact-root final-v49 source logs and narrowly mapped actual native browser cases; read here, not newly browser-executed by reviewer",
+    "basis": "For r0001/r0008/r0009/r0019/r0020, retained log sourceSha256 or SOURCE equals exact final rootIndexSha256 ff728552...; fresh tests independently reconfirm applicable source assertions. Final native-lifecycle sourceSha256 is also exact ff728552. Source equivalence is narrow, not host/input equivalence.",
+    "location": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/",
+    "nativeReceipt": {
+      "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-native-lifecycle/results.json",
+      "start": 14302,
+      "end": 15932,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/runs/joined-v49-final-chromium-native-lifecycle/results.json#L14302-L15932"
+    },
+    "nativeCaseReuse": [
+      "wall-clock-and-reduced-motion:27 assertions; pre-script Date with independent performance.now, actual model/host/sky UTC under +120000ms/-30000ms direct-render steps"
+    ],
+    "browserBoundary": "Mapped ordinary native/calendar or wall-step receipts are retained where applicable; they do not contain the complete required hostile/unavailable/correction/accessibility/scheduled-day matrices. Native calendar/wall PNGs are local h8 evidence; public JSON is not falsely described as already public PNG proof. No old native bundle hash is mistaken for a root-index hash."
+  },
+  "negativeControls": {
+    "suite": "Immutable tests linked per matrix; fresh corresponding in-memory/disposable mutants detected.",
+    "dateMutations": null,
+    "health": "Actual non-empty prayer/date render and independent positive controls prevent empty/no-render false greens.",
+    "nativeBoundary": "Recording DOM does not establish browser event execution, native keyboard/touch/focus/overflow or pixels."
+  },
+  "dependencies": [
+    "R0008 rejects invalid explicit inverse before clock/celestial use.",
+    "R0005 owns day matching/adoption/late reclassification and day-specific cooldown retirement; interface source is present.",
+    "R0003 owns operation slots/finally; R0006 real-elapsed prayer scheduling stays separate.",
+    "R0007 coherent elapsed countdown and R0009 reverse calendar selection consume current instant."
+  ],
+  "gaps": [
+    "Mandatory DESIGN one-API/two-authority and explicit timeScale=1 preview distinction remains inaccurate/absent.",
+    "Exact-root native pre-script Date with independent performance.now and +120s/-30s direct model/host/sky readback is credited. Remaining required browser proof: scheduled forward/reverse prayer boundaries, day/cache/deferred-response/reclassification/request ownership and real-elapsed retry eligibility, hidden/show and explicit1/60/frozen matrix with matching output crops."
+  ],
+  "verdict": "LEAVE OPEN",
+  "proposedBoundedNextIncrement": "Preserve direct-wall default, anchored explicit modes, invalid-simulation guards, backward-aware loop and real-elapsed prayer ownership/day classifier. Correct the narrow DESIGN formula and explicit1x paragraph. Reuse the completed exact-root27-assertion pre-script Date/model/host/sky wall-step case; extend only the missing actual scheduled loop/prayer-boundary/day-cache/deferred-release/owner-reclassification/real-elapsed retry/hidden-resume/explicit-mode consumers with deterministic accepted UTC records and matching crops. Preserve the three mutants and avoid repeating unrelated terrain solves. Native sleep/NTP and adjacent weather retry cooldown remain outside this bounded claim; no new weather runtime fix is authorized.",
+  "missingChecksRequested": [
+    {
+      "purpose": "Actual browser device-wall correction consumer/day ownership proof",
+      "command": "Reuse final-v49 native-lifecycle wall-clock-and-reduced-motion exact-root27-assertion case; primary serial disposable actual-entry driver for only the remaining scheduled-boundary/day/deferred-release/explicit-mode consumers. No production or host clock edit.",
+      "driverRequired": "Real boot/render/loop; +/-wall steps with fixed monotonic; current/next/countdown/date/cache/slots at every release; hidden/show; explicit1/60/frozen;325×530 crop."
+    }
+  ],
+  "ownerDecision": "No new owner decision needed for in-contract missing proof/narrow required docs. Any later production edit or external publication remains separately authorized by primary/user.",
+  "legacyFailureDisposition": "Eight legacy native failures and four TODOs were inspected through the final qualification/runner scope. They map to retired synthetic-glint/pre-CP9 PBR comparisons or placeholder callbacks, not a blanket failure of these calendar/clock obligations. Unmet native issue-specific proofs remain independently unverified.",
+  "reviewerVsPrimary": "Reviewer B findings and complete mandatory matrix reconciled and approved by primary Astra; close1/9/10, leave8/25/32 open. This worker makes no GitHub writes.",
+  "rollbackOrContainment": "This audit makes no production change. Preserve completed source/security/calendar/clock work; keep issues open while proof/docs gaps remain. A later authorized increment should roll back only its failed narrow test/docs/disclosure delta, never remove admission, encoding, gap/fold rejection or truthful unavailable output to make a gate pass.",
+  "adjacentCounterexample": {
+    "classification": "Contextual adjacent source counterexample; not automatically a new binding R0020/R0006 obligation. Linked R0006 detailed scope is prayer acquisition, not weather.",
+    "evidence": "weather-wall-step-probe.json",
+    "source": {
+      "path": "src/native/index.html",
+      "start": 1355,
+      "end": 1385,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1355-L1385"
+    },
+    "consumer": {
+      "path": "index.html",
+      "start": 3479,
+      "end": 3509,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3479-L3509"
+    },
+    "expected": "After failed weather attempt plus 60000 ms independent monotonic time, retry wrapper should reach a new acquisition if extending real-elapsed eligibility to weather.",
+    "observed": "Unchanged/+1 h wall controls totalAttempts=2; -1 h wall case totalAttempts=1 due Date.now() - lastWxTry < 60000. Controlled wrapper doubles; no network/browser/host-clock effect.",
+    "functionSha256": "0da1140e2c0546aae2514711137ac713d550afc6adb486a67456f54e536fca84"
+  },
+  "primaryReconciliation": {
+    "status": "APPROVED",
+    "reviewer": "primary Astra",
+    "authority": "Parent explicitly confirmed full-contract and native-proof review; independent visual observations retained in primary-visual-review.json",
+    "approvedVerdict": "LEAVE OPEN"
+  },
+  "publicationPrecondition": "Primary must replace AUDIT_EVIDENCE_COMMIT with the approved immutable evidence SHA, verify linked file hashes/readback, publish the evidence comment before any manual closure. No publication performed by reviewer B.",
+  "publicationTextStatus": "PRIMARY_RECONCILED_AWAITING_IMMUTABLE_SHA_BINDING",
+  "immutableFreshEvidenceLinks": {
+    "assessment": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/B/32-assessment.json",
+    "sourceReceipts": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/B/fresh-test-receipts.json",
+    "sourceLog": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/B/r0020-clock.cjs.log",
+    "rawNativeReceipts": [],
+    "capturedImages": [],
+    "reconciliation": null,
+    "shaBinding": "AUDIT_EVIDENCE_COMMIT literal to be replaced by primary after immutable SHA/hash approval"
+  }
+}

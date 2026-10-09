@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:33.446138+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/31",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/31/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/31/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/31/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/31",
+    "id": 5381809239,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfkVw",
+    "number": 31,
+    "title": "R001F: Keep coarse-location deadlines active through response-body parsing",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:57:01Z",
+    "updated_at": "2026-09-08T06:25:35Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-031 -->\n# R001F: Keep coarse-location deadlines active through response-body parsing\n\n**Repository-local identity:** `R001F` in `theislampill/salah_widget`; existing tracker [#31](https://github.com/theislampill/salah_widget/issues/31). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-031. Product reliability defect; proposed P2. Scope is coarseDetect's existing two-provider attempt lifetime; this work order grants no implementation or publication authority.\n\n## The timeout ends while the operation is still waiting\n\nThe preserved 7 September 2026 source fixture invoked original coarseDetect({timeoutMs:5}) with controlled fetch promises and timers. Both main fd2972ba64225fe9d6848e92497e6d0ed20ea624 and unmerged candidate 9d9c43649748555afbe09e3ca49bc47db2d7e7bb produced:\n\n| Step | Preserved result |\n|---|---|\n| Start GeoJS attempt | One abort timer exists. |\n| Resolve HTTP headers with {ok:true,json:()=>pendingBody.promise}; leave body pending; drain microtasks | Abort timers become zero; detection result remains unsettled; fetch count stays one. |\n| Release JSON body with latitude \"24.47\", longitude \"39.61\", city \"Madinah\", country_code \"SA\" | Detection resolves ok:true, provider:\"GeoJS\", source:\"coarse-ip\", status:\"ok\"; cfg has latitude24.47, longitude39.61, method\"4\", units\"c\". |\n\nThe controlled Intl host supplied America/New_York, which remained cfg.tz in the successful result. This is a timezone-precedence control, not a recommendation about timezone or regional method selection.\n\nThe five milliseconds were a configured **virtual timer**, not a measured real-network stall duration. The fixture observed the timer removed before firing; it did not simulate a native browser's abort-aware stream. Releasing only the body recovered the result, isolating the missing deadline to body lifetime. Live outage frequency and actual browser recovery remain unmeasured.\n\n[coarseDetect](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/config.js#L174) starts the timer at line192, then clears it at line194 as soon as fetch resolves headers, before returning r.json(). The outer promise can consequently wait indefinitely with no timer to reach ipinfo. [builder detectArea](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L385) remains at \"Detecting your area…\"; [widget local boot](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2190) cannot reach its intended failure/manual-setup branch. These caller consequences follow from the pending promise; the historical fixture did not prove their rendered pixels.\n\nThe invariant is: **each provider attempt remains bounded while awaiting headers and body, then either returns its usable result or advances once to the next provider; exhaustion returns explicit failure so the existing manual path can run.** Completion of headers is not completion of detection.\n\n## Re-anchor and preserve the contract\n\nBefore authorized implementation, record root, remote, HEAD and dirty state. Expect theislampill/salah_widget; classify relevant drift before editing:\n\n~~~sh\ngit rev-parse --show-toplevel\ngit remote get-url origin\ngit rev-parse HEAD\ngit status --short\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- config.js builder.html index.html tests/smoke.html\n~~~\n\nStop on incompatible provider, parser or caller changes. The [candidate coarseDetect](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/config.js#L174) has the same historical witness; it is not a prequalified branch to merge.\n\nWrite config.js coarseDetect's local next(i) attempt and its narrow regression fixture. Preserve GeoJS→ipinfo order, opts.timeoutMs || 6000, no third attempt, existing fetch options, provider parsing, normalization, source/provider/status fields and timezone precedence. Do not redefine timeoutMs=0, add a new provider or change valid-coordinate/region policy as part of timer repair. Exhaustion must remain {ok:false,source:\"coarse-ip\",status:\"failed\"}.\n\n## Minimal staged implementation and observable states\n\n1. Keep the timer alive through fetch→HTTP check→r.json()→provider parsing/normalization. Remove clearTimeout from the headers callback. Successful headers now leave the provider attempt pending with its timer still owned by that attempt.\n2. Give timeout a terminal result as well as abort cleanup. Inside next(i), race the full existing local work chain against a local deadline promise. The deadline callback rejects that promise and aborts that attempt's controller. This guarantees logical fallback even if a controlled or noncooperating body promise ignores abort. No global scheduler or reusable transport framework is needed.\n3. Clear the attempt's timer only after the race settles. Success returns the existing result; failure clears then invokes next(i+1) once. Never let an old attempt's completion clear the next provider's timer. Keep normalization and result construction local to work; no UI, storage or global config adoption occurs before the winning return.\n4. Leave late work attached to handled promises. Its eventual resolution/rejection cannot emit another result, start another fallback or become unhandled. Abort requests transport cleanup; it does not prove a custom transport actually stopped. The attempt can be logically failed while an obsolete noncooperating body remains unresolved.\n5. Keep callers' contracts unchanged. Builder can show success/failure using its current intent; widget boot can open manual settings on explicit exhaustion. Any late result arriving after a new form choice must still be rejected by [R000F](https://github.com/theislampill/salah_widget/issues/15). Do not make this timer the form's ownership mechanism.\n\nDesign pseudocode for the existing next(i) body, not an executed patch:\n\n~~~js\nvar ac = new AbortController(), to;\nvar deadline = new Promise(function (_, reject) {\n  to = setTimeout(function () {\n    reject(new Error(\"coarse location timeout\"));\n    ac.abort();\n  }, timeoutMs);\n});\nvar work = Promise.resolve().then(function () {\n  return fetch(p.url, {\n    signal:ac.signal, mode:\"cors\",\n    referrerPolicy:\"no-referrer\", cache:\"no-store\"\n  });\n}).then(function (r) {\n  if (!r.ok) throw new Error(\"http \" + r.status);\n  return r.json();\n}).then(function (j) {\n  // Keep the existing p.parse, coordinate checks, normalize,\n  // and success result construction here, unchanged.\n  // This chain has no UI/config/storage side effects.\n});\nreturn Promise.race([work, deadline]).then(function (result) {\n  clearTimeout(to);\n  return result;\n}, function () {\n  clearTimeout(to);\n  return next(i + 1);\n});\n~~~\n\nThe final patch must retain the actual parse/return body in the commented position; a missing return is not an implementation. This local race has two real consumers already identified above, so no exported helper or new config field is justified.\n\nSimply moving clearTimeout to final settlement and relying on native fetch abort is a credible smaller alternative **for an abort-aware native Response body**. It must be qualified with the actual stalled-stream browser case. It will not settle the historical abort-ignorant deferred body fixture unless that fixture models abort. The explicit deadline result is chosen here so the promised operation bound remains testable without conflating those two instruments. A fetch-only race repeats the headers/body gap. One global timeout would reduce the fallback provider's existing opportunity; indefinite retry or a new provider expands scope.\n\nTimers cannot preempt synchronous CPU-bound JSON parsing or a blocked event loop. The guarantee is termination of asynchronous waiting once the event loop runs the deadline callback, not a hard wall-clock execution limit through arbitrary synchronous work.\n\n## Public RED/GREEN fixture\n\nPublish the regression source with the later repair. The following proposed fixture invokes actual config.js and supplies the decisive public inputs; it does not require a private audit probe or live provider. Save it as a narrow authorized test and run node tests/coarse-deadline.cjs from the tested checkout:\n\n~~~js\nconst fs = require(\"node:fs\");\nconst vm = require(\"node:vm\");\nconst assert = require(\"node:assert/strict\");\nfunction deferred() {\n  let resolve, reject;\n  const promise = new Promise((a,b) => { resolve=a; reject=b; });\n  return {promise,resolve,reject};\n}\nconst drain = async () => { for (let i=0;i<20;i++) await Promise.resolve(); };\n(async () => {\n  const timers = new Map(), requests = []; let serial=0;\n  const context = {\n    URLSearchParams, AbortController, Intl,\n    setTimeout(fn,ms) { const id=++serial; timers.set(id,{fn,ms}); return id; },\n    clearTimeout(id) { timers.delete(id); },\n    fetch(url,opts) {\n      const d=deferred(); requests.push({url,opts,...d}); return d.promise;\n    }\n  };\n  context.window=context;\n  vm.createContext(context);\n  vm.runInContext(fs.readFileSync(\"config.js\",\"utf8\"),context);\n  let completions=0;\n  const result=context.SalahConfig.coarseDetect({timeoutMs:5})\n    .then(value => { completions++; return value; });\n  await drain();\n  assert.equal(requests.length,1);\n  assert.equal(timers.size,1);\n  const body=deferred();\n  requests[0].resolve({ok:true,json:()=>body.promise});\n  await drain();\n  // Historical RED: timers.size is 0 here; result is still pending.\n  assert.equal(timers.size,1,\"deadline must survive headers\");\n  assert.equal(completions,0);\n  const [id,timer]=[...timers.entries()][0];\n  assert.equal(timer.ms,5);\n  timers.delete(id); timer.fn(); // fire the first provider's virtual deadline\n  await drain();\n  assert.equal(requests[0].opts.signal.aborted,true);\n  assert.equal(requests.length,2,\"exactly one fallback\");\n  requests[1].resolve({ok:true,json:async()=>({\n    loc:\"51.5,-0.12\",city:\"London\",country:\"GB\",timezone:\"Europe/London\"\n  })});\n  const value=await result;\n  assert.equal(value.ok,true); assert.equal(value.provider,\"ipinfo\");\n  assert.equal(value.cfg.lat,51.5); assert.equal(value.cfg.lon,-0.12);\n  body.resolve({latitude:\"24.47\",longitude:\"39.61\",city:\"Madinah\",country_code:\"SA\"});\n  await drain();\n  assert.equal(completions,1); assert.equal(requests.length,2);\n  assert.equal(timers.size,0);\n})().catch(error => { console.error(error); process.exitCode=1; });\n~~~\n\nThis is new proposed test text, not a rerun or claimed PASS. It intentionally uses an abort-ignorant body to distinguish timeout-result ownership. Use the exact source's required globals if a later compatible config module needs them; do not replace the production function with test logic. Keep provider fixtures finite/valid, and preserve the historical released-body success as a separate positive control.\n\n| Additional deterministic case | Required final state |\n|---|---|\n| Healthy GeoJS body before expiry | One request, existing GeoJS success shape, timer removed, no fallback. |\n| Headers never resolve | First deadline still advances once to ipinfo. |\n| HTTP non-ok, rejected JSON/invalid JSON, or existing parser's unusable-coordinate case | Cleanup then existing fallback; no invented successful location. |\n| Both provider attempts reach their virtual deadline | Exactly two requests; result ok:false/source:\"coarse-ip\"/status:\"failed\"; no active timers or third request. |\n| Body callback settles before deadline; reverse ordering in a separate case | First actual settlement wins. Schedule both explicitly; do not depend on a flaky simultaneous real-time race. |\n| Old body rejects after fallback succeeds | No unhandled rejection, duplicate fallback or changed returned result. |\n| New form intent during first/fallback attempt | Old result/status cannot alter that form or its saved/exported configuration. |\n| Restore clearTimeout at headers in an isolated mutation | The deadline-survives-headers assertion becomes RED again. |\n| Remove explicit deadline rejection with abort-ignorant body | Logical-settlement/fallback assertion fails, demonstrating why abort alone is insufficient for this instrument. |\n\nDo not claim the Map timer fixture proves native stream cancellation. The minimum browser bridge serves an isolated local response endpoint that sends successful headers and begins an incomplete JSON body, then withholds the remainder. Redirect the two known provider URLs to local fixture routes before loading config.js, while retaining native fetch/AbortController/Response body behavior. First route stalls; second returns the healthy ipinfo body above. Observe first-request abort, one fallback, result and cleanup. Add a finite streamed GeoJS control. Close only fixture-owned requests/server resources afterward; never induce a real provider outage.\n\nFinally invoke actual builder detectArea and a fresh disposable widget #local=1 boot. Two provider failures must produce the builder's manual/precise recovery guidance and the widget's manual settings/render-loop path. Capture the relevant UI crop; a helper's return value alone cannot prove usable manual recovery. No host storage or geolocation prompt is needed. Native browser/event-loop version and fixture identity belong in the evidence; a Node result cannot certify a specific embedding host.\n\n## Integration, compatibility, rollback and closure\n\nThe sole repair domain remains config/coarse-detection. Its existing qualification edge from [R000F](https://github.com/theislampill/salah_widget/issues/15) is unchanged. [R0003](https://github.com/theislampill/salah_widget/issues/3) owns remote request/config adoption, [R0006](https://github.com/theislampill/salah_widget/issues/6) prayer liveness, [R000D](https://github.com/theislampill/salah_widget/issues/13) weather/radar transport and [R0011](https://github.com/theislampill/salah_widget/issues/17) settings reset feedback. Similar timeout needs do not justify merging these owners or adding a global transport abstraction. No relationship delta is proposed.\n\nBuilder/index are consumer tests; edit them only for a demonstrated necessary caller-contract adjustment. Preserve successful source/provider/accuracy/area fields, timezone and country mapping, local/hash/saved priority, v1 saved configuration, cache compatibility and all installer/preset payloads. Keep 325×530 layout, header/footer readability and ordinary visual behavior. README recovery wording changes only if the actual repaired behavior requires clarification; no \"bounded operation\" or public recovery claim before its readback.\n\nRollback timer/race/fallback edits as one coherent unit if healthy detection regresses. Do not retain only a header-time cleanup while declaring the deadline fixed. Stop on incompatible caller/provider drift or an unapproved broader transport design. Source-only or virtual-only evidence remains partial where native/browser recovery is claimed.\n\nDONE requires final integrated-tree RED→GREEN, positive/boundary/mutation controls, the native streamed-body and actual-caller checks, and independent exact-tree review of cleanup and one-fallback ownership. Add an evidence comment binding tree, fixture, schedules, outcomes and limits. Public claims additionally require matching served config.js/callers and the recovery readback. Use non-closing Implements #31 PR wording and manual closure after evidence. This work order asserts no executed product or independent PASS.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/31/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/31/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733564019,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfkV88AAAAHJ9z4cw",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733564019",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:35Z",
+      "rename": {
+        "from": "SW-031: Keep coarse-location deadlines active through response-body parsing",
+        "to": "R001F: Keep coarse-location deadlines active through response-body parsing"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R001F",
+    "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+    "updatedAt": "2026-09-08T06:25:35Z",
+    "commentRevisions": []
+  }
+}

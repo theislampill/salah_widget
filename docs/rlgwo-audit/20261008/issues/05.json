@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:30.037772+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/5",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/5/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/5/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/5/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/5",
+    "id": 5381804211,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfQsw",
+    "number": 5,
+    "title": "R0005: Route prefetched and late prayer responses correctly across civil midnight",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:15Z",
+    "updated_at": "2026-09-08T06:24:36Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-005 -->\n# R0005: Route prefetched and late prayer responses correctly across civil midnight\n\n**Repository-local identity:** `R0005` in `theislampill/salah_widget`; existing tracker [#5](https://github.com/theislampill/salah_widget/issues/5). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-005. Existing corrective owner: GitHub #5. Proposed priority P1; product-or-skill defect. This work order specifies day adoption and its consumer invalidation; it does not authorize implementation or publish a repair.\n\n## Three connected transitions, one owner\n\nOn main `fd2972ba64225fe9d6848e92497e6d0ed20ea624`, tomorrow's already-completed data is discarded when the loop notices midnight. In the recorded UTC September 7→8 fixture, the widget had today=September 7/Hijri 19 and tomorrow=September 8/Hijri 20. After Maghrib it displayed Hijri 20; offline midnight discarded tomorrow and retained September 7, so the display went backward to stale Hijri 19. Candidate `9d9c43649748555afbe09e3ca49bc47db2d7e7bb` checks the prefetched Gregorian date, promotes September 8 and retains Hijri 20. That completed-promotion patch is a useful control.\n\nA different scheduling witness fails on **both** trees. At September 7 23:59:59, dispatch tomorrow=September 8 and hold its promise. Cross midnight and let a rollover request load September 8. Release the older prefetch. Both end with `today.date=tomorrow.date=\"08-09-2026\"`, never request September 9, and fail the next Maghrib advance; the candidate nevertheless reports `maghribRollApplied=true`. The callback assigns according to its original name “tomorrow,” even though its payload has become today. Promoting only records already completed at midnight does not repair that callback.\n\nHA-N002 records the final transition: successful asynchronous new-day adoption can update data without causing a render. With a frozen simulation second, the displayed old date/stale flag remained through 20 callbacks. With ordinary advancing seconds, the next second repairs the sampled discrepancy. Therefore the supported claim is an adoption→consumer invalidation failure, not a guaranteed visible flash in every normal load.\n\nThese are retained exact-source controlled fixtures, not new browser runs or a claim about all Islamic calendar conventions. DATE-002, DATE-004 and HA-N002 are owned together because an admitted day must be placed in the right slot and become visible. Hijri date-selection/hold policy remains [R0009](https://github.com/theislampill/salah_widget/issues/9).\n\n## Re-anchor and causal owner\n\nRecord actual checkout, HEAD and dirty state using `git -C C:\\workspace\\ai\\salah_widget rev-parse --show-toplevel`, `rev-parse HEAD`, `status --short`, and `diff -- index.html tests/smoke.html` with that same prefix. Stop for relevant incompatible drift. Inspect [main prefetch callback](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1986-L1990), [main midnight/adoption/render gate](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2232-L2262), and [candidate completed promotion](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L2321-L2353).\n\nThe existing `tomorrowStr()` increments a UTC-constructed civil date. Saved month/year/leap/DST controls passed on both trees. Its replacement with epoch+86400000 would introduce a separate bug. Preserve the actual calendar operation and define today/tomorrow by local civil identity at **adoption**, not 24-hour elapsed duration.\n\n## Adoption contract and precise state table\n\nThe immutable context from [R0003](https://github.com/theislampill/salah_widget/issues/3) establishes which configuration and operation still own the completion. Admission from [R0002](https://github.com/theislampill/salah_widget/issues/2) establishes that payload Gregorian identity equals its requested date. Only then classify it against `nowParts()` in the resolved location zone. Proposed design pseudocode below names decisions, not a new externally exposed schema:\n\n```text\ncurrentDay = location civil day at adoption\nnextDay    = civil successor of currentDay\npayloadDay = admitted response Gregorian day\nobsolete generation/slot -> no adoption; settle only its own operation\npayloadDay == currentDay -> eligible for today\npayloadDay == nextDay    -> eligible for tomorrow\notherwise               -> no current/tomorrow adoption\n```\n\n| Before/completion | Required transition |\n|---|---|\n| Completed prefetched record now matches currentDay | Promote it to today **before** clearing tomorrow; persist under its actual date, clear stale, invalidate consumers. |\n| In-flight prefetch becomes currentDay, today is absent/stale | Adopt as today; clear only matching old tomorrow state; release its own prefetch slot; allow nextDay acquisition. |\n| Late prefetch becomes currentDay, a newer valid current record is already installed | Treat it as a duplicate no-op for today; do not overwrite the newer record or populate tomorrow with currentDay. Settle its own slot. |\n| Prefetch still equals nextDay | Install as tomorrow if its context/operation remains eligible; current today stays intact; invalidate Hijri/Fajr consumers. |\n| Completion arrives after an additional day of sleep or a backward date correction | If neither currentDay nor nextDay, discard from live slots. If it matches one, use that classification; an old dispatch label is not authority. |\n| No matching cache/prefetch at a day transition | Retain old today only with stale state; leave current day unaccepted and recovery eligible under the bounded retry owner. |\n\n1. Consolidate the repeated assignment bundle at the existing loader/prefetch/rollover boundaries: accepted payload and actual day, cache key from context, `lastDate`, stale flag, matching tomorrow clear/promotion, moon/star date invalidation and render-dirty signal. A narrow adoption function is justified only if those real callers use it. Do not move acquisition, provider validation, Hijri policy and all rendering into a generic state framework.\n2. At midnight, test the completed prefetched record's admitted day and generation before consulting the current-day cache. Adopt the matching record before assigning `tomorrow=null`. Preserve valid cache fallback and the existing bounded offline retry opportunity. Never advance the accepted-day marker merely because the wall clock crossed; it advances only when current data was accepted. Any separate loop “observed day” marker must not suppress retries after a failed adoption.\n3. Replace the unconditional prefetch `.then(d=>{tomorrow=d;...})` with the state table. Do the current-day/current-generation check after the promise settles. A current valid `today` obtained from a later rollover operation wins over a now-duplicate late prefetch; this avoids unnecessary stale-over-fresh replacement without inventing provider timestamps. Clear/release only the old operation's slot. A prior operation may not clear a newer prefetch busy state, per the ownership contract.\n4. Reset prefetch eligibility by configuration and requested civil day through [R0006](https://github.com/theislampill/salah_widget/issues/6)'s scheduler state. Do not reset the cooldown every render or block September 9 because a non-null tomorrow happens to contain September 8. A valid nextDay record suppresses redundant requests; an invalid/wrong-day tomorrow slot does not. Successful promotion must leave the system capable of fetching the new nextDay.\n5. Use a single coalesced render-dirty flag at accepted asynchronous state changes. The existing visible rAF loop renders when its simulated second changes **or** state is dirty, then consumes that dirty flag. A completion while hidden marks dirty; the first visible callback paints it without creating a second rAF loop. Keep existing explicit initial loader render where needed before loop startup. Do not call `render()` recursively from `model()` or every promise callback. Mark only after eligible adoption, not after rejected/obsolete results.\n6. Preserve candidate moon/star invalidation details where the accepted day changes: `_starsProjected=false`, appropriate moon re-render/stamp invalidation and `lastMoonMin` reset. Those are consumers of an adopted day; arbitrary new celestial animation is out of scope. Preserve opaque calendar moon and the existing visible-motion/reduced-motion contract.\n\nRejected alternatives matter here. Unconditionally clearing tomorrow cures neither late callbacks nor offline loss. Rejecting all responses dispatched before midnight throws away useful current-day data. A global “date never decreases” rule would hide backward device corrections and provider anomalies; it cannot establish current Gregorian identity. Rendering from every callback creates repeated work and can recurse into another prefetch; one invalidation consumed by the existing loop is sufficient.\n\n## Deterministic RED, GREEN and mutation controls\n\nBuild a disposable controlled-clock fixture using actual prefetch callback and `startRenderLoop`, with in-memory fetch/cache and paint capture. Synthetic record `P(day,hijriDay)` has matching Gregorian fields, UTC metadata, six usable clocks Fajr 05:00, Sunrise 06:00, Dhuhr 12:00, Asr 15:30, Maghrib/Sunset 18:00, Isha 19:30, and Hijri year 1448/month 2 with the supplied day. These dates/times are fixture inputs, not a provider calendar claim.\n\n| Recipe | Required observable final result |\n|---|---|\n| Start `2026-09-07T23:59:59Z`, today=P(7,19), completed tomorrow=P(8,20), network offline; advance 2 seconds | today/lastDate September 8, stale false, persisted September 8, current Hijri selection 20 under existing Maghrib policy. Historical main produced stale September 7/Hijri 19; candidate promotion is the useful positive branch. |\n| Same start, hold first request for September 8; cross midnight, release rollover September 8, then release old prefetch September 8 | today September 8; tomorrow is absent or September 9, never September 8; old response does not replace newer accepted data; September 9 becomes requestable. Advance through next Maghrib and observe its correct next-day consumer. |\n| Release prefetch September 8 after midnight while rollover fails | Late response may repair current today, clear stale, and persist its actual day. Blanket rejection of pre-midnight requests fails this control. |\n| Release normally before midnight | Store September 8 only in tomorrow, keep September 7 today, preserve pre-Maghrib preview and later Maghrib selection. |\n| Switch configuration before old completion; or release September 8 after current day September 9 | No old-generation mutation; no stale September 8 installed as current/tomorrow on September 9; owning current operation remains busy until its own completion. |\n| Frozen `simTime`, stale old record, release a valid current-day response after the last paint | The **first next visible frame** consumes dirty state and paints adopted day/stale=false without changing simulated seconds; 20 further callbacks cannot retain old output or produce redundant per-frame fetches. Hide before release and verify the first resumed frame. |\n| Year/month/leap controls | Keep Dec 31→Jan 1, Feb 28 2024→Feb 29→Mar 1 and New York DST civil-next-day results. No arithmetic replacement by fixed elapsed 24h. |\n\nCapture request dates, operation IDs, loaded/next-day slots, accepted date, stale flag, selected/displayed date and cache writes at every release point. A final screenshot alone can miss a poisoned tomorrow slot; a final state number alone can miss a frozen consumer. Browser date/status crops must supplement source witnesses. Temporarily disable promotion, restore unconditional tomorrow assignment, and disable render-dirty consumption separately in an authorized isolated fixture: each matching test must fail. Restore final source before qualifying it.\n\n## Integration and closeable boundary\n\nAccepted interface predecessors are [R0003](https://github.com/theislampill/salah_widget/issues/3) for requesting-context ownership and [R0004](https://github.com/theislampill/salah_widget/issues/4) for location-day boot; [R0002](https://github.com/theislampill/salah_widget/issues/2) supplies final valid-day qualification. This owner supplies current/promotion state to [R0009](https://github.com/theislampill/salah_widget/issues/9). Shared production hunks with [R0006](https://github.com/theislampill/salah_widget/issues/6) (eligibility/retry) and [R0020](https://github.com/theislampill/salah_widget/issues/32) (forward/backward current instant) require one integrator, not competing edits to the loop. Preserve the existing relationship graph; a common `index.html` does not make every other issue a predecessor.\n\nChange the adoption/callback/render-invalidation paths and their invoked fixtures. Update DESIGN/HANDOFF or README where they explain midnight, retained stale data or frozen-scene refresh; do not claim a new prayer calculation or Hijri authority. Main cache identity, builder/config output, install scripts and presets remain compatible. The public surface is a correct current day and responsive date consumer within the existing readable 325×530 card.\n\nIf candidate promotion is integrated but late prefetch or frozen repaint still fails, record that partial state and keep #5 open. Revert the coordinated day assignments/invalidation changes if valid cache, ordinary prefetch or rendering regresses; preserve old cache bytes and failure evidence. Acceptance requires final-tree transition/control results, independent review of caller reachability, and actual rendered readback before an evidence comment and manual closure. Use non-closing `Implements #5`; served-source/readback is additionally required for deployment claims. Supplementary historical companion SHA256: `2c7bf3fff141c5d1d9fd5f7b4ad3a6aaa4ee1d7159bfb075eae54b30f0da42ec`. The decisive public inputs above do not require the private companion.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/5/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/5/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733518130,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfQs88AAAAHJ9xFMg",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733518130",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:36Z",
+      "rename": {
+        "from": "SW-005: Route prefetched and late prayer responses correctly across civil midnight",
+        "to": "R0005: Route prefetched and late prayer responses correctly across civil midnight"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0005",
+    "bodySha256": "46f15738302f33d4881dc1ed71550340a6c1d09bfb0f23cd02626c4bb0b81393",
+    "updatedAt": "2026-09-08T06:24:36Z",
+    "commentRevisions": []
+  }
+}

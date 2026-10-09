@@ -1,0 +1,78 @@
+{
+  "name": "18-success-then-failure-old-timers",
+  "status": "FAIL",
+  "options": {
+    "page": "builder",
+    "copy": "success",
+    "fallback": "false"
+  },
+  "checks": [
+    {
+      "name": "exact current script guards and isolated hooks initialize",
+      "passed": true,
+      "detail": {
+        "state": "ready",
+        "error": null,
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+        "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+        "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+        "scriptCount": 2,
+        "bodiesPreserved": true,
+        "storageIsolated": true,
+        "clockFixed": true
+      }
+    },
+    {
+      "name": "copy current success restores button focus",
+      "passed": true,
+      "detail": {
+        "id": "copy",
+        "value": "",
+        "readonly": null,
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "name": "copy truthful failure",
+      "passed": false,
+      "detail": "COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY."
+    }
+  ],
+  "snapshots": {},
+  "clipboard": [
+    {
+      "button": "copy",
+      "captured": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+      "selected": {
+        "id": "embed-recovery",
+        "value": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+        "readonly": true,
+        "start": 0,
+        "end": 269
+      },
+      "status": "COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY."
+    }
+  ],
+  "pageErrors": [],
+  "outsideRequests": [],
+  "ledgerStart": 7,
+  "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&copy=success&fallback=false",
+  "fixtureIdentity": {
+    "state": "ready",
+    "error": null,
+    "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "scriptCount": 2,
+    "bodiesPreserved": true,
+    "storageIsolated": true,
+    "clockFixed": true
+  },
+  "error": "copy truthful failure: 'COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.'",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-consumer-driver.py\", line 450, in run\n    action(page, row)\n  File \"C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-consumer-driver.py\", line 292, in caller_copy_timers\n    clipboard_failure(page, row, button)\n  File \"C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-consumer-driver.py\", line 115, in clipboard_failure\n    check(row, button + ' truthful failure', 'Couldn' in status and 'copied' not in status.lower() and '✓' not in status, status)\n  File \"C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-consumer-driver.py\", line 41, in check\n    raise AssertionError(name + ': ' + repr(detail))\nAssertionError: copy truthful failure: 'COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.'\n",
+  "fontStatus": "settled",
+  "screenshot": "18-success-then-failure-old-timers.png"
+}

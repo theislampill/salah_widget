@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; frame-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; font-src 'none'; base-uri 'self'; form-action 'none'">
+<title>CONFIG isolated native fixture</title></head>
+<body><pre id="fixture-error">Loading exact CONFIG/page source with private storage and synthetic location…</pre>
+<script>
+// Test-only wrapper for the parent's exclusive browser lease. Full production
+// page/config script bodies are retained. Font resources are suppressed; location,
+// prayer dates and service results are synthetic, not the viewer's location.
+(function(){
+  "use strict";
+  const nativeFetch=window.fetch.bind(window),NativeDate=Date,query=new URLSearchParams(location.search),rootURL=new URL("../",location.href);
+  const page=query.get("page")||"widget",seed=query.get("seed")||"manual",gps=query.get("gps")||"success",detect=query.get("detect")||"success",deny=query.get("deny")||"none";
+  const stream=query.get("stream")||"none",copy=query.get("copy")||"deny",fallback=query.get("fallback")||"false",platform=query.get("platform")||"";
+  const holds=new Set((query.get("hold")||"").split(",").filter(Boolean));
+  const expectedPages={"widget":{"sha":"ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee","attrs":[" src=\"config.js\""," id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",""," src=\"real-sky/native-sky.js\"",""," src=\"moon/moon-host.js\""]},"builder":{"sha":"66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e","attrs":[" src=\"config.js\"",""]}},expectedConfig="91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81";
+  let runtimeFiles=new Set(),now=NativeDate.parse("2026-10-02T12:00:00Z");
+  const bytes=new Map(),pendingGPS=[],key="salah_widget:config:v1";
+  const report=window.__locationFixture={wrapperURL:location.href,page,seed,gps,detect,deny,state:"setup",sourceSha256:null,configSha256:null,error:null,
+    fonts:"system fallback; known remote fonts suppressed",clock:"fixed synthetic UTC epoch",storageEvents:[],requests:[],gpsCalls:[],errors:[]};
+  report.advance=ms=>{now+=Number(ms);};
+  report.denySave=false;report.denyRemove=false;
+  report.target="18ff14860ff41c084b1db5f396bb62aa9c22b1be";report.nativeRuntimeScripts="preserved exact six; no module suppression";
+  report.providerJobs=[];report.copyJobs=[];report.fallbackCalls=[];report.copyMode=copy;report.fallbackMode=fallback;report.streamMode=stream;
+  const providerJobs=new Map(),copyJobs=[];
+  function respond(kind,u,payload,status=200,init){
+    const id=report.providerJobs.length,row={id,kind,url:u.href,at:now,state:holds.has(kind)?"held":"returned",status};report.providerJobs.push(row);
+    if(init&&init.signal){row.signalAborted=init.signal.aborted;init.signal.addEventListener("abort",()=>{row.signalAborted=true;},{once:true});}
+    if(!holds.has(kind))return json(payload,status);
+    return new Promise((resolve,reject)=>providerJobs.set(id,{row,payload,status,resolve,reject}));
+  }
+  report.releaseProvider=(id,payload,status)=>{const job=providerJobs.get(Number(id));if(!job||job.row.state!=="held")throw Error("No held provider "+id);
+    job.row.state="returned";job.resolve(new Response(JSON.stringify(payload===undefined?job.payload:payload),{status:status===undefined?job.status:status,headers:{"Content-Type":"application/json"}}));};
+  report.rejectProvider=id=>{const job=providerJobs.get(Number(id));if(!job||job.row.state!=="held")throw Error("No held provider "+id);job.row.state="rejected";job.reject(Error("controlled provider failure"));};
+  report.pendingProviders=kind=>report.providerJobs.filter(j=>j.state==="held"&&(!kind||j.kind===kind));
+  function searchPayload(u){const q=(u.searchParams.get("q")||"").toLowerCase();
+    if(q==="london")return [{class:"place",lat:"51.5",lon:"-0.12",address:{city:"London",country:"United Kingdom",country_code:"gb"}},
+      {class:"place",lat:"42.98",lon:"-81.25",address:{city:"London",state:"Ontario",country:"Canada",country_code:"ca"}}];
+    if(q==="cairo")return [{class:"place",lat:"30.0444",lon:"31.2357",address:{city:"Cairo",country:"Egypt",country_code:"eg"}}];
+    return [{class:"place",lat:"52.52",lon:"13.41",address:{city:"Berlin",country:"Germany",country_code:"de"},boundingbox:["52","53","13","14"]}];
+  }
+  function copyWrite(payload){const row={index:report.copyJobs.length,payload:String(payload),state:report.copyMode==="hold"?"held":report.copyMode};report.copyJobs.push(row);
+    if(report.copyMode==="success")return Promise.resolve();if(report.copyMode!=="hold")return Promise.reject(Error("controlled clipboard denial"));
+    return new Promise((resolve,reject)=>copyJobs[row.index]={row,resolve,reject});}
+  report.releaseCopy=(index,ok)=>{const job=copyJobs[index];if(!job||job.row.state!=="held")throw Error("No held copy "+index);job.row.state=ok?"success":"denied";ok?job.resolve():job.reject(Error("controlled clipboard denial"));};
+  report.application=()=>{const ids=page==="builder"?["label","lat","lon","method","school","time","units","appearance","dfcode"]:["set-label","set-lat","set-lon","set-method","set-school","set-time","set-units","set-appearance","set-datefmt"];
+    const pin=document.getElementById(page==="builder"?"geo":"set-pin"),qa=typeof window.qaState==="function"?window.qaState():null;
+    return {inputs:Object.fromEntries(ids.map(id=>[id,document.getElementById(id)?.value])),config:qa?.config||null,
+      status:document.getElementById("set-status")?.textContent||document.getElementById("geotip")?.textContent,
+      pin:pin?{classes:pin.className,title:pin.title,name:pin.getAttribute("aria-label")}:null,
+      code:document.getElementById("code")?.value,previewSrc:document.getElementById("pv")?.getAttribute("src"),
+      savedBytes:bytes.get(key)??null};};
+  const privateStore={get length(){return bytes.size;},key:n=>[...bytes.keys()][n]??null,
+    getItem:k=>{report.storageEvents.push(["get",String(k)]);return bytes.get(String(k))??null;},
+    setItem:(k,v)=>{k=String(k);report.storageEvents.push(["set",k]);if(k===key&&report.denySave)throw new DOMException("fixture blocked","SecurityError");bytes.set(k,String(v));},
+    removeItem:k=>{k=String(k);report.storageEvents.push(["remove",k]);if(k===key&&report.denyRemove)throw new DOMException("fixture blocked","SecurityError");bytes.delete(k);}};
+  function failure(error){report.state="error";report.error=String(error&&error.message||error);const el=document.getElementById("fixture-error");if(el)el.textContent="Fixture setup error: "+report.error;}
+  function json(value,status=200){return Promise.resolve(new Response(JSON.stringify(value),{status,headers:{"Content-Type":"application/json"}}));}
+  function prayer(day){const parts=day.split("-"),month=Number(parts[1]);if(parts.length!==3||month<1||month>12)throw Error("Unexpected prayer date");
+    return {data:{timings:{Fajr:"05:00",Sunrise:"06:00",Dhuhr:"12:00",Asr:"15:30",Sunset:"18:00",Maghrib:"18:00",Isha:"19:30"},meta:{timezone:"UTC"},date:{gregorian:{date:day,day:parts[0],month:{number:month},year:parts[2]},hijri:{day:"01",month:{number:1,en:"Synthetic month"},year:"1500"}}}};}
+  function fixtureFetch(input,init){const u=new URL(typeof input==="string"||input instanceof URL?String(input):input.url,location.href);report.requests.push({url:u.href,at:now});
+    if(u.origin===rootURL.origin){const relative=decodeURIComponent(u.pathname.slice(rootURL.pathname.length));
+      if(!runtimeFiles.has(relative))return Promise.reject(Error("Unadmitted local asset "+relative));return nativeFetch(input,init);}
+    if(u.href==="https://get.geojs.io/v1/ip/geo.json"||u.href==="https://ipinfo.io/json"){
+      if(stream!=="none"){
+        const route=stream==="fail"?"/failure":u.hostname==="get.geojs.io"?(stream==="finite"?"/geojs-finite":"/geojs-stall"):"/ipinfo";
+        const row={id:report.providerJobs.length,kind:"coarse-stream",url:u.href,route,state:"native-fetch",signalAborted:!!init?.signal?.aborted};report.providerJobs.push(row);
+        init?.signal?.addEventListener("abort",()=>{row.signalAborted=true;},{once:true});
+        return nativeFetch(new URL(route,rootURL),init).then(r=>{row.headersReturned=true;row.http=r.status;return r;},e=>{row.error=String(e);throw e;});
+      }
+      if(detect==="fail")return respond("coarse",u,{error:"synthetic detection failure"},503,init);
+      return respond("coarse",u,u.hostname==="get.geojs.io"?{latitude:"24.47",longitude:"39.61",city:"Madinah",country:"Saudi Arabia",country_code:"SA",accuracy:"5"}:{loc:"51.5,-0.12",city:"London",country:"GB"},200,init);
+    }
+    if(u.origin==="https://api.aladhan.com"&&u.pathname.startsWith("/v1/timings/"))return json(prayer(u.pathname.slice("/v1/timings/".length)));
+    if(u.origin==="https://nominatim.openstreetmap.org")return respond("search",u,searchPayload(u),200,init);
+    if(u.origin==="https://api.zippopotam.us")return json({places:[]});
+    if(u.origin==="https://api.bigdatacloud.net")return respond("reverse",u,{city:"Berlin",countryCode:"DE",continentCode:"EU"},200,init);
+    if(u.origin==="https://api.open-meteo.com"||u.hostname.includes("rainviewer"))return json({error:"weather unavailable in CONFIG fixture"},503);
+    report.errors.push("Unexpected request: "+u.href);return Promise.reject(Error(report.errors.at(-1)));
+  }
+  function completeGPS(index){const job=pendingGPS[index];if(!job||job.completed)return;job.completed=true;
+    if(gps==="denied"||gps==="timeout"){job.bad({code:gps==="denied"?1:3,message:gps});return;}
+    const pos={coords:{latitude:52.52,longitude:13.41,accuracy:gps==="missing"?undefined:25},timestamp:gps==="missing"?undefined:gps==="cached"?now-300000:gps==="future"?now+1:now};job.ok(pos);
+  }
+  report.releaseGPS=completeGPS;
+  report.inspect=()=>({state:report.state,error:report.error,config:typeof window.qaState==="function"?window.qaState().config:null,
+    form:typeof window.formConfig==="function"?window.formConfig():Object.fromEntries(["set-label","set-lat","set-lon","set-method","set-units"].map(id=>[id,document.getElementById(id)?.value])),
+    status:document.getElementById("set-status")?.textContent||document.getElementById("geotip")?.textContent,
+    openerName:document.querySelector(".buckle")?.getAttribute("aria-label"),storage:[...bytes],gpsCalls:report.gpsCalls,requests:report.requests});
+  async function source(file){const r=await nativeFetch(new URL(file,rootURL),{cache:"no-store"});if(!r.ok)throw Error(file+" HTTP "+r.status);const data=await r.arrayBuffer();return {text:new TextDecoder("utf-8",{fatal:true}).decode(data),sha:[...new Uint8Array(await crypto.subtle.digest("SHA-256",data))].map(b=>b.toString(16).padStart(2,"0")).join("")};}
+  async function start(){
+    if(!["widget","builder"].includes(page)||!["manual","browser","legacy","none"].includes(seed)||!["success","cached","denied","timeout","unsupported","missing","future","held"].includes(gps)||!["none","save","reset"].includes(deny)||!["success","fail"].includes(detect))throw Error("Unknown fixture option");
+    const [pageSource,configSource]=await Promise.all([source(page==="builder"?"builder.html":"index.html"),source("config.js")]);report.sourceSha256=pageSource.sha;report.configSha256=configSource.sha;
+    if(pageSource.sha!==expectedPages[page].sha||configSource.sha!==expectedConfig)throw Error("Exact target source hash changed");
+    const manifestSource=await source("docs/real-sky/evidence/startup-cloud-20261007/final-v49/CANDIDATE_RUNTIME.json"),manifest=JSON.parse(manifestSource.text);
+    if(manifest.treeSha256!=="f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260")throw Error("Target runtime inventory changed");
+    runtimeFiles=new Set(Object.keys(manifest.files));report.runtimeInventorySha256=manifest.treeSha256;
+    const scripts=[...pageSource.text.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)],expectedAttrs=expectedPages[page].attrs;
+    if(scripts.length!==expectedAttrs.length||scripts.some((s,i)=>s[1]!==expectedAttrs[i]))throw Error("Page script anchors changed");
+    report.scriptCount=scripts.length;report.scriptBodies=scripts.map(s=>s[2].length);
+    if(!["none","stall","finite","fail"].includes(stream)||!["deny","hold","success","absent"].includes(copy)||!["true","false","throw"].includes(fallback)||[...holds].some(k=>!["coarse","search","reverse"].includes(k)))throw Error("Unknown current fixture control");
+    Object.defineProperty(navigator,"clipboard",{configurable:true,value:copy==="absent"?undefined:{writeText:copyWrite}});
+    document.execCommand=command=>{if(command!=="copy")throw Error("Unexpected execCommand "+command);const active=document.activeElement;
+      report.fallbackCalls.push({command,payload:active?.value,selectionStart:active?.selectionStart,selectionEnd:active?.selectionEnd});
+      if(report.fallbackMode==="throw")throw Error("controlled copy fallback failure");return report.fallbackMode==="true";};
+    if(platform){Object.defineProperty(navigator,"platform",{configurable:true,value:platform});Object.defineProperty(navigator,"userAgentData",{configurable:true,value:{platform}});report.platformFixture=platform;}
+    Object.defineProperty(window,"localStorage",{configurable:true,get:()=>privateStore});
+    class FixtureDate extends NativeDate{constructor(...args){super(...(args.length?args:[now]));}static now(){return now;}}window.Date=FixtureDate;window.fetch=fixtureFetch;
+    Object.defineProperty(navigator,"geolocation",{configurable:true,value:gps==="unsupported"?undefined:{getCurrentPosition:(ok,bad,opts)=>{const index=pendingGPS.length;pendingGPS.push({ok,bad});report.gpsCalls.push({index,options:opts,at:now});if(gps!=="held")setTimeout(()=>completeGPS(index),0);}}});
+    Object.defineProperty(navigator,"permissions",{configurable:true,value:{query:async()=>({state:gps==="denied"?"denied":"granted"})}});
+    window.__seedLocationFixture=()=>{if(seed!=="none"){
+      const c={v:1,lat:51.5,lon:-.12,label:"London",method:"3",units:"f",source:seed==="manual"?"manual":"browser-geolocation"};
+      if(seed==="browser")c.locationEvidence={intent:"device-position",source:"browser-geolocation",accuracyM:25,acquiredAt:now-86400000,provider:null,area:null,bounds:null};
+      if(seed==="legacy")bytes.set(key,JSON.stringify({...c,savedAt:now}));else if(!SalahConfig.saveLocal(c).ok)throw Error("Fixture seed failed");
+    }report.denySave=deny==="save";report.denyRemove=deny==="reset";};
+    const doc=new DOMParser().parseFromString(pageSource.text,"text/html"),originalScripts=[...doc.querySelectorAll("script")],module=originalScripts[0],runtime=originalScripts[1];
+    module.removeAttribute("src");module.textContent=configSource.text;const seedScript=doc.createElement("script");seedScript.textContent="window.__seedLocationFixture();";runtime.before(seedScript);
+    const knownFonts=new Set(["https://fonts.googleapis.com","https://fonts.gstatic.com","https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap"]);
+    for(const el of doc.querySelectorAll("link[href]")){const raw=el.getAttribute("href"),u=new URL(raw,rootURL);if(u.origin===rootURL.origin)continue;if(!knownFonts.has(raw))throw Error("Unreviewed font/resource: "+raw);el.remove();}
+    const base=doc.createElement("base");base.href=rootURL.href;doc.head.prepend(base);
+    const wrapped="<!doctype html>"+doc.documentElement.outerHTML,after=[...wrapped.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+    if(after.length!==scripts.length+1||after[0][2]!==configSource.text||after[1][2]!==seedScript.textContent||
+      scripts.slice(1).some((s,i)=>after[i+2][2]!==s[2]||after[i+2][1].trim()!==s[1].trim()))throw Error("Production script body changed during wrapping");
+    report.productionScriptBodiesPreserved=true;report.wrappedScriptCount=after.length;
+    // Builder derives output URLs from location.href. Preserve its production URL
+    // shape; reload this fixture using report.wrapperURL to re-establish isolation.
+    history.replaceState(null,"",new URL((page==="builder"?"builder.html":"index.html")+location.hash,rootURL));
+    report.state="loading";document.open();window.addEventListener("error",e=>{report.errors.push(e.message);failure(e.message);});window.addEventListener("unhandledrejection",e=>{report.errors.push(String(e.reason));failure(e.reason);});
+    document.addEventListener("DOMContentLoaded",()=>{try{report.storageIsolated=window.localStorage===privateStore;report.clockFixed=Date.now()===now;
+      if(!report.storageIsolated||!report.clockFixed||!window.SalahConfig||(page==="widget"?typeof window.qaState!=="function":typeof window.formConfig!=="function"))throw Error("Actual source or isolated hooks did not initialize");report.state=report.error?"error":"ready";
+    }catch(e){failure(e);}},{once:true});document.write(wrapped);document.close();
+  }
+  start().catch(failure);
+})();
+</script></body></html>

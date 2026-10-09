@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:31.435874+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/15",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/15/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/15/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/15/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/15",
+    "id": 5381806285,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfYzQ",
+    "number": 15,
+    "title": "R000F: Keep builder and settings results bound to the latest location-edit intent",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:33Z",
+    "updated_at": "2026-09-08T06:24:59Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-015 -->\n# R000F: Keep builder and settings results bound to the latest location-edit intent\n\n**Repository-local identity:** `R000F` in `theislampill/salah_widget`; existing tracker [#15](https://github.com/theislampill/salah_widget/issues/15). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-015. Product defect; proposed P1 within this repair. This work order repairs existing location-edit ownership; it grants no implementation, commit or publication authority.\n\n## The failure to repair\n\nA form can display one place's name and another place's coordinates because its asynchronous location operations do not share an edit owner. The same gap lets an older settings search become the configuration saved on close. The invariant is precise: **a lookup result may update coordinates, name, method, country bias, pin, status, candidate list or persistence only while its captured edit and session still own those outputs.**\n\nThe preserved 7 September 2026 controlled-source run executed original builder code and the original settings section at main fd2972ba64225fe9d6848e92497e6d0ed20ea624 and unmerged candidate 9d9c43649748555afbe09e3ca49bc47db2d7e7bb. It found the same failures on both. It used deferred provider/GPS promises, in-memory storage and DOM doubles; these results are not live-provider or rendered browser incidents.\n\n| Historical sequence | Preserved result |\n|---|---|\n| Leave initial coarse detection pending. Search London and resolve candidate latitude 51.5, longitude -0.12, country gb. Then return coarse New York 40.7,-74, method 2. | Form changes from 51.50000,-0.12000 to 40.70000,-74.00000; label stays London; method becomes 2. Exported iframe carries the mixed tuple. |\n| Start reverse geocoding at 40.7,-74. Change to 24.47,39.61 and finish the new reverse body with city Madinah, countryCode SA, continentCode AS. Finish the old body with New York/US/NA. | Coordinates remain 24.47,39.61, but label becomes New York and method 2. |\n| Start London search, then manually edit coordinates before it completes. | The pending search replaces the manual coordinates. |\n| Settings: start London lookup; type Cairo, dispatch input, then Shift+Enter; finish London. | London replaces the Cairo display-name choice and coordinates; the next _commitSettings applies latitude 51.5. |\n| Settings: resolve two London candidates (UK 51.5,-0.12; Ontario 42.98,-81.25); type Cairo and press Enter. | Geocoder request count remains 1; the form cycles to London, Ontario. |\n| Request precise GPS, then enter manual coordinates before its completion. | The GPS result overwrites the later manual choice. |\n\nA meaningful contrary control already works: builder label input increments srchSeq, so typing Cairo during an older London forward search preserves Cairo and the initial latitude 24.4672. Preserve that behavior. The settings focus loop also has a separate actual browser control: Escape restores the named opener and Tab/Shift+Tab wrap inside the dialog. These controls limit the finding; search cancellation is incomplete, and the settings dialog is not generally keyboard-inaccessible.\n\n## Re-anchor and exact owners\n\nBefore an authorized implementation, run these read-only checks from the intended checkout, record HEAD, dirty paths and remote, and stop if relevant changes conflict with the owners below:\n\n~~~sh\ngit rev-parse --show-toplevel\ngit remote get-url origin\ngit rev-parse HEAD\ngit status --short\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- builder.html index.html tests/smoke.html README.md\n~~~\n\nExpected repository is theislampill/salah_widget. Future HEAD need not equal the historical base, but the executor must classify the relevant drift before transplanting a repair. Do not adopt the whole candidate.\n\nWrite [builder.html, search and reverse owners](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L238), including searchReset, applyCand, doSearch, fillNameFromCoords, locate, detectArea and their input handlers. Write [index.html, settings owner](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2283), including _runSetSearch, _showSetCand, _wireSettings, _populateSettingsForm, _usePrecise, _resetLocal and open/close lifetime. _commitSettings continues to snapshot the current valid form. The [candidate settings section](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L2397) is comparison evidence, not a prequalified patch.\n\n## Minimal design and event ordering\n\nRetain separate builder and settings state; they are different forms with different lifetimes. Extend their existing counters instead of adding a shared request scheduler. A small local record can hold session generation, location-edit generation, and an operation sequence for the active lookup. These are proposed transient fields, not persisted WidgetConfig keys or new public API fields.\n\n1. **Invalidate at intent, before waiting.** Label input, coordinate input, starting a deliberate precise request, Shift+Enter name retention, reset, and settings close/reopen invalidate earlier location work and clear old candidates. Cancel pending debounce/revert timers at the same owner. Builder's initial detect captures the initial edit generation without later claiming user-intent priority. Units/time/date-only edits do not invalidate an otherwise current coordinate lookup. Method input retains methodAuto=false; a late lookup may still supply current coordinates but cannot override that method.\n2. **Capture a request, never reconstruct it after await.** Forward search captures the query, home-country bias, generation and operation token. Reverse captures coordinates and generation. Coarse/GPS capture the generation and operation token. Settings additionally captures the session. A result or error checks those identities before any form write, pin/status update, country-bias change or clearing of the current operation's busy feedback. Abort is optional cleanup; GPS may not be cancellable and requires the same ownership check.\n3. **Treat automatic continuation as the same intent.** Accepting current GPS coordinates may trigger reverse geocoding at those exact accepted coordinates; pass/capture the same owning edit while replacing only the active subordinate operation. Do not increment the edit generation on programmatic writes and thereby invalidate the operation's own continuation. Check labelAuto/methodAuto at commit time as well as the request identity. A manual label or method override after dispatch must survive. No country/continent mapping is changed by this issue.\n4. **Bind candidates to their source query.** Store the originating query/generation when matches are accepted. In settings, _showSetCand may replace the field with a candidate display name, so equality against the original query alone is insufficient. Keep a candidate-list owner plus the last label value written by that list. Enter cycles only when that owner is current and there has been no user input since its last applied candidate; otherwise clear the list and search the new typed query. This preserves London cycling despite its programmatic label update, while Cairo sends request 2. Builder retains its existing label-input invalidation and gets equivalent candidate ownership.\n5. **Close creates a hard session boundary.** On settings close, invalidate pending work first, then _commitSettings snapshots the existing form once, then close and restore focus normally. Reopen starts a fresh session before population; an A→B→A query text sequence cannot revive A's old operation. Reset is another edit boundary; its detection result is subject to current session/intent, regardless of whether storage removal succeeded. Storage outcome policy belongs to [R0011](https://github.com/theislampill/salah_widget/issues/17).\n6. **Make no-op completion observable in tests.** Obsolete success, failure and cleanup all leave the current form, candidate list, source/pin, feedback and saved bytes untouched. Current success still sets dirty state and refreshes the builder preview or settings form. No stale callback is allowed to call applyConfig or saveLocal.\n\nThis is a little more state than comparing coordinates or query text, but those comparisons fail A→B→A and equal-coordinate/custom-label cases. Separate cancellation counters for each network type leave cross-type races intact. Disabling all inputs during detection would prevent correction during a slow provider and change the existing workflow. Serializing every lookup would queue obsolete work and still need intent checks. Aborting fetch alone cannot cancel an already-returned body, a queued microtask or GPS callback.\n\n## Public deterministic fixture and host bridge\n\nPublish the regression source with the repair. The private audit probe is supplementary only. The following inputs and schedule are sufficient to recreate its decisive behavior; the proposed regression must invoke the production event handlers and original serializer, not a second implementation of their logic.\n\nUse a fresh isolated page/VM for each case. Default builder controls are label Madinah, lat 24.4672, lon 39.6142, method \"4\", school \"0\", time \"24\", units \"f\", datefmt \"YYYY-MM-DD\". Settings starts from the equivalent valid local configuration. Install no real network or clipboard sink. Supply a deferred queue for SalahConfig.geocodeSearch and coarseDetect, and for GPS/reverse completion. Candidate schema is:\n\n~~~js\nconst london = {lat:51.5, lon:-0.12, name:\"London\", norm:\"London\", cc:\"gb\"};\nconst ontario = {lat:42.98, lon:-81.25, name:\"London, Ontario\",\n                 norm:\"London, Ontario\", cc:\"ca\"};\nconst madinahReverse = {city:\"Madinah\", countryCode:\"SA\", continentCode:\"AS\"};\nconst oldNewYorkReverse = {city:\"New York\", countryCode:\"US\", continentCode:\"NA\"};\n// Deferred helper for the fixture, not production:\nfunction deferred() {\n  let resolve, reject;\n  const promise = new Promise((a,b) => { resolve=a; reject=b; });\n  return {promise, resolve, reject};\n}\n~~~\n\nAfter each user input dispatch actual input/change events, then advance only the relevant debounce (builder forward 1000 ms; coordinate reverse 700 ms). Resolve promises in the table's order and drain microtasks. Assert the whole form tuple, parsed iframe hash, saved config and number/arguments of requests; a correct label alone cannot pass.\n\n| GREEN/control case | Required outcome |\n|---|---|\n| Coarse-after-London, reverse-New-York-after-Madinah, GPS/search-after-manual | Later user tuple and corresponding method/name override remain unchanged after the obsolete completion and after export/close. |\n| London then Cairo + Shift+Enter | Cairo remains the display name; coordinates equal their pre-search values; no London data is saved. |\n| London two matches; user types Cairo; Enter | Request count becomes 2 with Cairo; neither London candidate is applied. |\n| Same two London matches, no user input; Enter twice | Ontario then London are selected with matching coordinates; no unnecessary new lookup. |\n| Search A, new input B, new input A; resolve newest then oldest | Only newest generation may apply even though query text is equal. |\n| Close/reopen during forward, reverse/GPS or reset detect | Prior session cannot alter the new form, feedback or saved bytes. |\n| Explicit custom name/method and a current valid lookup | Protected fields remain; eligible coordinates still update. |\n| Current lookup rejects; obsolete lookup rejects afterward | Current error is shown once; obsolete error/cleanup does not replace it. |\n\nMutation controls belong in isolated fixtures: remove one gate each for coarse, reverse, GPS and forward; restore candidate cycling without owner validation; remove close invalidation. Each mutation must fail its own through-handler assertion. Do not weaken the fixture by directly assigning private generation fields to make a test pass.\n\nThe minimum real-browser bridge is one disposable local builder page and one disposable local-mode widget with request interception before navigation, fixed provider fixtures and in-memory/disposable storage. Perform the London/Cairo input+Enter/Shift+Enter and GPS/manual sequence using real browser keyboard/input events, then close/reopen via the actual UI. Capture final form/preview and settings feedback crops plus resulting parsed configuration. The VM proves schedule logic, not native event bubbling, permissions, focus, visual layout or third-party host storage. No host geolocation prompt is needed: a controlled geolocation result is appropriate. A claim about actual host permission behavior needs that separately identified host.\n\n## Integration, public effects, rollback and completion\n\n[R0010](https://github.com/theislampill/salah_widget/issues/16), [R0011](https://github.com/theislampill/salah_widget/issues/17) and [R001F](https://github.com/theislampill/salah_widget/issues/31) retain their existing qualification dependence on current edit intent. [R0003](https://github.com/theislampill/salah_widget/issues/3) owns downstream prayer/weather request context; form generations must not become remote data generations. Shared _wireSettings/_commitSettings/applyConfig-area changes integrate serially with the settings feedback owner. No new typed edge or write domain is proposed.\n\nKeep generic/local versus fixed serialization, explicit defaults, 325×530 iframe, permission attribute, URL encoding, date-format literals, dialog focus loop and autosave-on-close intact. This repair changes builder/settings behavior and its tests; it does not authorize installers, preset, weather, prayer or regional-policy edits. README's search/Shift+Enter explanation changes only if needed to describe the now-enforced behavior. Later public claims require matching served builder/config/index bytes and the corresponding consumer interaction.\n\nRollback the local generation/candidate/handler changes as one coherent delta if current edits no longer apply. Do not retain invalidation at dispatch without the corresponding continuation/commit gates. Never recover by force-saving an obsolete result. Stop on incompatible owner drift or absent real-browser evidence for a browser claim; record logic-only completion as partial.\n\nDONE requires final integrated-tree RED→GREEN, positive and mutation controls, the browser bridge, and an evidence comment identifying tree, fixture, schedules, expected/actual outputs and limits. Independent exact-tree review must inspect the cross-type and close-session paths. Use non-closing Implements #15 PR wording; close manually only after the evidence comment and any claimed public readback. Filing this work order proves no product repair.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/15/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/15/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733535616,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfYzc8AAAAHJ9yJgA",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733535616",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:59Z",
+      "rename": {
+        "from": "SW-015: Keep builder and settings results bound to the latest location-edit intent",
+        "to": "R000F: Keep builder and settings results bound to the latest location-edit intent"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R000F",
+    "bodySha256": "649771770d4108a187b2372b1a7a2f6ebe7137ef0e1c2a6579607ea372d09e73",
+    "updatedAt": "2026-09-08T06:24:59Z",
+    "commentRevisions": []
+  }
+}

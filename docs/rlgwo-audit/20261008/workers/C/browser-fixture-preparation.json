@@ -1,0 +1,63 @@
+{
+  "status": "PREPARED NOT EXECUTED",
+  "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "sourceFixture": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\widget-fixture.html",
+  "sourceFixtureSha256": "1b9f164dd5b43fb9091ca1c0dba42f09a00f76e95c3069b26b1db7bad63c9042",
+  "preparedFixtureSha256": "1153f9f3a85b3eaffc0de68eeebc26f82c1c812989a6abcc01db91091de6ddc4",
+  "changes": [
+    {
+      "from": "rootURL=new URL(\"../\",location.href);",
+      "to": "rootURL=new URL(\"/product/\",location.href);",
+      "purpose": "Serve untouched target under a separate HTTP alias; audit wrapper is outside repository",
+      "anchorCount": 1
+    },
+    {
+      "from": "let clockNow=fixed;",
+      "to": "let clockNow=fixed;\n  const caseId=query.get(\"case\"),caseSet=new Set([\"12-null-temp\",\"12-zero-temp\",\"12-invalid-precip\",\"12-wet\",\"14-dry\",\"14-wet\",\"30-equator\",\"30-meridian\",\"30-origin\"]);\n  if(!caseSet.has(caseId))throw Error(\"Unknown bounded weather case\");\n  const cfg=new URLSearchParams(hash),wantLat=String(Number(cfg.get(\"lat\"))),wantLon=String(Number(cfg.get(\"lon\")));",
+      "purpose": "Known closed case list and captured expected numeric coordinate identity",
+      "anchorCount": 1
+    },
+    {
+      "from": "weatherOracle:\"joined R0024: useful model; local permission requires admitted synthetic fixture\"",
+      "to": "weatherOracle:\"H5/H8 current model may support quantity-gated model particles; no direct observation or lightning inferred\"",
+      "purpose": "Correct stale fixture description only; no existing assertion weakened",
+      "anchorCount": 1
+    },
+    {
+      "from": "precipitation:5,rain:5,showers:0,snowfall:0};",
+      "to": "precipitation:caseId===\"12-invalid-precip\"?\"Infinity\":caseId===\"14-dry\"?0:2,\n      rain:caseId===\"12-invalid-precip\"?null:caseId===\"14-dry\"?0:2,showers:0,snowfall:0,\n      ...(caseId===\"12-null-temp\"?{temperature_2m:null}:caseId===\"12-zero-temp\"?{temperature_2m:0}:{})};",
+      "purpose": "Actual fetchWeather receives null/zero/malformed/healthy amounts before startup, not helper installation",
+      "anchorCount": 1
+    },
+    {
+      "from": "u.searchParams.get(\"latitude\")===\"24.47\"&&u.searchParams.get(\"longitude\")===\"39.61\"",
+      "to": "u.searchParams.get(\"latitude\")===wantLat&&u.searchParams.get(\"longitude\")===wantLon",
+      "purpose": "Weather request must consume exact requested zero-axis pair; retains complete fields, units, zone and parameter count",
+      "anchorCount": 1
+    },
+    {
+      "from": "return jsonResponse({generated:Math.floor(clockNow/1000),host:\"https://tilecache.rainviewer.com\",radar:{past:[]}},row);",
+      "to": "return jsonResponse({generated:Math.floor(clockNow/1000),host:location.origin+\"/tile\",radar:{past:[{time:Math.floor(clockNow/1000),path:\"/v2/radar/\"+Math.floor(clockNow/1000)}]}},row);",
+      "purpose": "Actual browser Image/canvas loads an HTTP uniform 0dBZ palette tile; no fake accessor/Image/canvas",
+      "anchorCount": 1
+    },
+    {
+      "from": "expected={latitude:\"24.47\",longitude:\"39.61\",method:\"4\",school:\"0\"}",
+      "to": "expected={latitude:wantLat,longitude:wantLon,method:\"4\",school:\"0\"}",
+      "purpose": "Target-bound synthetic prayer fixture changes only coordinates; no real prayer-provider availability claim",
+      "anchorCount": 1
+    },
+    {
+      "from": "icon:document.querySelector(\"#wi\").textContent,temperature:document.querySelector(\"#wt\").textContent});",
+      "to": "icon:document.querySelector(\"#wi\").textContent,temperature:document.querySelector(\"#wt\").textContent,\n      raw:copy(weather),radar:copy(weatherRadar),wxBusy,radarBusy,\n      cached:copy((()=>{try{const raw=localStorage.getItem(wxKey());return raw==null?null:JSON.parse(raw);}catch{return null;}})()),\n      visibleParticles:[...document.querySelectorAll(\".drop,.flake\")].filter(e=>{const s=getComputedStyle(e);return s.display!==\"none\"&&s.visibility===\"visible\"&&+s.opacity>.03;}).length,\n      fx:document.querySelector(\".c\").dataset.fx,precip:document.querySelector(\".c\").dataset.precip,lightning:document.querySelector(\".c\").dataset.lightning,\n      headerLabel:document.querySelector(\"#wi\").title,\n      card:(()=>{const r=document.querySelector(\".c\").getBoundingClientRect();return {width:r.width,height:r.height};})(),\n      footer:(()=>{const r=document.querySelector(\".d\").getBoundingClientRect(),c=document.querySelector(\".c\").getBoundingClientRect();return {top:r.top-c.top,bottom:r.bottom-c.top};})()});",
+      "purpose": "Read-only consumer snapshots after actual acquisitions; gate invocation is diagnostic only",
+      "anchorCount": 1
+    },
+    {
+      "purpose": "Permit owned current HTTP app wasm compilation in the isolated wrapper only; no generic eval",
+      "anchorCount": 2
+    }
+  ],
+  "expectations": "Original script count, config/native-first-paint/native-sky/Moon anchors, script-body equality, hook/storage/clock/source-owner identity and unexpected-request/resource failures retained. Product function bodies never patched.",
+  "limitations": "No browser execution by C. Fixed clock and blocked external fonts do not qualify ordinary live M0 or original typography; primary rollout/retained motion evidence must satisfy those independently."
+}

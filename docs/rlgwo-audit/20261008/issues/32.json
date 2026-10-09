@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:33.499822+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/32",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/32/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/32/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/32/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/32",
+    "id": 5381809419,
+    "node_id": "I_kwDOS6MzkM8AAAABQMflCw",
+    "number": 32,
+    "title": "R0020: Make default real-time mode follow device wall-clock corrections",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:57:03Z",
+    "updated_at": "2026-09-08T06:25:37Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-032 -->\n# R0020: Make default real-time mode follow device wall-clock corrections\n\n**Repository-local identity:** `R0020` in `theislampill/salah_widget`; existing tracker [#32](https://github.com/theislampill/salah_widget/issues/32). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-032. Existing corrective owner: GitHub #32. Proposed priority P1; product-or-skill defect. The main repair target is `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; audit `9d9c43649748555afbe09e3ca49bc47db2d7e7bb` is comparison evidence, not an assumed future target. This work order authorizes no implementation, commit or publication.\n\n## Captured divergence and the missing clock authority\n\nThe widget has one public temporal source, but ordinary mode does not keep that source aligned with the device wall clock. `initSim()` records Date.now once. `simNow()` then adds only monotonic elapsed time until the timezone changes. NEW-HP-001's exact-source fixture moved Date.now and performance.now independently: unchanged clocks had zero skew; a +3600000 ms wall correction left `simNow-Date.now=-3600000`; a −3600000 correction left +3600000. ET-NEW-001 corroborated the same defect with ±7200000 ms plus one second of monotonic elapsed time. These are two witnesses of one invariant, not two clock owners.\n\nThe old formula is arithmetically consistent with its old anchor. Its defect is using that retained anchor as ordinary **current device time** after the device has corrected itself. Prayer/current-event selection, countdown, civil day, sun/moon date and day acquisition consume this instant; changing only a text clock would leave the product state wrong. There is no evidence here of an actual NTP incident, an observed user's error duration, a measured correction frequency, a native suspend result, or a rendered/public repair. Historical results used exact temporal source in controlled Node environments and did not change the machine clock.\n\nDST elapsed arithmetic remains [R0007](https://github.com/theislampill/salah_widget/issues/7), conversion of explicit local times remains [R0008](https://github.com/theislampill/salah_widget/issues/8), and day/late-response/Hijri semantics remain their existing owners. This issue supplies the correct current instant and discriminating consumer cases.\n\n## Re-anchor and resolve explicit timeScale=1 from the actual contract\n\nBefore edits, record `git -C C:\\workspace\\ai\\salah_widget rev-parse --show-toplevel`, `rev-parse HEAD`, `status --short`, and `diff -- index.html DESIGN.md tests/smoke.html`, with the same `git -C` prefix. Compare [main initialization/mode helpers](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L694-L726), [loop and visibility](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2224-L2273), and [candidate temporal source](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L709-L744). Stop on incompatible relevant drift; unrelated work remains untouched.\n\nThe existing code distinguishes an absent `timeScale` parameter from an explicit positive one: `ADVANCING = _tsParam!=null && TIMESCALE>0`. Explicit `timeScale=1` therefore already selects preview behavior: [hourly forecast synchronization](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L861-L866), [star reprojection](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1983-L1985), [SIM readout](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2032-L2034), and the loop's forecast/refresh/fast-class branches. [DESIGN's parameter contract](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md#L246-L250) expressly says a timeScale parameter enables ADVANCING, forecast weather, reprojected stars and the sim clock.\n\nThere is a conflicting shorthand comment: “1 → real time.” In context that states the **rate**, while the executable parameter-presence branch and documented preview effects distinguish mode intent. The chosen minimal repair preserves explicit `timeScale=1` as a 1× anchored preview. It fixes only ordinary no-clock-override loads. This is an evidence-based compatibility choice, not an assertion that the old wording was unambiguous. Clarify the comment and DESIGN: absent clock overrides follows current device time; explicit `timeScale=1` remains a 1× preview with its existing preview behavior. Do not use this issue to change ADVANCING/weather semantics or silently reinterpret existing preview URLs.\n\n## Exact mode table and smallest source design\n\nDefine the authority predicate once, beside existing parsed flags. Proposed code below is design, not an implemented patch:\n\n```js\nconst FOLLOW_WALL_CLOCK =\n  _tsParam == null && SIM.time == null && TIMESCALE === 1;\n\nfunction simNow(){\n  if(FOLLOW_WALL_CLOCK) return Date.now();\n  if(_simBase == null || _simTz !== tz) initSim();\n  return _simBase + (_RAFNOW()-_rafT0)*TIMESCALE;\n}\n```\n\nIntegrate the converter owner's explicit invalid-simulation guard around the explicit branch; do not reintroduce a numeric old anchor after a rejected scene. The predicate has no persisted state and no new query field. It deliberately distinguishes parameter presence from the numeric rate.\n\n| Inputs after existing parsing | Clock authority | Existing visible/data mode retained |\n|---|---|---|\n| No simTime, no timeScale | Current Date.now on every call | Ordinary real-time; no new ADVANCING flag. |\n| Explicit timeScale=1, no simTime | Initial anchor plus monotonic elapsed ×1 | Existing 1× preview/ADVANCING and SIM readout. |\n| Explicit timeScale=60, no simTime | Initial anchor plus monotonic elapsed ×60 | Existing accelerated preview. |\n| simTime=03:30, no timeScale | Resolved explicit anchor, scale 0 | Frozen scene remains frozen. |\n| simTime=03:30 with scale 1 or 60 | Resolved anchor plus configured elapsed rate | Explicit scene remains independent. |\n| Explicit scale 0, empty/invalid scale parsed as 0, or clamped negative scale | Existing frozen parsed mode | Do not broaden this task into query-parser validation. |\n\n1. Put the ordinary branch before any retained-anchor initialization. A zone change changes how an epoch is displayed, not the real epoch itself; ordinary mode need not call `initSim` merely because `_simTz` is stale. Leave explicit simulation's intended zone-settling initialization in place. Do not repeatedly reanchor its elapsed base every frame.\n2. Keep `nowParts()` and `simDate()` on the same `simNow()` entry point. Do not add separate “real date,” “prayer clock” and “sky clock” authorities or call Date.now directly throughout the renderer. A current default-mode call must observe either direction of a wall step immediately. The existing `sec!==_lastSec` loop comparison schedules rendering after either positive or negative second changes; preserve `!==`, not `>`.\n3. Make consumer decisions with the ordinary current instant on their next existing scheduled render. [R0007](https://github.com/theislampill/salah_widget/issues/7) owns a coherent model snapshot for endpoint subtraction. There is no requirement to introduce a global frame cache or another rAF loop here. A subsecond correction within the same integer second can be shown at the next normal second tick; the fixture must not claim a callback occurred when the loop was paused.\n4. On forward/backward civil-day corrections, preserve the day-adoption contract from [R0005](https://github.com/theislampill/salah_widget/issues/5): derive the actual current local day, classify completed cache/prefetch and late data by their admitted dates, and mark an unmatched retained record stale/unavailable. Do not increment the configuration generation on every clock read. A same-generation pending response can still have the wrong day after a correction, so [R0003](https://github.com/theislampill/salah_widget/issues/3) generation guards are necessary but not sufficient.\n5. The candidate's future-Hijri hold is not automatically adopted into main. If the final integrated date-output owner uses a hold, [R0009](https://github.com/theislampill/salah_widget/issues/9) must disclose it correctly after a backward step rather than silently calling a future date current. The clock repair must not hide its restored ability to move backward behind a monotonic display clamp. Shared consumer evidence may qualify both owners without moving their source ownership here.\n6. Preserve real-elapsed operation eligibility and busy ownership under [R0006](https://github.com/theislampill/salah_widget/issues/6). A wall correction should change the relevant civil day, not cause one request per frame or postpone an otherwise eligible retry by an hour. `_RAFNOW()` uses performance.now on the normal supported browser path; where its existing fallback is Date.now, independent-simulation/monotonic guarantees require actual host qualification and are not inferred from Node stubs.\n7. Retain the existing visibility and IntersectionObserver stop/start behavior. A hidden document does not need a timer to keep updating output; its first resumed callback reads the current wall instant and performs at most the existing eligible day/acquisition work. Do not run a catch-up render or request for every missed second/day. Actual native sleep/wake is a separate environment pathway and cannot be declared fixed from injected clock steps alone.\n\nPeriodic blind reanchors would destroy frozen/accelerated scenes. A new “NTP detector” or correction threshold invents policy not needed by the witness. Keeping only monotonic time preserves the defect indefinitely. Changing ADVANCING to hide the explicit-1 difference would alter forecast/stars/UI behavior outside scope. Direct Date.now for the default branch is smaller and exact for the specified authority.\n\n## Public deterministic RED → GREEN fixture\n\nThe following **proposed** fixture controls only its VM Date/performance objects. It does not alter the host clock or execute a private probe. It extracts the actual temporal block; preserve its source hash and stop if markers are missing. Each test creates a fresh realm so one mode's anchor cannot contaminate another.\n\n```js\nconst fs = require('node:fs'), vm = require('node:vm');\nconst assert = require('node:assert/strict');\nconst source = fs.readFileSync('index.html','utf8');\nconst a = source.indexOf('const _RAFNOW =');\nconst b = source.indexOf('// ---- prayer-times data:',a);\nassert(a >= 0 && b > a);\nconst block = source.slice(a,b);\nconst base = Date.parse('2026-09-07T12:00:00.000Z');\nfunction check(query, step, expected){\n  let wall=base, mono=0;\n  class ClockDate extends Date {\n    constructor(...args){ super(...(args.length ? args : [wall])); }\n    static now(){ return wall; }\n  }\n  const q=new URLSearchParams(query);\n  const c=vm.createContext({Date:ClockDate, Intl, q,\n    SIM:{time:q.get('simTime')}, tz:'UTC',\n    performance:{now:()=>mono}, pad:n=>String(n).padStart(2,'0')});\n  vm.runInContext(block,c);\n  const read=()=>vm.runInContext('simNow()',c,{timeout:5000});\n  read(); // establish the explicit-mode anchor before either clock changes\n  mono=1000; wall=base+1000+step;\n  assert.equal(read(), expected(wall));\n}\nfor(const step of [0,3600000,-3600000,7200000,-7200000])\n  check('',step,wall=>wall);\ncheck('timeScale=1',3600000,()=>base+1000);\ncheck('timeScale=60',3600000,()=>base+60000);\ncheck('simTime=03:30',3600000,\n      ()=>Date.parse('2026-09-07T03:30:00.000Z'));\n```\n\nThe default positive/negative assertions fail on the historical source by exactly the injected step; unchanged clock is the positive control. The explicit-preview assertions preserve its existing independent anchor/rate. The timeout is fixture containment, not a production clock deadline. Repeat negative wall steps for explicit modes and SIM.time+scale; each must remain independent on the supplied monotonic performance fixture. Also assert default `nowParts()` is 13:00:01 or 11:00:01 UTC after the respective one-hour step, proving that wall parts consume the corrected instant.\n\n## Required caller and browser controls\n\nAn isolated browser fixture must inject its test Date/performance functions **before** the widget script executes, then supply deterministic provider responses and storage. Use a same-origin disposable document or test runner's pre-script hook; changing a `window.Date` object after the IIFE has already captured state is not equivalent setup. Record the served source hash and actual hook installation, invoke the real boot/render/loop, and capture DOM output. A detached Node function test does not prove browser consumer integration.\n\nUse a synthetic admitted UTC September 7 record with Fajr 05:00, Sunrise 06:00, Dhuhr 12:00, Asr 15:30, Maghrib/Sunset 18:00, Isha 19:30, matching Gregorian fields and UTC metadata. These are fixture inputs, not a real site's prayer prediction.\n\n| Controlled transition | Required actual consumer result |\n|---|---|\n| 15:29:59 → 15:30:01 wall step, fixed monotonic time | Next scheduled visible render changes current prayer from Dhuhr to Asr; next key becomes Maghrib, and countdown consumes the new instant. |\n| Reverse to 15:29:59 | Current/next selection can return to Dhuhr/Asr; no only-increasing second guard or display latch. |\n| September 7 23:59:59 → September 8 00:00:01 with completed day 8 prefetch | Day 8 is adopted through its owner, accepted date/cache identity is day 8, and output is not stale day 7 labeled current. |\n| Hold a day 7 request through that forward step | A late response cannot be relabeled day 8. Old completion also cannot release a newer owning request slot. |\n| Step backward from day 8 to day 7, then release a pending day 8 response | It can qualify as nextDay when eligible, never as current day 7. Date/Hijri output retains truthful provenance rather than a hidden future hold. |\n| Hide, advance fixture wall clock, then show | First resumed callback uses current device time, with one existing eligible acquisition opportunity, not a catch-up storm or second loop. This is simulated visibility evidence, not native sleep. |\n| Explicit timeScale=1/60 or frozen simTime, with wall steps | Anchor/rate and existing ADVANCING/forecast/stars/SIM readout behavior remain as declared in the mode table. |\n\nCapture corrected now, current/next labels, selected/loaded dates, cache writes and attempt ownership at each release point, with a crop of actual clock/prayer/date output. Preserve existing valid-scene 325×530 readability, opaque calendar moon, visible live motion, reduced-motion behavior and offscreen pause. No cloud hash may substitute for motion evidence. Native suspend or device-correction claims require actual supported-host observations if later selected; they are not prerequisites to claim only the bounded injected wall-correction pathway with its stated limits.\n\nMutation controls in an authorized disposable fixture restore the old boot-anchor formula, broaden the default predicate to explicit simTime, and change the loop's `!==` to `>` separately. Default step, explicit frozen, and backward-render cases must respectively fail. Restore the final tree before qualification. A test that mocks nowParts directly cannot qualify whether nowParts consumes the repaired simNow.\n\n## Interfaces, docs, rollback and closure\n\nNo new predecessor or graph edge is proposed. Preserve qualification from this owner to [R0007](https://github.com/theislampill/salah_widget/issues/7) and [R0009](https://github.com/theislampill/salah_widget/issues/9), and shared `runtime/clock-mode` / `runtime/render-loop` writes with [R0005](https://github.com/theislampill/salah_widget/issues/5), [R0006](https://github.com/theislampill/salah_widget/issues/6), [R0008](https://github.com/theislampill/salah_widget/issues/8). The request/day fixture consumes existing ownership contracts; it does not transfer their repair scope. One integrator joins overlapping production hunks.\n\nChange only the clock authority predicate/branch, necessary consumer integration, comments and invoked fixtures. Update DESIGN's [one-formula description](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md#L87-L95) to retain one temporal API with two explicit authorities, and clarify the 1× preview distinction at the existing parameter documentation. No new clock preference, builder field, config/preset migration, installer, dependency, OS setting, active IMPLEMENTAUDIT state or notification feature belongs here.\n\nRollback the narrow predicate/consumer integration if explicit modes or accepted day behavior regress. Keep the default defect open rather than mask it with a monotonic Hijri clamp. Partial source arithmetic success cannot close #32 while consumer/date/explicit-mode controls fail. Final-tree RED→GREEN/control evidence, independent exact-tree review and browser consumer readback precede an evidence comment and manual closure; use non-closing `Implements #32`. Public repair claims require matching served source/readback. Supplementary historical companion SHA256: `a265910ff3eed52bfb640fabef7ae2c7c35dc24899e364d1349b081c5901c7bf`. No new execution result is asserted by this plan.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/32/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/32/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733565984,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMflC88AAAAHJ90AIA",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733565984",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:37Z",
+      "rename": {
+        "from": "SW-032: Make default real-time mode follow device wall-clock corrections",
+        "to": "R0020: Make default real-time mode follow device wall-clock corrections"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0020",
+    "bodySha256": "5996e99716e206c19053d0a8eac38d5d38e29d4d4fbffb53e846e49670e8cb52",
+    "updatedAt": "2026-09-08T06:25:37Z",
+    "commentRevisions": []
+  }
+}

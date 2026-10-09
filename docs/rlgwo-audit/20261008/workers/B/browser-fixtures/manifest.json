@@ -1,0 +1,4211 @@
+{
+  "schema": "B-native-fixture-preparation/1",
+  "auditTarget": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "root": "C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget",
+  "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+  "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+  "originalFixtures": [
+    {
+      "file": "tests/r0001-browser-fixture.cjs",
+      "sha256": "6533cd947ceaa9209af4b185a50a1a0721098e86ee10f957d9c0546ec59f4f46"
+    },
+    {
+      "file": "tests/r0009-browser-fixture.cjs",
+      "sha256": "7faf06af3f9a32256811410874cefde484a61d045ccbe9b5c56cf0b220f4d005"
+    }
+  ],
+  "adaptations": [
+    "Expose original documentFixture export only in an in-memory module; preserve original functions/data/expectations.",
+    "Permit only same-origin unchanged asset fetches in original prayer-only interceptor; other external provider fetches retain rejection.",
+    "Current script/boot anchors checked exactly once; same source setup and real boot/render retained.",
+    "Primary date-only browser runner may explicitly defer optional native-data and Moon worker/WASM requests; no astronomy/whole-renderer PASS inferred.",
+    "Arc payloads/negative copied from existing exact full marker tests; no model/drawArc/CSS replacement."
+  ],
+  "canary": "<svg onload=\"window.__sw_sec_probe=1\"></svg>",
+  "rows": [
+    {
+      "id": "r0001-ordinary",
+      "issue": 1,
+      "file": "r0001-ordinary.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "74ea17bb906fa40022a28a1187c9c1ba7678d66f85a5e7571732640fc9d69f3f",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "ordinary",
+      "testCase": "ordinary",
+      "mutant": null,
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-hash-format",
+      "issue": 1,
+      "file": "r0001-hash-format.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=%3Csvg%20onload%3D%22window.__sw_sec_probe%3D1%22%3E%3C%2Fsvg%3E",
+      "fixtureSha256": "95cd4e37645607e6e0ab9d56b00fe7cbb5956028999391253dc14728f95fffe0",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "hash-format",
+      "testCase": "hash-format",
+      "mutant": null,
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-saved-format",
+      "issue": 1,
+      "file": "r0001-saved-format.html",
+      "hash": "#local=1&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&motion=full",
+      "fixtureSha256": "ebb28a197bccd48e04496ce055b845bd1b0aed300576f012e399c110f0f06715",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "saved-format",
+      "testCase": "saved-format",
+      "mutant": null,
+      "expectedConfigSource": "localStorage"
+    },
+    {
+      "id": "r0001-provider-month",
+      "issue": 1,
+      "file": "r0001-provider-month.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=DD%20MMMM%20YYYY",
+      "fixtureSha256": "fe4544f7ec8f0dd052be6041666fe097bff2c54488d19d9fdae1eef339ed0ef5",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "provider-month",
+      "testCase": "provider-month",
+      "mutant": null,
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-preview-day",
+      "issue": 1,
+      "file": "r0001-preview-day.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "b127c3efcea2cbea6808cc0f6b71c7058f4aad33af66a0c5564fb25b45d714d9",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "preview-day",
+      "testCase": "preview-day",
+      "mutant": null,
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-after-maghrib",
+      "issue": 1,
+      "file": "r0001-after-maghrib.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=19:00&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=DD%20MMMM%20YYYY",
+      "fixtureSha256": "fe4544f7ec8f0dd052be6041666fe097bff2c54488d19d9fdae1eef339ed0ef5",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "after-maghrib",
+      "testCase": "provider-month",
+      "mutant": null,
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-held-out-tokens",
+      "issue": 1,
+      "file": "r0001-held-out-tokens.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=YYYY%20YY%20MMMM%20MMM%20MM%20M%20DD%20D",
+      "fixtureSha256": "74ea17bb906fa40022a28a1187c9c1ba7678d66f85a5e7571732640fc9d69f3f",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "held-out-tokens",
+      "testCase": "ordinary",
+      "mutant": null,
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-literal-control",
+      "issue": 1,
+      "file": "r0001-literal-control.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20%22'%20%26%20%3C%20%3E%20YYYY",
+      "fixtureSha256": "74ea17bb906fa40022a28a1187c9c1ba7678d66f85a5e7571732640fc9d69f3f",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "literal-control",
+      "testCase": "ordinary",
+      "mutant": null,
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-stale-control",
+      "issue": 1,
+      "file": "r0001-stale-control.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=%3Csvg%20onload%3D%22window.__sw_sec_probe%3D1%22%3E%3C%2Fsvg%3E",
+      "fixtureSha256": "eea554b85b9bdd43e6c6f4aedd2965accc1bb97cb39ce5056cc1a2212cba52c4",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "stale-control",
+      "testCase": "stale",
+      "mutant": null,
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-ce-mutant",
+      "issue": 1,
+      "file": "r0001-ce-mutant.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=%3Csvg%20onload%3D%22window.__sw_sec_probe%3D1%22%3E%3C%2Fsvg%3E",
+      "fixtureSha256": "3493d415335424e31d487fcb0f693e8a1d4c0dc7ca646022bd7c3006c9273b93",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "ce-mutant",
+      "testCase": "hash-format",
+      "mutant": "ce",
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-ah-mutant",
+      "issue": 1,
+      "file": "r0001-ah-mutant.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=%3Csvg%20onload%3D%22window.__sw_sec_probe%3D1%22%3E%3C%2Fsvg%3E",
+      "fixtureSha256": "0da47ef9bb0ff43139e6e38161ca33bf50167a5f00b1bf1afc21b01c4df95626",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "ah-mutant",
+      "testCase": "hash-format",
+      "mutant": "ah",
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0001-preview-mutant",
+      "issue": 1,
+      "file": "r0001-preview-mutant.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&simCloud=0&simTemp=72&simHumid=45&simWind=3&simWindDir=225&simPrecip=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "61fa3ed6581b3220b4243c591d707d94cd6a2594aa59ae5599a993d54e71d912",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "security",
+      "name": "preview-mutant",
+      "testCase": "preview-day",
+      "mutant": "preview",
+      "expectedConfigSource": "hash"
+    },
+    {
+      "id": "r0009-before",
+      "issue": 9,
+      "file": "r0009-before.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "355dee6b8ac44661e0752a0cef0eb02b5298abce382882d6a728cdf86cd3289d",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "before",
+      "spec": {
+        "name": "before",
+        "clock": "2026-09-07T17:59:59Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-boundary",
+      "issue": 9,
+      "file": "r0009-boundary.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "4cdfac8750cb14315d879bd29782cb52d7e74d749b515d29c6cfffea799a6287",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "boundary",
+      "spec": {
+        "name": "boundary",
+        "clock": "2026-09-07T18:00:00Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-after",
+      "issue": 9,
+      "file": "r0009-after.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "ef9b63d2a90cd5a9a7ae278ab7c23d5ffa0590dd21e290be13dbe6ff8fe93439",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "after",
+      "spec": {
+        "name": "after",
+        "clock": "2026-09-07T18:01:00Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-missing",
+      "issue": 9,
+      "file": "r0009-missing.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "1c3658dc0f10aa05362007fbbd05e87e8e6b3668ef2a5a4c7d4b0f890b7f7386",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "missing",
+      "spec": {
+        "name": "missing",
+        "clock": "2026-09-07T18:01:00Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": true,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-late",
+      "issue": 9,
+      "file": "r0009-late.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "fbda956edf447faaf942bd1093bd706fa78e5aa10ff77f49f35992e7c2d87cf6",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "late",
+      "spec": {
+        "name": "late",
+        "clock": "2026-09-07T18:01:00Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": true,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-different-method",
+      "issue": 9,
+      "file": "r0009-different-method.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "7ff9c56ae7f9d0301aa2b1f202349707ac353195a6df258db66f1b0c4dc5cfab",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "different-method",
+      "spec": {
+        "name": "different-method",
+        "clock": "2026-09-07T18:01:00Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "UAQ"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-unknown-method",
+      "issue": 9,
+      "file": "r0009-unknown-method.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "59bbe0df6d68fecc0cb7ed12aa33a14bc1c995dd348b5ed5a888da6618aae2e4",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "unknown-method",
+      "spec": {
+        "name": "unknown-method",
+        "clock": "2026-09-07T18:01:00Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-wrong-day",
+      "issue": 9,
+      "file": "r0009-wrong-day.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "32393bd59c544e4c08b0b0e712cb87d619f201e82f948c9f76649e95ff3044b6",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "wrong-day",
+      "spec": {
+        "name": "wrong-day",
+        "clock": "2026-09-07T18:01:00Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "21-02-1448",
+              "day": "21",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        }
+      }
+    },
+    {
+      "id": "r0009-wrong-zone",
+      "issue": 9,
+      "file": "r0009-wrong-zone.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "d2bcebaa25cd4f8c922823f807c735e9043f44b471b643ab9786e9c0a1373bf6",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "wrong-zone",
+      "spec": {
+        "name": "wrong-zone",
+        "clock": "2026-09-07T18:01:00Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        }
+      }
+    },
+    {
+      "id": "r0009-invalid-next",
+      "issue": 9,
+      "file": "r0009-invalid-next.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "e5418c17beb4aa8c336a1be0d19305413a2609f75893f3d50963e787bd2b1158",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "invalid-next",
+      "spec": {
+        "name": "invalid-next",
+        "clock": "2026-09-07T17:59:59Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "31-02-1448",
+              "day": "31",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        }
+      }
+    },
+    {
+      "id": "r0009-absent",
+      "issue": 9,
+      "file": "r0009-absent.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "7d4b2ecfae4e8c01fd77e01a77f00e1238f0aed09d3fd61851a442d756081b0d",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "absent",
+      "spec": {
+        "name": "absent",
+        "clock": "2026-09-07T17:59:59Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": null
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": null
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-named-missing-name",
+      "issue": 9,
+      "file": "r0009-named-missing-name.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=DD%20MMMM%20YYYY",
+      "fixtureSha256": "e559304c6aa2741b9f6192a72addeeebecfa3c0e347f6d4d9d13abace81865f6",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "named-missing-name",
+      "spec": {
+        "name": "named-missing-name",
+        "clock": "2026-09-07T17:59:59Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "DD MMMM YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-long",
+      "issue": 9,
+      "file": "r0009-long.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&datefmt=DD%20MMMM%20YYYY",
+      "fixtureSha256": "5888d4a372830be66fddf2b61de29f1d66c8fad133553a20fb5fdf7fc6d9a111",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "long",
+      "spec": {
+        "name": "long",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "DD MMMM YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-saved-long",
+      "issue": 9,
+      "file": "r0009-saved-long.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&local=1",
+      "fixtureSha256": "5b0229a5fd84f991f221dfa3b32e51dbfca65e3a2d192b1c2fa838502f6d72f5",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "saved-long",
+      "spec": {
+        "name": "saved-long",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "DD MMMM YYYY",
+        "holdTomorrow": false,
+        "saved": true,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-preset-us",
+      "issue": 9,
+      "file": "r0009-preset-us.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&datefmt=MM%2FDD%2FYYYY",
+      "fixtureSha256": "be589c22de8a8808346a1b893407feede097eab32111d61c3a25b9cc8906392e",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "preset-us",
+      "spec": {
+        "name": "preset-us",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "MM/DD/YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-preset-eu",
+      "issue": 9,
+      "file": "r0009-preset-eu.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&datefmt=DD%2FMM%2FYYYY",
+      "fixtureSha256": "71230a7e9d5a1a0886d7d5c253ca80cec9c3061c88377eb89b8b18bd6251231e",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "preset-eu",
+      "spec": {
+        "name": "preset-eu",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "DD/MM/YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-literal",
+      "issue": 9,
+      "file": "r0009-literal.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&datefmt=%3Csvg%20onload%3D%22window.__sw_sec_probe%3D1%22%3E%3C%2Fsvg%3E%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20%26%20%22'%20YYYY",
+      "fixtureSha256": "36e3355fc208d449b88627c79383fac7009132f1888ab85b0add53408639805a",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "literal",
+      "spec": {
+        "name": "literal",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "<svg onload=\"window.__sw_sec_probe=1\"></svg> التاريخ & \"' YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-month-literal",
+      "issue": 9,
+      "file": "r0009-month-literal.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&datefmt=DD%20MMMM%20YYYY",
+      "fixtureSha256": "c0b693311c61b6cb68d800d0d0b4cfb50f09b77d25693c8be2d2518391820c00",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "month-literal",
+      "spec": {
+        "name": "month-literal",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "<svg onload=\"window.__sw_sec_probe=1\"></svg>"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "<svg onload=\"window.__sw_sec_probe=1\"></svg>"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "<svg onload=\"window.__sw_sec_probe=1\"></svg>"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "<svg onload=\"window.__sw_sec_probe=1\"></svg>"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "DD MMMM YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-very-long",
+      "issue": 9,
+      "file": "r0009-very-long.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&datefmt=%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE%20full%20value%20%3C%20%3E%20%26%20DD%20MMMM%20YYYY",
+      "fixtureSha256": "f18a46907e431b6e96008b6b6a78c605bcaf9d49380987e408e5714f7e4ca67b",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "very-long",
+      "spec": {
+        "name": "very-long",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & التاريخ full value < > & DD MMMM YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-long-month",
+      "issue": 9,
+      "file": "r0009-long-month.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&datefmt=DD%20MMMM%20YYYY",
+      "fixtureSha256": "ed6e4df14e89058fd90fefb1f1383d2a54708747b994c0337fdab6a8df169911",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "long-month",
+      "spec": {
+        "name": "long-month",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal "
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal Rabīʿ al-awwal "
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "DD MMMM YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-fallback-font",
+      "issue": 9,
+      "file": "r0009-fallback-font.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&datefmt=DD%20MMMM%20YYYY",
+      "fixtureSha256": "f5576c9436f062357ce8d39d3a49f2f00ac88f46ad9b8478630d7e5d0999a211",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "fallback-font",
+      "spec": {
+        "name": "fallback-font",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "DD MMMM YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-stale",
+      "issue": 9,
+      "file": "r0009-stale.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simWx=0&units=f&motion=full&datefmt=DD%20MMMM%20YYYY",
+      "fixtureSha256": "5d032ef2952d113131b18330243f5d381a480fb1d952c9de9e37ff5a253e28bc",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "stale",
+      "spec": {
+        "name": "stale",
+        "clock": "2026-09-08T09:30:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rabīʿ al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "DD MMMM YYYY",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": true,
+        "injectedNext": null
+      }
+    },
+    {
+      "id": "r0009-title-mutant",
+      "issue": 9,
+      "file": "r0009-title-mutant.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "bac5d461e49814bc9e6f5b5df37dd61cd9e8912fdc3b2e9c2d9dcc6be629d830",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "title-mutant",
+      "spec": {
+        "name": "missing",
+        "clock": "2026-09-07T18:01:00Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": true,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      },
+      "mutant": "after-only-title"
+    },
+    {
+      "id": "r0009-hold-mutant",
+      "issue": 9,
+      "file": "r0009-hold-mutant.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&tz=UTC&simWx=0&units=f&motion=full&datefmt=YYYY-MM-DD",
+      "fixtureSha256": "e2751ccf64066c880487eaf9170334f17ddf1c0f0788c9fee1171b7d944d76bd",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "calendar",
+      "name": "hold-mutant",
+      "spec": {
+        "name": "before",
+        "clock": "2026-09-07T17:59:59Z",
+        "zone": "UTC",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "10-02-1448",
+              "day": "10",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "11-02-1448",
+              "day": "11",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      },
+      "mutant": "backwards-hold"
+    },
+    {
+      "id": "r000a-london",
+      "issue": 10,
+      "file": "r000a-london.html",
+      "hash": "#lat=51.5074&lon=-0.1278&label=london&method=3&tz=Europe%2FLondon&datefmt=YYYY-MM-DD&simWx=0&motion=full",
+      "fixtureSha256": "cbc8292065a8a1112573ef44f662f0dd560295546e0ffbdb3078695fb135220d",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "markers",
+      "name": "london",
+      "mutant": null,
+      "spec": {
+        "name": "marker-london",
+        "clock": "2026-06-21T11:00:00Z",
+        "zone": "Europe/London",
+        "today": {
+          "timings": {
+            "Fajr": "02:31",
+            "Sunrise": "04:43",
+            "Dhuhr": "13:02",
+            "Asr": "17:25",
+            "Sunset": "21:22",
+            "Maghrib": "21:22",
+            "Isha": "23:27"
+          },
+          "date": {
+            "gregorian": {
+              "date": "21-06-2026",
+              "day": "21",
+              "month": {
+                "number": 6,
+                "en": "June"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Europe/London",
+            "method": {
+              "id": 3,
+              "params": {
+                "Fajr": 18,
+                "Isha": 17
+              }
+            },
+            "latitudeAdjustmentMethod": "ANGLE_BASED"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "02:31",
+            "Sunrise": "04:43",
+            "Dhuhr": "13:02",
+            "Asr": "17:25",
+            "Sunset": "21:22",
+            "Maghrib": "21:22",
+            "Isha": "23:27"
+          },
+          "date": {
+            "gregorian": {
+              "date": "22-06-2026",
+              "day": "22",
+              "month": {
+                "number": 6,
+                "en": "June"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Europe/London",
+            "method": {
+              "id": 3,
+              "params": {
+                "Fajr": 18,
+                "Isha": 17
+              }
+            },
+            "latitudeAdjustmentMethod": "ANGLE_BASED"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      },
+      "lat": 51.5074,
+      "lon": -0.1278
+    },
+    {
+      "id": "r000a-london-mutant",
+      "issue": 10,
+      "file": "r000a-london-mutant.html",
+      "hash": "#lat=51.5074&lon=-0.1278&label=london&method=3&tz=Europe%2FLondon&datefmt=YYYY-MM-DD&simWx=0&motion=full",
+      "fixtureSha256": "7e9f7039998cf716436b49bc2cfdbd1f470a5ff21f46630039339d7c350051c5",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "markers",
+      "name": "london",
+      "mutant": "universal-14",
+      "spec": {
+        "name": "marker-london",
+        "clock": "2026-06-21T11:00:00Z",
+        "zone": "Europe/London",
+        "today": {
+          "timings": {
+            "Fajr": "02:31",
+            "Sunrise": "04:43",
+            "Dhuhr": "13:02",
+            "Asr": "17:25",
+            "Sunset": "21:22",
+            "Maghrib": "21:22",
+            "Isha": "23:27"
+          },
+          "date": {
+            "gregorian": {
+              "date": "21-06-2026",
+              "day": "21",
+              "month": {
+                "number": 6,
+                "en": "June"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Europe/London",
+            "method": {
+              "id": 3,
+              "params": {
+                "Fajr": 18,
+                "Isha": 17
+              }
+            },
+            "latitudeAdjustmentMethod": "ANGLE_BASED"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "02:31",
+            "Sunrise": "04:43",
+            "Dhuhr": "13:02",
+            "Asr": "17:25",
+            "Sunset": "21:22",
+            "Maghrib": "21:22",
+            "Isha": "23:27"
+          },
+          "date": {
+            "gregorian": {
+              "date": "22-06-2026",
+              "day": "22",
+              "month": {
+                "number": 6,
+                "en": "June"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Europe/London",
+            "method": {
+              "id": 3,
+              "params": {
+                "Fajr": 18,
+                "Isha": 17
+              }
+            },
+            "latitudeAdjustmentMethod": "ANGLE_BASED"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      },
+      "lat": 51.5074,
+      "lon": -0.1278
+    },
+    {
+      "id": "r000a-tromso",
+      "issue": 10,
+      "file": "r000a-tromso.html",
+      "hash": "#lat=69.6492&lon=18.9553&label=tromso&method=3&tz=Europe%2FOslo&datefmt=YYYY-MM-DD&simWx=0&motion=full",
+      "fixtureSha256": "523dc13bc2657e44ed6e411ffd7509d028e30967b09243da0cba8c6390509981",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "markers",
+      "name": "tromso",
+      "mutant": null,
+      "spec": {
+        "name": "marker-tromso",
+        "clock": "2026-06-21T10:00:00Z",
+        "zone": "Europe/Oslo",
+        "today": {
+          "timings": {
+            "Fajr": "00:46",
+            "Sunrise": "00:46",
+            "Dhuhr": "12:46",
+            "Asr": "17:58",
+            "Sunset": "00:46",
+            "Maghrib": "00:46",
+            "Isha": "00:46",
+            "Imsak": "00:36",
+            "Midnight": "12:46",
+            "Firstthird": "08:46",
+            "Lastthird": "16:46"
+          },
+          "date": {
+            "readable": "21 Jun 2026",
+            "timestamp": "1782018000",
+            "hijri": {
+              "date": "06-01-1448",
+              "format": "DD-MM-YYYY",
+              "day": "6",
+              "weekday": {
+                "en": "Al Ahad",
+                "ar": "الاحد"
+              },
+              "month": {
+                "number": 1,
+                "en": "Muḥarram",
+                "ar": "مُحَرَّم",
+                "days": 29
+              },
+              "year": "1448",
+              "designation": {
+                "abbreviated": "AH",
+                "expanded": "Anno Hegirae"
+              },
+              "holidays": [],
+              "adjustedHolidays": [],
+              "method": "HJCoSA"
+            },
+            "gregorian": {
+              "date": "21-06-2026",
+              "format": "DD-MM-YYYY",
+              "day": "21",
+              "weekday": {
+                "en": "Sunday"
+              },
+              "month": {
+                "number": 6,
+                "en": "June"
+              },
+              "year": "2026",
+              "designation": {
+                "abbreviated": "AD",
+                "expanded": "Anno Domini"
+              },
+              "lunarSighting": false
+            }
+          },
+          "meta": {
+            "latitude": 69.6492,
+            "longitude": 18.9553,
+            "timezone": "Europe/Oslo",
+            "method": {
+              "id": 3,
+              "name": "Muslim World League",
+              "params": {
+                "Fajr": 18,
+                "Isha": 17
+              },
+              "location": {
+                "latitude": 51.5194682,
+                "longitude": -0.1360365
+              }
+            },
+            "latitudeAdjustmentMethod": "ANGLE_BASED",
+            "midnightMode": "STANDARD",
+            "school": "STANDARD",
+            "offset": {
+              "Imsak": 0,
+              "Fajr": 0,
+              "Sunrise": 0,
+              "Dhuhr": 0,
+              "Asr": 0,
+              "Maghrib": 0,
+              "Sunset": 0,
+              "Isha": 0,
+              "Midnight": 0
+            }
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "00:46",
+            "Sunrise": "00:46",
+            "Dhuhr": "12:46",
+            "Asr": "17:58",
+            "Sunset": "00:46",
+            "Maghrib": "00:46",
+            "Isha": "00:46",
+            "Imsak": "00:36",
+            "Midnight": "12:46",
+            "Firstthird": "08:46",
+            "Lastthird": "16:46"
+          },
+          "date": {
+            "readable": "21 Jun 2026",
+            "timestamp": "1782018000",
+            "hijri": {
+              "date": "06-01-1448",
+              "format": "DD-MM-YYYY",
+              "day": "6",
+              "weekday": {
+                "en": "Al Ahad",
+                "ar": "الاحد"
+              },
+              "month": {
+                "number": 1,
+                "en": "Muḥarram",
+                "ar": "مُحَرَّم",
+                "days": 29
+              },
+              "year": "1448",
+              "designation": {
+                "abbreviated": "AH",
+                "expanded": "Anno Hegirae"
+              },
+              "holidays": [],
+              "adjustedHolidays": [],
+              "method": "HJCoSA"
+            },
+            "gregorian": {
+              "date": "22-06-2026",
+              "format": "DD-MM-YYYY",
+              "day": "22",
+              "weekday": {
+                "en": "Sunday"
+              },
+              "month": {
+                "number": 6,
+                "en": "June"
+              },
+              "year": "2026",
+              "designation": {
+                "abbreviated": "AD",
+                "expanded": "Anno Domini"
+              },
+              "lunarSighting": false
+            }
+          },
+          "meta": {
+            "latitude": 69.6492,
+            "longitude": 18.9553,
+            "timezone": "Europe/Oslo",
+            "method": {
+              "id": 3,
+              "name": "Muslim World League",
+              "params": {
+                "Fajr": 18,
+                "Isha": 17
+              },
+              "location": {
+                "latitude": 51.5194682,
+                "longitude": -0.1360365
+              }
+            },
+            "latitudeAdjustmentMethod": "ANGLE_BASED",
+            "midnightMode": "STANDARD",
+            "school": "STANDARD",
+            "offset": {
+              "Imsak": 0,
+              "Fajr": 0,
+              "Sunrise": 0,
+              "Dhuhr": 0,
+              "Asr": 0,
+              "Maghrib": 0,
+              "Sunset": 0,
+              "Isha": 0,
+              "Midnight": 0
+            }
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      },
+      "lat": 69.6492,
+      "lon": 18.9553
+    },
+    {
+      "id": "r000a-madinah",
+      "issue": 10,
+      "file": "r000a-madinah.html",
+      "hash": "#lat=24.47&lon=39.61&label=madinah&method=4&tz=Asia%2FRiyadh&datefmt=YYYY-MM-DD&simWx=0&motion=full",
+      "fixtureSha256": "49009b5800825ae7b950699e0e28569d1d250181e465c35719059ee4e3737b20",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "kind": "markers",
+      "name": "madinah",
+      "mutant": null,
+      "spec": {
+        "name": "marker-madinah",
+        "clock": "2026-09-07T09:00:00Z",
+        "zone": "Asia/Riyadh",
+        "today": {
+          "timings": {
+            "Fajr": "04:46",
+            "Sunrise": "06:05",
+            "Dhuhr": "12:20",
+            "Asr": "15:49",
+            "Sunset": "18:34",
+            "Maghrib": "18:34",
+            "Isha": "20:04"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4,
+              "params": {
+                "Fajr": 18.5,
+                "Isha": "90 min"
+              }
+            },
+            "latitudeAdjustmentMethod": "ANGLE_BASED"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "04:46",
+            "Sunrise": "06:05",
+            "Dhuhr": "12:20",
+            "Asr": "15:49",
+            "Sunset": "18:34",
+            "Maghrib": "18:34",
+            "Isha": "20:04"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4,
+              "params": {
+                "Fajr": 18.5,
+                "Isha": "90 min"
+              }
+            },
+            "latitudeAdjustmentMethod": "ANGLE_BASED"
+          }
+        },
+        "format": "YYYY-MM-DD",
+        "holdTomorrow": false,
+        "saved": false,
+        "stale": false,
+        "injectedNext": null
+      },
+      "lat": 24.47,
+      "lon": 39.61
+    }
+  ],
+  "transitions": [
+    {
+      "name": "same-day-10",
+      "clock": "2026-09-07T17:59:59Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "07-09-2026",
+            "day": "07",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "10-02-1448",
+            "day": "10",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "11-02-1448",
+            "day": "11",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-02-10"
+    },
+    {
+      "name": "same-day-09",
+      "clock": "2026-09-07T17:59:59Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "07-09-2026",
+            "day": "07",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "09-02-1448",
+            "day": "09",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "10-02-1448",
+            "day": "10",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-02-09"
+    },
+    {
+      "name": "post-maghrib",
+      "clock": "2026-09-07T18:01:00Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "07-09-2026",
+            "day": "07",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "19-02-1448",
+            "day": "19",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "20-02-1448",
+            "day": "20",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-02-20"
+    },
+    {
+      "name": "reverse-boundary",
+      "clock": "2026-09-07T17:59:59Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "07-09-2026",
+            "day": "07",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "19-02-1448",
+            "day": "19",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "20-02-1448",
+            "day": "20",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-02-19"
+    },
+    {
+      "name": "midnight-promotion",
+      "clock": "2026-09-08T00:00:00Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "20-02-1448",
+            "day": "20",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "09-09-2026",
+            "day": "09",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "21-02-1448",
+            "day": "21",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-02-20"
+    },
+    {
+      "name": "accepted-duplicate-skip-0",
+      "clock": "2026-09-07T17:59:59Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "07-09-2026",
+            "day": "07",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "08-02-1448",
+            "day": "08",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "11-02-1448",
+            "day": "11",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-02-08"
+    },
+    {
+      "name": "accepted-duplicate-skip-1",
+      "clock": "2026-09-07T17:59:59Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "07-09-2026",
+            "day": "07",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "10-02-1448",
+            "day": "10",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "11-02-1448",
+            "day": "11",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-02-10"
+    },
+    {
+      "name": "accepted-duplicate-skip-2",
+      "clock": "2026-09-07T17:59:59Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "07-09-2026",
+            "day": "07",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "10-02-1448",
+            "day": "10",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "11-02-1448",
+            "day": "11",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-02-10"
+    },
+    {
+      "name": "long-sleep",
+      "clock": "2026-09-27T10:00:00Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "27-09-2026",
+            "day": "27",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "08-02-1448",
+            "day": "08",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "28-09-2026",
+            "day": "28",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "date": "09-02-1448",
+            "day": "09",
+            "month": {
+              "number": 2,
+              "en": "Safar"
+            },
+            "year": "1448",
+            "method": "HJCoSA"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-02-08"
+    },
+    {
+      "name": "month-boundary",
+      "clock": "2026-09-07T18:00:00Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "07-09-2026",
+            "day": "07",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "year": "1447",
+            "month": {
+              "number": 11,
+              "en": "Dhu al-Qadah"
+            },
+            "day": "29"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "year": "1447",
+            "month": {
+              "number": 12,
+              "en": "Dhu al-Hijjah"
+            },
+            "day": "01"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1447-12-01"
+    },
+    {
+      "name": "year-boundary",
+      "clock": "2026-09-07T18:00:00Z",
+      "today": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "07-09-2026",
+            "day": "07",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "year": "1447",
+            "month": {
+              "number": 12,
+              "en": "Dhu al-Hijjah"
+            },
+            "day": "30"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "tomorrow": {
+        "timings": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:00",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "20:00"
+        },
+        "date": {
+          "gregorian": {
+            "date": "08-09-2026",
+            "day": "08",
+            "month": {
+              "number": 9,
+              "en": "September"
+            },
+            "year": "2026"
+          },
+          "hijri": {
+            "year": "1448",
+            "month": {
+              "number": 1,
+              "en": "Muharram"
+            },
+            "day": "01"
+          }
+        },
+        "meta": {
+          "latitude": 24.47,
+          "longitude": 39.61,
+          "timezone": "UTC",
+          "method": {
+            "id": 4
+          },
+          "school": "STANDARD"
+        }
+      },
+      "want": "1448-01-01"
+    }
+  ],
+  "execution": "PREPARED_NOT_BROWSER_EXECUTED"
+}

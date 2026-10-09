@@ -1,0 +1,216 @@
+{
+  "name": "31-builder-native-stall",
+  "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+  "options": {
+    "page": "builder",
+    "seed": "none",
+    "stream": "stall"
+  },
+  "checks": [
+    {
+      "name": "exact current script guards and isolated hooks initialize",
+      "passed": true,
+      "detail": {
+        "state": "ready",
+        "error": null,
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+        "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+        "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+        "scriptCount": 2,
+        "bodiesPreserved": true,
+        "storageIsolated": true,
+        "clockFixed": true
+      }
+    },
+    {
+      "name": "native full-body result reaches builder",
+      "passed": true,
+      "detail": {
+        "inputs": {
+          "label": "London",
+          "lat": "51.50000",
+          "lon": "-0.12000",
+          "method": "4",
+          "school": "0",
+          "time": "24",
+          "units": "f",
+          "appearance": "glass",
+          "dfcode": "YYYY-MM-DD"
+        },
+        "config": null,
+        "status": "Detected: London (approx.)",
+        "pin": {
+          "classes": "geo-pin lit",
+          "title": "Estimated from your IP — click to request browser location",
+          "name": "Estimated from your IP — click to request browser location"
+        },
+        "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=51.5&lon=-0.12&label=London&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+        "previewSrc": "http://127.0.0.1:54231/?r=1#lat=51.5&lon=-0.12&label=London&method=4&school=0&appearance=glass",
+        "savedBytes": null
+      }
+    },
+    {
+      "name": "native headers observed before body abort",
+      "passed": true,
+      "detail": [
+        {
+          "id": 0,
+          "kind": "coarse-stream",
+          "url": "https://get.geojs.io/v1/ip/geo.json",
+          "route": "/geojs-stall",
+          "state": "native-fetch",
+          "signalAborted": true,
+          "headersReturned": true,
+          "http": 200
+        },
+        {
+          "id": 1,
+          "kind": "coarse-stream",
+          "url": "https://ipinfo.io/json",
+          "route": "/ipinfo",
+          "state": "native-fetch",
+          "signalAborted": false,
+          "headersReturned": true,
+          "http": 200
+        }
+      ]
+    },
+    {
+      "name": "one healthy native fallback, stalled socket closes without completion",
+      "passed": true,
+      "detail": [
+        {
+          "path": "/geojs-stall",
+          "headersAt": 1791510843637,
+          "closedAt": 1791510849612,
+          "completed": false
+        },
+        {
+          "path": "/ipinfo",
+          "headersAt": 1791510849618,
+          "closedAt": 1791510849618,
+          "completed": true
+        }
+      ]
+    },
+    {
+      "name": "no unhandled or unexpected sink errors",
+      "passed": true,
+      "detail": {
+        "pageErrors": [],
+        "outsideRequests": [],
+        "fixtureErrors": []
+      }
+    }
+  ],
+  "snapshots": {},
+  "clipboard": [],
+  "pageErrors": [],
+  "outsideRequests": [],
+  "ledgerStart": 9,
+  "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&stream=stall",
+  "fixtureIdentity": {
+    "state": "ready",
+    "error": null,
+    "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "scriptCount": 2,
+    "bodiesPreserved": true,
+    "storageIsolated": true,
+    "clockFixed": true
+  },
+  "elapsedConsumerSeconds": 6.157000000006519,
+  "nativeStreamJobs": [
+    {
+      "id": 0,
+      "kind": "coarse-stream",
+      "url": "https://get.geojs.io/v1/ip/geo.json",
+      "route": "/geojs-stall",
+      "state": "native-fetch",
+      "signalAborted": true,
+      "headersReturned": true,
+      "http": 200
+    },
+    {
+      "id": 1,
+      "kind": "coarse-stream",
+      "url": "https://ipinfo.io/json",
+      "route": "/ipinfo",
+      "state": "native-fetch",
+      "signalAborted": false,
+      "headersReturned": true,
+      "http": 200
+    }
+  ],
+  "nativeStreamLedger": [
+    {
+      "path": "/geojs-stall",
+      "headersAt": 1791510843637,
+      "closedAt": 1791510849612,
+      "completed": false
+    },
+    {
+      "path": "/ipinfo",
+      "headersAt": 1791510849618,
+      "closedAt": 1791510849618,
+      "completed": true
+    }
+  ],
+  "finalApplication": {
+    "inputs": {
+      "label": "London",
+      "lat": "51.50000",
+      "lon": "-0.12000",
+      "method": "4",
+      "school": "0",
+      "time": "24",
+      "units": "f",
+      "appearance": "glass",
+      "dfcode": "YYYY-MM-DD"
+    },
+    "config": null,
+    "status": "Detected: London (approx.)",
+    "pin": {
+      "classes": "geo-pin lit",
+      "title": "Estimated from your IP — click to request browser location",
+      "name": "Estimated from your IP — click to request browser location"
+    },
+    "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=51.5&lon=-0.12&label=London&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+    "previewSrc": "http://127.0.0.1:54231/?r=1#lat=51.5&lon=-0.12&label=London&method=4&school=0&appearance=glass",
+    "savedBytes": null
+  },
+  "fixtureRecords": {
+    "providerJobs": [
+      {
+        "id": 0,
+        "kind": "coarse-stream",
+        "url": "https://get.geojs.io/v1/ip/geo.json",
+        "route": "/geojs-stall",
+        "state": "native-fetch",
+        "signalAborted": true,
+        "headersReturned": true,
+        "http": 200
+      },
+      {
+        "id": 1,
+        "kind": "coarse-stream",
+        "url": "https://ipinfo.io/json",
+        "route": "/ipinfo",
+        "state": "native-fetch",
+        "signalAborted": false,
+        "headersReturned": true,
+        "http": 200
+      }
+    ],
+    "gpsCalls": [],
+    "copyJobs": [],
+    "fallbackCalls": [],
+    "errors": [],
+    "storageEvents": []
+  },
+  "fontStatus": "settled",
+  "screenshot": "31-builder-native-stall.png"
+}

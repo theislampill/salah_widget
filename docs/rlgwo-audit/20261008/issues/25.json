@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:32.736593+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/25",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/25/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/25/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/25/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/25",
+    "id": 5381808070,
+    "node_id": "I_kwDOS6MzkM8AAAABQMffxg",
+    "number": 25,
+    "title": "R0019: Expose complete calendar values when supported date formats overflow the fixed footer",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:50Z",
+    "updated_at": "2026-09-08T06:25:21Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-025 -->\n# R0019: Expose complete calendar values when supported date formats overflow the fixed footer\n\n**Repository-local identity:** `R0019` in `theislampill/salah_widget`; existing tracker [#25](https://github.com/theislampill/salah_widget/issues/25). The SW identifier is historical draft provenance.\n\n\nThe supplied long-date format overflows both footer values at the supported 325×530 size. Keep deliberate compact ellipsis, but make either date an explicit keyboard/touch entry to a small full-value disclosure that shows both selected calendar values and their existing status. Do not enlarge the embed or recompute a second, potentially conflicting AH date.\n\nCampaign draft alias: SW-025. Existing GitHub owner: #25. P2, product UI defect. This is a corrective access mechanism; no broader footer redesign or calendar policy is selected. The proposed interaction has not been built or browser-qualified.\n\n## Re-anchor and preserve the actual failure\n\nHistorical main is `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; candidate is `9d9c43649748555afbe09e3ca49bc47db2d7e7bb`. In the future authorized checkout record `git rev-parse --show-toplevel`, `git remote get-url origin`, `git status --short`, `git rev-parse HEAD`, then inspect `git diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- index.html builder.html tests/smoke.html README.md DESIGN.md`. Confirm `theislampill/salah_widget`, preserve unrelated work and reconcile relevant date-output/accessibility drift.\n\nOwners are [main footer CSS](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L387), [existing footer elements](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L510), [selected date renderer](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2003), [candidate date renderer/title](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L2033), and [builder format controls](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L132).\n\nThe saved candidate browser run used Madinah, local `2026-09-08 12:30`, the supplied `DD MMMM YYYY` format and an actual 325×530 viewport. Its DOM readback was:\n\n| Element | Complete DOM text | scrollWidth / clientWidth | Other observed facts |\n|---|---|---|---|\n| `#ce` | `08 September 2026CE` | 132 / 110 px | Empty title; tabIndex −1; bottom 517.7677 px. |\n| `#ah` | `ه26 Rabīʿ al-awwal 1448 | 🌘 27` | 187 / 155 px | Convention explanation in title, without the full date; tabIndex −1; bottom 518.6906 px. |\n\nThe paired source/screenshot evidence shows intentional single-line `white-space:nowrap;overflow:hidden;text-overflow:ellipsis`. The card itself is not clipped: footer bottom 518.69 is inside 530. Both dates remain in the DOM, so this is not proof of complete information loss to every assistive technology. The visible long-format crop and absence of a keyboard/touch disclosure establish the narrower defect. No historical measurement says that every custom format or screen reader fails.\n\n## Missing contract and selected interaction\n\nThe current code treats “string present in DOM” as enough, although a built-in format cannot be read visually. Native `title` on a nonfocusable span does not supply a reliable keyboard/touch interaction. At the other extreme, fitting arbitrary custom strings into one footer line is impossible without truncation, tiny text or changed geometry.\n\nUse one in-widget full-date disclosure, opened from either footer value. The default view retains both existing IDs, text/era/preview structure and compact styling. A small native button for each date is the proposed trigger, not a new preference or a one-time overflow detector. Keep the disclosure available even when a current short value fits, so long values, fallback fonts and date changes do not require different interaction rules.\n\nImplement in ordered, observable stages:\n\n1. Wrap the existing `#ce` and `#ah` spans in stable `type=\"button\"` date triggers inside `.d`. Preserve those IDs as the renderer's text owners and scope ellipsis to the visible value spans, not every span in a future panel. Reset button font/border/background and apply `min-inline-size:0` plus the current flex allocation so wrapping does not expand the date row. Retain `.d`'s height, margin, gap and direction. Add a visible keyboard focus treatment and a discoverable hover/focus/tap affordance that does not consume extra line height.\n2. Add one bounded, labeled native `dialog` inside the widget document for the complete date view, styled with the existing restrained glass/color vocabulary. Use actual buttons and text content; no framework or tooltip library. The opened dialog is an explicit overlay within the iframe viewport, not a row inserted into the prayer stack. Limit its width to the card viewport minus safe side margins, its height to the available viewport, and allow internal vertical scrolling. Long custom strings use normal wrapping and `overflow-wrap:anywhere`; neither horizontal overflow nor a shrunken one-line font is an acceptable fallback.\n3. Populate the dialog with clearly labeled Gregorian and Hijri full values, the current preview when present, and the already-selected stale/unavailable/provenance explanation. Use the exact strings and decision that the footer renderer just selected. Do not call the provider, increment AH, or independently call `fmtDate()` against a new `today/tomorrow` choice from the click handler. A tiny ephemeral projection shared by the footer and disclosure is justified because both have real consumers; no new saved configuration schema is needed.\n4. Opening either trigger displays both full values and moves focus into the dialog; Close and Escape dismiss it and restore focus to the initiating trigger when still present. Preserve native dialog focus containment and ensure its heading, close button and full values have sensible accessible names. The value remains selectable/readable, and touch users can scroll long content. If native dialog behavior is unavailable in a supported host, stop the compatibility claim and supply an explicitly tested small fallback before closure; do not silently degrade to `title` alone.\n5. Keep the button/dialog nodes stable across the existing per-render date update. Update text only when the selected text or explanation changes; do not rebuild the focused trigger/dialog each tick. While open, a Maghrib/date/source transition updates the same full values and reason; it does not close the panel, steal focus or announce the whole unchanged panel every second. The next open always reflects the latest rendered selection. Empty/invalid dates have explicit unavailable text and never reveal stale hidden content from a prior selection.\n\nDo not reuse the settings close/autosave path for this read-only disclosure: [the current settings close handler commits settings](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2437). Reading full dates must not apply settings, trigger geocoding, write storage or refetch prayer data. The native dialog can remain behaviorally separate without adding a new app-wide overlay controller. Qualify that normal settings use and a restored footer focus still work; do not take ownership of settings preference semantics.\n\n## Standalone RED/GREEN and interaction fixtures\n\nFor a future deterministic RED, freeze the test browser before initialization at `2026-09-08T09:30:00.000Z`, use `#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&datefmt=DD%20MMMM%20YYYY`, and return day/zone-matching prayer data on a disposable origin. For the captured footer strings, provide Gregorian day `08`, month `{number:9,en:\"September\"}`, year `2026`; selected AH day `26`, month `{number:3,en:\"Rabīʿ al-awwal\"}`, year `1448`; tomorrow AH day `27`, with Gregorian request date `09-09-2026`. Set AH method metadata to `HJCoSA`. These are display fixture values, not an adjudication of the owner's separate 24-versus-26 observation. Provide a valid timing set and keep the clock before its Maghrib.\n\nLet rows/fonts settle; measure `innerWidth/innerHeight` and `.c` rather than trusting requested device emulation. The original widths are historical evidence, not brittle exact-pixel expectations for every final browser/font. RED is demonstrated overflow with no usable full-value interaction. Repaired GREEN can retain overflow in the compact spans, provided complete values are obtainable through the specified interaction.\n\n| Case | Required final-tree result |\n|---|---|\n| Supplied formats `YYYY-MM-DD`, `MM/DD/YYYY`, `DD/MM/YYYY`, `DD MMMM YYYY` | Both full formatted dates can be obtained from either trigger; compact format keeps its established normal appearance. |\n| Saved long-format fixture | Dialog shows all of `08 September 2026` and `26 Rabīʿ al-awwal 1448`, with separate clear calendar labels and preview 27/phase where applicable; no missing year or clipped tail. |\n| Keyboard | Tab reaches each trigger; Enter and Space open; dialog focus is contained; Close and Escape return to the actual initiating control; a render tick does not drop focus. |\n| Touch/pointer | Either visible date opens the same full-value view; Close works without hover; long text can be scrolled and selected within bounds. |\n| Long custom literal / fallback font | Repeated long text and a long month name remain fully obtainable without horizontal overflow; block the web font in the isolated fixture and repeat. No promise that arbitrary text fits one line. |\n| Preview/stale/unavailable and transition while open | Full values and reasons match the same footer selection before/after Maghrib, missing tomorrow, midnight promotion and delayed arrival. Prayer staleness is not silently substituted for AH update availability. |\n| Unsafe literal and missing value | `<svg onload=\"window.__sw_sec_probe=1\"></svg>`, Arabic, ampersands and quotes remain literal; no injected nodes or event. Missing/invalid value shows unavailable, never a stale prior hidden date. |\n| No-effect read | Opening/closing changes no config/storage keys, request count, prayer method or selected date. The isolated fixture records those boundaries. |\n| Mutations | Replace the trigger with title-only spans: keyboard/touch test fails. Recompute AH from `today` on click: post-Maghrib selected-value test fails. Rebuild open dialog every tick: focus persistence test fails. Remove wrap/bounds: long-text containment test fails. |\n\nCapture default footer, long-format footer and open disclosure crops at actual 325×530, plus keyboard/touch interaction evidence. Verify unchanged prayer stack positions, visible header/footer in the ordinary closed view, era-marker directionality, no buckle changes and the builder's actual iframe preview. A dialog intentionally overlays some content while open; it must remain readable and closeable without changing the fixed card dimensions. No clip or ratio alone proves keyboard access.\n\n## Interfaces, public projection and closure\n\nExisting qualification dependencies remain [R0001](https://github.com/theislampill/salah_widget/issues/1) for inert text and [R0009](https://github.com/theislampill/salah_widget/issues/9) for truthful selected date/reason. Agree one final `runtime/date-output` writer; this owner consumes the selector's ephemeral text projection rather than owning calendar logic. Its other domain is `ui/date-footer`. No new typed edge or preference schema is proposed. `UI-001` is the unique truncation owner; fixed geometry, explicit English/token assumptions and preset parse/dimensions are retained controls.\n\nIMPLEMENTAUDIT R001D: source footer/disclosure, exact interaction tests and relevant [README](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/README.md)/[DESIGN](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md) full-value access instructions change. Check builder format preview, changing it only if the resulting supported interaction requires a description adjustment. Config grammar, installer/preset and 325×530 snippet remain compatible. IMPLEMENTAUDIT R001E: any text projection helper must feed the actual footer and dialog, with the wrong-selection mutant proving reachability.\n\nDONE requires exact-final-tree RED→GREEN, all supported preset and input-path controls, real keyboard/touch/fallback-font evidence, geometry crops, and independent review of focus/safe text/selection. Record source/fixture/host/results and compatibility limits in an evidence comment before manual #25 closure; use non-closing `Implements #25`. Public completion additionally requires a separately authorized deployment and served-source/UI readback.\n\nRollback only the disclosure/layout delta if geometry or accessibility regresses; preserve existing literal text and keep the access issue open. STOP on incompatible selector/sink drift, unsupported host behavior without a tested fallback, or a requirement to enlarge the embed or change religious date policy. A native title by itself is not acceptable recovery of keyboard/touch access.\n\nMethodology references (separate repository, not Salah work owners): [R001D in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/155), [R001E in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/157).\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/25/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/25/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733553106,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMffxs8AAAAHJ9zN0g",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733553106",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:21Z",
+      "rename": {
+        "from": "SW-025: Expose complete calendar values when supported date formats overflow the fixed footer",
+        "to": "R0019: Expose complete calendar values when supported date formats overflow the fixed footer"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0019",
+    "bodySha256": "b4b741199b2161f688e4b9e258198cf7ce79903331f5f18e84193c7aee0473d4",
+    "updatedAt": "2026-09-08T06:25:21Z",
+    "commentRevisions": []
+  }
+}

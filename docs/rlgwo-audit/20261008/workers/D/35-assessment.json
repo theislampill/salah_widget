@@ -1,0 +1,3164 @@
+{
+  "schema": "rlgwo-closure-assessment/1",
+  "worker": "D",
+  "issueNumber": 35,
+  "canonicalId": "R0023",
+  "title": "R0023 — Preserve location intent, fix accuracy and acquisition age through the weather pipeline",
+  "originalBodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+  "initialRevision": "2026-09-08T10:50:30Z",
+  "issuePacketCapturedAtUtc": "2026-10-09T00:41:33.723379+00:00",
+  "completeBodyAndDiscussionRead": true,
+  "commentRevisions": [],
+  "events": "Renaming events only for15/16/17/18/31;35 has none. No additional binding issue comments in captured packets.",
+  "target": {
+    "repo": "theislampill/salah_widget",
+    "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "checkoutHead": "4bccdf43363926c3077f60de87e5617ccb9abcb9",
+    "checkoutTree": "35208181eea714c17f5e77b2644e76434345db60",
+    "checkoutDirtyPaths": [],
+    "sourceReadRoot": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+    "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "deliveredIndexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "sourceConfigSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "deliveredConfigSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "sourceBuilderSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "deliveredBuilderSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "currentness": "Fresh read-only git/object/hash verification; exact-ref source executions; mutation children use clean same-tree root consumers.",
+    "publicBaseline": {
+      "status": "DELIVERED_VERIFIED",
+      "primaryReleaseReceipt": "release.json",
+      "inspectedByD": "readbacks-validation.json",
+      "verifiedAt": "2026-10-09T01:34:55.876184+00:00",
+      "pagesBuild": 1270547036,
+      "publicRuntimeAndV1Files": 139,
+      "publicSmokeCases": 16,
+      "publicSmokeAllPass": true,
+      "rawAndPagesDocumentScriptMatches": 16,
+      "scope": "Primary provided current merge/runtime/V1/public smoke and public raw/Pages document/script readbacks; D verified receipt identities and local corresponding source hashes. Controlled race/storage/copy/native-stream negatives are separate."
+    },
+    "attribution": "Config and builder last changed in CP9 integration 7fe3ba1dc8c83604a04cab24a7e4307b6779df7e. Existing repairs are credited as preserved pre-PR42 work; no claim that PR42 first implemented them."
+  },
+  "reviewerConfiguration": {
+    "requested": {
+      "model": "gpt-6.1-sol",
+      "reasoningEffort": "max"
+    },
+    "effective": {
+      "model": "gpt-6.1-sol",
+      "reasoningEffort": "max",
+      "confirmation": "CONFIRMED_RECORDED_CLIENT_CONFIGURATION"
+    },
+    "evidence": "Primary reviewer-model-settings.json and D independently inspected own session turn_context 01a11e26-77d9-7bc0-b18d-f4fb2ac3b10a: model gpt-6.1-sol, effort max and collaboration settings match. Supported spawn plus local client recording is confirmation; no independent hardware/backend attestation claimed.",
+    "sessionId": "01a11e26-76ef-7583-b53a-d9c4abeec9f0",
+    "verificationReceipt": "readbacks-validation.json"
+  },
+  "recommendation": "LEAVE OPEN",
+  "recommendationScope": "Mandatory native/consumer/documentation gaps only; no closure quota and no claim of a production defect from missing native proof.",
+  "requirementMatrix": [
+    {
+      "obligation": "Represent selected target/intent separately from original acquisition source, known metre accuracy, original acquisition timestamp and settings persistence time.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-WX",
+        "C-STORE"
+      ],
+      "discriminator": "T-35 record assertions; targeted13 downstream interface cases.",
+      "expected": "Explicit fixed site, browser device position, coarse area, place/postcode and legacy/unknown distinguishable.",
+      "observed": "locationEvidence carries intent/source/accuracyM/acquiredAt/provider/area/bounds; CONFIG savedAt separate; weather capture copies original fields.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O01",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Capture finite coords.accuracy in metres and actual position.timestamp from both one-shot widget and builder acquisition; no zero/current-time fabrication for malformed metadata.",
+      "authoredOwnerRefs": [
+        "C-GEO-OWNER",
+        "B-ACQUIRE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-GEO",
+        "B-ACQUIRE",
+        "I-SET"
+      ],
+      "discriminator": "T-35 shared geolocation, form chain and builder; capture-time mutant.",
+      "expected": "Positive52.52,13.41/25m/T is exact through acquisition/form/apply/save/load.",
+      "observed": "Shared and both form paths retain25/T; actual settings acquisition/apply/save/load control passes; capture-time mutant caught.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O02",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Missing/NaN/negative/infinite/non-number accuracy remains unknown; valid reported0 is not decimal-derived precision.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "C-GEO-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "C-GEO",
+        "I-SET"
+      ],
+      "discriminator": "T-35 malformed accuracies/zero and manual five-decimal control.",
+      "expected": "Unknown accuracy null; no precision from formatting.",
+      "observed": "All malformed cases null;0 retained; manual52.52000/13.41000 fixed site has null accuracy/time.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O03",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Missing/nonpositive/future/malformed timestamp remains unknown, never age0; define/document actual clock/skew handling.",
+      "authoredOwnerRefs": [
+        "C-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-WX",
+        "I-SET"
+      ],
+      "discriminator": "T-35 timestamp matrix and source71–72.",
+      "expected": "Original fix time stays null across later save; future policy explicit.",
+      "observed": "Zero-skew Date.now() validation rejects future timestamps, null stays null after day-later save; source comment explains policy but delivered config documentation does not.",
+      "status": "unmet",
+      "scope": "logic satisfied; mandatory policy documentation missing",
+      "id": "R0023-O04",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Save unrelated label/units/method preferences later advances savedAt only; preserve original source/metres/T and acquired age.",
+      "authoredOwnerRefs": [
+        "C-STORE-OWNER",
+        "I-FORM-OWNER",
+        "I-SET-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-STORE",
+        "I-FORM",
+        "I-SET"
+      ],
+      "discriminator": "T-35 label/units atT+1day; fix-age/label-clears/form-drop mutations.",
+      "expected": "AcquiredAt remainsT/accuracy25; savedAt T+1day; no second acquisition.",
+      "observed": "Actual form/apply/save/load chain retains metadata and one GPS call; age-renewal/dropped metadata/name clearing mutations fail.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O05",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Five-minute cached browser fix keeps original timestamp; stale saved browser target stays usable without claiming current viewer position.",
+      "authoredOwnerRefs": [
+        "C-GEO-OWNER",
+        "I-FORM-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-GEO",
+        "C-STORE",
+        "I-FORM",
+        "I-SET",
+        "I-WX"
+      ],
+      "discriminator": "T-35 cached/old saved position; downstream fix expiry and savedAt negative.",
+      "expected": "Saved browser position/age distinguish from fresh device presence; fixed sites are not age-stale.",
+      "observed": "Cached acquiredAt T−300000 unchanged; old target still usable and pin says Saved browser position, not GPS/current; downstream rejects expired device but admits configured site.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O06",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Coordinate edits select explicit manual site and clear incompatible acquisition claims; label-only edit/reverse naming cannot improve accuracy or renew timestamp.",
+      "authoredOwnerRefs": [
+        "B-INTENT-OWNER",
+        "I-SET-OWNER",
+        "I-FORM-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-INTENT",
+        "I-SET",
+        "I-FORM"
+      ],
+      "discriminator": "T-35 manual coordinate/name/reverse cases and late reverse after manual.",
+      "expected": "Manual target null accuracy/time; naming preserves acquired evidence.",
+      "observed": "Both form coordinate paths clear browser claims; label and units/reverse keep25/T; stale reverse cannot restore old evidence.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O07",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Place/postcode selection retains available provider/granularity/bounds without invented point precision; absent/malformed bounds explicitly unknown.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-SET-OWNER",
+        "B-INTENT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-PLACE",
+        "C-CONSUMER",
+        "I-SET",
+        "B-INTENT"
+      ],
+      "discriminator": "T-35 actual Nominatim bounds and malformed/absent bounds.",
+      "expected": "Real supplied bounds retained; null if malformed; accuracy/time not manufactured.",
+      "observed": "Berlin bounds52..53/13..14 and provider/area retained; absent/NaN/empty malformed bounds null.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O08",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Coarse-IP area/provider retained only with verified semantics; ambiguous scalar accuracy is not interpreted as metres.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "C-DEADLINE",
+        "I-WX"
+      ],
+      "discriminator": "T-35 actual GeoJS parser accuracy5; downstream coarse negative.",
+      "expected": "coarse-area, GeoJS/area, metric accuracy unknown.",
+      "observed": "Raw cfg.accuracy5 remains historical provider scalar; locationEvidence.accuracyM/acquiredAt null; weather does not borrow scalar precision.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O09",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Conservative legacy saved migration retains usable coordinates/preferences without savedAt-to-fix substitution; read does not destructively rewrite.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "C-STORE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "C-STORE",
+        "I-FORM"
+      ],
+      "discriminator": "T-35 legacy browser/unresolved/read/save/older preference rewrite.",
+      "expected": "Legacy acquisition unknown; explicit later save can conservatively represent site.",
+      "observed": "Legacy browser intent retained with unknown precision/time; original raw record unchanged on read; explicit save preserves coordinates/preferences and safe source.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O10",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Denied storage preserves accurate in-memory metadata and truthful session-only feedback; blocked/partitioned storage does not clear useful saved data.",
+      "authoredOwnerRefs": [
+        "C-STORE-OWNER",
+        "I-APPLY-OWNER",
+        "I-PERSIST-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-STORE",
+        "I-APPLY",
+        "I-PERSIST"
+      ],
+      "discriminator": "T-35 denied persistence; T-17 denied getter/read/remove sentinels.",
+      "expected": "25/T retained in memory after failed save; old storage intact.",
+      "observed": "Metadata/source stays browser-geolocation and status session-only; denied reads/deletion safeguards pass. Native writable partition/iframe policy remains unverified below.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O11",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Portable hashes intentionally describe configured destination; do not expose fine-grained acquisition history or imply sender fix is recipient presence.",
+      "authoredOwnerRefs": [
+        "C-SERIAL-OWNER",
+        "B-EXPORT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-SERIAL",
+        "B-EXPORT",
+        "C-RESOLVE",
+        "I-WX"
+      ],
+      "discriminator": "T-35 actual builder portable recipient and all serialization modes.",
+      "expected": "Portable recipient is hash fixed-site, selected coords, null accuracy/time; URLs omit private fix history.",
+      "observed": "Actual builder52.52/13.41 produces fixed-site recipient; accuracy/acquiredAt/timestamp/evidence/device source absent in portable/preferLocal/local hashes.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O12",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Explicit hardcoded, local, preferLocal, preview and copied snippet preserve location/metadata semantics and existing method/unit priority.",
+      "authoredOwnerRefs": [
+        "C-RESOLVE-OWNER",
+        "B-EXPORT-OWNER",
+        "I-BOOT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-RESOLVE",
+        "B-EXPORT",
+        "I-BOOT"
+      ],
+      "discriminator": "T-35 hardcoded/local/preferLocal; T-16 actual export paths/precedence.",
+      "expected": "Fixed site never claims current recipient device; saved selections remain authoritative.",
+      "observed": "Hardcoded0,0 is fixed-site/unknown precision; preferLocal retains saved browser evidence+preferences; builder hash/snippet/preview share serializer.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O13",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Old/downgraded production consumers remain usable and conservatively see configured site/unknown, never false fresh precise GPS.",
+      "authoredOwnerRefs": [
+        "C-STORE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-STORE",
+        "I-FORM"
+      ],
+      "discriminator": "T-35 actual historical fd2972 consumer; legacy-source mutant.",
+      "expected": "Stored source manual with private origin+evidence; old pin manual and raw bytes unchanged.",
+      "observed": "Real older source fixture shows Manual location with correct coords/preferences and no rewrite; omission of conservative source rewrite fails relevant assertion.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O14",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "No old result wins new location intent; permission denied/timeout/unavailable/unsupported does not retry/prompt-loop or replace target evidence.",
+      "authoredOwnerRefs": [
+        "B-ACQUIRE-OWNER",
+        "I-SET-OWNER",
+        "C-GEO-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-ACQUIRE",
+        "I-SET",
+        "C-GEO"
+      ],
+      "discriminator": "T-35 stale GPS, denied1/timeout3/unsupported; held-out unavailable2; T-15.",
+      "expected": "One-shot user-triggered behavior; prior config preserved after failure.",
+      "observed": "All controlled cases pass with one or zero getCurrentPosition calls and unchanged current target; late old GPS cannot overwrite manual/save.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O15",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Keep one-shot existing highAccuracy=false/10minute cache/timeout, do not add watchPosition, auto prompt each refresh or demand precision for fixed site; no prayer method policy change.",
+      "authoredOwnerRefs": [
+        "C-GEO-OWNER",
+        "B-ACQUIRE-OWNER",
+        "I-SET-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-GEO",
+        "B-ACQUIRE",
+        "I-SET"
+      ],
+      "discriminator": "T-35 exact acquisition options and source search.",
+      "expected": "Existing options retained; accepted age/accuracy is product-scale policy, not GPS label.",
+      "observed": "Exact false/10000/600000 options; no continuous tracking in owners; weather admits configured sites separately.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O16",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Decision-useful diagnostics/pin/status identify target/source/accuracy/fix age honestly; original source and persistence time separately visible.",
+      "authoredOwnerRefs": [
+        "I-FORM-OWNER",
+        "I-SET-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "I-FORM",
+        "I-SET",
+        "I-WX"
+      ],
+      "discriminator": "T-35 saved/browser pin and qa source3174–3175, weather target3145.",
+      "expected": "Browser/Saved browser position with25m/time or unknown; no inaccurate GPS/current wording.",
+      "observed": "Current production pin names and qa fields are honest within source/controlled tests; native display/crops still require bridge; README contradicts below.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O17",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Update README recipient disclosure and config documentation for acquisition/fix versus savedAt, browser versus saved position, portable fixed site and conservative legacy/skew.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-FORM-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "D-LOCAL",
+        "D-STORAGE",
+        "D-CONFIG"
+      ],
+      "discriminator": "README105/128–139 and DESIGN339–341 actual target.",
+      "expected": "Documentation reflects metadata interface and honest precision/privacy.",
+      "observed": "README still says precise GPS/Use precise location and partitioned=unavailable; no acquisition age/portable evidence semantics. DESIGN WidgetConfig omits locationEvidence and its lifecycle/skew contract.",
+      "status": "unmet",
+      "scope": "mandatory documentation",
+      "id": "R0023-O18",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Freeze/consume end-to-end location record in weather; distinguish precise-device/site/coarse/unknown and original fix age, immutable snapshot across body await.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-WX"
+      ],
+      "discriminator": "Fresh targeted13 R0024 interface cases: T-WX-TARGET/T-WX-COPY/T-WX-CONFIG.",
+      "expected": "Selected target evidence reaches weather without mutation or savedAt inflation.",
+      "observed": "All13 named downstream cases pass; actual config hash and actual save/load feed weather, stale/legacy/coarse/unknown rejection separate from fixed-site admission; body mutation cannot alter captured primitives.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O19",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Keep the location-meaning interface distinct from precipitation authority and product-scale device accuracy policy; fixed configured sites need no fresh GPS.",
+      "authoredOwnerRefs": [
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "I-WX"
+      ],
+      "discriminator": "R0023 target/intent invariant, binding H5/H8 context and distinct synthetic point-policy source.",
+      "expected": "Target/source/accuracy/age remain honest; no added direct-present adapter/GPS requirement for labelled current model estimate.",
+      "observed": "Audit preserves the H5/H8 amendment to R0024 model-presentation scope. It waives no R0023 metadata, documentation or native-proof obligation; synthetic point gates remain fixture controls rather than live observation.",
+      "status": "satisfied",
+      "scope": "owner policy compatibility; no R0023 waiver",
+      "id": "R0023-O20",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Iframe controls: top-level/delegated local embed/absent delegation/restrictive parent policy with controlled permission host or mocks; preserve local allow geolocation and no real owner permission interaction.",
+      "authoredOwnerRefs": [
+        "B-EXPORT-OWNER",
+        "C-GEO-OWNER",
+        "I-SET-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-EXPORT",
+        "C-GEO",
+        "I-SET"
+      ],
+      "discriminator": "Original iframe matrix; existing allow source only.",
+      "expected": "Actual form/acquisition behavior fails gracefully under denied policy; no automatic retry.",
+      "observed": "Controlled one-shot failure logic passes and local snippet includes allow; no native parent-policy matrix receipt located/executed.",
+      "status": "unverified",
+      "scope": "native iframe/Permissions Policy consumers",
+      "id": "R0023-O21",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Small real-browser integration proof must exercise actual full form→apply→save→load and builder path on bound bytes; helper-only tests cannot prove retained fields.",
+      "authoredOwnerRefs": [
+        "I-FORM-OWNER",
+        "I-SET-OWNER",
+        "B-ACQUIRE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "I-FORM",
+        "I-SET",
+        "I-APPLY",
+        "C-STORE",
+        "B-ACQUIRE"
+      ],
+      "discriminator": "T-35-NATIVE and held-out applicability probe.",
+      "expected": "Usable current exact-script native wrapper/driver plus native form/persistence readback.",
+      "observed": "The original two-script fixture defect is retained. The isolated exact-six-script adaptation now loads actual widgets and one current GPS form→close/apply→save→reopen positive preserves25m/T, and hostile GPS/manual/closed-session/reset cases pass. Full metadata negative lifecycle/builder/iframe matrix is not claimed; documentation and remaining proof stay open.",
+      "status": "unverified",
+      "scope": "native current form positive credited; full metadata/builder/iframe matrix remains unverified",
+      "id": "R0023-O22",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Original positive/control/negative metadata fixtures and end-to-end mutation tests preserve original expectations; source-equivalent historical evidence narrowly reused, exact candidate current tests fresh.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-FORM-OWNER",
+        "I-SET-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-FORM",
+        "I-SET",
+        "C-STORE",
+        "I-WX"
+      ],
+      "discriminator": "T-35/M-35 fresh ref and downstream13 fresh; public retained L-35.",
+      "expected": "Capture/drop/renewed-time/name/older-source regressions detected behaviorally.",
+      "observed": "31/31 metadata,5/5 mutants and13/13 downstream interface checks pass; each expected failure is behavioral with no bootstrap failure. Legacy actual consumer explicitly historical, not final browser proof.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O23",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Ownership links R000F/R0010/R0011/R001F/R001B remain interfaces rather than duplicate algorithms or administrative whole-issue blockers; serialized shared writers.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-FORM-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-FORM",
+        "I-WX",
+        "C-STORE",
+        "B-INTENT"
+      ],
+      "discriminator": "Separate intent/serializer/storage/deadline owners and tested call interfaces.",
+      "expected": "Evidence lifecycle owns metadata; acquisition/request algorithms retain their original owner.",
+      "observed": "Metadata carries across existing owners; independent gates noted per interface; docs and native bridge gaps are local, not blanket N001/N002/N003 blocker.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O24",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Rollback metadata/UI without deleting usable coords/preferences; older consumer degrades safely; stop on private URL leak/destructive migration/continuous tracking; closure exact-candidate end-to-end proof.",
+      "authoredOwnerRefs": [
+        "C-STORE-OWNER",
+        "C-SERIAL-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-STORE",
+        "C-SERIAL",
+        "I-FORM",
+        "I-WX"
+      ],
+      "discriminator": "T-35 old-reader/private-hash/no data deletion controls and audit boundary.",
+      "expected": "Preserve usable target and private origin; no new provider/production change during audit.",
+      "observed": "Conservative downgrade and omitted URL history proven in controlled source; no public/runtime changes; native/docs increment remains proposed only.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O25",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      }
+    }
+  ],
+  "evidenceSources": [
+    {
+      "id": "C-OWNER",
+      "path": "src/native/config.js",
+      "startLine": 56,
+      "endLine": 85,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L56-L85",
+      "purpose": "Authored location-evidence normalization and acquisition primitives"
+    },
+    {
+      "id": "C-CONSUMER",
+      "path": "config.js",
+      "startLine": 56,
+      "endLine": 85,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L56-L85",
+      "purpose": "Delivered identical configuration primitives"
+    },
+    {
+      "id": "C-SERIAL-OWNER",
+      "path": "src/native/config.js",
+      "startLine": 146,
+      "endLine": 176,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L146-L176",
+      "purpose": "Authored canonical serializer"
+    },
+    {
+      "id": "C-SERIAL",
+      "path": "config.js",
+      "startLine": 146,
+      "endLine": 176,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L146-L176",
+      "purpose": "Delivered canonical serializer"
+    },
+    {
+      "id": "C-STORE-OWNER",
+      "path": "src/native/config.js",
+      "startLine": 178,
+      "endLine": 219,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L178-L219",
+      "purpose": "Authored storage results and conservative saved representation"
+    },
+    {
+      "id": "C-STORE",
+      "path": "config.js",
+      "startLine": 178,
+      "endLine": 219,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L178-L219",
+      "purpose": "Delivered save/load/clear contract"
+    },
+    {
+      "id": "C-DEADLINE-OWNER",
+      "path": "src/native/config.js",
+      "startLine": 230,
+      "endLine": 270,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L230-L270",
+      "purpose": "Authored full-body coarse deadline and two-provider fallback"
+    },
+    {
+      "id": "C-DEADLINE",
+      "path": "config.js",
+      "startLine": 230,
+      "endLine": 270,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L230-L270",
+      "purpose": "Delivered coarse deadline implementation"
+    },
+    {
+      "id": "C-GEO-OWNER",
+      "path": "src/native/config.js",
+      "startLine": 272,
+      "endLine": 291,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L272-L291",
+      "purpose": "Authored one-shot browser acquisition and error handling"
+    },
+    {
+      "id": "C-GEO",
+      "path": "config.js",
+      "startLine": 272,
+      "endLine": 291,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L272-L291",
+      "purpose": "Delivered one-shot acquisition"
+    },
+    {
+      "id": "C-RESOLVE-OWNER",
+      "path": "src/native/config.js",
+      "startLine": 294,
+      "endLine": 326,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L294-L326",
+      "purpose": "Authored precedence resolver and detected-base overlay"
+    },
+    {
+      "id": "C-RESOLVE",
+      "path": "config.js",
+      "startLine": 294,
+      "endLine": 326,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L294-L326",
+      "purpose": "Delivered resolver and preference overlay"
+    },
+    {
+      "id": "C-PLACE",
+      "path": "config.js",
+      "startLine": 333,
+      "endLine": 375,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L333-L375",
+      "purpose": "Delivered geocoder candidates and available bounds"
+    },
+    {
+      "id": "B-EXPORT-OWNER",
+      "path": "src/native/builder.html",
+      "startLine": 204,
+      "endLine": 239,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L204-L239",
+      "purpose": "Authored form/export/preview and local explanatory text"
+    },
+    {
+      "id": "B-EXPORT",
+      "path": "builder.html",
+      "startLine": 204,
+      "endLine": 239,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L204-L239",
+      "purpose": "Delivered form, canonical hash, snippet and preview"
+    },
+    {
+      "id": "B-INTENT-OWNER",
+      "path": "src/native/builder.html",
+      "startLine": 258,
+      "endLine": 343,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L258-L343",
+      "purpose": "Authored shared builder edit owner, candidates and reverse continuation"
+    },
+    {
+      "id": "B-INTENT",
+      "path": "builder.html",
+      "startLine": 258,
+      "endLine": 343,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L258-L343",
+      "purpose": "Delivered builder handlers and candidate ownership"
+    },
+    {
+      "id": "B-ACQUIRE-OWNER",
+      "path": "src/native/builder.html",
+      "startLine": 437,
+      "endLine": 470,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L437-L470",
+      "purpose": "Authored GPS/coarse adoption under builder edit ownership"
+    },
+    {
+      "id": "B-ACQUIRE",
+      "path": "builder.html",
+      "startLine": 437,
+      "endLine": 470,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L437-L470",
+      "purpose": "Delivered builder acquisition and manual recovery"
+    },
+    {
+      "id": "I-APPLY-OWNER",
+      "path": "src/native/index.html",
+      "startLine": 3310,
+      "endLine": 3328,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3310-L3328",
+      "purpose": "Authored synchronous persistence outcome before provider await"
+    },
+    {
+      "id": "I-APPLY",
+      "path": "index.html",
+      "startLine": 5338,
+      "endLine": 5356,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5338-L5356",
+      "purpose": "Delivered actual applyConfig consumer"
+    },
+    {
+      "id": "I-BOOT-OWNER",
+      "path": "src/native/index.html",
+      "startLine": 3347,
+      "endLine": 3390,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3347-L3390",
+      "purpose": "Authored local boot, explicit hash preferences and manual recovery"
+    },
+    {
+      "id": "I-BOOT",
+      "path": "index.html",
+      "startLine": 5375,
+      "endLine": 5418,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5375-L5418",
+      "purpose": "Delivered local boot consumer"
+    },
+    {
+      "id": "I-PERSIST-OWNER",
+      "path": "src/native/index.html",
+      "startLine": 3452,
+      "endLine": 3478,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3452-L3478",
+      "purpose": "Authored storage-result status composition and closed opener"
+    },
+    {
+      "id": "I-PERSIST",
+      "path": "index.html",
+      "startLine": 5481,
+      "endLine": 5507,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5481-L5507",
+      "purpose": "Delivered persistence message, accessible opener and live announcement"
+    },
+    {
+      "id": "I-SET-OWNER",
+      "path": "src/native/index.html",
+      "startLine": 3479,
+      "endLine": 3693,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3479-L3693",
+      "purpose": "Authored settings edit/session/candidate/form/acquisition/reset/close owners"
+    },
+    {
+      "id": "I-SET",
+      "path": "index.html",
+      "startLine": 5508,
+      "endLine": 5722,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5508-L5722",
+      "purpose": "Delivered settings owner and actual event handlers"
+    },
+    {
+      "id": "I-FORM-OWNER",
+      "path": "src/native/index.html",
+      "startLine": 3549,
+      "endLine": 3572,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3549-L3572",
+      "purpose": "Authored form metadata and origin preservation"
+    },
+    {
+      "id": "I-FORM",
+      "path": "index.html",
+      "startLine": 5578,
+      "endLine": 5601,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5578-L5601",
+      "purpose": "Delivered form conversion/population"
+    },
+    {
+      "id": "I-WX-OWNER",
+      "path": "src/native/index.html",
+      "startLine": 1293,
+      "endLine": 1312,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+      "purpose": "Authored target snapshot separates selected point from acquisition evidence"
+    },
+    {
+      "id": "I-WX",
+      "path": "index.html",
+      "startLine": 3417,
+      "endLine": 3436,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3417-L3436",
+      "purpose": "Delivered weather-target snapshot consumer"
+    },
+    {
+      "id": "T-35",
+      "path": "tests/r0023-metadata.cjs",
+      "startLine": 27,
+      "endLine": 157,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0023-metadata.cjs#L27-L157",
+      "purpose": "Original fix/accuracy across acquisition/form/apply/save/load, portable and older-reader controls"
+    },
+    {
+      "id": "M-35",
+      "path": "tests/r0023-mutations.cjs",
+      "startLine": 1,
+      "endLine": 3,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0023-mutations.cjs#L1-L3",
+      "purpose": "Capture, renewed age, dropped form metadata, name edit and older-reader regressions"
+    },
+    {
+      "id": "T-35-NATIVE",
+      "path": "tests/r0023-native.html",
+      "startLine": 49,
+      "endLine": 71,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0023-native.html#L49-L71",
+      "purpose": "Prepared browser wrapper; widget script count guard incompatible with delivered entry"
+    },
+    {
+      "id": "T-WX-TARGET",
+      "path": "tests/r0024-weather.test.cjs",
+      "startLine": 140,
+      "endLine": 161,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L161",
+      "purpose": "Distinct site/recent-device/broad/coarse/legacy/expired/unknown consumer controls"
+    },
+    {
+      "id": "T-WX-COPY",
+      "path": "tests/r0024-weather.test.cjs",
+      "startLine": 204,
+      "endLine": 228,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L204-L228",
+      "purpose": "Immutable evidence snapshot and no savedAt-to-fix-time substitution"
+    },
+    {
+      "id": "T-WX-CONFIG",
+      "path": "tests/r0024-weather.test.cjs",
+      "startLine": 288,
+      "endLine": 304,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304",
+      "purpose": "Actual config parse and actual save/load into downstream weather target"
+    },
+    {
+      "id": "D-LOCAL",
+      "path": "README.md",
+      "startLine": 80,
+      "endLine": 119,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L80-L119",
+      "purpose": "Delivered local examples, settings description and precedence; missing builder preference distinction"
+    },
+    {
+      "id": "D-STORAGE",
+      "path": "README.md",
+      "startLine": 121,
+      "endLine": 140,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L121-L140",
+      "purpose": "Delivered privacy/storage prose; partitioning assertion and reset non-erasure gap"
+    },
+    {
+      "id": "D-CONFIG",
+      "path": "DESIGN.md",
+      "startLine": 332,
+      "endLine": 355,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L332-L355",
+      "purpose": "Delivered configuration documentation omits locationEvidence/acquisition lifecycle"
+    },
+    {
+      "id": "L-35",
+      "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/MANIFEST.json",
+      "startLine": 1366,
+      "endLine": 1373,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/MANIFEST.json#L1366-L1373",
+      "purpose": "Public lossless final metadata VM receipt"
+    }
+  ],
+  "freshExecution": {
+    "environment": {
+      "node": "22.16.0",
+      "launcher": "PowerShell7.6.6",
+      "os": "Windows",
+      "sourceBinding": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "browser": "NOT_RUN"
+    },
+    "receipts": [
+      {
+        "name": "r0023-metadata",
+        "startedAtUtc": "2026-10-09T00:58:00.3900922Z",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r0023-metadata.cjs",
+          "--ref",
+          "18ff14860ff41c084b1db5f396bb62aa9c22b1be"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "stdout": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0023-metadata.stdout.log",
+        "stderr": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0023-metadata.stderr.log",
+        "stdoutSha256": "9574fd91abd7202554414083ffe196862ea8efa66e1d68f48067184a5728a041",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tail": "PASS default and explicit storage arguments encode conservatively without mutating live input\n{\"cases\":31,\"passed\":31,\"failed\":0,\"ref\":\"18ff14860ff41c084b1db5f396bb62aa9c22b1be\",\"mutant\":null,\"native\":\"NOT_RUN\"}"
+      },
+      {
+        "name": "r0023-mutations",
+        "startedAtUtc": "2026-10-09T00:58:35.8343850Z",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r0023-mutations.cjs"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "sourceBinding": "Clean checkout at 4bccdf43363926c3077f60de87e5617ccb9abcb9; same tree 35208181eea714c17f5e77b2644e76434345db60 as target merge",
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "stdout": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0023-mutations.stdout.log",
+        "stderr": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r0023-mutations.stderr.log",
+        "stdoutSha256": "b65a12b57263bb7e4fe8e29d7cb596ea5040d902a6eff286352efc5cd1c88020",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "PASS mutant caught: capture-time\nPASS mutant caught: fix-age\nPASS mutant caught: form-drop\nPASS mutant caught: label-clears\nPASS mutant caught: legacy-source\n"
+      }
+    ],
+    "extraReceipts": [
+      {
+        "name": "heldout-probes",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\heldout-probes.cjs"
+        ],
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "output": "PASS all six complete immutable issue bodies match their initial SHA256\nPASS obsolete builder coarse failure cannot replace accepted London outputs\nPASS obsolete builder reverse failure cannot replace newer reverse outputs\nPASS obsolete builder GPS error preserves newer manual tuple feedback and export\nPASS obsolete settings GPS and reset errors preserve newer manual state and stored bytes\nPASS obsolete settings GPS and reset errors cannot change reopened session\nPASS preferLocal without saved data boots explicit fixed fallback\nPASS browser POSITION_UNAVAILABLE preserves target evidence without retry\n{\"instrument\":\"exact production text and unchanged wrapper guard; browser NOT_RUN\",\"requiredScriptCount\":2,\"deliveredScriptCount\":6,\"guardWouldThrow\":\"Page script anchors changed\",\"attributes\":[\" src=\\\"config.js\\\"\",\" id=\\\"native-first-paint-code\\\" data-sha256=\\\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\\\"\",\"\",\" src=\\\"real-sky/native-sky.js\\\"\",\"\",\" src=\\\"moon/moon-host.js\\\"\"]}\nPASS R0023 native wrapper widget script guard is inapplicable to delivered six-script entry\n{\"cases\":9,\"passed\":9,\"failed\":0,\"target\":\"18ff14860ff41c084b1db5f396bb62aa9c22b1be\",\"native\":\"NOT_RUN\",\"scope\":\"held-out exact-source VM/body-custody/fixture-applicability checks; no production edits\"}\n"
+      },
+      {
+        "name": "r0023-weather-interface",
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "sourceBinding": "Clean same-tree checkout; targeted R0024 tests qualify R0023 interface only",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-name-pattern=R0024 F .* has honest point admission|original device fix lease expires|synchronous acquisition captures original|browser source with missing original|actual accepted CONFIG hash parser|actual accepted CONFIG save/load",
+          "tests/r0024-weather.test.cjs"
+        ],
+        "output": "TAP version 13\n# WEATHER source C:\\\\Users\\\\theis\\\\.codex\\\\worktrees\\\\hotfix-startup-clouds\\\\salah_widget\\\\index.html SHA256 ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee\n# WEATHER config source C:\\\\Users\\\\theis\\\\.codex\\\\worktrees\\\\hotfix-startup-clouds\\\\salah_widget\\\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81\n# WEATHER request-owner SHA256 ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee\n# Subtest: R0024 F fixed site unknown precision has honest point admission\nok 1 - R0024 F fixed site unknown precision has honest point admission\n  ---\n  duration_ms: 7.1264\n  type: 'test'\n  ...\n# Subtest: R0024 F recent precise device has honest point admission\nok 2 - R0024 F recent precise device has honest point admission\n  ---\n  duration_ms: 3.3081\n  type: 'test'\n  ...\n# Subtest: R0024 F device accuracy boundary has honest point admission\nok 3 - R0024 F device accuracy boundary has honest point admission\n  ---\n  duration_ms: 4.4567\n  type: 'test'\n  ...\n# Subtest: R0024 F broad device fix has honest point admission\nok 4 - R0024 F broad device fix has honest point admission\n  ---\n  duration_ms: 19.049\n  type: 'test'\n  ...\n# Subtest: R0024 F coarse IP unknown accuracy has honest point admission\nok 5 - R0024 F coarse IP unknown accuracy has honest point admission\n  ---\n  duration_ms: 4.3302\n  type: 'test'\n  ...\n# Subtest: R0024 F saved device unknown original fix has honest point admission\nok 6 - R0024 F saved device unknown original fix has honest point admission\n  ---\n  duration_ms: 4.1706\n  type: 'test'\n  ...\n# Subtest: R0024 F expired original device fix has honest point admission\nok 7 - R0024 F expired original device fix has honest point admission\n  ---\n  duration_ms: 5.3581\n  type: 'test'\n  ...\n# Subtest: R0024 F unknown intent has honest point admission\nok 8 - R0024 F unknown intent has honest point admission\n  ---\n  duration_ms: 4.1996\n  type: 'test'\n  ...\n# Subtest: R0024 original device fix lease expires independently of a fresh weather download\nok 9 - R0024 original device fix lease expires independently of a fresh weather download\n  ---\n  duration_ms: 37.9729\n  type: 'test'\n  ...\n# Subtest: R0024 synchronous acquisition captures original evidence primitives before the body can mutate config\nok 10 - R0024 synchronous acquisition captures original evidence primitives before the body can mutate config\n  ---\n  duration_ms: 41.2337\n  type: 'test'\n  ...\n# Subtest: R0024 browser source with missing original fix time cannot borrow a recent settings savedAt\nok 11 - R0024 browser source with missing original fix time cannot borrow a recent settings savedAt\n  ---\n  duration_ms: 6.5139\n  type: 'test'\n  ...\n# Subtest: R0024 actual accepted CONFIG hash parser supplies a configured site without manufactured fix precision\nok 12 - R0024 actual accepted CONFIG hash parser supplies a configured site without manufactured fix precision\n  ---\n  duration_ms: 47.0391\n  type: 'test'\n  ...\n# Subtest: R0024 actual accepted CONFIG save/load preserves original browser epoch while WEATHER declines an expired device claim\nok 13 - R0024 actual accepted CONFIG save/load preserves original browser epoch while WEATHER declines an expired device claim\n  ---\n  duration_ms: 35.6536\n  type: 'test'\n  ...\n1..13\n# tests 13\n# suites 0\n# pass 13\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 291.0125\n"
+      }
+    ],
+    "expected": "All positive commands exit0; mutation runner exits0 only when intended child behavior fails with exit1 and expected FAIL name, excluding bootstrap failures.",
+    "observed": "31/31 primary controlled cases pass; 5/5 included behavioral mutations detected; all recorded exits0."
+  },
+  "historicalReuse": {
+    "classification": "SUPPLEMENTARY_ONLY",
+    "basis": "Public final-v49 gzip logs count the same named production-source suites and explicitly native NOT_RUN. Fresh exact-ref reruns supersede them for current logic. No old whole-runtime browser identity is promoted to target-native proof.",
+    "sourceEquivalence": "Authored/delivered config and builder are byte-identical; reviewed head tree equals actual merge tree. Older fd2972 reader used only as explicitly identified compatibility control in #35.",
+    "notReused": "Historical broad native-smoke config callbacks verify helper APIs only; they do not reach these required actual race/storage feedback/copy selection/stream/metadata interactions."
+  },
+  "negativeControls": {
+    "suites": [
+      "r0023-mutations"
+    ],
+    "qualifier": "Through-handler behavioral controls; exact FAIL names verified by their harnesses; no empty fixture/helper-only mutation is accepted as whole native proof."
+  },
+  "demonstratedImprovements": [
+    "Saved browser evidence privately retains original epoch/metres/origin while old consumers see manual configured-site source; genuine older production consumer controls prove usable conservative degradation.",
+    "Downstream weather receives a copied target/evidence snapshot; settings savedAt and legacy coarse accuracy cannot create current-device authority."
+  ],
+  "gaps": [
+    "README/config documentation and explicit future/skew policy documentation are missing or inaccurate.",
+    "The exact-six-script fixture applicability gap is repaired and qualified by current native widget cases, including form→apply→save→reopen25m/T. Remaining complete metadata saved/load/builder and iframe-policy proof is unverified; no native negative lifecycle/permission matrix is claimed."
+  ],
+  "boundedNextIncrement": {
+    "semanticOwners": [
+      "README.md recipient/source/storage wording",
+      "DESIGN.md WidgetConfig metadata lifecycle",
+      "tests/r0023-native.html browser evidence fixture or an isolated current equivalent",
+      "src/native/config.js and builder/index form verification owners"
+    ],
+    "scope": "Documentation and browser-fixture/evidence increment; preserve original25m/T metadata, conservative legacy/old-reader representation and approved current-model policy. No continuous GPS/new provider/prayer method/migration change.",
+    "steps": [
+      "Update concise README and config documentation for target intent, original acquisition source/metres/T, separately savedAt, cached/saved position and fixed portable recipient; document current zero-skew/future handling.",
+      "Reuse the now-qualified exact-six-script isolated fixture/driver and publish its source/receipts; repair the old checked-in two-script fixture only in the later authorized evidence increment. Preserve all current modules/assets and original expectations.",
+      "Use mocked52.52/13.41/25m/T on disposable native widget and builder; acquire→form→close/apply→save→load, then unrelated preferences atT+1day; verify original T stays and savedAt changes; cached/missing/future/legacy/stale/manual/name/late-old/denied-storage controls.",
+      "Exercise top-level, delegated local iframe, absent delegation and restrictive parent policy with mocks/controlled host; capture current/saved/unknown pin/status and parsed portable recipient, final config/storage plus downstream target diagnostics.",
+      "Keep original mutation/positive tests and bind all new native receipts to exact final bytes; primary reviews counterexamples before any external comments or closure."
+    ],
+    "acceptance": "Current full-script native fixture loads without anchor error; actual acquisition/form/persistence preserves25/T while savedAt alone advances; unknown stays unknown, portable fixed target carries no private history, permission cases degrade once, documentation matches diagnostics.",
+    "missingCheckRequest": "After the concise mandatory documentation correction, use the qualified six-script native fixture for the remaining saved/load/builder metadata and iframe-policy bridge; current form/GPS25m/T and intent/reset cases are already credited and must not be replayed without reason."
+  },
+  "rollbackOrContainment": "Preserve completed source and all stored owner data. Next increment is proposed only; evidence fixture/README edits must remain narrow. On reproduced defect, retain failing case and stop for primary scope/owner review rather than broaden repair.",
+  "externalEffects": "None by worker: no browser/build/solver/source mutation/commit/push/GitHub comment/closure/deployment. Primary controls reconciliation/publication.",
+  "publicationStatus": "FROZEN_PRIMARY_RECONCILED_AWAITING_IMMUTABLE_EVIDENCE_BINDING_AND_HASH_APPROVAL",
+  "freshPrimaryNativeEvidence": {
+    "executor": "Primary Astra in exclusive serial browser lease; no browser run by reviewer D",
+    "browser": {
+      "family": "chromium",
+      "version": "148.0.7778.96",
+      "os": "Windows",
+      "machine": "AMD64",
+      "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+      "chromiumSandboxRequested": true
+    },
+    "cases": {
+      "15-settings-candidates-current-gps": {
+        "name": "15-settings-candidates-current-gps",
+        "case": {
+          "name": "15-settings-candidates-current-gps",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "widget",
+            "seed": "manual",
+            "hold": "search",
+            "gps": "held"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 6,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "settings cycles Ontario",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "London",
+                  "set-lat": "42.98000",
+                  "set-lon": "-81.25000",
+                  "set-method": "3",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": "YYYY-MM-DD"
+                },
+                "config": {
+                  "configSource": "localStorage",
+                  "configMode": "local",
+                  "autoDetectSource": null,
+                  "autoDetectStatus": "idle",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "unknown",
+                  "geolocationLastError": null,
+                  "lat": 51.5,
+                  "lon": -0.12,
+                  "tz": "UTC",
+                  "label": "London",
+                  "method": "3",
+                  "units": "f",
+                  "locationEvidence": {
+                    "intent": "fixed-site",
+                    "source": "manual",
+                    "accuracyM": null,
+                    "acquiredAt": null,
+                    "provider": null,
+                    "area": null,
+                    "bounds": null
+                  },
+                  "fixAgeMs": null,
+                  "savedAt": 1790942400000,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Match 2 of 2: London, Ontario, Canada\npress Enter to cycle",
+                "pin": {
+                  "classes": "set-pin off",
+                  "title": "Configured site — click to request browser location",
+                  "name": "Configured site — click to request browser location"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": "{\"v\":1,\"lat\":51.5,\"lon\":-0.12,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+              }
+            },
+            {
+              "name": "settings new candidate query",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "Cairo",
+                  "set-lat": "30.04440",
+                  "set-lon": "31.23570",
+                  "set-method": "3",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": "YYYY-MM-DD"
+                },
+                "config": {
+                  "configSource": "localStorage",
+                  "configMode": "local",
+                  "autoDetectSource": null,
+                  "autoDetectStatus": "idle",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "unknown",
+                  "geolocationLastError": null,
+                  "lat": 51.5,
+                  "lon": -0.12,
+                  "tz": "UTC",
+                  "label": "London",
+                  "method": "3",
+                  "units": "f",
+                  "locationEvidence": {
+                    "intent": "fixed-site",
+                    "source": "manual",
+                    "accuracyM": null,
+                    "acquiredAt": null,
+                    "provider": null,
+                    "area": null,
+                    "bounds": null
+                  },
+                  "fixAgeMs": null,
+                  "savedAt": 1790942400000,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Found: Cairo, Egypt",
+                "pin": {
+                  "classes": "set-pin off",
+                  "title": "Configured site — click to request browser location",
+                  "name": "Configured site — click to request browser location"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": "{\"v\":1,\"lat\":51.5,\"lon\":-0.12,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+              }
+            },
+            {
+              "name": "current GPS positive accepted with accessible accuracy",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "Cairo",
+                  "set-lat": "52.52000",
+                  "set-lon": "13.41000",
+                  "set-method": "3",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": "YYYY-MM-DD"
+                },
+                "config": {
+                  "configSource": "localStorage",
+                  "configMode": "local",
+                  "autoDetectSource": null,
+                  "autoDetectStatus": "idle",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "granted",
+                  "geolocationLastError": null,
+                  "lat": 51.5,
+                  "lon": -0.12,
+                  "tz": "UTC",
+                  "label": "London",
+                  "method": "3",
+                  "units": "f",
+                  "locationEvidence": {
+                    "intent": "fixed-site",
+                    "source": "manual",
+                    "accuracyM": null,
+                    "acquiredAt": null,
+                    "provider": null,
+                    "area": null,
+                    "bounds": null
+                  },
+                  "fixAgeMs": null,
+                  "savedAt": 1790942400000,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Browser position · accuracy 25 m · fix 0 min old — click to refresh",
+                "pin": {
+                  "classes": "set-pin glow",
+                  "title": "Browser position · accuracy 25 m · fix 0 min old — click to refresh",
+                  "name": "Browser position · accuracy 25 m · fix 0 min old — click to refresh"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": "{\"v\":1,\"lat\":51.5,\"lon\":-0.12,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+              }
+            },
+            {
+              "name": "actual close retains GPS acquisition",
+              "passed": true,
+              "detail": {
+                "v": 1,
+                "lat": 52.52,
+                "lon": 13.41,
+                "tz": "America/New_York",
+                "label": "Cairo",
+                "method": "3",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "manual",
+                "savedAt": 1790942400000,
+                "locationEvidence": {
+                  "intent": "device-position",
+                  "source": "browser-geolocation",
+                  "accuracyM": 25,
+                  "acquiredAt": 1790942400000,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                },
+                "origin": "browser-geolocation"
+              }
+            },
+            {
+              "name": "saved fix accessible source",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "Cairo",
+                  "set-lat": "52.52",
+                  "set-lon": "13.41",
+                  "set-method": "3",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": "YYYY-MM-DD"
+                },
+                "config": {
+                  "configSource": "localStorage",
+                  "configMode": "local",
+                  "autoDetectSource": null,
+                  "autoDetectStatus": "idle",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "granted",
+                  "geolocationLastError": null,
+                  "lat": 52.52,
+                  "lon": 13.41,
+                  "tz": "UTC",
+                  "label": "Cairo",
+                  "method": "3",
+                  "units": "f",
+                  "locationEvidence": {
+                    "intent": "device-position",
+                    "source": "browser-geolocation",
+                    "accuracyM": 25,
+                    "acquiredAt": 1790942400000,
+                    "provider": null,
+                    "area": null,
+                    "bounds": null
+                  },
+                  "fixAgeMs": 0,
+                  "savedAt": 1790942400000,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+                "pin": {
+                  "classes": "set-pin glow",
+                  "title": "Saved browser position · accuracy 25 m · fix 0 min old — click to refresh",
+                  "name": "Saved browser position · accuracy 25 m · fix 0 min old — click to refresh"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": "{\"v\":1,\"lat\":52.52,\"lon\":13.41,\"tz\":\"America/New_York\",\"label\":\"Cairo\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"device-position\",\"source\":\"browser-geolocation\",\"accuracyM\":25,\"acquiredAt\":1790942400000,\"provider\":null,\"area\":null,\"bounds\":null},\"origin\":\"browser-geolocation\"}"
+              }
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 2,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=manual&gps=held&page=widget&hold=search#local=1",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 6,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "finalApplication": {
+            "inputs": {
+              "set-label": "Cairo",
+              "set-lat": "52.52",
+              "set-lon": "13.41",
+              "set-method": "3",
+              "set-school": "0",
+              "set-time": "24",
+              "set-units": "f",
+              "set-appearance": "glass",
+              "set-datefmt": "YYYY-MM-DD"
+            },
+            "config": {
+              "configSource": "localStorage",
+              "configMode": "local",
+              "autoDetectSource": null,
+              "autoDetectStatus": "idle",
+              "storageAvailable": true,
+              "storageError": null,
+              "geolocationPermissionState": "granted",
+              "geolocationLastError": null,
+              "lat": 52.52,
+              "lon": 13.41,
+              "tz": "UTC",
+              "label": "Cairo",
+              "method": "3",
+              "units": "f",
+              "locationEvidence": {
+                "intent": "device-position",
+                "source": "browser-geolocation",
+                "accuracyM": 25,
+                "acquiredAt": 1790942400000,
+                "provider": null,
+                "area": null,
+                "bounds": null
+              },
+              "fixAgeMs": 0,
+              "savedAt": 1790942400000,
+              "hashConfigOverridden": false,
+              "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+            },
+            "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+            "pin": {
+              "classes": "set-pin glow",
+              "title": "Saved browser position · accuracy 25 m · fix 0 min old — click to refresh",
+              "name": "Saved browser position · accuracy 25 m · fix 0 min old — click to refresh"
+            },
+            "code": null,
+            "previewSrc": null,
+            "savedBytes": "{\"v\":1,\"lat\":52.52,\"lon\":13.41,\"tz\":\"America/New_York\",\"label\":\"Cairo\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"device-position\",\"source\":\"browser-geolocation\",\"accuracyM\":25,\"acquiredAt\":1790942400000,\"provider\":null,\"area\":null,\"bounds\":null},\"origin\":\"browser-geolocation\"}"
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "search",
+                "url": "https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5&q=London",
+                "at": 1790942400000,
+                "state": "returned",
+                "status": 200,
+                "signalAborted": false
+              },
+              {
+                "id": 1,
+                "kind": "search",
+                "url": "https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5&q=Cairo",
+                "at": 1790942400000,
+                "state": "returned",
+                "status": 200,
+                "signalAborted": false
+              }
+            ],
+            "gpsCalls": [
+              {
+                "index": 0,
+                "options": {
+                  "enableHighAccuracy": false,
+                  "timeout": 10000,
+                  "maximumAge": 600000
+                },
+                "at": 1790942400000
+              }
+            ],
+            "copyJobs": [],
+            "fallbackCalls": [],
+            "errors": [],
+            "storageEvents": [
+              [
+                "set",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salahwx:51.5|-0.12|f"
+              ],
+              [
+                "get",
+                "salah:51.5|-0.12|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "salah:51.5|-0.12|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salahwx:52.52|13.41|f"
+              ],
+              [
+                "get",
+                "salah:52.52|13.41|America/New_York|3|0"
+              ],
+              [
+                "get",
+                "salah:52.52|13.41|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "salah:52.52|13.41|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ]
+            ]
+          },
+          "fontStatus": "settled",
+          "screenshot": "15-settings-candidates-current-gps.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/15-settings-candidates-current-gps.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/15-settings-candidates-current-gps.png",
+        "screenshotSha256": "e474ecd0ccf70e14885dbc73fd61cbd212d98dd4477be1dc86391aed3e91f1b0",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      },
+      "15-settings-gps-manual": {
+        "name": "15-settings-gps-manual",
+        "case": {
+          "name": "15-settings-gps-manual",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "widget",
+            "seed": "manual",
+            "gps": "held"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 6,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "late old settings GPS whole application unchanged",
+              "passed": true,
+              "detail": {
+                "before": {
+                  "inputs": {
+                    "set-label": "London",
+                    "set-lat": "30",
+                    "set-lon": "31",
+                    "set-method": "3",
+                    "set-school": "0",
+                    "set-time": "24",
+                    "set-units": "f",
+                    "set-appearance": "glass",
+                    "set-datefmt": "YYYY-MM-DD"
+                  },
+                  "config": {
+                    "configSource": "localStorage",
+                    "configMode": "local",
+                    "autoDetectSource": null,
+                    "autoDetectStatus": "idle",
+                    "storageAvailable": true,
+                    "storageError": null,
+                    "geolocationPermissionState": "unknown",
+                    "geolocationLastError": null,
+                    "lat": 51.5,
+                    "lon": -0.12,
+                    "tz": "UTC",
+                    "label": "London",
+                    "method": "3",
+                    "units": "f",
+                    "locationEvidence": {
+                      "intent": "fixed-site",
+                      "source": "manual",
+                      "accuracyM": null,
+                      "acquiredAt": null,
+                      "provider": null,
+                      "area": null,
+                      "bounds": null
+                    },
+                    "fixAgeMs": null,
+                    "savedAt": 1790942400000,
+                    "hashConfigOverridden": false,
+                    "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                  },
+                  "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+                  "pin": {
+                    "classes": "set-pin off",
+                    "title": "Configured site — click to request browser location",
+                    "name": "Configured site — click to request browser location"
+                  },
+                  "code": null,
+                  "previewSrc": null,
+                  "savedBytes": "{\"v\":1,\"lat\":51.5,\"lon\":-0.12,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+                },
+                "after": {
+                  "inputs": {
+                    "set-label": "London",
+                    "set-lat": "30",
+                    "set-lon": "31",
+                    "set-method": "3",
+                    "set-school": "0",
+                    "set-time": "24",
+                    "set-units": "f",
+                    "set-appearance": "glass",
+                    "set-datefmt": "YYYY-MM-DD"
+                  },
+                  "config": {
+                    "configSource": "localStorage",
+                    "configMode": "local",
+                    "autoDetectSource": null,
+                    "autoDetectStatus": "idle",
+                    "storageAvailable": true,
+                    "storageError": null,
+                    "geolocationPermissionState": "unknown",
+                    "geolocationLastError": null,
+                    "lat": 51.5,
+                    "lon": -0.12,
+                    "tz": "UTC",
+                    "label": "London",
+                    "method": "3",
+                    "units": "f",
+                    "locationEvidence": {
+                      "intent": "fixed-site",
+                      "source": "manual",
+                      "accuracyM": null,
+                      "acquiredAt": null,
+                      "provider": null,
+                      "area": null,
+                      "bounds": null
+                    },
+                    "fixAgeMs": null,
+                    "savedAt": 1790942400000,
+                    "hashConfigOverridden": false,
+                    "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                  },
+                  "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+                  "pin": {
+                    "classes": "set-pin off",
+                    "title": "Configured site — click to request browser location",
+                    "name": "Configured site — click to request browser location"
+                  },
+                  "code": null,
+                  "previewSrc": null,
+                  "savedBytes": "{\"v\":1,\"lat\":51.5,\"lon\":-0.12,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+                }
+              }
+            },
+            {
+              "name": "manual config saved and reopened",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "London",
+                  "set-lat": "30",
+                  "set-lon": "31",
+                  "set-method": "3",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": "YYYY-MM-DD"
+                },
+                "config": {
+                  "configSource": "localStorage",
+                  "configMode": "local",
+                  "autoDetectSource": null,
+                  "autoDetectStatus": "idle",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "unknown",
+                  "geolocationLastError": null,
+                  "lat": 30,
+                  "lon": 31,
+                  "tz": "UTC",
+                  "label": "London",
+                  "method": "3",
+                  "units": "f",
+                  "locationEvidence": {
+                    "intent": "fixed-site",
+                    "source": "manual",
+                    "accuracyM": null,
+                    "acquiredAt": null,
+                    "provider": null,
+                    "area": null,
+                    "bounds": null
+                  },
+                  "fixAgeMs": null,
+                  "savedAt": 1790942400000,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+                "pin": {
+                  "classes": "set-pin off",
+                  "title": "Configured site — click to request browser location",
+                  "name": "Configured site — click to request browser location"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+              }
+            },
+            {
+              "name": "old GPS from closed session whole application unchanged",
+              "passed": true,
+              "detail": {
+                "before": {
+                  "inputs": {
+                    "set-label": "London",
+                    "set-lat": "30",
+                    "set-lon": "31",
+                    "set-method": "3",
+                    "set-school": "0",
+                    "set-time": "24",
+                    "set-units": "f",
+                    "set-appearance": "glass",
+                    "set-datefmt": "YYYY-MM-DD"
+                  },
+                  "config": {
+                    "configSource": "localStorage",
+                    "configMode": "local",
+                    "autoDetectSource": null,
+                    "autoDetectStatus": "idle",
+                    "storageAvailable": true,
+                    "storageError": null,
+                    "geolocationPermissionState": "unknown",
+                    "geolocationLastError": null,
+                    "lat": 30,
+                    "lon": 31,
+                    "tz": "UTC",
+                    "label": "London",
+                    "method": "3",
+                    "units": "f",
+                    "locationEvidence": {
+                      "intent": "fixed-site",
+                      "source": "manual",
+                      "accuracyM": null,
+                      "acquiredAt": null,
+                      "provider": null,
+                      "area": null,
+                      "bounds": null
+                    },
+                    "fixAgeMs": null,
+                    "savedAt": 1790942400000,
+                    "hashConfigOverridden": false,
+                    "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                  },
+                  "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+                  "pin": {
+                    "classes": "set-pin off",
+                    "title": "Configured site — click to request browser location",
+                    "name": "Configured site — click to request browser location"
+                  },
+                  "code": null,
+                  "previewSrc": null,
+                  "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+                },
+                "after": {
+                  "inputs": {
+                    "set-label": "London",
+                    "set-lat": "30",
+                    "set-lon": "31",
+                    "set-method": "3",
+                    "set-school": "0",
+                    "set-time": "24",
+                    "set-units": "f",
+                    "set-appearance": "glass",
+                    "set-datefmt": "YYYY-MM-DD"
+                  },
+                  "config": {
+                    "configSource": "localStorage",
+                    "configMode": "local",
+                    "autoDetectSource": null,
+                    "autoDetectStatus": "idle",
+                    "storageAvailable": true,
+                    "storageError": null,
+                    "geolocationPermissionState": "unknown",
+                    "geolocationLastError": null,
+                    "lat": 30,
+                    "lon": 31,
+                    "tz": "UTC",
+                    "label": "London",
+                    "method": "3",
+                    "units": "f",
+                    "locationEvidence": {
+                      "intent": "fixed-site",
+                      "source": "manual",
+                      "accuracyM": null,
+                      "acquiredAt": null,
+                      "provider": null,
+                      "area": null,
+                      "bounds": null
+                    },
+                    "fixAgeMs": null,
+                    "savedAt": 1790942400000,
+                    "hashConfigOverridden": false,
+                    "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                  },
+                  "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+                  "pin": {
+                    "classes": "set-pin off",
+                    "title": "Configured site — click to request browser location",
+                    "name": "Configured site — click to request browser location"
+                  },
+                  "code": null,
+                  "previewSrc": null,
+                  "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+                }
+              }
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {
+            "manual settings before old GPS": {
+              "inputs": {
+                "set-label": "London",
+                "set-lat": "30",
+                "set-lon": "31",
+                "set-method": "3",
+                "set-school": "0",
+                "set-time": "24",
+                "set-units": "f",
+                "set-appearance": "glass",
+                "set-datefmt": "YYYY-MM-DD"
+              },
+              "config": {
+                "configSource": "localStorage",
+                "configMode": "local",
+                "autoDetectSource": null,
+                "autoDetectStatus": "idle",
+                "storageAvailable": true,
+                "storageError": null,
+                "geolocationPermissionState": "unknown",
+                "geolocationLastError": null,
+                "lat": 51.5,
+                "lon": -0.12,
+                "tz": "UTC",
+                "label": "London",
+                "method": "3",
+                "units": "f",
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "manual",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                },
+                "fixAgeMs": null,
+                "savedAt": 1790942400000,
+                "hashConfigOverridden": false,
+                "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+              },
+              "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+              "pin": {
+                "classes": "set-pin off",
+                "title": "Configured site — click to request browser location",
+                "name": "Configured site — click to request browser location"
+              },
+              "code": null,
+              "previewSrc": null,
+              "savedBytes": "{\"v\":1,\"lat\":51.5,\"lon\":-0.12,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+            },
+            "late old settings GPS": {
+              "inputs": {
+                "set-label": "London",
+                "set-lat": "30",
+                "set-lon": "31",
+                "set-method": "3",
+                "set-school": "0",
+                "set-time": "24",
+                "set-units": "f",
+                "set-appearance": "glass",
+                "set-datefmt": "YYYY-MM-DD"
+              },
+              "config": {
+                "configSource": "localStorage",
+                "configMode": "local",
+                "autoDetectSource": null,
+                "autoDetectStatus": "idle",
+                "storageAvailable": true,
+                "storageError": null,
+                "geolocationPermissionState": "unknown",
+                "geolocationLastError": null,
+                "lat": 51.5,
+                "lon": -0.12,
+                "tz": "UTC",
+                "label": "London",
+                "method": "3",
+                "units": "f",
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "manual",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                },
+                "fixAgeMs": null,
+                "savedAt": 1790942400000,
+                "hashConfigOverridden": false,
+                "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+              },
+              "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+              "pin": {
+                "classes": "set-pin off",
+                "title": "Configured site — click to request browser location",
+                "name": "Configured site — click to request browser location"
+              },
+              "code": null,
+              "previewSrc": null,
+              "savedBytes": "{\"v\":1,\"lat\":51.5,\"lon\":-0.12,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+            },
+            "reopened before old GPS": {
+              "inputs": {
+                "set-label": "London",
+                "set-lat": "30",
+                "set-lon": "31",
+                "set-method": "3",
+                "set-school": "0",
+                "set-time": "24",
+                "set-units": "f",
+                "set-appearance": "glass",
+                "set-datefmt": "YYYY-MM-DD"
+              },
+              "config": {
+                "configSource": "localStorage",
+                "configMode": "local",
+                "autoDetectSource": null,
+                "autoDetectStatus": "idle",
+                "storageAvailable": true,
+                "storageError": null,
+                "geolocationPermissionState": "unknown",
+                "geolocationLastError": null,
+                "lat": 30,
+                "lon": 31,
+                "tz": "UTC",
+                "label": "London",
+                "method": "3",
+                "units": "f",
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "manual",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                },
+                "fixAgeMs": null,
+                "savedAt": 1790942400000,
+                "hashConfigOverridden": false,
+                "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+              },
+              "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+              "pin": {
+                "classes": "set-pin off",
+                "title": "Configured site — click to request browser location",
+                "name": "Configured site — click to request browser location"
+              },
+              "code": null,
+              "previewSrc": null,
+              "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+            },
+            "old GPS from closed session": {
+              "inputs": {
+                "set-label": "London",
+                "set-lat": "30",
+                "set-lon": "31",
+                "set-method": "3",
+                "set-school": "0",
+                "set-time": "24",
+                "set-units": "f",
+                "set-appearance": "glass",
+                "set-datefmt": "YYYY-MM-DD"
+              },
+              "config": {
+                "configSource": "localStorage",
+                "configMode": "local",
+                "autoDetectSource": null,
+                "autoDetectStatus": "idle",
+                "storageAvailable": true,
+                "storageError": null,
+                "geolocationPermissionState": "unknown",
+                "geolocationLastError": null,
+                "lat": 30,
+                "lon": 31,
+                "tz": "UTC",
+                "label": "London",
+                "method": "3",
+                "units": "f",
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "manual",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                },
+                "fixAgeMs": null,
+                "savedAt": 1790942400000,
+                "hashConfigOverridden": false,
+                "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+              },
+              "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+              "pin": {
+                "classes": "set-pin off",
+                "title": "Configured site — click to request browser location",
+                "name": "Configured site — click to request browser location"
+              },
+              "code": null,
+              "previewSrc": null,
+              "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+            }
+          },
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 3,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=manual&gps=held&page=widget#local=1",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 6,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "finalApplication": {
+            "inputs": {
+              "set-label": "London",
+              "set-lat": "30",
+              "set-lon": "31",
+              "set-method": "3",
+              "set-school": "0",
+              "set-time": "24",
+              "set-units": "f",
+              "set-appearance": "glass",
+              "set-datefmt": "YYYY-MM-DD"
+            },
+            "config": {
+              "configSource": "localStorage",
+              "configMode": "local",
+              "autoDetectSource": null,
+              "autoDetectStatus": "idle",
+              "storageAvailable": true,
+              "storageError": null,
+              "geolocationPermissionState": "unknown",
+              "geolocationLastError": null,
+              "lat": 30,
+              "lon": 31,
+              "tz": "UTC",
+              "label": "London",
+              "method": "3",
+              "units": "f",
+              "locationEvidence": {
+                "intent": "fixed-site",
+                "source": "manual",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null
+              },
+              "fixAgeMs": null,
+              "savedAt": 1790942400000,
+              "hashConfigOverridden": false,
+              "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+            },
+            "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+            "pin": {
+              "classes": "set-pin off",
+              "title": "Configured site — click to request browser location",
+              "name": "Configured site — click to request browser location"
+            },
+            "code": null,
+            "previewSrc": null,
+            "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"London\",\"method\":\"3\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+          },
+          "fixtureRecords": {
+            "providerJobs": [],
+            "gpsCalls": [
+              {
+                "index": 0,
+                "options": {
+                  "enableHighAccuracy": false,
+                  "timeout": 10000,
+                  "maximumAge": 600000
+                },
+                "at": 1790942400000
+              },
+              {
+                "index": 1,
+                "options": {
+                  "enableHighAccuracy": false,
+                  "timeout": 10000,
+                  "maximumAge": 600000
+                },
+                "at": 1790942400000
+              }
+            ],
+            "copyJobs": [],
+            "fallbackCalls": [],
+            "errors": [],
+            "storageEvents": [
+              [
+                "set",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salahwx:51.5|-0.12|f"
+              ],
+              [
+                "get",
+                "salah:51.5|-0.12|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "salah:51.5|-0.12|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salahwx:30|31|f"
+              ],
+              [
+                "get",
+                "salah:30|31|America/New_York|3|0"
+              ],
+              [
+                "get",
+                "salah:30|31|America/New_York|3|0"
+              ],
+              [
+                "get",
+                "salah:30|31|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "salah:30|31|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ]
+            ]
+          },
+          "fontStatus": "settled",
+          "screenshot": "15-settings-gps-manual.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/15-settings-gps-manual.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/15-settings-gps-manual.png",
+        "screenshotSha256": "2988a2ae093a9e88bed4195dfa7112d0b122d6ad9ed97f52a66c5ea8dc9b87f3",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      },
+      "15-settings-reset-ownership": {
+        "name": "15-settings-reset-ownership",
+        "case": {
+          "name": "15-settings-reset-ownership",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "widget",
+            "seed": "manual",
+            "hold": "coarse"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 6,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "late old reset detection whole application unchanged",
+              "passed": true,
+              "detail": {
+                "before": {
+                  "inputs": {
+                    "set-label": "London",
+                    "set-lat": "30",
+                    "set-lon": "31",
+                    "set-method": "3",
+                    "set-school": "0",
+                    "set-time": "24",
+                    "set-units": "f",
+                    "set-appearance": "glass",
+                    "set-datefmt": "YYYY-MM-DD"
+                  },
+                  "config": {
+                    "configSource": "localStorage",
+                    "configMode": "local",
+                    "autoDetectSource": null,
+                    "autoDetectStatus": "idle",
+                    "storageAvailable": true,
+                    "storageError": null,
+                    "geolocationPermissionState": "unknown",
+                    "geolocationLastError": null,
+                    "lat": 51.5,
+                    "lon": -0.12,
+                    "tz": "UTC",
+                    "label": "London",
+                    "method": "3",
+                    "units": "f",
+                    "locationEvidence": {
+                      "intent": "fixed-site",
+                      "source": "manual",
+                      "accuracyM": null,
+                      "acquiredAt": null,
+                      "provider": null,
+                      "area": null,
+                      "bounds": null
+                    },
+                    "fixAgeMs": null,
+                    "savedAt": 1790942400000,
+                    "hashConfigOverridden": false,
+                    "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                  },
+                  "status": "Saved settings cleared.\nEnter to search a place · Shift+Enter to keep the typed name.",
+                  "pin": {
+                    "classes": "set-pin off",
+                    "title": "Configured site — click to request browser location",
+                    "name": "Configured site — click to request browser location"
+                  },
+                  "code": null,
+                  "previewSrc": null,
+                  "savedBytes": null
+                },
+                "after": {
+                  "inputs": {
+                    "set-label": "London",
+                    "set-lat": "30",
+                    "set-lon": "31",
+                    "set-method": "3",
+                    "set-school": "0",
+                    "set-time": "24",
+                    "set-units": "f",
+                    "set-appearance": "glass",
+                    "set-datefmt": "YYYY-MM-DD"
+                  },
+                  "config": {
+                    "configSource": "localStorage",
+                    "configMode": "local",
+                    "autoDetectSource": null,
+                    "autoDetectStatus": "idle",
+                    "storageAvailable": true,
+                    "storageError": null,
+                    "geolocationPermissionState": "unknown",
+                    "geolocationLastError": null,
+                    "lat": 51.5,
+                    "lon": -0.12,
+                    "tz": "UTC",
+                    "label": "London",
+                    "method": "3",
+                    "units": "f",
+                    "locationEvidence": {
+                      "intent": "fixed-site",
+                      "source": "manual",
+                      "accuracyM": null,
+                      "acquiredAt": null,
+                      "provider": null,
+                      "area": null,
+                      "bounds": null
+                    },
+                    "fixAgeMs": null,
+                    "savedAt": 1790942400000,
+                    "hashConfigOverridden": false,
+                    "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                  },
+                  "status": "Saved settings cleared.\nEnter to search a place · Shift+Enter to keep the typed name.",
+                  "pin": {
+                    "classes": "set-pin off",
+                    "title": "Configured site — click to request browser location",
+                    "name": "Configured site — click to request browser location"
+                  },
+                  "code": null,
+                  "previewSrc": null,
+                  "savedBytes": null
+                }
+              }
+            },
+            {
+              "name": "old reset from closed session whole application unchanged",
+              "passed": true,
+              "detail": {
+                "before": {
+                  "inputs": {
+                    "set-label": "London",
+                    "set-lat": "30",
+                    "set-lon": "31",
+                    "set-method": "3",
+                    "set-school": "0",
+                    "set-time": "24",
+                    "set-units": "f",
+                    "set-appearance": "glass",
+                    "set-datefmt": "YYYY-MM-DD"
+                  },
+                  "config": {
+                    "configSource": "localStorage",
+                    "configMode": "local",
+                    "autoDetectSource": null,
+                    "autoDetectStatus": "idle",
+                    "storageAvailable": true,
+                    "storageError": null,
+                    "geolocationPermissionState": "unknown",
+                    "geolocationLastError": null,
+                    "lat": 30,
+                    "lon": 31,
+                    "tz": "UTC",
+                    "label": "London",
+                    "method": "3",
+                    "units": "f",
+                    "locationEvidence": {
+                      "intent": "fixed-site",
+                      "source": "manual",
+                      "accuracyM": null,
+                      "acquiredAt": null,
+                      "provider": null,
+                      "area": null,
+                      "bounds": null
+                    },
+                    "fixAgeMs": null,
+                    "savedAt": 1790942400000,
+                    "hashConfigOverridden": false,
+                    "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                  },
+                  "status": "Saved settings cleared.\nEnter to search a place · Shift+Enter to keep the typed name.",
+                  "pin": {
+                    "classes": "set-pin off",
+                    "title": "Configured site — click to request browser location",
+                    "name": "Configured site — click to request browser location"
+                  },
+                  "code": null,
+                  "previewSrc": null,
+                  "savedBytes": null
+                },
+                "after": {
+                  "inputs": {
+                    "set-label": "London",
+                    "set-lat": "30",
+                    "set-lon": "31",
+                    "set-method": "3",
+                    "set-school": "0",
+                    "set-time": "24",
+                    "set-units": "f",
+                    "set-appearance": "glass",
+                    "set-datefmt": "YYYY-MM-DD"
+                  },
+                  "config": {
+                    "configSource": "localStorage",
+                    "configMode": "local",
+                    "autoDetectSource": null,
+                    "autoDetectStatus": "idle",
+                    "storageAvailable": true,
+                    "storageError": null,
+                    "geolocationPermissionState": "unknown",
+                    "geolocationLastError": null,
+                    "lat": 30,
+                    "lon": 31,
+                    "tz": "UTC",
+                    "label": "London",
+                    "method": "3",
+                    "units": "f",
+                    "locationEvidence": {
+                      "intent": "fixed-site",
+                      "source": "manual",
+                      "accuracyM": null,
+                      "acquiredAt": null,
+                      "provider": null,
+                      "area": null,
+                      "bounds": null
+                    },
+                    "fixAgeMs": null,
+                    "savedAt": 1790942400000,
+                    "hashConfigOverridden": false,
+                    "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                  },
+                  "status": "Saved settings cleared.\nEnter to search a place · Shift+Enter to keep the typed name.",
+                  "pin": {
+                    "classes": "set-pin off",
+                    "title": "Configured site — click to request browser location",
+                    "name": "Configured site — click to request browser location"
+                  },
+                  "code": null,
+                  "previewSrc": null,
+                  "savedBytes": null
+                }
+              }
+            },
+            {
+              "name": "positive current reset with newer preference",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "Madinah",
+                  "set-lat": "24.47",
+                  "set-lon": "39.61",
+                  "set-method": "4",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": "YYYY-MM-DD"
+                },
+                "config": {
+                  "configSource": "coarse-ip",
+                  "configMode": "local",
+                  "autoDetectSource": null,
+                  "autoDetectStatus": "idle",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "unknown",
+                  "geolocationLastError": null,
+                  "lat": 24.47,
+                  "lon": 39.61,
+                  "tz": "UTC",
+                  "label": "Madinah",
+                  "method": "4",
+                  "units": "f",
+                  "locationEvidence": {
+                    "intent": "coarse-area",
+                    "source": "coarse-ip",
+                    "accuracyM": null,
+                    "acquiredAt": null,
+                    "provider": "GeoJS",
+                    "area": "Madinah, Saudi Arabia",
+                    "bounds": null
+                  },
+                  "fixAgeMs": null,
+                  "savedAt": null,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Saved settings cleared.\nUsing estimated area: Madinah, Saudi Arabia",
+                "pin": {
+                  "classes": "set-pin lit",
+                  "title": "Estimated from your IP — click to request browser location",
+                  "name": "Estimated from your IP — click to request browser location"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": null
+              }
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {
+            "manual input supersedes pending reset": {
+              "inputs": {
+                "set-label": "London",
+                "set-lat": "30",
+                "set-lon": "31",
+                "set-method": "3",
+                "set-school": "0",
+                "set-time": "24",
+                "set-units": "f",
+                "set-appearance": "glass",
+                "set-datefmt": "YYYY-MM-DD"
+              },
+              "config": {
+                "configSource": "localStorage",
+                "configMode": "local",
+                "autoDetectSource": null,
+                "autoDetectStatus": "idle",
+                "storageAvailable": true,
+                "storageError": null,
+                "geolocationPermissionState": "unknown",
+                "geolocationLastError": null,
+                "lat": 51.5,
+                "lon": -0.12,
+                "tz": "UTC",
+                "label": "London",
+                "method": "3",
+                "units": "f",
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "manual",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                },
+                "fixAgeMs": null,
+                "savedAt": 1790942400000,
+                "hashConfigOverridden": false,
+                "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+              },
+              "status": "Saved settings cleared.\nEnter to search a place · Shift+Enter to keep the typed name.",
+              "pin": {
+                "classes": "set-pin off",
+                "title": "Configured site — click to request browser location",
+                "name": "Configured site — click to request browser location"
+              },
+              "code": null,
+              "previewSrc": null,
+              "savedBytes": null
+            },
+            "late old reset detection": {
+              "inputs": {
+                "set-label": "London",
+                "set-lat": "30",
+                "set-lon": "31",
+                "set-method": "3",
+                "set-school": "0",
+                "set-time": "24",
+                "set-units": "f",
+                "set-appearance": "glass",
+                "set-datefmt": "YYYY-MM-DD"
+              },
+              "config": {
+                "configSource": "localStorage",
+                "configMode": "local",
+                "autoDetectSource": null,
+                "autoDetectStatus": "idle",
+                "storageAvailable": true,
+                "storageError": null,
+                "geolocationPermissionState": "unknown",
+                "geolocationLastError": null,
+                "lat": 51.5,
+                "lon": -0.12,
+                "tz": "UTC",
+                "label": "London",
+                "method": "3",
+                "units": "f",
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "manual",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                },
+                "fixAgeMs": null,
+                "savedAt": 1790942400000,
+                "hashConfigOverridden": false,
+                "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+              },
+              "status": "Saved settings cleared.\nEnter to search a place · Shift+Enter to keep the typed name.",
+              "pin": {
+                "classes": "set-pin off",
+                "title": "Configured site — click to request browser location",
+                "name": "Configured site — click to request browser location"
+              },
+              "code": null,
+              "previewSrc": null,
+              "savedBytes": null
+            },
+            "reopened before old reset": {
+              "inputs": {
+                "set-label": "London",
+                "set-lat": "30",
+                "set-lon": "31",
+                "set-method": "3",
+                "set-school": "0",
+                "set-time": "24",
+                "set-units": "f",
+                "set-appearance": "glass",
+                "set-datefmt": "YYYY-MM-DD"
+              },
+              "config": {
+                "configSource": "localStorage",
+                "configMode": "local",
+                "autoDetectSource": null,
+                "autoDetectStatus": "idle",
+                "storageAvailable": true,
+                "storageError": null,
+                "geolocationPermissionState": "unknown",
+                "geolocationLastError": null,
+                "lat": 30,
+                "lon": 31,
+                "tz": "UTC",
+                "label": "London",
+                "method": "3",
+                "units": "f",
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "manual",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                },
+                "fixAgeMs": null,
+                "savedAt": 1790942400000,
+                "hashConfigOverridden": false,
+                "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+              },
+              "status": "Saved settings cleared.\nEnter to search a place · Shift+Enter to keep the typed name.",
+              "pin": {
+                "classes": "set-pin off",
+                "title": "Configured site — click to request browser location",
+                "name": "Configured site — click to request browser location"
+              },
+              "code": null,
+              "previewSrc": null,
+              "savedBytes": null
+            },
+            "old reset from closed session": {
+              "inputs": {
+                "set-label": "London",
+                "set-lat": "30",
+                "set-lon": "31",
+                "set-method": "3",
+                "set-school": "0",
+                "set-time": "24",
+                "set-units": "f",
+                "set-appearance": "glass",
+                "set-datefmt": "YYYY-MM-DD"
+              },
+              "config": {
+                "configSource": "localStorage",
+                "configMode": "local",
+                "autoDetectSource": null,
+                "autoDetectStatus": "idle",
+                "storageAvailable": true,
+                "storageError": null,
+                "geolocationPermissionState": "unknown",
+                "geolocationLastError": null,
+                "lat": 30,
+                "lon": 31,
+                "tz": "UTC",
+                "label": "London",
+                "method": "3",
+                "units": "f",
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "manual",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                },
+                "fixAgeMs": null,
+                "savedAt": 1790942400000,
+                "hashConfigOverridden": false,
+                "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+              },
+              "status": "Saved settings cleared.\nEnter to search a place · Shift+Enter to keep the typed name.",
+              "pin": {
+                "classes": "set-pin off",
+                "title": "Configured site — click to request browser location",
+                "name": "Configured site — click to request browser location"
+              },
+              "code": null,
+              "previewSrc": null,
+              "savedBytes": null
+            }
+          },
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 4,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=manual&gps=unsupported&page=widget&hold=coarse#local=1",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 6,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "finalApplication": {
+            "inputs": {
+              "set-label": "Madinah",
+              "set-lat": "24.47",
+              "set-lon": "39.61",
+              "set-method": "4",
+              "set-school": "0",
+              "set-time": "24",
+              "set-units": "f",
+              "set-appearance": "glass",
+              "set-datefmt": "YYYY-MM-DD"
+            },
+            "config": {
+              "configSource": "coarse-ip",
+              "configMode": "local",
+              "autoDetectSource": null,
+              "autoDetectStatus": "idle",
+              "storageAvailable": true,
+              "storageError": null,
+              "geolocationPermissionState": "unknown",
+              "geolocationLastError": null,
+              "lat": 24.47,
+              "lon": 39.61,
+              "tz": "UTC",
+              "label": "Madinah",
+              "method": "4",
+              "units": "f",
+              "locationEvidence": {
+                "intent": "coarse-area",
+                "source": "coarse-ip",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": "GeoJS",
+                "area": "Madinah, Saudi Arabia",
+                "bounds": null
+              },
+              "fixAgeMs": null,
+              "savedAt": null,
+              "hashConfigOverridden": false,
+              "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+            },
+            "status": "Saved settings cleared.\nUsing estimated area: Madinah, Saudi Arabia",
+            "pin": {
+              "classes": "set-pin lit",
+              "title": "Estimated from your IP — click to request browser location",
+              "name": "Estimated from your IP — click to request browser location"
+            },
+            "code": null,
+            "previewSrc": null,
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "at": 1790942400000,
+                "state": "returned",
+                "status": 200,
+                "signalAborted": false
+              },
+              {
+                "id": 1,
+                "kind": "coarse",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "at": 1790942400000,
+                "state": "returned",
+                "status": 200,
+                "signalAborted": false
+              },
+              {
+                "id": 2,
+                "kind": "coarse",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "at": 1790942400000,
+                "state": "returned",
+                "status": 200,
+                "signalAborted": false
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [],
+            "fallbackCalls": [],
+            "errors": [],
+            "storageEvents": [
+              [
+                "set",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salahwx:51.5|-0.12|f"
+              ],
+              [
+                "get",
+                "salah:51.5|-0.12|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "salah:51.5|-0.12|America/New_York|3|0"
+              ],
+              [
+                "remove",
+                "salah_widget:config:v1"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salahwx:30|31|f"
+              ],
+              [
+                "get",
+                "salah:30|31|America/New_York|3|0"
+              ],
+              [
+                "get",
+                "salah:30|31|America/New_York|3|0"
+              ],
+              [
+                "set",
+                "salah:30|31|America/New_York|3|0"
+              ],
+              [
+                "remove",
+                "salah_widget:config:v1"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salahwx:24.47|39.61|f"
+              ],
+              [
+                "get",
+                "salah:24.47|39.61|America/New_York|4|0"
+              ],
+              [
+                "get",
+                "salah:24.47|39.61|America/New_York|4|0"
+              ],
+              [
+                "set",
+                "salah:24.47|39.61|America/New_York|4|0"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ]
+            ]
+          },
+          "fontStatus": "settled",
+          "screenshot": "15-settings-reset-ownership.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/15-settings-reset-ownership.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/15-settings-reset-ownership.png",
+        "screenshotSha256": "f85678e4436026033066354e489e56778081f940ad9319c96d2c5a21843e1671",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      }
+    },
+    "reconciliationReceipt": "native-reconciliation.json",
+    "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-reconciliation.json",
+    "scope": "Credit existing native acquisition/form/close/reset paths only; no waiver of the remaining specific documentation/consumer/iframe obligations.",
+    "harnessRepairsAndRetainedCounterexamples": {
+      "repairs": [
+        "CSP string eval rejected: bounded browser-protocol evaluate(function) polling; unchanged CSP without unsafe-eval.",
+        "Idless Settings footer anchors: native element handles and exact activeElement identity; no assigned ids/production DOM mutation.",
+        "builder.html19 text-transform uppercase: keep raw+rendered text, normalize letter case only; require manual failure and reject copied/checkmark success."
+      ],
+      "failures": [
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-all-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-all-primary/results.json",
+          "name": "15-settings-display-close-session",
+          "error": "Page.wait_for_function: EvalError: Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:\".\n\n    at eval (<anonymous>)\n    at predicate (eval at evaluate (:290:30), <anonymous>:4:56)\n    at next (eval at evaluate (:290:30), <anonymous>:29:29)",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        },
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+          "name": "15-settings-display-close-session",
+          "error": "Locator.focus: Unexpected token \"#\" while parsing css selector \"#\". Did you mean to CSS.escape it?\nCall log:\n  - waiting for #\n",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        },
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+          "name": "18-denied-copy-responsive-Windows-payload",
+          "error": "copy truthful failure: 'COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.'",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        },
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+          "name": "18-success-then-failure-old-timers",
+          "error": "copy truthful failure: 'COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.'",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        }
+      ]
+    },
+    "limitations": [
+      "Synthetic service/GPS/clipboard doubles do not prove real provider/clipboard permissions or native installer execution.",
+      "Original fallback fonts and fixed synthetic UTC epoch are disclosed; no science or production-font requalification.",
+      "No native denied-storage/iframe permission matrix or selected local preference matrix claimed for conclusively open documentation issues.",
+      "Evidence URLs use AUDIT_EVIDENCE_COMMIT placeholder until primary publishes, verifies and substitutes immutable public evidence identity."
+    ]
+  },
+  "publicEvidenceURLState": "AUDIT_EVIDENCE_COMMIT_PLACEHOLDER_MUST_BE_REPLACED_BEFORE_PUBLICATION",
+  "primaryReconciliation": {
+    "status": "ACCEPTED_BY_PRIMARY",
+    "basis": "Primary explicitly reviewed and accepted all51 closure rows for15/18/31 plus exact native receipts/crops;16/17/35 retained open for conclusively verified specific documentation/remaining consumer gaps.",
+    "externalHumanApprovalClaimed": false
+  }
+}

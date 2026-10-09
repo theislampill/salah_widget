@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:32.784264+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/27",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/27/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/27/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/27/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/27",
+    "id": 5381808410,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfhGg",
+    "number": 27,
+    "title": "R001B: Document actual recipients of search queries and location-derived requests",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:54Z",
+    "updated_at": "2026-09-08T06:25:26Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-027 -->\n# R001B: Document actual recipients of search queries and location-derived requests\n\n**Repository-local identity:** `R001B` in `theislampill/salah_widget`; existing tracker [#27](https://github.com/theislampill/salah_widget/issues/27). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-027. Documentation defect; proposed P2. Repair only the existing privacy/data-flow explanation; no network policy or provider-retention conclusion is authorized.\n\n## Evidence and exact target\n\nThe preserved 7 September 2026 source audit found README's privacy section names GeoJS/ipinfo and browser geolocation, while its API section names prayer/weather requests. Builder's privacy note names GeoJS only. They omit manual search and reverse-geocode recipients. On both main fd2972ba64225fe9d6848e92497e6d0ed20ea624 and candidate 9d9c43649748555afbe09e3ca49bc47db2d7e7bb, controlled original-source calls produced these exact URLs:\n\n~~~text\nhttps://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5&q=M5V2T6\nhttps://api.zippopotam.us/ca/M5V\nhttps://api.bigdatacloud.net/data/reverse-geocode-client?latitude=51.5&longitude=-0.12&localityLanguage=en\n~~~\n\nThe first two came from geocodeSearch(\"M5V2T6\", {}) with fetch intercepted; the third from builder fillNameFromCoords at 51.5,-0.12 with automatic naming/method still enabled. They are controlled URL-construction evidence, not recorded external transmission or a tracking/retention finding. Existing disclosures are a partial contrary control; describing local persistence does not describe all computation as local.\n\nBefore authorized editing, record root, theislampill/salah_widget remote, HEAD and dirty state, then inspect relevant drift:\n\n~~~sh\ngit rev-parse HEAD\ngit status --short\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- README.md builder.html config.js index.html\n~~~\n\nWrite [README, Auto-detect, precise location & privacy](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/README.md#L113) and [builder privacy note](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L178). The candidate has the same omission: [README](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/README.md#L113). index.html/config.js and lookup callsites are verification owners only.\n\n## Replacement wording and source ledger\n\nReplace the incomplete README disclosure with this compact introduction and table, retaining the existing useful geolocation-permission guidance:\n\n> Settings are stored in your browser/profile, but the widget and builder use external services. Local storage does not make search or location-based requests local-only. Coarse detection is approximate; precise browser location is optional and requested by your action. The requests below depend on the feature used, cache state and network availability.\n\n| Trigger | Recipient and fields |\n|---|---|\n| Builder's initial area detection; widget local/preferLocal mode when it needs detection; an accepted Reset/re-detect action | GeoJS, then ipinfo.io on failure. The request exposes the connection's IP address. The provider URLs have no user-entered location/query parameters; the device timezone is used locally in configuration resolution. |\n| Builder location-name input after its search debounce or Enter; widget Settings place/postcode search on Enter | Nominatim receives the typed query as q. A digit-containing query may also send the current home-country bias as countrycodes. |\n| A search whose whitespace-stripped text begins with letter-digit-letter | Zippopotam receives the uppercase first three characters in its /ca/ path, in addition to Nominatim receiving the query. This is the implemented prefix trigger, not proof the complete input is a valid Canadian postcode. |\n| Builder automatic name/method lookup after eligible coordinate input or a precise-location result | BigDataCloud reverse-geocode-client receives latitude, longitude and localityLanguage=en. The in-widget precise path itself does not call this builder reverse function. |\n| Prayer-time loading and refresh for the configured location | Aladhan receives latitude, longitude, calculation method, school and requested date. |\n| Weather loading and refresh when real-weather acquisition is active | Open-Meteo receives latitude, longitude, timezone, requested units and weather-field selections. |\n| Radar loading and refresh when real-weather acquisition is active | RainViewer receives a weather-map manifest request; the returned tile host receives a frame/tile path whose x/y indices are derived from the configured location. |\n| Page font loading, subject to browser caching | Google Fonts stylesheet/font hosts receive font resource requests. These resource URLs do not contain the widget's location or search text. |\n\nFollow with:\n\n> Reset removes the saved widget configuration key. It does not clear prayer/weather caches or erase information held by external services. Browser or embedding-host storage and permission policies can limit persistence or precise location. This description identifies client-side request construction; it makes no claim about providers' retention practices.\n\nSource trace: [coarseDetect](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/config.js#L174), [geocodeSearch](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/config.js#L293), [builder reverse/GPS](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L292), [timings](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L743), [weather/radar](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L771), [font declarations](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L7), [configured-key removal](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/config.js#L160).\n\nUse this shorter builder note, linking \"Request details\" to README's privacy section using the repository's existing link convention:\n\n> Self-configuring location is approximate and uses GeoJS, with ipinfo.io as fallback. Place/postcode searches go to Nominatim and, for matching Canadian-style prefixes, Zippopotam. Builder reverse lookups send coordinates to BigDataCloud; the widget also requests prayer, weather, radar and font resources. Saved settings stay in your browser, which does not prevent these service requests. Precise location is optional and requires browser/host permission. Request details.\n\nRetain the current explanation that an iframe host can strip allow=\"geolocation\" and that coarse/manual setup remain available. Coordinate the persistence-failure sentence with [R0011](https://github.com/theislampill/salah_widget/issues/17); do not claim its UI repair has shipped before readback. No blanket \"stores nothing on any server\" or \"does no tracking\" assertion can stand in for the specific recipient description.\n\n## Validation, alternatives and completion\n\nA future deterministic documentation check should invoke the real source functions with intercepted fetch and the public values above. Assert the exact Nominatim q, Zippopotam /ca/M5V and reverse latitude/longitude. Negative controls: \"London\" requests Nominatim without a Canadian-prefix request; an input shorter than two trimmed characters produces no search; builder reverse lookup with both labelAuto and methodAuto disabled makes no reverse request. These controls demonstrate the stated triggers and prevent an overbroad \"every edit sends coordinates\" claim.\n\nFor each table row, record the final-tree callsite/constructed fields; do not call a private probe as the public recipe. Read the rendered README and builder note for legibility and agreement. No new test framework or network trace service is needed. Changes in providers, URL fields, lookup triggers or Reset scope are the explicit revisit triggers.\n\nA link-only privacy notice would hide the specific missing recipients. A new consent workflow, provider replacement or legal policy is broader than this evidence. More exhaustive browser fingerprint/retention claims would be unsupported. The selected repair is exact text plus a bounded source trace.\n\nOnly README and builder prose change; preserve controls, generated payloads, 325×530 card and runtime behavior. Existing documentation-integrator ownership and typed relationships remain unchanged. Roll back only inaccurate wording if validation fails; do not roll back correct recipient disclosure or mutate runtime to fit prose. Stop if current callsites differ materially and update only the affected rows.\n\nDONE requires the final text and source trace, an evidence comment and later rendered public-document readback if claiming published disclosure. Use non-closing Implements #27 PR wording and manual closure after evidence. No runtime or independent PASS is asserted by this document.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/27/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/27/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733556502,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfhGs8AAAAHJ9zbFg",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733556502",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:26Z",
+      "rename": {
+        "from": "SW-027: Document actual recipients of search queries and location-derived requests",
+        "to": "R001B: Document actual recipients of search queries and location-derived requests"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R001B",
+    "bodySha256": "040d23ae4d6eabf68693b587b5a2de0bcba3829fb92c040538d6683ffe5a4752",
+    "updatedAt": "2026-09-08T06:25:26Z",
+    "commentRevisions": []
+  }
+}

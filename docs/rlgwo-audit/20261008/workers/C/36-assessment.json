@@ -1,0 +1,2230 @@
+{
+  "schema": "rlgwo-closure-assessment-v1",
+  "issue": 36,
+  "canonicalId": "R0024",
+  "title": "R0024 — Separate current precipitation evidence from nearby, approaching and forecast states",
+  "contract": {
+    "bodySha256": "67bcb1850732609c37e009fd164ac20d0e55a6b41c1ca75cdded85f714f2031a",
+    "bodyHashVerified": true,
+    "initialAuditRevision": "2026-09-12T03:49:14Z",
+    "packet": "issues/36.json",
+    "comments": 0,
+    "events": 0,
+    "discussion": "Complete body/comments/events read; rename events for11–14/30 and no comments; R0024 packet has no event/comment amendment. H5/H8 owner policy amendment is separately authorized by WORKER_BRIEF."
+  },
+  "repository": "theislampill/salah_widget",
+  "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "tree": "35208181eea714c17f5e77b2644e76434345db60",
+  "reviewedHead": "4bccdf43363926c3077f60de87e5617ccb9abcb9",
+  "runtimeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+  "rootIndexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+  "authoredNativeSha256": "19dd9ba814fdb426b75e4282aca2e3bf20569b5b55ef9764d13e786c84c7b012",
+  "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+  "auditDate": "2026-10-08",
+  "reviewer": "C",
+  "scope": "Read-only pinned source/evidence review plus explicitly permitted lightweight fixtures; outputs only workers/C.",
+  "evidenceEnvironment": {
+    "os": "Windows x64",
+    "node": "v22.16.0",
+    "testConcurrency": 1,
+    "clock": "Fixture-controlled Date/performance/timers; machine clock unchanged",
+    "network": "Contained fetch/Image/canvas/storage/DOM doubles; no provider calls in fresh fixtures",
+    "browserExecutionByReviewer": false
+  },
+  "delivery": {
+    "status": "DELIVERED_VERIFIED",
+    "primaryReported": "Read release.json and 16-case public-browser-summary.json plus actual public Firefox consumer receipt",
+    "evidence": {
+      "status": "DELIVERED_VERIFIED",
+      "verifiedAt": "2026-10-09T01:34:55.876184+00:00",
+      "publicBrowserCases": 16,
+      "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+      "releaseSha256": "1325b6d8dfa0e14f5bdeac21d651d5a8ce9efe0eb9e69aaa99adfcfdaf3dcdd2",
+      "exactPublicFirefox": {
+        "file": "public-firefox/root-iframe-cold/results.json",
+        "sha256": "f5ee39188fe8aa859066d98183dc21cd5e839e4dab27277cda4360e36704194d",
+        "status": "PASS",
+        "rawCode": 53,
+        "source": "current (Open-Meteo model estimate)",
+        "model": {
+          "state": "wet",
+          "provider": "Open-Meteo",
+          "product": "current weather model",
+          "code": 53,
+          "category": "drizzle",
+          "sourceValidAt": 1791508500000,
+          "retrievedAt": 1791509046824,
+          "quantity": {
+            "kind": "preceding-interval-amount",
+            "value": 0.2,
+            "units": "mm",
+            "from": 1791507600000,
+            "to": 1791508500000,
+            "averageRateMmH": 0.8,
+            "instantaneous": false
+          },
+          "resolution": "native/interpolated provenance unavailable",
+          "spatialSupport": "model-grid precision unavailable"
+        },
+        "visualPermissions": {
+          "rain": true,
+          "snow": false,
+          "lightning": false,
+          "source": "current model estimate",
+          "quantitativeSupport": "current interval amount supports category"
+        },
+        "directPresent": {
+          "available": false,
+          "reason": "no qualified live present adapter",
+          "evidence": null
+        },
+        "observedPresent": false,
+        "finalDataFx": "drizzle",
+        "rawForecastCode": 51
+      },
+      "limits": "16 public cases establish delivered identity, ordinary1x entry and scoped terrain/replacement/geometry. They do not imply weather transport-negative, zero-axis or combined0dBZ proof. Current provider record is time-specific model estimate, not the owner historical site/incident."
+    },
+    "limits": "16 public cases establish delivered identity, ordinary1x entry and scoped terrain/replacement/geometry. They do not imply weather transport-negative, zero-axis or combined0dBZ proof. Current provider record is time-specific model estimate, not the owner historical site/incident."
+  },
+  "sourceAttribution": "CP9 native prerequisite integration 3cf6ce2 already carried admission, source-age, deadline, radar exclusion, coordinate and evidence-state owners before PR42. PR42 adds the authorized model presentation/header/clock safeguards and later rendering work; no blanket attribution of old repairs to PR42.",
+  "generatedJoin": {
+    "authoredOwner": "src/native/index.html",
+    "consumer": "index.html",
+    "difference": "The weather region differs by the narrow acceptedElevation handoff injected by tools/build_native.py:64–67. Native and root are not falsely claimed byte-identical.",
+    "proof": [
+      {
+        "file": "src/native/index.html",
+        "start": 1355,
+        "end": 1386,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1355-L1386"
+      },
+      {
+        "file": "index.html",
+        "start": 3479,
+        "end": 3511,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3479-L3511"
+      },
+      {
+        "file": "tools/build_native.py",
+        "start": 64,
+        "end": 67,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tools/build_native.py#L64-L67"
+      }
+    ]
+  },
+  "nativePlatformProof": "The six assigned weather/browser issues do not require Apple Bash3.2 or PowerShell5.1 installer qualification. No cross-platform/native browser proof is inferred from Node fixtures.",
+  "publication": {
+    "status": "PRIMARY_ASTRA_RECONCILED_APPROVED_TEXT; EXTERNAL EFFECTS HELD FOR IMMUTABLE EVIDENCE HASH VERIFICATION",
+    "authority": "Primary alone reconciles and approves each comment and any closure.",
+    "githubWrites": false,
+    "productionMutation": false,
+    "primaryDecision": "APPROVED LEAVE OPEN WITH EXACT GAPS",
+    "publicEvidenceBinding": "AUDIT_EVIDENCE_COMMIT placeholder; primary exact SHA/per-file readback approval required"
+  },
+  "policyAmendments": [
+    {
+      "authority": "WORKER_BRIEF binding owner H5/H8 policy; pinned DESIGN.md244–267",
+      "scope": "Fresh eligible Open-Meteo CURRENT model condition and quantitatively supported rain/snow may be presented as MODEL ESTIMATES, without direct-present adapter. The same admitted snapshot feeds icon/temp/effect/provenance. Raw WMO condition persistence is distinct from effect downgrade. Forecast-only/stale/wrong-target/malformed records stay excluded; missing/contradictory quantities cannot invent particles. Model thunder does not authorize lightning. RainViewer alpha remains unitless.",
+      "affectedOriginalClause": "R0024 blanket suppression of all strong model-only precipitation and corresponding fixture D withholding clause are validly superseded only for approved model presentation; all other state/source/quality/UI/expiry distinctions survive."
+    }
+  ],
+  "requirementMatrix": [
+    {
+      "id": "2401",
+      "obligation": "Pure reconciliation returns independent supported wet/dry, model-estimated wet/dry, conflicting and unknown current states; WMO remains one input.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1596,
+          "end": 1624,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1596-L1624"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3723,
+          "end": 3750,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3723-L3750"
+        }
+      ],
+      "discriminator": "A/B conflict controls, model null/zero, unknown/conflicting present.",
+      "expected": "Unknown is not dry; original clear WMO cannot veto qualified synthetic current wet.",
+      "observed": "Actual-source P A/B/conflict/null-versus-zero tests passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 54,
+          "end": 108,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L54-L108"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 193,
+          "end": 198,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L193-L198"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 230,
+          "end": 242,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L230-L242"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2402",
+      "obligation": "Spatial nearby/no-nearby/unavailable stays distinct from current. Horizon approaching/nearby-without-arrival/numerical-forecast/none-supported/unknown stays separate; current and approach may coexist.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1596,
+          "end": 1624,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1596-L1624"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3723,
+          "end": 3750,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3723-L3750"
+        }
+      ],
+      "discriminator": "C qualified trajectory, invalid current-wind derivation, area negative, current-plus-approach.",
+      "expected": "No ETA from wind, proximity or hourly weather; approach alone cannot authorize local particles.",
+      "observed": "P C/current-plus-later/area/invalid-quality controls passed; live sources remain spatially unavailable.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 95,
+          "end": 123,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L95-L123"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 236,
+          "end": 248,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L236-L248"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2403",
+      "obligation": "Forecast retains provider/product, valid window, units, amount, optional probability and its event/window. Missing probability is not zero; amount is not observed rate.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1589,
+          "end": 1595,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1589-L1595"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3715,
+          "end": 3721,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3715-L3721"
+        }
+      ],
+      "discriminator": "Future hourly 2mm versus interpolated wxAt 1mm; synthetic null/zero probability.",
+      "expected": "Stepped preceding-hour amount/window; unknown probability and issue provenance remain null; no current permission.",
+      "observed": "P forecast-window and probability fixtures passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 185,
+          "end": 198,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L185-L198"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 266,
+          "end": 274,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L266-L274"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2404",
+      "obligation": "Initial Open-Meteo current is model-estimated. Alpha supplies no present/spatial authority. No new provider, trajectory engine, minutely fetch or live arrival claim is required.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1523,
+          "end": 1587,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1587"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3649,
+          "end": 3713,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3649-L3713"
+        }
+      ],
+      "discriminator": "Trusted flags plus dense/empty/sparse palette; closed live adapter.",
+      "expected": "Model estimate with direct observation unavailable; no fabricated approach, operational negative evidence or ground-rain claim.",
+      "observed": "P D/E/G/trust/sparse controls passed; source explicitly closes live observation adapters.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 113,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L113-L138"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 213,
+          "end": 218,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L213-L218"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 276,
+          "end": 280,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L276-L280"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2405",
+      "obligation": "The original blanket prohibition of current-model particles is expressly amended by owner H5/H8: a direct adapter is not required for quantitatively supported MODEL ESTIMATE rain/snow.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1625,
+          "end": 1651,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1625-L1651"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3751,
+          "end": 3777,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3751-L3777"
+        }
+      ],
+      "discriminator": "Live current codes 63/73/95 with 2mm; ordinary render condition controls.",
+      "expected": "Labelled current-model precipitation may display; direct permissions/observedPresent stay false and lightning stays off.",
+      "observed": "P H5 and H full-render controls passed. visualPermissions are separate. Amendment concerns model condition/effect presentation; it does not turn a model into observation.",
+      "status": "validly superseded",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 31,
+          "end": 43,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L31-L43"
+        },
+        {
+          "file": "tests/hotfix-prayer-weather.test.cjs",
+          "start": 112,
+          "end": 140,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L112-L140"
+        },
+        {
+          "file": "DESIGN.md",
+          "start": 244,
+          "end": 267,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2406",
+      "obligation": "Surviving guards reject stale, wrong-target, malformed and forecast-only live inputs. Missing/contradictory quantity is uncertainty, not particles/rate/dryness. Model thunder never authorizes observed strikes.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1625,
+          "end": 1651,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1625-L1651"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3751,
+          "end": 3777,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3751-L3777"
+        }
+      ],
+      "discriminator": "Expiry/wrong generation, missing/zero/-1 amount, return to live, hourly-thunder preview.",
+      "expected": "No stale or forecast leakage into present; raw model condition stays labelled, unsupported particles stay off and lightning stays off.",
+      "observed": "W/P/C/H controls passed. The old blanket model-withholding expectation is amended; these guards remain active.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 237,
+          "end": 247,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L237-L247"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 253,
+          "end": 264,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L253-L264"
+        },
+        {
+          "file": "tests/hotfix-prayer-weather.test.cjs",
+          "start": 118,
+          "end": 167,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L118-L167"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2407",
+      "obligation": "Adapter evidence cannot be a free trusted boolean. Provider/product, target generation, source/receipt/frame/issue/valid times, units, footprint/coverage, quality and versioned admission reason remain mandatory.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1523,
+          "end": 1587,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1587"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3649,
+          "end": 3713,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3649-L3713"
+        }
+      ],
+      "discriminator": "Wrong provider plus trusted:true, wrong generation/units, future/missing times, quality and footprint.",
+      "expected": "Reject apparent direct evidence unless the exact source contract and point/time/health/quality are established.",
+      "observed": "P identity/temporal/quality controls passed. The sole current adapter-contract positive is synthetic-present-v1 in an explicit simulation lane.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 125,
+          "end": 170,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L125-L170"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 213,
+          "end": 218,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L213-L218"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2408",
+      "obligation": "Underlying local observation age and operational health remain separate from fresh mosaic and nominal coverage. Positive and negative claims abstain on stale/unknown local age or nonoperational/interpolated data.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1523,
+          "end": 1587,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1587"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3649,
+          "end": 3713,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3649-L3713"
+        }
+      ],
+      "discriminator": "G wet/dry states with unknown health, stale/unknown local age, weak/interpolated data and outside coverage.",
+      "expected": "Fresh transport/mosaic cannot grant strong current wet/dry or ETA.",
+      "observed": "All P G cases passed; live local age is null and operational health unknown.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 113,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L113-L138"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2409",
+      "obligation": "R0023 location intent/source/accuracy/original fix age and target generation/coordinates remain captured. Unknown IP accuracy is not invented; model-grid support remains separate.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1293,
+          "end": 1312,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3419,
+          "end": 3436,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3419-L3436"
+        }
+      ],
+      "discriminator": "F fixed site, precise device, 250/250.01m, expired fix, coarse IP, saved original fix, mutable body configuration.",
+      "expected": "A configured point is not a device fix; savedAt cannot renew original fix time; broad/coarse/old device evidence is rejected.",
+      "observed": "P F/config save-load/mutable-config capture controls passed using actual config and weather owners.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 140,
+          "end": 162,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 204,
+          "end": 211,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L204-L211"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 224,
+          "end": 228,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L224-L228"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 288,
+          "end": 304,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2410",
+      "obligation": "Keep amount/rate units and preceding intervals. 0.4mm over 900s becomes 1.6mm/h interval average, not instantaneous onset. Null is not zero; overflowing derived fields stay null.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1596,
+          "end": 1624,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1596-L1624"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3723,
+          "end": 3750,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3723-L3750"
+        }
+      ],
+      "discriminator": "Model amount 0.4mm, synthetic rate/amount, extreme derived-quantity arithmetic.",
+      "expected": "No promotion of quantity kind or provenance; derived values are finite or null.",
+      "observed": "P quantity/time-window/rate/overflow controls passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 172,
+          "end": 198,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L172-L198"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 259,
+          "end": 264,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L259-L264"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2411",
+      "obligation": "Current/forecast source and receipt ages and generation leases are independent. Source gap, rain end, outage, target change and tab-resume expiry withdraw permission without cloud retention keeping wet effects alive.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1278,
+          "end": 1292,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3402,
+          "end": 3416,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3402-L3416"
+        },
+        {
+          "file": "real-sky/native-host-hooks.js",
+          "start": 12,
+          "end": 34,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/real-sky/native-host-hooks.js#L12-L34"
+        }
+      ],
+      "discriminator": "Synthetic exclusive 60000ms lease, end/outage/generation; current expiry 900001ms; earlier spatial expiry.",
+      "expected": "Wet effects withdraw immediately; separately qualified current may survive earlier spatial expiry; no borrowed freshness.",
+      "observed": "P/C lease/expiry/cloud-paint controls passed. Decision cache ends at the earliest eligibility boundary.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 74,
+          "end": 89,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L74-L89"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 243,
+          "end": 258,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L243-L258"
+        },
+        {
+          "file": "tests/r0024-cloud-expiry.test.cjs",
+          "start": 27,
+          "end": 47,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-cloud-expiry.test.cjs#L27-L47"
+        },
+        {
+          "file": "tests/r0024-cloud-expiry.test.cjs",
+          "start": 76,
+          "end": 82,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-cloud-expiry.test.cjs#L76-L82"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2412",
+      "obligation": "Explicit synthetic positives and preview exercise actual rain/snow/strike consumers. Identical live flags cannot upgrade production observation authority.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1523,
+          "end": 1587,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1587"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3649,
+          "end": 3713,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3649-L3713"
+        }
+      ],
+      "discriminator": "Synthetic A clear-model-to-rain, type/strike cases, ignored live synthetic installation, SIM wet/dry.",
+      "expected": "Simulation is labelled. No hash/provider trusted field grants live present authority. Approved current-model visual effects remain permitted.",
+      "observed": "P synthetic/live-closed/SIM controls passed; hourly thunder preview retains lightning off unless explicitly synthetic weather.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 54,
+          "end": 73,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L54-L73"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 281,
+          "end": 286,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L281-L286"
+        },
+        {
+          "file": "tests/hotfix-prayer-weather.test.cjs",
+          "start": 162,
+          "end": 167,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L162-L167"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2413",
+      "obligation": "A qualified current wet plus model dry must record supported wet/disagreement and rain. B qualified current dry plus model rain must record dry/conflict according to policy, without universal WMO/radar veto.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1596,
+          "end": 1624,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1596-L1624"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3723,
+          "end": 3750,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3723-L3750"
+        }
+      ],
+      "discriminator": "Exact synthetic A/B adapter fixtures.",
+      "expected": "A actual rain; B particles off; model evidence remains inspectable.",
+      "observed": "P actual atmosphere/paint A/B cases passed; they make no live RainViewer calibration claim.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 54,
+          "end": 61,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L54-L61"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 81,
+          "end": 108,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L81-L108"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2414",
+      "obligation": "C dry point with qualified nearby arrival is separate from local rain. Unqualified movement gives nearby-only/unavailable. Current rain and later approach may coexist.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1596,
+          "end": 1624,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1596-L1624"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3723,
+          "end": 3750,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3723-L3750"
+        }
+      ],
+      "discriminator": "Exact C trajectory/current-wind and coexistence cases.",
+      "expected": "Separate arrival interval, no particles at the dry point.",
+      "observed": "P C/coexistence controls passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 95,
+          "end": 112,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L95-L112"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2415",
+      "obligation": "D absent/outside-coverage observation with model rain remains model-estimated wet and observation unavailable. The original withholding of supported model particles is narrowly amended; this is not confirmed dry.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1625,
+          "end": 1651,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1625-L1651"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3751,
+          "end": 3777,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3751-L3777"
+        }
+      ],
+      "discriminator": "D readable but uncalibrated radar and G outside-coverage; H5 model positive.",
+      "expected": "No observation upgrade or confirmed-dry inference; approved supported current-model effects may display.",
+      "observed": "P D/G/H5 cases passed. Only the old no-model-particles presentation phrase is superseded.",
+      "status": "validly superseded",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 31,
+          "end": 38,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L31-L38"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 113,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L113-L138"
+        },
+        {
+          "file": "DESIGN.md",
+          "start": 246,
+          "end": 267,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L246-L267"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2416",
+      "obligation": "E an 18-minute mosaic with fresh retrieval cannot establish local observation or ETA. G weak/interpolated/ambiguous returns never become millimetres or calibrated drizzle.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1387,
+          "end": 1459,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1387-L1459"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3513,
+          "end": 3585,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3513-L3585"
+        }
+      ],
+      "discriminator": "Exact E 18-minute mosaic and G quality states.",
+      "expected": "Diagnostic availability under the 20-minute bound grants no present/spatial/ETA/intensity authority.",
+      "observed": "P E/G cases passed; source provenance remains distinct.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 120,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L120-L138"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2417",
+      "obligation": "Future forecast intervals are never current. Unknown native/interpolated provenance is explicit. Probability/amount and coverage/operational-health negative distinctions survive.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1589,
+          "end": 1595,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1589-L1595"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3715,
+          "end": 3721,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3715-L3721"
+        }
+      ],
+      "discriminator": "Future window, interpolated quality, probability null/zero, underlying age and empty radar.",
+      "expected": "No instantaneous/current/arrival claim from numerical forecast or transport freshness.",
+      "observed": "P forecast/quantity/probability/quality/trust cases passed. Native/interpolated provenance remains unavailable.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 125,
+          "end": 138,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L125-L138"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 172,
+          "end": 198,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L172-L198"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 213,
+          "end": 218,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L213-L218"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 266,
+          "end": 280,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L266-L280"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2418",
+      "obligation": "qaState exposes consumed target/source/fix age, valid/receipt ages, quality/coverage, point versus surrounding state, current/spatial/horizon/forecast, rejection/unavailability, permissions/expiry/reason and any derivation, without tiles or redundant forecast arrays.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 3131,
+          "end": 3162,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3131-L3162"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 5159,
+          "end": 5190,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5159-L5190"
+        }
+      ],
+      "discriminator": "Actual P/W atmosphere and paint followed by QA.",
+      "expected": "One consumed decision explains all independent fields; unitless radar and unknown underlying health stay explicit.",
+      "observed": "P/W reach QA and validate named states. Admitted evidence retains localObservationAt separately; no full tile or track array is emitted.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "src/native/index.html",
+          "start": 3138,
+          "end": 3162,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3138-L3162"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 113,
+          "end": 123,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L113-L123"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 172,
+          "end": 202,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L172-L202"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2419",
+      "obligation": "Information distinguishing current from nearby/approaching/predicted/unknown must reach concise visible or accessible presentation, not only a debug object.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1653,
+          "end": 1668,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1653-L1668"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3780,
+          "end": 3794,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3780-L3794"
+        }
+      ],
+      "discriminator": "Read weatherHeader/paintWeatherHeader for fixture C and compare its QA horizon/spatial.",
+      "expected": "Current dry plus approach and forecast/unknown distinctions are communicated outside QA when present.",
+      "observed": "weatherHeader never reads spatial/horizon/forecast. For C its source title is 'SIM supported-dry; qualified synthetic present dry' while approaching exists only in QA.",
+      "status": "unmet",
+      "evidence": [
+        {
+          "file": "src/native/index.html",
+          "start": 1654,
+          "end": 1668,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1654-L1668"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 95,
+          "end": 103,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L95-L103"
+        },
+        {
+          "file": "tests/smoke.html",
+          "start": 257,
+          "end": 265,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/smoke.html#L257-L265"
+        }
+      ],
+      "limitations": "Source/contained-DOM semantic finding; no new browser pixel run. Owner amendment permits model effects; it does not remove this information-state obligation."
+    },
+    {
+      "id": "2420",
+      "obligation": "Render A–G and added controls in the actual 325×530 card. Synthetic positives have cloud-linked particles; dry/nearby/approach/forecast/unknown negatives have none. Preserve readable status, reduced motion and sun/moon/cloud quality.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 2953,
+          "end": 2962,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2953-L2962"
+        },
+        {
+          "file": "src/native/index.html",
+          "start": 3068,
+          "end": 3078,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3068-L3078"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 4980,
+          "end": 4989,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4980-L4989"
+        },
+        {
+          "file": "index.html",
+          "start": 5096,
+          "end": 5106,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5096-L5106"
+        }
+      ],
+      "discriminator": "Bounded browser matrix/crops plus consumed source/effect decisions.",
+      "expected": "All mandatory states remain distinct through the real renderer; numeric tests do not certify pixels.",
+      "observed": "Fresh Node P 63/63, C 9/9, H 21/21 passed. Pre-H5 native smoke provides only historical partial A/B/C/lease/coverage consumer evidence. V46 rain positive crop was inspected. Full equivalent final-target A–G/added-control pixel evidence was not supplied.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "file": "tests/smoke.html",
+          "start": 159,
+          "end": 273,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/smoke.html#L159-L273"
+        },
+        {
+          "file": "docs/real-sky/evidence/startup-cloud-20261007/native-smoke/results.json.gz",
+          "start": null,
+          "end": null,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/native-smoke/results.json.gz"
+        },
+        {
+          "file": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/retained/rain-abc/C-PR42-rain.png",
+          "start": null,
+          "end": null,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/retained/rain-abc/C-PR42-rain.png"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2421",
+      "obligation": "Add no provider requests or per-frame inference. Compare CPU/memory/network overhead to baseline; reuse pure reconciliation until eligibility changes.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1625,
+          "end": 1651,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1625-L1651"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3751,
+          "end": 3777,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3751-L3777"
+        }
+      ],
+      "discriminator": "Stable-decision-identity test, source network path and matched overhead measurement.",
+      "expected": "No added network; cheap reconciliation on input/time changes with measured overhead.",
+      "observed": "P stable-input cache control passed; source adds no provider. Matched baseline CPU/memory/network measurements specific to this state scaffold were not located.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 220,
+          "end": 223,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L220-L223"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2422",
+      "obligation": "Update public weather semantics, source attribution and supported diagnostic docs. No field study, sample collection, telemetry export or continuous GPS is required.",
+      "authoredOwner": [
+        {
+          "file": "DESIGN.md",
+          "start": 244,
+          "end": 267,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267"
+        },
+        {
+          "file": "README.md",
+          "start": 188,
+          "end": 202,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L188-L202"
+        },
+        {
+          "file": "README.md",
+          "start": 223,
+          "end": 225,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L223-L225"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "DESIGN.md",
+          "start": 244,
+          "end": 267,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267"
+        },
+        {
+          "file": "README.md",
+          "start": 188,
+          "end": 202,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L188-L202"
+        },
+        {
+          "file": "README.md",
+          "start": 223,
+          "end": 225,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L223-L225"
+        }
+      ],
+      "discriminator": "Actual DESIGN, README and diagnostic/public information paths.",
+      "expected": "Explain model-effect amendment, current versus prediction/unavailable and source-quality limits.",
+      "observed": "DESIGN documents the amendment. README's 'Live local weather'/auto-retry prose omits unavailable measurement/state and forecast/nearby limitations; information gap 2419 remains.",
+      "status": "unmet",
+      "evidence": [
+        {
+          "file": "DESIGN.md",
+          "start": 244,
+          "end": 267,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267"
+        },
+        {
+          "file": "README.md",
+          "start": 188,
+          "end": 202,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L188-L202"
+        },
+        {
+          "file": "README.md",
+          "start": 223,
+          "end": 225,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L223-L225"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2423",
+      "obligation": "R0003/B/C/E and R0023 interfaces are qualification prerequisites. R000D/R001E/R001B stay distinct owners. Renderer richness consumes evidence and cannot generate authority.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1005,
+          "end": 1044,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3129,
+          "end": 3168,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3129-L3168"
+        }
+      ],
+      "discriminator": "Actual generation, finite admission, expiry, radar exclusion, target/fix contracts and renderer data flow.",
+      "expected": "No administrative whole-issue blocker or absorbed calibration/deadline/provider/location repair.",
+      "observed": "Relevant interfaces and fresh tests are traced. Linked issue administrative state is not a blanket blocker; missing evidence is mapped only to affected obligations.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000d-weather.test.cjs",
+          "start": 111,
+          "end": 139,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 140,
+          "end": 162,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 204,
+          "end": 211,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L204-L211"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2424",
+      "obligation": "Done is the honest state/renderer contract, not useful local arrival/provider qualification or predictive skill. Containment returns to unavailable/model-estimated without alpha-mm or invented ETA.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1596,
+          "end": 1624,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1596-L1624"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3723,
+          "end": 3750,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3723-L3750"
+        }
+      ],
+      "discriminator": "Scope/containment and immutable original contract plus amendment.",
+      "expected": "No new provider, paid infrastructure, continuous GPS, field study or accurate-arrival claim is required; approved model rain is preserved.",
+      "observed": "State scaffold exists and model prohibition is amended. Proposal keeps missing observation/arrival adapters unavailable; it does not request reverting approved effects.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "src/native/index.html",
+          "start": 1523,
+          "end": 1624,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1624"
+        },
+        {
+          "file": "DESIGN.md",
+          "start": 244,
+          "end": 267,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "2425",
+      "obligation": "Exact-candidate independent proof, evidence comment and primary reconciliation precede closure. Generic all-dry API smoke/arithmetic cannot certify predictive skill.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1005,
+          "end": 1044,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3129,
+          "end": 3168,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3129-L3168"
+        }
+      ],
+      "discriminator": "Bounded C source/fixtures/retained evidence and publication hold.",
+      "expected": "No comment marked approved/posted, no arrival accuracy or blanket visual PASS.",
+      "observed": "Source/consumer identity and fresh logic review are complete; surviving UI/browser/resource proof and individual primary approval remain outstanding.",
+      "status": "unverified",
+      "evidence": [],
+      "limitations": null
+    }
+  ],
+  "executedCommands": [
+    {
+      "file": "tests/r000c-weather.test.cjs",
+      "pass": 119,
+      "todo": 4,
+      "fail": 0,
+      "log": "r000c-weather.test.cjs.tap",
+      "sha256": "481bef68f7859c62037f5228c5cf4d2d7450af55d1a55ff010bb371778c17734",
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "--test",
+        "--test-concurrency=1",
+        "tests/r000c-weather.test.cjs"
+      ],
+      "expected": "Relevant unchanged assertions pass. TODO remains TODO, not executed PASS.",
+      "observed": "119 pass, 0 fail, 4 TODO",
+      "execution": "FRESH_REVIEWER_C_EXACT_TARGET_TREE",
+      "receipt": "test-receipts.json"
+    },
+    {
+      "file": "tests/r000d-weather.test.cjs",
+      "pass": 24,
+      "todo": 0,
+      "fail": 0,
+      "log": "r000d-weather.test.cjs.tap",
+      "sha256": "177f686336be5623349c83181668027a1b5673d10ba5b171ebafeadc7a950987",
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "--test",
+        "--test-concurrency=1",
+        "tests/r000d-weather.test.cjs"
+      ],
+      "expected": "Relevant unchanged assertions pass. TODO remains TODO, not executed PASS.",
+      "observed": "24 pass, 0 fail, 0 TODO",
+      "execution": "FRESH_REVIEWER_C_EXACT_TARGET_TREE",
+      "receipt": "test-receipts.json"
+    },
+    {
+      "file": "tests/r0024-weather.test.cjs",
+      "pass": 63,
+      "todo": 0,
+      "fail": 0,
+      "log": "r0024-weather.test.cjs.tap",
+      "sha256": "37d964c1661353eac19feba51312fbde91f456235a90971f939eac346ad66ca0",
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "--test",
+        "--test-concurrency=1",
+        "tests/r0024-weather.test.cjs"
+      ],
+      "expected": "Relevant unchanged assertions pass. TODO remains TODO, not executed PASS.",
+      "observed": "63 pass, 0 fail, 0 TODO",
+      "execution": "FRESH_REVIEWER_C_EXACT_TARGET_TREE",
+      "receipt": "test-receipts.json"
+    },
+    {
+      "file": "tests/r0024-response-zone.test.cjs",
+      "pass": 9,
+      "todo": 0,
+      "fail": 0,
+      "log": "r0024-response-zone.test.cjs.tap",
+      "sha256": "e082af2640eca35cc056f732573202a42f2427622fa8c796b57ed998bcd6b5c5",
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "--test",
+        "--test-concurrency=1",
+        "tests/r0024-response-zone.test.cjs"
+      ],
+      "expected": "Relevant unchanged assertions pass. TODO remains TODO, not executed PASS.",
+      "observed": "9 pass, 0 fail, 0 TODO",
+      "execution": "FRESH_REVIEWER_C_EXACT_TARGET_TREE",
+      "receipt": "test-receipts.json"
+    },
+    {
+      "file": "tests/r0024-cloud-expiry.test.cjs",
+      "pass": 9,
+      "todo": 0,
+      "fail": 0,
+      "log": "r0024-cloud-expiry.test.cjs.tap",
+      "sha256": "071c04c0ab028d2014062e694f3a68ebc00b612cd266334b43cefcd2fe6aa0ff",
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "--test",
+        "--test-concurrency=1",
+        "tests/r0024-cloud-expiry.test.cjs"
+      ],
+      "expected": "Relevant unchanged assertions pass. TODO remains TODO, not executed PASS.",
+      "observed": "9 pass, 0 fail, 0 TODO",
+      "execution": "FRESH_REVIEWER_C_EXACT_TARGET_TREE",
+      "receipt": "test-receipts.json"
+    },
+    {
+      "file": "tests/hotfix-prayer-weather.test.cjs",
+      "pass": 21,
+      "todo": 0,
+      "fail": 0,
+      "log": "hotfix-prayer-weather.test.cjs.tap",
+      "sha256": "9356d4be54a74861a406ea5f75f151ff169fe69898faac4f8ea890a8154c9233",
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "--test",
+        "--test-concurrency=1",
+        "tests/hotfix-prayer-weather.test.cjs"
+      ],
+      "expected": "Relevant unchanged assertions pass. TODO remains TODO, not executed PASS.",
+      "observed": "21 pass, 0 fail, 0 TODO",
+      "execution": "FRESH_REVIEWER_C_EXACT_TARGET_TREE",
+      "receipt": "test-receipts.json"
+    }
+  ],
+  "freshEvidence": {
+    "totalTests": 249,
+    "pass": 245,
+    "fail": 0,
+    "todo": 4,
+    "allSuiteExitCodes": 0,
+    "sourceStateBefore": "Clean reviewed head, verified equal merge tree.",
+    "sourceStateAfter": "git status --porcelain empty after six serial runs; production source untouched.",
+    "actualFixtureBoundary": "VM doubles isolate network/Image/canvas/storage/DOM; actual declaration slices and mandatory entrypoints are asserted present. Hotfix full native runtime uses r001d harness. No actual browser/pixels/native-cancellation/provider coverage inferred.",
+    "followupSourceEquivalence": {
+      "kind": "FRESH_SOURCE_EQUIVALENCE_COMPARISON",
+      "receipt": "historical-source-equivalence.json",
+      "regions": [
+        {
+          "id": "motion-policy",
+          "startAnchor": "const MOTIONFULL =",
+          "endAnchor": "// ---- helpers",
+          "old": {
+            "sha256": "c7130510aa3ef8193be9ddc8315845f7adad27958c6bdfc4d8640302959814bc",
+            "startLine": 2793,
+            "endLine": 2798,
+            "bytes": 756
+          },
+          "current": {
+            "sha256": "c7130510aa3ef8193be9ddc8315845f7adad27958c6bdfc4d8640302959814bc",
+            "startLine": 2861,
+            "endLine": 2866,
+            "bytes": 756
+          },
+          "equal": true
+        },
+        {
+          "id": "cloud-generator-motion",
+          "startAnchor": "// ---- CLOUD ENGINE:",
+          "endAnchor": "// ---- ATMOSPHERE STATE",
+          "old": {
+            "sha256": "fe98f8930cf17697e193b10d357702e57dd26b541cc0ae41272a2ee23b73d305",
+            "startLine": 4400,
+            "endLine": 4570,
+            "bytes": 12931
+          },
+          "current": {
+            "sha256": "fe98f8930cf17697e193b10d357702e57dd26b541cc0ae41272a2ee23b73d305",
+            "startLine": 4468,
+            "endLine": 4638,
+            "bytes": 12931
+          },
+          "equal": true
+        },
+        {
+          "id": "request-owner",
+          "startAnchor": "function cacheKey(){",
+          "endAnchor": "// Read only the selected legacy main-format envelope.",
+          "old": {
+            "sha256": "23cefa8b79428fc20e988915ce6db1255ce50023bca9f0ab73c1ea0448eee856",
+            "startLine": 3055,
+            "endLine": 3100,
+            "bytes": 2262
+          },
+          "current": {
+            "sha256": "23cefa8b79428fc20e988915ce6db1255ce50023bca9f0ab73c1ea0448eee856",
+            "startLine": 3123,
+            "endLine": 3168,
+            "bytes": 2262
+          },
+          "equal": true
+        },
+        {
+          "id": "weather-admission-acquisition-decision-header",
+          "startAnchor": "// ---- weather (Open-Meteo:",
+          "endAnchor": "// ---- accurate Moon position",
+          "old": {
+            "sha256": "0c9e15a63738572887137a6e359f2b5cea45f716e6135e906256f1f69871adeb",
+            "startLine": 3250,
+            "endLine": 3728,
+            "bytes": 38848
+          },
+          "current": {
+            "sha256": "0c9e15a63738572887137a6e359f2b5cea45f716e6135e906256f1f69871adeb",
+            "startLine": 3318,
+            "endLine": 3796,
+            "bytes": 38848
+          },
+          "equal": true
+        },
+        {
+          "id": "model-and-radar-gate",
+          "startAnchor": "const _PRECIP_MIN=",
+          "endAnchor": "// ---- CLOUD ENGINE:",
+          "old": {
+            "sha256": "4ca59118844413f9794dd2f38a2e3e4436d7eab5b8fd83bc76f94e974ff817e0",
+            "startLine": 4356,
+            "endLine": 4399,
+            "bytes": 2974
+          },
+          "current": {
+            "sha256": "4ca59118844413f9794dd2f38a2e3e4436d7eab5b8fd83bc76f94e974ff817e0",
+            "startLine": 4424,
+            "endLine": 4467,
+            "bytes": 2974
+          },
+          "equal": true
+        },
+        {
+          "id": "weather-atmosphere-consumer",
+          "startAnchor": "function atmosphere(M){",
+          "endAnchor": "// paint(A)",
+          "old": {
+            "sha256": "f0d76b3c836dd1d285285dd874265fd28461cbb67694fbfa866a4cbdd20c2cdf",
+            "startLine": 4578,
+            "endLine": 4799,
+            "bytes": 21214
+          },
+          "current": {
+            "sha256": "f0d76b3c836dd1d285285dd874265fd28461cbb67694fbfa866a4cbdd20c2cdf",
+            "startLine": 4646,
+            "endLine": 4867,
+            "bytes": 21214
+          },
+          "equal": true
+        },
+        {
+          "id": "cloud-per-use-consumer",
+          "startAnchor": "function applyCloudState(A){",
+          "endAnchor": "// Size the present-prayer name",
+          "old": {
+            "sha256": "a2001bfa926f96db63014113a78182fecaf9cc99103a6d971adcdb7e5b828692",
+            "startLine": 4808,
+            "endLine": 4952,
+            "bytes": 12408
+          },
+          "current": {
+            "sha256": "a2001bfa926f96db63014113a78182fecaf9cc99103a6d971adcdb7e5b828692",
+            "startLine": 4876,
+            "endLine": 5020,
+            "bytes": 12408
+          },
+          "equal": true
+        },
+        {
+          "id": "weather-qa-consumer",
+          "startAnchor": "window.qaState=function(){",
+          "endAnchor": "// debugMotion telemetry",
+          "old": {
+            "sha256": "402a0deaab05bc6783f7c1a80424642f8253e2a0938606f15c4e08327ec1cd79",
+            "startLine": 5084,
+            "endLine": 5167,
+            "bytes": 9673
+          },
+          "current": {
+            "sha256": "402a0deaab05bc6783f7c1a80424642f8253e2a0938606f15c4e08327ec1cd79",
+            "startLine": 5152,
+            "endLine": 5235,
+            "bytes": 9673
+          },
+          "equal": true
+        }
+      ]
+    }
+  },
+  "reusedEvidence": [
+    {
+      "kind": "HISTORICAL_RED",
+      "source": "Issue#36 immutable packet original body",
+      "identity": "67bcb1850732609c37e009fd164ac20d0e55a6b41c1ca75cdded85f714f2031a",
+      "basis": "Original reporter-preserved source-executing witnesses at fd2972.../9d9c436...; not rerun by C and not current deployed behavior."
+    },
+    {
+      "kind": "HISTORICAL_BROWSER_CONSUMER",
+      "source": "docs/real-sky/evidence/startup-cloud-20261007/native-smoke/results.json.gz",
+      "runtime": "90576a5396548e1deb3f0bcf405f0d2a824113181d3a0f189f51b09bd20c63f5",
+      "sourceHash": "b3f3065d719c13276b29aa2d79113b2a9dc3476e7c83106fba446a7faed71f04",
+      "observed": "141 pass,0 fail,30 required cases; Chrome148.0.7778.96 Windows; isolated storage/clock/fetch. Includes pre-H5 model-particles-off, expiry+helper model recovery, synthetic A/B/C/lease/coverage controls. No zero-axis attempt.",
+      "basis": "Not reused as final-target PASS. Policy/oracle and source identity differ; no proven exact required target transport-negative pixels."
+    },
+    {
+      "kind": "HISTORICAL_MODEL_RAIN_POSITIVE",
+      "source": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/retained/joined-v46-firefox-rain-abc/results.json",
+      "runtime": "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+      "observed": "C-PR42 rain29 visible particles,clear0; frozenV1 and deployedc1 controls retained. One public C-PR42-rain.png visually inspected by C: header/footer/card readable and precipitation present.",
+      "pixelSha256": "c13358de851876c29db2a9de2c374071c15023916d922477d22897e4ddf61e96",
+      "basis": "Narrow historical positive/readability evidence. Public v46→v47 and v48→v49 reuse receipts retain weather policy/source ancestry and explicit timing/presentation limits; not final-target timeout, malformed-data, zero-axis or full A–G pixel proof."
+    },
+    {
+      "kind": "HISTORICAL_EXECUTED_BROWSER_REUSED_WITH_FRESH_SOURCE_EQUIVALENCE",
+      "receipt": "historical-source-equivalence.json",
+      "sha256": "c6bbf77b29ddb18094459515fab9305f688c74dd7a5a02ab3e8f8cc8a373038b",
+      "publicBasis": {
+        "file": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json",
+        "start": 15145,
+        "end": 15215,
+        "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json#L15145-L15215"
+      },
+      "oldRuntime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "oldIndex": "c9579ac9aa9d158cc4ad0ce4288781f3ff3db40afdc4820510203e6e64c80a7a",
+      "currentIndex": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "regions": [
+        {
+          "id": "motion-policy",
+          "startAnchor": "const MOTIONFULL =",
+          "endAnchor": "// ---- helpers",
+          "old": {
+            "sha256": "c7130510aa3ef8193be9ddc8315845f7adad27958c6bdfc4d8640302959814bc",
+            "startLine": 2793,
+            "endLine": 2798,
+            "bytes": 756
+          },
+          "current": {
+            "sha256": "c7130510aa3ef8193be9ddc8315845f7adad27958c6bdfc4d8640302959814bc",
+            "startLine": 2861,
+            "endLine": 2866,
+            "bytes": 756
+          },
+          "equal": true
+        },
+        {
+          "id": "cloud-generator-motion",
+          "startAnchor": "// ---- CLOUD ENGINE:",
+          "endAnchor": "// ---- ATMOSPHERE STATE",
+          "old": {
+            "sha256": "fe98f8930cf17697e193b10d357702e57dd26b541cc0ae41272a2ee23b73d305",
+            "startLine": 4400,
+            "endLine": 4570,
+            "bytes": 12931
+          },
+          "current": {
+            "sha256": "fe98f8930cf17697e193b10d357702e57dd26b541cc0ae41272a2ee23b73d305",
+            "startLine": 4468,
+            "endLine": 4638,
+            "bytes": 12931
+          },
+          "equal": true
+        },
+        {
+          "id": "request-owner",
+          "startAnchor": "function cacheKey(){",
+          "endAnchor": "// Read only the selected legacy main-format envelope.",
+          "old": {
+            "sha256": "23cefa8b79428fc20e988915ce6db1255ce50023bca9f0ab73c1ea0448eee856",
+            "startLine": 3055,
+            "endLine": 3100,
+            "bytes": 2262
+          },
+          "current": {
+            "sha256": "23cefa8b79428fc20e988915ce6db1255ce50023bca9f0ab73c1ea0448eee856",
+            "startLine": 3123,
+            "endLine": 3168,
+            "bytes": 2262
+          },
+          "equal": true
+        },
+        {
+          "id": "weather-admission-acquisition-decision-header",
+          "startAnchor": "// ---- weather (Open-Meteo:",
+          "endAnchor": "// ---- accurate Moon position",
+          "old": {
+            "sha256": "0c9e15a63738572887137a6e359f2b5cea45f716e6135e906256f1f69871adeb",
+            "startLine": 3250,
+            "endLine": 3728,
+            "bytes": 38848
+          },
+          "current": {
+            "sha256": "0c9e15a63738572887137a6e359f2b5cea45f716e6135e906256f1f69871adeb",
+            "startLine": 3318,
+            "endLine": 3796,
+            "bytes": 38848
+          },
+          "equal": true
+        },
+        {
+          "id": "model-and-radar-gate",
+          "startAnchor": "const _PRECIP_MIN=",
+          "endAnchor": "// ---- CLOUD ENGINE:",
+          "old": {
+            "sha256": "4ca59118844413f9794dd2f38a2e3e4436d7eab5b8fd83bc76f94e974ff817e0",
+            "startLine": 4356,
+            "endLine": 4399,
+            "bytes": 2974
+          },
+          "current": {
+            "sha256": "4ca59118844413f9794dd2f38a2e3e4436d7eab5b8fd83bc76f94e974ff817e0",
+            "startLine": 4424,
+            "endLine": 4467,
+            "bytes": 2974
+          },
+          "equal": true
+        },
+        {
+          "id": "weather-atmosphere-consumer",
+          "startAnchor": "function atmosphere(M){",
+          "endAnchor": "// paint(A)",
+          "old": {
+            "sha256": "f0d76b3c836dd1d285285dd874265fd28461cbb67694fbfa866a4cbdd20c2cdf",
+            "startLine": 4578,
+            "endLine": 4799,
+            "bytes": 21214
+          },
+          "current": {
+            "sha256": "f0d76b3c836dd1d285285dd874265fd28461cbb67694fbfa866a4cbdd20c2cdf",
+            "startLine": 4646,
+            "endLine": 4867,
+            "bytes": 21214
+          },
+          "equal": true
+        },
+        {
+          "id": "cloud-per-use-consumer",
+          "startAnchor": "function applyCloudState(A){",
+          "endAnchor": "// Size the present-prayer name",
+          "old": {
+            "sha256": "a2001bfa926f96db63014113a78182fecaf9cc99103a6d971adcdb7e5b828692",
+            "startLine": 4808,
+            "endLine": 4952,
+            "bytes": 12408
+          },
+          "current": {
+            "sha256": "a2001bfa926f96db63014113a78182fecaf9cc99103a6d971adcdb7e5b828692",
+            "startLine": 4876,
+            "endLine": 5020,
+            "bytes": 12408
+          },
+          "equal": true
+        },
+        {
+          "id": "weather-qa-consumer",
+          "startAnchor": "window.qaState=function(){",
+          "endAnchor": "// debugMotion telemetry",
+          "old": {
+            "sha256": "402a0deaab05bc6783f7c1a80424642f8253e2a0938606f15c4e08327ec1cd79",
+            "startLine": 5084,
+            "endLine": 5167,
+            "bytes": 9673
+          },
+          "current": {
+            "sha256": "402a0deaab05bc6783f7c1a80424642f8253e2a0938606f15c4e08327ec1cd79",
+            "startLine": 5152,
+            "endLine": 5235,
+            "bytes": 9673
+          },
+          "equal": true
+        }
+      ],
+      "executedCurrentCases": [
+        {
+          "family": "clear",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 0,
+          "currentPrecip": 0,
+          "requests": 1
+        },
+        {
+          "family": "partial",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 0,
+          "currentPrecip": 0,
+          "requests": 1
+        },
+        {
+          "family": "overcast",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 0,
+          "currentPrecip": 0,
+          "requests": 1
+        },
+        {
+          "family": "fog",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 0,
+          "currentPrecip": 0,
+          "requests": 1
+        },
+        {
+          "family": "haze",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 0,
+          "currentPrecip": 0,
+          "requests": 1
+        },
+        {
+          "family": "drizzle",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 10,
+          "currentPrecip": 0.2,
+          "requests": 1
+        },
+        {
+          "family": "light-rain",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 31,
+          "currentPrecip": 0.2,
+          "requests": 1
+        },
+        {
+          "family": "rain",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 31,
+          "currentPrecip": 2,
+          "requests": 1
+        },
+        {
+          "family": "heavy-rain",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 31,
+          "currentPrecip": 5,
+          "requests": 1
+        },
+        {
+          "family": "showers",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 28,
+          "currentPrecip": 1,
+          "requests": 1
+        },
+        {
+          "family": "snow",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "-2°",
+          "visibleParticles": 40,
+          "currentPrecip": 1,
+          "requests": 1
+        },
+        {
+          "family": "thunder",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 30,
+          "currentPrecip": 3,
+          "requests": 1
+        },
+        {
+          "family": "contradictory-rain",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true,
+            "uncertaintyDisclosed": true,
+            "noInventedEffect": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 0,
+          "currentPrecip": 0,
+          "requests": 1
+        },
+        {
+          "family": "partial-rain",
+          "checks": {
+            "sixRows": true,
+            "nextAgreement": true,
+            "currentAgreement": true,
+            "noStaleSky": true,
+            "previewCurrent": true,
+            "daylightIdentity": true,
+            "lunarForegroundAir": true,
+            "geometry": true,
+            "noInventedLightning": true,
+            "currentLane": true,
+            "conditionRetained": true,
+            "temperatureCoherent": true,
+            "provenanceDisclosed": true,
+            "quantitativeEffect": true,
+            "noObservedClaim": true,
+            "noFabricatedLightning": true,
+            "uncertaintyDisclosed": true,
+            "noInventedEffect": true
+          },
+          "source": "current",
+          "temp": "24°",
+          "visibleParticles": 0,
+          "currentPrecip": null,
+          "requests": 1
+        }
+      ],
+      "executedAvailability": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\startup-cloud-hotfix-20261007\\h8\\joined-v45-chromium-availability\\results.json",
+        "sha256": "fcf049256bca68bb49a73567c2b4428753b4a8da28039665c8798aaf77df1937",
+        "status": "PASS",
+        "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+        "index": "c9579ac9aa9d158cc4ad0ce4288781f3ff3db40afdc4820510203e6e64c80a7a",
+        "checks": {
+          "initialWet": true,
+          "expiredUnknown": true,
+          "coherentUnknown": true,
+          "recovery": true,
+          "noObservedClaim": true,
+          "stateAgreement": true,
+          "providerFailureReached": true,
+          "provider503Consumed": true
+        },
+        "wallSeconds": 153.93700000000536,
+        "frames": 136,
+        "firstUnavailable": 9.281000000002678,
+        "failureConsumedAt": 88.89100000000326,
+        "recoveryAt": 149.26600000000326,
+        "providerFailures": [
+          {
+            "atWall": 90.125,
+            "request": "https://api.open-meteo.com/v1/forecast?latitude=28.5383&longitude=-81.3792&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=America%2FNew_York",
+            "status": 503
+          }
+        ],
+        "errors": [],
+        "runtimeUnchanged": true,
+        "inspectedCrops": [
+          {
+            "name": "frame-00000.png",
+            "sha256": "8d469353a16fc86ff5dee004b971b48848ad55830ee4709330e96a928b7919b4",
+            "inspection": "C viewed actual pixels: initial rain/header24; expired dash/empty temperature/no rain; recovered rain/header24. Card/footer readable. Day scenes do not establish all-phase Moon opacity or M0."
+          },
+          {
+            "name": "frame-00008.png",
+            "sha256": "28535e6cf8afafaa74d41c7221b72c44298a0a441abbfba1bcf8a5b9e6e9b1e4",
+            "inspection": "C viewed actual pixels: initial rain/header24; expired dash/empty temperature/no rain; recovered rain/header24. Card/footer readable. Day scenes do not establish all-phase Moon opacity or M0."
+          },
+          {
+            "name": "frame-00135.png",
+            "sha256": "f8ea10a2551f34218aadcf734195ad351ad4a523eb88d0f088008ec1d0e35c32",
+            "inspection": "C viewed actual pixels: initial rain/header24; expired dash/empty temperature/no rain; recovered rain/header24. Card/footer readable. Day scenes do not establish all-phase Moon opacity or M0."
+          }
+        ]
+      },
+      "limits": "V45 does not contain temperature null/absent/genuine0 or malformed precip string, combined actual0dBZ acquisition, or zero-axis requests. Those inputs remain unverified by this browser packet. Changed unrelated presentation/integration regions do not blanket-invalidate equivalent weather policy."
+    }
+  ],
+  "negativeControls": {
+    "executed": "See requirement matrix and exact fixture assertions; source age/boundary/future, invalid envelope/measurements, ownership races, held headers/body/Image, ordinary errors, raw clear+numeric radar, dry sparse sample, invalid runtime coordinates, current-versus-forecast and synthetic/live fences as mapped.",
+    "requiredUnexecutedMutations": [],
+    "mutationStatus": "NOT_EXECUTED_IN_THIS_AUDIT; no production file mutated."
+  },
+  "todoAccounting": [
+    {
+      "sourceLine": 524,
+      "identity": "R0003 join: obsolete acquisition cannot install/persist or clear successor attempt",
+      "disposition": "Still TODO; actual replacement D111–139 passed; not a closure blocker merely due placeholder."
+    },
+    {
+      "sourceLine": 525,
+      "identity": "R000D join: unresolving JSON and image bodies settle within accepted deadline",
+      "disposition": "Still TODO; actual D36–102 body/image deadline controls passed."
+    },
+    {
+      "sourceLine": 526,
+      "identity": "R0024 join: fresh current model eligibility remains positive while final live strong-particle permission is withheld",
+      "disposition": "Still TODO; withholding expectation explicitly superseded by owner H5/H8. P31–38/H112–140 test current allowed model effects while observation authority remains absent."
+    },
+    {
+      "sourceLine": 527,
+      "identity": "native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence",
+      "disposition": "Still TODO; mapped current browser gaps remain. Historical/native/rollout PASS cannot blanket discharge it."
+    }
+  ],
+  "historicalFailures": {
+    "source": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/receipts/historical-failures-v49-final.json",
+    "items": [
+      "R0021 old PBR source byte-identity guard",
+      "R0022 phase0.08/0.5/0.92/1,daylight,below-horizon samplers reference removed _glintEls",
+      "R0022 old PBR source byte-identity guard"
+    ],
+    "scope": "Eight failures remain failures; none is an admission/expiry/deadline/radar/coordinate/state assertion. They are not blanket blockers for these issues and not newly fixed by this audit."
+  },
+  "dependencies": [
+    {
+      "interface": "R0003 generation/source owner",
+      "assessment": "Assessed by actual source/consumer interfaces and mapped tests; administrative issue open/closed state is not used as a prerequisite."
+    },
+    {
+      "interface": "R000B source/receipt expiry",
+      "assessment": "Assessed by actual source/consumer interfaces and mapped tests; administrative issue open/closed state is not used as a prerequisite."
+    },
+    {
+      "interface": "R000C known-field units/shape admission",
+      "assessment": "Assessed by actual source/consumer interfaces and mapped tests; administrative issue open/closed state is not used as a prerequisite."
+    },
+    {
+      "interface": "R000E uncalibrated radar exclusion",
+      "assessment": "Assessed by actual source/consumer interfaces and mapped tests; administrative issue open/closed state is not used as a prerequisite."
+    },
+    {
+      "interface": "R0023 target intent/accuracy/original fix time",
+      "assessment": "Assessed by actual source/consumer interfaces and mapped tests; administrative issue open/closed state is not used as a prerequisite."
+    },
+    {
+      "interface": "R000D body/Image lifetime remains separate",
+      "assessment": "Assessed by actual source/consumer interfaces and mapped tests; administrative issue open/closed state is not used as a prerequisite."
+    },
+    {
+      "interface": "R001E zero-axis interface remains separate",
+      "assessment": "Assessed by actual source/consumer interfaces and mapped tests; administrative issue open/closed state is not used as a prerequisite."
+    },
+    {
+      "interface": "R001B disclosure remains separate",
+      "assessment": "Assessed by actual source/consumer interfaces and mapped tests; administrative issue open/closed state is not used as a prerequisite."
+    }
+  ],
+  "gaps": [
+    {
+      "obligation": "2419",
+      "status": "unmet",
+      "gap": "weatherHeader never reads spatial/horizon/forecast. For C its source title is 'SIM supported-dry; qualified synthetic present dry' while approaching exists only in QA.",
+      "limitation": "Source/contained-DOM semantic finding; no new browser pixel run. Owner amendment permits model effects; it does not remove this information-state obligation."
+    },
+    {
+      "obligation": "2420",
+      "status": "unverified",
+      "gap": "Fresh Node P 63/63, C 9/9, H 21/21 passed. Pre-H5 native smoke provides only historical partial A/B/C/lease/coverage consumer evidence. V46 rain positive crop was inspected. Full equivalent final-target A–G/added-control pixel evidence was not supplied.",
+      "limitation": null
+    },
+    {
+      "obligation": "2421",
+      "status": "unverified",
+      "gap": "P stable-input cache control passed; source adds no provider. Matched baseline CPU/memory/network measurements specific to this state scaffold were not located.",
+      "limitation": null
+    },
+    {
+      "obligation": "2422",
+      "status": "unmet",
+      "gap": "DESIGN documents the amendment. README's 'Live local weather'/auto-retry prose omits unavailable measurement/state and forecast/nearby limitations; information gap 2419 remains.",
+      "limitation": null
+    },
+    {
+      "obligation": "2425",
+      "status": "unverified",
+      "gap": "Source/consumer identity and fresh logic review are complete; surviving UI/browser/resource proof and individual primary approval remain outstanding.",
+      "limitation": null
+    }
+  ],
+  "verdict": "LEAVE OPEN",
+  "proposedNextRlgwoIncrement": {
+    "gap": "A–G logic scaffold and amended model-effect policy are implemented. Surviving nearby/approach/forecast information is absent from weatherHeader; mandatory equivalent browser/state pixels and scoped CPU/memory/network baseline proof remain unverified. README semantics are incomplete.",
+    "semanticOwner": "src/native/index.html reconcileWeatherEvidence/weatherDecision/weatherHeader/paint plus actual source adapter/target interfaces; shared DESIGN/README integrator; root generated through tools/build_native.py.",
+    "preserved": "Owner H5/H8 permission for labelled supported current-model rain/snow, unqualified live observation/spatial/arrival adapters, no observed lightning, finite/age/target/quantity gates, all positive synthetic A–G decisions.",
+    "steps": [
+      "Implement a compact accessible information state for current versus present nearby/approaching/forecast/unknown decisions; retain the approved condition icon geometry and current-model effects.",
+      "Update README/public diagnostic semantics coherently, with no arrival-service or observation claim.",
+      "Run a finite exact-source browser A–G/control matrix using admitted synthetic evidence and marked preview/live lanes; preserve card/header/footer/sun/Moon/cloud/reduced-motion behavior and verify actual particles/strikes plus information-state pixels.",
+      "Measure added reconciliation CPU/memory/network against the declared baseline and show no new provider requests/per-frame inference."
+    ],
+    "acceptance": "All 24xx obligations satisfied or narrowly amended; current/spatial/horizon/forecast remain distinct beyond debug through visible/accessibility output, full original decision/control matrix has consumer/pixel proof, unchanged sources cannot acquire live observation authority, and matched resource evidence is scoped.",
+    "nonGoals": "No new provider, live motion/arrival estimator, minutely fetch, continuous GPS, telemetry/field-study/sample programme, calibrated prediction probability or accurate-arrival guarantee. Do not revert approved model effects or demand a direct adapter for their presentation."
+  },
+  "reviewerReconciliation": "Reviewer C proof and all final binding rows independently reconciled by primary Astra; primary approves recorded disposition. Posting/closure remain separate held effects pending immutable evidence commit and per-file hash approval.",
+  "prohibitedEffectsObserved": "None: no source/generator/shared fixtures/main/V1/PR38 changes, build, browser launch, terrain solver, provider call, Git index/commit/push, GitHub write or new subagent.",
+  "followup": {
+    "authorizedBy": "Primary bounded mutation/resource and fixture-preparation messages",
+    "mutationReceipt": "mutation-receipts.json",
+    "browserPreparation": "browser-fixture-preparation-v2.json",
+    "browserDriver": "run_weather_browser_v2.py",
+    "browserExecutionByC": false,
+    "originalFailure": "browser14-chromium/results.json (V1 harness failure, retained; not product counterexample)",
+    "sourceMutation": false,
+    "effectiveConfig": {
+      "model": "gpt-6.1-sol",
+      "reasoningEffort": "max",
+      "confirmation": "CONFIRMED RECORDED CLIENT TURN CONFIGURATION",
+      "basis": "Supported spawn configuration and recorded local turn_context; not independent hardware/backend attestation",
+      "source": "reviewer-model-settings.json",
+      "sourceSha256": "183999c426f808271a5ebbcc529daed738b528b5bda6cc6c25dadf29a1947235",
+      "agentPath": "/root/rlgwo_c",
+      "sessionId": "01a11e26-4326-7601-8c59-e1f5e4350df4",
+      "turnIds": [
+        "01a11e26-43ea-7172-a508-366aa06d28ee",
+        "01a11e40-a7ac-7bd0-a150-a29378fe4034"
+      ]
+    }
+  }
+}

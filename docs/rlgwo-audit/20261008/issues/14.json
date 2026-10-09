@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:31.388889+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/14",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/14/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/14/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/14/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/14",
+    "id": 5381806140,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfYPA",
+    "number": 14,
+    "title": "R000E: Stop interpreting radar alpha density as quantitative storm-strength evidence",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:31Z",
+    "updated_at": "2026-09-08T06:24:56Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-014 -->\n# R000E: Stop interpreting radar alpha density as quantitative storm-strength evidence\n\n**Repository-local identity:** `R000E` in `theislampill/salah_widget`; existing tracker [#14](https://github.com/theislampill/salah_widget/issues/14). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-014. Proposed priority P1; product defect. W006 owns the meaning of radar evidence at the sampler/gate boundary. Freshness stays with [R000B](https://github.com/theislampill/salah_widget/issues/11), lifetime with [R000D](https://github.com/theislampill/salah_widget/issues/13), and request identity with [R0003](https://github.com/theislampill/salah_widget/issues/3). No provider migration or quantitative rainfall estimator is authorized.\n\n## A documented approximation defeats its own guard\n\nThe code already documents an uncalibrated alpha-density proxy. The defect is the stronger claim that it is safe because radar only confirms an existing precipitation code. If the raw model code overcalls thunder, weak radar evidence can prevent the intended downgrade. “Never create rain from clear” is a useful control, but it does not validate the evidence used to retain thunder.\n\nThe saved source-executing probe used the provider's scheme-2 Universal Blue palette, a uniform 256×256 tile, the actual 7×7 sampler, current frame time, and `gateWeatherCode(95,{precip:0,cloud:95},radarPrecipNow())`. Both main `fd2972ba64225fe9d6848e92497e6d0ed20ea624` and candidate `9d9c43649748555afbe09e3ca49bc47db2d7e7bb` returned:\n\n| Reflectivity row | Provider RGBA | Historical proxy value labelled mm | Final gate code |\n|---|---|---:|---:|\n| 0 dBZ | `[130,123,105,73]` | 1.2309803921568627 | 95 |\n| 15 dBZ | `[136,221,238,255]` | 4.3 | 95 |\n| 20 dBZ | `[0,163,224,255]` | 4.3 | 95 |\n| 45 dBZ | `[255,68,0,255]` | 4.3 | 95 |\n| Transparent/no data control | `[0,0,0,0]` | 0 | 3 |\n\nThese are historical controlled RGBA/gate outputs, not measured rain or a local storm. Palette rows and provider semantics were preserved on 7 September 2026 from [the RainViewer colour table](https://www.rainviewer.com/files/rainviewer_api_colors_table.csv) and [maps API](https://www.rainviewer.com/api/weather-maps-api.html). They are not freshly revalidated provider content in this authoring pass.\n\nThe cause is exact: [`fetchRadar`](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L825-L837) ignores RGB and counts pixels with `alpha>40`; with at least three returns it calculates `(0.3+4.0*coverage)*meanAlpha`. For a uniform tile coverage=1, so 0 dBZ yields `4.3*73/255`, and every opaque colour yields 4.3. [The gate](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1432-L1451) takes `max(modelPrecip,radarMm)` and compares it to 0.05 mm and 0.8 mm. An opacity score is thereby treated as the same physical quantity as model interval precipitation.\n\nThe public [DESIGN statement](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md#L187-L197) claims safety under confirm-only/fail-closed. The clear-code control does hold: raw 0 plus radar scalar 5 remains 0. The dry thunder control without radar becomes 3; model precipitation 0.3 downgrades thunder to rain code 63; model precipitation 2 retains 95. Preserve those controls while removing the unsupported comparison.\n\nThere is a second limitation, not a new repair owner: the saved sparse fixture uses a dry centre pixel and three echoes at offsets `(3,3),(3,2),(2,3)`. At Madinah and zoom 6, the probe estimates 2,226.282331443378 ground metres per pixel. It returns 0.5448979591836735 and retains raw rain 63. A neighbourhood can contain echoes several kilometres away while the site pixel is dry. This supports cautious terminology; it does not authorize a geographic coverage redesign.\n\n## Re-anchor and reproduce without private infrastructure\n\nBind authorized checkout root, HEAD and dirty paths using `git --no-optional-locks rev-parse --show-toplevel`, `rev-parse HEAD`, `status --short` and `diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- index.html tests/smoke.html DESIGN.md README.md`. Reconcile changed sampler/gate interfaces before editing. [Candidate sampler/gate source](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html) is a preserved comparison, not a whole-branch adoption instruction.\n\nIn an isolated fixture execute the actual `fetchRadar`, `radarPrecipNow` and `gateWeatherCode` declarations. Freeze `NOW=Date.parse(\"2026-09-07T21:00:00Z\")` and `lat=24.47,lon=39.61,SIM.wx=null`. Stub fetch with status-200 manifest:\n\n```js\n{\n  generated: NOW / 1000,\n  host: \"https://tilecache.rainviewer.com\",\n  radar: {past: [{time: NOW / 1000, path: \"/v2/radar/\" + NOW / 1000}]}\n}\n```\n\nResolve Image load and have `getImageData(0,0,256,256).data` contain each table RGBA at every pixel. Call `fetchRadar()`, then the gate expression above; reset the fixture or advance 600,001 ms between tiles so the existing radar throttle does not skip them. Repeat with transparent pixels and clear raw code. The specific output values demonstrate the wrong physical equivalence without needing a screenshot to infer it. A public browser crop is still required before claiming rendered correction.\n\n## Chosen minimal route: withdraw unsupported radar authority\n\nChoose fail-closed radar contribution for this repair. Keep model-current quantitative precipitation policy and the raw categorical prerequisite. No new reflectivity decoder or threshold is a hidden prerequisite to close the existing defect.\n\n1. At the existing sampler/accessor boundary, stop producing a precipitation-in-mm authority value from alpha/density. A successful readable tile can retain frame provenance and a clearly unitless diagnostic such as return-pixel count/coverage; it cannot supply the scalar used by the current precipitation gate. Keep fetch/ownership/deadline/source-age behavior in the existing acquisition path so sibling changes do not become stranded. A separate network-elimination optimization is not part of this owner.\n\n2. Update the actual `gateWeatherCode` consumer and diagnostics together. The legacy numeric third argument must no longer preserve rain or thunder merely by being positive; ignore unsupported numeric radar evidence. The gate continues to use an admitted fresh model-current precipitation amount from [R000B](https://github.com/theislampill/salah_widget/issues/11)/[R000C](https://github.com/theislampill/salah_widget/issues/12). Retaining the callable third parameter as a compatibility shim is acceptable if all numeric radar arguments contribute zero and tests prove that; do not leave an alternate direct caller able to bypass the disabled accessor.\n\n3. Replace misleading diagnostics at [`qaState().wxTruth`](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2052-L2057): `effectivePrecipMm` must describe only supported model interval precipitation under the chosen route. No alpha value may be emitted as `radarPrecipMm`, included in `observedPrecipMm`, or interpolated into `[radar …mm]` downgrade text. For compatibility, the legacy radar-mm field may temporarily remain zero with an explicit unsupported-semantics reason and a unitless provenance/diagnostic field; document the field transition and ensure internal/tests consumers stop depending on a fake measurement. New names are proposed implementation details, not already-present APIs.\n\n4. Correct [DESIGN](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md#L179-L197), [README](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/README.md), comments and [smoke expectations](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/tests/smoke.html#L116-L121) that call the scalar rain millimetres or “heavy radar.” Explain the public behavior change: model-dry rain/thunder codes previously retained by the proxy now downgrade; fresh model wet evidence remains usable. This is deliberate conservative loss of radar confirmation, not proof that dry weather is observed.\n\nIf preserving categorical radar confirmation is required by the future implementing owner, stop at this explicit design alternative before adopting it. It requires demonstrating the actual palette version, RGB→reflectivity decoding, `/2/1_1.png` smoothing/no-data treatment, neighbourhood policy and conservative supported-vs-unavailable decision, with positive and negative fixtures. RainViewer smoothing blends colours; exact lookup on blended RGB can invent values. Reflectivity support alone does not validate on-site rainfall or lightning, and a positive category must never be compared to the 0.8 mm storm threshold. [NWS radar guidance](https://www.weather.gov/iwx/wsr_88d), preserved during the original audit, supports caution about weak/nonprecipitation returns; it does not supply a universal threshold. There is no admitted calibrated categorical positive fixture in this evidence packet, so fail-closed is the executable default.\n\nA tempting weaker fix would rename `mm` to “score” but keep `max` and 0.8 comparisons; that changes prose while preserving the false retention. Raising alpha/count thresholds cannot distinguish the identical-opacity 15/20/45 dBZ tiles. A dBZ-to-rain-rate formula requires calibration assumptions and expands the repair. Removing the raw-code prerequisite would let radar fabricate a storm category and violate an already-passing control.\n\n## Final-tree test matrix and public effects\n\nAll following GREEN/mutation/browser checks are proposed, not previously run.\n\n| Fixture/control | Required result for the selected fail-closed route |\n|---|---|\n| All five palette tiles, raw 95/model precip 0/cloud 95 | Gate 3, no thunder; stored/diagnostic alpha never becomes mm |\n| 15 vs 20 vs 45 dBZ identical alpha | No equality claim about physical intensity; all remain unavailable confirmation until justified decoding exists |\n| Raw rain 63/model precip 0 plus numeric radar 2 | Gate 3 for cloud 95; legacy numeric argument cannot bypass containment |\n| Raw 95/model precipitation 0.3/cloud 95 | Gate 63, preserving model-based downgrade |\n| Raw 95/model precipitation 2/cloud 95 | Gate 95 under fresh/admitted current control |\n| Raw clear 0 plus any tile or numeric third argument 5 | Remains 0 |\n| Three nearby returns with dry centre | No on-site/quantitative claim, no confirmation under this route |\n| Transparent/missing frame, image error, canvas failure, SIM | Unavailable radar contribution; no crash or stuck attempt |\n| Repeated old frame/future frame/expired retrieval | No authority; retained provenance obeys [R000B](https://github.com/theislampill/salah_widget/issues/11) and diagnostics do not call it current |\n\nMutation controls restore the alpha formula's contribution at the accessor and separately restore direct third-argument acceptance in the gate; each must fail the corresponding table rows. A unit test that merely returns zero from a replacement fake accessor does not exercise the source fix.\n\nUse one disposable browser owner to load the actual acquisition fixture with raw 95, model precipitation 0 and uniform 0 dBZ, then a fresh model-wet control. Capture weather chip/title, actual `.c.dataset.fx` and absence/presence of rain/lightning in the appropriate scene. No shader/optics redesign is needed. Preserve header/footer readability, opaque moon, fixed 325×530 layout and ordinary live motion; scalar metrics alone do not certify pixels.\n\n## Boundaries, rollback and DONE\n\nQualification from [R000B](https://github.com/theislampill/salah_widget/issues/11) remains explicit for any retained radar evidence; fail-closed default does not secretly remove that accepted relationship. Shared radar/gate writes coordinate with [R0003](https://github.com/theislampill/salah_widget/issues/3), [R000B](https://github.com/theislampill/salah_widget/issues/11), [R000D](https://github.com/theislampill/salah_widget/issues/13) and [R001E](https://github.com/theislampill/salah_widget/issues/30); use one integrator for production hunks and shared docs/tests. No new edge, provider, credential, library, builder setting, installer/preset update or persisted schema is proposed.\n\nContainment rollback is to keep radar's gate contribution disabled if replacement semantics remain unproved. Never restore pseudo-mm labels or alpha-as-storm evidence merely to satisfy old tests. If model-wet controls fail, revert the affected gate changes while preserving the unsupported-radar exclusion and expose the failing fixture. Partial state “labels corrected, numeric contribution still active” cannot close.\n\nDONE requires final integrated RED→GREEN and mutation/control evidence, independent review of accessor/direct-gate/diagnostic reachability, and an evidence comment before manual closure. Use non-closing `Implements #N`. Match served source and controlled consumer output before claiming public repair; otherwise report local/not deployed. No real precipitation or storm-observation guarantee is part of acceptance.\n\nSupplementary companion `basis/finding-records/SW-014.json`, SHA256 `14f50398faaf92d4c0bb787be3f321ee971b7f069763133752c6c9a6eeaeea0d`, retains W006 and counterexamples W008/W011/W013/W014. It does not provide a calibrated radar replacement.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/14/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/14/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733533663,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfYPM8AAAAHJ9yB3w",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733533663",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:56Z",
+      "rename": {
+        "from": "SW-014: Stop interpreting radar alpha density as quantitative storm-strength evidence",
+        "to": "R000E: Stop interpreting radar alpha density as quantitative storm-strength evidence"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R000E",
+    "bodySha256": "8bd168dd271f521541528b4fc25823a80768c95eafffe4219bc4614a4a19998a",
+    "updatedAt": "2026-09-08T06:24:56Z",
+    "commentRevisions": []
+  }
+}

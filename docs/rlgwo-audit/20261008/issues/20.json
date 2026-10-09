@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:32.080254+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/20",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/20/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/20/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/20/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/20",
+    "id": 5381807170,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfcQg",
+    "number": 20,
+    "title": "R0014: Repair PowerShell minimum-host parsing and release-asset selection",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:42Z",
+    "updated_at": "2026-09-08T06:25:10Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-020 -->\n# R0014: Repair PowerShell minimum-host parsing and release-asset selection\n\n**Repository-local identity:** `R0014` in `theislampill/salah_widget`; existing tracker [#20](https://github.com/theislampill/salah_widget/issues/20). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-020. Product defect; proposed priority P1. The exact downloaded file must parse on declared Windows PowerShell 5.1, and valid release assets must reach the manual-install path. VAL-005 establishes a file-decoding failure before execution; VAL-004 independently establishes a selector failure after parsing. Repair both. A newer host or successful store fallback can hide one failure without fixing it.\n\n## Baseline and evidence custody\n\nHistorical source: main `fd2972ba64225fe9d6848e92497e6d0ed20ea624`, candidate `9d9c43649748555afbe09e3ca49bc47db2d7e7bb`. Both produced the same selector exception. Before future edits, bind the authorized checkout and preserve unrelated work:\n\n```text\ngit --no-optional-locks rev-parse --show-toplevel\ngit --no-optional-locks remote get-url origin\ngit --no-optional-locks status --short --branch\ngit --no-optional-locks rev-parse HEAD\ngit --no-optional-locks diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 HEAD -- install.ps1 README.md builder.html\n```\n\nRequire the intended `theislampill/salah_widget` target and inspect any changed encoding, selector, callers and advertised host. Stop on incompatible drift; do not assume the old defect survives at a future HEAD. The candidate is not approved for wholesale adoption.\n\nOwners are [install.ps1 exact file/minimum-host declaration](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/install.ps1#L1-L26), [Select-TablissNgAsset](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/install.ps1#L314-L339), [download/manual/fallback consumers](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/install.ps1#L341-L503), [the non-ASCII display string](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/install.ps1#L527-L535), [README Windows route](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/README.md#L41-L68) and [builder Windows command](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L344-L357). [Candidate installer](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/install.ps1) is comparison evidence.\n\n## What actually failed, and competing interpretations\n\nThe 7 September controlled native-host probe recorded Windows PowerShell `5.1.26100.9168` and PowerShell `7.6.5`. On 5.1, `Parser.ParseFile` over the BOM-less UTF-8 file returned four errors, at source lines 535, 535, 583 and 527: unexpected `{`, missing `)`, missing string terminator, missing `}`. Its initial bytes were `35,32,83`, not a UTF-8 BOM. Explicit UTF-8 `ReadAllText` followed by `ParseInput` returned zero errors; PS7 `ParseFile` also returned zero. This differential ties the failure to exact file decoding. It does not establish that README’s `irm | iex` response-string route fails identically, and it does not make a PS7-only parse an acceptable 5.1 gate.\n\nThe independently extracted selector was given `tabliss-chromium.zip` and `tabliss-firefox-signed.xpi` as in-memory release assets. On both hosts and both source trees it threw `Cannot convert 'System.Object[]' to the type 'System.String' required by parameter 'Property'. Specified method is not supported.` The comma after each `Where-Object` pipeline inside `@(...)` changes argument binding; this is not a missing upstream release or failed download. `Install-TablissNG` catches the exception and offers a store, so observing a store prompt would not prove valid GitHub selection.\n\nNo whole wizard, download, store opening, browser profile mutation or extension installation was executed by this evidence. Four independent combinations of tree/family share the same implementation and are not four independent defect mechanisms.\n\n## Public RED recipe: exact bytes plus bounded selector\n\nSave this as `red-powershell.ps1` outside the source checkout. Execute it with both actual hosts, supplying an absolute source file path:\n\n```powershell\npowershell.exe -NoProfile -File .\\red-powershell.ps1 -SourceFile C:\\fixture\\install.ps1\npwsh.exe -NoProfile -File .\\red-powershell.ps1 -SourceFile C:\\fixture\\install.ps1\n```\n\nThe fixture does not execute installer top level or call a remote API. Its text is ASCII-safe so the fixture itself does not reproduce the decoding mistake accidentally.\n\n```powershell\nparam([Parameter(Mandatory=$true)][string]$SourceFile)\n$ErrorActionPreference = 'Stop'\n$tokens=$null; $fileErrors=$null\n$null=[System.Management.Automation.Language.Parser]::ParseFile(\n  $SourceFile,[ref]$tokens,[ref]$fileErrors)\n$text=[IO.File]::ReadAllText($SourceFile,[Text.Encoding]::UTF8)\n$tokens=$null; $textErrors=$null\n$ast=[System.Management.Automation.Language.Parser]::ParseInput(\n  $text,[ref]$tokens,[ref]$textErrors)\nif (@($textErrors).Count) { throw 'Unexpected source syntax drift' }\n$defs=@($ast.FindAll({param($n)\n  $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and\n  $n.Name -eq 'Select-TablissNgAsset'\n},$true))\nif ($defs.Count -ne 1) { throw 'Selector identity mismatch' }\n. ([scriptblock]::Create($defs[0].Extent.Text))\nfunction Get-LatestRelease {\n  [pscustomobject]@{tag_name='fixture'; assets=@(\n    [pscustomobject]@{name='tabliss-chromium.zip'; browser_download_url='https://example.invalid/chromium'}\n    [pscustomobject]@{name='tabliss-firefox-signed.xpi'; browser_download_url='https://example.invalid/firefox'}\n  )}\n}\n$rows=foreach($family in 'chromium','firefox') {\n  try {\n    $chosen=@(Select-TablissNgAsset $family)\n    [pscustomobject]@{family=$family; result='selected'; count=$chosen.Count; names=@($chosen.name)}\n  } catch {\n    [pscustomobject]@{family=$family; result='threw'; error=$_.Exception.Message}\n  }\n}\n[pscustomobject]@{\n  host=$PSVersionTable.PSVersion.ToString()\n  fileErrors=@($fileErrors).Count\n  fileErrorLines=@($fileErrors | ForEach-Object {$_.Extent.StartLineNumber})\n  explicitUtf8Errors=@($textErrors).Count\n  cases=@($rows)\n} | ConvertTo-Json -Depth 6\n```\n\nAt the pinned RED baseline: 5.1 fileErrors=4, explicitUtf8Errors=0; PS7 both=0; both families throw the Property-binding error on both hosts. Extracting from explicit UTF-8 text is intentional isolation of the second defect, not a replacement for the exact-file parser gate. Run final GREEN against the repaired file and, when distribution is claimed, against bytes freshly read from the authorized raw-script endpoint. Never resave that downloaded copy through a text editor before hashing and parsing it.\n\n## Staged implementation design\n\n**1. Repair byte interpretation without raising the floor.** Keep `#requires -Version 5.1`. Prefer making the installer source ASCII-safe: replace the decorative em dash in the quoted status line with ` - `, inspect remaining non-ASCII bytes, and normalize only display/comment text needed for this policy. Preserve variable-expanded Unicode browser/profile paths and preset/config strings; source encoding policy does not mean transliterating user data. A byte scan of the final distributed script must find no byte above 127 if this option is selected. A UTF-8 BOM is a viable competing policy, but it relies on every distribution/rewrite step retaining that marker; choose it only with a byte-preservation gate. Raising the minimum to PS7 transfers avoidable installation work to users and evades the admitted 5.1 contract.\n\nIntermediate acceptance: final file parses on both native hosts before any whole-entry fixture is credited. Keep the pre-repair bytes as the RED discriminator. `ParseInput` remains an explanation control, never the sole acceptance gate.\n\n**2. Repair ordering at the existing selector.** Remove pipeline-separating commas and emit each candidate pipeline as a separate statement inside `@(...)`, or concatenate separately parenthesized arrays. Prefer the former: each complete pipeline contributes zero or more objects in stable order without additional state. Keep `Select-Object -First 1` and exactly one returned object after flattening; diagnostics go through `Write-Host`/warning channels, not the success pipeline. Preserve existing source order within each preference tier.\n\nThe retained tier contract is precise:\n\n| Family | Tier precedence | Exclusions |\n|---|---|---|\n| Chromium | ZIP name matching `chrom(e|ium)`, then a `tabliss*.zip` fallback | Names containing firefox, safari or source |\n| Firefox | XPI with signed/firefox in name, then other XPI, then firefox ZIP fallback | Names containing unsigned or source |\n\nThese are filename filters. They neither verify a signature nor prove the fallback Firefox ZIP is installable through “Install Add-on From File”. The earlier phrase “signed Firefox requirements” must not become a new cryptographic claim. Retain rejection of explicitly unsigned/source builds and the current preference semantics in this repair. If the owner wants to prohibit generic XPI or ZIP fallback, that needs a separately stated compatibility/security decision; do not silently change those tiers while fixing syntax.\n\n**3. Qualify the consumer without letting catch hide failure.** Invoke `Install-TablissNG` in an effect-stubbed fixture after parsing succeeds. With the valid release fixture, assert `Download-Asset` receives exactly the selected object; Chromium reaches `Expand-ChromiumAsset` with the returned path and Firefox reaches its existing manual path. Replace `Open-TargetUrl`, `Copy-Text`, `Read-Host`, downloads and extraction with in-memory spies. Record which branch ran. Valid assets must never hit the “Falling back” path. Empty/no-match releases may reach fallback, with an honest unavailable diagnostic. Unsupported family remains an error. A network/auth failure remains a network/auth failure, not “installed”.\n\n**4. Update distribution-facing claims as a unit.** Keep the README’s response-string route and the script’s review/download/`-File` route accurate, including the exact supported host and manual action boundary. Change builder Windows command only if its actual invocation changes; do not churn the encoded hash grammar or preset content. IMPLEMENTAUDIT R001D applies to exact distributed bytes and usage prose, not merely a local syntax result. IMPLEMENTAUDIT R001E applies to the native parser fixture and actual selector caller, preventing unused test helpers from standing in for entry qualification.\n\n## Deterministic GREEN and mutation controls\n\n| Fixture | Required result |\n|---|---|\n| Exact final file on PS5.1 and PS7 | Zero ParseFile errors; explicit UTF-8 control also zero; record host version, file SHA256 and encoding policy. |\n| Valid Chromium ZIP + signed Firefox XPI | One object per family with the exact appropriate name and URL; no fallback. |\n| Put `tabliss.zip` before `tabliss-chromium.zip` in source array | Chromium-specific tier still wins despite array order. Reverse within one tier to verify stable source order. |\n| `source.zip`, `tabliss-firefox-unsigned.xpi`, `safari.zip`, competing family | These never displace a valid same-family asset. Only unsuitable assets produces the existing no-safe-asset error. |\n| Empty assets; unsupported `safari`; metadata exception | Defined rejection; stubbed manual store fallback only where the actual caller owns it. No download/open occurs accidentally. |\n| Generic XPI / Firefox ZIP only | Explicitly characterize retained fallback selection; do not label signature authenticity or browser installability PASS. |\n| Paths/config containing spaces and Unicode | Caller receives unchanged strings, despite ASCII-safe script source. |\n| Reinsert comma; restore original BOM-less non-ASCII bytes | Selector and native file gate respectively fail. Neither PS7 parsing nor catch/store success can mask those mutants. |\n\nWhole-file `-File` entry proof needs a disposable, fully effect-stubbed/native environment. Its setup must intercept `New-Item`, profile discovery, web requests, clipboard, process launch, extraction and deletion before top-level execution; do not launch the current installer against the owner’s profiles merely to show that parsing works. Host unavailability is an open native qualification gap, not a skipped PASS.\n\n## Siblings, rollback and DONE\n\nNo hard whole-issue predecessor is introduced. [R0016](https://github.com/theislampill/salah_widget/issues/22) already consumes this work’s qualification contract for Windows no-effect preview. Agree the source owner for final `install.ps1` integration: its effect guards must not reintroduce a non-ASCII parsing problem or alter selector output, and this issue must not absorb its dry-run work. [R0013](https://github.com/theislampill/salah_widget/issues/19) owns Bash. Shared README/test insertions use the designated integrator. No new edge or broad platform campaign is needed.\n\nPreserve manual extension installation, explicit dashboard-replacement warning, builder config carry-through, the preset’s 325×530 iframe and permission scope. Roll back the bounded encoding/selector patch and matching tests if a supported artifact path regresses, but remove any unsupported host claim at the same time. Keep actual downloaded/manual assets; no cleanup or profile rollback belongs to this authoring issue. Stop on incompatible drift, absent minimum-host qualification, broken selector controls or unresolved Firefox policy changes.\n\nDONE requires final-tree RED→GREEN/control evidence on both claimed hosts, exact-byte identity, consumer branch proof, and an evidence comment before manual closure. Where publication/distribution is claimed, additionally bind the authorized raw-script readback to those bytes; a local fix does not prove public replacement. Use non-closing `Implements #20` PR wording. A work-order publication, parser success, selected asset, downloaded file and installed extension remain distinct outcomes.\n\nMethodology references (separate repository, not Salah work owners): [R001D in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/155), [R001E in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/157).\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/20/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/20/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733544240,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfcQs8AAAAHJ9yrMA",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733544240",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:10Z",
+      "rename": {
+        "from": "SW-020: Repair PowerShell minimum-host parsing and release-asset selection",
+        "to": "R0014: Repair PowerShell minimum-host parsing and release-asset selection"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0014",
+    "bodySha256": "b81dff79f973bcedc7889c7119490730b86358215588554e09d70c3133effa5d",
+    "updatedAt": "2026-09-08T06:25:10Z",
+    "commentRevisions": []
+  }
+}

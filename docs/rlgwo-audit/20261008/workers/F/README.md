@@ -1,0 +1,7 @@
+# Reviewer F final bounded follow-up
+
+Source target 18ff14860ff41c084b1db5f396bb62aa9c22b1be; tree 35208181eea714c17f5e77b2644e76434345db60; runtime f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260. All original packets read. F owns only this directory. Source stayed clean; no production/GitHub/commit effects.
+
+F ran authorized lightweight source/VM controls. Primary ran all browsers serially; F inspected receipts and crops. Native radio V2 both engines and actual current-surface opt-in sampler complete #26/#29 recommendations. #33 explicitly carries the new verified owner first-complete celestial scene successor. #24 direct default-policy gap remains without an invented owner decision; #34 legitimate astronomy is separated from false calendar light. See per-issue complete matrices/comments and summary.json.
+
+Initial packets are preserved in pre-followup. Prepared V1/V2 radio fixtures are retained for receipt hash custody; no browser was launched by F. Sol6.1/max confirmed by recorded client configuration, without hardware/backend attestation. Primary Astra independently reconciled all65 mandatory rows and conclusions. Final publication text includes AUDIT_EVIDENCE_COMMIT placeholders; exact comment hash approval remains false until the primary substitutes the immutable evidence SHA. Comments must precede any approved closure. No GitHub effects have occurred.

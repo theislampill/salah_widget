@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:29.992674+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/6",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/6/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/6/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/6/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/6",
+    "id": 5381804469,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfRtQ",
+    "number": 6,
+    "title": "R0006: Bound prayer attempts and recover cold-load and tomorrow failures without request storms",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:17Z",
+    "updated_at": "2026-09-08T06:24:39Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-006 -->\n# R0006: Bound prayer attempts and recover cold-load and tomorrow failures without request storms\n\n**Repository-local identity:** `R0006` in `theislampill/salah_widget`; existing tracker [#6](https://github.com/theislampill/salah_widget/issues/6). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-006. Existing corrective owner: GitHub #6. Proposed priority P1; product-or-skill defect. This issue plans three required liveness subcases; filing it proves none repaired and authorizes no execution or deployment.\n\n## What the captured failures actually establish\n\nBoth main `fd2972ba64225fe9d6848e92497e6d0ed20ea624` and candidate `9d9c43649748555afbe09e3ca49bc47db2d7e7bb` await prayer loading before starting the render loop. In PROVIDER-03, a never-settling fetch produced one request, no deadline/abort signal, and no completion/error/loop startup during the bounded observation. The source has no application-level bound. This establishes an indefinitely pending path, not a measured real-service outage duration.\n\nWhen all three cold-load attempts reject promptly and no cache exists, both show `Could not load prayer times` and leave `today=null`. After the fixture became healthy, exact loop opportunities at 0, 1 second, 60 seconds, 5 minutes and 1 hour made no additional requests; the date lane also observed no new request over 62 simulated minutes. Manually invoking the actual `loadPrayerData()` produced request 4 and succeeded. Recovery was available but unscheduled. A render loop existing somewhere in source is not evidence that missing data can reach its fetch path.\n\nThe tomorrow path has the opposite problem. Main becomes eligible immediately after each exhausted retry operation. Keep the measurements distinct: DATE-011's ten high-level opportunities called `fetchTimings` ten times on main versus once on candidate; PROVIDER-05's sixteen opportunities every four seconds through 60 seconds produced 48 low-level fetch calls versus 6, with retry sleeps recorded and immediately resolved; PERF-002's 66 opportunities across 65 virtual seconds, using actual source retry delays, produced **65 requests on main versus 6 on candidate**, whose operations started at 0 and 60000 ms. These are different controlled schedules, not interchangeable counts of one experiment. The candidate's 60-second gate is useful evidence, not whole-branch adoption authority.\n\nA healthy transient control already works: two rejected attempts, backoff requests 900 and 1800 ms, then valid data on attempt 3. Preserve it. The issue owns finite attempt lifetime, same-day cold recovery and bounded prefetch eligibility together; fixing only one leaves a material liveness failure.\n\n## Source and re-anchoring boundary\n\nRecord checkout/HEAD/dirty state with `git -C C:\\workspace\\ai\\salah_widget rev-parse --show-toplevel`, `rev-parse HEAD`, `status --short`, and `diff -- index.html tests/smoke.html`, using that same `git -C` prefix. Compare [fetch/retry](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L743-L757), [prefetch](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1986-L1990), [load/apply awaits](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2143-L2179), [boot and loop](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2215-L2273), and [candidate throttle](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L2014-L2019). Stop if current code materially changes operation ownership, boot readiness or scheduling. Preserve unrelated dirty files and no-commit policy.\n\n## Proposed policy, state transitions and integration order\n\nUse the existing three-attempt operation, existing 900/1800 ms backoffs, existing loop/visibility handling and existing 60000 ms retry cadence. Add **10000 ms per attempt** as an initial implementation policy. It is a design choice, not a provider guarantee or historical measured latency. The nominal longest three-timeout operation is `10000 + 900 + 10000 + 1800 + 10000 = 32700 ms`, excluding event-loop scheduling. JavaScript timers do not preempt synchronous parsing or a blocked event loop; never advertise this as a hard real-time CPU bound. Nonfinite model containment remains [R0002](https://github.com/theislampill/salah_widget/issues/2).\n\n1. Obtain the generation/operation/attempt contract from [R0003](https://github.com/theislampill/salah_widget/issues/3). An operation owns the today/rollover/prefetch slot across its retries; each attempt owns its controller/deadline. A timeout terminalizes the attempt and prevents its later body from adopting. An obsolete generation stops retrying and may settle only its own operation. This dependency is required before integrating shared `finally` and busy-state changes.\n2. Start a deadline before fetching; race the complete asynchronous `fetch → response body → parse/admission completion` chain against it, rather than clearing the timer when headers arrive. Abort on expiry where supported, while identity guards reject any late success even if cancellation is ignored. Clear the attempt timer in all terminal paths. Attach rejection handling to late promises so timeout recovery does not create unhandled rejections. A synchronous admission error uses the same bounded retry/error exit; successful admission still requires the separate request/day contract.\n3. Preserve at most three low-level attempts. With failure 1, wait 900 ms; with failure 2, wait 1800 ms; after failure 3 settle the operation as failed. A successful attempt terminates retries immediately. Do not start another low-level attempt while the previous one remains eligible. Aborted superseded work must not consume B's budget or clear B's slot.\n4. Represent the existing outer scheduling decision by generation, requested civil day, owning operation and next eligible real elapsed time. Reuse `_RAFNOW()` for elapsed eligibility when `performance.now()` is available, and the existing retry duration; simulated time is not an acquisition scheduler. This prevents a `timeScale` sweep or frozen `simTime` from distorting retry cadence and avoids wall-clock steps postponing a retry for an hour. Retain the existing fallback host limitation if only Date.now is available; qualify that host separately rather than claim monotonic behavior there. No second timer service is needed.\n5. Record the next operation-start eligibility when an operation starts: `startElapsed + 60000`. Busy ownership separately prevents overlap. If an operation settles at 32700 ms, it remains in cooldown until 60000 ms; an early success can populate a reusable record immediately. If the document is hidden or offscreen, existing loop cancellation remains in force. On the first resumed eligible callback, schedule one operation, not one for every missed minute. There is no promise of background recovery while the loop is paused.\n6. Make cold-load failure an explicit recoverable condition in the existing loop: usable coordinates + no valid current data + no owning operation + cooldown elapsed permits `loadPrayerData`/current-day acquisition. It must run even when `render()` returns early for `today=null`, and must not depend on the date changing. After the finite initial load settles, boot/apply can start or retain the existing loop; a loading/error view must not fabricate prayer times. A current-day cache remains usable if refresh fails. A healthy response invalidates the error/data consumer and resumes the normal prefetch path.\n7. Give tomorrow eligibility its requested-day identity. Healthy matching tomorrow data suppresses further fetches. A failure releases only the operation slot, preserves cooldown, and becomes retryable later. New config/day resets the appropriate eligibility once, not every render. Promotion and late reclassification from [R0005](https://github.com/theislampill/salah_widget/issues/5) may satisfy current data or make the next day eligible; they do not reset unrelated active operations. Existing rollover cooldown follows the same ownership/real-elapsed rules where shared hunks need integration.\n\nObservable operation states are `eligible → attempt 1 → backoff → attempt 2 → backoff → attempt 3 → failed/cooldown → eligible`, with success or supersession terminal exits from any active attempt. UI state is distinct: a failed refresh may retain valid cache, while a failed cold load remains unavailable. Slot state is also distinct: a stale result can settle its own promise without being allowed to adopt or release a newer slot.\n\nA bare `AbortController` does not bound a stalled body or ensure settlement. A deadline around headers alone leaves `r.json()` hanging. Starting a new outer operation on every frame defeats the three-attempt bound. A permanent failure bit solves the storm by recreating the cold-load dead end. A new global scheduler, automatic page reload, manual-refresh feature or complete offline app is unnecessary for these witnesses.\n\n## Exact future verification matrix\n\nAll new results below must be produced on the final integrated tree; historical results above were controlled source execution, not browser PASS. Use actual source callers, virtual timeout/backoff scheduling, in-memory cache and deferred headers/body promises. Never change the host clock or the owner's storage.\n\n| Input schedule | Expected repaired events and control |\n|---|---|\n| Headers never settle | Attempt 1 expires at nominal 10000 ms; attempts 2/3 follow after 900/1800 ms; no more than 3 attempts before operation settles nominally by 32700 ms. Owning busy state releases, timer registry has no live attempt timers, boot becomes able to start loop/error state. |\n| Headers resolve immediately; body never settles | Same bound and release behavior. A headers-only timeout mutation must fail this row. |\n| Body succeeds after its deadline; or old timeout fires after B starts | Late A cannot mutate current data, cache, error or B busy state. Current B success control still commits. |\n| Two prompt failures, third valid record | Three calls; requested backoffs exactly 900/1800 ms; valid record commits once; no fourth retry. |\n| No cache, all initial attempts fail; restore network before elapsed 60000 ms on same day | No per-frame calls during cooldown; first eligible visible opportunity at/after 60000 starts one operation and its healthy first response loads without reload or midnight. Capture request 4 and rendered recovery. |\n| Same test with cache present and healthy | Cache paints through allowed admission; failed refresh does not blank it. No false “network current” claim. |\n| Immediate failures with true virtual timer advancement and 66 opportunities t=0…65000 ms | Start operations only at 0 and 60000 ms if both are eligible and no data succeeds; at most 6 low-level calls. Record starts/attempts/waits separately. Compare the original source's saved 65 versus 6 witness using equivalent actual backoff accounting. |\n| After successful tomorrow load, continue opportunities | Zero redundant tomorrow requests while the matching day record is usable. After promotion, the new nextDay becomes eligible once. |\n| New generation/day while old operation is pending; wall +/−1 hour; frozen/accelerated simulation | New identity cannot inherit the old failure lock or be cleared by old finally. Eligibility follows real elapsed duration, not simulated minutes or wall correction, on a host with performance.now. |\n| Hidden during cooldown, then resume late | No new background loop; one eligible operation on resume, no catch-up storm. |\n\nPreserve original RED by temporarily removing deadline coverage, the cold-data scheduling branch, and the outer cooldown in separate authorized isolated mutations. Each must fail its corresponding row. Do not use a fixture that mocks `fetchTimings` to resolve immediately for the body-deadline assertion; that bypasses the failure. Do not collapse high-level operations and low-level requests into one count.\n\n## Dependencies, public effect and closure\n\nThe accepted interface predecessor is [R0003](https://github.com/theislampill/salah_widget/issues/3) for operation/attempt ownership. Coordinate prayer fetch/cache with [R0002](https://github.com/theislampill/salah_widget/issues/2), boot with [R0004](https://github.com/theislampill/salah_widget/issues/4) and [R0010](https://github.com/theislampill/salah_widget/issues/16), prefetch/adoption/render invalidation with [R0005](https://github.com/theislampill/salah_widget/issues/5), and clock/loop integration with [R0020](https://github.com/theislampill/salah_widget/issues/32). No new graph edge is required merely to share a fixture. One integrator owns shared production hunks.\n\nOnly transport lifecycle, existing scheduling opportunities and invoked tests should change. README should describe finite attempts, bounded same-day recovery, valid-cache behavior and visibility limits accurately; “offline-friendly” does not promise an offline application. No installer, preset, config schema, provider or dependency changes are justified. Preserve the existing single rAF loop, offscreen pause, reduced-motion override, readable 325×530 card and opaque moon. Final browser acceptance needs an unavailable→recovered crop and evidence that the default live scene still moves where conditions permit; a cloud hash is not motion evidence.\n\nRollback the coordinated deadline/cleanup/scheduler changes if healthy loads, ordinary retries or visibility behavior regress; keep explicit unavailable state and saved failure fixtures. A throttle-only patch, a deadline-only patch, or an automatic-retry patch with unbounded attempts is partial and cannot close #6. Closure needs final-tree traces for all three subcases, independent exact-tree review of ownership/cleanup, browser recovery readback and an evidence comment, with non-closing `Implements #6`. Public claims also require served-source/readback. Supplementary companion SHA256: `37d9e43da6e09af927fc51f3d8c227842e9039ba720db17aa947b6996425c40f`.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/6/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/6/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733519829,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfRtc8AAAAHJ9xL1Q",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733519829",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:39Z",
+      "rename": {
+        "from": "SW-006: Bound prayer attempts and recover cold-load and tomorrow failures without request storms",
+        "to": "R0006: Bound prayer attempts and recover cold-load and tomorrow failures without request storms"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0006",
+    "bodySha256": "5c79e956277dbc358a0d57071f629518044fe4119f7f0a3c2cbb0797c5febb1e",
+    "updatedAt": "2026-09-08T06:24:39Z",
+    "commentRevisions": []
+  }
+}

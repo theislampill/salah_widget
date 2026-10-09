@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:32.779625+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/26",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/26",
+    "id": 5381808249,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfgeQ",
+    "number": 26,
+    "title": "R001A: Give builder option groups standard keyboard radio interaction",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:52Z",
+    "updated_at": "2026-09-08T06:25:24Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-026 -->\n# R001A: Give builder option groups standard keyboard radio interaction\n\n**Repository-local identity:** `R001A` in `theislampill/salah_widget`; existing tracker [#26](https://github.com/theislampill/salah_widget/issues/26). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-026. Existing-control defect; proposed P2. This is the two-button Embed type group, not a builder accessibility redesign.\n\n## Actual browser witness\n\nAt the preserved main tree fd2972ba64225fe9d6848e92497e6d0ed20ea624, the UI lane used a real 375×800 browser viewport, focused Portable and pressed ArrowRight. Focus stayed on mode-portable. aria-checked stayed true/false, and **both controls had tabIndex 0**. The saved native DOM readback is:\n\n~~~json\n{\n  \"viewport\":[375,800],\n  \"active\":\"mode-portable\",\n  \"radios\":[\n    {\"id\":\"mode-portable\",\"checked\":\"true\",\"tabindex\":0},\n    {\"id\":\"mode-local\",\"checked\":\"false\",\"tabindex\":0}\n  ]\n}\n~~~\n\nThe accompanying screenshot was retained by the audit. This authoring pass has not rerun the browser. The positive control matters: focusing Self-configuring and pressing Space did select it. Users have a Tab-plus-Space route; the finding is missing radio-group interaction, not inability to select a mode. No screen-reader speech matrix was measured. builder.html is unchanged between the preserved main and candidate 9d9c43649748555afbe09e3ca49bc47db2d7e7bb.\n\nThe [markup](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L164) declares role=radiogroup with two button role=radio children. [setMode and wiring](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L211) update selected classes and aria-checked but attach only click handlers. Native button activation explains why Space works; declaring radio roles does not supply native radio arrow behavior.\n\n## Narrow design\n\nBefore authorized implementation, record root, remote, HEAD and dirty state and run:\n\n~~~sh\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- builder.html tests/smoke.html\n~~~\n\nExpect theislampill/salah_widget and stop if the group was already replaced or its values/callers changed. The [candidate source](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/builder.html#L164) is comparison evidence.\n\nKeep the existing buttons and finish their small roving-tabindex model. This is smaller than changing markup, CSS and click consumers to native inputs in this two-control group.\n\n1. Have setMode continue to be the single selected-state owner. In the same pass that sets active and aria-checked, set the selected button's tabIndex to 0 and the other to -1. Initial setMode(\"portable\") establishes the invariant before keyboard use. Programmatic mode changes must update all three values too.\n2. Add one keydown handler on .modebtns for ArrowRight/ArrowDown (next) and ArrowLeft/ArrowUp (previous). Build the ordered eligible list from the existing group buttons, excluding disabled controls. Only handle an event whose target is one of those controls. Prevent default for handled arrows, wrap within this group, focus the target and invoke setMode with its existing portable/local value once.\n3. Preserve native button Enter/Space→click activation. Do not also call setMode on their keydown events, which could double-activate or reload the preview twice. Tab/Shift+Tab must remain native: one stop enters the group at its selection, and the next leaves it. Do not trap Tab or use arrow handlers on the whole document.\n4. Retain visible focus CSS and all existing mode effects: generated hash, preview reload, explanatory text and local-only geolocation allow. The selection and generated output must agree after keyboard, mouse and programmatic changes.\n\nThe invariant is exactly one selected/checked/tabbable enabled radio for this group, with native focus and activation behavior preserved. With only one enabled control, arrows remain on it; with none, do not manufacture a selection or throw. Those are defensive fixture controls, not a requested new disabled-state feature.\n\nReplacing roles with generic buttons would abandon the intended mutually exclusive semantics. Adding tabindex alone fixes neither arrows nor state synchronization. Native radio inputs are a credible alternative if the current source has materially changed, but then document the smaller actual diff and requalify CSS and native behavior; do not mix both interaction models. A reusable accessibility framework is disproportionate here.\n\n## Public RED→GREEN recipe\n\nOn a disposable served builder, record exact served source identity; use real browser keyboard events, not dispatchEvent as a substitute for native default behavior. At 375×800, focus #mode-portable and press ArrowRight. Baseline result is the JSON above. Repaired expected state is:\n\n~~~json\n{\n  \"active\":\"mode-local\",\n  \"radios\":[\n    {\"id\":\"mode-portable\",\"checked\":\"false\",\"tabindex\":-1},\n    {\"id\":\"mode-local\",\"checked\":\"true\",\"tabindex\":0}\n  ],\n  \"embedMode\":\"local\"\n}\n~~~\n\nAlso inspect the actual generated iframe hash for local=1, local-only allow=\"geolocation\" and width:325px;height:530px. Do not infer configuration from checked text alone.\n\n| Native interaction/control | Required result |\n|---|---|\n| Tab into group from preceding focusable control | Selected radio receives focus; next Tab leaves group. Shift+Tab re-enters selection. |\n| Right from Portable, Right from Local | Local then wrap to Portable, each with selected/focused/output state agreeing. |\n| Left from Portable; Up/Down in the group | Same defined reverse/forward wrap; no document scrolling caused by handled arrows. |\n| Space or Enter on either button | One native click activation and one mode update, no double preview reload. |\n| Mouse/touch click, then leave/re-enter by keyboard | Clicked value becomes the single tabbable selection. |\n| Programmatic setMode(\"local\") | aria-checked, active class, tabIndex and generated output all reflect local. |\n| Mutation: omit arrow handler or one tabIndex update | Native arrow or single-tabstop assertion fails. |\n\nCapture focused selected/unselected crops at mobile and ordinary desktop widths. Inspect that the focus indicator is visible and text does not clip. The historic keyboard fixture is already a real-browser result, but source inspection alone cannot qualify the new native key behavior. Do not claim assistive-technology speech support without that separate observed environment.\n\n## Scope and completion\n\nOnly builder group wiring/state and a focused regression change. No new preference semantics, serialized values, config.js, widget settings focus trap, installers or preset changes. [R0010](https://github.com/theislampill/salah_widget/issues/16) still owns what the selected local preferences mean; this work must preserve its output rather than redefine it. Existing shared test/docs insertion ownership stays with the integrator; no new typed dependency is proposed.\n\nRollback group changes as a unit if click/Space behavior, preview or focus visibility regresses. Stop on incompatible group drift or missing native keyboard evidence. DONE requires final-tree native RED→GREEN and controls, exact-tree review of double activation/Tab behavior, evidence comment, and served builder readback if claiming public repair. Use non-closing Implements #26 PR wording and manual closure after evidence. This document is not a new rendered PASS.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733554764,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfgec8AAAAHJ9zUTA",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733554764",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:24Z",
+      "rename": {
+        "from": "SW-026: Give builder option groups standard keyboard radio interaction",
+        "to": "R001A: Give builder option groups standard keyboard radio interaction"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R001A",
+    "bodySha256": "329056534ccc2720a2b3ca7c5d7bff1ac0ee24788774d53f717c10b4ba3e0ff1",
+    "updatedAt": "2026-09-08T06:25:24Z",
+    "commentRevisions": []
+  }
+}

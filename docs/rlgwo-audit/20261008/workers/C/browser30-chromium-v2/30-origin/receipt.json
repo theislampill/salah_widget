@@ -1,0 +1,2414 @@
+{
+  "id": "30-origin",
+  "issue": 30,
+  "coordinates": [
+    0,
+    0
+  ],
+  "expected": {
+    "temperature": 20,
+    "normalizedPrecip": 2,
+    "rain": true,
+    "lightning": false
+  },
+  "url": "http://127.0.0.1:63338/fixture.html?case=30-origin&attempt=9&run=C-audit-primary-only&mode=healthy#lat=0&lon=0&tz=Asia%2FRiyadh&label=Public+coordinate+fixture&method=4&school=0&units=c&seed=1",
+  "checks": {
+    "exactSource": true,
+    "sourceOwnedHooks": true,
+    "actualWeatherAndManifestBodiesConsumed": true,
+    "rawNormalizedTemp": true,
+    "cachedNormalizedTemp": true,
+    "headerTemp": true,
+    "normalizedPrecip": true,
+    "conditionRetainedAsModel": true,
+    "modelDisclosure": true,
+    "actualParticles": true,
+    "effectDataset": true,
+    "noLightning": true,
+    "notObserved": true,
+    "actualReadable0dBZImage": true,
+    "radarContributesNoMm": true,
+    "cardGeometry": true,
+    "footerFits": true,
+    "noPageError": true,
+    "wrongOwnerRejected": true
+  },
+  "state": {
+    "qa": {
+      "sim": "07-09-2026 12:30",
+      "dateTruth": {
+        "gregorianText": "2026-09-07",
+        "hijriText": "1500-01-01",
+        "previewDay": "02",
+        "previewText": "🌘 02",
+        "explanation": "Before Maghrib; the displayed Hijri date has not advanced. calendar convention unavailable. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+        "requestedGregorianDay": "07-09-2026",
+        "loadedGregorianDay": "07-09-2026",
+        "selectedGregorianDay": "07-09-2026",
+        "timezone": "Asia/Riyadh",
+        "beforeOrAfterMaghrib": "before",
+        "maghribRollAvailable": true,
+        "maghribRollApplied": false,
+        "selectedSource": "today",
+        "calendarSource": "Aladhan",
+        "hijriMethod": null,
+        "unavailableReason": null,
+        "selectionReason": null,
+        "staleDateState": "current",
+        "hijriAnomaly": null
+      },
+      "sunEl": 52.6,
+      "wx": {
+        "code": 95,
+        "cloud": 95,
+        "temp": 20,
+        "rh": 90,
+        "vis": 20000,
+        "wind": 2
+      },
+      "wxTruth": {
+        "currentWeatherSource": "current (Open-Meteo model estimate)",
+        "forecastTrackSource": "none",
+        "radarSource": "RainViewer mosaic",
+        "radarPrecipMm": 0,
+        "radarAgeSec": 0,
+        "radarFrameAgeSec": 0,
+        "radarAvailable": true,
+        "radarConfirming": false,
+        "radarDiagnostic": {
+          "returnCount": 16,
+          "sampledCount": 16,
+          "coverage": 1,
+          "meanAlpha": 0.28627450980392155
+        },
+        "radarQuantitativeReason": "unavailable: uncalibrated palette/alpha; no on-site precipitation or lightning authority",
+        "requests": {
+          "weather": {
+            "generation": 0,
+            "operationId": 1,
+            "attemptId": 1,
+            "state": "received",
+            "reason": null
+          },
+          "radar": {
+            "generation": 0,
+            "operationId": 2,
+            "attemptId": 4,
+            "state": "received",
+            "reason": null
+          }
+        },
+        "target": {
+          "generation": 0,
+          "lat": 0,
+          "lon": 0,
+          "intent": "fixed-site",
+          "source": "hash",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null,
+          "fixAgeMs": null
+        },
+        "current": "model-estimated-wet",
+        "model": {
+          "state": "wet",
+          "provider": "Open-Meteo",
+          "product": "current weather model",
+          "code": 95,
+          "category": "thunder",
+          "sourceValidAt": 1788773400000,
+          "retrievedAt": 1788773400000,
+          "quantity": {
+            "kind": "preceding-interval-amount",
+            "value": 2,
+            "units": "mm",
+            "from": 1788772500000,
+            "to": 1788773400000,
+            "averageRateMmH": 8,
+            "instantaneous": false
+          },
+          "resolution": "native/interpolated provenance unavailable",
+          "spatialSupport": "model-grid precision unavailable"
+        },
+        "present": {
+          "available": false,
+          "reason": "no qualified live present adapter",
+          "evidence": null
+        },
+        "disagreement": false,
+        "spatial": {
+          "state": "unavailable",
+          "reason": "no qualified live surrounding adapter"
+        },
+        "horizon": {
+          "state": "unknown",
+          "arrival": null
+        },
+        "forecast": null,
+        "permissions": {
+          "rain": false,
+          "snow": false,
+          "lightning": false,
+          "expiresAt": null,
+          "reason": "no qualified live present adapter"
+        },
+        "visualPermissions": {
+          "rain": true,
+          "snow": false,
+          "lightning": false,
+          "source": "current model estimate",
+          "quantitativeSupport": "current interval amount supports category"
+        },
+        "lane": "live",
+        "conditionState": "model-estimated-thunder",
+        "observedPresent": false,
+        "localObservationAgeMs": null,
+        "localOperationalHealth": "unknown",
+        "rawCode": 95,
+        "rawForecastCode": null,
+        "observedPrecipMm": null,
+        "modelPrecipMm": 2,
+        "effectivePrecipMm": 2,
+        "activePrecip": true,
+        "activeThunder": false,
+        "displayCondition": "thunder",
+        "modelCondition": "thunder",
+        "finalDataFx": "thunder",
+        "downgradeReason": "no qualified live present adapter",
+        "modelGateReason": null,
+        "advancing": false,
+        "cloudFieldSeed": 4.7
+      },
+      "cache": {
+        "weatherSource": "current",
+        "weatherAgeSec": 0,
+        "weatherSourceAgeSec": 0,
+        "weatherStale": false,
+        "currentEligible": true,
+        "currentUnavailableReason": null,
+        "lastWeatherRefresh": "2026-09-07T09:30:00.000Z",
+        "forecastTrackLoaded": false,
+        "prayerDate": "07-09-2026",
+        "prayerLoaded": true,
+        "tomorrowLoaded": true,
+        "prayerStale": false,
+        "rolloverPendingMs": null,
+        "simulated": false
+      },
+      "config": {
+        "configSource": "hash",
+        "configMode": "hardcoded",
+        "autoDetectSource": null,
+        "autoDetectStatus": "idle",
+        "storageAvailable": true,
+        "storageError": null,
+        "geolocationPermissionState": "unknown",
+        "geolocationLastError": null,
+        "lat": 0,
+        "lon": 0,
+        "tz": "Asia/Riyadh",
+        "label": "Public coordinate fixture",
+        "method": "4",
+        "units": "c",
+        "locationEvidence": {
+          "intent": "fixed-site",
+          "source": "hash",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null
+        },
+        "fixAgeMs": null,
+        "savedAt": null,
+        "hashConfigOverridden": false,
+        "why": "explicit hash lat/lon (no local flag) → hardcoded wins; saved config ignored"
+      },
+      "render": {
+        "atMs": 493,
+        "sim": "07-09-2026 12:30",
+        "currentKey": "Dhuhr",
+        "nextKey": "Asr",
+        "leftMin": 180,
+        "progress": 0.14285714285714285,
+        "fx": "thunder",
+        "generation": 0,
+        "acceptedUtcMs": 1788773400000,
+        "timetableDate": "07-09-2026",
+        "nextDate": "07-09-2026",
+        "nextEpoch": 1788784200000,
+        "nextTime": "15:30",
+        "zone": "Asia/Riyadh",
+        "timetable": {
+          "Fajr": "05:00",
+          "Sunrise": "06:00",
+          "Dhuhr": "12:00",
+          "Asr": "15:30",
+          "Sunset": "18:00",
+          "Maghrib": "18:00",
+          "Isha": "19:30"
+        }
+      },
+      "weatherHeader": {
+        "cond": "thunder",
+        "icon": "⛈️",
+        "label": "Thunderstorm — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+        "temperature": 20,
+        "code": 95,
+        "rawCode": 95,
+        "generation": 0,
+        "target": {
+          "lat": 0,
+          "lon": 0
+        },
+        "sourceValidAt": 1788773400000,
+        "retrievedAt": 1788773400000,
+        "conditionState": "model-estimated-thunder",
+        "observedPresent": false,
+        "paintedAt": 1788773400000
+      },
+      "clouds": {
+        "low": 0.6,
+        "mid": 0.6,
+        "high": 0.3,
+        "hash": 1043616603,
+        "alpha": 1020348,
+        "lighting": {
+          "owner": "accepted physical Sun and rigid sky camera; cosine cloud-facing display approximation",
+          "utcMs": 1788773400000,
+          "sun": {
+            "altDeg": 52.56689667413674,
+            "azDeg": 80.11692101449262,
+            "enu": [
+              0.5988144892705689,
+              0.1043276349042878,
+              0.794063569265651
+            ],
+            "raDeg": 165.99766538829954,
+            "decDeg": 5.988430123406544,
+            "distanceKm": 150756387.92855304,
+            "frame": "topocentric-mean-equator-of-date",
+            "geometric": true,
+            "distanceAu": 1.0077780652799049
+          },
+          "camera": {
+            "type": "camera",
+            "width": 325,
+            "height": 530,
+            "azDeg": 180,
+            "altDeg": 45,
+            "fovYDeg": 90,
+            "rollDeg": 0
+          },
+          "warmth": 0
+        }
+      },
+      "stars": {
+        "op": 0,
+        "visible": 0,
+        "blur": "0.60px",
+        "mw": 0
+      },
+      "sky": {
+        "airglow": "rgba(56,61,50,0.000)",
+        "haze": 0,
+        "airDrift": 0.517,
+        "moonBeam": 0,
+        "lunarCorona": 0,
+        "aurora": 0
+      },
+      "moonTruth": {
+        "phaseFraction": 0.209,
+        "waxing": false,
+        "moonAltitudeDeg": 64.7,
+        "moonSkyFresh": true,
+        "lastConsumed": {
+          "status": "completed",
+          "stage": "paint",
+          "fresh": true,
+          "observation": {
+            "fresh": true,
+            "produced": {
+              "epochMinute": 29812890,
+              "minute": 750,
+              "context": "0|0|Asia/Riyadh"
+            },
+            "expected": {
+              "epochMinute": 29812890,
+              "minute": 750,
+              "context": "0|0|Asia/Riyadh"
+            },
+            "phaseFraction": 0.1637900594762024,
+            "altitudeDeg": 64.74655035193096,
+            "light": {
+              "eligibility": 0,
+              "eligible": false,
+              "reason": "daylight",
+              "illumination": 0,
+              "beam": 0,
+              "cloudLight": 0,
+              "localStarWash": 0,
+              "localGlow": 0,
+              "halo": 0,
+              "corona": 0,
+              "paraselenae": 0
+            }
+          }
+        },
+        "currentGeometry": {
+          "fresh": true,
+          "produced": {
+            "epochMinute": 29812890,
+            "minute": 750,
+            "context": "0|0|Asia/Riyadh"
+          },
+          "expected": {
+            "epochMinute": 29812890,
+            "minute": 750,
+            "context": "0|0|Asia/Riyadh"
+          },
+          "phaseFraction": 0.1637900594762024,
+          "altitudeDeg": 64.74655035193096,
+          "light": {
+            "eligibility": 0,
+            "eligible": false,
+            "reason": "daylight",
+            "illumination": 0,
+            "beam": 0,
+            "cloudLight": 0,
+            "localStarWash": 0,
+            "localGlow": 0,
+            "halo": 0,
+            "corona": 0,
+            "paraselenae": 0
+          }
+        },
+        "lunarLight": {
+          "eligibility": 0,
+          "eligible": false,
+          "reason": "daylight",
+          "illumination": 0,
+          "beam": 0,
+          "cloudLight": 0,
+          "localStarWash": 0,
+          "localGlow": 0,
+          "halo": 0,
+          "corona": 0,
+          "paraselenae": 0
+        },
+        "surface": {
+          "status": "loading",
+          "quality": "pending",
+          "visibleSource": "awaiting-terrain",
+          "identity": null,
+          "legacyDecoded": true,
+          "legacyVisible": false,
+          "texture": "unavailable"
+        },
+        "physicalMoonVisible": false,
+        "calendarMoonVisible": false,
+        "displayMode": "day-suppressed",
+        "moonSkyOpacity": 0,
+        "moonCalendarOpacity": 0,
+        "moonFeatureOpacity": 1,
+        "moonlightOpacity": 0,
+        "earthshine": "surface unavailable",
+        "reason": "daytime suppression (calendar chip persists in header/footer)"
+      },
+      "realSky": {
+        "checkpoint": "9",
+        "status": "pending",
+        "renders": 0,
+        "frameUtcMs": null,
+        "catalogue": null,
+        "generation": null,
+        "assumptions": null,
+        "composition": null,
+        "errors": []
+      },
+      "moonRenderer": {
+        "backend": "metric-terrain-wasm-mb1",
+        "status": "loading",
+        "quality": "pending",
+        "legacyFallback": false,
+        "currentNativeFraction": 0.1637900594762024,
+        "renderedFraction": null,
+        "calendarProxyWeight": 0,
+        "profile": null,
+        "errors": []
+      },
+      "legacySyntheticStarTelemetry": {
+        "active": false,
+        "replacement": "realSky; raster diagnostics, not old synthetic DOM arrays"
+      }
+    },
+    "target": {
+      "generation": 0,
+      "lat": 0,
+      "lon": 0,
+      "intent": "fixed-site",
+      "source": "hash",
+      "accuracyM": null,
+      "acquiredAt": null,
+      "provider": null,
+      "area": null,
+      "bounds": null
+    },
+    "modelEligible": true,
+    "synthetic": null,
+    "rainOpacity": 0.61,
+    "icon": "⛈️",
+    "temperature": "20°",
+    "raw": {
+      "code": 95,
+      "units": "c",
+      "src": "current",
+      "admission": {},
+      "target": {
+        "generation": 0,
+        "lat": 0,
+        "lon": 0,
+        "intent": "fixed-site",
+        "source": "hash",
+        "accuracyM": null,
+        "acquiredAt": null,
+        "provider": null,
+        "area": null,
+        "bounds": null
+      },
+      "provider": "Open-Meteo",
+      "product": "current weather model",
+      "quantityKind": "preceding-interval-amount",
+      "precipitationUnit": "mm",
+      "temp": 20,
+      "feels": 19,
+      "rh": 90,
+      "dew": 18,
+      "wind": 2,
+      "windDir": 180,
+      "gust": 4,
+      "cloud": 95,
+      "cloudLow": 60,
+      "cloudMid": 60,
+      "cloudHigh": 30,
+      "precip": 2,
+      "rain": 2,
+      "showers": 0,
+      "snow": 0,
+      "vis": 20000,
+      "isDay": 1,
+      "currentTime": "2026-09-07T12:30",
+      "currentZone": "Asia/Riyadh",
+      "currentValidAt": 1788773400000,
+      "currentIntervalSec": 900,
+      "retrievedAt": 1788773400000
+    },
+    "radar": {
+      "precipMm": 0,
+      "at": 1788773400000,
+      "retrievedAt": 1788773400000,
+      "target": {
+        "generation": 0,
+        "lat": 0,
+        "lon": 0,
+        "intent": "fixed-site",
+        "source": "hash",
+        "accuracyM": null,
+        "acquiredAt": null,
+        "provider": null,
+        "area": null,
+        "bounds": null
+      },
+      "frame": 1788773400,
+      "frameGeneratedAt": 1788773400000,
+      "indexGeneratedAt": 1788773400000,
+      "sample": {
+        "returnCount": 16,
+        "sampledCount": 16,
+        "coverage": 1,
+        "meanAlpha": 0.28627450980392155
+      },
+      "source": "RainViewer mosaic",
+      "quantitativeAuthority": "unavailable (uncalibrated palette/alpha)"
+    },
+    "wxBusy": false,
+    "radarBusy": false,
+    "cached": {
+      "w": {
+        "code": 95,
+        "units": "c",
+        "src": "current",
+        "admission": {},
+        "target": {
+          "generation": 0,
+          "lat": 0,
+          "lon": 0,
+          "intent": "fixed-site",
+          "source": "hash",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null
+        },
+        "provider": "Open-Meteo",
+        "product": "current weather model",
+        "quantityKind": "preceding-interval-amount",
+        "precipitationUnit": "mm",
+        "temp": 20,
+        "feels": 19,
+        "rh": 90,
+        "dew": 18,
+        "wind": 2,
+        "windDir": 180,
+        "gust": 4,
+        "cloud": 95,
+        "cloudLow": 60,
+        "cloudMid": 60,
+        "cloudHigh": 30,
+        "precip": 2,
+        "rain": 2,
+        "showers": 0,
+        "snow": 0,
+        "vis": 20000,
+        "isDay": 1,
+        "currentTime": "2026-09-07T12:30",
+        "currentZone": "Asia/Riyadh",
+        "currentValidAt": 1788773400000,
+        "currentIntervalSec": 900,
+        "retrievedAt": 1788773400000
+      },
+      "ts": 1788773400000
+    },
+    "visibleParticles": 26,
+    "fx": "thunder",
+    "precip": "on",
+    "lightning": "off",
+    "headerLabel": "Thunderstorm — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+    "card": {
+      "width": 325,
+      "height": 530
+    },
+    "footer": {
+      "top": 502.40625,
+      "bottom": 520.34375
+    }
+  },
+  "fixture": {
+    "mode": "healthy",
+    "run": "C-audit-primary-only",
+    "attempt": 9,
+    "documentId": "c22eba19-a0a1-462b-946c-e5664b3ac2ee",
+    "hash": "lat=0&lon=0&tz=Asia%2FRiyadh&label=Public+coordinate+fixture&method=4&school=0&units=c&seed=1",
+    "state": "ready",
+    "error": null,
+    "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "weatherOracle": "H5/H8 current model may support quantity-gated model particles; no direct observation or lightning inferred",
+    "bridgeSha256": "2b758042b7cf157696ccf6f8ce14510d36a39fba5a33efe3ba1c9611d23a7325",
+    "storageIsolated": true,
+    "clockFixed": true,
+    "clockNow": 1788773400000,
+    "fetchIntercepted": true,
+    "initialStorageEntries": 0,
+    "ledger": [
+      {
+        "attempt": 9,
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=Asia%2FRiyadh",
+        "jsonReads": 1,
+        "result": "json-consumed",
+        "cache": "no-store"
+      },
+      {
+        "attempt": 9,
+        "url": "https://api.rainviewer.com/public/weather-maps.json",
+        "jsonReads": 1,
+        "result": "json-consumed",
+        "cache": "no-store"
+      },
+      {
+        "attempt": 9,
+        "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=0&longitude=0&method=4&school=0",
+        "jsonReads": 1,
+        "result": "json-consumed",
+        "cache": "no-store"
+      },
+      {
+        "attempt": 9,
+        "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=0&longitude=0&method=4&school=0",
+        "jsonReads": 1,
+        "result": "json-consumed",
+        "cache": "no-store"
+      }
+    ],
+    "storageEvents": [
+      [
+        "get",
+        "salahwx:0|0|c"
+      ],
+      [
+        "get",
+        "salah:0|0|Asia/Riyadh|4|0"
+      ],
+      [
+        "set",
+        "salahwx:0|0|c"
+      ],
+      [
+        "set",
+        "salah:0|0|Asia/Riyadh|4|0"
+      ],
+      [
+        "set",
+        "__sw_probe__"
+      ],
+      [
+        "remove",
+        "__sw_probe__"
+      ],
+      [
+        "get",
+        "salahwx:0|0|c"
+      ],
+      [
+        "set",
+        "__sw_probe__"
+      ],
+      [
+        "remove",
+        "__sw_probe__"
+      ],
+      [
+        "get",
+        "salahwx:0|0|c"
+      ],
+      [
+        "set",
+        "__sw_probe__"
+      ],
+      [
+        "remove",
+        "__sw_probe__"
+      ],
+      [
+        "get",
+        "salahwx:0|0|c"
+      ]
+    ],
+    "consoleErrors": [],
+    "weatherEvents": [
+      {
+        "action": "consumer-read",
+        "at": 1788773400000,
+        "input": null,
+        "result": {
+          "qa": {
+            "sim": "07-09-2026 12:30",
+            "dateTruth": {
+              "gregorianText": "2026-09-07",
+              "hijriText": "1500-01-01",
+              "previewDay": "02",
+              "previewText": "🌘 02",
+              "explanation": "Before Maghrib; the displayed Hijri date has not advanced. calendar convention unavailable. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+              "requestedGregorianDay": "07-09-2026",
+              "loadedGregorianDay": "07-09-2026",
+              "selectedGregorianDay": "07-09-2026",
+              "timezone": "Asia/Riyadh",
+              "beforeOrAfterMaghrib": "before",
+              "maghribRollAvailable": true,
+              "maghribRollApplied": false,
+              "selectedSource": "today",
+              "calendarSource": "Aladhan",
+              "hijriMethod": null,
+              "unavailableReason": null,
+              "selectionReason": null,
+              "staleDateState": "current",
+              "hijriAnomaly": null
+            },
+            "sunEl": 52.6,
+            "wx": {
+              "code": 95,
+              "cloud": 95,
+              "temp": 20,
+              "rh": 90,
+              "vis": 20000,
+              "wind": 2
+            },
+            "wxTruth": {
+              "currentWeatherSource": "current (Open-Meteo model estimate)",
+              "forecastTrackSource": "none",
+              "radarSource": "RainViewer mosaic",
+              "radarPrecipMm": 0,
+              "radarAgeSec": 0,
+              "radarFrameAgeSec": 0,
+              "radarAvailable": true,
+              "radarConfirming": false,
+              "radarDiagnostic": {
+                "returnCount": 16,
+                "sampledCount": 16,
+                "coverage": 1,
+                "meanAlpha": 0.28627450980392155
+              },
+              "radarQuantitativeReason": "unavailable: uncalibrated palette/alpha; no on-site precipitation or lightning authority",
+              "requests": {
+                "weather": {
+                  "generation": 0,
+                  "operationId": 1,
+                  "attemptId": 1,
+                  "state": "received",
+                  "reason": null
+                },
+                "radar": {
+                  "generation": 0,
+                  "operationId": 2,
+                  "attemptId": 4,
+                  "state": "received",
+                  "reason": null
+                }
+              },
+              "target": {
+                "generation": 0,
+                "lat": 0,
+                "lon": 0,
+                "intent": "fixed-site",
+                "source": "hash",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null,
+                "fixAgeMs": null
+              },
+              "current": "model-estimated-wet",
+              "model": {
+                "state": "wet",
+                "provider": "Open-Meteo",
+                "product": "current weather model",
+                "code": 95,
+                "category": "thunder",
+                "sourceValidAt": 1788773400000,
+                "retrievedAt": 1788773400000,
+                "quantity": {
+                  "kind": "preceding-interval-amount",
+                  "value": 2,
+                  "units": "mm",
+                  "from": 1788772500000,
+                  "to": 1788773400000,
+                  "averageRateMmH": 8,
+                  "instantaneous": false
+                },
+                "resolution": "native/interpolated provenance unavailable",
+                "spatialSupport": "model-grid precision unavailable"
+              },
+              "present": {
+                "available": false,
+                "reason": "no qualified live present adapter",
+                "evidence": null
+              },
+              "disagreement": false,
+              "spatial": {
+                "state": "unavailable",
+                "reason": "no qualified live surrounding adapter"
+              },
+              "horizon": {
+                "state": "unknown",
+                "arrival": null
+              },
+              "forecast": null,
+              "permissions": {
+                "rain": false,
+                "snow": false,
+                "lightning": false,
+                "expiresAt": null,
+                "reason": "no qualified live present adapter"
+              },
+              "visualPermissions": {
+                "rain": true,
+                "snow": false,
+                "lightning": false,
+                "source": "current model estimate",
+                "quantitativeSupport": "current interval amount supports category"
+              },
+              "lane": "live",
+              "conditionState": "model-estimated-thunder",
+              "observedPresent": false,
+              "localObservationAgeMs": null,
+              "localOperationalHealth": "unknown",
+              "rawCode": 95,
+              "rawForecastCode": null,
+              "observedPrecipMm": null,
+              "modelPrecipMm": 2,
+              "effectivePrecipMm": 2,
+              "activePrecip": true,
+              "activeThunder": false,
+              "displayCondition": "thunder",
+              "modelCondition": "thunder",
+              "finalDataFx": "thunder",
+              "downgradeReason": "no qualified live present adapter",
+              "modelGateReason": null,
+              "advancing": false,
+              "cloudFieldSeed": 4.7
+            },
+            "cache": {
+              "weatherSource": "current",
+              "weatherAgeSec": 0,
+              "weatherSourceAgeSec": 0,
+              "weatherStale": false,
+              "currentEligible": true,
+              "currentUnavailableReason": null,
+              "lastWeatherRefresh": "2026-09-07T09:30:00.000Z",
+              "forecastTrackLoaded": false,
+              "prayerDate": "07-09-2026",
+              "prayerLoaded": true,
+              "tomorrowLoaded": true,
+              "prayerStale": false,
+              "rolloverPendingMs": null,
+              "simulated": false
+            },
+            "config": {
+              "configSource": "hash",
+              "configMode": "hardcoded",
+              "autoDetectSource": null,
+              "autoDetectStatus": "idle",
+              "storageAvailable": true,
+              "storageError": null,
+              "geolocationPermissionState": "unknown",
+              "geolocationLastError": null,
+              "lat": 0,
+              "lon": 0,
+              "tz": "Asia/Riyadh",
+              "label": "Public coordinate fixture",
+              "method": "4",
+              "units": "c",
+              "locationEvidence": {
+                "intent": "fixed-site",
+                "source": "hash",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null
+              },
+              "fixAgeMs": null,
+              "savedAt": null,
+              "hashConfigOverridden": false,
+              "why": "explicit hash lat/lon (no local flag) → hardcoded wins; saved config ignored"
+            },
+            "render": {
+              "atMs": 493,
+              "sim": "07-09-2026 12:30",
+              "currentKey": "Dhuhr",
+              "nextKey": "Asr",
+              "leftMin": 180,
+              "progress": 0.14285714285714285,
+              "fx": "thunder",
+              "generation": 0,
+              "acceptedUtcMs": 1788773400000,
+              "timetableDate": "07-09-2026",
+              "nextDate": "07-09-2026",
+              "nextEpoch": 1788784200000,
+              "nextTime": "15:30",
+              "zone": "Asia/Riyadh",
+              "timetable": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              }
+            },
+            "weatherHeader": {
+              "cond": "thunder",
+              "icon": "⛈️",
+              "label": "Thunderstorm — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+              "temperature": 20,
+              "code": 95,
+              "rawCode": 95,
+              "generation": 0,
+              "target": {
+                "lat": 0,
+                "lon": 0
+              },
+              "sourceValidAt": 1788773400000,
+              "retrievedAt": 1788773400000,
+              "conditionState": "model-estimated-thunder",
+              "observedPresent": false,
+              "paintedAt": 1788773400000
+            },
+            "clouds": {
+              "low": 0.6,
+              "mid": 0.6,
+              "high": 0.3,
+              "hash": 1045989685,
+              "alpha": 1022703,
+              "lighting": {
+                "owner": "accepted physical Sun and rigid sky camera; cosine cloud-facing display approximation",
+                "utcMs": 1788773400000,
+                "sun": {
+                  "altDeg": 52.56689667413674,
+                  "azDeg": 80.11692101449262,
+                  "enu": [
+                    0.5988144892705689,
+                    0.1043276349042878,
+                    0.794063569265651
+                  ],
+                  "raDeg": 165.99766538829954,
+                  "decDeg": 5.988430123406544,
+                  "distanceKm": 150756387.92855304,
+                  "frame": "topocentric-mean-equator-of-date",
+                  "geometric": true,
+                  "distanceAu": 1.0077780652799049
+                },
+                "camera": {
+                  "type": "camera",
+                  "width": 325,
+                  "height": 530,
+                  "azDeg": 180,
+                  "altDeg": 45,
+                  "fovYDeg": 90,
+                  "rollDeg": 0
+                },
+                "warmth": 0
+              }
+            },
+            "stars": {
+              "op": 0,
+              "visible": 0,
+              "blur": "0.60px",
+              "mw": 0
+            },
+            "sky": {
+              "airglow": "rgba(56,61,50,0.000)",
+              "haze": 0,
+              "airDrift": 0.517,
+              "moonBeam": 0,
+              "lunarCorona": 0,
+              "aurora": 0
+            },
+            "moonTruth": {
+              "phaseFraction": 0.209,
+              "waxing": false,
+              "moonAltitudeDeg": 64.7,
+              "moonSkyFresh": true,
+              "lastConsumed": {
+                "status": "completed",
+                "stage": "paint",
+                "fresh": true,
+                "observation": {
+                  "fresh": true,
+                  "produced": {
+                    "epochMinute": 29812890,
+                    "minute": 750,
+                    "context": "0|0|Asia/Riyadh"
+                  },
+                  "expected": {
+                    "epochMinute": 29812890,
+                    "minute": 750,
+                    "context": "0|0|Asia/Riyadh"
+                  },
+                  "phaseFraction": 0.1637900594762024,
+                  "altitudeDeg": 64.74655035193096,
+                  "light": {
+                    "eligibility": 0,
+                    "eligible": false,
+                    "reason": "daylight",
+                    "illumination": 0,
+                    "beam": 0,
+                    "cloudLight": 0,
+                    "localStarWash": 0,
+                    "localGlow": 0,
+                    "halo": 0,
+                    "corona": 0,
+                    "paraselenae": 0
+                  }
+                }
+              },
+              "currentGeometry": {
+                "fresh": true,
+                "produced": {
+                  "epochMinute": 29812890,
+                  "minute": 750,
+                  "context": "0|0|Asia/Riyadh"
+                },
+                "expected": {
+                  "epochMinute": 29812890,
+                  "minute": 750,
+                  "context": "0|0|Asia/Riyadh"
+                },
+                "phaseFraction": 0.1637900594762024,
+                "altitudeDeg": 64.74655035193096,
+                "light": {
+                  "eligibility": 0,
+                  "eligible": false,
+                  "reason": "daylight",
+                  "illumination": 0,
+                  "beam": 0,
+                  "cloudLight": 0,
+                  "localStarWash": 0,
+                  "localGlow": 0,
+                  "halo": 0,
+                  "corona": 0,
+                  "paraselenae": 0
+                }
+              },
+              "lunarLight": {
+                "eligibility": 0,
+                "eligible": false,
+                "reason": "daylight",
+                "illumination": 0,
+                "beam": 0,
+                "cloudLight": 0,
+                "localStarWash": 0,
+                "localGlow": 0,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              },
+              "surface": {
+                "status": "loading",
+                "quality": "pending",
+                "visibleSource": "awaiting-terrain",
+                "identity": null,
+                "legacyDecoded": true,
+                "legacyVisible": false,
+                "texture": "unavailable"
+              },
+              "physicalMoonVisible": false,
+              "calendarMoonVisible": false,
+              "displayMode": "day-suppressed",
+              "moonSkyOpacity": 0,
+              "moonCalendarOpacity": 0,
+              "moonFeatureOpacity": 1,
+              "moonlightOpacity": 0,
+              "earthshine": "surface unavailable",
+              "reason": "daytime suppression (calendar chip persists in header/footer)"
+            },
+            "realSky": {
+              "checkpoint": "9",
+              "status": "pending",
+              "renders": 0,
+              "frameUtcMs": null,
+              "catalogue": null,
+              "generation": null,
+              "assumptions": null,
+              "composition": null,
+              "errors": []
+            },
+            "moonRenderer": {
+              "backend": "metric-terrain-wasm-mb1",
+              "status": "loading",
+              "quality": "pending",
+              "legacyFallback": false,
+              "currentNativeFraction": 0.1637900594762024,
+              "renderedFraction": null,
+              "calendarProxyWeight": 0,
+              "profile": null,
+              "errors": []
+            },
+            "legacySyntheticStarTelemetry": {
+              "active": false,
+              "replacement": "realSky; raster diagnostics, not old synthetic DOM arrays"
+            }
+          },
+          "target": {
+            "generation": 0,
+            "lat": 0,
+            "lon": 0,
+            "intent": "fixed-site",
+            "source": "hash",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "modelEligible": true,
+          "synthetic": null,
+          "rainOpacity": 0.61,
+          "icon": "⛈️",
+          "temperature": "20°",
+          "raw": {
+            "code": 95,
+            "units": "c",
+            "src": "current",
+            "admission": {},
+            "target": {
+              "generation": 0,
+              "lat": 0,
+              "lon": 0,
+              "intent": "fixed-site",
+              "source": "hash",
+              "accuracyM": null,
+              "acquiredAt": null,
+              "provider": null,
+              "area": null,
+              "bounds": null
+            },
+            "provider": "Open-Meteo",
+            "product": "current weather model",
+            "quantityKind": "preceding-interval-amount",
+            "precipitationUnit": "mm",
+            "temp": 20,
+            "feels": 19,
+            "rh": 90,
+            "dew": 18,
+            "wind": 2,
+            "windDir": 180,
+            "gust": 4,
+            "cloud": 95,
+            "cloudLow": 60,
+            "cloudMid": 60,
+            "cloudHigh": 30,
+            "precip": 2,
+            "rain": 2,
+            "showers": 0,
+            "snow": 0,
+            "vis": 20000,
+            "isDay": 1,
+            "currentTime": "2026-09-07T12:30",
+            "currentZone": "Asia/Riyadh",
+            "currentValidAt": 1788773400000,
+            "currentIntervalSec": 900,
+            "retrievedAt": 1788773400000
+          },
+          "radar": {
+            "precipMm": 0,
+            "at": 1788773400000,
+            "retrievedAt": 1788773400000,
+            "target": {
+              "generation": 0,
+              "lat": 0,
+              "lon": 0,
+              "intent": "fixed-site",
+              "source": "hash",
+              "accuracyM": null,
+              "acquiredAt": null,
+              "provider": null,
+              "area": null,
+              "bounds": null
+            },
+            "frame": 1788773400,
+            "frameGeneratedAt": 1788773400000,
+            "indexGeneratedAt": 1788773400000,
+            "sample": {
+              "returnCount": 16,
+              "sampledCount": 16,
+              "coverage": 1,
+              "meanAlpha": 0.28627450980392155
+            },
+            "source": "RainViewer mosaic",
+            "quantitativeAuthority": "unavailable (uncalibrated palette/alpha)"
+          },
+          "wxBusy": false,
+          "radarBusy": false,
+          "cached": {
+            "w": {
+              "code": 95,
+              "units": "c",
+              "src": "current",
+              "admission": {},
+              "target": {
+                "generation": 0,
+                "lat": 0,
+                "lon": 0,
+                "intent": "fixed-site",
+                "source": "hash",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null
+              },
+              "provider": "Open-Meteo",
+              "product": "current weather model",
+              "quantityKind": "preceding-interval-amount",
+              "precipitationUnit": "mm",
+              "temp": 20,
+              "feels": 19,
+              "rh": 90,
+              "dew": 18,
+              "wind": 2,
+              "windDir": 180,
+              "gust": 4,
+              "cloud": 95,
+              "cloudLow": 60,
+              "cloudMid": 60,
+              "cloudHigh": 30,
+              "precip": 2,
+              "rain": 2,
+              "showers": 0,
+              "snow": 0,
+              "vis": 20000,
+              "isDay": 1,
+              "currentTime": "2026-09-07T12:30",
+              "currentZone": "Asia/Riyadh",
+              "currentValidAt": 1788773400000,
+              "currentIntervalSec": 900,
+              "retrievedAt": 1788773400000
+            },
+            "ts": 1788773400000
+          },
+          "visibleParticles": 24,
+          "fx": "thunder",
+          "precip": "on",
+          "lightning": "off",
+          "headerLabel": "Thunderstorm — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+          "card": {
+            "width": 325,
+            "height": 530
+          },
+          "footer": {
+            "top": 502.40625,
+            "bottom": 520.34375
+          }
+        }
+      },
+      {
+        "action": "consumer-read",
+        "at": 1788773400000,
+        "input": null,
+        "result": {
+          "qa": {
+            "sim": "07-09-2026 12:30",
+            "dateTruth": {
+              "gregorianText": "2026-09-07",
+              "hijriText": "1500-01-01",
+              "previewDay": "02",
+              "previewText": "🌘 02",
+              "explanation": "Before Maghrib; the displayed Hijri date has not advanced. calendar convention unavailable. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+              "requestedGregorianDay": "07-09-2026",
+              "loadedGregorianDay": "07-09-2026",
+              "selectedGregorianDay": "07-09-2026",
+              "timezone": "Asia/Riyadh",
+              "beforeOrAfterMaghrib": "before",
+              "maghribRollAvailable": true,
+              "maghribRollApplied": false,
+              "selectedSource": "today",
+              "calendarSource": "Aladhan",
+              "hijriMethod": null,
+              "unavailableReason": null,
+              "selectionReason": null,
+              "staleDateState": "current",
+              "hijriAnomaly": null
+            },
+            "sunEl": 52.6,
+            "wx": {
+              "code": 95,
+              "cloud": 95,
+              "temp": 20,
+              "rh": 90,
+              "vis": 20000,
+              "wind": 2
+            },
+            "wxTruth": {
+              "currentWeatherSource": "current (Open-Meteo model estimate)",
+              "forecastTrackSource": "none",
+              "radarSource": "RainViewer mosaic",
+              "radarPrecipMm": 0,
+              "radarAgeSec": 0,
+              "radarFrameAgeSec": 0,
+              "radarAvailable": true,
+              "radarConfirming": false,
+              "radarDiagnostic": {
+                "returnCount": 16,
+                "sampledCount": 16,
+                "coverage": 1,
+                "meanAlpha": 0.28627450980392155
+              },
+              "radarQuantitativeReason": "unavailable: uncalibrated palette/alpha; no on-site precipitation or lightning authority",
+              "requests": {
+                "weather": {
+                  "generation": 0,
+                  "operationId": 1,
+                  "attemptId": 1,
+                  "state": "received",
+                  "reason": null
+                },
+                "radar": {
+                  "generation": 0,
+                  "operationId": 2,
+                  "attemptId": 4,
+                  "state": "received",
+                  "reason": null
+                }
+              },
+              "target": {
+                "generation": 0,
+                "lat": 0,
+                "lon": 0,
+                "intent": "fixed-site",
+                "source": "hash",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null,
+                "fixAgeMs": null
+              },
+              "current": "model-estimated-wet",
+              "model": {
+                "state": "wet",
+                "provider": "Open-Meteo",
+                "product": "current weather model",
+                "code": 95,
+                "category": "thunder",
+                "sourceValidAt": 1788773400000,
+                "retrievedAt": 1788773400000,
+                "quantity": {
+                  "kind": "preceding-interval-amount",
+                  "value": 2,
+                  "units": "mm",
+                  "from": 1788772500000,
+                  "to": 1788773400000,
+                  "averageRateMmH": 8,
+                  "instantaneous": false
+                },
+                "resolution": "native/interpolated provenance unavailable",
+                "spatialSupport": "model-grid precision unavailable"
+              },
+              "present": {
+                "available": false,
+                "reason": "no qualified live present adapter",
+                "evidence": null
+              },
+              "disagreement": false,
+              "spatial": {
+                "state": "unavailable",
+                "reason": "no qualified live surrounding adapter"
+              },
+              "horizon": {
+                "state": "unknown",
+                "arrival": null
+              },
+              "forecast": null,
+              "permissions": {
+                "rain": false,
+                "snow": false,
+                "lightning": false,
+                "expiresAt": null,
+                "reason": "no qualified live present adapter"
+              },
+              "visualPermissions": {
+                "rain": true,
+                "snow": false,
+                "lightning": false,
+                "source": "current model estimate",
+                "quantitativeSupport": "current interval amount supports category"
+              },
+              "lane": "live",
+              "conditionState": "model-estimated-thunder",
+              "observedPresent": false,
+              "localObservationAgeMs": null,
+              "localOperationalHealth": "unknown",
+              "rawCode": 95,
+              "rawForecastCode": null,
+              "observedPrecipMm": null,
+              "modelPrecipMm": 2,
+              "effectivePrecipMm": 2,
+              "activePrecip": true,
+              "activeThunder": false,
+              "displayCondition": "thunder",
+              "modelCondition": "thunder",
+              "finalDataFx": "thunder",
+              "downgradeReason": "no qualified live present adapter",
+              "modelGateReason": null,
+              "advancing": false,
+              "cloudFieldSeed": 4.7
+            },
+            "cache": {
+              "weatherSource": "current",
+              "weatherAgeSec": 0,
+              "weatherSourceAgeSec": 0,
+              "weatherStale": false,
+              "currentEligible": true,
+              "currentUnavailableReason": null,
+              "lastWeatherRefresh": "2026-09-07T09:30:00.000Z",
+              "forecastTrackLoaded": false,
+              "prayerDate": "07-09-2026",
+              "prayerLoaded": true,
+              "tomorrowLoaded": true,
+              "prayerStale": false,
+              "rolloverPendingMs": null,
+              "simulated": false
+            },
+            "config": {
+              "configSource": "hash",
+              "configMode": "hardcoded",
+              "autoDetectSource": null,
+              "autoDetectStatus": "idle",
+              "storageAvailable": true,
+              "storageError": null,
+              "geolocationPermissionState": "unknown",
+              "geolocationLastError": null,
+              "lat": 0,
+              "lon": 0,
+              "tz": "Asia/Riyadh",
+              "label": "Public coordinate fixture",
+              "method": "4",
+              "units": "c",
+              "locationEvidence": {
+                "intent": "fixed-site",
+                "source": "hash",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null
+              },
+              "fixAgeMs": null,
+              "savedAt": null,
+              "hashConfigOverridden": false,
+              "why": "explicit hash lat/lon (no local flag) → hardcoded wins; saved config ignored"
+            },
+            "render": {
+              "atMs": 493,
+              "sim": "07-09-2026 12:30",
+              "currentKey": "Dhuhr",
+              "nextKey": "Asr",
+              "leftMin": 180,
+              "progress": 0.14285714285714285,
+              "fx": "thunder",
+              "generation": 0,
+              "acceptedUtcMs": 1788773400000,
+              "timetableDate": "07-09-2026",
+              "nextDate": "07-09-2026",
+              "nextEpoch": 1788784200000,
+              "nextTime": "15:30",
+              "zone": "Asia/Riyadh",
+              "timetable": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              }
+            },
+            "weatherHeader": {
+              "cond": "thunder",
+              "icon": "⛈️",
+              "label": "Thunderstorm — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+              "temperature": 20,
+              "code": 95,
+              "rawCode": 95,
+              "generation": 0,
+              "target": {
+                "lat": 0,
+                "lon": 0
+              },
+              "sourceValidAt": 1788773400000,
+              "retrievedAt": 1788773400000,
+              "conditionState": "model-estimated-thunder",
+              "observedPresent": false,
+              "paintedAt": 1788773400000
+            },
+            "clouds": {
+              "low": 0.6,
+              "mid": 0.6,
+              "high": 0.3,
+              "hash": 1045989685,
+              "alpha": 1022703,
+              "lighting": {
+                "owner": "accepted physical Sun and rigid sky camera; cosine cloud-facing display approximation",
+                "utcMs": 1788773400000,
+                "sun": {
+                  "altDeg": 52.56689667413674,
+                  "azDeg": 80.11692101449262,
+                  "enu": [
+                    0.5988144892705689,
+                    0.1043276349042878,
+                    0.794063569265651
+                  ],
+                  "raDeg": 165.99766538829954,
+                  "decDeg": 5.988430123406544,
+                  "distanceKm": 150756387.92855304,
+                  "frame": "topocentric-mean-equator-of-date",
+                  "geometric": true,
+                  "distanceAu": 1.0077780652799049
+                },
+                "camera": {
+                  "type": "camera",
+                  "width": 325,
+                  "height": 530,
+                  "azDeg": 180,
+                  "altDeg": 45,
+                  "fovYDeg": 90,
+                  "rollDeg": 0
+                },
+                "warmth": 0
+              }
+            },
+            "stars": {
+              "op": 0,
+              "visible": 0,
+              "blur": "0.60px",
+              "mw": 0
+            },
+            "sky": {
+              "airglow": "rgba(56,61,50,0.000)",
+              "haze": 0,
+              "airDrift": 0.517,
+              "moonBeam": 0,
+              "lunarCorona": 0,
+              "aurora": 0
+            },
+            "moonTruth": {
+              "phaseFraction": 0.209,
+              "waxing": false,
+              "moonAltitudeDeg": 64.7,
+              "moonSkyFresh": true,
+              "lastConsumed": {
+                "status": "completed",
+                "stage": "paint",
+                "fresh": true,
+                "observation": {
+                  "fresh": true,
+                  "produced": {
+                    "epochMinute": 29812890,
+                    "minute": 750,
+                    "context": "0|0|Asia/Riyadh"
+                  },
+                  "expected": {
+                    "epochMinute": 29812890,
+                    "minute": 750,
+                    "context": "0|0|Asia/Riyadh"
+                  },
+                  "phaseFraction": 0.1637900594762024,
+                  "altitudeDeg": 64.74655035193096,
+                  "light": {
+                    "eligibility": 0,
+                    "eligible": false,
+                    "reason": "daylight",
+                    "illumination": 0,
+                    "beam": 0,
+                    "cloudLight": 0,
+                    "localStarWash": 0,
+                    "localGlow": 0,
+                    "halo": 0,
+                    "corona": 0,
+                    "paraselenae": 0
+                  }
+                }
+              },
+              "currentGeometry": {
+                "fresh": true,
+                "produced": {
+                  "epochMinute": 29812890,
+                  "minute": 750,
+                  "context": "0|0|Asia/Riyadh"
+                },
+                "expected": {
+                  "epochMinute": 29812890,
+                  "minute": 750,
+                  "context": "0|0|Asia/Riyadh"
+                },
+                "phaseFraction": 0.1637900594762024,
+                "altitudeDeg": 64.74655035193096,
+                "light": {
+                  "eligibility": 0,
+                  "eligible": false,
+                  "reason": "daylight",
+                  "illumination": 0,
+                  "beam": 0,
+                  "cloudLight": 0,
+                  "localStarWash": 0,
+                  "localGlow": 0,
+                  "halo": 0,
+                  "corona": 0,
+                  "paraselenae": 0
+                }
+              },
+              "lunarLight": {
+                "eligibility": 0,
+                "eligible": false,
+                "reason": "daylight",
+                "illumination": 0,
+                "beam": 0,
+                "cloudLight": 0,
+                "localStarWash": 0,
+                "localGlow": 0,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              },
+              "surface": {
+                "status": "loading",
+                "quality": "pending",
+                "visibleSource": "awaiting-terrain",
+                "identity": null,
+                "legacyDecoded": true,
+                "legacyVisible": false,
+                "texture": "unavailable"
+              },
+              "physicalMoonVisible": false,
+              "calendarMoonVisible": false,
+              "displayMode": "day-suppressed",
+              "moonSkyOpacity": 0,
+              "moonCalendarOpacity": 0,
+              "moonFeatureOpacity": 1,
+              "moonlightOpacity": 0,
+              "earthshine": "surface unavailable",
+              "reason": "daytime suppression (calendar chip persists in header/footer)"
+            },
+            "realSky": {
+              "checkpoint": "9",
+              "status": "pending",
+              "renders": 0,
+              "frameUtcMs": null,
+              "catalogue": null,
+              "generation": null,
+              "assumptions": null,
+              "composition": null,
+              "errors": []
+            },
+            "moonRenderer": {
+              "backend": "metric-terrain-wasm-mb1",
+              "status": "loading",
+              "quality": "pending",
+              "legacyFallback": false,
+              "currentNativeFraction": 0.1637900594762024,
+              "renderedFraction": null,
+              "calendarProxyWeight": 0,
+              "profile": null,
+              "errors": []
+            },
+            "legacySyntheticStarTelemetry": {
+              "active": false,
+              "replacement": "realSky; raster diagnostics, not old synthetic DOM arrays"
+            }
+          },
+          "target": {
+            "generation": 0,
+            "lat": 0,
+            "lon": 0,
+            "intent": "fixed-site",
+            "source": "hash",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "modelEligible": true,
+          "synthetic": null,
+          "rainOpacity": 0.61,
+          "icon": "⛈️",
+          "temperature": "20°",
+          "raw": {
+            "code": 95,
+            "units": "c",
+            "src": "current",
+            "admission": {},
+            "target": {
+              "generation": 0,
+              "lat": 0,
+              "lon": 0,
+              "intent": "fixed-site",
+              "source": "hash",
+              "accuracyM": null,
+              "acquiredAt": null,
+              "provider": null,
+              "area": null,
+              "bounds": null
+            },
+            "provider": "Open-Meteo",
+            "product": "current weather model",
+            "quantityKind": "preceding-interval-amount",
+            "precipitationUnit": "mm",
+            "temp": 20,
+            "feels": 19,
+            "rh": 90,
+            "dew": 18,
+            "wind": 2,
+            "windDir": 180,
+            "gust": 4,
+            "cloud": 95,
+            "cloudLow": 60,
+            "cloudMid": 60,
+            "cloudHigh": 30,
+            "precip": 2,
+            "rain": 2,
+            "showers": 0,
+            "snow": 0,
+            "vis": 20000,
+            "isDay": 1,
+            "currentTime": "2026-09-07T12:30",
+            "currentZone": "Asia/Riyadh",
+            "currentValidAt": 1788773400000,
+            "currentIntervalSec": 900,
+            "retrievedAt": 1788773400000
+          },
+          "radar": {
+            "precipMm": 0,
+            "at": 1788773400000,
+            "retrievedAt": 1788773400000,
+            "target": {
+              "generation": 0,
+              "lat": 0,
+              "lon": 0,
+              "intent": "fixed-site",
+              "source": "hash",
+              "accuracyM": null,
+              "acquiredAt": null,
+              "provider": null,
+              "area": null,
+              "bounds": null
+            },
+            "frame": 1788773400,
+            "frameGeneratedAt": 1788773400000,
+            "indexGeneratedAt": 1788773400000,
+            "sample": {
+              "returnCount": 16,
+              "sampledCount": 16,
+              "coverage": 1,
+              "meanAlpha": 0.28627450980392155
+            },
+            "source": "RainViewer mosaic",
+            "quantitativeAuthority": "unavailable (uncalibrated palette/alpha)"
+          },
+          "wxBusy": false,
+          "radarBusy": false,
+          "cached": {
+            "w": {
+              "code": 95,
+              "units": "c",
+              "src": "current",
+              "admission": {},
+              "target": {
+                "generation": 0,
+                "lat": 0,
+                "lon": 0,
+                "intent": "fixed-site",
+                "source": "hash",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null
+              },
+              "provider": "Open-Meteo",
+              "product": "current weather model",
+              "quantityKind": "preceding-interval-amount",
+              "precipitationUnit": "mm",
+              "temp": 20,
+              "feels": 19,
+              "rh": 90,
+              "dew": 18,
+              "wind": 2,
+              "windDir": 180,
+              "gust": 4,
+              "cloud": 95,
+              "cloudLow": 60,
+              "cloudMid": 60,
+              "cloudHigh": 30,
+              "precip": 2,
+              "rain": 2,
+              "showers": 0,
+              "snow": 0,
+              "vis": 20000,
+              "isDay": 1,
+              "currentTime": "2026-09-07T12:30",
+              "currentZone": "Asia/Riyadh",
+              "currentValidAt": 1788773400000,
+              "currentIntervalSec": 900,
+              "retrievedAt": 1788773400000
+            },
+            "ts": 1788773400000
+          },
+          "visibleParticles": 24,
+          "fx": "thunder",
+          "precip": "on",
+          "lightning": "off",
+          "headerLabel": "Thunderstorm — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+          "card": {
+            "width": 325,
+            "height": 530
+          },
+          "footer": {
+            "top": 502.40625,
+            "bottom": 520.34375
+          }
+        }
+      },
+      {
+        "action": "consumer-read",
+        "at": 1788773400000,
+        "input": null,
+        "result": {
+          "qa": {
+            "sim": "07-09-2026 12:30",
+            "dateTruth": {
+              "gregorianText": "2026-09-07",
+              "hijriText": "1500-01-01",
+              "previewDay": "02",
+              "previewText": "🌘 02",
+              "explanation": "Before Maghrib; the displayed Hijri date has not advanced. calendar convention unavailable. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+              "requestedGregorianDay": "07-09-2026",
+              "loadedGregorianDay": "07-09-2026",
+              "selectedGregorianDay": "07-09-2026",
+              "timezone": "Asia/Riyadh",
+              "beforeOrAfterMaghrib": "before",
+              "maghribRollAvailable": true,
+              "maghribRollApplied": false,
+              "selectedSource": "today",
+              "calendarSource": "Aladhan",
+              "hijriMethod": null,
+              "unavailableReason": null,
+              "selectionReason": null,
+              "staleDateState": "current",
+              "hijriAnomaly": null
+            },
+            "sunEl": 52.6,
+            "wx": {
+              "code": 95,
+              "cloud": 95,
+              "temp": 20,
+              "rh": 90,
+              "vis": 20000,
+              "wind": 2
+            },
+            "wxTruth": {
+              "currentWeatherSource": "current (Open-Meteo model estimate)",
+              "forecastTrackSource": "none",
+              "radarSource": "RainViewer mosaic",
+              "radarPrecipMm": 0,
+              "radarAgeSec": 0,
+              "radarFrameAgeSec": 0,
+              "radarAvailable": true,
+              "radarConfirming": false,
+              "radarDiagnostic": {
+                "returnCount": 16,
+                "sampledCount": 16,
+                "coverage": 1,
+                "meanAlpha": 0.28627450980392155
+              },
+              "radarQuantitativeReason": "unavailable: uncalibrated palette/alpha; no on-site precipitation or lightning authority",
+              "requests": {
+                "weather": {
+                  "generation": 0,
+                  "operationId": 1,
+                  "attemptId": 1,
+                  "state": "received",
+                  "reason": null
+                },
+                "radar": {
+                  "generation": 0,
+                  "operationId": 2,
+                  "attemptId": 4,
+                  "state": "received",
+                  "reason": null
+                }
+              },
+              "target": {
+                "generation": 0,
+                "lat": 0,
+                "lon": 0,
+                "intent": "fixed-site",
+                "source": "hash",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null,
+                "fixAgeMs": null
+              },
+              "current": "model-estimated-wet",
+              "model": {
+                "state": "wet",
+                "provider": "Open-Meteo",
+                "product": "current weather model",
+                "code": 95,
+                "category": "thunder",
+                "sourceValidAt": 1788773400000,
+                "retrievedAt": 1788773400000,
+                "quantity": {
+                  "kind": "preceding-interval-amount",
+                  "value": 2,
+                  "units": "mm",
+                  "from": 1788772500000,
+                  "to": 1788773400000,
+                  "averageRateMmH": 8,
+                  "instantaneous": false
+                },
+                "resolution": "native/interpolated provenance unavailable",
+                "spatialSupport": "model-grid precision unavailable"
+              },
+              "present": {
+                "available": false,
+                "reason": "no qualified live present adapter",
+                "evidence": null
+              },
+              "disagreement": false,
+              "spatial": {
+                "state": "unavailable",
+                "reason": "no qualified live surrounding adapter"
+              },
+              "horizon": {
+                "state": "unknown",
+                "arrival": null
+              },
+              "forecast": null,
+              "permissions": {
+                "rain": false,
+                "snow": false,
+                "lightning": false,
+                "expiresAt": null,
+                "reason": "no qualified live present adapter"
+              },
+              "visualPermissions": {
+                "rain": true,
+                "snow": false,
+                "lightning": false,
+                "source": "current model estimate",
+                "quantitativeSupport": "current interval amount supports category"
+              },
+              "lane": "live",
+              "conditionState": "model-estimated-thunder",
+              "observedPresent": false,
+              "localObservationAgeMs": null,
+              "localOperationalHealth": "unknown",
+              "rawCode": 95,
+              "rawForecastCode": null,
+              "observedPrecipMm": null,
+              "modelPrecipMm": 2,
+              "effectivePrecipMm": 2,
+              "activePrecip": true,
+              "activeThunder": false,
+              "displayCondition": "thunder",
+              "modelCondition": "thunder",
+              "finalDataFx": "thunder",
+              "downgradeReason": "no qualified live present adapter",
+              "modelGateReason": null,
+              "advancing": false,
+              "cloudFieldSeed": 4.7
+            },
+            "cache": {
+              "weatherSource": "current",
+              "weatherAgeSec": 0,
+              "weatherSourceAgeSec": 0,
+              "weatherStale": false,
+              "currentEligible": true,
+              "currentUnavailableReason": null,
+              "lastWeatherRefresh": "2026-09-07T09:30:00.000Z",
+              "forecastTrackLoaded": false,
+              "prayerDate": "07-09-2026",
+              "prayerLoaded": true,
+              "tomorrowLoaded": true,
+              "prayerStale": false,
+              "rolloverPendingMs": null,
+              "simulated": false
+            },
+            "config": {
+              "configSource": "hash",
+              "configMode": "hardcoded",
+              "autoDetectSource": null,
+              "autoDetectStatus": "idle",
+              "storageAvailable": true,
+              "storageError": null,
+              "geolocationPermissionState": "unknown",
+              "geolocationLastError": null,
+              "lat": 0,
+              "lon": 0,
+              "tz": "Asia/Riyadh",
+              "label": "Public coordinate fixture",
+              "method": "4",
+              "units": "c",
+              "locationEvidence": {
+                "intent": "fixed-site",
+                "source": "hash",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null
+              },
+              "fixAgeMs": null,
+              "savedAt": null,
+              "hashConfigOverridden": false,
+              "why": "explicit hash lat/lon (no local flag) → hardcoded wins; saved config ignored"
+            },
+            "render": {
+              "atMs": 493,
+              "sim": "07-09-2026 12:30",
+              "currentKey": "Dhuhr",
+              "nextKey": "Asr",
+              "leftMin": 180,
+              "progress": 0.14285714285714285,
+              "fx": "thunder",
+              "generation": 0,
+              "acceptedUtcMs": 1788773400000,
+              "timetableDate": "07-09-2026",
+              "nextDate": "07-09-2026",
+              "nextEpoch": 1788784200000,
+              "nextTime": "15:30",
+              "zone": "Asia/Riyadh",
+              "timetable": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              }
+            },
+            "weatherHeader": {
+              "cond": "thunder",
+              "icon": "⛈️",
+              "label": "Thunderstorm — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+              "temperature": 20,
+              "code": 95,
+              "rawCode": 95,
+              "generation": 0,
+              "target": {
+                "lat": 0,
+                "lon": 0
+              },
+              "sourceValidAt": 1788773400000,
+              "retrievedAt": 1788773400000,
+              "conditionState": "model-estimated-thunder",
+              "observedPresent": false,
+              "paintedAt": 1788773400000
+            },
+            "clouds": {
+              "low": 0.6,
+              "mid": 0.6,
+              "high": 0.3,
+              "hash": 1043616603,
+              "alpha": 1020348,
+              "lighting": {
+                "owner": "accepted physical Sun and rigid sky camera; cosine cloud-facing display approximation",
+                "utcMs": 1788773400000,
+                "sun": {
+                  "altDeg": 52.56689667413674,
+                  "azDeg": 80.11692101449262,
+                  "enu": [
+                    0.5988144892705689,
+                    0.1043276349042878,
+                    0.794063569265651
+                  ],
+                  "raDeg": 165.99766538829954,
+                  "decDeg": 5.988430123406544,
+                  "distanceKm": 150756387.92855304,
+                  "frame": "topocentric-mean-equator-of-date",
+                  "geometric": true,
+                  "distanceAu": 1.0077780652799049
+                },
+                "camera": {
+                  "type": "camera",
+                  "width": 325,
+                  "height": 530,
+                  "azDeg": 180,
+                  "altDeg": 45,
+                  "fovYDeg": 90,
+                  "rollDeg": 0
+                },
+                "warmth": 0
+              }
+            },
+            "stars": {
+              "op": 0,
+              "visible": 0,
+              "blur": "0.60px",
+              "mw": 0
+            },
+            "sky": {
+              "airglow": "rgba(56,61,50,0.000)",
+              "haze": 0,
+              "airDrift": 0.517,
+              "moonBeam": 0,
+              "lunarCorona": 0,
+              "aurora": 0
+            },
+            "moonTruth": {
+              "phaseFraction": 0.209,
+              "waxing": false,
+              "moonAltitudeDeg": 64.7,
+              "moonSkyFresh": true,
+              "lastConsumed": {
+                "status": "completed",
+                "stage": "paint",
+                "fresh": true,
+                "observation": {
+                  "fresh": true,
+                  "produced": {
+                    "epochMinute": 29812890,
+                    "minute": 750,
+                    "context": "0|0|Asia/Riyadh"
+                  },
+                  "expected": {
+                    "epochMinute": 29812890,
+                    "minute": 750,
+                    "context": "0|0|Asia/Riyadh"
+                  },
+                  "phaseFraction": 0.1637900594762024,
+                  "altitudeDeg": 64.74655035193096,
+                  "light": {
+                    "eligibility": 0,
+                    "eligible": false,
+                    "reason": "daylight",
+                    "illumination": 0,
+                    "beam": 0,
+                    "cloudLight": 0,
+                    "localStarWash": 0,
+                    "localGlow": 0,
+                    "halo": 0,
+                    "corona": 0,
+                    "paraselenae": 0
+                  }
+                }
+              },
+              "currentGeometry": {
+                "fresh": true,
+                "produced": {
+                  "epochMinute": 29812890,
+                  "minute": 750,
+                  "context": "0|0|Asia/Riyadh"
+                },
+                "expected": {
+                  "epochMinute": 29812890,
+                  "minute": 750,
+                  "context": "0|0|Asia/Riyadh"
+                },
+                "phaseFraction": 0.1637900594762024,
+                "altitudeDeg": 64.74655035193096,
+                "light": {
+                  "eligibility": 0,
+                  "eligible": false,
+                  "reason": "daylight",
+                  "illumination": 0,
+                  "beam": 0,
+                  "cloudLight": 0,
+                  "localStarWash": 0,
+                  "localGlow": 0,
+                  "halo": 0,
+                  "corona": 0,
+                  "paraselenae": 0
+                }
+              },
+              "lunarLight": {
+                "eligibility": 0,
+                "eligible": false,
+                "reason": "daylight",
+                "illumination": 0,
+                "beam": 0,
+                "cloudLight": 0,
+                "localStarWash": 0,
+                "localGlow": 0,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              },
+              "surface": {
+                "status": "loading",
+                "quality": "pending",
+                "visibleSource": "awaiting-terrain",
+                "identity": null,
+                "legacyDecoded": true,
+                "legacyVisible": false,
+                "texture": "unavailable"
+              },
+              "physicalMoonVisible": false,
+              "calendarMoonVisible": false,
+              "displayMode": "day-suppressed",
+              "moonSkyOpacity": 0,
+              "moonCalendarOpacity": 0,
+              "moonFeatureOpacity": 1,
+              "moonlightOpacity": 0,
+              "earthshine": "surface unavailable",
+              "reason": "daytime suppression (calendar chip persists in header/footer)"
+            },
+            "realSky": {
+              "checkpoint": "9",
+              "status": "pending",
+              "renders": 0,
+              "frameUtcMs": null,
+              "catalogue": null,
+              "generation": null,
+              "assumptions": null,
+              "composition": null,
+              "errors": []
+            },
+            "moonRenderer": {
+              "backend": "metric-terrain-wasm-mb1",
+              "status": "loading",
+              "quality": "pending",
+              "legacyFallback": false,
+              "currentNativeFraction": 0.1637900594762024,
+              "renderedFraction": null,
+              "calendarProxyWeight": 0,
+              "profile": null,
+              "errors": []
+            },
+            "legacySyntheticStarTelemetry": {
+              "active": false,
+              "replacement": "realSky; raster diagnostics, not old synthetic DOM arrays"
+            }
+          },
+          "target": {
+            "generation": 0,
+            "lat": 0,
+            "lon": 0,
+            "intent": "fixed-site",
+            "source": "hash",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "modelEligible": true,
+          "synthetic": null,
+          "rainOpacity": 0.61,
+          "icon": "⛈️",
+          "temperature": "20°",
+          "raw": {
+            "code": 95,
+            "units": "c",
+            "src": "current",
+            "admission": {},
+            "target": {
+              "generation": 0,
+              "lat": 0,
+              "lon": 0,
+              "intent": "fixed-site",
+              "source": "hash",
+              "accuracyM": null,
+              "acquiredAt": null,
+              "provider": null,
+              "area": null,
+              "bounds": null
+            },
+            "provider": "Open-Meteo",
+            "product": "current weather model",
+            "quantityKind": "preceding-interval-amount",
+            "precipitationUnit": "mm",
+            "temp": 20,
+            "feels": 19,
+            "rh": 90,
+            "dew": 18,
+            "wind": 2,
+            "windDir": 180,
+            "gust": 4,
+            "cloud": 95,
+            "cloudLow": 60,
+            "cloudMid": 60,
+            "cloudHigh": 30,
+            "precip": 2,
+            "rain": 2,
+            "showers": 0,
+            "snow": 0,
+            "vis": 20000,
+            "isDay": 1,
+            "currentTime": "2026-09-07T12:30",
+            "currentZone": "Asia/Riyadh",
+            "currentValidAt": 1788773400000,
+            "currentIntervalSec": 900,
+            "retrievedAt": 1788773400000
+          },
+          "radar": {
+            "precipMm": 0,
+            "at": 1788773400000,
+            "retrievedAt": 1788773400000,
+            "target": {
+              "generation": 0,
+              "lat": 0,
+              "lon": 0,
+              "intent": "fixed-site",
+              "source": "hash",
+              "accuracyM": null,
+              "acquiredAt": null,
+              "provider": null,
+              "area": null,
+              "bounds": null
+            },
+            "frame": 1788773400,
+            "frameGeneratedAt": 1788773400000,
+            "indexGeneratedAt": 1788773400000,
+            "sample": {
+              "returnCount": 16,
+              "sampledCount": 16,
+              "coverage": 1,
+              "meanAlpha": 0.28627450980392155
+            },
+            "source": "RainViewer mosaic",
+            "quantitativeAuthority": "unavailable (uncalibrated palette/alpha)"
+          },
+          "wxBusy": false,
+          "radarBusy": false,
+          "cached": {
+            "w": {
+              "code": 95,
+              "units": "c",
+              "src": "current",
+              "admission": {},
+              "target": {
+                "generation": 0,
+                "lat": 0,
+                "lon": 0,
+                "intent": "fixed-site",
+                "source": "hash",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null
+              },
+              "provider": "Open-Meteo",
+              "product": "current weather model",
+              "quantityKind": "preceding-interval-amount",
+              "precipitationUnit": "mm",
+              "temp": 20,
+              "feels": 19,
+              "rh": 90,
+              "dew": 18,
+              "wind": 2,
+              "windDir": 180,
+              "gust": 4,
+              "cloud": 95,
+              "cloudLow": 60,
+              "cloudMid": 60,
+              "cloudHigh": 30,
+              "precip": 2,
+              "rain": 2,
+              "showers": 0,
+              "snow": 0,
+              "vis": 20000,
+              "isDay": 1,
+              "currentTime": "2026-09-07T12:30",
+              "currentZone": "Asia/Riyadh",
+              "currentValidAt": 1788773400000,
+              "currentIntervalSec": 900,
+              "retrievedAt": 1788773400000
+            },
+            "ts": 1788773400000
+          },
+          "visibleParticles": 26,
+          "fx": "thunder",
+          "precip": "on",
+          "lightning": "off",
+          "headerLabel": "Thunderstorm — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+          "card": {
+            "width": 325,
+            "height": 530
+          },
+          "footer": {
+            "top": 502.40625,
+            "bottom": 520.34375
+          }
+        }
+      }
+    ],
+    "firstPaintSourceSha256": "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d"
+  },
+  "imageRequests": [
+    "http://127.0.0.1:63338/tile/v2/radar/1788773400/256/6/32/32/2/1_1.png"
+  ],
+  "pageErrors": [],
+  "status": "PASS",
+  "primaryVisualReview": "REQUIRED; C has not seen these unexecuted pixels"
+}

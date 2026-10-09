@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:29.975929+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/3",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/3/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/3/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/3/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/3",
+    "id": 5381803926,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfPlg",
+    "number": 3,
+    "title": "R0003: Bind asynchronous prayer, weather and radar commits to their requesting configuration",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:12Z",
+    "updated_at": "2026-09-08T06:24:32Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-003 -->\n# R0003: Bind asynchronous prayer, weather and radar commits to their requesting configuration\n\n**Repository-local identity:** `R0003` in `theislampill/salah_widget`; existing tracker [#3](https://github.com/theislampill/salah_widget/issues/3). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-003. Existing corrective owner: GitHub #3. Proposed priority P1; product-or-skill defect. Filing this plan neither implements it nor authorizes a merge or deployment.\n\n## The missing ownership contract\n\nA result must belong to the selection that dispatched it, and a completion must release only the operation/attempt that owns its slot. Resetting globals when settings change does neither. On both main `fd2972ba64225fe9d6848e92497e6d0ed20ea624` and unmerged candidate `9d9c43649748555afbe09e3ca49bc47db2d7e7bb`, the saved PROVIDER-01 fixture selected Madinah A, then New York B, completed B, and finally completed A. New York's label and coordinates survived, but A changed the global timezone to `Asia/Riyadh`, changed next Asr from `15:30` to `15:49`, and wrote A's data under B's cache key. A delayed tomorrow response likewise entered B's tomorrow slot.\n\nW004 witnesses the same missing contract in another acquisition path. A Madinah Celsius request remained busy across selection of London `(51.48,-0.001)` in Fahrenheit, preventing the new request. Its eventual temperature `20` was installed and persisted under `salahwx:51.48|-0.001|f`. An old RainViewer tile completed after the switch and restored `precipMm:4.3` for the old location. An hourly New York record was converted using the new global Riyadh zone: expected epoch `1788814800000`, actual `1788789600000`, a −7-hour error. These are controlled exact-source scheduling results, not observations of those cities' weather or a live provider incident.\n\nThe causal sequence is dispatch from globals → asynchronous wait → completion reads different globals → mutation of shared state/persistence. Prayer transport mutates `tz` before the caller can reject the data; weather computes `wxKey()` at completion; radar computes coordinates after its manifest await and accepts a later image callback; unqualified `finally` clears global busy flags. An abort signal alone cannot establish correctness when an already-resolved body or image callback still runs.\n\n## Re-anchor the exact owners\n\nBefore edits, record `git -C C:\\workspace\\ai\\salah_widget rev-parse --show-toplevel`, `rev-parse HEAD`, `status --short`, and `diff -- index.html tests/smoke.html` with the same `git -C` prefix. Compare [prayer fetch/cache](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L735-L757), [weather dispatch and hourly completion](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L771-L801), [radar manifest/image completion](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L820-L840), [prefetch](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1986-L1990), and [load/reset/apply](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2143-L2179). Stop on incompatible relevant drift and obtain a revised integration boundary. The candidate has the same ownership defect; its unrelated changes are not authorized by this issue.\n\n## Proposed in-memory interface and transitions\n\nAgree this internal shape before shared edits. Names below are design pseudocode, not fields already present in a public API or a persisted schema:\n\n```text\ncontext = { generation, operationId, kind, requestedDay,\n            lat, lon, method, school, units, requestZone, cacheKey }\nattempt = { operationId, attemptId, controller }\neligible(context, slot) = context.generation == currentGeneration\n                         and slot.operationId == context.operationId\n```\n\nCapture primitives before the first await. Prayer contexts include day/method/school and the exact main-format cache key; weather includes units and the timezone actually encoded in its URL; radar includes coordinates for manifest→tile→pixel work. `kind` identifies the dispatch slot, not a permanent promise that tomorrow data will remain tomorrow. Missing/unneeded fields need not be added to every record. Each retry gets its own attempt identity under one operation identity; the operation owns the busy slot across backoff. Distinguish a configuration generation from attempt identity: A→B→A requires three generations even if the third selection equals the first by value.\n\n1. Increment the acquisition generation at the accepted configuration replacement boundary before clearing/loading state. Bind the new config, invalidate old operation eligibility, and then dispatch current work. Do not wait for old `finally` to make B eligible. Slot replacement is synchronous; optionally abort superseded transports after their identity has become ineligible. A pure label/date-format edit must not cause an uncontrolled parallel acquisition path; preserve the existing apply boundary unless an explicit optimization is separately justified.\n2. Make `fetchTimings` return admitted payload data without mutating global timezone. Capture its URL inputs once. At loader, prefetch and rollover completions, first validate request/body agreement through [R0002](https://github.com/theislampill/salah_widget/issues/2), then check generation/slot ownership, then pass the payload and context into the day-classification path. Only the accepted adoption branch may change `tz`, today/tomorrow, dates, stale status, cache or render invalidation. The bootstrap timezone discovery owned by [R0004](https://github.com/theislampill/salah_widget/issues/4) is itself a guarded adoption of metadata; it is not an exception permitting old A to change B's zone.\n3. In `fetchWeather`, parse/normalize into local candidate values, including elevation, current weather, source timestamps and track. An old completion changes none of `siteElev`, `weather`, `weatherTrack`, `lastWxAt` or storage. Compute the exact cache key from the captured context, never the current globals. Check ownership before persistence as well as before the visible assignment. Preserve weather validation/freshness decisions for their owners; being current-generation does not make an invalid or old observation fresh.\n4. Consume [R0008](https://github.com/theislampill/salah_widget/issues/8)'s explicit-zone conversion interface at the **existing** hourly parser. Pass `context.requestZone` through the converter and its strict round-trip check; a wrapper that captures the zone but calls a helper which rereads global `tz` is still wrong. The request zone is the zone used to encode the response wall strings. If returned metadata contradicts it, fail that track closed or reconcile explicitly; do not reinterpret the same string using whichever zone is globally selected at completion. Invalid/unresolved gap or fold conversions cannot supply fresh-weather epochs to [R000B](https://github.com/theislampill/salah_widget/issues/11).\n5. In `fetchRadar`, derive tile coordinates and sample pixel coordinates from captured lat/lon, even after the manifest await. Hold frame/source data locally across image loading. After load/error, gate the final `weatherRadar` assignment and operation cleanup. An old tile can settle its own promise but may not restore old precipitation, clear a replacement radar slot, or reset its retry deadline. Image deadline/handler cleanup is [R000D](https://github.com/theislampill/salah_widget/issues/13)'s interface consumer, not a second lifecycle implementation here.\n6. In all success, catch and finally paths, release the slot only if its operation ID still matches; clear an attempt timer/controller only if its attempt ID matches. An old catch must not show a current error over B, and an old finally must not make B's busy state false. Current success and current failure must both eventually settle normally. Do not retain one global `wxBusy` lock across generations and call that stale protection.\n\nThis is a few contexts and existing slot guards, not a global scheduler, persisted request log, or freshness bit. A universal shared bit would let unrelated weather completion invalidate a prayer request. Comparing only coordinates misses units/method/school and A→B→A. Capturing only the cache key still permits cross-location state and timezone mutation. Serializing all requests behind A prevents B from loading when A hangs. Cancellation remains useful resource cleanup, with identity checks as the acceptance proof.\n\n## Deterministic acceptance, with actual caller reachability\n\nCreate deferred fetch/body/image promises in an isolated fixture; execute actual `applyConfig`, fetch, adoption and render paths. Keep an in-memory storage write log. For the historical prayer recipe, hold `nowParts()` at September 7, 2026 noon to isolate ownership from date arithmetic. A is `(24.47,39.61,\"Madinah\",method 4,school 0,initial tz UTC)` and B is `(40.71,-74.01,\"New York\",method 2,school 0,initial tz UTC)`. Both responses are successful envelopes for `07-09-2026`, with Sunrise 06:00, Dhuhr 12:00, Sunset/Maghrib 18:00 and Isha 19:30. A has Fajr 04:46, Asr 15:49 and `meta.timezone:\"Asia/Riyadh\"`; B has Fajr 05:00, Asr 15:30 and `meta.timezone:\"America/New_York\"`. Supply valid Gregorian identity and optional date fixtures under the admission contract. Dispatch A, dispatch B, release B, snapshot, release A, snapshot again.\n\nThe repaired final snapshot must equal B's snapshot for coordinates, label, zone, schedule, tomorrow, stale status and cache bytes. Record B's captured cache key; after A releases there must be no write to B's key. A's late completion must also make no new stale-cache write after it is obsolete. Reverse completion order as a positive current-owner control; do not assert “nothing ever commits.”\n\n| Interleaving/control | Specific required outcome |\n|---|---|\n| A→B, old success / rejection / finally after B | No B state, error, cache or busy-slot change from A. B's own completion still releases its slot. |\n| A→B→A with first A released last | Only third-generation A may commit. Equality of coordinates does not resurrect first A. |\n| Same coordinates, method-only or school-only change | Old schedule cannot overwrite the newly selected method/school; captured request URL and cache identity match the winner. |\n| Madinah Celsius request → London Fahrenheit selection | Current London work can dispatch while old work settles; old `20` cannot enter London cache or live state. Healthy London response commits through the same path. |\n| Old hourly `2026-03-08T03:30` from New York; global zone becomes Riyadh | Pure conversion with captured New York zone is `2026-03-08T07:30:00.000Z`, not `08:30Z` or a Riyadh-derived instant. Obsolete generation cannot commit it. Equivalent current-generation control may commit. This combined DST fixture is proposed acceptance, not a previously executed result. |\n| Radar manifest released before switch, image released after switch; and manifest released after switch | Old tile/pixel sampling uses A coordinates, but no old rain evidence enters B; B's slot survives A cleanup. Current tile positive control retains existing precipitation gating. |\n| Same-generation tomorrow crosses midnight | Context remains generation-valid; [R0005](https://github.com/theislampill/salah_widget/issues/5) classifies its actual date. Rejecting every late response is not an acceptable shortcut. |\n| Healthy cache reload after winning response | Reload isolated storage and recover B, proving ownership reaches persistence rather than only UI assignment. |\n\nMutation controls remove a timezone commit guard, change a captured cache-key write back to `cacheKey()`/`wxKey()`, and make old `finally` unconditional, separately in an authorized disposable fixture. The corresponding row must fail each time. Removing only an abort signal should **not** defeat stale-result rejection. That control distinguishes ownership from transport luck.\n\n## Integration, public effects and closure\n\nThe accepted directed interface is [R0008](https://github.com/theislampill/salah_widget/issues/8) → this owner: converter semantics there, captured request-zone/hourly caller here. This owner supplies request/attempt ownership to [R0004](https://github.com/theislampill/salah_widget/issues/4), [R0005](https://github.com/theislampill/salah_widget/issues/5), [R0006](https://github.com/theislampill/salah_widget/issues/6), and [R000D](https://github.com/theislampill/salah_widget/issues/13). Coordinate exact writes with prayer admission/cache, weather admission/age, radar truth, zero-coordinate and config-apply owners [R0002](https://github.com/theislampill/salah_widget/issues/2), [R000B](https://github.com/theislampill/salah_widget/issues/11), [R000C](https://github.com/theislampill/salah_widget/issues/12), [R000E](https://github.com/theislampill/salah_widget/issues/14), [R001E](https://github.com/theislampill/salah_widget/issues/30), [R0011](https://github.com/theislampill/salah_widget/issues/17). Agree interfaces before shared hunks; these are not whole-issue serialization dependencies. UI lookup intent remains [R000F](https://github.com/theislampill/salah_widget/issues/15).\n\nOnly acquisition/adoption code and discriminating tests should change. Preserve main legacy cache keys and valid old bytes, config serialization, builder, installers and presets. README needs an update only if stale/loading behavior visible to users changes. No new provider, dependency, schema migration or visual redesign is needed. Final browser evidence must show actual settings changes with controlled responses and readable 325×530 output; preserve opaque moon and scene motion rather than using races as a reason to freeze rendering.\n\nRevert dispatch and all dependent completion guards together if current requests cease to settle; a half-installed context interface is unsafe. Stop on a missing consumer guard, ambiguous shared writer or contradictory cache result and retain an explicit partial state. Close #3 only after final-tree race/control results, independent exact-tree review of every mutation site, and an evidence comment; use `Implements #3` without auto-close. Public claims require matching served-source and consumer readback. Supplementary historical companion SHA256: `daf4ee3c022f3b5717ad67b03d78433451389c3639ff6ae5c43ab7384d8707b5`.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/3/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/3/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733514892,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfPls8AAAAHJ9w4jA",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733514892",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:32Z",
+      "rename": {
+        "from": "SW-003: Bind asynchronous prayer, weather and radar commits to their requesting configuration",
+        "to": "R0003: Bind asynchronous prayer, weather and radar commits to their requesting configuration"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0003",
+    "bodySha256": "0bf3a125260da16792455cc95970b97c097a29dbe5b23aaa54b26178ffc067dc",
+    "updatedAt": "2026-09-08T06:24:32Z",
+    "commentRevisions": []
+  }
+}

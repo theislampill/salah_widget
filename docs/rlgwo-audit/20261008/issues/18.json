@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:31.451080+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/18",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/18/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/18/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/18/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/18",
+    "id": 5381806867,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfbEw",
+    "number": 18,
+    "title": "R0012: Make copy success and manual recovery correspond to the requested payload",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:38Z",
+    "updated_at": "2026-09-08T06:25:06Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-018 -->\n# R0012: Make copy success and manual recovery correspond to the requested payload\n\n**Repository-local identity:** `R0012` in `theislampill/salah_widget`; existing tracker [#18](https://github.com/theislampill/salah_widget/issues/18). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-018. Product defect; proposed P2. This repair concerns copy outcome and recovery, not command execution or installer correctness.\n\n## Historical witness and causal boundary\n\nThe 7 September 2026 original-source VM fixture rejected navigator.clipboard.writeText and made document.execCommand(\"copy\") return false. On both main fd2972ba64225fe9d6848e92497e6d0ed20ea624 and candidate 9d9c43649748555afbe09e3ca49bc47db2d7e7bb, Copy embed still displayed \"copied ✓\". Install widget instead displayed \"Couldn’t copy — select the embed code box and copy manually.\" That box held an iframe, not the terminal command requested by Install.\n\nThe [embed handler](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L331) does not inspect fallback success and unconditionally sets success text. The [existing copyText and install handler](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L360) already return/use a boolean, but the install failure points at the wrong artifact. A successful primary clipboard write is the retained positive control. Hostile label encoding, platform selection and 325×530 iframe size passed separate bounded controls; no injection or malformed installer command is established here. The fixture never used the owner's clipboard, a live browser or a terminal installer.\n\nThe invariant is **a success message follows actual copy success, and manual recovery exposes the exact payload captured for that action**. A failed operation must not direct a user to a different artifact.\n\n## Exact repair with the existing helper\n\nBefore authorized work, bind repository root, theislampill/salah_widget remote, HEAD and dirty paths; inspect relevant drift with:\n\n~~~sh\ngit rev-parse --show-toplevel\ngit remote get-url origin\ngit rev-parse HEAD\ngit status --short\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- builder.html tests/smoke.html README.md\n~~~\n\nThe write owner is builder.html copy onclick, copyText, install onclick and their status/recovery markup. [installCmd](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L344) remains a read/compatibility owner. The [candidate builder](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/builder.html) is not a prequalified patch.\n\n1. Capture each payload once at button activation: current #code.value for Embed; installCmd().cmd for Install. Call the existing copyText(payload) from both handlers. Set success only for true; a rejected/false fallback is failure. Harden only helper cleanup needed for a thrown fallback: remove its temporary textarea and retain a boolean result without letting cleanup hide a failure.\n2. Keep the embed-code box an embed-code box. On embed failure show \"Couldn’t copy. Select the embed code below and copy it manually.\" Focus/select the exact captured payload in the recovery surface. On install failure show \"Couldn’t copy. Select the install command below and copy it manually.\" Reveal a labeled readonly textarea adjacent to install feedback containing the captured command. Never write the command into the embed textarea or change command quoting.\n3. Use one small manual-recovery surface for the install action; the existing embed textarea suffices when its current value still equals the captured iframe. If the form changes while a copy is pending, preserve the action's captured iframe in a labeled recovery textarea rather than silently selecting a newly generated iframe. A single shared recovery region labeled by artifact kind is an acceptable compact implementation; it must retain the payload/action association and must not replace the canonical embed output.\n4. Associate async completion and timeout cleanup with that button's current copy attempt. Disable that button while its attempt is pending, restore it in cleanup, and clear its prior status timer before writing new feedback. Keep separate embed/install status ownership so an earlier success-reset timer cannot clear a newer failure. Do not auto-hide the manual payload after eight seconds: retain it until a new action of the same kind replaces it or the user dismisses it. Restore focus to the activating button on success; move focus/select to manual recovery on failure.\n\nA local per-action attempt counter is sufficient where disabling cannot prevent programmatic reentry; do not add a global clipboard scheduler. This is action-result ownership, not the separate location-intent domain. New clipboard permissions, automatic permission prompts or a copy library do not repair false feedback. Removing fallback entirely would regress browsers where the existing boolean fallback works. Regenerating a command after await could select changed form values or platform state, violating recovery identity.\n\n## Standalone fixture and exact expected payloads\n\nRun future tests with a controlled clipboard/execCommand double in a disposable origin. Do not write the owner's real clipboard. The stimulus is:\n\n~~~js\nconst written = [];\nnavigator.clipboard.writeText = async t => {\n  written.push(t);\n  throw new Error(\"controlled clipboard denial\");\n};\ndocument.execCommand = command => {\n  if (command !== \"copy\") throw new Error(\"unexpected command\");\n  return false;\n};\n// Activate the actual Embed or Install button.\n// Assert no copied-success text, and recovery.value === written[0].\n~~~\n\nWhere the browser property is read-only, install the equivalent configurable test double before application load. Do not change production permissions to make the test possible.\n\nUse a builder fixture at https://example.test/widget/builder.html with portable label Madinah, latitude 24.4672, longitude 39.6142, method 4, school 0, time 24 and units f. The historical iframe src is https://example.test/widget/#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0. Capture the complete actual snippet, including newlines and 325×530 style; compare recovery byte-for-byte, not just \"contains iframe\".\n\nFor platform Win32, current installCmd yields:\n\n~~~powershell\n$env:SALAH_WIDGET_HASH='lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0'; irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex\n~~~\n\nFor MacIntel/Linux, current command shape is:\n\n~~~sh\ncurl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | SALAH_WIDGET_HASH='lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0' bash\n~~~\n\nThese strings are **test data; do not execute them**. For intentional generic local=1, the current command omits SALAH_WIDGET_HASH. Qualify actual generated strings on the final tree; do not hardcode obsolete strings after an authorized serializer change.\n\n| Copy path/control | Expected output |\n|---|---|\n| Primary resolves | Success; fallback call count 0; no manual-error message. |\n| Primary rejects, fallback true | Success; captured payload was passed to both mechanisms. |\n| Primary rejects, fallback false or throws | No copied/checkmark success; accessible failure and exact manual payload remain available. |\n| Clipboard API absent | Controlled fallback follows the same true/false outcomes without an uncaught exception. |\n| Embed vs Install; Windows vs Bash | Recovery kind/name and bytes match the requested artifact, never another button's output. |\n| Form changes while pending; old status timer fires | Result remains bound to captured payload; newer failure is not cleared by old timer. |\n| Label includes apostrophe, quotes, ampersand, newline, Unicode and command-substitution-looking literal text | Existing URLSearchParams encoding and exact decoded label survive; no raw quote breakout or command execution. |\n| Mutation: unconditional success or install recovery wired to #code | Respective through-button assertion fails. |\n\nThe minimum browser bridge uses actual button activation, rejection doubles and native textarea focus/selection. Capture readable failure text and selected recovery, then keyboard Tab onward; test narrow/mobile width and a long command without page overflow. The VM cannot establish selection, focus or screen-reader announcements. Clipboard doubles cannot prove a real permission policy; report that boundary.\n\n## Interfaces, public effects and DONE\n\nNo new typed dependency is proposed. [R0010](https://github.com/theislampill/salah_widget/issues/16) may change the carried local fragment; this work compares against the actual captured artifact. [R0013](https://github.com/theislampill/salah_widget/issues/19) and [R0014](https://github.com/theislampill/salah_widget/issues/20) own Bash/minimum-PowerShell installer execution. Correctly recovering their command is not proof it installs successfully. Serially join shared builder markup/docs through the existing integrator.\n\nKeep generated payload grammar, 325×530 iframe, geolocation attribute scope, config.js, index.html, installer sources and preset unchanged. Add README recovery text only if it describes these buttons; no published copy-success claim until served builder bytes and UI are read back.\n\nRollback handler/recovery changes together if success paths or focus regress, preserving the canonical embed textarea. Stop on incompatible command grammar or absent browser selection evidence; retain pure-source results as partial. DONE needs final-tree RED→GREEN plus positive/mutation controls, browser feedback/selection evidence and an evidence comment. Use non-closing Implements #18 PR wording and manual closure after evidence and any claimed public readback. This proposal asserts no implementation PASS.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/18/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/18/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733540453,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfbE88AAAAHJ9ycZQ",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733540453",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:05Z",
+      "rename": {
+        "from": "SW-018: Make copy success and manual recovery correspond to the requested payload",
+        "to": "R0012: Make copy success and manual recovery correspond to the requested payload"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0012",
+    "bodySha256": "0106441ebe4116da9f9a93d0a31f21ec6db60c890257c6eb3a5ace221e303bf5",
+    "updatedAt": "2026-09-08T06:25:06Z",
+    "commentRevisions": []
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:30.641304+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/7",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/7/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/7/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/7/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/7",
+    "id": 5381804811,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfTCw",
+    "number": 7,
+    "title": "R0007: Compute next-prayer countdowns from real zoned instants across DST",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:19Z",
+    "updated_at": "2026-09-08T06:24:41Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-007 -->\n# R0007: Compute next-prayer countdowns from real zoned instants across DST\n\n**Repository-local identity:** `R0007` in `theislampill/salah_widget`; existing tracker [#7](https://github.com/theislampill/salah_widget/issues/7). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-007. Existing corrective owner: GitHub #7. Proposed priority P1; product-or-skill defect. This plan repairs the elapsed interval; it does not authorize implementation or claim a new prayer calculation.\n\n## A precise endpoint failure, not a broken civil calendar\n\nHistorical DATE-006 executed the actual `model()` on main `fd2972ba64225fe9d6848e92497e6d0ed20ea624` and candidate `9d9c43649748555afbe09e3ca49bc47db2d7e7bb`. In New York at `2026-03-08T06:30:00Z` (01:30 EST), with Fajr 05:00 EDT (`09:00Z`), both returned `leftMin=210`; elapsed endpoint difference is **150 minutes**. At `2026-11-01T05:30:00Z` (first 01:30, EDT), Fajr 05:00 EST is `10:00Z`: both again returned 210, while the endpoint difference is **270 minutes**. Ordinary `2026-09-07T05:30:00Z`→`09:00Z` correctly returned 210.\n\nThe source subtracts local wall minutes, then adds 1440 for overnight Fajr. It cannot account for an offset transition between now and the intended prayer. A separate proposed fall control from 00:30 EDT to 05:00 EST has 330 elapsed minutes versus 270 wall minutes; retain it as a **new fixture**, not a replacement description of the historical 01:30/270-minute witness. The preserved experiments are exact-source VM/model results with independently supplied UTC endpoints, not browser screenshots or universal timezone coverage.\n\nCivil `tomorrowStr()` already passed the saved month/year/leap/DST controls. It increments a UTC-constructed civil date, rather than adding elapsed 24 hours to a local epoch. Keep that control and operation intact. [R0008](https://github.com/theislampill/salah_widget/issues/8) owns wall-time inversion; [R0020](https://github.com/theislampill/salah_widget/issues/32) owns whether the current instant follows wall-clock corrections. Neither automatically fixes this model's subtraction.\n\n## Re-anchor and narrow change surface\n\nBefore mutation, record `git -C C:\\workspace\\ai\\salah_widget rev-parse --show-toplevel`, `rev-parse HEAD`, `status --short`, and `diff -- index.html tests/smoke.html`, using the same prefix. Compare [main `model()`](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1201-L1224), [candidate model](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L1227-L1250), [temporal conversion/civil successor](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L704-L731), and [duration/visible consumers](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1977-L1995). Stop on incompatible event-selection or conversion drift; do not graft another converter onto unknown HEAD.\n\nKeep `nowMin`, noon-based normalization, sunrise/sunset, arc dots, current labels and existing progress semantics separate from elapsed countdown. The accepted issue is not a redesign of the solar arc or progress policy. If progress is later intended to mean elapsed time, that contract must be reconciled explicitly; this repair must not silently move prayer markers or change Dhuhr geometry as a side effect of fixing `leftMin`.\n\n## Executable design: identify event, resolve instant, subtract\n\n1. Retain the existing event-selection order and requested displayed time, but carry the selected event's **civil date** and effective location zone alongside it. For a same-day next event use the admitted current payload day; for next-day Fajr use the actual admitted next-day payload date. Require the latter to equal the civil successor of the selected current day. A non-null tomorrow carrying today's date is unusable for that endpoint and belongs to [R0005](https://github.com/theislampill/salah_widget/issues/5)'s adoption repair.\n2. Call the corrected explicit-zone conversion interface owned by [R0008](https://github.com/theislampill/salah_widget/issues/8) with year/month/day/hour/minute and that zone. Do not derive the date from UTC midnight, assume the device zone, hardcode UTC offsets, or add 86400000 ms to today's event epoch. Consume the exact proposed interface `epochForTzTime(y,mo,d,h,mi,zone)` returning a finite epoch for one supported minute-precision inverse, and `NaN` for invalid, unsupported, gap or ambiguous input. Check `Number.isFinite` before subtracting. No provider disambiguation is inferred from a bare `HH:mm` string. The helper's bounded inverse and strict round-trip check own conversion; avoid duplicating a second one-offset implementation here.\n3. Read the current instant once for the model calculation and derive its wall parts from that same instant. This prevents `nowParts()` and the elapsed subtraction straddling different clock samples in a boundary test. Compute `leftMin=(nextEpoch-nowEpoch)/60000` only for a valid intended future endpoint. Keep the existing `dur()` presentation/rounding and event labels for valid endpoints. At exact prayer time, preserve the current selection rule (`x.m>nowMin` selects the following event), rather than momentarily showing a negative countdown to the just-passed event.\n4. Choose an explicit unavailable result, with no estimate mode: set `leftMin=NaN` when the required next-day record is missing/wrong-day or the converter returns `NaN`. In the next-time/countdown branch set `.nt.textContent=\"—\"` and `.left.textContent=\"Countdown unavailable\"`, using the existing `showError(msg)` presentation helper with that exact message. Do not call `dur` or `fmt` for the unavailable endpoint, clamp it to zero, or present today's Fajr repeated tomorrow as confirmed future data. The pinned main renderer has no estimate label: its current `tomorrow ? tomorrow.timings.Fajr : t.Fajr` fallback is fed straight to the precise `.nt`/`.left` output. Adding a prediction/estimate product mode is larger than withholding unsupported precision. Current prayer name, the admitted current-day timetable, date provenance and wall-time arc/progress remain available; this output branch does not mark valid today data globally invalid. A valid ordinary current-day next prayer continues to show its countdown even when tomorrow is absent.\n5. At the actual render assignments, use `if(Number.isFinite(M.leftMin))` for the existing `fmt(M.nextTime)` and `dur(M.leftMin)` output; otherwise call `showError(\"Countdown unavailable\")`. Continue rendering the rest of the valid model, rather than returning from the whole render function. This prevents the next unconditional `.nt`/`.left` assignment from overwriting the unavailable message. When an admitted matching tomorrow record arrives, [R0005](https://github.com/theislampill/salah_widget/issues/5)'s coalesced invalidation makes the next visible frame restore both the exact formatted time and elapsed countdown, including frozen simulation. No new timer, ARIA live-region storm or date-output policy is introduced.\n\nThe smaller tempting fix “subtract one hour on DST dates” fails fall-back direction, fractional-offset changes and nontransition days. Passing only hour/minute loses overnight date identity. Recomputing prayer times locally changes religious/provider policy. The existing explicit-zone helper is the smallest shared conversion boundary once corrected; introducing a timezone package requires separate dependency approval and is not assumed here.\n\n## Deterministic acceptance with independent expected values\n\nUse actual model and render caller on a disposable fixture, admitted records with all six clocks, and New York zone. Fajr is 05:00 in the controls below; keep the other clocks usable and later than the current time. Independently parse the stated offset-bearing ISO endpoints for expected elapsed values; never generate expected epochs by calling the converter under test.\n\n| Fixture endpoints | Expected `leftMin` / purpose |\n|---|---|\n| `2026-03-08T01:30:00-05:00` → `2026-03-08T05:00:00-04:00` | 150; historical source RED was 210. |\n| `2026-11-01T01:30:00-04:00` → `2026-11-01T05:00:00-05:00` | 270; historical source RED was 210. |\n| `2026-09-07T01:30:00-04:00` → `2026-09-07T05:00:00-04:00` | 210; historical ordinary-day positive control. |\n| `2026-11-01T00:30:00-04:00` → `2026-11-01T05:00:00-05:00` | 330; proposed additional fall control, distinct from historical result. |\n| `2026-03-07T23:30:00-05:00` → next-day `2026-03-08T05:00:00-04:00` | 270; proves actual following civil date is used across spring transition. |\n| `2026-11-01T01:30:00-05:00` → `2026-11-01T05:00:00-05:00` | 210; second 01:30 has a different current epoch even with the same wall fields. |\n| Kathmandu `2026-09-07T01:30:00+05:45` → `2026-09-07T05:00:00+05:45` | 210; non-integer-hour offset control. |\n| Next event unavailable or unresolved wall-time fold/gap | `.nt` is `—`, `.left` is exactly `Countdown unavailable`; no NaN/Infinity or invented exact zero appears. Ordinary earlier valid next event still works. |\n\nRecovery control: after the unavailable overnight state, release a valid matching tomorrow with Fajr 05:00; on the next visible frame `.nt` restores its chosen 12/24-hour format and `.left` restores the elapsed interval. Use a same-day Fajr or invalid converter return as negative controls and confirm that neither removes the unavailable message. The timetable/date from valid today stays readable throughout.\n\nAlso keep Dec 31→Jan 1 and leap-day Fajr fixtures, exact-boundary event selection, 12/24-hour display, ordinary arc coordinates and existing progress output. Assert `nextKey`, `nextTime`, target payload date and rendered text together with `leftMin`. The spring screenshot should show the existing duration representation for 150 minutes (2h 30m), while the arc/marker layout matches the unchanged wall-time model.\n\nMutation controls in an isolated authorized fixture restore wall-minute subtraction and then replace next-day civil conversion with epoch+24h. The transition/overnight rows must discriminate them while ordinary controls still pass. Repaired-helper unit tests without the actual `.left` consumer are insufficient. Combined final qualification injects forward/backward wall corrections from [R0020](https://github.com/theislampill/salah_widget/issues/32) and verifies that the model consumes the corrected current instant; that does not create a second clock repair here.\n\n## Delivery and closure\n\nAccepted dependencies remain [R0008](https://github.com/theislampill/salah_widget/issues/8) → this owner for conversion interface and [R0020](https://github.com/theislampill/salah_widget/issues/32) → this owner for current-instant qualification. Coordinate shared conversion hunks with one integrator. Day-adoption, input admission and date-display states are consumer controls, not permission to take over those owners.\n\nChange the interval/model consumer and actual invoked fixtures; update README only where it describes countdown precision/unavailability. Keep config time format, builder, installers and presets unchanged. No notification, adhan, calculation engine or sky redesign belongs here. Preserve readable 325×530 output, existing prayer markers, opaque moon and visible motion. The saved evidence has no browser verdict; final acceptance requires a controlled rendered countdown crop and unchanged arc/layout control.\n\nRevert the narrow endpoint/countdown changes if ordinary scheduling or output regresses, leaving the converter owner's independent work intact where its contract still passes. Stop on unresolved endpoint semantics rather than mask it with a rounded number. Close #7 only after final-tree RED→GREEN/controls, independent exact-tree consumer review and evidence comment; use `Implements #7` without auto-close. Public claims require served-source/readback. Supplementary historical companion SHA256: `7a640c530b4db3e23d2cd89a0718913bbd3e089b2a631fbb476b8395de1431ad`.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/7/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/7/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733521769,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfTC88AAAAHJ9xTaQ",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733521769",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:41Z",
+      "rename": {
+        "from": "SW-007: Compute next-prayer countdowns from real zoned instants across DST",
+        "to": "R0007: Compute next-prayer countdowns from real zoned instants across DST"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0007",
+    "bodySha256": "0a127bf70ed50250ad2ec77c28e278c44c4ea37ae564e89acad817522c88a407",
+    "updatedAt": "2026-09-08T06:24:41Z",
+    "commentRevisions": []
+  }
+}

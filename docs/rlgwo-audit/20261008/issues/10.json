@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:30.679012+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/10",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/10/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/10/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/10/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/10",
+    "id": 5381805264,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfU0A",
+    "number": 10,
+    "title": "R000A: Make adjusted-prayer markers follow the selected method rather than a universal 14-degree test",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:24Z",
+    "updated_at": "2026-09-08T06:24:48Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-010 -->\n# R000A: Make adjusted-prayer markers follow the selected method rather than a universal 14-degree test\n\n**Repository-local identity:** `R000A` in `theislampill/salah_widget`; existing tracker [#10](https://github.com/theislampill/salah_widget/issues/10). The SW identifier is historical draft provenance.\n\n\nThe existing Fajr/Isha ring is intended to identify prayers whose selected twilight angle cannot be reached by the widget's solar model. It currently applies a single `minRealE > -14` test to both prayers. At London on 21 June, the model reaches −14.041301465736721°, but method 3 asks for 18°/17°: neither requested depression is reached, yet neither marker receives `adj`. Classify each prayer from the accepted payload's actual method parameter and state the limit for interval-based methods.\n\nCampaign draft alias: SW-010. Existing GitHub owner: #10. P2, truth of an existing indicator. No new prayer method, high-latitude setting or sky-design objective is included. This issue does not authorize implementation.\n\n## Re-anchor and replay the bound failure\n\nHistorical main is `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; candidate is `9d9c43649748555afbe09e3ca49bc47db2d7e7bb`. Future executor: record `git rev-parse --show-toplevel`, `git remote get-url origin`, `git status --short`, `git rev-parse HEAD`, then inspect `git diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- index.html tests/smoke.html DESIGN.md README.md`. Confirm repository `theislampill/salah_widget` and the relevant geometry/classification owner before changing it. Preserve unrelated work; stop on incompatible method or model drift.\n\nSources: [main `drawArc`, extrema and marker class](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1227), [candidate corresponding marker owner](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L1331), and [main `model()` return](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L1215). The accepted payload's `meta.method.params` is the parameter source. Do not infer an angle from a method name or the configuration number alone.\n\nThe retained provider lane executed the exact `model()`, `solarElevationDeg()` and full `drawArc()` against captured responses on both trees. With London local noon on `21-06-2026`, it returned these tags:\n\n```html\n<circle class=\"dot\" cx=\"19.37\" cy=\"134.93\" r=\"5\"/>\n<circle class=\"dot\" cx=\"274.41\" cy=\"133.93\" r=\"5\"/>\n```\n\nThey are the Fajr and Isha markers. `providerParams={Fajr:18,Isha:17}`, `latitudeAdjustmentMethod=\"ANGLE_BASED\"`, `dayLen=999`, `polar=false`, and `estimated=false`. Tromsø summer returned both `dot adj`; reachable Madinah returned neither. The saved experiment proves emitted markup and inconsistent method classification. It did not capture a browser crop, certify provider adjustment policy, or validate every approximation in the solar model.\n\nThe public fixture core below is sufficient to build a narrow offline replay using the actual source functions. Bind configuration to the row's latitude, longitude, zone and method; set `nowParts()` to the listed civil date at 12:00; assign the same payload as `today`; call actual `drawArc(model())`. For a browser fixture, freeze the corresponding local noon before initialization and intercept the day-matching prayer response. Supply ordinary usable date objects alongside the listed timings; do not query a live API during deterministic acceptance.\n\n| Captured fixture | Date / coordinates / zone / method parameters | Fajr, Sunrise, Dhuhr, Asr, Sunset=Maghrib, Isha | Historical minimum / classes |\n|---|---|---|---|\n| London | `21-06-2026`; `51.5074,-0.1278`; `Europe/London`; id 3, Fajr 18, Isha 17 | `02:31,04:43,13:02,17:25,21:22,23:27` | `-14.041301465736721`; Fajr no `adj`, Isha no `adj` — RED |\n| Tromsø summer | `21-06-2026`; `69.6492,18.9553`; `Europe/Oslo`; id 3, Fajr 18, Isha 17 | `00:46,00:46,12:46,17:58,00:46,00:46` | `3.0875607422630584`; both `adj` — retained positive control |\n| Madinah | `07-09-2026`; `24.47,39.61`; `Asia/Riyadh`; id 4, Fajr 18.5, Isha `\"90 min\"` | `04:46,06:05,12:20,15:49,18:34,20:04` | `-57.6205552169282`; neither `adj` — retained reachable/interval control |\n\nThe complete captured Tromsø summer response and its retrieval/hash provenance are also public in [R0002](https://github.com/theislampill/salah_widget/issues/2); its timing/method fields exactly agree with this table. Reuse that fixture when integrating admission and marker controls, while retaining separate assertions and owners. The table above remains sufficient for this narrow offline arc replay.\n\nAll three captured payloads report `latitudeAdjustmentMethod=\"ANGLE_BASED\"`. That global label alone cannot establish how an individual minute-offset Isha was adjusted.\n\n## Minimal design and ordered implementation\n\nThe invariant is per-prayer classification with an honest evidence boundary. Keep the current marker dimensions, path samples and timing positions. The missing contract is the interpretation of the selected parameter; it is not a missing ephemeris or provider.\n\n1. Capture `today.meta.method.params` at the existing synchronous `drawArc(M)` owner alongside the model input derived from that accepted payload. Keep a single render/adoption owner: do not independently refetch method metadata, create a remote methods cache, or read a new configuration selection against an old payload. If relevant drift has separated the accepted timing and method snapshots, reconcile that narrow interface before coding rather than patching an unrelated loader here.\n2. Interpret Fajr and Isha independently. A finite positive numeric parameter is a depression in degrees for this existing model comparison. An interval string such as `\"90 min\"` is an interval, never numeric angle 90; avoid `parseFloat()` as classification. Missing, malformed, zero/negative or unrecognized parameters yield unknown classification. This parsing is local marker interpretation, not a new global provider-admission schema.\n3. For a supported degree, use the existing model's extrema to ask whether altitude `-angle` lies within its modeled daily range. In the demonstrated shallow-night case, `minRealE > -angle` means unreachable. Preserve the existing extrema calculation; using both minimum and maximum avoids calling a threshold reached merely because a polar model remains wholly below it. Define exact equality as within the modeled range. Do not invent a physical tolerance without evidence or assert observational astronomy accuracy at that boundary.\n4. Apply `adj` only to a Fajr/Isha marker classified as unreachable under the supported angle comparison. A reachable angle receives the ordinary marker. An interval or unsupported parameter receives the existing ordinary marker with explicit “adjustment classification unavailable for this parameter” description; absence of `adj` must not promise that the provider did no adjustment. Carry an internal status/reason into the marker's SVG description/title, or the existing accessible arc description, so tests and assistive output can distinguish ordinary from unknown without a new icon system.\n5. Retain Sunrise's independent `ring` class and Dhuhr's existing post-transit placement. Never change `M.t`, prayer order, countdowns, sunrise/Maghrib horizon placement or solar curve geometry to make the new classes easier to show. Update only the existing indicator explanation and its regressions.\n\nProposed local result semantics are `unreachable-angle`, `reachable-angle`, or `unknown`, with the parameter and modeled range available to the test. These names are design notation, not claims that such fields already ship. A small helper is justified only if actual `drawArc()` consumes it; extracting it must not turn this into a method registry or second calculation engine.\n\n## Discriminating GREEN and mutation matrix\n\n| Fixture/control | Required result |\n|---|---|\n| Full London replay above | Fajr and Isha both gain `adj`; existing positions/radii and other classes remain unchanged. Keep the old `-14` source as RED witness. |\n| Full Tromsø and Madinah replays | Tromsø retains both rings and finite markup. Madinah Fajr is reachable; Isha `90 min` is explicitly unknown for angle-based adjustment while retaining its ordinary appearance. |\n| Synthetic isolated extrema `min=-17.5`, `max=40`, parameters Fajr 18/Isha 17 | Fajr unreachable, Isha reachable. Swapping parameters swaps only their classifications. Both cannot share one Boolean. |\n| Boundary `min=-18,max=40`, degree 18, then `min=-17.999` and `min=-18.001` | Equality/reached-side are reachable in the model; shallow side is unreachable. This is a numerical contract, not a new physical accuracy claim. |\n| Range wholly below target, e.g. `min=-40,max=-20`, degree 18 | Target −18 is outside the modeled range; do not report a crossing as reachable. |\n| Isha `\"90 min\"`, missing params, `NaN`, nonnumeric text, malformed interval | No coercion into an angle, no throw/nonfinite SVG, no confident “unadjusted” claim. |\n| Accepted location/method refresh | New accepted payload and model agree; old method angles do not persist. Existing provider clocks/times and selected method UI remain unchanged. |\n| Isolated mutants | Restore universal `-14`: London fails. Reuse Fajr result for Isha: one-angle boundary fails. Coerce `90 min` with `parseFloat`: interval control fails. Change only descriptive status without actual class output: full markup assertion fails. |\n\nThese are proposed final-tree tests. Source-level truth is necessary but insufficient for visual closure: capture an actual London marker/arc crop at the observed 325×530 viewport showing both rings visibly distinct, plus the ordinary Madinah control and a polar finite-layout control. Inspect header/footer and preserve Sunrise ring, Maghrib on the dashed line, and Dhuhr after the apex. Never substitute a correct CSS class for pixels proving it is visible.\n\n## Integration, public effect and closure\n\n`PROVIDER-06` is the unique corrective owner; provider configuration semantics and polar duplicate-time controls remain controls, not additional issues. There is no declared hard predecessor or proposed relationship delta. This issue owns `runtime/arc-adjustment`; a shared `index.html` does not justify concurrent edits to its exact functions. The common test/docs integrator owns final insertion points.\n\nIMPLEMENTAUDIT R001D: update [DESIGN](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md) and [README](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/README.md) only where they describe this indicator. Builder/configuration choices, installers, preset and 325×530 wrapper remain compatible. No optional `latitudeAdjustmentMethod` setting is introduced. IMPLEMENTAUDIT R001E: the method interpreter must change actual returned marker classes and descriptions and fail the named mutants; helper-only tests do not suffice.\n\nDONE requires final-tree RED→GREEN/control/mutation results, independent review of parameter interpretation, and rendered crops. Record exact source and fixture identities, browser/viewport, outcomes and solar-model limits in an evidence comment before manual #10 closure. Use non-closing `Implements #10`; a public visual claim additionally needs later authorized served-source identity and crop readback.\n\nRollback only classification/description/test changes if interval or ordinary markers regress. Preserve truthful unknown status; never “fix” uncertainty by forcing all prayers adjusted. STOP if the intended repair requires provider-policy changes, a new prayer algorithm or an unsupported visual claim. No source patch or current rendered improvement is claimed by this work order.\n\nMethodology references (separate repository, not Salah work owners): [R001D in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/155), [R001E in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/157).\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/10/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/10/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733526740,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfU0M8AAAAHJ9xm1A",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733526740",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:48Z",
+      "rename": {
+        "from": "SW-010: Make adjusted-prayer markers follow the selected method rather than a universal 14-degree test",
+        "to": "R000A: Make adjusted-prayer markers follow the selected method rather than a universal 14-degree test"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R000A",
+    "bodySha256": "30b24ff061513f9a02652e645636377cfc09f281f8166ae6aab3d18245157a62",
+    "updatedAt": "2026-09-08T06:24:48Z",
+    "commentRevisions": []
+  }
+}

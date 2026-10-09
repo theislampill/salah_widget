@@ -1,0 +1,2827 @@
+{
+  "schema": "rlgwo-closure-assessment/1",
+  "worker": "D",
+  "issueNumber": 31,
+  "canonicalId": "R001F",
+  "title": "R001F: Keep coarse-location deadlines active through response-body parsing",
+  "originalBodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+  "initialRevision": "2026-09-08T06:25:35Z",
+  "issuePacketCapturedAtUtc": "2026-10-09T00:41:33.446138+00:00",
+  "completeBodyAndDiscussionRead": true,
+  "commentRevisions": [],
+  "events": "Renaming events only for15/16/17/18/31;35 has none. No additional binding issue comments in captured packets.",
+  "target": {
+    "repo": "theislampill/salah_widget",
+    "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "checkoutHead": "4bccdf43363926c3077f60de87e5617ccb9abcb9",
+    "checkoutTree": "35208181eea714c17f5e77b2644e76434345db60",
+    "checkoutDirtyPaths": [],
+    "sourceReadRoot": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+    "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "deliveredIndexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "sourceConfigSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "deliveredConfigSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "sourceBuilderSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "deliveredBuilderSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "currentness": "Fresh read-only git/object/hash verification; exact-ref source executions; mutation children use clean same-tree root consumers.",
+    "publicBaseline": {
+      "status": "DELIVERED_VERIFIED",
+      "primaryReleaseReceipt": "release.json",
+      "inspectedByD": "readbacks-validation.json",
+      "verifiedAt": "2026-10-09T01:34:55.876184+00:00",
+      "pagesBuild": 1270547036,
+      "publicRuntimeAndV1Files": 139,
+      "publicSmokeCases": 16,
+      "publicSmokeAllPass": true,
+      "rawAndPagesDocumentScriptMatches": 16,
+      "scope": "Primary provided current merge/runtime/V1/public smoke and public raw/Pages document/script readbacks; D verified receipt identities and local corresponding source hashes. Controlled race/storage/copy/native-stream negatives are separate."
+    },
+    "attribution": "Config and builder last changed in CP9 integration 7fe3ba1dc8c83604a04cab24a7e4307b6779df7e. Existing repairs are credited as preserved pre-PR42 work; no claim that PR42 first implemented them."
+  },
+  "reviewerConfiguration": {
+    "requested": {
+      "model": "gpt-6.1-sol",
+      "reasoningEffort": "max"
+    },
+    "effective": {
+      "model": "gpt-6.1-sol",
+      "reasoningEffort": "max",
+      "confirmation": "CONFIRMED_RECORDED_CLIENT_CONFIGURATION"
+    },
+    "evidence": "Primary reviewer-model-settings.json and D independently inspected own session turn_context 01a11e26-77d9-7bc0-b18d-f4fb2ac3b10a: model gpt-6.1-sol, effort max and collaboration settings match. Supported spawn plus local client recording is confirmation; no independent hardware/backend attestation claimed.",
+    "sessionId": "01a11e26-76ef-7583-b53a-d9c4abeec9f0",
+    "verificationReceipt": "readbacks-validation.json"
+  },
+  "recommendation": "CLOSE — SATISFIED WITH DEMONSTRATED IMPROVEMENTS",
+  "recommendationScope": "Every mapped mandatory original obligation qualifies on exact target, including the formerly missing minimum native bridge; inherited repair attribution and controls remain explicit.",
+  "requirementMatrix": [
+    {
+      "obligation": "Each existing provider attempt remains bounded from fetch headers through HTTP/body JSON/parse/normalize; timer cannot end at headers.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "T-31 body stall; headers mutation.",
+      "expected": "After headers and pending body, exactly one owned deadline remains.",
+      "observed": "Virtual pending body retains timer; deadline aborts current controller and exactly one ipinfo fallback; restored header cleanup mutant fails.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O01",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Deadline creates terminal rejection as well as abort; race the full work so abort-ignorant body still logically fails.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "T-31 abort-ignorant body, Node elapsed wait; abort-only mutation.",
+      "expected": "Operation settles/falls back when callback runs even if body ignores signal.",
+      "observed": "Node20ms deadline returns healthy fallback within40ms test wait and<1000ms allowance; abort-only mutation fails required behavior. This is Node wait proof, not native stream cancellation.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O02",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Clear attempt timer only after settlement; one fallback owner; old completion cannot clear next timer or adopt/start duplicate fallback.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "T-31 body success/failure order, late resolve/reject and timer counts.",
+      "expected": "First settlement wins; one result, two requests maximum, no live timers.",
+      "observed": "Both explicit schedules pass; old body resolution/rejection after ipinfo leaves one completion and2 requests; no unhandled rejection.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O03",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Keep GeoJS→ipinfo, timeoutMs||6000 including0 behavior, no third provider, original CORS/no-referrer/no-store, provider parsing/status/source/area/accuracy and timezone precedence.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "T-31 healthy GeoJS, timeoutMs0, source option read.",
+      "expected": "Healthy original shape; Intl timezone first; fallback retains existing parsers.",
+      "observed": "Healthy tuple24.47/39.61/4/c with GeoJS/coarse-ip/ok and Intl zone; timer removed;0 selects6000; source fetch options unchanged.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O04",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "HTTP non-ok, JSON rejection/invalid JSON and existing unusable-coordinate cases clean up and advance to healthy fallback without false success.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "T-31 HTTP503/JSON rejection/unusable coords.",
+      "expected": "Exactly next provider and timer cleanup.",
+      "observed": "All three controlled failure cases reach ipinfo and leave zero timers; no fabricated success.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O05",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Both header/body attempts timeout: explicit {ok:false,source:coarse-ip,status:failed}, exactly two requests, no timer or third attempt.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "T-31 hung attempts exhaust.",
+      "expected": "Exhaustion lets manual callers continue.",
+      "observed": "Exact failure object, request count2, timers0; one case starts without headers and second stalls body.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O06",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Late work has handled promises and no UI/config/storage effect before winning return; synchronous CPU/event-loop blocking cannot be preempted.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "T-31 old rejection/no unhandled plus source full work.",
+      "expected": "Bound asynchronous waiting when callback can run, not arbitrary hard wall-clock CPU deadline.",
+      "observed": "Race handlers absorb late reject; normalization result is local; no caller adoption in obsolete work. Explicit limitation retained.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O07",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Actual builder exhaustion offers manual/precise recovery; actual fresh local boot exhaustion opens settings and starts render loop.",
+      "authoredOwnerRefs": [
+        "B-ACQUIRE-OWNER",
+        "I-BOOT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-ACQUIRE",
+        "I-BOOT",
+        "I-SET"
+      ],
+      "discriminator": "T-31 actual builder and boot source into real coarse fixture.",
+      "expected": "Builder off/manual hint and widget failed/manual panel with loop, no prayer wait.",
+      "observed": "Controlled through-caller tests pass with production bodies; widget loop count1, settings-open and failed status; builder failure hint/off pin.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O08",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "New form intent during first/fallback attempt rejects old returned location/status/save/export under R000F.",
+      "authoredOwnerRefs": [
+        "B-ACQUIRE-OWNER",
+        "I-SET-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-ACQUIRE",
+        "I-SET",
+        "B-EXPORT"
+      ],
+      "discriminator": "T-31 new builder edit during fallback; T-15/held-out settings detect no-op.",
+      "expected": "Manual30,31 preserved; timer is not form ownership mechanism.",
+      "observed": "Fallback after manual edit leaves full builder snapshot equal; settings session/reset ownership separate and tested.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O09",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Public deterministic fixture loads actual config, finite valid provider inputs and virtual schedules; released-body success retained as positive; mutation controls prove relevant defect.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "T-31/M-31 fresh exact ref.",
+      "expected": "Healthy and hostile schedule assertions not private replacement logic.",
+      "observed": "13/13 exact-ref cases pass;2/2 mutations fail intended stall assertion with no bootstrap errors; fixture explicitly labels browser NOT_RUN.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O10",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Minimum native stream bridge: native fetch/AbortController/Response body; local route sends headers+incomplete JSON and stalls, second healthy; observe abort/one fallback/cleanup plus finite stream.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "Public T-31-STREAM helper reused by the isolated read-only audit server; six fresh primary native consumer cases with actual fetch/Response/AbortController and exact hash/anchor/body guards.",
+      "expected": "Native response-body cancellation and fallback are actually observed on named browser/version.",
+      "observed": "6/6 fresh native cases pass across builder and full six-script widget:200 headers/incomplete JSON then native abort and stalled socket close; one healthy ipinfo fallback;10ms finite body adopted with no fallback/abort; exactly two503 providers; real failed widget opens Settings and manual30/31 close restores CONFIG/card. Actual caller crops and raw stream ledgers retained and inspected.",
+      "status": "satisfied",
+      "scope": "fresh exact-target native bridge plus source/VM controls",
+      "id": "R001F-O11",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Native actual builder detectArea and fresh local boot two-provider failure must yield usable manual recovery, rendered crop and final runtime state.",
+      "authoredOwnerRefs": [
+        "B-ACQUIRE-OWNER",
+        "I-BOOT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-ACQUIRE",
+        "I-BOOT",
+        "I-SET"
+      ],
+      "discriminator": "Original native actual-caller closure obligation. Fresh primary native cases: 31-builder-native-stall, 31-builder-native-finite, 31-builder-native-fail, 31-widget-native-stall, 31-widget-native-finite, 31-widget-native-fail; exact guards, raw receipts and crops archived.",
+      "expected": "Browser UI recovery and render loop observed, not helper return only.",
+      "observed": "6/6 fresh native cases pass across builder and full six-script widget:200 headers/incomplete JSON then native abort and stalled socket close; one healthy ipinfo fallback;10ms finite body adopted with no fallback/abort; exactly two503 providers; real failed widget opens Settings and manual30/31 close restores CONFIG/card. Actual caller crops and raw stream ledgers retained and inspected.",
+      "status": "satisfied",
+      "scope": "fresh exact-target native bridge plus source/VM controls",
+      "id": "R001F-O12",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "R000F ownership edge retained; R0003 remote adoption/R0006 prayer/R000D weather/R0011 reset remain separate owners; no global transport abstraction.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER",
+        "B-ACQUIRE-OWNER",
+        "I-BOOT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE",
+        "B-ACQUIRE",
+        "I-BOOT",
+        "I-SET"
+      ],
+      "discriminator": "Source local next(i) implementation and caller interfaces.",
+      "expected": "No administrative blanket dependencies or unrelated transport rewrite.",
+      "observed": "Local attempt race preserves caller shape and separate ownership; reset uses same explicit result subject to current session.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O13",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Preserve successful metadata, mapping/zone, saved/local/hash precedence, v1 data, installers/preset and ordinary card/UI; README only if recovery behavior wording changes.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER",
+        "C-RESOLVE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE",
+        "C-RESOLVE",
+        "B-ACQUIRE",
+        "I-BOOT",
+        "D-LOCAL"
+      ],
+      "discriminator": "T-31 healthy shape and T-16 precedence/encoding; read existing README.",
+      "expected": "No provider/policy/new source edits under timer fix.",
+      "observed": "Healthy/source and precedence controls pass; existing manual recovery prose remains compatible; no new provider/region policy introduced.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O14",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Final integrated RED→GREEN + positive/boundary/mutation and independent review; public served config/callers+recovery proof; manual closure only after evidence.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE",
+        "B-ACQUIRE",
+        "I-BOOT"
+      ],
+      "discriminator": "D independent exact-target source/positive/mutation/native receipt inspection; verified public distribution and primary independent row/native/crop reconciliation.",
+      "expected": "Logic/native/public scopes stay distinct.",
+      "observed": "Fresh logic, behavioral mutations, six actual native body/caller controls and public distribution are verified. Primary Astra reviewed all16 rows, exact native receipts and recovery crops and accepted closure; no external human approval or unrun CI is claimed.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O15",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    },
+    {
+      "obligation": "Rollback timer/race/fallback coherently if healthy detection regresses; never retain only header cleanup as fixed; stop at incompatible provider/caller drift.",
+      "authoredOwnerRefs": [
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-DEADLINE"
+      ],
+      "discriminator": "Counterfactual mutation and bounded increment policy.",
+      "expected": "Preserve accepted repair; no broad production work.",
+      "observed": "No regression demonstrated by preserved source/logic controls and six current native cases. The evidence-only stream/caller increment is complete; timer/race/fallback containment remains coherent. No production mutation was authorized or made in this audit.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R001F-O16",
+      "contractBinding": {
+        "bodySha256": "72ada128fff844e79cca6c755f228cbcef9e5865734f382d7d1ce6977e317e5e",
+        "revision": "2026-09-08T06:25:35Z",
+        "comments": []
+      }
+    }
+  ],
+  "evidenceSources": [
+    {
+      "id": "C-DEADLINE-OWNER",
+      "path": "src/native/config.js",
+      "startLine": 230,
+      "endLine": 270,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L230-L270",
+      "purpose": "Authored full-body coarse deadline and two-provider fallback"
+    },
+    {
+      "id": "C-DEADLINE",
+      "path": "config.js",
+      "startLine": 230,
+      "endLine": 270,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L230-L270",
+      "purpose": "Delivered coarse deadline implementation"
+    },
+    {
+      "id": "C-RESOLVE-OWNER",
+      "path": "src/native/config.js",
+      "startLine": 294,
+      "endLine": 326,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L294-L326",
+      "purpose": "Authored precedence resolver and detected-base overlay"
+    },
+    {
+      "id": "C-RESOLVE",
+      "path": "config.js",
+      "startLine": 294,
+      "endLine": 326,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/config.js#L294-L326",
+      "purpose": "Delivered resolver and preference overlay"
+    },
+    {
+      "id": "B-EXPORT",
+      "path": "builder.html",
+      "startLine": 204,
+      "endLine": 239,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L204-L239",
+      "purpose": "Delivered form, canonical hash, snippet and preview"
+    },
+    {
+      "id": "B-ACQUIRE-OWNER",
+      "path": "src/native/builder.html",
+      "startLine": 437,
+      "endLine": 470,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L437-L470",
+      "purpose": "Authored GPS/coarse adoption under builder edit ownership"
+    },
+    {
+      "id": "B-ACQUIRE",
+      "path": "builder.html",
+      "startLine": 437,
+      "endLine": 470,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L437-L470",
+      "purpose": "Delivered builder acquisition and manual recovery"
+    },
+    {
+      "id": "I-BOOT-OWNER",
+      "path": "src/native/index.html",
+      "startLine": 3347,
+      "endLine": 3390,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3347-L3390",
+      "purpose": "Authored local boot, explicit hash preferences and manual recovery"
+    },
+    {
+      "id": "I-BOOT",
+      "path": "index.html",
+      "startLine": 5375,
+      "endLine": 5418,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5375-L5418",
+      "purpose": "Delivered local boot consumer"
+    },
+    {
+      "id": "I-SET-OWNER",
+      "path": "src/native/index.html",
+      "startLine": 3479,
+      "endLine": 3693,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3479-L3693",
+      "purpose": "Authored settings edit/session/candidate/form/acquisition/reset/close owners"
+    },
+    {
+      "id": "I-SET",
+      "path": "index.html",
+      "startLine": 5508,
+      "endLine": 5722,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5508-L5722",
+      "purpose": "Delivered settings owner and actual event handlers"
+    },
+    {
+      "id": "T-WIDGET",
+      "path": "tests/r0011-fixture.cjs",
+      "startLine": 1,
+      "endLine": 74,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0011-fixture.cjs#L1-L74",
+      "purpose": "Actual resolution/boot/applyConfig/settings source with explicit provider/renderer/DOM doubles"
+    },
+    {
+      "id": "T-31",
+      "path": "tests/r001f-deadline.cjs",
+      "startLine": 8,
+      "endLine": 75,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001f-deadline.cjs#L8-L75",
+      "purpose": "Virtual ordering, abort-ignorant body, real Node elapsed wait and actual caller logic"
+    },
+    {
+      "id": "M-31",
+      "path": "tests/r001f-mutations.cjs",
+      "startLine": 1,
+      "endLine": 3,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001f-mutations.cjs#L1-L3",
+      "purpose": "Headers cleanup and abort-only regressions detected behaviorally"
+    },
+    {
+      "id": "T-31-STREAM",
+      "path": "tests/r001f-stream-server.cjs",
+      "startLine": 1,
+      "endLine": 21,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001f-stream-server.cjs#L1-L21",
+      "purpose": "Exact public finite/stalled native stream helper reused in six fresh primary browser caller cases"
+    },
+    {
+      "id": "D-LOCAL",
+      "path": "README.md",
+      "startLine": 80,
+      "endLine": 119,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L80-L119",
+      "purpose": "Delivered local examples, settings description and precedence; missing builder preference distinction"
+    },
+    {
+      "id": "L-31",
+      "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/MANIFEST.json",
+      "startLine": 1326,
+      "endLine": 1333,
+      "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/MANIFEST.json#L1326-L1333",
+      "purpose": "Public lossless final coarse-deadline VM receipt"
+    }
+  ],
+  "freshExecution": {
+    "environment": {
+      "node": "22.16.0",
+      "launcher": "PowerShell7.6.6",
+      "os": "Windows",
+      "sourceBinding": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "browser": "NOT_RUN"
+    },
+    "receipts": [
+      {
+        "name": "r001f-deadline",
+        "startedAtUtc": "2026-10-09T00:57:59.6379716Z",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r001f-deadline.cjs",
+          "--ref",
+          "18ff14860ff41c084b1db5f396bb62aa9c22b1be"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "stdout": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r001f-deadline.stdout.log",
+        "stderr": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r001f-deadline.stderr.log",
+        "stdoutSha256": "48e96f273827ac5c35b48c026afb5fb5a723e876858497fa6ee78c95088f5750",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tail": "PASS new builder edit rejects fallback location and feedback\n{\"cases\":13,\"passed\":13,\"failed\":0,\"ref\":\"18ff14860ff41c084b1db5f396bb62aa9c22b1be\",\"mutant\":null,\"native\":\"NOT_RUN\"}"
+      },
+      {
+        "name": "r001f-mutations",
+        "startedAtUtc": "2026-10-09T00:58:35.5185239Z",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r001f-mutations.cjs"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "sourceBinding": "Clean checkout at 4bccdf43363926c3077f60de87e5617ccb9abcb9; same tree 35208181eea714c17f5e77b2644e76434345db60 as target merge",
+        "expectedExitCode": 0,
+        "observedExitCode": 0,
+        "stdout": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r001f-mutations.stdout.log",
+        "stderr": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\r001f-mutations.stderr.log",
+        "stdoutSha256": "ee7b48bd86505ef8a44ae3dc7a6c28dcc745744ed91a2bdf1a9a38c5d58e82aa",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "PASS mutant caught: headers\nPASS mutant caught: abort-only\n"
+      }
+    ],
+    "extraReceipts": [],
+    "expected": "All positive commands exit0; mutation runner exits0 only when intended child behavior fails with exit1 and expected FAIL name, excluding bootstrap failures.",
+    "observed": "13/13 primary controlled cases pass; 2/2 included behavioral mutations detected; all recorded exits0."
+  },
+  "historicalReuse": {
+    "classification": "SUPPLEMENTARY_ONLY",
+    "basis": "Public final-v49 gzip logs count the same named production-source suites and explicitly native NOT_RUN. Fresh exact-ref reruns supersede them for current logic. No old whole-runtime browser identity is promoted to target-native proof.",
+    "sourceEquivalence": "Authored/delivered config and builder are byte-identical; reviewed head tree equals actual merge tree. Older fd2972 reader used only as explicitly identified compatibility control in #35.",
+    "notReused": "Historical broad native-smoke config callbacks verify helper APIs only; they do not reach these required actual race/storage feedback/copy selection/stream/metadata interactions."
+  },
+  "negativeControls": {
+    "suites": [
+      "r001f-mutations"
+    ],
+    "qualifier": "Through-handler behavioral controls; exact FAIL names verified by their harnesses; no empty fixture/helper-only mutation is accepted as whole native proof."
+  },
+  "demonstratedImprovements": [
+    "A logical deadline rejects independently of transport abort, so abort-ignorant deferred bodies cannot hold fallback indefinitely; explicit one-fallback and handled-late-body controls cover that stronger bound.",
+    "Current complete-script native bridge qualified with source hash/anchor/body guards, isolated real DOM consumers and exact action/native stream receipts; original failure controls and all earlier accepted tests retained."
+  ],
+  "gaps": [],
+  "boundedNextIncrement": null,
+  "rollbackOrContainment": "Preserve completed source and all stored owner data. Next increment is proposed only; evidence fixture/README edits must remain narrow. On reproduced defect, retain failing case and stop for primary scope/owner review rather than broaden repair.",
+  "externalEffects": "None by worker: no browser/build/solver/source mutation/commit/push/GitHub comment/closure/deployment. Primary controls reconciliation/publication.",
+  "publicationStatus": "FROZEN_PRIMARY_RECONCILED_AWAITING_IMMUTABLE_EVIDENCE_BINDING_AND_HASH_APPROVAL",
+  "freshPrimaryNativeEvidence": {
+    "executor": "Primary Astra in exclusive serial browser lease; no browser run by reviewer D",
+    "browser": {
+      "family": "chromium",
+      "version": "148.0.7778.96",
+      "os": "Windows",
+      "machine": "AMD64",
+      "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+      "chromiumSandboxRequested": true
+    },
+    "cases": {
+      "31-builder-native-stall": {
+        "name": "31-builder-native-stall",
+        "case": {
+          "name": "31-builder-native-stall",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "builder",
+            "seed": "none",
+            "stream": "stall"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 2,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "native full-body result reaches builder",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "label": "London",
+                  "lat": "51.50000",
+                  "lon": "-0.12000",
+                  "method": "4",
+                  "school": "0",
+                  "time": "24",
+                  "units": "f",
+                  "appearance": "glass",
+                  "dfcode": "YYYY-MM-DD"
+                },
+                "config": null,
+                "status": "Detected: London (approx.)",
+                "pin": {
+                  "classes": "geo-pin lit",
+                  "title": "Estimated from your IP — click to request browser location",
+                  "name": "Estimated from your IP — click to request browser location"
+                },
+                "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=51.5&lon=-0.12&label=London&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "previewSrc": "http://127.0.0.1:54231/?r=1#lat=51.5&lon=-0.12&label=London&method=4&school=0&appearance=glass",
+                "savedBytes": null
+              }
+            },
+            {
+              "name": "native headers observed before body abort",
+              "passed": true,
+              "detail": [
+                {
+                  "id": 0,
+                  "kind": "coarse-stream",
+                  "url": "https://get.geojs.io/v1/ip/geo.json",
+                  "route": "/geojs-stall",
+                  "state": "native-fetch",
+                  "signalAborted": true,
+                  "headersReturned": true,
+                  "http": 200
+                },
+                {
+                  "id": 1,
+                  "kind": "coarse-stream",
+                  "url": "https://ipinfo.io/json",
+                  "route": "/ipinfo",
+                  "state": "native-fetch",
+                  "signalAborted": false,
+                  "headersReturned": true,
+                  "http": 200
+                }
+              ]
+            },
+            {
+              "name": "one healthy native fallback, stalled socket closes without completion",
+              "passed": true,
+              "detail": [
+                {
+                  "path": "/geojs-stall",
+                  "headersAt": 1791510843637,
+                  "closedAt": 1791510849612,
+                  "completed": false
+                },
+                {
+                  "path": "/ipinfo",
+                  "headersAt": 1791510849618,
+                  "closedAt": 1791510849618,
+                  "completed": true
+                }
+              ]
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 9,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&stream=stall",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 2,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "elapsedConsumerSeconds": 6.157000000006519,
+          "nativeStreamJobs": [
+            {
+              "id": 0,
+              "kind": "coarse-stream",
+              "url": "https://get.geojs.io/v1/ip/geo.json",
+              "route": "/geojs-stall",
+              "state": "native-fetch",
+              "signalAborted": true,
+              "headersReturned": true,
+              "http": 200
+            },
+            {
+              "id": 1,
+              "kind": "coarse-stream",
+              "url": "https://ipinfo.io/json",
+              "route": "/ipinfo",
+              "state": "native-fetch",
+              "signalAborted": false,
+              "headersReturned": true,
+              "http": 200
+            }
+          ],
+          "nativeStreamLedger": [
+            {
+              "path": "/geojs-stall",
+              "headersAt": 1791510843637,
+              "closedAt": 1791510849612,
+              "completed": false
+            },
+            {
+              "path": "/ipinfo",
+              "headersAt": 1791510849618,
+              "closedAt": 1791510849618,
+              "completed": true
+            }
+          ],
+          "finalApplication": {
+            "inputs": {
+              "label": "London",
+              "lat": "51.50000",
+              "lon": "-0.12000",
+              "method": "4",
+              "school": "0",
+              "time": "24",
+              "units": "f",
+              "appearance": "glass",
+              "dfcode": "YYYY-MM-DD"
+            },
+            "config": null,
+            "status": "Detected: London (approx.)",
+            "pin": {
+              "classes": "geo-pin lit",
+              "title": "Estimated from your IP — click to request browser location",
+              "name": "Estimated from your IP — click to request browser location"
+            },
+            "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=51.5&lon=-0.12&label=London&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+            "previewSrc": "http://127.0.0.1:54231/?r=1#lat=51.5&lon=-0.12&label=London&method=4&school=0&appearance=glass",
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse-stream",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "route": "/geojs-stall",
+                "state": "native-fetch",
+                "signalAborted": true,
+                "headersReturned": true,
+                "http": 200
+              },
+              {
+                "id": 1,
+                "kind": "coarse-stream",
+                "url": "https://ipinfo.io/json",
+                "route": "/ipinfo",
+                "state": "native-fetch",
+                "signalAborted": false,
+                "headersReturned": true,
+                "http": 200
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [],
+            "fallbackCalls": [],
+            "errors": [],
+            "storageEvents": []
+          },
+          "fontStatus": "settled",
+          "screenshot": "31-builder-native-stall.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-builder-native-stall.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-builder-native-stall.png",
+        "screenshotSha256": "d5ab379d1e304bf5e2f1f3a402847fe7e7697fadce13562bcb2315ca37b9e107",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      },
+      "31-builder-native-finite": {
+        "name": "31-builder-native-finite",
+        "case": {
+          "name": "31-builder-native-finite",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "builder",
+            "seed": "none",
+            "stream": "finite"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 2,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "native full-body result reaches builder",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "label": "Madinah",
+                  "lat": "24.47000",
+                  "lon": "39.61000",
+                  "method": "4",
+                  "school": "0",
+                  "time": "24",
+                  "units": "f",
+                  "appearance": "glass",
+                  "dfcode": "YYYY-MM-DD"
+                },
+                "config": null,
+                "status": "Detected: Madinah (approx.)",
+                "pin": {
+                  "classes": "geo-pin lit",
+                  "title": "Estimated from your IP — click to request browser location",
+                  "name": "Estimated from your IP — click to request browser location"
+                },
+                "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "previewSrc": "http://127.0.0.1:54231/?r=1#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass",
+                "savedBytes": null
+              }
+            },
+            {
+              "name": "healthy finite body has no fallback or abort",
+              "passed": true,
+              "detail": {
+                "jobs": [
+                  {
+                    "id": 0,
+                    "kind": "coarse-stream",
+                    "url": "https://get.geojs.io/v1/ip/geo.json",
+                    "route": "/geojs-finite",
+                    "state": "native-fetch",
+                    "signalAborted": false,
+                    "headersReturned": true,
+                    "http": 200
+                  }
+                ],
+                "ledger": [
+                  {
+                    "path": "/geojs-finite",
+                    "headersAt": 1791510850757,
+                    "closedAt": 1791510850767,
+                    "completed": true
+                  }
+                ]
+              }
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 13,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&stream=finite",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 2,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "elapsedConsumerSeconds": 0.14000000001396984,
+          "nativeStreamJobs": [
+            {
+              "id": 0,
+              "kind": "coarse-stream",
+              "url": "https://get.geojs.io/v1/ip/geo.json",
+              "route": "/geojs-finite",
+              "state": "native-fetch",
+              "signalAborted": false,
+              "headersReturned": true,
+              "http": 200
+            }
+          ],
+          "nativeStreamLedger": [
+            {
+              "path": "/geojs-finite",
+              "headersAt": 1791510850757,
+              "closedAt": 1791510850767,
+              "completed": true
+            }
+          ],
+          "finalApplication": {
+            "inputs": {
+              "label": "Madinah",
+              "lat": "24.47000",
+              "lon": "39.61000",
+              "method": "4",
+              "school": "0",
+              "time": "24",
+              "units": "f",
+              "appearance": "glass",
+              "dfcode": "YYYY-MM-DD"
+            },
+            "config": null,
+            "status": "Detected: Madinah (approx.)",
+            "pin": {
+              "classes": "geo-pin lit",
+              "title": "Estimated from your IP — click to request browser location",
+              "name": "Estimated from your IP — click to request browser location"
+            },
+            "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+            "previewSrc": "http://127.0.0.1:54231/?r=1#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&appearance=glass",
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse-stream",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "route": "/geojs-finite",
+                "state": "native-fetch",
+                "signalAborted": false,
+                "headersReturned": true,
+                "http": 200
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [],
+            "fallbackCalls": [],
+            "errors": [],
+            "storageEvents": []
+          },
+          "fontStatus": "settled",
+          "screenshot": "31-builder-native-finite.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-builder-native-finite.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-builder-native-finite.png",
+        "screenshotSha256": "a2e803817f071d2a3873fd2ef605832e9797abdad4b8f3c39a5d0a52af01646e",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      },
+      "31-builder-native-fail": {
+        "name": "31-builder-native-fail",
+        "case": {
+          "name": "31-builder-native-fail",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "builder",
+            "seed": "none",
+            "stream": "fail"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 2,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "native failed builder offers manual recovery",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "label": "Madinah",
+                  "lat": "24.4672",
+                  "lon": "39.6142",
+                  "method": "4",
+                  "school": "0",
+                  "time": "24",
+                  "units": "f",
+                  "appearance": "glass",
+                  "dfcode": "YYYY-MM-DD"
+                },
+                "config": null,
+                "status": "Couldn’t detect — type a place, or click the pin for browser location.",
+                "pin": {
+                  "classes": "geo-pin off",
+                  "title": "Configured site — click to request browser location",
+                  "name": "Configured site — click to request browser location"
+                },
+                "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+                "previewSrc": "http://127.0.0.1:54231/?r=0#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass",
+                "savedBytes": null
+              }
+            },
+            {
+              "name": "exhaustion uses exactly two failed providers",
+              "passed": true,
+              "detail": {
+                "jobs": [
+                  {
+                    "id": 0,
+                    "kind": "coarse-stream",
+                    "url": "https://get.geojs.io/v1/ip/geo.json",
+                    "route": "/failure",
+                    "state": "native-fetch",
+                    "signalAborted": false,
+                    "headersReturned": true,
+                    "http": 503
+                  },
+                  {
+                    "id": 1,
+                    "kind": "coarse-stream",
+                    "url": "https://ipinfo.io/json",
+                    "route": "/failure",
+                    "state": "native-fetch",
+                    "signalAborted": false,
+                    "headersReturned": true,
+                    "http": 503
+                  }
+                ],
+                "ledger": [
+                  {
+                    "path": "/failure",
+                    "headersAt": 1791510851843,
+                    "closedAt": 1791510851843,
+                    "completed": true
+                  },
+                  {
+                    "path": "/failure",
+                    "headersAt": 1791510851850,
+                    "closedAt": 1791510851850,
+                    "completed": true
+                  }
+                ]
+              }
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 16,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&stream=fail",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 2,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "elapsedConsumerSeconds": 0.40600000001722947,
+          "nativeStreamJobs": [
+            {
+              "id": 0,
+              "kind": "coarse-stream",
+              "url": "https://get.geojs.io/v1/ip/geo.json",
+              "route": "/failure",
+              "state": "native-fetch",
+              "signalAborted": false,
+              "headersReturned": true,
+              "http": 503
+            },
+            {
+              "id": 1,
+              "kind": "coarse-stream",
+              "url": "https://ipinfo.io/json",
+              "route": "/failure",
+              "state": "native-fetch",
+              "signalAborted": false,
+              "headersReturned": true,
+              "http": 503
+            }
+          ],
+          "nativeStreamLedger": [
+            {
+              "path": "/failure",
+              "headersAt": 1791510851843,
+              "closedAt": 1791510851843,
+              "completed": true
+            },
+            {
+              "path": "/failure",
+              "headersAt": 1791510851850,
+              "closedAt": 1791510851850,
+              "completed": true
+            }
+          ],
+          "finalApplication": {
+            "inputs": {
+              "label": "Madinah",
+              "lat": "24.4672",
+              "lon": "39.6142",
+              "method": "4",
+              "school": "0",
+              "time": "24",
+              "units": "f",
+              "appearance": "glass",
+              "dfcode": "YYYY-MM-DD"
+            },
+            "config": null,
+            "status": "Couldn’t detect — type a place, or click the pin for browser location.",
+            "pin": {
+              "classes": "geo-pin off",
+              "title": "Configured site — click to request browser location",
+              "name": "Configured site — click to request browser location"
+            },
+            "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+            "previewSrc": "http://127.0.0.1:54231/?r=0#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass",
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse-stream",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "route": "/failure",
+                "state": "native-fetch",
+                "signalAborted": false,
+                "headersReturned": true,
+                "http": 503
+              },
+              {
+                "id": 1,
+                "kind": "coarse-stream",
+                "url": "https://ipinfo.io/json",
+                "route": "/failure",
+                "state": "native-fetch",
+                "signalAborted": false,
+                "headersReturned": true,
+                "http": 503
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [],
+            "fallbackCalls": [],
+            "errors": [],
+            "storageEvents": []
+          },
+          "fontStatus": "settled",
+          "screenshot": "31-builder-native-fail.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-builder-native-fail.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-builder-native-fail.png",
+        "screenshotSha256": "a4e487758b6d0cfbdf47a73a5eec09d5ed4f300e5d56ec8cf9b02393bbf0f235",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      },
+      "31-widget-native-stall": {
+        "name": "31-widget-native-stall",
+        "case": {
+          "name": "31-widget-native-stall",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "widget",
+            "seed": "none",
+            "stream": "stall"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 6,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "native full-body result reaches widget",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "",
+                  "set-lat": "",
+                  "set-lon": "",
+                  "set-method": "2",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": ""
+                },
+                "config": {
+                  "configSource": "coarse-ip",
+                  "configMode": "local",
+                  "autoDetectSource": "ipinfo",
+                  "autoDetectStatus": "ok",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "unknown",
+                  "geolocationLastError": null,
+                  "lat": 51.5,
+                  "lon": -0.12,
+                  "tz": "UTC",
+                  "label": "London",
+                  "method": "4",
+                  "units": "c",
+                  "locationEvidence": {
+                    "intent": "coarse-area",
+                    "source": "coarse-ip",
+                    "accuracyM": null,
+                    "acquiredAt": null,
+                    "provider": "ipinfo",
+                    "area": "London, GB",
+                    "bounds": null
+                  },
+                  "fixAgeMs": null,
+                  "savedAt": null,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+                "pin": {
+                  "classes": "set-pin",
+                  "title": "Estimated from your IP. Click to request browser location.",
+                  "name": "Use browser location"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": null
+              }
+            },
+            {
+              "name": "native headers observed before body abort",
+              "passed": true,
+              "detail": [
+                {
+                  "id": 0,
+                  "kind": "coarse-stream",
+                  "url": "https://get.geojs.io/v1/ip/geo.json",
+                  "route": "/geojs-stall",
+                  "state": "native-fetch",
+                  "signalAborted": true,
+                  "headersReturned": true,
+                  "http": 200
+                },
+                {
+                  "id": 1,
+                  "kind": "coarse-stream",
+                  "url": "https://ipinfo.io/json",
+                  "route": "/ipinfo",
+                  "state": "native-fetch",
+                  "signalAborted": false,
+                  "headersReturned": true,
+                  "http": 200
+                }
+              ]
+            },
+            {
+              "name": "one healthy native fallback, stalled socket closes without completion",
+              "passed": true,
+              "detail": [
+                {
+                  "path": "/geojs-stall",
+                  "headersAt": 1791510853053,
+                  "closedAt": 1791510859050,
+                  "completed": false
+                },
+                {
+                  "path": "/ipinfo",
+                  "headersAt": 1791510859053,
+                  "closedAt": 1791510859053,
+                  "completed": true
+                }
+              ]
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 20,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=widget&stream=stall#local=1",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 6,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "elapsedConsumerSeconds": 6.562000000005355,
+          "nativeStreamJobs": [
+            {
+              "id": 0,
+              "kind": "coarse-stream",
+              "url": "https://get.geojs.io/v1/ip/geo.json",
+              "route": "/geojs-stall",
+              "state": "native-fetch",
+              "signalAborted": true,
+              "headersReturned": true,
+              "http": 200
+            },
+            {
+              "id": 1,
+              "kind": "coarse-stream",
+              "url": "https://ipinfo.io/json",
+              "route": "/ipinfo",
+              "state": "native-fetch",
+              "signalAborted": false,
+              "headersReturned": true,
+              "http": 200
+            }
+          ],
+          "nativeStreamLedger": [
+            {
+              "path": "/geojs-stall",
+              "headersAt": 1791510853053,
+              "closedAt": 1791510859050,
+              "completed": false
+            },
+            {
+              "path": "/ipinfo",
+              "headersAt": 1791510859053,
+              "closedAt": 1791510859053,
+              "completed": true
+            }
+          ],
+          "finalApplication": {
+            "inputs": {
+              "set-label": "",
+              "set-lat": "",
+              "set-lon": "",
+              "set-method": "2",
+              "set-school": "0",
+              "set-time": "24",
+              "set-units": "f",
+              "set-appearance": "glass",
+              "set-datefmt": ""
+            },
+            "config": {
+              "configSource": "coarse-ip",
+              "configMode": "local",
+              "autoDetectSource": "ipinfo",
+              "autoDetectStatus": "ok",
+              "storageAvailable": true,
+              "storageError": null,
+              "geolocationPermissionState": "unknown",
+              "geolocationLastError": null,
+              "lat": 51.5,
+              "lon": -0.12,
+              "tz": "UTC",
+              "label": "London",
+              "method": "4",
+              "units": "c",
+              "locationEvidence": {
+                "intent": "coarse-area",
+                "source": "coarse-ip",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": "ipinfo",
+                "area": "London, GB",
+                "bounds": null
+              },
+              "fixAgeMs": null,
+              "savedAt": null,
+              "hashConfigOverridden": false,
+              "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+            },
+            "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+            "pin": {
+              "classes": "set-pin",
+              "title": "Estimated from your IP. Click to request browser location.",
+              "name": "Use browser location"
+            },
+            "code": null,
+            "previewSrc": null,
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse-stream",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "route": "/geojs-stall",
+                "state": "native-fetch",
+                "signalAborted": true,
+                "headersReturned": true,
+                "http": 200
+              },
+              {
+                "id": 1,
+                "kind": "coarse-stream",
+                "url": "https://ipinfo.io/json",
+                "route": "/ipinfo",
+                "state": "native-fetch",
+                "signalAborted": false,
+                "headersReturned": true,
+                "http": 200
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [],
+            "fallbackCalls": [],
+            "errors": [],
+            "storageEvents": [
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "get",
+                "salahwx:51.5|-0.12|c"
+              ],
+              [
+                "get",
+                "salah:51.5|-0.12|America/New_York|4|0"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "salah:51.5|-0.12|America/New_York|4|0"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ]
+            ]
+          },
+          "fontStatus": "settled",
+          "screenshot": "31-widget-native-stall.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-widget-native-stall.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-widget-native-stall.png",
+        "screenshotSha256": "0d818d07d85f6c504d9bfd9cda62d25b4db396a6654a47d94a4988fc25308789",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      },
+      "31-widget-native-finite": {
+        "name": "31-widget-native-finite",
+        "case": {
+          "name": "31-widget-native-finite",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "widget",
+            "seed": "none",
+            "stream": "finite"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 6,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "native full-body result reaches widget",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "",
+                  "set-lat": "",
+                  "set-lon": "",
+                  "set-method": "2",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": ""
+                },
+                "config": {
+                  "configSource": "coarse-ip",
+                  "configMode": "local",
+                  "autoDetectSource": "GeoJS",
+                  "autoDetectStatus": "ok",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "unknown",
+                  "geolocationLastError": null,
+                  "lat": 24.47,
+                  "lon": 39.61,
+                  "tz": "UTC",
+                  "label": "Madinah",
+                  "method": "4",
+                  "units": "c",
+                  "locationEvidence": {
+                    "intent": "coarse-area",
+                    "source": "coarse-ip",
+                    "accuracyM": null,
+                    "acquiredAt": null,
+                    "provider": "GeoJS",
+                    "area": "Madinah",
+                    "bounds": null
+                  },
+                  "fixAgeMs": null,
+                  "savedAt": null,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+                "pin": {
+                  "classes": "set-pin",
+                  "title": "Estimated from your IP. Click to request browser location.",
+                  "name": "Use browser location"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": null
+              }
+            },
+            {
+              "name": "healthy finite body has no fallback or abort",
+              "passed": true,
+              "detail": {
+                "jobs": [
+                  {
+                    "id": 0,
+                    "kind": "coarse-stream",
+                    "url": "https://get.geojs.io/v1/ip/geo.json",
+                    "route": "/geojs-finite",
+                    "state": "native-fetch",
+                    "signalAborted": false,
+                    "headersReturned": true,
+                    "http": 200
+                  }
+                ],
+                "ledger": [
+                  {
+                    "path": "/geojs-finite",
+                    "headersAt": 1791510859882,
+                    "closedAt": 1791510859900,
+                    "completed": true
+                  }
+                ]
+              }
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 24,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=widget&stream=finite#local=1",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 6,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "elapsedConsumerSeconds": 0.360000000015134,
+          "nativeStreamJobs": [
+            {
+              "id": 0,
+              "kind": "coarse-stream",
+              "url": "https://get.geojs.io/v1/ip/geo.json",
+              "route": "/geojs-finite",
+              "state": "native-fetch",
+              "signalAborted": false,
+              "headersReturned": true,
+              "http": 200
+            }
+          ],
+          "nativeStreamLedger": [
+            {
+              "path": "/geojs-finite",
+              "headersAt": 1791510859882,
+              "closedAt": 1791510859900,
+              "completed": true
+            }
+          ],
+          "finalApplication": {
+            "inputs": {
+              "set-label": "",
+              "set-lat": "",
+              "set-lon": "",
+              "set-method": "2",
+              "set-school": "0",
+              "set-time": "24",
+              "set-units": "f",
+              "set-appearance": "glass",
+              "set-datefmt": ""
+            },
+            "config": {
+              "configSource": "coarse-ip",
+              "configMode": "local",
+              "autoDetectSource": "GeoJS",
+              "autoDetectStatus": "ok",
+              "storageAvailable": true,
+              "storageError": null,
+              "geolocationPermissionState": "unknown",
+              "geolocationLastError": null,
+              "lat": 24.47,
+              "lon": 39.61,
+              "tz": "UTC",
+              "label": "Madinah",
+              "method": "4",
+              "units": "c",
+              "locationEvidence": {
+                "intent": "coarse-area",
+                "source": "coarse-ip",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": "GeoJS",
+                "area": "Madinah",
+                "bounds": null
+              },
+              "fixAgeMs": null,
+              "savedAt": null,
+              "hashConfigOverridden": false,
+              "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+            },
+            "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+            "pin": {
+              "classes": "set-pin",
+              "title": "Estimated from your IP. Click to request browser location.",
+              "name": "Use browser location"
+            },
+            "code": null,
+            "previewSrc": null,
+            "savedBytes": null
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse-stream",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "route": "/geojs-finite",
+                "state": "native-fetch",
+                "signalAborted": false,
+                "headersReturned": true,
+                "http": 200
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [],
+            "fallbackCalls": [],
+            "errors": [],
+            "storageEvents": [
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salahwx:24.47|39.61|c"
+              ],
+              [
+                "get",
+                "salah:24.47|39.61|America/New_York|4|0"
+              ],
+              [
+                "set",
+                "salah:24.47|39.61|America/New_York|4|0"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ]
+            ]
+          },
+          "fontStatus": "settled",
+          "screenshot": "31-widget-native-finite.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-widget-native-finite.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-widget-native-finite.png",
+        "screenshotSha256": "5cc0ae60c99115b8302a9f10535805e9e1cd9093e0397714c80eb907984baf81",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      },
+      "31-widget-native-fail": {
+        "name": "31-widget-native-fail",
+        "case": {
+          "name": "31-widget-native-fail",
+          "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+          "options": {
+            "page": "widget",
+            "seed": "none",
+            "stream": "fail"
+          },
+          "checks": [
+            {
+              "name": "exact current script guards and isolated hooks initialize",
+              "passed": true,
+              "detail": {
+                "state": "ready",
+                "error": null,
+                "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+                "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+                "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+                "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+                "scriptCount": 6,
+                "bodiesPreserved": true,
+                "storageIsolated": true,
+                "clockFixed": true
+              }
+            },
+            {
+              "name": "native failed widget opens manual form",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "",
+                  "set-lat": "",
+                  "set-lon": "",
+                  "set-method": "2",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": "YYYY-MM-DD"
+                },
+                "config": {
+                  "configSource": null,
+                  "configMode": "local",
+                  "autoDetectSource": null,
+                  "autoDetectStatus": "failed",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "unknown",
+                  "geolocationLastError": null,
+                  "lat": null,
+                  "lon": null,
+                  "tz": "America/New_York",
+                  "label": "",
+                  "method": "2",
+                  "units": "f",
+                  "locationEvidence": null,
+                  "fixAgeMs": null,
+                  "savedAt": null,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+                "pin": {
+                  "classes": "set-pin off",
+                  "title": "Configured site — click to request browser location",
+                  "name": "Configured site — click to request browser location"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": null
+              }
+            },
+            {
+              "name": "actual manual form restores configured target",
+              "passed": true,
+              "detail": {
+                "inputs": {
+                  "set-label": "Manual recovery",
+                  "set-lat": "30",
+                  "set-lon": "31",
+                  "set-method": "2",
+                  "set-school": "0",
+                  "set-time": "24",
+                  "set-units": "f",
+                  "set-appearance": "glass",
+                  "set-datefmt": "YYYY-MM-DD"
+                },
+                "config": {
+                  "configSource": "localStorage",
+                  "configMode": "local",
+                  "autoDetectSource": null,
+                  "autoDetectStatus": "failed",
+                  "storageAvailable": true,
+                  "storageError": null,
+                  "geolocationPermissionState": "unknown",
+                  "geolocationLastError": null,
+                  "lat": 30,
+                  "lon": 31,
+                  "tz": "UTC",
+                  "label": "Manual recovery",
+                  "method": "2",
+                  "units": "f",
+                  "locationEvidence": {
+                    "intent": "fixed-site",
+                    "source": "manual",
+                    "accuracyM": null,
+                    "acquiredAt": null,
+                    "provider": null,
+                    "area": null,
+                    "bounds": null
+                  },
+                  "fixAgeMs": null,
+                  "savedAt": 1790942400000,
+                  "hashConfigOverridden": false,
+                  "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+                },
+                "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+                "pin": {
+                  "classes": "set-pin off",
+                  "title": "Configured site — click to request browser location",
+                  "name": "Configured site — click to request browser location"
+                },
+                "code": null,
+                "previewSrc": null,
+                "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"Manual recovery\",\"method\":\"2\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+              }
+            },
+            {
+              "name": "exhaustion uses exactly two failed providers",
+              "passed": true,
+              "detail": {
+                "jobs": [
+                  {
+                    "id": 0,
+                    "kind": "coarse-stream",
+                    "url": "https://get.geojs.io/v1/ip/geo.json",
+                    "route": "/failure",
+                    "state": "native-fetch",
+                    "signalAborted": false,
+                    "headersReturned": true,
+                    "http": 503
+                  },
+                  {
+                    "id": 1,
+                    "kind": "coarse-stream",
+                    "url": "https://ipinfo.io/json",
+                    "route": "/failure",
+                    "state": "native-fetch",
+                    "signalAborted": false,
+                    "headersReturned": true,
+                    "http": 503
+                  }
+                ],
+                "ledger": [
+                  {
+                    "path": "/failure",
+                    "headersAt": 1791510860979,
+                    "closedAt": 1791510860980,
+                    "completed": true
+                  },
+                  {
+                    "path": "/failure",
+                    "headersAt": 1791510861007,
+                    "closedAt": 1791510861007,
+                    "completed": true
+                  }
+                ]
+              }
+            },
+            {
+              "name": "no unhandled or unexpected sink errors",
+              "passed": true,
+              "detail": {
+                "pageErrors": [],
+                "outsideRequests": [],
+                "fixtureErrors": []
+              }
+            }
+          ],
+          "snapshots": {},
+          "clipboard": [],
+          "pageErrors": [],
+          "outsideRequests": [],
+          "ledgerStart": 27,
+          "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=widget&stream=fail#local=1",
+          "fixtureIdentity": {
+            "state": "ready",
+            "error": null,
+            "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+            "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+            "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+            "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+            "scriptCount": 6,
+            "bodiesPreserved": true,
+            "storageIsolated": true,
+            "clockFixed": true
+          },
+          "elapsedConsumerSeconds": 0.75,
+          "nativeStreamJobs": [
+            {
+              "id": 0,
+              "kind": "coarse-stream",
+              "url": "https://get.geojs.io/v1/ip/geo.json",
+              "route": "/failure",
+              "state": "native-fetch",
+              "signalAborted": false,
+              "headersReturned": true,
+              "http": 503
+            },
+            {
+              "id": 1,
+              "kind": "coarse-stream",
+              "url": "https://ipinfo.io/json",
+              "route": "/failure",
+              "state": "native-fetch",
+              "signalAborted": false,
+              "headersReturned": true,
+              "http": 503
+            }
+          ],
+          "nativeStreamLedger": [
+            {
+              "path": "/failure",
+              "headersAt": 1791510860979,
+              "closedAt": 1791510860980,
+              "completed": true
+            },
+            {
+              "path": "/failure",
+              "headersAt": 1791510861007,
+              "closedAt": 1791510861007,
+              "completed": true
+            }
+          ],
+          "finalApplication": {
+            "inputs": {
+              "set-label": "Manual recovery",
+              "set-lat": "30",
+              "set-lon": "31",
+              "set-method": "2",
+              "set-school": "0",
+              "set-time": "24",
+              "set-units": "f",
+              "set-appearance": "glass",
+              "set-datefmt": "YYYY-MM-DD"
+            },
+            "config": {
+              "configSource": "localStorage",
+              "configMode": "local",
+              "autoDetectSource": null,
+              "autoDetectStatus": "failed",
+              "storageAvailable": true,
+              "storageError": null,
+              "geolocationPermissionState": "unknown",
+              "geolocationLastError": null,
+              "lat": 30,
+              "lon": 31,
+              "tz": "UTC",
+              "label": "Manual recovery",
+              "method": "2",
+              "units": "f",
+              "locationEvidence": {
+                "intent": "fixed-site",
+                "source": "manual",
+                "accuracyM": null,
+                "acquiredAt": null,
+                "provider": null,
+                "area": null,
+                "bounds": null
+              },
+              "fixAgeMs": null,
+              "savedAt": 1790942400000,
+              "hashConfigOverridden": false,
+              "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+            },
+            "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+            "pin": {
+              "classes": "set-pin off",
+              "title": "Configured site — click to request browser location",
+              "name": "Configured site — click to request browser location"
+            },
+            "code": null,
+            "previewSrc": null,
+            "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"Manual recovery\",\"method\":\"2\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+          },
+          "fixtureRecords": {
+            "providerJobs": [
+              {
+                "id": 0,
+                "kind": "coarse-stream",
+                "url": "https://get.geojs.io/v1/ip/geo.json",
+                "route": "/failure",
+                "state": "native-fetch",
+                "signalAborted": false,
+                "headersReturned": true,
+                "http": 503
+              },
+              {
+                "id": 1,
+                "kind": "coarse-stream",
+                "url": "https://ipinfo.io/json",
+                "route": "/failure",
+                "state": "native-fetch",
+                "signalAborted": false,
+                "headersReturned": true,
+                "http": 503
+              }
+            ],
+            "gpsCalls": [],
+            "copyJobs": [],
+            "fallbackCalls": [],
+            "errors": [],
+            "storageEvents": [
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salah_widget:config:v1"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "salah_widget:config:v1"
+              ],
+              [
+                "get",
+                "salahwx:30|31|f"
+              ],
+              [
+                "get",
+                "salah:30|31|America/New_York|2|0"
+              ],
+              [
+                "get",
+                "salah:30|31|America/New_York|2|0"
+              ],
+              [
+                "set",
+                "salah:30|31|America/New_York|2|0"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ],
+              [
+                "set",
+                "__sw_probe__"
+              ],
+              [
+                "remove",
+                "__sw_probe__"
+              ]
+            ]
+          },
+          "fontStatus": "settled",
+          "screenshot": "31-widget-native-fail.png"
+        },
+        "receiptURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+        "receiptSha256": "d11823c33393f0530a1bcb9e422083534428f738a0c6fa6337568f601707c65b",
+        "caseURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-widget-native-fail.json",
+        "screenshotURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/31-widget-native-fail.png",
+        "screenshotSha256": "ae931d4310057b3e67f9aa9926ab9589888ad57a79aa28f5fdc59cc3e383dea0",
+        "classification": "FRESH_PRIMARY_NATIVE_CURRENT_TARGET_NO_REPLAY",
+        "localReceipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json"
+      }
+    },
+    "reconciliationReceipt": "native-reconciliation.json",
+    "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-reconciliation.json",
+    "scope": "Required native bridge",
+    "harnessRepairsAndRetainedCounterexamples": {
+      "repairs": [
+        "CSP string eval rejected: bounded browser-protocol evaluate(function) polling; unchanged CSP without unsafe-eval.",
+        "Idless Settings footer anchors: native element handles and exact activeElement identity; no assigned ids/production DOM mutation.",
+        "builder.html19 text-transform uppercase: keep raw+rendered text, normalize letter case only; require manual failure and reject copied/checkmark success."
+      ],
+      "failures": [
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-all-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-all-primary/results.json",
+          "name": "15-settings-display-close-session",
+          "error": "Page.wait_for_function: EvalError: Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:\".\n\n    at eval (<anonymous>)\n    at predicate (eval at evaluate (:290:30), <anonymous>:4:56)\n    at next (eval at evaluate (:290:30), <anonymous>:29:29)",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        },
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+          "name": "15-settings-display-close-session",
+          "error": "Locator.focus: Unexpected token \"#\" while parsing css selector \"#\". Did you mean to CSS.escape it?\nCall log:\n  - waiting for #\n",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        },
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+          "name": "18-denied-copy-responsive-Windows-payload",
+          "error": "copy truthful failure: 'COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.'",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        },
+        {
+          "file": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\D\\native-rest-primary\\results.json",
+          "publicURL": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/workers/D/native-rest-primary/results.json",
+          "name": "18-success-then-failure-old-timers",
+          "error": "copy truthful failure: 'COULDN’T COPY. SELECT THE EMBED CODE BELOW AND COPY IT MANUALLY.'",
+          "classification": "RETAINED_HARNESS_COUNTEREXAMPLE_NOT_PRODUCTION_DEFECT"
+        }
+      ]
+    },
+    "limitations": [
+      "Synthetic service/GPS/clipboard doubles do not prove real provider/clipboard permissions or native installer execution.",
+      "Original fallback fonts and fixed synthetic UTC epoch are disclosed; no science or production-font requalification.",
+      "No native denied-storage/iframe permission matrix or selected local preference matrix claimed for conclusively open documentation issues.",
+      "Evidence URLs use AUDIT_EVIDENCE_COMMIT placeholder until primary publishes, verifies and substitutes immutable public evidence identity."
+    ]
+  },
+  "publicEvidenceURLState": "AUDIT_EVIDENCE_COMMIT_PLACEHOLDER_MUST_BE_REPLACED_BEFORE_PUBLICATION",
+  "primaryReconciliation": {
+    "status": "ACCEPTED_BY_PRIMARY",
+    "basis": "Primary explicitly reviewed and accepted all51 closure rows for15/18/31 plus exact native receipts/crops;16/17/35 retained open for conclusively verified specific documentation/remaining consumer gaps.",
+    "externalHumanApprovalClaimed": false
+  }
+}

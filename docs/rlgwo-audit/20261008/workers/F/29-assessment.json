@@ -1,0 +1,955 @@
+{
+  "schema": "rlgwo-closure-assessment-v1",
+  "reviewer": "F",
+  "issueNumber": 29,
+  "canonicalId": "R001D",
+  "title": "R001D: Bind lunar diagnostics to consumed state and current canvas geometry",
+  "originalBodySha256": "5a28289ca6be1934d89172025d5c341f90df6578f0703895807edc6990ec72ab",
+  "originalUpdatedAt": "2026-09-08T06:25:31Z",
+  "packetCapturedAtUtc": "2026-10-09T00:41:32.867019+00:00",
+  "commentRevisions": [],
+  "fullPacketRead": true,
+  "discussionAmendments": "No comments; renamed/referenced events read without treating them as authority.",
+  "target": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "auditDate": "2026-10-08"
+  },
+  "targetCustody": "Clean reviewed head 4bccdf43363926c3077f60de87e5617ccb9abcb9 has identical merge tree; source read there.",
+  "model": {
+    "requested": "gpt-6.1-sol",
+    "requestedEffort": "max",
+    "effectiveConfigurationConfirmed": true,
+    "confirmationKind": "supported spawn configuration plus local recorded turn_context; not independent hardware/backend attestation",
+    "recordedSessionId": "01a11e27-0cc9-7e73-a2e2-a9f2ec7bcc32",
+    "recordSha256": "183999c426f808271a5ebbcc529daed738b528b5bda6cc6c25dadf29a1947235"
+  },
+  "scopeOfDone": "Produced geometry owns absolute time/context; completed paint owns immutable consumed freshness; QA never converts unavailable/stale into fresh. Raw Moon labels use current V5 backing dimensions/shared geometry with integer bounds and explicit unavailable states. Primary current-surface browser probe and F21/21+11/11+6 semantic mutants satisfy both instrument subcases.",
+  "requirementMatrix": [
+    {
+      "id": "1D-01",
+      "obligation": "Producer owns date/absolute-minute/context stamp after valid geometry; direct callers and same-minute reuse; failed geometry does not advance success marker.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1856,
+            1866
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1856-L1866"
+        },
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1890,
+            1934
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1890-L1934"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4016,
+            4060
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4016-L4060"
+        }
+      ],
+      "discriminator": "Actual boot/config/cache/network/day paths and alternate-date/location controls.",
+      "expected": "No equal-minute false freshness; successful production owns metadata.",
+      "observed": "Retained final 11-case lifecycle reaches actual boot/applyConfig/rAF day adoption and strictfresh result; source checks date/context and failed production marker.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001d-lifecycle.log.gz",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001d-lifecycle.log.gz"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Whole inline source lifecycle with contained boundaries; no compositor"
+        }
+      ]
+    },
+    {
+      "id": "1D-02",
+      "obligation": "Capture immutable state at actual atmosphere->paint boundary; later producer cannot rewrite consumed snapshot; stricttrue only and pre-first/missing/fail unavailable.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2979,
+            2990
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2979-L2990"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            5007,
+            5018
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5007-L5018"
+        }
+      ],
+      "discriminator": "Consumer-before-update, missing/throwing atmosphere, failed paint, pre-first query, restore !==false/recompute mutants.",
+      "expected": "Reordered old consume stays stale; failures never true.",
+      "observed": "Fresh whole-render diagnostics21/21 and lifecycle11/11 reach real atmosphere/paint and direct producers; reordered/omitted updates, pre-first/empty/error/failed stages, date/location collisions and immutable snapshots discriminate. Both not-false and recompute-after-consume mutants are detected.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native-results.json",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native-results.json"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Runner includes lifecycle, not r001d-diagnostics/mutations"
+        }
+      ]
+    },
+    {
+      "id": "1D-03",
+      "obligation": "Keep atmosphere pure, cadence/PBR threshold/cache and bounded warnings at consumption; no scheduler or default appearance changes.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2980,
+            2990
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2980-L2990"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            5008,
+            5019
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5008-L5019"
+        }
+      ],
+      "discriminator": "Existing .001 reuse/.006 repaint, failure controls and no default readbacks.",
+      "expected": "Diagnostic repair preserves rendering/cache and bounded warning.",
+      "observed": "All original cadence/cache assertions retained: .001 reuses raster/buffer and .006 repaints using storage. Consumed warnings are bounded; atmosphere stays pure. The diagnostic source is opt-in/read-only and does not change default material; current V5 appearance is qualified separately by retained source-bound controls.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1D-04",
+      "obligation": "Sampler uses actual width/height/shared renderer radius/center, checks integer bounds before flattened index; absent/context/error data unavailable.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1868,
+            1887
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1868-L1887"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4002,
+            4014
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4002-L4014"
+        }
+      ],
+      "discriminator": "Synthetic dark-limb/bright-disc,300/negative/y=height,empty/error controls through actual readout.",
+      "expected": "Auditable in/out/OOB samples; no row wrapping or hardcoded darkness.",
+      "observed": "Disclosed current-surface adapter supplies the same original synthetic disc to SalahMoonRuntime.surface() instead of only legacy _moonCv; all21 assertions pass without changing expected coordinates. Actual public raw300x300/R144 readout also agrees with independent current backing pixels. Missing-context/throwing-read are unavailable and5 bounds are OOB, all restored.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "tests/r001d-diagnostics.cjs",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001d-diagnostics.cjs"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Read actual assertions; current surface fixture adaptation required"
+        }
+      ]
+    },
+    {
+      "id": "1D-05",
+      "obligation": "Meaningful inner/limb/edge and valid exterior 295/299; expose dimensions/coordinates, name canvas exterior and no clamp-as-original.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1868,
+            1887
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1868-L1887"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4061,
+            4068
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4061-L4068"
+        }
+      ],
+      "discriminator": "Actualcurrent surface plus bright/dark synthetic current surface controls.",
+      "expected": "300/R144 gives 222,293,294,295,299 samples and distinct alpha/luminance.",
+      "observed": "Actual public current preview at(222/293/294/295/299,150) reads14/255,15/108,0/0,0/0,0/0 respectively. Raw edge AA is preserved as observed; these labels are not composited-sky proof. The original synthetic dark/bright positives independently prevent hardcoded labels.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1D-06",
+      "obligation": "Required whole-render freshness smoke and sampler mutations must reach actual consumers; missing diagnostics not a pass.",
+      "authoredOwners": [
+        {
+          "path": "tests/r001d-mutations.cjs",
+          "lines": [
+            1,
+            28
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001d-mutations.cjs#L1-L28"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "tests/smoke.html",
+          "lines": [
+            363,
+            366
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/smoke.html#L363-L366"
+        }
+      ],
+      "discriminator": "Strict smoke under reorder/notfalse/recompute and R58/removebounds.",
+      "expected": "Each respective defect detected by reached assertion, no helper-only or setup credit.",
+      "observed": "All original21 cases retained; first6 original semantic mutants detected with healthy controls, including R58 and removed bounds. Seventh legacy synthetic-star refresh mutation is explicitly excluded from these6; actual host/catalogue/currentness/opacity replacements are separately4+3+27 controls, not a seventh mutant relabel.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1D-07",
+      "obligation": "Nonthrowing opt-in native sanity and appearance-preservation crops across crescent/half/gibbous/full/new/below; no transparency/blackcutout, no art-improvement claim.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1868,
+            1887
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1868-L1887"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "moon/src/moon-native.mjs",
+          "lines": [
+            189,
+            203
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-native.mjs#L189-L203"
+        },
+        {
+          "path": "moon/src/moon-detail.mjs",
+          "lines": [
+            31,
+            40
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-detail.mjs#L31-L40"
+        }
+      ],
+      "discriminator": "Current debug readout at real terrain publication plus matched composition crops/star-positive control.",
+      "expected": "Diagnostics change no default pixels; physical/calendar semantics preserved.",
+      "observed": "Primary native opt-in probe PASS at exact publicff7285/f443cf: initial unavailable at345.2ms, first current V5 TERRAIN PREVIEW, strict completed consumedFresh, actual overlay/raw pixels, nonthrowing error/OOB controls and no page errors. F viewed card/readout crops. This does not claim refined terrain; common public release and exact final-v49 references separately prove normal refinement/presence/motion. Diagnostic source has no default material writer, so appearance evidence is reused at the unchanged accepted V5 material interface, not a new phase campaign.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/visual-review/chromium-moon-cold-motion.png",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/visual-review/chromium-moon-cold-motion.png"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Viewed retained current terrain/calendar frames20.031..97.953s"
+        }
+      ]
+    },
+    {
+      "id": "1D-08",
+      "obligation": "Affected AGENTS/DESIGN/smoke claims current; independent exact-tree positive/negative review and evidence before closure/public instrument claim.",
+      "authoredOwners": [
+        {
+          "path": "AGENTS.md",
+          "lines": [
+            7,
+            28
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/AGENTS.md#L7-L28"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "DESIGN.md",
+          "lines": [
+            198,
+            204
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L198-L204"
+        }
+      ],
+      "discriminator": "Source/debug readback and bounded diagnostic regression packet.",
+      "expected": "Truthful current-owner diagnostic limits and public delivery scope.",
+      "observed": "Affected diagnostic source/comments and strict smoke projection traced to delivered source; fresh current-surface readout closes the mandatory browser instrument gate. Exact-tree independent review and this evidence comment complete instrument proof; public raw-sampler delivery is narrowly supported, not public optical accuracy.",
+      "status": "satisfied",
+      "evidence": []
+    }
+  ],
+  "negativeControls": [
+    "Producer/context and actual failed-atmosphere/paint/readout controls exist in source tests, but a present test file is not executed final evidence.",
+    "Old-surface debug fixture mismatch must not be counted as detection of a production sampler mutant."
+  ],
+  "gaps": [],
+  "dependencies": [
+    "R0022 consumes native light diagnostics; current scientific sky has its own separate accepted astronomical state.",
+    "Current V5 terrain publication/quality must not be confused with geometry freshness.",
+    "N003 real OS/BFCache is outside this diagnostic contract unless a mapped native failure needs it."
+  ],
+  "improvements": [],
+  "ownerDecisions": [],
+  "verdict": "CLOSE — SATISFIED WITH DEMONSTRATED IMPROVEMENTS",
+  "proposedNextRlgwoIncrement": {
+    "owner": "Primary reconciliation/publication only",
+    "steps": [
+      "Publish immutable exact current-surface native receipt/crop links and disclosed fixture adaptation; reconcile this bounded instrument closure."
+    ],
+    "acceptance": "Both original instrument subcases and their mandatory native sanity/consumer/negative controls are satisfied; no diagnostic repair remains.",
+    "nonGoals": "No Moon art/physics improvement claim, full-refinement claim from the8s preview, universal optical accuracy, new scheduler or default-frame readback."
+  },
+  "missingChecksRequested": [],
+  "freshExecution": {
+    "productTests": [
+      {
+        "issue": 29,
+        "name": "r001d-diagnostics-original",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r001d-diagnostics.cjs"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "fixtureSha256": "5d707620bd4c5f52c76a09bde721f70b000b35f827d6e150eb2b250afe52d729",
+        "freshExecution": true,
+        "seconds": 2.367516,
+        "exitCode": 1,
+        "terminal": {
+          "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+          "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+          "fixtureSha256": "5d707620bd4c5f52c76a09bde721f70b000b35f827d6e150eb2b250afe52d729",
+          "pass": 17,
+          "fail": 4,
+          "limits": "VM boundaries; no native compositor/texture/motion/cost proof"
+        },
+        "failures": [
+          "FAIL actual debug readout distinguishes dark opaque limb and canvas exterior :: The input did not match the regular expression /limb[^\\n]*0\\/255/. Input:",
+          "FAIL bright-disc positive debug readout is not hardcoded dark :: The input did not match the regular expression /limb[^\\n]*255\\/255/. Input:",
+          "FAIL sampler coordinates and geometry use actual dimensions/shared radius :: Expected values to be strictly equal:",
+          "FAIL cropped backing canvas does not relabel an interior pixel as exterior :: Cannot read properties of undefined (reading 'status')"
+        ],
+        "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001d-diagnostics-original.log",
+        "logSha256": "1bcd75d9bc8c79c9e1d3e70dc6d0d615520db2275f6e4640e754628be9ce027f",
+        "error": null
+      },
+      {
+        "issue": 29,
+        "name": "r001d-lifecycle",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r001d-lifecycle.cjs"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "fixtureSha256": "5a751be6e5be97429f47345ada66f1442a7c3db8d71f2cd298a04fd922dd8f38",
+        "freshExecution": true,
+        "seconds": 0.858297,
+        "exitCode": 0,
+        "terminal": {
+          "terminal": true,
+          "declared": 11,
+          "executed": 11,
+          "missing": 0,
+          "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+          "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+          "fixtureSha256": "5a751be6e5be97429f47345ada66f1442a7c3db8d71f2cd298a04fd922dd8f38",
+          "pass": 11,
+          "fail": 0,
+          "stallFirst": false,
+          "retryFirst": false,
+          "limits": "real source lifecycle/loop with contained boundary doubles; no browser"
+        },
+        "failures": [],
+        "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001d-lifecycle.log",
+        "logSha256": "e9a2364d419290151800a73da6965155cb8adc2f394715ee0b7ebe84f31553dd",
+        "error": null
+      },
+      {
+        "name": "r001d-diagnostics-current-surface",
+        "originalFixture": "tests/r001d-diagnostics.cjs",
+        "originalFixtureSha256": "5d707620bd4c5f52c76a09bde721f70b000b35f827d6e150eb2b250afe52d729",
+        "adaptedFixture": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\r001d-diagnostics-current-surface.cjs",
+        "adaptedFixtureSha256": "b7f7330ee3f09fb1cc149838950651b88d43d865de76f36517535bbb66758eb0",
+        "changes": [
+          "Absolute import of unchanged source harness; all 21 original cases/assertions retained.",
+          "Five sampler/debug inputs now supply the same synthetic backing via current SalahMoonRuntime.surface(); request is a contained boundary double. Legacy canvas assignment retained for comparison. No producer/consumer code or expected coordinates changed."
+        ],
+        "assertionsWeakened": false,
+        "command": [
+          "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+          "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\r001d-diagnostics-current-surface.cjs",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "freshExecution": true,
+        "exitCode": 0,
+        "terminal": {
+          "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+          "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+          "fixtureSha256": "b7f7330ee3f09fb1cc149838950651b88d43d865de76f36517535bbb66758eb0",
+          "pass": 21,
+          "fail": 0,
+          "limits": "VM boundaries; no native compositor/texture/motion/cost proof"
+        },
+        "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001d-diagnostics-current-surface.log",
+        "logSha256": "a88910b9558ae85d419262a7de6c31a5737de2c78c2cb82a7f8f36d0ec647f91",
+        "failures": []
+      },
+      {
+        "name": "r001d-mutations-current-surface",
+        "originalFixture": "tests/r001d-mutations.cjs",
+        "originalFixtureSha256": "b311a5736418e4103ca78b7eee6aae64d3077f7d85ea6ce44c21a06d22f4013e",
+        "adaptedFixture": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\r001d-mutations-current-surface.cjs",
+        "adaptedFixtureSha256": "85e0c7226e36ebf29efd56fb1d08fa4f2e02f2d65b23f8b01b58aa005cfe3a28",
+        "changes": [
+          "Absolute import of unchanged source harness; first six original mutants/healthy controls/assertions retained.",
+          "Sampler uses current surface with the same synthetic disc; no assertion changed.",
+          "Seventh removed-synthetic-star refresh mutant excluded explicitly. Actual astronomical appearance/currentness/opaque-composition controls assessed separately; six detected mutants do not count as proof of the excluded seventh."
+        ],
+        "assertionsWeakened": false,
+        "command": [
+          "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+          "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\r001d-mutations-current-surface.cjs",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "freshExecution": true,
+        "exitCode": 0,
+        "terminal": {
+          "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+          "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+          "fixtureSha256": "85e0c7226e36ebf29efd56fb1d08fa4f2e02f2d65b23f8b01b58aa005cfe3a28",
+          "detected": 6,
+          "failed": 0,
+          "limits": "source/VM mutations; no browser or shader beauty"
+        },
+        "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001d-mutations-current-surface.log",
+        "logSha256": "9f351ee622218c682c35060fddb30c9d72d6c9603e5ca7eacb636915d835996a",
+        "failures": []
+      }
+    ],
+    "browsers": [
+      {
+        "executedBy": "primary",
+        "freshExecution": true,
+        "receipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\primary-native-F-moon-debug\\results.json",
+        "receiptSha256": "36247960841dce201dcff1b2620cd218a8cd686f15cf7d6523b233f188a18705",
+        "browser": {
+          "family": "chromium",
+          "version": "148.0.7778.96",
+          "os": "Windows",
+          "machine": "AMD64",
+          "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+          "chromiumSandboxRequested": true
+        },
+        "harnessSha256": "928b894b90903ff45409b2e6530cfba423fa6b3220af6a43b207fb80a95be672",
+        "servedIndexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "initial": {
+          "first": {
+            "at": 345.19999998807907,
+            "sample": {
+              "status": "unavailable",
+              "width": null,
+              "height": null,
+              "radius": 144,
+              "cx": 0,
+              "cy": 0,
+              "samples": []
+            },
+            "runtime": null
+          },
+          "errors": []
+        },
+        "sample": {
+          "status": "ok",
+          "width": 300,
+          "height": 300,
+          "radius": 144,
+          "cx": 150,
+          "cy": 150,
+          "samples": [
+            {
+              "label": "inner",
+              "x": 222,
+              "y": 150,
+              "status": "ok",
+              "lum": 14,
+              "alpha": 255
+            },
+            {
+              "label": "limb",
+              "x": 293,
+              "y": 150,
+              "status": "ok",
+              "lum": 15,
+              "alpha": 108
+            },
+            {
+              "label": "edge",
+              "x": 294,
+              "y": 150,
+              "status": "ok",
+              "lum": 0,
+              "alpha": 0
+            },
+            {
+              "label": "disc exterior",
+              "x": 295,
+              "y": 150,
+              "status": "ok",
+              "lum": 0,
+              "alpha": 0
+            },
+            {
+              "label": "canvas exterior",
+              "x": 299,
+              "y": 150,
+              "status": "ok",
+              "lum": 0,
+              "alpha": 0
+            }
+          ]
+        },
+        "quality": "terrain-preview",
+        "consumedFresh": true,
+        "errorControls": {
+          "missingContext": {
+            "status": "unavailable",
+            "width": 300,
+            "height": 300,
+            "radius": 144,
+            "cx": 150,
+            "cy": 150,
+            "samples": []
+          },
+          "throwingRead": {
+            "status": "unavailable",
+            "width": 300,
+            "height": 300,
+            "radius": 144,
+            "cx": 150,
+            "cy": 150,
+            "samples": []
+          },
+          "bounds": [
+            {
+              "x": 300,
+              "y": 150,
+              "status": "OOB",
+              "lum": null,
+              "alpha": null
+            },
+            {
+              "x": -1,
+              "y": 150,
+              "status": "OOB",
+              "lum": null,
+              "alpha": null
+            },
+            {
+              "x": 150,
+              "y": -1,
+              "status": "OOB",
+              "lum": null,
+              "alpha": null
+            },
+            {
+              "x": 150,
+              "y": 300,
+              "status": "OOB",
+              "lum": null,
+              "alpha": null
+            },
+            {
+              "x": 1.5,
+              "y": 150,
+              "status": "OOB",
+              "lum": null,
+              "alpha": null
+            }
+          ],
+          "restored": true,
+          "restoredSample": {
+            "status": "ok",
+            "width": 300,
+            "height": 300,
+            "radius": 144,
+            "cx": 150,
+            "cy": 150,
+            "samples": [
+              {
+                "label": "inner",
+                "x": 222,
+                "y": 150,
+                "status": "ok",
+                "lum": 14,
+                "alpha": 255
+              },
+              {
+                "label": "limb",
+                "x": 293,
+                "y": 150,
+                "status": "ok",
+                "lum": 15,
+                "alpha": 108
+              },
+              {
+                "label": "edge",
+                "x": 294,
+                "y": 150,
+                "status": "ok",
+                "lum": 0,
+                "alpha": 0
+              },
+              {
+                "label": "disc exterior",
+                "x": 295,
+                "y": 150,
+                "status": "ok",
+                "lum": 0,
+                "alpha": 0
+              },
+              {
+                "label": "canvas exterior",
+                "x": 299,
+                "y": 150,
+                "status": "ok",
+                "lum": 0,
+                "alpha": 0
+              }
+            ]
+          }
+        },
+        "pageErrors": []
+      }
+    ],
+    "scope": "F ran bounded Node/VM/command controls only after resource authorization. All actual browser launches below were executed serially by primary; F inspected receipts and crops.",
+    "replacementControls": {
+      "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "scope": "No browsers/terrain/solvers; bounded replacement controls for actual accepted host, astronomical source, catalogue and local opacity join. Current real-sky source is called, not removed synthetic arrays. Numerical encoded frame data are not native screenshots.",
+      "commands": [
+        {
+          "name": "lunar-interface-controls",
+          "command": [
+            "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+            "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\lunar-interface-controls.cjs"
+          ],
+          "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+          "freshExecution": true,
+          "exitCode": 0,
+          "seconds": 0.239006,
+          "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\lunar-interface-controls.log",
+          "logSha256": "5528cc0c2c64aa70ae6a0632e4425712c8be21ee484ae8e8fc2d91137444ccd9",
+          "tail": [
+            "PASS actual accepted host never promotes calendar phase/altitude to physical astronomical state",
+            "PASS late physical source cannot remain current after accepted UTC/target changes",
+            "PASS real local Moon join blocks direct starlight independent of calendar fade with outside positive",
+            "PASS restoring fade-scaled star leakage is detected by identical inside/outside probe",
+            "{\"sourceIndexSha256\":\"ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee\",\"detailSha256\":\"3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0\",\"fixtureSha256\":\"8c3609830205f3fea9fb2983278bb1ded210fba5c8466025d693ef4b7ef344ff\",\"passed\":4,\"failed\":0,\"limits\":\"Actual whole-source accepted host/native paint plus numerical astronomical and local join controls. Not a native hostile-star screenshot or phase campaign.\"}"
+          ]
+        },
+        {
+          "name": "native-catalogue-currentness-opacity",
+          "command": [
+            "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+            "--test",
+            "--test-name-pattern=current bright-catalogue|preview rejects corrupt catalogue|prepared sky owns",
+            "tests/real-sky/native-star-preview.test.mjs"
+          ],
+          "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+          "freshExecution": true,
+          "exitCode": 0,
+          "seconds": 1.924794,
+          "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\native-catalogue-currentness-opacity.log",
+          "logSha256": "1fc317fb1f60b381713e56b1759f2e2e61c7a12769312e57673db8db7a630453",
+          "tail": [
+            "  duration_ms: 279.081",
+            "  type: 'test'",
+            "  ...",
+            "1..3",
+            "# tests 3",
+            "# suites 0",
+            "# pass 3",
+            "# fail 0",
+            "# cancelled 0",
+            "# skipped 0",
+            "# todo 0",
+            "# duration_ms 1872.513"
+          ]
+        }
+      ],
+      "setupAttempts": [
+        {
+          "result": "fixture setup error, no product conclusion",
+          "reason": "First custom adapter re-injected native-host hooks that the whole-source harness already executes, causing duplicate _cp9SiteElevation declaration. Removed the redundant injection."
+        },
+        {
+          "result": "fixture input-order failure, no product conclusion",
+          "reason": "A same-minute in-memory boot-flag change was initially followed only by render(), which deliberately reuses geometry. Corrected the test to call the actual renderMoon producer before actual render; no assertion/production code changed."
+        }
+      ],
+      "earlierFreshToolReceipt": {
+        "command": [
+          "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+          "--test",
+          "tests/real-sky/native-contract.test.mjs",
+          "tests/real-sky/native-composition.test.mjs",
+          "tests/real-sky/native-moon-admission.test.mjs"
+        ],
+        "exitCode": 0,
+        "tests": 27,
+        "pass": 27,
+        "fail": 0,
+        "durationMs": 91.7811,
+        "kind": "Fresh execution in tool output, summarized here without claiming a retained full stdout log"
+      }
+    }
+  },
+  "reuseBasis": "Final-v49 receipts retain the exact ff7285 index and f443cf runtime. Earlier Moon/CP9 receipts retain their earlier identities and qualify only mapped unchanged mechanisms; no old aggregate PASS is promoted to current closure. Follow-up credits final normal1x images/public replacement proof for actual motion and current surface continuity. Owner-adopted physical astronomical scattering is distinct from native calendar-derived light. No complete Moon phase campaign is inferred from the opt-in raw sampler.",
+  "inheritedQualification": {
+    "N001": "PARTIAL",
+    "N002": "PARTIAL",
+    "N003": "BLOCKED",
+    "scope": "Only mapped mandatory obligations are affected; these are not blanket blockers."
+  },
+  "publication": {
+    "reconciledByPrimary": true,
+    "approved": false,
+    "posted": false,
+    "hold": "Primary Astra reconciled all mandatory rows and conclusions. Substitute immutable evidence commit SHA, independently approve exact comment hash, publish comment then any approved closure. No GitHub effect yet.",
+    "deliveredBaseline": "DELIVERED_VERIFIED; 16 public browser cases PASS; root/V1 actual sources and 330x534 wrapper checked",
+    "publicEvidenceLinksPending": true,
+    "conclusionsApprovedByPrimary": true,
+    "commentHashApproved": false,
+    "evidenceBasePlaceholder": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/",
+    "preparedCommentSha256": "28a1dc7e9fcb5b19563ba8dd0554e7f5b1917481bcc2ffbeda6656193b607cb9"
+  },
+  "risks": "Evidence gaps are not all product defects. Source mechanics, raw numerical equality, displayed pixels, native default actions and real OS lifecycle are distinct claims.",
+  "inspectionReceipt": "inspection-receipt.json",
+  "executedCommands": [
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "18ff14860ff41c084b1db5f396bb62aa9c22b1be^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only identity",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only reviewed-source equivalence",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only dirty state",
+      "expected": "",
+      "observed": "",
+      "exitCode": 0
+    },
+    {
+      "command": "SHA-256 of actual index.html bytes and complete issue body UTF-8 bytes",
+      "environment": "Python -I -S -B, hashlib/JSON; no network/browser",
+      "kind": "fresh read-only byte binding",
+      "expected": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "5a28289ca6be1934d89172025d5c341f90df6578f0703895807edc6990ec72ab"
+      },
+      "observed": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "5a28289ca6be1934d89172025d5c341f90df6578f0703895807edc6990ec72ab"
+      },
+      "exitCode": 0
+    },
+    {
+      "command": "Read authored source, delivered consumers, exact assertions and retained final-v49 gzip/JSON receipts",
+      "environment": "PowerShell UTF-8 reads + Python standard-library gzip/json/hashlib",
+      "kind": "fresh inspection of historical execution",
+      "expected": "Preserve scope and original source/runtime identities; do not invent execution",
+      "observed": "inspection-receipt.json records bytes, receipt hashes and original terminal/case counts; zero fresh product/browser test commands",
+      "exitCode": 0
+    },
+    {
+      "issue": 29,
+      "name": "r001d-diagnostics-original",
+      "command": [
+        "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+        "tests/r001d-diagnostics.cjs"
+      ],
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "fixtureSha256": "5d707620bd4c5f52c76a09bde721f70b000b35f827d6e150eb2b250afe52d729",
+      "freshExecution": true,
+      "seconds": 2.367516,
+      "exitCode": 1,
+      "terminal": {
+        "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+        "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "fixtureSha256": "5d707620bd4c5f52c76a09bde721f70b000b35f827d6e150eb2b250afe52d729",
+        "pass": 17,
+        "fail": 4,
+        "limits": "VM boundaries; no native compositor/texture/motion/cost proof"
+      },
+      "failures": [
+        "FAIL actual debug readout distinguishes dark opaque limb and canvas exterior :: The input did not match the regular expression /limb[^\\n]*0\\/255/. Input:",
+        "FAIL bright-disc positive debug readout is not hardcoded dark :: The input did not match the regular expression /limb[^\\n]*255\\/255/. Input:",
+        "FAIL sampler coordinates and geometry use actual dimensions/shared radius :: Expected values to be strictly equal:",
+        "FAIL cropped backing canvas does not relabel an interior pixel as exterior :: Cannot read properties of undefined (reading 'status')"
+      ],
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001d-diagnostics-original.log",
+      "logSha256": "1bcd75d9bc8c79c9e1d3e70dc6d0d615520db2275f6e4640e754628be9ce027f",
+      "error": null
+    },
+    {
+      "issue": 29,
+      "name": "r001d-lifecycle",
+      "command": [
+        "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+        "tests/r001d-lifecycle.cjs"
+      ],
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "fixtureSha256": "5a751be6e5be97429f47345ada66f1442a7c3db8d71f2cd298a04fd922dd8f38",
+      "freshExecution": true,
+      "seconds": 0.858297,
+      "exitCode": 0,
+      "terminal": {
+        "terminal": true,
+        "declared": 11,
+        "executed": 11,
+        "missing": 0,
+        "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+        "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "fixtureSha256": "5a751be6e5be97429f47345ada66f1442a7c3db8d71f2cd298a04fd922dd8f38",
+        "pass": 11,
+        "fail": 0,
+        "stallFirst": false,
+        "retryFirst": false,
+        "limits": "real source lifecycle/loop with contained boundary doubles; no browser"
+      },
+      "failures": [],
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001d-lifecycle.log",
+      "logSha256": "e9a2364d419290151800a73da6965155cb8adc2f394715ee0b7ebe84f31553dd",
+      "error": null
+    },
+    {
+      "name": "r001d-diagnostics-current-surface",
+      "originalFixture": "tests/r001d-diagnostics.cjs",
+      "originalFixtureSha256": "5d707620bd4c5f52c76a09bde721f70b000b35f827d6e150eb2b250afe52d729",
+      "adaptedFixture": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\r001d-diagnostics-current-surface.cjs",
+      "adaptedFixtureSha256": "b7f7330ee3f09fb1cc149838950651b88d43d865de76f36517535bbb66758eb0",
+      "changes": [
+        "Absolute import of unchanged source harness; all 21 original cases/assertions retained.",
+        "Five sampler/debug inputs now supply the same synthetic backing via current SalahMoonRuntime.surface(); request is a contained boundary double. Legacy canvas assignment retained for comparison. No producer/consumer code or expected coordinates changed."
+      ],
+      "assertionsWeakened": false,
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\r001d-diagnostics-current-surface.cjs",
+        "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html"
+      ],
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "freshExecution": true,
+      "exitCode": 0,
+      "terminal": {
+        "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+        "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "fixtureSha256": "b7f7330ee3f09fb1cc149838950651b88d43d865de76f36517535bbb66758eb0",
+        "pass": 21,
+        "fail": 0,
+        "limits": "VM boundaries; no native compositor/texture/motion/cost proof"
+      },
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001d-diagnostics-current-surface.log",
+      "logSha256": "a88910b9558ae85d419262a7de6c31a5737de2c78c2cb82a7f8f36d0ec647f91",
+      "failures": []
+    },
+    {
+      "name": "r001d-mutations-current-surface",
+      "originalFixture": "tests/r001d-mutations.cjs",
+      "originalFixtureSha256": "b311a5736418e4103ca78b7eee6aae64d3077f7d85ea6ce44c21a06d22f4013e",
+      "adaptedFixture": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\r001d-mutations-current-surface.cjs",
+      "adaptedFixtureSha256": "85e0c7226e36ebf29efd56fb1d08fa4f2e02f2d65b23f8b01b58aa005cfe3a28",
+      "changes": [
+        "Absolute import of unchanged source harness; first six original mutants/healthy controls/assertions retained.",
+        "Sampler uses current surface with the same synthetic disc; no assertion changed.",
+        "Seventh removed-synthetic-star refresh mutant excluded explicitly. Actual astronomical appearance/currentness/opaque-composition controls assessed separately; six detected mutants do not count as proof of the excluded seventh."
+      ],
+      "assertionsWeakened": false,
+      "command": [
+        "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\r001d-mutations-current-surface.cjs",
+        "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html"
+      ],
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "freshExecution": true,
+      "exitCode": 0,
+      "terminal": {
+        "sourcePath": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+        "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "fixtureSha256": "85e0c7226e36ebf29efd56fb1d08fa4f2e02f2d65b23f8b01b58aa005cfe3a28",
+        "detected": 6,
+        "failed": 0,
+        "limits": "source/VM mutations; no browser or shader beauty"
+      },
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001d-mutations-current-surface.log",
+      "logSha256": "9f351ee622218c682c35060fddb30c9d72d6c9603e5ca7eacb636915d835996a",
+      "failures": []
+    }
+  ]
+}

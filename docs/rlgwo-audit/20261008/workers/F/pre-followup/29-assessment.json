@@ -1,0 +1,440 @@
+{
+  "schema": "rlgwo-closure-assessment-v1",
+  "reviewer": "F",
+  "issueNumber": 29,
+  "canonicalId": "R001D",
+  "title": "R001D: Bind lunar diagnostics to consumed state and current canvas geometry",
+  "originalBodySha256": "5a28289ca6be1934d89172025d5c341f90df6578f0703895807edc6990ec72ab",
+  "originalUpdatedAt": "2026-09-08T06:25:31Z",
+  "packetCapturedAtUtc": "2026-10-09T00:41:32.867019+00:00",
+  "commentRevisions": [],
+  "fullPacketRead": true,
+  "discussionAmendments": "No comments; renamed/referenced events read without treating them as authority.",
+  "target": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "auditDate": "2026-10-08"
+  },
+  "targetCustody": "Clean reviewed head 4bccdf43363926c3077f60de87e5617ccb9abcb9 has identical merge tree; source read there.",
+  "model": {
+    "requested": "gpt-6.1-sol",
+    "requestedEffort": "max",
+    "effectiveConfigurationConfirmed": false
+  },
+  "scopeOfDone": "renderMoon stamps finite produced geometry from captured absolute minute/date/location/zone. applyTheme records immutable last-consumed atmosphere/paint status; QA separates last consumption from recomputed geometry. Sampler now reads current terrain backing canvas, shared radius and checked coordinates.",
+  "requirementMatrix": [
+    {
+      "id": "1D-01",
+      "obligation": "Producer owns date/absolute-minute/context stamp after valid geometry; direct callers and same-minute reuse; failed geometry does not advance success marker.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1856,
+            1866
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1856-L1866"
+        },
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1890,
+            1934
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1890-L1934"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4016,
+            4060
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4016-L4060"
+        }
+      ],
+      "discriminator": "Actual boot/config/cache/network/day paths and alternate-date/location controls.",
+      "expected": "No equal-minute false freshness; successful production owns metadata.",
+      "observed": "Retained final 11-case lifecycle reaches actual boot/applyConfig/rAF day adoption and strictfresh result; source checks date/context and failed production marker.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001d-lifecycle.log.gz",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001d-lifecycle.log.gz"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Whole inline source lifecycle with contained boundaries; no compositor"
+        }
+      ]
+    },
+    {
+      "id": "1D-02",
+      "obligation": "Capture immutable state at actual atmosphere->paint boundary; later producer cannot rewrite consumed snapshot; stricttrue only and pre-first/missing/fail unavailable.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2979,
+            2990
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2979-L2990"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            5007,
+            5018
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5007-L5018"
+        }
+      ],
+      "discriminator": "Consumer-before-update, missing/throwing atmosphere, failed paint, pre-first query, restore !==false/recompute mutants.",
+      "expected": "Reordered old consume stays stale; failures never true.",
+      "observed": "Source capture is correct and QA uses lastMoonPaint; full diagnostics/mutation tests exist but their final execution is not in native runner receipt.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native-results.json",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native-results.json"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Runner includes lifecycle, not r001d-diagnostics/mutations"
+        }
+      ]
+    },
+    {
+      "id": "1D-03",
+      "obligation": "Keep atmosphere pure, cadence/PBR threshold/cache and bounded warnings at consumption; no scheduler or default appearance changes.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            2980,
+            2990
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2980-L2990"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            5008,
+            5019
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5008-L5019"
+        }
+      ],
+      "discriminator": "Existing .001 reuse/.006 repaint, failure controls and no default readbacks.",
+      "expected": "Diagnostic repair preserves rendering/cache and bounded warning.",
+      "observed": "Native legacy PBR tests describe correct threshold but current terrain path supersedes that producer. Actual current geometry/terrain bridge tests are separate; no final full diagnostic preservation proof.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "1D-04",
+      "obligation": "Sampler uses actual width/height/shared renderer radius/center, checks integer bounds before flattened index; absent/context/error data unavailable.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1868,
+            1887
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1868-L1887"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4002,
+            4014
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4002-L4014"
+        }
+      ],
+      "discriminator": "Synthetic dark-limb/bright-disc,300/negative/y=height,empty/error controls through actual readout.",
+      "expected": "Auditable in/out/OOB samples; no row wrapping or hardcoded darkness.",
+      "observed": "Current sampler reads SalahMoonRuntime.surface(), normally 300x300 via moon-native 9,73,79,193; raw bounds code rejects OOB. Existing diagnostics fixture only sets _moonCv, so it no longer supplies the selected current surface.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "source": {
+            "path": "tests/r001d-diagnostics.cjs",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001d-diagnostics.cjs"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Read actual assertions; current surface fixture adaptation required"
+        }
+      ]
+    },
+    {
+      "id": "1D-05",
+      "obligation": "Meaningful inner/limb/edge and valid exterior 295/299; expose dimensions/coordinates, name canvas exterior and no clamp-as-original.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1868,
+            1887
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1868-L1887"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "index.html",
+          "lines": [
+            4061,
+            4068
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4061-L4068"
+        }
+      ],
+      "discriminator": "Actualcurrent surface plus bright/dark synthetic current surface controls.",
+      "expected": "300/R144 gives 222,293,294,295,299 samples and distinct alpha/luminance.",
+      "observed": "Source enumerates these coordinates and qualified labels. No retained current native debugMoon readout linked to current terrain was located.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "1D-06",
+      "obligation": "Required whole-render freshness smoke and sampler mutations must reach actual consumers; missing diagnostics not a pass.",
+      "authoredOwners": [
+        {
+          "path": "tests/r001d-mutations.cjs",
+          "lines": [
+            1,
+            28
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001d-mutations.cjs#L1-L28"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "tests/smoke.html",
+          "lines": [
+            363,
+            366
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/smoke.html#L363-L366"
+        }
+      ],
+      "discriminator": "Strict smoke under reorder/notfalse/recompute and R58/removebounds.",
+      "expected": "Each respective defect detected by reached assertion, no helper-only or setup credit.",
+      "observed": "Read mutation anchors include removed synthetic star-appearance case; diagnostics legacy canvas fixture cannot certify current terrain readout. No final replacement discriminator receipt supplied.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "1D-07",
+      "obligation": "Nonthrowing opt-in native sanity and appearance-preservation crops across crescent/half/gibbous/full/new/below; no transparency/blackcutout, no art-improvement claim.",
+      "authoredOwners": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1868,
+            1887
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1868-L1887"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "moon/src/moon-native.mjs",
+          "lines": [
+            189,
+            203
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-native.mjs#L189-L203"
+        },
+        {
+          "path": "moon/src/moon-detail.mjs",
+          "lines": [
+            31,
+            40
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/moon/src/moon-detail.mjs#L31-L40"
+        }
+      ],
+      "discriminator": "Current debug readout at real terrain publication plus matched composition crops/star-positive control.",
+      "expected": "Diagnostics change no default pixels; physical/calendar semantics preserved.",
+      "observed": "Final-v49 normal Moon and matched-layer source-bound imagery exist, but they do not inspect this exact opt-in sampler/error boundary. Viewed calendar-motion sheet contains a dark below-horizon disc with faint limb; no blankettexture/opacity certification.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/visual-review/chromium-moon-cold-motion.png",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/visual-review/chromium-moon-cold-motion.png"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "Viewed retained current terrain/calendar frames20.031..97.953s"
+        }
+      ]
+    },
+    {
+      "id": "1D-08",
+      "obligation": "Affected AGENTS/DESIGN/smoke claims current; independent exact-tree positive/negative review and evidence before closure/public instrument claim.",
+      "authoredOwners": [
+        {
+          "path": "AGENTS.md",
+          "lines": [
+            7,
+            28
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/AGENTS.md#L7-L28"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "DESIGN.md",
+          "lines": [
+            198,
+            204
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L198-L204"
+        }
+      ],
+      "discriminator": "Source/debug readback and bounded diagnostic regression packet.",
+      "expected": "Truthful current-owner diagnostic limits and public delivery scope.",
+      "observed": "Owner docs separate geometry/material/currentness. Final mandatory diagnostic/browser matrix is unverified; this reviewer proposal has no primary reconciliation.",
+      "status": "unverified",
+      "evidence": []
+    }
+  ],
+  "negativeControls": [
+    "Producer/context and actual failed-atmosphere/paint/readout controls exist in source tests, but a present test file is not executed final evidence.",
+    "Old-surface debug fixture mismatch must not be counted as detection of a production sampler mutant."
+  ],
+  "gaps": [
+    "Final whole-render reordered/error/missing/sampler mutation receipts are absent; current runner only executes 11-case lifecycle.",
+    "Existing sampler fixture sets legacy _moonCv while current readout selects SalahMoonRuntime.surface; this is a fixture-interface gap, not demonstrated faulty production coordinates.",
+    "Current native opt-in debug sanity and appearance-preservation evidence bound to sampler are unverified."
+  ],
+  "dependencies": [
+    "R0022 consumes native light diagnostics; current scientific sky has its own separate accepted astronomical state.",
+    "Current V5 terrain publication/quality must not be confused with geometry freshness.",
+    "N003 real OS/BFCache is outside this diagnostic contract unless a mapped native failure needs it."
+  ],
+  "improvements": [],
+  "ownerDecisions": [],
+  "verdict": "LEAVE OPEN",
+  "proposedNextRlgwoIncrement": {
+    "owner": "src/native/index.html diagnostic metadata/readout and tests/r001d-*; actual current terrain interface moon/src/moon-native.mjs",
+    "preserve": "Keep finite producer stamp, immutable consumed snapshot, stricttrue projection, real-time cadence, current terrain, shared radius and no default getImageData.",
+    "steps": [
+      "Update only isolated diagnostic fixtures to supply the actual selected current surface API; disclose doubles and retain original expectations.",
+      "Run actual render reordering/error/context and R58/OOB/not-false/recompute mutants with stage and consumer identity proof; remove neither negative nor expectation.",
+      "Under serial primary preview, inspect opt-in debugMoon on current terrain with coordinates/dimensions/errors and matched default moon crops; repair only a demonstrated instrument fault."
+    ],
+    "acceptance": "All original two-subcase positives/negatives/mutations pass at exact source with actual paint/readout reached; missing/failed stays unavailable, reordered consumption stays stale, rawcanvas samples are correct, native default appearance preserved.",
+    "nonGoals": "No lunar art/physics redesign, old-canvas substitution, new shader, scheduler, persisted diagnostics or visual improvement claim."
+  },
+  "missingChecksRequested": [
+    {
+      "name": "current diagnostic consumer controls",
+      "command": "Run tests/r001d-diagnostics.cjs and tests/r001d-mutations.cjs on current source after an explicitly disclosed isolated current-surface fixture adaptation; retain actual consumer stage assertions.",
+      "reason": "Existing final runner omits these; legacy fixture is not equivalent current sampler proof."
+    },
+    {
+      "name": "native debugMoon sanity",
+      "command": "Use exact current entry with debugMoon=1 after a current terrain surface; record sampled coordinates/radius/backing and normal matched crops.",
+      "reason": "Mandatory opt-in native/error/appearance preservation; serial browser owner."
+    }
+  ],
+  "freshExecution": {
+    "productTests": [],
+    "browsers": [],
+    "reason": "Primary resource-release message was not received; read-only source/evidence inspection only."
+  },
+  "reuseBasis": "Final-v49 receipts retain the exact ff7285 index and f443cf runtime. Earlier Moon/CP9 receipts retain their earlier identities and qualify only mapped unchanged mechanisms; no old aggregate PASS is promoted to current closure.",
+  "inheritedQualification": {
+    "N001": "PARTIAL",
+    "N002": "PARTIAL",
+    "N003": "BLOCKED",
+    "scope": "Only mapped mandatory obligations are affected; these are not blanket blockers."
+  },
+  "publication": {
+    "reconciledByPrimary": false,
+    "approved": false,
+    "posted": false,
+    "hold": "Primary must establish delivered baseline and reconcile each comment before any GitHub effect."
+  },
+  "risks": "Evidence gaps are not all product defects. Source mechanics, raw numerical equality, displayed pixels, native default actions and real OS lifecycle are distinct claims.",
+  "inspectionReceipt": "inspection-receipt.json",
+  "executedCommands": [
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "18ff14860ff41c084b1db5f396bb62aa9c22b1be^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only identity",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only reviewed-source equivalence",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only dirty state",
+      "expected": "",
+      "observed": "",
+      "exitCode": 0
+    },
+    {
+      "command": "SHA-256 of actual index.html bytes and complete issue body UTF-8 bytes",
+      "environment": "Python -I -S -B, hashlib/JSON; no network/browser",
+      "kind": "fresh read-only byte binding",
+      "expected": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "5a28289ca6be1934d89172025d5c341f90df6578f0703895807edc6990ec72ab"
+      },
+      "observed": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "5a28289ca6be1934d89172025d5c341f90df6578f0703895807edc6990ec72ab"
+      },
+      "exitCode": 0
+    },
+    {
+      "command": "Read authored source, delivered consumers, exact assertions and retained final-v49 gzip/JSON receipts",
+      "environment": "PowerShell UTF-8 reads + Python standard-library gzip/json/hashlib",
+      "kind": "fresh inspection of historical execution",
+      "expected": "Preserve scope and original source/runtime identities; do not invent execution",
+      "observed": "inspection-receipt.json records bytes, receipt hashes and original terminal/case counts; zero fresh product/browser test commands",
+      "exitCode": 0
+    }
+  ]
+}

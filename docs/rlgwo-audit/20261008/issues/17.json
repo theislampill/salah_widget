@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:31.392846+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/17",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/17/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/17/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/17/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/17",
+    "id": 5381806583,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfZ9w",
+    "number": 17,
+    "title": "R0011: Report settings save and reset outcomes from actual storage results",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:36Z",
+    "updated_at": "2026-09-08T06:25:03Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-017 -->\n# R0011: Report settings save and reset outcomes from actual storage results\n\n**Repository-local identity:** `R0011` in `theislampill/salah_widget`; existing tracker [#17](https://github.com/theislampill/salah_widget/issues/17). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-017. Product defect; proposed P2. Scope is the existing settings persistence contract; it is not an erasure feature or implementation authority.\n\n## Observed outcome mismatch\n\nOn both main fd2972ba64225fe9d6848e92497e6d0ed20ea624 and unmerged candidate 9d9c43649748555afbe09e3ca49bc47db2d7e7bb:\n\n- With a saved London configuration and removeItem throwing a DOMException named SecurityError, _resetLocal immediately says \"Local settings cleared.\" After controlled detection failure, it says \"Local settings cleared — enter your location.\" The London record remains readable, and _storageErr is null.\n- With setItem throwing SecurityError, changing units to c through _commitSettings still applies units c to the live CONFIG and sets _storageErr to SecurityError. The visible-status field remains \"Enter to search a place · Shift+Enter to keep the typed name.\" Shared saveLocal already returned {ok:false,error:\"SecurityError\"}.\n- README promises that the widget says when saving is unavailable. A separate source census found _storageErr declared, assigned, reset and exposed diagnostically, but no visible outcome consumer.\n\nThese are preserved 7 September controlled original-source/DOM results. Lifecycle callees were stubbed in the save witness; no native blocked-storage session or real-user reset was exercised. The result establishes missing caller feedback, not the prevalence of storage denial.\n\nThe invariant is: **a save failure preserves the usable in-memory choice and tells the user it is session-only; reset success is reported only if removing the saved configuration succeeded.** A success-shaped diagnostic or a future successful provider request cannot substitute for the storage result.\n\n## Bind the repair and keep the existing storage contract\n\nBefore authorized work, record root, remote, HEAD and dirty paths:\n\n~~~sh\ngit rev-parse --show-toplevel\ngit remote get-url origin\ngit rev-parse HEAD\ngit status --short\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- index.html config.js README.md tests/smoke.html\n~~~\n\nExpect theislampill/salah_widget. Stop on incompatible settings/applyConfig drift. [config.js saveLocal/clearLocal](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/config.js#L153) already catch storage errors and return {ok,error}; successful save additionally returns savedAt. Keep these shapes and the v1 key salah_widget:config:v1. No new storage library or version is required.\n\nThe writes are [applyConfig](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2166), [_setStatus and form population](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2283), [_commitSettings/_resetLocal/open/close](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2399), narrowly associated settings feedback markup, and [README persistence wording](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/README.md#L126). [Candidate applyConfig](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L2252) remains comparison evidence.\n\n## Concrete state and staged implementation\n\nThe storage operation is synchronous even though applyConfig later awaits prayer loading. Publish its outcome **before the first await**; do not wait for network success to tell the user whether saving worked.\n\n1. Retain a small transient latest persistence outcome at the settings owner: operation save/reset, status saved/session-only/cleared/reset-failed, and error name where present. This is proposed in-memory UI state, not a persisted schema. Reuse _storageErr for its existing diagnostic meaning and derive visible state from the same result. Let a successful later save/removal clear its earlier failure; a routine search hint or opening settings must not clear it.\n2. In applyConfig's existing opts.save branch, consume the actual saveLocal return. On failure, publish \"Changes apply for this session only. Could not save settings (SecurityError).\" using safe textContent with a bounded known error label. On success, retain current origin/source/savedAt behavior and publish \"Settings saved in this browser.\" Continue bindConfig, weather/prayer recovery and rendering on either outcome. Preserve session updates if storage is unavailable.\n3. In _resetLocal, invalidate old lookup intent with the current form owner, then call clearLocal once and inspect its return. If removal fails, publish \"Could not clear saved settings (SecurityError). Your saved settings remain.\" and stop this reset attempt before coarse detection or configuration replacement. The failure should not silently turn a saved London profile into a detected session profile. If removal succeeds, publish \"Saved settings cleared. Detecting your area…\" and run the existing detect path with save:false. A successful detection means \"Saved settings cleared — using estimated area: …\"; failed detection means \"Saved settings cleared — enter your location.\" These states separately expose storage completion and detection completion.\n4. Keep the existing settings close operation synchronous in its visible effect: commit the valid current form, close, restore the opener. Do not await prayer fetch or keep the modal trapped open because storage failed. _populateSettingsForm should show the retained persistence warning together with its ordinary search hint, instead of replacing the warning. A narrow status-composition helper can store the ordinary lookup message separately from the persistence outcome and write the existing #set-status; every existing _setStatus caller must still reach that renderer.\n5. Supply a closed-panel indication without moving the card stack. Reuse the existing settings opener's generated .gear element as a warning marker \"!\" while session-only/reset-failed is current; restore the gear on success. Give the opener a state-bearing accessible name, for example \"Widget settings — changes not saved; session only\", and a matching title. Preserve the normal \"Widget settings\" name when no warning exists. Because #set-status is inside the hidden dialog after close, add one visually hidden polite live-status node outside that dialog, updated from the same outcome at the time of save/reset. The marker is a discoverable warning, and reopening shows the complete readable explanation. No toast framework, new modal or card-size change is warranted.\n\nThe live-status node and status compositor are justified only by real consumers: failure on close and subsequent reopen. Verify their reachability through _commitSettings and _resetLocal. A hidden node alone does not satisfy visible feedback; a punctuation marker alone does not explain the failure; both the named opener and full reopened status are required.\n\nThe alternative of throwing on save failure breaks session-only operation. Keeping settings open changes the documented autosave/close flow and can strand users behind a storage condition they cannot remedy. A status text assignment immediately followed by _populateSettingsForm still loses the message. Treating reset as a purge of all localStorage would exceed the configured-key contract and could destroy unrelated application data. Replacing localStorage or introducing migrations is unrelated to this caller bug.\n\n## Public RED and deterministic matrix\n\nUse original config.js with a Map-backed storage double in an isolated fixture; never alter the owner's actual origin. Load the real settings handlers and applyConfig; stub only provider/renderer lifecycle work where a pure fixture cannot run it. Mark that distinction in results. The decisive storage stimulus is:\n\n~~~js\nconst bytes = new Map();\nconst storage = {\n  getItem:k => bytes.has(k) ? bytes.get(k) : null,\n  setItem:(k,v) => bytes.set(k,String(v)),\n  removeItem:k => bytes.delete(k)\n};\n// Bind this object as the fixture window.localStorage before loading config.js.\n// Seed through the production saveLocal before inducing the error:\nSalahConfig.saveLocal({lat:51.5,lon:-0.12,label:\"London\",method:\"3\",units:\"f\"});\nconst oldBytes = bytes.get(SalahConfig.KEY);\n// Reset RED:\nstorage.removeItem = () => { throw new DOMException(\"blocked\",\"SecurityError\"); };\n// Click the actual Reset control; inspect status immediately and after any queued work.\n// Required: no \"cleared\" success, oldBytes unchanged, zero new coarse-detect calls.\n~~~\n\nFor save RED, use a fresh realm; seed first, make setItem throw the same exception, change set-units to c, dispatch input/change and close via the actual close path. Required live CONFIG.units is \"c\"; saved bytes retain the previous units; _storageErr is SecurityError; session-only feedback is observable without waiting for loadPrayerData.\n\n| Case | Required storage, runtime and UI outcome |\n|---|---|\n| setItem SecurityError, valid current form | Session update succeeds; old saved bytes stay; warning marker/accessibility text and next-open full warning identify session-only. |\n| removeItem SecurityError, saved London | No false cleared/reset message; saved bytes and live configuration remain; no new detection from this failed reset. |\n| Successful save after a previous failure | New exact normalized settings are readable through loadLocal, source/origin provenance remains correct; warning clears. |\n| Successful removal, detection pending | Config key is absent; cleared-plus-detecting message remains truthful. |\n| Successful removal, detection fails | Key remains absent, manual setup is usable, no fabricated estimated area. |\n| Successful removal, detection succeeds | applyConfig uses save:false; no accidental resaving of the reset default. |\n| Blocked reads, malformed JSON or v2 record | Existing loadLocal null fallback remains; no uncaught error or destructive migration. |\n| Unrelated prayer/weather/test key seeded | Save/reset leave those bytes unchanged. Reset is not a claim to erase location caches or provider records. |\n| Current form supersedes pending reset/search | [R000F](https://github.com/theislampill/salah_widget/issues/15) rejects stale completion; no old callback clears or overwrites current feedback. |\n\nPositive controls retain all 21 historical pure config assertions as supplementary checks; they already passed before this bug was repaired. Mutation controls remove result checking at save or reset, or restore _populateSettingsForm's unconditional hint: each corresponding UI-through-handler test must fail. Do not call an isolated saveLocal return test whole acceptance.\n\nThe minimum native bridge uses one disposable same-origin widget and an iframe fixture. Exercise normal storage once, then deterministically inject denied setItem/removeItem before navigation for denial cases; use real buttons, keyboard close and reopen. Capture the closed opener warning and the reopened readable message, along with CONFIG and saved bytes. Check no clipped status, 325×530 card, readable prayer/footer/header, existing focus wrap and Escape return. Injected denial proves browser DOM/event behavior, not a particular host's privacy policy. If claiming actual TablissNG/third-party behavior, identify its version and permissions and obtain a native host readback; otherwise state unverified. Partitioned storage can be writable within its partition, so documentation must not equate all partitioning with failure.\n\n## Boundaries, rollback and closure\n\nThe existing qualification edge from [R000F](https://github.com/theislampill/salah_widget/issues/15) is retained. Serially integrate overlapping settings-event writes with that owner, and applyConfig writes with [R0003](https://github.com/theislampill/salah_widget/issues/3) so persistence feedback cannot bypass request ownership. No new global request contract is proposed. [R001B](https://github.com/theislampill/salah_widget/issues/27) owns the broader recipient/reset disclosure; the documentation integrator joins exact README edits.\n\nREADME should say: **\"Saved settings use this browser's storage. If writing is unavailable, changes still apply for the current session and Settings shows a warning. Reset removes the saved widget configuration; it does not erase prayer/weather caches or data held by external providers.\"** Do not assert the repaired behavior is already deployed. Builder serialization, installers and preset formats stay compatible. Rendering/physics, date invalid-input behavior and opaque moon remain unchanged, with crops required for the warning's affected geometry.\n\nRollback only the feedback and reset-result handling delta if successful operations regress; retain saved fixture bytes and do not purge caches as recovery. Keep session-only updates usable. Missing native feedback/readability evidence is a specific partial state, not success. Stop if fulfilling feedback requires a broader layout or host-bridge change; report that for owner review.\n\nDONE requires final-tree RED→GREEN/control evidence at real callers, independent review of close/reopen and reset failure, and an evidence comment binding exact tree and fixture. Public claims additionally need served index/config/README and visible feedback readback. Use non-closing Implements #17 PR wording, then close manually after evidence. This authored proposal is not an independent PASS or a product repair.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n\nShared storage-function integration: coordinate with [R0017](https://github.com/theislampill/salah_widget/issues/23) at config.js saveLocal/clearLocal and their callers. Persistence-result feedback and the optional isolated-test storage argument have distinct invariants but touch the same function contract. One writer integrates them, preserving omitted-argument behavior and actual failure results. This is a shared-write constraint, not a requirement to complete either entire issue before preparing the other's controls.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/17/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/17/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733538964,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfZ988AAAAHJ9yWlA",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733538964",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:03Z",
+      "rename": {
+        "from": "SW-017: Report settings save and reset outcomes from actual storage results",
+        "to": "R0011: Report settings save and reset outcomes from actual storage results"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0011",
+    "bodySha256": "a82aadd43f3617e279020b177327a85b3d14a56a34c143c0108ec0673ad3c5d4",
+    "updatedAt": "2026-09-08T06:25:03Z",
+    "commentRevisions": []
+  }
+}

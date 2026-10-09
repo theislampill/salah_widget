@@ -1,0 +1,393 @@
+{
+  "schema": "rlgwo-isolated-mutation-receipt-v1",
+  "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "status": "EXPECTED GREEN AND MUTANT RED",
+  "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+  "node": "v22.16.0",
+  "serial": true,
+  "browserExecution": false,
+  "productMutation": false,
+  "skipped": {
+    "R000B": "Independent explicit DESIGN/README valid-time/receipt-time contract still unmet",
+    "R000C": "Independent explicit README unavailable-temperature contract still unmet",
+    "R000D": "Independent explicit README bounded-wait/backoff/suspension contract still unmet"
+  },
+  "receipts": [
+    {
+      "id": "R000E-accessor-alpha",
+      "kind": "green",
+      "startedAtUtc": "2026-10-09T01:27:39.856Z",
+      "endedAtUtc": "2026-10-09T01:27:40.044Z",
+      "command": {
+        "executable": "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "args": [
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern",
+          "R000E .* actual tile sampler never contributes quantitative authority",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "workingDirectory": "C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget",
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+          "SALAH_CONFIG_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\config.js"
+        }
+      },
+      "mutation": {
+        "from": "function radarPrecipNow(){ return 0; }",
+        "to": "function radarPrecipNow(){ const r=radarEvidence(); const s=weatherRadar&&weatherRadar.sample; return r.available&&s&&s.returnCount>=3?(0.3+4.0*s.coverage)*s.meanAlpha:0; }",
+        "isolatedCopy": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R000E-accessor-alpha.html",
+        "sha256": "0fd341709661ab75244a09c7582807c2a076f5aded65bcd3393196fe7ea0b838",
+        "anchorCount": 1
+      },
+      "discriminator": "0/15/20/45 dBZ fail; transparent/no-data remains passing; actual fetchRadar+7x7 sample is used",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "testFileSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "tapPath": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\R000E-accessor-alpha.green.tap",
+      "tapSha256": "dd63d20d89a75d91864f081e0e4d9c3837b1995bf1e131b036c28ac90a57a9a5",
+      "expected": {
+        "fail": 0,
+        "pass": 5,
+        "exitCode": 0
+      },
+      "observed": {
+        "fail": 0,
+        "pass": 5,
+        "skip": 0,
+        "todo": 0,
+        "exitCode": 0,
+        "error": null
+      },
+      "conforms": true
+    },
+    {
+      "id": "R000E-accessor-alpha",
+      "kind": "mutant",
+      "startedAtUtc": "2026-10-09T01:27:40.046Z",
+      "endedAtUtc": "2026-10-09T01:27:40.222Z",
+      "command": {
+        "executable": "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "args": [
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern",
+          "R000E .* actual tile sampler never contributes quantitative authority",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "workingDirectory": "C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget",
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R000E-accessor-alpha.html",
+          "SALAH_CONFIG_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\config.js"
+        }
+      },
+      "mutation": {
+        "from": "function radarPrecipNow(){ return 0; }",
+        "to": "function radarPrecipNow(){ const r=radarEvidence(); const s=weatherRadar&&weatherRadar.sample; return r.available&&s&&s.returnCount>=3?(0.3+4.0*s.coverage)*s.meanAlpha:0; }",
+        "isolatedCopy": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R000E-accessor-alpha.html",
+        "sha256": "0fd341709661ab75244a09c7582807c2a076f5aded65bcd3393196fe7ea0b838",
+        "anchorCount": 1
+      },
+      "discriminator": "0/15/20/45 dBZ fail; transparent/no-data remains passing; actual fetchRadar+7x7 sample is used",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "testFileSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "tapPath": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\R000E-accessor-alpha.mutant.tap",
+      "tapSha256": "9a416ce142aea448552b8451be51e1a5fd0367a6f0728d47ad077335f6253aad",
+      "expected": {
+        "fail": 4,
+        "pass": 1,
+        "exitCode": 1
+      },
+      "observed": {
+        "fail": 4,
+        "pass": 1,
+        "skip": 0,
+        "todo": 0,
+        "exitCode": 1,
+        "error": null
+      },
+      "conforms": true
+    },
+    {
+      "id": "R000E-direct-numeric-radar",
+      "kind": "green",
+      "startedAtUtc": "2026-10-09T01:27:40.226Z",
+      "endedAtUtc": "2026-10-09T01:27:40.394Z",
+      "command": {
+        "executable": "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "args": [
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern",
+          "R000E lower-level model control",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "workingDirectory": "C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget",
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+          "SALAH_CONFIG_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\config.js"
+        }
+      },
+      "mutation": {
+        "from": "const precip=w?wxNumber(w.precip,0):null, has=precip!=null&&precip>=_PRECIP_MIN;",
+        "to": "const modelPrecip=w?wxNumber(w.precip,0):null, precip=Math.max(modelPrecip||0,wxNumber(radarMm,0)||0), has=precip!=null&&precip>=_PRECIP_MIN;",
+        "isolatedCopy": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R000E-direct-numeric-radar.html",
+        "sha256": "66dfa22592c99ebcc3e2683c8935f975b9af514731689529c45e47782425d305",
+        "anchorCount": 1
+      },
+      "discriminator": "dry rain, dry thunder and model0.3 thunder fail; model2 and raw-clear controls remain passing",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "testFileSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "tapPath": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\R000E-direct-numeric-radar.green.tap",
+      "tapSha256": "19e4fbc43ebf4af12e8e921f738f967536654ac73e07dd808102ff70cf73cba9",
+      "expected": {
+        "fail": 0,
+        "pass": 5,
+        "exitCode": 0
+      },
+      "observed": {
+        "fail": 0,
+        "pass": 5,
+        "skip": 0,
+        "todo": 0,
+        "exitCode": 0,
+        "error": null
+      },
+      "conforms": true
+    },
+    {
+      "id": "R000E-direct-numeric-radar",
+      "kind": "mutant",
+      "startedAtUtc": "2026-10-09T01:27:40.396Z",
+      "endedAtUtc": "2026-10-09T01:27:40.547Z",
+      "command": {
+        "executable": "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "args": [
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern",
+          "R000E lower-level model control",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "workingDirectory": "C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget",
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R000E-direct-numeric-radar.html",
+          "SALAH_CONFIG_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\config.js"
+        }
+      },
+      "mutation": {
+        "from": "const precip=w?wxNumber(w.precip,0):null, has=precip!=null&&precip>=_PRECIP_MIN;",
+        "to": "const modelPrecip=w?wxNumber(w.precip,0):null, precip=Math.max(modelPrecip||0,wxNumber(radarMm,0)||0), has=precip!=null&&precip>=_PRECIP_MIN;",
+        "isolatedCopy": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R000E-direct-numeric-radar.html",
+        "sha256": "66dfa22592c99ebcc3e2683c8935f975b9af514731689529c45e47782425d305",
+        "anchorCount": 1
+      },
+      "discriminator": "dry rain, dry thunder and model0.3 thunder fail; model2 and raw-clear controls remain passing",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "testFileSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "tapPath": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\R000E-direct-numeric-radar.mutant.tap",
+      "tapSha256": "5d74f3a56fcc19a66b173a3dd4e69bdb668d27c793d53cb1069f9dccee88a392",
+      "expected": {
+        "fail": 3,
+        "pass": 2,
+        "exitCode": 1
+      },
+      "observed": {
+        "fail": 3,
+        "pass": 2,
+        "skip": 0,
+        "todo": 0,
+        "exitCode": 1,
+        "error": null
+      },
+      "conforms": true
+    },
+    {
+      "id": "R001E-weather-truthiness",
+      "kind": "green",
+      "startedAtUtc": "2026-10-09T01:27:40.549Z",
+      "endedAtUtc": "2026-10-09T01:27:40.934Z",
+      "command": {
+        "executable": "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "args": [
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern",
+          "R001E both real acquisitions preserve coordinate",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "workingDirectory": "C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget",
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+          "SALAH_CONFIG_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\config.js"
+        }
+      },
+      "mutation": {
+        "from": "if(!usableWeatherCoordinates(lat,lon)||wxBusy) return;",
+        "to": "if(!lat||!lon||wxBusy) return;",
+        "isolatedCopy": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R001E-weather-truthiness.html",
+        "sha256": "549b5254152f45f21fdd8ada42ad61094ddda04f3c87fae277e447fc0b214495",
+        "anchorCount": 1
+      },
+      "discriminator": "equator, meridian, both-zero and negative-zero independently fail; tiny nonzero and ordinary coordinates remain passing",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "testFileSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "tapPath": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\R001E-weather-truthiness.green.tap",
+      "tapSha256": "656740fe4b18c4c1b038f0a3572ba47004eb8a6ea2113e1f4058670f5de8e84f",
+      "expected": {
+        "fail": 0,
+        "pass": 6,
+        "exitCode": 0
+      },
+      "observed": {
+        "fail": 0,
+        "pass": 6,
+        "skip": 0,
+        "todo": 0,
+        "exitCode": 0,
+        "error": null
+      },
+      "conforms": true
+    },
+    {
+      "id": "R001E-weather-truthiness",
+      "kind": "mutant",
+      "startedAtUtc": "2026-10-09T01:27:40.935Z",
+      "endedAtUtc": "2026-10-09T01:27:41.157Z",
+      "command": {
+        "executable": "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "args": [
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern",
+          "R001E both real acquisitions preserve coordinate",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "workingDirectory": "C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget",
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R001E-weather-truthiness.html",
+          "SALAH_CONFIG_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\config.js"
+        }
+      },
+      "mutation": {
+        "from": "if(!usableWeatherCoordinates(lat,lon)||wxBusy) return;",
+        "to": "if(!lat||!lon||wxBusy) return;",
+        "isolatedCopy": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R001E-weather-truthiness.html",
+        "sha256": "549b5254152f45f21fdd8ada42ad61094ddda04f3c87fae277e447fc0b214495",
+        "anchorCount": 1
+      },
+      "discriminator": "equator, meridian, both-zero and negative-zero independently fail; tiny nonzero and ordinary coordinates remain passing",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "testFileSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "tapPath": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\R001E-weather-truthiness.mutant.tap",
+      "tapSha256": "ae78c211b9d0b4110b99d5753639003e381a9091b73d3c5f0f3135c9c356c72f",
+      "expected": {
+        "fail": 4,
+        "pass": 2,
+        "exitCode": 1
+      },
+      "observed": {
+        "fail": 4,
+        "pass": 2,
+        "skip": 0,
+        "todo": 0,
+        "exitCode": 1,
+        "error": null
+      },
+      "conforms": true
+    },
+    {
+      "id": "R001E-radar-truthiness",
+      "kind": "green",
+      "startedAtUtc": "2026-10-09T01:27:41.159Z",
+      "endedAtUtc": "2026-10-09T01:27:41.533Z",
+      "command": {
+        "executable": "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "args": [
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern",
+          "R001E both real acquisitions preserve coordinate",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "workingDirectory": "C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget",
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\index.html",
+          "SALAH_CONFIG_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\config.js"
+        }
+      },
+      "mutation": {
+        "from": "if(SIM.wx!=null || !usableWeatherCoordinates(lat,lon) || radarBusy) return;",
+        "to": "if(SIM.wx!=null || !lat || !lon || radarBusy) return;",
+        "isolatedCopy": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R001E-radar-truthiness.html",
+        "sha256": "bbdd5a513e5c8dcc8f087afdd842f409e3069c0f1d8af8494582a77d226565b9",
+        "anchorCount": 1
+      },
+      "discriminator": "equator, meridian, both-zero and negative-zero independently fail; tiny nonzero and ordinary coordinates remain passing",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "testFileSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "tapPath": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\R001E-radar-truthiness.green.tap",
+      "tapSha256": "cc6b05b390d56db3ab4e1d31f9d245b715936c7457194a43cdbaa4a0e53c5172",
+      "expected": {
+        "fail": 0,
+        "pass": 6,
+        "exitCode": 0
+      },
+      "observed": {
+        "fail": 0,
+        "pass": 6,
+        "skip": 0,
+        "todo": 0,
+        "exitCode": 0,
+        "error": null
+      },
+      "conforms": true
+    },
+    {
+      "id": "R001E-radar-truthiness",
+      "kind": "mutant",
+      "startedAtUtc": "2026-10-09T01:27:41.534Z",
+      "endedAtUtc": "2026-10-09T01:27:41.884Z",
+      "command": {
+        "executable": "C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe",
+        "args": [
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern",
+          "R001E both real acquisitions preserve coordinate",
+          "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "workingDirectory": "C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget",
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R001E-radar-truthiness.html",
+          "SALAH_CONFIG_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget\\config.js"
+        }
+      },
+      "mutation": {
+        "from": "if(SIM.wx!=null || !usableWeatherCoordinates(lat,lon) || radarBusy) return;",
+        "to": "if(SIM.wx!=null || !lat || !lon || radarBusy) return;",
+        "isolatedCopy": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\mutants\\R001E-radar-truthiness.html",
+        "sha256": "bbdd5a513e5c8dcc8f087afdd842f409e3069c0f1d8af8494582a77d226565b9",
+        "anchorCount": 1
+      },
+      "discriminator": "equator, meridian, both-zero and negative-zero independently fail; tiny nonzero and ordinary coordinates remain passing",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "testFileSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "tapPath": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\C\\R001E-radar-truthiness.mutant.tap",
+      "tapSha256": "50f31eaddbf266f31d1e1e4ac25b072172987605e4317dcb221100124e15c00c",
+      "expected": {
+        "fail": 4,
+        "pass": 2,
+        "exitCode": 1
+      },
+      "observed": {
+        "fail": 4,
+        "pass": 2,
+        "skip": 0,
+        "todo": 0,
+        "exitCode": 1,
+        "error": null
+      },
+      "conforms": true
+    }
+  ]
+}

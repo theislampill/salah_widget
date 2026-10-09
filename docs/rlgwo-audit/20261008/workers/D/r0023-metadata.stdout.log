@@ -1,0 +1,33 @@
+PASS shared geolocation captures original measured accuracy and fix timestamp
+PASS actual GPS form apply save load retains exactly 25 metres and original epoch
+PASS label and units saves a day later preserve fix age while savedAt advances
+PASS a cached five-minute fix retains its acquisition time
+PASS saved old browser target remains usable without becoming a current device claim
+PASS coordinate edits deliberately replace acquisition with a manual fixed site
+PASS display name edit alone preserves browser evidence and coordinates
+PASS malformed accuracies stay unknown and zero metres is a valid reported value
+PASS missing malformed and future timestamps stay unknown with no age-zero substitution
+PASS denied and timed-out positions do not replace evidence or retry
+PASS unsupported geolocation leaves manual target usable
+PASS legacy browser origin keeps target but no precision or savedAt-as-fix
+PASS legacy unresolved origin stays unknown and saved bytes remain usable
+PASS normalization owns fresh metadata primitives and bounds instead of the input object
+PASS real coarse parser keeps area provider and explicitly unknown metric accuracy
+PASS actual geocoder selection carries real bounds without invented point precision
+PASS geocoder absent malformed bounds remain unknown
+PASS manual five-decimal coordinates do not become measured precision
+PASS builder captures evidence while portable recipient receives only fixed target
+PASS builder reverse naming and label preference edits cannot improve or refresh fix
+PASS builder coordinate edit clears browser metadata and late reverse cannot restore it
+PASS abandoned GPS cannot overwrite newer manual metadata or saved outcome
+PASS denied persistence retains accurate in-memory evidence with session-only feedback
+PASS hardcoded local and preferLocal keep target semantics and preference precedence
+PASS portable and local serialization never emits private acquisition history
+{"consumer":"fd2972ba64225fe9d6848e92497e6d0ed20ea624","storedSource":"manual","storedOrigin":"browser-geolocation","title":"Manual location — click for precise location (GPS)","bytesUnchanged":true,"native":"NOT_RUN"}
+PASS actual older consumer degrades a saved browser position to a configured site
+PASS later preference saves preserve private origin and fix while the older state stays manual
+PASS legacy browser record remains unchanged on read and conservatively migrates on explicit save
+PASS older preference rewrite remains usable with explicitly unknown acquisition evidence
+PASS manual place and coarse saved representations preserve their established source states
+PASS default and explicit storage arguments encode conservatively without mutating live input
+{"cases":31,"passed":31,"failed":0,"ref":"18ff14860ff41c084b1db5f396bb62aa9c22b1be","mutant":null,"native":"NOT_RUN"}

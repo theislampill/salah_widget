@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:29.989050+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/4",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/4/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/4/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/4/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/4",
+    "id": 5381804073,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfQKQ",
+    "number": 4,
+    "title": "R0004: Choose the initial prayer day in the resolved location timezone without losing legacy cache",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:13Z",
+    "updated_at": "2026-09-08T06:24:34Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-004 -->\n# R0004: Choose the initial prayer day in the resolved location timezone without losing legacy cache\n\n**Repository-local identity:** `R0004` in `theislampill/salah_widget`; existing tracker [#4](https://github.com/theislampill/salah_widget/issues/4). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-004. Existing corrective owner: GitHub #4. Proposed priority P1; product-or-skill defect, including its discriminating boot fixture. This plan grants no implementation or publication authority.\n\n## Incident, useful candidate work and rejected premise\n\nAt controlled instant `2026-09-07T22:00:00Z`, New York is still September 7 while Tokyo is September 8. An embed selecting Tokyo coordinates without a `tz` hint starts with the default `America/New_York` hint. Main `fd2972ba64225fe9d6848e92497e6d0ed20ea624` requests `07-09-2026`, adopts the returned `Asia/Tokyo` zone, and paints September 7 as current while `nowParts()` says September 8. Its recorded request sequence was September 7 then September 9 prefetch. Candidate `9d9c43649748555afbe09e3ca49bc47db2d7e7bb` rederives the live day and requests September 7, September 8, then September 9; its first accepted live paint is September 8. That live correction is useful, but it is not a complete loader repair.\n\nBoth versions filter cache by the hint's September 7 **before** reading the cached location zone. A valid September 8 Tokyo record therefore cannot boot offline. Conversely, a September 7 record passes that early filter, then sets Tokyo and paints as current although the local day is September 8. The candidate's date-truth readout records the mismatch while still calling it current. Diagnostic visibility does not enforce the invariant.\n\nThe candidate also removes `_cacheTz` from the persistent key. Historical DATE-014 copied a valid current-day main cache into identical offline storage: main loaded; candidate reported `Could not load prayer times`. The stated motivation that provider-zone adoption orphans main's key was contradicted by execution: main's key stayed `salah:35.68|139.69|America/New_York|2|0` before and after `tz` became Tokyo. `_cacheTz` was captured from configuration. Candidate's stable key was `salah:35.68|139.69|2|0`. Do not turn a false key-instability premise into an unnecessary destructive migration.\n\nThese DATE-001/003/012/014 results are saved exact-source Node VM observations with controlled clock, network, storage and paint records, not screenshots or proof of a live service incident. The explicit-zone control passes on both trees; therefore a smoke that supplies the correct zone cannot detect the omitted-zone defect. Provider-zone resolution itself is intentional: `tz` is a first-paint hint, not a force-the-provider override.\n\n## Re-anchor and owned files\n\nRecord the future execution checkout, HEAD and dirty state using `git -C C:\\workspace\\ai\\salah_widget rev-parse --show-toplevel`, `rev-parse HEAD`, `status --short`, and `diff -- index.html tests/smoke.html README.md ARCHITECTURE.md` with the same prefix. Stop on incompatible cache/adoption drift; retain unrelated work and old cache bytes. The source references are [main key and cache helpers](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L735-L757), [main loader](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2143-L2154), [candidate live correction](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L2218-L2238), [candidate cache identity](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L745-L755), and [candidate date smoke](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/tests/smoke.html#L201-L229).\n\nThe invariant is about the **first accepted current paint**, including a cached paint: its admitted Gregorian day must equal the selected location's civil day at adoption. Valid offline data must survive upgrade. It does not promise a cached tomorrow across every reload, a new multi-day cache, a user-selected calendar ruling, or a forced timezone override.\n\n## Ordered loader design and observable states\n\nUse the context supplied by [R0003](https://github.com/theislampill/salah_widget/issues/3) and admission supplied by [R0002](https://github.com/theislampill/salah_widget/issues/2). The states below can remain local variables and existing UI state; no persisted state machine is required.\n\n| Stage | May be known | Permitted effect |\n|---|---|---|\n| `hint-only` | Selected coordinates/method/school; first-paint zone hint; request generation | Show loading/unavailable; no unverified record painted current. |\n| `zone-known` | Admitted cached/provider timezone and valid request/body date agreement | Derive civil day at the current instant in that zone. Metadata adoption is generation-guarded. |\n| `current-record` | Payload day equals the just-derived location day | Commit today, accepted date, cache and current status, then render. |\n| `needs-corrected-day` | Zone valid, available payload belongs to another day | Keep unavailable or explicitly stale retained data; dispatch at most one corrected-day request in this load operation. |\n| `unavailable/retry-eligible` | Correct-day transport failed or civil day moved again | Settle this load; leave bounded recovery to the existing liveness owner. Do not recurse indefinitely during accelerated simulation. |\n\n1. Split reading the selected cache envelope from its day filter. Read only deterministic keys for the selected configuration, in a try/catch; never scan all localStorage. Validate envelope/data identity first. An admitted envelope supplies its own stored day for request/body comparison and a usable location zone even if its day will not qualify as today. This permits discovery of Tokyo from a September 8 record that the old hint would have hidden. Invalid cache is a miss, not authority for timezone mutation.\n2. The selected repair target is main `fd2972ba64225fe9d6848e92497e6d0ed20ea624`. Retain its exact timezone-bearing `salah:[lat]|[lon]|[_cacheTz]|[method]|[school]` namespace for both reads and writes. Read only the captured key for the selected configuration; provider-zone adoption changes `tz`, never `_cacheTz` or the captured key. Do not add the audit candidate's zone-free fallback adapter, scan another namespace, migrate entries, or delete its bytes. Candidate `9d9c` is comparison evidence, not an assumed installed cohort or future target. A zone-free-only entry is a miss on this main-based repair; the normal bounded network/error path follows, just as the namespace contract requires. If a later authorized target actually includes a shipped alternate schema, stop at that incompatible drift and reconcile its upgrade requirement separately before changing this decision. The known upgrade control here is existing main-format cache remaining readable after this main-based repair.\n3. Once an eligible cached record supplies a valid zone, derive the selected civil day **then** compare its payload day. If matching, assign current state and render; continue the existing live refresh without blanking valid cache on failure. If not matching, keep no current paint. An intentionally retained old record must be marked stale before rendering, with its actual day intact; whether stale details are displayed is consumed by [R0009](https://github.com/theislampill/salah_widget/issues/9), not solved by relabeling the record here.\n4. With no usable cached zone, request the hint-derived day as the bootstrap request. Its response must pass request/body admission. Capture its returned zone locally, check current request ownership, then resolve the location day using that zone and the current instant. A valid but wrong-for-now response can establish the zone without becoming today. If the location day differs, request that corrected date once, still within the captured generation. Avoid saving the bootstrap record as current under a corrected date.\n5. At the corrected response, recheck ownership and civil day again. A response for the originally corrected date is not necessarily current after midnight or a clock step. Return it to the day-classification contract of [R0005](https://github.com/theislampill/salah_widget/issues/5); if no record qualifies, settle and schedule bounded recovery via [R0006](https://github.com/theislampill/salah_widget/issues/6). A busy flag cannot remain held while waiting for an impossible date match. The useful candidate second fetch is retained with this final check; no unlimited fetch-until-day-stops-changing loop is introduced.\n6. Commit zone/current data/accepted date/stale flag/cache as one synchronous eligible adoption, then notify the existing render path. Do not let a cached render run between `today=cached` and day validation. Bootstrap metadata from obsolete A must not alter B. Preserve intentional simulation reanchoring on settled timezone through the clock owners; do not “fix” the boot case by setting the machine clock or forcing every embed to include `tz`.\n\nKeeping the existing key is smaller than migration and preserves known offline consumers. Forcing the correct zone in builder output would conceal the loader defect and make existing embeds remain wrong. Suppressing all cache use would avoid the bad paint but deliberately break offline behavior. Adopting the whole candidate supplies a useful live patch while importing an observed cache regression. All three are rejected alternatives.\n\n## Deterministic fixtures and expected transitions\n\nUse an isolated storage origin. Set the fixture clock to `2026-09-07T22:00:00Z`, device/hint zone New York, selected coordinates `35.68,139.69`, method `2`, school `0`, and **omit the URL/config timezone hint** for the negative stimulus. Return successful synthetic prayer records for the day requested in `/v1/timings/DD-MM-YYYY`, with `meta.timezone:\"Asia/Tokyo\"`, matching Gregorian fields and usable fixed timings (Fajr 05:00, Sunrise 06:00, Dhuhr 12:00, Asr 15:30, Maghrib/Sunset 18:00, Isha 19:30). The particular times are fixture values, not Tokyo prayer predictions. Record every request and every paint's loaded day, effective zone, current location day and stale/unavailable state.\n\n| Fixture | RED preserved / final expected result |\n|---|---|\n| Empty storage, no hint, live success | Main historically painted September 7 current. Final bootstrap request September 7 may occur, but only September 8 can first paint current; corrected request is September 8. Subsequent next-day prefetch may be September 9. |\n| Exact same setup with explicit `tz=Asia/Tokyo` | Positive control: first current request/paint September 8; no needless September 7 correction. This control alone cannot pass the issue. |\n| Same-day-in-both-zones instant, e.g. `2026-09-07T12:00:00Z` | Correct September 7 load; no extra corrected-day fetch merely because zone names differ. |\n| Main-format key holds `{date:\"08-09-2026\",data:<valid Tokyo September 8 record>}`, network offline | Read metadata before day filtering, adopt Tokyo, paint September 8 current from cache. Leave bytes/key available for rollback. |\n| Same key holds valid Tokyo September 7, network offline | No paint calling September 7 current after Tokyo day September 8 is known. Retained old display, if any, is explicitly stale and keeps September 7. |\n| Valid old main cache copied unchanged into repaired isolated storage | Offline current-day function preserved. Compare key strings/bytes and resulting data, not only cache-reader return. An exact zone-free-only candidate key is a negative namespace control: it is not adopted or deleted. With both keys present, use only the valid main-format selected key. |\n| Corrupt JSON, timings null, invalid zone, or envelope/payload date mismatch | No trusted zone/data adoption from the record; healthy network fallback remains reachable. Optional absent Hijri is distinct from required invalid Gregorian identity. |\n| Corrected request held across midnight or a config switch | Re-evaluate day and generation before adoption. Old generation cannot mutate zone/cache/current state; same-generation day change is reclassified rather than mislabeled. |\n\nA browser test must observe the first qualified paint, not merely wait for a final “eventually correct” state. Record loading→zone discovery→first current frame on the disposable origin, with a crop of the date/status row. Do not call a live-network timeout PASS or SKIP the deterministic negative because the service is down. Temporarily restoring the early day filter or removing the post-response day check in an isolated fixture must fail the matching row; explicit-zone control remains green. Retain month/year/leap/DST civil-tomorrow controls unchanged because this issue does not replace calendar arithmetic.\n\n## Interfaces, public surfaces and done\n\nAccepted dependencies stay [R0003](https://github.com/theislampill/salah_widget/issues/3) → this owner for request-context interface and [R0002](https://github.com/theislampill/salah_widget/issues/2) → this owner for final admission qualification. This owner supplies initial location-day behavior to [R0005](https://github.com/theislampill/salah_widget/issues/5). Coordinate prayer-cache/boot/adoption hunks with those owners and [R0006](https://github.com/theislampill/salah_widget/issues/6), [R0010](https://github.com/theislampill/salah_widget/issues/16); one integrator handles shared tests/docs insertions. No whole-issue serialization is implied.\n\nUpdate only loader/cache behavior and its actual invoked fixtures. README/ARCHITECTURE should explain location timezone resolution, current-day acceptance and retained offline compatibility. Builder may continue intentionally omitting `tz`; no new setting, installer, preset, API provider or calendar library is needed. Retain the 325×530 frame and readable loading/date states without changing the sky renderer.\n\nRevert the narrow loader changes if valid main-format cache or normal online boot regresses; keep original cache bytes, never purge them. A live-only corrected-day pass leaves this issue partial until wrong/current cache, upgrade and first-paint controls pass. Close #4 only after final-tree results, independent source/caller review and browser first-paint evidence are recorded in an evidence comment, using non-closing `Implements #4`. Public claims additionally require matching served source/readback. Supplementary historical companion SHA256: `b34a311eb148cdc8a6d96c7068894bd0587c26b50175720701c3e65ab4ad705e`.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/4/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/4/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733516505,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfQKc8AAAAHJ9w-2Q",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733516505",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:34Z",
+      "rename": {
+        "from": "SW-004: Choose the initial prayer day in the resolved location timezone without losing legacy cache",
+        "to": "R0004: Choose the initial prayer day in the resolved location timezone without losing legacy cache"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0004",
+    "bodySha256": "7338ad624dfd078c3e6f0684259201c93a4d987ab4e70fe2c3db20e465f06196",
+    "updatedAt": "2026-09-08T06:24:34Z",
+    "commentRevisions": []
+  }
+}

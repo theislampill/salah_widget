@@ -1,0 +1,126 @@
+{
+  "schema": "pr42-worker-A-isolated-controls/1",
+  "targetCommit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+  "fixtureSha256": "66730ed6d347440d2ef9a159450d465104c079c75b9051370687ef3857a93814",
+  "status": "PASS_SCOPED",
+  "checks": 8,
+  "receipts": [
+    {
+      "name": "R0004 omitted-hint same-day12Z Tokyo control needs no corrected-day request",
+      "status": "PASS",
+      "observed": {
+        "currentDate": "07-09-2026",
+        "zone": "Asia/Tokyo",
+        "currentDayRequests": 1,
+        "requestDates": [
+          "07-09-2026",
+          "08-09-2026"
+        ]
+      },
+      "environment": "Windows/Node v22.16.0; actual source-bound VM recording DOM; no browser or pixel claim"
+    },
+    {
+      "name": "early-filter mutant identity",
+      "sourceSha256": "d606623ba37c519f584e685132e9818823c81cfa129aa8b200cbd6e156761c7d",
+      "mutantExpected": "omitted-hint offline cached8 unavailable; explicit-zone cached8 remains available",
+      "mutantObserved": "matched"
+    },
+    {
+      "name": "R0004 early hint-day cache-filter mutant loses valid offline Tokyo day8; explicit-zone control survives",
+      "status": "PASS",
+      "observed": {
+        "omittedHintMutantCurrent": null,
+        "explicitHintMutantTag": "cached8",
+        "oldBytesRetained": true
+      },
+      "environment": "Windows/Node v22.16.0; actual source-bound VM recording DOM; no browser or pixel claim"
+    },
+    {
+      "name": "post-response check mutant identity",
+      "sourceSha256": "e99b2855c4a1ebace54060885d4e3e838b90984efb27d8b976ac81e8ec13ba21",
+      "mutantExpected": "cannot establish first qualified current paint; independent classifier prevents false current paint",
+      "mutantObserved": "matched; no regression was hidden as a PASS for boot availability"
+    },
+    {
+      "name": "R0004 removed loader day-correction check is contained by independent day-classifier; explicit control survives",
+      "status": "PASS",
+      "observed": {
+        "omittedHintMutant": {
+          "today": null,
+          "paints": 0,
+          "requests": 1
+        },
+        "explicitHintMutantTag": "explicit"
+      },
+      "environment": "Windows/Node v22.16.0; actual source-bound VM recording DOM; no browser or pixel claim"
+    },
+    {
+      "name": "R0005 exact AH19→20 completed offline promotion preserves selected day20 across midnight",
+      "status": "PASS",
+      "observed": {
+        "date": "08-09-2026",
+        "hijriText": "1448-02-20",
+        "renderedAH": "ه1448-02-20",
+        "stale": false,
+        "cacheDate": "08-09-2026"
+      },
+      "environment": "Windows/Node v22.16.0; actual source-bound VM recording DOM; no browser or pixel claim"
+    },
+    {
+      "name": "R0005 late duplicate cannot poison tomorrow; next Sep9 data advances following Maghrib toAH21",
+      "status": "PASS",
+      "observed": {
+        "todayDate": "08-09-2026",
+        "tomorrowDate": "09-09-2026",
+        "hijriText": "1448-02-21",
+        "renderedAH": "ه1448-02-21",
+        "selectedSource": "tomorrow"
+      },
+      "environment": "Windows/Node v22.16.0; actual source-bound VM recording DOM; no browser or pixel claim"
+    },
+    {
+      "name": "R0005 exact2024 civil promotion 28-02-2024→29-02-2024",
+      "status": "PASS",
+      "observed": {
+        "from": "28-02-2024",
+        "to": "29-02-2024",
+        "stale": false
+      },
+      "environment": "Windows/Node v22.16.0; actual source-bound VM recording DOM; no browser or pixel claim"
+    },
+    {
+      "name": "R0005 exact2024 civil promotion 29-02-2024→01-03-2024",
+      "status": "PASS",
+      "observed": {
+        "from": "29-02-2024",
+        "to": "01-03-2024",
+        "stale": false
+      },
+      "environment": "Windows/Node v22.16.0; actual source-bound VM recording DOM; no browser or pixel claim"
+    },
+    {
+      "name": "actual-arc equality identity",
+      "svgSha256": "eceaccdbe1d9fcb9a72fdab3a601a2a0d0c48db6c968bb1a489b29500a60d2d1",
+      "mutantSourceSha256": "c6775ac4a55b2df0edbe376ee08a8855b73111ba9ae2cb1e1a67e7d119b18c70",
+      "pixelLimitation": "Source SVG equality is not a rendered crop; the required browser spring150m layout remains unverified."
+    },
+    {
+      "name": "R0007 actual drawArc SVG unaffected by wall-minute countdown mutant at spring01:30;150m current interval is discriminated",
+      "status": "PASS",
+      "observed": {
+        "nowEpoch": 1772951400000,
+        "expectedNextEpoch": 1772960400000,
+        "leftMin": 150,
+        "wallMutantLeftMin": 210,
+        "arcEqual": true,
+        "arcSha256": "eceaccdbe1d9fcb9a72fdab3a601a2a0d0c48db6c968bb1a489b29500a60d2d1"
+      },
+      "environment": "Windows/Node v22.16.0; actual source-bound VM recording DOM; no browser or pixel claim"
+    }
+  ],
+  "limits": [
+    "No browser or rendered-pixel proof",
+    "Mutations are source strings confined to this VM, with original expectations disclosed; final production bytes were not changed."
+  ]
+}

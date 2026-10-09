@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:31.391849+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/16",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/16/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/16/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/16/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/16",
+    "id": 5381806429,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfZXQ",
+    "number": 16,
+    "title": "R0010: Preserve explicit local-embed preferences across regional detection",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:35Z",
+    "updated_at": "2026-09-08T06:25:01Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-016 -->\n# R0010: Preserve explicit local-embed preferences across regional detection\n\n**Repository-local identity:** `R0010` in `theislampill/salah_widget`; existing tracker [#16](https://github.com/theislampill/salah_widget/issues/16). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-016. Product defect; proposed P1 for the bounded preference loss below. This work order does not select a new regional method policy and does not authorize implementation or publication.\n\n## Exact loss and its limits\n\nA builder user selects method \"2\" and units \"f\", then chooses the self-configuring embed. On both preserved source trees, the generated fragment is **local=1**. On a fresh detected base with method \"4\" and units \"c\", that fragment resolves to 4/c. The same base with **local=1&method=2&units=f** resolves to the selected 2/f.\n\nThis is a serialization omission, not evidence that either regional method mapping is the correct religious recommendation. The preserved witness used original source in a Node VM with a synthetic Saudi detected base; it measured neither a live visitor's location nor final browser behavior. The deliberate generic local=1 API and saved-local precedence are retained working controls.\n\nThe invariant is: **builder-exported method and units follow the builder's visible selected preferences on a fresh embed, including values equal to global parser defaults; an explicitly generic local embed remains automatic.** A saved viewer configuration continues to win where it already does.\n\n## Re-anchor, cause and source owners\n\nHistorical main is fd2972ba64225fe9d6848e92497e6d0ed20ea624; the same witness was recorded on unmerged candidate 9d9c43649748555afbe09e3ca49bc47db2d7e7bb. Before authorized work, record repository root, remote, HEAD and dirty paths and inspect only relevant drift:\n\n~~~sh\ngit rev-parse --show-toplevel\ngit remote get-url origin\ngit rev-parse HEAD\ngit status --short\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- config.js builder.html index.html tests/smoke.html README.md\n~~~\n\nExpect theislampill/salah_widget; stop on an incompatible serializer/resolver contract. Treat candidate changes as candidates, never a whole-branch merge instruction.\n\n[config.js serialize](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/config.js#L108) normalizes input, then omits method when it equals DEFAULTS.method and emits units only for \"c\". [builder.html hash](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L190) passes formConfig with only {mode:\"local\"}. The serializer therefore cannot distinguish selected 2/f from intentionally omitted automatic preferences. The information is gone before [applyHashPrefs](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/config.js#L254) or [boot's detected-base overlay](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L2188) runs.\n\n## Smallest staged repair\n\n1. Add a **callsite-only serializer option**, proposed spelling {mode:\"local\", explicitPrefs:[\"method\",\"units\"]}. It is not persisted and adds no hash key or WidgetConfig version. Inside serialize, use the existing normalized values and URLSearchParams. The option can cause those two named preference keys to be emitted even when equal to defaults; unsupported option names do nothing. Default calls without it retain current output.\n2. Pass that option only from builder hash() when embedMode is local. Builder controls are concrete selected values, not an automatic preference UI; taking their current values is sufficient. Do not add touched flags, new automatic dropdown entries or a configuration state machine. Keep the portable call exactly as it is.\n3. Retain normal parsing and applyHashPrefs. The fresh detection branch already honors explicitly present keys. A serializer repair must not rewrite resolve() to apply author preferences over a valid saved viewer configuration. Inspect the original three consumers: iframe snippet(), previewUrl()/url(), and installCmd(). They already call hash(); all must therefore carry the same preference choices without another serializer.\n4. Correct builder setMode's explanatory text from \"Generic embed\" to \"Self-configuring location\" and state: **\"Each viewer's area is auto-detected. The method and temperature units selected here are included for a fresh viewer; saved widget settings take precedence. Location fields are omitted.\"** Preserve the existing geolocation/host caveat. Add the equivalent distinction beside README's local=1 examples. Do not alter the generic TablissNG preset to an author's fixed preferences.\n\nThe serious alternative of always emitting all defaults in every local serialization would make today's generic local=1 consumers silently cease to be automatic. Modifying regional mapping hides only one destination's failure and changes policy. A persisted explicitness schema requires migration while the only lost information is at the builder export callsite. A builder-only hand-built hash would fork the canonical serializer and weaken its encoding controls. The scoped option is compatible and reaches a real consumer.\n\n## Public RED recipe and acceptance matrix\n\nFor an authorized fixture, load the exact config.js and actual builder inline script with a fresh disposable storage namespace, controlled coarse detection and no external requests. Set the controls to the values below, invoke setMode(\"local\"), and inspect hash(). This public skeleton shows the exact input and assertion; form helpers are the real builder functions:\n\n~~~js\ndocument.getElementById(\"method\").value = \"2\";\ndocument.getElementById(\"units\").value = \"f\";\nsetMode(\"local\");\nconst h = hash();\nconst detected = SalahConfig.normalize({\n  lat:24.47, lon:39.61, method:\"4\", units:\"c\", source:\"coarse-ip\"\n});\nconst result = SalahConfig.applyHashPrefs(detected, SalahConfig.parseHash(h).cfg);\n// Historical RED: h === \"local=1\", result.method === \"4\", result.units === \"c\".\n// Required GREEN:\nconsole.assert(new URLSearchParams(h).get(\"method\") === \"2\");\nconsole.assert(new URLSearchParams(h).get(\"units\") === \"f\");\nconsole.assert(result.method === \"2\" && result.units === \"f\");\nconsole.assert(!new URLSearchParams(h).has(\"lat\"));\nconsole.assert(!new URLSearchParams(h).has(\"lon\"));\nconsole.assert(!new URLSearchParams(h).has(\"label\"));\n~~~\n\nTurn these assertions into failing test assertions, not console-only logs. Use no live geolocation to obtain the synthetic base. For the new serializer option, the minimal default-form output is local=1&method=2&units=f; compare key/value semantics additionally so later intentional ordering changes do not hide loss.\n\n| Fixture/control | Required behavior |\n|---|---|\n| Builder local 2/f over detected 4/c | Fresh final runtime configuration is 2/f; embed src, preview fragment and installer-carried fragment agree. |\n| Builder local 2/c, 4/f and 4/c | Each selected pair survives; coordinates/name stay absent from local fragments. |\n| Generic SalahConfig.serialize({}, {mode:\"local\"}) | Exactly local=1; fresh detected 4/c remains 4/c. |\n| Saved valid London config 51.5,-0.12, method 3, units c; resolve local=1&method=2&units=f | Saved 3/c remains authoritative; no detection. Test a subsequent reload, not only applyHashPrefs in isolation. |\n| Same saved config plus preferLocal=1 with fixed 24.47,39.61 and units f | Existing saved London 3/c precedence remains; without saved config the explicit fixed fallback stays usable. |\n| Portable serialization {lat:1,lon:2,label:\"A & B'#<>\",datefmt:\"D / M & YYYY\"} | Retain baseline bytes lat=1&lon=2&label=A+%26+B%27%23%3C%3E&method=2&school=0&datefmt=D+%2F+M+%26+YYYY and exact decoded literals. |\n| Zero coordinates in fixed mode, absent shared config legacy fixed fallback | Preserve admitted zero and the documented fallback; this repair makes no provider support claim. |\n| Mutate away explicit method or units emission | The corresponding fresh-detection assertion fails even though ordinary config smoke still passes. |\n\nThe public test must include one real boot consumer: use the actual generated local fragment on a fresh isolated widget origin, return the controlled detected base, then read CONFIG/method/units or equivalent final runtime state and the displayed units/method settings. Merely testing applyHashPrefs with a manually corrected fragment would reproduce the known positive control while bypassing the defective builder path. Feed the actual install command's extracted SALAH_WIDGET_HASH through the same resolver without executing the network installer. Both Windows and Bash command payloads must carry it intact.\n\n## Integration and release boundary\n\nThe existing qualification edge from [R000F](https://github.com/theislampill/salah_widget/issues/15) remains: export only the latest form intent. No new interface edge is needed. This work writes config/serialization and builder/form export. index.html boot is a consumer verification owner; coordinate any necessary narrow boot edit with [R0004](https://github.com/theislampill/salah_widget/issues/4) and [R0006](https://github.com/theislampill/salah_widget/issues/6), and first explain why the working existing overlay is insufficient. No regional mapping change, cache schema migration, new dependency or general preference UI is included.\n\nKeep 325×530 sizing, local-only allow=\"geolocation\", URLSearchParams escaping, optional date literals, hardcoded byte compatibility and generic preset behavior. install.sh/install.ps1 need no source change for a fragment they already carry. The final served claim must bind matching builder.html, config.js and index.html; a local unit test does not establish public or installed behavior.\n\nRollback serializer option and builder callsite together if generic output or saved precedence changes. Never delete viewer storage to manufacture the fresh-viewer case. Stop if a new source version has materially different local precedence; record that interface gap rather than selecting a policy here.\n\nDONE requires final-tree RED→GREEN with all three output consumers, generic/saved/portable controls, and an evidence comment identifying exact tree, fixture source and actual resolved values. Independent review should inspect both omission branches and the absence of any saved-precedence rewrite. Use non-closing Implements #16 PR wording and manual closure after evidence and any claimed public readback. This document is authoring, not an executed PASS.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/16/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/16/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733537213,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfZXc8AAAAHJ9yPvQ",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733537213",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:01Z",
+      "rename": {
+        "from": "SW-016: Preserve explicit local-embed preferences across regional detection",
+        "to": "R0010: Preserve explicit local-embed preferences across regional detection"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0010",
+    "bodySha256": "42a921594f29faec0abffdafd86aa22f57f2b7c0dfcea75c94195d83cd0c39f8",
+    "updatedAt": "2026-09-08T06:25:01Z",
+    "commentRevisions": []
+  }
+}

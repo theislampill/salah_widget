@@ -1,0 +1,62 @@
+{
+  "auditTarget": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+  "extractedFunctionSha256": "0da1140e2c0546aae2514711137ac713d550afc6adb486a67456f54e536fca84",
+  "scope": "Actual fetchWeather wrapper; acquisition/freshness/ownership dependencies are controlled doubles; no full scheduler/browser claim",
+  "scenarios": [
+    {
+      "wallStepMs": 0,
+      "elapsedSinceFailedAttemptMs": 60000,
+      "now": 1788782460000,
+      "lastWxTry": 1788782460000,
+      "totalAttempts": 2,
+      "expectedTotalAttempts": 2,
+      "postcondition": "SATISFIED",
+      "calls": [
+        {
+          "wall": 1788782400000,
+          "mono": 0
+        },
+        {
+          "wall": 1788782460000,
+          "mono": 60000
+        }
+      ]
+    },
+    {
+      "wallStepMs": -3600000,
+      "elapsedSinceFailedAttemptMs": 60000,
+      "now": 1788778860000,
+      "lastWxTry": 1788782400000,
+      "totalAttempts": 1,
+      "expectedTotalAttempts": 2,
+      "postcondition": "UNMET",
+      "calls": [
+        {
+          "wall": 1788782400000,
+          "mono": 0
+        }
+      ]
+    },
+    {
+      "wallStepMs": 3600000,
+      "elapsedSinceFailedAttemptMs": 60000,
+      "now": 1788786060000,
+      "lastWxTry": 1788786060000,
+      "totalAttempts": 2,
+      "expectedTotalAttempts": 2,
+      "postcondition": "SATISFIED",
+      "calls": [
+        {
+          "wall": 1788782400000,
+          "mono": 0
+        },
+        {
+          "wall": 1788786060000,
+          "mono": 60000
+        }
+      ]
+    }
+  ],
+  "finding": "A completed failed weather acquisition can remain retry-ineligible for approximately one hour after a backward one-hour device wall step, although 60000 ms monotonic time has elapsed."
+}

@@ -1,0 +1,21 @@
+{
+  "command": [
+    "wsl.exe",
+    "-d",
+    "Ubuntu",
+    "--exec",
+    "/usr/bin/python3",
+    "-I",
+    "-c",
+    "import json,os,pathlib; p=pathlib.Path('/tmp/salah-crossuid-nonlogin-jtalb7st'); print(json.dumps({'uid':os.getuid(),'fixtureExists':p.exists(),'retainedBundles':[str(q) for q in (p/'home').glob('salah-widget-install.*')] if p.exists() else [],'scratchRoots':[str(q) for q in (p/'tmp').glob('salah-widget-download.*')] if p.exists() else []}))"
+  ],
+  "exit": 0,
+  "result": {
+    "fixtureExists": false,
+    "retainedBundles": [],
+    "scratchRoots": [],
+    "uid": 1000
+  },
+  "scope": "Later WSL readback, distinct from archived original supervisor run. No cleanup performed by this command.",
+  "stderr": ""
+}

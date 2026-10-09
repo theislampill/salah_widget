@@ -1,0 +1,387 @@
+{
+  "schema": "rlgwo-closure-assessment-v1",
+  "reviewer": "F",
+  "issueNumber": 26,
+  "canonicalId": "R001A",
+  "title": "R001A: Give builder option groups standard keyboard radio interaction",
+  "originalBodySha256": "329056534ccc2720a2b3ca7c5d7bff1ac0ee24788774d53f717c10b4ba3e0ff1",
+  "originalUpdatedAt": "2026-09-08T06:25:24Z",
+  "packetCapturedAtUtc": "2026-10-09T00:41:32.779625+00:00",
+  "commentRevisions": [],
+  "fullPacketRead": true,
+  "discussionAmendments": "No comments; renamed/referenced events read without treating them as authority.",
+  "target": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "auditDate": "2026-10-08"
+  },
+  "targetCustody": "Clean reviewed head 4bccdf43363926c3077f60de87e5617ccb9abcb9 has identical merge tree; source read there.",
+  "model": {
+    "requested": "gpt-6.1-sol",
+    "requestedEffort": "max",
+    "effectiveConfigurationConfirmed": false
+  },
+  "scopeOfDone": "The existing two-button Embed type group now has one checked/active/tabbable selection, scoped arrow wrapping, disabled-control handling, and native Tab/Enter/Space preserved in the application handler.",
+  "requirementMatrix": [
+    {
+      "id": "1A-01",
+      "obligation": "Preserve two mutually exclusive Embed buttons, values/callers; no accessibility redesign or preference redefinition.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            174,
+            177
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L174-L177"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            174,
+            177
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L174-L177"
+        }
+      ],
+      "discriminator": "Source/generated equality and selected/output state.",
+      "expected": "Portable/local semantics unchanged.",
+      "observed": "Markup retains role=radiogroup/radio and values; generated builder matches authored owner under final preservation evidence.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1A-02",
+      "obligation": "setMode single owner updates active/aria-checked/tabIndex for initial, click and programmatic changes.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L226-L252"
+        }
+      ],
+      "discriminator": "8-case retained VM selected-state/output assertions.",
+      "expected": "Exactly one enabled selected/checked/tabbable radio; none enabled is safe.",
+      "observed": "Current source and retained 8/8 prove state synchronization and disabled fixtures; terminal explicitly native=NOT_RUN.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001a-radio.log.gz",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001a-radio.log.gz"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "VM behavior/output, no native default-action proof"
+        }
+      ]
+    },
+    {
+      "id": "1A-03",
+      "obligation": "Scoped Right/Down next and Left/Up previous, wrap, focus+setMode once; exclude disabled and other event targets.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            243,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L243-L252"
+        }
+      ],
+      "discriminator": "Real native arrows, scroll prevention and preview revision count.",
+      "expected": "Selection/focus/output agree, handled arrows prevent default, one update.",
+      "observed": "VM checks all four arrows and revision+1. Required actual native event delivery not located.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "1A-04",
+      "obligation": "Native Enter/Space click preserved; do not handle keydown twice; native Tab/ShiftTab enter selection then leave without trap.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            243,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L243-L252"
+        }
+      ],
+      "discriminator": "Real browser Tab sequence and Enter/Space click/preview counters.",
+      "expected": "One native activation; one group tab stop and escape.",
+      "observed": "Handler returns for these keys; VM says native default activation is not emulated. No native final-tree receipt.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "1A-05",
+      "obligation": "Pointer and programmatic modes update selected/focused/generated output, local=1/allow=geolocation and existing embed size.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            211,
+            239
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L211-L239"
+        }
+      ],
+      "discriminator": "Actual output/readback after arrow/click/setMode.",
+      "expected": "Mode/output agree; correct local-only delegation and 325x530 builder payload.",
+      "observed": "Retained8-case VM verifies exact hash, allow and dimensions. Served/native browser parity remains unverified.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "1A-06",
+      "obligation": "One/zero enabled safety and unrelated group target ignored; omit arrow or tabIndex mutant fails the right behavior.",
+      "authoredOwners": [
+        {
+          "path": "tests/r001a-radio.cjs",
+          "lines": [
+            8,
+            64
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001a-radio.cjs#L8-L64"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "tests/r001a-mutations.cjs",
+          "lines": [
+            1,
+            10
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001a-mutations.cjs#L1-L10"
+        }
+      ],
+      "discriminator": "Real consumer mutation with no bootstrap substitute.",
+      "expected": "Each semantic fault detected.",
+      "observed": "Mutation script rejects nonzero plus exact Right-arrow failure without TypeError/setup failures, but no final execution receipt was found.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "1A-07",
+      "obligation": "Mobile375x800 and ordinary desktop focused selected/unselected crops: focus visible and no clipped text.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            35,
+            36
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L35-L36"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            53,
+            55
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L53-L55"
+        }
+      ],
+      "discriminator": "Native keyboard and actual crop at both widths.",
+      "expected": "Visible focus, unclipped controls.",
+      "observed": "Focus CSS exists. Native mobile/desktop focused crops unverified; no speech/AT claim added.",
+      "status": "unverified",
+      "evidence": []
+    },
+    {
+      "id": "1A-08",
+      "obligation": "Final native RED/GREEN, exact-tree review of Tab/double activation, evidence comment and served builder readback before public repair claim.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L226-L252"
+        }
+      ],
+      "discriminator": "Current native sequence plus matched served source.",
+      "expected": "Complete all bounded group obligations before manual closure.",
+      "observed": "Only source/VM proof located; primary/public reconciliation pending. No whole R0010 issue dependency imposed.",
+      "status": "unverified",
+      "evidence": []
+    }
+  ],
+  "negativeControls": [
+    "Current disabled one/none and unrelated-target controls are explicit VM fixtures, not new disabled UI features.",
+    "Mutation script demands behavior failure and rejects bootstrap errors; actual final receipt unverified."
+  ],
+  "gaps": [
+    "Required final-tree native keyboard/default-action and focus-crop evidence is absent from inspected retained packets.",
+    "Final arrow/tabIndex mutant receipt and actual served builder output readback are unverified."
+  ],
+  "dependencies": [
+    "R0010 owns selected local preferences; preserve its output interface, not whole-issue closure.",
+    "Production iframe 330x534 owner policy is separate from the builder group interaction repair."
+  ],
+  "improvements": [],
+  "ownerDecisions": [],
+  "verdict": "LEAVE OPEN",
+  "proposedNextRlgwoIncrement": {
+    "owner": "src/native/builder.html existing radio group and focused tests only",
+    "preserve": "Keep setMode, portable/local values, output/hash/delegation and existing preview update behavior.",
+    "steps": [
+      "Run actual native Right/Left/Up/Down/wrap and Tab/ShiftTab/Enter/Space at375x800 and desktop; count actual click and preview revisions.",
+      "Inspect selected/output/hash/allow after click and programmatic changes; run omit-arrow/tabIndex controls and capture focus crops.",
+      "If all pass, add exact source/served digests, event/readback/crop receipts and primary independent reconciliation; repair only observed group failures."
+    ],
+    "acceptance": "All original native group controls pass, mutations fail the named behavior, one tab stop and one native activation, visible focus/no clipping at both widths.",
+    "nonGoals": "No framework, screen-reader speech claim, settings focus-trap redesign, new preference semantics or installer changes."
+  },
+  "missingChecksRequested": [
+    {
+      "name": "native radio evidence",
+      "command": "Open exact delivered builder in isolated browser; use native keyboard presses at375x800 and desktop; inspect aria-checked/tabIndex/activeElement/embedMode/iframe hash and revision after each step.",
+      "reason": "VM does not emulate native defaults; mandatory platform evidence."
+    }
+  ],
+  "freshExecution": {
+    "productTests": [],
+    "browsers": [],
+    "reason": "Primary resource-release message was not received; read-only source/evidence inspection only."
+  },
+  "reuseBasis": "Final-v49 receipts retain the exact ff7285 index and f443cf runtime. Earlier Moon/CP9 receipts retain their earlier identities and qualify only mapped unchanged mechanisms; no old aggregate PASS is promoted to current closure.",
+  "inheritedQualification": {
+    "N001": "PARTIAL",
+    "N002": "PARTIAL",
+    "N003": "BLOCKED",
+    "scope": "Only mapped mandatory obligations are affected; these are not blanket blockers."
+  },
+  "publication": {
+    "reconciledByPrimary": false,
+    "approved": false,
+    "posted": false,
+    "hold": "Primary must establish delivered baseline and reconcile each comment before any GitHub effect."
+  },
+  "risks": "Evidence gaps are not all product defects. Source mechanics, raw numerical equality, displayed pixels, native default actions and real OS lifecycle are distinct claims.",
+  "inspectionReceipt": "inspection-receipt.json",
+  "executedCommands": [
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "18ff14860ff41c084b1db5f396bb62aa9c22b1be^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only identity",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only reviewed-source equivalence",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only dirty state",
+      "expected": "",
+      "observed": "",
+      "exitCode": 0
+    },
+    {
+      "command": "SHA-256 of actual index.html bytes and complete issue body UTF-8 bytes",
+      "environment": "Python -I -S -B, hashlib/JSON; no network/browser",
+      "kind": "fresh read-only byte binding",
+      "expected": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "329056534ccc2720a2b3ca7c5d7bff1ac0ee24788774d53f717c10b4ba3e0ff1"
+      },
+      "observed": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "329056534ccc2720a2b3ca7c5d7bff1ac0ee24788774d53f717c10b4ba3e0ff1"
+      },
+      "exitCode": 0
+    },
+    {
+      "command": "Read authored source, delivered consumers, exact assertions and retained final-v49 gzip/JSON receipts",
+      "environment": "PowerShell UTF-8 reads + Python standard-library gzip/json/hashlib",
+      "kind": "fresh inspection of historical execution",
+      "expected": "Preserve scope and original source/runtime identities; do not invent execution",
+      "observed": "inspection-receipt.json records bytes, receipt hashes and original terminal/case counts; zero fresh product/browser test commands",
+      "exitCode": 0
+    }
+  ]
+}

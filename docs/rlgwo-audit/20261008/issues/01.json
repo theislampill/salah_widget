@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:30.031501+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/1",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/1/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/1/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/1/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/1",
+    "id": 5381803470,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfNzg",
+    "number": 1,
+    "title": "R0001: Keep untrusted date text inert at every calendar output sink",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:08Z",
+    "updated_at": "2026-09-08T06:24:27Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-001 -->\n# R0001: Keep untrusted date text inert at every calendar output sink\n\n**Repository-local identity:** `R0001` in `theislampill/salah_widget`; existing tracker [#1](https://github.com/theislampill/salah_widget/issues/1). The SW identifier is historical draft provenance.\n\n\nThe delivered-source baseline treats formatted calendar data as HTML. A crafted `datefmt` fragment reached both footer rows and ran a harmless event handler in a local browser. Repair the three date interpolations and prove that each real sink is protected. The candidate already contains a narrow encoding repair, but its helper-only smoke can remain green after a sink loses that repair.\n\nCampaign draft alias: SW-001. Existing GitHub owner: #1. Priority P1; product defect with its directly associated regression guard. Filing or publishing this work order does not authorize implementation or certify a repair.\n\n## Re-anchor the exact owner\n\nHistorical main is `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; candidate is `9d9c43649748555afbe09e3ca49bc47db2d7e7bb`. Before a future authorized change, run these read-only commands in the intended checkout and record the output:\n\n```text\ngit rev-parse --show-toplevel\ngit remote get-url origin\ngit status --short\ngit rev-parse HEAD\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- index.html config.js tests/smoke.html\n```\n\nExpected repository is `theislampill/salah_widget`. Reconcile relevant changes rather than asserting that an arbitrary future HEAD is vulnerable. Preserve unrelated dirty work. The source owners are [main formatter and render sinks, lines 687–692 and 2003–2016](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L687), [candidate escaping and sinks](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L694), [configuration ingress](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/config.js#L50), and [candidate security smoke, lines 220–234](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/tests/smoke.html#L220).\n\n## Incident, mechanism and evidence limits\n\n`SalahConfig.resolve(location.hash).cfg.datefmt` supplies `datefmtStr`. `fmtDate()` substitutes documented tokens while preserving other literal characters. Main then interpolates its result into `#ce.innerHTML` and `#ah.innerHTML`. A separate pre-Maghrib preview interpolates `tomorrow.date.hijri.day` directly. API/cache month text reaches the formatter too. The missing contract is at the HTML boundary: values intentionally allowed as text must not become nodes or event attributes.\n\nThe recorded canary was exactly:\n\n```html\n<svg onload=\"window.__sw_sec_probe=1\"></svg>\n```\n\nHistorical browser route: local main `index.html` with `#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0&datefmt=%3Csvg%20onload%3D%22window.__sw_sec_probe%3D1%22%3E%3C%2Fsvg%3E`. After prayer data loaded, `window.__sw_sec_probe` was `1` and the two calendar rows contained two injected SVG nodes. The equivalent candidate route recorded no canary value and zero SVG nodes. This establishes an actual local browser execution path; it does not establish exfiltration, a public-origin exploit run, or general candidate security.\n\nSeparately, exact-source replay through the real config module and recording DOM stubs tested normal, hash, provider-month and preview-day cases. Main emitted raw SVG in all three hostile cases; candidate escaped it. Those upstream cases were source execution, not browser event execution. An in-memory CE-only mutant removed `${escHtml(fmtDate(g))}` while leaving `escHtml()` intact: the old helper assertion still returned true, the benign page still contained no injected element, and the hostile hash again reached CE as raw SVG. This is why a direct helper test is insufficient.\n\n## Smallest executable repair\n\n1. Keep `fmtDate()` a plain-text formatter. Apply the candidate's `escHtml()` at the final CE formatted value, AH selected formatted value, and tomorrow-day preview value, or construct text nodes at those same boundaries. For the existing template structure, the narrow three-call encoding change is the preferred starting patch. Escape dynamic text once at its output context; retain constant era, phase and stale spans as markup.\n2. Keep hash/config serialization literal. Do not strip angle brackets, Arabic, quotes or ampersands at ingestion; such an allowlist changes supported custom formats and still fails to cover trusted-looking provider/cache data. Do not encode in `fmtDate()` and again at the sink: double encoding would show `&amp;` to the user and contaminate other plain-text consumers.\n3. Put hostile inputs into the existing smoke owner through an isolated deterministic page load. Wire tests to the actual configuration path and renderer, not a second miniature renderer. Capture `#ce` and `#ah` DOM/text after the render has demonstrably completed. Test the preview separately before Maghrib; after Maghrib it is absent by design.\n4. Isolate the date tests from live API availability and from the smoke page's storage changes. Use a disposable origin/context and stub only the relevant prayer responses. The test must fail if no date render happens; an empty page with no SVG is not GREEN. No test runs against the owner's widget storage or public origin.\n\nThis owner changes encoding and its controls, not date validity, calendar selection, request ownership or the entire candidate branch. If upstream admission now rejects a malformed preview day, preserve that integration rejection and additionally exercise the renderer boundary with a fixture-only admitted-state injection. Never weaken admission or add a production bypass merely to keep an XSS test reachable.\n\n## Public RED/GREEN recipe and controls\n\nFor a future fixture, freeze the browser clock before initialization at `2026-09-07T09:30:00.000Z`, set `tz=Asia/Riyadh` and the route above, and return day-matching `{data: ...}` prayer responses with valid timings. A sufficient controlled timing set is Fajr `05:00`, Sunrise `06:00`, Dhuhr `12:00`, Asr `15:00`, Sunset/Maghrib `18:00`, Isha `20:00`. Supply Gregorian `07-09-2026` with day `07`, month `{number:9,en:\"September\"}`, year `2026`; tomorrow Gregorian `08-09-2026`. Supply synthetic AH `25-03-1448` / `26-03-1448`, month `{number:3,en:\"Rabi al-awwal\"}`, year `1448`, method `HJCoSA`. These AH values are fixture data, not an astronomical/calendar assertion.\n\nRun each hostile case in a fresh page, resetting the canary before navigation. Inspect specifically `#ce svg,img,script` and `#ah svg,img,script`; the widget legitimately contains SVG elsewhere.\n\n| Case | Exact stimulus | Required repaired result and discriminator |\n|---|---|---|\n| Hash and saved format | Canary above as `datefmt`, then separately the same literal through saved configuration | Both rows visibly contain literal `<svg ...>` text; zero injected nodes and no canary execution; era markup survives. If a saved preference is superseded by hash, remove the hash format so the saved path actually runs. |\n| Provider month | `datefmt=DD MMMM YYYY`; replace both accepted `date.*.month.en` strings with the canary, leaving numeric date fields valid | Literal month text at both sinks, no execution. This does not rely on a malicious format. |\n| Preview day | Before Maghrib, replace `tomorrow.date.hijri.day` with the canary in isolated renderer state | Preview is present and literal, with zero injected nodes. In integrated admission tests, rejection is also safe but is not proof of this sink's encoding. |\n| After Maghrib | Valid tomorrow payload, hostile formatter/month | Actual selected tomorrow AH remains inert; preview is absent. No wrong date-selection patch is imported. |\n| Ordinary held-out text | `YYYY YY MMMM MMM MM M DD D` on year `1448`, month `2/Safar`, day `19` | Exact text `1448 48 Safar Saf 02 2 19 19`; also retain Arabic literals, quotes, `&`, literal `< >`, empty/missing-date behavior and unchanged CE/AH markers. |\n| Three independent mutations | Remove only one of CE, AH or preview encodings in an isolated test copy, retaining the helper and other two encodings | Corresponding through-sink case fails. A canary need not execute in a DOM stub, but raw injected markup must be detected; actual browser cases additionally check execution. |\n\nThe test fixture and these expected outcomes are proposed work, not executed PASS. Preserve any invalid-date behavior established by the input-admission owner; encoding must remain safe whether the accepted value is a date, literal fallback or unavailable text.\n\n## Integration, delivery and rollback\n\nThe exact shared write is `runtime/date-output`. Coordinate one final hunk owner with [R0009](https://github.com/theislampill/salah_widget/issues/9) and [R0019](https://github.com/theislampill/salah_widget/issues/25); those issues consume inert output as a qualification invariant. There is no new interface dependency or calendar policy in this repair. Security findings `SEC-001`, `SEC-003` and validation corroboration `VAL-010` are one exploit owner plus its missing guard, not three public issues. Builder URL/one-line quoting controls were retained as non-defects.\n\nIMPLEMENTAUDIT R001D public projection: source `index.html` and actual regressions change; existing configuration grammar, builder/install commands and preset remain compatible. Update an existing security claim only if its supported scope changes. IMPLEMENTAUDIT R001E consumer reachability: removing any repaired sink call must fail its real-path fixture; helper presence is not acceptance. No new CSP framework or dependency is required.\n\nDONE requires final-tree hostile/control and mutation results, a real local browser readback, and a footer crop proving ordinary text/era/preview appearance. Record exact source revision, fixture clock/origin, executed cases, results and limitations in an evidence comment before manual closure. Use non-closing `Implements #1` PR wording. Only a separately authorized deployment plus served-byte identity and consumer readback can support a public repair claim.\n\nRollback the smallest renderer/test delta if ordinary text or geometry regresses, preserving the failing cases. Restoring the vulnerable renderer is not secure recovery: retain the issue open and restore safe text rendering before claiming protection. STOP on incompatible sink/validation drift, an unexecuted fixture, or a need to change calendar/transport policy. The historical records remain unchanged.\n\nMethodology references (separate repository, not Salah work owners): [R001D in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/155), [R001E in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/157).\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/1/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/1/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733511336,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfNzs8AAAAHJ9wqqA",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733511336",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:24:27Z",
+      "rename": {
+        "from": "SW-001: Keep untrusted date text inert at every calendar output sink",
+        "to": "R0001: Keep untrusted date text inert at every calendar output sink"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R0001",
+    "bodySha256": "5add36cec6341eacf44c2dda3ef0c35a221a83e64efde12b29339460b394eb0d",
+    "updatedAt": "2026-09-08T06:24:27Z",
+    "commentRevisions": []
+  }
+}

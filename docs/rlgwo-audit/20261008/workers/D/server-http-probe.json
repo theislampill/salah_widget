@@ -1,0 +1,43 @@
+{
+  "scope": "read-only loopback HTTP/Node transport; browser NOT_RUN",
+  "checks": [
+    {
+      "name": "source byte pins and exact audit fixture served",
+      "passed": true
+    },
+    {
+      "name": "arbitrary paths denied and iframe redirect bounded",
+      "passed": true
+    },
+    {
+      "name": "finite native stream parses healthy bytes",
+      "passed": true
+    },
+    {
+      "name": "headers plus stalled native body responds to actual abort",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "server": {
+    "origin": "http://127.0.0.1:55766",
+    "fixture": "/audit/r0023-current-native.html",
+    "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "nativeStreams": [
+      "/geojs-stall",
+      "/geojs-finite",
+      "/ipinfo",
+      "/failure",
+      "/ledger"
+    ],
+    "preview": "current exact production widget in isolated wrapper; modules retained",
+    "browser": "NOT_LAUNCHED"
+  },
+  "streamRow": {
+    "path": "/geojs-stall",
+    "headersAt": 1791510310512,
+    "closedAt": 1791510310579,
+    "completed": false
+  },
+  "status": "PASS_NODE_ONLY"
+}

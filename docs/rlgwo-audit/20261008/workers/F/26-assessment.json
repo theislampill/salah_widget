@@ -1,0 +1,580 @@
+{
+  "schema": "rlgwo-closure-assessment-v1",
+  "reviewer": "F",
+  "issueNumber": 26,
+  "canonicalId": "R001A",
+  "title": "R001A: Give builder option groups standard keyboard radio interaction",
+  "originalBodySha256": "329056534ccc2720a2b3ca7c5d7bff1ac0ee24788774d53f717c10b4ba3e0ff1",
+  "originalUpdatedAt": "2026-09-08T06:25:24Z",
+  "packetCapturedAtUtc": "2026-10-09T00:41:32.779625+00:00",
+  "commentRevisions": [],
+  "fullPacketRead": true,
+  "discussionAmendments": "No comments; renamed/referenced events read without treating them as authority.",
+  "target": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "tree": "35208181eea714c17f5e77b2644e76434345db60",
+    "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "auditDate": "2026-10-08"
+  },
+  "targetCustody": "Clean reviewed head 4bccdf43363926c3077f60de87e5617ccb9abcb9 has identical merge tree; source read there.",
+  "model": {
+    "requested": "gpt-6.1-sol",
+    "requestedEffort": "max",
+    "effectiveConfigurationConfirmed": true,
+    "confirmationKind": "supported spawn configuration plus local recorded turn_context; not independent hardware/backend attestation",
+    "recordedSessionId": "01a11e27-0cc9-7e73-a2e2-a9f2ec7bcc32",
+    "recordSha256": "183999c426f808271a5ebbcc529daed738b528b5bda6cc6c25dadf29a1947235"
+  },
+  "scopeOfDone": "The existing two-button Embed group now has one selected/tabbable radio, native arrow wrap/focus, native Tab/ShiftTab/Enter/Space and synchronized generated output. Primary executed the final V2 native matrix in Chromium148 and Firefox150 at375x800 and1100x900; F inspected all four focus crops.",
+  "requirementMatrix": [
+    {
+      "id": "1A-01",
+      "obligation": "Preserve two mutually exclusive Embed buttons, values/callers; no accessibility redesign or preference redefinition.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            174,
+            177
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L174-L177"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            174,
+            177
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L174-L177"
+        }
+      ],
+      "discriminator": "Source/generated equality and selected/output state.",
+      "expected": "Portable/local semantics unchanged.",
+      "observed": "Markup retains role=radiogroup/radio and values; generated builder matches authored owner under final preservation evidence.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1A-02",
+      "obligation": "setMode single owner updates active/aria-checked/tabIndex for initial, click and programmatic changes.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L226-L252"
+        }
+      ],
+      "discriminator": "8-case retained VM selected-state/output assertions.",
+      "expected": "Exactly one enabled selected/checked/tabbable radio; none enabled is safe.",
+      "observed": "Current source and retained 8/8 prove state synchronization and disabled fixtures; terminal explicitly native=NOT_RUN.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "source": {
+            "path": "docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001a-radio.log.gz",
+            "lines": null,
+            "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001a-radio.log.gz"
+          },
+          "freshness": "historical reuse inspected in this audit",
+          "scope": "VM behavior/output, no native default-action proof"
+        }
+      ]
+    },
+    {
+      "id": "1A-03",
+      "obligation": "Scoped Right/Down next and Left/Up previous, wrap, focus+setMode once; exclude disabled and other event targets.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            243,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L243-L252"
+        }
+      ],
+      "discriminator": "Real native arrows, scroll prevention and preview revision count.",
+      "expected": "Selection/focus/output agree, handled arrows prevent default, one update.",
+      "observed": "Both native engines execute all four arrows/wrap with focus+state+output agreement and revision+1; V2 explicitly checks scroll offsets unchanged. Disabled controls and unrelated native event target are excluded.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1A-04",
+      "obligation": "Native Enter/Space click preserved; do not handle keydown twice; native Tab/ShiftTab enter selection then leave without trap.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            243,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L243-L252"
+        }
+      ],
+      "discriminator": "Real browser Tab sequence and Enter/Space click/preview counters.",
+      "expected": "One native activation; one group tab stop and escape.",
+      "observed": "V2 presses actual Enter and complete Space on both local and portable, each revision+1; actual Tab exits the group and Shift+Tab re-enters selected radio without a reload or trap.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1A-05",
+      "obligation": "Pointer and programmatic modes update selected/focused/generated output, local=1/allow=geolocation and existing embed size.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            211,
+            239
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L211-L239"
+        }
+      ],
+      "discriminator": "Actual output/readback after arrow/click/setMode.",
+      "expected": "Mode/output agree; correct local-only delegation and 325x530 builder payload.",
+      "observed": "Both native engines verify click and programmatic mode changes, code/preview local flag, allow=geolocation and preserved325x530 emitted snippet. Native Tab/ShiftTab is repeated immediately after click. Blank preview is explicitly an output-contract boundary; it does not certify sky rendering. Public16 actual widget cases separately support card/wrapper rendering.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1A-06",
+      "obligation": "One/zero enabled safety and unrelated group target ignored; omit arrow or tabIndex mutant fails the right behavior.",
+      "authoredOwners": [
+        {
+          "path": "tests/r001a-radio.cjs",
+          "lines": [
+            8,
+            64
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001a-radio.cjs#L8-L64"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "tests/r001a-mutations.cjs",
+          "lines": [
+            1,
+            10
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001a-mutations.cjs#L1-L10"
+        }
+      ],
+      "discriminator": "Real consumer mutation with no bootstrap substitute.",
+      "expected": "Each semantic fault detected.",
+      "observed": "Both original mutants reject at first native Right: arrows -> embedMode expected local; tabindex -> mode-portable tabIndex must follow selected state. All four mutant documents per engine reach the intended assertions without page errors; bootstrap failures are not counted. Source VM8/8 and both mutants also pass fresh.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1A-07",
+      "obligation": "Mobile375x800 and ordinary desktop focused selected/unselected crops: focus visible and no clipped text.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            35,
+            36
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L35-L36"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            53,
+            55
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L53-L55"
+        }
+      ],
+      "discriminator": "Native keyboard and actual crop at both widths.",
+      "expected": "Visible focus, unclipped controls.",
+      "observed": "F viewed four native375/desktop focus crops. Portable label and unselected local label are intact; actual yellow2px keyboard outline is visible. No screen-reader speech matrix is claimed or required.",
+      "status": "satisfied",
+      "evidence": []
+    },
+    {
+      "id": "1A-08",
+      "obligation": "Final native RED/GREEN, exact-tree review of Tab/double activation, evidence comment and served builder readback before public repair claim.",
+      "authoredOwners": [
+        {
+          "path": "src/native/builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252"
+        }
+      ],
+      "deliveredConsumers": [
+        {
+          "path": "builder.html",
+          "lines": [
+            226,
+            252
+          ],
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L226-L252"
+        }
+      ],
+      "discriminator": "Current native sequence plus matched served source.",
+      "expected": "Complete all bounded group obligations before manual closure.",
+      "observed": "Final V2 records bind exact builder66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e and indexff7285; both engines6/6. Full record/crop publication links await primary evidence-only custody; closure proposal is not posted or approved here.",
+      "status": "satisfied",
+      "evidence": []
+    }
+  ],
+  "negativeControls": [
+    "Current disabled one/none and unrelated-target controls are explicit VM fixtures, not new disabled UI features.",
+    "Mutation script demands behavior failure and rejects bootstrap errors; actual final receipt unverified."
+  ],
+  "gaps": [],
+  "dependencies": [
+    "R0010 owns selected local preferences; preserve its output interface, not whole-issue closure.",
+    "Production iframe 330x534 owner policy is separate from the builder group interaction repair."
+  ],
+  "improvements": [],
+  "ownerDecisions": [],
+  "verdict": "CLOSE — SATISFIED WITH DEMONSTRATED IMPROVEMENTS",
+  "proposedNextRlgwoIncrement": {
+    "owner": "Primary reconciliation/publication only",
+    "steps": [
+      "Publish immutable evidence-only links for the final V2 native receipts/crops and the exact prepared fixture; reconcile this closure comment individually."
+    ],
+    "acceptance": "Every original obligation is satisfied at the delivered target; no runtime repair remains in this issue.",
+    "nonGoals": "No new accessibility framework, screen-reader programme, live owner storage mutation or inference that blank preview renders the widget."
+  },
+  "missingChecksRequested": [],
+  "freshExecution": {
+    "productTests": [
+      {
+        "issue": 26,
+        "name": "r001a-radio",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r001a-radio.cjs"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "fixtureSha256": "54c1d5fc51d51dbd35e3d61799a9de1df578ab18cb21ac234d4d35c5f31493c1",
+        "freshExecution": true,
+        "seconds": 0.065919,
+        "exitCode": 0,
+        "terminal": {
+          "cases": 8,
+          "passed": 8,
+          "failed": 0,
+          "ref": "working-tree",
+          "mutant": null,
+          "native": "NOT_RUN"
+        },
+        "failures": [],
+        "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001a-radio.log",
+        "logSha256": "62ce2fc8bdd15fb1bb9aba87b6e391b559e99573bb54ea44f77b84563c48cddd",
+        "error": null
+      },
+      {
+        "issue": 26,
+        "name": "r001a-mutations",
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "tests/r001a-mutations.cjs"
+        ],
+        "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+        "fixtureSha256": "933346cbca0bca4f0cd853b2f282e40a318f741b296ddaa4ce81f0bc5cb56822",
+        "freshExecution": true,
+        "seconds": 0.182678,
+        "exitCode": 0,
+        "terminal": null,
+        "failures": [],
+        "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001a-mutations.log",
+        "logSha256": "4ca7b47d0406d4efd44a1a1b6d60e7065cc59a3ced1dccc12c224c71ad14d728",
+        "error": null
+      }
+    ],
+    "browsers": [
+      {
+        "executedBy": "primary",
+        "freshExecution": true,
+        "receipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\primary-native-F2-chromium\\results.json",
+        "receiptSha256": "033b64b624aa2fa5d30576f2aa622a07e40f27c8e39e30ebf109c80484a617ce",
+        "browser": {
+          "family": "chromium",
+          "version": "148.0.7778.96",
+          "os": "Windows",
+          "machine": "AMD64",
+          "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+          "chromiumSandboxRequested": true
+        },
+        "cases": [
+          {
+            "name": "mobile-healthy",
+            "status": "PASS",
+            "negativeControlDetected": null,
+            "discriminator": null
+          },
+          {
+            "name": "mobile-arrows",
+            "status": "PASS",
+            "negativeControlDetected": true,
+            "discriminator": "embedMode expected local"
+          },
+          {
+            "name": "mobile-tabindex",
+            "status": "PASS",
+            "negativeControlDetected": true,
+            "discriminator": "mode-portable tabIndex must follow selected state"
+          },
+          {
+            "name": "desktop-healthy",
+            "status": "PASS",
+            "negativeControlDetected": null,
+            "discriminator": null
+          },
+          {
+            "name": "desktop-arrows",
+            "status": "PASS",
+            "negativeControlDetected": true,
+            "discriminator": "embedMode expected local"
+          },
+          {
+            "name": "desktop-tabindex",
+            "status": "PASS",
+            "negativeControlDetected": true,
+            "discriminator": "mode-portable tabIndex must follow selected state"
+          }
+        ],
+        "driverSha256": "ccce3145ed37a71518374301ac7f31e6ddb66ad04f6b28f2d273fbac5b7d2689",
+        "fixtureSha256": "bd20b34e55795ec642856ce8d4332fac3a339c72ca9c1daca92979eec36f6b02"
+      },
+      {
+        "executedBy": "primary",
+        "freshExecution": true,
+        "receipt": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\primary-native-F2-firefox\\results.json",
+        "receiptSha256": "d0eeaabea4e99b111fdd7b94a8bdd1a70e3d98e5cf767d975efa2052fb8a223f",
+        "browser": {
+          "family": "firefox",
+          "version": "150.0.2",
+          "os": "Windows",
+          "machine": "AMD64",
+          "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\firefox-1522\\firefox\\firefox.exe",
+          "chromiumSandboxRequested": null
+        },
+        "cases": [
+          {
+            "name": "mobile-healthy",
+            "status": "PASS",
+            "negativeControlDetected": null,
+            "discriminator": null
+          },
+          {
+            "name": "mobile-arrows",
+            "status": "PASS",
+            "negativeControlDetected": true,
+            "discriminator": "embedMode expected local"
+          },
+          {
+            "name": "mobile-tabindex",
+            "status": "PASS",
+            "negativeControlDetected": true,
+            "discriminator": "mode-portable tabIndex must follow selected state"
+          },
+          {
+            "name": "desktop-healthy",
+            "status": "PASS",
+            "negativeControlDetected": null,
+            "discriminator": null
+          },
+          {
+            "name": "desktop-arrows",
+            "status": "PASS",
+            "negativeControlDetected": true,
+            "discriminator": "embedMode expected local"
+          },
+          {
+            "name": "desktop-tabindex",
+            "status": "PASS",
+            "negativeControlDetected": true,
+            "discriminator": "mode-portable tabIndex must follow selected state"
+          }
+        ],
+        "driverSha256": "ccce3145ed37a71518374301ac7f31e6ddb66ad04f6b28f2d273fbac5b7d2689",
+        "fixtureSha256": "bd20b34e55795ec642856ce8d4332fac3a339c72ca9c1daca92979eec36f6b02"
+      }
+    ],
+    "scope": "F ran bounded Node/VM/command controls only after resource authorization. All actual browser launches below were executed serially by primary; F inspected receipts and crops."
+  },
+  "reuseBasis": "Final-v49 receipts retain the exact ff7285 index and f443cf runtime. Earlier Moon/CP9 receipts retain their earlier identities and qualify only mapped unchanged mechanisms; no old aggregate PASS is promoted to current closure. Follow-up credits final normal1x images/public replacement proof for actual motion and current surface continuity. Owner-adopted physical astronomical scattering is distinct from native calendar-derived light. No complete Moon phase campaign is inferred from the opt-in raw sampler.",
+  "inheritedQualification": {
+    "N001": "PARTIAL",
+    "N002": "PARTIAL",
+    "N003": "BLOCKED",
+    "scope": "Only mapped mandatory obligations are affected; these are not blanket blockers."
+  },
+  "publication": {
+    "reconciledByPrimary": true,
+    "approved": false,
+    "posted": false,
+    "hold": "Primary Astra reconciled all mandatory rows and conclusions. Substitute immutable evidence commit SHA, independently approve exact comment hash, publish comment then any approved closure. No GitHub effect yet.",
+    "deliveredBaseline": "DELIVERED_VERIFIED; 16 public browser cases PASS; root/V1 actual sources and 330x534 wrapper checked",
+    "publicEvidenceLinksPending": true,
+    "conclusionsApprovedByPrimary": true,
+    "commentHashApproved": false,
+    "evidenceBasePlaceholder": "https://github.com/theislampill/salah_widget/blob/AUDIT_EVIDENCE_COMMIT/docs/rlgwo-audit/20261008/",
+    "preparedCommentSha256": "3e04c997d5d57dfa0ba4d165df923ee1b7a5d3a097573a64656dc9d09354249a"
+  },
+  "risks": "Evidence gaps are not all product defects. Source mechanics, raw numerical equality, displayed pixels, native default actions and real OS lifecycle are distinct claims.",
+  "inspectionReceipt": "inspection-receipt.json",
+  "executedCommands": [
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "18ff14860ff41c084b1db5f396bb62aa9c22b1be^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only identity",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only reviewed-source equivalence",
+      "expected": "35208181eea714c17f5e77b2644e76434345db60",
+      "observed": "35208181eea714c17f5e77b2644e76434345db60",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain"
+      ],
+      "environment": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "kind": "fresh read-only dirty state",
+      "expected": "",
+      "observed": "",
+      "exitCode": 0
+    },
+    {
+      "command": "SHA-256 of actual index.html bytes and complete issue body UTF-8 bytes",
+      "environment": "Python -I -S -B, hashlib/JSON; no network/browser",
+      "kind": "fresh read-only byte binding",
+      "expected": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "329056534ccc2720a2b3ca7c5d7bff1ac0ee24788774d53f717c10b4ba3e0ff1"
+      },
+      "observed": {
+        "index": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "contract": "329056534ccc2720a2b3ca7c5d7bff1ac0ee24788774d53f717c10b4ba3e0ff1"
+      },
+      "exitCode": 0
+    },
+    {
+      "command": "Read authored source, delivered consumers, exact assertions and retained final-v49 gzip/JSON receipts",
+      "environment": "PowerShell UTF-8 reads + Python standard-library gzip/json/hashlib",
+      "kind": "fresh inspection of historical execution",
+      "expected": "Preserve scope and original source/runtime identities; do not invent execution",
+      "observed": "inspection-receipt.json records bytes, receipt hashes and original terminal/case counts; zero fresh product/browser test commands",
+      "exitCode": 0
+    },
+    {
+      "issue": 26,
+      "name": "r001a-radio",
+      "command": [
+        "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+        "tests/r001a-radio.cjs"
+      ],
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "fixtureSha256": "54c1d5fc51d51dbd35e3d61799a9de1df578ab18cb21ac234d4d35c5f31493c1",
+      "freshExecution": true,
+      "seconds": 0.065919,
+      "exitCode": 0,
+      "terminal": {
+        "cases": 8,
+        "passed": 8,
+        "failed": 0,
+        "ref": "working-tree",
+        "mutant": null,
+        "native": "NOT_RUN"
+      },
+      "failures": [],
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001a-radio.log",
+      "logSha256": "62ce2fc8bdd15fb1bb9aba87b6e391b559e99573bb54ea44f77b84563c48cddd",
+      "error": null
+    },
+    {
+      "issue": 26,
+      "name": "r001a-mutations",
+      "command": [
+        "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+        "tests/r001a-mutations.cjs"
+      ],
+      "cwd": "C:\\Users\\theis\\.codex\\worktrees\\hotfix-startup-clouds\\salah_widget",
+      "fixtureSha256": "933346cbca0bca4f0cd853b2f282e40a318f741b296ddaa4ce81f0bc5cb56822",
+      "freshExecution": true,
+      "seconds": 0.182678,
+      "exitCode": 0,
+      "terminal": null,
+      "failures": [],
+      "log": "C:\\Users\\theis\\Documents\\Codex\\pr42-rlgwo-closure-20261008\\workers\\F\\followup-tests\\r001a-mutations.log",
+      "logSha256": "4ca7b47d0406d4efd44a1a1b6d60e7065cc59a3ced1dccc12c224c71ad14d728",
+      "error": null
+    }
+  ]
+}

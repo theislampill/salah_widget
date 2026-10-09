@@ -1,0 +1,386 @@
+{
+  "name": "31-widget-native-fail",
+  "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+  "options": {
+    "page": "widget",
+    "seed": "none",
+    "stream": "fail"
+  },
+  "checks": [
+    {
+      "name": "exact current script guards and isolated hooks initialize",
+      "passed": true,
+      "detail": {
+        "state": "ready",
+        "error": null,
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+        "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+        "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+        "scriptCount": 6,
+        "bodiesPreserved": true,
+        "storageIsolated": true,
+        "clockFixed": true
+      }
+    },
+    {
+      "name": "native failed widget opens manual form",
+      "passed": true,
+      "detail": {
+        "inputs": {
+          "set-label": "",
+          "set-lat": "",
+          "set-lon": "",
+          "set-method": "2",
+          "set-school": "0",
+          "set-time": "24",
+          "set-units": "f",
+          "set-appearance": "glass",
+          "set-datefmt": "YYYY-MM-DD"
+        },
+        "config": {
+          "configSource": null,
+          "configMode": "local",
+          "autoDetectSource": null,
+          "autoDetectStatus": "failed",
+          "storageAvailable": true,
+          "storageError": null,
+          "geolocationPermissionState": "unknown",
+          "geolocationLastError": null,
+          "lat": null,
+          "lon": null,
+          "tz": "America/New_York",
+          "label": "",
+          "method": "2",
+          "units": "f",
+          "locationEvidence": null,
+          "fixAgeMs": null,
+          "savedAt": null,
+          "hashConfigOverridden": false,
+          "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+        },
+        "status": "Enter to search a place · Shift+Enter to keep the typed name.",
+        "pin": {
+          "classes": "set-pin off",
+          "title": "Configured site — click to request browser location",
+          "name": "Configured site — click to request browser location"
+        },
+        "code": null,
+        "previewSrc": null,
+        "savedBytes": null
+      }
+    },
+    {
+      "name": "actual manual form restores configured target",
+      "passed": true,
+      "detail": {
+        "inputs": {
+          "set-label": "Manual recovery",
+          "set-lat": "30",
+          "set-lon": "31",
+          "set-method": "2",
+          "set-school": "0",
+          "set-time": "24",
+          "set-units": "f",
+          "set-appearance": "glass",
+          "set-datefmt": "YYYY-MM-DD"
+        },
+        "config": {
+          "configSource": "localStorage",
+          "configMode": "local",
+          "autoDetectSource": null,
+          "autoDetectStatus": "failed",
+          "storageAvailable": true,
+          "storageError": null,
+          "geolocationPermissionState": "unknown",
+          "geolocationLastError": null,
+          "lat": 30,
+          "lon": 31,
+          "tz": "UTC",
+          "label": "Manual recovery",
+          "method": "2",
+          "units": "f",
+          "locationEvidence": {
+            "intent": "fixed-site",
+            "source": "manual",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "fixAgeMs": null,
+          "savedAt": 1790942400000,
+          "hashConfigOverridden": false,
+          "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+        },
+        "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+        "pin": {
+          "classes": "set-pin off",
+          "title": "Configured site — click to request browser location",
+          "name": "Configured site — click to request browser location"
+        },
+        "code": null,
+        "previewSrc": null,
+        "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"Manual recovery\",\"method\":\"2\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+      }
+    },
+    {
+      "name": "exhaustion uses exactly two failed providers",
+      "passed": true,
+      "detail": {
+        "jobs": [
+          {
+            "id": 0,
+            "kind": "coarse-stream",
+            "url": "https://get.geojs.io/v1/ip/geo.json",
+            "route": "/failure",
+            "state": "native-fetch",
+            "signalAborted": false,
+            "headersReturned": true,
+            "http": 503
+          },
+          {
+            "id": 1,
+            "kind": "coarse-stream",
+            "url": "https://ipinfo.io/json",
+            "route": "/failure",
+            "state": "native-fetch",
+            "signalAborted": false,
+            "headersReturned": true,
+            "http": 503
+          }
+        ],
+        "ledger": [
+          {
+            "path": "/failure",
+            "headersAt": 1791510860979,
+            "closedAt": 1791510860980,
+            "completed": true
+          },
+          {
+            "path": "/failure",
+            "headersAt": 1791510861007,
+            "closedAt": 1791510861007,
+            "completed": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "no unhandled or unexpected sink errors",
+      "passed": true,
+      "detail": {
+        "pageErrors": [],
+        "outsideRequests": [],
+        "fixtureErrors": []
+      }
+    }
+  ],
+  "snapshots": {},
+  "clipboard": [],
+  "pageErrors": [],
+  "outsideRequests": [],
+  "ledgerStart": 27,
+  "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=widget&stream=fail#local=1",
+  "fixtureIdentity": {
+    "state": "ready",
+    "error": null,
+    "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "source": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+    "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "scriptCount": 6,
+    "bodiesPreserved": true,
+    "storageIsolated": true,
+    "clockFixed": true
+  },
+  "elapsedConsumerSeconds": 0.75,
+  "nativeStreamJobs": [
+    {
+      "id": 0,
+      "kind": "coarse-stream",
+      "url": "https://get.geojs.io/v1/ip/geo.json",
+      "route": "/failure",
+      "state": "native-fetch",
+      "signalAborted": false,
+      "headersReturned": true,
+      "http": 503
+    },
+    {
+      "id": 1,
+      "kind": "coarse-stream",
+      "url": "https://ipinfo.io/json",
+      "route": "/failure",
+      "state": "native-fetch",
+      "signalAborted": false,
+      "headersReturned": true,
+      "http": 503
+    }
+  ],
+  "nativeStreamLedger": [
+    {
+      "path": "/failure",
+      "headersAt": 1791510860979,
+      "closedAt": 1791510860980,
+      "completed": true
+    },
+    {
+      "path": "/failure",
+      "headersAt": 1791510861007,
+      "closedAt": 1791510861007,
+      "completed": true
+    }
+  ],
+  "finalApplication": {
+    "inputs": {
+      "set-label": "Manual recovery",
+      "set-lat": "30",
+      "set-lon": "31",
+      "set-method": "2",
+      "set-school": "0",
+      "set-time": "24",
+      "set-units": "f",
+      "set-appearance": "glass",
+      "set-datefmt": "YYYY-MM-DD"
+    },
+    "config": {
+      "configSource": "localStorage",
+      "configMode": "local",
+      "autoDetectSource": null,
+      "autoDetectStatus": "failed",
+      "storageAvailable": true,
+      "storageError": null,
+      "geolocationPermissionState": "unknown",
+      "geolocationLastError": null,
+      "lat": 30,
+      "lon": 31,
+      "tz": "UTC",
+      "label": "Manual recovery",
+      "method": "2",
+      "units": "f",
+      "locationEvidence": {
+        "intent": "fixed-site",
+        "source": "manual",
+        "accuracyM": null,
+        "acquiredAt": null,
+        "provider": null,
+        "area": null,
+        "bounds": null
+      },
+      "fixAgeMs": null,
+      "savedAt": 1790942400000,
+      "hashConfigOverridden": false,
+      "why": "local=1 → saved local config, else coarse-ip auto-detect, else manual setup"
+    },
+    "status": "Settings saved in this browser.\nEnter to search a place · Shift+Enter to keep the typed name.",
+    "pin": {
+      "classes": "set-pin off",
+      "title": "Configured site — click to request browser location",
+      "name": "Configured site — click to request browser location"
+    },
+    "code": null,
+    "previewSrc": null,
+    "savedBytes": "{\"v\":1,\"lat\":30,\"lon\":31,\"tz\":\"America/New_York\",\"label\":\"Manual recovery\",\"method\":\"2\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1790942400000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+  },
+  "fixtureRecords": {
+    "providerJobs": [
+      {
+        "id": 0,
+        "kind": "coarse-stream",
+        "url": "https://get.geojs.io/v1/ip/geo.json",
+        "route": "/failure",
+        "state": "native-fetch",
+        "signalAborted": false,
+        "headersReturned": true,
+        "http": 503
+      },
+      {
+        "id": 1,
+        "kind": "coarse-stream",
+        "url": "https://ipinfo.io/json",
+        "route": "/failure",
+        "state": "native-fetch",
+        "signalAborted": false,
+        "headersReturned": true,
+        "http": 503
+      }
+    ],
+    "gpsCalls": [],
+    "copyJobs": [],
+    "fallbackCalls": [],
+    "errors": [],
+    "storageEvents": [
+      [
+        "get",
+        "salah_widget:config:v1"
+      ],
+      [
+        "get",
+        "salah_widget:config:v1"
+      ],
+      [
+        "set",
+        "__sw_probe__"
+      ],
+      [
+        "remove",
+        "__sw_probe__"
+      ],
+      [
+        "set",
+        "salah_widget:config:v1"
+      ],
+      [
+        "get",
+        "salahwx:30|31|f"
+      ],
+      [
+        "get",
+        "salah:30|31|America/New_York|2|0"
+      ],
+      [
+        "get",
+        "salah:30|31|America/New_York|2|0"
+      ],
+      [
+        "set",
+        "salah:30|31|America/New_York|2|0"
+      ],
+      [
+        "set",
+        "__sw_probe__"
+      ],
+      [
+        "remove",
+        "__sw_probe__"
+      ],
+      [
+        "set",
+        "__sw_probe__"
+      ],
+      [
+        "remove",
+        "__sw_probe__"
+      ],
+      [
+        "set",
+        "__sw_probe__"
+      ],
+      [
+        "remove",
+        "__sw_probe__"
+      ],
+      [
+        "set",
+        "__sw_probe__"
+      ],
+      [
+        "remove",
+        "__sw_probe__"
+      ]
+    ]
+  },
+  "fontStatus": "settled",
+  "screenshot": "31-widget-native-fail.png"
+}

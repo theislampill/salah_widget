@@ -1,0 +1,121 @@
+{
+  "capturedAtUtc": "2026-10-09T00:41:33.445065+00:00",
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/30",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/30/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/30/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/30/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/30",
+    "id": 5381809062,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfjpg",
+    "number": 30,
+    "title": "R001E: Allow valid equator and prime-meridian coordinates to reach weather and radar acquisition",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 0,
+    "created_at": "2026-09-08T03:56:59Z",
+    "updated_at": "2026-09-08T06:25:33Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-030 -->\n# R001E — Preserve valid zero-axis coordinates at weather/radar dispatch\n\n**Repository-local identity:** `R001E` in `theislampill/salah_widget`; existing tracker [#30](https://github.com/theislampill/salah_widget/issues/30). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-030. Existing tracker: https://github.com/theislampill/salah_widget/issues/30. Priority P2; corrective input-domain repair. This work order changes two acquisition guards, not prayer-provider policy, location selection or weather calibration. It does not authorize implementation, commit or deployment by itself.\n\n## Re-anchor the actual target\n\nThe observed main baseline is `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; audit branch `9d9c43649748555afbe09e3ca49bc47db2d7e7bb` has the same relevant guards and is evidence, not a merge instruction. Main `index.html` SHA256 is `446453b522f56f5f1bc0afd1a3abd09b73756754fa58a6b3b0ff09ce953a2eec`; audit SHA256 is `464f8eef80a67f337cb0e323b8b79a90b7c445ff57a9c38cb3497eec729f4ef2`.\n\nBefore an authorized repair, run `git remote -v`, `git rev-parse --show-toplevel`, `git rev-parse HEAD`, and `git status --porcelain=v1 --untracked-files=all`. Confirm this is `theislampill/salah_widget`, preserve unrelated work and compare the current `index.html`, `config.js` and `tests/smoke.html` against the pinned main. Re-anchor the functions below by name if lines moved. Stop for reconciliation if another owner has already changed coordinate capture, admission or dispatch; do not blindly apply the old hunk.\n\nPublic source owners:\n\n- [`fetchWeather`, including its guard and query construction](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L771-L779).\n- [`fetchRadar`, manifest dispatch and tile construction](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L816-L840).\n- [`SalahConfig.normalize` and `validate`](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/config.js#L69-L100), which already admit numeric zero.\n- [`tests/smoke.html`](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/tests/smoke.html), the integration-test owner; changes must retain required-test accounting and storage isolation.\n\n## Incident and evidence limits\n\nA controlled-source audit executed the actual bounded `fetchWeather` and `fetchRadar` functions from both pinned trees, with recorded fetch/Image/canvas/storage stand-ins and a fixed clock. It also ran the real configuration normalization/validation. The decisive results were:\n\n| Runtime latitude, longitude | Configuration valid | Combined weather + radar-manifest dispatches |\n|---|---:|---:|\n|0,30|yes|0|\n|30,0|yes|0|\n|0,0|yes|0|\n|0.000001,30|yes|2|\n\nThe nonzero control distinguishes coordinate truthiness from a general network, busy-state or fixture failure. Both axes are independently causal. This is exact-source dispatch evidence; the original zero fixture's fetch stand-in returned an empty object, so it does not prove weather payload admission, successful radar image loading, live coverage or correct rendered conditions.\n\nThe causal chain is short but consequential: valid numeric zero enters runtime state → `!lat || !lon` treats zero as absent → acquisition returns before building/issuing either request → no provider has an opportunity to answer. Changing only the configuration validator cannot repair this because validation already succeeded. The defect can affect a valid equator or prime-meridian location independently of its climate or selected calculation method.\n\nA separate dated Aladhan observation must not be conflated with this local gate. On2026-09-07, the timings endpoint for07-09-2026, method2/school0 returned HTTP400 for `(0,0)`, `(0,-78.4678)` and `(51.4769,0)`;0.01-degree neighbours returned HTTP200 in the recorded follow-up, while reported0.000001-degree neighbours did not. Those are historical prayer-provider snapshots, not a current or permanent service guarantee. This issue neither fixes that provider nor authorizes moving the user's coordinates. A successful weather repair must not be advertised as complete zero-axis prayer support.\n\n## Intended invariant and smallest repair\n\nFor already normalized runtime coordinates, an eligible acquisition accepts finite numeric latitude in[-90,90] and longitude in[-180,180], including positive and negative zero. It rejects absent, nonnumeric, nonfinite and out-of-domain direct runtime values. Coordinate validity remains separate from busy, simulation and retry/throttle eligibility; those clauses keep their existing behavior.\n\nReplace only the two truthiness predicates with the existing usable-coordinate contract if one is actually shared at the repair head, otherwise a small local predicate equivalent to:\n\n```js\nconst usableCoordinates = (la, lo) =>\n  typeof la === 'number' && Number.isFinite(la) && la >= -90 && la <= 90 &&\n  typeof lo === 'number' && Number.isFinite(lo) && lo >= -180 && lo <= 180;\n```\n\nThis is proposed design, not a shipped helper. Both real acquisition call paths must consume it; merely exporting or unit-testing an unused helper does not repair dispatch. If [R0003](https://github.com/theislampill/salah_widget/issues/3) has established immutable request context, validate and construct the request from that same captured coordinate pair. Do not validate one global pair then issue with a later different pair.\n\nKeep existing query serialization, units/timezone parameters, manifest address and tile geometry. Do not replace coordinates with epsilon, convert valid zero to a fallback place, broaden network retry, add a provider, alter calculation methods or change the persisted configuration schema.\n\nAn important compatibility boundary: the current `normalize` intentionally clamps some raw out-of-range values. The preserved normalizer controls include100/200→90/180 and Infinity/-Infinity→90/-180. Therefore direct-runtime negative guard cases below do **not** assert that all raw form/hash inputs must now be rejected. The normal configuration path retains its established coercion/clamping behavior. A raw hash string`\"0\"` may normalize to numeric0; the runtime predicate does not need to accept arbitrary unnormalized strings. Changing that normalization policy is a different owner decision.\n\n## Construct a deterministic RED without private files or live services\n\nUse an isolated test harness, never the owner's stored settings or public origin. Execute the actual functions from the checked-out source with controlled dependencies; copied guard logic alone is not the RED. A VM/fixture harness may expose these two functions and the runtime variables without executing boot or real network calls. Keep that fixture's extraction/entry boundary explicit and fail if either real function is missing.\n\nSet `Date.now()` to `Date.parse('2026-09-07T21:00:00Z')`, `SIM.wx=null`, `ADVANCING=false`, units`c`, timezone`UTC`, weather/track/radar state empty, busy flags false and last-attempt/success clocks0. Recreate all state for every coordinate pair. Replace fetch with a recorder that appends the actual URL and returns a resolved fake response; provide inert Image/canvas/storage dependencies. Await weather and radar invocation settlement rather than assuming one microtask is enough.\n\nInvoke `fetchWeather()` and `fetchRadar()` once for each table row. Baseline expected RED: the three zero-axis pairs dispatch nothing; the tiny nonzero control dispatches two requests. Record the actual function/source identity and observed calls. If the nonzero control fails, repair the harness or classify environmental/ownership drift before claiming the product defect reproduced.\n\nFor the corrected guard discriminator, assert actual weather query values, not a URL reconstructed from input after the fact:\n\n```js\nconst u = new URL(recordedWeatherRequest);\nassert.equal(u.origin + u.pathname, 'https://api.open-meteo.com/v1/forecast');\nassert.equal(u.searchParams.get('latitude'), String(expectedLatitude));\nassert.equal(u.searchParams.get('longitude'), String(expectedLongitude));\nassert.equal(u.searchParams.get('wind_speed_unit'), 'ms');\n```\n\nZero must serialize as`\"0\"`; no epsilon is permitted. Temperature-unit/timezone assertions must reflect the actual captured config and any accepted sibling change. The first radar request is exactly`https://api.rainviewer.com/public/weather-maps.json`; it has no coordinate query parameters. Coordinate preservation for radar is proved at its subsequent tile request.\n\nExtend that same harness with a healthy status200 radar manifest:\n\n```js\nconst nowSec = Date.parse('2026-09-07T21:00:00Z') / 1000;\nconst manifest = {\n  generated: nowSec,\n  host: 'https://tilecache.rainviewer.com',\n  radar: { past: [{ time: nowSec, path: '/v2/radar/' + nowSec }] }\n};\n```\n\nHave the fake Image capture its assigned `src` and settle predictably with an inert canvas. The current tile path is`host + path + '/256/6/' + xt + '/' + yt + '/2/1_1.png'`. Independently compute integer Web-Mercator indices at zoom6; proposed expected controls are `(0,30)→(37,32)`, `(30,0)→(32,26)` and `(0,0)→(32,32)`. Verify those expectations when constructing the fixture; no saved audit execution of these full tile controls is claimed. Do not assert that a fake image proves real precipitation, calibration or tile coverage.\n\n## Ordered implementation and integration\n\n1. Re-anchor source and retain the three REDs plus their nonzero control. Record normalization separately from acquisition.\n2. Replace both local guard predicates, preserving every other eligibility clause. If sharing a tiny predicate, prove both functions reach it and it consumes the same request context as URL/tile construction.\n3. Run actual dispatch/query and healthy-manifest tile controls, then direct-invalid/busy/SIM/throttle controls. A state where weather accepts zero but radar still returns early is partial, not done.\n4. Join the shared weather/radar hunks through one source integrator with [R0003](https://github.com/theislampill/salah_widget/issues/3), [R000B](https://github.com/theislampill/salah_widget/issues/11), [R000C](https://github.com/theislampill/salah_widget/issues/12), [R000D](https://github.com/theislampill/salah_widget/issues/13) and [R000E](https://github.com/theislampill/salah_widget/issues/14). This is a shared-write constraint, not a whole-issue blocking predecessor. Data admission, source age, bounded attempt cleanup and radar authority retain their existing owners.\n5. Run one disposable-origin browser acquisition/consumer fixture using a healthy response conforming to the actual weather admission contract at that combined head. Check the consumed header condition and `.c.dataset.fx` at a zero-axis location. No live provider is needed to qualify local dispatch. Keep unavailable prayer data explicitly unavailable if the independent prayer path rejects the location.\n6. Re-run existing relevant smoke controls and retain source/response/URL/image/consumer receipts. Preserve fixed325×530 composition, header/footer visibility and existing moon/motion behavior; this predicate repair provides no new renderer-art PASS.\n\n## Acceptance matrix and false-green controls\n\n| Case | Required final evidence | False green rejected |\n|---|---|---|\n|Each of the three zero-axis pairs|One weather and one manifest request per independent eligible fixture; exact coordinate strings|Configuration validation alone, or testing only one axis|\n|Ordinary and tiny nonzero controls|Existing dispatch remains eligible|A harness that suppressed all requests|\n|Direct null/undefined/NaN/±Infinity or range violation|No dispatch from invalid runtime state|Truthiness replacement that admits every nonzero value|\n|String`\"0\"` through real config normalization|Numeric0 reaches acquisition|Accidentally redefining accepted hash input as invalid|\n|Busy, explicit simulated weather, existing cooldown|Existing duplicate/forbidden request suppression remains|Bypassing the rest of either guard to obtain a green zero test|\n|Captured context changes mid-request|URL and later radar tile use the dispatched coordinate pair|Guard checks old pair but tile reads new globals|\n|Healthy manifest|Actual assigned tile URL has the correct zoom6 indices and unchanged zero coordinate geometry|Asserting a separately constructed expected URL without observing Image.src|\n|One zero-axis healthy weather response|Real browser consumer sees admitted current fixture data|Network recorder count reported as successful rendering|\n|Independent mutants|Restoring old truthiness in weather alone fails weather zero controls; restoring it in radar alone fails radar controls|A combined assertion that never reaches one function|\n|Prayer-provider failure|Weather dispatch can pass while prayer support remains explicitly unproved/unavailable|Epsilon location changes or blanket support claims|\n\nRun negative/mutation controls in an isolated authorized fixture or review worktree. The owner's application checkout and browser settings must not become a test scratchpad. Historical RED evidence is already available, but all proposed corrected and mutation outcomes require actual future execution before implementation closure.\n\n## Alternatives, public effects, rollback and closure\n\nInput truthiness is the wrong abstraction for geographical coordinates. Epsilon substitution changes the requested place and still lacks a reliable provider guarantee. A configuration-only “allow zero” patch misses both real early returns. Removing the entire guard risks overlap with busy/throttle/simulation and request-ownership protections. A broad acquisition refactor or new validation library has substantially more regression surface than these two predicates.\n\nIMPLEMENTAUDIT R001D: the affected shipped source is`index.html`; integration tests own actual dispatch/consumer evidence. `config.js` is a compatibility control unless the current-head contract requires a narrowly reconciled caller change. No builder format, preset, installer, dependency or generated artifact changes are expected. Update README/help only if an existing support claim would otherwise overstate prayer-provider behavior; the documentation integrator owns shared prose. Public/Pages source readback is required only when a later authorized deployment is claimed, not as evidence that this work order was filed.\n\nStop on conflicting request-context changes, failed nonzero controls, invalid-coordinate requests, altered normalized coordinates or a broader provider-policy requirement. If the narrow guard change causes a regression, revert only that change in the authorized implementation workspace and retain the failing control; do not “recover” by silently moving the location. A rollback may reinstate the known zero-dispatch defect and must be reported as such, not as successful functional repair.\n\nDone requires both acquisition owners repaired, final-tree RED→GREEN plus controls/mutants recorded, shared-hunk integration reviewed, and actual bounded browser consumer evidence separated from live service limitations. Missing radar or invalid-input coverage is partial completion. Use a non-closing `Implements #30` link for a future authorized PR; publish an evidence comment before manual issue closure. No implementation, PR, deployment or closure is performed by this publication campaign.\n\nThe invariant is distinct from weather response validity, liveness, age and calibration: valid location0must reach eligible dispatch. Preserved weather W001 and the dated provider zero-axis observations supply provenance; their decision-relevant inputs and limits are included above so a cold executor does not need the private campaign archive.\n\nMethodology references (separate repository, not Salah work owners): [R001D in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/155).\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/30/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/30/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [],
+  "events": [
+    {
+      "id": 30733562258,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfjps8AAAAHJ9zxkg",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733562258",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:33Z",
+      "rename": {
+        "from": "SW-030: Allow valid equator and prime-meridian coordinates to reach weather and radar acquisition",
+        "to": "R001E: Allow valid equator and prime-meridian coordinates to reach weather and radar acquisition"
+      },
+      "performed_via_github_app": null
+    }
+  ],
+  "contract": {
+    "canonicalId": "R001E",
+    "bodySha256": "80348cc5d90f755000e0b27b771c0d4d5770fa09e54afc0b8918f397e06d17e0",
+    "updatedAt": "2026-09-08T06:25:33Z",
+    "commentRevisions": []
+  }
+}

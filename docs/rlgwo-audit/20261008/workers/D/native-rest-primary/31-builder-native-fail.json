@@ -1,0 +1,214 @@
+{
+  "name": "31-builder-native-fail",
+  "status": "MACHINE_CHECKS_PASS_VISUAL_REVIEW_PENDING",
+  "options": {
+    "page": "builder",
+    "seed": "none",
+    "stream": "fail"
+  },
+  "checks": [
+    {
+      "name": "exact current script guards and isolated hooks initialize",
+      "passed": true,
+      "detail": {
+        "state": "ready",
+        "error": null,
+        "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+        "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+        "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+        "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+        "scriptCount": 2,
+        "bodiesPreserved": true,
+        "storageIsolated": true,
+        "clockFixed": true
+      }
+    },
+    {
+      "name": "native failed builder offers manual recovery",
+      "passed": true,
+      "detail": {
+        "inputs": {
+          "label": "Madinah",
+          "lat": "24.4672",
+          "lon": "39.6142",
+          "method": "4",
+          "school": "0",
+          "time": "24",
+          "units": "f",
+          "appearance": "glass",
+          "dfcode": "YYYY-MM-DD"
+        },
+        "config": null,
+        "status": "Couldn’t detect — type a place, or click the pin for browser location.",
+        "pin": {
+          "classes": "geo-pin off",
+          "title": "Configured site — click to request browser location",
+          "name": "Configured site — click to request browser location"
+        },
+        "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+        "previewSrc": "http://127.0.0.1:54231/?r=0#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass",
+        "savedBytes": null
+      }
+    },
+    {
+      "name": "exhaustion uses exactly two failed providers",
+      "passed": true,
+      "detail": {
+        "jobs": [
+          {
+            "id": 0,
+            "kind": "coarse-stream",
+            "url": "https://get.geojs.io/v1/ip/geo.json",
+            "route": "/failure",
+            "state": "native-fetch",
+            "signalAborted": false,
+            "headersReturned": true,
+            "http": 503
+          },
+          {
+            "id": 1,
+            "kind": "coarse-stream",
+            "url": "https://ipinfo.io/json",
+            "route": "/failure",
+            "state": "native-fetch",
+            "signalAborted": false,
+            "headersReturned": true,
+            "http": 503
+          }
+        ],
+        "ledger": [
+          {
+            "path": "/failure",
+            "headersAt": 1791510851843,
+            "closedAt": 1791510851843,
+            "completed": true
+          },
+          {
+            "path": "/failure",
+            "headersAt": 1791510851850,
+            "closedAt": 1791510851850,
+            "completed": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "no unhandled or unexpected sink errors",
+      "passed": true,
+      "detail": {
+        "pageErrors": [],
+        "outsideRequests": [],
+        "fixtureErrors": []
+      }
+    }
+  ],
+  "snapshots": {},
+  "clipboard": [],
+  "pageErrors": [],
+  "outsideRequests": [],
+  "ledgerStart": 16,
+  "entry": "http://127.0.0.1:54231/audit/r0023-current-native.html?detect=success&seed=none&gps=unsupported&page=builder&stream=fail",
+  "fixtureIdentity": {
+    "state": "ready",
+    "error": null,
+    "target": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "source": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "scriptCount": 2,
+    "bodiesPreserved": true,
+    "storageIsolated": true,
+    "clockFixed": true
+  },
+  "elapsedConsumerSeconds": 0.40600000001722947,
+  "nativeStreamJobs": [
+    {
+      "id": 0,
+      "kind": "coarse-stream",
+      "url": "https://get.geojs.io/v1/ip/geo.json",
+      "route": "/failure",
+      "state": "native-fetch",
+      "signalAborted": false,
+      "headersReturned": true,
+      "http": 503
+    },
+    {
+      "id": 1,
+      "kind": "coarse-stream",
+      "url": "https://ipinfo.io/json",
+      "route": "/failure",
+      "state": "native-fetch",
+      "signalAborted": false,
+      "headersReturned": true,
+      "http": 503
+    }
+  ],
+  "nativeStreamLedger": [
+    {
+      "path": "/failure",
+      "headersAt": 1791510851843,
+      "closedAt": 1791510851843,
+      "completed": true
+    },
+    {
+      "path": "/failure",
+      "headersAt": 1791510851850,
+      "closedAt": 1791510851850,
+      "completed": true
+    }
+  ],
+  "finalApplication": {
+    "inputs": {
+      "label": "Madinah",
+      "lat": "24.4672",
+      "lon": "39.6142",
+      "method": "4",
+      "school": "0",
+      "time": "24",
+      "units": "f",
+      "appearance": "glass",
+      "dfcode": "YYYY-MM-DD"
+    },
+    "config": null,
+    "status": "Couldn’t detect — type a place, or click the pin for browser location.",
+    "pin": {
+      "classes": "geo-pin off",
+      "title": "Configured site — click to request browser location",
+      "name": "Configured site — click to request browser location"
+    },
+    "code": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://127.0.0.1:54231/#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+    "previewSrc": "http://127.0.0.1:54231/?r=0#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass",
+    "savedBytes": null
+  },
+  "fixtureRecords": {
+    "providerJobs": [
+      {
+        "id": 0,
+        "kind": "coarse-stream",
+        "url": "https://get.geojs.io/v1/ip/geo.json",
+        "route": "/failure",
+        "state": "native-fetch",
+        "signalAborted": false,
+        "headersReturned": true,
+        "http": 503
+      },
+      {
+        "id": 1,
+        "kind": "coarse-stream",
+        "url": "https://ipinfo.io/json",
+        "route": "/failure",
+        "state": "native-fetch",
+        "signalAborted": false,
+        "headersReturned": true,
+        "http": 503
+      }
+    ],
+    "gpsCalls": [],
+    "copyJobs": [],
+    "fallbackCalls": [],
+    "errors": [],
+    "storageEvents": []
+  },
+  "fontStatus": "settled",
+  "screenshot": "31-builder-native-fail.png"
+}

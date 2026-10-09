@@ -1,0 +1,142 @@
+{
+  "schema": "request-mutation-equivalence/1",
+  "status": "PASS FOR SCOPED ORIGINAL OWNERSHIP ORACLES; LEGACY MUTANTS CONTAINED",
+  "targetCommit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+  "fixtureSha256": "e096af17b42157423bc268782386ad141e60f5319180c3e232ce7cb89ed7eb2b",
+  "environment": {
+    "node": "v22.16.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "preciseInvariant": "Production key components lat/lon/_cacheTz/method/school/units are assigned before acquisition at initialization, before acquisition after guarded coarseDetect, or by applyConfig only after beginRuntimeGeneration invalidates prior slots. Eligible old-generation continuations cannot reach persistence. Same-generation accepted prayer timezone discovery mutates tz but not frozen _cacheTz; it cannot change either key. Therefore current global key and captured key agree at reachable accepted commits, while old-generation commits are rejected before key selection.",
+  "replacementDiscriminators": "Actual applyConfig deferred A→B, B succeeds then old A, exact winning timezone/Asr/cache/error and slot identity; existing independently executed method/school/ABA/finally/abort tests; weather actual request/body/attempt consumers with production generation/reset order. The invariant is bounded to current product callers, not arbitrary script writes to private globals.",
+  "sourceRanges": [
+    {
+      "path": "src/native/index.html",
+      "start": 673,
+      "end": 698
+    },
+    {
+      "path": "src/native/index.html",
+      "start": 999,
+      "end": 1058
+    },
+    {
+      "path": "src/native/index.html",
+      "start": 1060,
+      "end": 1095
+    },
+    {
+      "path": "src/native/index.html",
+      "start": 1128,
+      "end": 1154
+    },
+    {
+      "path": "src/native/index.html",
+      "start": 1355,
+      "end": 1385
+    },
+    {
+      "path": "src/native/index.html",
+      "start": 3251,
+      "end": 3288
+    },
+    {
+      "path": "src/native/index.html",
+      "start": 3310,
+      "end": 3327
+    },
+    {
+      "path": "src/native/index.html",
+      "start": 3355,
+      "end": 3367
+    }
+  ],
+  "receipts": [
+    {
+      "variant": "original",
+      "sourceSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",
+      "expected": "B succeeds through actual apply/load/adoption/render; late A changes no zone/state/cache/error/slot",
+      "observed": {
+        "winner": "B-current",
+        "zone": "America/New_York",
+        "asr": "15:30",
+        "acceptedKeyWrites": [
+          {
+            "key": "salah:40.71|-74.01|UTC|2|0",
+            "captured": "salah:40.71|-74.01|UTC|2|0",
+            "current": "salah:40.71|-74.01|UTC|2|0",
+            "generation": 2
+          }
+        ],
+        "lateChanges": false
+      },
+      "disposition": "positive original behavioral oracle passed"
+    },
+    {
+      "variant": "legacy-prayer-global-key",
+      "sourceSha256": "519911069561427b0b59f83954f7290582f7f0e2f01c1e77f5743dd1732a11e5",
+      "expected": "B succeeds through actual apply/load/adoption/render; late A changes no zone/state/cache/error/slot",
+      "observed": {
+        "winner": "B-current",
+        "zone": "America/New_York",
+        "asr": "15:30",
+        "acceptedKeyWrites": [
+          {
+            "key": "salah:40.71|-74.01|UTC|2|0",
+            "captured": "salah:40.71|-74.01|UTC|2|0",
+            "current": "salah:40.71|-74.01|UTC|2|0",
+            "generation": 2
+          }
+        ],
+        "lateChanges": false
+      },
+      "disposition": "Single legacy mutation inert under independent unchanged transport/adoption ownership fences; not a killed-mutation claim"
+    },
+    {
+      "variant": "remove-first-loader-zone-guard",
+      "sourceSha256": "82b5d4ea2fb1300c5009fcc40c4275766248b5b2090435fb3e859d0126921706",
+      "expected": "B succeeds through actual apply/load/adoption/render; late A changes no zone/state/cache/error/slot",
+      "observed": {
+        "winner": "B-current",
+        "zone": "America/New_York",
+        "asr": "15:30",
+        "acceptedKeyWrites": [
+          {
+            "key": "salah:40.71|-74.01|UTC|2|0",
+            "captured": "salah:40.71|-74.01|UTC|2|0",
+            "current": "salah:40.71|-74.01|UTC|2|0",
+            "generation": 2
+          }
+        ],
+        "lateChanges": false
+      },
+      "disposition": "Single legacy mutation inert under independent unchanged transport/adoption ownership fences; not a killed-mutation claim"
+    },
+    {
+      "variant": "legacy-weather-global-key",
+      "sourceSha256": "95c3063194e4a0335cab57429df5e532566c70fcb92773cfcdd7a68ee0bd2a4c",
+      "expected": "Legitimate generation replacement permits London/Fahrenheit; stale Madinah/Celsius cannot commit or persist",
+      "observed": {
+        "temperature": 68,
+        "units": "f",
+        "acceptedKeyWrites": [
+          {
+            "key": "salahwx:51.48|-0.001|f",
+            "captured": "salahwx:51.48|-0.001|f",
+            "current": "salahwx:51.48|-0.001|f",
+            "generation": 1
+          }
+        ],
+        "lateChanges": false
+      },
+      "disposition": "Single legacy mutation inert under unchanged request/attempt ownership before persistence; recording weather boundary uses the exact production generation/reset sequence, not an unfenced direct global edit. Actual settings browser proof remains absent."
+    }
+  ],
+  "limitations": [
+    "No actual browser, pixels or live provider claim",
+    "No false negative-control kill claim; these original single-guard mutants are contained by later architecture",
+    "Arbitrary direct global edits without the accepted configuration fence would violate the product interface and are not manufactured as a defect"
+  ]
+}
