@@ -22,18 +22,22 @@ test('head presentation accepts only a resolved site and native ordinary wall ti
  }finally{Date.now=now;for(const [k,v] of Object.entries(restore))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });
 
-test('boot republishes the accepted preview after native scene invalidation before yielding to prayer transport',()=>{
+test('boot republishes the accepted preview after native scene invalidation before yielding to prayer transport',async()=>{
  const source=fs.readFileSync(new URL('../../src/native/index.html',import.meta.url),'utf8');
  const boot=source.slice(source.indexOf('async function boot(){'),source.indexOf('// SINGLE rAF render clock'));
- const events=[];let visible=true;
+ const events=[],frames=[],tasks=[];let visible=true;
  const context={_runtimeGeneration:0,_cfgMode:'bare',QA:false,lat:28.5,lon:-81.4,
   beginSkyScene(){},simulationReady:()=>true,buildSceneOnce(){},renderMoon(){},startWeather(){events.push('weather');},
   // paint() invalidates the bootstrap scene when it first adopts its scene key.
   render(){visible=false;events.push('native-render');},
   window:{SalahSkyPreview:{update(){visible=true;events.push('preview');}}},
+  requestAnimationFrame:cb=>frames.push(cb),MessageChannel:class{constructor(){this.port1={close(){}};this.port2={close(){},postMessage:()=>tasks.push(()=>this.port1.onmessage())};}},fetchWeather(){},fetchRadar(){},
   loadPrayerData(){events.push('prayer-await');return new Promise(()=>{});},startRenderLoop(){}};
  vm.createContext(context);vm.runInContext(boot+'\nboot();',context);
  assert.equal(visible,true,'A valid daytime sky must exist at the first asynchronous yield');
+ assert.deepEqual(events,['weather','native-render','preview']);
+ frames.shift()();frames.shift()();tasks.shift()();await Promise.resolve();
+ assert.equal(visible,true,'Provider acquisition must not withdraw the already-published scene');
  assert.deepEqual(events,['weather','native-render','preview','prayer-await']);
 });
 

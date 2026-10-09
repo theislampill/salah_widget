@@ -1,4 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
+import fs from 'node:fs';import vm from 'node:vm';
 const mod=await import('../../real-sky/native-assets.mjs').catch(()=>({}));
 const tick=async()=>{for(let i=0;i<8;i++)await Promise.resolve();};
 function harness(options={}){assert.equal(typeof mod.NativeAssetLoader,'function','Optional native asset loader exists');const loads=[],started=[],states=[],resets=[];const loader=new mod.NativeAssetLoader({load:signal=>new Promise((resolve,reject)=>loads.push({signal,resolve,reject})),start:pack=>{started.push(pack);},onState:s=>states.push(s),onReset:()=>resets.push(true),timeoutMs:1000,...options});return{loader,loads,started,states,resets};}
@@ -15,4 +16,20 @@ test('retry supplies a distinct generation to the request factory so pending scr
  const loader=new mod.NativeAssetLoader({load:async(_signal,generation)=>{generations.push(generation);return {};},start:()=>{}});
  await loader.retry();await loader.retry();
  assert.deepEqual(generations,[1,2]);loader.dispose();
+});
+
+test('optional full pack yields a first presentation opportunity and deferred start is revocable',async()=>{
+ const source=fs.readFileSync(new URL('../../real-sky/native-assets.mjs',import.meta.url),'utf8').replaceAll('export ','');
+ for(const cancel of [false,true]){
+  let id=0;const frames=new Map(),started=[];
+  const w={__SALAH_REAL_SKY_PACK__:{catalogue:'fixture'},SalahStarBootstrap:{},SalahMoonInitial:{},addEventListener(){},removeEventListener(){}};
+  const c={window:w,AbortController,URL,setTimeout,clearTimeout,requestAnimationFrame:f=>(frames.set(++id,f),id),cancelAnimationFrame:n=>frames.delete(n),document:{querySelector:()=>null,createElement:()=>({setAttribute(){},remove(){}})}};
+  vm.createContext(c);vm.runInContext(source,c);c.startNativeSkyAssets(p=>started.push(p),'http://example.test/native-sky.js');
+  assert.equal(started.length,0,'full catalogue must not preempt the initial presentation');
+  const frame=()=>{const queued=[...frames.values()];frames.clear();queued.forEach(f=>f());};
+  frame();await tick();assert.equal(started.length,0,'first rAF precedes a paint, not proves one occurred');
+  if(cancel)w.SalahRealSkyAssets.dispose();
+  frame();await tick();assert.equal(started.length,cancel?0:1);
+  w.SalahRealSkyAssets.dispose();
+ }
 });

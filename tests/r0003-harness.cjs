@@ -24,7 +24,7 @@ function harness(options={}){
   const raw=options.source||source();
   const slice=(a,b)=>between(raw,a,b);
   let elapsed=0,wall=Date.parse(options.epoch||"2026-09-07T12:00:00Z"),serial=0,context;
-  const timers=new Map(),frames=new Map(),nodes=new Map(),storage=new Map(),reads=[],writes=[],requests=[],paints=[],errors=[],skyBuilders=[],cloudClears=[];
+  const timers=new Map(),frames=new Map(),tasks=[],nodes=new Map(),storage=new Map(),reads=[],writes=[],requests=[],paints=[],errors=[],skyBuilders=[],cloudClears=[];
   class ClockDate extends Date {constructor(...a){super(...(a.length?a:[wall]));}static now(){return wall;}}
   function run(code){return vm.runInContext(code,context,{timeout:300});}
   function state(){return copy(run("({today,tomorrow,tz,lat,lon,method,school,lastDate,fetchingTomorrow,_prayerStale,_loopStarted})"));}
@@ -59,6 +59,7 @@ function harness(options={}){
     location:{hash:options.hash||"#lat=10&lon=10&tz=UTC&method=2"},
     setTimeout:(fn,ms=0)=>{const id=++serial;timers.set(id,{at:elapsed+Number(ms),fn});return id;},clearTimeout:id=>timers.delete(id),
     requestAnimationFrame:fn=>{const id=++serial;frames.set(id,fn);return id;},cancelAnimationFrame:id=>frames.delete(id),
+    MessageChannel:class{constructor(){this.port1={close(){}};this.port2={close(){},postMessage:()=>tasks.push(()=>this.port1.onmessage())};}},
     document,
     // Accepted calendar rendering skips unchanged text writes. Observe each valid
     // actual render at its existing lower theme consumer, after date projection.
@@ -90,19 +91,25 @@ function harness(options={}){
     slice("let _starEls=[],","function refreshStarAppearance(A){")+"\n"+
     slice("function skySceneIdentity(){","function commitSkyScene(A){")+"\n"+
     slice("let _cloudFieldSeed=0;","function advanceCloudMotion(civilSeconds){")+"\n"+
+    slice("function lunarPresentation(","function atmosphere(M){")+"\n"+
     slice("// ---- state ----","// ---- continuous time-of-day sky")+"\n"+
     slice("function solarElevationDeg(M,a){","function sunAltAt(M,a){")+"\n"+
     slice("let _lastBolt=-1, _lastRender=null;","function updateSimClock(n){")+"\n"+
     slice("let _loopStarted=false;","// ——————————————————————— in-widget settings"));
   async function advance(to){assert.ok(to>=elapsed);let budget=0;while(true){await settle();const next=[...timers].filter(([,t])=>t.at<=to).sort((a,b)=>a[1].at-b[1].at)[0];if(!next)break;if(++budget>200)throw Error("fixture timer bound");const [id,t]=next;timers.delete(id);const at=Math.max(elapsed,t.at);wall+=at-elapsed;elapsed=at;t.fn();}wall+=to-elapsed;elapsed=to;await settle();}
   async function frame(){const pending=[...frames];frames.clear();for(const [,fn]of pending)fn(elapsed);await settle();}
+  // Transport tests begin after the explicit two rendering opportunities and
+  // posted task. Do not turn those callbacks into synchronous production work;
+  // dedicated critical-path tests retain and assert the intermediate states.
+  async function paintBoot(){await frame();await frame();while(tasks.length){tasks.shift()();await settle();}}
+  async function startBoot(){const pending=run("boot()");await paintBoot();return {pending};}
   return {run,state,storage,reads,writes,requests,paints,errors,nodes,document,timers,frames,advance,frame,settle,skyBuilders,cloudClears,
     wallBy:ms=>{wall+=ms;},elapse:ms=>{elapsed+=ms;wall+=ms;},elapsed:()=>elapsed,
     hide:()=>{sandbox.document.visibilityState="hidden";events.get("visibilitychange")?.();},
     show:()=>{sandbox.document.visibilityState="visible";events.get("visibilitychange")?.();},
     seed:(current,next=null)=>{sandbox.fixtureCurrent=copy(current);sandbox.fixtureNext=next&&copy(next);run("today=fixtureCurrent;tomorrow=fixtureNext;lastDate=today.date.gregorian.date;tz=today.meta.timezone;");},
     apply:cfg=>{sandbox.fixtureConfig=cfg;return run("applyConfig(fixtureConfig,{save:false})");},
-    boot:()=>run("boot()")};
+    boot:()=>run("boot()"),startBoot,paintBoot};
 }
 function cfg(lat,label=String(lat),extra={}){return {lat,lon:lat,tz:"UTC",label,method:"2",school:"0",time:"24",units:"f",datefmt:"YYYY-MM-DD",source:"manual",...extra};}
 function req(h,day="07-09-2026",lat=null){return h.requests.find(r=>r.url.includes(`/timings/${day}?`)&&(lat===null||new URL(r.url).searchParams.get("latitude")===String(lat)));}

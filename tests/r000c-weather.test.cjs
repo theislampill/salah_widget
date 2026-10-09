@@ -41,7 +41,7 @@ const runtime = [
   region('let _starEls=[],', 'function projectStars(date){'),
   region('function refreshStarAppearance(A){', 'function buildStars(){'),
   region('function skySceneIdentity(){', '// build the animated weather overlay'),
-  region('function atmosphere(M){', '// paint(A)'),
+  region('function lunarPresentation(', '// paint(A)'),
   region('function applyCloudState(A){', '// Size the present-prayer name'),
   // Joined calendar QA reads its actual last-painted declaration; older source has no such reader.
   ...(source.includes('let _lastDateTruth=') ? [region('let _lastDateTruth=', '\n')] : []),

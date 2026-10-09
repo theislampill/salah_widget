@@ -1,7 +1,8 @@
 # salah_widget — DESIGN
 
 A static Islamic prayer-times widget embedded as an iframe (e.g. in TablissNG).
-PR39/40/41 are deployed; PR42 repairs the current root without changing frozen V1. Native authoring
+PR42 is merged on main at `18ff1486`; this startup successor is a separate unmerged repair.
+Frozen V1 is unchanged. Native authoring
 lives in `src/native/`; `python tools/build_native.py` generates the root entries,
 worker and offline expansion. See [current ownership and qualification](docs/real-sky/INTEGRATION.md).
 The native design below predates CP9: synthetic star/glint producers are
@@ -10,8 +11,8 @@ motion claims do not qualify the new renderer.
 
 The deployed renderer includes the supplied V5 terrain Moon on CP9. Native phase,
 prayer and settings ownership is retained; a WebAssembly worker produces a
-terrain preview and then angular refinement. Deployed main still uses the original
-PBR during loading/failure. PR42 withholds that inferior substitution, retains
+terrain preview and then angular refinement. PR42 withholds the old PBR
+substitution during loading/failure, retains
 an independently current refined surface during replacement, and can bridge
 with the same full-spatial V5 terrain's explicitly labelled angular preview.
 The preview uses the same material, relief, Earthshine and display mapping;
@@ -27,6 +28,22 @@ See [Moon integration](docs/moon/INTEGRATION.md) and the
 [receiving qualification](docs/moon/QUALIFICATION.md) for measured latency,
 opaque composition, file entry and remaining limits. Final refinement takes
 seconds to minutes depending on browser; it is not a 60fps renderer.
+
+The bounded startup successor adds a separate initial quality tier. A lossless
+921-record subset of the same catalogue supplies the existing magnitude<=4.5
+preview without parsing the full diffuse pack. A deterministic 540px receiver
+representation derived from the unchanged V5 kernel/terrain/material supplies
+current canonical lunar presentation before full terrain acquisition. It stores
+no phase image, observer or clock. The native owner supplies current geometry;
+generation, seek, profile/reference and original displacement fences still apply.
+Initial solar visibility uses a bounded horizon approximation; finite Earth and
+off-plane terrain/refinement remain explicitly pending. Full quality is unchanged.
+See [contract and evidence](docs/real-sky/CELESTIAL_STARTUP_RLGWO.md).
+
+The settled bright-Moon left hotspot and grey wash remain an open display defect
+under [R0022-L1](docs/real-sky/R0022_L1_DISPLAY_INCREMENT.md). They are reproduced
+in baseline and candidate. Removing lunar scattering was only a labelled
+attribution control, not a product correction or accepted appearance target.
 
 PR42's immediate atmosphere and final sky share one explicit display policy:
 median atmospheric luminance metering and chromaticity-preserving compression.

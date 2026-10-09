@@ -6,7 +6,9 @@
 <title>Prayer Times</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap">
+<!-- Typography is optional: a slow font service cannot delay accepted sky/UI inputs.
+     The same stylesheet and existing fallback stack apply when it is available. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;background:transparent}
@@ -867,9 +869,16 @@ let ADVANCING = _tsParam!=null && TIMESCALE>0;          // a running fast-forwar
 let FOLLOW_WALL_CLOCK = _tsParam==null && SIM.time==null && TIMESCALE===1;
 let _clockPreview=false; // explicit runtime clock control retains forecast provenance while paused
 let _rafT0=_RAFNOW(), _simBase=null, _simTz=null, _simValid=true, _simInvalidTz=null;
+// Formatter construction appeared on the first-scene critical path dozens of
+// times. Reuse only its immutable zone/options; every call still projects the
+// supplied current UTC, including DST, seek and configuration changes.
+let _partsFormatter=null,_partsFormatterZone=null;
 function partsInTz(ms){
   try{
-    const f=new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+    if(!_partsFormatter||_partsFormatterZone!==tz){
+      _partsFormatter=new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});_partsFormatterZone=tz;
+    }
+    const f=_partsFormatter;
     const p={}; for(const part of f.formatToParts(new Date(ms))) p[part.type]=part.value;
     return {y:+p.year,mo:+p.month,d:+p.day,h:(+p.hour)%24,mi:+p.minute,s:+p.second,dateStr:`${p.day}-${p.month}-${p.year}`};
   }catch(e){
@@ -1723,8 +1732,11 @@ const _MTW=160,_MTH=80,_MN=300,_MR=144,_RELIEF=1.9,_EXPO=1.55;   // _MN 300: hea
 let _mAlb=null,_mNrm=null,_moonCv=null,_moonCtx=null,_moonOut=null,_pbrReady=false,_pbrPending=null,_lastPbrFrac=-1,_lastPbrWax=null;
 let _pbrFailed=false,_moonFallbackReady=false,_lastCalendarFrac=-1,_lastCalendarWax=null,_lastCalendarAlb=null,_lastCalendarUp=-1;
 (function loadMoonMaps(){
-  const fail=()=>{ _pbrFailed=true; _pbrReady=false; _renderDirty=true; if(_pbrPending!=null) renderMoonCalendarFallback(_pbrPending.frac,_pbrPending.waxing); updateSkySurface(); };
-  function grab(src,cb){ const im=new Image(); im.onerror=fail; im.onload=()=>{ try{ const cv=document.createElement("canvas"); cv.width=_MTW; cv.height=_MTH; const cx=cv.getContext("2d"); cx.drawImage(im,0,0,_MTW,_MTH); cb(cx.getImageData(0,0,_MTW,_MTH).data); }catch(e){ fail(); } }; im.src=src; }
+  // The generated V5 owner is installed before these image callbacks run.
+  // Its foreground never consumes the legacy maps; reading them back from the
+  // GPU can block its first complete scene despite the image being discarded.
+  const fail=()=>{ if(window.SalahMoonRuntime)return; _pbrFailed=true; _pbrReady=false; _renderDirty=true; if(_pbrPending!=null) renderMoonCalendarFallback(_pbrPending.frac,_pbrPending.waxing); updateSkySurface(); };
+  function grab(src,cb){ const im=new Image(); im.onerror=fail; im.onload=()=>{ if(window.SalahMoonRuntime)return; try{ const cv=document.createElement("canvas"); cv.width=_MTW; cv.height=_MTH; const cx=cv.getContext("2d"); cx.drawImage(im,0,0,_MTW,_MTH); cb(cx.getImageData(0,0,_MTW,_MTH).data); }catch(e){ fail(); } }; im.src=src; }
   const done=()=>{
     if(_mAlb&&_mNrm){ if(_pbrFailed) _renderDirty=true; _pbrReady=true; _pbrFailed=false; if(_moonFallbackReady) _lastPbrFrac=-1; _moonFallbackReady=false;
       if(_pbrPending!=null){ const p=_pbrPending; _pbrPending=null; renderMoonPBR(p.frac,p.waxing); }
@@ -2073,9 +2085,9 @@ function beginSkyScene(){
   if(_cloudCtx&&_cloudCv) _cloudCtx.clearRect(0,0,_cloudCv.width,_cloudCv.height);
   updateSkySurface();
 }
-// The terrain service publishes a current full-spatial V5 preview or refined
-// surface. Decoded legacy maps are not terrain readiness; quality stays explicit.
-// Prayer/sky remain usable while terrain initializes or recovers.
+// A current V5 receiver presentation is available in the first accepted paint;
+// full-spatial terrain preview/refinement replace it with explicit quality.
+// Decoded legacy maps are never terrain readiness.
 function updateSkySurface(){
   const c=$(".c"),photo=$(".mphoto"),mask=$(".moon-mask-disc");
   const ready=!!(window.SalahMoonRuntime?.surface() && photo && photo.getAttribute("href") && _skySceneKey!==null);
@@ -2534,7 +2546,9 @@ function _drawPuff(ctx,x,y,r,col,a){
 // clusters are active (broken → a few with gaps; overcast → many overlapping into a solid deck). Vertical shading
 // + sun/moon RIM light make them read as 3-D bodies. Drawn with ctx radial gradients (soft-but-defined edges).
 function paintClouds(t){
-  if(!_cloudCv){ _cloudCv=document.querySelector(".cloudcanvas"); if(!_cloudCv) return; _cloudCtx=_cloudCv.getContext("2d"); }
+  // Both sky and lunar joins read this small foreground each paint. CPU backing
+  // avoids a GPU fence/readback before the first scene; painting is unchanged.
+  if(!_cloudCv){ _cloudCv=document.querySelector(".cloudcanvas"); if(!_cloudCv) return; _cloudCtx=_cloudCv.getContext("2d",{willReadFrequently:true}); }
   const W=_cloudCv.width,H=_cloudCv.height,S=cloudState,ctx=_cloudCtx;
   ctx.clearRect(0,0,W,H);
   const cols=(_colDens&&_colDens.length===W)?_colDens:(_colDens=new Float32Array(W)); cols.fill(0);
@@ -2616,6 +2630,36 @@ function tieRainToClouds(){
 //   (2) lighting variables — sky luminance, horizon glow, moonlight, cloud underlight, wetness
 //   (3) presentation       — colours, opacities, durations, slants
 // Nothing here is keyed to a prayer NAME. paint(A) below is the ONLY place this state touches the DOM.
+// Lunar body presence/light uses accepted celestial inputs, independently of
+// timetable acquisition. Both initial and ordinary paint consume these SAME
+// expressions; a pending prayer request grants neither a phase nor moonlight.
+function lunarPresentation(solarElevation){
+  const mFrac=clamp(moonSky.frac),moonUp=clamp((moonSky.alt+2)/6);
+  const darkness=clamp(-(solarElevation+3)/9),phaseVis=clamp((mFrac-0.02)/0.05);
+  const moonObject=_pbrFailed?0:moonUp*darkness*phaseVis;
+  const moonLightEligible=moonObject>0;
+  const moonLightReason=_pbrFailed?"surface-unavailable":darkness===0?"daylight":moonUp===0?"below-horizon":phaseVis===0?"near-new":"eligible";
+  const moonLocalWash=moonLightEligible?clamp(mFrac*moonUp*1.15):0;
+  const moonGlow=moonLightEligible?(0.03+0.24*mFrac*mFrac):0;
+  const moonlight=moonObject*(0.35+0.65*mFrac),moonShow=clamp(darkness*1.8);
+  return {mFrac,moonUp,darkness,phaseVis,moonObject,moonLightEligible,moonLightReason,moonLocalWash,moonGlow,moonlight,moonStrength:moonlight,moonShow,moonPresence:moonShow};
+}
+function paintCelestialWithoutTimetable(){
+  const identity=skySceneIdentity(),sun=window.SalahNativeSkyHost?.cloudLighting?.()?.sun;
+  if(identity===null||!Number.isFinite(sun?.altDeg))return;
+  if(identity!==_skySceneKey){beginSkyScene();_skySceneKey=identity;}
+  const n=nowParts();if(moonGeometryObservation({nowMin:n.h*60+n.mi+n.s/60}).fresh!==true)renderMoon();
+  projectStars(simDate());
+  const a=lunarPresentation(sun.altDeg),c=$(".c");
+  c.style.setProperty("--moonfeat","1");c.style.setProperty("--moonocc","1");
+  c.style.setProperty("--moongrp",a.moonShow.toFixed(3));c.style.setProperty("--moonbeam",(0.6*a.moonlight).toFixed(3));
+  _skyMoonPresence=a.moonShow;window.SalahMoonRuntime?.request();updateSkySurface();
+  // Publish the native body and matching real catalogue in this synchronous
+  // turn. No prayer surrogate, sleep, fade or whole-card loading gate.
+  c.classList.remove("sky-pending");
+  // Preserve the existing first-theme transition suppression until paint(A)
+  // installs its complete palette; pending prayer data must not cause a fade.
+}
 function atmosphere(M){
   const day=isDayNow(M.nowMin);
   const decision=weatherDecision(),current=decision.record,code=decision.renderCode,info=weatherHeader(decision,day);
@@ -2630,28 +2674,16 @@ function atmosphere(M){
   const S=physSky(M, sm);                                       // sky colours DERIVED from solar elevation
   const D=wxDrivers(current);                                   // the same eligible snapshot supplies every weather consumer
   const airDrift=_airDrift();                                   // slow non-looping transparency/air-mass wander (0..1) — makes a clear sky breathe over 15–60 min
-  const mFrac=clamp(moonSky.frac);                             // phase AND altitude from the geometry this frame consumes
+  const {mFrac,moonUp,darkness,phaseVis,moonObject,moonLightEligible,moonLightReason,moonLocalWash,moonGlow,moonlight,moonStrength,moonShow,moonPresence}=lunarPresentation(sm.altDeg);
   // — lunar state (from the REAL ephemeris in moonSky, set by renderMoon). Three regimes: a real above-
   //   horizon lit night moon (bright disc + casts moonlight); a below-horizon/daytime faint calendar
   //   presence (no sky illumination); a near-new moon (nearly gone).
-  const moonUp=clamp((moonSky.alt+2)/6);                        // 1 = physically above the horizon
-  const darkness=clamp(-(sm.altDeg+3)/9);                       // night emerges over civil→nautical twilight
-  const phaseVis=clamp((mFrac-0.02)/0.05);                      // ~0 only at true new moon
-  const moonObject=_pbrFailed?0:moonUp*darkness*phaseVis;       // decoder-error calendar fallback grants no atmospheric lunar light
   // One physical permission for EVERY atmospheric lunar consumer. The near-new cutoff is a renderer
   // eligibility rule, not literal zero lunar-surface radiance: PBR night-side/Earthshine stays separate.
-  const moonLightEligible=moonObject>0;
-  const moonLightReason=_pbrFailed?"surface-unavailable":darkness===0?"daylight":moonUp===0?"below-horizon":phaseVis===0?"near-new":"eligible";
-  const moonLocalWash=moonLightEligible?clamp(mFrac*moonUp*1.15):0;
-  const moonGlow=moonLightEligible?(0.03+0.24*mFrac*mFrac):0;    // retain the existing eligible-phase gain
-  const moonlight=moonObject*(0.35+0.65*mFrac);                // PHYSICAL illumination ONLY — 0 below horizon / new / day, never faked for the calendar moon
-  const moonStrength=moonlight;
   // The PBR calendar surface stays opaque/textured, including near-new/below-horizon Earthshine.
   // Its existing group fade blends into twilight; the independent stellar-background cutout
   // stays binary through that fade, so filtered stars/glints/Milky Way cannot shine through.
   // Physical moonlight permission remains separate. Heavy cloud covers the surface by layer order.
-  const moonShow=clamp(darkness*1.8);   // full by early nautical twilight; withdrawn in daylight
-  const moonPresence=moonShow;
   const directional=1-D.cloud*D.cloud;                          // hard sun when clear → flat/shadowless overcast
   // — sky gradient: physical sky → weather tint → moonlit lift —
   let g1=S.g1, g2=S.g2, g3=S.g3;
@@ -2926,7 +2958,11 @@ function paint(A){
   c.style.setProperty("--moonfeat",A.moonDisc.toFixed(3));
   c.style.setProperty("--moonbeam",A.moonBeam.toFixed(3));
   c.style.setProperty("--moongrp",A.moonGrp.toFixed(3));        // lunar-calendar presence: never 0 at night (the Moon is always meaningfully present), even near-new or below horizon
-  _skyMoonPresence=A.moonGrp; updateSkySurface();
+  _skyMoonPresence=A.moonGrp;
+  // This is the first complete native geometry/presence contract. Preparing an
+  // initial surface in the earlier geometry-only renderMoon() would be wasted
+  // when paint() establishes the scene epoch, and could delay first interaction.
+  window.SalahMoonRuntime?.request(); updateSkySurface();
   c.style.setProperty("--moon-sky",rgb(A.moonSky));             // occluder tracks the live sky colour
   const mg=$(".mglow"); if(mg) mg.style.setProperty("--mgo",A.moonGlow.toFixed(3));   // physical glow only; never gate the opaque PBR/calendar surface
   refreshStarAppearance(A);                                   // same consumed lunar permission, without moving held star positions
@@ -3010,8 +3046,10 @@ function fitCn(M){
   const cm=ctx.measureText(cn.textContent);
   const ascR=(cm.actualBoundingBoxAscent||21)/30, descR=(cm.fontBoundingBoxDescent||7.2)/30;  // ink-cap top / font descent, per font px
   const horizonY=hz.getBoundingClientRect().top;
-  const svg=rail.ownerSVGElement, L=rail.getTotalLength(), pts=[];
-  for(let i=0;i<=200;i++){ const p=rail.getPointAtLength(L*i/200); const s=svg.createSVGPoint(); s.x=p.x; s.y=p.y; pts.push(s.matrixTransform(rail.getScreenCTM())); }
+  // No DOM/style mutation occurs while sampling this path. Snapshot its one
+  // transform instead of forcing 201 identical layout queries during startup.
+  const svg=rail.ownerSVGElement, L=rail.getTotalLength(), railMatrix=rail.getScreenCTM(), pts=[];
+  for(let i=0;i<=200;i++){ const p=rail.getPointAtLength(L*i/200); const s=svg.createSVGPoint(); s.x=p.x; s.y=p.y; pts.push(s.matrixTransform(railMatrix)); }
   const halfAt=ty=>{ let l=-1e9,r=1e9; for(let i=1;i<pts.length;i++){ const a=pts[i-1],b=pts[i]; if((a.y-ty)*(b.y-ty)<=0&&a.y!==b.y){ const t=(ty-a.y)/(b.y-a.y), x=a.x+(b.x-a.x)*t; if(x<cx) l=Math.max(l,x); else r=Math.min(r,x); } } return Math.min(cx-l, r-cx); };
   let font=30;                                                  // letters' cap-top y depends on font, arc width on that y → damped fixed-point
   for(let i=0;i<12;i++){
@@ -3075,7 +3113,7 @@ function render(){
     // No accepted scene paint may leave another epoch's particles behind. The
     // independently admitted header remains usable while the timetable loads.
     $(".c").dataset.fx=d.record?wxClass(d.renderCode):"unavailable";$(".c").dataset.lightning="off";$(".c").dataset.precip="off";$(".c").style.setProperty("--rain-op","0");
-    renderCalendarDates(selectCalendarDisplay(null));return;
+    paintCelestialWithoutTimetable();renderCalendarDates(selectCalendarDisplay(null));return;
   }
   const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin || moonGeometryObservation(M).fresh!==true){ renderMoon(); lastMoonMin=moonSky._min; }   // minute cadence + date/location invalidation; failed production never advances the success marker
   // REAL-TIME: star POSITIONS stay fixed (no record-player spin) — only CSS per-star scintillation varies. The sky
@@ -3189,17 +3227,18 @@ window.qaState=function(){
     // accepted physical and below-horizon calendar presentations remain distinct.
     moonTruth:(()=>{ const mp=moonNow(), alt=(A.moonAltitude!=null?A.moonAltitude:moonSky.alt), up=alt>-0.5;
       const runtime=window.SalahMoonRuntime,refined=!!runtime?.surface(),lunarState=runtime?.state;
-      const surfaceStatus=refined?"v5-terrain":lunarState?.status??"pending";
+      const initial=lunarState?.visibleSource==="initial-v5";
+      const surfaceStatus=refined?(initial?"v5-initial":"v5-terrain"):lunarState?.status??"pending";
       const surfaceVisible=$(".c").classList.contains("moon-ready"),grp=+(A.moonGrp||0),disc=+(A.moonDisc||0);
       const phys=refined && surfaceVisible && up && !A.day && (A.moonlightIntensity||0)>0.02;
       return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
         lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
         lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
-        surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?"V5 DEM intersections, terrain shadows and colour":"unavailable"},
+        surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?(initial?"V5-derived receivers and canonical terrain horizons; full refinement pending":"V5 DEM intersections, terrain shadows and colour"):"unavailable"},
         physicalMoonVisible:phys, calendarMoonVisible:surfaceVisible && grp>0.01,
-        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?"refined-calendar":"debug-hidden"),
+        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?(initial?"initial-calendar":"refined-calendar"):"debug-hidden"),
         moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
-        moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only":"surface unavailable",
+        moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?(initial?"V5 material with initial Lambert Earth integral; full terrain refinement pending":"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only"):"surface unavailable",
         reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?"awaiting current terrain; no legacy substitution":phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
     })()
   };
@@ -3231,7 +3270,7 @@ let _loopStarted=false;
 
 // The post-config WEATHER pipeline, factored out of boot() so the settings panel's live
 // Apply (applyConfig) re-runs the SAME path — one source of truth, no page reload.
-function startWeather(){
+function startWeather(deferNetwork=false){
   loadWx();
   if(SIM.wx!=null){
     const sTemp=SIM.temp!=null?+SIM.temp:72, sRh=SIM.humid!=null?+SIM.humid:45;
@@ -3245,7 +3284,7 @@ function startWeather(){
       gust: (SIM.wind!=null?+SIM.wind:3)+2, cloud: SIM.cloud!=null?+SIM.cloud:0, precip: SIM.precip!=null?+SIM.precip:defP,
       vis: SIM.humid!=null&&+SIM.humid>92?2000:20000, isDay:1, src:"sim"};
   }
-  fetchWeather(); fetchRadar();
+  if(!deferNetwork){fetchWeather(); fetchRadar();}
 }
 // The post-config PRAYER-DATA pipeline (cache → live fetch → render).
 async function loadPrayerData(){
@@ -3355,6 +3394,7 @@ async function boot(){
 
   // ---- resolve coordinates (mode-aware: hardcoded sync above; local resolves here) ----
   if(lat==null||lon==null){
+    window.SalahStartSkyPreview?.();
     if(_needsDetect && window.SalahConfig){
       // local / preferLocal with no saved config → coarse, PERMISSION-FREE area auto-detect.
       _autoDetectStatus="pending";
@@ -3380,12 +3420,34 @@ async function boot(){
   }
 
   if(!simulationReady()) return;                            // coordinate detection may have changed the explicit scene's zone
-  startWeather();
+  startWeather(true); // Retained/explicit weather participates in the first scene.
   render(); // Current shell/header and explicit pending prayer rows precede network settlement.
   // The first native paint adopts its scene key and invalidates the head
   // preview. Republish accepted inputs before yielding: a cache-warm browser
   // can present this turn before the first rAF, exposing the dark base colour.
-  window.SalahSkyPreview?.update();
+  // The initial foreground must follow current native geometry. Starting it
+  // before render() built a complete preview only to discard it in that same
+  // turn. Unknown-location acquisition already created its waiting owner.
+  if(window.SalahSkyPreview) window.SalahSkyPreview.update();
+  else window.SalahStartSkyPreview?.();
+  // The complete celestial scene and settings controls are already published.
+  // Let the browser present them before synchronous cached timetable fitting
+  // (or a very fast provider response) consumes another long main-thread turn.
+  // This is a paint opportunity, not a timer, hidden shell or asset-ready gate.
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    // Resolving inside rAF resumes this async function as a microtask BEFORE
+    // that rendering step finishes. Queue an ordinary task instead, so cached
+    // timetable fitting cannot occupy the same rendering callback. No timer or
+    // claim of monitor presentation is attached to this scheduling boundary.
+    const turn=new MessageChannel();
+    turn.port1.onmessage=()=>{turn.port1.close();turn.port2.close();resolve();};
+    turn.port2.postMessage(null);
+  })));
+  if(generation!==_runtimeGeneration) return;
+  // Start fresh observation transport after that first paint opportunity. A
+  // fast response otherwise invalidates and recomputes the just-built sky in
+  // its first rAF. Cached weather was consumed above; no observation is hidden.
+  fetchWeather(); fetchRadar();
   await loadPrayerData();
   if(generation!==_runtimeGeneration) return;
   startRenderLoop();
@@ -3699,6 +3761,7 @@ window.SalahMoonHost=Object.freeze({
   const identity=skySceneIdentity();
   return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
    fraction:moonSky.frac,waxing:!!moonSky.waxing,up:moonSky.up,
+   presentationReady:_skySceneKey!==null,initialWarranted:_skyMoonPresence>0,
    maximumPresentationRatio:MOON_SCALE_MAX/(MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*clamp(moonSky.up)),
    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
    paused:document.hidden||!!$('.c')?.classList.contains('paused')};

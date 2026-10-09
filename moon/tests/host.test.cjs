@@ -1,22 +1,58 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const src=process.env.SALAH_MOON_SOURCE_DIR||path.join(__dirname,'../src');
-function rig({inline=false,diameter=104}={}){
- let clock=0,id=0;const jobs=new Map(),workers=[],nodes=new Map(),events=new Map();let published=0,fallbacks=0;
+function rig({inline=false,diameter=104,initial=false,deferWorker=false}={}){
+ let clock=0,id=0;const jobs=new Map(),frames=new Map(),workers=[],nodes=new Map(),events=new Map();let published=0,fallbacks=0;
  const state={utcMs:1000,generation:0,sceneIdentity:'A',fraction:.5,waxing:false,up:1,dpr:1,timeScale:0,paused:false};
  for(let i=0;i<2;i++)nodes.set('moon-embedded-'+i,{textContent:'AAAA',remove(){nodes.delete('moon-embedded-'+i)}});
  const detail={available:false,adopt(s){for(const a of [s.linear,s.calendarLinear,s.coverage])for(const v of a)if(!Number.isFinite(v))throw Error('nonfinite worker result');this.available=true},clear(){this.available=false},dispose(){}};
  class Worker{constructor(){this.sent=[];this.terminated=false;workers.push(this)}postMessage(m){if(this.terminated)throw Error('worker closed');this.sent.push(m)}terminate(){this.terminated=true}emit(m){this.onmessage?.({data:m})}}
  class U extends URL{};U.createObjectURL=()=> 'blob:mock/'+(++id);U.revokeObjectURL=()=>{};
  const w={__SALAH_MOON_OFFLINE__:true,__SALAH_MOON_EMBEDDED__:true,SalahMoonHost:{capture:()=>({...state,maximumPresentationRatio:1.13/(1.11+.02*state.up)}),publish:()=>published++,fallback:()=>fallbacks++},SalahRealSky:{compose(){}}};
+ if(initial)w.SalahMoonInitial={render(scene){const size=2,out=scene.outSize;return {kind:'initial',scene:{...scene,size},width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:size,surfaceExtent:scene.extent,surfaceLinear:new Float32Array(size*size*3),calendarLinear:new Float32Array(size*size*3),surfaceCoverage:new Float32Array(size*size),physicalIdentity:'initial:'+state.generation,profileIdentity:'profile',diagnostics:{quality:{status:'initial-v5'}}};}};
  const doc={currentScript:{src:inline?'':'https://test/moon/moon-host.js'},baseURI:inline?'about:blank':'https://test/',hidden:false,querySelector:()=>({getBoundingClientRect:()=>({width:diameter,height:diameter})}),getElementById:k=>nodes.get(k),createElement:()=>({width:0,height:0,style:{},getContext:()=>({putImageData(){}}),remove(){}}),head:{append(){}},addEventListener:(n,f)=>events.set(n,f),removeEventListener:n=>events.delete(n)};
  const c=vm.createContext({window:w,document:doc,URL:U,Blob,Worker,performance:{now:()=>clock},structuredClone,Uint8ClampedArray,Float32Array,ImageData:class{constructor(d,w,h){this.data=d;this.width=w;this.height=h}},startMoonDetail:()=>detail,blendCalendarBytes:a=>a,setTimeout:(f,ms)=>{const n=++id;jobs.set(n,{f,ms});return n},clearTimeout:n=>jobs.delete(n),setInterval:()=>++id,clearInterval:()=>{},MOON_DEFAULT_PROFILE:{profile_id:'calendar-neutral-v5-01',mode:'calendar'},MOON_WORKER_SOURCE:'',MOON_OFFLINE_CHUNKS:[{name:'dem',index:0,last:true},{name:'colour',index:0,last:true}]});
+ c.requestAnimationFrame=f=>{const n=++id;frames.set(n,f);return n;};c.cancelAnimationFrame=n=>frames.delete(n);
+ const frame=()=>{const callbacks=[...frames.values()];frames.clear();callbacks.forEach(f=>f(clock));};
  vm.runInContext(fs.readFileSync(path.join(src,'moon-precision.mjs'),'utf8')+'\n'+fs.readFileSync(path.join(src,'moon-native.mjs'),'utf8'),c);
+ if(!deferWorker){frame();frame();}
  const flush=()=>{for(let guard=0;guard<20;guard++){const j=[...jobs].find(([,v])=>v.ms===0);if(!j)break;jobs.delete(j[0]);j[1].f()}};
  const request=()=>workers.at(-1).sent.findLast(m=>m.kind==='render');
  const response=(kind='result')=>{const r=request(),n=r.scene.size,out=r.scene.outSize;return {kind,id:r.id,identity:r.identity,scene:structuredClone(r.scene),width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:n,surfaceExtent:r.scene.extent,surfaceLinear:new Float32Array(n*n*3),calendarLinear:new Float32Array(n*n*3),surfaceCoverage:new Float32Array(n*n),physicalIdentity:'physical',profileIdentity:'profile',diagnostics:{kernel:'metric-radial-terrain-wasm-mb1',quality:{status:kind==='preview'?'preview':'empirical-adaptive'}}}};
- return {w,workers,state,detail,nodes,events,jobs,flush,request,response,resize:value=>diameter=value,get published(){return published},get fallbacks(){return fallbacks},advance:t=>clock+=t};
+ return {w,workers,state,detail,nodes,events,jobs,flush,frame,request,response,resize:value=>diameter=value,get published(){return published},get fallbacks(){return fallbacks},advance:t=>clock+=t};
 }
+
+test('full terrain boot follows a paint opportunity while the current initial surface is available',()=>{
+ const r=rig({initial:true,deferWorker:true});assert.equal(r.workers.length,0);
+ assert.equal(r.w.SalahMoonRuntime.request(),true);assert.equal(r.workers.length,0);
+ r.frame();assert.equal(r.workers.length,0);r.frame();assert.equal(r.workers.length,1);
+ assert.ok(r.w.SalahMoonRuntime.surface());
+ const disposed=rig({deferWorker:true});disposed.w.SalahMoonRuntime.dispose();disposed.frame();disposed.frame();assert.equal(disposed.workers.length,0);
+ const retry=rig({deferWorker:true});assert.equal(retry.w.SalahMoonRuntime.retry(),true);retry.frame();retry.frame();assert.equal(retry.workers.length,1,'explicit retry revokes deferred boot');
+});
+
+test('current initial V5 presentation precedes worker readiness and is replaced by preview then final',()=>{
+ const r=rig({initial:true});assert.equal(r.w.SalahMoonRuntime.request(),true);
+ assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'initial-v5');assert.equal(r.w.SalahMoonRuntime.state.pending,false);
+ r.workers[0].emit({kind:'ready'});assert.ok(r.request(),'initial availability must still request the full renderer');
+ r.workers[0].emit(r.response('preview'));assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'terrain-preview');
+ r.workers[0].emit(r.response());assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'refined-terrain');
+});
+
+test('initial data grants no authority to an old generation, seek or profile',()=>{
+ const r=rig({initial:true});r.w.SalahMoonRuntime.request();const a=r.w.SalahMoonRuntime.state.accepted;
+ r.state.generation++;r.state.sceneIdentity='B';assert.equal(r.w.SalahMoonRuntime.surface(),null);
+ r.w.SalahMoonRuntime.request();assert.notEqual(r.w.SalahMoonRuntime.state.accepted.identity,a.identity);
+ r.state.utcMs+=5000;assert.equal(r.w.SalahMoonRuntime.surface(),null);r.w.SalahMoonRuntime.request();assert.ok(r.w.SalahMoonRuntime.surface());
+ r.w.SalahMoonRuntime.setProfile('reference');assert.equal(r.w.SalahMoonRuntime.surface(),null,'unqualified physical/reference presentation stays with full solver');
+});
+
+test('missing full assets retain only independently current initial presentation',()=>{
+ const r=rig({initial:true});r.w.SalahMoonRuntime.request();r.workers[0].emit({kind:'boot-error',error:'controlled missing full assets'});
+ assert.ok(r.w.SalahMoonRuntime.surface());assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'initial-v5');
+ assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');assert.equal(r.w.SalahMoonRuntime.retry(),true);
+ r.workers.at(-1).emit({kind:'ready'});assert.ok(r.request());
+});
 
 test('presentation footprint motion cannot withdraw the same qualified terrain',()=>{
  const r=rig({diameter:108});r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());

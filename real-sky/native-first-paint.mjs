@@ -1,5 +1,6 @@
 import {renderNativeBackgroundPreview} from './native-preview.mjs';
 import {encodeNativeFrame} from './native-encoding.mjs';
+import {joinNativeStarPreview} from './native-star-preview.mjs';
 
 /** Run in the head, before the card's HTML can be painted. This is a bounded
  * atmospheric background, NOT a readiness gate: no hidden card, timer, asset
@@ -17,8 +18,12 @@ export function prepareNativeFirstPaint(){
   reducedMotion:params.get('motion')!=='full'&&matchMedia('(prefers-reduced-motion: reduce)').matches,paused:false,
   camera:{azDeg:number('skyAz',180),altDeg:number('skyAlt',45),fovYDeg:number('skyFov',90),rollDeg:number('skyRoll',0)},allowEstimates:params.get('skyEstimates')!=='off',weather:null};
  try{
-  const p=renderNativeBackgroundPreview(snapshot),cv=document.createElement('canvas');cv.width=325;cv.height=530;
-  cv.getContext('2d').putImageData(new ImageData(encodeNativeFrame(p.raster.linear,p.raster.effectiveExposure),325,530),0,0);
+  let p=renderNativeBackgroundPreview(snapshot);
+  const cv=document.createElement('canvas');cv.width=325;cv.height=530;
+  let bytes=encodeNativeFrame(p.raster.linear,p.raster.effectiveExposure);
+  const catalogue=window.SalahStarBootstrap;
+  if(catalogue){const stars=catalogue.render(p.job,p.raster.physicalState,{background:bytes,exposure:p.raster.effectiveExposure});p=joinNativeStarPreview(p,bytes,stars);bytes=p.rgba;}
+  cv.getContext('2d').putImageData(new ImageData(bytes,325,530),0,0);
   const style=document.createElement('style');style.id='native-first-paint';
   // The raw HTML must not expose a default night Moon at an accepted daytime
   // site. The native painter supplies the detailed body/weather terms at boot.
