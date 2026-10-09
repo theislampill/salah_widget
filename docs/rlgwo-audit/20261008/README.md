@@ -1,5 +1,7 @@
 # PR42 delivered-release and 37-issue RLGWO audit
 
+**Completed audit:**37 reviewed and individually evidence-commented; 11 closed completed by this audit, 0 independently/already closed, 26 remaining open. [Final ledger](ledger.json) · [Astra remaining-work report and all37 comment links](ASTRA_RECONCILIATION.md) · [Independent final issue/comment/state readbacks](final-readback) · [Final public root/V1 currentness](final-public-currentness.json).
+
 Audit date: 2026-10-08, America/New_York. This directory is evidence on a documentation-only branch. It does not change or deploy the widget.
 
 The reviewed PR42 head was `4bccdf43363926c3077f60de87e5617ccb9abcb9`. The completed merge and audited delivered main are `18ff14860ff41c084b1db5f396bb62aa9c22b1be`, tree `35208181eea714c17f5e77b2644e76434345db60`.
@@ -20,3 +22,5 @@ Preserved harness failures are not relabelled production defects or successes. R
 The rollout permits documented initial astronomy acquisition and proves ordinary unchanged-scene normal1x replacement continuity. It does not close the subsequently authorized first-complete-celestial-scene startup requirement, which remains on #33/R0021 with its separate repair work. A pending accelerated terrain solve is not normal1x proof. N001/N002 remain PARTIAL and N003 BLOCKED within their original scope.
 
 No new production source repair, frozen V1 change, PR38 action, branch deletion, reset, force push or protection bypass occurred in this audit. An unresolved obligation stays on its existing canonical issue with a bounded next increment; implementation of those increments is not implied by this audit.
+
+The immutable original source/receipt packet is commit `9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84`. The present commit adds final approved comment copies and actual effect readbacks. Prior pre-publication recommendations remain historical; final states are in the ledger.

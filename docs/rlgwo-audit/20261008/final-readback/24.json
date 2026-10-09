@@ -1,0 +1,179 @@
+{
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/24",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/24/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/24/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/24/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/24",
+    "id": 5381807910,
+    "node_id": "I_kwDOS6MzkM8AAAABQMffJg",
+    "number": 24,
+    "title": "R0018: Keep prayer timetable text readable over the clear-day scene",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 1,
+    "created_at": "2026-09-08T03:56:49Z",
+    "updated_at": "2026-10-09T02:30:39Z",
+    "closed_at": null,
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-024 -->\n# R0018: Keep prayer timetable text readable over the clear-day scene\n\n**Repository-local identity:** `R0018` in `theislampill/salah_widget`; existing tracker [#24](https://github.com/theislampill/salah_widget/issues/24). The SW identifier is historical draft provenance.\n\n\nThe clear-day timetable loses readable contrast even in the current and next rows. Repair the local text/backing composition so an animated bright sky cannot wash out prayer names and times. Preserve the existing 325×530 card, prayer stack geometry and sky art. This is a corrective readability owner, not a redesign or a general accessibility certification.\n\nCampaign draft alias: SW-024. Existing GitHub owner: #24. P2, product UI defect. The proposal, fixtures and color recipe below have not been implemented or qualified.\n\n## Bound source and historical rendered evidence\n\nHistorical main is `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; candidate is `9d9c43649748555afbe09e3ca49bc47db2d7e7bb`. Before a future authorized edit record `git rev-parse --show-toplevel`, `git remote get-url origin`, `git status --short`, `git rev-parse HEAD`, then `git diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- index.html DESIGN.md`. Confirm `theislampill/salah_widget`, preserve unrelated work and reconcile incompatible CSS/composition drift. The relevant [main timetable CSS](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/index.html#L378) and [candidate CSS](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/index.html#L378) are identical in the recorded comparison.\n\nThe historical scene was served from pinned main on a disposable local origin. Its exact recorded URL path/fragment was:\n\n```text\n/main/index.html?ui=18#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&simTime=12:30&simWx=0\n```\n\n`/main/` was the historical server mount; `ui=18` was a cachebuster, not a scene setting. At an ordinary static root use `/index.html` with the same fragment. The recorded procedure waited 2.2 seconds after load for prayer rows and the frozen scene. Host: Chrome 152 on Windows; actual CSS viewport 325×530 and actual DPR 2.28. Device-emulation requests are not proof of the actual viewport.\n\n**The historical civil date was not pinned.** The route and the measurements therefore do not independently establish a repeatable date-specific solar scene. The footer date visible in saved pixels must not be relabeled as a clock-control receipt. The separately selected future acceptance date below is not the historical capture date.\n\nThe baseline full-card image shows faint timetable text; its paired background image hides only `.p b,.p .tm` on the same frozen scene. All twelve text rectangles were measured. Source text is 12.5px/600 at line-height 16.7px; computed foreground was `rgb(240,237,248)`. The ancestor `.p.past` has opacity 0.42, while current/next rows have opacity 1. The returned maxima were:\n\n| Row text / time | Group opacity | Maximum changed-pixel contrast, name / time |\n|---|---:|---:|\n| Fajr / 04:46 | 0.42 | 1.738 / 1.670 |\n| Sunrise / 06:05 | 0.42 | 1.802 / 1.628 |\n| Dhuhr / 12:19 | 1 | 2.543 / 2.357 |\n| Asr / 15:48 | 1 | 2.295 / 2.193 |\n| Maghrib / 18:33 | 0.42 | 1.591 / 1.542 |\n| Isha / 20:03 | 0.42 | 1.467 / 1.375 |\n\nThese are historical changed-pixel measurements, including antialiasing/shadows, not formal WCAG ratios. The source-color/opacity estimates independently supported the low-contrast diagnosis within the same scene, but did not model every blend/backdrop-filter operation. The active rows establish that simply restoring past-row opacity cannot be the whole fix. These are informational schedule values, not disabled controls. Do not reuse an earlier footer 1.6–2.0 claim as a timetable measurement.\n\nSupplementary immutable evidence, relative to the campaign root:\n\n| Artifact | SHA256 |\n|---|---|\n| `resumption-v1/revisions-v2/evidence/ui/contrast-baseline.png` | `d9aa398cd20183366ad0e2d0ee6a54366ea3c27aa7f4948cf989631a2e856831` |\n| `resumption-v1/revisions-v2/evidence/ui/contrast-background.png` | `db2f030704c1366df7df6287ba73effaa2dfc15a6b26b9158b7f9192ed40c9d9` |\n| `resumption-v1/revisions-v2/evidence/ui/contrast-rects.json` | `9ee7c658c6b3b44cb7221358e649f777ffd4de643a0998bd17ab174c5a89a795` |\n| `resumption-v1/revisions-v2/evidence/ui/contrast-result.json` | `1a068cd670cbdb4b29877fde6d0aac8c8a493991229d5c9337382e199632fbbe` |\n| `resumption-v1/revisions-v2/evidence/ui/measure-evidence.py` | `1cc8a35a659ab79c61240374284ee7cd2a0853f96e4c687c64f0893a54ff4bfe` |\n\nPrivate paths are supplementary; the inputs, findings, method and required future controls are specified here without requiring those files.\n\n## Why this happens and the bounded implementation\n\n`.p` is a translucent white gradient over a varying sky, with backdrop blur/saturation and an accent-dependent `.p.on` background. Its bright background and light foreground can converge. `.p.past{opacity:.42}` then composites the entire row—including any attempted darker backing—through the same low group alpha. Raising only a child's opacity cannot undo ancestor opacity; adding only text shadow does not establish foreground/background contrast.\n\nUse the existing cell as the control surface. Implement and inspect these stages:\n\n1. Preserve the grid columns/gaps, `.p` padding, border width/radius, font sizes/line heights and every row string. Keep names/times at full informational opacity in all states; remove the group-opacity attenuation from `.p.past`. Preserve past/current/next hierarchy using the existing border, restrained cell tint and `.p.now` inset cue rather than making information faint.\n2. Give every cell state a bounded dark backing below its decorative tint and a local light foreground. A concrete starting recipe is a shared `rgba(9,17,28,.82)` base with the existing tint gradient layered above it and `#f0edf8` text at opacity 1. This is a proposed starting value, not a tested contrast claim. The `.p.on` background override must compose with the same base; otherwise the next-row rule silently removes the repair. Keep `.p.now`'s distinguishing inset border. Do not change global `--text`, sky colors, solar rendering or all widget glass.\n3. Inspect actual inherited filters, blend modes and group opacity that still affect these cells. If the recipe does not provide at least 4.5:1 for ordinary timetable text under intended-color/background evaluation, adjust only the local base/tint/foreground. Do not add a per-frame pixel sampler or weather-specific theme switch to chase contrast: a stable local backing should supply the invariant.\n4. Compare the repaired noon crop to the saved/read-only baseline and to the freshly reproduced RED. The intended local change is darker readable cells; the surrounding art, header belt, footer and prayer stack must retain their composition. A globally dimmed sky or opaque full-card overlay is outside this owner.\n\nThe tradeoff is reduced translucency inside the existing timetable cells, in exchange for stable access to the core schedule. The exact alpha is allowed to move during controlled pixel review; meeting the readability invariant while retaining the existing geometry and hierarchy decides it. No token framework, theme system, new dependency or layout redesign is needed.\n\n## Separate future fixture and acceptance procedure\n\nRe-establish the RED on the pinned defective tree using a **new controlled fixture**: freeze the browser clock before initialization at `2026-09-07T09:30:00.000Z` (12:30 Asia/Riyadh), use the route fragment above at the actual 325×530 CSS viewport, and return a deterministic day/zone-matching prayer response. This selected future date does not retrospectively pin the historical capture.\n\nFor the text-layout control retain the recorded strings Fajr `04:46`, Sunrise `06:05`, Dhuhr `12:19`, Asr `15:48`, Maghrib `18:33`, Isha `20:03`; set Sunset consistently to `18:33`. Bind Gregorian request/payload `07-09-2026`, `meta.timezone=\"Asia/Riyadh\"`, lat/lon `24.47/39.61`, method 4, with usable date data. These strings are fixture values, not certified prayer calculations. Prevent unrelated live responses from overwriting the controlled scene. Capture after rows are present, fonts settle and layout/scene are stationary; elapsed waiting alone does not prove fixture readiness.\n\nCapture the original scene, then add a temporary isolated-fixture rule `.p b,.p .tm{visibility:hidden!important}`, capture the same fixed scene, and remove it. Do not remove the row or change its dimensions. Save the actual viewport, DPR, browser, source revision, clock/zone, font resolution, row classes and rectangles. The historical measurement method maps rectangles from CSS to screenshot pixels, compares baseline/background only where channel change is at least 8, calculates relative sRGB luminance, and reports the maximum contrast among those changed pixels. Its nominal estimate composites authored foreground through the recorded group opacity onto text-free background. Both are useful diagnostics; neither alone certifies full-stack conformance.\n\n| Final-tree case/control | Required result |\n|---|---|\n| New frozen noon RED→GREEN, twelve text rectangles | The baseline defect is visible before repair; repaired text is readable in the crop and at least 4.5:1 under appropriate intended-color/background evaluation. Cover both opacity-0.42 legacy states and full-opacity current/next states in RED. |\n| Day/night/weather | At the same controlled location/date, inspect representative sunrise, sunset, dark night, clear, broken and overcast scenes, with past/current/next classes. Record selected scenes; do not claim every browser or every weather state was originally measured. |\n| Local stress background | In an isolated fixture place a bright backdrop under cells, preserving the actual composite structure; every state retains the intended contrast. |\n| Opacity mutant | Restore `.p.past{opacity:.42}` only: the past-row control must detect the loss. |\n| Next-row mutant | Remove the dark base only from `.p.on`, or restore its original bright-sky background: the active/next control must detect the loss. |\n| Geometry and content | Actual `.c` stays 325×530; header/footer remain visible, prayer stack positions and all labels/times stay fixed; compact/long date and stale states still fit their established bounds. |\n\nUse cropped pixels and intended-color composition evidence together. If a measurement says PASS while the image is visibly unreadable, stop; a score cannot override the project’s pixel gate. Keep the claim limited to timetable readability, not all accessibility conformance. Final visual review is sequential under one preview owner to avoid scene/clock interference.\n\n## Ownership, public effects and DONE\n\n`UI-002` owns this repair; fixed-card/compact-footer evidence remains a no-regression control. Write domain is `ui/timetable-css`; no new dependency or relationship delta is proposed. Coordinate any simultaneous art work at exact CSS/composition hunks without absorbing that work into this issue. The shared docs/test integrator owns final insertions.\n\nIMPLEMENTAUDIT R001D: change the relevant `index.html` CSS/backing and [DESIGN readability acceptance](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/DESIGN.md). Update README only if its public claim changes. Builder/configuration/installer/preset remain compatible, with the 325×530 preview/copy/embed contract intact. IMPLEMENTAUDIT R001E does not justify a new metric framework: any added test must exercise the actual cell composition and detect the named mutant.\n\nDONE requires final-tree RED→GREEN crops, composition/contrast results with their limits, geometry/hierarchy controls and independent visual review. Put exact tree/fixture/host/results in an evidence comment before manual #24 closure and use non-closing `Implements #24`. Later public readiness additionally requires authorized deployment and matching served-index plus rendered readback; publishing this work order proves neither.\n\nRollback only the local text/backing delta if geometry or art controls fail, retaining the issue and failing evidence. Do not preserve a failing opacity value by lowering the acceptance target. STOP on incompatible composition drift, inability to reproduce a visible RED in the new fixture, a conflict with another exact CSS writer, or a proposed global redesign. The unpinned historical date and non-normative changed-pixel ratios remain explicit limitations.\n\nMethodology references (separate repository, not Salah work owners): [R001D in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/155), [R001E in IMPLEMENTAUDIT](https://github.com/theislampill/IMPLEMENTAUDIT.md/issues/157).\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/24/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/24/timeline",
+    "performed_via_github_app": null,
+    "state_reason": null,
+    "pinned_comment": null
+  },
+  "comments": [
+    {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/comments/6073050728",
+      "html_url": "https://github.com/theislampill/salah_widget/issues/24#issuecomment-6073050728",
+      "issue_url": "https://api.github.com/repos/theislampill/salah_widget/issues/24",
+      "id": 6073050728,
+      "node_id": "IC_kwDOS6MzkM8AAAABaftmaA",
+      "user": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "created_at": "2026-10-09T02:30:39Z",
+      "updated_at": "2026-10-09T02:30:39Z",
+      "body": "# RLGWO closure audit — R0018 — REMAINS OPEN\n\n<!-- RLGWO-AUDIT:18ff14860ff41c084b1db5f396bb62aa9c22b1be:R0018:2026-10-08 -->\n\n**Recommendation: LEAVE OPEN.** An opt-in contrast appearance provides full row opacity and a bounded dark backing. The default remains glass with .p.past opacity .42; PR42 strengthens NEXT with an opaque dark-text accent while CURRENT retains its own outline.\n\nTarget `18ff14860ff41c084b1db5f396bb62aa9c22b1be`, tree `35208181eea714c17f5e77b2644e76434345db60`, runtime `f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260`, root index `ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee`. Audit date2026-10-08. Original complete body SHA-256 `2ba804af694fc027e4fb7f17677c9d89ffc90cba370bd0a96ce9f40d2c838fbc`, revision `2026-09-08T06:25:19Z`. All body/discussion/events were read; no event is treated as permission.\n\nDelivered baseline is independently recorded as DELIVERED_VERIFIED with16 actual public root/V1 Chromium/Firefox cases PASS. Actual browser launches were serialized by the primary; F ran only authorized lightweight Node/VM controls and inspected receipts/crops. Sol6.1/max is confirmed by recorded client turn configuration, not hardware/backend attestation.\n\n| Mandatory obligation | Source owner → delivered consumer | Discriminator and expected | Observed / disposition |\n|---|---|---|---|\n| 18-01: Preserve325x530 card, row geometry/fonts/strings and surrounding sky/header/footer; no global redesign. | [src/native/index.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L411-L425) → [index.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L411-L425) | Geometry declaration equality and representative final crops. Expected: Local timetable treatment only; exact established geometry/content. | Current CSS retains row geometry/fonts/strings and325x530 card; public16 cases verify root/V1 card/layout and approved330x534 production wrapper. The next-row emphasis change is approved and local. **SATISFIED** |\n| 18-02: Names/times full informational opacity in EVERY state; remove .p.past group attenuation while retaining state hierarchy. | [src/native/index.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L411-L425) → [index.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L423-L424) | Original opacity mutant and default/contrast source comparison. Expected: No .42 information attenuation in intended repair. | Default glass still applies .p.past opacity .42 to names/times. H6 requests subdued elapsed rows and readable future rows, without forcing high-contrast mode; it does not waive full information opacity. Both requirements can coexist through local style treatment. **UNMET** |\n| 18-03: Every state has local backing/foreground >=4.5:1 under intended-color/background evaluation, including next override and bright animated sky. | [src/native/index.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L411-L425) → [index.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L420-L422) | White sky/accent stress and past/next independent composition mutants. Expected: All timetable states meet invariant; no child opacity workaround. | Fresh authored intended-color white-stress calculation gives default normal glass1.1554847908734267:1; opt-in contrast satisfies >=4.5 and opacity1. The calculator itself asserts default glass <4.5. This is a bounded intended-color stress result, not a measurement of every photograph or the untested frozen-noon12 rectangles. **UNMET** |\n| 18-04: Reproduce pinned noon RED and final GREEN at date 2026-09-07,12:30Riyadh, actual 325x530/DPR with specified synthetic prayer values and settled fonts. | [tests/r0018-timetable-contrast.cjs](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0018-timetable-contrast.cjs#L1-L36) → [index.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L411-L425) | Matched12 text rectangles plus text-hidden same-scene background. Expected: Visible RED, readable GREEN and correct intended-color composition. | Historical issue supplies RED values but date was unpinned. No final exact 12-rectangle frozen-noon text/background pair was found. **UNVERIFIED** |\n| 18-05: Representative sunrise/sunset/night/clear/broken/overcast past/current/next scenes and local bright stress; contrast mutants must detect losses. | [tests/r0018-timetable-contrast.cjs](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0018-timetable-contrast.cjs#L69-L82) → [index.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L411-L425) | Final actual composites, .42 past mutant and next presentation mutant. Expected: Pixel readability and >=4.5 where contract binds; named mutants independently fail. | Numerical authored guards distinguish past/next contrast faults. Viewed final twilight default past rows are visibly faint; no measured native whole-composition matrix. **UNVERIFIED** |\n| 18-06: Compare repaired noon to original/fresh RED, preserve art hierarchy and compact/long/stale dates, independent sequential pixel review. | [DESIGN.md](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L98-L108) → [index.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L411-L425) | Matched baseline/current crops; surrounding geometry/content controls. Expected: Local darker readable cells; no sky dim/full-card overlay. | Final images show NEXT/current differentiation but are not original-to-final matched noon repair proof. **UNVERIFIED** |\n| 18-07: DESIGN readability acceptance/document truthful public claim; builder/config/install/preset and embed bounds compatible. | [DESIGN.md](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L103-L108) → [README.md](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L233-L248) | Inspect docs and interface policy readback. Expected: Scope of default/optional accessibility and known owner amendment explicit. | Docs say other rows stay readable glass; no supplied issue comment amends original full-opacity/all-state guarantee. Owner production iframe 330x534 around 325x530 is explicit separate amendment. **UNVERIFIED** |\n| 18-08: Exact-tree evidence comment, independent visual review and served source/rendered readback before claimed public closure. | [docs/real-sky/STARTUP_CLOUD_HOTFIX.md](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/STARTUP_CLOUD_HOTFIX.md#L377-L393) → [docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json) | Current bounded pixel/composition proofs plus owner reconciliation. Expected: No metric override of visibly weak text or invented accessibility certification. | Delivered source/public baseline and current geometry are independently verified; primary Astra reconciled the actual default opacity/intended-color gap. Issue-specific frozen-noon and native intended-color contrast proof is still required before readability closure. **UNVERIFIED** |\n\nFresh controls (actual target/source binding; attempts and results remain separate):\n- `C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe tests/r0018-timetable-contrast.cjs` — exit0; \"Full JSON/log retained; exit=0\". Log SHA-256 `28a8af7167a8ad51212e5505018fd6ebbf8bdf21a931882fc06cfb1c60297aa4`.\n\nRetained immutable evidence (historical executions, not reruns):\n- [docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r0018-timetable-contrast.log.gz](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r0018-timetable-contrast.log.gz) — Authored colors/bounds, not full filter/antialias conformance.\n- [docs/real-sky/evidence/startup-cloud-20261007/final-v49/visual-review/firefox-startup-twilight.png](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/visual-review/firefox-startup-twilight.png) — Viewed historical final-runtime default-glass startup sheet.\n\nN001/N002 PARTIAL and N003 BLOCKED are considered only at mapped interfaces. Eight retained native legacy failures remain individually named; absent synthetic arrays and old PBR byte equality are neither product defects by themselves nor automatic passes. No all-browser, optical-calibration, GPU/battery, CI or external human-approval claim is made.\n\n## Next RLGWO increment required for closure\n\n- The original default full-information-opacity requirement remains unmet: .p.past attenuates text at .42. No new owner decision is inherently needed.\n- Default glass lacks the original intended-color >=4.5 guarantee under the specified bright stress; the existing PASS applies to the optional contrast surface. Original frozen-noon12-rectangle/native text-free proof remains unverified.\n\nBounded owner/scope: src/native/index.html timetable styles and authored readability tests; regenerate root through the existing builder.\n\nPreserve: Preserve the approved scene, glass choice, elapsed/future classification, opaque NEXT emphasis, CURRENT outline, six rows/fonts and card/layout.\n1. Apply the smallest local default-glass backing/foreground treatment that preserves subdued elapsed hierarchy while keeping name/time information at full opacity. Do not force selection of the optional contrast mode.\n2. Run the original pinned2026-09-07 noon intended-color/text-free12-rectangle procedure and specified bright stress; retain past/NEXT mutants, matched crops and representative source-required scene/geometry controls.\n\n**Acceptance:** Every original required row state retains full information opacity and meets the specified intended-color >=4.5 evaluation; hierarchy, approved atmosphere and geometry remain readable without a mode switch.\n\n**Non-goals:** No global repaint, mandatory high-contrast preference, contrast claim for arbitrary photographs or new owner decision unless a genuine implementation conflict arises.\n\nDependencies:\n- H6/R000A row classification: elapsed subdued, future readable, NEXT/CURRENT distinct; these requirements are compatible with original full information opacity and local readability.\n- Approved atmospheric scene/card/production wrapper preserved; no all-photo contrast requirement is invented.\n\nPrimary Astra independently reconciled every mandatory row and this conclusion. This evidence comment precedes any approved closure action; it does not claim the issue was already closed. Reviewer F changed no runtime source or GitHub state.\n\nImmutable audit inputs and fresh receipts:\n\n- [Complete original contract, discussion and events](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/issues/24.json).\n- [Full reconciled obligation/evidence matrix](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/workers/F/24-assessment.json).\n- [Recorded six-reviewer model/effort configuration](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/reviewer-model-settings.json).\n- [Delivered target verification](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/release.json).\n- [16 actual public root/V1 browser cases](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/public-browser-summary.json).\n- [Fresh lightweight current-source command receipts](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/workers/F/followup-tests/receipt.json).\n- [Primary independent visual readback](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-visual-review.json).\n\n\nPrimary publication reconciliation: the complete mandatory matrix and verdict above were reviewed by Astra against the delivered target. Reviewer F performed the independent issue audit; the designated worker mechanically publishes this approved body. This proof is posted and read back before any justified completed closure.\n\n- [Exact original issue and discussion](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/issues/24.json) · [Audited release](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/release.json) · [Public runtime/V1 readback](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/public-runtime.json).\n- [539-row primary reconciliation](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-reconciliation.json) · [Six reviewer configuration receipts](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/reviewer-model-settings.json) · [Evidence custody manifest](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/EVIDENCE_MANIFEST.json).\n",
+      "author_association": "OWNER",
+      "pin": null,
+      "reactions": {
+        "url": "https://api.github.com/repos/theislampill/salah_widget/issues/comments/6073050728/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "performed_via_github_app": null,
+      "minimized": null
+    }
+  ],
+  "publicationReceipt": {
+    "number": 24,
+    "reviewer": "F",
+    "mechanicalPublisher": "worker F",
+    "AUDIT_SHA": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "commentSha256": "5581ba7661e351bed675b618809c644f5175a8eb96ef4043899f07a2f0d7c93b",
+    "closedByAudit": false,
+    "steps": [
+      {
+        "atUtc": "2026-10-09T02:30:38.362680+00:00",
+        "kind": "fresh-preconditions",
+        "data": {
+          "main": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+          "bodySha256": "2ba804af694fc027e4fb7f17677c9d89ffc90cba370bd0a96ce9f40d2c838fbc",
+          "state": "open",
+          "stateReason": null,
+          "commentIds": []
+        }
+      },
+      {
+        "atUtc": "2026-10-09T02:30:39.134077+00:00",
+        "kind": "proof-posted",
+        "data": {
+          "id": 6073050728,
+          "url": "https://github.com/theislampill/salah_widget/issues/24#issuecomment-6073050728"
+        }
+      },
+      {
+        "atUtc": "2026-10-09T02:30:39.535630+00:00",
+        "kind": "proof-readback-verified",
+        "data": {
+          "id": 6073050728,
+          "url": "https://github.com/theislampill/salah_widget/issues/24#issuecomment-6073050728",
+          "bodySha256": "5581ba7661e351bed675b618809c644f5175a8eb96ef4043899f07a2f0d7c93b"
+        }
+      },
+      {
+        "atUtc": "2026-10-09T02:30:40.260995+00:00",
+        "kind": "final-readback",
+        "data": {
+          "state": "open",
+          "reason": null,
+          "closedAt": null
+        }
+      }
+    ],
+    "publishedCommentUrl": "https://github.com/theislampill/salah_widget/issues/24#issuecomment-6073050728",
+    "publishedCommentId": 6073050728,
+    "disposition": "LEAVE OPEN",
+    "finalState": "open",
+    "finalStateReason": null,
+    "finalUpdatedAt": "2026-10-09T02:30:39Z",
+    "status": "VERIFIED"
+  }
+}

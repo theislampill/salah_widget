@@ -1,0 +1,213 @@
+{
+  "issue": {
+    "url": "https://api.github.com/repos/theislampill/salah_widget/issues/26",
+    "repository_url": "https://api.github.com/repos/theislampill/salah_widget",
+    "labels_url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/labels{/name}",
+    "comments_url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/comments",
+    "events_url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/events",
+    "html_url": "https://github.com/theislampill/salah_widget/issues/26",
+    "id": 5381808249,
+    "node_id": "I_kwDOS6MzkM8AAAABQMfgeQ",
+    "number": 26,
+    "title": "R001A: Give builder option groups standard keyboard radio interaction",
+    "user": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "closed",
+    "locked": false,
+    "assignees": [],
+    "milestone": null,
+    "comments": 1,
+    "created_at": "2026-09-08T03:56:52Z",
+    "updated_at": "2026-10-09T02:30:45Z",
+    "closed_at": "2026-10-09T02:30:45Z",
+    "assignee": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "sub_issues_summary": {
+      "total": 0,
+      "completed": 0,
+      "percent_completed": 0
+    },
+    "issue_dependencies_summary": {
+      "blocked_by": 0,
+      "total_blocked_by": 0,
+      "blocking": 0,
+      "total_blocking": 0
+    },
+    "body": "<!-- salah-widget-audit-20260907:SW-026 -->\n# R001A: Give builder option groups standard keyboard radio interaction\n\n**Repository-local identity:** `R001A` in `theislampill/salah_widget`; existing tracker [#26](https://github.com/theislampill/salah_widget/issues/26). The SW identifier is historical draft provenance.\n\n\nCampaign draft alias: SW-026. Existing-control defect; proposed P2. This is the two-button Embed type group, not a builder accessibility redesign.\n\n## Actual browser witness\n\nAt the preserved main tree fd2972ba64225fe9d6848e92497e6d0ed20ea624, the UI lane used a real 375×800 browser viewport, focused Portable and pressed ArrowRight. Focus stayed on mode-portable. aria-checked stayed true/false, and **both controls had tabIndex 0**. The saved native DOM readback is:\n\n~~~json\n{\n  \"viewport\":[375,800],\n  \"active\":\"mode-portable\",\n  \"radios\":[\n    {\"id\":\"mode-portable\",\"checked\":\"true\",\"tabindex\":0},\n    {\"id\":\"mode-local\",\"checked\":\"false\",\"tabindex\":0}\n  ]\n}\n~~~\n\nThe accompanying screenshot was retained by the audit. This authoring pass has not rerun the browser. The positive control matters: focusing Self-configuring and pressing Space did select it. Users have a Tab-plus-Space route; the finding is missing radio-group interaction, not inability to select a mode. No screen-reader speech matrix was measured. builder.html is unchanged between the preserved main and candidate 9d9c43649748555afbe09e3ca49bc47db2d7e7bb.\n\nThe [markup](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L164) declares role=radiogroup with two button role=radio children. [setMode and wiring](https://github.com/theislampill/salah_widget/blob/fd2972ba64225fe9d6848e92497e6d0ed20ea624/builder.html#L211) update selected classes and aria-checked but attach only click handlers. Native button activation explains why Space works; declaring radio roles does not supply native radio arrow behavior.\n\n## Narrow design\n\nBefore authorized implementation, record root, remote, HEAD and dirty state and run:\n\n~~~sh\ngit diff fd2972ba64225fe9d6848e92497e6d0ed20ea624 -- builder.html tests/smoke.html\n~~~\n\nExpect theislampill/salah_widget and stop if the group was already replaced or its values/callers changed. The [candidate source](https://github.com/theislampill/salah_widget/blob/9d9c43649748555afbe09e3ca49bc47db2d7e7bb/builder.html#L164) is comparison evidence.\n\nKeep the existing buttons and finish their small roving-tabindex model. This is smaller than changing markup, CSS and click consumers to native inputs in this two-control group.\n\n1. Have setMode continue to be the single selected-state owner. In the same pass that sets active and aria-checked, set the selected button's tabIndex to 0 and the other to -1. Initial setMode(\"portable\") establishes the invariant before keyboard use. Programmatic mode changes must update all three values too.\n2. Add one keydown handler on .modebtns for ArrowRight/ArrowDown (next) and ArrowLeft/ArrowUp (previous). Build the ordered eligible list from the existing group buttons, excluding disabled controls. Only handle an event whose target is one of those controls. Prevent default for handled arrows, wrap within this group, focus the target and invoke setMode with its existing portable/local value once.\n3. Preserve native button Enter/Space→click activation. Do not also call setMode on their keydown events, which could double-activate or reload the preview twice. Tab/Shift+Tab must remain native: one stop enters the group at its selection, and the next leaves it. Do not trap Tab or use arrow handlers on the whole document.\n4. Retain visible focus CSS and all existing mode effects: generated hash, preview reload, explanatory text and local-only geolocation allow. The selection and generated output must agree after keyboard, mouse and programmatic changes.\n\nThe invariant is exactly one selected/checked/tabbable enabled radio for this group, with native focus and activation behavior preserved. With only one enabled control, arrows remain on it; with none, do not manufacture a selection or throw. Those are defensive fixture controls, not a requested new disabled-state feature.\n\nReplacing roles with generic buttons would abandon the intended mutually exclusive semantics. Adding tabindex alone fixes neither arrows nor state synchronization. Native radio inputs are a credible alternative if the current source has materially changed, but then document the smaller actual diff and requalify CSS and native behavior; do not mix both interaction models. A reusable accessibility framework is disproportionate here.\n\n## Public RED→GREEN recipe\n\nOn a disposable served builder, record exact served source identity; use real browser keyboard events, not dispatchEvent as a substitute for native default behavior. At 375×800, focus #mode-portable and press ArrowRight. Baseline result is the JSON above. Repaired expected state is:\n\n~~~json\n{\n  \"active\":\"mode-local\",\n  \"radios\":[\n    {\"id\":\"mode-portable\",\"checked\":\"false\",\"tabindex\":-1},\n    {\"id\":\"mode-local\",\"checked\":\"true\",\"tabindex\":0}\n  ],\n  \"embedMode\":\"local\"\n}\n~~~\n\nAlso inspect the actual generated iframe hash for local=1, local-only allow=\"geolocation\" and width:325px;height:530px. Do not infer configuration from checked text alone.\n\n| Native interaction/control | Required result |\n|---|---|\n| Tab into group from preceding focusable control | Selected radio receives focus; next Tab leaves group. Shift+Tab re-enters selection. |\n| Right from Portable, Right from Local | Local then wrap to Portable, each with selected/focused/output state agreeing. |\n| Left from Portable; Up/Down in the group | Same defined reverse/forward wrap; no document scrolling caused by handled arrows. |\n| Space or Enter on either button | One native click activation and one mode update, no double preview reload. |\n| Mouse/touch click, then leave/re-enter by keyboard | Clicked value becomes the single tabbable selection. |\n| Programmatic setMode(\"local\") | aria-checked, active class, tabIndex and generated output all reflect local. |\n| Mutation: omit arrow handler or one tabIndex update | Native arrow or single-tabstop assertion fails. |\n\nCapture focused selected/unselected crops at mobile and ordinary desktop widths. Inspect that the focus indicator is visible and text does not clip. The historic keyboard fixture is already a real-browser result, but source inspection alone cannot qualify the new native key behavior. Do not claim assistive-technology speech support without that separate observed environment.\n\n## Scope and completion\n\nOnly builder group wiring/state and a focused regression change. No new preference semantics, serialized values, config.js, widget settings focus trap, installers or preset changes. [R0010](https://github.com/theislampill/salah_widget/issues/16) still owns what the selected local preferences mean; this work must preserve its output rather than redefine it. Existing shared test/docs insertion ownership stays with the integrator; no new typed dependency is proposed.\n\nRollback group changes as a unit if click/Space behavior, preview or focus visibility regresses. Stop on incompatible group drift or missing native keyboard evidence. DONE requires final-tree native RED→GREEN and controls, exact-tree review of double activation/Tab behavior, evidence comment, and served builder readback if claiming public repair. Use non-closing Implements #26 PR wording and manual closure after evidence. This document is not a new rendered PASS.\n\nIdentity provenance: first repository-local allocation batch; existing GitHub object order was used to assign distinct monotonic hex-4 IDs. Closed/held IDs are not reused. Issue number is not implementation priority.\n",
+    "closed_by": {
+      "login": "theislampill",
+      "id": 266501826,
+      "node_id": "U_kgDOD-J-wg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/theislampill",
+      "html_url": "https://github.com/theislampill",
+      "followers_url": "https://api.github.com/users/theislampill/followers",
+      "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+      "organizations_url": "https://api.github.com/users/theislampill/orgs",
+      "repos_url": "https://api.github.com/users/theislampill/repos",
+      "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/theislampill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "timeline_url": "https://api.github.com/repos/theislampill/salah_widget/issues/26/timeline",
+    "performed_via_github_app": null,
+    "state_reason": "completed",
+    "pinned_comment": null
+  },
+  "comments": [
+    {
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/comments/6073051392",
+      "html_url": "https://github.com/theislampill/salah_widget/issues/26#issuecomment-6073051392",
+      "issue_url": "https://api.github.com/repos/theislampill/salah_widget/issues/26",
+      "id": 6073051392,
+      "node_id": "IC_kwDOS6MzkM8AAAABaftpAA",
+      "user": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "created_at": "2026-10-09T02:30:42Z",
+      "updated_at": "2026-10-09T02:30:42Z",
+      "body": "# RLGWO closure proof — R001A — R001A: Give builder option groups standard keyboard radio interaction\n\n<!-- RLGWO-AUDIT:18ff14860ff41c084b1db5f396bb62aa9c22b1be:R001A:2026-10-08 -->\n\n**Recommendation: CLOSE — SATISFIED WITH DEMONSTRATED IMPROVEMENTS.** The existing two-button Embed group now has one selected/tabbable radio, native arrow wrap/focus, native Tab/ShiftTab/Enter/Space and synchronized generated output. Primary executed the final V2 native matrix in Chromium148 and Firefox150 at375x800 and1100x900; F inspected all four focus crops.\n\nTarget `18ff14860ff41c084b1db5f396bb62aa9c22b1be`, tree `35208181eea714c17f5e77b2644e76434345db60`, runtime `f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260`, root index `ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee`. Audit date2026-10-08. Original complete body SHA-256 `329056534ccc2720a2b3ca7c5d7bff1ac0ee24788774d53f717c10b4ba3e0ff1`, revision `2026-09-08T06:25:24Z`. All body/discussion/events were read; no event is treated as permission.\n\nDelivered baseline is independently recorded as DELIVERED_VERIFIED with16 actual public root/V1 Chromium/Firefox cases PASS. Actual browser launches were serialized by the primary; F ran only authorized lightweight Node/VM controls and inspected receipts/crops. Sol6.1/max is confirmed by recorded client turn configuration, not hardware/backend attestation.\n\n| Mandatory obligation | Source owner → delivered consumer | Discriminator and expected | Observed / disposition |\n|---|---|---|---|\n| 1A-01: Preserve two mutually exclusive Embed buttons, values/callers; no accessibility redesign or preference redefinition. | [src/native/builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L174-L177) → [builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L174-L177) | Source/generated equality and selected/output state. Expected: Portable/local semantics unchanged. | Markup retains role=radiogroup/radio and values; generated builder matches authored owner under final preservation evidence. **SATISFIED** |\n| 1A-02: setMode single owner updates active/aria-checked/tabIndex for initial, click and programmatic changes. | [src/native/builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252) → [builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L226-L252) | 8-case retained VM selected-state/output assertions. Expected: Exactly one enabled selected/checked/tabbable radio; none enabled is safe. | Current source and retained 8/8 prove state synchronization and disabled fixtures; terminal explicitly native=NOT_RUN. **SATISFIED** |\n| 1A-03: Scoped Right/Down next and Left/Up previous, wrap, focus+setMode once; exclude disabled and other event targets. | [src/native/builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252) → [builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L243-L252) | Real native arrows, scroll prevention and preview revision count. Expected: Selection/focus/output agree, handled arrows prevent default, one update. | Both native engines execute all four arrows/wrap with focus+state+output agreement and revision+1; V2 explicitly checks scroll offsets unchanged. Disabled controls and unrelated native event target are excluded. **SATISFIED** |\n| 1A-04: Native Enter/Space click preserved; do not handle keydown twice; native Tab/ShiftTab enter selection then leave without trap. | [src/native/builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252) → [builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L243-L252) | Real browser Tab sequence and Enter/Space click/preview counters. Expected: One native activation; one group tab stop and escape. | V2 presses actual Enter and complete Space on both local and portable, each revision+1; actual Tab exits the group and Shift+Tab re-enters selected radio without a reload or trap. **SATISFIED** |\n| 1A-05: Pointer and programmatic modes update selected/focused/generated output, local=1/allow=geolocation and existing embed size. | [src/native/builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252) → [builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L211-L239) | Actual output/readback after arrow/click/setMode. Expected: Mode/output agree; correct local-only delegation and 325x530 builder payload. | Both native engines verify click and programmatic mode changes, code/preview local flag, allow=geolocation and preserved325x530 emitted snippet. Native Tab/ShiftTab is repeated immediately after click. Blank preview is explicitly an output-contract boundary; it does not certify sky rendering. Public16 actual widget cases separately support card/wrapper rendering. **SATISFIED** |\n| 1A-06: One/zero enabled safety and unrelated group target ignored; omit arrow or tabIndex mutant fails the right behavior. | [tests/r001a-radio.cjs](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001a-radio.cjs#L8-L64) → [tests/r001a-mutations.cjs](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r001a-mutations.cjs#L1-L10) | Real consumer mutation with no bootstrap substitute. Expected: Each semantic fault detected. | Both original mutants reject at first native Right: arrows -> embedMode expected local; tabindex -> mode-portable tabIndex must follow selected state. All four mutant documents per engine reach the intended assertions without page errors; bootstrap failures are not counted. Source VM8/8 and both mutants also pass fresh. **SATISFIED** |\n| 1A-07: Mobile375x800 and ordinary desktop focused selected/unselected crops: focus visible and no clipped text. | [src/native/builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L35-L36) → [builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L53-L55) | Native keyboard and actual crop at both widths. Expected: Visible focus, unclipped controls. | F viewed four native375/desktop focus crops. Portable label and unselected local label are intact; actual yellow2px keyboard outline is visible. No screen-reader speech matrix is claimed or required. **SATISFIED** |\n| 1A-08: Final native RED/GREEN, exact-tree review of Tab/double activation, evidence comment and served builder readback before public repair claim. | [src/native/builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L226-L252) → [builder.html](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L226-L252) | Current native sequence plus matched served source. Expected: Complete all bounded group obligations before manual closure. | Final V2 records bind exact builder66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e and indexff7285; both engines6/6. Full records and crops are linked below. Primary Astra reconciled the exact-tree closure conclusion; this comment records proof before any closure action. **SATISFIED** |\n\nFresh controls (actual target/source binding; attempts and results remain separate):\n- `C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe tests/r001a-radio.cjs` — exit0; {\"cases\":8,\"passed\":8,\"failed\":0,\"ref\":\"working-tree\",\"mutant\":null,\"native\":\"NOT_RUN\"}. Log SHA-256 `62ce2fc8bdd15fb1bb9aba87b6e391b559e99573bb54ea44f77b84563c48cddd`.\n- `C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe tests/r001a-mutations.cjs` — exit0; \"Full JSON/log retained; exit=0\". Log SHA-256 `4ca7b47d0406d4efd44a1a1b6d60e7065cc59a3ced1dccc12c224c71ad14d728`.\n- Primary native chromium 148.0.7778.96 on Windows: receipt SHA-256 `033b64b624aa2fa5d30576f2aa622a07e40f27c8e39e30ebf109c80484a617ce`; driver/fixture SHA-256 `ccce3145ed37a71518374301ac7f31e6ddb66ad04f6b28f2d273fbac5b7d2689` / `bd20b34e55795ec642856ce8d4332fac3a339c72ca9c1daca92979eec36f6b02`.\n  [{\"name\":\"mobile-healthy\",\"status\":\"PASS\",\"negativeControlDetected\":null,\"discriminator\":null},{\"name\":\"mobile-arrows\",\"status\":\"PASS\",\"negativeControlDetected\":true,\"discriminator\":\"embedMode expected local\"},{\"name\":\"mobile-tabindex\",\"status\":\"PASS\",\"negativeControlDetected\":true,\"discriminator\":\"mode-portable tabIndex must follow selected state\"},{\"name\":\"desktop-healthy\",\"status\":\"PASS\",\"negativeControlDetected\":null,\"discriminator\":null},{\"name\":\"desktop-arrows\",\"status\":\"PASS\",\"negativeControlDetected\":true,\"discriminator\":\"embedMode expected local\"},{\"name\":\"desktop-tabindex\",\"status\":\"PASS\",\"negativeControlDetected\":true,\"discriminator\":\"mode-portable tabIndex must follow selected state\"}]\n- Primary native firefox 150.0.2 on Windows: receipt SHA-256 `d0eeaabea4e99b111fdd7b94a8bdd1a70e3d98e5cf767d975efa2052fb8a223f`; driver/fixture SHA-256 `ccce3145ed37a71518374301ac7f31e6ddb66ad04f6b28f2d273fbac5b7d2689` / `bd20b34e55795ec642856ce8d4332fac3a339c72ca9c1daca92979eec36f6b02`.\n  [{\"name\":\"mobile-healthy\",\"status\":\"PASS\",\"negativeControlDetected\":null,\"discriminator\":null},{\"name\":\"mobile-arrows\",\"status\":\"PASS\",\"negativeControlDetected\":true,\"discriminator\":\"embedMode expected local\"},{\"name\":\"mobile-tabindex\",\"status\":\"PASS\",\"negativeControlDetected\":true,\"discriminator\":\"mode-portable tabIndex must follow selected state\"},{\"name\":\"desktop-healthy\",\"status\":\"PASS\",\"negativeControlDetected\":null,\"discriminator\":null},{\"name\":\"desktop-arrows\",\"status\":\"PASS\",\"negativeControlDetected\":true,\"discriminator\":\"embedMode expected local\"},{\"name\":\"desktop-tabindex\",\"status\":\"PASS\",\"negativeControlDetected\":true,\"discriminator\":\"mode-portable tabIndex must follow selected state\"}]\n\nRetained immutable evidence (historical executions, not reruns):\n- [docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001a-radio.log.gz](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/logs/native/r001a-radio.log.gz) — VM behavior/output, no native default-action proof.\n\nN001/N002 PARTIAL and N003 BLOCKED are considered only at mapped interfaces. Eight retained native legacy failures remain individually named; absent synthetic arrays and old PBR byte equality are neither product defects by themselves nor automatic passes. No all-browser, optical-calibration, GPU/battery, CI or external human-approval claim is made.\n\nEvery mandatory row is satisfied or validly superseded. No runtime repair remains for this bounded issue.\n\nDependencies:\n- R0010 owns selected local preferences; preserve its output interface, not whole-issue closure.\n- Production iframe 330x534 owner policy is separate from the builder group interaction repair.\n\nPrimary Astra independently reconciled every mandatory row and this conclusion. This evidence comment precedes any approved closure action; it does not claim the issue was already closed. Reviewer F changed no runtime source or GitHub state.\n\nImmutable audit inputs and fresh receipts:\n\n- [Complete original contract, discussion and events](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/issues/26.json).\n- [Full reconciled obligation/evidence matrix](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/workers/F/26-assessment.json).\n- [Recorded six-reviewer model/effort configuration](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/reviewer-model-settings.json).\n- [Delivered target verification](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/release.json).\n- [16 actual public root/V1 browser cases](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/public-browser-summary.json).\n- [Fresh lightweight current-source command receipts](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/workers/F/followup-tests/receipt.json).\n- [chromium V2 healthy and both native mutation controls](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-native-F2-chromium/results.json).\n- [chromium mobile native keyboard-focus crop](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-native-F2-chromium/mobile-focus.png).\n- [chromium desktop native keyboard-focus crop](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-native-F2-chromium/desktop-focus.png).\n- [firefox V2 healthy and both native mutation controls](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-native-F2-firefox/results.json).\n- [firefox mobile native keyboard-focus crop](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-native-F2-firefox/mobile-focus.png).\n- [firefox desktop native keyboard-focus crop](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-native-F2-firefox/desktop-focus.png).\n- [Exact final native keyboard driver](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/workers/F/radio_keyboard_check_v2.py).\n- [Exact final contained current-builder fixture](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/workers/F/native-radio-fixture-v2.cjs).\n- [Primary independent visual readback](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-visual-review.json).\n\n\nPrimary publication reconciliation: the complete mandatory matrix and verdict above were reviewed by Astra against the delivered target. Reviewer F performed the independent issue audit; the designated worker mechanically publishes this approved body. This proof is posted and read back before any justified completed closure.\n\n- [Exact original issue and discussion](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/issues/26.json) · [Audited release](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/release.json) · [Public runtime/V1 readback](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/public-runtime.json).\n- [539-row primary reconciliation](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/primary-reconciliation.json) · [Six reviewer configuration receipts](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/reviewer-model-settings.json) · [Evidence custody manifest](https://github.com/theislampill/salah_widget/blob/9cd9dfa3a8e39a51f9bd436ce3fa5ad50747ed84/docs/rlgwo-audit/20261008/EVIDENCE_MANIFEST.json).\n",
+      "author_association": "OWNER",
+      "pin": null,
+      "reactions": {
+        "url": "https://api.github.com/repos/theislampill/salah_widget/issues/comments/6073051392/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "performed_via_github_app": null,
+      "minimized": null
+    }
+  ],
+  "publicationReceipt": {
+    "number": 26,
+    "reviewer": "F",
+    "mechanicalPublisher": "worker F",
+    "AUDIT_SHA": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "commentSha256": "9e218c507361c501c82326dc8f53167413a96cf5cde8ee50bf6a3f84ba37f65a",
+    "closedByAudit": true,
+    "steps": [
+      {
+        "atUtc": "2026-10-09T02:30:41.565219+00:00",
+        "kind": "fresh-preconditions",
+        "data": {
+          "main": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+          "bodySha256": "329056534ccc2720a2b3ca7c5d7bff1ac0ee24788774d53f717c10b4ba3e0ff1",
+          "state": "open",
+          "stateReason": null,
+          "commentIds": []
+        }
+      },
+      {
+        "atUtc": "2026-10-09T02:30:42.354815+00:00",
+        "kind": "proof-posted",
+        "data": {
+          "id": 6073051392,
+          "url": "https://github.com/theislampill/salah_widget/issues/26#issuecomment-6073051392"
+        }
+      },
+      {
+        "atUtc": "2026-10-09T02:30:42.821940+00:00",
+        "kind": "proof-readback-verified",
+        "data": {
+          "id": 6073051392,
+          "url": "https://github.com/theislampill/salah_widget/issues/26#issuecomment-6073051392",
+          "bodySha256": "9e218c507361c501c82326dc8f53167413a96cf5cde8ee50bf6a3f84ba37f65a"
+        }
+      },
+      {
+        "atUtc": "2026-10-09T02:30:43.856561+00:00",
+        "kind": "close-request-started",
+        "data": {
+          "reason": "completed"
+        }
+      },
+      {
+        "atUtc": "2026-10-09T02:30:44.856956+00:00",
+        "kind": "close-command-returned",
+        "data": {
+          "output": ""
+        }
+      },
+      {
+        "atUtc": "2026-10-09T02:30:45.212295+00:00",
+        "kind": "final-readback",
+        "data": {
+          "state": "closed",
+          "reason": "completed",
+          "closedAt": "2026-10-09T02:30:45Z"
+        }
+      }
+    ],
+    "publishedCommentUrl": "https://github.com/theislampill/salah_widget/issues/26#issuecomment-6073051392",
+    "publishedCommentId": 6073051392,
+    "disposition": "CLOSE — SATISFIED WITH DEMONSTRATED IMPROVEMENTS",
+    "finalState": "closed",
+    "finalStateReason": "completed",
+    "finalUpdatedAt": "2026-10-09T02:30:45Z",
+    "status": "VERIFIED"
+  }
+}
