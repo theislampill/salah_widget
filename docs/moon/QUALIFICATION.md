@@ -1,5 +1,11 @@
 # CP9 dependent Moon candidate — receiving qualification
 
+**2026-10-09 review revision:** the [PR43 amendment](../real-sky/PR43_REVIEW_REVISION.md)
+qualifies a changed compact initial receiver against the retained40 references
+and binds decoder-only equivalence separately. It preserves full final V5 and
+frozen V1. Its actual entry/font captures do not close strict S1, L1/S10 or the
+actual-parent gate. Historical results below retain their original source scope.
+
 **Current-root startup successor:** [R0021 specification](../real-sky/CELESTIAL_STARTUP_RLGWO.md)
 separates first scene availability from full terrain convergence. Its V5-derived
 receiver tier is qualified against retained full adaptive references at the actual

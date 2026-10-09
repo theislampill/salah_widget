@@ -29,5 +29,18 @@ class CompleteScene(unittest.TestCase):
   self.assertEqual(m.first_complete_scene(self.receipt(observerKnown=False))['status'],'SEPARATE_ACQUISITION_CASE')
  def test_later_blank_is_not_repaired_startup(self):
   self.assertEqual(m.first_complete_scene(self.receipt(laterUnwarrantedGaps=[3000]))['status'],'FAIL')
+ def test_coverage_must_be_a_finite_nonnegative_number(self):
+  for value in [None,False,True,-1,float('nan'),float('inf'),float('-inf'),'40']:
+   with self.subTest(value=value):
+    self.assertEqual(m.first_complete_scene(self.receipt(maximumUncoveredMs=value))['status'],'FAIL')
+  for value in [0,80]:
+   self.assertEqual(m.first_complete_scene(self.receipt(maximumUncoveredMs=value))['status'],'PASS')
+  self.assertEqual(m.first_complete_scene(self.receipt(maximumUncoveredMs=80.01))['status'],'FAIL')
+ def test_acceptance_cannot_follow_its_complete_presentation(self):
+  self.assertEqual(m.first_complete_scene(self.receipt(acceptedMs=340))['status'],'PASS')
+  self.assertEqual(m.first_complete_scene(self.receipt(acceptedMs=340.01))['status'],'FAIL')
+  self.assertEqual(m.first_complete_scene(self.receipt(acceptedMs=1000))['status'],'FAIL')
+  self.assertEqual(m.first_complete_scene(self.receipt(acceptedMs=90))['status'],'PASS')
+  self.assertEqual(m.first_complete_scene(self.receipt(acceptedMs=89.99))['status'],'FAIL')
 
 if __name__=='__main__':unittest.main()

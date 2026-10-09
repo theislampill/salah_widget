@@ -30,7 +30,7 @@ for browser in ['chromium','firefox']:
     'firstCompleteUpperMs':complete,'sceneToCompleteObservedMs':complete-first['scene'],'addedStartupMs':first['scene']-receipt['baselineSceneMs'],
     'acceptedToCompleteUpperMs':None if r['acceptedMs'] is None else complete-r['acceptedMs'],'maximumUncoveredMs':gap,
     'receipt':receipt,'strictAcceptance':first_complete_scene(receipt),'timingChecksWithoutCoverage':{
-      'navigation':complete<=b['navigationMs'],'acceptedScene':None if r['acceptedMs'] is None else complete-r['acceptedMs']<=b['acceptedMs'],
+      'navigation':complete<=b['navigationMs'],'acceptedScene':None if r['acceptedMs'] is None else 0<=complete-r['acceptedMs']<=b['acceptedMs'],
       'observedContentGap':complete-first['scene']<=b['frameGapMs'],'addedStartup':first['scene']-receipt['baselineSceneMs']<=b['regressionMs']}}
    timings.append(row)
 (O/'TIMING.json').write_text(json.dumps({'clock':'native source-frame receipt upper bounds; no getter or PNG requests in the first 15s; no physical-monitor photon claim',

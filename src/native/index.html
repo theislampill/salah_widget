@@ -1899,41 +1899,25 @@ function moonDebugSamples(){
   }catch(e){ return {status:"unavailable",width,height,radius,cx,cy,samples:[]}; }
 }
 const MOON_SCALE_MIN=1.11,MOON_SCALE_MAX=1.13;
+function nativeLunarSnapshot(date,lat,lon,SIM){
+ let frac,waxing;
+ if(SIM.moon!=null){frac=clamp(+SIM.moon);waxing=SIM.wax!=='0';}
+ else if(isFinite(+lat)&&isFinite(+lon)){const il=moonIllum(date);frac=il.fraction;waxing=il.waxing;}
+ else{const mp=moonPhase(date);frac=mp.frac;waxing=mp.waxing;}
+ let alt=25,Hm=0;
+ if(SIM.moonAlt!=null){alt=+SIM.moonAlt;Hm=SIM.moonH!=null?+SIM.moonH:0;}
+ else if(isFinite(+lat)&&isFinite(+lon)){const aa=moonAltAz(date,Math.max(-89.5,Math.min(89.5,+lat)),+lon);alt=aa.alt;Hm=aa.H;}
+ const up=clamp((alt+2)/6),hd=Math.max(-1,Math.min(1,Hm/120)),x=268+hd*1.5,y=55+3*up-clamp((alt-6)/70)*3;
+ const scale=MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*up;
+ return {utcMs:date.getTime(),frac,waxing,alt,H:Hm,up,x,y,scale,sx:x/325,sy:y/530,
+  transform:`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`,
+  valid:[alt,Hm,frac,up,x,y].every(Number.isFinite)};
+}
 function renderMoon(){
-  let frac, waxing;
-  const date=simDate();                                            // moon phase advances with simTime (debug fast-forward spans days)
-  if(SIM.moon!=null){                                              // sim: forced phase for testing
-    frac=clamp(+SIM.moon); waxing=SIM.wax!=="0";
-  } else if(isFinite(+lat) && isFinite(+lon)){                     // real: accurate illuminated fraction + waxing/waning sense
-    const il=moonIllum(date); frac=il.fraction; waxing=il.waxing;
-  } else {                                                         // no coords yet: a plausible moon, never NaN
-    const mp=moonNow(); frac=mp.frac; waxing=mp.waxing;
-  }
-  // ONE steady UPRIGHT face: renderMoonPBR lights the bright limb on the RIGHT (waxing) / LEFT (waning) with the
-  // maria FIXED, so the terminator just sweeps across — the disc never rotates ("record-player" spin) and its lit
-  // side matches the footer phase emoji. (Previously the χ−q parallactic orientation rotated the whole disc over
-  // time, which read as the moon spinning and mismatching the emoji.)
-  // CINEMATIC POSITION: real altitude + hour angle drive a rising/setting path (never pinned). H maps to
-  // x (east/rising→left, transit→centre, west/setting→right); altitude maps to y (arcs up when high; sits
-  // low at/just below the horizon when down). Below the horizon it degrades to a low, small calendar marker.
-  let alt=25, Hm=0;
-  if(SIM.moonAlt!=null){ alt=+SIM.moonAlt; Hm=SIM.moonH!=null?+SIM.moonH:0; }
-  else if(isFinite(+lat) && isFinite(+lon)){ const aa=moonAltAz(date, Math.max(-89.5,Math.min(89.5,+lat)), +lon); alt=aa.alt; Hm=aa.H; }
-  const up=clamp((alt+2)/6);                                       // 0 below horizon → 1 a few degrees up
-  // RESERVED top-right lunar slot — a LARGE, corner-clipped moon (≈1.9× the old size) that ENTERS and EXITS
-  // by a positional SWEEP, not a fade: as it rises (up:0→1) it slides in from off the upper-right corner —
-  // LEFT + DOWN with a slight zoom — and settles into its slot; as it sets (up:1→0) it reverses (right-out +
-  // up + shrink) and clips back off the corner. Opacity only ASSISTS at the extremes (see --moonfeat). It
-  // stays high in the corner (a clear gap above the always-low/descending arc at this x) and never sweeps
-  // across the centre/header. A faint culmination lift keeps a high moon from looking frozen.
-  const sweep=up, hd=Math.max(-1,Math.min(1,Hm/120));
-  // The moon SETTLES into a mostly-on-card top-right slot in EVERY visible state (a below-horizon moon only ever
-  // shows at night as the calendar ghost — by day moongrp→0 — so it must NOT be jammed off the corner). The sweep
-  // now only adds a small rise/settle for life; it no longer flings the disc off-card.
-  const x=268 + hd*1.5;                                            // centred so the WHOLE disc has comfortable margin on the right (≈5px) — a thin WAXING crescent's lit right limb is clearly in frame, not at the edge — while the left limb clears the temperature strap row below
-  const y=55 + 3*sweep - clamp((alt-6)/70)*3;                      // ≈55-58: dropped below the temp strap (y19-37) and above the arc (top y≈121 on the right) — its wide middle clears the strap, so the disc is large AND fully on-card
-  const scale=MOON_SCALE_MIN + (MOON_SCALE_MAX-MOON_SCALE_MIN)*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
-  const transform=`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`;
+  const date=simDate();
+  // The head and ordinary painter share this same native phase, upright sense,
+  // approved body size and altitude/hour-angle path. No second ephemeris/clock.
+  const {frac,waxing,alt,H:Hm,up,x,y,transform}=nativeLunarSnapshot(date,lat,lon,SIM);
   const g=$(".moon"); if(g) g.setAttribute("transform",transform);
   const mask=$(".moon-mask-geometry"); if(mask) mask.setAttribute("transform",transform);
   const maskDisc=$(".moon-mask-disc"),photo=$(".mphoto");
@@ -2633,17 +2617,18 @@ function tieRainToClouds(){
 // Lunar body presence/light uses accepted celestial inputs, independently of
 // timetable acquisition. Both initial and ordinary paint consume these SAME
 // expressions; a pending prayer request grants neither a phase nor moonlight.
-function lunarPresentation(solarElevation){
-  const mFrac=clamp(moonSky.frac),moonUp=clamp((moonSky.alt+2)/6);
+function nativeLunarPresentation(moon,solarElevation,surfaceFailed){
+  const mFrac=clamp(moon.frac),moonUp=clamp((moon.alt+2)/6);
   const darkness=clamp(-(solarElevation+3)/9),phaseVis=clamp((mFrac-0.02)/0.05);
-  const moonObject=_pbrFailed?0:moonUp*darkness*phaseVis;
+  const moonObject=surfaceFailed?0:moonUp*darkness*phaseVis;
   const moonLightEligible=moonObject>0;
-  const moonLightReason=_pbrFailed?"surface-unavailable":darkness===0?"daylight":moonUp===0?"below-horizon":phaseVis===0?"near-new":"eligible";
+  const moonLightReason=surfaceFailed?"surface-unavailable":darkness===0?"daylight":moonUp===0?"below-horizon":phaseVis===0?"near-new":"eligible";
   const moonLocalWash=moonLightEligible?clamp(mFrac*moonUp*1.15):0;
   const moonGlow=moonLightEligible?(0.03+0.24*mFrac*mFrac):0;
   const moonlight=moonObject*(0.35+0.65*mFrac),moonShow=clamp(darkness*1.8);
   return {mFrac,moonUp,darkness,phaseVis,moonObject,moonLightEligible,moonLightReason,moonLocalWash,moonGlow,moonlight,moonStrength:moonlight,moonShow,moonPresence:moonShow};
 }
+function lunarPresentation(solarElevation){ return nativeLunarPresentation(moonSky,solarElevation,_pbrFailed); }
 function paintCelestialWithoutTimetable(){
   const identity=skySceneIdentity(),sun=window.SalahNativeSkyHost?.cloudLighting?.()?.sun;
   if(identity===null||!Number.isFinite(sun?.altDeg))return;
@@ -3029,13 +3014,41 @@ function applyTheme(M){
 // Size the present-prayer name to the live arc: keep 1 M of clearance from the curve on each side
 // (the arc is narrower on short days, wider on long ones — so we fit per day, not a fixed size) and
 // sit the text baseline 1/2 M above the horizon, WITHOUT moving the hero time (it stays centred
-// between horizon and bar). Gated on name/day so it only recomputes when the curve actually changes.
+// between horizon and bar). Cache each name/day within the current font generation.
 let _cnFit="";
+// A nonblocking stylesheet can register its faces after the first fit. check()
+// returns true for an absent family, so it cannot admit or preserve that cache.
+// The set-wide completion event can also wait on a different stalled face.
+// Track actual face states and their own completion, keeping fallback geometry
+// cached between changes and waking even a frozen preview when one face settles.
+const _cnFontLoads=new WeakMap();
+const cnRelevantFont=face=>/^(Fraunces|Inter)$/i.test(face.family.replace(/["']/g,"").trim());
+function cnFontChanged(){ _cnFit=""; _renderDirty=true; }
+function cnFontSignature(){
+  const fonts=document.fonts;
+  if(!fonts?.[Symbol.iterator]) return "";
+  let signature="";
+  for(const face of fonts){
+    if(!cnRelevantFont(face)) continue;
+    signature+=face.family+"|"+face.weight+"|"+face.style+"|"+face.status+";";
+    if(face.status==="loading" && _cnFontLoads.get(face)!==face.loaded){
+      _cnFontLoads.set(face,face.loaded);
+      face.loaded.then(cnFontChanged,cnFontChanged);
+    }
+  }
+  return signature;
+}
+function cnFontsChanged(event){
+  if(event.fontfaces.some(cnRelevantFont)) cnFontChanged();
+}
+document.fonts?.addEventListener("loading",cnFontSignature);
+document.fonts?.addEventListener("loadingdone",cnFontsChanged);
+document.fonts?.addEventListener("loadingerror",cnFontsChanged);
 function fitCn(M){
   const cn=$(".cn"), nt=$(".nt"), rail=document.querySelector(".arc .rail"),
         hz=document.querySelector(".arc .horizon"), bar=$(".bar");
   if(!cn||!nt||!rail||!hz||!bar) return;
-  const key=M.currentKey+"|"+Math.round(M.sunrise)+"|"+Math.round(M.sunset);
+  const key=M.currentKey+"|"+Math.round(M.sunrise)+"|"+Math.round(M.sunset)+"|"+cnFontSignature();
   if(key===_cnFit) return;
   const Mu=16, gap=Mu/2;
   const box=el=>{ const r=document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
@@ -3065,9 +3078,7 @@ function fitCn(M){
   const mid=()=>{ const b=box(nt); return (b.top+b.bottom)/2; };
   const curM=parseFloat(getComputedStyle(cn).marginBottom)||0;
   cn.style.marginBottom=(curM+(tgt-mid())).toFixed(2)+"px";
-  // only cache once the real display font is measurable — otherwise re-fit next frame so a size
-  // computed against the fallback font (before Fraunces loads) doesn't get locked in.
-  try{ if(!document.fonts || document.fonts.check('600 24px "Fraunces"')) _cnFit=key; }catch(e){ _cnFit=key; }
+  _cnFit=key;
 }
 
 // PROCEDURAL BRANCHING LIGHTNING — a stepped-leader channel from the cloud base downward (sometimes reaching the

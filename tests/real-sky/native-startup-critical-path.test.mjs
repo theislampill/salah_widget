@@ -14,7 +14,7 @@ test('prayer-name fitting snapshots one unchanged arc transform per fit',()=>{
  const elements={'.cn':cn,'.nt':nt,'.arc .rail':rail,'.arc .horizon':{getBoundingClientRect:()=>({top:200})},'.bar':{getBoundingClientRect:()=>({top:260})}};
  const run=code=>{
   cn.style={...styles};matrixReads=0;pointReads=0;
-  const scope={_cnFit:'',Math,isFinite,parseFloat,$:s=>elements[s],getComputedStyle:el=>el.style,
+  const scope={_cnFit:'',cnFontSignature:()=>'',Math,isFinite,parseFloat,$:s=>elements[s],getComputedStyle:el=>el.style,
    document:{querySelector:s=>elements[s],fonts:{check:()=>true},createRange:()=>({selectNodeContents(el){this.el=el;},getBoundingClientRect(){return this.el===cn?{left:120,right:200,width:80,bottom:190}:{top:200,bottom:250};}}),createElement:()=>({getContext:()=>({measureText:()=>({actualBoundingBoxAscent:21,fontBoundingBoxDescent:7.2})})})}};
   vm.createContext(scope);vm.runInContext(code,scope);scope.fitCn({currentKey:'Isha',sunrise:400,sunset:1100});return {...cn.style};
  };
@@ -44,6 +44,48 @@ test('optional remote font CSS cannot block the native bootstrap',()=>{
  const handler=tag.match(/onload="([^"]+)"/)?.[1];assert.ok(handler);
  const link={media:'print'};vm.runInNewContext('(function(){'+handler+'}).call(link)',{link});assert.equal(link.media,'all','ordinary styles still apply once available');
 });
+test('cached fallback fitting responds once to relevant native font completion',()=>{
+ const code=source.slice(source.indexOf('let _cnFit="";'),source.indexOf('// PROCEDURAL BRANCHING LIGHTNING'));
+ let measurements=0;const listeners=new Map(),cn={style:{top:'100px',marginBottom:'0px',fontFamily:'Fraunces'},textContent:'Forenoon'},nt={};
+ const rail={getTotalLength:()=>200,getPointAtLength:l=>({x:20+l*1.4,y:200-100*Math.sin(l*Math.PI/200)}),getScreenCTM:()=>({}),ownerSVGElement:{createSVGPoint:()=>({matrixTransform(){return {x:this.x,y:this.y};}})}};
+ const elements={'.cn':cn,'.nt':nt,'.arc .rail':rail,'.arc .horizon':{getBoundingClientRect:()=>({top:200})},'.bar':{getBoundingClientRect:()=>({top:260})}};
+ // Native check() may report true before an absent family is registered. The
+ // browser regression covers the real CSS/font transport; this checks caching.
+ const scope={_renderDirty:false,Math,isFinite,parseFloat,$:s=>elements[s],getComputedStyle:e=>e.style,
+  document:{fonts:{check:()=>true,addEventListener:(name,fn)=>listeners.set(name,fn)},querySelector:s=>elements[s],
+   createRange:()=>({selectNodeContents(e){this.e=e;},getBoundingClientRect(){return this.e===cn?{left:110,right:210,width:100,bottom:190}:{top:200,bottom:250};}}),
+   createElement:()=>({getContext:()=>({measureText(){measurements++;return {actualBoundingBoxAscent:21,fontBoundingBoxDescent:7.2};}})})}};
+ vm.createContext(scope);vm.runInContext(code,scope);
+ const fit=()=>scope.fitCn({currentKey:'Forenoon',sunrise:400,sunset:1100});
+ fit();fit();assert.equal(measurements,1,'fallback remains usable and cached while CSS is absent');
+ const finish=(type,family)=>listeners.get(type)?.({fontfaces:[{family,status:type==='loadingdone'?'loaded':'error'}]});
+ finish('loadingdone','"Fraunces"');fit();assert.equal(measurements,2,'real face arrival invalidates stale fallback metrics');
+ assert.equal(scope._renderDirty,true,'arrival schedules a native render even at frozen preview time');
+ fit();fit();assert.equal(measurements,2,'settled typography does not refit continuously');
+ finish('loadingdone','Unrelated');fit();assert.equal(measurements,2,'unrelated font does not invalidate this geometry');
+ finish('loadingerror','Inter');fit();fit();assert.equal(measurements,3,'terminal failure has one stable fallback fit');
+});
+test('individual font arrival refits before the other family settles',async()=>{
+ const code=source.slice(source.indexOf('let _cnFit="";'),source.indexOf('// PROCEDURAL BRANCHING LIGHTNING'));
+ let measurements=0,releaseFraunces,rejectInter;const listeners=new Map();
+ const faces=[{family:'Fraunces',status:'loading',loaded:new Promise(r=>releaseFraunces=r)},
+  {family:'Inter',status:'loading',loaded:new Promise((_,r)=>rejectInter=r)}];
+ const cn={style:{top:'100px',marginBottom:'0px',fontFamily:'Fraunces'},textContent:'Forenoon'},nt={};
+ const rail={getTotalLength:()=>200,getPointAtLength:l=>({x:20+l*1.4,y:200-100*Math.sin(l*Math.PI/200)}),getScreenCTM:()=>({}),ownerSVGElement:{createSVGPoint:()=>({matrixTransform(){return {x:this.x,y:this.y};}})}};
+ const elements={'.cn':cn,'.nt':nt,'.arc .rail':rail,'.arc .horizon':{getBoundingClientRect:()=>({top:200})},'.bar':{getBoundingClientRect:()=>({top:260})}};
+ const fonts={status:'loading',check:()=>true,[Symbol.iterator]:()=>faces[Symbol.iterator](),addEventListener:(name,fn)=>listeners.set(name,fn)};
+ const scope={_renderDirty:false,Math,isFinite,parseFloat,$:s=>elements[s],getComputedStyle:e=>e.style,
+  document:{fonts,querySelector:s=>elements[s],createRange:()=>({selectNodeContents(e){this.e=e;},getBoundingClientRect(){return this.e===cn?{left:110,right:210,width:100,bottom:190}:{top:200,bottom:250};}}),
+   createElement:()=>({getContext:()=>({measureText(){measurements++;return {actualBoundingBoxAscent:21,fontBoundingBoxDescent:7.2};}})})}};
+ vm.createContext(scope);vm.runInContext(code,scope);const fit=()=>scope.fitCn({currentKey:'Forenoon',sunrise:400,sunset:1100});
+ fit();fit();assert.equal(measurements,1);
+ faces[0].status='loaded';releaseFraunces(faces[0]);await Promise.resolve();await Promise.resolve();
+ assert.equal(scope._renderDirty,true,'individual Fraunces completion must wake a frozen native preview while Inter stays pending');
+ fit();fit();assert.equal(measurements,2,'no set-wide event or forced cache clear is needed');
+ scope._renderDirty=false;faces[1].status='error';rejectInter(Error('font permanently unavailable'));await Promise.resolve();await Promise.resolve();
+ assert.equal(scope._renderDirty,true);fit();fit();assert.equal(measurements,3,'terminal fallback stabilizes after its own invalidation');
+});
+
 test('V5 ownership prevents discarded legacy-map GPU readback at startup',()=>{
  const start=source.indexOf('(function loadMoonMaps(){'),end=source.indexOf('})();',start)+5;
  let readbacks=0;

@@ -15,7 +15,10 @@ def first_complete_scene(receipt):
  if receipt.get('observerKnown') is not True:
   return {'status':'SEPARATE_ACQUISITION_CASE','failures':['accepted observer is unavailable'],'budget':budget}
  if receipt.get('evidenceKind')!='presented-pixels':failures.append('requires presented pixels')
- if not receipt.get('frames') or receipt.get('maximumUncoveredMs',math.inf)>80:failures.append('incomplete early-frame coverage')
+ uncovered=receipt.get('maximumUncoveredMs')
+ if (not receipt.get('frames') or isinstance(uncovered,bool) or not isinstance(uncovered,(int,float))
+     or not math.isfinite(uncovered) or not 0<=uncovered<=budget['frameGapMs']):
+  failures.append('incomplete early-frame coverage')
  needed=['sceneMs','acceptedMs','baselineSceneMs']
  if receipt.get('moonWarranted'):needed.append('moonMs')
  if receipt.get('starsWarranted'):needed.append('starsMs')
@@ -27,7 +30,7 @@ def first_complete_scene(receipt):
  complete=max(receipt[k] for k in needed if k not in ['acceptedMs','baselineSceneMs'])
  checks={
   'navigation':complete<=budget['navigationMs'],
-  'acceptedScene':complete-receipt['acceptedMs']<=budget['acceptedMs'],
+  'acceptedScene':0<=complete-receipt['acceptedMs']<=budget['acceptedMs'],
   'coherentFirstScene':complete-receipt['sceneMs']<=budget['frameGapMs'],
   'noLoadingGateRegression':receipt['sceneMs']-receipt['baselineSceneMs']<=budget['regressionMs'],
   'continuedPresence':not receipt.get('laterUnwarrantedGaps'),

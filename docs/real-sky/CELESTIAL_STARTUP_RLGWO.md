@@ -1,7 +1,9 @@
 # R0021 current-root startup increment — revision 1
 
-Status: implemented; bounded qualification recorded for Draft review. S1,
-actual-parent qualification and S10 remain open. This increment does not close #33.
+Status: REQUEST CHANGES at reviewed head `f0647b44e10c9ce4f80895b52861893c347512fd`.
+The [active review amendment](PR43_REVIEW_REVISION.md) reopens initial-entry and
+font-arrival qualification in this same work order. S1, actual-parent qualification
+and S10 remain open. This increment does not close #33.
 Specification update 4 incorporates S10 attribution and the bounded startup
 implementation under the same named successor revision 1; it
 does not allocate a new canonical work order. The audit coordinator owns the

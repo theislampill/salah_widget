@@ -5,6 +5,16 @@ and don't expect this file to repeat them.
 
 ## Current R0021 startup successor
 
+**2026-10-09 PR43 review revision:** consume the
+[active R1/R2 amendment](docs/real-sky/PR43_REVIEW_REVISION.md) and its portable
+evidence before using the preceding qualification. Runtime`040192b5…` bounds
+initial HTML delivery and fixes deferred-font fitting. R1/S1 remains PARTIAL
+with five current strict startup failures; R2 passes its actual-consumer scope.
+The same213-node/409-edge execution programme continues; no duplicate planning
+or attribution, main merge, deployment or #33/#34 closure is authorized. The
+current coordinator is sole integrator; Mac is owner-deferred and actual parent
+is unavailable. The identities/results below describe the preceding candidate.
+
 PR42 is merged at `18ff14860ff41c084b1db5f396bb62aa9c22b1be`; do not replay it.
 The isolated `codex/celestial-startup-repair` branch supplies same-catalogue
 initial stars and a source-bound V5 receiver tier, followed by unchanged full

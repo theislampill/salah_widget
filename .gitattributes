@@ -13,6 +13,9 @@ docs/real-sky/startup-evidence/** -text whitespace=blank-at-eol,blank-at-eof,spa
 docs/real-sky/startup-evidence/**/*.log -whitespace
 docs/real-sky/startup-dag-reconciliation/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/real-sky/startup-dag-reconciliation/**/*.log -whitespace
+# Review packet copies retain sealed CRLF, raw logs and unified-patch context.
+# COPY_MANIFEST verifies original bytes; normalization would invalidate custody.
+docs/real-sky/pr43-review-evidence/** -text -whitespace
 # Final Windows qualification receipts preserve their original CRLF bytes.
 docs/real-sky/evidence/startup-cloud-20261007/final-v49/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/real-sky/evidence/startup-cloud-20261007/historical-before-v49/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

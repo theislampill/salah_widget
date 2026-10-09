@@ -1,7 +1,7 @@
 'use strict';
-const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),crypto=require('node:crypto');
 const src=process.env.SALAH_MOON_SOURCE_DIR||path.join(__dirname,'../src');
-function rig({inline=false,diameter=104,initial=false,deferWorker=false}={}){
+function rig({inline=false,diameter=104,initial=false,deferWorker=false,lateSource=false}={}){
  let clock=0,id=0;const jobs=new Map(),frames=new Map(),workers=[],nodes=new Map(),events=new Map();let published=0,fallbacks=0;
  const state={utcMs:1000,generation:0,sceneIdentity:'A',fraction:.5,waxing:false,up:1,dpr:1,timeScale:0,paused:false};
  for(let i=0;i<2;i++)nodes.set('moon-embedded-'+i,{textContent:'AAAA',remove(){nodes.delete('moon-embedded-'+i)}});
@@ -11,7 +11,8 @@ function rig({inline=false,diameter=104,initial=false,deferWorker=false}={}){
  const w={__SALAH_MOON_OFFLINE__:true,__SALAH_MOON_EMBEDDED__:true,SalahMoonHost:{capture:()=>({...state,maximumPresentationRatio:1.13/(1.11+.02*state.up)}),publish:()=>published++,fallback:()=>fallbacks++},SalahRealSky:{compose(){}}};
  if(initial)w.SalahMoonInitial={render(scene){const size=2,out=scene.outSize;return {kind:'initial',scene:{...scene,size},width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:size,surfaceExtent:scene.extent,surfaceLinear:new Float32Array(size*size*3),calendarLinear:new Float32Array(size*size*3),surfaceCoverage:new Float32Array(size*size),physicalIdentity:'initial:'+state.generation,profileIdentity:'profile',diagnostics:{quality:{status:'initial-v5'}}};}};
  const doc={currentScript:{src:inline?'':'https://test/moon/moon-host.js'},baseURI:inline?'about:blank':'https://test/',hidden:false,querySelector:()=>({getBoundingClientRect:()=>({width:diameter,height:diameter})}),getElementById:k=>nodes.get(k),createElement:()=>({width:0,height:0,style:{},getContext:()=>({putImageData(){}}),remove(){}}),head:{append(){}},addEventListener:(n,f)=>events.set(n,f),removeEventListener:n=>events.delete(n)};
- const c=vm.createContext({window:w,document:doc,URL:U,Blob,Worker,performance:{now:()=>clock},structuredClone,Uint8ClampedArray,Float32Array,ImageData:class{constructor(d,w,h){this.data=d;this.width=w;this.height=h}},startMoonDetail:()=>detail,blendCalendarBytes:a=>a,setTimeout:(f,ms)=>{const n=++id;jobs.set(n,{f,ms});return n},clearTimeout:n=>jobs.delete(n),setInterval:()=>++id,clearInterval:()=>{},MOON_DEFAULT_PROFILE:{profile_id:'calendar-neutral-v5-01',mode:'calendar'},MOON_WORKER_SOURCE:'',MOON_OFFLINE_CHUNKS:[{name:'dem',index:0,last:true},{name:'colour',index:0,last:true}]});
+ const digest=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+ const c=vm.createContext({window:w,document:doc,URL:U,Blob,Worker,TextEncoder,assetDigest:digest,performance:{now:()=>clock},structuredClone,Uint8ClampedArray,Float32Array,ImageData:class{constructor(d,w,h){this.data=d;this.width=w;this.height=h}},startMoonDetail:()=>detail,blendCalendarBytes:a=>a,setTimeout:(f,ms)=>{const n=++id;jobs.set(n,{f,ms});return n},clearTimeout:n=>jobs.delete(n),setInterval:()=>++id,clearInterval:()=>{},MOON_DEFAULT_PROFILE:{profile_id:'calendar-neutral-v5-01',mode:'calendar'},MOON_WORKER_SOURCE:lateSource?null:'',MOON_WORKER_PIN:{bytes:10,sha256:digest('testworker')},MOON_OFFLINE_CHUNKS:[{name:'dem',index:0,last:true},{name:'colour',index:0,last:true}]});
  c.requestAnimationFrame=f=>{const n=++id;frames.set(n,f);return n;};c.cancelAnimationFrame=n=>frames.delete(n);
  const frame=()=>{const callbacks=[...frames.values()];frames.clear();callbacks.forEach(f=>f(clock));};
  vm.runInContext(fs.readFileSync(path.join(src,'moon-precision.mjs'),'utf8')+'\n'+fs.readFileSync(path.join(src,'moon-native.mjs'),'utf8'),c);
@@ -22,6 +23,16 @@ function rig({inline=false,diameter=104,initial=false,deferWorker=false}={}){
  return {w,workers,state,detail,nodes,events,jobs,flush,frame,request,response,resize:value=>diameter=value,get published(){return published},get fallbacks(){return fallbacks},advance:t=>clock+=t};
 }
 
+test('held refinement script leaves the current initial Moon usable and starts only admitted source',()=>{
+ const r=rig({initial:true,lateSource:true});assert.equal(r.workers.length,0,'missing source must not start an invalid worker');
+ assert.equal(r.w.SalahMoonRuntime.request(),true);assert.ok(r.w.SalahMoonRuntime.surface());
+ assert.throws(()=>r.w.SalahMoonRuntime.installWorkerSource('wrongworker'),/source identity/);assert.equal(r.workers.length,0);
+ assert.equal(r.w.SalahMoonRuntime.installWorkerSource('testworker'),true);r.frame();assert.equal(r.workers.length,0);r.frame();assert.equal(r.workers.length,1);
+ assert.equal(r.workers[0].sent[0].workerSource,'testworker');
+ r.w.SalahMoonRuntime.installWorkerSource('testworker');r.frame();r.frame();assert.equal(r.workers.length,1,'duplicate delivery must not restart refinement');
+ r.w.SalahMoonRuntime.dispose();assert.equal(r.w.SalahMoonRuntime.installWorkerSource('testworker'),false);
+});
+
 test('full terrain boot follows a paint opportunity while the current initial surface is available',()=>{
  const r=rig({initial:true,deferWorker:true});assert.equal(r.workers.length,0);
  assert.equal(r.w.SalahMoonRuntime.request(),true);assert.equal(r.workers.length,0);
@@ -29,6 +40,17 @@ test('full terrain boot follows a paint opportunity while the current initial su
  assert.ok(r.w.SalahMoonRuntime.surface());
  const disposed=rig({deferWorker:true});disposed.w.SalahMoonRuntime.dispose();disposed.frame();disposed.frame();assert.equal(disposed.workers.length,0);
  const retry=rig({deferWorker:true});assert.equal(retry.w.SalahMoonRuntime.retry(),true);retry.frame();retry.frame();assert.equal(retry.workers.length,1,'explicit retry revokes deferred boot');
+});
+
+test('held source preserves the worker retry budget and explicit pending status',()=>{
+ const r=rig({initial:true,lateSource:true});r.w.SalahMoonRuntime.request();
+ assert.equal(r.w.SalahMoonRuntime.state.status,'waiting-refinement-source');
+ for(let i=0;i<4;i++)assert.equal(r.w.SalahMoonRuntime.retry(),false,'no worker attempt is possible before its source arrives');
+ assert.equal(r.workers.length,0);assert.equal(r.w.SalahMoonRuntime.state.retryCount,0);
+ r.w.SalahMoonRuntime.installWorkerSource('testworker');r.frame();r.frame();
+ r.workers[0].emit({kind:'boot-error',error:'controlled first actual worker failure'});
+ assert.equal(r.w.SalahMoonRuntime.retry(),true,'first actual failure retains the bounded recovery path');
+ assert.equal(r.workers.length,2);
 });
 
 test('current initial V5 presentation precedes worker readiness and is replaced by preview then final',()=>{

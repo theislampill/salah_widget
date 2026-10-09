@@ -41,6 +41,9 @@ const runtime = [
   region('let _starEls=[],', 'function projectStars(date){'),
   region('function refreshStarAppearance(A){', 'function buildStars(){'),
   region('function skySceneIdentity(){', '// build the animated weather overlay'),
+  // Current entries also contain a generated head copy. Bind the helper next
+  // to the actual native wrapper, rather than spanning two script elements.
+  ...(source.includes('function nativeLunarPresentation(') ? [region('function nativeLunarPresentation(', '\nfunction lunarPresentation(', source.slice(source.lastIndexOf('function nativeLunarPresentation(')))] : []),
   region('function lunarPresentation(', '// paint(A)'),
   region('function applyCloudState(A){', '// Size the present-prayer name'),
   // Joined calendar QA reads its actual last-painted declaration; older source has no such reader.

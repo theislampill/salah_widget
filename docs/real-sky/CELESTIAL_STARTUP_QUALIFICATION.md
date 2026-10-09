@@ -1,5 +1,11 @@
 # Current-root celestial startup — qualification record
 
+**Affected qualification reopened:** the independent owner-supplied review of
+`f0647b44e10c9ce4f80895b52861893c347512fd` requests changes to initial HTML delivery
+and deferred-font fitting. The [active amendment](PR43_REVIEW_REVISION.md) owns
+the correction and fresh evidence. The retained results below describe their
+original bytes and do not qualify the revision.
+
 This is the separate #33/R0021 startup successor, revision 1. It is implemented
 work for a **Draft repair PR**, not an audit closure, owner visual acceptance,
 merge or deployment. [Specification](CELESTIAL_STARTUP_RLGWO.md) defines the
