@@ -17,7 +17,7 @@ function fixture(at='12:30:00',changes={},raw=source(),next=true,day='07-09-2026
 function rows(h){
   h.run('render()');
   const html=h.nodes.get('.times').innerHTML;
-  const list=[...html.matchAll(/<div class="p ([^"]*)"><b>([^<]+)<\/b><span class="tm">([^<]+)<\/span><\/div>/g)];
+  const list=[...html.matchAll(/<div class="p ([^"]*)"(?: data-prayer-key="[^"]*")?><b>([^<]+)<\/b><span class="tm">([^<]+)<\/span><\/div>/g)];
   assert.deepEqual(list.map(row=>row[2]),keys,'Actual renderer keeps all six authored rows');
   return list.map(row=>({key:row[2],roles:row[1].trim().split(/\s+/).filter(Boolean).sort().join('+'),time:row[3]}));
 }

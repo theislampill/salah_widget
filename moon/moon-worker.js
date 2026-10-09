@@ -133,7 +133,7 @@ function sha256Hex(data){
 // moon-detail.mjs
 /** DPR-aware local lunar join. Physics stays in the existing sky raster; only
  * the lunar region is sampled at device resolution. No UI-thread terrain solver.
- * Native cloud pixels keep their one explicit inverse-transfer/foreground owner.
+ * Native cloud pixels use the same bounded display-transfer owner as the sky.
  */
 function prefixSurface({size,linear,coverage}){
  if(!Number.isInteger(size)||size<1||size>768||linear?.length!==size*size*3||coverage?.length!==size*size)throw new RangeError('surface prefix shape');
@@ -166,8 +166,10 @@ function joinLunarPixel({gas,direct,premult,coverage:a,opacity,cloud,exposure}){
  const ma=a*opacity,ca=cloud[3],out=[0,0,0];
  for(let k=0;k<3;k++){
   const surface=a>0?Math.max(0,Math.min(1-1/131072,premult[k]/a)):0;
-  // Suppress direct background exactly once, independently of the group fade.
-  const beforeCloud=gas[k]*(1-ma)+direct[k]*(1-a)+(-Math.log1p(-surface)/exposure)*ma;
+  // Gas is foreground atmospheric path radiance, not distant background.
+  // Opaque terrain blocks stars/diffuse sources, never the air in front of it.
+  // Calendar opacity scales surface emphasis only; it cannot grant star leaks.
+  const beforeCloud=gas[k]+direct[k]*(1-a)+(-Math.log1p(-surface)/exposure)*ma;
   out[k]=beforeCloud*(1-ca)+cloud[k]*ca;
  }return out;
 }
@@ -179,7 +181,7 @@ function startMoonDetail(){
  const stat={renders:0,skips:0,totalMs:0,maxMs:0,dpr:0,pixels:0,mode:'local-device-resolution; inherited physics grid unchanged'};
  const clear=()=>{cv.style.visibility='hidden';last=null;};
  function geometry(){
-  const card=document.querySelector('.c'),photo=document.querySelector('.mphoto'),group=document.querySelector('.moon'),features=document.querySelector('.mfeatures'),disc=document.querySelector('.moon-mask-disc'),t=photo?.getScreenCTM(),cardRect=card?.getBoundingClientRect(),rect=document.querySelector('.real-sky-canvas')?.getBoundingClientRect();
+  const card=document.querySelector('.c'),photo=document.querySelector('.mphoto'),group=document.querySelector('.moon'),features=document.querySelector('.mfeatures'),disc=document.querySelector('.moon-mask-disc'),t=photo?.getScreenCTM(),cardRect=card?.getBoundingClientRect(),rect=document.querySelector(card?.classList.contains('real-sky-composed')?'.real-sky-canvas':'.real-sky-preview')?.getBoundingClientRect();
   if(!surface||!table||!t||!rect||!(rect.width>0&&rect.height>0)||!cardRect||!card.classList.contains('moon-ready')||!disc?.classList.contains('mask-on')||+getComputedStyle(disc).opacity===0||t.a<=0||t.d<=0||Math.abs(t.b)>1e-8||Math.abs(t.c)>1e-8)return null;
   // Sample in viewport device pixels, then convert to the absolute child's
   // containing block. Its origin is inside the card border, not cardRect.left.
@@ -197,9 +199,16 @@ function startMoonDetail(){
  function available(){try{return !disposed&&!!context&&!!cx&&!!geometry();}catch{return false;}}
  function compose(frame,encode){
   if(disposed||!frame||!window.SalahMoonRuntime?.surface()||!context||!cx){clear();return;}
-  const g=geometry();if(!g||!g.card.classList.contains('real-sky-composed')){clear();return;}
+  const g=geometry();if(!g||!(g.card.classList.contains('real-sky-composed')||frame.preview&&g.card.classList.contains('real-sky-preview-ready'))){clear();return;}
   const began=performance.now(),r=frame.raster;
-  if(!cv.isConnected){const base=document.querySelector('.real-sky-canvas');if(base)base.after(cv);else g.card.prepend(cv);}
+  const base=document.querySelector(frame.preview?'.real-sky-preview':'.real-sky-canvas');
+  // Native lunar optics precede the original opaque SVG photo. Preserve that
+  // ownership when the photo is replaced: placing this canvas immediately
+  // after the base sky put the WHOLE native SVG (including its bright-centred
+  // corona) over refined Earthshine. Clouds are already in this local join;
+  // foreground weather/UI retain their later/higher layers.
+  const behind=g.card.querySelector('.sky')??base;
+  if(behind&&cv.previousSibling!==behind)behind.after(cv);else if(!cv.isConnected)g.card.prepend(cv);
   const {width:W,height:H,dpr}=g;
   if(cloudCv.width!==W||cloudCv.height!==H){cloudCv.width=W;cloudCv.height=H;}
   cx.resetTransform();cx.clearRect(0,0,W,H);cx.globalCompositeOperation='source-over';cx.globalAlpha=1;
@@ -211,10 +220,10 @@ function startMoonDetail(){
    const grad=cx.createLinearGradient(0,cr.top*dpr-g.top,0,cr.bottom*dpr-g.top);for(const [at,c] of [[0,'rgba(0,0,0,0)'],[.03,'#000'],[.24,'#000'],[.34,'rgba(0,0,0,0)'],[1,'rgba(0,0,0,0)']])grad.addColorStop(at,c);
    cx.globalCompositeOperation='destination-in';cx.fillStyle=grad;cx.fillRect(0,0,W,H);cx.globalCompositeOperation='source-over';
   }
-  const cloudRGBA=cx.getImageData(0,0,W,H).data;
+  const cloudRGBA=validateNativeRGBA(cx.getImageData(0,0,W,H).data,W*H);
   const key=JSON.stringify([surface.identity,W,H,g.left,g.top,g.x,g.y,g.w,g.h,g.rect.left,g.rect.top,g.rect.width,g.rect.height,g.opacity,dpr,r.effectiveExposure,g.up]);
   if(last&&last.frame===frame&&last.key===key&&last.cloud.length===cloudRGBA.length&&last.cloud.every((x,i)=>x===cloudRGBA[i])){stat.skips++;return;}
-  const exposure=r.effectiveExposure,inv=new Float64Array(256);for(let i=0;i<256;i++){const c=i/255,l=c<=.04045?c/12.92:((c+.055)/1.055)**2.4;inv[i]=-Math.log1p(-Math.min(1-1/131072,l))/exposure;}
+  const exposure=r.effectiveExposure;
   const linear=new Float64Array(W*H*3);
   if(!prepared||prepared.frame!==frame||prepared.key!==key){
    const covered=new Uint8Array(W*H),before=new Float64Array(W*H*3),ss=surface.size/(.96*surface.extent),ox=surface.size/2-.5*ss,oy=ox;
@@ -233,13 +242,14 @@ function startMoonDetail(){
   }
   const covered=prepared.covered,before=prepared.before;
   for(let i=0;i<covered.length;i++){if(!covered[i])continue;const ci=4*i,alpha=cloudRGBA[ci+3]/255;
-   for(let k=0;k<3;k++)linear[3*i+k]=before[3*i+k]*(1-alpha)+inv[cloudRGBA[ci+k]]*alpha;
+   for(let k=0;k<3;k++)linear[3*i+k]=nativeCloudChannel(before[3*i+k],cloudRGBA[ci+k],alpha,exposure);
   }
   const rgba=encode(linear,exposure);for(let i=0;i<covered.length;i++)rgba[4*i+3]=covered[i]?255:0;
+  if(frame.preview&&!frame.current()){clear();return;}
   if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}
   context.putImageData(new ImageData(rgba,W,H),0,0);
   Object.assign(cv.style,{left:`${(g.left/dpr-g.originX)/g.scaleX}px`,top:`${(g.top/dpr-g.originY)/g.scaleY}px`,width:`${W/dpr/g.scaleX}px`,height:`${H/dpr/g.scaleY}px`,visibility:'visible'});
-  last={frame,key,cloud:cloudRGBA};stat.renders++;stat.totalMs=performance.now()-began;stat.maxMs=Math.max(stat.maxMs,stat.totalMs);stat.dpr=dpr;stat.pixels=W*H;
+  last={frame,key,cloud:cloudRGBA};stat.renders++;stat.totalMs=performance.now()-began;stat.maxMs=Math.max(stat.maxMs,stat.totalMs);stat.dpr=dpr;stat.pixels=W*H;stat.skyOwner=frame.preview?'atmospheric-preview':'refined-sky';stat.atmosphereOwner='foreground path radiance, never lunar-occluded';
  }
  return {adopt(s){table=prefixSurface(s);calendarTable=s.calendarLinear?prefixSurface({size:s.size,linear:s.calendarLinear,coverage:s.coverage}):null;surface=s;last=null;prepared=null;},clear,compose,get available(){return available();},get state(){return {...stat,visible:cv.style.visibility==='visible'};},dispose(){disposed=true;clear();cv.remove();table=null;calendarTable=null;surface=null;prepared=null;}};
 }
@@ -254,16 +264,21 @@ function projectSurfaceCodes({size,linear,coverage,extent},diameter=312,shift=[0
 // moon-calendar.mjs
 
 /** Explicit BELOW-HORIZON CALENDAR TOKEN, not physical Earthlight or an
- * astronomical irradiance floor. Above-horizon reference pixels remain exact.
- * Existing native up only blends these display surfaces; coverage stays opaque.
+ * astronomical irradiance floor. Preserve the refined phase/relief at no more
+ * than the old .020 x material token's integrated display luminance. This is
+ * one scalar emphasis change, not albedo substituted for terrain lighting.
+ * Above-horizon reference pixels remain exact; coverage stays opaque.
  */
-function calendarProxy(material,coverage){
- if(material.length!==coverage.length*3)throw new RangeError('calendar material');
- const out=new Float32Array(material.length);
+function calendarProxy(material,coverage,refined){
+ if(material.length!==coverage.length*3||refined?.length!==material.length)throw new RangeError('calendar material');
+ const out=new Float32Array(material.length),Y=[.2126,.7152,.0722];let ceiling=0,total=0;
  for(let i=0;i<coverage.length;i++){
   const a=coverage[i];if(!Number.isFinite(a)||a<0||a>1)throw new RangeError('calendar coverage');
-  for(let k=0;k<3;k++){const c=material[3*i+k];if(!Number.isFinite(c)||c<0||c>1)throw new RangeError('calendar colour');out[3*i+k]=.020*c*a;}
- }return out;
+  for(let k=0;k<3;k++){const c=material[3*i+k],v=refined[3*i+k];if(!Number.isFinite(c)||c<0||c>1||!Number.isFinite(v)||v<0||v>a+1e-6)throw new RangeError('calendar colour');ceiling+=Y[k]*.020*c*a;total+=Y[k]*v;}
+ }
+ const gain=total>0?Math.min(1,ceiling/total):0;
+ for(let i=0;i<out.length;i++)out[i]=refined[i]*gain;
+ return out;
 }
 function blendCalendarBytes(upper,lower,up){
  if(!Number.isFinite(up)||up<0||up>1||upper.length!==lower.length||upper.length%4)throw new RangeError('calendar blend');
@@ -280,9 +295,9 @@ function blendCalendarBytes(upper,lower,up){
 /** Adds a display-only native calendar token without touching V5 source fields,
  * primary surface, or quality images. Called only at worker publication. */
 function nativeCalendarResult(engine,result){
- const N=result.surfaceSize,pix=new Float64Array(engine.e.memory.buffer,engine.e.get_pixels(),N*N*24),material=new Float32Array(N*N*3);
- for(let i=0;i<N*N;i++)for(let k=0;k<3;k++)material[3*i+k]=pix[24*i+6+k];
- const linear=calendarProxy(material,result.surfaceCoverage),table=prefixSurface({size:N,linear,coverage:result.surfaceCoverage}),M=result.width,scale=N/(result.scene.diameter*result.surfaceExtent),o=N/2-M*scale/2,rgba=new Uint8ClampedArray(result.rgba.length);
+ const N=result.surfaceSize,material=engine.material??new Float32Array(N*N*3);
+ if(!engine.material){const pix=new Float64Array(engine.e.memory.buffer,engine.e.get_pixels(),N*N*24);for(let i=0;i<N*N;i++)for(let k=0;k<3;k++)material[3*i+k]=pix[24*i+6+k];}
+ const linear=calendarProxy(material,result.surfaceCoverage,result.surfaceLinear),table=prefixSurface({size:N,linear,coverage:result.surfaceCoverage}),M=result.width,scale=N/(result.scene.diameter*result.surfaceExtent),o=N/2-M*scale/2,rgba=new Uint8ClampedArray(result.rgba.length);
  for(let y=0;y<M;y++)for(let x=0;x<M;x++){
   const i=y*M+x,c=boxSurface(table,o+x*scale,o+y*scale,o+(x+1)*scale,o+(y+1)*scale),a=c[3];rgba[4*i+3]=result.rgba[4*i+3];
   for(let k=0;k<3;k++){const v=a?c[k]/a:0;rgba[4*i+k]=Math.floor(255*(v<=.0031308?12.92*v:1.055*v**(1/2.4)-.055)+.5);}
@@ -341,7 +356,16 @@ async function decodeAsset(bytes,spec){
  if(await digestBytes(new Uint8Array(raw.buffer))!==spec.rawSha256)throw new Error('Decoded Moon asset identity mismatch');
  return raw;
 }
-const pause=()=>new Promise(resolve=>setTimeout(resolve,0));
+// Yield a WORKER task, not a microtask. Nested zero-delay timers add a browser
+// clamp after each ~8 ms slice (measured ~300 ms per 640 ms of useful work).
+// MessageChannel keeps cancellation/messages serviceable without that delay;
+// numerical ordering, sampling, quality gates and elapsed deadlines are unchanged.
+const lunarYieldQueue=[],lunarYieldChannel=typeof MessageChannel==='function'?new MessageChannel():null;
+if(lunarYieldChannel){
+ lunarYieldChannel.port1.onmessage=()=>{const wake=lunarYieldQueue.shift();wake?.();if(!lunarYieldQueue.length)lunarYieldChannel.port1.unref?.();};
+ lunarYieldChannel.port1.unref?.();lunarYieldChannel.port2.unref?.();
+}
+const pause=()=>new Promise(resolve=>{if(!lunarYieldChannel){setTimeout(resolve,0);return;}lunarYieldQueue.push(resolve);lunarYieldChannel.port1.ref?.();lunarYieldChannel.port2.postMessage(0);});
 class MoonEngine{
  static async create({wasm,dem,colour,manifest}){
   if(manifest.schema!=='moon-worker-assets/1'||manifest.codec!=='u16le-left-delta-byteplanes-gzip/1')throw new Error('Moon asset contract');
@@ -447,11 +471,104 @@ async function adaptiveRender(engine,scene,{cancelled=()=>false,onProgress=()=>{
  if(!diagnostic){delete result.receiverCodes;delete result.ambiguous;delete result.qualityImages;}
  return result;
 }
+// moon-pool.mjs
+/** Two independent row owners, the SAME kernel and one global quality/display
+ * decision. This changes scheduling, not quadrature, geometry or pixel order.
+ * Each kernel owns its camera/cache; only its assigned lighting rows are joined.
+ */
+function moonRowBridge(worker){
+ const waiting=new Map();let serial=0,failure=null;
+ const fail=error=>{failure??=error;for(const p of waiting.values())p.reject(failure);waiting.clear();};
+ const call=(kind,data={},onProgress=()=>{})=>new Promise((resolve,reject)=>{
+  if(failure){reject(failure);return;}
+  const id=++serial;waiting.set(id,{resolve,reject,onProgress,expected:kind==='shard-boot'?'shard-ready':'shard-result'});
+  try{worker.postMessage({kind,id,...data});}catch(error){fail(error);}
+ });
+ worker.onmessage=e=>{
+  const m=e.data;if(!m||typeof m!=='object'||m.kind==='boot-error'){fail(new Error(m?.error||'Moon row message contract'));return;}
+  const p=waiting.get(m.id);if(!p)return; // An already revoked request has no authority.
+  if(m.kind==='shard-progress'){p.onProgress(m.progress);return;}
+  if(m.kind==='shard-error'){
+   const error=Object.assign(new Error(m.error),{name:m.name??'Error'});waiting.delete(m.id);p.reject(error);
+   if(error.name!=='AbortError')fail(error);return;
+  }
+  if(m.kind!==p.expected){fail(new Error('Moon row reply kind'));return;}
+  waiting.delete(m.id);p.resolve(m.result);
+ };
+ worker.onerror=e=>fail(new Error(e.message||'Moon row worker failed'));worker.onmessageerror=()=>fail(new Error('Moon row message decode failed'));
+ return {worker,boot:assets=>call('shard-boot',{assets}),render(scene,options){const {onProgress,cancelled,...plain}=options;return call('shard-render',{scene,options:plain},onProgress);},cancel(){if(!failure)try{worker.postMessage({kind:'shard-cancel'});}catch(error){fail(error);}},dispose(){worker.terminate();fail(new Error('Moon row worker disposed'));}};
+}
+class MoonPool {
+ constructor(workers){if(workers.length!==2)throw new RangeError('Two lunar row owners required');this.workers=workers;this.lightKey=null;this.material=null;this.serial=0;}
+ static async create(assets,workerSource){
+  if(typeof workerSource!=='string'||!workerSource.length)throw new Error('Owned lunar worker source required');
+  // A file document's blob URL belongs to its opaque origin. A nested worker
+  // cannot reuse that ancestor URL; create an identical source Blob owned by
+  // this worker instead. No network fetch or relaxed browser security.
+  const bridges=[],url=URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'}));
+  try{
+   for(let i=0;i<2;i++){
+    const bridge=moonRowBridge(new Worker(url));bridge.ready=bridge.boot(assets);bridges.push(bridge);
+   }
+   await Promise.all(bridges.map(b=>b.ready));return new MoonPool(bridges);
+  }catch(error){for(const b of bridges)b.dispose();throw error;}
+  finally{URL.revokeObjectURL(url);}
+ }
+ cancel(){this.serial++;for(const w of this.workers)w.cancel();}
+ async render(scene,options={}){
+  const s=admitScene(scene),start=performance.now(),token=this.serial,cancelled=()=>token!==this.serial||options.cancelled?.();
+  if(cancelled())throw new DOMException('Superseded Moon rows','AbortError');
+  const N=s.size,key=JSON.stringify([N,s.basis,s.sun,s.earth,s.distance,s.extent]),first=this.lightKey!==key;
+  if(options.lightingMask!=null&&(!(options.lightingMask instanceof Uint8Array)||options.lightingMask.length!==N*N||options.lightingMask.some(x=>x>3)||first))throw new Error('Sparse row refinement requires the same admitted physical scene');
+  const ranges=[[0,Math.floor(N/2)],[Math.floor(N/2),N]];
+  // The first rule initializes the existing kernel's full receiver cache. Later
+  // rules partition its supported sparse mask. No uninitialized row is read.
+  let failed=null;
+  const work=this.workers.map((w,i)=>{
+   const [lo,hi]=ranges[i],mask=first?null:new Uint8Array(N*N);
+   if(mask){if(options.lightingMask)mask.set(options.lightingMask.subarray(lo*N,hi*N),lo*N);else mask.fill(3,lo*N,hi*N);}
+   return w.render(s,{...options,lightingMask:mask,rowOwner:[lo,hi],onProgress:p=>options.onProgress?.({...p,rowOwner:i})}).catch(error=>{failed??=error;for(const sibling of this.workers)sibling.cancel();throw error;});
+  });
+  const replies=await Promise.allSettled(work);
+  if(cancelled()){this.lightKey=null;throw new DOMException('Superseded Moon rows','AbortError');}
+  if(failed){this.lightKey=null;throw failed;}
+  const parts=replies.map(x=>x.value),a=parts[0];
+  const profileIdentity=await profileFingerprint(s.profile);
+  if(!a||typeof a.physicalIdentity!=='string'||!a.physicalIdentity||parts.some(p=>!p||p.physicalIdentity!==a.physicalIdentity||p.profileIdentity!==profileIdentity||p.surfaceSize!==N||JSON.stringify(p.scene)!==JSON.stringify(s)))throw new Error('Moon row identity mismatch');
+  const fields={solar:[Float32Array,3],earth:[Float32Array,3],coverage:[Float64Array,1],receiverCodes:[Float32Array,3],ambiguous:[Uint8Array,1],surfaceLinear:[Float32Array,3],surfaceCoverage:[Float32Array,1]};
+  const result={...a};
+  for(const [name,[Type,stride]] of Object.entries(fields)){
+   const joined=new Type(N*N*stride);
+   for(let j=0;j<parts.length;j++){
+    const source=parts[j][name],[lo,hi]=ranges[j];if(!(source instanceof Type)||source.length!==joined.length)throw new Error('Moon row field shape: '+name);
+    // Reject the whole reply, including dormant cache rows; they can become
+    // owned after a future scene. No partially validated shard is published.
+    const limit=name==='coverage'||name==='surfaceCoverage'||name==='surfaceLinear'?1.000001:name==='ambiguous'?3:Infinity;
+    for(const value of source)if(!Number.isFinite(value)||value<0||value>limit)throw new Error('Moon row field value: '+name);
+    joined.set(source.subarray(lo*N*stride,hi*N*stride),lo*N*stride);
+   }
+   result[name]=joined;
+  }
+  if(!(a.material instanceof Float32Array)||a.material.length!==N*N*3||a.material.some(v=>!Number.isFinite(v)||v<0))throw new Error('Moon row material shape/value');this.material=a.material;
+  // Filter AFTER joining receiver fields, including taps crossing the internal
+  // boundary. Concatenating already-filtered half images would create a seam.
+  const display=renderSurfaceFrame({width:N,height:N,solar:result.solar,earth:result.earth,coverage:result.coverage,profile:s.profile,outSize:s.outSize,scale:N/(s.diameter*s.extent),centreX:N/2,centreY:N/2});
+  result.rgba=new Uint8ClampedArray(s.outSize*s.outSize*4);
+  for(let i=0;i<display.coverage.length;i++){for(let k=0;k<3;k++)result.rgba[4*i+k]=Math.floor(display.straightSrgb[3*i+k]*255+.5);result.rgba[4*i+3]=Math.floor(display.coverage[i]*255+.5);}
+  result.qualityImages=[projectSurfaceCodes({size:N,linear:result.surfaceLinear,coverage:result.coverage,extent:s.extent},312),projectSurfaceCodes({size:N,linear:result.surfaceLinear,coverage:result.coverage,extent:s.extent},312,[.37,-.21])];
+  result.diagnostics={...a.diagnostics,totalMs:performance.now()-start,cameraMs:Math.max(...parts.map(p=>p.diagnostics.cameraMs)),lightingMs:Math.max(...parts.map(p=>p.diagnostics.lightingMs)),memoryBytes:parts.reduce((n,p)=>n+p.diagnostics.memoryBytes,0),shadowedFacingSamples:parts.every(p=>Number.isInteger(p.diagnostics.ownedShadowedFacingSamples))?parts.reduce((n,p)=>n+p.diagnostics.ownedShadowedFacingSamples,0):null,rowScheduling:{workers:2,ranges,initialCacheRule:first,globalQuality:true,globalFiltering:true,workerTimes:parts.map(p=>p.diagnostics.totalMs)}};
+  // These are actual compute counters (including the duplicated first rule),
+  // whereas knownSurfaceSamples describes the one assembled camera surface.
+  for(const field of ['analyticSamples','shadowRays','blockerWitnesses'])result.diagnostics[field]=parts.reduce((n,p)=>n+p.diagnostics[field],0);
+  delete result.diagnostics.ownedShadowedFacingSamples;
+  delete result.material;this.lightKey=key;return result;
+ }
+}
 // moon-worker.mjs
 
 
 
-let enginePromise=null,latest=null,running=false,serial=0;const offlineParts=new Map();
+let enginePromise=null,latest=null,running=false,serial=0,shardEngine=null,shardSerial=0;const offlineParts=new Map();
 async function read(url,maxBytes){
  const r=await fetch(url,{cache:'force-cache'});if(!r.ok)throw new Error('Moon asset HTTP '+r.status);
  const reader=r.body.getReader(),data=new Uint8Array(maxBytes);let at=0;
@@ -463,7 +580,7 @@ async function boot(m){
  const manifest=MOON_ASSET_MANIFEST;
  const from=(name,max)=>m.offline?new Promise((resolve,reject)=>offlineParts.set(name,{resolve,reject,bytes:new Uint8Array(max),at:0,index:0})):m.embedded?Promise.resolve(unbase64(m.embedded[name])):read(new URL(name,m.base),max);
  const wasm=unbase64(MOON_WASM_BASE64),[dem,colour]=await Promise.all([from(manifest.assets.dem.path,manifest.assets.dem.bytes),from(manifest.assets.colour.path,manifest.assets.colour.bytes)]);
- return MoonEngine.create({wasm,dem,colour,manifest});
+ return MoonPool.create({wasm,dem,colour,manifest},m.workerSource);
 }
 async function pump(){
  if(running||!latest||!enginePromise)return;running=true;
@@ -486,6 +603,29 @@ async function pump(){
 }
 self.onmessage=e=>{
  const m=e.data;
+ // Nested workers execute only the original kernel/receiver work. Their parent
+ // joins rows before global adaptive decisions or any display publication.
+ if(m.kind==='shard-boot'){
+  if(shardEngine){self.postMessage({kind:'shard-error',id:m.id,error:'Duplicate row boot'});return;}
+  shardEngine=MoonEngine.create(m.assets);shardEngine.then(()=>self.postMessage({kind:'shard-ready',id:m.id,result:true})).catch(error=>self.postMessage({kind:'shard-error',id:m.id,error:String(error.message??error)}));return;
+ }
+ if(m.kind==='shard-cancel'){shardSerial++;return;}
+ if(m.kind==='shard-render'){
+  const token=shardSerial;
+  (async()=>{
+   if(!shardEngine)throw new Error('Moon row not booted');const engine=await shardEngine;
+   const result=await engine.render(m.scene,{...m.options,diagnostic:'fields',qualityFields:true,cancelled:()=>token!==shardSerial,onProgress:progress=>self.postMessage({kind:'shard-progress',id:m.id,progress})});
+   if(token!==shardSerial)throw new DOMException('Superseded Moon rows','AbortError');
+   const N=m.scene.size,[lo,hi]=m.options.rowOwner;
+   if(!Number.isInteger(lo)||!Number.isInteger(hi)||lo<0||hi>N||hi<=lo)throw new Error('Moon row range');
+   const pix=new Float64Array(engine.e.memory.buffer,engine.e.get_pixels(),N*N*24);result.material=new Float32Array(N*N*3);let shadowed=0;
+   for(let i=0;i<N*N;i++){for(let k=0;k<3;k++)result.material[3*i+k]=pix[24*i+6+k];if(i>=lo*N&&i<hi*N&&pix[24*i+14]>1e-8&&pix[24*i+12]<pix[24*i+14]*.01)shadowed++;}
+   result.diagnostics.ownedShadowedFacingSamples=shadowed;
+   delete result.rgba;delete result.qualityImages;delete result.displayLinear;
+   const transfers=['solar','earth','coverage','receiverCodes','ambiguous','surfaceLinear','surfaceCoverage','material'].map(k=>result[k].buffer);
+   self.postMessage({kind:'shard-result',id:m.id,result},transfers);
+  })().catch(error=>self.postMessage({kind:'shard-error',id:m.id,error:String(error.message??error),name:error.name}));return;
+ }
  if(m.kind==='boot'){
   if(enginePromise){self.postMessage({kind:'boot-error',error:'Duplicate Moon worker boot'});return;}
   enginePromise=boot(m);enginePromise.then(()=>{self.postMessage({kind:'ready'});pump();}).catch(error=>self.postMessage({kind:'boot-error',error:String(error.message??error)}));
@@ -496,7 +636,7 @@ self.onmessage=e=>{
    const data=unbase64(m.data);if(a.at+data.length>a.bytes.length)throw new Error('Offline Moon chunk overflow');a.bytes.set(data,a.at);a.at+=data.length;a.index++;
    if(m.last){if(a.at!==a.bytes.length)throw new Error('Offline Moon asset incomplete');a.resolve(a.bytes);offlineParts.delete(m.name);}
   }catch(error){if(a)a.reject(error);self.postMessage({kind:'boot-error',error:String(error.message??error)});}
- }else if(m.kind==='render'){serial++;latest=m;pump();}
- else if(m.kind==='cancel'){serial++;latest=null;}
+ }else if(m.kind==='render'){serial++;latest=m;enginePromise?.then(engine=>engine.cancel?.()).catch(()=>{});pump();}
+ else if(m.kind==='cancel'){serial++;latest=null;enginePromise?.then(engine=>engine.cancel?.()).catch(()=>{});}
 };
 self.addEventListener('unhandledrejection',e=>{self.postMessage({kind:'boot-error',error:String(e.reason)});});

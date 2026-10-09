@@ -3,6 +3,7 @@ import {requireNativeWorker} from './native-worker-policy.mjs';
 import {ReferenceRenderClient} from './core/src/reference-worker-client.mjs';
 import {NativeSkyLifecycle} from './native-lifecycle.mjs';
 import {encodeNativeFrame} from './native-encoding.mjs';
+import {nativeAtmosphereFields,nativeSkyPresentation} from './native-preview.mjs';
 import {NativeForegroundCapture,nativeForeground,nativeCalendarRegion,nativeForegroundRows,sameNativePresentation} from './native-composition.mjs';
 /** DOM ownership adapter; native PBR/calendar/weather remain native source code. */
 export function startNativeSky(pack,workerSource,physical){
@@ -12,11 +13,13 @@ export function startNativeSky(pack,workerSource,physical){
  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas 2D unavailable');
  const badge=document.createElement('span');badge.className='real-sky-status';badge.setAttribute('role','status');card.append(badge);
  const foreground=physical?new NativeForegroundCapture(canvas):null;
- const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
- let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,previousPresentation=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
- function publish(){badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':status.availability?.reason==='rate-throughput'?`Real sky unavailable at ${status.availability.rate}×`:'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent';canvas.dataset.status=status.status;}
- function clear(reason='invalidated'){window.SalahMoonDetail?.clear();card.classList.remove('real-sky-composed');frame=null;job=null;status.last=null;paintedFrame=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;publish();}
- function snapshot(){return host.capture();}
+ const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,presentationRejections:0,presentationUtcMs:null,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
+ let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,paintedJob=null,previousPresentation=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
+ function publish(){const preview=window.SalahSkyPreview?.state.status==='ready';badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.availability?.reason==='rate-throughput'?`${preview?'Sky preview · r':'R'}efinement unavailable at ${status.availability.rate}×`:preview?'Sky preview · refining…':status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent. A current preview is distinct from registered diffuse refinement.';canvas.dataset.status=status.status;}
+ function clear(reason='invalidated'){if(card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');window.SalahMoonDetail?.clear();card.classList.remove('real-sky-composed');frame=null;job=null;status.last=null;paintedFrame=null;paintedJob=null;status.presentationUtcMs=null;status.displayed=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;publish();}
+ // Identity/age fences do not consume decorative solar geometry. Measure the
+ // presented body only for an accepted atmospheric display, not every guard.
+ function snapshot(){return host.capture(false);}
  function calendarGeometry(rows=530){
   if(window.SalahMoonRuntime?.detailEnabled)return {key:'separate-device-resolution-moon',mask:()=>null};
   const disc=document.querySelector('.moon-mask-disc'),matrix=disc?.getScreenCTM();
@@ -33,8 +36,7 @@ export function startNativeSky(pack,workerSource,physical){
    if(foreground){
     // Full physical frames change only on worker acceptance. Native clouds/Moon
     // can move independently; repaint their entire old/new support, not all 530 rows.
-    if(paintedFrame!==frame){ctx.putImageData(new ImageData(encodeNativeFrame(frame.raster.linear,frame.raster.effectiveExposure),325,530),0,0);paintedFrame=frame;}
-    const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom);previousMoonBottom=bottom;
+    const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom);
     const capture=foreground.capture(rows),geometry=calendarGeometry(rows);
     const presentation={frame,rows,maskKey:geometry.key,cloudRGBA:capture.cloudRGBA,moonRGBA:capture.moonRGBA};
     // Unlike the donor cloud-only guard, this also fences physical frame, PBR
@@ -45,8 +47,18 @@ export function startNativeSky(pack,workerSource,physical){
      card.classList.add('real-sky-composed');canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeFrame);return;
     }
     const base=nativeCalendarRegion(frame.raster,geometry.mask(),rows);
-    const joined=nativeForeground(base,{...capture,exposure:frame.raster.effectiveExposure});
-    ctx.putImageData(new ImageData(encodeNativeFrame(joined.linear,frame.raster.effectiveExposure),325,rows),0,0);
+    const joined=nativeForeground(base,{...capture,atmosphereLinear:(frame.raster.skyBackgroundLinear??frame.raster.backgroundLinear).subarray(0,base.length),exposure:frame.raster.effectiveExposure});
+    // Prepare/validate the entire update before touching the visible framebuffer.
+    // A failed capture must not expose an uncomposed base (or partial cloud data).
+    const region=new ImageData(encodeNativeFrame(joined.linear,frame.raster.effectiveExposure),325,rows);
+    const solarMask=foreground.prepareSolarMask(capture.cloudRGBA,rows);
+    const full=paintedFrame!==frame?new ImageData(encodeNativeFrame(frame.raster.linear,frame.raster.effectiveExposure),325,530):null;
+    if(!lifecycle.current(job,snapshot())){clear('superseded during composition');return;}
+    if(full)ctx.putImageData(full,0,0);
+    ctx.putImageData(region,0,0);
+    card.style.setProperty('--native-sun-cloud-mask',solarMask);
+    paintedFrame=frame;paintedJob=job;status.presentationUtcMs=job.observer.utcMs;previousMoonBottom=bottom;
+    status.displayed={utcMs:job.observer.utcMs,identity:job.native.identity,exposure:frame.raster.effectiveExposure,presentation:frame.raster.displayPresentation??null,retained:false};
     previousPresentation=presentation;status.presentationDraws++;
     status.last.composition={...joined.diagnostics,meanCloudAlpha:joined.diagnostics.meanCloudAlpha*rows/530,...capture.native,updatedRows:rows,totalRows:530};card.classList.add('real-sky-composed');
    }else{
@@ -54,12 +66,27 @@ export function startNativeSky(pack,workerSource,physical){
    }
    canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeFrame);lastCompose=performance.now();
    if(status.last.composition)status.last.composition.lastComposeMs=lastCompose-started;
-  }catch(e){failure(e);}
+  }catch(e){
+   // Retention is allowed only under the ORIGINAL visible job's fences and
+   // 30-second age limit. A seek/configuration/epoch change still clears now.
+   if(paintedJob&&lifecycle.current(paintedJob)){
+    status.presentationRejections++;status.lastPresentationError=String(e?.message??e);if(status.displayed)status.displayed={...status.displayed,retained:true,reason:status.lastPresentationError};lastCompose=performance.now();return;
+   }
+   failure(e);
+  }
  }
 
  function accept(result,_id,request){
   const current=snapshot();if(!lifecycle.current(request,current)){status.rejections++;return;}
   if(result.status!=='ready'||!result.raster)throw new Error(result.error??'Native real sky unavailable');
+  if(result.raster.physicalState?.sun?.altDeg>-18){
+   // Twilight's solar-only shoulder needs the SAME spatial nodes as the raw
+   // worker background, so removing solar cannot accidentally remove neutral
+   // lunar/natural/local light through a differently interpolated decomposition.
+   const step=request.options.backgroundStepCss,grid=result.raster.physicalState.sun.altDeg<-3?[Math.ceil(325/step),Math.ceil(530/step)]:[24,40];
+   const fields=nativeAtmosphereFields(result.raster.physicalState,result.raster.atmosphere,request.options.view,request.options.diffuse.residualNight,...grid);
+   result={...result,raster:nativeSkyPresentation({...result.raster,solarAerosolLinear:fields.solarAerosolLinear,solarBackgroundLinear:fields.solarBackgroundLinear,twilightDisplay:fields.twilightDisplay},request.options.view,host.capture().solarAnchor)};
+  }
   frame=result;job=request;status.status='ready';status.renders++;status.last={utcMs:result.utcMs,observer:result.observer,native:result.native,catalogue:result.catalogue,sources:result.sources,drawn:result.raster.drawn,detectableSources:result.raster.detectableSources,diffuseAsset:result.diffuseAsset,diffuseState:result.raster.diffuseState??null,physicalState:result.raster.physicalState,exposure:result.raster.effectiveExposure,atmosphere:result.raster.atmosphere,visibilityScope:physical?'CP7 contrast diagnostics are before native cloud foreground; final pixel/operator evidence is separate':'CP7 pre-native-overlay contrast diagnostic',weather:current.weather,view:request.options.view,execution:result.execution,timings:result.timings,warnings:result.raster.modelWarnings};compose();publish();
  }
  function failure(e){if(disposed)return;clear('render failure');status.status='unavailable';const message=String(e?.message??e);if(status.errors.at(-1)!==message)status.errors.push(message);status.errors=status.errors.slice(-12);publish();}
@@ -73,7 +100,7 @@ export function startNativeSky(pack,workerSource,physical){
  animationId=requestAnimationFrame(animate);
  const visibility=()=>request(true);document.addEventListener('visibilitychange',visibility);
  const readState=()=>({...structuredClone(status),lifecycle:lifecycle.state});
- window.SalahRealSky={request,compose,invalidate:reason=>lifecycle.invalidate(reason),get state(){return readState();},dispose(){if(disposed)return;lifecycle.dispose();disposed=true;clearInterval(timer);cancelAnimationFrame(animationId);document.removeEventListener('visibilitychange',visibility);client.dispose();if(workerUrl)URL.revokeObjectURL(workerUrl);card.classList.remove('real-sky-composed');frame=null;job=null;previousPresentation=null;status.last=null;status.status='disposed';canvas.remove();badge.remove();}};
+ window.SalahRealSky={request,compose,invalidate:reason=>lifecycle.invalidate(reason),get state(){return readState();},dispose(){if(disposed)return;lifecycle.dispose();disposed=true;clearInterval(timer);cancelAnimationFrame(animationId);document.removeEventListener('visibilitychange',visibility);client.dispose();if(workerUrl)URL.revokeObjectURL(workerUrl);card.classList.remove('real-sky-composed');card.style.removeProperty('--native-sun-cloud-mask');frame=null;job=null;previousPresentation=null;status.last=null;status.status='disposed';canvas.remove();badge.remove();}};
  window.realSkyState=readState;window.realSkyFrame=()=>frame; // Diagnostics, not render authority.
  publish();request(true);
 }

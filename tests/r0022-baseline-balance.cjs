@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {execFileSync}=require('node:child_process');
-const {load,sha,root}=require('./r001d-harness.cjs');
+const {load,sha,root,prayerForDate}=require('./r001d-harness.cjs');
 const path=require('node:path');
 const baseCommit='fd2972ba64225fe9d6848e92497e6d0ed20ea624';
 const baseline=execFileSync('git',['show',baseCommit+':index.html'],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024});
@@ -36,8 +36,13 @@ for(const [name,start,end] of [['PBR','function renderMoonPBR(','function moonNo
 });
 const decks=s=>{const start=s.indexOf('const decks=[',s.indexOf('function paintClouds('));assert.ok(start>0);return s.slice(start,s.indexOf('];',start)+2);};
 test('cloud deck sizes/bands/opacity/slots remain identical',()=>assert.equal(decks(candidate),decks(baseline)));
-const lighting=s=>{const start=s.indexOf('const sux=S.sunX*W-cx',s.indexOf('function paintClouds(')),end=s.indexOf('_drawPuff(ctx,px,py,pr,col,aBase);',start);assert.ok(start>0&&end>start);return s.slice(start,end).split('\n').map(l=>l.trim()).join('\n');};
-test('cloud colour/volume/sun/moon lighting equations remain identical',()=>assert.equal(lighting(candidate),lighting(baseline)));
+// H7/H8 deliberately replaces the prayer-arc solar vector and whole-deck warm
+// tint with physical camera-direction lighting. Keep the OLD equality guard
+// for every other line (volume, opacity, lining gains and lunar illumination).
+// Direction/continuity is independently tested in native-preview.test.mjs and
+// actual camera-rotation/moving-weather captures, not claimed byte-identical.
+const lighting=s=>{const start=s.indexOf('const mux=S.moonX*W-cx',s.indexOf('function paintClouds(')),end=s.indexOf('_drawPuff(ctx,px,py,pr,col,aBase);',start);assert.ok(start>0&&end>start);return s.slice(start,end).split('\n').map(l=>l.trim()).filter(l=>!l.startsWith('// Warm direct light')&&!l.startsWith('// physical camera direction')&&!l.startsWith('const warmth=(S.warmth??0)*facing;')).join('\n');};
+test('cloud volume/opacity/lining/lunar equations remain identical outside authorised directional solar lighting',()=>assert.equal(lighting(candidate),lighting(baseline)));
 test('cloud growth/radius/coverage gate equations remain identical',()=>{
   for(const prefix of ['const base=[tint','const gate=clamp((cov','const aMul=life*gate','const R=R0*']){
     const line=s=>s.split('\n').map(l=>l.trim()).find(l=>l.startsWith(prefix));assert.ok(line(baseline));assert.equal(line(candidate),line(baseline));
@@ -49,16 +54,28 @@ test('protected cloud shader guard catches a flattened core gradient',()=>{
   assert.notEqual(part(candidate.replace(anchor,'g.addColorStop(0.4')),part(baseline));
 });
 const arcPart=s=>{const start=s.indexOf('function drawArc('),end=s.indexOf('// ---- continuous time-of-day sky',start);assert.ok(start>=0&&end>start);return s.slice(start,end);};
-test('solar arc source matches exact accepted R000A reference',()=>assert.equal(arcPart(candidate),arcPart(acceptedPrayer)));
-function arcGeometry(source,{lat,lon,epoch,record}){
-  const h=load({source});if(record)h.ctx.__geometryPrayer=record;
-  h.run('lat='+lat+';lon='+lon+';_simBase=Date.parse('+JSON.stringify(epoch)+');_simTz=tz;'+(record?'today=__geometryPrayer;tomorrow=__geometryPrayer;':''));
+test('solar arc math matches accepted R000A apart from the declared prayer-key diagnostic',()=>{
+  const actual=arcPart(candidate),diagnostic=' data-prayer-key="${p.k}"';
+  assert.equal(actual.split(diagnostic).length,2,'one explicit diagnostic owner');
+  assert.equal(actual.replace(diagnostic,''),arcPart(acceptedPrayer));
+});
+function arcGeometry(source,{lat,lon,epoch,record,zone='Asia/Riyadh'}){
+  const h=load({source});
+  // A geometry comparison still needs an admitted date/zone. The old fixture
+  // changed its clock to June/December while retaining a September prayer
+  // bundle (and used Riyadh for the Oslo records). H6 correctly rejects that.
+  zone=record?.meta.timezone||zone;
+  const fields=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:zone,day:'2-digit',month:'2-digit',year:'numeric'}).formatToParts(new Date(epoch)).map(p=>[p.type,p.value]));
+  const day=[fields.day,fields.month,fields.year].join('-');
+  h.ctx.__geometryPrayer=record||prayerForDate(day);
+  if(!record)h.ctx.__geometryPrayer.meta.timezone=zone;
+  h.run('lat='+lat+';lon='+lon+';tz=__geometryPrayer.meta.timezone;_simBase=Date.parse('+JSON.stringify(epoch)+');_simTz=tz;today=__geometryPrayer;tomorrow=__geometryPrayer;');
   const output=h.run('drawArc(model())');
   const geometry=[...output.matchAll(/<(line|path|circle)\b([^>]*?)\/?>/g)].map(([,tag,text])=>{
     const attrs=Object.fromEntries([...text.matchAll(/([\w-]+)="([^"]*)"/g)].map(([,k,v])=>[k,v]));
     if(tag==='circle'&&attrs.class?.split(/\s+/).includes('dot')){
       attrs.class=attrs.class.split(/\s+/).filter(v=>v!=='adj').join(' ');
-      for(const k of ['data-adjustment','data-angle','data-solar-min','data-solar-max'])delete attrs[k];
+      for(const k of ['data-adjustment','data-angle','data-solar-min','data-solar-max','data-prayer-key'])delete attrs[k];
     }
     return {tag,attrs};
   });
@@ -71,7 +88,7 @@ const summer=JSON.parse(fs.readFileSync(path.join(root,'tests/r0002-tromso-summe
 const winter=JSON.parse(fs.readFileSync(path.join(root,'tests/r0002-tromso-winter.json'),'utf8')).data;
 const arcCases=[
   ['Madinah noon',{lat:24.47,lon:39.61,epoch:'2026-09-08T09:30:00Z'}],
-  ['London shallow night',{lat:51.5,lon:-.12,epoch:'2026-06-21T21:00:00Z'}],
+  ['London shallow night',{lat:51.5,lon:-.12,epoch:'2026-06-21T21:00:00Z',zone:'Europe/London'}],
   ['Tromso summer',{lat:69.6492,lon:18.9553,epoch:'2026-06-21T09:30:00Z',record:summer}],
   ['Tromso winter',{lat:69.6492,lon:18.9553,epoch:'2026-12-21T09:30:00Z',record:winter}],
 ];

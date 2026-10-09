@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS_SCOPED_CORRECTED_HARNESS_SCALAR",
+  "source": "workspace\\tools\\cp9\\geography_entry_check.py",
+  "sourceSha256": "e630097e1f95e41e90b021e4afbb560744a8093e97a775e8a5b27949edd40fa9",
+  "weatherPredicateLine": 19,
+  "releaseLoopLine": 96,
+  "controls": [
+    {
+      "scenario": "correct complete admitted fixture",
+      "checks": {
+        "weatherTarget": true,
+        "weatherFields": true,
+        "weatherLane": true,
+        "headerSnapshot": true,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "all pass",
+      "observed": "all pass"
+    },
+    {
+      "scenario": "original same-WMO corrupted selected weather",
+      "checks": {
+        "weatherTarget": false,
+        "weatherFields": false,
+        "weatherLane": true,
+        "headerSnapshot": false,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "weatherTarget false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "wrong target generation only",
+      "checks": {
+        "weatherTarget": false,
+        "weatherFields": true,
+        "weatherLane": true,
+        "headerSnapshot": true,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "weatherTarget false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "wrong target coordinates only",
+      "checks": {
+        "weatherTarget": false,
+        "weatherFields": true,
+        "weatherLane": true,
+        "headerSnapshot": true,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "weatherTarget false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "wrong accepted numeric fields only",
+      "checks": {
+        "weatherTarget": true,
+        "weatherFields": false,
+        "weatherLane": true,
+        "headerSnapshot": false,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "weatherFields false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "wrong accepted units only",
+      "checks": {
+        "weatherTarget": true,
+        "weatherFields": false,
+        "weatherLane": true,
+        "headerSnapshot": true,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "weatherFields false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "wrong source lane only",
+      "checks": {
+        "weatherTarget": true,
+        "weatherFields": true,
+        "weatherLane": false,
+        "headerSnapshot": true,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "weatherLane false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "unsupported observation claim",
+      "checks": {
+        "weatherTarget": true,
+        "weatherFields": true,
+        "weatherLane": false,
+        "headerSnapshot": true,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "weatherLane false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "wrong header generation only",
+      "checks": {
+        "weatherTarget": true,
+        "weatherFields": true,
+        "weatherLane": true,
+        "headerSnapshot": false,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "headerSnapshot false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "wrong header temperature only",
+      "checks": {
+        "weatherTarget": true,
+        "weatherFields": true,
+        "weatherLane": true,
+        "headerSnapshot": false,
+        "weatherPresentation": true,
+        "supportedParticles": true
+      },
+      "expected": "headerSnapshot false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "wrong header icon",
+      "checks": {
+        "weatherTarget": true,
+        "weatherFields": true,
+        "weatherLane": true,
+        "headerSnapshot": true,
+        "weatherPresentation": false,
+        "supportedParticles": true
+      },
+      "expected": "weatherPresentation false",
+      "observed": "rejected"
+    },
+    {
+      "scenario": "missing supported rain particles",
+      "checks": {
+        "weatherTarget": true,
+        "weatherFields": true,
+        "weatherLane": true,
+        "headerSnapshot": true,
+        "weatherPresentation": true,
+        "supportedParticles": false
+      },
+      "expected": "supportedParticles false",
+      "observed": "rejected"
+    }
+  ],
+  "unexpectedReleaseControl": {
+    "scenario": "original fulfillment-driver RuntimeError",
+    "expected": "propagates, never classified as native cancellation",
+    "observed": "RuntimeError propagated; no release/cancellation label"
+  },
+  "completedReleaseControls": [
+    {
+      "release": "fulfillment completed after A2",
+      "transportFailure": null
+    },
+    {
+      "release": "fulfillment completed after A2",
+      "transportFailure": "net::ERR_ABORTED"
+    }
+  ],
+  "abaScope": "Real request cancellation/currentness and final DOM. A cancelled transport is not claimed as a delivered late body; post-parse late-body generation rejection has separate scalar controls.",
+  "remainingConcreteProblems": [],
+  "limits": "AST/scalar controls only; no browser, native rendered particles, expensive queue, product edit or shared-source edit."
+}

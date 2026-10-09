@@ -30,13 +30,14 @@ self.onmessage=async e=>{const m=e.data;try{if(m.kind==='boot'){nativeWorkerEngi
 self.addEventListener('unhandledrejection',e=>{self.postMessage({kind:'fatal',error:String(e.reason)});});
 '''
 (N/'native-worker.js').write_text(worker,encoding='utf-8',newline='\n')
-extra=['core/src/reference-worker-client.mjs','core/src/latest-render-queue.mjs','native-encoding.mjs']
+extra=['core/src/reference-worker-client.mjs','core/src/latest-render-queue.mjs','native-encoding.mjs','native-cloud-transfer.mjs']
 if (N/'native-composition.mjs').exists():extra.append('native-composition.mjs')
-extra.extend(['native-worker-policy.mjs','native-lifecycle.mjs','native-assets.mjs','native-host.mjs'])
+extra.extend(['native-preview.mjs','native-worker-policy.mjs','native-lifecycle.mjs','native-assets.mjs','native-host.mjs'])
 boot='''
 startNativeSkyAssets(pack=>startNativeSky(pack,WORKER_SOURCE,PHYSICAL_MODE),document.currentScript?.src);
 '''.replace('WORKER_SOURCE',json.dumps(worker)).replace('PHYSICAL_MODE',str(bool(physical)).lower())
 (N/'native-sky.js').write_text('(function(){"use strict";\n'+base+'\n'+concat([N/p for p in extra])+boot+'\n})();\n',encoding='utf-8',newline='\n')
+preview='(function(){"use strict";\n'+base+'\n'+concat([N/p for p in ['native-encoding.mjs','native-cloud-transfer.mjs','native-composition.mjs','native-preview.mjs','native-star-preview.mjs','native-preview-host.mjs','native-first-paint.mjs']])+'\nwindow.SalahNativeCloudLighting=nativeCloudSolarLighting;window.SalahStartSkyPreview=startNativeSkyPreview;prepareNativeFirstPaint();\n})();\n'
 pack={'catalogueText':(S/'data/bright-stars.json').read_text(encoding='utf-8'),'manifestText':(S/'data/registered-starlight/runtime-manifest.json').read_text(encoding='utf-8'),'assetTexts':{'128':(S/'data/registered-starlight/V-nside128.json').read_text(encoding='utf-8')} if physical else {}}
 (N/'native-data.js').write_text('window.__SALAH_REAL_SKY_PACK__='+json.dumps(pack,ensure_ascii=True,separators=(',',':'))+';\n',encoding='utf-8',newline='\n')
 # Source is pinned and retained locally. Only this explicit block replacement and hooks change index.
@@ -64,17 +65,29 @@ s=original[:start]+replacement+original[end:]
 elevation_line='    if(track&&attemptEligible(op,a)) weatherTrack=track;'
 assert s.count(elevation_line)==1
 s=s.replace(elevation_line,elevation_line+"\n    // CP9 elevation custody: notify only after this operation's eligible native weather adoption.\n    if((current||track)&&elevation!=null&&attemptEligible(op,a)&&selectedWeather()) window.SalahNativeSkyHost?.acceptedElevation(elevation,op.generation,captured.lat,captured.lon);",1)
-s=s.replace('function beginSkyScene(){','function beginSkyScene(){\n  window.SalahRealSky?.invalidate("native beginSkyScene");',1)
+s=s.replace('function beginSkyScene(){','function beginSkyScene(){\n  window.SalahSkyPreview?.clear("native beginSkyScene");\n  window.SalahRealSky?.invalidate("native beginSkyScene");',1)
 s=s.replace('  commitSkyScene(A);\n}','  commitSkyScene(A);\n  window.SalahNativeSkyHost?.notify();\n}',1)
+s=s.replace('  beginSkyScene();\n  if(!simulationReady()) return;','  beginSkyScene();\n  window.SalahStartSkyPreview?.();\n  if(!simulationReady()) return;',1)
 s=s.replace('\nboot();','\n'+(N/'native-host-hooks.js').read_text(encoding='utf-8')+'\nboot();',1)
-s=s.replace('</head>','<link rel="stylesheet" href="real-sky/native-sky.css">\n</head>',1)
+# The shared resolver and bounded atmosphere must run before static card markup
+# can paint. No visibility gate: the first card already has its accepted sky.
+s=s.replace('<script src="config.js"></script>','',1)
+s=s.replace('</head>','<link rel="stylesheet" href="real-sky/native-sky.css">\n<script src="config.js"></script>\n<script id="native-first-paint-code" data-sha256="'+hashlib.sha256(preview.encode()).hexdigest()+'">'+preview+'</script>\n</head>',1)
 s=s.replace('</body>','<script src="real-sky/native-sky.js"></script>\n</body>',1)
 (W/'index.html').write_text(s,encoding='utf-8',newline='\n')
 css='''.real-sky-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}.real-sky-status{position:absolute;bottom:3px;left:0;width:100%;text-align:center;font:8px sans-serif;color:#aaa;z-index:3;pointer-events:none}.milkyway,.stars,.starglints{display:none!important}
+/* A valid accepted atmosphere owns the first visible sky. No timer or worker
+   readiness can turn an accepted daytime target into a dark placeholder. */
+.c{background:#273445}
+.real-sky-preview{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}
+.c.real-sky-composed .real-sky-preview{display:none}
+.c.real-sky-preview-ready .sky .mphoto,.c.real-sky-preview-ready .sky .moccluder,.c.real-sky-preview-ready .sky .mbeam,.c.real-sky-preview-ready .sky .mglow{visibility:hidden!important}
+.wfx .cloudcanvas{visibility:hidden!important}
+.wfx .fog,.wfx .veil,.wfx .sunhaze,.c>.grain,.c>.climate{display:none!important}
 /* Broad sky radiance is now physical. Native discs and discrete optical presentations stay native. */
 .atmo .airglow,.atmo .aurora,.atmo .scatter,.atmo .belt,.atmo .anticrep,.atmo>.sun{display:none!important}
 '''
-if physical:css+='''/* Painter remains live for transfer and rain; its alpha/colour is composed in linear light exactly once. */
+if physical:css+='''/* Painter remains live for transfer and rain; bounded display colour is composed exactly once. */
 .c.real-sky-composed .wfx .cloudcanvas{visibility:hidden!important}
 .c.real-sky-composed .sky .mphoto,.c.real-sky-composed .sky .moccluder,.c.real-sky-composed .sky .mbeam,.c.real-sky-composed .sky .mglow{visibility:hidden!important}
 /* Discrete native solar/lunar optics remain condition-gated presentation layers, not diffuse/background meters. */

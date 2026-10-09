@@ -1,5 +1,13 @@
 # CP9 dependent Moon candidate — receiving qualification
 
+**PR42 follow-up:** the [current hotfix register](../real-sky/STARTUP_CLOUD_HOTFIX.md)
+owns the later lunar calendar/composition, bounded terrain-preview/refined
+continuity and native corona-order changes. Refined-only withholding was rejected
+as a continuity regression. The receiving/release receipts below remain historical;
+they do not qualify those changed postimages. V5 kernel, terrain assets and
+material profile remain unchanged. Joined PR42 browser qualification is separate
+from the original renderer rollout and does not authorize another merge.
+
 **Corrected candidate, 2026-10-07:** see the [release qualification](RELEASE_CANDIDATE.md),
 [rim correction](RIM_CORRECTION.md) and [normal-clock currentness fix](CLOCK_CURRENTNESS.md).
 The receipts below describe the preceding candidate. The follow-up qualifies

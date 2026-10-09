@@ -28,7 +28,11 @@ REFERENCE=r'''()=>{
   for(let k=0;k<3;k++){
    const gas=sample(r.skyBackgroundLinear??r.backgroundLinear,px,py,k),direct=sample(r.stellarLinear,px,py,k)+sample(r.diffusePhysicalLinear,px,py,k);
    const surface=a?Math.min(1-1/131072,sum[k]/a):0;
-   const linear=gas*(1-a*op)+direct*(1-a)-Math.log1p(-surface)/E*a*op;
+   // PR42 foreground contract: air is between observer and opaque Moon.
+   // The independent source-cell overlap reference still owns coverage; only
+   // its transport boundary changes. Old gas-occlusion is a retained negative
+   // control in lunar-atmosphere-negative.tap, not an acceptable rim oracle.
+   const linear=gas+direct*(1-a)-Math.log1p(-surface)/E*a*op;
    const v=-Math.expm1(-E*Math.max(0,linear));rgba[4*(j*W+i)+k]=Math.round(255*(v<=.0031308?12.92*v:1.055*v**(1/2.4)-.055));
   }
   rgba[4*(j*W+i)+3]=a>1e-10?255:0;

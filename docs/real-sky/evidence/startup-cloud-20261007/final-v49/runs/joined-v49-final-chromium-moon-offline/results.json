@@ -1,0 +1,1506 @@
+{
+  "scope": "Actual navigation and product worker; controlled native date/prayers/weather. No live-provider, full V5 science or independent-review claim. Refinement and fault workloads identified separately.",
+  "entry": "file-offline",
+  "checks": [
+    {
+      "name": "prayer-and-settings-during-refinement",
+      "passed": true,
+      "longGaps": [],
+      "actions": [
+        {
+          "type": "date",
+          "opened": true,
+          "delayMs": 2.5,
+          "durationMs": 4.200000017881393,
+          "status": "loading"
+        },
+        {
+          "type": "settings",
+          "opened": true,
+          "delayMs": 0.4000000059604645,
+          "durationMs": 1.0999999940395355,
+          "status": "loading"
+        },
+        {
+          "type": "date",
+          "opened": true,
+          "delayMs": 0.5,
+          "durationMs": 2.4000000059604645,
+          "status": "rendering"
+        },
+        {
+          "type": "settings",
+          "opened": true,
+          "delayMs": 5.600000023841858,
+          "durationMs": 0.5,
+          "status": "rendering"
+        },
+        {
+          "type": "date",
+          "opened": true,
+          "delayMs": 1.100000023841858,
+          "durationMs": 2.0999999940395355,
+          "status": "rendering"
+        },
+        {
+          "type": "settings",
+          "opened": true,
+          "delayMs": 0.5,
+          "durationMs": 0.5,
+          "status": "rendering"
+        },
+        {
+          "type": "date",
+          "opened": true,
+          "delayMs": 0.5,
+          "durationMs": 2.2000000178813934,
+          "status": "rendering"
+        },
+        {
+          "type": "settings",
+          "opened": true,
+          "delayMs": 0.7000000178813934,
+          "durationMs": 0.4000000059604645,
+          "status": "rendering"
+        },
+        {
+          "type": "date",
+          "opened": true,
+          "delayMs": 6.9000000059604645,
+          "durationMs": 2,
+          "status": "refining"
+        },
+        {
+          "type": "settings",
+          "opened": true,
+          "delayMs": 9.799999982118607,
+          "durationMs": 0.4000000059604645,
+          "status": "refining"
+        },
+        {
+          "type": "date",
+          "opened": true,
+          "delayMs": 7.0999999940395355,
+          "durationMs": 2.300000011920929,
+          "status": "refining"
+        },
+        {
+          "type": "settings",
+          "opened": true,
+          "delayMs": 6.699999988079071,
+          "durationMs": 0.4000000059604645,
+          "status": "refining"
+        },
+        {
+          "type": "date",
+          "opened": true,
+          "delayMs": 6.699999988079071,
+          "durationMs": 2,
+          "status": "refining"
+        },
+        {
+          "type": "settings",
+          "opened": true,
+          "delayMs": 9.5,
+          "durationMs": 0.4000000059604645,
+          "status": "refining"
+        },
+        {
+          "type": "date",
+          "opened": true,
+          "delayMs": 6.799999982118607,
+          "durationMs": 2.100000023841858,
+          "status": "refining"
+        },
+        {
+          "type": "settings",
+          "opened": true,
+          "delayMs": 6.9000000059604645,
+          "durationMs": 0.5,
+          "status": "refining"
+        }
+      ],
+      "maxHeartbeatMs": 64.60000002384186,
+      "maxScheduledActionDelayMs": 9.799999982118607,
+      "statuses": [
+        {
+          "status": "loading",
+          "at": 949.4000000059605
+        },
+        {
+          "status": "rendering",
+          "at": 1754
+        },
+        {
+          "status": "refining",
+          "at": 7188.9000000059605
+        },
+        {
+          "status": "ready",
+          "at": 39176.59999999404
+        }
+      ],
+      "budgetMs": 250,
+      "budgetMet": true
+    },
+    {
+      "name": "half",
+      "passed": true,
+      "state": {
+        "moon": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 1,
+          "rejected": 0,
+          "cancelled": 0,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "visibleSource": "refined-terrain",
+          "progress": {
+            "stage": "lighting",
+            "row": 519,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "progressQuality": {
+            "status": "preview",
+            "samples": 64
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.699999988079071,
+            "lightingMs": 4118.5999999940395,
+            "totalMs": 4934.299999982119,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 5028,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 576888,
+            "blockerWitnesses": 851424,
+            "memoryBytes": 326631424,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "rowScheduling": {
+              "workers": 2,
+              "ranges": [
+                [
+                  0,
+                  270
+                ],
+                [
+                  270,
+                  540
+                ]
+              ],
+              "initialCacheRule": false,
+              "globalQuality": true,
+              "globalFiltering": true,
+              "workerTimes": [
+                1927.7999999821186,
+                4275.299999982119
+              ]
+            },
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 95,
+              "projectedMaximumCode": 0.2913970947265625,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 1.0621871948242188,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 5348.300000011921
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 6555
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 2890,
+                  "milliseconds": 20461.20000001788
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 389,
+                  "milliseconds": 4934.299999982119
+                }
+              ],
+              "totalMs": 37360.30000001192,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.49995963128740056,
+          "lastAdoption": {
+            "at": 39147.69999998808,
+            "prefixMs": 9.300000011920929,
+            "totalMs": 14.200000017881393,
+            "source": "refined-terrain"
+          },
+          "current": true,
+          "epoch": 0,
+          "generation": 0,
+          "pending": false,
+          "accepted": {
+            "identity": "50700308a3b9fdd13c23a041fec836967b65a0615a6c1a3615e310a4f181feed",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                -8.0737425198916e-05,
+                -0.999999996740734,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.49995963128740056,
+              "waxing": false,
+              "tilt": 0,
+              "requestedNativeFraction": 0.5,
+              "phaseQuantumRadians": 0.0015266055045871558,
+              "phaseDisplayDiameter": 109,
+              "geometryConvention": "native accepted phase; leading-edge bounded display approximation while advancing, nearest while fixed; .0416 device px maximum; no future UTC"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.5,
+          "phasePrecision": {
+            "diameterDevicePixels": 109,
+            "quantumRadians": 0.0015266055045871558,
+            "bucket": 1029,
+            "maximumPositionErrorDevicePixels": 0.0416,
+            "refreshThresholdDevicePixels": 0.0104,
+            "maximumNativePresentationDiameter": 109,
+            "signedPositionDrift": -0.004400189678124722,
+            "targetPositionErrorBound": 0.004400189678124722
+          },
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight"
+        },
+        "detail": {
+          "renders": 2,
+          "skips": 127,
+          "totalMs": 11.699999988079071,
+          "maxMs": 16.80000001192093,
+          "dpr": 1,
+          "pixels": 12321,
+          "mode": "local-device-resolution; inherited physics grid unchanged",
+          "skyOwner": "refined-sky",
+          "atmosphereOwner": "foreground path radiance, never lunar-occluded",
+          "visible": true
+        },
+        "sky": {
+          "status": "ready",
+          "errors": [],
+          "composition": {
+            "cloudApplications": 1,
+            "meanCloudAlpha": 0,
+            "maxCloudAlpha": 0,
+            "moonPixels": 0,
+            "cloudTransmissionOwner": "1 - native painted alpha after native blur and vertical mask",
+            "order": "gas-transported sky → calendar direct-light cutout → native PBR material → bounded display-linear cloud screen → shared encode",
+            "cloudColour": "display-referred native painter; coverage before inverse tone map; not measured cloud radiance",
+            "exposureOwner": "CP7 sky+diffuse meter before calendar/foreground; native foreground excluded",
+            "saturation": "bounded cloud display energy; native lunar code 255 uses 1 - 1/131072",
+            "moonSurface": "device-resolution-owned",
+            "moonAlpha": 0,
+            "cloudBuffer": {
+              "width": 144,
+              "height": 232
+            },
+            "maskStops": [
+              0,
+              0.03,
+              0.24,
+              0.34,
+              1
+            ],
+            "cloudSource": "hidden",
+            "updatedRows": 183,
+            "totalRows": 530,
+            "lastComposeMs": 1.0999999940395355
+          }
+        },
+        "host": {
+          "utcMs": 1788813000000,
+          "generation": 0,
+          "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0",
+          "fraction": 0.5,
+          "waxing": false,
+          "up": 1,
+          "maximumPresentationRatio": 1,
+          "dpr": 1,
+          "timeScale": 0,
+          "paused": false
+        },
+        "rows": 6,
+        "qa": {
+          "phaseFraction": 0.5,
+          "waxing": false,
+          "moonAltitudeDeg": 20,
+          "moonSkyFresh": true,
+          "lastConsumed": {
+            "status": "completed",
+            "stage": "paint",
+            "fresh": true,
+            "observation": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "expected": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "phaseFraction": 0.5,
+              "altitudeDeg": 20,
+              "light": {
+                "eligibility": 1,
+                "eligible": true,
+                "reason": "eligible",
+                "illumination": 0.675,
+                "beam": 0.405,
+                "cloudLight": 0.675,
+                "localStarWash": 0.575,
+                "localGlow": 0.09,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              }
+            }
+          },
+          "currentGeometry": {
+            "fresh": true,
+            "produced": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "expected": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "phaseFraction": 0.5,
+            "altitudeDeg": 20,
+            "light": {
+              "eligibility": 1,
+              "eligible": true,
+              "reason": "eligible",
+              "illumination": 0.675,
+              "beam": 0.405,
+              "cloudLight": 0.675,
+              "localStarWash": 0.575,
+              "localGlow": 0.09,
+              "halo": 0,
+              "corona": 0,
+              "paraselenae": 0
+            }
+          },
+          "lunarLight": {
+            "eligibility": 1,
+            "eligible": true,
+            "reason": "eligible",
+            "illumination": 0.675,
+            "beam": 0.405,
+            "cloudLight": 0.675,
+            "localStarWash": 0.575,
+            "localGlow": 0.09,
+            "halo": 0,
+            "corona": 0,
+            "paraselenae": 0
+          },
+          "surface": {
+            "status": "v5-terrain",
+            "quality": "empirical-adaptive",
+            "visibleSource": "refined-terrain",
+            "identity": "50700308a3b9fdd13c23a041fec836967b65a0615a6c1a3615e310a4f181feed",
+            "legacyDecoded": true,
+            "legacyVisible": false,
+            "texture": "V5 DEM intersections, terrain shadows and colour"
+          },
+          "physicalMoonVisible": true,
+          "calendarMoonVisible": true,
+          "displayMode": "physical",
+          "moonSkyOpacity": 1,
+          "moonCalendarOpacity": 1,
+          "moonFeatureOpacity": 1,
+          "moonlightOpacity": 0.405,
+          "earthshine": "Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only",
+          "reason": null
+        },
+        "geometry": {
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530
+          },
+          "footerBottom": 520.34375
+        }
+      }
+    },
+    {
+      "name": "opaque-to-stars-and-cloud-once",
+      "passed": true,
+      "proof": {
+        "innerOpaquePixels": 3497,
+        "maximumInteriorStarDifference": 0,
+        "changedBoundaryChannels": 1248,
+        "cloudSamples": 1225,
+        "maximumCloudCodeDifference": 1,
+        "wrongDoubleTransmission": 3503,
+        "cloudCode": [
+          80,
+          120,
+          159,
+          128
+        ],
+        "cloudToleranceCodes": 1,
+        "scope": "Synthetic direct-light and constant-cloud controls; exact interior star rejection, independent bounded display-linear foreground equation with one code of 8-bit reference quantization"
+      }
+    },
+    {
+      "name": "native-cloud-field-present",
+      "passed": true,
+      "field": {
+        "nonzeroPixels": 6721,
+        "visiblePixels": 5954,
+        "maxAlpha": 229,
+        "weatherSource": "sim",
+        "cloud": 65,
+        "weatherCode": 2
+      }
+    },
+    {
+      "name": "native-clouds",
+      "passed": true,
+      "state": {
+        "moon": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 1,
+          "rejected": 0,
+          "cancelled": 0,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "visibleSource": "refined-terrain",
+          "progress": {
+            "stage": "lighting",
+            "row": 519,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "progressQuality": {
+            "status": "preview",
+            "samples": 64
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.699999988079071,
+            "lightingMs": 4118.5999999940395,
+            "totalMs": 4934.299999982119,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 5028,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 576888,
+            "blockerWitnesses": 851424,
+            "memoryBytes": 326631424,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "rowScheduling": {
+              "workers": 2,
+              "ranges": [
+                [
+                  0,
+                  270
+                ],
+                [
+                  270,
+                  540
+                ]
+              ],
+              "initialCacheRule": false,
+              "globalQuality": true,
+              "globalFiltering": true,
+              "workerTimes": [
+                1927.7999999821186,
+                4275.299999982119
+              ]
+            },
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 95,
+              "projectedMaximumCode": 0.2913970947265625,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 1.0621871948242188,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 5348.300000011921
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 6555
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 2890,
+                  "milliseconds": 20461.20000001788
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 389,
+                  "milliseconds": 4934.299999982119
+                }
+              ],
+              "totalMs": 37360.30000001192,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.49995963128740056,
+          "lastAdoption": {
+            "at": 39147.69999998808,
+            "prefixMs": 9.300000011920929,
+            "totalMs": 14.200000017881393,
+            "source": "refined-terrain"
+          },
+          "current": true,
+          "epoch": 0,
+          "generation": 0,
+          "pending": false,
+          "accepted": {
+            "identity": "50700308a3b9fdd13c23a041fec836967b65a0615a6c1a3615e310a4f181feed",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                -8.0737425198916e-05,
+                -0.999999996740734,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.49995963128740056,
+              "waxing": false,
+              "tilt": 0,
+              "requestedNativeFraction": 0.5,
+              "phaseQuantumRadians": 0.0015266055045871558,
+              "phaseDisplayDiameter": 109,
+              "geometryConvention": "native accepted phase; leading-edge bounded display approximation while advancing, nearest while fixed; .0416 device px maximum; no future UTC"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.5,
+          "phasePrecision": {
+            "diameterDevicePixels": 109,
+            "quantumRadians": 0.0015266055045871558,
+            "bucket": 1029,
+            "maximumPositionErrorDevicePixels": 0.0416,
+            "refreshThresholdDevicePixels": 0.0104,
+            "maximumNativePresentationDiameter": 109,
+            "signedPositionDrift": -0.004400189678124722,
+            "targetPositionErrorBound": 0.004400189678124722
+          },
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight"
+        },
+        "detail": {
+          "renders": 9,
+          "skips": 135,
+          "totalMs": 6.699999988079071,
+          "maxMs": 16.80000001192093,
+          "dpr": 1,
+          "pixels": 12321,
+          "mode": "local-device-resolution; inherited physics grid unchanged",
+          "skyOwner": "refined-sky",
+          "atmosphereOwner": "foreground path radiance, never lunar-occluded",
+          "visible": true
+        },
+        "sky": {
+          "status": "ready",
+          "errors": [],
+          "composition": {
+            "cloudApplications": 1,
+            "meanCloudAlpha": 0.07182567517574613,
+            "maxCloudAlpha": 0.8941176470588236,
+            "moonPixels": 0,
+            "cloudTransmissionOwner": "1 - native painted alpha after native blur and vertical mask",
+            "order": "gas-transported sky → calendar direct-light cutout → native PBR material → bounded display-linear cloud screen → shared encode",
+            "cloudColour": "display-referred native painter; coverage before inverse tone map; not measured cloud radiance",
+            "exposureOwner": "CP7 sky+diffuse meter before calendar/foreground; native foreground excluded",
+            "saturation": "bounded cloud display energy; native lunar code 255 uses 1 - 1/131072",
+            "moonSurface": "device-resolution-owned",
+            "moonAlpha": 0,
+            "cloudBuffer": {
+              "width": 144,
+              "height": 232
+            },
+            "maskStops": [
+              0,
+              0.03,
+              0.24,
+              0.34,
+              1
+            ],
+            "cloudSource": "hidden",
+            "updatedRows": 183,
+            "totalRows": 530,
+            "lastComposeMs": 27
+          }
+        },
+        "host": {
+          "utcMs": 1788813000000,
+          "generation": 0,
+          "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0",
+          "fraction": 0.5,
+          "waxing": false,
+          "up": 1,
+          "maximumPresentationRatio": 1,
+          "dpr": 1,
+          "timeScale": 0,
+          "paused": false
+        },
+        "rows": 6,
+        "qa": {
+          "phaseFraction": 0.5,
+          "waxing": false,
+          "moonAltitudeDeg": 20,
+          "moonSkyFresh": true,
+          "lastConsumed": {
+            "status": "completed",
+            "stage": "paint",
+            "fresh": true,
+            "observation": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "expected": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "phaseFraction": 0.5,
+              "altitudeDeg": 20,
+              "light": {
+                "eligibility": 1,
+                "eligible": true,
+                "reason": "eligible",
+                "illumination": 0.675,
+                "beam": 0.405,
+                "cloudLight": 0.675,
+                "localStarWash": 0.575,
+                "localGlow": 0.09,
+                "halo": 0.1903571428571429,
+                "corona": 0.19337499999999994,
+                "paraselenae": 0
+              }
+            }
+          },
+          "currentGeometry": {
+            "fresh": true,
+            "produced": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "expected": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "phaseFraction": 0.5,
+            "altitudeDeg": 20,
+            "light": {
+              "eligibility": 1,
+              "eligible": true,
+              "reason": "eligible",
+              "illumination": 0.675,
+              "beam": 0.405,
+              "cloudLight": 0.675,
+              "localStarWash": 0.575,
+              "localGlow": 0.09,
+              "halo": 0.1903571428571429,
+              "corona": 0.19337499999999994,
+              "paraselenae": 0
+            }
+          },
+          "lunarLight": {
+            "eligibility": 1,
+            "eligible": true,
+            "reason": "eligible",
+            "illumination": 0.675,
+            "beam": 0.405,
+            "cloudLight": 0.675,
+            "localStarWash": 0.575,
+            "localGlow": 0.09,
+            "halo": 0.1903571428571429,
+            "corona": 0.19337499999999994,
+            "paraselenae": 0
+          },
+          "surface": {
+            "status": "v5-terrain",
+            "quality": "empirical-adaptive",
+            "visibleSource": "refined-terrain",
+            "identity": "50700308a3b9fdd13c23a041fec836967b65a0615a6c1a3615e310a4f181feed",
+            "legacyDecoded": true,
+            "legacyVisible": false,
+            "texture": "V5 DEM intersections, terrain shadows and colour"
+          },
+          "physicalMoonVisible": true,
+          "calendarMoonVisible": true,
+          "displayMode": "physical",
+          "moonSkyOpacity": 1,
+          "moonCalendarOpacity": 1,
+          "moonFeatureOpacity": 1,
+          "moonlightOpacity": 0.405,
+          "earthshine": "Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only",
+          "reason": null
+        },
+        "geometry": {
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530
+          },
+          "footerBottom": 520.34375
+        }
+      }
+    },
+    {
+      "name": "native-A-B-A-rejects-original-result",
+      "passed": true,
+      "observation": {
+        "rejected": 3,
+        "epoch": 5,
+        "staleEpoch": 1,
+        "pending": true,
+        "withheld": true
+      }
+    },
+    {
+      "name": "matching-malformed-result-rejected-original-current-surface-retained",
+      "passed": true,
+      "state": {
+        "moon": {
+          "status": "unavailable",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 3,
+          "rejected": 5,
+          "cancelled": 5,
+          "errors": [
+            "Moon nonfinite/premultiplied surface"
+          ],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "visibleSource": "refined-terrain",
+          "progress": {
+            "stage": "lighting",
+            "row": 39,
+            "total": 40,
+            "sourceSamples": 1024,
+            "selected": null
+          },
+          "progressQuality": {
+            "status": "preview",
+            "samples": 64
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 0.09999999403953552,
+            "lightingMs": 228.5,
+            "totalMs": 319.5,
+            "knownSurfaceSamples": 1073,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 31,
+            "sourceSamples": 1024,
+            "analyticClearSun": true,
+            "analyticSamples": 3,
+            "shadowRays": 6626,
+            "blockerWitnesses": 6897,
+            "memoryBytes": 326631424,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "rowScheduling": {
+              "workers": 2,
+              "ranges": [
+                [
+                  0,
+                  20
+                ],
+                [
+                  20,
+                  40
+                ]
+              ],
+              "initialCacheRule": false,
+              "globalQuality": true,
+              "globalFiltering": true,
+              "workerTimes": [
+                90.09999999403954,
+                230.19999998807907
+              ]
+            },
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 0,
+              "projectedMaximumCode": 0.08463287353515625,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 0.08463668823242188,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 1600,
+                  "milliseconds": 127.89999997615814
+                },
+                {
+                  "samples": 256,
+                  "receivers": 1600,
+                  "milliseconds": 162.90000000596046
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 17,
+                  "milliseconds": 319.5
+                }
+              ],
+              "totalMs": 614.4000000059605,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.5,
+          "lastAdoption": {
+            "at": 42091.09999999404,
+            "prefixMs": 0.30000001192092896,
+            "totalMs": 1.300000011920929,
+            "source": "refined-terrain"
+          },
+          "reason": "native beginSkyScene",
+          "retainedReason": "replacement worker failure; original current surface",
+          "current": true,
+          "epoch": 5,
+          "generation": 2,
+          "pending": false,
+          "accepted": {
+            "identity": "c6b1307d2d179378dfe4c75455293c8398d996de2964f0526ace14d09a2bb454",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 40,
+              "outSize": 80,
+              "diameter": 76.8,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                6.123233995736766e-17,
+                -1,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "mode": "physical-reference",
+              "fraction": 0.5,
+              "waxing": false,
+              "tilt": 0,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              }
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": false,
+          "currentNativeFraction": 0.5,
+          "phasePrecision": {
+            "diameterDevicePixels": 109,
+            "quantumRadians": 0.0015266055045871558,
+            "bucket": 1029,
+            "maximumPositionErrorDevicePixels": 0.0416,
+            "refreshThresholdDevicePixels": 0.0104,
+            "maximumNativePresentationDiameter": 109,
+            "signedPositionDrift": 0,
+            "targetPositionErrorBound": null
+          },
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight"
+        },
+        "detail": {
+          "renders": 13,
+          "skips": 145,
+          "totalMs": 7.200000017881393,
+          "maxMs": 16.80000001192093,
+          "dpr": 1,
+          "pixels": 12321,
+          "mode": "local-device-resolution; inherited physics grid unchanged",
+          "skyOwner": "atmospheric-preview",
+          "atmosphereOwner": "foreground path radiance, never lunar-occluded",
+          "visible": true
+        },
+        "sky": {
+          "status": "pending",
+          "errors": [],
+          "composition": null
+        },
+        "host": {
+          "utcMs": 1788813000000,
+          "generation": 2,
+          "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0",
+          "fraction": 0.5,
+          "waxing": false,
+          "up": 1,
+          "maximumPresentationRatio": 1,
+          "dpr": 1,
+          "timeScale": 0,
+          "paused": false
+        },
+        "rows": 6,
+        "qa": {
+          "phaseFraction": 0.5,
+          "waxing": false,
+          "moonAltitudeDeg": 20,
+          "moonSkyFresh": true,
+          "lastConsumed": {
+            "status": "completed",
+            "stage": "paint",
+            "fresh": true,
+            "observation": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "expected": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "phaseFraction": 0.5,
+              "altitudeDeg": 20,
+              "light": {
+                "eligibility": 1,
+                "eligible": true,
+                "reason": "eligible",
+                "illumination": 0.675,
+                "beam": 0.405,
+                "cloudLight": 0.675,
+                "localStarWash": 0.575,
+                "localGlow": 0.09,
+                "halo": 0.1903571428571429,
+                "corona": 0.19337499999999994,
+                "paraselenae": 0
+              }
+            }
+          },
+          "currentGeometry": {
+            "fresh": true,
+            "produced": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "expected": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "phaseFraction": 0.5,
+            "altitudeDeg": 20,
+            "light": {
+              "eligibility": 1,
+              "eligible": true,
+              "reason": "eligible",
+              "illumination": 0.675,
+              "beam": 0.405,
+              "cloudLight": 0.675,
+              "localStarWash": 0.575,
+              "localGlow": 0.09,
+              "halo": 0.1903571428571429,
+              "corona": 0.19337499999999994,
+              "paraselenae": 0
+            }
+          },
+          "lunarLight": {
+            "eligibility": 1,
+            "eligible": true,
+            "reason": "eligible",
+            "illumination": 0.675,
+            "beam": 0.405,
+            "cloudLight": 0.675,
+            "localStarWash": 0.575,
+            "localGlow": 0.09,
+            "halo": 0.1903571428571429,
+            "corona": 0.19337499999999994,
+            "paraselenae": 0
+          },
+          "surface": {
+            "status": "v5-terrain",
+            "quality": "empirical-adaptive",
+            "visibleSource": "refined-terrain",
+            "identity": "c6b1307d2d179378dfe4c75455293c8398d996de2964f0526ace14d09a2bb454",
+            "legacyDecoded": true,
+            "legacyVisible": false,
+            "texture": "V5 DEM intersections, terrain shadows and colour"
+          },
+          "physicalMoonVisible": true,
+          "calendarMoonVisible": true,
+          "displayMode": "physical",
+          "moonSkyOpacity": 1,
+          "moonCalendarOpacity": 1,
+          "moonFeatureOpacity": 1,
+          "moonlightOpacity": 0.405,
+          "earthshine": "Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only",
+          "reason": null
+        },
+        "geometry": {
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530
+          },
+          "footerBottom": 520.34375
+        }
+      }
+    },
+    {
+      "name": "failure-retention-revoked-on-new-profile",
+      "passed": true
+    },
+    {
+      "name": "retry-starts",
+      "passed": true
+    },
+    {
+      "name": "retry-recovers-refined-surface",
+      "passed": true
+    },
+    {
+      "name": "ordinary-local-transport",
+      "passed": true,
+      "requests": []
+    },
+    {
+      "name": "no-unexpected-page-errors",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "runtimeTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+  "harnessSha256": "d053337f46ec7381faf418c691aa918bff0040e7c3983e7896f1c08bd2b6181b",
+  "browser": {
+    "family": "chromium",
+    "version": "148.0.7778.96",
+    "os": "Windows",
+    "machine": "AMD64",
+    "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+    "chromiumSandboxRequested": true
+  },
+  "url": "file:///workspace/offline.html",
+  "prayerReadySeconds": 0.9370000000053551,
+  "previewSeconds": 7.203000000008615,
+  "refinedSeconds": 39.203000000008615,
+  "workerEvents": [
+    {
+      "kind": "preview",
+      "id": 1,
+      "identity": {
+        "id": 1,
+        "key": "[0,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"calendar\",null,109]",
+        "epoch": 0
+      },
+      "phase": 0.49995963128740056,
+      "at": 7132.799999982119,
+      "quality": {
+        "status": "preview",
+        "samples": 64
+      }
+    },
+    {
+      "kind": "result",
+      "id": 1,
+      "identity": {
+        "id": 1,
+        "key": "[0,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"calendar\",null,109]",
+        "epoch": 0
+      },
+      "phase": 0.49995963128740056,
+      "at": 39143.40000000596,
+      "quality": {
+        "status": "empirical-adaptive",
+        "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+        "thresholdCode": 0.125,
+        "unsettled": 0,
+        "receiverHeuristicRemaining": 95,
+        "projectedMaximumCode": 0.2913970947265625,
+        "projectedGate": 0.5,
+        "lastMaximumCode": 1.0621871948242188,
+        "history": [
+          {
+            "samples": 64,
+            "receivers": 291600,
+            "milliseconds": 5348.300000011921
+          },
+          {
+            "samples": 256,
+            "receivers": 291600,
+            "milliseconds": 6555
+          },
+          {
+            "samples": 1024,
+            "receivers": 2890,
+            "milliseconds": 20461.20000001788
+          },
+          {
+            "samples": 4096,
+            "receivers": 389,
+            "milliseconds": 4934.299999982119
+          }
+        ],
+        "totalMs": 37360.30000001192,
+        "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+      }
+    },
+    {
+      "kind": "preview",
+      "id": 3,
+      "identity": {
+        "id": 3,
+        "key": "[0,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"calendar\",\"{\\\"size\\\":40,\\\"outSize\\\":80,\\\"diameter\\\":76.8,\\\"basis\\\":[0,1,0,0,0,1,1,0,0],\\\"sun\\\":[6.123233995736766e-17,-1,0],\\\"earth\\\":[384400,0,0],\\\"distance\\\":384400,\\\"extent\\\":1.08,\\\"mode\\\":\\\"physical-reference\\\",\\\"fraction\\\":0.5,\\\"waxing\\\":false,\\\"tilt\\\":0}\",109]",
+        "epoch": 1
+      },
+      "phase": 0.5,
+      "at": 40827.19999998808,
+      "quality": {
+        "status": "preview",
+        "samples": 64
+      }
+    },
+    {
+      "kind": "result",
+      "id": 3,
+      "identity": {
+        "id": 3,
+        "key": "[0,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"calendar\",\"{\\\"size\\\":40,\\\"outSize\\\":80,\\\"diameter\\\":76.8,\\\"basis\\\":[0,1,0,0,0,1,1,0,0],\\\"sun\\\":[6.123233995736766e-17,-1,0],\\\"earth\\\":[384400,0,0],\\\"distance\\\":384400,\\\"extent\\\":1.08,\\\"mode\\\":\\\"physical-reference\\\",\\\"fraction\\\":0.5,\\\"waxing\\\":false,\\\"tilt\\\":0}\",109]",
+        "epoch": 1
+      },
+      "phase": 0.5,
+      "at": 41275.29999998212,
+      "quality": {
+        "status": "empirical-adaptive",
+        "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+        "thresholdCode": 0.125,
+        "unsettled": 0,
+        "receiverHeuristicRemaining": 0,
+        "projectedMaximumCode": 0.08463287353515625,
+        "projectedGate": 0.5,
+        "lastMaximumCode": 0.08463668823242188,
+        "history": [
+          {
+            "samples": 64,
+            "receivers": 1600,
+            "milliseconds": 135.90000000596046
+          },
+          {
+            "samples": 256,
+            "receivers": 1600,
+            "milliseconds": 145.30000001192093
+          },
+          {
+            "samples": 1024,
+            "receivers": 17,
+            "milliseconds": 304.69999998807907
+          }
+        ],
+        "totalMs": 593.9000000059605,
+        "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+      }
+    },
+    {
+      "kind": "preview",
+      "id": 10,
+      "identity": {
+        "id": 10,
+        "key": "[2,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"calendar\",\"{\\\"size\\\":40,\\\"outSize\\\":80,\\\"diameter\\\":76.8,\\\"basis\\\":[0,1,0,0,0,1,1,0,0],\\\"sun\\\":[6.123233995736766e-17,-1,0],\\\"earth\\\":[384400,0,0],\\\"distance\\\":384400,\\\"extent\\\":1.08,\\\"mode\\\":\\\"physical-reference\\\",\\\"fraction\\\":0.5,\\\"waxing\\\":false,\\\"tilt\\\":0}\",109]",
+        "epoch": 5
+      },
+      "phase": 0.5,
+      "at": 41603.79999998212,
+      "quality": {
+        "status": "preview",
+        "samples": 64
+      }
+    },
+    {
+      "kind": "result",
+      "id": 10,
+      "identity": {
+        "id": 10,
+        "key": "[2,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"calendar\",\"{\\\"size\\\":40,\\\"outSize\\\":80,\\\"diameter\\\":76.8,\\\"basis\\\":[0,1,0,0,0,1,1,0,0],\\\"sun\\\":[6.123233995736766e-17,-1,0],\\\"earth\\\":[384400,0,0],\\\"distance\\\":384400,\\\"extent\\\":1.08,\\\"mode\\\":\\\"physical-reference\\\",\\\"fraction\\\":0.5,\\\"waxing\\\":false,\\\"tilt\\\":0}\",109]",
+        "epoch": 5
+      },
+      "phase": 0.5,
+      "at": 42090.69999998808,
+      "quality": {
+        "status": "empirical-adaptive",
+        "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+        "thresholdCode": 0.125,
+        "unsettled": 0,
+        "receiverHeuristicRemaining": 0,
+        "projectedMaximumCode": 0.08463287353515625,
+        "projectedGate": 0.5,
+        "lastMaximumCode": 0.08463668823242188,
+        "history": [
+          {
+            "samples": 64,
+            "receivers": 1600,
+            "milliseconds": 127.89999997615814
+          },
+          {
+            "samples": 256,
+            "receivers": 1600,
+            "milliseconds": 162.90000000596046
+          },
+          {
+            "samples": 1024,
+            "receivers": 17,
+            "milliseconds": 319.5
+          }
+        ],
+        "totalMs": 614.4000000059605,
+        "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+      }
+    },
+    {
+      "kind": "preview",
+      "id": 11,
+      "identity": {
+        "id": 11,
+        "key": "[2,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"calendar\",\"{\\\"size\\\":40,\\\"outSize\\\":80,\\\"diameter\\\":76.8,\\\"basis\\\":[0,1,0,0,0,1,1,0,0],\\\"sun\\\":[6.123233995736766e-17,-1,0],\\\"earth\\\":[384400,0,0],\\\"distance\\\":384400,\\\"extent\\\":1.08,\\\"mode\\\":\\\"physical-reference\\\",\\\"fraction\\\":0.5,\\\"waxing\\\":false,\\\"tilt\\\":0}\",109]",
+        "epoch": 5
+      },
+      "phase": 0.5,
+      "at": 42264.09999999404,
+      "quality": {
+        "status": "preview",
+        "samples": 64
+      }
+    },
+    {
+      "kind": "result",
+      "id": 11,
+      "identity": {
+        "id": 11,
+        "key": "[2,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"calendar\",\"{\\\"size\\\":40,\\\"outSize\\\":80,\\\"diameter\\\":76.8,\\\"basis\\\":[0,1,0,0,0,1,1,0,0],\\\"sun\\\":[6.123233995736766e-17,-1,0],\\\"earth\\\":[384400,0,0],\\\"distance\\\":384400,\\\"extent\\\":1.08,\\\"mode\\\":\\\"physical-reference\\\",\\\"fraction\\\":0.5,\\\"waxing\\\":false,\\\"tilt\\\":0}\",109]",
+        "epoch": 5
+      },
+      "phase": 0.5,
+      "at": 42764.90000000596,
+      "quality": {
+        "status": "empirical-adaptive",
+        "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+        "thresholdCode": 0.125,
+        "unsettled": 0,
+        "receiverHeuristicRemaining": 0,
+        "projectedMaximumCode": 0.08463287353515625,
+        "projectedGate": 0.5,
+        "lastMaximumCode": 0.08463668823242188,
+        "history": [
+          {
+            "samples": 64,
+            "receivers": 1600,
+            "milliseconds": 116.30000001192093
+          },
+          {
+            "samples": 256,
+            "receivers": 1600,
+            "milliseconds": 167.40000000596046
+          },
+          {
+            "samples": 1024,
+            "receivers": 17,
+            "milliseconds": 330.5
+          }
+        ],
+        "totalMs": 618,
+        "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+      }
+    },
+    {
+      "kind": "preview",
+      "id": 14,
+      "identity": {
+        "id": 14,
+        "key": "[2,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"reference\",\"{\\\"size\\\":40,\\\"outSize\\\":80,\\\"diameter\\\":76.8,\\\"basis\\\":[0,1,0,0,0,1,1,0,0],\\\"sun\\\":[6.123233995736766e-17,-1,0],\\\"earth\\\":[384400,0,0],\\\"distance\\\":384400,\\\"extent\\\":1.08,\\\"mode\\\":\\\"physical-reference\\\",\\\"fraction\\\":0.5,\\\"waxing\\\":false,\\\"tilt\\\":0}\",109]",
+        "epoch": 6
+      },
+      "phase": 0.5,
+      "at": 43892.29999998212,
+      "quality": {
+        "status": "preview",
+        "samples": 64
+      }
+    },
+    {
+      "kind": "result",
+      "id": 14,
+      "identity": {
+        "id": 14,
+        "key": "[2,\"24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:45.599999994039536:0\",0.49995963128740056,false,1,\"reference\",\"{\\\"size\\\":40,\\\"outSize\\\":80,\\\"diameter\\\":76.8,\\\"basis\\\":[0,1,0,0,0,1,1,0,0],\\\"sun\\\":[6.123233995736766e-17,-1,0],\\\"earth\\\":[384400,0,0],\\\"distance\\\":384400,\\\"extent\\\":1.08,\\\"mode\\\":\\\"physical-reference\\\",\\\"fraction\\\":0.5,\\\"waxing\\\":false,\\\"tilt\\\":0}\",109]",
+        "epoch": 6
+      },
+      "phase": 0.5,
+      "at": 44683.5,
+      "quality": {
+        "status": "empirical-adaptive",
+        "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+        "thresholdCode": 0.125,
+        "unsettled": 0,
+        "receiverHeuristicRemaining": 1,
+        "projectedMaximumCode": 0.17206859588623047,
+        "projectedGate": 0.5,
+        "lastMaximumCode": 0.17206859588623047,
+        "history": [
+          {
+            "samples": 64,
+            "receivers": 1600,
+            "milliseconds": 169.80000001192093
+          },
+          {
+            "samples": 256,
+            "receivers": 1600,
+            "milliseconds": 144.60000002384186
+          },
+          {
+            "samples": 1024,
+            "receivers": 17,
+            "milliseconds": 286.80000001192093
+          },
+          {
+            "samples": 4096,
+            "receivers": 1,
+            "milliseconds": 349.10000002384186
+          }
+        ],
+        "totalMs": 962.3000000119209,
+        "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+      }
+    }
+  ],
+  "serverRequests": [],
+  "status": "PASS_SCOPED"
+}

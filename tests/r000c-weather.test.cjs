@@ -186,8 +186,9 @@ test('control: actual fresh acquisition, model gate, atmosphere and chip are rea
   assert.equal(f.cache().w.temp, 20); assert.equal(f.read().wxBusy, false);
   const view = f.view(); assert.equal(f.gateWeatherCode(95,f.read().weather,0),95);
   assert.equal(view.qa.wxTruth.current,'model-estimated-wet'); assert.equal(view.qa.wxTruth.modelCondition,'thunder');
-  assert.equal(view.a.cls,'overcast'); assert.equal(f.nodes.get('#wt').textContent,'20°');
-  assert.equal(view.qa.wxTruth.finalDataFx,'overcast'); assert.equal(view.qa.wxTruth.activeThunder,false);
+  // H5 owner policy: retain the current model condition, not a direct observation.
+  assert.equal(view.a.cls,'thunder'); assert.equal(f.nodes.get('#wt').textContent,'20°');
+  assert.equal(view.qa.wxTruth.finalDataFx,'thunder'); assert.equal(view.qa.wxTruth.activeThunder,false);
 });
 
 for (const [name, input, want] of [['null', null, null], ['missing', undefined, null], ['zero', 0, 0], ['negative', -12.5, -12]]) {
@@ -241,7 +242,7 @@ for (const code of [999, '95', -1, 95.5]) test('R000C invalid current WMO code '
 for (const [name, value, want] of [['string', 'Infinity', null], ['nan', NaN, null], ['infinite', Infinity, null], ['negative', -1, null], ['missing', undefined, null], ['zero', 0, 0]]) {
   test('R000C precipitation ' + name + ' preserves unknown versus quantitative zero', async () => {
     const f = fixture({ payload: healthy({ precipitation: value }) }); await f.fetchWeather();
-    assert.equal(f.read().weather.precip, want); assert.equal(f.view().a.cls, 'overcast');
+    assert.equal(f.read().weather.precip, want); assert.equal(f.view().a.cls, 'thunder');assert.equal(f.view().qa.wxTruth.activePrecip,false);
     assert.equal(f.gateWeatherCode(95, { precip: value, cloud: 95 }, 0), 3);
   });
 }
@@ -325,7 +326,7 @@ test('R000B legacy zero-valued cache is retained without current authority and d
   const key = 'salahwx:24.47|39.61|c', raw = JSON.stringify({ w: { code: 0, temp: 0, precip: 0 }, ts: NOW });
   const f = fixture({ storage: [[key, raw]] }); f.loadWx(); assert.equal(f.read().weather.temp, 0);
   assert.equal(f.storage.get(key), raw); assert.equal(f.view().a.wxTemp, null);
-  assert.equal(f.nodes.get('#wi').title, 'Weather unavailable'); await f.fetchWeather(); assert.equal(f.calls.length, 1);
+  assert.match(f.nodes.get('#wi').title, /^Weather unavailable/); await f.fetchWeather(); assert.equal(f.calls.length, 1);
 });
 test('R000B future cache receipt cannot become current weather', () => {
   const f = fixture({ storage: [['salahwx:24.47|39.61|c', JSON.stringify({ w: { code: 95, precip: 2 }, ts: NOW + 86400000 })]] });
@@ -372,11 +373,11 @@ test('R000B current expires before offline refresh; fresh replacement restores e
     return { ok: true, status: 200, json: async () => healthy({ time: offline ? 'invalid' : f.clock.now === NOW ? '2026-09-07T21:00' : '2026-09-07T21:16' }) };
   } });
   await f.fetchWeather(); assert.equal(f.view().qa.cache.currentEligible,true); assert.equal(f.view().a.wxTemp,20);
-  assert.equal(f.view().qa.wxTruth.modelCondition,'thunder'); assert.equal(f.view().a.cls,'overcast'); f.clock.now = NOW + 960000; offline = true;
+  assert.equal(f.view().qa.wxTruth.modelCondition,'thunder'); assert.equal(f.view().a.cls,'thunder'); f.clock.now = NOW + 960000; offline = true;
   await f.fetchWeather(); const view = f.view(); assert.equal(view.a.cls, 'clear'); assert.equal(view.a.wxTemp, null);
   assert.equal(view.a.windSpeed, 0); assert.equal(view.qa.wx.temp, null); assert.equal(view.qa.cache.weatherStale, true);
   offline = false; f.clock.now += 60001; await f.fetchWeather(); assert.equal(f.view().qa.cache.currentEligible,true);
-  assert.equal(f.view().a.wxTemp,20); assert.equal(f.view().qa.wxTruth.modelCondition,'thunder'); assert.equal(f.view().a.cls,'overcast');
+  assert.equal(f.view().a.wxTemp,20); assert.equal(f.view().qa.wxTruth.modelCondition,'thunder'); assert.equal(f.view().a.cls,'thunder');
 });
 test('control: real-time clear current never becomes hourly thunder; explicit preview does', async () => {
   const payload = healthy({ weather_code: 0, precipitation: 0 }); payload.hourly.weather_code = [95, 95];

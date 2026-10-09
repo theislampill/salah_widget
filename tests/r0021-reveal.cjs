@@ -4,6 +4,12 @@ const cp8SnapshotOnly=process.argv.includes("--cp8-snapshot-only"),cp8Exclusions
 function test(name,fn){if(cp8SnapshotOnly&&cp8Exclusions[name]&&!name.startsWith("moon PBR shader")){console.log("SKIP_EXPLICIT",name,"—",cp8Exclusions[name]);return;}cases.push([name,fn]);}
 process.on('beforeExit',()=>{if(!done){console.error('INCOMPLETE reveal suite terminal absent');process.exitCode=1;}});
 function fixture(){return load({sourcePath});}
+function acceptedTerrainBoundary(h){
+  // This state/CSS fixture does not solve terrain. Model the new publication
+  // boundary explicitly; actual worker/source/opacity pixels have browser gates.
+  h.run('var fixtureTerrain={};window.SalahMoonRuntime={state:{status:"ready",quality:"empirical-adaptive",accepted:{identity:"fixture-terrain"}},surface:()=>fixtureTerrain,request:()=>!!fixtureTerrain,invalidate(){fixtureTerrain=null;this.state.accepted=null;}};');
+  h.select('.mphoto').setAttribute('href','fixture:accepted-terrain');h.run('updateSkySurface()');
+}
 const positions=h=>h.run('JSON.stringify(_starEls.map(e=>[e.style.display,e.getAttribute("cx"),e.getAttribute("cy")]))');
 test('ordinary held star positions remain stable across a healthy render',()=>{
   const h=load({sourcePath,hash:'#lat=24.47&lon=39.61&tz=Asia%2FRiyadh&units=c&seed=1&simMoon=.5&simWax=1&simMoonAlt=20&simMoonH=42'});
@@ -37,7 +43,9 @@ test('accepted sky/UI does not wait for unknown weather, pending fonts or map de
   assert.ok(h.select('.cn').textContent);assert.equal(h.select('.c').classList.contains('moon-ready'),false);
   assert.equal(h.select('.moon-mask-disc').classList.contains('mask-on'),false);assert.equal(h.select('.mphoto').getAttribute('href'),null);
   for(const im of h.images)if(typeof im.onload==='function')im.onload();
-  assert.ok(h.select('.mphoto').getAttribute('href'),'real source PBR producer');
+  assert.ok(h.select('.mphoto').getAttribute('href'),'retained legacy producer can decode without publication permission');
+  assert.equal(h.select('.c').classList.contains('moon-ready'),false);assert.equal(h.select('.moon-mask-disc').classList.contains('mask-on'),false);
+  acceptedTerrainBoundary(h);
   assert.equal(h.select('.c').classList.contains('moon-ready'),true);assert.equal(h.select('.moon-mask-disc').classList.contains('mask-on'),true);
 });
 test('missing accepted coordinates retain neutral sky and unavailable projection',()=>{
@@ -59,6 +67,8 @@ for(const [name,frac,alt] of [['new',.01,20],['crescent',.08,20],['half',.5,20],
   test(name+' twilight uses a surface-bound mask independent of physical light',()=>{
     const h=fixture();h.run('_simBase=Date.parse("2026-09-08T02:40:00Z");SIM.moon="'+frac+'";SIM.moonAlt="'+alt+'";render();');
     for(const im of h.images)if(typeof im.onload==='function')im.onload();
+    assert.equal(h.select('.moon-mask-disc').classList.contains('mask-on'),false,'decode alone cannot publish');
+    acceptedTerrainBoundary(h);
     assert.equal(h.select('.moon-mask-disc').classList.contains('mask-on'),true);assert.ok(+h.select('.c').style.getPropertyValue('--moongrp')<1);
     if(frac===.01||alt<0)assert.equal(+h.select('.c').style.getPropertyValue('--moonbeam'),0);
     assert.equal(h.select('.moon-mask-geometry').getAttribute('transform'),h.select('.moon').getAttribute('transform'));

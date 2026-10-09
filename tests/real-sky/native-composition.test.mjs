@@ -2,14 +2,28 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {encodeFrame} from '../../real-sky/core/src/renderer.mjs';
 let m;try{m=await import('../../real-sky/native-composition.mjs');}catch{}
 test('native linear composition module exists',()=>assert.ok(m,'Composition missing'));
-test('actual native alpha attenuates direct light once, not twice',()=>{assert.ok(m);const a=new Uint8ClampedArray([0,0,0,235]);const x=m.nativeForeground(new Float64Array([2,3,4]),{cloudRGBA:a,exposure:12});const T=20/255;for(let c=0;c<3;c++)assert.ok(Math.abs(x.linear[c]-[2,3,4][c]*T)<1e-14);assert.ok(Math.abs(x.linear[0]-2*T*T)>.01);});
+test('solar obstruction shares cloud coverage without a second cloud colour',()=>{
+ const clouds=new Uint8ClampedArray([255,0,0,0,0,255,0,128,0,0,255,255]);
+ const mask=m.nativeSolarTransmission(clouds);
+ assert.deepEqual([...mask],[255,255,255,255,255,255,255,127,255,255,255,0]);
+ assert.deepEqual([...clouds],[255,0,0,0,0,255,0,128,0,0,255,255]);
+ assert.throws(()=>m.nativeSolarTransmission(new Float64Array(4)));
+ assert.throws(()=>m.nativeSolarTransmission(new Uint8ClampedArray(3)));
+});
+test('actual native alpha attenuates direct light once, not twice',()=>{assert.ok(m);const a=new Uint8ClampedArray([0,0,0,235]);const x=m.nativeForeground(new Float64Array([2,3,4]),{cloudRGBA:a,exposure:12});const T=20/255;for(let c=0;c<3;c++){const displayed=-Math.expm1(-12*x.linear[c]);assert.ok(Math.abs(displayed-(-Math.expm1(-12*[2,3,4][c]))*T)<1e-14);assert.ok(Math.abs(displayed-T*T)>.01);}});
 test('zero-alpha native cloud leaves physical sky byte-identical',()=>{assert.ok(m);const b=new Float64Array([.02,.03,.04]);assert.deepEqual(m.nativeForeground(b,{cloudRGBA:new Uint8ClampedArray([220,210,200,0]),exposure:24}).linear,b);});
 test('fully opaque native colour appears once at the shared exposure',()=>{assert.ok(m);const x=m.nativeForeground(new Float64Array([90,90,90]),{cloudRGBA:new Uint8ClampedArray([72,81,94,255]),exposure:7});assert.deepEqual(Array.from(encodeFrame(x.linear,7)),[72,81,94,255]);});
-test('native PBR material is in front of stars but behind the cloud screen',()=>{assert.ok(m);const x=m.nativeForeground(new Float64Array([90,90,90]),{moonRGBA:new Uint8ClampedArray([60,70,80,255]),cloudRGBA:new Uint8ClampedArray([0,0,0,128]),exposure:12});const native=m.nativeForeground(new Float64Array([0,0,0]),{moonRGBA:new Uint8ClampedArray([60,70,80,255]),exposure:12});for(let k=0;k<3;k++)assert.ok(Math.abs(x.linear[k]-native.linear[k]*127/255)<1e-15);});
-test('cloud colour is not multiplied by a second source-alpha factor',()=>{assert.ok(m);const x=m.nativeForeground(new Float64Array([0,0,0]),{cloudRGBA:new Uint8ClampedArray([120,100,80,128]),exposure:9});for(let k=0;k<3;k++)assert.ok(Math.abs(x.linear[k]-m.nativeInverseCode([120,100,80][k],9)*128/255)<1e-14);});
+test('native PBR material is in front of stars but behind the cloud screen',()=>{assert.ok(m);const x=m.nativeForeground(new Float64Array([90,90,90]),{moonRGBA:new Uint8ClampedArray([60,70,80,255]),cloudRGBA:new Uint8ClampedArray([0,0,0,128]),exposure:12});const native=m.nativeForeground(new Float64Array([0,0,0]),{moonRGBA:new Uint8ClampedArray([60,70,80,255]),exposure:12});for(let k=0;k<3;k++)assert.ok(Math.abs(-Math.expm1(-12*x.linear[k])-(-Math.expm1(-12*native.linear[k]))*127/255)<1e-15);});
+test('cloud colour is not multiplied by a second source-alpha factor',()=>{assert.ok(m);const x=m.nativeForeground(new Float64Array([0,0,0]),{cloudRGBA:new Uint8ClampedArray([120,100,80,128]),exposure:9});for(let k=0;k<3;k++)assert.ok(Math.abs(-Math.expm1(-9*x.linear[k])-(-Math.expm1(-9*m.nativeInverseCode([120,100,80][k],9)))*128/255)<1e-14);});
 test('native cloud vertical mask reproduces the existing support, not a whole-card veil',()=>{assert.ok(m);assert.equal(m.nativeCloudMaskAt(0),0);assert.equal(m.nativeCloudMaskAt(.03),1);assert.equal(m.nativeCloudMaskAt(.24),1);assert.ok(Math.abs(m.nativeCloudMaskAt(.29)-.5)<1e-12);assert.equal(m.nativeCloudMaskAt(.34),0);assert.equal(m.nativeCloudMaskAt(.9),0);});
 test('invalid foreground buffers or exposures are rejected',()=>{assert.ok(m);assert.throws(()=>m.nativeForeground(new Float64Array([1,2,3]),{cloudRGBA:new Uint8ClampedArray(3),exposure:4}));assert.throws(()=>m.nativeForeground(new Float64Array([1,2,3]),{exposure:0}));});
 test('PBR transparent edge does not punch a dark halo in the physical sky',()=>{assert.ok(m);const b=new Float64Array([.2,.3,.4]);const x=m.nativeForeground(b,{moonRGBA:new Uint8ClampedArray([0,0,0,0]),exposure:12});assert.deepEqual(x.linear,b);});
+
+test('opaque dark lunar material cannot occult foreground atmospheric radiance',()=>{
+ const gas=new Float64Array([.03,.05,.08]);
+ const result=m.nativeForeground(gas,{moonRGBA:new Uint8ClampedArray([0,0,0,255]),atmosphereLinear:gas,exposure:12});
+ assert.deepEqual(result.linear,gas,'a black opaque surface blocks distant sources, not foreground sky scattering');
+});
 
 test('region calendar join is exactly the corresponding full-frame prefix',()=>{assert.equal(typeof m.nativeCalendarRegion,'function');const r={width:2,height:3,linear:new Float64Array(18),skyBackgroundLinear:Float64Array.from({length:18},(_,i)=>i*.01),stellarLinear:Float64Array.from({length:18},(_,i)=>i*.02),diffusePhysicalLinear:Float64Array.from({length:18},(_,i)=>i*.03)};const mask=new Float64Array([1,.5,0,.25,1,1]);const full=m.nativeCalendarRegion(r,mask,3);assert.deepEqual(m.nativeCalendarRegion(r,mask.slice(0,4),2),full.slice(0,12));assert.throws(()=>m.nativeCalendarRegion(r,mask,0));assert.throws(()=>m.nativeCalendarRegion(r,mask,4));assert.throws(()=>m.nativeCalendarRegion(r,mask,2));});
 test('foreground region includes current and previous Moon extents, with whole-frame bound',()=>{assert.equal(typeof m.nativeForegroundRows,'function');assert.equal(m.nativeForegroundRows(530,170,150),183);assert.equal(m.nativeForegroundRows(530,340.5,150),343);assert.equal(m.nativeForegroundRows(530,130,400),402);assert.equal(m.nativeForegroundRows(530,600,0),530);assert.throws(()=>m.nativeForegroundRows(530,NaN,0));});

@@ -35,7 +35,7 @@ function harness(options={}){
   // share the recording node; later mutations retain their native attribute state.
   // This contains DOM effects, without emulating layout or live selector matching.
   const classOwners=new Map();
-  for(const match of slice("<body",'<script src="config.js">').matchAll(/<([a-z][\w-]*)\b([^>]*)>/gi)){
+  for(const match of slice("<body",'<script').matchAll(/<([a-z][\w-]*)\b([^>]*)>/gi)){
     const attrs=Object.fromEntries(Array.from(match[2].matchAll(/([\w-]+)\s*=\s*"([^"]*)"/g),m=>[m[1],m[2]]));
     const owner={tag:match[1],attrs,node:null};
     for(const name of (attrs.class||"").split(/\s+/).filter(Boolean))if(!classOwners.has("."+name))classOwners.set("."+name,owner);
@@ -73,10 +73,14 @@ function harness(options={}){
     }
   };sandbox.window=sandbox;context=vm.createContext(sandbox);
   run(config);
-  run(slice('"use strict";',"// ---- weather (Open-Meteo:")+"\n"+
+  run('"use strict";\n'+slice('// ---- config:',"// ---- weather (Open-Meteo:")+"\n"+
     "let weather=null,weatherTrack=null,weatherRadar=null,lastWxAt=0,lastWxTry=0,lastRadarAt=0,wxBusy=false,radarBusy=false;\n"+
     "const moonSky={_min:-1};\n"+
     "function loadWx(){} function fetchWeather(){} function fetchRadar(){} function syncWeather(){}\n"+
+    // Header withdrawal is now independent of prayer readiness. These are
+    // weather-boundary doubles, like fetchWeather above; actual header/effects
+    // are exercised by hotfix-prayer-weather and the full-runtime browser tests.
+    "function weatherDecision(){return {record:null};} function weatherHeader(){return {};} function paintWeatherHeader(){}\n"+
     "function buildStars(){recordSkyBuilder('stars');} function buildWeather(){recordSkyBuilder('weather');} function renderMoon(){} function fitCn(){} function applyTheme(){recordPrayerPaint();}\n"+
     "function moonNow(){return {phase:0.5};} function phaseEmoji(){return 'moon';} function moonGeometryObservation(){return {fresh:true};} function paintClouds(){} function tieRainToClouds(){} function updateSimClock(){}\n"+
     "function enableSettingsAffordance(){} function openSettings(){}\n"+

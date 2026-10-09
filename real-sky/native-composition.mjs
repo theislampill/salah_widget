@@ -1,8 +1,9 @@
-/** CP8.2 native foreground operator.
+import {nativeCloudChannel,validateNativeRGBA} from './native-cloud-transfer.mjs';
+/** Native foreground operator.
  * Input sky has received molecular/aerosol transport, NOT cloud attenuation.
  * Painted native cloud alpha is the sole total cloud transmission owner. Native
- * RGB/PBR are display-referred presentations, not measured radiance; inversion of
- * the SAME exposure/encoding places them in one explicit linear compositing space.
+ * RGB/PBR are display-referred presentations, not measured radiance. Clouds join
+ * in bounded display-linear light; opaque lunar material retains its transfer.
  */
 export function nativeInverseCode(code,exposure){
  if(!Number.isFinite(exposure)||exposure<=0||exposure>100000)throw new RangeError('Positive shared native exposure required');
@@ -13,21 +14,34 @@ export function nativeInverseCode(code,exposure){
  return -Math.log1p(-Math.min(1-1/131072,l))/exposure;
 }
 export function nativeCloudMaskAt(y){if(!Number.isFinite(y))throw new RangeError('Cloud mask coordinate');return y<=0||y>=.34?0:y<.03?y/.03:y<=.24?1:(.34-y)/.10;}
-export function nativeForeground(base,{cloudRGBA=null,moonRGBA=null,exposure}={}){
+/** The native CSS Sun uses the same total cloud coverage as the framebuffer.
+ * This is obstruction only; no second cloud colour or opacity is painted. */
+export function nativeSolarTransmission(cloudRGBA){
+ if(!(cloudRGBA instanceof Uint8ClampedArray)||cloudRGBA.length%4)throw new RangeError('Invalid solar cloud capture');
+ const mask=new Uint8ClampedArray(cloudRGBA.length);
+ for(let i=0;i<mask.length;i+=4){mask[i]=mask[i+1]=mask[i+2]=255;mask[i+3]=255-cloudRGBA[i+3];}
+ return mask;
+}
+export function nativeForeground(base,{cloudRGBA=null,moonRGBA=null,atmosphereLinear=null,exposure}={}){
  if(!base||base.length%3)throw new RangeError('Native linear RGB input required');
- const pixels=base.length/3;for(const a of [cloudRGBA,moonRGBA])if(a&&a.length!==pixels*4)throw new RangeError('Native foreground dimensions');
+ const pixels=base.length/3;for(const a of [cloudRGBA,moonRGBA])if(a)validateNativeRGBA(a,pixels);
+ if(atmosphereLinear&&atmosphereLinear.length!==base.length)throw new RangeError('Native atmosphere dimensions');
  const inv=Float64Array.from({length:256},(_,i)=>nativeInverseCode(i,exposure)),out=new Float64Array(base.length);
  let cloudAlphaSum=0,maxAlpha=0,moonPixels=0;
  for(let p=0;p<pixels;p++){
-  const ci=p*4,li=p*3,ma=moonRGBA?moonRGBA[ci+3]/255:0,ca=cloudRGBA?cloudRGBA[ci+3]/255:0,T=1-ca;
+  const ci=p*4,li=p*3,ma=moonRGBA?moonRGBA[ci+3]/255:0,ca=cloudRGBA?cloudRGBA[ci+3]/255:0;
   cloudAlphaSum+=ca;maxAlpha=Math.max(maxAlpha,ca);if(ma>0)moonPixels++;
   for(let k=0;k<3;k++){
    const v=base[li+k];if(!Number.isFinite(v)||v<0)throw new RangeError('Nonphysical native base channel');
-   const lunar=ma? v*(1-ma)+inv[moonRGBA[ci+k]]*ma:v;
-   out[li+k]=lunar*T+(ca?inv[cloudRGBA[ci+k]]*ca:0);
+   const gas=atmosphereLinear?.[li+k]??0;if(!Number.isFinite(gas)||gas<0)throw new RangeError('Nonphysical native atmosphere channel');
+   // CalendarRegion has already cut distant sources out of the opaque disc.
+   // Restore the foreground gas share instead of treating it as an occluded
+   // background when the native loading/failure surface is composited.
+   const lunar=ma? v*(1-ma)+(gas+inv[moonRGBA[ci+k]])*ma:v;
+   out[li+k]=ca?nativeCloudChannel(lunar,cloudRGBA[ci+k],ca,exposure):lunar;
   }
  }
- return {linear:out,diagnostics:{cloudApplications:1,meanCloudAlpha:cloudAlphaSum/Math.max(1,pixels),maxCloudAlpha:maxAlpha,moonPixels,cloudTransmissionOwner:'1 - native painted alpha after native blur and vertical mask',order:'gas-transported sky → calendar direct-light cutout → native PBR material → native cloud screen → one shared encode',cloudColour:'display-referred native painter; inverse shared tone map; not measured cloud radiance',exposureOwner:'CP7 sky+diffuse meter before calendar/foreground; native foreground excluded',saturation:'native code 255 uses 1 - 1/131072 in inverse tone map'}};
+ return {linear:out,diagnostics:{cloudApplications:1,meanCloudAlpha:cloudAlphaSum/Math.max(1,pixels),maxCloudAlpha:maxAlpha,moonPixels,cloudTransmissionOwner:'1 - native painted alpha after native blur and vertical mask',order:'gas-transported sky → calendar direct-light cutout → native PBR material → bounded display-linear cloud screen → shared encode',cloudColour:'display-referred native painter; coverage before inverse tone map; not measured cloud radiance',exposureOwner:'CP7 sky+diffuse meter before calendar/foreground; native foreground excluded',saturation:'bounded cloud display energy; native lunar code 255 uses 1 - 1/131072'}};
 }
 /** Exact leading-row restriction of the calendar/direct-light join. */
 export function nativeCalendarRegion(raster,mask=null,rows=raster.height){
@@ -53,6 +67,12 @@ export class NativeForegroundCapture{
   if(!m||!(r.height>0))return 0;
   const x=Number(p.getAttribute('x')),y=Number(p.getAttribute('y')),w=Number(p.getAttribute('width')),h=Number(p.getAttribute('height'));
   return Math.max(...[[x,y],[x+w,y],[x,y+h],[x+w,y+h]].map(([a,b])=>(m.b*a+m.d*b+m.f-r.top)*530/r.height));
+ }
+ prepareSolarMask(cloudRGBA,rows){
+  validateNativeRGBA(cloudRGBA,325*rows,'solar cloud');
+  if(!this.solar){this.solar=document.createElement('canvas');this.solar.width=325;this.solar.height=530;this.sx=this.solar.getContext('2d');}
+  const mask=nativeSolarTransmission(cloudRGBA);this.sx.clearRect(0,0,325,530);this.sx.fillStyle='#fff';this.sx.fillRect(0,rows,325,530-rows);this.sx.putImageData(new ImageData(mask,325,rows),0,0);
+  return 'url("'+this.solar.toDataURL()+'")';
  }
  capture(rows=530){
   if(!Number.isInteger(rows)||rows<1||rows>530)throw new RangeError('Native capture rows');

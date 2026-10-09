@@ -29,21 +29,21 @@ function present(f,changes={}){
 }
 
 for (const [code,type] of [[63,'rain'],[73,'snow'],[95,'thunder']]) {
-  test('R0024 live model '+type+' remains useful but cannot emit strong local particles', async () => {
+  test('R0024/H5 live model '+type+' presents supported particles without direct-observation authority', async () => {
     const f = fixture({payload:healthy({weather_code:code})}); await f.fetchWeather(); const v=f.view();
     assert.equal(f.read().weather.temp,20); assert.equal(v.qa.cache.currentEligible,true);
     assert.equal(f.gateWeatherCode(code,f.read().weather,0),code); // retained lower model positive
-    assert.equal(strong(v.a.cls),false); assert.equal(v.qa.wxTruth.activePrecip,false);
-    assert.equal(v.qa.wxTruth.activeThunder,false); assert.equal(v.a.rainOp,0);
+    assert.equal(strong(v.a.cls),true); assert.equal(v.qa.wxTruth.activePrecip,true);
+    assert.equal(v.qa.wxTruth.activeThunder,false); assert.ok(v.a.rainOp>0);assert.equal(v.qa.wxTruth.permissions.rain,false);assert.equal(v.qa.wxTruth.observedPresent,false);
   });
 }
 test('R0024 eligible model-clear chip visibly distinguishes estimate from local observation', async () => {
   const f=fixture({payload:healthy({weather_code:0,precipitation:0,cloud_cover:0})}); await f.fetchWeather(); f.view();
-  assert.equal(f.nodes.get('#wi').textContent,'≈'); assert.match(f.nodes.get('#wi').title,/model estimate/i);
+  assert.equal(f.nodes.get('#wi').textContent,'☀️'); assert.match(f.nodes.get('#wi').title,/model estimate/i);
   assert.equal(f.nodes.get('#wt').textContent,'20°');
 });
 test('R0024 no current data is visible unknown, with no retained weather consumers',()=>{
-  const f=fixture(); const v=f.view(); assert.equal(f.nodes.get('#wi').textContent,'?');
+  const f=fixture(); const v=f.view(); assert.equal(f.nodes.get('#wi').textContent,'—');
   assert.equal(v.a.wxTemp,null); assert.equal(v.a.cloudCover,0); assert.equal(v.a.windSpeed,0);
 });
 test('control: explicit advancing forecast retains its marked preview positive',async()=>{
@@ -69,7 +69,7 @@ test('R0024 qualified synthetic present snow and observed lightning have separat
 test('R0024 synthetic input cannot upgrade the ordinary live lane',async()=>{
   const f=policyFixture(); await f.fetchWeather(); const admitted=f.admit(present(f)); assert.equal(admitted.ok,true); f.install(admitted);
   const v=f.view(); assert.equal(v.qa.wxTruth.lane,'live'); assert.equal(v.qa.wxTruth.current,'model-estimated-wet');
-  assert.equal(v.qa.wxTruth.present.available,false); assert.equal(strong(v.a.cls),false);
+  assert.equal(v.qa.wxTruth.present.available,false); assert.equal(strong(v.a.cls),true);assert.equal(v.qa.wxTruth.permissions.rain,false);assert.equal(v.qa.wxTruth.observedPresent,false);
 });
 test('R0024 source-bound positive expires at its exact lease end without cloud smoothing',async()=>{
   const f=policyFixture({hash:'timeScale=1',payload:healthy({weather_code:0,precipitation:0})}); await f.fetchWeather(); f.consume(present(f));
@@ -115,12 +115,12 @@ test('R0024 D no decoded radar observation plus model rain is estimated wet, nev
   assert.equal(v.qa.wxTruth.radarAvailable,true); assert.equal(v.qa.wxTruth.current,'model-estimated-wet');
   assert.equal(v.qa.wxTruth.present.available,false); assert.equal(v.qa.wxTruth.localOperationalHealth,'unknown');
   assert.equal(v.qa.wxTruth.localObservationAgeMs,null); assert.equal(v.qa.wxTruth.spatial.state,'unavailable'); assert.equal(v.qa.wxTruth.horizon.arrival,null);
-  assert.equal(strong(v.a.cls),false);
+  assert.equal(strong(v.a.cls),true);assert.equal(v.qa.wxTruth.permissions.rain,false);
 });
 test('R0024 E 18-minute mosaic remains diagnostic while fresh receipt grants no local observation or ETA',async()=>{
   const f=policyFixture({frameSec:NOW/1000-1080}); await f.fetchWeather(); await f.fetchRadar(); const v=f.view();
   assert.equal(v.qa.wxTruth.radarAvailable,true); assert.equal(v.qa.wxTruth.radarFrameAgeSec,1080); assert.equal(v.qa.wxTruth.radarAgeSec,0);
-  assert.equal(v.qa.wxTruth.present.available,false); assert.equal(v.qa.wxTruth.horizon.arrival,null); assert.equal(strong(v.a.cls),false);
+  assert.equal(v.qa.wxTruth.present.available,false); assert.equal(v.qa.wxTruth.horizon.arrival,null); assert.equal(strong(v.a.cls),true);assert.equal(v.qa.wxTruth.permissions.rain,false);
 });
 for(const [name,quality] of [['no coverage',{footprint:{kind:'point',lat:24.47,lon:39.61,coverage:'outside'}}],
   ['unknown health',{quality:{status:'qualified',sampling:'direct',localObservationAt:NOW,operationalHealth:'unknown'}}],
@@ -214,7 +214,7 @@ test('R0024 provider trusted flags and dense/empty/sparse palette input have no 
   for(const options of [{rgba:[82,147,196,255]},{rgba:[0,0,0,0]},{sparse:true}]){
     const payload=healthy(); payload.current.trusted=true; payload.current.observed=true; payload.present={trusted:true,state:'wet'};
     const f=policyFixture({...options,payload}); await f.fetchWeather(); await f.fetchRadar(); const v=f.view();
-    assert.equal(v.qa.wxTruth.observedPrecipMm,null); assert.equal(v.qa.wxTruth.current,'model-estimated-wet'); assert.equal(v.qa.wxTruth.activePrecip,false);
+    assert.equal(v.qa.wxTruth.observedPrecipMm,null); assert.equal(v.qa.wxTruth.current,'model-estimated-wet'); assert.equal(v.qa.wxTruth.activePrecip,true);assert.equal(v.qa.wxTruth.permissions.rain,false);assert.equal(v.qa.wxTruth.observedPresent,false);
   }
 });
 test('R0024 stable inputs reuse pure reconciliation until the next eligibility boundary',async()=>{
@@ -260,7 +260,7 @@ test('R0024 unrepresentable derived average or interval stays null rather than i
   for(const [interval,value] of [[1e-300,1e308],[1e308,0.4]]){
     const f=policyFixture({payload:healthy({interval,precipitation:value})}); await f.fetchWeather(); const q=f.view().qa.wxTruth.model.quantity;
     assert(q); assert.equal(q.averageRateMmH==null||Number.isFinite(q.averageRateMmH),true); assert.equal(q.from==null||Number.isFinite(q.from),true);
-    assert.equal(f.view().qa.wxTruth.activePrecip,false);
+    assert.equal(f.view().qa.wxTruth.activePrecip,true);assert.equal(f.view().qa.wxTruth.observedPresent,false);
   }
 });
 test('R0024 caller-provided synthetic probability zero stays distinct from unavailable and grants no current condition',()=>{

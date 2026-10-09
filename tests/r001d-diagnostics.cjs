@@ -40,7 +40,7 @@ test('failed paint cannot retain previous successful freshness',()=>{
   assert.equal(h.run('qaState().moonTruth.moonSkyFresh===true'),false);
 });
 test('same minute of day on a different date is stale at actual consume',()=>{
-  const h=fixture(); h.run('render(); _simBase+=86400000; applyTheme(model());');
+  const h=fixture(); h.run('render(); _simBase+=86400000; maintainPrayerDay(); applyTheme(model());');
   assert.equal(h.run('qaState().moonTruth.moonSkyFresh===true'),false);
 });
 test('same minute in another location is stale at actual consume',()=>{

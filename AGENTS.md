@@ -126,8 +126,10 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
   on the apex**.
 - The moon's dark limb rendered as a **black cutout**, or a jaggy/stroked moon edge.
 - A **generic** glow standing in for a gated optical phenomenon.
-- **Claiming rain/thunderstorm without active observed-precip evidence**, or letting the hourly forecast overwrite
-  the current observed condition in real-time.
+- **Claiming direct local rain/lightning observations from model or uncalibrated radar data**, or letting
+  hourly forecasts overwrite current conditions in real time. The owner's PR42 policy explicitly permits
+  labelled fresh current-model rain/snow with supporting admitted quantities. Keep condition presentation,
+  model effect permissions and direct-observation authority separate; see DESIGN.md.
 - Clouds that **reseed / slideshow** on weather refresh or per render tick.
 - Replacing the accurate PBR moon lighting with a flat sprite; making physics "ugly".
 

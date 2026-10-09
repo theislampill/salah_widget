@@ -41,7 +41,7 @@ const CASES=[
   ["config parsing + precedence",14], ["config private persistence",8], ["config denied storage",4],
   ["weather gate availability",1], ["weather gate assertions",13], ["prayer transport + rendered countdown",4],
   ["dry forecast-thunder is downgraded",3], ["precip-supported rain is shown",1], ["fog code shows fog, not rain",2],
-  ["live model wet is useful; local particles off",9], ["live model expiry + admitted recovery",8],
+  ["live model wet is useful; model particles labelled",9], ["live model expiry + admitted recovery",8],
   ["live synthetic installation is refused",4], ["admitted synthetic wet overrides model dry",8],
   ["admitted synthetic snow + lightning",6], ["synthetic exclusive lease expiry",5],
   ["synthetic rain end + outage",8], ["synthetic target + coverage rejection",6],
@@ -158,14 +158,14 @@ const liveWeatherReady=ww=>{try{const q=ww.qaState();return q.cache.currentEligi
 async function weatherScene(hash,name,fn,ready=prayerReady){return scene(hash,name,(ww,q,ok)=>fn(ww,ww.__smokeWeather,ww.__smokeWeather.identity(),ok),ready);}
 async function weatherConsumers(){
   const live=base+"&units=c",synthetic=base+"&units=c&simWx=0";
-  await weatherScene(live,"live model wet is useful; local particles off",(ww,b,owner,ok)=>{
+  await weatherScene(live,"live model wet is useful; model particles labelled",(ww,b,owner,ok)=>{
     const s=b.read(owner),q=s.qa.wxTruth;
     ok("current model passed actual admission",s.modelEligible&&s.qa.cache.currentEligible);
     ok("model thunder category + amount remain useful",q.modelCondition==="thunder"&&q.modelPrecipMm===5);
-    ok("actual model temperature + estimate cue consumed",s.temperature==="20°"&&s.icon==="≈");
+    ok("actual model temperature + condition icon consumed",s.temperature==="20°"&&s.icon==="⛈️");
     ok("current is estimated wet, local observation unavailable",q.current==="model-estimated-wet"&&!q.present.available&&q.localObservationAgeMs===null&&q.observedPrecipMm===null);
     ok("all live strong permissions are off",!q.permissions.rain&&!q.permissions.snow&&!q.permissions.lightning);
-    ok("actual particle opacity is zero",!strong(s)&&q.finalDataFx==="overcast");
+    ok("model-estimated rain is visible without observed lightning",strong(s)&&q.finalDataFx==="thunder"&&s.rainOpacity>0&&!q.activeThunder&&!q.observedPresent);
     ok("no fabricated nearby or arrival",q.spatial.state==="unavailable"&&q.horizon.arrival===null);
     ok("actual current transport JSON was consumed",ww.__widgetFixture.ledger.some(r=>new URL(r.url).origin==="https://api.open-meteo.com"&&r.jsonReads===1&&r.result==="json-consumed"));
     ok("visible estimate is also accessible",/model estimate/i.test(ww.document.querySelector("#wi").getAttribute("aria-label"))&&/unobserved/i.test(ww.document.querySelector("#wi").title));
@@ -174,13 +174,13 @@ async function weatherConsumers(){
     ok("fresh current model positive before expiry",b.read(owner).modelEligible);
     const expired=b.advanceClock(owner,900001),q=expired.qa;
     ok("source/receipt expiry removes current eligibility",!expired.modelEligible&&!q.cache.currentEligible);
-    ok("expired current temperature withdrawn",q.wx.temp===null&&expired.temperature===""&&expired.icon==="?");
+    ok("expired current temperature withdrawn",q.wx.temp===null&&expired.temperature===""&&expired.icon==="—");
     ok("expired current physical inputs withdrawn",q.wx.cloud===null&&q.wx.wind===null&&q.wx.rh===null&&q.wx.vis===null);
     ok("expiry cannot retain particles",!strong(expired)&&!q.wxTruth.present.available);
     const recovered=b.installModel(owner,weatherCurrent(ww)).state;
     ok("fresh admitted input restores model eligibility",recovered.modelEligible&&recovered.qa.cache.currentEligible);
-    ok("fresh admitted input restores actual chip",recovered.temperature==="20°"&&recovered.icon==="≈");
-    ok("recovered live model remains estimated wet/strong off",recovered.qa.wxTruth.current==="model-estimated-wet"&&!strong(recovered));
+    ok("fresh admitted input restores actual chip",recovered.temperature==="20°"&&recovered.icon==="⛈️");
+    ok("recovered live model remains estimated wet with no observed authority",recovered.qa.wxTruth.current==="model-estimated-wet"&&strong(recovered)&&!recovered.qa.wxTruth.permissions.rain&&!recovered.qa.wxTruth.activeThunder);
   },liveWeatherReady);
   await weatherScene(live,"live synthetic installation is refused",(ww,b,owner,ok)=>{
     const before=b.read(owner),raw=syntheticPresent(ww,before.target),admitted=b.admitSynthetic(owner,raw);let reason="";
@@ -189,7 +189,7 @@ async function weatherConsumers(){
     ok("valid synthetic input is refused in ordinary live lane",admitted.ok&&/refused.*live/i.test(reason));
     ok("refusal occurred before synthetic-state write",before.synthetic===null&&after.synthetic===null);
     ok("refusal is logged for exact input",events.some(e=>e.action==="synthetic-refused-live"&&e.input.target.generation===before.target.generation));
-    ok("actual live model remains useful and strong off",after.modelEligible&&after.temperature==="20°"&&!strong(after));
+    ok("actual live model remains useful without synthetic observation authority",after.modelEligible&&after.temperature==="20°"&&strong(after)&&!after.qa.wxTruth.permissions.rain);
   },liveWeatherReady);
   await weatherScene(synthetic,"admitted synthetic wet overrides model dry",(ww,b,owner,ok)=>{
     const model=b.installModel(owner,weatherCurrent(ww,0,0));ok("model-clear input is actually admitted",model.ok&&model.state.modelEligible);

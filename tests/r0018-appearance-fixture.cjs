@@ -46,7 +46,8 @@ function builder({source=read('builder.html'),configSource=read('config.js')}={}
     classList:{add:x=>classes.add(x),remove:x=>classes.delete(x),contains:x=>classes.has(x),toggle:(x,on)=>on?classes.add(x):classes.delete(x)},
     addEventListener:(type,fn)=>{if(!events.has(type))events.set(type,[]);events.get(type).push(fn);},setAttribute:(k,v)=>{n.attributes[k]=String(v);if(k==='tabindex')n.tabIndex=+v;},getAttribute:k=>n.attributes[k]??null,
     querySelectorAll:()=>n.children,focus:()=>{document.activeElement=n;},dispatch:type=>{const e={type,target:n,preventDefault(){}};for(const fn of events.get(type)||[])fn(e);if(type==='click'&&n.onclick)n.onclick(e);}};nodes.set(id,n);return n;}
-  for(const m of source.slice(0,source.indexOf('<script src="config.js">')).matchAll(/<([a-z][\w-]*)\b([^>]*\bid="[^"]+"[^>]*)>/gi)){const a=attrs(m[2]);node(a.id,a);}
+  const bodyStart=source.indexOf('<body');
+  for(const m of source.slice(bodyStart,source.indexOf('<script',bodyStart)).matchAll(/<([a-z][\w-]*)\b([^>]*\bid="[^"]+"[^>]*)>/gi)){const a=attrs(m[2]);node(a.id,a);}
   for(const m of source.matchAll(/<select\b([^>]*)>([\s\S]*?)<\/select>/g)){const id=attrs(m[1]).id,options=Array.from(m[2].matchAll(/<option\b([^>]*)>/g));const option=options.find(x=>/\bselected\b/.test(x[1]))||options[0];if(nodes.has(id)&&option)nodes.get(id).value=attrs(option[1]).value;}
   const group=node('mode-group');group.children=['mode-portable','mode-local'].map(id=>nodes.get(id));
   Object.assign(document,{getElementById:id=>nodes.get(id)||null,querySelector:selector=>selector==='.modebtns'?group:null});

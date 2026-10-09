@@ -3,7 +3,17 @@
 Context for a fresh agent picking up this repo. The durable design/process docs already exist — read those first
 and don't expect this file to repeat them.
 
-## Current CP9 candidate
+## Current PR42 repair frontier
+
+PR39, PR40 and PR41 are already merged. Main is
+`c1a480c97e9af188cf57704502d818c0584cf265`; the existing repair is PR42,
+`codex/hotfix-startup-clouds`. Continue from the H1–H8 register in
+`docs/real-sky/STARTUP_CLOUD_HOTFIX.md`, including rejected startup controls.
+Do not replay donor installation, V5 research or the completed merges. The PR42
+work order authorizes follow-up commits/pushes and qualification, **not merge**.
+Keep V1 frozen and N001/N002 PARTIAL / N003 BLOCKED unchanged.
+
+## Historical CP9/Moon integration handoff
 
 Start with `docs/real-sky/INTEGRATION.md`, its DAG ledger and qualification records.
 The base is main `fd2972ba64225fe9d6848e92497e6d0ed20ea624`; this candidate is

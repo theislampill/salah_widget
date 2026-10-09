@@ -1,6 +1,6 @@
 /** DPR-aware local lunar join. Physics stays in the existing sky raster; only
  * the lunar region is sampled at device resolution. No UI-thread terrain solver.
- * Native cloud pixels keep their one explicit inverse-transfer/foreground owner.
+ * Native cloud pixels use the same bounded display-transfer owner as the sky.
  */
 function prefixSurface({size,linear,coverage}){
  if(!Number.isInteger(size)||size<1||size>768||linear?.length!==size*size*3||coverage?.length!==size*size)throw new RangeError('surface prefix shape');
@@ -33,8 +33,10 @@ function joinLunarPixel({gas,direct,premult,coverage:a,opacity,cloud,exposure}){
  const ma=a*opacity,ca=cloud[3],out=[0,0,0];
  for(let k=0;k<3;k++){
   const surface=a>0?Math.max(0,Math.min(1-1/131072,premult[k]/a)):0;
-  // Suppress direct background exactly once, independently of the group fade.
-  const beforeCloud=gas[k]*(1-ma)+direct[k]*(1-a)+(-Math.log1p(-surface)/exposure)*ma;
+  // Gas is foreground atmospheric path radiance, not distant background.
+  // Opaque terrain blocks stars/diffuse sources, never the air in front of it.
+  // Calendar opacity scales surface emphasis only; it cannot grant star leaks.
+  const beforeCloud=gas[k]+direct[k]*(1-a)+(-Math.log1p(-surface)/exposure)*ma;
   out[k]=beforeCloud*(1-ca)+cloud[k]*ca;
  }return out;
 }
@@ -46,7 +48,7 @@ function startMoonDetail(){
  const stat={renders:0,skips:0,totalMs:0,maxMs:0,dpr:0,pixels:0,mode:'local-device-resolution; inherited physics grid unchanged'};
  const clear=()=>{cv.style.visibility='hidden';last=null;};
  function geometry(){
-  const card=document.querySelector('.c'),photo=document.querySelector('.mphoto'),group=document.querySelector('.moon'),features=document.querySelector('.mfeatures'),disc=document.querySelector('.moon-mask-disc'),t=photo?.getScreenCTM(),cardRect=card?.getBoundingClientRect(),rect=document.querySelector('.real-sky-canvas')?.getBoundingClientRect();
+  const card=document.querySelector('.c'),photo=document.querySelector('.mphoto'),group=document.querySelector('.moon'),features=document.querySelector('.mfeatures'),disc=document.querySelector('.moon-mask-disc'),t=photo?.getScreenCTM(),cardRect=card?.getBoundingClientRect(),rect=document.querySelector(card?.classList.contains('real-sky-composed')?'.real-sky-canvas':'.real-sky-preview')?.getBoundingClientRect();
   if(!surface||!table||!t||!rect||!(rect.width>0&&rect.height>0)||!cardRect||!card.classList.contains('moon-ready')||!disc?.classList.contains('mask-on')||+getComputedStyle(disc).opacity===0||t.a<=0||t.d<=0||Math.abs(t.b)>1e-8||Math.abs(t.c)>1e-8)return null;
   // Sample in viewport device pixels, then convert to the absolute child's
   // containing block. Its origin is inside the card border, not cardRect.left.
@@ -64,9 +66,16 @@ function startMoonDetail(){
  function available(){try{return !disposed&&!!context&&!!cx&&!!geometry();}catch{return false;}}
  function compose(frame,encode){
   if(disposed||!frame||!window.SalahMoonRuntime?.surface()||!context||!cx){clear();return;}
-  const g=geometry();if(!g||!g.card.classList.contains('real-sky-composed')){clear();return;}
+  const g=geometry();if(!g||!(g.card.classList.contains('real-sky-composed')||frame.preview&&g.card.classList.contains('real-sky-preview-ready'))){clear();return;}
   const began=performance.now(),r=frame.raster;
-  if(!cv.isConnected){const base=document.querySelector('.real-sky-canvas');if(base)base.after(cv);else g.card.prepend(cv);}
+  const base=document.querySelector(frame.preview?'.real-sky-preview':'.real-sky-canvas');
+  // Native lunar optics precede the original opaque SVG photo. Preserve that
+  // ownership when the photo is replaced: placing this canvas immediately
+  // after the base sky put the WHOLE native SVG (including its bright-centred
+  // corona) over refined Earthshine. Clouds are already in this local join;
+  // foreground weather/UI retain their later/higher layers.
+  const behind=g.card.querySelector('.sky')??base;
+  if(behind&&cv.previousSibling!==behind)behind.after(cv);else if(!cv.isConnected)g.card.prepend(cv);
   const {width:W,height:H,dpr}=g;
   if(cloudCv.width!==W||cloudCv.height!==H){cloudCv.width=W;cloudCv.height=H;}
   cx.resetTransform();cx.clearRect(0,0,W,H);cx.globalCompositeOperation='source-over';cx.globalAlpha=1;
@@ -78,10 +87,10 @@ function startMoonDetail(){
    const grad=cx.createLinearGradient(0,cr.top*dpr-g.top,0,cr.bottom*dpr-g.top);for(const [at,c] of [[0,'rgba(0,0,0,0)'],[.03,'#000'],[.24,'#000'],[.34,'rgba(0,0,0,0)'],[1,'rgba(0,0,0,0)']])grad.addColorStop(at,c);
    cx.globalCompositeOperation='destination-in';cx.fillStyle=grad;cx.fillRect(0,0,W,H);cx.globalCompositeOperation='source-over';
   }
-  const cloudRGBA=cx.getImageData(0,0,W,H).data;
+  const cloudRGBA=validateNativeRGBA(cx.getImageData(0,0,W,H).data,W*H);
   const key=JSON.stringify([surface.identity,W,H,g.left,g.top,g.x,g.y,g.w,g.h,g.rect.left,g.rect.top,g.rect.width,g.rect.height,g.opacity,dpr,r.effectiveExposure,g.up]);
   if(last&&last.frame===frame&&last.key===key&&last.cloud.length===cloudRGBA.length&&last.cloud.every((x,i)=>x===cloudRGBA[i])){stat.skips++;return;}
-  const exposure=r.effectiveExposure,inv=new Float64Array(256);for(let i=0;i<256;i++){const c=i/255,l=c<=.04045?c/12.92:((c+.055)/1.055)**2.4;inv[i]=-Math.log1p(-Math.min(1-1/131072,l))/exposure;}
+  const exposure=r.effectiveExposure;
   const linear=new Float64Array(W*H*3);
   if(!prepared||prepared.frame!==frame||prepared.key!==key){
    const covered=new Uint8Array(W*H),before=new Float64Array(W*H*3),ss=surface.size/(.96*surface.extent),ox=surface.size/2-.5*ss,oy=ox;
@@ -100,13 +109,14 @@ function startMoonDetail(){
   }
   const covered=prepared.covered,before=prepared.before;
   for(let i=0;i<covered.length;i++){if(!covered[i])continue;const ci=4*i,alpha=cloudRGBA[ci+3]/255;
-   for(let k=0;k<3;k++)linear[3*i+k]=before[3*i+k]*(1-alpha)+inv[cloudRGBA[ci+k]]*alpha;
+   for(let k=0;k<3;k++)linear[3*i+k]=nativeCloudChannel(before[3*i+k],cloudRGBA[ci+k],alpha,exposure);
   }
   const rgba=encode(linear,exposure);for(let i=0;i<covered.length;i++)rgba[4*i+3]=covered[i]?255:0;
+  if(frame.preview&&!frame.current()){clear();return;}
   if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}
   context.putImageData(new ImageData(rgba,W,H),0,0);
   Object.assign(cv.style,{left:`${(g.left/dpr-g.originX)/g.scaleX}px`,top:`${(g.top/dpr-g.originY)/g.scaleY}px`,width:`${W/dpr/g.scaleX}px`,height:`${H/dpr/g.scaleY}px`,visibility:'visible'});
-  last={frame,key,cloud:cloudRGBA};stat.renders++;stat.totalMs=performance.now()-began;stat.maxMs=Math.max(stat.maxMs,stat.totalMs);stat.dpr=dpr;stat.pixels=W*H;
+  last={frame,key,cloud:cloudRGBA};stat.renders++;stat.totalMs=performance.now()-began;stat.maxMs=Math.max(stat.maxMs,stat.totalMs);stat.dpr=dpr;stat.pixels=W*H;stat.skyOwner=frame.preview?'atmospheric-preview':'refined-sky';stat.atmosphereOwner='foreground path radiance, never lunar-occluded';
  }
  return {adopt(s){table=prefixSurface(s);calendarTable=s.calendarLinear?prefixSurface({size:s.size,linear:s.calendarLinear,coverage:s.coverage}):null;surface=s;last=null;prepared=null;},clear,compose,get available(){return available();},get state(){return {...stat,visible:cv.style.visibility==='visible'};},dispose(){disposed=true;clear();cv.remove();table=null;calendarTable=null;surface=null;prepared=null;}};
 }

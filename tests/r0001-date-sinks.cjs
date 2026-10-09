@@ -45,8 +45,8 @@ function run({source=html, format='YYYY-MM-DD', saved=false, month=false, previe
     _prayerStale=${stale};
     render();
   `,context,{filename:'test-only-admitted-state'});
-  assert.equal((node('.times').innerHTML.match(/class="p /g)||[]).length,6,'The actual timetable rendered');
-  assert.equal(node('.cn').textContent,time==='19:00'?'Maghrib':'Dhuhr','Actual model() selected the expected current prayer');
+  assert.equal((node('.times').innerHTML.match(/class="p(?:\s|")/g)||[]).length,6,'The actual timetable rendered');
+  assert.equal(node('.cn').textContent,missing?'—':time==='19:00'?'Maghrib':'Dhuhr','Unadmitted date cannot retain a prayer selection');
   assert.ok(node('.nt').textContent,'A non-empty next-prayer time rendered');
   return {ce:node('#ce').innerHTML,ah:node('#ah').innerHTML,times:node('.times').innerHTML,
     configSource:vm.runInContext('CONFIG.source',context),fmt:value=>vm.runInContext(`fmtDate(${JSON.stringify(value)})`,context)};

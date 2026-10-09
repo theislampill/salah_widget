@@ -7,18 +7,42 @@ window.SalahNativeSkyHost=Object.freeze({
   if(typeof heightM!=='number'||!Number.isFinite(heightM)||heightM<-500||heightM>10000||generation!==_runtimeGeneration||latitude!==lat||longitude!==lon)return false;
   _cp9SiteElevation=Object.freeze({heightM,generation,lat:latitude,lon:longitude});return true;
  },
- lunarSurface(){return window.SalahMoonRuntime?.surface()??((_pbrReady||_moonFallbackReady)?_moonCv:null);},
- capture(){
+ lunarSurface(){return window.SalahMoonRuntime?.surface()??null;},
+ cloudLighting(){return window.SalahNativeCloudLighting?.(this.capture(false))??null;},
+ capture(includePresentation=true){
   const identity=simulationReady()?skySceneIdentity():null;
   const cw=selectedWeather();
   const elevation=cw&&_cp9SiteElevation&&_cp9SiteElevation.generation===_runtimeGeneration&&_cp9SiteElevation.lat===lat&&_cp9SiteElevation.lon===lon?_cp9SiteElevation:null;
   const cameraNumber=(name,fallback)=>q.has(name)?(q.get(name).trim()===''?NaN:Number(q.get(name))):fallback;
+  const card=$('.c');let solarAnchor=null;
+  // Cloud lighting consumes physical direction, never decorative-body layout.
+  // Avoid forcing CSS layout on every native cloud/atmosphere update. The
+  // default renderer boundary still measures the actually presented body.
+  if(includePresentation){
+  const body=$('.sunbody'),attached=$('.suncorner'),sx=parseFloat(card?.style.getPropertyValue('--sunx2')),sy=parseFloat(card?.style.getPropertyValue('--sunlift'));
+  // The native transform is eased by CSS. Register attached light to the
+  // centre actually presented now, not the future --sunlift target. This is
+  // presentation metadata only; no astronomical UTC/identity is substituted.
+  const br=body?.getBoundingClientRect?.(),vr=($('.real-sky-canvas')??$('.real-sky-preview'))?.getBoundingClientRect?.();
+  const actual=br&&vr&&vr.width>0&&vr.height>0&&Number.isFinite(br.left)&&Number.isFinite(br.top)?{x:(br.left+br.width/2-vr.left)*325/vr.width,y:(br.top+br.height/2-vr.top)*530/vr.height}:null;
+  const presence=attached&&typeof getComputedStyle==='function'?Number(getComputedStyle(attached).opacity):null;
+  solarAnchor=Number.isFinite(sx)&&Number.isFinite(sy)?{...(actual??{x:sx,y:sy}),...(Number.isFinite(presence)?{presence}: {})}:null;
+  }
   return {utcMs:simNow(),lat,lon,heightM:elevation?.heightM??0,elevationSource:elevation?'native response elevation bound to this target generation':'default zero; no bound eligible weather height',elevationOwner:elevation?{...elevation}:null,generation:_runtimeGeneration,sceneIdentity:identity,
    tz,timeScale:TIMESCALE,units,lp:LPOLL,reducedMotion:isMotionReduced(),paused:document.hidden||!!$('.c')?.classList.contains('paused'),
    camera:{azDeg:cameraNumber('skyAz',180),altDeg:cameraNumber('skyAlt',45),fovYDeg:cameraNumber('skyFov',90),rollDeg:cameraNumber('skyRoll',0)},allowEstimates:q.get('skyEstimates')!=='off',
    weather:cw?{src:cw.src??'accepted-native',temp:cw.temp??null,rh:cw.rh??null,vis:cw.vis??null,cloud:cw.cloud??null,code:cw.code??null,wind:cw.wind??null}:null,
-   prayerReady:!!today,moonReady:!!(window.SalahMoonRuntime?.surface()||_pbrReady||_moonFallbackReady),pbrFailed:_pbrFailed};
+   solarAnchor,
+   // Numerical/currentness reads must not query layout or publish a lunar
+   // texture. surface() does both; after sky DOM writes that forced layout
+   // consumed the remaining fast-clock publication budget. Read the real
+   // lunar owner only for the full presentation/diagnostic snapshot.
+   prayerReady:!!today,moonReady:includePresentation?!!window.SalahMoonRuntime?.surface():null,pbrFailed:_pbrFailed};
  },
+ // Preview has its own accepted-input/expiry check on every animation frame.
+ // A synchronous second producer here ran during native paint, before clouds,
+ // then repeated in that same frame at high rates. Bootstrap still paints
+ // immediately; target changes remain fenced by beginSkyScene and preview rAF.
  notify(){window.SalahRealSky?.request();}
 });
 // CP9 additive diagnostic join, adopted from the donor's native-QA integration.

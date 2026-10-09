@@ -48,6 +48,12 @@ body{color:#fff7df;
    the sun's azimuth (left at dawn, right at dusk). No discrete "rays": clear-sky
    scattering is smooth; shafts only read through cloud (see .godray). */
 .atmo{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:28px;mix-blend-mode:screen}
+/* Full-card coordinates keep obstruction registered to the same cloud pixels
+   used by the sky/Moon join. The mask contributes transmission, never a second
+   cloud colour. Body diameter and corona extent remain independent. */
+.sun-cloud-mask{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+  -webkit-mask-image:var(--native-sun-cloud-mask,none);mask-image:var(--native-sun-cloud-mask,none);
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;mask-mode:alpha}
 .atmo .sun{position:absolute;left:var(--sunvx,5%);top:var(--sunvy,7%);width:360px;height:360px;transform:translate(-50%,-50%);
   background:radial-gradient(circle,var(--glow),transparent 64%);filter:blur(6px)}
 /* CORNER SUN — a large, top-left-clipped daytime sun: a bright nucleus, a soft warm corona that slowly
@@ -58,10 +64,10 @@ body{color:#fff7df;
 .atmo .suncorner{position:absolute;left:0;top:0;width:0;height:0;opacity:var(--sunamt,0);
   transform:translate(var(--sunx2,24px),var(--sunlift,14px));transition:opacity 1.5s ease,transform 2.4s ease}
 .atmo .suncorner>div{position:absolute;left:0;top:0;border-radius:50%;will-change:transform;transition:background 1.6s linear}
-.atmo .suncorner .disc,.wfx .sunbody .disc{width:240px;height:240px;
+.atmo .suncorner .disc,.atmo .sunbody .disc{width:240px;height:240px;
   transition:background 1.6s linear,opacity 1.5s ease;
-  background:radial-gradient(circle,#fff 0%,#fff 19%,var(--suncore,#fff6e0) 38%,var(--sunmid,#ffcf8a) 64%,rgba(255,190,110,0) 86%);
-  filter:blur(0.8px);transform:translate(-50%,-50%) scale(var(--sundisc,1)) scaleY(var(--sunflat,1))}   /* DEFINED bright white nucleus (0-38%) → warm-gold body edge → soft falloff (a radiant BODY with an edge, not a vague brush); scaleY = low-sun atmospheric-refraction FLATTENING near the horizon */
+  background:var(--sunprofile,radial-gradient(circle closest-side,var(--suncore,#fff6e0) 0%,var(--suncore,#fff6e0) 60%,var(--sunmid,#ffe1b4) 96%,transparent 100%));
+  filter:blur(0.8px);transform:translate(-50%,-50%) scale(var(--sundisc,1)) scaleY(var(--sunflat,1))}   /* Broad radiometric nucleus and modest limb falloff within the declared body radius; scaleY is the retained low-sun refraction presentation. Corona has its own independent extent. */
 .atmo .suncorner .corona{width:600px;height:600px;
   background:radial-gradient(circle,rgba(255,214,158,.4) 0%,rgba(255,198,128,.2) 24%,rgba(255,184,112,.075) 48%,rgba(255,170,100,0) 66%);
   filter:blur(10px);transform:translate(-50%,-50%) scale(var(--sunpulse,1))}   /* broad subordinate corona/radiance */
@@ -198,15 +204,15 @@ body{color:#fff7df;
 .wfx .cloudcanvas{position:absolute;inset:0;width:100%;height:100%;filter:blur(.55px);
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 3%,#000 24%,transparent 34%);
           mask-image:linear-gradient(180deg,transparent 0,#000 3%,#000 24%,transparent 34%)}
-/* The existing radiometric disc crosses the cloud layer for overcast or a compact clear low sun; corona/rays/optics stay behind it. */
-.wfx .sunbody{position:absolute;left:0;top:0;width:0;height:0;opacity:var(--sunbodyamt,var(--sunamt,0));
+/* The single radiometric body shares the atmospheric light group. A normal
+   foreground group would replace path radiance with orange surface colour.
+   Geometry is unchanged; corona/rays/optics remain separate contributions. */
+.atmo .sunbody{position:absolute;left:0;top:0;width:0;height:0;opacity:var(--sunbodyamt,var(--sunamt,0));
   transform:translate(var(--sunx2,24px),var(--sunlift,14px));transition:opacity 1.5s ease,transform 2.4s ease}
-.wfx .sunbody .disc{position:absolute;left:0;top:0;border-radius:50%;opacity:0;mix-blend-mode:screen}
-.c[data-fx=overcast] .wfx .sunbody .disc{opacity:1}
-.c[data-fx=overcast] .atmo .suncorner .disc{opacity:0}
-/* A compact clear low sun uses this same radiant body; the original corona/rays keep their presence curve. */
-.c[data-fx=clear] .wfx .sunbody .disc{opacity:var(--sunlow,0)}
-.c[data-fx=clear] .atmo .suncorner .disc{opacity:calc(1 - var(--sunlow,0))}
+.atmo .sunbody .disc{position:absolute;left:0;top:0;border-radius:50%;opacity:1;mix-blend-mode:screen}
+/* One body owner through the horizon transition. The retained corner group
+   supplies corona/rays only; overlapping copies must not change core energy. */
+.atmo .suncorner .disc{opacity:0}
 .wfx .sunhaze{position:absolute;left:var(--sunvx,5%);top:var(--sunvy,7%);width:300px;height:300px;transform:translate(-50%,-50%);
   background:radial-gradient(circle,var(--glow),transparent 56%);mix-blend-mode:screen;filter:blur(7px);opacity:0;transition:opacity 1s}
 /* CREPUSCULAR RAYS (light shafts): soft radial shafts emanating from the sun's screen position, revealed
@@ -257,12 +263,12 @@ body{color:#fff7df;
 .c[data-fx=fog]      .veil{opacity:.5}
 .c[data-fx=snow]     .veil{opacity:.34}
 .c[data-fx=fog]      .fog{opacity:.62}
-.c[data-fx=rain]     .drop,.c[data-fx=thunder] .drop{display:block}
-.c[data-fx=drizzle]  .drop:nth-child(3n+1){display:block;opacity:.6;animation-duration:.85s}
+.c[data-precip=on][data-fx=rain] .drop,.c[data-precip=on][data-fx=thunder] .drop{display:block}
+.c[data-precip=on][data-fx=drizzle] .drop:nth-child(3n+1){display:block;opacity:.6;animation-duration:.85s}
 .c[data-fx=thunder]  .drop{animation-duration:.4s}
-.c[data-fx=snow]     .flake{display:block}
-.c[data-fx=thunder]  .flash{animation:flash 19s linear infinite}
-.c[data-fx=thunder]  .bolt{animation:flash 23s linear infinite -4s}
+.c[data-precip=on][data-fx=snow] .flake{display:block}
+.c[data-fx=thunder][data-lightning=on] .flash{animation:flash 19s linear infinite}
+.c[data-fx=thunder][data-lightning=on] .bolt{animation:flash 23s linear infinite -4s}
 
 /* header — LIQUID-GLASS BELT (corrected geometry): NOT one full-width pill. Two CONTENT-FIT frosted straps
    (location-left, temperature-right), each sized to its text + symmetric VISIBLE padding, flanking a circular
@@ -406,9 +412,13 @@ body{color:#fff7df;
 .times{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:6px;margin-top:9.6px}
 /* Liquid glass preserves the faded inactive rows, current inset and upcoming tint. */
 .p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;background:linear-gradient(160deg,#ffffff26,#ffffff0d);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
-.p.on{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 30%,transparent),color-mix(in srgb,var(--accent) 12%,transparent));border-color:color-mix(in srgb,var(--accent) 50%,transparent)}
+.p.on{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047));color:#211d15;border-color:var(--accent);box-shadow:var(--glass),inset 3px 0 0 var(--accent)}
+/* An opaque accent plate gives NEXT a stable identity even over a warm horizon.
+   CURRENT retains its independent outline; future rows remain glass, not past. */
+.p.on b{font-weight:700}
+.p.on b,.p.on .tm{text-shadow:none}
 .c[data-appearance="contrast"] .p{opacity:1;color:#f0edf8;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.90)}
-.c[data-appearance="contrast"] .p.on{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 30%,transparent),color-mix(in srgb,var(--accent) 12%,transparent)),rgba(9,17,28,.90)}
+.c[data-appearance="contrast"] .p.on{color:#211d15;background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047))}
 .p.now{box-shadow:var(--glass),inset 0 0 0 1.5px color-mix(in srgb,var(--text) 55%,transparent)}
 .p.past{opacity:.42}
 .p b{font-weight:600;font-size:12.5px;line-height:16.7px;letter-spacing:.01em}
@@ -459,7 +469,7 @@ body{color:#fff7df;
   <div class="dbglayers" aria-hidden="true"></div>
   <div class="dbgmoon" aria-hidden="true"></div>
   <div class="dbgmotion" aria-hidden="true"></div>
-  <div class="atmo" aria-hidden="true"><div class="airglow"></div><div class="aurora"></div><div class="scatter"></div><div class="belt"></div><div class="anticrep"></div><div class="sunpillar"></div><div class="sunhalo"></div><div class="sundogs"></div><div class="sun"></div><div class="suncorner"><div class="rays"></div><div class="corona"></div><div class="disc"></div></div></div>
+  <div class="atmo" aria-hidden="true"><div class="airglow"></div><div class="aurora"></div><div class="scatter"></div><div class="belt"></div><div class="anticrep"></div><div class="sunpillar"></div><div class="sunhalo"></div><div class="sundogs"></div><div class="sun"></div><div class="sun-cloud-mask"><div class="suncorner"><div class="rays"></div><div class="corona"></div><div class="disc"></div></div><div class="sunbody"><div class="disc"></div></div></div></div>
   <svg class="sky" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
     <defs>
       <radialGradient id="mg" cx="40%" cy="34%" r="72%">
@@ -528,7 +538,6 @@ body{color:#fff7df;
     <canvas class="cloudcanvas" width="144" height="232" aria-hidden="true"></canvas>
     <div class="veil"></div>
     <div class="sunhaze"></div>
-    <div class="sunbody"><div class="disc"></div></div>
     <div class="godray" aria-hidden="true"></div>
     <svg class="bolt" viewBox="0 0 325 530" preserveAspectRatio="none"><path d="M214 4 L201 60 L220 56 L198 150"/></svg>
     <div class="flash"></div>
@@ -854,8 +863,9 @@ function renderCalendarDates(projection){
 const _RAFNOW = ()=> (typeof performance!=='undefined' && performance.now) ? performance.now() : Date.now();
 const _tsParam=q.get("timeScale");
 let TIMESCALE = _tsParam!=null ? Math.max(0,+_tsParam||0) : (SIM.time!=null ? 0 : 1);
-const ADVANCING = _tsParam!=null && TIMESCALE>0;          // a running fast-forward → show the sim clock
-const FOLLOW_WALL_CLOCK = _tsParam==null && SIM.time==null && TIMESCALE===1;
+let ADVANCING = _tsParam!=null && TIMESCALE>0;          // a running fast-forward → show the sim clock
+let FOLLOW_WALL_CLOCK = _tsParam==null && SIM.time==null && TIMESCALE===1;
+let _clockPreview=false; // explicit runtime clock control retains forecast provenance while paused
 let _rafT0=_RAFNOW(), _simBase=null, _simTz=null, _simValid=true, _simInvalidTz=null;
 function partsInTz(ms){
   try{
@@ -990,6 +1000,7 @@ function cacheKey(){ return "salah:"+[lat,lon,_cacheTz,method,school].join("|");
 // In-memory ownership is independent of weather freshness and persisted cache schemas.
 // A -> B -> A has three generations; each kind keeps its own operation across retry backoffs.
 let _runtimeGeneration=0, _requestSerial=0, _attemptSerial=0;
+let _prayerRecordsGeneration=0;
 const _requestSlots={current:null,prefetch:null,weather:null,radar:null};
 function beginRequest(kind,requestedDay=null){
   if(!Object.prototype.hasOwnProperty.call(_requestSlots,kind) || _requestSlots[kind]) return null;
@@ -1131,7 +1142,7 @@ function adoptPrayerBundle(data,requestedDay,op=null,replaceCurrent=true,persist
     if(changedDay && _prayerCooldown.current && _prayerCooldown.current.day!==current){
       _prayerCooldown.current={day:current,nextTry:0};
     }
-    tz=admitted.timezone; today=admitted.data; lastDate=current; _prayerStale=false;
+    tz=admitted.timezone; today=admitted.data; lastDate=current; _prayerStale=false; _prayerRecordsGeneration=_runtimeGeneration;
     if(!prayerRecordReady(tomorrow,next)) tomorrow=null;
     if(persist) saveCache(current,today,op?op.cacheKey:cacheKey());
     if(changedDay){ _starsProjected=false; lastMoonMin=-1; }
@@ -1275,7 +1286,7 @@ function weatherEligibility(w,now=Date.now()){
     reason:eligible?null:!targetMatches?"current model belongs to another target generation":"current model time/interval unavailable, future or expired"};
 }
 function selectedWeather(now=Date.now()){
-  if(SIM.wx!=null||ADVANCING) return weather&&(!weather.target||weatherTargetSame(weather.target,currentWeatherTarget()))?weather:null;
+  if(SIM.wx!=null||ADVANCING||_clockPreview) return weather&&(!weather.target||weatherTargetSame(weather.target,currentWeatherTarget()))?weather:null;
   // Explicit previews retain their separate time contract, but cannot revive another target's admitted data.
   return weatherEligibility(weather,now).eligible?weather:null;
 }
@@ -1472,7 +1483,7 @@ function syncWeather(){
   // In normal REAL-TIME we must NEVER overwrite the `current=` model estimate with an hourly forecast — a forecast
   // rain/thunder code must not be presented as "currently raining/storming". Real drift comes from the 15-min
   // current refetch (fetchWeather). Neither model block is an on-site observation.
-  if(!ADVANCING) return;
+  if(!ADVANCING&&!_clockPreview) return;
   const w=wxAt(simNow()); if(w){ if(w.code!=null) weather=w; w.src="forecast"; }
 }
 // normalise the current weather into 0..1 physical drivers (heat/cold/wind/humidity/cloud/haze)
@@ -1603,30 +1614,58 @@ function reconcileWeatherEvidence({target,model,modelCategory,present,presentRej
     forecast?{state:"numerical-forecast-only",arrival:null}:spatial.state==="observed-area-no-echo"?{state:"none-supported",arrival:null}:{state:"unknown",arrival:null};
   const preview=lane==="preview", wet=state==="wet";
   const permissions={rain:e?wet&&e.present.type==="rain":preview&&["drizzle","rain","thunder"].includes(modelCategory),
-    snow:e?wet&&e.present.type==="snow":preview&&modelCategory==="snow",lightning:e?wet&&e.present.type==="rain"&&e.present.lightning==="observed":preview&&modelCategory==="thunder",
+    // A forecast thunder category is not a lightning detection. Only an
+    // explicitly synthetic weather scene may preview invented strikes; normal
+    // current/forecast model presentation retains the independent evidence gate.
+    snow:e?wet&&e.present.type==="snow":preview&&modelCategory==="snow",lightning:e?wet&&e.present.type==="rain"&&e.present.lightning==="observed":preview&&model?.src==="sim"&&modelCategory==="thunder",
     expiresAt:e?e.expiresAt:null,reason:e?"qualified synthetic present "+state:preview?"explicit simulation/forecast preview":presentRejection||eligible.reason};
   return {lane,target,current,model:modelEvidence,present:{available:!!e,reason:e?e.pointPolicy:presentRejection||eligible.reason,evidence:e},
     disagreement,spatial,horizon,forecast,permissions:Object.freeze(permissions)};
 }
 function weatherDecision(now=Date.now()){
-  const target=currentWeatherTarget(), current=selectedWeather(now), preview=SIM.wx!=null||ADVANCING;
+  const target=currentWeatherTarget(), current=selectedWeather(now), preview=SIM.wx!=null||ADVANCING||_clockPreview;
   const synthetic=preview?weatherSynthetic:null, cache=_wxDecisionCache;
   if(cache&&cache.target===target&&cache.current===current&&cache.track===weatherTrack&&cache.synthetic===synthetic&&cache.preview===preview&&now>=cache.at&&now<cache.until) return cache.decision;
-  const modelCode=gateWeatherCode(current?current.code:null,current,0), modelCategory=wxClass(modelCode), modelDowngrade=_wxDowngrade;
+  const effectCode=gateWeatherCode(current?current.code:null,current,0),effectCategory=wxClass(effectCode),modelDowngrade=_wxDowngrade;
+  const modelCode=!preview&&current?current.code:effectCode,modelCategory=wxClass(modelCode);
   const forecast=weatherForecast(weatherTrack,target,now), lane=synthetic?"simulation-fixture":preview?"preview":"live";
   const decision=reconcileWeatherEvidence({target,model:current,modelCategory,present:synthetic&&synthetic.ok?synthetic.evidence:null,
     presentRejection:synthetic&&!synthetic.ok?synthetic.reason:null,forecast,lane},now), permission=decision.permissions;
-  // Permission withdrawal is immediate; cloud smoothing and the raw/model WMO code cannot retain particles.
-  decision.renderCode=permission.rain?(permission.lightning?95:63):permission.snow?73:
+  // Condition presentation and direct-present evidence are different contracts.
+  // A fresh CURRENT model may present supported precipitation without claiming
+  // an observed event. Forecast-only and synthetic leases keep their old fences.
+  const modelLive=lane==="live"&&!!current;
+  decision.visualPermissions=Object.freeze({rain:permission.rain||(modelLive&&["drizzle","rain","thunder"].includes(effectCategory)),
+    snow:permission.snow||(modelLive&&effectCategory==="snow"),lightning:permission.lightning,
+    source:modelLive?"current model estimate":permission.reason,quantitativeSupport:modelLive?modelDowngrade||"current interval amount supports category":null});
+  decision.renderCode=modelLive||lane==="preview"?modelCode:permission.rain?(permission.lightning?95:63):permission.snow?73:
     ["drizzle","rain","snow","thunder"].includes(modelCategory)?_coverCode(current):modelCode;
-  if(lane==="preview") decision.renderCode=modelCode;
   decision.modelCode=modelCode; decision.modelDowngrade=modelDowngrade;
+  decision.record=current;decision.observedPresent=false;
+  decision.conditionState=!current&&!decision.present.available?"unavailable":lane==="live"?"model-estimated-"+wxClass(decision.renderCode):lane+"-"+wxClass(decision.renderCode);
   const e=synthetic&&synthetic.ok?synthetic.evidence:null;
   const until=Math.min(current&&wxNumber(current.currentValidAt)!=null?current.currentValidAt+_WX_CURRENT_TTL+1:Infinity,
     current&&wxNumber(current.retrievedAt)!=null?current.retrievedAt+_WX_CURRENT_TTL+1:Infinity,e&&e.expiresAt>now?e.expiresAt:Infinity,
     e&&e.spatial.expiresAt>now?e.spatial.expiresAt:Infinity,e&&e.approach&&e.approach.to>=now?e.approach.to+1:Infinity,
     forecast?Math.min(forecast.validUntil,forecast.retrievedAt+_WX_FORECAST_TTL+1):Infinity);
   _wxDecisionCache={target,current,track:weatherTrack,synthetic,preview,at:now,until,decision}; return decision;
+}
+let _lastWeatherHeader=null;
+function weatherHeader(decision,day){
+  const current=decision.record,description=wxInfo(decision.renderCode,day),available=!!current||decision.present.available;
+  const info=!available?{icon:"—",label:"Weather unavailable — no eligible current condition"}:decision.lane==="live"?
+    {...description,label:description.label+" — Open-Meteo current model estimate; direct local observation unavailable (unobserved)"+(decision.modelDowngrade?"; quantitative effect decision: "+decision.modelDowngrade:"")}:
+    {...description,label:decision.lane==="simulation-fixture"?"SIM "+decision.current+"; "+decision.permissions.reason:"SIM weather preview: "+description.label};
+  return {...info,temperature:current?.temp??null,code:available?decision.renderCode:null,rawCode:current?.code??null,
+    generation:decision.target.generation,target:{lat:decision.target.lat,lon:decision.target.lon},
+    sourceValidAt:current?.currentValidAt??null,retrievedAt:current?.retrievedAt??null,conditionState:decision.conditionState,observedPresent:decision.observedPresent};
+}
+function paintWeatherHeader(value){
+  // One synchronous commit from one admitted snapshot. Expiry/target withdrawal
+  // clears BOTH sinks even while prayer data is pending.
+  const wi=$("#wi"),wt=$("#wt");wi.textContent=value.icon;wi.title=value.label;wi.setAttribute("role","img");wi.setAttribute("aria-label",value.label);
+  wt.textContent=value.temperature!=null?`${value.temperature}°`:"";
+  _lastWeatherHeader={...value,paintedAt:Date.now()};
 }
 
 // ---- accurate Moon position & orientation (SunCalc core, BSD-2, github.com/mourner/suncalc) ----
@@ -1740,7 +1779,7 @@ function renderMoonCalendarFallback(frac,waxing){
 }
 let _lastPbrUp=-1;  // surface appearance also follows the existing horizon envelope
 function renderMoonPBR(frac, waxing){
-  if(window.SalahMoonRuntime?.request()) return;
+  if(window.SalahMoonRuntime){window.SalahMoonRuntime.request();updateSkySurface();return;}
   renderMoonLegacyPBR(frac,waxing);
 }
 function renderMoonLegacyPBR(frac, waxing){
@@ -1835,7 +1874,7 @@ function sampleMoonPixel(data,width,height,x,y){
   return {x,y,status:"ok",lum:Math.round((data[i]+data[i+1]+data[i+2])/3),alpha:data[i+3]};
 }
 function moonDebugSamples(){
-  const currentSurface=window.SalahMoonRuntime?.surface()??_moonCv;
+  const currentSurface=window.SalahMoonRuntime?.surface()??null;
   const width=currentSurface?currentSurface.width:null,height=currentSurface?currentSurface.height:null,radius=_MR,cx=width/2,cy=Math.round(height/2);
   try{
     if(!currentSurface) throw new Error("canvas absent");
@@ -1847,6 +1886,7 @@ function moonDebugSamples(){
     return {status:"ok",width,height,radius,cx,cy,samples:points.map(([label,x])=>({label,...(label==="canvas exterior"&&x<=cx+radius?{x,y:cy,status:"unavailable",lum:null,alpha:null}:sampleMoonPixel(data,width,height,x,cy))}))};
   }catch(e){ return {status:"unavailable",width,height,radius,cx,cy,samples:[]}; }
 }
+const MOON_SCALE_MIN=1.11,MOON_SCALE_MAX=1.13;
 function renderMoon(){
   let frac, waxing;
   const date=simDate();                                            // moon phase advances with simTime (debug fast-forward spans days)
@@ -1880,7 +1920,7 @@ function renderMoon(){
   // now only adds a small rise/settle for life; it no longer flings the disc off-card.
   const x=268 + hd*1.5;                                            // centred so the WHOLE disc has comfortable margin on the right (≈5px) — a thin WAXING crescent's lit right limb is clearly in frame, not at the edge — while the left limb clears the temperature strap row below
   const y=55 + 3*sweep - clamp((alt-6)/70)*3;                      // ≈55-58: dropped below the temp strap (y19-37) and above the arc (top y≈121 on the right) — its wide middle clears the strap, so the disc is large AND fully on-card
-  const scale=1.11 + 0.02*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
+  const scale=MOON_SCALE_MIN + (MOON_SCALE_MAX-MOON_SCALE_MIN)*sweep;                                  // large readable disc (~+11-13% vs the old corner moon) sized to FIT the pocket with right-edge margin; whole disc + phase visible, clear of temp / arc / focal text
   const transform=`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`;
   const g=$(".moon"); if(g) g.setAttribute("transform",transform);
   const mask=$(".moon-mask-geometry"); if(mask) mask.setAttribute("transform",transform);
@@ -2033,11 +2073,12 @@ function beginSkyScene(){
   if(_cloudCtx&&_cloudCv) _cloudCtx.clearRect(0,0,_cloudCv.width,_cloudCv.height);
   updateSkySurface();
 }
-// Decoded PBR and terminal-error calendar fallback are distinct surfaces; both need an output href.
-// Pending decode remains unavailable; accepted UI/sky never waits for the lunar maps.
+// The terrain service publishes a current full-spatial V5 preview or refined
+// surface. Decoded legacy maps are not terrain readiness; quality stays explicit.
+// Prayer/sky remain usable while terrain initializes or recovers.
 function updateSkySurface(){
   const c=$(".c"),photo=$(".mphoto"),mask=$(".moon-mask-disc");
-  const ready=!!((_pbrReady||_moonFallbackReady||!!window.SalahMoonRuntime?.surface()) && photo && photo.getAttribute("href") && _skySceneKey!==null);
+  const ready=!!(window.SalahMoonRuntime?.surface() && photo && photo.getAttribute("href") && _skySceneKey!==null);
   if(c) c.classList.toggle("moon-ready",ready);
   if(mask) mask.classList.toggle("mask-on",ready && _skyMoonPresence>0);
 }
@@ -2092,9 +2133,11 @@ function prayerDayFields(record){
   return y>0 && Number.isFinite(utcFields(y,mo,d)) ? {y,mo,d,dateStr:`${pad(d)}-${pad(mo)}-${y}`} : null;
 }
 function model(){
-  if(!today || !today.timings) return null;
+  if(!today || !today.timings || _prayerRecordsGeneration!==_runtimeGeneration) return null;
   const nowEpoch=simNow(); if(!Number.isFinite(nowEpoch)) return null;
   const n=partsInTz(nowEpoch), nowMin=n.h*60+n.mi+n.s/60, t=today.timings;
+  const recordDay=prayerDayFields(today);
+  if(!recordDay||recordDay.y!==n.y||recordDay.mo!==n.mo||recordDay.d!==n.d||today.meta?.timezone!==tz)return null;
   const list=prayers.map(k=>({k,m:mins(t[k]),t:t[k]})).sort((a,b)=>a.m-b.m);
   const sunsetMin=mins(t.Sunset||t.Maghrib);
   // Ingress owns full validation; this defense prevents nonfinite or unbounded bypassed minutes from
@@ -2130,7 +2173,7 @@ function model(){
   return {
     t, noon, decl, doy, sunrise:norm(mins(t.Sunrise)), sunset:norm(sunsetMin),
     nowMin, nowAbs:norm(nowMin), warmEnd: tomorrowFlag ? start+1440 : norm(next.m),
-    dots: prayers.map(k=>({k, abs:norm(mins(t[k]))})),
+    dots: prayers.map(k=>({k, abs:norm(k===next.k&&tomorrowFlag?next.m:mins(t[k]))})),
     currentKey:cur, nextKey:next.k, nextTime:next.t,
     leftMin, nowEpoch, nextEpoch, nextDateStr:nextDay && nextDay.dateStr, nextZone,
     progress:clamp((nowMin-prevMin)/(nextMin-prevMin)),
@@ -2239,7 +2282,7 @@ function drawArc(M){
     // apex, hold it the minimum hair past; if it's genuinely later, its own time already places it further along.
     const pabs = (p.k==="Dhuhr") ? Math.max(p.abs, noonT + 11) : p.abs;
     const cls = (p.k===M.nextKey ? "dot next" : "dot") + (adj?" adj":"") + (ring?" ring":"");
-    const geometry=`<circle class="${cls}" cx="${X(pabs).toFixed(2)}" cy="${Y(pabs).toFixed(2)}" r="${R}"`;
+    const geometry=`<circle class="${cls}" cx="${X(pabs).toFixed(2)}" cy="${Y(pabs).toFixed(2)}" r="${R}" data-prayer-key="${p.k}"`;
     dots+=classification?`${geometry} data-adjustment="${classification.status}"${classification.angle!=null?` data-angle="${classification.angle}"`:""} data-solar-min="${minRealE}" data-solar-max="${maxRealE}"><title>${classification.description}</title></circle>`:`${geometry}/>`;
   }
   // "eye of a needle": the ring centre + tangent come from the SAME sample at iNow — pts[iNow] IS the
@@ -2524,13 +2567,17 @@ function paintClouds(t){
       for(let copy=-1;copy<=1;copy++){
         const cx=centre+copy*_CLOUD_WRAP*W,extent=1.14*R;
         if(cx+extent<0 || cx-extent>W) continue;
-        const sux=S.sunX*W-cx, suy=S.sunY*H-cy, suL=Math.hypot(sux,suy)||1, sl=Math.max(0,1-suL/(W*0.9))*S.sunUp;
+        const light=S.physicalLight?.sample(cx/W,cy/H),sux=light?light.dx:S.sunX*W-cx,suy=light?light.dy:S.sunY*H-cy,suL=Math.hypot(sux,suy)||1;
+        const facing=light?.facing??Math.max(0,1-suL/(W*.9)),sl=facing*S.sunUp;
         const mux=S.moonX*W-cx, muy=S.moonY*H-cy, muL=Math.hypot(mux,muy)||1, ml=Math.max(0,1-muL/(W*0.6))*S.moonLit;
         const aBase=dop*aMul*0.5*(1+0.7*clamp((cov-0.7)/0.3));            // OVERCAST FILL: at high coverage make puffs more opaque so the deck reads as a SOLID ceiling (fewer sky gaps); broken/clear (cov<0.7) unchanged
         for(let pi=0;pi<_PUFF.length;pi++){
           const p=_PUFF[pi], px=cx+p[0]*R, py=cy+p[1]*R, pr=p[2]*R, plen=Math.hypot(p[0],p[1])||1;
           const tB=clamp(0.5-p[1]*0.95);                                     // top puffs lit, base puffs shaded → cumulus volume
           let col=[base[0]+(top[0]-base[0])*tB, base[1]+(top[1]-base[1])*tB, base[2]+(top[2]-base[2])*tB];
+          // Warm direct light is solar-side, not a whole-deck tint. The same
+          // physical camera direction owns both broad illumination and lining.
+          const warmth=(S.warmth??0)*facing;col=mixRGB(col,[255,166,102],.62*warmth);
           const sCos=(p[0]*sux+p[1]*suy)/(suL*plen), rim=sl*Math.max(0,sCos)*0.85;          // SILVER/GOLD lining: puffs on the sun side catch a warm bright rim
           col=[col[0]+(S.sunCol[0]-col[0])*rim, col[1]+(S.sunCol[1]-col[1])*rim, col[2]+(S.sunCol[2]-col[2])*rim];
           const mCos=(p[0]*mux+p[1]*muy)/(muL*plen), mrim=ml*Math.max(0,mCos)*0.65;          // cool MOONLIT edge at night
@@ -2571,12 +2618,15 @@ function tieRainToClouds(){
 // Nothing here is keyed to a prayer NAME. paint(A) below is the ONLY place this state touches the DOM.
 function atmosphere(M){
   const day=isDayNow(M.nowMin);
-  const current=selectedWeather(), decision=weatherDecision(), code=decision.renderCode;
-  const description=wxInfo(code,day), modelDescription=wxInfo(decision.modelCode,day);
-  const info=decision.lane==="live"?{...description,icon:current?"≈":"?",label:current?"Model estimate: "+modelDescription.label+"; local precipitation unobserved":"Weather unavailable"}:
-    {...description,label:decision.lane==="simulation-fixture"?"SIM "+decision.current+"; "+decision.permissions.reason:"SIM weather preview: "+description.label};
+  const decision=weatherDecision(),current=decision.record,code=decision.renderCode,info=weatherHeader(decision,day);
   const cls=wxClass(code), w=WX[cls];
-  const sm=sunMetrics(M);                                       // genuine solar altitude (deg) + screen x/y
+  // The prayer arc's altitude fit passes through admitted timetable events;
+  // it is not an independent solar ephemeris. Keep its decorative x/y, but
+  // drive body/horizon presence and lunar day fade from the SAME accepted
+  // physical Sun already used by the sky and cloud-facing illumination.
+  const cloudLighting=window.SalahNativeSkyHost?.cloudLighting?.()??null;
+  const nativeMetrics=sunMetrics(M),physicalElevation=cloudLighting?.sun?.altDeg;
+  const sm=Number.isFinite(physicalElevation)?{...nativeMetrics,altDeg:physicalElevation}:nativeMetrics;
   const S=physSky(M, sm);                                       // sky colours DERIVED from solar elevation
   const D=wxDrivers(current);                                   // the same eligible snapshot supplies every weather consumer
   const airDrift=_airDrift();                                   // slow non-looping transparency/air-mass wander (0..1) — makes a clear sky breathe over 15–60 min
@@ -2641,12 +2691,18 @@ function atmosphere(M){
   const wet=(cls==="rain"||cls==="thunder"||cls==="overcast")?1:(cls==="drizzle"||cls==="snow"||cls==="fog")?0.5:0;
   let cloudBase=mixRGB([232,236,243],[196,206,220],wet);
   cloudBase=mixRGB(cloudBase,[66,74,90],0.55*wet);
-  const dayK=day?1:clamp((sm.altDeg+8)/10);
+  // Continuous geometric twilight illumination; the timetable's binary day
+  // flag must not recolour a whole deck at Sunrise/Maghrib. Preserve the
+  // established daytime endpoint from +2deg upwards. This is the native cloud
+  // presentation approximation, separate from the numerical sky radiance.
+  const cloudElevation=sm.altDeg;
+  const dayK=clamp((cloudElevation+8)/10);
   cloudBase=mixRGB([34,44,66],cloudBase,dayK);
-  if(sm.altDeg<18){ const warmU=clamp((18-sm.altDeg)/16)*(day?1:0.3); cloudBase=mixRGB(cloudBase,[255,166,102],0.62*warmU); }   // the WHOLE lit cloud takes the surviving warm sunlight at low sun (Mie-neutral droplets)
+  const beamU=clamp((cloudElevation+1.5)/3.5),cloudBeam=beamU*beamU*(3-2*beamU);
+  const cloudWarmth=clamp((18-cloudElevation)/16)*cloudBeam; // Applied per cluster using its physical solar-facing term.
   if(cls==="overcast") cloudBase=mixRGB(cloudBase,[72,80,96],0.34*dayK);   // LEADEN ceiling: a solid overcast deck reads heavier + lower-luminance than a scattered cloud field (day-gated so a night deck stays ashen, not muddy; does NOT touch the sun tone-map, which keys off cls/cloud, not cloudBase)
   // light COLOURS the cloud deck is lit by (used by paintClouds for forward-scatter): warm/low → white/high sun; silver moon
-  const sunWarmC=clamp((15-sm.altDeg)/22)*(day?1:0);
+  const sunWarmC=clamp((15-cloudElevation)/22)*cloudBeam;
   const cloudSunCol=mixRGB([255,247,232],[255,168,96], sunWarmC);
   const cloudMoonCol=mixRGB([206,220,246],[226,232,250], mFrac);
   // — anti-solar Belt of Venus (pink anti-twilight band; needs a clear-ish anti-solar sky, so off under
@@ -2669,11 +2725,12 @@ function atmosphere(M){
   if(current && current.cloudLow!=null){ clLow=clamp(current.cloudLow/100); clMid=clamp(current.cloudMid/100); clHigh=clamp(current.cloudHigh/100); }
   else { const sp=({clear:[0,0,0],cloud:[.2,.55,.4],overcast:[.92,.85,.5],fog:[1,.2,0],drizzle:[.72,.6,.2],rain:[.9,.85,.3],thunder:[.92,.9,.6],snow:[.82,.7,.3]})[cls]||[0,0,0]; clLow=sp[0]; clMid=sp[1]; clHigh=sp[2]; }
   // LUNAR OPTICS — two DISTINCT phenomena gated by cloud TYPE: a 22° ICE-crystal HALO ring from thin CIRRUS (high
-  // cloud), and a water-droplet CORONA aureole from thin ALTOSTRATUS/FOG (mid cloud / humidity). Both need a bright
+  // cloud), and a water-droplet CORONA aureole from thin ALTOSTRATUS/FOG. Dew point or humidity alone
+  // does not establish a droplet column: a humid clear scene must not grow a smooth veil over Earthshine. Both need a bright
   // above-horizon moon in a dark sky; thick low cloud kills both. They are near-exclusive (ice vs water cloud).
   const moonLume=moonLightEligible?moonUp*darkness*clamp(0.25+0.75*mFrac):0;
   let lunarHalo    =clamp((clHigh-0.06)/0.34)*clamp((0.66-clHigh)/0.42)*(1-clLow)*(1-0.7*clMid)*moonLume;   // `let`: forceable via &debugOptic=lunarhalo
-  const lunarCorona=clamp(Math.max((clMid-0.08)/0.36,(D.humid-0.72)/0.24,(cls==="fog"?0.7:0)))*clamp((0.72-clMid)/0.5)*(1-0.45*clLow)*moonLume;
+  const lunarCorona=clamp(Math.max((clMid-0.08)/0.36,(cls==="fog"?0.7:0)))*clamp((0.72-clMid)/0.5)*(1-0.45*clLow)*moonLume;
   // — crepuscular rays (light shafts): only when the sun is up, the deck is BROKEN (gaps to shine through),
   //   and there's participating medium (humidity/haze). Clear dry sky → 0; solid overcast → directional≈0 → 0.
   const broken=clamp(1-Math.abs(clMid-0.45)/0.42);                 // peaks at half-cover (gaps); 0 at clear & solid
@@ -2700,36 +2757,56 @@ function atmosphere(M){
   // SIMULATED presence (true aurora needs Kp/solar-wind data we don't have) — gated so it NEVER shows at low lat.
   const aurDark=clamp(-(sm.altDeg+8)/6);   // needs a genuinely DARK sky (sun ≲ −10°): no aurora in bright twilight/white nights
   const aurora=(Math.abs(+lat||0)>=55?clamp((Math.abs(+lat||0)-55)/12):0)*aurDark*clamp(1-1.5*clLow)*(1-0.55*moonStrength)*(1-0.7*LPOLL)*0.5;
-  // Intensity changes only an already permitted effect. A model amount cannot grant present precipitation.
+  // An admitted current amount controls model-estimated particles; it never
+  // grants direct observation or lightning permission.
   const presentQuantity=decision.present.evidence&&decision.present.evidence.present.quantity;
-  const pmm=decision.lane==="preview"&&current?wxNumber(current.precip,0):presentQuantity&&presentQuantity.kind==="amount"?presentQuantity.value:null;
-  const rainOp=decision.permissions.rain||decision.permissions.snow?(pmm==null?0.72:clamp(0.42+0.6*clamp((pmm-0.1)/6))):0;
-  // ——— CORNER-SUN TONE-MAPPING (scene-referred radiance → Kasten–Young airmass + Beer–Lambert + per-class cloud
-  // transmittance + CCT blackbody → ACES). LIFTED here from paint() so paint() only WRITES --suncore/--sunmid
-  // (render-boundary purity). Math is byte-identical to the old paint() block; inputs (sm.altDeg, D.haze ≡ the
-  // returned aerosolDensity, cls, D.cloud ≡ cloudCover) are all declared above → no TDZ. Cloud desaturates the
-  // nucleus toward warm-white, NEVER grey/purple; the core clips to a defined white body even through cloud.
+  const pmm=(decision.lane==="preview"||decision.lane==="live")&&current?wxNumber(current.precip,0):presentQuantity&&presentQuantity.kind==="amount"?presentQuantity.value:null;
+  const rainOp=decision.visualPermissions.rain||decision.visualPermissions.snow?(pmm==null?0.72:clamp(0.42+0.6*clamp((pmm-0.1)/6))):0;
+  // CORNER-SUN display presentation: retained airmass/Beer–Lambert attenuation,
+  // warm colour response and ACES mapping. This enlarged body is not a calibrated
+  // angular solar radiance source. Its whole radial profile shares one spectrum;
+  // no white CSS hotspot bypasses attenuation. Actual painted cloud coverage
+  // obstructs it at composition, rather than attenuating it twice by category.
   const _se=sm.altDeg, _noonS=clamp(_se/40), _eC=Math.max(0,_se);
   const _m=1/(Math.sin(_eC*Math.PI/180)+0.50572*Math.pow(_eC+6.07995,-1.6364));   // Kasten–Young relative airmass
   const _k=0.13+0.07*clamp(D.haze), _Tbeam=Math.exp(-_k*(_m-1));                   // optical depth → Beer–Lambert beam transmittance
   const _tcLUT={clear:1.0,cloud:0.7,overcast:0.35,thunder:0.22,fog:0.30,rain:0.40,snow:0.55,drizzle:0.6}[cls];
   const _Tcloud=_tcLUT!=null?_tcLUT:(1-0.65*clamp(D.cloud));                       // cloud transmittance (attenuates FLUX, not colour)
-  const _CCT=Math.max(2000,Math.min(5800,2000+3500*_ss(_se/40)));                  // ~2000K horizon → ~5500K noon
+  const _m40=1/(Math.sin(40*Math.PI/180)+0.50572*Math.pow(46.07995,-1.6364));
+  const _colourRecovery=clamp(_Tbeam/Math.exp(-_k*(_m40-1)));
+  // The old elevation/40 smoothstep held the body near2000K even at+5.5deg,
+  // while beam transmission had already recovered. Let that same admitted
+  // air/haze transmission drive this DISPLAY colour response. Retain the LUT,
+  // natural horizon warmth, and exactly the existing5500K result at>=40deg.
+  const _CCT=2000+3500*_colourRecovery;
   const _bbLUT=[[2000,255,137,18],[2700,255,169,87],[3500,255,196,137],[4500,255,219,186],[5500,255,228,206],[6500,255,243,239]];
   let _cCol=[255,243,239]; for(let i=0;i<_bbLUT.length-1;i++){ if(_CCT<=_bbLUT[i+1][0]){ const f=(_CCT-_bbLUT[i][0])/(_bbLUT[i+1][0]-_bbLUT[i][0]); _cCol=[1,2,3].map(j=>_bbLUT[i][j]+f*(_bbLUT[i+1][j]-_bbLUT[i][j])); break; } }
   _cCol=mixRGB(_cCol,[255,244,232],(0.12+0.08*clamp(D.cloud))*clamp((1-_Tcloud)/0.65));   // cloud WARM white-balance (never cold grey)
   const _cLin=_cCol.map(v=>Math.pow(v/255,2.2));                                   // de-gamma → linear
   const _aces=x=>{ x=Math.max(0,x*0.6); return Math.min(1,(x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14)); };   // ACES (Narkowicz)
   const _tm=(lin,L)=>rgb(lin.map(c=>Math.round(255*Math.pow(_aces(c*L),1/2.2))));  // tone-map a radiance → display colour
-  let _sunmidB=mixRGB([255,150,70],[255,214,170],_noonS); _sunmidB=mixRGB(_sunmidB,[255,238,218],(1-_Tcloud)*0.45);   // SATURATED warm-gold BODY (cloud → warm-white)
-  const sunCoreRGB=_tm(_cLin,6.0*_Tcloud*(0.22+0.78*_Tbeam)), sunMidRGB=rgb(_sunmidB);
+  // A single admitted spectrum/beam supplies the whole body. A modest limb
+  // falloff changes radiance, not hue. The previous unattenuated orange edge
+  // plus hard-coded white CSS centre produced a filament inside a collar.
+  const _bodyL=6.0*(0.22+0.78*_Tbeam);
+  const sunCoreRGB=_tm(_cLin,_bodyL), sunMidRGB=_tm(_cLin,_bodyL*.65);
+  // Resolve the low-Sun radial radiance rather than flattening the central60%.
+  // A bounded linear limb-darkening presentation (u=.6) uses the SAME admitted
+  // spectrum/beam throughout, with no white filament or independent warm rim.
+  // Smoothly retain the established high-Sun profile by40deg; diameter, glow
+  // extent, atmospheric radiance and ephemerides have no dependency on this.
+  const _profileWeight=1-_ss((_se-10)/30);
+  const sunProfile=[0,.2,.4,.6,.8,.9,.96].map(radius=>{
+    const old=1-.35*clamp((radius-.6)/.36),resolved=.4+.6*Math.sqrt(1-radius*radius);
+    return {radius,colour:_tm(_cLin,_bodyL*(old+(resolved-old)*_profileWeight))};
+  });
   const moonObservation=Object.freeze({...moonGeometryObservation(M),light:Object.freeze({eligibility:moonObject,eligible:moonLightEligible,reason:moonLightReason,
     illumination:moonlight,beam:0.6*moonlight,cloudLight:moonlight,localStarWash:moonLocalWash,localGlow:moonGlow,halo:lunarHalo,corona:lunarCorona,paraselenae:moonParhelia})});
   return {
     // —— physical drivers (the source of truth) ——
     day, cls, info, code, weatherDecision:decision, wxTemp: current?current.temp:null,
     solarElevationDeg: sm.altDeg, skyLuminance: skyLum(sm.altDeg), sunX: sm.x, sunY: sm.y,
-    sunCoreRGB, sunMidRGB, sunCloudT: _Tcloud,                   // tone-mapped corner-sun nucleus + body + cloud transmittance (paint() writes --suncore/--sunmid and uses sunCloudT for --sunray)
+    sunCoreRGB, sunMidRGB, sunProfile, sunRadiometry:{airmass:_m,beamTransmission:_Tbeam,displayCctK:_CCT,bodyRadianceScale:_bodyL},sunCloudT: _Tcloud, // cloud category controls rays only; actual coverage obstructs direct body
     moonPhase: mFrac, moonAltitude: moonSky.alt, moonHourAngle: moonSky.H, moonObservation,moonSkyFresh:moonObservation.fresh,
     moonObject, moonlightIntensity: moonlight,moonGlow,moonLocalWash,
     cloudCover: D.cloud, windSpeed: D.wind, windDeg: current&&current.windDir!=null?current.windDir:225,
@@ -2745,7 +2822,7 @@ function atmosphere(M){
     // —— heat / cold ——
     heat: D.heat, warm: 0.20*D.heat, cool: 0.22*D.cold, frost: 0.5*D.cold,
     // —— clouds / wind / precip ——
-    cloudTint: cloudBase, cloudTint2: mixRGB(cloudBase,[20,26,40],0.12), cloudTintHi: mixRGB(cloudBase,[255,255,255],0.32),
+    cloudTint: cloudBase, cloudTint2: mixRGB(cloudBase,[20,26,40],0.12), cloudTintHi: mixRGB(cloudBase,[255,255,255],0.32),cloudLighting,cloudWarmth,cloudElevation,
     windDirSign: D.windX>=0?1:-1, rainOp,
     rainSlant: D.windX*D.wind*120, snowSlant: D.windX*D.wind*300,
     // —— clouds: layered coverage (low/mid/high) + wind VELOCITY vector for the canvas density field's advection ——
@@ -2784,7 +2861,7 @@ function applyCloudState(A){
   else { const ce=ADVANCING?1:0.08; CS.covLow+=(CS.tgtLow-CS.covLow)*ce; CS.covMid+=(CS.tgtMid-CS.covMid)*ce; CS.covHigh+=(CS.tgtHigh-CS.covHigh)*ce; }
   CS.wx=A.windUX; CS.wy=A.windUY; CS.wspd=0.06+0.6*A.windSpeedNorm;
   CS.tLow=A.cloudTint2; CS.tMid=A.cloudTint; CS.tHi=A.cloudTintHi;
-  CS.sunX=A.sunX/100; CS.sunY=A.sunY/100; CS.sunUp=clamp((A.solarElevationDeg+1)/5);   // clouds stay sun-lit even at a low golden-hour sun
+  CS.sunX=A.sunX/100; CS.sunY=A.sunY/100; CS.sunUp=clamp(((A.cloudElevation??A.solarElevationDeg)+1)/5);CS.physicalLight=A.cloudLighting;CS.warmth=A.cloudWarmth;
   CS.sunCol=A.cloudSunCol; CS.moonCol=A.cloudMoonCol; CS.moonX=A.cloudMoonX; CS.moonY=A.cloudMoonY; CS.moonLit=A.cloudMoonLit;
   _cloudDirty=true;
 }
@@ -2809,15 +2886,17 @@ function paint(A){
   c.style.setProperty("--suny",A.sunY.toFixed(1)+"%");
   // —— CORNER SUN (.suncorner): nucleus + corona + rays, reading time-of-day & weather ——
   { const e=A.solarElevationDeg, noon=clamp(e/40), sunAmt=clamp((e+1.5)/7), sunLow=1-clamp(e/5.5);
-    // NUCLEUS + BODY colour are tone-mapped in atmosphere() (Kasten–Young airmass + Beer–Lambert + per-class cloud
-    // transmittance + CCT blackbody → ACES); paint() only WRITES them. See atmosphere() for the math + rationale
-    // (a DEFINED white nucleus even through cloud; cloud desaturates toward warm-white, never the old grey/purple blob).
+    // NUCLEUS + BODY colour are tone-mapped in atmosphere() (Kasten–Young airmass + Beer–Lambert
+    // + CCT colour response → ACES); actual cloud alpha obstructs the light group once.
+    // (a defined warm body with atmosphere-dependent colour; painted clouds may obstruct it completely).
     c.style.setProperty("--sunamt",sunAmt.toFixed(3));                            // PRESENCE only (is the sun up?) — NOT a brightness mute
     c.style.setProperty("--sunbodyamt",clamp((e+1.5)/1.5).toFixed(3));              // radiant low-sun body only; zero at the existing -1.5° cutoff
-    c.style.setProperty("--sunlow",sunLow.toFixed(3));                            // return the clear disc to its original layer by the existing 5.5° full-presence boundary
+    c.style.setProperty("--sunlow",sunLow.toFixed(3));                            // retained low-elevation diagnostic; no body-size or two-layer handoff authority
     c.style.setProperty("--suncore",A.sunCoreRGB);                               // tone-mapped NUCLEUS colour (from atmosphere)
-    c.style.setProperty("--sunmid",A.sunMidRGB);                                 // tone-mapped SATURATED warm-gold BODY/edge (from atmosphere)
-    c.style.setProperty("--sundisc",(1.10-0.24*noon-0.75*sunLow).toFixed(3));      // compact low-sun body; original high-sun footprint and refraction
+    c.style.setProperty("--sunmid",A.sunMidRGB);                                 // modest limb radiance falloff of the SAME attenuated spectrum
+    if(e<40&&A.sunProfile)c.style.setProperty("--sunprofile","radial-gradient(circle closest-side,"+A.sunProfile.map(p=>p.colour+" "+(p.radius*100)+"%").join(",")+",transparent 100%)");
+    else c.style.removeProperty("--sunprofile");                                // byte-identical established high-Sun gradient
+    c.style.setProperty("--sundisc",(1.10-0.24*noon).toFixed(3));                 // enlarged presentation body: horizon presence/clipping must not shrink it into a button; high-Sun footprint unchanged
     // The low-left nucleus belongs to the visible arc horizon, not the old fixed 216px layout.
     // Read its existing geometry only below apex; noon placement remains unchanged.
     let sunHorizonPx=216;
@@ -2874,13 +2953,14 @@ function paint(A){
   c.style.setProperty("--pillarcol",A.pillarCol);
   c.style.setProperty("--anticrep",(0.8*A.antiCrep).toFixed(3));      // anticrepuscular rays (faint, opposite the sun)
   c.style.setProperty("--mparhelia",(0.85*A.moonParhelia).toFixed(3)); // lunar paraselenae / moondogs (cirrus + bright moon)
-  c.dataset.fx=A.cls;
+  c.dataset.fx=A.weatherDecision.conditionState==="unavailable"?"unavailable":A.cls;
+  c.dataset.precip=A.weatherDecision.visualPermissions.rain||A.weatherDecision.visualPermissions.snow?"on":"off";
+  c.dataset.lightning=A.weatherDecision.visualPermissions.lightning?"on":"off";
   c.style.setProperty("--mhalo",Math.min(0.85,1.5*A.lunarHalo).toFixed(3));     // 22° ice halo ring — only with thin cirrus (boosted so the ring reads through the cloud)
-  c.style.setProperty("--mcorona",Math.min(0.9,1.15*A.lunarCorona).toFixed(3)); // droplet corona aureole — only with thin water cloud / fog / humidity
+  c.style.setProperty("--mcorona",Math.min(0.9,1.15*A.lunarCorona).toFixed(3)); // droplet corona aureole — requires thin water cloud or fog, not humidity alone
   // (cloud morphology is no longer rewritten per class — the low/mid/high LAYERS carry the morphology; the
   //  turbulence filters are static, and only the per-layer coverage opacities + drift transforms change.)
-  const wi=$("#wi"); wi.textContent=A.info.icon; wi.title=A.info.label; wi.setAttribute("role","img"); wi.setAttribute("aria-label",A.info.label);
-  $("#wt").textContent=A.wxTemp!=null?`${A.wxTemp}°`:"";
+  paintWeatherHeader(A.info);
   if(DEBUGLAYERS){ const dl=$(".dbglayers");
     if(dl){ if(dl.style.display!=="block") dl.style.display="block";
       let vis=0; for(const e of _starEls) if(e.style.display!=="none") vis++;
@@ -2980,13 +3060,23 @@ function genLightning(seed){
   return d;
 }
 let _lastBolt=-1, _lastRender=null;   // _lastRender: last actually-rendered state summary (observability, read by qaState)
+function withdrawPrayerPresentation(){
+  $(".cn").textContent="—";$(".nt").textContent="—";$(".left").textContent="Prayer times unavailable";
+  $(".arc").innerHTML="";$(".times").innerHTML=prayers.map(k=>`<div class="p" data-prayer-key="${k}"><b>${k}</b><span class="tm">—</span></div>`).join("");
+  const p=$(".bar>i");p.style.width="";p.style.visibility="hidden";_lastRender=null;
+}
 function render(){
-  if(!simulationReady()){ renderCalendarDates(selectCalendarDisplay(null)); _lastRender=null; return; }
-  if(!today){ renderCalendarDates(selectCalendarDisplay(null)); return; }
+  if(!simulationReady()){ withdrawPrayerPresentation();paintWeatherHeader(weatherHeader(weatherDecision(),false));renderCalendarDates(selectCalendarDisplay(null));return; }
   setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)
   syncWeather();                                              // sim/fast-forward: pull weather from the forecast track at simTime
   const M=model();
-  if(!M){ renderCalendarDates(selectCalendarDisplay(null)); showError("Prayer times unavailable"); _lastRender=null; return; }
+  if(!M){
+    withdrawPrayerPresentation();const d=weatherDecision();paintWeatherHeader(weatherHeader(d,d.record?.isDay!==0));
+    // No accepted scene paint may leave another epoch's particles behind. The
+    // independently admitted header remains usable while the timetable loads.
+    $(".c").dataset.fx=d.record?wxClass(d.renderCode):"unavailable";$(".c").dataset.lightning="off";$(".c").dataset.precip="off";$(".c").style.setProperty("--rain-op","0");
+    renderCalendarDates(selectCalendarDisplay(null));return;
+  }
   const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin || moonGeometryObservation(M).fresh!==true){ renderMoon(); lastMoonMin=moonSky._min; }   // minute cadence + date/location invalidation; failed production never advances the success marker
   // REAL-TIME: star POSITIONS stay fixed (no record-player spin) — only CSS per-star scintillation varies. The sky
   // is re-projected ONLY under timeScale (ADVANCING), or once per new day, so fast-forward shows celestial motion.
@@ -2997,14 +3087,18 @@ function render(){
     $(".nt").textContent = fmt(M.nextTime);
     $(".left").innerHTML = `<span class="until-time">${dur(M.leftMin)}</span> <span class="until-label">left</span> <span class="until-label">until</span> <span class="until-prayer">${M.nextKey}</span>`;
   }else showError("Countdown unavailable");
-  $(".bar>i").style.width = (M.progress*100).toFixed(1)+"%";
+  const progress=$(".bar>i"),width=(M.progress*100).toFixed(1)+"%";
+  progress.style.visibility="";
+  // Hydrate the first prayer value directly. The clock bar is not a loader.
+  if(!progress.style.width){progress.style.transition="none";progress.style.width=width;void progress.offsetWidth;progress.style.transition="";}
+  else progress.style.width=width;
   $(".arc").innerHTML = drawArc(M);
   fitCn(M);
   $(".times").innerHTML = prayers.map(k=>{
     const on   = k===M.nextKey;                      // next → coloured (incl. tomorrow's Fajr overnight)
     const now  = k===M.currentKey;                   // present → bordered (not coloured)
     const dim  = !now && !on && mins(M.t[k])<M.nowMin; // only elapsed events fade; row order does not imply time
-    return `<div class="p ${on?"on":""} ${now?"now":""} ${dim?"past":""}"><b>${k}</b><span class="tm">${fmt(M.t[k])}</span></div>`;
+    return `<div class="p ${on?"on":""} ${now?"now":""} ${dim?"past":""}" data-prayer-key="${k}"><b>${k}</b><span class="tm">${fmt(on?M.nextTime:M.t[k])}</span></div>`;
   }).join("");
   renderCalendarDates(selectCalendarDisplay(M));
   $(".c").dataset.stale = _prayerStale ? "prayer" : "";
@@ -3013,9 +3107,10 @@ function render(){
   // OBSERVABILITY: capture the state actually rendered this tick (read by qaState().render — a real last-render
   // summary, not a recompute), so the next failure is diagnosable.
   _lastRender={ atMs:Math.round(_RAFNOW()), sim:`${nowParts().dateStr} ${pad(nowParts().h)}:${pad(nowParts().mi)}`,
-    currentKey:M.currentKey, nextKey:M.nextKey, leftMin:+M.leftMin.toFixed(1), progress:+M.progress.toFixed(3), fx:$(".c").dataset.fx };
+    currentKey:M.currentKey,nextKey:M.nextKey,leftMin:M.leftMin,progress:M.progress,fx:$(".c").dataset.fx,
+    generation:_runtimeGeneration,acceptedUtcMs:M.nowEpoch,timetableDate:prayerDayFields(today)?.dateStr,nextDate:M.nextDateStr,nextEpoch:M.nextEpoch,nextTime:M.nextTime,zone:tz,timetable:{...M.t} };
   // regenerate the branching bolt each ~2.6s strike-window while a thunderstorm is active (deterministic from simTime)
-  if($(".c").dataset.fx==="thunder"){ const bk=Math.floor(simNow()/2600); if(bk!==_lastBolt){ _lastBolt=bk; const bp=document.querySelector(".bolt path"); if(bp) bp.setAttribute("d",genLightning(bk)); } }
+  if($(".c").dataset.lightning==="on"){ const bk=Math.floor(simNow()/2600); if(bk!==_lastBolt){ _lastBolt=bk; const bp=document.querySelector(".bolt path"); if(bp) bp.setAttribute("d",genLightning(bk)); } }
 }
 
 function updateSimClock(n){       // debug fast-forward read-out (only shown when timeScale is set)
@@ -3049,18 +3144,18 @@ window.qaState=function(){
         requests:{weather:_wxRequests.weather,radar:_wxRequests.radar},
         target:{...decision.target,fixAgeMs:decision.target.acquiredAt==null?null:Date.now()-decision.target.acquiredAt},
         current:decision.current,model:decision.model,present:decision.present,disagreement:decision.disagreement,
-        spatial:decision.spatial,horizon:decision.horizon,forecast:decision.forecast,permissions:decision.permissions,lane:decision.lane,
+        spatial:decision.spatial,horizon:decision.horizon,forecast:decision.forecast,permissions:decision.permissions,visualPermissions:decision.visualPermissions,lane:decision.lane,conditionState:decision.conditionState,observedPresent:decision.observedPresent,
         localObservationAgeMs:decision.present.evidence?Date.now()-decision.present.evidence.localObservationAt:null,
         localOperationalHealth:decision.present.evidence?decision.present.evidence.quality.operationalHealth:"unknown",
         rawCode:raw,rawForecastCode:fc,observedPrecipMm:decision.present.evidence&&decision.present.evidence.present.quantity&&decision.present.evidence.present.quantity.kind==="amount"?decision.present.evidence.present.quantity.value:null,
-        modelPrecipMm:p,effectivePrecipMm:decision.lane==="preview"?p:null,activePrecip:decision.permissions.rain||decision.permissions.snow,activeThunder:decision.permissions.lightning,
-        displayCondition:wxClass(decision.renderCode),modelCondition:wxClass(decision.modelCode),finalDataFx:(document.querySelector(".c").dataset.fx||null),
+        modelPrecipMm:p,effectivePrecipMm:decision.lane==="preview"||decision.lane==="live"?p:null,activePrecip:decision.visualPermissions.rain||decision.visualPermissions.snow,activeThunder:decision.visualPermissions.lightning,
+        displayCondition:decision.conditionState==="unavailable"?"unavailable":wxClass(decision.renderCode),modelCondition:decision.modelCode==null?"unavailable":wxClass(decision.modelCode),finalDataFx:(document.querySelector(".c").dataset.fx||null),
         downgradeReason:decision.lane==="live"?decision.permissions.reason:decision.modelDowngrade||decision.permissions.reason,
         modelGateReason:decision.modelDowngrade||null,advancing:ADVANCING,cloudFieldSeed:_cloudFieldSeed }; })(),
     // ── CACHE / STALE-STATE diagnostics (BASE): what may be stale and how old ──
     cache:(()=>{ const eligibility=weatherEligibility(weather), wxAge=eligibility.receiptAgeMs==null?null:Math.round(eligibility.receiptAgeMs/1000);
       return { weatherSource: weather?(weather.src||"current"):"none", weatherAgeSec:wxAge, weatherSourceAgeSec:eligibility.sourceAgeMs==null?null:Math.round(eligibility.sourceAgeMs/1000),
-        weatherStale:(SIM.wx!=null||ADVANCING)?false:!eligibility.eligible, currentEligible:eligibility.eligible, currentUnavailableReason:eligibility.reason,
+        weatherStale:(SIM.wx!=null||ADVANCING||_clockPreview)?false:!eligibility.eligible, currentEligible:eligibility.eligible, currentUnavailableReason:eligibility.reason,
         lastWeatherRefresh: lastWxAt?new Date(lastWxAt).toISOString():null, forecastTrackLoaded: !!weatherTrack,
         prayerDate: lastDate||null, prayerLoaded: !!today, tomorrowLoaded: !!tomorrow,
         prayerStale: _prayerStale, rolloverPendingMs: (_prayerStale ? Math.max(0, _rolloverNextTry-_RAFNOW()) : null),
@@ -3086,24 +3181,26 @@ window.qaState=function(){
            : "no lat/lon and no local flag → bare (showError)"
       };
     })(),
-    render: _lastRender,
-    clouds:{low:+(A.cloudLayerLow||0).toFixed(2), mid:+(A.cloudLayerMid||0).toFixed(2), high:+(A.cloudLayerHigh||0).toFixed(2), hash:cloudHash, alpha:cloudAlpha},
+    render: _lastRender,weatherHeader:_lastWeatherHeader,
+    clouds:{low:+(A.cloudLayerLow||0).toFixed(2), mid:+(A.cloudLayerMid||0).toFixed(2), high:+(A.cloudLayerHigh||0).toFixed(2), hash:cloudHash, alpha:cloudAlpha,lighting:A.cloudLighting?{owner:A.cloudLighting.owner,utcMs:A.cloudLighting.utcMs,sun:A.cloudLighting.sun,camera:A.cloudLighting.camera,warmth:A.cloudWarmth}:null},
     stars:{op:+(cs.getPropertyValue("--stars").trim()||0), visible:starsVis, blur:cs.getPropertyValue("--starblur").trim(), mw:+(cs.getPropertyValue("--mw").trim()||0)},
     sky:{airglow:cs.getPropertyValue("--airglow").trim(), haze:+(A.aerosolDensity||0).toFixed(2), airDrift:+(A.airDrift||0).toFixed(3), moonBeam:+(A.moonBeam||0).toFixed(2), lunarCorona:+(A.lunarCorona||0).toFixed(2), aurora:+(A.aurora||0).toFixed(2)},
-    // ── LUNAR PRESENCE diagnostics: physical sky-moon vs lunar-calendar moon (the slot must never be empty at night) ──
+    // Visible owner, not legacy decode status. Current terrain preview and final
+    // accepted physical and below-horizon calendar presentations remain distinct.
     moonTruth:(()=>{ const mp=moonNow(), alt=(A.moonAltitude!=null?A.moonAltitude:moonSky.alt), up=alt>-0.5;
-      const surfaceStatus=_pbrReady?"pbr":_moonFallbackReady?"calendar-fallback":_pbrFailed?"failed":"pending";
+      const runtime=window.SalahMoonRuntime,refined=!!runtime?.surface(),lunarState=runtime?.state;
+      const surfaceStatus=refined?"v5-terrain":lunarState?.status??"pending";
       const surfaceVisible=$(".c").classList.contains("moon-ready"),grp=+(A.moonGrp||0),disc=+(A.moonDisc||0);
-      const phys=surfaceStatus==="pbr" && surfaceVisible && up && !A.day && (A.moonlightIntensity||0)>0.02;
+      const phys=refined && surfaceVisible && up && !A.day && (A.moonlightIntensity||0)>0.02;
       return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
         lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
         lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
-        surface:{status:surfaceStatus,pbrReady:_pbrReady,fallbackReady:_moonFallbackReady,texture:_pbrReady?"decoded-albedo-and-normals":_moonFallbackReady?(_mAlb?"decoded-albedo":"procedural-phase"):"unavailable"},
+        surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?"V5 DEM intersections, terrain shadows and colour":"unavailable"},
         physicalMoonVisible:phys, calendarMoonVisible:surfaceVisible && grp>0.01,
-        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":surfaceStatus==="calendar-fallback"?"calendar-fallback":phys?"physical":grp>0.01?"calendar-ghost":"debug-hidden"),
+        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?"refined-calendar":"debug-hidden"),
         moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
-        moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:surfaceStatus==="calendar-fallback"?"Existing phase Earthshine; calendar surface only, no physical moonlight":surfaceStatus==="pbr"?"PBR earthshine (es curve in renderMoonPBR) — ashen, never black":"surface unavailable",
-        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?"lunar surface unavailable":surfaceStatus==="calendar-fallback"?"lunar map decode failed → calendar phase fallback, moonlight off":phys?null:(up?"near-new / cloud → calendar ashen ghost (no moonlight)":"below horizon → calendar ghost, moonlight off") };
+        moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only":"surface unavailable",
+        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?"awaiting current terrain; no legacy substitution":phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
     })()
   };
 };
@@ -3160,7 +3257,12 @@ async function loadPrayerData(){
       tz=cached.timezone;                                    // validated selected-envelope metadata, before requested-day filtering
       if(!simulationReady()) return;
       const day=prayerCivilDay();
-      if(cached.date===day && adoptPrayerBundle(cached.data,day,op,true,false) && !_loopStarted){ render(); _renderDirty=false; }
+      if(cached.date===day && adoptPrayerBundle(cached.data,day,op,true,false) && !_loopStarted){
+        render();
+        // Adopting the first prayer scene clears the earlier sky preview.
+        // Republish its accepted target in this turn, before network/rAF yield.
+        window.SalahSkyPreview?.update(); _renderDirty=false;
+      }
     }
     if(!requestEligible(op)) return;
     let requested=prayerCivilDay(); op.requestedDay=requested; op.requestZone=tz;
@@ -3177,7 +3279,9 @@ async function loadPrayerData(){
       if(!simulationReady()) return;
       day=prayerCivilDay(); _prayerCooldown.current.day=day;
     }
-    if(adoptPrayerBundle(data,requested,op) && !_loopStarted){ render(); _renderDirty=false; }
+    if(adoptPrayerBundle(data,requested,op) && !_loopStarted){
+      render(); window.SalahSkyPreview?.update(); _renderDirty=false;
+    }
     else if(!today && requestEligible(op)) showError("Could not load prayer times");
   }catch(e){
     if(requestEligible(op) && !today) showError("Could not load prayer times");
@@ -3197,6 +3301,7 @@ function resetForNewLocation(){
   weatherRadar=null; lastRadarAt=0;
   _starsProjected=false; _prayerStale=false; lastMoonMin=-1; _renderDirty=true;
   _rolloverBusy=false; _rolloverNextTry=0;
+  withdrawPrayerPresentation();paintWeatherHeader(weatherHeader(weatherDecision(),false));
   beginSkyScene();
   if(simulationReady()){ buildSceneOnce(); renderMoon(); }
 }
@@ -3221,6 +3326,23 @@ async function applyConfig(cfg, opts){
   if(generation!==_runtimeGeneration) return;
   startRenderLoop();                                  // no-op if already running
 }
+
+// Diagnostic control of the EXISTING native clock, with an explicit live return.
+// No private renderer time or altered transport deadlines. Every transition
+// invalidates pending sky/Moon work, including A -> preview -> live A, before
+// publishing the new native target. It does not persist settings or seek Date.
+window.SalahClock=Object.freeze({set({rate=TIMESCALE,utcMs=null,live=false}={}){
+  if(!Number.isFinite(rate)||rate<0||utcMs!=null&&(!Number.isFinite(utcMs)||Math.abs(utcMs)>8640000000000000))throw new RangeError("Invalid native clock control");
+  const next=live?Date.now():utcMs??simNow();if(!Number.isFinite(next))throw new RangeError("Native clock requires an accepted time");
+  TIMESCALE=live?1:rate;FOLLOW_WALL_CLOCK=!!live;ADVANCING=!live&&rate>0;_clockPreview=!live;
+  _simBase=next;_rafT0=_RAFNOW();_simTz=tz;_simValid=true;_simInvalidTz=null;
+  window.SalahRealSky?.invalidate("explicit native clock control");window.SalahSkyPreview?.clear("explicit native clock control");beginSkyScene();
+  if(live&&weather?.src==="forecast"){weather=null;loadWx();fetchWeather();}
+  _wxDecisionCache=null;lastMoonMin=-1;_renderDirty=true;
+  const c=$(".c"),sc=$(".simclock");c?.classList.toggle("fast",ADVANCING);if(sc)sc.style.display=live?"none":"block";
+  maintainPrayerDay();render();window.SalahNativeSkyHost?.notify();
+  return {utcMs:simNow(),rate:TIMESCALE,live:FOLLOW_WALL_CLOCK};
+}});
 
 async function boot(){
   const generation=_runtimeGeneration;
@@ -3259,6 +3381,11 @@ async function boot(){
 
   if(!simulationReady()) return;                            // coordinate detection may have changed the explicit scene's zone
   startWeather();
+  render(); // Current shell/header and explicit pending prayer rows precede network settlement.
+  // The first native paint adopts its scene key and invalidates the head
+  // preview. Republish accepted inputs before yielding: a cache-warm browser
+  // can present this turn before the first rAF, exposing the dark base colour.
+  window.SalahSkyPreview?.update();
   await loadPrayerData();
   if(generation!==_runtimeGeneration) return;
   startRenderLoop();
@@ -3292,6 +3419,9 @@ function startRenderLoop(){
     if(reduced){ if(_cloudDirty){ paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; } }
     else if(rt-_lastCloud>76){ _lastCloud=rt; paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; }
     if(rt-_tickAcc>=1000){ _rafPS=Math.round(_rafN*1000/(rt-_tickAcc)); _cloudPS=Math.round(_cloudN*1000/(rt-_tickAcc)); _rafN=0;_cloudN=0;_tickAcc=rt; if(DEBUGMOTION) updateMotionDbg(_rafPS,_cloudPS,cEl); }
+    // Optional sky presents after native UI/cloud work, using a freshly
+    // accepted UTC. Bootstrap owns its own callback until this handoff.
+    window.SalahSkyPreview?.present(_RAFNOW());
     _raf=requestAnimationFrame(loop);
   }
   function start(){ if(!_raf) _raf=requestAnimationFrame(loop); }
@@ -3569,14 +3699,15 @@ window.SalahMoonHost=Object.freeze({
   const identity=skySceneIdentity();
   return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
    fraction:moonSky.frac,waxing:!!moonSky.waxing,up:moonSky.up,
+   maximumPresentationRatio:MOON_SCALE_MAX/(MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*clamp(moonSky.up)),
    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
    paused:document.hidden||!!$('.c')?.classList.contains('paused')};
  },
  publish(canvas){const ph=$('.mphoto');if(ph)ph.setAttribute('href',canvas.toDataURL());updateSkySurface();},
  fallback(){
-  if(!Number.isFinite(moonSky.frac))return;
-  _lastPbrFrac=-1;renderMoonLegacyPBR(moonSky.frac,!!moonSky.waxing);
-  if(_pbrFailed)renderMoonCalendarFallback(moonSky.frac,!!moonSky.waxing);
+  // Resilience means a usable widget and retry, not silently substituting the
+  // old Moon. The mask follows the same admission as the material surface.
+  updateSkySurface();
  },
 });
 

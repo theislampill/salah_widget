@@ -7,7 +7,7 @@ WASM is source-bound; recompilation is optional and separately qualified.
 from pathlib import Path
 import base64, hashlib, json, re
 
-WORKER_UNITS=['asset-digest.mjs','surface_v5.mjs','moon-detail.mjs','moon-calendar.mjs','moon-engine.mjs','moon-quality.mjs','moon-worker.mjs']
+WORKER_UNITS=['asset-digest.mjs','surface_v5.mjs','moon-detail.mjs','moon-calendar.mjs','moon-engine.mjs','moon-quality.mjs','moon-pool.mjs','moon-worker.mjs']
 HOST_UNITS=['moon-detail.mjs','moon-calendar.mjs','moon-precision.mjs','moon-native.mjs']
 PROFILE={'schema':'lunar-presentation/5','profile_id':'calendar-neutral-v5-01','mode':'calendar','exposure':2.9195482731525044,'lift':0.003,'knee':5.388411226362526e-6,'colour_basis':'linear-sRGB','gamut':'luminance-preserving-neutral-axis'}
 CHUNK_BYTES=786432  # independently padded base64 chunks, 1 MiB script text
@@ -37,7 +37,8 @@ def build_moon(root):
    chunks.append({'name':path,'index':i,'path':part,'last':last})
    write(moon/part, 'window.SalahMoonAssetChunk('+','.join([json.dumps(path),str(i),json.dumps(code),str(last).lower()])+');\n')
    tags.append(f'<script type="application/octet-stream" id="moon-embedded-{counter}">'+code+'</script>');counter+=1
- host='(function(){\nconst MOON_DEFAULT_PROFILE='+json.dumps(PROFILE,separators=(',',':'))+';\nconst MOON_WORKER_SOURCE='+json.dumps(worker)+';\nconst MOON_OFFLINE_CHUNKS='+json.dumps(chunks,separators=(',',':'))+';\n'+concat(HOST_UNITS)+'\n})();\n'
+ cloud=(root/'real-sky/native-cloud-transfer.mjs').read_text(encoding='utf-8').replace('export ','')
+ host='(function(){\n'+cloud+'\nconst MOON_DEFAULT_PROFILE='+json.dumps(PROFILE,separators=(',',':'))+';\nconst MOON_WORKER_SOURCE='+json.dumps(worker)+';\nconst MOON_OFFLINE_CHUNKS='+json.dumps(chunks,separators=(',',':'))+';\n'+concat(HOST_UNITS)+'\n})();\n'
  write(moon/'moon-host.js',host)
  # CP9 has already regenerated each entry; refuse stacking repeated Moon injections.
  entry=root/'index.html';text=entry.read_text(encoding='utf-8')
@@ -50,5 +51,6 @@ def build_moon(root):
  single='\n'.join(tags)+'\n<script>window.__SALAH_MOON_OFFLINE__=true;window.__SALAH_MOON_EMBEDDED__=true;</script>\n<script>'+inline(host)+'</script>\n'
  write(entry,text.replace('</body>',single+'</body>',1))
  sources={str(p.relative_to(root)).replace('\\','/'):sha(p.read_bytes()) for p in sorted([moon/'src'/n for n in WORKER_UNITS+['moon-precision.mjs','moon-native.mjs','moon_kernel.c']])}
+ sources['real-sky/native-cloud-transfer.mjs']=sha((root/'real-sky/native-cloud-transfer.mjs').read_bytes())
  write(moon/'BUILD.json',json.dumps({'schema':'moon-build/1','source':sources,'compilerRequired':False,'kernelSha256':sha(wasm),'workerSha256':sha(worker.encode()),'hostSha256':sha(host.encode()),'assetManifestSha256':sha((moon/'asset-manifest.json').read_bytes()),'chunkCount':len(chunks),'profile':PROFILE},indent=2)+'\n')
  return {'moonHostBytes':len(host.encode()),'moonWorkerBytes':len(worker.encode()),'assetBytes':sum(map(len,packed.values())),'chunks':len(chunks)}

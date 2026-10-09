@@ -29,7 +29,7 @@ OBSERVER=r'''(()=>{
 MONITOR=r'''()=>{
  window.__mqPerf={start:performance.now(),gaps:[],actions:[],statuses:[]};let last=performance.now();
  window.__mqTimer=setInterval(()=>{const now=performance.now(),s=SalahMoonRuntime.state.status;
-  __mqPerf.gaps.push({ms:now-last,status:s});last=now;
+  __mqPerf.gaps.push({at:now,ms:now-last,status:s,adoption:SalahMoonRuntime.state.lastAdoption});last=now;
   if(__mqPerf.statuses.at(-1)?.status!==s)__mqPerf.statuses.push({status:s,at:now});
  },25);
  window.__mqInteract=()=>{for(let i=1;i<=8;i++){const due=performance.now()+i*300;setTimeout(()=>{
@@ -96,10 +96,11 @@ def run(root, out, entry='http', phases=True):
             report['refinedSeconds']=time.monotonic()-start
             perf=page.evaluate('()=>{clearInterval(__mqTimer);return __mqPerf;}')
             check('prayer-and-settings-during-refinement', len(perf['actions'])==16 and all(a['opened'] for a in perf['actions']) and all(any(a['type']==kind and a['status']=='refining' for a in perf['actions']) for kind in ['date','settings']) and max(g['ms'] for g in perf['gaps'])<=250 and max(a['delayMs'] for a in perf['actions'])<=250,
-                  actions=perf['actions'],maxHeartbeatMs=max(g['ms'] for g in perf['gaps']),maxScheduledActionDelayMs=max(a['delayMs'] for a in perf['actions']),statuses=perf['statuses'],budgetMs=250,
+                  longGaps=[g for g in perf['gaps'] if g['ms']>100],actions=perf['actions'],maxHeartbeatMs=max(g['ms'] for g in perf['gaps']),maxScheduledActionDelayMs=max(a['delayMs'] for a in perf['actions']),statuses=perf['statuses'],budgetMs=250,
                   budgetMet=max(g['ms'] for g in perf['gaps'])<=250 and max(a['delayMs'] for a in perf['actions'])<=250)
             wait(page,"realSkyState().status==='ready'&&SalahMoonDetail.state.visible",60)
             def capture(name):
+                wait(page,"SalahMoonRuntime.state.status==='ready'&&!!SalahMoonRuntime.surface()&&SalahMoonDetail.state.visible",290)
                 page.locator('.c').screenshot(path=str(out/(name+'.png')))
                 page.locator('.moon-detail-canvas').screenshot(path=str(out/(name+'-moon.png')))
                 s=page.evaluate(STATE);g=s['geometry'];check(name,s['rows']==6 and s['detail']['visible'] and not s['moon']['legacyFallback'] and g['footerBottom']<=g['card']['y']+g['card']['height'],state=s)
@@ -110,10 +111,14 @@ def run(root, out, entry='http', phases=True):
                     wait(page,"SalahMoonRuntime.state.status==='ready'",290)
                     wait(page,'SalahMoonDetail.state.visible',60);capture(name)
                     checks[-1]['refinementSeconds']=time.monotonic()-phase_start;save()
-                page.evaluate("()=>{SIM.moonAlt='-20';renderMoon();render();SalahRealSky.compose();}")
-                wait(page,'SalahMoonDetail.state.visible',60);capture('below-horizon-calendar')
+                page.evaluate("()=>{SIM.moonAlt='-20';renderMoon();render();SalahMoonRuntime.request();SalahRealSky.compose();}")
+                capture('below-horizon-calendar')
                 check('below-horizon-has-no-moonlight',page.evaluate('qaState().moonTruth.moonlightOpacity===0&&SalahMoonRuntime.state.calendarProxyWeight===1'))
-                page.evaluate("()=>{SIM.moonAlt='20';renderMoon();render();SalahRealSky.compose();}")
+                page.evaluate("()=>{SIM.moonAlt='20';renderMoon();render();SalahMoonRuntime.request();SalahRealSky.compose();}")
+                # Horizon presentation can change the rounded display diameter
+                # and therefore the admitted phase bucket. A ready label or old
+                # canvas backing bytes cannot substitute for a CURRENT surface.
+                capture('restored-above-horizon-current')
             # Distinct cloud and direct-field controls on the actual adopted surface.
             encoding='\n'.join(line for line in (root/'real-sky/native-encoding.mjs').read_text(encoding='utf-8').splitlines() if not line.startswith('import ')).replace('export ','')
             for name,path in [('finite','astronomy.mjs'),('linearToSrgb','photometry.mjs')]:
@@ -122,6 +127,7 @@ def run(root, out, entry='http', phases=True):
             page.evaluate('(()=>{'+encoding+';window.__moonEncode=encodeNativeFrame;})()')
             proof=page.evaluate(r'''()=>{
  const detail=document.querySelector('.moon-detail-canvas'),cloud=document.querySelector('.cloudcanvas'),c=cloud.getContext('2d'),saved=c.getImageData(0,0,cloud.width,cloud.height),frame=realSkyFrame();
+ if(!SalahMoonRuntime.surface()||!SalahMoonDetail.state.visible)throw new Error('Composition control requires a current visible terrain surface');
  c.clearRect(0,0,cloud.width,cloud.height);const fresh=()=>({...frame,raster:{...frame.raster}});
  SalahMoonDetail.compose(fresh(),__moonEncode);const before=detail.getContext('2d').getImageData(0,0,detail.width,detail.height).data;
  const bright=fresh();bright.raster.stellarLinear=new Float64Array(frame.raster.stellarLinear.length).fill(50);bright.raster.diffusePhysicalLinear=new Float64Array(frame.raster.stellarLinear.length).fill(50);
@@ -139,10 +145,10 @@ def run(root, out, entry='http', phases=True):
  const a=cloudCode[3]/255;let maxCloud=0,samples=0,wrongDoubleTransmission=0;
  for(let y=Math.floor(H*.35);y<H*.65;y++)for(let x=Math.floor(W*.35);x<W*.65;x++){
   const i=4*(y*W+x);if(before[i+3]!==255)continue;samples++;
-  for(let k=0;k<3;k++){const b=inv(before[i+k]),f=inv(cloudCode[k]),expected=code(b*(1-a)+f*a);maxCloud=Math.max(maxCloud,Math.abs(expected-joined[i+k]));if(code(b*(1-a)*(1-a)+f*a)!==expected)wrongDoubleTransmission++;}
+  for(let k=0;k<3;k++){const b=-Math.expm1(-E*inv(before[i+k])),f=-Math.expm1(-E*inv(cloudCode[k])),scene=d=>-Math.log1p(-Math.min(1-1/131072,d))/E,expected=code(scene(b*(1-a)+f*a));maxCloud=Math.max(maxCloud,Math.abs(expected-joined[i+k]));if(code(scene(b*(1-a)*(1-a)+f*a))!==expected)wrongDoubleTransmission++;}
  }
  c.putImageData(saved,0,0);SalahRealSky.compose();
- return {innerOpaquePixels:inner,maximumInteriorStarDifference:maxInner,changedBoundaryChannels:changed,cloudSamples:samples,maximumCloudCodeDifference:maxCloud,wrongDoubleTransmission,cloudCode:[...cloudCode],cloudToleranceCodes:1,scope:'Synthetic direct-light and constant-cloud controls; exact interior star rejection, independent scalar foreground equation with one code of 8-bit reference quantization'};
+ return {innerOpaquePixels:inner,maximumInteriorStarDifference:maxInner,changedBoundaryChannels:changed,cloudSamples:samples,maximumCloudCodeDifference:maxCloud,wrongDoubleTransmission,cloudCode:[...cloudCode],cloudToleranceCodes:1,scope:'Synthetic direct-light and constant-cloud controls; exact interior star rejection, independent bounded display-linear foreground equation with one code of 8-bit reference quantization'};
 }''')
             check('opaque-to-stars-and-cloud-once',proof['innerOpaquePixels']>100 and proof['maximumInteriorStarDifference']==0 and proof['changedBoundaryChannels']>0 and proof['cloudSamples']>100 and proof['maximumCloudCodeDifference']<=1 and proof['wrongDoubleTransmission']>0,proof=proof)
             page.locator('.c').screenshot(path=str(out/'opacity-control-restored.png'))
@@ -160,10 +166,11 @@ def run(root, out, entry='http', phases=True):
             aba=page.evaluate(r'''async()=>{
  const stale=__mq.lastResult,w=__mq.workers.findLast(w=>w.isMoon),before=SalahMoonRuntime.state.rejected;
  await applyConfig({...CONFIG,label:'Moon B'},{save:false});await applyConfig({...CONFIG,label:'Moon receiving'},{save:false});
- w.onmessage({data:stale});return {rejected:SalahMoonRuntime.state.rejected-before,epoch:SalahMoonRuntime.state.epoch,staleEpoch:stale.identity.epoch,pending:SalahMoonRuntime.state.pending,legacyFallback:SalahMoonRuntime.state.legacyFallback};
+ w.onmessage({data:stale});return {rejected:SalahMoonRuntime.state.rejected-before,epoch:SalahMoonRuntime.state.epoch,staleEpoch:stale.identity.epoch,pending:SalahMoonRuntime.state.pending,withheld:SalahMoonRuntime.surface()===null};
 }''')
-            check('native-A-B-A-rejects-original-result',aba['rejected']>=1 and aba['epoch']>aba['staleEpoch'] and aba['legacyFallback'],observation=aba)
+            check('native-A-B-A-rejects-original-result',aba['rejected']>=1 and aba['epoch']>aba['staleEpoch'] and aba['withheld'],observation=aba)
             wait(page,"SalahMoonRuntime.state.status==='ready'",60)
+            retained=page.evaluate('SalahMoonRuntime.state.accepted.identity')
             malformed=page.evaluate(r'''()=>{
  const stale=structuredClone(__mq.lastResult);SalahMoonRuntime.refresh();const w=__mq.workers.findLast(w=>w.isMoon);
  // A matching result from the actual prior request is first fenced, then the
@@ -171,7 +178,8 @@ def run(root, out, entry='http', phases=True):
  const handler=w.onmessage;w.onmessage=e=>{if(e.data.kind==='result'){w.onmessage=handler;const m=structuredClone(e.data);m.surfaceLinear[0]=NaN;handler({data:m});}else handler(e);};return {armed:true};
 }''')
             wait(page,"SalahMoonRuntime.state.status==='unavailable'",60)
-            check('matching-malformed-result-withdraws',page.evaluate("SalahMoonRuntime.state.legacyFallback&&SalahMoonRuntime.surface()===null&&document.querySelectorAll('.p').length===6"),state=page.evaluate(STATE))
+            check('matching-malformed-result-rejected-original-current-surface-retained',page.evaluate("id=>SalahMoonRuntime.state.accepted.identity===id&&!!SalahMoonRuntime.surface()&&document.querySelectorAll('.p').length===6",retained),state=page.evaluate(STATE))
+            page.evaluate("SalahMoonRuntime.setProfile('reference')");check('failure-retention-revoked-on-new-profile',page.evaluate('SalahMoonRuntime.surface()===null'))
             check('retry-starts',page.evaluate('SalahMoonRuntime.retry()'));wait(page,"SalahMoonRuntime.state.status==='ready'",60)
             check('retry-recovers-refined-surface',page.evaluate('!!SalahMoonRuntime.surface()&&!SalahMoonRuntime.state.legacyFallback'))
             report['workerEvents']=page.evaluate('__mq.events');report['serverRequests']=served
