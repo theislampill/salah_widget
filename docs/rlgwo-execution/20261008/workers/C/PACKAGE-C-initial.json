@@ -1,0 +1,183 @@
+{
+  "schema": "rlgwo-primary-package-cold-review/v1",
+  "reviewer": "C",
+  "author": "PRIMARY",
+  "capturedAtUtc": "2026-10-09T04:14:27.153518+00:00",
+  "disposition": "CHANGES_REQUIRED",
+  "reviewedFiles": [
+    {
+      "path": "tools/assemble_execution_dag.py",
+      "sha256": "2366cd7b06c193008441132b3bf2d05c3f983fe8e01a4814ca99dc5c353da831",
+      "bytes": 21438
+    },
+    {
+      "path": "tools/validate_execution_plan.py",
+      "sha256": "42c1d575240e8ed81ebcc07451250c1f25085be616d6b986943118d68ecef21c",
+      "bytes": 10615
+    },
+    {
+      "path": "tools/assemble_priorities.py",
+      "sha256": "ab530322bc8ba34f3635a90333d1e48ea889bb9a0eb73b65e920125c54cd1ae5",
+      "bytes": 7754
+    },
+    {
+      "path": "tools/summarize_schedule.py",
+      "sha256": "76c64ca8f0d6060d2abb539b52bf31657cdff4f8c22a4f0c41230b512bb7246c",
+      "bytes": 2602
+    },
+    {
+      "path": "tools/graph_negative_controls.py",
+      "sha256": "4c354857c97d54db5234f963668035bfef70f5c6ea51441f7a6dec33fa4df08e",
+      "bytes": 4365
+    },
+    {
+      "path": "CLOSURE_DAG.json",
+      "sha256": "a98f85267f6a609823df94c765333fe28c53128382c6bba70430f72adc1cd22b",
+      "bytes": 1497186
+    },
+    {
+      "path": "CLOSURE_DAG.mmd",
+      "sha256": "a36f8a52647691052d596f246c410898ffa3e52347d22fd7069449d7c365a131",
+      "bytes": 50973
+    },
+    {
+      "path": "CLOSURE_DAG.md",
+      "sha256": "5f1ace5e83cf6cb05220446991b777684a1b5900973326205f9aa147b96ea840",
+      "bytes": 12778
+    },
+    {
+      "path": "RESOURCE_AND_AUTHORITY.md",
+      "sha256": "aa1278b76ac17fa253f2797faa1a802627c57bafde2d4d10cdabade1655ac30f",
+      "bytes": 3407
+    },
+    {
+      "path": "THIRD_THREAD_EXECUTION_PROMPT.md",
+      "sha256": "d77c60db3d90183d9a815efb159762fb6dfe05f72782c6b7cbf3260791ef0c84",
+      "bytes": 12762
+    },
+    {
+      "path": "SCHEDULE.json",
+      "sha256": "4b5e5d89575e555d8b8da4e545aee7e5f6dc7412051a23052048206649ac8df9",
+      "bytes": 6871
+    },
+    {
+      "path": "PRIORITIES.md",
+      "sha256": "51cba1545bcaced1ba95516aa4d03f1a33790cfb47ce952ba78b541bcfd21b93",
+      "bytes": 87971
+    },
+    {
+      "path": "INVENTORY.json",
+      "sha256": "25f154bd25a0cd45bc978d4fe73fc092b7a5f438c3f0c44e661486fc027a6da3",
+      "bytes": 14590
+    },
+    {
+      "path": "BASELINE_OBLIGATIONS.json",
+      "sha256": "ab13a69781449c8428dadb4aaed1a74f201c0fc5fda372ed72dd55c157992601",
+      "bytes": 319349
+    },
+    {
+      "path": "OBLIGATION_COVERAGE.csv",
+      "sha256": "b4a11482bcf5ba7f3d6c7136e4729262e208fa987561a6f17ba6427eab549246",
+      "bytes": 22032
+    },
+    {
+      "path": "DAG_RECONCILIATION.md",
+      "sha256": "9e2fdd44dc226272d3148d7e599e8e62f7ebdb94f7eff2cdd0aebea2f9d02311",
+      "bytes": 3387
+    },
+    {
+      "path": "OWNER_AMENDMENTS.md",
+      "sha256": "8db40674e79b32e875f96a045095d856e7a9f4bb554dfc865b43c38c1d65f5ee",
+      "bytes": 4722
+    },
+    {
+      "path": "DAG_VALIDATION.json",
+      "sha256": "929efbde1f0b89fcb68ff1794aed5a85a78c979c8ee8b4a6c0f645e5f3e1e934",
+      "bytes": 7710
+    }
+  ],
+  "reviewedGraph": {
+    "path": "CLOSURE_DAG.json",
+    "sha256": "a98f85267f6a609823df94c765333fe28c53128382c6bba70430f72adc1cd22b",
+    "bytes": 1497186
+  },
+  "initialSnapshot": "workers/C/package-review-initial/INPUTS.json",
+  "scope": "Read-only primary planning package/tool/graph/prompt review; no product campaign or source/tests/browser/GitHub effects. Initial findings preserved for focused correction review.",
+  "findings": [
+    {
+      "id": "C-PACKAGE-01",
+      "severity": "material",
+      "classification": "unbound duplicate authority/delivery interface",
+      "location": "tools/assemble_execution_dag.py release_stages and produced-interface join; CLOSURE_DAG.json CLOSE-R000B/CLOSE-R000C/CLOSE-R000D/CLOSE-R0024 inputs",
+      "failureMode": "Authored uppercase Rxxxx-exact-head-authority/v1 and Rxxxx-required-delivery/v1 remain GATED producerless externals while generated stages emit lowercase rxxxx-exact-head-authority/v1 and rxxxx-delivery/v1 at different artifacts. Completion of actual authority/delivery cannot satisfy the literal extra receipt input without an explicit adapter/reconciliation.",
+      "counterexample": "CLOSE-R000B receives r000b-delivery/v1 from R000B-DELIVER yet still waits for producerless R000B-required-delivery/v1. The source graph structurally passes because explicit unavailable externals are allowed.",
+      "smallestCorrection": "Normalize the authored IDs to actual producers or add exact receipt adapters with explicit interfaceAliases preserving consumer meaning and producer artifact path. Preserve source/spec receipt names as provenance; do not silently waive delivery.",
+      "affectedNodes": [
+        "CLOSE-R000B",
+        "CLOSE-R000C",
+        "CLOSE-R000D",
+        "CLOSE-R0024"
+      ],
+      "contractBinding": "COLD_REVIEW_BRIEF6/7 and primary exact-head/delivery expansion directive."
+    },
+    {
+      "id": "C-PACKAGE-02",
+      "severity": "material",
+      "classification": "missing heavy resource reservation",
+      "location": "tools/assemble_execution_dag.py generic runtime-merge DELIVER; CLOSURE_DAG.json R0024-DELIVER resources/estimate",
+      "failureMode": "R0024-DELIVER requires actual affected public runtime consumer readback but reserves integrator/github-writer only and0 exclusive minutes. It can overlap the already capacity1 browser/performance queue, violating the declared one-heavy-job boundary and undercounting its resource demand.",
+      "counterexample": "R0024 native delivered information check can run while another heavy node owns the browser lease if only listed resources are reserved. #24 uses its existing heavy-browser delivery and is already covered; it is not an affected example.",
+      "smallestCorrection": "For generic runtime-merge delivery with actual browser consumer proof, reserve heavy-browser and a qualified bounded planning range; preserve existing issue-specific ranges and acceptance thresholds.",
+      "affectedNodes": [
+        "R0024-DELIVER"
+      ],
+      "contractBinding": "RESOURCE_AND_AUTHORITY.md capacity1 heavy queue and COLD_REVIEW_BRIEF6/7."
+    },
+    {
+      "id": "C-PACKAGE-03",
+      "severity": "material",
+      "classification": "false documentation release dependency",
+      "location": "tools/assemble_execution_dag.py release_stages review_inputs uses closure.requiredOutputs; R0013-RELEASE-REVIEW/R0013-DELIVER and R0010-RELEASE-REVIEW",
+      "failureMode": "Docs-merge approval/delivery waits for every issue native/qualification output. Independent accurate documentation cannot deliver while unrelated native proof/platform acquisition waits, despite an accepted source/fact interface and separate original documentation row. This contradicts the planned fastest ready-groups schedule.",
+      "counterexample": "R0013-DOCS requires SATISFIED bash-input-cache-config/v1 and produces reviewed terminal/review/manual/cache/newline facts for19-09. R0013-RELEASE-REVIEW nevertheless requires Apple detector/launch output and QUALIFY, and DELIVER also directly requires QUALIFY. Native detector row19-05 is a closure gate, not a dependency of the correct README delta. R0010-O09 likewise is independent of missing O12 native boot proof.",
+      "smallestCorrection": "Permit an independently reviewed docs-only candidate to obtain exact-head owner approval and docs delivery from its actual documentation/fact dependencies while full issue native/evidence qualification remains on CLOSE. Coalesce compatible ready docs/approval receipts without requiring all documentation batches or all issue closures. If a particular documentation fact needs new native proof, retain that exact interface gate.",
+      "affectedNodes": [
+        "R0013-RELEASE-REVIEW",
+        "R0013-DELIVER",
+        "R0010-RELEASE-REVIEW"
+      ],
+      "contractBinding": "Original19-09 versus19-05 and R0010-O09 versusO12; CLOSURE_DAG.md ready small groups/no unrelated native-platform blockage; parent scheduling review request."
+    }
+  ],
+  "resolvedFindingIds": [],
+  "remainingMaterialFindingIds": [
+    "C-PACKAGE-01",
+    "C-PACKAGE-02",
+    "C-PACKAGE-03"
+  ],
+  "checks": {
+    "originalRows": 111,
+    "exactOriginalParentTexts": true,
+    "nodes": 202,
+    "typedEdges": 441,
+    "amendmentRows": 1,
+    "deliveredSource": {
+      "sourceTarget": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "sourceTree": "35208181eea714c17f5e77b2644e76434345db60",
+      "auditEvidenceCommit": "b879573c298f19189d1f2392108b8b9f3b2cda0b",
+      "runtimeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260"
+    },
+    "structuralValidation": "Primary recorded PASS on this graph; C independently compared exact baseline parents and inspected generation/validation code. This is not runtime qualification.",
+    "authority": "Proposed executor launch grants bounded implementation/commit/DraftPR/evidence/justified closure only; exact-head main merge/deploy authority remains separately required.",
+    "reuse": "Scope-specific source/input/platform/consumer equivalence; N001/N002PARTIAL/N003BLOCKED and11 accepted closed issues remain intact.",
+    "scopePreservation": "H5/H8 current model presentation, excluded nowcast research, source/generator boundaries, V1/PR38 protections, startup source ownership, physical/calendar distinction and whole-scene gates remain explicit.",
+    "negativeControls": "Primary planning-validator discriminators are separate from product evidence; inspect source/actual receipt versions on final rebind.",
+    "writerOwnership": "Text requires disjoint isolated drafts, one shared source/generated integrator and one shared docs writer; heavy queue is capacity1. Alias classes alone are not permission for competing final shared-file writes."
+  },
+  "acknowledgedPendingInputs": [
+    "F/E reciprocal cold review corrections and parent-ID integration are acknowledged provisional inputs, not new findings.",
+    "Definite startup source/runtime/writeup/glow handoff and real-parent/platform/cost-budget gates remain pending; they prohibit FINAL sealing until acquired/reconciled but do not prevent independent ready specification work."
+  ],
+  "priorityAndSchedule": "Priority assesses residual impact/confidence/exposure separately from cost/resource availability. No artificial P0; unavailable platform waits have no invented ETA. Structural longest paths and demand are planning envelopes only. C-PACKAGE-03 is a concrete false dependency, not a claim of global optimality.",
+  "externalEffects": []
+}

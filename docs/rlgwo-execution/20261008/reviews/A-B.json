@@ -1,0 +1,603 @@
+{
+  "schema": "rlgwo-independent-cold-review/1",
+  "reviewer": "A",
+  "author": "B",
+  "reviewedAtUtc": "2026-10-09T04:02:26.686533+00:00",
+  "stage": "FINAL_HASH_BOUND_COLD_REVIEW",
+  "sourceTarget": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "auditEvidenceCommit": "b879573c298f19189d1f2392108b8b9f3b2cda0b",
+  "authorFreeze": {
+    "path": "workers/B/AUTHOR_FREEZE.json",
+    "sha256": "5a5b3688fd7b852df7af03ddcf9c436242f6071a021d8a00b7b233b67ad7bce6"
+  },
+  "inputs": [
+    {
+      "path": "COLD_REVIEW_BRIEF.md",
+      "sha256": "97f4aecd11285d734af5e2d3d6f91b8a912c6f454afc5e21b10d4add9c688365"
+    },
+    {
+      "path": "BASELINE_OBLIGATIONS.json",
+      "sha256": "ab13a69781449c8428dadb4aaed1a74f201c0fc5fda372ed72dd55c157992601"
+    },
+    {
+      "path": "issues/08.json",
+      "sha256": "55ea5f0972e58b2369611d3661e5fe84710c1b41ea783e15acfbcf9c36b89168"
+    },
+    {
+      "path": "issues/25.json",
+      "sha256": "76d30395f636e627d43f88fe550731aaf1b7bc7e938a094bfc18392626e090c9"
+    },
+    {
+      "path": "issues/32.json",
+      "sha256": "77fd416bf258d3e390db89fde8fcfce02d6561f931215a043db01afb08faa9ec"
+    }
+  ],
+  "sourceReadback": {
+    "path": "src/native/index.html",
+    "sha256": "19dd9ba814fdb426b75e4282aca2e3bf20569b5b55ef9764d13e786c84c7b012"
+  },
+  "issues": [
+    {
+      "issue": 8,
+      "canonicalId": "R0008",
+      "disposition": "PASS",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R0008.md",
+          "sha256": "e2f67a8ab876005e9dbcf502f22b85c57c4077296f3d1dea4aad3c4455e74988"
+        },
+        {
+          "path": "comments/08.md",
+          "sha256": "e2f67a8ab876005e9dbcf502f22b85c57c4077296f3d1dea4aad3c4455e74988"
+        },
+        {
+          "path": "metadata/R0008.json",
+          "sha256": "49e98556fec2ab279f728d5ec56a66e7bf0657279f47c8faa53b211ea15c7b62"
+        }
+      ],
+      "resolvedFindingIds": [
+        "A-B-R0008-01"
+      ],
+      "remainingMaterialFindingIds": []
+    },
+    {
+      "issue": 25,
+      "canonicalId": "R0019",
+      "disposition": "PASS",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R0019.md",
+          "sha256": "e67d9b93518f0b07c34caf2d54a73bdf315788b307435ec183744ee41209fde9"
+        },
+        {
+          "path": "comments/25.md",
+          "sha256": "e67d9b93518f0b07c34caf2d54a73bdf315788b307435ec183744ee41209fde9"
+        },
+        {
+          "path": "metadata/R0019.json",
+          "sha256": "a5eeb9499fdb6230aa4612073df44b6d99586264d4edbbd7889380e3983e1cd7"
+        }
+      ],
+      "resolvedFindingIds": [],
+      "remainingMaterialFindingIds": []
+    },
+    {
+      "issue": 32,
+      "canonicalId": "R0020",
+      "disposition": "PASS",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R0020.md",
+          "sha256": "5bc7cec5ddb25306dc3130c30905a8ea45dfd72186f9ad90bba7d878906240eb"
+        },
+        {
+          "path": "comments/32.md",
+          "sha256": "5bc7cec5ddb25306dc3130c30905a8ea45dfd72186f9ad90bba7d878906240eb"
+        },
+        {
+          "path": "metadata/R0020.json",
+          "sha256": "299f651de542e3c235399c125b713de7414f54abe7283ab220bfa0a0593b541e"
+        }
+      ],
+      "resolvedFindingIds": [
+        "A-B-R0020-01"
+      ],
+      "remainingMaterialFindingIds": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "A-B-R0008-01",
+      "issue": 8,
+      "priority": "P1",
+      "material": true,
+      "obligations": [
+        "R0008-O08"
+      ],
+      "locations": [
+        {
+          "path": "REMAINING_RLGWOs/R0008.md",
+          "line": 38
+        },
+        {
+          "path": "REMAINING_RLGWOs/R0008.md",
+          "line": 81
+        },
+        {
+          "path": "comments/08.md",
+          "line": 38
+        },
+        {
+          "path": "metadata/R0008.json",
+          "jsonPointer": "/remainingObligations/0/acceptance/0"
+        }
+      ],
+      "failureMode": "The recipe separately reaches a pure parser with captured NY/global Riyadh, an eligible NY fetch without a specified reached global-zone change, and an obsolete new-generation request. This leaves the mandatory real deferred weather caller with captured NY != current global zone unbound. A helper/parser kill plus early obsolete rejection can pass without exercising that combined consumer. The table also says wxEpoch receives a sixth argument; its actual signature has two arguments, while epochForTzTime receives the sixth zone argument.",
+      "sourceEvidence": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1236,
+            1242
+          ],
+          "claim": "wxEpoch(s,zone) delegates to epochForTzTime(y,mo,d,h,mi,zone)."
+        },
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1005,
+            1026
+          ],
+          "claim": "Eligibility checks generation/slot/attempt/deadline; a same-generation prayer provider-zone adoption does not obsolete the weather operation."
+        },
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            1362,
+            1383
+          ],
+          "claim": "Real fetch captures zone before deferred body and passes captured ctx through current/hourly admission."
+        },
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            3268,
+            3283
+          ],
+          "claim": "Guarded real prayer metadata may change global tz while the same generation remains active."
+        }
+      ],
+      "smallestCorrection": "Keep the pure parser/source receipt as supplementary. Add an explicit actual-entry positive: pre-script NY on March8, start actual NY weather with JSON body held; settle an actual eligible same-generation prayer response with Riyadh metadata on the same Gregorian day; record unchanged generation/owning weather slot and changed global zone; release NY weather before the existing deadline. Assert actual wxEpoch(s,NY) -> epochForTzTime(...,NY sixth) gives 07:30Z, and real current/track/cache commit under captured identity. The ignored-zone mutant must fail this reached consumer with the healthy control passing. Preserve the separate configuration-generation no-effect negative. Update spec/comment and R0008-A08 fixture/assertion together; preserve parentText verbatim.",
+      "scope": "Execution-contract correction only; no demonstrated runtime bug, new production repair, new platform or broadened obligation.",
+      "resolution": {
+        "status": "RESOLVED",
+        "review": "The actual-entry deferred NY weather operation now remains eligible while guarded same-generation prayer adoption changes global tz to Riyadh. Original wrapper/resolver argument positions, actual 07:30Z current/track/cache/source-age readback and reached ignored-zone mutant are explicit. Configuration-generation rejection stays separate.",
+        "locations": [
+          {
+            "path": "REMAINING_RLGWOs/R0008.md",
+            "line": 40
+          },
+          {
+            "path": "metadata/R0008.json",
+            "jsonPointer": "/remainingObligations/0/acceptance/0"
+          }
+        ]
+      }
+    },
+    {
+      "id": "A-B-R0020-01",
+      "issue": 32,
+      "priority": "P1",
+      "material": true,
+      "obligations": [
+        "R0020-O06",
+        "R0020-O12",
+        "R0020-O13"
+      ],
+      "locations": [
+        {
+          "path": "REMAINING_RLGWOs/R0020.md",
+          "line": 30
+        },
+        {
+          "path": "comments/32.md",
+          "line": 30
+        },
+        {
+          "path": "metadata/R0020.json",
+          "jsonPointer": "/remainingObligations/0/acceptance/0/fixture"
+        },
+        {
+          "path": "metadata/R0020.json",
+          "jsonPointer": "/nodes/1/outputs/0"
+        }
+      ],
+      "failureMode": "WALL-HELD seeds a fresh cache and holds the initial current-day7 loader, then expects a next native scheduled callback to start prefetch9 before releasing current7. Cache adoption can render, but boot awaits loadPrayerData before startRenderLoop. The stated cold-entry sequence leaves _loopStarted=false at that required callback. Manually calling render/startRenderLoop to make it pass would replace the scheduled boot pathway.",
+      "sourceEvidence": [
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            3230,
+            3230
+          ],
+          "claim": "New document starts _loopStarted=false."
+        },
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            3251,
+            3288
+          ],
+          "claim": "Cache/current admission renders when no loop exists; it does not start the loop and the held loader remains pending."
+        },
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            3389,
+            3403
+          ],
+          "claim": "Boot starts its single loop only after awaited initial loader finishes."
+        },
+        {
+          "path": "src/native/index.html",
+          "lines": [
+            3298,
+            3327
+          ],
+          "claim": "Actual applyConfig starts a fresh generation/current loader without resetting an already running loop, and same-config cache remains readable."
+        }
+      ],
+      "smallestCorrection": "State a settled healthy day7 boot with recorded _loopStarted=true, one native scheduled callback and admitted/persisted cache7. Initiate the real applyConfig refresh with unchanged coordinates/UTC/method/school (a label-only change is sufficient), retaining that loop and cache identity. Hold its current7 response and the new generation's native prefetch8; then perform the existing midnight/prefetch8/current7/corrected8/prefetch9 releases within unchanged attempt deadlines/budget. Record generations/operation IDs and assert the successor prefetch9 slot is already owning before current7 finally. Bind this warm-entry prerequisite into the fixture contract and R0020-A06/A12/A13 without directly assigning slots or manually starting/rendering the loop.",
+      "scope": "Execution-contract correction only; no new product requirement or assertion that current runtime is defective.",
+      "resolution": {
+        "status": "RESOLVED",
+        "review": "WALL-HELD now starts after healthy settled boot with admitted persisted day7 cache, _loopStarted=true and an actual scheduled callback. Label-only actual applyConfig retains that loop/cache and starts the observed new generation's held current7/prefetch8. Prefetch9 must be observed owning before current7 finally, without manual render/startloop/slot assignment; A06/A12/A13 and the early fixture contract agree.",
+        "locations": [
+          {
+            "path": "REMAINING_RLGWOs/R0020.md",
+            "line": 32
+          },
+          {
+            "path": "metadata/R0020.json",
+            "jsonPointer": "/remainingObligations/0/acceptance/0/fixture"
+          },
+          {
+            "path": "metadata/R0020.json",
+            "jsonPointer": "/nodes/1/outputs/0"
+          }
+        ]
+      }
+    }
+  ],
+  "reviewScope": "Independent cold executability review of frozen specifications/comments/metadata and corresponding full issue packets/audit rows; not a repeated product audit.",
+  "checks": {
+    "acceptedRows": 28,
+    "remainingRows": 22,
+    "nodes": 12,
+    "coverageStatusParentTextCommentEqualityFreezeInterfacesClosureDelivery": "PASS",
+    "productTests": "NOT_RUN",
+    "browsers": "NOT_RUN",
+    "sourceOrGithubEffects": "NONE",
+    "finalQualificationDeliverySplit": "PASS: all three reviewed candidates have exact downstream required receipt IDs/status/producer; no merge receipt needed to finish qualification; closure remains delivered-state gated",
+    "reviewedRevisionProvenance": "PASS: unpublished rev1 versus cold-corrected rev2 explicit in all three standalone comments/specifications",
+    "readScope": "All three final specifications read, synchronized comment bytes verified, complete remaining/accepted metadata/issue/audit packets and revised consumer/delivery interfaces reconciled; source inspected read-only"
+  },
+  "acceptedDecisions": [
+    "R0019 preserves accepted short native access proof, actual Tab/long/touch/font/continuous-open/no-effect consumers and approved 330x534 outer / 325x530 inner dimensions.",
+    "R0008 preserves accepted inverse/mutation proof, current-model precipitation amendment and independent hourly/current admission; native responsiveness has no invented millisecond deadline.",
+    "R0020 preserves retained exact-root 27-assertion native direct-wall/model-host-sky proof and 44 source controls; scheduled release evidence remains a distinct future gate.",
+    "All three preserve explicit docs-merge and runtime-merge-if-changed delivery, independent closure, affected-only currentness reuse and single-writer/browser resource constraints.",
+    "Final corrected metadata output-ID/artifact interfaces are consistent; primary-reported earlier interface finding is not repeated.",
+    "Primary qualification/delivery split is usable: local QUALIFY produces reviewed PRE_DELIVERY_CANDIDATE; exact primary-assigned downstream delivery receipt remains PENDING_DOWNSTREAM and mandatory before manual closure."
+  ],
+  "nextAction": "Primary independently reconciles these exact reviewed final hashes and maps the declared downstream delivery receipts before specification readiness/publication. No product implementation, native proof, delivery or issue closure is implied by this cold-review PASS.",
+  "disposition": "PASS",
+  "unresolvedMaterialFindings": [],
+  "initialReview": {
+    "path": "workers/A/cold-review-B-initial.json",
+    "sha256": "ca5a1d82e00e62aa5da74fec07b62bcbf02673fc9be509e285dfddb4b7cede16",
+    "authorFreeze": {
+      "path": "workers/B/AUTHOR_FREEZE.json",
+      "sha256": "94fab961254c9c60a431295c1baf0fd4e3de38cefd673134132228857cf86309"
+    },
+    "issues": [
+      {
+        "issue": 8,
+        "canonicalId": "R0008",
+        "reviewedFiles": [
+          {
+            "path": "REMAINING_RLGWOs/R0008.md",
+            "sha256": "68f38bcb1f498621d0ddc6b2c886ebe853d7fbc4d74428f0be65a1b3d93b6cd2",
+            "bytes": 24401
+          },
+          {
+            "path": "comments/08.md",
+            "sha256": "68f38bcb1f498621d0ddc6b2c886ebe853d7fbc4d74428f0be65a1b3d93b6cd2",
+            "bytes": 24401
+          },
+          {
+            "path": "metadata/R0008.json",
+            "sha256": "3dd5fa9637d0099769ba090992b73edf91a6782732ded83f54a2f5fa400b2acd",
+            "bytes": 44892
+          }
+        ],
+        "retainedIds": [
+          "R0008-O01",
+          "R0008-O02",
+          "R0008-O03",
+          "R0008-O04",
+          "R0008-O05",
+          "R0008-O06",
+          "R0008-O07",
+          "R0008-O10",
+          "R0008-O11"
+        ],
+        "remainingIds": [
+          "R0008-O08",
+          "R0008-O09",
+          "R0008-O12",
+          "R0008-O13",
+          "R0008-O14",
+          "R0008-O15",
+          "R0008-O16"
+        ],
+        "structuralChecks": "PASS",
+        "nodeCount": 4,
+        "disposition": "CHANGES_REQUIRED",
+        "findingIds": [
+          "A-B-R0008-01"
+        ]
+      },
+      {
+        "issue": 25,
+        "canonicalId": "R0019",
+        "reviewedFiles": [
+          {
+            "path": "REMAINING_RLGWOs/R0019.md",
+            "sha256": "90301eccb8f12cd048a769a0c083801088818c5419dbe9f9d074e4cf72229d2a",
+            "bytes": 26538
+          },
+          {
+            "path": "comments/25.md",
+            "sha256": "90301eccb8f12cd048a769a0c083801088818c5419dbe9f9d074e4cf72229d2a",
+            "bytes": 26538
+          },
+          {
+            "path": "metadata/R0019.json",
+            "sha256": "d593cd050a1c3c6bbd747fc1cd299418e0ed89343beda4bd65f2e9ef9cac65db",
+            "bytes": 51300
+          }
+        ],
+        "retainedIds": [
+          "R0019-O01",
+          "R0019-O02",
+          "R0019-O03",
+          "R0019-O04",
+          "R0019-O05",
+          "R0019-O06",
+          "R0019-O07",
+          "R0019-O08",
+          "R0019-O09",
+          "R0019-O10"
+        ],
+        "remainingIds": [
+          "R0019-O11",
+          "R0019-O12",
+          "R0019-O13",
+          "R0019-O14",
+          "R0019-O15",
+          "R0019-O16",
+          "R0019-O17",
+          "R0019-O18"
+        ],
+        "structuralChecks": "PASS",
+        "nodeCount": 4,
+        "disposition": "PASS",
+        "findingIds": []
+      },
+      {
+        "issue": 32,
+        "canonicalId": "R0020",
+        "reviewedFiles": [
+          {
+            "path": "REMAINING_RLGWOs/R0020.md",
+            "sha256": "b67aded0f23c4d000a57a8bd024141f6998de2774315a74f002863283c503dcf",
+            "bytes": 27704
+          },
+          {
+            "path": "comments/32.md",
+            "sha256": "b67aded0f23c4d000a57a8bd024141f6998de2774315a74f002863283c503dcf",
+            "bytes": 27704
+          },
+          {
+            "path": "metadata/R0020.json",
+            "sha256": "d16c721d3e37d665fc1f01758582ab331ffb64dbf6f4c53feabd2cbeca85c375",
+            "bytes": 49115
+          }
+        ],
+        "retainedIds": [
+          "R0020-O01",
+          "R0020-O02",
+          "R0020-O03",
+          "R0020-O04",
+          "R0020-O05",
+          "R0020-O07",
+          "R0020-O09",
+          "R0020-O10",
+          "R0020-O11"
+        ],
+        "remainingIds": [
+          "R0020-O06",
+          "R0020-O08",
+          "R0020-O12",
+          "R0020-O13",
+          "R0020-O14",
+          "R0020-O15",
+          "R0020-O16"
+        ],
+        "structuralChecks": "PASS",
+        "nodeCount": 4,
+        "disposition": "CHANGES_REQUIRED",
+        "findingIds": [
+          "A-B-R0020-01"
+        ]
+      }
+    ]
+  },
+  "correctionReceipt": {
+    "path": "workers/B/cold-corrections-rev2.json",
+    "sha256": "feb5101fd61ee4946c622b7ee7ecdb8e11728865ddc34e2d5f6802bcf3251b2a"
+  },
+  "issueDetails": [
+    {
+      "issue": 8,
+      "canonicalId": "R0008",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R0008.md",
+          "sha256": "e2f67a8ab876005e9dbcf502f22b85c57c4077296f3d1dea4aad3c4455e74988",
+          "bytes": 26103
+        },
+        {
+          "path": "comments/08.md",
+          "sha256": "e2f67a8ab876005e9dbcf502f22b85c57c4077296f3d1dea4aad3c4455e74988",
+          "bytes": 26103
+        },
+        {
+          "path": "metadata/R0008.json",
+          "sha256": "49e98556fec2ab279f728d5ec56a66e7bf0657279f47c8faa53b211ea15c7b62",
+          "bytes": 47368
+        }
+      ],
+      "retainedIds": [
+        "R0008-O01",
+        "R0008-O02",
+        "R0008-O03",
+        "R0008-O04",
+        "R0008-O05",
+        "R0008-O06",
+        "R0008-O07",
+        "R0008-O10",
+        "R0008-O11"
+      ],
+      "remainingIds": [
+        "R0008-O08",
+        "R0008-O09",
+        "R0008-O12",
+        "R0008-O13",
+        "R0008-O14",
+        "R0008-O15",
+        "R0008-O16"
+      ],
+      "structuralChecks": "PASS",
+      "nodeCount": 4,
+      "disposition": "PASS",
+      "findingsResolved": [
+        "A-B-R0008-01"
+      ],
+      "findingIds": [],
+      "executionStatus": "NOT_EXECUTED; required native/docs/delivery gates remain future work",
+      "deliveryReview": "PASS: reviewed candidate can finish before delivery; declared downstream receipt remains mandatory for closure"
+    },
+    {
+      "issue": 25,
+      "canonicalId": "R0019",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R0019.md",
+          "sha256": "e67d9b93518f0b07c34caf2d54a73bdf315788b307435ec183744ee41209fde9",
+          "bytes": 27454
+        },
+        {
+          "path": "comments/25.md",
+          "sha256": "e67d9b93518f0b07c34caf2d54a73bdf315788b307435ec183744ee41209fde9",
+          "bytes": 27454
+        },
+        {
+          "path": "metadata/R0019.json",
+          "sha256": "a5eeb9499fdb6230aa4612073df44b6d99586264d4edbbd7889380e3983e1cd7",
+          "bytes": 52978
+        }
+      ],
+      "retainedIds": [
+        "R0019-O01",
+        "R0019-O02",
+        "R0019-O03",
+        "R0019-O04",
+        "R0019-O05",
+        "R0019-O06",
+        "R0019-O07",
+        "R0019-O08",
+        "R0019-O09",
+        "R0019-O10"
+      ],
+      "remainingIds": [
+        "R0019-O11",
+        "R0019-O12",
+        "R0019-O13",
+        "R0019-O14",
+        "R0019-O15",
+        "R0019-O16",
+        "R0019-O17",
+        "R0019-O18"
+      ],
+      "structuralChecks": "PASS",
+      "nodeCount": 4,
+      "disposition": "PASS",
+      "findingsResolved": [],
+      "findingIds": [],
+      "executionStatus": "NOT_EXECUTED; required native/docs/delivery gates remain future work",
+      "deliveryReview": "PASS: reviewed candidate can finish before delivery; declared downstream receipt remains mandatory for closure"
+    },
+    {
+      "issue": 32,
+      "canonicalId": "R0020",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R0020.md",
+          "sha256": "5bc7cec5ddb25306dc3130c30905a8ea45dfd72186f9ad90bba7d878906240eb",
+          "bytes": 30041
+        },
+        {
+          "path": "comments/32.md",
+          "sha256": "5bc7cec5ddb25306dc3130c30905a8ea45dfd72186f9ad90bba7d878906240eb",
+          "bytes": 30041
+        },
+        {
+          "path": "metadata/R0020.json",
+          "sha256": "299f651de542e3c235399c125b713de7414f54abe7283ab220bfa0a0593b541e",
+          "bytes": 52585
+        }
+      ],
+      "retainedIds": [
+        "R0020-O01",
+        "R0020-O02",
+        "R0020-O03",
+        "R0020-O04",
+        "R0020-O05",
+        "R0020-O07",
+        "R0020-O09",
+        "R0020-O10",
+        "R0020-O11"
+      ],
+      "remainingIds": [
+        "R0020-O06",
+        "R0020-O08",
+        "R0020-O12",
+        "R0020-O13",
+        "R0020-O14",
+        "R0020-O15",
+        "R0020-O16"
+      ],
+      "structuralChecks": "PASS",
+      "nodeCount": 4,
+      "disposition": "PASS",
+      "findingsResolved": [
+        "A-B-R0020-01"
+      ],
+      "findingIds": [],
+      "executionStatus": "NOT_EXECUTED; required native/docs/delivery gates remain future work",
+      "deliveryReview": "PASS: reviewed candidate can finish before delivery; declared downstream receipt remains mandatory for closure"
+    }
+  ]
+}

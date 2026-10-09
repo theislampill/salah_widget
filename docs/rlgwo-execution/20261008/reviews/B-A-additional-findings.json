@@ -1,0 +1,53 @@
+{
+  "schema": "independent-cold-review-finding/1",
+  "reviewer": "B",
+  "author": "A",
+  "authorFreezeSha256": "ed347fd015585a3de80f11f10e8a68a0ee4c40f7207a6c34a17cc1683df69530",
+  "reviewStage": "IN_PROGRESS; preserve after full original bodies/discussions and specifications read",
+  "scope": "Planning/source review only; no product tests/browser or A/source/GitHub edits. These are fixture/delivery contract ambiguities, not demonstrated production bugs.",
+  "findings": [
+    {
+      "id": "B-A-F02",
+      "issues": [7],
+      "material": true,
+      "obligations": ["7.15"],
+      "locations": [
+        {"path": "REMAINING_RLGWOs/R0007.md", "line": 109},
+        {"path": "REMAINING_RLGWOs/R0007.md", "line": 156},
+        {"path": "REMAINING_RLGWOs/R0007.md", "line": 157},
+        {"path": "metadata/R0007.json", "jsonPointer": "/remainingObligations/2/acceptance"}
+      ],
+      "failureMode": "D4 and A06 claim frozen native preview/dirty-frame recovery, but A05 specifies only a fixed fixture Date at04:30Z, and the generic environment omits simTime/timeScale for live recovery. Fixed Date in the no-override branch still has FOLLOW_WALL_CLOCK=true/TIMESCALE=1; it is a constant-wall fixture rather than the explicit frozen preview branch. Thus an executor can label that passing scene frozen without reaching the claimed native mode. This does not reopen accepted source row7.07; it clarifies the new native claim under7.15.",
+      "sourceEvidence": [
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L864-L867",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L932-L947",
+        "https://github.com/theislampill/salah_widget/issues/7#issuecomment-6073061264"
+      ],
+      "smallestCorrection": "Specify a separate actual frozen overnight-recovery lane before natural boot: NewYork tz, pre-scriptDate2026-03-08T04:30Z (localMarch7), simTime=23:30 with timeScale omitted, native performance/rAF/timers retained. Read TIMESCALE=0,FOLLOW_WALL_CLOCK=false,ADVANCING=false and identical epoch before/after real matchingMar8 prefetch settlement, no clock/manual-render calls; first native dirty frame restores270m and12/24h. Bind A05/A06/environment metadata and comment. Keep no-simTime/timeScale rule for the separate normal live-motion/recovery control. A unique current23:30 allows actual future endpoint gap/fold controls without invalidating the whole scene.",
+      "recheck": "Read-only hash-bound review of recipe/flags/environment/acceptance and synchronized comment/metadata; no runtime execution required in this stage."
+    },
+    {
+      "id": "B-A-F03",
+      "issues": [2, 6, 7],
+      "material": true,
+      "obligations": ["2.13", "2.15", "6.13", "6.16", "7.14", "7.16"],
+      "locations": [
+        {"path": "metadata/R0002.json", "jsonPointer": "/closure/conditions/2"},
+        {"path": "metadata/R0006.json", "jsonPointer": "/closure/conditions/2"},
+        {"path": "metadata/R0007.json", "jsonPointer": "/closure/conditions/2"},
+        {"path": "metadata/R0002.json", "jsonPointer": "/nodes/3/outputs/0/contract"},
+        {"path": "metadata/R0006.json", "jsonPointer": "/nodes/3/outputs/0/contract"},
+        {"path": "metadata/R0007.json", "jsonPointer": "/nodes/3/outputs/0/contract"}
+      ],
+      "failureMode": "The enumerated D facts and shared-file ownership correctly restrict ARCHITECTURE toR0004, but #2/#6/#7 generic delivery output and final closure condition say Required README/ARCHITECTURE facts merged/published. The final gate therefore reads broader than the actual per-issue docs contract and could make independent evidence/docs completion depend on unrelated R0004 ARCHITECTURE delivery. Do not add that gate from generic wording.",
+      "sourceEvidence": [
+        "https://github.com/theislampill/salah_widget/issues/2#issuecomment-6073034448",
+        "https://github.com/theislampill/salah_widget/issues/6#issuecomment-6073060055",
+        "https://github.com/theislampill/salah_widget/issues/7#issuecomment-6073061264",
+        "https://github.com/theislampill/salah_widget/issues/4#issuecomment-6073056799"
+      ],
+      "smallestCorrection": "Generate required documentation paths/facts per issue: README only for2/6/7, README plus enumerated ARCHITECTURE facts for4;3 retains evidence-publication-and-existing-runtime-readback with no routine docs/runtime merge prerequisite. Substitute exact required per-issue facts in doc/delivery output contracts, metadata final closure condition and matching F/H publication wording. Preserve all enumerated facts and coalesced shared README paragraphs; no new doc edit or test is requested now.",
+      "recheck": "Hash-bound doc/closure/interface consistency review across affected spec/comment/meta and unchanged4/3 scope; no source/browser tests required."
+    }
+  ]
+}

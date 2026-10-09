@@ -1,0 +1,25 @@
+{
+  "schema": "independent-cold-review-finding/1",
+  "reviewer": "B",
+  "author": "A",
+  "authorFreezeSha256": "3265b30f8f41b653b2383e4fa83e2182588f08865e300a9ea5a2bca8bf090df0",
+  "reviewStage": "IN_PROGRESS; first material finding retained before author correction",
+  "scope": "Read-only specification/source review; no product test, browser, source/GitHub mutation or native PASS claim.",
+  "findings": [
+    {
+      "id": "B-A-F01",
+      "issues": [2, 3, 4, 6, 7],
+      "severity": "material execution ambiguity; CHANGES_REQUIRED",
+      "location": "All five specs section B prayer-browser-observation/v1; R0002.md:57 and R0003/R0006/R0007.md:58; same comment copies/metadata observer contract.",
+      "claim": "The post-render observation contract is described as reading selected read-only state, but requests qaState().dateTruth/wxTruth while measuring storage/write/ownership effects.",
+      "sourceEvidence": [
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3172-L3175",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L181-L187"
+      ],
+      "observedSourceFact": "qaState() config diagnostic invokes SalahConfig.storageAvailable(); it setItem('__sw_probe__','1') and removeItem('__sw_probe__'). No probe separation/exclusion is specified by these plans.",
+      "failureMode": "Every observer snapshot introduces storage operations into the log that is intended to discriminate product cache/config/obsolete-write behavior, and adds reads/recomputations beyond last-painted state. An executor can produce false write failures or incorrectly call the observer side-effect-free. This is a harness contract defect, not a new production runtime finding.",
+      "smallestCorrection": "Read _lastDateTruth and narrowly chosen direct read-only actual weather decision/diagnostic fields inside the checked IIFE observation hook, without calling full qaState in cache/effect windows. Alternatively explicitly segregate any qaState diagnostic call outside measured product-effect windows, tag and retain its '__sw_probe__' writes/removal separately and keep raw logs; never erase actual product writes. Add the same rule to observer metadata/comment copies and preserve no observer-induced source/state mutation.",
+      "recheck": "Hash-bound read-only review of the corrected common observer contract and all five synchronized spec/comment/metadata artifacts; no product/browser rerun required for the plan correction."
+    }
+  ]
+}

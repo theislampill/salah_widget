@@ -1,0 +1,20 @@
+# Independent cold-read acceptance for this package
+
+Review only the assigned other author's specifications, comments and metadata. Do not edit them or run product/browser tests. Read the corresponding current issue packets and frozen audit rows. You are checking whether a new executor can finish the bounded work without this chat, not repeating the implementation audit or demanding a new research programme.
+
+Write a review under `reviews/<reviewer>-<author>.json` and `.md`, with each issue's specification/comment/metadata hashes, exact material findings and final disposition. Use `PASS` only when the execution contract is usable; `PASS_WITH_NONBLOCKING_NOTES` may identify optional improvements, but substantive missing inputs/controls/delivery gates are `CHANGES_REQUIRED`. External native-platform or merge approval gates may remain if their acquisition/decision task and safe parallel work are explicit. Acknowledged pending startup handoff prevents FINAL sealing, not independent specification work.
+
+Check all of these:
+
+1. Every original residual row ID and text is preserved/mapped; accepted rows are not reopened and closure/evidence rows are not silently dropped. Added owner amendments are named separately. No missing proof is called a demonstrated runtime bug.
+2. There are concrete fixtures, entry state, actual consumer, steps, event boundaries, expected/observed distinction, numerical or visual oracle, accessible artifact and independent closure gate for every remaining obligation. Commands are identified as previously executed, verified syntax/source, or proposed. Proposed paths are not misrepresented as existing programs.
+3. Negative controls would discriminate the failure in the real consumer. No helper-only substitution for required native/browser/platform evidence; no success from empty hostile-node sets, late stills for first scene, generic assets for weather body/Image recovery, simulation for a required current-weather lane, or another OS for native Apple/Windows semantics.
+4. Source/generator/consumer/interface boundaries and shared-file conflicts are concrete. No primary generated-file edits, newly invented dependencies/frameworks, unexplained thresholds, unsolicited pipeline rewrite or route through PR38/V1.
+5. Priority assesses the residual risk with evidence confidence, exposure, containment and a rationale for any changed historical priority. Order/resource availability is separate from severity. No P0 is invented to fill a category.
+6. Inputs are available or explicitly gated. Hard dependencies name the exact interface/artifact rather than an administrative issue closure. Shared machine/file access is a resource constraint. Costs are qualified ranges, not promises.
+7. Closure requires all remaining obligations plus independent review and any necessary delivered documentation/runtime. An unmerged branch or successful specification does not close a delivery-required issue. Currentness/reuse and drift/interrupt recovery rules are explicit.
+8. The substantive GitHub comment can stand on its own for the execution core. Appendix/source/evidence links are immutable or will bind the package commit before publication. No private path/hash alone is treated as public proof.
+9. Current-model precipitation amendment remains honest and preserved. N001/N002/N003 limits map to actual affected rows rather than blanket acceptance/barriers.
+10. #33/#34, where applicable: startup versus settled lunar-field defect remains separate; normal first-scene appearance is not inferred from terrain RGB equivalence. Diagnostic subtraction of all atmosphere is not the chosen correction. Final external source/runtime/writeup/glow intake is required before seal.
+
+Return an issue-by-issue finding list with the exact location, failure mode and smallest correction. Propose concrete text/fixture/interface clarifications when possible. Do not add requirements without binding contract or a demonstrated execution ambiguity. Report counterexamples and disagreements; the primary will reconcile and authors will repair their own files.

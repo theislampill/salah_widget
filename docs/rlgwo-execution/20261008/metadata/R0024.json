@@ -1,0 +1,1684 @@
+{
+  "issue": 36,
+  "canonicalId": "R0024",
+  "revision": 1,
+  "author": "C",
+  "sourceTarget": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "auditEvidenceCommit": "b879573c298f19189d1f2392108b8b9f3b2cda0b",
+  "bodySha256": "67bcb1850732609c37e009fd164ac20d0e55a6b41c1ca75cdded85f714f2031a",
+  "commentRevisions": [
+    {
+      "id": 6073047436,
+      "updatedAt": "2026-10-09T02:30:21Z",
+      "sha256": "a6abf1abf88c03b8e412c692e2ca8c9139ed9f944627d57e7f91fb492a5b9e1b"
+    }
+  ],
+  "specPath": "REMAINING_RLGWOs/R0024.md",
+  "commentPath": "comments/36.md",
+  "priority": "P1",
+  "residualClasses": [
+    "implementation",
+    "evidence",
+    "docs",
+    "qualification"
+  ],
+  "priorityAssessment": {
+    "rationale": "P1 because the missing information distinction is substantial user-visible fidelity: a supported-dry+nearby/approach decision cannot be communicated outside QA. Native A–G authority/pixel proof also remains materially incomplete. Resource/prose pieces are P2. There is no current critical security/integrity demonstration forP0.",
+    "impact": "Users cannot distinguish an admitted current state from nearby/approaching/numerical/unknown information; poor wording could upgrade a model to observation or forecast to present.",
+    "conditions": "Current dry/wet/unknown with supplied synthetic spatial/horizon/forecast data, live adapters unavailable, local-mode settings buckle, optional probability/time/quantity fields.",
+    "exposure": "The weather chip is an ordinary public interface; live nearby/arrival source is absent, so missinginformation must state unavailable rather than invent useful arrival.",
+    "confidence": "High on actual weatherHeader omission and accepted63-state/quality logic; medium on unexecuted full native/resource proof.",
+    "containment": "Accepted finite/time/target/current/permission guards remain; bounded unavailable behavior, source-coupled rollback and isolated fixture/effect authority.",
+    "evidence": [
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+      "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-publication.json"
+    ],
+    "existingLabelDeparture": "No GitHub priority label present. Original body has no Pn label; owner local rubric assigns residualP1, with2421/2422 P2."
+  },
+  "readiness": "AWAITING_COLD_REVIEW",
+  "acceptedObligations": [
+    {
+      "id": "2401",
+      "status": "satisfied",
+      "parentText": "Pure reconciliation returns independent supported wet/dry, model-estimated wet/dry, conflicting and unknown current states; WMO remains one input.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L54-L108",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L193-L198",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L230-L242"
+      ]
+    },
+    {
+      "id": "2402",
+      "status": "satisfied",
+      "parentText": "Spatial nearby/no-nearby/unavailable stays distinct from current. Horizon approaching/nearby-without-arrival/numerical-forecast/none-supported/unknown stays separate; current and approach may coexist.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L95-L123",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L236-L248"
+      ]
+    },
+    {
+      "id": "2403",
+      "status": "satisfied",
+      "parentText": "Forecast retains provider/product, valid window, units, amount, optional probability and its event/window. Missing probability is not zero; amount is not observed rate.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L185-L198",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L266-L274"
+      ]
+    },
+    {
+      "id": "2404",
+      "status": "satisfied",
+      "parentText": "Initial Open-Meteo current is model-estimated. Alpha supplies no present/spatial authority. No new provider, trajectory engine, minutely fetch or live arrival claim is required.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L113-L138",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L213-L218",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L276-L280"
+      ]
+    },
+    {
+      "id": "2405",
+      "status": "superseded",
+      "parentText": "The original blanket prohibition of current-model particles is expressly amended by owner H5/H8: a direct adapter is not required for quantitatively supported MODEL ESTIMATE rain/snow.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L31-L43",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L112-L140",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267"
+      ]
+    },
+    {
+      "id": "2406",
+      "status": "satisfied",
+      "parentText": "Surviving guards reject stale, wrong-target, malformed and forecast-only live inputs. Missing/contradictory quantity is uncertainty, not particles/rate/dryness. Model thunder never authorizes observed strikes.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L237-L247",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L253-L264",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L118-L167"
+      ]
+    },
+    {
+      "id": "2407",
+      "status": "satisfied",
+      "parentText": "Adapter evidence cannot be a free trusted boolean. Provider/product, target generation, source/receipt/frame/issue/valid times, units, footprint/coverage, quality and versioned admission reason remain mandatory.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L125-L170",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L213-L218"
+      ]
+    },
+    {
+      "id": "2408",
+      "status": "satisfied",
+      "parentText": "Underlying local observation age and operational health remain separate from fresh mosaic and nominal coverage. Positive and negative claims abstain on stale/unknown local age or nonoperational/interpolated data.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L113-L138"
+      ]
+    },
+    {
+      "id": "2409",
+      "status": "satisfied",
+      "parentText": "R0023 location intent/source/accuracy/original fix age and target generation/coordinates remain captured. Unknown IP accuracy is not invented; model-grid support remains separate.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L204-L211",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L224-L228",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+      ]
+    },
+    {
+      "id": "2410",
+      "status": "satisfied",
+      "parentText": "Keep amount/rate units and preceding intervals. 0.4mm over 900s becomes 1.6mm/h interval average, not instantaneous onset. Null is not zero; overflowing derived fields stay null.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L172-L198",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L259-L264"
+      ]
+    },
+    {
+      "id": "2411",
+      "status": "satisfied",
+      "parentText": "Current/forecast source and receipt ages and generation leases are independent. Source gap, rain end, outage, target change and tab-resume expiry withdraw permission without cloud retention keeping wet effects alive.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L74-L89",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L243-L258",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-cloud-expiry.test.cjs#L27-L47",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-cloud-expiry.test.cjs#L76-L82"
+      ]
+    },
+    {
+      "id": "2412",
+      "status": "satisfied",
+      "parentText": "Explicit synthetic positives and preview exercise actual rain/snow/strike consumers. Identical live flags cannot upgrade production observation authority.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L54-L73",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L281-L286",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L162-L167"
+      ]
+    },
+    {
+      "id": "2413",
+      "status": "satisfied",
+      "parentText": "A qualified current wet plus model dry must record supported wet/disagreement and rain. B qualified current dry plus model rain must record dry/conflict according to policy, without universal WMO/radar veto.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L54-L61",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L81-L108"
+      ]
+    },
+    {
+      "id": "2414",
+      "status": "satisfied",
+      "parentText": "C dry point with qualified nearby arrival is separate from local rain. Unqualified movement gives nearby-only/unavailable. Current rain and later approach may coexist.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L95-L112"
+      ]
+    },
+    {
+      "id": "2415",
+      "status": "superseded",
+      "parentText": "D absent/outside-coverage observation with model rain remains model-estimated wet and observation unavailable. The original withholding of supported model particles is narrowly amended; this is not confirmed dry.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L31-L38",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L113-L138",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L246-L267"
+      ]
+    },
+    {
+      "id": "2416",
+      "status": "satisfied",
+      "parentText": "E an 18-minute mosaic with fresh retrieval cannot establish local observation or ETA. G weak/interpolated/ambiguous returns never become millimetres or calibrated drizzle.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L120-L138"
+      ]
+    },
+    {
+      "id": "2417",
+      "status": "satisfied",
+      "parentText": "Future forecast intervals are never current. Unknown native/interpolated provenance is explicit. Probability/amount and coverage/operational-health negative distinctions survive.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L125-L138",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L172-L198",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L213-L218",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L266-L280"
+      ]
+    },
+    {
+      "id": "2418",
+      "status": "satisfied",
+      "parentText": "qaState exposes consumed target/source/fix age, valid/receipt ages, quality/coverage, point versus surrounding state, current/spatial/horizon/forecast, rejection/unavailability, permissions/expiry/reason and any derivation, without tiles or redundant forecast arrays.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3138-L3162",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L113-L123",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L172-L202"
+      ]
+    },
+    {
+      "id": "2423",
+      "status": "satisfied",
+      "parentText": "R0003/B/C/E and R0023 interfaces are qualification prerequisites. R000D/R001E/R001B stay distinct owners. Renderer richness consumes evidence and cannot generate authority.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L204-L211"
+      ]
+    },
+    {
+      "id": "2424",
+      "status": "satisfied",
+      "parentText": "Done is the honest state/renderer contract, not useful local arrival/provider qualification or predictive skill. Containment returns to unavailable/model-estimated without alpha-mm or invented ETA.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1624",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267"
+      ]
+    }
+  ],
+  "remainingObligations": [
+    {
+      "id": "2419",
+      "parentText": "Information distinguishing current from nearby/approaching/predicted/unknown must reach concise visible or accessible presentation, not only a debug object.",
+      "auditStatus": "unmet",
+      "class": "implementation",
+      "priority": "P1",
+      "priorityRationale": "Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof.",
+      "witness": "weatherHeader never reads spatial/horizon/forecast. For C its source title is 'SIM supported-dry; qualified synthetic present dry' while approaching exists only in QA.",
+      "acceptance": [
+        {
+          "id": "R0024-A01",
+          "fixture": "Synthetic C: modelWMO95/2mm plus qualified current dry, nearby[8,12]km, observedAt=N, arrival[N+600000,N+1800000] derivedFrom=qualified-fixture-trajectory; compare identical current with approach absent/current-wind and current wet+approach. Current lane record and existing target captured; no new source.",
+          "consumer": "weatherDecision → proposed weatherInformation(decision,day) → weatherHeader/paintWeatherHeader → #wi title/name and #weather-information description; local buckle describedby",
+          "assertion": "Accessible/hover information says Current: SIM supported dry; Nearby: precipitation8–12km; Approach: qualified SIM interval10–30min (with absolute zone interval available) for C, nearby only/no supported arrival for unqualified movement, and current wet plus later approach both retained. No local particles for C. Word SIM cannot be removed; production no-qualified-source shows nearby unavailable/no supported arrival. Parent button Widget settings/persistence warning/action name remains intact.",
+          "environment": "Source-executing DOM fixture first, then actual native accessibility/hover/current consumers in A02",
+          "expected": "2419 source-level demonstrated gap repaired at authored information owners only; formatter does not alter permissions, WMO/temp or derived state.",
+          "artifact": "evidence/R0024/R0024-A01/receipt.json",
+          "reviewGate": "Independent native reviewer reads network/owner/admitted/cache/DOM receipts and actually inspects card/header/footer/Moon/cloud crops or clip; numeric PASS cannot override pixels. Primary reconciles exact candidate."
+        }
+      ],
+      "nodeIds": [
+        "R0024-INFO"
+      ],
+      "closureGate": "CLOSE-R0024"
+    },
+    {
+      "id": "2420",
+      "parentText": "Render A–G and added controls in the actual 325×530 card. Synthetic positives have cloud-linked particles; dry/nearby/approach/forecast/unknown negatives have none. Preserve readable status, reduced motion and sun/moon/cloud quality.",
+      "auditStatus": "unverified",
+      "class": "evidence",
+      "priority": "P1",
+      "priorityRationale": "Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof.",
+      "witness": "Fresh Node P 63/63, C 9/9, H 21/21 passed. Pre-H5 native smoke provides only historical partial A/B/C/lease/coverage consumer evidence. V46 rain positive crop was inspected. Full equivalent final-target A–G/added-control pixel evidence was not supplied.",
+      "acceptance": [
+        {
+          "id": "R0024-A02",
+          "fixture": "Full native A–G matrix described in B plus all controls in D/F: precise/fixed-site and coarse/expired target, model-only current positive (rain/snow/thunder), dry/unknown/forecast-only, unsupported quantities/alpha, quality/operational/local-age changes, future interval/probability, lease/tab resume/newgeneration, rain-end/outage, wet plus later approach. Present/nearby positives use the existing owned simulation bridge; optional forecast null/0 uses proposed r0024-forecast-fixture/v1 installSyntheticForecast(owner,raw), whose exact dependency decorator/payload/refusal recipe is D. Both install only in explicit timeScale=1 preview; identical ordinary-live install rejects. Live model positives use actual controlled fetch; production hourly probability/event remain null.",
+          "consumer": "Actual native admission/reconcile/qaState → accessible header info → native atmosphere/cloud systems/particle/lightning/prayer/Moon composition",
+          "assertion": "Every scenario preserves independent current/spatial/horizon/forecast and quantity/probability provenance; accessible #weather-information/wi title reads same snapshot. Synthetic wet rain/snow particles>0 originate under cloud columns; synthetic observed lightning has nonzero gated strike event when motion permits. Dry/nearby/approach/unknown/forecast-only negatives particles0 and strike0. Eligible live current quantities may enable model particles underH5, never observed permission/strikes. All full-card/crops readable325×530; Sun/opaque half-Moon/cloud continuity; reduced motion reduces flashes/motion, motion=full override works without weather authority changes.",
+          "environment": "Windows x64; installed Chromium and Firefox via tools/cp9/browser_runtime.py; record actual executable/version. Fresh profile per case, private Map storage, 390×600 viewport, DPR 1, 325×530 card, Asia/Riyadh browser zone, fixed-site lat24.47/lon39.61, method4/school0/Celsius/seed1; source/runtime/fixture hashes bound. No local=1 unless config is seeded before parse.",
+          "expected": "2420 full finite original state/control native matrix, scoped art/currentness regression and accessible presentation proof; no arrival accuracy/provider qualification claim.",
+          "artifact": "evidence/R0024/R0024-A02/receipt.json",
+          "reviewGate": "Independent native reviewer reads network/owner/admitted/cache/DOM receipts and actually inspects card/header/footer/Moon/cloud crops or clip; numeric PASS cannot override pixels. Primary reconciles exact candidate."
+        }
+      ],
+      "nodeIds": [
+        "R0024-NATIVE"
+      ],
+      "closureGate": "CLOSE-R0024"
+    },
+    {
+      "id": "2421",
+      "parentText": "Add no provider requests or per-frame inference. Compare CPU/memory/network overhead to baseline; reuse pure reconciliation until eligibility changes.",
+      "auditStatus": "unverified",
+      "class": "evidence",
+      "priority": "P2",
+      "priorityRationale": "Bounded documented/diagnostic or resource coverage gap; accepted authority logic contains immediate risk.",
+      "witness": "P stable-input cache control passed; source adds no provider. Matched baseline CPU/memory/network measurements specific to this state scaffold were not located.",
+      "acceptance": [
+        {
+          "id": "R0024-A03",
+          "fixture": "Two separately bound comparisons: (1) SOURCE18ff versus information candidate for the remaining formatter delta; (2) r0024-scaffold-resource-baseline/v1 paired full-scaffold versus resource-only replay control, admitted only after RESOURCE-BASELINE acquisition/review in D. Same native engine/hardware/provider input tape/renderer/worker/terrain/request ledger and observer overhead. Three60s warm trials for each pair plus cold and wet→dry→expiry→newtarget transitions; source-fixture call/heap measurements are separately labelled. A missing comparable scaffold control leaves2421 unverified; whole fd2972-versus-CP9 renderer delta is never weather overhead.",
+          "consumer": "Actual native request ledger/worker and browser CPU/heap measurements; exact weatherDecision/reconcile source call counts in isolated observer instrumentation copy",
+          "assertion": "Zero added provider requests/bytes/recipients, no network from formatter or reconciliation; no per-frame inference: repeated same target/record/track/lease returns same decision and reconciliation call count does not increase until a supported input/eligibility boundary changes. Measure raw CPU ms, wall intervals, JS heap/available memory metric and allocations; unsupported metric marked unavailable, never0. Original contract supplies no CPU/heap numeric budget: proposed budget is no sustained incremental increase beyond measured same-baseline run-to-run range, preregister range from baseline repeats, preserve all raw trials; exceedance requires diagnosis and primary acceptance of a concrete bound, not automatic PASS. Pair UI250ms invariant only if changed render callback exposure measured.",
+          "environment": "Serialized Windows native browser/performance queue; same engine/profile/hardware warmup; source-fixture microbench separately labelled",
+          "expected": "2421 requires both formatter delta and comparable scaffold cost, with cold/transition/cached and retained/allocated memory observations. Unpaired absolute timing is contextual only. RESOURCE-BASELINE may return GATED_NOT_COMPARABLE, which blocks only2421 qualification/closure and leaves safe INFO/DOCS/NATIVE work available.",
+          "artifact": "evidence/R0024/R0024-A03/receipt.json",
+          "reviewGate": "Independent resource reviewer admits exact paired scaffold input/control and instrumentation equivalence, then checks raw CPU/heap/request data, null metrics, baseline-repeat variance and cache boundaries. Primary decides scope/budget before2421 can pass; unqualified comparison cannot be waived by a formatter-only delta."
+        }
+      ],
+      "nodeIds": [
+        "R0024-RESOURCE-BASELINE",
+        "R0024-RESOURCE"
+      ],
+      "closureGate": "CLOSE-R0024"
+    },
+    {
+      "id": "2422",
+      "parentText": "Update public weather semantics, source attribution and supported diagnostic docs. No field study, sample collection, telemetry export or continuous GPS is required.",
+      "auditStatus": "unmet",
+      "class": "docs",
+      "priority": "P2",
+      "priorityRationale": "Bounded documented/diagnostic or resource coverage gap; accepted authority logic contains immediate risk.",
+      "witness": "DESIGN documents the amendment. README's 'Live local weather'/auto-retry prose omits unavailable measurement/state and forecast/nearby limitations; information gap 2419 remains.",
+      "acceptance": [
+        {
+          "id": "R0024-A04",
+          "fixture": "README Features/Auto-retry/Credits weather paragraph; DESIGN Weather truthfulness/API & data/URL-debug/Known approximations; HANDOFF current weather limitation.",
+          "consumer": "Public weather semantics/source attribution/diagnostic information",
+          "assertion": "Document CURRENT MODEL ESTIMATE versus direct current simulation QA, nearby/horizon/forecast/unknown; eligible model quantities may show rain/snow without observation adapter, WMOthunder grants no strike, forecast never current. Live observation/nearby/arrival adapters unqualified/unavailable, fresh alpha mosaic not local measurement/mm/coverage health. Amount preceding interval and optional probability event/window, missingprobability not0. Accessible chip information is bounded and derived; no useful arrival service/accuracy nowcast promise, field study, telemetry/GPS/provider requirement. Correct current nowcast/ground-truth wording in DESIGN370/HANDOFF172–173; keep historic90928c8 descriptions as history.",
+          "environment": "Static final prose/source/native-accessibility evidence",
+          "expected": "2422 exact current semantics and limitations, consistent with narrow owner amendment and interface outputs.",
+          "artifact": "evidence/R0024/R0024-A04/receipt.json",
+          "reviewGate": "Independent documentation reviewer compares every stated fact with pinned source and actual consumer receipts, then rejects observation/arrival/offline/cancellation overclaims."
+        }
+      ],
+      "nodeIds": [
+        "R0024-DOCS"
+      ],
+      "closureGate": "CLOSE-R0024"
+    },
+    {
+      "id": "2425",
+      "parentText": "Exact-candidate independent proof, evidence comment and primary reconciliation precede closure. Generic all-dry API smoke/arithmetic cannot certify predictive skill.",
+      "auditStatus": "unverified",
+      "class": "qualification",
+      "priority": "P1",
+      "priorityRationale": "Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof.",
+      "witness": "Source/consumer identity and fresh logic review are complete; surviving UI/browser/resource proof and individual primary approval remain outstanding.",
+      "acceptance": [
+        {
+          "id": "R0024-A05",
+          "fixture": "All25 original24xx rows:18 satisfied,2405/2415 narrowly superseded,2419/2420/2421/2422/2425 residual; candidate source/runtime/fixture/evidence hashes and updated accessible info. Evidence must expose amended D model-positive expectation and every surviving negative.",
+          "consumer": "Independent state/pixel/resource/authority review → authorized merged/served consumer/public info → immutable evidence comment/readback → authorized manual closure",
+          "assertion": "Original policy not silently rewritten: preserve old matrices/TODOs/oracles and name narrow H5/H8 override. No all-dry API, arithmetic, source/hash, detached status or generic public smoke supplies A–G native proof or arrival skill. Final row2425 explicitly requires primary reconciliation and every remaining output plus actual generated/public delivery. Keep PR38 excluded and no blanket N001/N002/N003 closure.",
+          "environment": "Immutable source/evidence/public delivery plus issue/marker readback",
+          "expected": "CLOSE-R0024 certifies bounded truthful state/renderer information only; no upstream observation/nowcast/arrival research is reopened.",
+          "artifact": "evidence/R0024/R0024-A05/receipt.json",
+          "reviewGate": "Different reviewer checks complete accepted-plus-residual matrix, delivery identity and immutable evidence hashes; primary approves exact comment before any separately authorized publication/closure."
+        }
+      ],
+      "nodeIds": [
+        "R0024-QUALIFY",
+        "CLOSE-R0024"
+      ],
+      "closureGate": "CLOSE-R0024"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "R0024-INFO",
+      "issueObligations": [
+        "R0024:2419"
+      ],
+      "priority": "P1",
+      "kind": "implementation",
+      "owner": "single native weather source integrator",
+      "scope": "Information distinguishing current from nearby/approaching/predicted/unknown must reach concise visible or accessible presentation, not only a debug object.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0024-info-output/v1",
+          "contract": "2419 source-level demonstrated gap repaired at authored information owners only; formatter does not alter permissions, WMO/temp or derived state.",
+          "artifact": "evidence/R0024/info/receipt.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work."
+      ],
+      "exitCriteria": [
+        "Accessible/hover information says Current: SIM supported dry; Nearby: precipitation8–12km; Approach: qualified SIM interval10–30min (with absolute zone interval available) for C, nearby only/no supported arrival for unqualified movement, and current wet plus later approach both retained. No local particles for C. Word SIM cannot be removed; production no-qualified-source shows nearby unavailable/no supported arrival. Parent button Widget settings/persistence warning/action name remains intact.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED NOT EXECUTED in this specification stage: node.exe --test --test-concurrency=1 tests/r0024-information.test.cjs",
+        "PROPOSED NOT EXECUTED in this specification stage: python.exe tools/build_native.py"
+      ],
+      "resources": [
+        "exclusive-source-integrator",
+        "light-node-fixture"
+      ],
+      "sharedFiles": [
+        "src/native/index.html",
+        "tests/r0024-information.test.cjs",
+        "tools/build_native.py (build only)"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          2,
+          4
+        ],
+        "exclusiveMachineMinutes": [
+          0,
+          0
+        ],
+        "confidence": "medium",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "R0024-DOCS",
+      "issueObligations": [
+        "R0024:2422"
+      ],
+      "priority": "P2",
+      "kind": "docs",
+      "owner": "shared documentation integrator",
+      "scope": "Update public weather semantics, source attribution and supported diagnostic docs. No field study, sample collection, telemetry export or continuous GPS is required.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0024-docs-output/v1",
+          "contract": "2422 exact current semantics and limitations, consistent with narrow owner amendment and interface outputs.",
+          "artifact": "evidence/R0024/docs/source-facts-and-diff.md"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work."
+      ],
+      "exitCriteria": [
+        "Document CURRENT MODEL ESTIMATE versus direct current simulation QA, nearby/horizon/forecast/unknown; eligible model quantities may show rain/snow without observation adapter, WMOthunder grants no strike, forecast never current. Live observation/nearby/arrival adapters unqualified/unavailable, fresh alpha mosaic not local measurement/mm/coverage health. Amount preceding interval and optional probability event/window, missingprobability not0. Accessible chip information is bounded and derived; no useful arrival service/accuracy nowcast promise, field study, telemetry/GPS/provider requirement. Correct current nowcast/ground-truth wording in DESIGN370/HANDOFF172–173; keep historic90928c8 descriptions as history.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "STATIC REVIEW PROPOSED: compare exact sections/facts listed in documentationFacts to source and native consumer receipts; no product execution required for authoring."
+      ],
+      "resources": [
+        "documentation-writer"
+      ],
+      "sharedFiles": [
+        "README.md",
+        "DESIGN.md",
+        "HANDOFF.md"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          1,
+          2
+        ],
+        "exclusiveMachineMinutes": [
+          0,
+          0
+        ],
+        "confidence": "medium",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "R0024-NATIVE",
+      "issueObligations": [
+        "R0024:2420"
+      ],
+      "priority": "P1",
+      "kind": "evidence",
+      "owner": "native weather state/accessibility reviewer",
+      "scope": "Render A–G and added controls in the actual 325×530 card. Synthetic positives have cloud-linked particles; dry/nearby/approach/forecast/unknown negatives have none. Preserve readable status, reduced motion and sun/moon/cloud quality.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        },
+        {
+          "id": "R0024-info-output/v1",
+          "contract": "Exact candidate-bound INFO output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R0024.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0024-native-output/v1",
+          "contract": "2420 full finite original state/control native matrix, scoped art/currentness regression and accessible presentation proof; no arrival accuracy/provider qualification claim.",
+          "artifact": "evidence/R0024/native/receipt.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work.",
+        "R0024-INFO exact output accepted"
+      ],
+      "exitCriteria": [
+        "Every scenario preserves independent current/spatial/horizon/forecast and quantity/probability provenance; accessible #weather-information/wi title reads same snapshot. Synthetic wet rain/snow particles>0 originate under cloud columns; synthetic observed lightning has nonzero gated strike event when motion permits. Dry/nearby/approach/unknown/forecast-only negatives particles0 and strike0. Eligible live current quantities may enable model particles underH5, never observed permission/strikes. All full-card/crops readable325×530; Sun/opaque half-Moon/cloud continuity; reduced motion reduces flashes/motion, motion=full override works without weather authority changes.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED NOT EXECUTED in this specification stage: python.exe tools/build_native.py",
+        "PROPOSED NOT EXECUTED in this specification stage: python.exe tools/qa/run_r0024_native.py --root <authorized-candidate> --out <isolated-evidence/R0024/native> --browser chromium --matrix all"
+      ],
+      "resources": [
+        "exclusive-heavy-browser"
+      ],
+      "sharedFiles": [
+        "tools/qa/run_r0024_native.py",
+        "tests/weather-fixture-r0024.html"
+      ],
+      "dependsOn": [
+        {
+          "node": "R0024-INFO",
+          "type": "hard-interface",
+          "reason": "NATIVE consumes exact INFO candidate-bound output; interface, not whole administrative issue dependency."
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          4,
+          7
+        ],
+        "exclusiveMachineMinutes": [
+          15,
+          35
+        ],
+        "confidence": "medium-low",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "R0024-RESOURCE-BASELINE",
+      "issueObligations": [
+        "R0024:2421"
+      ],
+      "priority": "P2",
+      "kind": "decision",
+      "owner": "weather resource baseline acquirer and independent reviewer",
+      "scope": "Add no provider requests or per-frame inference. Compare CPU/memory/network overhead to baseline; reuse pure reconciliation until eligibility changes.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0024-resource-baseline-output/v1",
+          "contract": "r0024-scaffold-resource-baseline/v1 exact full/control/tape/observer identities and scope; independently admitted QUALIFIED_SCOPED_INPUT or explicit GATED_NOT_COMPARABLE. The latter is an acquired gap, not2421 evidence PASS.",
+          "artifact": "evidence/R0024/resource-baseline-manifest.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work."
+      ],
+      "exitCriteria": [
+        "Acquire/review exact paired scaffold comparison manifest with bounded scope, available/null metrics, tape/observer/control hashes and QUALIFIED_SCOPED_INPUT or GATED_NOT_COMPARABLE. Only qualified input permits RESOURCE measurement; a gated result leaves2421/qualification incomplete.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED bounded source/control-draft acquisition and independent scope/tape/instrumentation review from R0024_RESOURCE_BASELINE; no native/product/performance execution until QUALIFIED_SCOPED_INPUT and future execution lease."
+      ],
+      "resources": [
+        "read-only-source",
+        "light-fixture-draft"
+      ],
+      "sharedFiles": [
+        "tools/qa/run_r0024_resources.py (proposed control/manifest)"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          1,
+          2
+        ],
+        "exclusiveMachineMinutes": [
+          0,
+          0
+        ],
+        "confidence": "medium",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "R0024-RESOURCE",
+      "issueObligations": [
+        "R0024:2421"
+      ],
+      "priority": "P2",
+      "kind": "evidence",
+      "owner": "independent weather resource reviewer",
+      "scope": "Add no provider requests or per-frame inference. Compare CPU/memory/network overhead to baseline; reuse pure reconciliation until eligibility changes.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        },
+        {
+          "id": "R0024-info-output/v1",
+          "contract": "Exact candidate-bound INFO output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R0024.json"
+          ]
+        },
+        {
+          "id": "R0024-resource-baseline-output/v1",
+          "contract": "Exact candidate-bound RESOURCE-BASELINE output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R0024.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0024-resource-output/v1",
+          "contract": "2421 requires both formatter delta and comparable scaffold cost, with cold/transition/cached and retained/allocated memory observations. Unpaired absolute timing is contextual only. RESOURCE-BASELINE may return GATED_NOT_COMPARABLE, which blocks only2421 qualification/closure and leaves safe INFO/DOCS/NATIVE work available.",
+          "artifact": "evidence/R0024/resource/receipt.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work.",
+        "R0024-INFO exact output accepted",
+        "R0024-RESOURCE-BASELINE exact output accepted"
+      ],
+      "exitCriteria": [
+        "Zero added provider requests/bytes/recipients, no network from formatter or reconciliation; no per-frame inference: repeated same target/record/track/lease returns same decision and reconciliation call count does not increase until a supported input/eligibility boundary changes. Measure raw CPU ms, wall intervals, JS heap/available memory metric and allocations; unsupported metric marked unavailable, never0. Original contract supplies no CPU/heap numeric budget: proposed budget is no sustained incremental increase beyond measured same-baseline run-to-run range, preregister range from baseline repeats, preserve all raw trials; exceedance requires diagnosis and primary acceptance of a concrete bound, not automatic PASS. Pair UI250ms invariant only if changed render callback exposure measured.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED NOT EXECUTED in this specification stage: python.exe tools/qa/run_r0024_resources.py --baseline <isolated-SOURCE-18ff14860ff41c084b1db5f396bb62aa9c22b1be> --candidate <authorized-candidate> --scaffold-manifest <QUALIFIED_SCOPED_INPUT-resource-baseline-manifest.json> --out <isolated-evidence/R0024/resources> --trials 3 --seconds 60"
+      ],
+      "resources": [
+        "exclusive-heavy-performance",
+        "light-node-fixture"
+      ],
+      "sharedFiles": [
+        "tools/qa/run_r0024_resources.py"
+      ],
+      "dependsOn": [
+        {
+          "node": "R0024-INFO",
+          "type": "hard-interface",
+          "reason": "RESOURCE consumes exact INFO candidate-bound output; interface, not whole administrative issue dependency."
+        },
+        {
+          "node": "R0024-RESOURCE-BASELINE",
+          "type": "hard-interface",
+          "reason": "RESOURCE consumes exact RESOURCE-BASELINE candidate-bound output admitted as QUALIFIED_SCOPED_INPUT; interface, not whole administrative issue dependency."
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          3,
+          5
+        ],
+        "exclusiveMachineMinutes": [
+          20,
+          40
+        ],
+        "confidence": "medium-low",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "R0024-QUALIFY",
+      "issueObligations": [
+        "R0024:2425"
+      ],
+      "priority": "P1",
+      "kind": "qualification",
+      "owner": "independent state/authority/pixel reviewer",
+      "scope": "Pre-delivery independent candidate reconciliation; later named authority/delivery receipts complete the preserved final-proof row. Exact-candidate independent proof, evidence comment and primary reconciliation precede closure. Generic all-dry API smoke/arithmetic cannot certify predictive skill.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        },
+        {
+          "id": "R0024-info-output/v1",
+          "contract": "Exact candidate-bound INFO output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R0024.json"
+          ]
+        },
+        {
+          "id": "R0024-docs-output/v1",
+          "contract": "Exact candidate-bound DOCS output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R0024.json"
+          ]
+        },
+        {
+          "id": "R0024-native-output/v1",
+          "contract": "Exact candidate-bound NATIVE output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R0024.json"
+          ]
+        },
+        {
+          "id": "R0024-resource-output/v1",
+          "contract": "Exact candidate-bound RESOURCE output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R0024.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0024-qualify-output/v1",
+          "contract": "Pre-delivery reviewed candidate certificate: exact row/fixture/native/resource/docs reconciliation and proposed final source/tree identities. Records pending exact-head authority, required docs/runtime delivery, public readback and closure; it is not a delivered/closed certificate.",
+          "artifact": "evidence/R0024/reviewed-candidate-certificate.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work.",
+        "R0024-INFO exact output accepted",
+        "R0024-DOCS exact output accepted",
+        "R0024-NATIVE exact output accepted",
+        "R0024-RESOURCE exact output accepted"
+      ],
+      "exitCriteria": [
+        "Every residual candidate artifact, proposed documentation/source delta and exact current interfaces independently reconciled; reviewed-candidate-certificate.json binds evidence and all contrary dispositions.",
+        "Record PENDING exact-head authority and required delivery/closure receipt IDs. No delivered/public/closed claim yet; later completed certificate requires those actual receipts.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED pre-delivery independent complete row/custody/source-equivalence/artifact candidate review; record pending exact-head authority/delivery/closure receipts. No test count substitutes for residual proof."
+      ],
+      "resources": [
+        "independent-review"
+      ],
+      "sharedFiles": [],
+      "dependsOn": [
+        {
+          "node": "R0024-INFO",
+          "type": "hard-interface",
+          "reason": "QUALIFY consumes exact INFO candidate-bound output; interface, not whole administrative issue dependency."
+        },
+        {
+          "node": "R0024-DOCS",
+          "type": "qualification",
+          "reason": "QUALIFY consumes exact DOCS candidate-bound output; interface, not whole administrative issue dependency."
+        },
+        {
+          "node": "R0024-NATIVE",
+          "type": "qualification",
+          "reason": "QUALIFY consumes exact NATIVE candidate-bound output; interface, not whole administrative issue dependency."
+        },
+        {
+          "node": "R0024-RESOURCE",
+          "type": "qualification",
+          "reason": "QUALIFY consumes exact RESOURCE candidate-bound output; interface, not whole administrative issue dependency."
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          2,
+          4
+        ],
+        "exclusiveMachineMinutes": [
+          4,
+          10
+        ],
+        "confidence": "medium",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "CLOSE-R0024",
+      "issueObligations": [
+        "R0024:2425"
+      ],
+      "priority": "P1",
+      "kind": "closure",
+      "owner": "primary authorized publisher",
+      "scope": "Exact-candidate independent proof, evidence comment and primary reconciliation precede closure. Generic all-dry API smoke/arithmetic cannot certify predictive skill.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        },
+        {
+          "id": "R0024-qualify-output/v1",
+          "contract": "Exact candidate-bound QUALIFY output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R0024.json"
+          ]
+        },
+        {
+          "id": "R0024-exact-head-authority/v1",
+          "contract": "Primary approves the reviewed candidate on the actual current base/body/discussion and grants the named future merge/delivery/publication/closure effects; stale approval cannot be reused.",
+          "status": "GATED_FUTURE_AUTHORITY_DELIVERY",
+          "evidence": [
+            "../evidence/R0024/exact-head-authority.json"
+          ]
+        },
+        {
+          "id": "R0024-required-delivery/v1",
+          "contract": "Actual docs-merge delivery for #11/#12/#13 or runtime-merge for #36, public/raw byte/readback proof; any bounded runtime escalation requires separately authorized repair and affected requalification.",
+          "status": "GATED_FUTURE_AUTHORITY_DELIVERY",
+          "evidence": [
+            "../evidence/R0024/required-delivery-receipt.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0024-close-output/v1",
+          "contract": "Completed closure-certificate.json only after named exact-head authority and required delivery receipts plus primary-approved evidence comment/readbacks and issue-state readback. QUALIFY alone is the pre-delivery candidate.",
+          "artifact": "evidence/R0024/public-delivery-and-issue-readback.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work.",
+        "R0024-QUALIFY exact output accepted"
+      ],
+      "exitCriteria": [
+        "Original policy not silently rewritten: preserve old matrices/TODOs/oracles and name narrow H5/H8 override. No all-dry API, arithmetic, source/hash, detached status or generic public smoke supplies A–G native proof or arrival skill. Final row2425 explicitly requires primary reconciliation and every remaining output plus actual generated/public delivery. Keep PR38 excluded and no blanket N001/N002/N003 closure.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED future effect/readback: only after exact evidence-body/hash approval and required merge/public delivery; verify main, issue body/discussion/state/marker then serialize proof and closure/readback."
+      ],
+      "resources": [
+        "serialized-external-writer"
+      ],
+      "sharedFiles": [],
+      "dependsOn": [
+        {
+          "node": "R0024-QUALIFY",
+          "type": "qualification",
+          "reason": "CLOSE consumes exact QUALIFY candidate-bound output; interface, not whole administrative issue dependency."
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          0.5,
+          1
+        ],
+        "exclusiveMachineMinutes": [
+          2,
+          5
+        ],
+        "confidence": "medium",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    }
+  ],
+  "closure": {
+    "id": "CLOSE-R0024",
+    "requiresDelivery": true,
+    "deliveryMode": "runtime-merge",
+    "deliveryModeEscalation": "Authored information source and its generated root plus docs must be merged/delivered; unchanged18ff public baseline cannot qualify the new formatter.",
+    "reviewedCandidateArtifact": "evidence/R0024/reviewed-candidate-certificate.json",
+    "completedCertificateArtifact": "evidence/R0024/closure-certificate.json",
+    "exactHeadAuthorityReceipt": "evidence/R0024/exact-head-authority.json",
+    "deliveryReceipt": "evidence/R0024/required-delivery-receipt.json",
+    "requiredOutputs": [
+      "R0024-info-output/v1",
+      "R0024-docs-output/v1",
+      "R0024-native-output/v1",
+      "R0024-resource-baseline-output/v1",
+      "R0024-resource-output/v1",
+      "R0024-qualify-output/v1"
+    ],
+    "conditions": [
+      "Every original mandatory row retained as satisfied, narrowly superseded or now proven; each residual has exact acceptance artifact and independent gate.",
+      "Authored/generated/delivered/public identities are separate; actual needed merge/public delivery authorized and verified, no publication/closure from local proof alone.",
+      "Original RED, old TODO/FAIL and historical reuse/source-equivalence limitations preserved; future evidence published with immutable hashes and primary exact approval.",
+      "Read back actual current issue contract/discussion/marker/comment/state before and after any authorized external effect."
+    ],
+    "authority": "Closure only after future executor authorization and actual required delivery; primary reconciles and approves exact evidence comment and manual closure."
+  },
+  "documentationFacts": [
+    "README Features: current MODEL ESTIMATE, unavailable icon/temp/quantity, modelquantity-supported rain/snow and no observed lightning.",
+    "README weather information/Credits: direct observation/nearby/arrival unavailable, numericalforecast separate, source/product/time/quantity/probability provenance retained; no useful arrival service promised.",
+    "DESIGN Weather truthfulness/URL-debug: independent decision states, inaccessibleQA-only gap repaired via chip description; source/receipt/interval/fix/quality distinctions remain.",
+    "DESIGN Known approximations/HANDOFF current weather: replace model nowcast/ground-truth upgrade promise with currentmodel estimate and unqualified categorical sources; historicalcommit descriptions retained."
+  ],
+  "affectedRegressionSet": [
+    "63A–G/currentquality/target/time/quantity/probability/lease/sourcecache logic plus amendedH5/H8 positive rain/snow/thunder and no live strike",
+    "actual accessible info/currentwet+laterapproach/currentunknown+forecast/nullprobability/true0/localsettings/persistence/focus",
+    "actual325×530 header/footer/buckle, cloud-linkedparticles/strike gates, sunlight/opaquehalfMoon/star/motion/reduced-motion preservation and zero newrequests/per-frame inference"
+  ],
+  "reuseRules": [
+    "Accepted rows remain accepted only while named source/interface/input/consumer regions unchanged; re-open only affected qualification on drift.",
+    "Exact eight-region V45 source-equivalence may reuse actual expiry/HTTP503/native-retry case and scoped motion/pixels, not an absent null/zero/body/Image/A–G input.",
+    "VM proves bounded logic, native browser proves actual controlled consumer, public readback proves delivery; none silently substitutes for another.",
+    "Four inherited WEATHER TODOs and old lunarFAILs remain literal. Replacement controls and narrow owner supersessions mapped separately."
+  ],
+  "sharedFileRisks": [
+    "src/native/index.html weather/header/diagnostic/settings regions collide with generation/temporal/location/lunar/startup writers; one authored source integrator.",
+    "README.md/DESIGN.md/HANDOFF.md overlap weather docs for#11/#12/#13/#36 and other residual specs; shared docs integrator coalesces exact facts before edit.",
+    "tools/build_native.py/generatedroot/fixture script anchors shared; only builder owner regenerates after approved authored change.",
+    "All heavy native/browser/performance jobs serialize; read-only/draft lanes may parallelize."
+  ],
+  "decisions": [
+    "Binding H5/H8 current-model presentation retained; model estimate never direct observation/lightning/arrival authority.",
+    "No blanket whole-issue prerequisites: exact accepted interface artifacts suffice.",
+    "No product/test/browser/network/GitHub effects performed by this authoring script.",
+    "All new executable entries named in this specification are PROPOSED, not existing tools/results; future executor creates them before running."
+  ],
+  "nonGoals": [
+    "No new weather provider, paid infrastructure, continuousGPS/telemetry, general schema/cache/download/scheduler framework, minutely acquisition or arrival estimator.",
+    "No accurate-arrival/predictive-skill or ground-observation/coverage/offline guarantee.",
+    "No PR38 donor, frozenV1 edits, broad optical/sky/Moon/V5 refactor or all-issue closure."
+  ],
+  "fixtureRecipes": [
+    {
+      "id": "R0024-A01",
+      "fixture": "Synthetic C: modelWMO95/2mm plus qualified current dry, nearby[8,12]km, observedAt=N, arrival[N+600000,N+1800000] derivedFrom=qualified-fixture-trajectory; compare identical current with approach absent/current-wind and current wet+approach. Current lane record and existing target captured; no new source.",
+      "consumer": "weatherDecision → proposed weatherInformation(decision,day) → weatherHeader/paintWeatherHeader → #wi title/name and #weather-information description; local buckle describedby",
+      "assertion": "Accessible/hover information says Current: SIM supported dry; Nearby: precipitation8–12km; Approach: qualified SIM interval10–30min (with absolute zone interval available) for C, nearby only/no supported arrival for unqualified movement, and current wet plus later approach both retained. No local particles for C. Word SIM cannot be removed; production no-qualified-source shows nearby unavailable/no supported arrival. Parent button Widget settings/persistence warning/action name remains intact.",
+      "environment": "Source-executing DOM fixture first, then actual native accessibility/hover/current consumers in A02",
+      "expected": "2419 source-level demonstrated gap repaired at authored information owners only; formatter does not alter permissions, WMO/temp or derived state.",
+      "artifact": "evidence/R0024/R0024-A01/receipt.json",
+      "reviewGate": "Independent native reviewer reads network/owner/admitted/cache/DOM receipts and actually inspects card/header/footer/Moon/cloud crops or clip; numeric PASS cannot override pixels. Primary reconciles exact candidate."
+    },
+    {
+      "id": "R0024-A02",
+      "fixture": "Full native A–G matrix described in B plus all controls in D/F: precise/fixed-site and coarse/expired target, model-only current positive (rain/snow/thunder), dry/unknown/forecast-only, unsupported quantities/alpha, quality/operational/local-age changes, future interval/probability, lease/tab resume/newgeneration, rain-end/outage, wet plus later approach. Present/nearby positives use the existing owned simulation bridge; optional forecast null/0 uses proposed r0024-forecast-fixture/v1 installSyntheticForecast(owner,raw), whose exact dependency decorator/payload/refusal recipe is D. Both install only in explicit timeScale=1 preview; identical ordinary-live install rejects. Live model positives use actual controlled fetch; production hourly probability/event remain null.",
+      "consumer": "Actual native admission/reconcile/qaState → accessible header info → native atmosphere/cloud systems/particle/lightning/prayer/Moon composition",
+      "assertion": "Every scenario preserves independent current/spatial/horizon/forecast and quantity/probability provenance; accessible #weather-information/wi title reads same snapshot. Synthetic wet rain/snow particles>0 originate under cloud columns; synthetic observed lightning has nonzero gated strike event when motion permits. Dry/nearby/approach/unknown/forecast-only negatives particles0 and strike0. Eligible live current quantities may enable model particles underH5, never observed permission/strikes. All full-card/crops readable325×530; Sun/opaque half-Moon/cloud continuity; reduced motion reduces flashes/motion, motion=full override works without weather authority changes.",
+      "environment": "Windows x64; installed Chromium and Firefox via tools/cp9/browser_runtime.py; record actual executable/version. Fresh profile per case, private Map storage, 390×600 viewport, DPR 1, 325×530 card, Asia/Riyadh browser zone, fixed-site lat24.47/lon39.61, method4/school0/Celsius/seed1; source/runtime/fixture hashes bound. No local=1 unless config is seeded before parse.",
+      "expected": "2420 full finite original state/control native matrix, scoped art/currentness regression and accessible presentation proof; no arrival accuracy/provider qualification claim.",
+      "artifact": "evidence/R0024/R0024-A02/receipt.json",
+      "reviewGate": "Independent native reviewer reads network/owner/admitted/cache/DOM receipts and actually inspects card/header/footer/Moon/cloud crops or clip; numeric PASS cannot override pixels. Primary reconciles exact candidate."
+    },
+    {
+      "id": "R0024-A03",
+      "fixture": "Two separately bound comparisons: (1) SOURCE18ff versus information candidate for the remaining formatter delta; (2) r0024-scaffold-resource-baseline/v1 paired full-scaffold versus resource-only replay control, admitted only after RESOURCE-BASELINE acquisition/review in D. Same native engine/hardware/provider input tape/renderer/worker/terrain/request ledger and observer overhead. Three60s warm trials for each pair plus cold and wet→dry→expiry→newtarget transitions; source-fixture call/heap measurements are separately labelled. A missing comparable scaffold control leaves2421 unverified; whole fd2972-versus-CP9 renderer delta is never weather overhead.",
+      "consumer": "Actual native request ledger/worker and browser CPU/heap measurements; exact weatherDecision/reconcile source call counts in isolated observer instrumentation copy",
+      "assertion": "Zero added provider requests/bytes/recipients, no network from formatter or reconciliation; no per-frame inference: repeated same target/record/track/lease returns same decision and reconciliation call count does not increase until a supported input/eligibility boundary changes. Measure raw CPU ms, wall intervals, JS heap/available memory metric and allocations; unsupported metric marked unavailable, never0. Original contract supplies no CPU/heap numeric budget: proposed budget is no sustained incremental increase beyond measured same-baseline run-to-run range, preregister range from baseline repeats, preserve all raw trials; exceedance requires diagnosis and primary acceptance of a concrete bound, not automatic PASS. Pair UI250ms invariant only if changed render callback exposure measured.",
+      "environment": "Serialized Windows native browser/performance queue; same engine/profile/hardware warmup; source-fixture microbench separately labelled",
+      "expected": "2421 requires both formatter delta and comparable scaffold cost, with cold/transition/cached and retained/allocated memory observations. Unpaired absolute timing is contextual only. RESOURCE-BASELINE may return GATED_NOT_COMPARABLE, which blocks only2421 qualification/closure and leaves safe INFO/DOCS/NATIVE work available.",
+      "artifact": "evidence/R0024/R0024-A03/receipt.json",
+      "reviewGate": "Independent resource reviewer admits exact paired scaffold input/control and instrumentation equivalence, then checks raw CPU/heap/request data, null metrics, baseline-repeat variance and cache boundaries. Primary decides scope/budget before2421 can pass; unqualified comparison cannot be waived by a formatter-only delta."
+    },
+    {
+      "id": "R0024-A04",
+      "fixture": "README Features/Auto-retry/Credits weather paragraph; DESIGN Weather truthfulness/API & data/URL-debug/Known approximations; HANDOFF current weather limitation.",
+      "consumer": "Public weather semantics/source attribution/diagnostic information",
+      "assertion": "Document CURRENT MODEL ESTIMATE versus direct current simulation QA, nearby/horizon/forecast/unknown; eligible model quantities may show rain/snow without observation adapter, WMOthunder grants no strike, forecast never current. Live observation/nearby/arrival adapters unqualified/unavailable, fresh alpha mosaic not local measurement/mm/coverage health. Amount preceding interval and optional probability event/window, missingprobability not0. Accessible chip information is bounded and derived; no useful arrival service/accuracy nowcast promise, field study, telemetry/GPS/provider requirement. Correct current nowcast/ground-truth wording in DESIGN370/HANDOFF172–173; keep historic90928c8 descriptions as history.",
+      "environment": "Static final prose/source/native-accessibility evidence",
+      "expected": "2422 exact current semantics and limitations, consistent with narrow owner amendment and interface outputs.",
+      "artifact": "evidence/R0024/R0024-A04/receipt.json",
+      "reviewGate": "Independent documentation reviewer compares every stated fact with pinned source and actual consumer receipts, then rejects observation/arrival/offline/cancellation overclaims."
+    },
+    {
+      "id": "R0024-A05",
+      "fixture": "All25 original24xx rows:18 satisfied,2405/2415 narrowly superseded,2419/2420/2421/2422/2425 residual; candidate source/runtime/fixture/evidence hashes and updated accessible info. Evidence must expose amended D model-positive expectation and every surviving negative.",
+      "consumer": "Independent state/pixel/resource/authority review → authorized merged/served consumer/public info → immutable evidence comment/readback → authorized manual closure",
+      "assertion": "Original policy not silently rewritten: preserve old matrices/TODOs/oracles and name narrow H5/H8 override. No all-dry API, arithmetic, source/hash, detached status or generic public smoke supplies A–G native proof or arrival skill. Final row2425 explicitly requires primary reconciliation and every remaining output plus actual generated/public delivery. Keep PR38 excluded and no blanket N001/N002/N003 closure.",
+      "environment": "Immutable source/evidence/public delivery plus issue/marker readback",
+      "expected": "CLOSE-R0024 certifies bounded truthful state/renderer information only; no upstream observation/nowcast/arrival research is reopened.",
+      "artifact": "evidence/R0024/R0024-A05/receipt.json",
+      "reviewGate": "Different reviewer checks complete accepted-plus-residual matrix, delivery identity and immutable evidence hashes; primary approves exact comment before any separately authorized publication/closure."
+    }
+  ],
+  "forecastFixtureInterface": "Proposed `r0024-forecast-fixture/v1` producer (fixture only): add `__smokeWeather.installSyntheticForecast(owner,raw)` and `clearSyntheticForecast(owner)` in the separately hashed classic bridge after unchanged product scripts. `control.assertOwned(owner)` binds run/document; installation also requires the current captured target and `(SIM.wx!=null||ADVANCING||_clockPreview)`. Ordinary live throws/logs refusal before changing any dependency/cache. Raw fields are scope=\"simulation-fixture\", policy=\"synthetic-forecast-v1\", provider=\"Synthetic QA\", product=\"probability contract\", target=currentWeatherTarget(), issuedAt=N, retrievedAt=N, validFrom=N+600000, validUntil=N+1800000, amount={kind:\"interval-amount\",value:2,units:\"mm\"}, probability=null or0, probabilityEvent=null or{event:\"precipitation\",from:N+600000,to:N+1800000}, resolution=\"synthetic fixture; calibration unavailable\". Require finite ordered future bounds, nonfuture issue/receipt, exact target generation, finite nonnegative amount and explicit matching event/window for probability0; preserve null. Rejected/malformed/wrong-owner/wrong-target input leaves old dependency unchanged.\n\nThe bridge captures original `weatherForecast` once and assigns a decorator to that dependency only: return the frozen fixture forecast when preview, owned target and valid fixture interval/receipt remain eligible; otherwise delegate original `(track,target,now)` unchanged. No reconcile/header/paint replacement and no production source/body edit. Installation/clear invalidates `_wxDecisionCache` once and calls existing render; actual `weatherDecision` calls the decorated forecast dependency at SOURCE1631 and passes it to unchanged `reconcileWeatherEvidence` at1632–1633, then real header/information sink. Use model=null/weatherTrack=null for forecast-only, and distinct presentwet+forecast coexistence. Record hook hash/assignment, source anchors, raw install/refusal, actual decision.forecast, cache and accessible text. Wrong generation, expiry, clear and ordinary live must withdraw the fixture; actual production hourly forecast still returns probability/probabilityEvent=null at1589–1594. This proves a synthetic producer/consumer contract, never a live probability acquisition or calibrated forecast.",
+  "resourceBaselineAcquisition": "`R0024-RESOURCE-BASELINE` acquires `r0024-scaffold-resource-baseline/v1` before measurement. Bounded candidates: original fd2972 weather-owner region (context only; whole renderer is incomparable), exact18ff full scaffold, and a proposed isolated resource-only replay control of18ff. Preferred pair is full18ff versus its replay control, with identical generated bodies except a hashed fixture-only decorator, same admitted target/model/track/synthetic inputs, clocks/eligibility transitions, renderer/worker/assets, profile/engine/hardware and observer hooks. Do not turn this into another source audit or remove the scaffold from production.\n\nDefine the replay control explicitly: precompute the full18ff decision tape outside measurement for cold/wet/dry/expiry/newgeneration epochs; load the same immutable tape in both arms. In the control only, replace the weatherDecision dependency with an ownership-checked lookup. It executes the pre-existing currentWeatherTarget/selectedWeather/gateWeatherCode/wxClass selection against the same tape, then returns that epoch's precomputed full decision; it skips added forecast/evidence reconciliation and scaffold cache/object construction. Full arm uses original weatherDecision/cache/reconcile. Same downstream consumer decisions/request schedule/renderer inputs must match by tape identity. Count old selection, skipped/new calls, lookup/observer tare and cache misses/hits separately; record exact decorator/disabled-range hashes and all precomputed-object retained bytes in both arms. The control is resource evidence only, never permission/correctness/pixel proof.\n\nBefore any exclusive performance run a different reviewer checks interface/source scope, tape equality including target and expiry transitions, retained/allocated-memory instrumentation/tare, and whether the native CPU/heap/request measures can isolate the additional scaffold. Output `evidence/R0024/resource-baseline-manifest.json` with exact full/control/tape/observer/browser identities, comparison scope, available/null metrics and disposition QUALIFIED_SCOPED_INPUT or GATED_NOT_COMPARABLE. Primary accepts the bounded comparison scope or names the one missing input. Stop acquisition after one review/repair of the control; if equivalence or CPU/memory comparability still cannot be established, keep2421 unverified and report the exact input/gap. No formatter-only delta or unpaired absolute timing may close it. Safe INFO/DOCS/NATIVE work continues. Qualified measurement then records paired cold/transition/cached CPU and allocated/retained heap plus request/byte counts; source-fixture measurements remain separately labelled from native browser/worker cost.",
+  "sourceOwners": [
+    {
+      "path": "src/native/index.html:557–584,1654–1668,3463–3469,3537–3547",
+      "role": "authored weather-information DOM/accessibility and weatherHeader/paint, settings/persistence name preservation"
+    },
+    {
+      "path": "src/native/index.html:1523–1651,3131–3162",
+      "role": "existing admission/reconcile/decision/cache/QA source consumed unchanged; new formatter is downstream only"
+    },
+    {
+      "path": "tests/r0024-weather.test.cjs; tests/widget-fixture.html; tests/smoke.html:159–273",
+      "role": "existingA–G model/synthetic/current/preview/quality/target/lease controls and native bridge"
+    },
+    {
+      "path": "tools/build_native.py; real-sky/native-host-hooks.js",
+      "role": "generated root and admitted atmosphere handoff; no physicalMoon/core/V5 bundle edits"
+    }
+  ],
+  "commands": {
+    "inspectedReadOnlySyntax": [
+      "git --no-optional-locks rev-parse --show-toplevel",
+      "git --no-optional-locks rev-parse HEAD",
+      "git --no-optional-locks status --short",
+      "git --no-optional-locks rev-parse '18ff14860ff41c084b1db5f396bb62aa9c22b1be^{tree}'",
+      "git --no-optional-locks diff -- src/native/index.html tools/build_native.py real-sky/native-host-hooks.js README.md DESIGN.md HANDOFF.md"
+    ],
+    "proposedNotExecuted": [
+      "node.exe --test --test-concurrency=1 tests/r0024-information.test.cjs",
+      "python.exe tools/build_native.py",
+      "python.exe tools/qa/run_r0024_native.py --root <authorized-candidate> --out <isolated-evidence/R0024/native> --browser chromium --matrix all",
+      "python.exe tools/qa/run_r0024_resources.py --baseline <isolated-SOURCE-18ff14860ff41c084b1db5f396bb62aa9c22b1be> --candidate <authorized-candidate> --scaffold-manifest <QUALIFIED_SCOPED_INPUT-resource-baseline-manifest.json> --out <isolated-evidence/R0024/resources> --trials 3 --seconds 60"
+    ]
+  }
+}

@@ -1,0 +1,767 @@
+{
+  "schema": "rlgwo-residual-specification/1",
+  "issue": 8,
+  "canonicalId": "R0008",
+  "revision": 2,
+  "author": "B",
+  "sourceTarget": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "auditEvidenceCommit": "b879573c298f19189d1f2392108b8b9f3b2cda0b",
+  "bodySha256": "dcaecdc1b1712865927b32623400ed07b269c6b799ab3c85ac16c7c22eb3dfac",
+  "specPath": "REMAINING_RLGWOs/R0008.md",
+  "commentPath": "comments/08.md",
+  "priority": "P1",
+  "residualClasses": [
+    "evidence",
+    "documentation",
+    "qualification"
+  ],
+  "priorityAssessment": {
+    "rationale": "Significant combined native qualification gap on strict timezone inverse consumed by real hourly weather, invalid-scene recovery and provider-zone adoption; source arithmetic already repaired.",
+    "impact": "Unqualified combined correctness/availability on reached weather and explicit clock consumers; inaccurate documented resolver/clock contract.",
+    "conditions": "DST gap/fold, deferred weather with changed global context/generation, invalid-to-valid scene, cold native Intl profile.",
+    "exposure": "Real hourly parser plus opt-in explicit simulation; ordinary source controls and fail-closed gates remain accepted.",
+    "confidence": "High in repaired source/37-case oracle and existing guards; combined actual native paths remain unverified, not demonstrated current defects.",
+    "containment": "Unique finite inverse or unavailable, generation/attempt guards, separate current/hourly admission; stop on observed failure/unresponsiveness.",
+    "evidence": [
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/r0008-timezone.cjs.log",
+      "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1385"
+    ],
+    "existingLabelDeparture": "No live priority label is changed. Original body proposed P2; residual caller/native closure-confidence exposure is assessed P1. Documentation row remains P2; no P0 finding."
+  },
+  "revisionProvenance": "Revision provenance: revision1 was an unpublished author draft. Revision2 incorporates independent cold-read fixture/interface clarifications and separates reviewed qualification from required downstream delivery; it makes no new runtime defect or execution PASS claim.",
+  "readiness": "AWAITING_COLD_REVIEW",
+  "deliveryMode": "docs-merge",
+  "conditionalDeliveryModes": [
+    {
+      "mode": "runtime-merge-if-changed",
+      "condition": "An authorized reached runtime defect requires an authored runtime delta; exact reviewed merge/deploy/public readback is then mandatory."
+    }
+  ],
+  "acceptedObligations": [
+    {
+      "id": "R0008-O01",
+      "status": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L40-L73"
+      ],
+      "scope": "Fresh literal-oracle conversions and fail-closed cases pass."
+    },
+    {
+      "id": "R0008-O02",
+      "status": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L42-L63"
+      ],
+      "scope": "Fresh exact outputs/rejections pass."
+    },
+    {
+      "id": "R0008-O03",
+      "status": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L75-L86"
+      ],
+      "scope": "Source implements the bound; fresh count/unsupported-profile controls pass; first-fold mutant is detected."
+    },
+    {
+      "id": "R0008-O04",
+      "status": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L65-L86"
+      ],
+      "scope": "Fresh counting/eviction controls pass; no localStorage profile owner exists."
+    },
+    {
+      "id": "R0008-O05",
+      "status": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L88-L104"
+      ],
+      "scope": "Fresh validity/legacy-mode cases pass."
+    },
+    {
+      "id": "R0008-O06",
+      "status": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L107-L139"
+      ],
+      "scope": "Fresh actual-boundary cases pass; guard-bypass mutant is detected. Provider adoption guards source-read; native browser adoption picture not implied."
+    },
+    {
+      "id": "R0008-O07",
+      "status": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L117-L139"
+      ],
+      "scope": "Fresh invalid-after-valid, settings local/preferLocal and once-only builder controls pass."
+    },
+    {
+      "id": "R0008-O10",
+      "status": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0007-countdown.cjs#L47-L60"
+      ],
+      "scope": "Source model gates nextEpoch and render gates leftMin. Dedicated gap/fold assertions read in countdown fixture; not rerun by this worker."
+    },
+    {
+      "id": "R0008-O11",
+      "status": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0008-timezone.cjs#L146-L175"
+      ],
+      "scope": "Fresh four mutation controls pass; spring mutant08:30Z differs from literal07:30Z, ignored-zone mutant returns Riyadh00:30Z."
+    }
+  ],
+  "remainingObligations": [
+    {
+      "id": "R0008-O08",
+      "parentText": "Async weather retains requestZone and passes sixth argument, checks operation ownership before adopting, rejects any invalid/ambiguous/non-increasing track without sorting NaNs.",
+      "class": "evidence",
+      "priority": "P1",
+      "priorityRationale": "Actual captured-zone hourly interface combines inverse and async ownership beyond accepted helper arithmetic.",
+      "witness": "TZ-CAPTURE separates reached captured NY parser from obsolete-generation early rejection; TZ-TRACK gap/fold/non-increasing negatives.",
+      "acceptance": [
+        {
+          "id": "R0008-A08",
+          "fixture": "TZ-CAPTURE actual-entry positive: wall2026-03-08T07:35Z, NY config without simTime/timeScale/simWx; actual NY fetch body held; eligible same-generation prayer response adopts Riyadh metadata on same March8; unchanged generation/owning weather operation/attempt/slot; release NY current03:30/hourly03:30/04:30 before existing deadline. Pure parser supplementary; old-generation operation separate. TZ-TRACK negatives.",
+          "consumer": "Actual wxEpoch/admitWeatherTrack/fetchWeather/beginRequest/attemptEligible/slots/cache.",
+          "assertion": "Reached actual wxEpoch(s,NY), two arguments, delegates to epochForTzTime(y,mo,d,h,mi,NY), sixth captured zone: NY03:30 resolves07:30Z despite globalRiyadh, healthy same-generation current/track/cache commit with captured identity and sourceAge300000ms. Ignored-zone mutant fails reached native consumer; obsolete operation cannot adopt/cache/clear successor; invalid/gap/fold/duplicate/decreasing track rejected. Early old rejection or pure parser alone does not qualify real caller.",
+          "environment": "Isolated native Chromium then Firefox on recorded Windows/version; viewport325x530,DPR1; actual root/config/fixture hashes; declared synthetic provider and per-document storage; pre-script clocks; optional astronomy503/date-only scope and actual settled fonts disclosed.",
+          "expected": "Reached actual wxEpoch(s,NY), two arguments, delegates to epochForTzTime(y,mo,d,h,mi,NY), sixth captured zone: NY03:30 resolves07:30Z despite globalRiyadh, healthy same-generation current/track/cache commit with captured identity and sourceAge300000ms. Ignored-zone mutant fails reached native consumer; obsolete operation cannot adopt/cache/clear successor; invalid/gap/fold/duplicate/decreasing track rejected. Early old rejection or pure parser alone does not qualify real caller.",
+          "artifact": "evidence/R0008/native/captured-zone.json",
+          "reviewGate": "Independent caller/ownership reviewer checks reached arguments/release trace and ignored-zone mutant."
+        }
+      ],
+      "nodeIds": [
+        "R0008-WEATHER"
+      ],
+      "closureGate": "CLOSE-R0008",
+      "auditDisposition": "unverified",
+      "existingPartialEvidence": "Source reads captured ctx.zone and all ep values must be finite and strictly increasing. Dedicated combined captured-zone async control was not freshly executed or established from a mapped retained assertion here."
+    },
+    {
+      "id": "R0008-O09",
+      "parentText": "Rejecting hourly track must not discard independently valid current model data or let invalid time become age evidence; approved owner model presentation remains model estimate.",
+      "class": "evidence",
+      "priority": "P1",
+      "priorityRationale": "Native current/hourly separation and valid source age are consequential real-weather consumer gaps.",
+      "witness": "TZ-TRACK spring currentNY03:30 at07:35Z,900s interval/code0/temp20c plus gap hourly; healthy and invalid-current controls.",
+      "acceptance": [
+        {
+          "id": "R0008-A09",
+          "fixture": "TZ-TRACK valid independently admitted current plus rejected gap/fold/duplicate/decreasing hourly; invalid current time control.",
+          "consumer": "Actual admitWeatherRecord/admitWeatherTrack/weatherEligibility/selectedWeather/header.",
+          "assertion": "Valid current selected despite rejected hourly; sourceAge300000ms/receiptAge0 in spring control; invalid epoch produces unavailable age/eligibility, never finite interpolation/age; current-model estimate policy unchanged.",
+          "environment": "Isolated native Chromium then Firefox on recorded Windows/version; viewport325x530,DPR1; actual root/config/fixture hashes; declared synthetic provider and per-document storage; pre-script clocks; optional astronomy503/date-only scope and actual settled fonts disclosed.",
+          "expected": "Valid current selected despite rejected hourly; sourceAge300000ms/receiptAge0 in spring control; invalid epoch produces unavailable age/eligibility, never finite interpolation/age; current-model estimate policy unchanged.",
+          "artifact": "evidence/R0008/native/current-track.json",
+          "reviewGate": "Independent weather/source-age reviewer checks selected object/target and actual header crop."
+        }
+      ],
+      "nodeIds": [
+        "R0008-WEATHER"
+      ],
+      "closureGate": "CLOSE-R0008",
+      "auditDisposition": "unverified",
+      "existingPartialEvidence": "Current and track admitted separately at src1374-1383; track rejection leaves current eligible under its own TTL. Current-policy amendment is unrelated to inversion precision. Full combined issue-specific negative control remains unmapped."
+    },
+    {
+      "id": "R0008-O12",
+      "parentText": "Actual browser requested clock/error/recovery, settled provider-zone reinitialization, frozen/accelerated controls must use valid pre-script setup and matching accepted input days.",
+      "class": "evidence",
+      "priority": "P1",
+      "priorityRationale": "Full native invalidation/recovery/provider-zone pathways materially exceed scalar source proof.",
+      "witness": "TZ-SCENES spring/fold exact wall days; TZ-RECOVERY UTC/NY/provider adoption; TZ-MODES frozen/1/60.",
+      "acceptance": [
+        {
+          "id": "R0008-A12",
+          "fixture": "TZ-SCENES/TZ-RECOVERY/TZ-MODES; pre-script exact wall/day/zone; actual admitted matching provider payloads.",
+          "consumer": "Actual boot/applyConfig/loadPrayerData/initSim/simulationReady/model/render.",
+          "assertion": "Valid spring07:30Z/postfold08:30Z and six prayer rows; gap/fold unavailable before downstream work; settings reachable; old anchor/output withdrawn; recovery restores prior visibility/builders once; frozen/1/60 independent elapsed modes.",
+          "environment": "Isolated native Chromium then Firefox on recorded Windows/version; viewport325x530,DPR1; actual root/config/fixture hashes; declared synthetic provider and per-document storage; pre-script clocks; optional astronomy503/date-only scope and actual settled fonts disclosed.",
+          "expected": "Valid spring07:30Z/postfold08:30Z and six prayer rows; gap/fold unavailable before downstream work; settings reachable; old anchor/output withdrawn; recovery restores prior visibility/builders once; frozen/1/60 independent elapsed modes.",
+          "artifact": "evidence/R0008/native/scenes.json",
+          "reviewGate": "Separate native reviewer checks setup before initialization, matching days/provider zones, validity traces and valid/invalid/recovered crops."
+        }
+      ],
+      "nodeIds": [
+        "R0008-NATIVE"
+      ],
+      "closureGate": "CLOSE-R0008",
+      "auditDisposition": "unverified",
+      "existingPartialEvidence": "Fresh tests are source slices/recording DOM. Final-v49 geo gap/fold records are explicitly source/scalar, and generic lifecycle or native clock seek is not this browser pathway."
+    },
+    {
+      "id": "R0008-O13",
+      "parentText": "Record profile-build count in repeated actual same-day model/hourly calls and actual supported-browser responsiveness; stop if cold cost unacceptable.",
+      "class": "evidence",
+      "priority": "P1",
+      "priorityRationale": "Actual native cold cost/reuse is a meaningful acceptance gap; no invented numeric deadline or routine owner approval.",
+      "witness": "TZ-PROFILES delegated native Intl counters and uninstrumented cold/warm input/heartbeat traces.",
+      "acceptance": [
+        {
+          "id": "R0008-A13",
+          "fixture": "TZ-PROFILES fresh profile via actual model/hourly calls, same-day reuse, five days/revisit; uninstrumented matched warm control.",
+          "consumer": "Actual native zoneDay/epochForTzTime cache and model/hourly callers.",
+          "assertion": "4321 inclusive projections/profile plus successful round trips, max4 in-memory profiles/fifth eviction; unsupported cache not rescanned; native cold/warm duration/input/heartbeat remains responsive, independently disposed. Stop on observed unresponsiveness; only unresolved cost tradeoff needs owner decision.",
+          "environment": "Isolated native Chromium then Firefox on recorded Windows/version; viewport325x530,DPR1; actual root/config/fixture hashes; declared synthetic provider and per-document storage; pre-script clocks; optional astronomy503/date-only scope and actual settled fonts disclosed.",
+          "expected": "4321 inclusive projections/profile plus successful round trips, max4 in-memory profiles/fifth eviction; unsupported cache not rescanned; native cold/warm duration/input/heartbeat remains responsive, independently disposed. Stop on observed unresponsiveness; only unresolved cost tradeoff needs owner decision.",
+          "artifact": "evidence/R0008/native/profiles.json",
+          "reviewGate": "Independent performance reviewer checks attribution/matched controls; no sparse-search acceptance, VM containment timeout or routine owner signoff."
+        }
+      ],
+      "nodeIds": [
+        "R0008-NATIVE"
+      ],
+      "closureGate": "CLOSE-R0008",
+      "auditDisposition": "unverified",
+      "existingPartialEvidence": "Node projection counts pass. No mapped browser build-count/cold inverse responsiveness receipt established; generic Moon/sky heartbeat measurements do not isolate inverse builds."
+    },
+    {
+      "id": "R0008-O14",
+      "parentText": "Keep default real motion/reduction override, opaque calendar moon, readable card and no invalid scene credited as normal motion/empty night.",
+      "class": "evidence",
+      "priority": "P1",
+      "priorityRationale": "Invalid/recovered native visual boundary and affected valid-scene regression must be qualified without weakening accepted renderer.",
+      "witness": "TZ-SCENES/TZ-RECOVERY state-matched crops; narrow unchanged full-renderer opacity/motion/reduction reuse or affected rerun.",
+      "acceptance": [
+        {
+          "id": "R0008-A14",
+          "fixture": "Matched valid/invalid/recovered scenes and source/input-equivalent full-renderer controls.",
+          "consumer": "Actual card/footer/withdrawn surfaces, full sky/Moon/motion/visibility consumers in separately scoped renderer control.",
+          "assertion": "325x530 readable valid/recovered card; explicit invalid withdrawal; valid opaque calendar Moon and real15-60s motion/Delta where allowed, reduced/full/offscreen retained. Date-only503 run cannot pass whole-renderer properties; no cloud hash motion proof.",
+          "environment": "Isolated native Chromium then Firefox on recorded Windows/version; viewport325x530,DPR1; actual root/config/fixture hashes; declared synthetic provider and per-document storage; pre-script clocks; optional astronomy503/date-only scope and actual settled fonts disclosed.",
+          "expected": "325x530 readable valid/recovered card; explicit invalid withdrawal; valid opaque calendar Moon and real15-60s motion/Delta where allowed, reduced/full/offscreen retained. Date-only503 run cannot pass whole-renderer properties; no cloud hash motion proof.",
+          "artifact": "evidence/R0008/regression/reuse-and-crops.json",
+          "reviewGate": "Independent pixel/lifecycle reviewer signs source/input/consumer equivalence or affected PNG/clip/Delta rerun."
+        }
+      ],
+      "nodeIds": [
+        "R0008-NATIVE"
+      ],
+      "closureGate": "CLOSE-R0008",
+      "auditDisposition": "unverified",
+      "existingPartialEvidence": "General final-v49 scenes are retained for broader owners. No issue-specific invalid/recovered browser crop or matched motion control qualified here."
+    },
+    {
+      "id": "R0008-O15",
+      "parentText": "DESIGN explicitly states minute precision, whole-minute offsets within24h, gap/fold unavailable, explicit invalid-scene boundary and revised two-authority clock description.",
+      "class": "documentation",
+      "priority": "P2",
+      "priorityRationale": "Narrow inaccurate/missing DESIGN facts can safely be corrected without a runtime redesign.",
+      "witness": "DESIGN atmosphere/timeScale sections and resolver paragraph lack exact domain/invalid-scene contract.",
+      "acceptance": [
+        {
+          "id": "R0008-A15",
+          "fixture": "Exact docs facts enumerated in specD, matched to unchanged source.",
+          "consumer": "Delivered DESIGN atmosphere/timeScale/resolver documentation.",
+          "assertion": "Minute precision, integer Gregorian/positive representable years, whole-minute offsets<=24h, U-24h..U+48h inclusive4321, gap/fold/unsupported unavailable,4-profile reuse, invalid-scene withdrawal/recovery and one API/two authority/explicit1x distinction stated accurately.",
+          "environment": "Read-only/source documentation review then actual approved merged/public document; no browser simulation substitutes.",
+          "expected": "Minute precision, integer Gregorian/positive representable years, whole-minute offsets<=24h, U-24h..U+48h inclusive4321, gap/fold/unsupported unavailable,4-profile reuse, invalid-scene withdrawal/recovery and one API/two authority/explicit1x distinction stated accurately.",
+          "artifact": "evidence/R0008/docs/facts-review.json",
+          "reviewGate": "Independent documentation/source reviewer checks exact final prose/diff and raw/Pages hashes."
+        }
+      ],
+      "nodeIds": [
+        "R0008-DOCS"
+      ],
+      "closureGate": "CLOSE-R0008",
+      "auditDisposition": "unmet",
+      "existingPartialEvidence": "Source comments describe inverse domain, but DESIGN still describes a universal anchored formula and contains no resolver minute/gap/fold/error boundary contract."
+    },
+    {
+      "id": "R0008-O16",
+      "parentText": "No dependency/provider/config schema/cache/scheduler redesign; overlapping semantic owners integrated; final source/caller review plus browser proof before closure.",
+      "class": "qualification",
+      "priority": "P1",
+      "priorityRationale": "Mandatory final exact-source/caller/browser/delivery obligation remains a real closure node.",
+      "witness": "Seven residual gates plus preserved accepted rows and exact final source/docs/public consumer.",
+      "acceptance": [
+        {
+          "id": "R0008-A16",
+          "fixture": "All16 parent rows reconciled against retained/new evidence; four required mutants and healthy controls.",
+          "consumer": "Final authored/generated source, invoked callers/docs, actually delivered consumer and issue proof.",
+          "assertion": "Every residual qualified, accepted scopes retained, no unapproved provider/schema/scheduler redesign, independent/cold/primary review, required merge/public docs/runtime identity and proof comment readback precede authorized closure.",
+          "environment": "Exact final source/tree/runtime/root/docs hashes, fixture/host/config identities and actual public readback; not an unmerged branch.",
+          "expected": "Every residual qualified, accepted scopes retained, no unapproved provider/schema/scheduler redesign, independent/cold/primary review, required merge/public docs/runtime identity and proof comment readback precede authorized closure.",
+          "artifact": "evidence/R0008/closure-certificate.json",
+          "reviewGate": "Independent final reviewer plus primary delivery/closure reconciliation."
+        }
+      ],
+      "nodeIds": [
+        "R0008-QUALIFY"
+      ],
+      "closureGate": "CLOSE-R0008",
+      "auditDisposition": "unverified",
+      "existingPartialEvidence": "Read-only source review complete; generated consumers match target. Missing interface/browser/docs proof prevents closure; no new owner decision is required."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "R0008-DOCS",
+      "issueObligations": [
+        "R0008:R0008-O15"
+      ],
+      "priority": "P2",
+      "kind": "documentation",
+      "owner": "Future authorized R0008 executor; one integrator for shared writes; separate reviewer",
+      "scope": "DESIGN atmosphere/timeScale/strict resolver domain facts only.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "R0008-ACCEPTED-INTERFACES",
+          "contract": "Strict unique finite inverse/invalid-scene entry, captured request/attempt ownership, provider/day adoption, finite countdown and owner-approved independent current weather model admission.",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0008-DOCS-OUTPUT-1",
+          "contract": "DESIGN atmosphere/timeScale/strict resolver domain facts only.; prospective output, not an acquired PASS.",
+          "artifact": "evidence/R0008/docs/facts-review.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation before readiness.",
+        "Reanchor current main/contracts/startup handoff; preserve unchanged accepted interfaces.",
+        "Future executor authorization and resources for actual tests/writes; current stage is planning only."
+      ],
+      "exitCriteria": [
+        "Every mapped residual has actual source/config/input/environment-bound required outputs and independent disposition.",
+        "Preserve healthy/mutant/failing receipts; do not infer defect or pass from missing evidence."
+      ],
+      "tests": [
+        "Source-inspected DESIGN138-143/318-320; proposed doc fact review, not executed tests."
+      ],
+      "resources": [
+        "documentation-integrator"
+      ],
+      "sharedFiles": [
+        "DESIGN.md"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          1,
+          2
+        ],
+        "exclusiveMachineMinutes": [
+          0,
+          0
+        ],
+        "confidence": "high",
+        "basis": "Correct exact facts while native queue is leased elsewhere. Planning range excludes newly demonstrated repair and broader campaigns."
+      },
+      "status": "AWAITING_COLD_REVIEW"
+    },
+    {
+      "id": "R0008-WEATHER",
+      "issueObligations": [
+        "R0008:R0008-O08",
+        "R0008:R0008-O09"
+      ],
+      "priority": "P1",
+      "kind": "evidence",
+      "owner": "Future authorized R0008 executor; one integrator for shared writes; separate reviewer",
+      "scope": "TZ-CAPTURE/TZ-TRACK actual weather parser/admission/operation traces.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "R0008-ACCEPTED-INTERFACES",
+          "contract": "Strict unique finite inverse/invalid-scene entry, captured request/attempt ownership, provider/day adoption, finite countdown and owner-approved independent current weather model admission.",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0008-WEATHER-OUTPUT-1",
+          "contract": "TZ-CAPTURE/TZ-TRACK actual weather parser/admission/operation traces.; prospective output, not an acquired PASS.",
+          "artifact": "evidence/R0008/native/captured-zone.json"
+        },
+        {
+          "id": "R0008-WEATHER-OUTPUT-2",
+          "contract": "TZ-CAPTURE/TZ-TRACK actual weather parser/admission/operation traces.; prospective output, not an acquired PASS.",
+          "artifact": "evidence/R0008/native/current-track.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation before readiness.",
+        "Reanchor current main/contracts/startup handoff; preserve unchanged accepted interfaces.",
+        "Future executor authorization and resources for actual tests/writes; current stage is planning only.",
+        "Acquire one exclusive browser/terrain/performance lease; sequential engines/scenarios."
+      ],
+      "exitCriteria": [
+        "Every mapped residual has actual source/config/input/environment-bound required outputs and independent disposition.",
+        "Preserve healthy/mutant/failing receipts; do not infer defect or pass from missing evidence."
+      ],
+      "tests": [
+        "Proposed not-yet-authored tools/cp9/rlgwo_timezone_check.py --cases capture,track --engine chromium thenfirefox."
+      ],
+      "resources": [
+        "heavy-browser"
+      ],
+      "sharedFiles": [
+        "tools/cp9/rlgwo_timezone_check.py"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          3,
+          5
+        ],
+        "exclusiveMachineMinutes": [
+          6,
+          15
+        ],
+        "confidence": "medium",
+        "basis": "Missing reached parser/current-track native interface. Planning range excludes newly demonstrated repair and broader campaigns."
+      },
+      "status": "AWAITING_COLD_REVIEW"
+    },
+    {
+      "id": "R0008-NATIVE",
+      "issueObligations": [
+        "R0008:R0008-O12",
+        "R0008:R0008-O13",
+        "R0008:R0008-O14"
+      ],
+      "priority": "P1",
+      "kind": "evidence",
+      "owner": "Future authorized R0008 executor; one integrator for shared writes; separate reviewer",
+      "scope": "TZ-SCENES/RECOVERY/MODES/PROFILES and affected/reused regression.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "R0008-ACCEPTED-INTERFACES",
+          "contract": "Strict unique finite inverse/invalid-scene entry, captured request/attempt ownership, provider/day adoption, finite countdown and owner-approved independent current weather model admission.",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0008-NATIVE-OUTPUT-1",
+          "contract": "TZ-SCENES/RECOVERY/MODES/PROFILES and affected/reused regression.; prospective output, not an acquired PASS.",
+          "artifact": "evidence/R0008/native/scenes.json"
+        },
+        {
+          "id": "R0008-NATIVE-OUTPUT-2",
+          "contract": "TZ-SCENES/RECOVERY/MODES/PROFILES and affected/reused regression.; prospective output, not an acquired PASS.",
+          "artifact": "evidence/R0008/native/profiles.json"
+        },
+        {
+          "id": "R0008-NATIVE-OUTPUT-3",
+          "contract": "TZ-SCENES/RECOVERY/MODES/PROFILES and affected/reused regression.; prospective output, not an acquired PASS.",
+          "artifact": "evidence/R0008/regression/reuse-and-crops.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation before readiness.",
+        "Reanchor current main/contracts/startup handoff; preserve unchanged accepted interfaces.",
+        "Future executor authorization and resources for actual tests/writes; current stage is planning only.",
+        "Acquire one exclusive browser/terrain/performance lease; sequential engines/scenarios."
+      ],
+      "exitCriteria": [
+        "Every mapped residual has actual source/config/input/environment-bound required outputs and independent disposition.",
+        "Preserve healthy/mutant/failing receipts; do not infer defect or pass from missing evidence."
+      ],
+      "tests": [
+        "Proposed not-yet-authored rlgwo_timezone_check.py --cases scenes,recovery,modes,profiles; source tests37 cases retained, not rerun here."
+      ],
+      "resources": [
+        "heavy-browser"
+      ],
+      "sharedFiles": [
+        "tools/cp9/rlgwo_timezone_check.py"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          4,
+          7
+        ],
+        "exclusiveMachineMinutes": [
+          10,
+          25
+        ],
+        "confidence": "medium",
+        "basis": "Missing invalidation/provider zone/modes/native cost/crops. Planning range excludes newly demonstrated repair and broader campaigns."
+      },
+      "status": "AWAITING_COLD_REVIEW"
+    },
+    {
+      "id": "R0008-QUALIFY",
+      "issueObligations": [
+        "R0008:R0008-O16"
+      ],
+      "priority": "P1",
+      "kind": "qualification",
+      "owner": "Future authorized R0008 executor; one integrator for shared writes; separate reviewer",
+      "scope": "Complete certificate/source-doc-public equivalence and independent review.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "R0008-ACCEPTED-INTERFACES",
+          "contract": "Strict unique finite inverse/invalid-scene entry, captured request/attempt ownership, provider/day adoption, finite countdown and owner-approved independent current weather model admission.",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/B/08-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html"
+          ]
+        },
+        {
+          "id": "R0008-DOCS-OUTPUT-1",
+          "producerNode": "R0008-DOCS",
+          "contract": "Exact corrected source-bound docs draft/facts review required; downstream approved delivery remains a closure gate.",
+          "status": "PENDING_INTERNAL",
+          "artifact": "evidence/R0008/docs/facts-review.json",
+          "evidence": [
+            "R0008.json"
+          ],
+          "admission": "Exact produced artifact may be consumed as soon as independently reviewed; remaining producer scenarios need not complete for a hard-interface input."
+        },
+        {
+          "id": "R0008-WEATHER-OUTPUT-1",
+          "producerNode": "R0008-WEATHER",
+          "contract": "Combined hourly/current interface proof required.",
+          "status": "PENDING_INTERNAL",
+          "artifact": "evidence/R0008/native/captured-zone.json",
+          "evidence": [
+            "R0008.json"
+          ],
+          "admission": "Exact produced artifact may be consumed as soon as independently reviewed; remaining producer scenarios need not complete for a hard-interface input."
+        },
+        {
+          "id": "R0008-WEATHER-OUTPUT-2",
+          "producerNode": "R0008-WEATHER",
+          "contract": "Combined hourly/current interface proof required.",
+          "status": "PENDING_INTERNAL",
+          "artifact": "evidence/R0008/native/current-track.json",
+          "evidence": [
+            "R0008.json"
+          ],
+          "admission": "Exact produced artifact may be consumed as soon as independently reviewed; remaining producer scenarios need not complete for a hard-interface input."
+        },
+        {
+          "id": "R0008-NATIVE-OUTPUT-1",
+          "producerNode": "R0008-NATIVE",
+          "contract": "Native invalid/recovery/cost/regression proof required.",
+          "status": "PENDING_INTERNAL",
+          "artifact": "evidence/R0008/native/scenes.json",
+          "evidence": [
+            "R0008.json"
+          ],
+          "admission": "Exact produced artifact may be consumed as soon as independently reviewed; remaining producer scenarios need not complete for a hard-interface input."
+        },
+        {
+          "id": "R0008-NATIVE-OUTPUT-2",
+          "producerNode": "R0008-NATIVE",
+          "contract": "Native invalid/recovery/cost/regression proof required.",
+          "status": "PENDING_INTERNAL",
+          "artifact": "evidence/R0008/native/profiles.json",
+          "evidence": [
+            "R0008.json"
+          ],
+          "admission": "Exact produced artifact may be consumed as soon as independently reviewed; remaining producer scenarios need not complete for a hard-interface input."
+        },
+        {
+          "id": "R0008-NATIVE-OUTPUT-3",
+          "producerNode": "R0008-NATIVE",
+          "contract": "Native invalid/recovery/cost/regression proof required.",
+          "status": "PENDING_INTERNAL",
+          "artifact": "evidence/R0008/regression/reuse-and-crops.json",
+          "evidence": [
+            "R0008.json"
+          ],
+          "admission": "Exact produced artifact may be consumed as soon as independently reviewed; remaining producer scenarios need not complete for a hard-interface input."
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R0008-QUALIFY-OUTPUT-1",
+          "contract": "Independently reviewed pre-delivery candidate certificate covering all original retained/new rows, exact source/doc/input/fixture hashes, findings and risks, with downstream merge/public delivery/comment/closure gates PENDING. Final closure additionally requires the declared downstream delivery receipt; no runtime merge for unchanged consumer.",
+          "artifact": "evidence/R0008/closure-certificate.json",
+          "stage": "PRE_DELIVERY_CANDIDATE",
+          "requiredDownstreamReceipt": "R0008-DELIVERY-RECEIPT"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation before readiness.",
+        "Reanchor current main/contracts/startup handoff; preserve unchanged accepted interfaces.",
+        "Future executor authorization and resources for actual tests/writes; current stage is planning only."
+      ],
+      "exitCriteria": [
+        "Every mapped residual has actual source/config/input/environment-bound required outputs and independent disposition.",
+        "Preserve healthy/mutant/failing receipts; do not infer defect or pass from missing evidence.",
+        "Independently reviewed pre-delivery candidate certificate with all retained/new rows and exact final source/docs/input hashes; list downstream delivery/comment/closure gates PENDING. Qualification can finish before merge/public delivery and does not close the issue."
+      ],
+      "tests": [
+        "Proposed exact row/evidence/hash/readback review; no fictional runtime rewrite."
+      ],
+      "resources": [
+        "documentation-integrator"
+      ],
+      "sharedFiles": [],
+      "dependsOn": [
+        {
+          "node": "R0008-DOCS",
+          "type": "qualification",
+          "reason": "Exact corrected source-bound docs draft/facts review required; downstream approved delivery remains a closure gate."
+        },
+        {
+          "node": "R0008-WEATHER",
+          "type": "qualification",
+          "reason": "Combined hourly/current interface proof required."
+        },
+        {
+          "node": "R0008-NATIVE",
+          "type": "qualification",
+          "reason": "Native invalid/recovery/cost/regression proof required."
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          1,
+          2
+        ],
+        "exclusiveMachineMinutes": [
+          0,
+          5
+        ],
+        "confidence": "medium",
+        "basis": "Review every retained/residual scope and produce a pre-delivery candidate; final closure requires downstream delivered docs/consumer. Planning range excludes newly demonstrated repair and broader campaigns."
+      },
+      "status": "AWAITING_COLD_REVIEW"
+    }
+  ],
+  "closure": {
+    "id": "CLOSE-R0008",
+    "requiresDelivery": true,
+    "qualificationStage": "Reviewed pre-delivery candidate certificate; downstream exact-head merge authority, docs delivery, runtime delivery only if changed, immutable evidence/comment readback and primary closure reconciliation remain explicit gates.",
+    "requiredDeliveryReceipt": {
+      "id": "R0008-DELIVERY-RECEIPT",
+      "producer": "Primary-assigned downstream approved delivery executor; not the QUALIFY node",
+      "status": "PENDING_DOWNSTREAM",
+      "contract": "Exact approved-head merged/public documentation and immutable evidence/comment readback; unchanged delivered runtime equality or separately approved changed-runtime merge/deploy/readback; bind receipt into final certificate before manual closure."
+    },
+    "deliveryMode": "docs-merge",
+    "conditionalDeliveryMode": "runtime-merge-if-changed",
+    "requiredOutputs": [
+      "R0008-DOCS-OUTPUT-1",
+      "R0008-WEATHER-OUTPUT-1",
+      "R0008-WEATHER-OUTPUT-2",
+      "R0008-NATIVE-OUTPUT-1",
+      "R0008-NATIVE-OUTPUT-2",
+      "R0008-NATIVE-OUTPUT-3",
+      "R0008-QUALIFY-OUTPUT-1"
+    ],
+    "requiredArtifacts": {
+      "R0008-DOCS-OUTPUT-1": "evidence/R0008/docs/facts-review.json",
+      "R0008-WEATHER-OUTPUT-1": "evidence/R0008/native/captured-zone.json",
+      "R0008-WEATHER-OUTPUT-2": "evidence/R0008/native/current-track.json",
+      "R0008-NATIVE-OUTPUT-1": "evidence/R0008/native/scenes.json",
+      "R0008-NATIVE-OUTPUT-2": "evidence/R0008/native/profiles.json",
+      "R0008-NATIVE-OUTPUT-3": "evidence/R0008/regression/reuse-and-crops.json",
+      "R0008-QUALIFY-OUTPUT-1": "evidence/R0008/closure-certificate.json"
+    },
+    "conditions": [
+      "Every original mandatory row retained or newly qualified with exact source/consumer/input/platform evidence.",
+      "All residual acceptance IDs and healthy/mutation/recovery controls reconciled independently.",
+      "Exact final authored/generated/docs hashes and actual required merge/public readback; unmerged docs/runtime branch not delivery.",
+      "Unchanged delivered runtime may qualify by evidence; no fictional runtime rewrite.",
+      "Primary-approved proof comment posted/read back before justified authorized manual closure; issue remains open on any failed/unqualified row."
+    ],
+    "authority": "Closure only after future executor authorization, independent/cold and primary reconciliation and actual required delivery; this planning packet authorizes no product/GitHub effect."
+  },
+  "documentationFacts": [
+    {
+      "sections": [
+        "DESIGN.md:138-143",
+        "DESIGN.md:318-320",
+        "new strict resolver paragraph beside temporal model"
+      ],
+      "facts": [
+        "Minute precision; strict Gregorian integers/positive representable year; whole-minute offsets magnitude<=24h.",
+        "Inclusive U-24h throughU+48h/4321 UTC minutes, unique candidate only; gap/fold/second offsets unsupported unavailable.",
+        "Four in-memory zone/day profiles; reuse/eviction including unsupported; no persistent schema.",
+        "Explicit invalid scene withdraws prior clock-dependent outputs, preserves settings and valid recovery.",
+        "One simNow API: ordinary absent overrides current Date.now; explicit anchored elapsed previews incl1x ADVANCING."
+      ],
+      "writerConstraint": "Coordinate clock facts with R0020-DOCS through one documentation integrator."
+    }
+  ],
+  "affectedRegressionSet": [
+    "real-sky/star/V5/Sun/Moon opaque calendar disc and physics gates",
+    "cloud/weather/precipitation/current-model versus hourly truth and currentness",
+    "prayer/day/current-next/countdown/calendar selection/inert text",
+    "settings/config/cache/request ownership and truthful unavailable/recovery",
+    "real15-60s motion/reduced/full/offscreen visibility with pixel/Delta not cloud hash",
+    "inner325x530/approved outer330x534, frozenV1, existing build owner mapping"
+  ],
+  "reuseRules": [
+    "Accepted audit dispositions/parent IDs remain immutable; source/helper equivalence is narrow and not native host/input equality.",
+    "Retained exact-source controls/native public evidence credited only for reached owner/input/environment; changed source/runtime hash alone neither rejects all receipts nor validates all joined behavior.",
+    "Date-only explicit503 astronomy runs qualify actual prayer/config/date/CSS only; full sky/Moon/motion/startup have separate exact evidence.",
+    "Source tests/VM/recording DOM are not native keyboard/touch/pixels; directrender/seek is not scheduled-loop/device-suspend proof.",
+    "New startup joined source requalifies affected composition/lifecycle/currentness; no restart/replay of unrelated accepted campaigns."
+  ],
+  "sharedFileRisks": [
+    {
+      "file": "src/native/index.html / generated index.html",
+      "risk": "Temporal/day/weather/footer owners and startup integration share source; edit authored semantic owner only if authorized reached defect; one integrator/regenerate affected consumers."
+    },
+    {
+      "file": "DESIGN.md",
+      "risk": "R0008/R0020 common clock hunk and R0019 footer access facts; independent drafts, one doc integrator; no global node allocated."
+    },
+    {
+      "file": "README.md / builder.html",
+      "risk": "R0019 access facts and embed sizing contract; preserve330x534outer/325x530inner and frozenV1; conditional help text receives affected geometry review."
+    },
+    {
+      "file": "tools/cp9 / tests",
+      "risk": "Proposed drivers adapt existing checked fixtures/launcher; retain original checks/source hashes/negative controls, no production replacement or current availability claim."
+    }
+  ],
+  "decisions": [
+    "No new runtime defect from missing native evidence; retain37 source cases and4 source mutant receipts.",
+    "Captured-zone parser positive and obsolete-generation early-rejection negative are separate.",
+    "Current model independence/source age is tested without altering owner-approved model-estimate policy.",
+    "No routine owner approval for responsive cold measurement; independent disposition; unresolved cost tradeoff only is a decision gate.",
+    "No newly required native Apple host; qualify recorded Chromium/Firefox Intl/performance."
+  ],
+  "nonGoals": [
+    "No sparse inverse/first-fold choice or arbitrary historical second-offset guarantee.",
+    "No provider/config/cache schema/scheduler/dependency redesign.",
+    "No runtime edits merely for evidence; no PR38/V1/source replay.",
+    "No whole-renderer/startup claim from optional503 date fixture."
+  ],
+  "commentsCaptured": [
+    {
+      "id": 6073041818,
+      "updatedAt": "2026-10-09T02:29:51Z"
+    }
+  ],
+  "configuration": "Requested reviewer gpt-6.1-sol/max previously confirmed by local recorded turn_context only; no independent backend attestation claimed.",
+  "planningEffects": "Only B assigned specification/comment/metadata and workers/B artifacts; no tests/browser/product/GitHub effects."
+}

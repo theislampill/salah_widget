@@ -1,0 +1,237 @@
+# RLGWO remaining-work specification — R000C — revision 1
+Priority: P1 | Residual class: evidence, docs, qualification
+
+<!-- COORDINATOR-READINESS:rev1 -->
+
+## Coordinator reconciliation — ready specification, open execution gates
+
+**READY_WITH_EXPLICIT_EXECUTION_GATES.** Author C; independent cold reader D; primary coordinator reconciled this exact revision. [Cold-read report](../reviews/D-C.json), [readiness and source hashes](../SPECIFICATION_READINESS.json), [consolidated execution graph](../CLOSURE_DAG.md). This qualifies the work order as executable. It does not claim that its future tests, platform proofs, repairs, merges or closure have happened. The AWAITING_COLD_REVIEW / READY_PENDING_REVIEW labels retained in the author text below record its pre-review drafting stage; this paragraph supersedes those labels only for specification cold-read readiness. Actual input, owner-decision, implementation, platform, qualification, delivery and closure gates remain binding. The issue remains open.
+
+The consolidated graph separates exact candidate review, required effect authority, actual delivery and final closure. For documentation-only work, accurate DOC/DOCS output can receive its own review and authorized delivery before unrelated native proof completes. Where the authored stage combined both, DELIVERY-CONFIRM preserves all original output interfaces and proof requirements; CLOSE still consumes every mandatory row and delivered document. This refines ordering only, waiving no acceptance obligation. One actual approval/delivery receipt may satisfy several nodes for the same exact head/base/effects; duplicate approvals or merges are not required. Runtime delivery still requires its full affected qualification and separate exact-head release authority.
+
+### Retained author specification
+
+<!-- RLGWO-SPEC:18ff14860ff41c084b1db5f396bb62aa9c22b1be:R000C:rev1:2026-10-08 -->
+
+**Status: AWAITING_COLD_REVIEW.** Finite measurement/shape/unit/current-track/cache admission is implemented and13 mandatory rows satisfied. Residuals are four unexecuted source mutations, actual null/absent/zero/malformed/wet native consumer pixels, related invariant checks, missing exposed-value prose and the final joined certificate. These gaps do not demonstrate that current source still fabricates0°. This is an executable specification, not implementation, native qualification, delivery or closure authorization. All new commands/cases below are proposed and unexecuted in this planning stage. The original body and accepted audit remain unchanged.
+
+## A — Identity, authority and observable objective
+
+[Issue #12](https://github.com/theislampill/salah_widget/issues/12) · [complete original audit packet](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/issues/12.json) · [current complete planning packet](../issues/12.json) · [accepted obligation assessment](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json) · [published parent next-increment comment](https://github.com/theislampill/salah_widget/issues/12#issuecomment-6073039923).
+
+Original issue body SHA-256 `25b82794e364c24ae0f75a05a030f1d16730af435af85625aabade55627c4f4b`. Current discussion contains one unchanged audit comment `6073039923`, SHA-256 `a6a322322afc80bac71797f0c92761435ee6f20b48e9872dacec801b1d5aa473`, updated `2026-10-09T02:29:40Z`. Rename events are identity provenance, not amendments; #36 has no such event. Full body/discussion packet and accepted audit matrix are consumed. Parent comment is the unversioned next increment; this revision specifies its surviving obligations without silently changing their meaning.
+
+Source/main `18ff14860ff41c084b1db5f396bb62aa9c22b1be`; tree `35208181eea714c17f5e77b2644e76434345db60`; reviewed checkout HEAD `4bccdf43363926c3077f60de87e5617ccb9abcb9` has the same tree. Runtime SHA-256 `f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260`; generated root index SHA-256 `ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee`. Audit evidence `b879573c298f19189d1f2392108b8b9f3b2cda0b` is immutable at `docs/rlgwo-audit/20261008`. New specification links use only the declared `SPEC_EVIDENCE_COMMIT` placeholder until this package is published. Local paths identify executable work, never sole public proof.
+
+[Owner H5/H8 authority](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267): eligible Open-Meteo CURRENT MODEL ESTIMATE WMO/temp and quantitative rain/snow presentation are allowed without a direct observation adapter; current model condition and quantitative effect decisions remain separate. Raw WMO95 may remain a thunder icon with uncertainty while particles and lightning are off. Forecast-only/stale/wrong-target/malformed input cannot become live current; alpha remains unitless. For R0024 only2405 and the model-withholding part of2415 are superseded. State/source/quality/target/UI/resource obligations survive.
+
+Accepted row IDs: `C01` (satisfied), `C02` (satisfied), `C03` (satisfied), `C04` (satisfied), `C05` (satisfied), `C06` (satisfied), `C07` (satisfied), `C08` (satisfied), `C09` (satisfied), `C10` (satisfied), `C11` (satisfied), `C12` (satisfied), `C13` (satisfied). Exact source assertions and original evidence are in the linked accepted matrix and machine metadata; they are not assigned new implementation work.
+
+Residual mandatory row IDs: `C14` (unverified; evidence; P1), `C15` (unverified; evidence; P1), `C16` (unverified; evidence; P1), `C17` (unmet; docs; P2), `C18` (unverified; qualification; P1). Every one has a concrete F acceptance and G node, including final-proof rows. Closure means these residuals are proven at the exact delivered candidate while accepted rows remain valid, a different reviewer reconciles the joined consumer, evidence is published/read back, and primary authorizes manual closure. A versioned spec alone is never that result.
+
+**Priority assessment.** P1 for substantial confidence missing at the transport→admission→cache→visible header/effect boundary. The originalP2 draft described a product repair; current runtime repair is accepted, so the P1 recommendation refers to native/mutation confidence, not a newly claimed defect. Documentation is P2; no P0 evidence.
+
+Impact: A future regression could manufacture0° from null or permit malformed measurements to drive effects; native exact input proof prevents a parser-only false closure. Conditions: Partial/malformed200, healthy-shaped500, legacy/cache records and true zero/negative measurements; forecast/current split. Exposure: Weather header is visible to every ordinary weather user; poisoned values are adversarial controls rather than recorded provider incidents. Confidence: High on current source and accepted119/245-pass logic evidence; native malformed/zero cases and mutants remain unverified. Containment: accepted conservative source/quantity/owner fences and coupled rollback remain. No GitHub priority label present. Original draftP2 → residualP1 because missing native/mutation proof affects a material authority pathway; keep prose subrowP2.
+
+## B — Retained witness and reproducible missing discriminator
+
+Original reporter VM null temperature became0 in installed/cache state on fd2972 and9d9c candidate; malformed500 body also installed999/Infinity/NaN. Current finite-number/whitelist/HTTP/unit/cache/track controls pass. Prepared native#12modes exist and are unexecuted; previous#14/#30 native results do not supply null/zero pixels.
+
+Retained exact evidence: [serial source-executing test receipts](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/test-receipts.json), [V45 source-equivalence and limitations](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/historical-source-equivalence.json), [original TODO/failure/reuse accounting](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json), [completed public delivery](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json), [16 public browser receipts](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json). Prior source fixes include the CP9 prerequisite integration before PR42; do not attribute all repairs to PR42. Authored weather source and generated root differ by the builder’s narrow [acceptedElevation handoff](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tools/build_native.py#L64-L67).
+
+The current default checkout `C:/workspace/ai/salah_widget` is historical fd2972 with unrelated scratch files; do not implement there. Re-anchor the reviewed source through `C:/Users/theis/.codex/worktrees/hotfix-startup-clouds/salah_widget`, then acquire an authorized isolated execution checkout. Planning inspection observed that reviewed checkout clean, with the HEAD/tree above. Re-acquire state before any future source/test/build mutation. Tools already used for the accepted audit: `C:/workspace/ai/cp9-integration-20261005/toolchain/node-v22.16.0-win-x64/node.exe` and `C:/workspace/ai/cp9-integration-20261005/venv/Scripts/python.exe`; verify their actual capabilities in execution rather than install a new dependency.
+
+Read-only re-anchor syntax inspected; no product tests were run in this planning stage:
+
+```powershell
+git --no-optional-locks rev-parse --show-toplevel
+git --no-optional-locks rev-parse HEAD
+git --no-optional-locks status --short
+git --no-optional-locks rev-parse '18ff14860ff41c084b1db5f396bb62aa9c22b1be^{tree}'
+git --no-optional-locks diff -- src/native/index.html tools/build_native.py real-sky/native-host-hooks.js README.md DESIGN.md HANDOFF.md
+```
+
+VM recipe: `NOW=Date.parse("2026-09-07T21:00:00Z")`, site24.47/39.61, Celsius, captured UTC, generation0, SIM.wx=null, ADVANCING=false; use existing source-executing r000c fixture and actual shared timezone/request-owner declarations. Healthy CURRENT fields: time21:00, interval900, WMO95, temp20, apparent19, humidity90, dew18, wind2m/s/direction180/gust4, cloud95, precipitation2mm, elevation100; aligned hourly21:00/22:00 with temp20/19/code95/3/precip2/0. A test may override only its declared discriminator. Treat legal JSON parser overflow, malformed JSON and VM-only NaN as three different input classes.
+
+Native recipe: Windows x64; installed Chromium and Firefox via tools/cp9/browser_runtime.py; record actual executable/version. Fresh profile per case, private Map storage, 390×600 viewport, DPR 1, 325×530 card, Asia/Riyadh browser zone, fixed-site lat24.47/lon39.61, method4/school0/Celsius/seed1; source/runtime/fixture hashes bound. No local=1 unless config is seeded before parse. Fixed-clock acquisition cases use `2026-09-07T09:30:00Z` (Riyadh12:30) and no timeScale/simWx. Night temporal/motion cases explicitly use a real1x moving wall clock and the declared source quarter-hour; no frozen-clock motion inference. Every synthetic present fixture is scoped/owned and marked preview; it is not a provider response. Controlled prayer dates/Hijri are test values, not calendar research or public prayer proof.
+
+Cheapest retained native preparation: [versioned C driver](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/run_weather_browser_v2.py) and [versioned wrapper/changes](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser-fixture-preparation-v2.json). Existing CLI accepts only12/14/30; #12 cases are prepared but unexecuted. #13/#36/newnight recipes require the named thin adaptation, not invented existing CLI support. Preserve the first #14 CSP/local-mode harness error and the second old quantitative-oracle FAIL; [offline H5/H8 effect reconciliation](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json) records why raw95condition is allowed while the actual zero-amount effect is off.
+
+## C — Authored owners, generated consumers and exact interfaces
+
+| Owner / file | Responsibility |
+|---|---|
+| `src/native/index.html:1213–1276,1314–1386,1463–1488,1654–1668` | known-field admission, cache/transport staging, null-aware interpolation and actual header |
+| `src/native/config.js and config.js` | units/location config owner unchanged; generated root config is not authored |
+| `tools/build_native.py:64–67` | deterministic generated root plus elevation handoff if approved source edit is necessary |
+| `tests/r000c-weather.test.cjs; tests/hotfix-prayer-weather.test.cjs; published workers/C/run_weather_browser_v2.py` | source-executing logic and prepared native entry; prepared#12cases have not been executed |
+
+The generated deployed consumer is root `index.html` with config/native host/Moon worker assets, not a separate corrected fixture implementation. `tools/build_native.py` owns generation. The native browser wrapper must load the unchanged product bodies and native HTTP assets, then add labelled dependency/observer hooks; record source/bridge/CSP hashes and exact hook modifications. Preserve first-paint/scene/currentness/worker identities. No arbitrary generic execution bridge or unsafe-eval is permitted.
+
+| Required input interface | Status / precise contract | Evidence |
+|---|---|---|
+| `captured-weather-operation/v1` | SATISFIED: beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB | [source/receipt](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044) |
+| `admitted-model-current-and-track/v1` | SATISFIED: finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved | [source/receipt](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386) |
+| `weather-per-use-authority/v1` | SATISFIED: selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent | [source/receipt](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292) |
+| `captured-calendar-zone-converter/v1` | SATISFIED: explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh | [source/receipt](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242) |
+| `bounded-weather-body-image-owner/v1` | SATISFIED: actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar | [source/receipt](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459) |
+| `radar-unitless-and-zero-axis/v1` | SATISFIED: actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly | [source/receipt](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json) |
+| `captured-location-evidence/v1` | SATISFIED: fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal | [source/receipt](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312) |
+| `weather-evidence-decision/v1` | SATISFIED: current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary | [source/receipt](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651) |
+| `owner-H5-H8-model-presentation/v1` | SATISFIED: eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority | [source/receipt](https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267) |
+| `delivered-baseline18ff/v1` | SATISFIED: actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout | [source/receipt](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json) |
+
+An administratively open issue is not a dependency. Consume these verified interface artifacts; if their exact source/input contract drifts, gate only the affected node. New outputs below are reviewable node receipts with candidate/source/fixture/input/environment hashes, raw states and independent disposition; all are planned, not claimed to exist.
+
+## D — Ordered bounded work and decision rules
+
+1. Verify the13 accepted interface rows and final source identities; inspect complete originalRED provenance rather than rerunning the old candidate as if it were current. Add no production normalizer unless a new failing actual-source witness establishes the missing behavior.
+2. Create `tools/qa/run_r000c_mutants.py` with exactly four isolated mutations from A01, one counted source anchor each and unchanged assertions; reuse minimal existing r000c acquisition/cache/track tests. Include healthy-shaped500 so admission checks cannot accidentally conceal a missingHTTPgate. Require genuine0/negative C/F/wet positives under each appropriate variant; retain raw assertion failures separately from harness failure.
+3. Copy the published `workers/C/run_weather_browser_v2.py` and wrapper into `tools/qa/run_r000c_native.py`/`tests/weather-fixture-r000c.html` in the future authorized execution checkout. Disclose all copy/anchor/CSP/source-hash changes; extend with absent property and numeric0amount. Change no expected WMO model condition to force a pass. Use native direct-function predicate polling under existing CSP; never generic unsafe-eval. Source identities accepted from the candidate manifest, not unconstrained arbitrary bytes.
+4. Run A02 native acquisition cases sequentially in fresh Chromium then Firefox contexts. Each exact rawCURRENT body feeds actual fetchWeather; no installModel helper for this acquisition claim. Retain request/jsonReads/admitted/cache/header/fx/particle/strike/art/crop evidence. Existing fixture has a fixed wall clock: label it as fixed-clock controlled provider input, not a live normal-time motion watch.
+5. Add A03 night and real1x moving-clock version only for scoped preservation; reuse accepted logic SIM/current-versus-forecast controls. Keep missing temperature independent of wet amount. A malformed quantity must suppress particles while allowed raw WMO95condition remains visible and labelled.
+6. Shared docs integrator writes A04 exposed-value semantics in README/actual DESIGN diagnostic section. Join C18 with actual independent final-tree/native/source delivery proof. If no product source changes, do not rebuild merely to create activity; delivery proof still needs public identity and truthful native/public distinction.
+
+Proposed executable entries (not yet created or executed; `<authorized-candidate>` and `<isolated-evidence/...>` must be bound by the future executor, then replace these metasyntactic values):
+
+```text
+python.exe tools/qa/run_r000c_mutants.py --root <authorized-candidate> --out <isolated-evidence/R000C/mutants>
+python.exe tools/qa/run_r000c_native.py --root <authorized-candidate> --out <isolated-evidence/R000C/native> --browser chromium --matrix all
+```
+
+Existing source tests may be run later only if source/interface changes or a listed residual needs the discriminator. Syntax/source inspection and prior exact receipts establish the existing test entry names, not new execution. In the isolated candidate bind `SALAH_WEATHER_SOURCE` to its generated index, `SALAH_CONFIG_SOURCE` to generated config and `SALAH_HOTFIX_SOURCE` to authored native source; do not accidentally execute the historical default checkout. Run serial `node.exe --test --test-concurrency=1 tests/r000c-weather.test.cjs`, `tests/r000d-weather.test.cjs`, `tests/r0024-weather.test.cjs`, `tests/r0024-response-zone.test.cjs`, `tests/r0024-cloud-expiry.test.cjs`, `tests/hotfix-prayer-weather.test.cjs` only as affected. Preserve4 inherited TODOs as TODO. Mutant copies carry actual extracted source, not duplicate corrected business logic.
+
+## E — Scope, preservation and compensation
+
+Preserve existing finite/WMO/unit/null/time/target/generation admission, current-hourly-SIM separation, per-use expiry, captured config/cache identity, quantitative model permissions and independent lightning. H5/H8 explicitly allows labelled CURRENT model rain/snow; unknown/invalid amount cannot authorize particles and neither model thunder nor RainViewer alpha grants strikes. No live source becomes qualified by formatter output or `trusted:true`.
+
+Preserve CP9 scientific core and accepted V5 stellar/source registries, physical Sun/Moon radiance, calendar Moon opacity/material/Earthshine, cloud continuity and full-/reduced-motion policy, prayer clock/currentness/rows, settings persistence/keyboard focus, terrain/composition/entry contracts,325×530 card and owner-approved330×534 productioniframe. FrozenV1 remains unchanged. Prior N001/N002PARTIAL andN003BLOCKED and historical lunar assertion failures retain their exact status; close neither by implication. Reuse only the unaffected identified interface/input evidence, never a blanket all-art PASS.
+
+Single source integrator owns any shared authored native weather/header/settings hunk, one documentation integrator owns README/DESIGN/HANDOFF, and one shared heavy native/terrain/performance queue runs at a time. Read-only source inspection and separate drafts can proceed in parallel. Authoritative owners are src/native/index.html/config/builder and real-sky/native-*; generated index/config/offline/bundles/CSS/data/worker are rebuilt only by authorized builders, never patched first. PR38, immutable vendor/scientific oracle, installer/presets/storage schema/location provider changes are outside this increment.
+
+Use isolated checkout/evidence directories, disposable origin/profile and private fixture storage. Do not touch user browser profiles, live preferences/caches or clipboard; no remote telemetry. HTTP fixtures disclose synthetic dates/Hijri/provider inputs and never present them as live observations. Roll back an actual source repair and its generated outputs together if a healthy control regresses; keep failed receipts/cache bytes and conservative unavailability. A failed information formatter can return the prior approved condition/model description while leaving nearby/arrival unavailable; it may not invent observation or restore alpha-mm. Publication/spec authoring does not authorize commit/push/deploy/state change; future executor/merge/publication leases remain separate. Containment does not satisfy a still-unverified closure row.
+
+## F — Complete residual acceptance matrix
+
+| Mandatory residual | Current gap / priority | Concrete acceptance | Node / independent gate |
+|---|---|---|---|
+| `C14` — Restore null rounding, remove HTTP gate, bypass cache normalization and restore loose hourly arrays in independent mutation controls. | unverified, P1; Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof. | `R000C-A01` | `R000C-EVIDENCE`; each fixture has an independent gate below |
+| `C15` — Disposable-browser null-temperature/genuine-zero/malformed-precip/healthy-wet cases must show actual header and data-fx; no fabricated0°/NaN°/invalid particles. | unverified, P1; Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof. | `R000C-A02` | `R000C-NATIVE`; each fixture has an independent gate below |
+| `C16` — Preserve SIM/preview,325×530 geometry,header/footer,moon opacity and live motion; parser result cannot certify pixels. | unverified, P1; Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof. | `R000C-A03` | `R000C-NATIVE`; each fixture has an independent gate below |
+| `C17` — README must explain exposed unavailable-value behavior; no schema/config/unit/installer/preset migration or new validator dependency. | unmet, P2; Bounded documented/diagnostic or resource coverage gap; accepted authority logic contains immediate risk. | `R000C-A04` | `R000C-DOCS`; each fixture has an independent gate below |
+| `C18` — Preserve original RED attribution, exact-tree independent reachability review and evidence comment; public claims need served consumer proof. | unverified, P1; Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof. | `R000C-A05` | `R000C-QUALIFY`, `CLOSE-R000C`; each fixture has an independent gate below |
+
+All fixture rows are future required acceptance. Exact constants0.05mm precipitation and0.8mm thunder gate, source/receipt TTLs900000/1200000ms, nofuture,10s stage waits,250m/5m syntheticdevice policy and exclusive syntheticvalidUntil come from the existing accepted source/contracts. Do not import a raw-condition downgrade oracle from an amended old test. No new rainfall/calibrated-confidence/predictive threshold is invented. Native deadlines permit recorded scheduling lateness; VM controls prove exact9999/10000 boundaries. Art/motion require crops/clip and independent inspection, not only numbers.
+
+### R000C-A01
+
+**Fixture:** Four independent actual-source variants: restore direct Math.round(cu.temperature_2m); remove r.ok gate in wxFetchJson; replace loadWx admitted normalization with raw c.w; restore loose hourly h[k]||[]/omit alignment (required temp/code and optional length). Retain null/absent current temp, healthy-shapedHTTP500, cache999/precip"Infinity", two hourly times with one required/optional element and both-null endpoint witnesses. VM clock2026-09-07T21:00Z/UTC/site24.47,39.61/Celsius, generation0.
+
+**Actual consumer:** fetchWeather/admitWeatherRecord/loadWx/admitWeatherTrack/wxAt → installed/cache → actual atmosphere/header/effects
+
+**Assertion / threshold:** Each source mutation makes corresponding installed/cache/consumer assertion fail, unchanged healthy input temp20, true0, negative C/F and wet controls pass. HTTP500 mutant witness must be otherwise healthy-shaped, because malformed500 may remain rejected by another gate. Preserve changed fragment, original/mutant source hashes, test command and expected assertion failure; one variant at a time.
+
+**Environment:** Windows x64; Node v22.16.0; exact final generated index.html selected with SALAH_WEATHER_SOURCE; source-owning native file also selected in the hotfix suite. Contained fetch/Image/storage/DOM/wall and monotonic clocks; never native-browser or provider evidence.
+
+**Expected:** Four genuine RED controls and paired GREEN, without production edits or oracle weakening.
+
+**Planned evidence:** `evidence/R000C/R000C-A01/receipt.json`; alongside it retain exact input/source/runtime/bridge/browser identities, raw events/assertions and relevant card/header/footer/Moon/cloud crop or clip. Do not label planned paths as executed evidence.
+
+**Independent gate:** Cold reviewer checks exact source extraction, pre/post mutation hashes, unchanged oracle, intended assertion failure and surviving healthy control; syntax/harness failure is not mutation detection.
+
+### R000C-A02
+
+**Fixture:** Prepared audit run_weather_browser_v2.py --issue12 modes12-null-temp/12-zero-temp/12-invalid-precip/12-wet, fixed2026-09-07T09:30Z/AsiaRiyadh12:30/native fixed-site. Extend a versioned copy with12-absent-temp (delete property, not null). CURRENT WMO95/cloud95/interval900; temp null, absent,0,20; invalid amount"Infinity" vs genuine2mm. Fixture Response.json is native but response is supplied by controlled fetch, not a real provider/wire acquisition; retain that limitation. Add acquired quantity0 as separate dry control.
+
+**Actual consumer:** Actual generated fetchWeather → normalized raw/cache → paintWeatherHeader/data-fx/data-precip and particle DOM
+
+**Assertion / threshold:** Null and absent temp stay null in state/cache and header empty, not0°/NaN°. Genuine0 displays0°, normal20 displays20°. Invalid amount normalized null/admission reason and numeric0 remains0; both particles0, lightning off; raw model95 icon/data-fx may remain ⛈️/thunder with uncertainty under H5/H8. Genuine2mm yields particles>0/model rain permission while direct observation/strike remain false. Require actual fetch call and native jsonReads, no model installation helpers.
+
+**Environment:** Windows x64; installed Chromium and Firefox via tools/cp9/browser_runtime.py; record actual executable/version. Fresh profile per case, private Map storage, 390×600 viewport, DPR 1, 325×530 card, Asia/Riyadh browser zone, fixed-site lat24.47/lon39.61, method4/school0/Celsius/seed1; source/runtime/fixture hashes bound. No local=1 unless config is seeded before parse.
+
+**Expected:** Five prepared/extended temperature-amount cases plus0mm negative prove actual native consumer; image alpha remains unitless and cannot supply wet permission.
+
+**Planned evidence:** `evidence/R000C/R000C-A02/receipt.json`; alongside it retain exact input/source/runtime/bridge/browser identities, raw events/assertions and relevant card/header/footer/Moon/cloud crop or clip. Do not label planned paths as executed evidence.
+
+**Independent gate:** Independent native reviewer reads network/owner/admitted/cache/DOM receipts and actually inspects card/header/footer/Moon/cloud crops or clip; numeric PASS cannot override pixels. Primary reconciles exact candidate.
+
+### R000C-A03
+
+**Fixture:** Use A02 controlled null/absent/zero/invalid/0mm/wet browser outputs at325×530; add one night half-Moon (.5/alt20/h42) with same malformed amount then eligible recovery, 30s real-time no-preference motion and reduced-motion/full override. Retain explicit SIM95/p0 and SIM95/p5 plus current-clear/hourly-thunder and ADVANCING forecast-labelled controls from unchanged logic fixtures.
+
+**Actual consumer:** Actual card/header/footer/prayer rows/Moon foreground/cloud drift/particles, live versus SIM/preview consumers
+
+**Assertion / threshold:** Unclipped footer/header, unchanged buckle cut-out and stack, opaque Moon with no stars through, visibly continuous clouds/live allowed motion, no new provider/config/unit/installer behavior. Motion judged from clip/Δ not hash. Missing temperature alone cannot suppress otherwise quantity-supported model particles; malformed amount does. No raw95 condition downgrade oracle imported from pre-H5 fixtures.
+
+**Environment:** Windows x64; installed Chromium and Firefox via tools/cp9/browser_runtime.py; record actual executable/version. Fresh profile per case, private Map storage, 390×600 viewport, DPR 1, 325×530 card, Asia/Riyadh browser zone, fixed-site lat24.47/lon39.61, method4/school0/Celsius/seed1; source/runtime/fixture hashes bound. No local=1 unless config is seeded before parse.
+
+**Expected:** C16 affected hostile/zero pixels and scoped SIM/motion/Moon preservation; retain independent Sun/V5/star/currentness receipts if exact sources/inputs unchanged.
+
+**Planned evidence:** `evidence/R000C/R000C-A03/receipt.json`; alongside it retain exact input/source/runtime/bridge/browser identities, raw events/assertions and relevant card/header/footer/Moon/cloud crop or clip. Do not label planned paths as executed evidence.
+
+**Independent gate:** Independent native reviewer reads network/owner/admitted/cache/DOM receipts and actually inspects card/header/footer/Moon/cloud crops or clip; numeric PASS cannot override pixels. Primary reconciles exact candidate.
+
+### R000C-A04
+
+**Fixture:** README Features and weather-value paragraph plus DESIGN Weather truthfulness/URL-debug; compare null/0 and malformed acquisition receipts.
+
+**Actual consumer:** Public exposed measurement semantics
+
+**Assertion / threshold:** Explain unavailable temp blank versus genuine0°; absent/invalid quantities retain null/reason and cannot authorize particles, genuine0 is dry model amount not fabricated measurement. Valid condition can remain despite absent optional measurements; Celsius/Fahrenheit request-bound and finite negative values allowed; no new validator package, cache migration or retrospective claim distinguishing old coerced0 from genuine0.
+
+**Environment:** Static exact candidate prose and raw/cache/UI evidence
+
+**Expected:** Concise accurate prose, existing keys/schema/builder units/installers/presets compatible.
+
+**Planned evidence:** `evidence/R000C/R000C-A04/receipt.json`; alongside it retain exact input/source/runtime/bridge/browser identities, raw events/assertions and relevant card/header/footer/Moon/cloud crop or clip. Do not label planned paths as executed evidence.
+
+**Independent gate:** Independent documentation reviewer compares every stated fact with pinned source and actual consumer receipts, then rejects observation/arrival/offline/cancellation overclaims.
+
+### R000C-A05
+
+**Fixture:** Original reporter RED bound to fd2972ba64225fe9d6848e92497e6d0ed20ea624 and candidate9d9c43649748555afbe09e3ca49bc47db2d7e7bb; current accepted13 plus residual5 row join; A01–A04 exact final hashes/source and consumer receipts.
+
+**Actual consumer:** Independent reachability/current-plus-track/cache review → required merged/public delivery → future evidence comment/readback → authorized closure
+
+**Assertion / threshold:** Do not rerun historical defect to invent new provenance or credit pre-PR42 admission solely to PR42. If production unchanged, reuse exact18ff delivered bytes but verify public relevant null/0/model UI readback against controlled case where feasible, local controlled native proof separately labelled. If source changed following detected counterexample, build native owner, deliver approved candidate then relevant public healthy/unavailable native readback. All C rows satisfied/superseded before closure; original audit remains intact.
+
+**Environment:** Immutable source/evidence/candidate/public and issue readback
+
+**Expected:** CLOSE-R000C certificate retains original RED, actual native and independent final-tree proof; no claim from TODO or planning result.
+
+**Planned evidence:** `evidence/R000C/R000C-A05/receipt.json`; alongside it retain exact input/source/runtime/bridge/browser identities, raw events/assertions and relevant card/header/footer/Moon/cloud crop or clip. Do not label planned paths as executed evidence.
+
+**Independent gate:** Different reviewer checks complete accepted-plus-residual matrix, delivery identity and immutable evidence hashes; primary approves exact comment before any separately authorized publication/closure.
+
+QUALIFY produces only `evidence/R000C/reviewed-candidate-certificate.json`: independently reconciled source/evidence/native/resource/docs candidate and preserved final-proof rows, with exact-head authority, required delivery and closure marked PENDING. It does not assert the final F receipt complete. The completed `evidence/R000C/closure-certificate.json` adds actual `exact-head-authority.json` and `required-delivery-receipt.json`, merged/public identity, approved evidence/issue readbacks and complete original dispositions. Unmatched/unknown completion stays unverified; local candidate review cannot be delivery or closure.
+
+## G — Dependencies, outputs, execution order and cost
+
+The machine graph is [metadata](../metadata/R000C.json). It consumes accepted interface identities, not issue states; per-issue IDs are local so primary can coalesce shared documentation/source queue work without inventing global blockers.
+
+| Node | Rows / output | Hard predecessor | Active effort (hours) | Exclusive machine (minutes) | Resource / basis |
+|---|---|---|---:|---:|---|
+| `R000C-EVIDENCE` | R000C:C14; `R000C-evidence-output/v1` → `evidence/R000C/evidence/receipt.json` | verified input interfaces only | 2–4 | 5–12 | light-node-fixture; confidence medium |
+| `R000C-DOCS` | R000C:C17; `R000C-docs-output/v1` → `evidence/R000C/docs/source-facts-and-diff.md` | verified input interfaces only | 0.5–1.5 | 0–0 | documentation-writer; confidence medium |
+| `R000C-NATIVE` | R000C:C15, R000C:C16; `R000C-native-output/v1` → `evidence/R000C/native/receipt.json` | verified input interfaces only | 3–5 | 8–18 | exclusive-heavy-browser; confidence medium-low |
+| `R000C-QUALIFY` | R000C:C18; `R000C-qualify-output/v1` → `evidence/R000C/reviewed-candidate-certificate.json` | R000C-EVIDENCE, R000C-DOCS, R000C-NATIVE | 1.5–3 | 3–8 | independent-review; confidence medium |
+| `CLOSE-R000C` | R000C:C18; `R000C-close-output/v1` → `evidence/R000C/public-delivery-and-issue-readback.json` | R000C-QUALIFY | 0.5–1 | 2–5 | serialized-external-writer; confidence medium |
+
+Issue estimate: active effort 7.5–14.5 hours; summed exclusive machine 18–43 minutes. These are bounded planning estimates, not measurements or a promise of elapsed finish. Independent source/fixture/docs draft effort can overlap; heavy native/performance work and external writers serialize. Counts exclude owner-review/deploy queue waiting and any newly demonstrated production defect. If#13radar retries must be watched for real10minutes rather than disclosed wall-offset, add30–60 exclusive machine minutes for the selected engines/stages; do not silently spend it. Primary may coalesce shared warmup/docs/observer setup instead of charging it perissue twice.
+
+Entry: future execution lease, cold review/primary reconciliation, exact admitted input interfaces and fresh clean isolated candidate. Evidence/docs/implementation outputs are candidate artifacts. QUALIFY ends with pre-delivery reviewed-candidate certificate and pending later authority/delivery/closure gates. Delivery mode is `docs-merge`: For #11/#12/#13 only a preserved actual consumer counterexample plus separately authorized bounded source/build fix changes docs-merge to runtime-merge; no source rewrite is presumed. Exact-head authority and delivery receipt paths are named in closure metadata; primary expands independent-review → exact-head authority → delivery → closure in the unified DAG. Required new documentation is always merged/read back; unchanged18ff product delivery may be reused by current hash only. Final manual closure requires actual authorized delivery and immutable evidence/issue readback.
+
+Exact shared-file risk: src/native/index.html weather/header/diagnostic/settings regions collide with generation/temporal/location/lunar/startup writers; one authored source integrator. README.md/DESIGN.md/HANDOFF.md overlap weather docs for#11/#12/#13/#36 and other residual specs; shared docs integrator coalesces exact facts before edit. tools/build_native.py/generatedroot/fixture script anchors shared; only builder owner regenerates after approved authored change. All heavy native/browser/performance jobs serialize; read-only/draft lanes may parallelize.
+
+## H — Cold-executor and independent reviewer checklist
+
+- [ ] Original issue/body/comment hashes, H5/H8 scope, source/main/tree/runtime and prior accepted matrix are read from immutable linked packets; no transcript needed. Current external target/state/drift is reacquired before any future effect.
+- [ ] Every residual mandatory row appears in F and metadata; final-proof row is a real qualification/closure dependency, not deleted as paperwork. Accepted/superseded rows remain explicitly preserved.
+- [ ] New CLI/file interfaces are created and reviewed before running; no pretend existing tool, browser/native/JSON-wire/field observation or visual PASS. Controlled clocks/data/environment and exact dependency substitutions are disclosed.
+- [ ] Positive, boundary, hostile, recovery and required isolated mutations reach actual source/consumer; original FAIL/TODO remains and only narrow owner-approved supersession affects the expected result. No generic asset/body/Image substitution.
+- [ ] Shared source/docs writer and exclusive heavy queue ownership are assigned; native/public/generated/source states separated. Privacy/profile/storage/clipboard and fixedcard/V1/sky/star/Sun/Moon/cloud/prayer/settings/currentness boundaries preserved.
+- [ ] Pixels, accessible description, actual particles/strikes, motion and resource claims are independently inspected in their stated scope; unsupported metrics and missing completion remain unknown.
+- [ ] Exact candidate certificate and delivery/evidence/issue readbacks are accepted by primary before separately authorized publication or completed closure. All material counterexamples retain exact input/state/command/artifact and stop only affected outputs.
+- [ ] Readiness remains AWAITING_COLD_REVIEW until a different reviewer and primary reconcile this revision. No missing platform/owner research task is manufactured; the new bounded weather information route is authorized planning scope, while actual source/build/merge/publication requires its future lease.
+
+Public custody: [current complete discussion](../issues/12.json) · [full remaining specification](R000C.md) · [machine obligations/DAG](../metadata/R000C.json) · [author review](../workers/C/AUTHOR_REVIEW.md). This comment adds revision1; it does not overwrite the original contract, prior audit proof or recorded state.

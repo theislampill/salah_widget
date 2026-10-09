@@ -1,0 +1,137 @@
+{
+  "result": "PASS",
+  "scope": "Pure guard calls with synthetic isolated objects only; no GitHub/Git write, product test or runtime evidence.",
+  "checks": [
+    {
+      "control": "exact repository HTTPS",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "control": "exact repository SSH",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "control": "reject other origin https://github.com/another/salah_widget.git",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "reject other origin https://github.com/theislampill/salah_widget-extra.git",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "reject other origin https://github.com.evil.example/theislampill/salah_widget.git",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "reject other origin file:///tmp/salah_widget",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "matching existing receipt",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "control": "reject copied receipt number",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "reject copied receipt canonicalId",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "reject copied receipt revision",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "reject copied receipt sourceTarget",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "reject copied receipt specificationCommit",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "reject copied receipt commentSha256",
+      "expected": false,
+      "observed": false,
+      "pass": true
+    },
+    {
+      "control": "healthy post-publication state",
+      "expected": 0,
+      "observed": 0,
+      "pass": true
+    },
+    {
+      "control": "reject main drift",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "control": "reject changed issue body",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "control": "reject external issue closure",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "control": "reject new discussion",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "control": "reject deleted prior comment",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "control": "reject edited prior comment",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    },
+    {
+      "control": "reject duplicate marker",
+      "expected": true,
+      "observed": true,
+      "pass": true
+    }
+  ],
+  "guardSources": {
+    "commit_specification.py": "c2678eb7a2b34a2eb8f43df9fb96d6e84c7b6688edf312ce402e5988a5e8731d",
+    "publish_specification.py": "8b044d435e96b77e4d937c14a8bb2bdbac7ef4b05ca913ce92c4725d1b4b9971"
+  },
+  "consumerBinding": "Primary independent review checks that origin guard precedes Git writes, receipt guard precedes appending, and poststate guard runs after actual readbacks."
+}

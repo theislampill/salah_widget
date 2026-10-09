@@ -1,0 +1,1220 @@
+{
+  "issue": 19,
+  "canonicalId": "R0013",
+  "revision": 1,
+  "author": "E",
+  "sourceTarget": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "auditEvidenceCommit": "b879573c298f19189d1f2392108b8b9f3b2cda0b",
+  "bodySha256": "36ab2fad718a70bbebf19101427998a9c6f25f075335f5308532f63c4bf1dd08",
+  "specPath": "REMAINING_RLGWOs/R0013.md",
+  "commentPath": "comments/19.md",
+  "priority": "P1",
+  "residualClasses": [
+    "platform-qualification",
+    "evidence",
+    "documentation"
+  ],
+  "priorityAssessment": {
+    "rationale": "The supported Apple Bash3.2 floor and complete detector matrix still lack native qualification. This is a significant supported-platform closure-confidence gap; accepted launch/path repairs are preserved.",
+    "impact": "A macOS user may encounter an undetected shell/native discovery incompatibility. No current native failure has been demonstrated; missing terminal/cache/path instructions can also mislead a manual installer user.",
+    "conditions": "Normal advertised Bash launch on actual Apple macOS; zero/multiple/odd profile paths under nounset, or reading public install guidance.",
+    "exposure": "Claimed macOS installer users; documentation is public. Existing modern Linux and builder controls are accepted.",
+    "confidence": "High that specified proof/docs are absent; unknown native product outcome until measured.",
+    "containment": "Retain fail-closed terminal/staging guards and reviewed-file guidance. Acquire the native host and use disposable contained fixtures before stronger support/closure claims.",
+    "existingLabelDeparture": "No priority label is present in the captured issue. P1 remains the original body proposal, now justified by residual qualification rather than the already repaired historical defects.",
+    "evidence": [
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-document-distribution.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/native-rebind.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/CUSTODY.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-helper-archived-source.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-entry-archived-source.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-mutations-archived-source.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/native-applicability-2fafcbf.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/builder-config-rebind.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/fresh-positive-receipts.json",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0010-preferences.stdout.log",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0012-clipboard.stdout.log"
+    ]
+  },
+  "readiness": "AWAITING_COLD_REVIEW",
+  "acceptedObligations": [
+    {
+      "id": "19-01",
+      "status": "satisfied",
+      "parentText": "All five human inputs share a checked readable controlling-terminal FD3; prompts are stderr; structured record reads retain their data streams; close FD3 without interfering with staging cleanup.",
+      "originalAuditStatus": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L63-L78",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L180-L189",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L565-L616",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L703-L705"
+      ]
+    },
+    {
+      "id": "19-02",
+      "status": "satisfied",
+      "parentText": "No terminal or EOF fails nonzero before installation effects; a successful empty terminal line may default to all/source1 and cannot count as installation proof.",
+      "originalAuditStatus": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L63-L78",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L569-L590",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L703-L731"
+      ]
+    },
+    {
+      "id": "19-03",
+      "status": "satisfied",
+      "parentText": "Normalize/validate selection before downloads; accept all or existing comma indices only; reject malformed/out-of-range tokens; deduplicate; refuse legacy; zero/legacy-only cannot claim staging.",
+      "originalAuditStatus": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L659-L662",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L703-L749",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L760-L767"
+      ]
+    },
+    {
+      "id": "19-04",
+      "status": "satisfied",
+      "parentText": "Replace both mapfile calls with current-shell read loops; reset arrays per config, guard zero-array nounset, and preserve zero-profile executable/data-directory fallback.",
+      "originalAuditStatus": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L349-L384"
+      ]
+    },
+    {
+      "id": "19-06",
+      "status": "satisfied",
+      "parentText": "Successful fresh and valid same-attempt cache downloads emit one newline-terminated absolute existing regular path; diagnostics stay stderr; failure emits no usable path; extraction/copy/open consume quoted unchanged bytes.",
+      "originalAuditStatus": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L41-L43",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L421-L482",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L584-L615"
+      ]
+    },
+    {
+      "id": "19-07",
+      "status": "satisfied",
+      "parentText": "Private-cache interface amendment: one verified download root per attempt, legitimate within-attempt reuse, new root next invocation, no old shared cache/retained-bundle admission.",
+      "originalAuditStatus": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L155-L172",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L421-L450"
+      ]
+    },
+    {
+      "id": "19-08",
+      "status": "satisfied",
+      "parentText": "Builder encoded malicious label/config roundtrip, SALAH_WIDGET_HASH at the Bash process, local mode omits coordinates, and geolocation/manual/embed contracts survive.",
+      "originalAuditStatus": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L204-L219",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L377-L390",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/config.js#L154-L183",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/builder.html#L377-L390"
+      ]
+    },
+    {
+      "id": "19-10",
+      "status": "satisfied",
+      "parentText": "Restore one stdin read, mapfile, and cache status stdout as separate discriminating parse-valid mutants; preserve RED evidence and do not credit malformed controls.",
+      "originalAuditStatus": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-mutations.py#L15-L33"
+      ]
+    },
+    {
+      "id": "19-11",
+      "status": "superseded",
+      "parentText": "Geometry/permission invariant and production wrapper amendment apply without broad runtime or staging redesign.",
+      "originalAuditStatus": "validly superseded",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L217-L219",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L32-L39"
+      ]
+    },
+    {
+      "id": "19-12",
+      "status": "satisfied",
+      "parentText": "Bind the delivered public script/document and generated-command source bytes to the exact reviewed target.",
+      "originalAuditStatus": "satisfied",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh#L1-L16",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/builder.html#L377-L390",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L57-L76"
+      ]
+    }
+  ],
+  "remainingObligations": [
+    {
+      "id": "19-05",
+      "class": "platform-qualification",
+      "priority": "P1",
+      "priorityRationale": "Missing native minimum-host proof is a significant support-confidence gap; complete modern matrix and line-delimited disclosure are lower-cost closure prerequisites, not evidence of a current product failure.",
+      "witness": "Apple applicability says BLOCKED; modern ledger does not individually cover all required cardinality/backslash cells.",
+      "acceptance": [
+        {
+          "id": "R0013-A01",
+          "fixture": "Both families, zero/fallback/one/multiple; spaces, مدينة, literal backslash, populated then empty config, unterminated producer final line",
+          "consumer": "Actual detect_targets and native profile producers / TARGETS under set -Eeuo pipefail",
+          "assertion": "Exact target count, order and profile path bytes; no nounset abort; zero-profile fallback retained; do not substitute a modern shell",
+          "environment": "Actual macOS Apple /bin/bash3.2, native find/stat/fs; acquisition receipt",
+          "expected": "All required detector cases PASS or a preserved concrete counterexample keeps this row open",
+          "artifact": "evidence/R0013/apple-detector/results.json",
+          "reviewGate": "Independent reviewer verifies native provenance, source SHA, all cells and positive controls",
+          "outputId": "r0013-a01-proof/v1",
+          "producerNode": "R0013-DETECTOR"
+        },
+        {
+          "id": "R0013-A02",
+          "fixture": "Identical detector ledger on recorded modern Bash, with same logical native-Linux fixtures",
+          "consumer": "Actual current detect_targets",
+          "assertion": "Complete missing zero/one/multiple/backslash cells; exact bytes and empty-array boundary; accepted unchanged prior cases may be reused",
+          "environment": "Modern native Linux Bash with version/UID/mount recorded",
+          "expected": "Complete modern matrix without crediting disabled mapfile as Apple proof",
+          "artifact": "evidence/R0013/modern-detector/results.json",
+          "reviewGate": "Independent coverage reviewer binds reused/new modern rows individually",
+          "outputId": "r0013-a02-proof/v1",
+          "producerNode": "R0013-DETECTOR"
+        },
+        {
+          "id": "R0013-A03",
+          "fixture": "PTY full pipe entry; all/empty/1,2/1,1,3; GitHub/ask/store/fallback/NO_OPEN; no-terminal/EOF/invalid/legacy-only",
+          "consumer": "Actual unmodified install.sh on Apple /bin/bash; downstream configured preset/manual consumers",
+          "assertion": "All human input from FD3; positive actual artifacts and exact path bytes; refusal nonzero before effects; NO_OPEN retains non-open effects",
+          "environment": "Actual macOS, private native-fs fixture with effect guards and bootstrap nonce",
+          "expected": "Native launch contract passes; no real install/network/clipboard/browser/profile effects",
+          "artifact": "evidence/R0013/apple-terminal/results.json",
+          "reviewGate": "Independent reviewer checks readiness, transcript, effects, sentinel/post-exit consumers rather than exit alone",
+          "outputId": "r0013-a03-proof/v1",
+          "producerNode": "R0013-MAC-LAUNCH"
+        },
+        {
+          "id": "R0013-A04",
+          "fixture": "Parse-valid mapfile/subshell/read-r/empty-array mutants plus unchanged healthy subject",
+          "consumer": "Native detector path oracle",
+          "assertion": "Each changed contract fails its intended assertion, not shell parse/bootstrap; retained stdin/cache mutants reused separately",
+          "environment": "Same native Apple and modern fixture/source binding",
+          "expected": "Independent RED controls and healthy original; failures retained",
+          "artifact": "evidence/R0013/detector-mutants/results.json",
+          "reviewGate": "Reviewer checks mutation syntax, reachability and named failure cause",
+          "outputId": "r0013-a04-proof/v1",
+          "producerNode": "R0013-DETECTOR"
+        },
+        {
+          "id": "R0013-A05",
+          "fixture": "README profile-discovery limitation paragraph",
+          "consumer": "Human rendered installation guidance",
+          "assertion": "Explicit newline-delimited path limitation; no arbitrary-byte profile support claim",
+          "environment": "Final local docs and delivered README",
+          "expected": "Correct retained limitation appears with installation guidance",
+          "artifact": "evidence/R0013/docs/profile-limitation.md",
+          "reviewGate": "Independent prose reader compares actual producer format with exact statement",
+          "outputId": "r0013-a05-proof/v1",
+          "producerNode": "R0013-QUALIFY"
+        }
+      ],
+      "nodeIds": [
+        "R0013-PLATFORM",
+        "R0013-FIXTURE",
+        "R0013-DETECTOR",
+        "R0013-MAC-LAUNCH",
+        "R0013-DOCS",
+        "R0013-QUALIFY"
+      ],
+      "subObligations": [
+        {
+          "id": "19-05.a",
+          "parent": "19-05",
+          "scope": "Apple detector/floor and native launch proof",
+          "priority": "P1",
+          "priorityAssessment": {
+            "rationale": "P1 for Apple detector/floor and native launch proof. Missing native minimum-host proof is a significant support-confidence gap; complete modern matrix and line-delimited disclosure are lower-cost closure prerequisites, not evidence of a current product failure.",
+            "impact": "Specific child: Apple detector/floor and native launch proof. A macOS user may encounter an undetected shell/native discovery incompatibility. No current native failure has been demonstrated; missing terminal/cache/path instructions can also mislead a manual installer user. Specific residual: Complete native Apple Bash 3.2 and modern-Bash detector matrix: both families, zero/one/multiple, spaces/Unicode/backslashes, unterminated final line, empty-array nounset; disclose newline-bearing path limitation.",
+            "conditions": "Normal advertised Bash launch on actual Apple macOS; zero/multiple/odd profile paths under nounset, or reading public install guidance. Witness: Apple applicability says BLOCKED; modern ledger does not individually cover all required cardinality/backslash cells.",
+            "exposure": "Claimed macOS installer users; documentation is public. Existing modern Linux and builder controls are accepted.",
+            "confidence": "High that specified proof/docs are absent; unknown native product outcome until measured.",
+            "containment": "Retain fail-closed terminal/staging guards and reviewed-file guidance. Acquire the native host and use disposable contained fixtures before stronger support/closure claims.",
+            "evidence": [
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-document-distribution.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/native-rebind.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/CUSTODY.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-helper-archived-source.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-entry-archived-source.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-mutations-archived-source.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/native-applicability-2fafcbf.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/builder-config-rebind.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/fresh-positive-receipts.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0010-preferences.stdout.log",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0012-clipboard.stdout.log"
+            ],
+            "existingLabelDeparture": "No priority label is present in the captured issue. P1 remains the original body proposal, now justified by residual qualification rather than the already repaired historical defects."
+          }
+        },
+        {
+          "id": "19-05.b",
+          "parent": "19-05",
+          "scope": "Complete modern detector matrix and native controls",
+          "priority": "P2",
+          "priorityAssessment": {
+            "rationale": "P2 for Complete modern detector matrix and native controls. Missing native minimum-host proof is a significant support-confidence gap; complete modern matrix and line-delimited disclosure are lower-cost closure prerequisites, not evidence of a current product failure.",
+            "impact": "Specific child: Complete modern detector matrix and native controls. A macOS user may encounter an undetected shell/native discovery incompatibility. No current native failure has been demonstrated; missing terminal/cache/path instructions can also mislead a manual installer user. Specific residual: Complete native Apple Bash 3.2 and modern-Bash detector matrix: both families, zero/one/multiple, spaces/Unicode/backslashes, unterminated final line, empty-array nounset; disclose newline-bearing path limitation.",
+            "conditions": "Normal advertised Bash launch on actual Apple macOS; zero/multiple/odd profile paths under nounset, or reading public install guidance. Witness: Apple applicability says BLOCKED; modern ledger does not individually cover all required cardinality/backslash cells.",
+            "exposure": "Claimed macOS installer users; documentation is public. Existing modern Linux and builder controls are accepted.",
+            "confidence": "High that specified proof/docs are absent; unknown native product outcome until measured.",
+            "containment": "Retain fail-closed terminal/staging guards and reviewed-file guidance. Acquire the native host and use disposable contained fixtures before stronger support/closure claims.",
+            "evidence": [
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-document-distribution.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/native-rebind.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/CUSTODY.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-helper-archived-source.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-entry-archived-source.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-mutations-archived-source.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/native-applicability-2fafcbf.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/builder-config-rebind.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/fresh-positive-receipts.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0010-preferences.stdout.log",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0012-clipboard.stdout.log"
+            ],
+            "existingLabelDeparture": "No priority label is present in the captured issue. P1 remains the original body proposal, now justified by residual qualification rather than the already repaired historical defects."
+          }
+        },
+        {
+          "id": "19-05.c",
+          "parent": "19-05",
+          "scope": "Newline-delimited path disclosure",
+          "priority": "P2",
+          "priorityAssessment": {
+            "rationale": "P2 for Newline-delimited path disclosure. Missing native minimum-host proof is a significant support-confidence gap; complete modern matrix and line-delimited disclosure are lower-cost closure prerequisites, not evidence of a current product failure.",
+            "impact": "Specific child: Newline-delimited path disclosure. A macOS user may encounter an undetected shell/native discovery incompatibility. No current native failure has been demonstrated; missing terminal/cache/path instructions can also mislead a manual installer user. Specific residual: Complete native Apple Bash 3.2 and modern-Bash detector matrix: both families, zero/one/multiple, spaces/Unicode/backslashes, unterminated final line, empty-array nounset; disclose newline-bearing path limitation.",
+            "conditions": "Normal advertised Bash launch on actual Apple macOS; zero/multiple/odd profile paths under nounset, or reading public install guidance. Witness: Apple applicability says BLOCKED; modern ledger does not individually cover all required cardinality/backslash cells.",
+            "exposure": "Claimed macOS installer users; documentation is public. Existing modern Linux and builder controls are accepted.",
+            "confidence": "High that specified proof/docs are absent; unknown native product outcome until measured.",
+            "containment": "Retain fail-closed terminal/staging guards and reviewed-file guidance. Acquire the native host and use disposable contained fixtures before stronger support/closure claims.",
+            "evidence": [
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-document-distribution.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/native-rebind.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/CUSTODY.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-helper-archived-source.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-entry-archived-source.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-mutations-archived-source.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/native-applicability-2fafcbf.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/builder-config-rebind.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/fresh-positive-receipts.json",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0010-preferences.stdout.log",
+              "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0012-clipboard.stdout.log"
+            ],
+            "existingLabelDeparture": "No priority label is present in the captured issue. P1 remains the original body proposal, now justified by residual qualification rather than the already repaired historical defects."
+          }
+        }
+      ],
+      "parentText": "Complete native Apple Bash 3.2 and modern-Bash detector matrix: both families, zero/one/multiple, spaces/Unicode/backslashes, unterminated final line, empty-array nounset; disclose newline-bearing path limitation.",
+      "auditStatus": "unverified",
+      "originalAuditWitness": "Native-applicability-2fafcbf explicitly records actual Apple host BLOCKED. Existing modern detector controls prove spaces/Unicode/unterminated final line and Firefox zero/one, but do not individually demonstrate the complete zero/one/multiple/backslash matrix. README does not disclose the newline-delimited profile limitation. Disabled mapfile is not Apple proof.",
+      "closureGate": "CLOSE-R0013",
+      "priorityAssessment": {
+        "rationale": "Missing native minimum-host proof is a significant support-confidence gap; complete modern matrix and line-delimited disclosure are lower-cost closure prerequisites, not evidence of a current product failure.",
+        "impact": "A macOS user may encounter an undetected shell/native discovery incompatibility. No current native failure has been demonstrated; missing terminal/cache/path instructions can also mislead a manual installer user. Specific residual: Complete native Apple Bash 3.2 and modern-Bash detector matrix: both families, zero/one/multiple, spaces/Unicode/backslashes, unterminated final line, empty-array nounset; disclose newline-bearing path limitation.",
+        "conditions": "Normal advertised Bash launch on actual Apple macOS; zero/multiple/odd profile paths under nounset, or reading public install guidance. Witness: Apple applicability says BLOCKED; modern ledger does not individually cover all required cardinality/backslash cells.",
+        "exposure": "Claimed macOS installer users; documentation is public. Existing modern Linux and builder controls are accepted.",
+        "confidence": "High that specified proof/docs are absent; unknown native product outcome until measured.",
+        "containment": "Retain fail-closed terminal/staging guards and reviewed-file guidance. Acquire the native host and use disposable contained fixtures before stronger support/closure claims.",
+        "evidence": [
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-document-distribution.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/native-rebind.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/CUSTODY.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-helper-archived-source.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-entry-archived-source.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-mutations-archived-source.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/native-applicability-2fafcbf.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/builder-config-rebind.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/fresh-positive-receipts.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0010-preferences.stdout.log",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0012-clipboard.stdout.log"
+        ],
+        "existingLabelDeparture": "No priority label is present in the captured issue. P1 remains the original body proposal, now justified by residual qualification rather than the already repaired historical defects."
+      }
+    },
+    {
+      "id": "19-09",
+      "class": "documentation",
+      "priority": "P2",
+      "priorityRationale": "The launch/path implementations are accepted; omission of terminal/review/cache instructions is bounded user guidance work, with a public/manual-execution impact.",
+      "witness": "README49–76 lacks controlling-terminal and retired-cache facts; existing builder comment points to absent offline instructions.",
+      "acceptance": [
+        {
+          "id": "R0013-A06",
+          "fixture": "README terminal/reviewed-file/manual/config/cache paragraph; current builder installCmd and existing SALAH_WIDGET_HASH controls",
+          "consumer": "Human README and copied builder Bash command",
+          "assertion": "Readable controlling terminal explicit; reviewed pinned exact file route; manual extension/import and dashboard replacement; configured hash and per-attempt cache/no cross-run reuse agreement",
+          "environment": "Rendered final README/builder and exact final hashes",
+          "expected": "No inaccurate completion/cache/terminal claim; no unnecessary invocation change",
+          "artifact": "evidence/R0013/docs/install-guidance.json",
+          "reviewGate": "Independent reader checks every listed fact, command shape and preserved interfaces",
+          "outputId": "r0013-a06-proof/v1",
+          "producerNode": "R0013-QUALIFY"
+        },
+        {
+          "id": "R0013-A07",
+          "fixture": "Final authorized public README, unchanged raw install.sh and builder generated command",
+          "consumer": "Raw-script and actual public documentation consumers",
+          "assertion": "Delivered revised README matches reviewed bytes; unchanged installer and command bind accepted receipts; terminal guidance is legible",
+          "environment": "Public raw/Pages/GitHub rendered docs after authorized delivery",
+          "expected": "Bounded capability distribution and content agreement, separate from browser installation",
+          "artifact": "evidence/R0013/delivery/readback.json",
+          "reviewGate": "Primary independent delivery readback and issue-closure certificate",
+          "outputId": "r0013-a07-proof/v1",
+          "producerNode": "R0013-DELIVER"
+        }
+      ],
+      "nodeIds": [
+        "R0013-DOCS",
+        "R0013-QUALIFY",
+        "R0013-DELIVER"
+      ],
+      "parentText": "README and builder explain normal terminal requirement and accurate reviewed-file route; preserve manual import, dashboard replacement and configured preset; disclose retired cross-run reuse.",
+      "auditStatus": "unmet",
+      "originalAuditWitness": "README retains curl|bash and Bash review-first/manual warning but omits the controlling-terminal requirement and cache compatibility disclosure. Builder source comment L372 points readers to offline/local instructions absent from README.",
+      "closureGate": "CLOSE-R0013",
+      "priorityAssessment": {
+        "rationale": "The launch/path implementations are accepted; omission of terminal/review/cache instructions is bounded user guidance work, with a public/manual-execution impact.",
+        "impact": "Public readers can misunderstand this specific mandatory fact: README and builder explain normal terminal requirement and accurate reviewed-file route; preserve manual import, dashboard replacement and configured preset; disclose retired cross-run reuse.",
+        "conditions": "Reading/copying the named final public documentation; exact missing discriminator: README49–76 lacks controlling-terminal and retired-cache facts; existing builder comment points to absent offline instructions.",
+        "exposure": "Public human guidance; Claimed macOS installer users; documentation is public. Existing modern Linux and builder controls are accepted.",
+        "confidence": "High that the named prose omission exists; accepted unchanged code behavior is preserved.",
+        "containment": "Bounded named-section prose edit and independent semantic/rendered/delivery review; preserve accepted interfaces.",
+        "evidence": [
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-document-distribution.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/native-rebind.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/CUSTODY.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-helper-archived-source.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-entry-archived-source.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/bash-mutations-archived-source.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/native-applicability-2fafcbf.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/builder-config-rebind.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/fresh-positive-receipts.json",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0010-preferences.stdout.log",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/D/r0012-clipboard.stdout.log"
+        ],
+        "existingLabelDeparture": "No priority label is present in the captured issue. P1 remains the original body proposal, now justified by residual qualification rather than the already repaired historical defects."
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "R0013-PLATFORM",
+      "issueObligations": [
+        "R0013:19-05"
+      ],
+      "priority": "P1",
+      "kind": "acquisition",
+      "owner": "native macOS platform custodian",
+      "scope": "Acquire access to an actual macOS host with its Apple /bin/bash 3.2, native BSD stat/mktemp/find/id and a native filesystem volume for the disposable fixture. This is an external platform acquisition gate, not a demonstrated installer defect or an unresolved owner-policy conflict. Capture /bin/bash --version, uname -a, sw_vers, id, command -v python3/stat/mktemp/find, actual utility paths and native stat output, df -P for the fixture and diskutil info for its mount (if available). Record device/inode/UID/mode and symlink/physical path of HOME and TMPDIR fixture parents. Existing python3 is an installer prerequisite; do not install Homebrew, replace the supported shell, create accounts or change real profiles to obtain a green. Record HOST_AVAILABLE with these fields, or ACQUISITION_PENDING with the missing host/prerequisite. Waiting for access is not a numeric execution ETA.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "apple-native-host/v1",
+          "contract": "Actual macOS Apple Bash3.2/native utilities/native-volume access",
+          "status": "ACQUISITION_PENDING",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/native-applicability-2fafcbf.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "r0013-apple-platform/v1",
+          "contract": "Native shell/OS/utility/fs provenance and contained fixture prerequisites",
+          "artifact": "evidence/R0013/apple-platform.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and future evidence-execution authorization; host access explicitly acquired"
+      ],
+      "exitCriteria": [
+        "Complete genuine host/volume/UID/tool provenance, or retain acquisition-pending frontier"
+      ],
+      "tests": [
+        "PROPOSED read-only /bin/bash --version; uname -a; sw_vers; id; native stat; df -P; diskutil info fixture mount"
+      ],
+      "resources": [
+        "native-apple-host"
+      ],
+      "sharedFiles": [],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          0.5,
+          1.5
+        ],
+        "exclusiveMachineMinutes": [
+          3,
+          10
+        ],
+        "confidence": "medium",
+        "basis": "Inventory capture only; excludes unknown calendar wait for Apple access"
+      },
+      "status": "READY_PENDING_REVIEW",
+      "externalPrerequisite": "ACQUISITION_PENDING",
+      "executionEligibility": "COLD_REVIEW_PENDING; satisfy entry criteria and any pending acquisition/authorization before execution"
+    },
+    {
+      "id": "R0013-FIXTURE",
+      "issueObligations": [
+        "R0013:19-05"
+      ],
+      "priority": "P1",
+      "kind": "fixture",
+      "owner": "installer fixture executor",
+      "scope": "Create tests/install-bash-native.py as a proposed fixture adapter, preserving the existing Linux runner and source guards. Proposed CLI: python3 tests/install-bash-native.py --source install.sh --bash /bin/bash --platform mac --suite detector|terminal|staging|entry|all --out <evidence-dir>. The fixture must read the exact install.sh bytes; use the supplied shell path for both outer process and inner piped Bash; check that the unmodified product itself chooses Darwin; and run set -Eeuo pipefail without disabling nounset. Load helper-only source by the existing unique top-level banner delimiter, never by stale line ranges. A complete-entry case executes the full unchanged source and reports a separate bootstrap-ready nonce emitted by BASH_ENV before installer top level.\n\nUse private HOME/TMPDIR roots on the native volume; macOS discovery paths are HOME/Library/Application Support/Google/Chrome, Microsoft Edge, BraveSoftware/Brave-Browser and Firefox/Profiles. Contain browser executable discovery without touching /Applications: BASH_ENV may intercept only declared browser command-v/-x discovery metadata, mapping them to disposable fixture executables; all other test/id/stat/mktemp/find operations remain native. This seam is declared in the receipt and does not substitute operating-system, owner or filesystem behavior. Retain the existing guarded wrapper design for mkdir/mktemp/rm/cp/mv, local fixture-only curl/release metadata/preset transport, and intercept macOS open/pbcopy before any top-level effect. Reject any attempted path outside the fixture, real network, real clipboard or actual browser launch. Harness logs and preparation are outside the subject snapshot; no real profile/extension/storage write occurs. Capture complete stdout/stderr/exit/PTY input transcript, effect argv with original bytes, pre/post subject snapshots and artifact consumer readback. Use a fresh shell/subject per case. A bootstrap failure is an invalid fixture, not a product RED. Timeout initially retains the existing 20-second entry limit as a harness containment choice, not a performance acceptance threshold; preserve output and distinguish timeout from a native contract failure.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "accepted-bash-fixture/v1",
+          "contract": "Exact source and existing helper/entry containment design",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-bash.py",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/native-rebind.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "r0013-native-fixture/v1",
+          "contract": "Explicit --bash/--platform/--suite/--out adapter; readiness/containment/subject snapshots/source hashes",
+          "artifact": "tests/install-bash-native.py"
+        }
+      ],
+      "entryCriteria": [
+        "Read source/test delimiters and existing guards; preserve Linux default runner"
+      ],
+      "exitCriteria": [
+        "Review CLI, intercept completeness, physical owner checks and full-source entry distinction before executing any installer case"
+      ],
+      "tests": [
+        "PROPOSED fixture self-check: bootstrap nonce and forbidden outside-effect negative; no test run is authorized in this plan stage"
+      ],
+      "resources": [
+        "single-installer-fixture-writer"
+      ],
+      "sharedFiles": [
+        "tests/install-bash-native.py"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          2,
+          4
+        ],
+        "exclusiveMachineMinutes": [
+          5,
+          15
+        ],
+        "confidence": "medium",
+        "basis": "Bounded adaptation of existing Linux fixture; read-only drafting can precede Apple access"
+      },
+      "status": "READY_PENDING_REVIEW",
+      "executionEligibility": "COLD_REVIEW_PENDING; satisfy entry criteria and any pending acquisition/authorization before execution"
+    },
+    {
+      "id": "R0013-DETECTOR",
+      "issueObligations": [
+        "R0013:19-05"
+      ],
+      "priority": "P1",
+      "kind": "qualification",
+      "owner": "native detector executor",
+      "scope": "Execute the explicit Apple and missing-modern cardinality/path/nounset ledger and named detector mutants only.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "r0013-apple-platform/v1",
+          "contract": "Genuine Apple provenance and safe fixture volume",
+          "status": "PENDING",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/retained-install/native-applicability-2fafcbf.json"
+          ]
+        },
+        {
+          "id": "r0013-native-fixture/v1",
+          "contract": "Reviewed native adapter with no hidden platform substitution",
+          "status": "PENDING",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-bash.py"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "r0013-native-detector/v1",
+          "contract": "Apple/full modern case rows, exact profile bytes, healthy positives and valid mutant RED",
+          "artifact": "evidence/R0013/detector-ledger.json"
+        },
+        {
+          "id": "r0013-a01-proof/v1",
+          "contract": "All required detector cases PASS or a preserved concrete counterexample keeps this row open",
+          "artifact": "evidence/R0013/apple-detector/results.json",
+          "acceptanceRecord": "R0013-A01"
+        },
+        {
+          "id": "r0013-a02-proof/v1",
+          "contract": "Complete modern matrix without crediting disabled mapfile as Apple proof",
+          "artifact": "evidence/R0013/modern-detector/results.json",
+          "acceptanceRecord": "R0013-A02"
+        },
+        {
+          "id": "r0013-a04-proof/v1",
+          "contract": "Independent RED controls and healthy original; failures retained",
+          "artifact": "evidence/R0013/detector-mutants/results.json",
+          "acceptanceRecord": "R0013-A04"
+        }
+      ],
+      "entryCriteria": [
+        "Platform and fixture outputs admitted; unmodified source hash bound"
+      ],
+      "exitCriteria": [
+        "All required cells and controls discriminate; preserve real failing source/host case before any patch decision"
+      ],
+      "tests": [
+        "python3 tests/install-bash-native.py --source install.sh --bash /bin/bash --platform mac --suite detector --out evidence/R0013/apple-detector [PROPOSED] ",
+        "python3 tests/install-bash-native.py --source install.sh --bash /usr/bin/bash --platform linux --suite detector --out evidence/R0013/modern-detector [PROPOSED]"
+      ],
+      "resources": [
+        "native-apple-host",
+        "native-linux-fixture-queue"
+      ],
+      "sharedFiles": [
+        "tests/install-bash-native.py"
+      ],
+      "dependsOn": [
+        {
+          "node": "R0013-PLATFORM",
+          "type": "hard-interface",
+          "reason": "Actual Apple environment is mandatory"
+        },
+        {
+          "node": "R0013-FIXTURE",
+          "type": "hard-interface",
+          "reason": "Native-source fixture interface must be reviewed"
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          1.5,
+          3.5
+        ],
+        "exclusiveMachineMinutes": [
+          15,
+          35
+        ],
+        "confidence": "medium",
+        "basis": "Finite two-family ledger; modern accepted cells reused"
+      },
+      "status": "READY_PENDING_REVIEW",
+      "executionEligibility": "COLD_REVIEW_PENDING; satisfy entry criteria and any pending acquisition/authorization before execution"
+    },
+    {
+      "id": "R0013-MAC-LAUNCH",
+      "issueObligations": [
+        "R0013:19-05"
+      ],
+      "priority": "P1",
+      "kind": "qualification",
+      "owner": "native installer entry executor",
+      "scope": "Qualify actual Apple PTY normal/NO_OPEN/source/refusal chain; publish receipts for R0016 reuse.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "r0013-native-fixture/v1",
+          "contract": "Complete source, safe intercepts and PTY entry with supplied /bin/bash",
+          "status": "PENDING",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/install-entry-bash.py"
+          ]
+        },
+        {
+          "id": "bash-input-and-path/v1",
+          "contract": "Accepted exact FD3 and single-path contracts",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "r0013-apple-launch/v1",
+          "contract": "Native full-entry normal/NO_OPEN/terminal refusal receipts and configured consumer artifacts",
+          "artifact": "evidence/R0013/apple-terminal/results.json"
+        },
+        {
+          "id": "r0013-a03-proof/v1",
+          "contract": "Native launch contract passes; no real install/network/clipboard/browser/profile effects",
+          "artifact": "evidence/R0013/apple-terminal/results.json",
+          "acceptanceRecord": "R0013-A03"
+        }
+      ],
+      "entryCriteria": [
+        "Genuine Apple host and adapter admitted; safe macOS root probes from R0015 available before normal effect fixtures"
+      ],
+      "exitCriteria": [
+        "Required healthy/refusal cases and post-exit consumers proven; source bytes unchanged or narrow failure explicitly escalated"
+      ],
+      "tests": [
+        "python3 tests/install-bash-native.py --source install.sh --bash /bin/bash --platform mac --suite terminal --out evidence/R0013/apple-terminal [PROPOSED; after fixture creation]"
+      ],
+      "resources": [
+        "native-apple-host",
+        "single-native-installer-effect-queue"
+      ],
+      "sharedFiles": [],
+      "dependsOn": [
+        {
+          "node": "R0013-PLATFORM",
+          "type": "hard-interface",
+          "reason": "Native floor"
+        },
+        {
+          "node": "R0013-FIXTURE",
+          "type": "hard-interface",
+          "reason": "Whole-entry harness"
+        },
+        {
+          "node": "R0015-MAC-STAGING",
+          "type": "qualification",
+          "reason": "Native root guard interface, not whole issue closure"
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          1,
+          2.5
+        ],
+        "exclusiveMachineMinutes": [
+          15,
+          35
+        ],
+        "confidence": "medium",
+        "basis": "Reuse Linux case design and retain resulting Apple positives for R0016"
+      },
+      "status": "READY_PENDING_REVIEW",
+      "executionEligibility": "COLD_REVIEW_PENDING; satisfy entry criteria and any pending acquisition/authorization before execution"
+    },
+    {
+      "id": "R0013-DOCS",
+      "issueObligations": [
+        "R0013:19-05",
+        "R0013:19-09"
+      ],
+      "priority": "P2",
+      "kind": "documentation",
+      "owner": "shared README integrator",
+      "scope": "Write exactly the terminal/review/manual/cache/newline facts listed in D; preserve copied command and existing configuration.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "bash-input-cache-config/v1",
+          "contract": "Accepted FD3/private per-attempt/single-path/encoded config interfaces",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/builder-config-rebind.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "r0013-install-docs/v1",
+          "contract": "Reviewed README terminal/review/cache/profile-limitation text and row-to-section map",
+          "artifact": "README.md"
+        }
+      ],
+      "entryCriteria": [
+        "Coordinate installer README section with R0014/R0015/R0016"
+      ],
+      "exitCriteria": [
+        "All enumerated facts and pinned recipe are complete; no changed invocation/runtime/permission contract"
+      ],
+      "tests": [
+        "PROPOSED independent prose/command comparison against install.sh/source serializer; no normal installer invocation from doc review"
+      ],
+      "resources": [
+        "single-shared-source-integrator"
+      ],
+      "sharedFiles": [
+        "README.md"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          0.5,
+          1.5
+        ],
+        "exclusiveMachineMinutes": [
+          0,
+          3
+        ],
+        "confidence": "medium",
+        "basis": "Small shared README paragraphs, no runtime build"
+      },
+      "status": "READY_PENDING_REVIEW",
+      "executionEligibility": "COLD_REVIEW_PENDING; satisfy entry criteria and any pending acquisition/authorization before execution"
+    },
+    {
+      "id": "R0013-QUALIFY",
+      "issueObligations": [
+        "R0013:19-05",
+        "R0013:19-09"
+      ],
+      "priority": "P1",
+      "kind": "independent-review",
+      "owner": "independent issue evidence/prose reviewer",
+      "scope": "Read every residual acceptance artifact, semantic text and controls; reconcile accepted unchanged rows against exact source/fixture/environment; produce a complete non-closing qualification record. For installer docs inspect actual rendered shared README and builder command agreement. For R001B execute only changed-doc scope after its creation; for R001C consume the executed source/browser ledgers without a duplicate campaign.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "r0013-native-detector/v1",
+          "contract": "Complete Apple/modern detector and control ledger",
+          "status": "PENDING",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json"
+          ]
+        },
+        {
+          "id": "r0013-apple-launch/v1",
+          "contract": "Actual native Apple terminal/manual consumers",
+          "status": "PENDING",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json"
+          ]
+        },
+        {
+          "id": "r0013-install-docs/v1",
+          "contract": "Terminal/review/cache/profile limitation instructions",
+          "status": "PENDING",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "r0013-qualification/v1",
+          "contract": "Independent row/child/artifact/source/accepted-reuse map and explicit remaining limits",
+          "artifact": "evidence/R0013/qualification.json"
+        },
+        {
+          "id": "r0013-a05-proof/v1",
+          "contract": "Correct retained limitation appears with installation guidance",
+          "artifact": "evidence/R0013/docs/profile-limitation.md",
+          "acceptanceRecord": "R0013-A05"
+        },
+        {
+          "id": "r0013-a06-proof/v1",
+          "contract": "No inaccurate completion/cache/terminal claim; no unnecessary invocation change",
+          "artifact": "evidence/R0013/docs/install-guidance.json",
+          "acceptanceRecord": "R0013-A06"
+        }
+      ],
+      "entryCriteria": [
+        "Different reviewer from source/docs/fixture author; all required input artifacts produced and reviewed; cold review accepted before future execution",
+        "Native-platform acquisition is proven before its cells are admitted; no missing receipt substituted by narrative"
+      ],
+      "exitCriteria": [
+        "All parent and child obligations covered by actual discriminating evidence; exact complete prose/rendered facts and accepted boundaries maintained; retain open on missing input"
+      ],
+      "tests": [
+        "PROPOSED independent artifact/prose/source/native-provenance review; no needless repeat of qualified runs"
+      ],
+      "resources": [
+        "single-heavy-browser-queue"
+      ],
+      "sharedFiles": [],
+      "dependsOn": [
+        {
+          "node": "R0013-DETECTOR",
+          "type": "qualification",
+          "reason": "Admit exact produced interface/result, not whole-issue predecessor"
+        },
+        {
+          "node": "R0013-MAC-LAUNCH",
+          "type": "qualification",
+          "reason": "Admit exact produced interface/result, not whole-issue predecessor"
+        },
+        {
+          "node": "R0013-DOCS",
+          "type": "qualification",
+          "reason": "Admit exact produced interface/result, not whole-issue predecessor"
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          0.75,
+          1.75
+        ],
+        "exclusiveMachineMinutes": [
+          3,
+          12
+        ],
+        "confidence": "medium",
+        "basis": "Cold semantic/receipt/coverage reconciliation and bounded rendered installer guidance; shared final README render can be coalesced"
+      },
+      "status": "READY_PENDING_REVIEW",
+      "executionEligibility": "COLD_REVIEW_PENDING; satisfy entry criteria and any pending acquisition/authorization before execution"
+    },
+    {
+      "id": "R0013-DELIVER",
+      "issueObligations": [
+        "R0013:19-05",
+        "R0013:19-09"
+      ],
+      "priority": "P1",
+      "kind": "delivery",
+      "owner": "authorized source/PR/delivery integrator",
+      "scope": "Integrate only reviewed bounded changes after separate authority; produce final immutable evidence and actual public raw/rendered readbacks of changed docs plus unchanged relevant script/builder/runtime bindings. Maintain non-closing PR wording; no main/runtime mutation is authorized by this plan.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "r0013-qualification/v1",
+          "contract": "Complete independent residual/accepted proof and scoped final text",
+          "status": "PENDING",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json"
+          ]
+        },
+        {
+          "id": "future-delivery-authority/v1",
+          "contract": "Exact future approved source/PR/merge/public delivery actions and target preconditions",
+          "status": "AUTHORIZATION_REQUIRED",
+          "evidence": [
+            "../REMAINING_RLGWOs/R0013.md"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "r0013-delivery/v1",
+          "contract": "Final delivered commit/tree/file hashes, public URL/status/readbacks/screenshots and exact evidence URLs",
+          "artifact": "evidence/R0013/delivery/readback.json"
+        },
+        {
+          "id": "r0013-a07-proof/v1",
+          "contract": "Bounded capability distribution and content agreement, separate from browser installation",
+          "artifact": "evidence/R0013/delivery/readback.json",
+          "acceptanceRecord": "R0013-A07"
+        }
+      ],
+      "entryCriteria": [
+        "Independent qualification accepted; exact future effect lease/target/currentness approved; preserve unrelated work and stop on incompatible drift"
+      ],
+      "exitCriteria": [
+        "Changed delivered docs equal final reviewed bytes and complete rendered facts; unchanged capability/runtime receipts rebound; each claimed external action has actual readback"
+      ],
+      "tests": [
+        "PROPOSED post-delivery raw/Pages/GitHub rendered readback, exact file/SHA comparison and relevant copied command consumer; not executed now"
+      ],
+      "resources": [
+        "one-authorized-external-writer",
+        "single-heavy-browser-queue"
+      ],
+      "sharedFiles": [
+        "README.md"
+      ],
+      "dependsOn": [
+        {
+          "node": "R0013-QUALIFY",
+          "type": "qualification",
+          "reason": "Complete issue-specific proof precedes distribution"
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          0.5,
+          1.5
+        ],
+        "exclusiveMachineMinutes": [
+          3,
+          12
+        ],
+        "confidence": "medium",
+        "basis": "Shared delivery/readback can serve multiple issues; per-node standalone envelope is not additive campaign cost"
+      },
+      "status": "READY_PENDING_REVIEW",
+      "executionEligibility": "COLD_REVIEW_PENDING; satisfy entry criteria and any pending acquisition/authorization before execution"
+    },
+    {
+      "id": "CLOSE-R0013",
+      "issueObligations": [
+        "R0013:19-05",
+        "R0013:19-09"
+      ],
+      "priority": "P1",
+      "kind": "closure",
+      "owner": "primary issue closure authority",
+      "scope": "Issue#19 remains open until exact independent qualification and actual required delivery certificate are admitted; then separately authorized manual closure/readback, never inferred from draft/test/PR.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "r0013-qualification/v1",
+          "contract": "Every original residual parent and accepted reuse row qualified",
+          "status": "PENDING",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/E/19-assessment.json"
+          ]
+        },
+        {
+          "id": "r0013-delivery/v1",
+          "contract": "Actual final public delivered docs/capability and evidence URL/hash readbacks",
+          "status": "PENDING",
+          "evidence": [
+            "../REMAINING_RLGWOs/R0013.md"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "r0013-closure-certificate/v1",
+          "contract": "Manual closure decision or exact still-open frontier, all row/artifact identities and authorized issue readback",
+          "artifact": "evidence/R0013/closure-certificate.json"
+        }
+      ],
+      "entryCriteria": [
+        "Future explicit issue closure authority; qualification+delivery complete and dependencies/current discussion rechecked"
+      ],
+      "exitCriteria": [
+        "Final closure certificate has every row/child/native/document/control/consumer/reuse/delivery result with no unknown mandatory cell; actual issue state readback recorded"
+      ],
+      "tests": [
+        "PROPOSED read-only certificate/issue readback; issue close only under separate future authority"
+      ],
+      "resources": [
+        "one-authorized-external-writer"
+      ],
+      "sharedFiles": [],
+      "dependsOn": [
+        {
+          "node": "R0013-QUALIFY",
+          "type": "qualification",
+          "reason": "Every mandatory row proof"
+        },
+        {
+          "node": "R0013-DELIVER",
+          "type": "qualification",
+          "reason": "Actual claimed public capability/docs"
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          0.25,
+          0.5
+        ],
+        "exclusiveMachineMinutes": [
+          1,
+          3
+        ],
+        "confidence": "high",
+        "basis": "Bounded certificate/decision; no closure effect now"
+      },
+      "status": "READY_PENDING_REVIEW",
+      "executionEligibility": "COLD_REVIEW_PENDING; satisfy entry criteria and any pending acquisition/authorization before execution"
+    }
+  ],
+  "closure": {
+    "id": "CLOSE-R0013",
+    "requiresDelivery": true,
+    "deliveryMode": "docs-merge",
+    "requiredOutputs": [
+      "r0013-apple-platform/v1",
+      "r0013-native-fixture/v1",
+      "r0013-native-detector/v1",
+      "r0013-a01-proof/v1",
+      "r0013-a02-proof/v1",
+      "r0013-a04-proof/v1",
+      "r0013-apple-launch/v1",
+      "r0013-a03-proof/v1",
+      "r0013-install-docs/v1",
+      "r0013-qualification/v1",
+      "r0013-a05-proof/v1",
+      "r0013-a06-proof/v1",
+      "r0013-delivery/v1",
+      "r0013-a07-proof/v1"
+    ],
+    "requiredArtifacts": [
+      "evidence/R0013/apple-detector/results.json",
+      "evidence/R0013/modern-detector/results.json",
+      "evidence/R0013/apple-terminal/results.json",
+      "evidence/R0013/detector-mutants/results.json",
+      "evidence/R0013/docs/profile-limitation.md",
+      "evidence/R0013/docs/install-guidance.json",
+      "evidence/R0013/delivery/readback.json"
+    ],
+    "certificateOutput": "r0013-closure-certificate/v1",
+    "conditions": [
+      "After independent review and future execution authorization, use a focused non-closing PR (Implements #N). No commit/push/merge/deployment/publication authority is supplied by this planning packet.",
+      "After separately authorized integration and delivery, record final commit/tree, authored/generated file hashes, exact inspected commands, environment, per-case results, controls, failed attempts and residual limits. Compare the advertised raw scripts and generated builder command with the final reviewed bytes; acquire changed public docs and inspect their rendered consumers where required.",
+      "Closure certificate names every original residual parent ID, its child acceptance records, unchanged accepted-row evidence, independent reviewer and actual delivery readbacks. Keep the issue open if a required platform, discriminator, document or consumer proof is missing. Primary issue-closure authority acts only after this certificate; no automatic close via PR keywords.",
+      "Every original residual/child and unchanged accepted-row binding is qualified; cold review admitted; missing native/consumer/document cell leaves issue open.",
+      "Delivery mode is docs-merge for current docs/fixture/evidence residuals. No runtime rewrite is mandatory. A genuine native product counterexample must be preserved and receive a narrowly authorized repair/revised scope before code changes."
+    ],
+    "authority": "Primary explicit closure only after future executor/effect authorization and actual required proof/delivery; no closure/publication/execution authority in this spec"
+  },
+  "documentationFacts": [
+    {
+      "section": "README / One-line install / reviewed Bash route",
+      "fact": "Normal mode needs a readable controlling terminal; EOF is refusal, an empty successful line may default, manual installation/import remains pending. Review a pinned file before normal execution.",
+      "example": "curl -fsSL -o ./install.sh \"https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.sh\"\nless ./install.sh\nDRY_RUN=1 bash ./install.sh\nbash ./install.sh"
+    },
+    {
+      "section": "README / One-line install / cache and profile limitations",
+      "fact": "Each invocation creates a new verified private download root. A valid same-attempt cache hit returns the identical existing path without another asset download. Old shared caches and retained manual bundles are not admitted as a new run cache. Profile discovery is newline-delimited and cannot represent newline-bearing profile paths."
+    },
+    {
+      "section": "README / installer manual boundary and existing builder comment",
+      "fact": "Keep encoded SALAH_WIDGET_HASH, explicit extension/manual import and dashboard replacement warning; the existing builder normal command stays unchanged. Link/refer to the real offline/local preview paragraph supplied with R0016."
+    }
+  ],
+  "affectedRegressionSet": [
+    "Native Apple detector and terminal/source/output-path chain",
+    "Only missing modern detector cells and their new mutants",
+    "README installer guidance, builder command/config/geolocation/manual agreement",
+    "Unchanged native Windows/staging/weather/runtime/V1 reuse; no broad visual recertification"
+  ],
+  "reuseRules": [
+    "Reuse an accepted row only with unchanged relevant source bytes, interface, test inputs and native environment assumptions; bind them in a reuse manifest. A new source/tree digest alone is insufficient. Changing README does not invalidate unchanged native installer bytes.",
+    "Keep historical native execution historical. Native Linux Bash5.2.21, Windows PowerShell5.1.26100.9444 and PowerShell7.6.6 receipts are not fresh reruns or Apple proof. No disabled-builtin, PLATFORM=mac, VM, Linux/GNU utility or Windows-filesystem substitution closes an actual Apple cell.",
+    "The current 16-case public rollout and 139-file binding establish the delivered baseline. They do not establish future changed documentation, diagnostic-specific overlay/reduced-motion cases, or every backlog obligation.",
+    "If an installer/runtime/serializer changes, invalidate the affected call-chain and mutant receipts and rerun only the corresponding necessary native/consumer gates after authorization. A doc-only patch reuses unchanged parser/selector/staging/currentness interfaces."
+  ],
+  "sharedFileRisks": [
+    "README One-line install49–76 also owned by R0014/R0015/R0016; one integrator merges terminal/host/lifetime/preview paragraphs.",
+    "Proposed tests/install-bash-native.py adapter shared with R0015 native staging and R0016 whole entry; maintain one fixture writer and one native-host effect owner."
+  ],
+  "decisions": [
+    "Acquire actual Apple host; do not infer failure or mandate a full-runtime rewrite from missing receipt.",
+    "Retain advertised pipe and unchanged builder serializer; file review is accurate guidance, not a substitute for pipe qualification.",
+    "Same-attempt cache contract is supplied/accepted by R0015; no whole-issue predecessor or owner conflict is invented."
+  ],
+  "nonGoals": [
+    "Repairing already accepted stdin/path/cache implementation without a new witness",
+    "Installing a newer Bash/Homebrew or changing real profiles",
+    "Changing widget/card/outer wrapper/permission/network policy",
+    "Browser extension installation or runtime sky/terrain rewrite"
+  ],
+  "sourceTree": "35208181eea714c17f5e77b2644e76434345db60",
+  "examinedCheckoutHead": "4bccdf43363926c3077f60de87e5617ccb9abcb9",
+  "currentPacketContract": {
+    "canonicalId": "R0013",
+    "bodySha256": "36ab2fad718a70bbebf19101427998a9c6f25f075335f5308532f63c4bf1dd08",
+    "commentRevisions": [
+      {
+        "id": 6073054943,
+        "updatedAt": "2026-10-09T02:31:02Z",
+        "sha256": "bf4edde445951cbf0157487cda74e3a0c35275c5b104b4ed3d40eec5cb2facc8"
+      }
+    ]
+  },
+  "capturedEvents": [
+    {
+      "id": 30733542566,
+      "node_id": "RTE_lADOS6MzkM8AAAABQMfbo88AAAAHJ9ykpg",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/30733542566",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "renamed",
+      "commit_id": null,
+      "commit_url": null,
+      "created_at": "2026-09-08T06:25:08Z",
+      "rename": {
+        "from": "SW-019: Repair Bash installer input, supported-shell and cached-path contracts",
+        "to": "R0013: Repair Bash installer input, supported-shell and cached-path contracts"
+      },
+      "performed_via_github_app": null
+    },
+    {
+      "id": 32419791123,
+      "node_id": "REFE_lADOS6MzkM8AAAABQMfbo88AAAAHjF7BEw",
+      "url": "https://api.github.com/repos/theislampill/salah_widget/issues/events/32419791123",
+      "actor": {
+        "login": "theislampill",
+        "id": 266501826,
+        "node_id": "U_kgDOD-J-wg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/266501826?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theislampill",
+        "html_url": "https://github.com/theislampill",
+        "followers_url": "https://api.github.com/users/theislampill/followers",
+        "following_url": "https://api.github.com/users/theislampill/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theislampill/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theislampill/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theislampill/subscriptions",
+        "organizations_url": "https://api.github.com/users/theislampill/orgs",
+        "repos_url": "https://api.github.com/users/theislampill/repos",
+        "events_url": "https://api.github.com/users/theislampill/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theislampill/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "event": "referenced",
+      "commit_id": "daa42b229b0617ab54ef136d894945726c773afb",
+      "commit_url": "https://api.github.com/repos/theislampill/salah_widget/commits/daa42b229b0617ab54ef136d894945726c773afb",
+      "created_at": "2026-10-03T23:25:01Z",
+      "performed_via_github_app": null
+    }
+  ],
+  "parentAuditComment": {
+    "id": 6073054943,
+    "url": "https://github.com/theislampill/salah_widget/issues/19#issuecomment-6073054943",
+    "updatedAt": "2026-10-09T02:31:02Z",
+    "sha256": "bf4edde445951cbf0157487cda74e3a0c35275c5b104b4ed3d40eec5cb2facc8"
+  },
+  "acquisitionGates": [
+    {
+      "node": "R0013-PLATFORM",
+      "status": "ACQUISITION_PENDING"
+    }
+  ],
+  "priorityRubric": "owner local P0/P1/P2 residual rubric; no priority-label changes",
+  "sourceAndReceiptInspectionOnly": true,
+  "productTestsExecutedInAuthoring": [],
+  "externalEffectsInAuthoring": [],
+  "specSha256": "23c6b0571cd0bbb295c9622c8a07027be38726a33c054160005d71a744eb6bdd",
+  "commentSha256": "23c6b0571cd0bbb295c9622c8a07027be38726a33c054160005d71a744eb6bdd"
+}

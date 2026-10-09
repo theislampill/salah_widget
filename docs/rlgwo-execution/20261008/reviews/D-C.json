@@ -1,0 +1,454 @@
+{
+  "schema": "rlgwo-independent-cold-review/v1",
+  "reviewer": "D",
+  "author": "C",
+  "reviewedAtUtc": "2026-10-09T04:08:09.479026+00:00",
+  "status": "FINAL_COLD_REVIEW_COMPLETE",
+  "overallDisposition": "PASS",
+  "sourceTarget": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "auditEvidenceCommit": "b879573c298f19189d1f2392108b8b9f3b2cda0b",
+  "authorFreezePath": "workers/C/FREEZE.json",
+  "authorFreezeSha256": "818dc7d411599c91980dbde5c02489d378471e03a4481694ee7b40b40fdd7712",
+  "authorFreezeVerified": true,
+  "initialReviewPath": "reviews/D-C-initial.json",
+  "initialReviewSha256": "a15479d26de3d073e1cf10c7c7d90f88bbd2036e4b4f14ed1c4b00f1e6797916",
+  "issues": [
+    {
+      "issue": 11,
+      "canonicalId": "R000B",
+      "disposition": "PASS",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R000B.md",
+          "sha256": "c784ad3be0e3775205bd35d9c492067511fb8b13fa0e1ce0ef92e574d3121d55"
+        },
+        {
+          "path": "comments/11.md",
+          "sha256": "c784ad3be0e3775205bd35d9c492067511fb8b13fa0e1ce0ef92e574d3121d55"
+        },
+        {
+          "path": "metadata/R000B.json",
+          "sha256": "102ebea176f173871dc12ed8325263785836b3072de0850ef9344cf163a197ce"
+        }
+      ],
+      "resolvedFindingIds": [
+        "D-C-11-01"
+      ],
+      "remainingMaterialFindingIds": [],
+      "bodySha256": "f83c4f3516b63a068dc768b16d64e14cb970cf41ea074e240e73dcffda6d0bcc",
+      "discussion": [
+        {
+          "id": 6073038339,
+          "sha256": "bef692a8ea29d0b590fd07725728876870b4056af556ef9f402accd259d73db3"
+        }
+      ],
+      "residualCoverage": [
+        "B04",
+        "B13",
+        "B14",
+        "B16",
+        "B17",
+        "B18"
+      ],
+      "initialDisposition": "CHANGES_REQUIRED",
+      "initialReviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R000B.md",
+          "sha256": "52d338b2b761aba1cd67bac038c52a105cb8e5b2c162c3d0fceb27d4d56557dd"
+        },
+        {
+          "path": "comments/11.md",
+          "sha256": "52d338b2b761aba1cd67bac038c52a105cb8e5b2c162c3d0fceb27d4d56557dd"
+        },
+        {
+          "path": "metadata/R000B.json",
+          "sha256": "0150aefb10af2c85b0391b2fa79ff6f1c1c398b98a6e72dc03727d52d4859abd"
+        }
+      ],
+      "strengths": [
+        "Exact original B rows retained, source versus receipt/expiry and current versus forecast independent.",
+        "Legal JSON overflow versus malformed wire versus VM-only NaN distinguished.",
+        "Four source mutants, real1x night opacity/continuity and actual eligible recovery named.",
+        "Missing proof is not called a current live defect; public/raw delivery gate retained."
+      ],
+      "findings": [
+        {
+          "id": "D-C-11-01",
+          "classification": "material execution-contract ambiguity",
+          "rows": [
+            "B04"
+          ],
+          "acceptance": [
+            "R000B-A01"
+          ],
+          "locations": [
+            {
+              "path": "REMAINING_RLGWOs/R000B.md",
+              "line": 79
+            },
+            {
+              "path": "REMAINING_RLGWOs/R000B.md",
+              "line": 124
+            },
+            {
+              "path": "REMAINING_RLGWOs/R000B.md",
+              "line": 128
+            },
+            {
+              "path": "metadata/R000B.json",
+              "jsonPointer": "/fixtureRecipes/0/assertion"
+            }
+          ],
+          "finding": "The full pre-multiplication validity row remains binding, but the F oracle makes converted-overflow admission conditional: \"If pre-multiplication validity requires excluding overflowing finite seconds\". Authority rejection and radarPrecipNow=0 are necessary but do not by themselves decide whether an overflowing epoch may dispatch an Image or become an installed diagnostic record. D79 supplies a useful narrow guard when an invalid derived epoch is stored; F still leaves the executor a different authority-only path without an amendment.",
+          "counterexample": "Declared legal finite Number.MAX_VALUE seconds multiplies to Infinity. A source path that dispatches Image/retains invalid derived metadata but later reports radarEvidence.available=false can satisfy the unconditional consumer assertions in A01. No native/VM run of this counterexample was performed in this review; this is an oracle/branch ambiguity against the preserved original row.",
+          "smallestCorrection": "Bind the default B04 oracle: validate raw numeric seconds, convert once, require finite valid frame/index epochs before their relevant Image/admission/install use; overflowing frame seconds must not dispatch Image or install an invalid derived epoch. Preserve evidence that current authority already fails closed; any failure is a diagnostic/admission gap, not an invented live precipitation defect. If primary instead adopts authority-only diagnostic retention, require an explicit owner amendment/disposition naming that narrowed original clause before the row can close. Remove the unresolved \"if ... requires\" from the final acceptance and metadata; keep any needed authored guard/negative/healthy proof and separate future source/build/delivery authorization.",
+          "scopeLimit": "No production defect prevalence, P0, provider incident or unauthorized repair is inferred.",
+          "resolution": {
+            "status": "RESOLVED_IN_SPECIFICATION",
+            "locations": [
+              "REMAINING_RLGWOs/R000B.md:79",
+              "REMAINING_RLGWOs/R000B.md:124",
+              "REMAINING_RLGWOs/R000B.md:128"
+            ],
+            "reason": "Default B04 now binds raw and converted epoch validity before relevant Image/admission/install. Overflow dispatch or invalid installation is a preserved diagnostic/admission RED requiring the narrow authorized guard; authority-only interpretation needs explicit owner amendment. Existing authority rejection and no current public precipitation defect remain distinct."
+          }
+        }
+      ],
+      "deliveryAssessment": "QUALIFY is reviewed pre-delivery candidate only. Exact-head authority, actual required docs/runtime delivery/public readback and completed closure are later separate gates. Original final-proof rows remain.",
+      "reviewScope": "PASS qualifies usability of this execution specification with its explicit future acquisition/delivery gates; it is not product/native/performance execution, merged delivery, publication or issue closure."
+    },
+    {
+      "issue": 12,
+      "canonicalId": "R000C",
+      "disposition": "PASS",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R000C.md",
+          "sha256": "e9424dfad31bb787dfecbc9255437739790539d8dd2d59a4609044164e20d534"
+        },
+        {
+          "path": "comments/12.md",
+          "sha256": "e9424dfad31bb787dfecbc9255437739790539d8dd2d59a4609044164e20d534"
+        },
+        {
+          "path": "metadata/R000C.json",
+          "sha256": "dce5c4b4ca857670cd873511dbcd53f28a937a8eaf5e41d128bebdb5b0a63fe9"
+        }
+      ],
+      "resolvedFindingIds": [],
+      "remainingMaterialFindingIds": [],
+      "bodySha256": "25b82794e364c24ae0f75a05a030f1d16730af435af85625aabade55627c4f4b",
+      "discussion": [
+        {
+          "id": 6073039923,
+          "sha256": "a6a322322afc80bac71797f0c92761435ee6f20b48e9872dacec801b1d5aa473"
+        }
+      ],
+      "residualCoverage": [
+        "C14",
+        "C15",
+        "C16",
+        "C17",
+        "C18"
+      ],
+      "initialDisposition": "PASS",
+      "initialReviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R000C.md",
+          "sha256": "670aeae038b548bfe0c2c628b9ddf7f425468c6d5eda405534e92268a518a317"
+        },
+        {
+          "path": "comments/12.md",
+          "sha256": "670aeae038b548bfe0c2c628b9ddf7f425468c6d5eda405534e92268a518a317"
+        },
+        {
+          "path": "metadata/R000C.json",
+          "sha256": "7be6e5d92c24b0fdda1f3b875111ab7684a95b0c67aa22ad87ebd49c3c1af17d"
+        }
+      ],
+      "strengths": [
+        "Four independent mutations include healthy-shaped HTTP500 to avoid correlated normalizer rejection.",
+        "Native null/absent/true0/invalid amount/0mm/wet consumers include cache/header and real particles, H5/H8 raw condition preserved.",
+        "Fixed-clock acquisition is not relabelled a live-motion watch; real1x preservation lane separate.",
+        "C14–C18 all map to explicit evidence/docs/qualification/closure nodes; current source repair credited correctly."
+      ],
+      "findings": [],
+      "deliveryAssessment": "QUALIFY is reviewed pre-delivery candidate only. Exact-head authority, actual required docs/runtime delivery/public readback and completed closure are later separate gates. Original final-proof rows remain.",
+      "reviewScope": "PASS qualifies usability of this execution specification with its explicit future acquisition/delivery gates; it is not product/native/performance execution, merged delivery, publication or issue closure."
+    },
+    {
+      "issue": 13,
+      "canonicalId": "R000D",
+      "disposition": "PASS",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R000D.md",
+          "sha256": "2a99b8a4550badf0adc121a4ad4acc6243e0fe62474b47a222de1b627179fa8f"
+        },
+        {
+          "path": "comments/13.md",
+          "sha256": "2a99b8a4550badf0adc121a4ad4acc6243e0fe62474b47a222de1b627179fa8f"
+        },
+        {
+          "path": "metadata/R000D.json",
+          "sha256": "15924748abf80c7267b1b851f4860c55ef86ff29271d8856dc0fb31aa83a1000"
+        }
+      ],
+      "resolvedFindingIds": [],
+      "remainingMaterialFindingIds": [],
+      "bodySha256": "08eafbfcd121aa53f380d0522041a16a388ac46777d9154aa013a3394864e863",
+      "discussion": [
+        {
+          "id": 6073041820,
+          "sha256": "aacd39e10b846ee6139615041ccd78b7ee594572699988cd3e34341a1446505d"
+        }
+      ],
+      "residualCoverage": [
+        "D11",
+        "D12",
+        "D13",
+        "D14",
+        "D15"
+      ],
+      "initialDisposition": "PASS",
+      "initialReviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R000D.md",
+          "sha256": "c95b21612d28b5533f861a2df0597aa6231f9333b752a5d4d4c1f307771a0816"
+        },
+        {
+          "path": "comments/13.md",
+          "sha256": "c95b21612d28b5533f861a2df0597aa6231f9333b752a5d4d4c1f307771a0816"
+        },
+        {
+          "path": "metadata/R000D.json",
+          "sha256": "edcaa9dcf01058b9c8823414128a86d5bbb4cdb2d40a51ec21bf34b867c74251"
+        }
+      ],
+      "strengths": [
+        "Five exact native stages cover weather headers/body, manifest headers/body and real Image; generic sky-asset recovery excluded.",
+        "Real timers/native fetch/Response/Image prove timeout→owner release→eligible new actual acquisition→functional consumer recovery.",
+        "Weather real60s spacing and disclosed radar wall-offset versus real10m option preserve throttle; no manual install/reset timestamp shortcut.",
+        "Ignored-abort dependency-only late-body control, native cancellation limits, saved-callback fixture scope, late A/newB ownership and readable Moon/motion consumers retained."
+      ],
+      "findings": [],
+      "deliveryAssessment": "QUALIFY is reviewed pre-delivery candidate only. Exact-head authority, actual required docs/runtime delivery/public readback and completed closure are later separate gates. Original final-proof rows remain.",
+      "reviewScope": "PASS qualifies usability of this execution specification with its explicit future acquisition/delivery gates; it is not product/native/performance execution, merged delivery, publication or issue closure."
+    },
+    {
+      "issue": 36,
+      "canonicalId": "R0024",
+      "disposition": "PASS",
+      "reviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R0024.md",
+          "sha256": "e43fa84d4f9a4cc8deeff8312f2d381c85f524845b8be084cbda0bb37e196b9c"
+        },
+        {
+          "path": "comments/36.md",
+          "sha256": "e43fa84d4f9a4cc8deeff8312f2d381c85f524845b8be084cbda0bb37e196b9c"
+        },
+        {
+          "path": "metadata/R0024.json",
+          "sha256": "89ef829b46a42cff95f38aebe647a850cbb199af91a3bc1ada37c1e6a04b3567"
+        }
+      ],
+      "resolvedFindingIds": [
+        "D-C-36-01",
+        "D-C-36-02"
+      ],
+      "remainingMaterialFindingIds": [],
+      "bodySha256": "67bcb1850732609c37e009fd164ac20d0e55a6b41c1ca75cdded85f714f2031a",
+      "discussion": [
+        {
+          "id": 6073047436,
+          "sha256": "a6abf1abf88c03b8e412c692e2ca8c9139ed9f944627d57e7f91fb492a5b9e1b"
+        }
+      ],
+      "residualCoverage": [
+        "2419",
+        "2420",
+        "2421",
+        "2422",
+        "2425"
+      ],
+      "initialDisposition": "CHANGES_REQUIRED",
+      "initialReviewedFiles": [
+        {
+          "path": "REMAINING_RLGWOs/R0024.md",
+          "sha256": "716322b78c30245bda7d9b104407fc79daa638c71e957f69587c22ebba20b755"
+        },
+        {
+          "path": "comments/36.md",
+          "sha256": "716322b78c30245bda7d9b104407fc79daa638c71e957f69587c22ebba20b755"
+        },
+        {
+          "path": "metadata/R0024.json",
+          "sha256": "fdba9801fa735f74c9fe4359701f5b9972373bf0fba94aa226f9380a7bd44056"
+        }
+      ],
+      "strengths": [
+        "H5/H8 narrow current-model amendment preserved; observation, forecast, unavailable/dry, quantitative effect and lightning remain separate.",
+        "2419 actual information omission acknowledged; formatter stays downstream and settings action/persistence warning protected through describedby.",
+        "Finite A–G plus quality/target/lease/null/quantity/radar and actual synthetic strike controls enumerated; no all-dry or alpha-mm false proof.",
+        "No observation/arrival skill research manufactured; native/resource/docs and actual generated/public-delivery gate all retained."
+      ],
+      "findings": [
+        {
+          "id": "D-C-36-01",
+          "classification": "material missing comparable resource input",
+          "rows": [
+            "2421"
+          ],
+          "acceptance": [
+            "R0024-A03"
+          ],
+          "locations": [
+            {
+              "path": "REMAINING_RLGWOs/R0024.md",
+              "line": 83
+            },
+            {
+              "path": "REMAINING_RLGWOs/R0024.md",
+              "line": 170
+            },
+            {
+              "path": "REMAINING_RLGWOs/R0024.md",
+              "line": 178
+            },
+            {
+              "path": "metadata/R0024.json",
+              "jsonPointer": "/fixtureRecipes/2/fixture"
+            }
+          ],
+          "finding": "The native matched 18ff-versus-new-information comparison is valid for the remaining formatter delta. Both sides already include the state scaffold, so it cannot quantify the surviving original scaffold overhead obligation. Absolute cold/cached reconciliation function cost is useful but is not yet a defined comparable overhead baseline. The specification correctly leaves 2421 unverified if comparability is absent, yet it does not define how the missing comparable scaffold input is acquired or which bounded decision resolves that input.",
+          "counterexample": "Identical large state-scaffold CPU/heap cost on both 18ff and candidate cancels out of the native formatter delta. Positive no-added-network/cached-identity checks and unchanged formatter overhead would pass while original state-scaffold overhead remains unmeasured. This is a comparison-scope counterexample, not a measured current performance regression.",
+          "smallestCorrection": "Keep the matched native formatter comparison, and add a separately identified paired scaffold benchmark/control with the same admitted records, target/clock/expiry transitions, worker/renderer environment and instrumentation overhead. Bind exactly what is disabled/tared in an isolated resource-only control, raw CPU/retained-and-allocated-memory/network measures, scope and review oracle; never use this control as correctness or pixel proof. Alternatively add an explicit bounded baseline-acquisition/primary-decision gate with available candidates, comparability checks, output identity and stop disposition. 2421 cannot be closed from formatter-only delta plus unpaired absolute function timing. Retain proposed variance-based budget as labelled design policy and reject unexplained exceedances.",
+          "scopeLimit": "Do not compare the entire historic fd2972 renderer with CP9/Moon and attribute total difference to weather; no field study, telemetry or new performance framework is requested.",
+          "resolution": {
+            "status": "RESOLVED_IN_SPECIFICATION",
+            "locations": [
+              "REMAINING_RLGWOs/R0024.md:90",
+              "REMAINING_RLGWOs/R0024.md:92",
+              "REMAINING_RLGWOs/R0024.md:94",
+              "REMAINING_RLGWOs/R0024.md:180",
+              "metadata/R0024.json nodes[R0024-RESOURCE-BASELINE]"
+            ],
+            "reason": "Separate bounded RESOURCE-BASELINE decision acquires full18ff/resource-only replay control, equal decision/input tape and observer/lookup/retained-object tare. Independent comparability acceptance produces QUALIFIED_SCOPED_INPUT before native resource measurement; GATED_NOT_COMPARABLE leaves2421 and closure incomplete while INFO/DOCS/NATIVE progress. Formatter-only delta/unpaired absolute cost cannot close original scaffold overhead. Actual comparability/performance remain future proof, not current PASS."
+          }
+        },
+        {
+          "id": "D-C-36-02",
+          "classification": "material missing native fixture producer",
+          "rows": [
+            "2419",
+            "2420"
+          ],
+          "acceptance": [
+            "R0024-A01",
+            "R0024-A02"
+          ],
+          "locations": [
+            {
+              "path": "REMAINING_RLGWOs/R0024.md",
+              "line": 78
+            },
+            {
+              "path": "REMAINING_RLGWOs/R0024.md",
+              "line": 82
+            },
+            {
+              "path": "REMAINING_RLGWOs/R0024.md",
+              "line": 132
+            },
+            {
+              "path": "REMAINING_RLGWOs/R0024.md",
+              "line": 154
+            }
+          ],
+          "finding": "The native table requires synthetic forecast probability null versus genuine 0 with an explicit event/window, but no proposed bridge method/signature supplies that forecast to the actual weatherDecision/reconciliation/header path. Current weatherForecast always produces probability:null and probabilityEvent:null, while the retained installSynthetic bridge installs present/nearby evidence only. Naming a thin native adaptation without this producer leaves that zero-probability consumer recipe unreachable as specified.",
+          "counterexample": "Changing current/hourly or the present contract alone cannot make actual weatherForecast produce probability0: authored source1593 returns both fields null literally. Pure weatherInformation(decision) with a hand-built record could prove formatting, but does not fulfill the claimed native A02 decision/header route without an explicitly owned fixture dependency hook.",
+          "smallestCorrection": "Specify one proposed ownership-checked simulation-only forecast fixture hook, with full provider/product/valid interval/amount/probability/event-window input and exact injection point into the existing forecast dependency consumed by actual weatherDecision→reconcileWeatherEvidence→weatherHeader/paint sink. Disclose hook/source hash, reject the same installation in ordinary live mode, retain raw trace and label it synthetic producer evidence. Production hourly forecast remains probability/event/provenance unavailable; no new provider or production forecast route is required. Or explicitly re-scope the optional-value control to an actual source/DOM sink fixture and leave the unsupported native acquisition assertion unverified. Update comment/metadata/CLI adaptation steps consistently.",
+          "sourceEvidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1589-L1594",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1625-L1633",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/widget-fixture.html#L90-L100"
+          ],
+          "scopeLimit": "No probability calibration, arrival research, provider acquisition or behavior rewrite is requested.",
+          "resolution": {
+            "status": "RESOLVED_IN_SPECIFICATION",
+            "locations": [
+              "REMAINING_RLGWOs/R0024.md:86",
+              "REMAINING_RLGWOs/R0024.md:88",
+              "metadata/R0024.json forecastFixtureInterface"
+            ],
+            "reason": "Named installSyntheticForecast/clearSyntheticForecast interface validates owned simulation forecast/event/window/target and decorates only weatherForecast; actual weatherDecision/reconcile/header/paint consume it, cache invalidation and expiry/live/wrong-owner refusal captured. Production hourly probability/event remain null; synthetic0 input does not become acquired/calibrated live forecast. No reconcile/header replacement or production route added."
+          }
+        }
+      ],
+      "deliveryAssessment": "QUALIFY is reviewed pre-delivery candidate only. Exact-head authority, actual required docs/runtime delivery/public readback and completed closure are later separate gates. Original final-proof rows remain.",
+      "reviewScope": "PASS qualifies usability of this execution specification with its explicit future acquisition/delivery gates; it is not product/native/performance execution, merged delivery, publication or issue closure."
+    }
+  ],
+  "staticChecks": [
+    {
+      "issue": 11,
+      "acceptedRowsUnchanged": true,
+      "originalResidualSetAndTextExact": true,
+      "completeSpecCommentByteEqual": true,
+      "allMetadataFixtureFieldsInSpec": true,
+      "bodyDiscussionUnchanged": true,
+      "specCharacters": 46339,
+      "localNodes": 5,
+      "deliveryMode": "docs-merge",
+      "qualifyPreDelivery": true,
+      "productTestsExecuted": false
+    },
+    {
+      "issue": 12,
+      "acceptedRowsUnchanged": true,
+      "originalResidualSetAndTextExact": true,
+      "completeSpecCommentByteEqual": true,
+      "allMetadataFixtureFieldsInSpec": true,
+      "bodyDiscussionUnchanged": true,
+      "specCharacters": 41510,
+      "localNodes": 5,
+      "deliveryMode": "docs-merge",
+      "qualifyPreDelivery": true,
+      "productTestsExecuted": false
+    },
+    {
+      "issue": 13,
+      "acceptedRowsUnchanged": true,
+      "originalResidualSetAndTextExact": true,
+      "completeSpecCommentByteEqual": true,
+      "allMetadataFixtureFieldsInSpec": true,
+      "bodyDiscussionUnchanged": true,
+      "specCharacters": 45128,
+      "localNodes": 5,
+      "deliveryMode": "docs-merge",
+      "qualifyPreDelivery": true,
+      "productTestsExecuted": false
+    },
+    {
+      "issue": 36,
+      "acceptedRowsUnchanged": true,
+      "originalResidualSetAndTextExact": true,
+      "completeSpecCommentByteEqual": true,
+      "allMetadataFixtureFieldsInSpec": true,
+      "bodyDiscussionUnchanged": true,
+      "specCharacters": 58859,
+      "localNodes": 7,
+      "deliveryMode": "runtime-merge",
+      "qualifyPreDelivery": true,
+      "productTestsExecuted": false
+    }
+  ],
+  "readMethod": "Original full cold read retained; focused complete changed-spec/metadata/closure hunks, explicit producer/baseline contracts and hashes rechecked against C original archive and frozen accepted issue/audit contracts. No repeated runtime audit.",
+  "effects": "Read-only C source/spec/metadata/issue/audit inspection; D helper and reviews only. No C edits, product tests/builds/browser/GitHub writes or recursion.",
+  "remainingExecutionGates": [
+    "R0024 paired resource comparability must be acquired and independently qualified before actual resource proof; GATED_NOT_COMPARABLE leaves2421 open.",
+    "All named native/source/discriminator proofs are still future work.",
+    "Primary exact-hash reconciliation precedes ready/link-bound publication copies. Actual source/docs merge/public readback and manual closure need separate authorization."
+  ]
+}

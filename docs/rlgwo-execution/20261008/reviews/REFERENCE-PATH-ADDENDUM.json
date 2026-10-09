@@ -1,0 +1,90 @@
+{
+  "schema": "rlgwo-reference-path-focused-review/v1",
+  "reviewer": "C",
+  "author": "PRIMARY",
+  "capturedAtUtc": "2026-10-09T04:51:09.868631+00:00",
+  "disposition": "PASS",
+  "reviewedFiles": [
+    {
+      "path": "tools/verify_references.py",
+      "sha256": "1fe6fc08f1952d2d0a75e0f50553ae22e3053ba965ac1fa1fcf1d74e2f184964",
+      "bytes": 4702
+    },
+    {
+      "path": "REFERENCE_PATH_CONTROL.json",
+      "sha256": "4e82163900c169c043e0c48a20409f1a65446fb4a05c25e294cc19c037ef4514",
+      "bytes": 960
+    },
+    {
+      "path": "inputs/planning-controls/verify_references-before.py",
+      "sha256": "84f85ee1ef369d0dc9d0cbfd2f1dca460b71254abdb40d0ae12988018207d60b",
+      "bytes": 4684
+    },
+    {
+      "path": "inputs/planning-controls/old-path-control.json",
+      "sha256": "ac92c3537bbe0d4c4a93768b8b0a00a9a4ff0692008f78628418fe04e79a7970",
+      "bytes": 382
+    },
+    {
+      "path": "inputs/planning-controls/fixed-negative.json",
+      "sha256": "8c7c7c583f08cc6852e57d73f571cab3a83a0c5fa4684de7c8188940fc113b84",
+      "bytes": 607
+    },
+    {
+      "path": "inputs/planning-controls/fixed-healthy.json",
+      "sha256": "4e2cdc18de2aa75d6eabf5906cc382bca62069f8407f2bd77f1faa8b6a84798f",
+      "bytes": 483
+    }
+  ],
+  "scope": "Exactly one reference-validator path-exclusion repair and retained actual primary temporary-fixture receipts. Offline byte/receipt association checks only; no repeat package review, product test, browser, Git or GitHub effect.",
+  "finding": {
+    "id": "C-REFERENCE-PATH-01",
+    "classification": "False-green empty scan caused by an excluded absolute ancestor",
+    "status": "RESOLVED",
+    "location": "tools/verify_references.py:28",
+    "counterexample": "The package root is under an ancestor named staging. The old file.parts test treats that ancestor as an excluded package subtree and skips every Markdown file, returning PASS with zero references/relative links. The retained old temporary-fixture receipt records that false green.",
+    "correction": "Change only file.parts to file.relative_to(root).parts. The selected root is authoritative; exclude staging/publication/contracts/workers only when they occur beneath it.",
+    "preservation": "Exact tuple, Markdown selection, relative/immutable-link parsing, Git object/line-range checks, errors, output, exit codes and availability-only scope are byte-identical. The old source is retained both in primary planning-controls and the C baseline copy."
+  },
+  "resolvedFindingIds": [
+    "C-REFERENCE-PATH-01"
+  ],
+  "remainingMaterialFindingIds": [],
+  "checks": {
+    "oneReplacementByteEquality": true,
+    "oldSourceSha256": "84f85ee1ef369d0dc9d0cbfd2f1dca460b71254abdb40d0ae12988018207d60b",
+    "newVerifierSha256": "1fe6fc08f1952d2d0a75e0f50553ae22e3053ba965ac1fa1fcf1d74e2f184964",
+    "oldFalseGreen": {
+      "result": "PASS",
+      "relativeLinksChecked": 0,
+      "immutableReferencesChecked": 0,
+      "interpretation": "Omitted required scan; not evidence that references are valid"
+    },
+    "fixedMissingTarget": {
+      "result": "FAIL",
+      "relativeLinksChecked": 1,
+      "immutableReferencesChecked": 0,
+      "exitCode": 1,
+      "expectedError": "README.md -> absent.md is unavailable"
+    },
+    "fixedHealthyTarget": {
+      "result": "PASS",
+      "relativeLinksChecked": 1,
+      "immutableReferencesChecked": 0,
+      "exitCode": 0,
+      "expectedEffect": "The same relative target exists and is actually checked"
+    },
+    "intentionalNestedExclusions": "The four exact subtree names remain unchanged and are evaluated relative to root. This is an inspected source-preservation claim; no additional nested-tree runtime fixture was executed by C.",
+    "receiptCurrentness": "Control source hashes match retained old and actual new verifier; child receipts/results/link counts/exit codes agree. Primary executed the controls; C performed independent offline inspection and association checks."
+  },
+  "packageRelation": {
+    "priorPackageReview": "reviews/PACKAGE-C.json",
+    "priorPackageReviewSha256": "210f675aa07534418c8c2c70ef7e7b1d349c37b5f441a7cbbce1f32b22de454b",
+    "graphContractStatus": "Unchanged; the repair does not alter product contracts, graph, author work orders or accepted evidence.",
+    "boundedFollowup": "Copy this exact new verifier into staged evidence, refresh its manifest/hash records and rerun the actual staged reference scan. Including the exact referenced C/D AUTHOR_REVIEW appendices is a disclosed evidence-copy operation; it is not a production or contract change.",
+    "limits": "This addendum passes the path repair and supplied controls only. It does not claim the final package scan, immutable publication, remote availability or issue-comment readback has already passed."
+  },
+  "externalEffects": [],
+  "productTestsExecuted": false,
+  "browserExecuted": false
+}

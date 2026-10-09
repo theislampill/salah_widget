@@ -1,0 +1,1280 @@
+{
+  "issue": 11,
+  "canonicalId": "R000B",
+  "revision": 1,
+  "author": "C",
+  "sourceTarget": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "auditEvidenceCommit": "b879573c298f19189d1f2392108b8b9f3b2cda0b",
+  "bodySha256": "f83c4f3516b63a068dc768b16d64e14cb970cf41ea074e240e73dcffda6d0bcc",
+  "commentRevisions": [
+    {
+      "id": 6073038339,
+      "updatedAt": "2026-10-09T02:29:30Z",
+      "sha256": "bef692a8ea29d0b590fd07725728876870b4056af556ef9f402accd259d73db3"
+    }
+  ],
+  "specPath": "REMAINING_RLGWOs/R000B.md",
+  "commentPath": "comments/11.md",
+  "priority": "P1",
+  "residualClasses": [
+    "evidence",
+    "docs",
+    "qualification"
+  ],
+  "priorityAssessment": {
+    "rationale": "P1 because source-time/receipt-time and per-use expiry guard a core weather-authority pathway, and their required regression controls remain missing. Missing public prose and overflow diagnostic coverage alone are P2. Accepted runtime fences contain the known historical defect; no demonstrated critical current failure supports P0.",
+    "impact": "Potential regression could keep expired weather visually current or label a fresh retrieval as fresh source information; the actual final source is fail-closed on known invalid ages.",
+    "conditions": "Malformed source metadata, repeated old mosaic, provider outage, tab resume, client clock skew or request-zone supersession.",
+    "exposure": "All ordinary real-time weather users rely on current authority; hostile overflow is a rare input, not a recorded provider incident.",
+    "confidence": "High on source/accepted boundary behavior and remaining documentation gap; medium on unexecuted hostile/mutant/native coverage.",
+    "containment": "Accepted finite/time/target/current/permission guards remain; bounded unavailable behavior, source-coupled rollback and isolated fixture/effect authority.",
+    "evidence": [
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+      "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+      "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-publication.json"
+    ],
+    "existingLabelDeparture": "Original draft proposed P1; no GitHub priority label is present. Retain P1 for the current closure-confidence gap, distinguish lower-urgency P2 documentation/overflow subrows."
+  },
+  "readiness": "AWAITING_COLD_REVIEW",
+  "acceptedObligations": [
+    {
+      "id": "B01",
+      "status": "satisfied",
+      "parentText": "Retain current valid time, aggregation interval and retrieval time separately; do not invent source time.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L183-L205",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L342-L353"
+      ]
+    },
+    {
+      "id": "B02",
+      "status": "satisfied",
+      "parentText": "Retain radar mosaic frame generation, index generation and retrieval separately.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L462-L477"
+      ]
+    },
+    {
+      "id": "B03",
+      "status": "satisfied",
+      "parentText": "Finite current metadata and positive interval use explicit captured-zone, calendar-valid and unambiguous conversion.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L295-L301",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L354-L358",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-response-zone.test.cjs#L14-L33"
+      ]
+    },
+    {
+      "id": "B05",
+      "status": "satisfied",
+      "parentText": "Use named 15-minute current authority bound on both source and receipt, inclusive; future allowance zero.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L360-L369"
+      ]
+    },
+    {
+      "id": "B06",
+      "status": "satisfied",
+      "parentText": "Use named 20-minute radar source/frame and retrieval bounds, inclusive; six-hour cache retention never current authority.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L335-L347",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L479-L488"
+      ]
+    },
+    {
+      "id": "B07",
+      "status": "satisfied",
+      "parentText": "Evaluate expiry at every real-time consumer; apply one selected snapshot to code, chip, cloud layers, precipitation, temperature, humidity, wind and native sky.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L348-L380",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L253-L258",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-cloud-expiry.test.cjs#L27-L47",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/real-sky/native-host-hooks.js#L12-L34"
+      ]
+    },
+    {
+      "id": "B08",
+      "status": "satisfied",
+      "parentText": "Unavailable real-time presentation clears icon/temperature/effects without claiming measured clear; prayer stale row remains independent.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L118-L134",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L325-L340"
+      ]
+    },
+    {
+      "id": "B09",
+      "status": "satisfied",
+      "parentText": "Legacy {w,ts} remains readable and storage bytes preserved; missing source metadata is nonauthoritative, not destructive migration.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L320-L347"
+      ]
+    },
+    {
+      "id": "B10",
+      "status": "satisfied",
+      "parentText": "Cache current hit must not suppress missing hourly-track acquisition; accepted-current bookkeeping separate from attempts/rejected old source.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L342-L353",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L66-L75"
+      ]
+    },
+    {
+      "id": "B11",
+      "status": "satisfied",
+      "parentText": "Preserve current clear versus hourly thunder, explicit SIM/ADVANCING forecast lanes; live radar excluded from SIM.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L382-L387",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L510-L514",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L281-L286",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L146-L167"
+      ]
+    },
+    {
+      "id": "B12",
+      "status": "satisfied",
+      "parentText": "Combined temporal/ownership control captures New York zone before global Riyadh change; current-generation success07:30Z; obsolete attempt must not commit.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L417",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+      ]
+    },
+    {
+      "id": "B15",
+      "status": "satisfied",
+      "parentText": "Disposable-browser fresh→expired→outage→fresh sequence must show chip/data-fx and no wet effects after expiry, with crops.",
+      "evidence": [
+        "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/smoke.html#L173-L184",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/native-smoke/results.json.gz",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json#L15145-L15215",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json#L15145-L15215",
+        "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/QUALIFICATION.json#L15145-L15215"
+      ]
+    }
+  ],
+  "remainingObligations": [
+    {
+      "id": "B04",
+      "parentText": "Radar frame seconds must be finite and valid before epoch multiplication; absent frame time cannot borrow index time.",
+      "auditStatus": "unverified",
+      "class": "evidence",
+      "priority": "P2",
+      "priorityRationale": "Bounded documented/diagnostic or resource coverage gap; accepted authority logic contains immediate risk.",
+      "witness": "Missing frame-time and ±age cases pass; valid seconds are admitted, derived overflowing seconds are not separately tested.",
+      "acceptance": [
+        {
+          "id": "R000B-A01",
+          "fixture": "WALL=2026-09-07T21:00:00Z, UTC, generation0, SIM.wx=null/ADVANCING=false. HTTP200 manifest generated=WALL/1000, latest path=/v2/radar/test; independently set past[0].time absent, null, \"1788814800\", -1, 1e309 JSON token (JSON.parse produces Infinity), and Number.MAX_VALUE as legal JSON. Separately hold frame time healthy and apply the same malformed/overflow set to generated/index seconds; retain a fresh finite frame/index control. In a separately labelled VM json() double also pass NaN and Infinity (not JSON wire values).",
+          "consumer": "Actual fetchRadar → wxFetchJson → wxRadarSample → weatherRadar → radarEvidence/qaState; actual gateWeatherCode/atmosphere",
+          "assertion": "Binding B04 oracle: validate raw numeric frame and index seconds, convert each once, and require a finite valid derived epoch before Image dispatch or admission/install. Absent/null/string/negative/nonfinite raw frame time or finite-seconds multiplication overflow must dispatch no Image and install no invalid frame/index epoch; an invalid index epoch must not be installed or used as a frame-time substitute. For every rejection radarEvidence.available=false and radarPrecipNow()=0; pre-existing authority rejection alone cannot pass the admission row. Fresh finite frame/index control samples the actual fixture Image/canvas and preserves separate frame/index/receipt clocks. Check generated/index multiplication independently of a healthy frame; do not call Infinity a finite valid epoch.",
+          "environment": "Windows x64; Node v22.16.0; exact final generated index.html selected with SALAH_WEATHER_SOURCE; source-owning native file also selected in the hotfix suite. Contained fetch/Image/storage/DOM/wall and monotonic clocks; never native-browser or provider evidence.",
+          "expected": "Hostile derived epochs rejected before their relevant Image/admission/install use, finite fresh diagnostic control available, zero radar mm and no strikes. The current consumer already withholds authority for nonfinite derived epochs; preserve that accepted fact. If actual acquisition nevertheless dispatches or stores invalid derived metadata, retain the exact RED diagnostic/admission receipt and gate a narrow authored finite-derived-frame/index epoch repair plus healthy proof and future delivery authorization. This is not a demonstrated public precipitation effect defect. No authority-only closure interpretation is permitted without a separately explicit owner amendment.",
+          "artifact": "evidence/R000B/R000B-A01/receipt.json",
+          "reviewGate": "Cold reviewer checks exact source extraction, pre/post mutation hashes, unchanged oracle, intended assertion failure and surviving healthy control; syntax/harness failure is not mutation detection."
+        }
+      ],
+      "nodeIds": [
+        "R000B-EVIDENCE"
+      ],
+      "closureGate": "CLOSE-R000B"
+    },
+    {
+      "id": "B13",
+      "parentText": "Four-hour old model/radar/repeated-frame, missing/NaN time, future+1ms/+24h cache, invalid interval and healthy wet restoration require final-tree discriminators.",
+      "auditStatus": "unverified",
+      "class": "evidence",
+      "priority": "P2",
+      "priorityRationale": "Bounded documented/diagnostic or resource coverage gap; accepted authority logic contains immediate risk.",
+      "witness": "Old current/frame, missing/future, inclusive -1ms and legacy/+24h controls pass; NaN epoch is not separately acquired from HTTP timestamp.",
+      "acceptance": [
+        {
+          "id": "R000B-A02",
+          "fixture": "Same fixed UTC acquisition as A01; current.time=\"invalid\", \"NaN\", absent, null and calendar-invalid string, interval=900, WMO95/temp20/precip2/cloud95; valid aligned hourly may be retained independently. Separately label VM json() current.time=NaN. Healthy control time=\"2026-09-07T21:00\". Actual HTTP literal NaN is malformed JSON and exercises body rejection, not a valid NaN timestamp.",
+          "consumer": "fetchWeather → admitWeatherRecord/wxEpoch → selectedWeather → atmosphere/paintWeatherHeader/native-host-hooks",
+          "assertion": "Derived currentValidAt must remain unavailable/nonfinite and currentEligible=false on malformed time; lastWxAt not renewed, no live current chip/temp/particles; valid hourly cannot substitute for live current. Stored raw diagnostic record may survive with null epoch. Healthy control installs/cache temp20 and eligible quantity-supported model rain, direct observation false, strikes off.",
+          "environment": "Windows x64; Node v22.16.0; exact final generated index.html selected with SALAH_WEATHER_SOURCE; source-owning native file also selected in the hotfix suite. Contained fetch/Image/storage/DOM/wall and monotonic clocks; never native-browser or provider evidence.",
+          "expected": "Explicit acquired malformed/NaN-derived metadata discriminator with prior accepted old/future/boundary rows reused, not relabelled as new execution.",
+          "artifact": "evidence/R000B/R000B-A02/receipt.json",
+          "reviewGate": "Cold reviewer checks exact source extraction, pre/post mutation hashes, unchanged oracle, intended assertion failure and surviving healthy control; syntax/harness failure is not mutation detection."
+        }
+      ],
+      "nodeIds": [
+        "R000B-EVIDENCE"
+      ],
+      "closureGate": "CLOSE-R000B"
+    },
+    {
+      "id": "B14",
+      "parentText": "Independent source→receipt, consumer-expiry bypass and global-zone mutants must make corresponding witnesses fail.",
+      "auditStatus": "unverified",
+      "class": "evidence",
+      "priority": "P1",
+      "priorityRationale": "Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof.",
+      "witness": "Required mutations have not been executed or located as current source-bound receipts.",
+      "acceptance": [
+        {
+          "id": "R000B-A03",
+          "fixture": "Four isolated actual-source copies: (M1) substitute currentValidAt with retrievedAt in current eligibility; (M2) substitute radar frameGeneratedAt with retrievedAt in radar eligibility; (M3) bypass real-time per-use source expiry while retaining admission; (M4) change captured request-zone use to mutable global tz. Use existing four-hour current/repeated old-frame, acquired-fresh→900001ms→offline consumer and New York2026-03-08T03:30→07:30Z/globalRiyadh witnesses.",
+          "consumer": "Actual acquisition/cache/selection/atmosphere/header/native-host capture and explicit-zone converter; mutations made only in disposable source copies",
+          "assertion": "M1 old-current must wrongly become eligible and its no-current witness RED; M2 repeated old-frame must wrongly become diagnostic-available and its frame-age witness RED; M3 expired header/temp/cloud/effects withdrawal witness RED; M4 captured-zone witness RED. One anchor per mutation, one mutation per run; healthy fresh/timezone controls still pass. Full final-source GREEN paired with each expected assertion RED.",
+          "environment": "Windows x64; Node v22.16.0; exact final generated index.html selected with SALAH_WEATHER_SOURCE; source-owning native file also selected in the hotfix suite. Contained fetch/Image/storage/DOM/wall and monotonic clocks; never native-browser or provider evidence.",
+          "expected": "Four detected independent regressions, not four command errors; retain unmodified fixture TODOs and separately map replacement controls.",
+          "artifact": "evidence/R000B/R000B-A03/receipt.json",
+          "reviewGate": "Cold reviewer checks exact source extraction, pre/post mutation hashes, unchanged oracle, intended assertion failure and surviving healthy control; syntax/harness failure is not mutation detection."
+        }
+      ],
+      "nodeIds": [
+        "R000B-EVIDENCE"
+      ],
+      "closureGate": "CLOSE-R000B"
+    },
+    {
+      "id": "B16",
+      "parentText": "Preserve 325×530 card/header/footer, moon opacity and cloud continuity in the affected transitions.",
+      "auditStatus": "unverified",
+      "class": "evidence",
+      "priority": "P1",
+      "priorityRationale": "Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof.",
+      "witness": "Retained V46 rain crop is readable with footer and particles; fresh Node cloud population/expiry controls pass. Full required final-target transition pixels not supplied.",
+      "acceptance": [
+        {
+          "id": "R000B-A04",
+          "fixture": "Native night at wall2026-09-07T18:44:50Z (Asia/Riyadh21:44:50); controlled CURRENT source time21:30:00/interval900/WMO63/temp24/precip2/cloud70, receipt initially fresh. Wall advances at1x; source eligibility inclusive until18:45:00Z, unavailable after +1ms; controlled refresh503, then healthy next eligible native weather retry with current quarter-hour time. Keep no simWx/simTime/timeScale, force calendar phase only simMoon=.5/simMoonAlt=20/simMoonH=42 if needed and disclose it. Repeat no-preference, reduced-motion default and motion=full override; capture ≥15–60s allowed-motion clip.",
+          "consumer": "Actual browser HTTP acquisition → native render/header/precip/cloud painter/Moon overlay/native host; no installModel recovery helper",
+          "assertion": "325×530 card and readable header/footer throughout; initial/recovered model particles from cloud systems; expired header em dash/temp blank/effects off, prayer rows independent. Opaque half-Moon/stars never visible through disc; cloud population retains identity and continuous drift/morph, no reseed/slideshow. Screenshot/clip reviewer decides; qaState.clouds.hash forbidden as motion evidence. OS reduced default reduces motion and motion=full restores it.",
+          "environment": "Windows x64; installed Chromium and Firefox via tools/cp9/browser_runtime.py; record actual executable/version. Fresh profile per case, private Map storage, 390×600 viewport, DPR 1, 325×530 card, Asia/Riyadh browser zone, fixed-site lat24.47/lon39.61, method4/school0/Celsius/seed1; source/runtime/fixture hashes bound. No local=1 unless config is seeded before parse.",
+          "expected": "B16 remaining night/opacity/continuity proof; reuse B15 V45 day expiry503→real retry evidence only for unchanged exact weather regions. This is controlled native1x elapsed proof, not live provider or all-phase lunar qualification.",
+          "artifact": "evidence/R000B/R000B-A04/receipt.json",
+          "reviewGate": "Independent native reviewer reads network/owner/admitted/cache/DOM receipts and actually inspects card/header/footer/Moon/cloud crops or clip; numeric PASS cannot override pixels. Primary reconciles exact candidate."
+        }
+      ],
+      "nodeIds": [
+        "R000B-NATIVE"
+      ],
+      "closureGate": "CLOSE-R000B"
+    },
+    {
+      "id": "B17",
+      "parentText": "Update DESIGN, README and diagnostics to distinguish model-valid time, interval, retrieval, mosaic generation and unavailable; no ground-observation/universal-coverage/offline guarantee.",
+      "auditStatus": "unmet",
+      "class": "docs",
+      "priority": "P2",
+      "priorityRationale": "Bounded documented/diagnostic or resource coverage gap; accepted authority logic contains immediate risk.",
+      "witness": "DESIGN244–267 and QA distinguish model/radar authority. README weather/retry text has no source/receipt age, interval, expiry or unavailable explanation.",
+      "acceptance": [
+        {
+          "id": "R000B-A05",
+          "fixture": "Review README Features/Auto-retry/Credits; DESIGN Weather truthfulness/API & data/URL-debug/Known approximations; HANDOFF running weather limitation. Compare to actual qaState.wxTruth cache/age/request diagnostics; no QA.md or DIAGNOSTICS.md exists, so use the existing DESIGN diagnostic section rather than inventing a second manual.",
+          "consumer": "Public prose and actual selectedWeather/radarEvidence/qaState diagnostic contract",
+          "assertion": "State separate model-valid/currentTime/currentZone/preceding interval/retrievedAt, radar frameGeneratedAt/indexGeneratedAt/retrievedAt; processing duration not epoch; 15m/20m inclusive both source+receipt, future allowance0, cache retention6h not authority; expired unavailable dash/blank/effects off, prayer cache distinct, clock-skew limitation, no local observation/coverage/offline guarantee. Correct contradictory current nowcast wording only where it presents current behavior; preserve historical commit provenance.",
+          "environment": "Static exact candidate prose plus retained source/consumer receipts; no browser required for documentation review",
+          "expected": "All required facts explicit in coherent public docs; missing diagnostic fields, if discovered, become a narrow source gap with a red fixture before edit.",
+          "artifact": "evidence/R000B/R000B-A05/receipt.json",
+          "reviewGate": "Independent documentation reviewer compares every stated fact with pinned source and actual consumer receipts, then rejects observation/arrival/offline/cancellation overclaims."
+        }
+      ],
+      "nodeIds": [
+        "R000B-DOCS"
+      ],
+      "closureGate": "CLOSE-R000B"
+    },
+    {
+      "id": "B18",
+      "parentText": "Joined temporal/cache/consumer review and evidence comment precede manual closure; public repair requires matching served-source/consumer readback.",
+      "auditStatus": "unverified",
+      "class": "qualification",
+      "priority": "P1",
+      "priorityRationale": "Material current weather authority, native consumer or final closure-confidence gap; existing logic contains known historical defects but cannot replace required proof.",
+      "witness": "Delivered baseline verified with16 public cases and recorded client configuration. C and primary Astra independently reviewed the source/interface join. Qualification remains incomplete for the explicitly mapped hostile metadata/mutation/documentation rows; external evidence publication precedes any later manual closure.",
+      "acceptance": [
+        {
+          "id": "R000B-A06",
+          "fixture": "Join all18 original B rows, A01–A05 receipts, unchanged V45 source-equivalence and delivered baseline; candidate commit/tree/runtime/root-index/config/source/fixture hashes; current body/discussion marker check before future effects.",
+          "consumer": "Independent joined temporal/cache/consumer review → future merged/deployed served consumer → exact evidence comment → separately authorized manual closure",
+          "assertion": "Every residual row mapped, no metadata-only closure, no unexecuted mutant/pixel promotion. If runtime unchanged, prove exact served18ff hash still matches; if narrow guard changed, build authored owner, obtain merge/delivery authorization, verify new public bytes and relevant unavailable/fresh consumer, then publish proof/read it back. Existing audit comment already posted and issue remains open; new spec publication alone is not closure.",
+          "environment": "Immutable candidate/release/public-source readback and issue readback",
+          "expected": "CLOSE-R000B certificate only after actual required delivery and primary reconciliation.",
+          "artifact": "evidence/R000B/R000B-A06/receipt.json",
+          "reviewGate": "Different reviewer checks complete accepted-plus-residual matrix, delivery identity and immutable evidence hashes; primary approves exact comment before any separately authorized publication/closure."
+        }
+      ],
+      "nodeIds": [
+        "R000B-QUALIFY",
+        "CLOSE-R000B"
+      ],
+      "closureGate": "CLOSE-R000B"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "R000B-EVIDENCE",
+      "issueObligations": [
+        "R000B:B04",
+        "R000B:B13",
+        "R000B:B14"
+      ],
+      "priority": "P1",
+      "kind": "evidence",
+      "owner": "weather temporal fixture executor",
+      "scope": "Radar frame seconds must be finite and valid before epoch multiplication; absent frame time cannot borrow index time.; Four-hour old model/radar/repeated-frame, missing/NaN time, future+1ms/+24h cache, invalid interval and healthy wet restoration require final-tree discriminators.; Independent source→receipt, consumer-expiry bypass and global-zone mutants must make corresponding witnesses fail.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R000B-evidence-output/v1",
+          "contract": "Hostile derived epochs rejected before their relevant Image/admission/install use, finite fresh diagnostic control available, zero radar mm and no strikes. The current consumer already withholds authority for nonfinite derived epochs; preserve that accepted fact. If actual acquisition nevertheless dispatches or stores invalid derived metadata, retain the exact RED diagnostic/admission receipt and gate a narrow authored finite-derived-frame/index epoch repair plus healthy proof and future delivery authorization. This is not a demonstrated public precipitation effect defect. No authority-only closure interpretation is permitted without a separately explicit owner amendment.; Explicit acquired malformed/NaN-derived metadata discriminator with prior accepted old/future/boundary rows reused, not relabelled as new execution.; Four detected independent regressions, not four command errors; retain unmodified fixture TODOs and separately map replacement controls.",
+          "artifact": "evidence/R000B/evidence/receipt.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work."
+      ],
+      "exitCriteria": [
+        "Binding B04 oracle: validate raw numeric frame and index seconds, convert each once, and require a finite valid derived epoch before Image dispatch or admission/install. Absent/null/string/negative/nonfinite raw frame time or finite-seconds multiplication overflow must dispatch no Image and install no invalid frame/index epoch; an invalid index epoch must not be installed or used as a frame-time substitute. For every rejection radarEvidence.available=false and radarPrecipNow()=0; pre-existing authority rejection alone cannot pass the admission row. Fresh finite frame/index control samples the actual fixture Image/canvas and preserves separate frame/index/receipt clocks. Check generated/index multiplication independently of a healthy frame; do not call Infinity a finite valid epoch.",
+        "Derived currentValidAt must remain unavailable/nonfinite and currentEligible=false on malformed time; lastWxAt not renewed, no live current chip/temp/particles; valid hourly cannot substitute for live current. Stored raw diagnostic record may survive with null epoch. Healthy control installs/cache temp20 and eligible quantity-supported model rain, direct observation false, strikes off.",
+        "M1 old-current must wrongly become eligible and its no-current witness RED; M2 repeated old-frame must wrongly become diagnostic-available and its frame-age witness RED; M3 expired header/temp/cloud/effects withdrawal witness RED; M4 captured-zone witness RED. One anchor per mutation, one mutation per run; healthy fresh/timezone controls still pass. Full final-source GREEN paired with each expected assertion RED.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED NOT EXECUTED in this specification stage: node.exe --test --test-concurrency=1 tests/r000b-remaining.test.cjs",
+        "PROPOSED NOT EXECUTED in this specification stage: python.exe tools/qa/run_r000b_mutants.py --root <authorized-candidate> --out <isolated-evidence/R000B/mutants>"
+      ],
+      "resources": [
+        "light-node-fixture"
+      ],
+      "sharedFiles": [
+        "tests/r000b-remaining.test.cjs",
+        "tools/qa/run_r000b_mutants.py"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          2,
+          4
+        ],
+        "exclusiveMachineMinutes": [
+          5,
+          15
+        ],
+        "confidence": "medium",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "R000B-DOCS",
+      "issueObligations": [
+        "R000B:B17"
+      ],
+      "priority": "P2",
+      "kind": "docs",
+      "owner": "shared documentation integrator",
+      "scope": "Update DESIGN, README and diagnostics to distinguish model-valid time, interval, retrieval, mosaic generation and unavailable; no ground-observation/universal-coverage/offline guarantee.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R000B-docs-output/v1",
+          "contract": "All required facts explicit in coherent public docs; missing diagnostic fields, if discovered, become a narrow source gap with a red fixture before edit.",
+          "artifact": "evidence/R000B/docs/source-facts-and-diff.md"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work."
+      ],
+      "exitCriteria": [
+        "State separate model-valid/currentTime/currentZone/preceding interval/retrievedAt, radar frameGeneratedAt/indexGeneratedAt/retrievedAt; processing duration not epoch; 15m/20m inclusive both source+receipt, future allowance0, cache retention6h not authority; expired unavailable dash/blank/effects off, prayer cache distinct, clock-skew limitation, no local observation/coverage/offline guarantee. Correct contradictory current nowcast wording only where it presents current behavior; preserve historical commit provenance.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "STATIC REVIEW PROPOSED: compare exact sections/facts listed in documentationFacts to source and native consumer receipts; no product execution required for authoring."
+      ],
+      "resources": [
+        "documentation-writer"
+      ],
+      "sharedFiles": [
+        "README.md",
+        "DESIGN.md",
+        "HANDOFF.md"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          1,
+          2
+        ],
+        "exclusiveMachineMinutes": [
+          0,
+          0
+        ],
+        "confidence": "medium",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "R000B-NATIVE",
+      "issueObligations": [
+        "R000B:B16"
+      ],
+      "priority": "P1",
+      "kind": "evidence",
+      "owner": "native weather consumer reviewer",
+      "scope": "Preserve 325×530 card/header/footer, moon opacity and cloud continuity in the affected transitions.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R000B-native-output/v1",
+          "contract": "B16 remaining night/opacity/continuity proof; reuse B15 V45 day expiry503→real retry evidence only for unchanged exact weather regions. This is controlled native1x elapsed proof, not live provider or all-phase lunar qualification.",
+          "artifact": "evidence/R000B/native/receipt.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work."
+      ],
+      "exitCriteria": [
+        "325×530 card and readable header/footer throughout; initial/recovered model particles from cloud systems; expired header em dash/temp blank/effects off, prayer rows independent. Opaque half-Moon/stars never visible through disc; cloud population retains identity and continuous drift/morph, no reseed/slideshow. Screenshot/clip reviewer decides; qaState.clouds.hash forbidden as motion evidence. OS reduced default reduces motion and motion=full restores it.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED NOT EXECUTED in this specification stage: python.exe tools/qa/run_r000b_native.py --root <authorized-candidate> --out <isolated-evidence/R000B/native> --browser chromium --matrix night-expiry-recovery --clock real1x"
+      ],
+      "resources": [
+        "exclusive-heavy-browser"
+      ],
+      "sharedFiles": [
+        "tools/qa/run_r000b_native.py",
+        "tests/widget-fixture.html (versioned copy only)"
+      ],
+      "dependsOn": [],
+      "estimate": {
+        "activeHours": [
+          2,
+          4
+        ],
+        "exclusiveMachineMinutes": [
+          15,
+          30
+        ],
+        "confidence": "medium-low",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "R000B-QUALIFY",
+      "issueObligations": [
+        "R000B:B18"
+      ],
+      "priority": "P1",
+      "kind": "qualification",
+      "owner": "independent temporal/cache/consumer reviewer",
+      "scope": "Pre-delivery independent candidate reconciliation; later named authority/delivery receipts complete the preserved final-proof row. Joined temporal/cache/consumer review and evidence comment precede manual closure; public repair requires matching served-source/consumer readback.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        },
+        {
+          "id": "R000B-evidence-output/v1",
+          "contract": "Exact candidate-bound EVIDENCE output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R000B.json"
+          ]
+        },
+        {
+          "id": "R000B-docs-output/v1",
+          "contract": "Exact candidate-bound DOCS output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R000B.json"
+          ]
+        },
+        {
+          "id": "R000B-native-output/v1",
+          "contract": "Exact candidate-bound NATIVE output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R000B.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R000B-qualify-output/v1",
+          "contract": "Pre-delivery reviewed candidate certificate: exact row/fixture/native/resource/docs reconciliation and proposed final source/tree identities. Records pending exact-head authority, required docs/runtime delivery, public readback and closure; it is not a delivered/closed certificate.",
+          "artifact": "evidence/R000B/reviewed-candidate-certificate.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work.",
+        "R000B-EVIDENCE exact output accepted",
+        "R000B-DOCS exact output accepted",
+        "R000B-NATIVE exact output accepted"
+      ],
+      "exitCriteria": [
+        "Every residual candidate artifact, proposed documentation/source delta and exact current interfaces independently reconciled; reviewed-candidate-certificate.json binds evidence and all contrary dispositions.",
+        "Record PENDING exact-head authority and required delivery/closure receipt IDs. No delivered/public/closed claim yet; later completed certificate requires those actual receipts.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED pre-delivery independent complete row/custody/source-equivalence/artifact candidate review; record pending exact-head authority/delivery/closure receipts. No test count substitutes for residual proof."
+      ],
+      "resources": [
+        "independent-review"
+      ],
+      "sharedFiles": [],
+      "dependsOn": [
+        {
+          "node": "R000B-EVIDENCE",
+          "type": "qualification",
+          "reason": "QUALIFY consumes exact EVIDENCE candidate-bound output; interface, not whole administrative issue dependency."
+        },
+        {
+          "node": "R000B-DOCS",
+          "type": "qualification",
+          "reason": "QUALIFY consumes exact DOCS candidate-bound output; interface, not whole administrative issue dependency."
+        },
+        {
+          "node": "R000B-NATIVE",
+          "type": "qualification",
+          "reason": "QUALIFY consumes exact NATIVE candidate-bound output; interface, not whole administrative issue dependency."
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          1.5,
+          3
+        ],
+        "exclusiveMachineMinutes": [
+          3,
+          8
+        ],
+        "confidence": "medium",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    },
+    {
+      "id": "CLOSE-R000B",
+      "issueObligations": [
+        "R000B:B18"
+      ],
+      "priority": "P1",
+      "kind": "closure",
+      "owner": "primary authorized publisher",
+      "scope": "Joined temporal/cache/consumer review and evidence comment precede manual closure; public repair requires matching served-source/consumer readback.",
+      "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "inputs": [
+        {
+          "id": "captured-weather-operation/v1",
+          "contract": "beginRequest/attemptEligible/finishRequest capture generation, target, requestzone, units/cachekey; obsolete A never commits or clears activeB",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+          ]
+        },
+        {
+          "id": "admitted-model-current-and-track/v1",
+          "contract": "finite known-field normalized current with captured units/zone/target and separate sourcevalid/interval/receipt; valid track independent; nulls preserved",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1386",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/12-assessment.json"
+          ]
+        },
+        {
+          "id": "weather-per-use-authority/v1",
+          "contract": "selectedWeather current source andreceipt eachinclusive0..900000ms; validpositiveinterval/targetgeneration; forecast not livecurrent",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1278-L1292",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/11-assessment.json"
+          ]
+        },
+        {
+          "id": "captured-calendar-zone-converter/v1",
+          "contract": "explicit request-zone/correct calendar/gap-fold rejection; NewYork03:30 on2026-03-08 means07:30Z despite globalRiyadh",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+          ]
+        },
+        {
+          "id": "bounded-weather-body-image-owner/v1",
+          "contract": "actualweather/manifestfetch+body each10s andImage10s; absolute monotonic guard/idempotentownedcleanup; retry60sweather/10mradar",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1459",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/13-assessment.json"
+          ]
+        },
+        {
+          "id": "radar-unitless-and-zero-axis/v1",
+          "contract": "actualImage samples unitless;radarPrecipNow0, noobservational orparticle grant; finitecoordinates including0axes dispatch correctly",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/14-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/30-assessment.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser30-chromium-v2/results.json"
+          ]
+        },
+        {
+          "id": "captured-location-evidence/v1",
+          "contract": "fixedsite distinctdevicefix/coarseIP; originalacquiredAt/accuracy/intent/targetgeneration preserved; noinventedradius orsave-renewal",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1293-L1312",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L140-L162",
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L288-L304"
+          ]
+        },
+        {
+          "id": "weather-evidence-decision/v1",
+          "contract": "current/spatial/horizon/forecast independent; synthetic-present-v1 only in markedpreview; liveadapters closed; cacheduntil earliesteligibility boundary",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1523-L1651",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/36-assessment.json"
+          ]
+        },
+        {
+          "id": "owner-H5-H8-model-presentation/v1",
+          "contract": "eligibleCURRENT modelWMO/temp andquantity-supportedrain/snow mayrender asMODEL ESTIMATE; rawcondition distinctfromeffectgate; noobservedlightning/forecast-as-current/radaralpha authority",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/C/browser14-v2-semantic-reconciliation.json"
+          ]
+        },
+        {
+          "id": "delivered-baseline18ff/v1",
+          "contract": "actualmain SOURCE18ff14860ff41c084b1db5f396bb62aa9c22b1be/tree35208181eea714c17f5e77b2644e76434345db60/runtimef443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260;16publicChrome/Firefox root/V1 cold/warm direct/iframe readbacks; relevantweather counterexamples notcovered bygenericrollout",
+          "status": "SATISFIED",
+          "evidence": [
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/release.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-runtime.json",
+            "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/public-browser-summary.json"
+          ]
+        },
+        {
+          "id": "R000B-qualify-output/v1",
+          "contract": "Exact candidate-bound QUALIFY output passed by its independent reviewer; no generic receipt substitute",
+          "status": "PLANNED",
+          "evidence": [
+            "R000B.json"
+          ]
+        },
+        {
+          "id": "R000B-exact-head-authority/v1",
+          "contract": "Primary approves the reviewed candidate on the actual current base/body/discussion and grants the named future merge/delivery/publication/closure effects; stale approval cannot be reused.",
+          "status": "GATED_FUTURE_AUTHORITY_DELIVERY",
+          "evidence": [
+            "../evidence/R000B/exact-head-authority.json"
+          ]
+        },
+        {
+          "id": "R000B-required-delivery/v1",
+          "contract": "Actual docs-merge delivery for #11/#12/#13 or runtime-merge for #36, public/raw byte/readback proof; any bounded runtime escalation requires separately authorized repair and affected requalification.",
+          "status": "GATED_FUTURE_AUTHORITY_DELIVERY",
+          "evidence": [
+            "../evidence/R000B/required-delivery-receipt.json"
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "id": "R000B-close-output/v1",
+          "contract": "Completed closure-certificate.json only after named exact-head authority and required delivery receipts plus primary-approved evidence comment/readbacks and issue-state readback. QUALIFY alone is the pre-delivery candidate.",
+          "artifact": "evidence/R000B/public-delivery-and-issue-readback.json"
+        }
+      ],
+      "entryCriteria": [
+        "Cold review and primary reconciliation passed; future execution authorized for this node.",
+        "Re-anchor exact source/candidate/tree/dirty state and input interfaces; stop on semantic drift, preserve unrelated work.",
+        "R000B-QUALIFY exact output accepted"
+      ],
+      "exitCriteria": [
+        "Every residual row mapped, no metadata-only closure, no unexecuted mutant/pixel promotion. If runtime unchanged, prove exact served18ff hash still matches; if narrow guard changed, build authored owner, obtain merge/delivery authorization, verify new public bytes and relevant unavailable/fresh consumer, then publish proof/read it back. Existing audit comment already posted and issue remains open; new spec publication alone is not closure.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "tests": [
+        "PROPOSED future effect/readback: only after exact evidence-body/hash approval and required merge/public delivery; verify main, issue body/discussion/state/marker then serialize proof and closure/readback."
+      ],
+      "resources": [
+        "serialized-external-writer"
+      ],
+      "sharedFiles": [],
+      "dependsOn": [
+        {
+          "node": "R000B-QUALIFY",
+          "type": "qualification",
+          "reason": "CLOSE consumes exact QUALIFY candidate-bound output; interface, not whole administrative issue dependency."
+        }
+      ],
+      "estimate": {
+        "activeHours": [
+          0.5,
+          1
+        ],
+        "exclusiveMachineMinutes": [
+          2,
+          5
+        ],
+        "confidence": "medium",
+        "basis": "Reuse accepted source/functions/fixtures; new bounded work and independent review only. Native includes fixture adaptation and two-engine serial queue; resource raw metrics may need a bounded repair. No repeated full audit or global art campaign."
+      },
+      "status": "READY_PENDING_REVIEW"
+    }
+  ],
+  "closure": {
+    "id": "CLOSE-R000B",
+    "requiresDelivery": true,
+    "deliveryMode": "docs-merge",
+    "deliveryModeEscalation": "For #11/#12/#13 only a preserved actual consumer counterexample plus separately authorized bounded source/build fix changes docs-merge to runtime-merge; no source rewrite is presumed.",
+    "reviewedCandidateArtifact": "evidence/R000B/reviewed-candidate-certificate.json",
+    "completedCertificateArtifact": "evidence/R000B/closure-certificate.json",
+    "exactHeadAuthorityReceipt": "evidence/R000B/exact-head-authority.json",
+    "deliveryReceipt": "evidence/R000B/required-delivery-receipt.json",
+    "requiredOutputs": [
+      "R000B-evidence-output/v1",
+      "R000B-docs-output/v1",
+      "R000B-native-output/v1",
+      "R000B-qualify-output/v1"
+    ],
+    "conditions": [
+      "Every original mandatory row retained as satisfied, narrowly superseded or now proven; each residual has exact acceptance artifact and independent gate.",
+      "Authored/generated/delivered/public identities are separate; actual needed merge/public delivery authorized and verified, no publication/closure from local proof alone.",
+      "Original RED, old TODO/FAIL and historical reuse/source-equivalence limitations preserved; future evidence published with immutable hashes and primary exact approval.",
+      "Read back actual current issue contract/discussion/marker/comment/state before and after any authorized external effect."
+    ],
+    "authority": "Closure only after future executor authorization and actual required delivery; primary reconciles and approves exact evidence comment and manual closure."
+  },
+  "documentationFacts": [
+    "README Features: source-valid current versus retrieval and15m inclusive eligibility; blank unavailable weather and prayer cache independence.",
+    "README weather/Auto-retry:20m radar frame+retrieval bounds, zero future allowance,6h retention not authority, cache bytes retained and eligible refresh/recovery.",
+    "DESIGN Weather truthfulness/URL & debug: currentTime/currentZone/currentValidAt/currentIntervalSec/retrievedAt and radar frame/index/receipt; diagnostic ages/reasons not permission.",
+    "DESIGN Known approximations and HANDOFF current weather limitation: current MODEL ESTIMATE and unitless mosaic, no observational/coverage/offline guarantee. Keep historical commit descriptions historical."
+  ],
+  "affectedRegressionSet": [
+    "current/receipt899999,900000,900001,-1ms; radar1199999,1200000,1200001,-1ms; four-hour/repeated-frame/future-cache/outage and fresh restoration",
+    "calendar gap/fold/capturedNewYork03:30→07:30Z/globalRiyadh; old A/newB generation/cache/units",
+    "current clear/hourlythunder, SIM/ADVANCING fences; per-use native sky/cloud/temp/wind/header/effects; card/header/footer/half-Moon opacity and motion"
+  ],
+  "reuseRules": [
+    "Accepted rows remain accepted only while named source/interface/input/consumer regions unchanged; re-open only affected qualification on drift.",
+    "Exact eight-region V45 source-equivalence may reuse actual expiry/HTTP503/native-retry case and scoped motion/pixels, not an absent null/zero/body/Image/A–G input.",
+    "VM proves bounded logic, native browser proves actual controlled consumer, public readback proves delivery; none silently substitutes for another.",
+    "Four inherited WEATHER TODOs and old lunarFAILs remain literal. Replacement controls and narrow owner supersessions mapped separately."
+  ],
+  "sharedFileRisks": [
+    "src/native/index.html weather/header/diagnostic/settings regions collide with generation/temporal/location/lunar/startup writers; one authored source integrator.",
+    "README.md/DESIGN.md/HANDOFF.md overlap weather docs for#11/#12/#13/#36 and other residual specs; shared docs integrator coalesces exact facts before edit.",
+    "tools/build_native.py/generatedroot/fixture script anchors shared; only builder owner regenerates after approved authored change.",
+    "All heavy native/browser/performance jobs serialize; read-only/draft lanes may parallelize."
+  ],
+  "decisions": [
+    "Binding H5/H8 current-model presentation retained; model estimate never direct observation/lightning/arrival authority.",
+    "No blanket whole-issue prerequisites: exact accepted interface artifacts suffice.",
+    "No product/test/browser/network/GitHub effects performed by this authoring script.",
+    "All new executable entries named in this specification are PROPOSED, not existing tools/results; future executor creates them before running."
+  ],
+  "nonGoals": [
+    "No new weather provider, paid infrastructure, continuousGPS/telemetry, general schema/cache/download/scheduler framework, minutely acquisition or arrival estimator.",
+    "No accurate-arrival/predictive-skill or ground-observation/coverage/offline guarantee.",
+    "No PR38 donor, frozenV1 edits, broad optical/sky/Moon/V5 refactor or all-issue closure."
+  ],
+  "fixtureRecipes": [
+    {
+      "id": "R000B-A01",
+      "fixture": "WALL=2026-09-07T21:00:00Z, UTC, generation0, SIM.wx=null/ADVANCING=false. HTTP200 manifest generated=WALL/1000, latest path=/v2/radar/test; independently set past[0].time absent, null, \"1788814800\", -1, 1e309 JSON token (JSON.parse produces Infinity), and Number.MAX_VALUE as legal JSON. Separately hold frame time healthy and apply the same malformed/overflow set to generated/index seconds; retain a fresh finite frame/index control. In a separately labelled VM json() double also pass NaN and Infinity (not JSON wire values).",
+      "consumer": "Actual fetchRadar → wxFetchJson → wxRadarSample → weatherRadar → radarEvidence/qaState; actual gateWeatherCode/atmosphere",
+      "assertion": "Binding B04 oracle: validate raw numeric frame and index seconds, convert each once, and require a finite valid derived epoch before Image dispatch or admission/install. Absent/null/string/negative/nonfinite raw frame time or finite-seconds multiplication overflow must dispatch no Image and install no invalid frame/index epoch; an invalid index epoch must not be installed or used as a frame-time substitute. For every rejection radarEvidence.available=false and radarPrecipNow()=0; pre-existing authority rejection alone cannot pass the admission row. Fresh finite frame/index control samples the actual fixture Image/canvas and preserves separate frame/index/receipt clocks. Check generated/index multiplication independently of a healthy frame; do not call Infinity a finite valid epoch.",
+      "environment": "Windows x64; Node v22.16.0; exact final generated index.html selected with SALAH_WEATHER_SOURCE; source-owning native file also selected in the hotfix suite. Contained fetch/Image/storage/DOM/wall and monotonic clocks; never native-browser or provider evidence.",
+      "expected": "Hostile derived epochs rejected before their relevant Image/admission/install use, finite fresh diagnostic control available, zero radar mm and no strikes. The current consumer already withholds authority for nonfinite derived epochs; preserve that accepted fact. If actual acquisition nevertheless dispatches or stores invalid derived metadata, retain the exact RED diagnostic/admission receipt and gate a narrow authored finite-derived-frame/index epoch repair plus healthy proof and future delivery authorization. This is not a demonstrated public precipitation effect defect. No authority-only closure interpretation is permitted without a separately explicit owner amendment.",
+      "artifact": "evidence/R000B/R000B-A01/receipt.json",
+      "reviewGate": "Cold reviewer checks exact source extraction, pre/post mutation hashes, unchanged oracle, intended assertion failure and surviving healthy control; syntax/harness failure is not mutation detection."
+    },
+    {
+      "id": "R000B-A02",
+      "fixture": "Same fixed UTC acquisition as A01; current.time=\"invalid\", \"NaN\", absent, null and calendar-invalid string, interval=900, WMO95/temp20/precip2/cloud95; valid aligned hourly may be retained independently. Separately label VM json() current.time=NaN. Healthy control time=\"2026-09-07T21:00\". Actual HTTP literal NaN is malformed JSON and exercises body rejection, not a valid NaN timestamp.",
+      "consumer": "fetchWeather → admitWeatherRecord/wxEpoch → selectedWeather → atmosphere/paintWeatherHeader/native-host-hooks",
+      "assertion": "Derived currentValidAt must remain unavailable/nonfinite and currentEligible=false on malformed time; lastWxAt not renewed, no live current chip/temp/particles; valid hourly cannot substitute for live current. Stored raw diagnostic record may survive with null epoch. Healthy control installs/cache temp20 and eligible quantity-supported model rain, direct observation false, strikes off.",
+      "environment": "Windows x64; Node v22.16.0; exact final generated index.html selected with SALAH_WEATHER_SOURCE; source-owning native file also selected in the hotfix suite. Contained fetch/Image/storage/DOM/wall and monotonic clocks; never native-browser or provider evidence.",
+      "expected": "Explicit acquired malformed/NaN-derived metadata discriminator with prior accepted old/future/boundary rows reused, not relabelled as new execution.",
+      "artifact": "evidence/R000B/R000B-A02/receipt.json",
+      "reviewGate": "Cold reviewer checks exact source extraction, pre/post mutation hashes, unchanged oracle, intended assertion failure and surviving healthy control; syntax/harness failure is not mutation detection."
+    },
+    {
+      "id": "R000B-A03",
+      "fixture": "Four isolated actual-source copies: (M1) substitute currentValidAt with retrievedAt in current eligibility; (M2) substitute radar frameGeneratedAt with retrievedAt in radar eligibility; (M3) bypass real-time per-use source expiry while retaining admission; (M4) change captured request-zone use to mutable global tz. Use existing four-hour current/repeated old-frame, acquired-fresh→900001ms→offline consumer and New York2026-03-08T03:30→07:30Z/globalRiyadh witnesses.",
+      "consumer": "Actual acquisition/cache/selection/atmosphere/header/native-host capture and explicit-zone converter; mutations made only in disposable source copies",
+      "assertion": "M1 old-current must wrongly become eligible and its no-current witness RED; M2 repeated old-frame must wrongly become diagnostic-available and its frame-age witness RED; M3 expired header/temp/cloud/effects withdrawal witness RED; M4 captured-zone witness RED. One anchor per mutation, one mutation per run; healthy fresh/timezone controls still pass. Full final-source GREEN paired with each expected assertion RED.",
+      "environment": "Windows x64; Node v22.16.0; exact final generated index.html selected with SALAH_WEATHER_SOURCE; source-owning native file also selected in the hotfix suite. Contained fetch/Image/storage/DOM/wall and monotonic clocks; never native-browser or provider evidence.",
+      "expected": "Four detected independent regressions, not four command errors; retain unmodified fixture TODOs and separately map replacement controls.",
+      "artifact": "evidence/R000B/R000B-A03/receipt.json",
+      "reviewGate": "Cold reviewer checks exact source extraction, pre/post mutation hashes, unchanged oracle, intended assertion failure and surviving healthy control; syntax/harness failure is not mutation detection."
+    },
+    {
+      "id": "R000B-A04",
+      "fixture": "Native night at wall2026-09-07T18:44:50Z (Asia/Riyadh21:44:50); controlled CURRENT source time21:30:00/interval900/WMO63/temp24/precip2/cloud70, receipt initially fresh. Wall advances at1x; source eligibility inclusive until18:45:00Z, unavailable after +1ms; controlled refresh503, then healthy next eligible native weather retry with current quarter-hour time. Keep no simWx/simTime/timeScale, force calendar phase only simMoon=.5/simMoonAlt=20/simMoonH=42 if needed and disclose it. Repeat no-preference, reduced-motion default and motion=full override; capture ≥15–60s allowed-motion clip.",
+      "consumer": "Actual browser HTTP acquisition → native render/header/precip/cloud painter/Moon overlay/native host; no installModel recovery helper",
+      "assertion": "325×530 card and readable header/footer throughout; initial/recovered model particles from cloud systems; expired header em dash/temp blank/effects off, prayer rows independent. Opaque half-Moon/stars never visible through disc; cloud population retains identity and continuous drift/morph, no reseed/slideshow. Screenshot/clip reviewer decides; qaState.clouds.hash forbidden as motion evidence. OS reduced default reduces motion and motion=full restores it.",
+      "environment": "Windows x64; installed Chromium and Firefox via tools/cp9/browser_runtime.py; record actual executable/version. Fresh profile per case, private Map storage, 390×600 viewport, DPR 1, 325×530 card, Asia/Riyadh browser zone, fixed-site lat24.47/lon39.61, method4/school0/Celsius/seed1; source/runtime/fixture hashes bound. No local=1 unless config is seeded before parse.",
+      "expected": "B16 remaining night/opacity/continuity proof; reuse B15 V45 day expiry503→real retry evidence only for unchanged exact weather regions. This is controlled native1x elapsed proof, not live provider or all-phase lunar qualification.",
+      "artifact": "evidence/R000B/R000B-A04/receipt.json",
+      "reviewGate": "Independent native reviewer reads network/owner/admitted/cache/DOM receipts and actually inspects card/header/footer/Moon/cloud crops or clip; numeric PASS cannot override pixels. Primary reconciles exact candidate."
+    },
+    {
+      "id": "R000B-A05",
+      "fixture": "Review README Features/Auto-retry/Credits; DESIGN Weather truthfulness/API & data/URL-debug/Known approximations; HANDOFF running weather limitation. Compare to actual qaState.wxTruth cache/age/request diagnostics; no QA.md or DIAGNOSTICS.md exists, so use the existing DESIGN diagnostic section rather than inventing a second manual.",
+      "consumer": "Public prose and actual selectedWeather/radarEvidence/qaState diagnostic contract",
+      "assertion": "State separate model-valid/currentTime/currentZone/preceding interval/retrievedAt, radar frameGeneratedAt/indexGeneratedAt/retrievedAt; processing duration not epoch; 15m/20m inclusive both source+receipt, future allowance0, cache retention6h not authority; expired unavailable dash/blank/effects off, prayer cache distinct, clock-skew limitation, no local observation/coverage/offline guarantee. Correct contradictory current nowcast wording only where it presents current behavior; preserve historical commit provenance.",
+      "environment": "Static exact candidate prose plus retained source/consumer receipts; no browser required for documentation review",
+      "expected": "All required facts explicit in coherent public docs; missing diagnostic fields, if discovered, become a narrow source gap with a red fixture before edit.",
+      "artifact": "evidence/R000B/R000B-A05/receipt.json",
+      "reviewGate": "Independent documentation reviewer compares every stated fact with pinned source and actual consumer receipts, then rejects observation/arrival/offline/cancellation overclaims."
+    },
+    {
+      "id": "R000B-A06",
+      "fixture": "Join all18 original B rows, A01–A05 receipts, unchanged V45 source-equivalence and delivered baseline; candidate commit/tree/runtime/root-index/config/source/fixture hashes; current body/discussion marker check before future effects.",
+      "consumer": "Independent joined temporal/cache/consumer review → future merged/deployed served consumer → exact evidence comment → separately authorized manual closure",
+      "assertion": "Every residual row mapped, no metadata-only closure, no unexecuted mutant/pixel promotion. If runtime unchanged, prove exact served18ff hash still matches; if narrow guard changed, build authored owner, obtain merge/delivery authorization, verify new public bytes and relevant unavailable/fresh consumer, then publish proof/read it back. Existing audit comment already posted and issue remains open; new spec publication alone is not closure.",
+      "environment": "Immutable candidate/release/public-source readback and issue readback",
+      "expected": "CLOSE-R000B certificate only after actual required delivery and primary reconciliation.",
+      "artifact": "evidence/R000B/R000B-A06/receipt.json",
+      "reviewGate": "Different reviewer checks complete accepted-plus-residual matrix, delivery identity and immutable evidence hashes; primary approves exact comment before any separately authorized publication/closure."
+    }
+  ],
+  "forecastFixtureInterface": null,
+  "resourceBaselineAcquisition": null,
+  "sourceOwners": [
+    {
+      "path": "src/native/index.html:1005–1044,1230–1386,1387–1459,1654–1668,2953–2962,3068–3078,3131–3162",
+      "role": "request/attempt ownership, temporal admission, cache, per-use selection, acquisition, header, renderer and diagnostics"
+    },
+    {
+      "path": "real-sky/native-host-hooks.js:12–34",
+      "role": "native sky captures selected weather every use; do not substitute stale raw weather"
+    },
+    {
+      "path": "tools/build_native.py:64–67",
+      "role": "only builder rebuilds generated root and narrow acceptedElevation handoff"
+    },
+    {
+      "path": "tests/r000c-weather.test.cjs; tests/r000d-weather.test.cjs; tests/r0024-cloud-expiry.test.cjs; tests/hotfix-prayer-weather.test.cjs",
+      "role": "existing accepted controls remain literal; new remaining fixtures extend source execution"
+    }
+  ],
+  "commands": {
+    "inspectedReadOnlySyntax": [
+      "git --no-optional-locks rev-parse --show-toplevel",
+      "git --no-optional-locks rev-parse HEAD",
+      "git --no-optional-locks status --short",
+      "git --no-optional-locks rev-parse '18ff14860ff41c084b1db5f396bb62aa9c22b1be^{tree}'",
+      "git --no-optional-locks diff -- src/native/index.html tools/build_native.py real-sky/native-host-hooks.js README.md DESIGN.md HANDOFF.md"
+    ],
+    "proposedNotExecuted": [
+      "node.exe --test --test-concurrency=1 tests/r000b-remaining.test.cjs",
+      "python.exe tools/qa/run_r000b_mutants.py --root <authorized-candidate> --out <isolated-evidence/R000B/mutants>",
+      "python.exe tools/qa/run_r000b_native.py --root <authorized-candidate> --out <isolated-evidence/R000B/native> --browser chromium --matrix night-expiry-recovery --clock real1x"
+    ]
+  }
+}
