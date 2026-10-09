@@ -4,6 +4,8 @@ This package continues the completed 37-issue audit. It specifies the remaining 
 
 Start with [priorities](PRIORITIES.md), [execution graph and schedule](CLOSURE_DAG.md), [startup/glow handoff](STARTUP_HANDOFF.md), and the [third-thread launch prompt](THIRD_THREAD_EXECUTION_PROMPT.md). The graph plans original residual rows plus explicit owner amendments. Follow each linked [issue specification](REMAINING_RLGWOs/) and its actual original contract; a graph node is not permission to weaken one.
 
+**Publication complete:** [all 26 issue comments and final handoff](FINAL_DELIVERY.md), with [full 37-issue readback](FINAL_ISSUE_READBACK.json). Eleven accepted closures are preserved; no issue state changed.
+
 ## Package navigation
 
 | Artifact | Purpose |
