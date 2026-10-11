@@ -99,6 +99,8 @@ use **local mode**. Add `#local=1` to the URL and the widget will:
 </iframe>
 ```
 
+A generic `#local=1` embed chooses method and units automatically after area detection. A local embed exported by the builder includes the selected method and temperature units as defaults for a viewer with no saved configuration, for example `#local=1&method=2&units=f`. An existing saved configuration in that viewer’s browser takes priority over those defaults. The generic preset remains `#local=1`.
+
 The in-widget settings panel supports location (name, latitude, longitude), calculation
 method, Asr school, 12/24-hour, date format, and temperature units. A **location pin** beside
 the location field shows the source — **red** = estimated from your IP (the default),
