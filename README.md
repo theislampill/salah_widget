@@ -239,9 +239,24 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
 - **Progress bar** showing how far you are through the current interval.
 - **Time-zone correct** — the time zone is resolved from the coordinates, so the times and
   countdown always reflect the *location's* clock, no matter where you view the widget.
-- **Offline-friendly** — the day's times are cached in `localStorage`, so the widget
-  paints instantly on reload and survives a flaky connection.
-- **Auto-retry** on API hiccups, and an automatic refresh when the day rolls over.
+- **Cached prayer data** — only an admitted selected current-day record can paint
+  current before refresh. Corrupt cache is a miss; healthy live recovery remains
+  reachable. Valid wrong-day cache may resolve the zone but cannot be called current.
+  Valid current data survives a failed refresh or denied persistence. Existing
+  `salah:lat|lon|_cacheTz|method|school` bytes remain compatible without scanning,
+  purging or migration; this is not an offline-application guarantee.
+- **Bounded retry** — each prayer operation has at most three attempts, with
+  900/1800 ms backoffs and a 10000 ms deadline for the full asynchronous fetch/body
+  attempt. Bootstrap and corrected-day requests share that budget. Three timeouts
+  total a nominal 32700 ms, plus event-loop scheduling; timers cannot preempt
+  synchronous parsing or a blocked event loop and do not guarantee provider latency.
+  Same-day no-data recovery and failed tomorrow acquisition use a 60-second
+  operation-start cadence on `performance.now()` hosts, with busy ownership preventing
+  overlap. A valid matching tomorrow suppresses redundant requests; day and generation
+  changes reclassify eligibility. Hidden/offscreen loops pause, so the first resumed
+  eligible opportunity starts one operation without background or catch-up guarantees.
+  Real elapsed eligibility is independent of `simTime`, `timeScale` and wall-clock
+  correction. The retained `Date.now()` fallback is not claimed monotonic.
 - Passed prayers dim; the upcoming one is highlighted.
 - Gregorian (CE) date bottom-left and Hijri (AH) date bottom-right, in your chosen
   `datefmt` (defaults to ISO `YYYY-MM-DD`).
