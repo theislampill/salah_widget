@@ -140,7 +140,7 @@ selected site. Its title reports available accuracy in metres and original fix a
 to request a browser position.
 Type a place name to **search** (Enter cycles multiple matches; **Shift+Enter** keeps a custom
 display name without moving the coordinates). Changes **save automatically** when you close the
-panel; the **↺** icon resets (clears your saved settings and re-detects).
+panel. If persistence fails, changes apply for this session and Settings retains a warning. The **↺** icon removes only saved widget configuration and then re-detects if removal succeeds; prayer/weather caches and provider-held data are unaffected.
 
 ### Modes & precedence
 
