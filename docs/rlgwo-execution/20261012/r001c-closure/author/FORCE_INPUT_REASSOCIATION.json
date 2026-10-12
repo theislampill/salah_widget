@@ -1,0 +1,23 @@
+{
+  "schema": "r001c-finite-force-input-reassociation/1",
+  "capturedSourcePath": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\diagnostic_qualification_exit_r1\\inputs\\historical-browser\\src\\native\\index.html",
+  "capturedSourceSha256": "ec59b3ff64e06713d652af5b30f04a18fcde404b92b4595bc1cee96818a6ec65",
+  "deliveredHead": "88926dd12d22a6a8c1cd369d4823750778fccb48",
+  "oldOwner": "lunarPresentation(solarElevation) called by lunarPresentation(sm.altDeg)",
+  "currentOwner": "inline atmosphere(M) with sm.altDeg",
+  "comparison": "Exact six named RHS expressions after only solarElevation -> sm.altDeg substitution and removal of source comments/whitespace. Actual widget clamp and force assignment line also exact. No VM/native test or universal helper equivalence.",
+  "expressions": {
+    "mFrac": "clamp(moonSky.frac)",
+    "moonUp": "clamp((moonSky.alt+2)/6)",
+    "darkness": "clamp(-(sm.altDeg+3)/9)",
+    "phaseVis": "clamp((mFrac-0.02)/0.05)",
+    "moonObject": "_pbrFailed?0:moonUp*darkness*phaseVis",
+    "moonLightEligible": "moonObject>0"
+  },
+  "clampSha256": "3996c2802e4d300d16f9cbffc98d15f9b14467f8d2068ae9d24ae8179e34fb8c",
+  "forceBranchSha256": "5a83c46728f86e733c6833325e2a6b697653bb57880aec0a11a5fd5ac1045d60",
+  "originalScope": "Six healthy forces, ten lunar ineligible contexts, unsupported corona; retained original executed proof remains at its captured source/environment.",
+  "freshCasesExecuted": 0,
+  "nodeCredit": 0,
+  "independentReceivingReview": "PENDING"
+}

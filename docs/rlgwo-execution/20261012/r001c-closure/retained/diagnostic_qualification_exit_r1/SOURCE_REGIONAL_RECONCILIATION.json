@@ -1,0 +1,179 @@
+{
+  "schema": "r001c-qualified-regional-source-reconciliation/1",
+  "regions": [
+    {
+      "id": "hash-parser",
+      "normalizedExcerptSha256": "13988c8bd2a359d701bbc63d558dcc850c3ba436c5564bfd158ff85386fc61aa",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "const q = new URLSearchParams(location.hash.slice(1));",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "debug-flags-and-native-reduced-motion",
+      "normalizedExcerptSha256": "e5776fe27c9de9989959545337f968fd5aba30c3dcceeeb1626087c5b43012d0",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "const DEBUGLAYERS = q.get(\"debugLayers\")===\"1\";   // &debugLayers=1 \u2192 live read-out of every sky/cloud layer opacity\nconst DEBUGMOON = q.get(\"debugMoon\")===\"1\";       // &debugMoon=1 \u2192 moon layer radii/opacities + a pixel-ring across the limb\nconst DEBUGDAWN = q.get(\"debugDawn\");             // DEPRECATED no-op: dawn is not a painted overlay anymore (true dawn = the physical twilight sky + Fajr marker; false dawn is not rendered). Kept only so old URLs don't error.\nconst DEBUGOPTIC = q.get(\"debugOptic\");           // &debugOptic=halo|sundogs|pillar|anticrep|paraselene|lunarhalo \u2192 force the corresponding QA branch; lunar forces retain moonlight eligibility\nconst QA = q.get(\"qa\")===\"1\";                     // &qa=1 \u2192 reset lastWxAt/lastWxTry on boot; window.qaState() is always assigned\nconst DEBUGMOTION = q.get(\"debugMotion\")===\"1\";   // &debugMotion=1 \u2192 live motion telemetry overlay (rAF & cloud-paint rates, reduced-motion, paused, cloud/star \u0394 over 10s/60s, wx source, timeScale, reason)\nconst MOTIONFULL = (q.get(\"motion\")||\"\")===\"full\";// &motion=full \u2192 force full animation even under OS prefers-reduced-motion. DEFAULT respects accessibility (motion reduced when the OS asks), but this gives an honest override for testing and for users who want it\n// SINGLE SOURCE for the reduced-motion decision (was duplicated as _REDUCED + _RM). Evaluated LIVE so a mid-session\n// OS toggle is honoured (matchMedia is cheap); &motion=full overrides. The CSS @media (prefers-reduced-motion) blocks\n// read the SAME native signal, gated by the .motionfull opt-out class \u2014 one decision, consulted by both JS and CSS.\nconst isMotionReduced = () => !MOTIONFULL && !!(window.matchMedia && window.matchMedia(\"(prefers-reduced-motion: reduce)\").matches);",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "clock-rate-and-preview-intent",
+      "normalizedExcerptSha256": "0f752dbdd3928c5d8f6bcd43e462e4d787f9bc1c20555f91c387f626304d78e0",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "const _RAFNOW = ()=> (typeof performance!=='undefined' && performance.now) ? performance.now() : Date.now();\nconst _tsParam=q.get(\"timeScale\");\nlet TIMESCALE = _tsParam!=null ? Math.max(0,+_tsParam||0) : (SIM.time!=null ? 0 : 1);\nlet ADVANCING = _tsParam!=null && TIMESCALE>0;          // a running fast-forward \u2192 show the sim clock\nlet FOLLOW_WALL_CLOCK = _tsParam==null && SIM.time==null && TIMESCALE===1;\nlet _clockPreview=false; // explicit runtime clock control retains forecast provenance while paused",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "overlay-style",
+      "normalizedExcerptSha256": "f4d3d2f60c30a755d514db9294e6cec368f3782101d90c295025071481b44344",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": ".dbgmotion{position:absolute;left:8px;top:22px;z-index:7;display:none;white-space:pre;font:9px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#bdf3d0;background:rgba(8,11,20,.66);padding:4px 7px;border-radius:7px;pointer-events:none;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "overlay-dom",
+      "normalizedExcerptSha256": "f83bc33fb73d2d35acefde70e3e96ad4b8b3cb43d62c1e3194626f979bf4f501",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "  <div class=\"dbgmotion\" aria-hidden=\"true\"></div>",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "force-branch",
+      "normalizedExcerptSha256": "5a83c46728f86e733c6833325e2a6b697653bb57880aec0a11a5fd5ac1045d60",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "  if(DEBUGOPTIC===\"halo\")sunHalo=0.95; else if(DEBUGOPTIC===\"sundogs\")sunDogs=0.95; else if(DEBUGOPTIC===\"pillar\")sunPillar=0.9; else if(DEBUGOPTIC===\"anticrep\")antiCrep=0.8; else if(DEBUGOPTIC===\"paraselene\")moonParhelia=moonLightEligible?0.9:0; else if(DEBUGOPTIC===\"lunarhalo\")lunarHalo=moonLightEligible?0.95:0;",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "native-reduced-css",
+      "normalizedExcerptSha256": "73ac171a1b93ab8d08fe23afb7ad7a2c5c0055db7f40a003c0f47e8a491d219b",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "@media (prefers-reduced-motion:reduce){\n  .c:not(.motionfull) .stars circle,.c:not(.motionfull) .starglints g,.c:not(.motionfull) .wfx .fog,.c:not(.motionfull) .wfx .drop,.c:not(.motionfull) .wfx .flake,.c:not(.motionfull) .wfx .flash,.c:not(.motionfull) .wfx .bolt,\n  .c:not(.motionfull) .climate .heatwave,.c:not(.motionfull) .atmo .sun,.c:not(.motionfull) .atmo .scatter,.c:not(.motionfull) .milkyway{animation:none!important}\n}",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "updateMotionDbg",
+      "normalizedExcerptSha256": "d268a86220d3702ba9fa7f86698c52bf1c1f2da1b828f77d5f7a6169479dcf45",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "function updateMotionDbg(rafPS, cloudPS, cEl){\n  const dm=document.querySelector('.dbgmotion'); if(!dm) return; if(dm.style.display!=='block') dm.style.display='block';\n  _motHist.push({a:_cloudAlphaNow(), s:_starSampleNow()}); if(_motHist.length>61)_motHist.shift();\n  const cur=_motHist[_motHist.length-1], h10=_motHist[Math.max(0,_motHist.length-11)], h60=_motHist[0];\n  const pct=(a,b)=> b? (Math.abs(a-b)/b*100):0;\n  const starAnim=(()=>{ const e=document.querySelector('.stars circle'); return e?getComputedStyle(e).animationName==='tw':false; })();\n  const wt=(()=>{try{return qaState().wxTruth;}catch(e){return {};}})(); const rm=isMotionReduced();   // LIVE (honours a mid-session OS toggle)\n  dm.textContent=`MOTION rAF ${rafPS}/s  cloudPaint ${cloudPS}/s\\n`\n    +`reduced ${rm?'YES':'no'}  motion=full ${MOTIONFULL?'YES':'no'}  paused ${cEl.classList.contains('paused')?'YES':'no'}\\n`\n    +`timeScale ${TIMESCALE}  advancing ${ADVANCING?'yes':'no'}\\n`\n    +`cloud\u0394 10s ${pct(cur.a,h10&&h10.a).toFixed(1)}%  60s ${pct(cur.a,h60&&h60.a).toFixed(1)}%\\n`\n    +`star\u0394 10s ${(cur.s-(h10?h10.s:cur.s)).toFixed(3)}  starAnim ${starAnim?'on':'OFF'}\\n`\n    +`wx ${wt.currentWeatherSource||'?'}  fx ${cEl.dataset.fx||'?'}\\n`\n    +`reason ${rm?'OS reduced-motion (add motion=full to override)':(cEl.classList.contains('paused')?'offscreen/hidden \u2192 paused (battery)':'full real-time motion')}`;\n}",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "startRenderLoop",
+      "normalizedExcerptSha256": "a8a8d533aef4b97acce6f3d0d1046ccab2e815e33857d9fb0102cc3ddf910cb7",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "function startRenderLoop(){\n  if(!simulationReady()) return;\n  if(_loopStarted) return; _loopStarted=true;\n  const cEl=document.querySelector(\".c\");\n  if(MOTIONFULL && cEl) cEl.classList.add(\"motionfull\");    // CSS reduced-motion rules are scoped to .c:not(.motionfull)\n  let _raf=null, _onScreen=true, _lastSec=-1, _lastWx=0, _lastCloud=0;\n  const visible=()=>_onScreen && document.visibilityState!==\"hidden\";\n  // \u2014\u2014 MOTION TELEMETRY (&debugMotion=1): prove the sky is actually alive in normal real-time \u2014\u2014\n  let _rafN=0,_cloudN=0,_tickAcc=_RAFNOW(),_rafPS=0,_cloudPS=0;   // loop rate counters (consumed only by the debugMotion overlay, which now lives at module scope)\n  function loop(){\n    _rafN++;\n    if(!simulationReady()){ _raf=requestAnimationFrame(loop); return; }\n    const n=nowParts();\n    maintainPrayerDay();                               // promotion, rollover and cold same-day recovery share this visible opportunity\n    const rt=_RAFNOW();\n    if(!ADVANCING && rt-_lastWx>30000){ _lastWx=rt; fetchWeather(); fetchRadar(); }    // refresh real weather ~\u00bd-min + radar (self-throttled ~10min); both held during a fast sweep\n    const sec=Math.floor(simNow()/1000);\n    if(sec!==_lastSec || _renderDirty){ _lastSec=sec; _renderDirty=false; render(); if(ADVANCING) updateSimClock(n); }\n    // Cloud evolution uses bounded visual intervals, with CLOCK's preview rate. Reduced-motion\n    // paints changed state at the same held axes, never a substitute epoch like 1000.\n    const reduced=isMotionReduced(); syncCloudMotionPreference(reduced,rt);\n    if(reduced){ if(_cloudDirty){ paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; } }\n    else if(rt-_lastCloud>76){ _lastCloud=rt; paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; }\n    if(rt-_tickAcc>=1000){ _rafPS=Math.round(_rafN*1000/(rt-_tickAcc)); _cloudPS=Math.round(_cloudN*1000/(rt-_tickAcc)); _rafN=0;_cloudN=0;_tickAcc=rt; if(DEBUGMOTION) updateMotionDbg(_rafPS,_cloudPS,cEl); }\n    // Optional sky presents after native UI/cloud work, using a freshly\n    // accepted UTC. Bootstrap owns its own callback until this handoff.\n    window.SalahSkyPreview?.present(_RAFNOW());\n    _raf=requestAnimationFrame(loop);\n  }\n  function start(){ if(!_raf) _raf=requestAnimationFrame(loop); }\n  function stop(){ if(_raf){ cancelAnimationFrame(_raf); _raf=null; } }\n  function setVis(){ const on=visible(); rebaseCloudMotion(!on); if(cEl){ cEl.classList.toggle(\"paused\",!on); if(ADVANCING) cEl.classList.add(\"fast\"); } if(on) start(); else stop(); }\n  document.addEventListener(\"visibilitychange\",setVis);\n  if(\"IntersectionObserver\" in window && cEl)\n    new IntersectionObserver(es=>{ _onScreen=es[0].isIntersecting; setVis(); },{threshold:0}).observe(cEl);\n  if(ADVANCING){ const sc=document.querySelector(\".simclock\"); if(sc) sc.style.display=\"block\"; }\n  setVis();\n}",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "simulationReady",
+      "normalizedExcerptSha256": "c6a6f6a8092a7af14c6b4e3d137cee246ad7c0d6e4b73acb40cb0599ed5b5f7c",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "function simulationReady(){\n  const valid=SIM.time==null || Number.isFinite(simNow()), sc=$(\".simclock\");\n  if(!valid){\n    for(const selector of [\".sky\",\"#wxfx\",\".climate\",\".arc\",\".bar\",\".cn\",\".times\",\".d\"]){\n      const el=$(selector); if(el && !_simHidden.has(el)){ _simHidden.set(el,el.style.visibility); el.style.visibility=\"hidden\"; }\n    }\n    showError(\"Simulation time unavailable\");\n    if(sc){ if(_simClockDisplay===null) _simClockDisplay=sc.style.display; sc.textContent=\"SIM unavailable\"; sc.style.display=\"block\"; }\n    return false;\n  }\n  for(const [el,visibility] of _simHidden) el.style.visibility=visibility;\n  _simHidden.clear();\n  if(sc && _simClockDisplay!==null){ sc.style.display=_simClockDisplay; _simClockDisplay=null; }\n  return true;\n}",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "_cloudAlphaNow",
+      "normalizedExcerptSha256": "a2e9a56e2b811980bd10d6a0aaf7ef6a287f909409cca3b5055abe6038430853",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "function _cloudAlphaNow(){ try{ const cv=document.querySelector('.cloudcanvas'),x=cv.getContext('2d'),d=x.getImageData(0,0,cv.width,cv.height).data; let a=0; for(let i=3;i<d.length;i+=4)a+=d[i]; return a; }catch(e){ return 0; } }",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "_starSampleNow",
+      "normalizedExcerptSha256": "d5817dfdea65809c3244ac611ca84b022ebe39fc8fb15343a746345435391851",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "function _starSampleNow(){ const els=document.querySelectorAll('.stars circle'); for(const e of els){ if(e.style.display!=='none' && getComputedStyle(e).animationName==='tw') return +getComputedStyle(e).opacity; } return 0; }   // sample a VISIBLE twinkling star (not a display:none pool star) so star\u0394 is representative\nfunction updateMotionDbg(rafPS, cloudPS, cEl){\n  const dm=document.querySelector('.dbgmotion'); if(!dm) return; if(dm.style.display!=='block') dm.style.display='block';\n  _motHist.push({a:_cloudAlphaNow(), s:_starSampleNow()}); if(_motHist.length>61)_motHist.shift();\n  const cur=_motHist[_motHist.length-1], h10=_motHist[Math.max(0,_motHist.length-11)], h60=_motHist[0];\n  const pct=(a,b)=> b? (Math.abs(a-b)/b*100):0;\n  const starAnim=(()=>{ const e=document.querySelector('.stars circle'); return e?getComputedStyle(e).animationName==='tw':false; })();\n  const wt=(()=>{try{return qaState().wxTruth;}catch(e){return {};}})(); const rm=isMotionReduced();   // LIVE (honours a mid-session OS toggle)\n  dm.textContent=`MOTION rAF ${rafPS}/s  cloudPaint ${cloudPS}/s\\n`\n    +`reduced ${rm?'YES':'no'}  motion=full ${MOTIONFULL?'YES':'no'}  paused ${cEl.classList.contains('paused')?'YES':'no'}\\n`\n    +`timeScale ${TIMESCALE}  advancing ${ADVANCING?'yes':'no'}\\n`\n    +`cloud\u0394 10s ${pct(cur.a,h10&&h10.a).toFixed(1)}%  60s ${pct(cur.a,h60&&h60.a).toFixed(1)}%\\n`\n    +`star\u0394 10s ${(cur.s-(h10?h10.s:cur.s)).toFixed(3)}  starAnim ${starAnim?'on':'OFF'}\\n`\n    +`wx ${wt.currentWeatherSource||'?'}  fx ${cEl.dataset.fx||'?'}\\n`\n    +`reason ${rm?'OS reduced-motion (add motion=full to override)':(cEl.classList.contains('paused')?'offscreen/hidden \u2192 paused (battery)':'full real-time motion')}`;\n}",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "simNow",
+      "normalizedExcerptSha256": "4734bd59393a7da39e8b8a91c071c1b38e2ca6a2c4e8986b0ad93df1a24716e9",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "function simNow(){\n  if(FOLLOW_WALL_CLOCK) return Date.now();\n  if(!_simValid && _simInvalidTz===tz) return NaN;\n  if((_simBase==null || _simTz!==tz) && !initSim()) return NaN;\n  return _simBase + (_RAFNOW()-_rafT0)*TIMESCALE;\n}",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "simDate",
+      "normalizedExcerptSha256": "f8e3d739dfc946bc1504684e0c6386e830c4ba8a0dc16bc13c52086501ef88e0",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "function simDate(){ return new Date(simNow()); }",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "id": "nowParts",
+      "normalizedExcerptSha256": "3871f24851c9cf04f9225e8b2bf3c8fe6cc0ec5afb42938924ecbd6ef36b5c22",
+      "normalization": "LF only; no code/token/whitespace normalization",
+      "exactText": "function nowParts(){ return partsInTz(simNow()); }",
+      "oldNativeEqualsOldGenerated": true,
+      "oldRelevantEqualsCurrentRelevant": true,
+      "currentNativeEqualsCurrentGenerated": true,
+      "wholeFileEqualityClaimed": false
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+      "bytes": 367870,
+      "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\index.html",
+      "bytes": 1569846,
+      "sha256": "c773af444ed1071f9ba6b62b8e635c8d38b1b7f73de995c781ed23c0d307499a"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\candidates\\rlgwo-weather-info-01\\src\\native\\index.html",
+      "bytes": 369164,
+      "sha256": "ec59b3ff64e06713d652af5b30f04a18fcde404b92b4595bc1cee96818a6ec65"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\candidates\\rlgwo-weather-info-01\\index.html",
+      "bytes": 6089285,
+      "sha256": "14e1d92101dad56f1352a2b4a85a460067361ecdfca62093f9f9d1286b991fad"
+    }
+  ],
+  "currentRuntimeOrOpticalPixelQualification": false,
+  "meaning": "Exact relevant diagnostic/parser/clock/loop/DOM/CSS code is unchanged. Actual four browser observations stay bound to e718/14e1, native Chromium148 Windows environment, native Date and synthetic transport/system fonts. No complete runtime, live current07 result, startup or physical environment equivalence is inferred."
+}

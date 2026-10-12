@@ -1,0 +1,66 @@
+{
+  "parentIssues": [
+    28
+  ],
+  "issueObligations": [
+    "R001C:28-01",
+    "R001C:28-02",
+    "R001C:28-03",
+    "R001C:28-04",
+    "R001C:28-05",
+    "R001C:28-06",
+    "R001C:28-09"
+  ],
+  "priority": "P2",
+  "specification": {
+    "path": "REMAINING_RLGWOs/R001C.md",
+    "revision": 1
+  },
+  "status": "WAITING_INPUTS_AND_AUTHORITY",
+  "resources": [
+    "independent-review",
+    "coordinator"
+  ],
+  "estimate": {
+    "activeHours": [
+      0.25,
+      0.75
+    ],
+    "exclusiveMachineMinutes": [
+      0,
+      0
+    ],
+    "confidence": "medium",
+    "basis": "Bounded candidate/effect identity reconciliation; excludes repairs, owner waiting and duplicated issue-specific tests."
+  },
+  "id": "R001C-RELEASE-REVIEW",
+  "kind": "independent-review",
+  "owner": "different reviewer plus primary reconciler",
+  "scope": "Independently approve only the exact documentation facts/diff against accepted source and required documentation assertions. Unrelated native proof remains on QUALIFY/CLOSE and is not required to deliver accurate docs.",
+  "inputs": [
+    {
+      "id": "r001c-diagnostic-docs/v1",
+      "contract": "Exact corrected text/complete examples/enum and full literal classification map"
+    },
+    {
+      "id": "r001c-a01-proof/v1",
+      "contract": "No positive query-only recipe survives; all intended literals activate actual flags"
+    }
+  ],
+  "outputs": [
+    {
+      "id": "r001c-reviewed-release/v1",
+      "contract": "Exact independently reviewed docs-only head/diff and source/fact evidence; full native and other residual proof explicitly pending until QUALIFY/CLOSE.",
+      "artifact": "execution/R001C/release-review.json"
+    }
+  ],
+  "entryCriteria": [
+    "Exact docs candidate and its source/fact proof fixed; reviewer differs from author; no claimed unsupported platform/runtime result."
+  ],
+  "exitCriteria": [
+    "Every changed documentation claim accurate and independently reviewed; incomplete native/evidence rows remain explicit and the issue remains open."
+  ],
+  "tests": [
+    "Read actual source, negative controls, raw outputs and required pixels; check scope and applicable old receipts, final hashes and public evidence reachability."
+  ]
+}

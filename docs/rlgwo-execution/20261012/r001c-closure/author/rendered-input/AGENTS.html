@@ -1,0 +1,173 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'none'; frame-src 'none'; img-src 'none'; font-src 'none'; base-uri 'none'"><title>LOCAL source preview AGENTS.md</title><style>body{font:16px/1.45 sans-serif;margin:30px;max-width:1220px;color:#111;background:white}table{border-collapse:collapse;table-layout:fixed;width:100%;font-size:14px}td,th{border:1px solid;padding:8px;vertical-align:top;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid;padding:12px}code{font-size:13px}</style></head><body><p id="preview-scope">LOCAL SOURCE PREVIEW. Not GitHub-public delivery or widget optical/motion qualification.</p><article id="document" data-doc="AGENTS.md" data-source-sha256="f506acbba2b5b2ade773c251342b41523b6e94cd740ee51a38ba15316714b948"><h1>salah_widget — AGENTS</h1>
+<p>How agents (human or AI) should work on this repo. The runtime entry is generated <code>index.html</code>; changes are
+visual and physics-adjacent, so <strong>review is dominated by looking at rendered pixels</strong>, not by reading metrics.</p>
+<h2>CP9 source ownership and qualification</h2>
+<p>Read <code>docs/real-sky/INTEGRATION.md</code> and the retained post-CP9 DAG before changing
+this candidate. Edit native UI, prayer/weather, geometry, PBR, Earthshine and
+embedded lunar textures in <code>src/native/index.html</code>; edit config and builder in
+<code>src/native/</code>. Integration owners are <code>real-sky/native-*.mjs</code> and
+<code>native-host-hooks.js</code>. Rebuild with <code>python tools/build_native.py</code>; never patch
+generated root entries, bundles, worker, data, CSS or copied <code>real-sky/core</code>.
+<code>vendor/real-sky</code> retains immutable scientific source and oracle fixtures.
+The requested bottom-border fix is authored in <code>tools/native_core_horizon.py</code>;
+the builder applies that one digest-guarded horizon-predicate correction while
+copying the core. Keep its boundary and drift regression tests with the change.
+Run its builders/tests in a disposable copy. Historical PASS does not qualify
+this candidate. The existing gates below remain requirements, not blanket PASS.</p>
+<p>The dependent Moon candidate adds authored <code>moon/src/</code>, lossless <code>moon/assets/</code>
+and the supplied <code>moon/moon_kernel.wasm</code>. <code>tools/build_moon.py</code> runs through the
+native builder; never edit its generated host/worker/chunks or expanded entries.
+Native phase/time/configuration still belong to <code>src/native/index.html</code>; the
+device-resolution lunar foreground belongs to <code>moon/src/moon-detail.mjs</code>.
+Read <code>docs/moon/QUALIFICATION.md</code> for this candidate&#39;s evidence and limitations.
+The CP9 comparison ledger remains PARTIAL/BLOCKED; Moon integration does not
+close N001/N002/N003 or authorize merge/deployment.</p>
+<h2>Golden rules</h2>
+<ul>
+<li><strong>Screenshots override metrics.</strong> A passing <code>qaState()</code> number does not pass a cycle if the screenshot looks
+wrong. Every visual claim needs a crop/clip.</li>
+<li><strong>Truthfulness over drama.</strong> Never make the widget claim a condition it can&#39;t support (see &quot;Weather&quot; below).</li>
+<li><strong>Do not commit unless explicitly asked.</strong> When asked, <code>main</code> is the GitHub Pages deploy branch.</li>
+<li><strong>No broad refactors mixed into a feature/fix.</strong> Keep diffs inspectable. Document before refactoring.</li>
+<li><strong>Physics gates the art.</strong> Optical phenomena must be condition-gated (ice vs droplet, low-sun + broken cloud,
+humidity, etc.), never random or always-on.</li>
+</ul>
+<h2>Subagent roles &amp; what each reviews</h2>
+<ul>
+<li><strong>GitHub/source auditor</strong> — confirms the committed <code>index.html</code> matches what&#39;s served; lists the relevant
+systems before any edit.</li>
+<li><strong>Runtime DOM/CSS/canvas auditor</strong> — measures live geometry (header/footer, cloud band vs dashed horizon, moon
+layers/radius/alpha <strong>+ disc opacity/occlusion (no stars through)</strong>, buckle cut-out vs strap, rain origin vs
+cloud columns) and reports numbers + crops.</li>
+<li><strong>Live-motion auditor</strong> — proves the default real-time widget actually animates over 15–60s (cloud drift/morph,
+star scintillation, sky breathing) via <code>&amp;debugMotion=1</code> Δ / a clip / a centroid-drift probe. <strong>Must NOT cite the
+<code>qaState().clouds.hash</code> as motion evidence</strong> (it flips on sub-pixel change — it produced false PASS reports).</li>
+<li><strong>Atmospheric-optics researcher</strong> — supplies condition gates, geometry, colour orders, gradient recipes for each
+phenomenon before it is coded.</li>
+<li><strong>Islamic dawn / Fajr semantics researcher</strong> — verifies false-dawn (vertical) vs true-dawn (horizontal) and the
+Fajr depression range; confirms dawn visuals never drive the prayer clock.</li>
+<li><strong>Solar / lunar renderer art directors</strong> — judge sun placement/optics and moon PBR/earthshine/halo/corona from
+forced-condition crops.</li>
+<li><strong>Cloud/weather lighting judge</strong> — structure, lighting, weather linkage, and <strong>continuity</strong> (no slideshow).</li>
+<li><strong>Star/night-sky judge</strong> — variety, twinkle (visible but not cartoonish), moon wash, location/weather response.</li>
+<li><strong>UI/layout invariant judge</strong> — footer visible + header geometry + readability in <em>every</em> scene.</li>
+<li><strong>Documentation architect / code-comment reviewer</strong> — keep DESIGN.md/AGENTS.md and the high-value comments true.</li>
+<li><strong>Skeptic visual panel (≥5)</strong> — may FAIL any cycle; must list failures and residual approximations.</li>
+<li><strong>Regression judge</strong> — diffs old screenshots vs current; flags anything that got worse.</li>
+</ul>
+<p>Note: judges that drive the live preview must run <strong>sequentially</strong> (one shared preview server; parallel judges
+stomp on each other&#39;s scenes). State this honestly rather than faking a simultaneous panel.</p>
+<h2>Required PASS/FAIL gates</h2>
+<p>A cycle PASSES only when, with <strong>screenshot/clip evidence</strong>:</p>
+<ul>
+<li>A — Sun is a <strong>defined radiant body with a clear nucleus</strong>, not a vague brush; colour is <strong>tone-mapped/white-
+balanced</strong> (airmass + transmittance + CCT + ACES) — under cloud it goes <strong>warm-white, never a grey/purple blob</strong>.</li>
+<li>B — Sunrise <strong>enters low from the left</strong> near the horizon (warm glowing disc); sunset sky is warm (not generic
+daylight); low-sun colour believable; low-sun refraction flattening.</li>
+<li>C — Solar optics distinct + gated (halo / parhelia / pillar / crepuscular / anticrepuscular / refraction), each
+only under its physical condition, and <strong>registered to the VISIBLE corner sun</strong> (<code>--sunvx/--sunvy</code>) — a center-
+screen halo is a FAIL.</li>
+<li>D — Moon is <strong>OPAQUE every night (no stars through the disc)</strong> and <strong>meaningfully present every night</strong> — a new/
+below-horizon moon shows a faint <strong>ashen opaque calendar disc with NO moonlight</strong> (never blank, never faked
+light); the disc is <strong>mostly in frame</strong> so the phase reads. Earthshine correct across crescent/half/gibbous/full
+(gibbous dark side faint <strong>but textured, never a black cutout</strong>).</li>
+<li>E — Lunar corona (small, close) vs 22° halo (large ring) vs paraselenae (lateral, rare) are distinct + gated.</li>
+<li>F — <strong>Dawn is honest, not painted:</strong> true dawn is the <strong>real physical twilight sky</strong> (dark at Fajr depth,
+brightening toward sunrise) + the Fajr marker — <strong>no horizontal &quot;true-dawn band.&quot;</strong> False dawn is <strong>fail-closed
+(not rendered)</strong> — <strong>no diagonal cone / lens-flare slash</strong>, and nothing under a bright moon.</li>
+<li>G — Clouds structured, lit, weather-linked; small distinct cells; mostly around/above the dashed 0° horizon.</li>
+<li>H — Rain/lightning originate from cloud systems and vary by weather type/intensity.</li>
+<li>I — Stars beautiful/alive/varied; <strong>not</strong> a spinning or static image; anchors + their glints <strong>scintillate</strong>.</li>
+<li>J — Header belt (buckle <strong>cut-out</strong>, no strap through it) + footer + prayer UI intact and readable in every scene.</li>
+<li><strong>M0 (live motion) — the default real-time widget VISIBLY animates over 15–60s where the scene allows (clouds
+drift/morph, stars scintillate, sky breathes). Proven by a real watch / <code>&amp;debugMotion=1</code> Δ, NEVER the qaState
+hash. Accessibility: <code>prefers-reduced-motion</code> reduces it by default; <code>&amp;motion=full</code> overrides.</strong></li>
+<li>K/L/M — DESIGN.md + AGENTS.md + HANDOFF.md current; high-value comments present; approximations stated honestly.</li>
+</ul>
+<h2>Evidence requirements (per cycle)</h2>
+<p>Crops/clips for: clear-day apex (<strong>defined nucleus</strong>), sunrise (enters low-left), sunset (warm sky), overcast
+(<strong>warm-white sun, not grey/purple</strong>), forced parhelia/halo/pillar (<strong>ringing the visible sun</strong>), forced
+crepuscular/anticrepuscular, crescent (<strong>right limb in frame</strong>)/half/gibbous/full moon, <strong>new moon (opaque ashen
+calendar disc)</strong>, <strong>moon-opacity proof (no stars through the disc)</strong>, forced lunar corona/halo/paraselene, daytime
+clouds, moonlit night clouds, rain + thunder, star twinkle, <strong>header buckle cut-out (zoom — no strap through)</strong>,
+header/footer, near-Fajr (real twilight, <strong>no painted dawn band/cone</strong>). Plus a <strong>real 15–60s live-motion clip /
+<code>debugMotion</code> 10s–60s Δ</strong> (the headline gate), 5m/15m/60m/day simulated deltas, and <code>motion=full</code> vs reduced-motion.
+Judges list failures and residual approximations. <strong>Screenshots/Δ — never the qaState hash — decide motion.</strong></p>
+<h2>Forbidden regressions (instant FAIL)</h2>
+<ul>
+<li><strong>No visible motion in normal live real-time view</strong> (a static &quot;wallpaper&quot; sky). Verify with a real 15–60s watch
+/ <code>&amp;debugMotion=1</code> 10s–60s Δ — <strong>NOT</strong> the <code>qaState().clouds.hash</code> (it flips on sub-pixel change and lies).</li>
+<li>The <strong>moon rendered transparent</strong> — stars visible <em>through</em> the disc, in ANY phase. The Moon is an opaque body.</li>
+<li>An <strong>empty moon slot / moonless normal night.</strong> A new/below-horizon moon must still show a faint <strong>ashen OPAQUE
+calendar disc</strong> (no moonlight) — never blank sky, never a &quot;new moon invisible&quot; rule.</li>
+<li>A <strong>painted false-dawn cone or horizontal true-dawn band/strip.</strong> Dawn = the real physical twilight sky + the
+Fajr marker; false dawn is <strong>fail-closed</strong> (not rendered) until properly modeled.</li>
+<li>The <strong>sun rendered as a dim grey/purple blob</strong> or a vague brush with <strong>no defined nucleus</strong> (use the scene-
+referred tone-map; cloud → warm-white, never cold grey).</li>
+<li><strong>Solar optics (halo / sundogs / pillar) detached from the visible sun</strong> (they must register to <code>--sunvx/--sunvy</code>,
+not the arc-sun azimuth). A center-screen halo is an instant FAIL.</li>
+<li>Footer date row clipped or any header change that <strong>moves the content stack</strong>.</li>
+<li><strong>Builder/embed:</strong> the iframe wrapper size drifting from the widget card — it must be <strong>325×530</strong> (= <code>.c</code>) in the
+builder preview, the copy snippet, README, and the TablissNG preset (an oversized wrapper adds invisible margin
+and misaligns the builder card/buttons).</li>
+<li>Header buckle off-centre, straps full-width, a heavy drop shadow, or <strong>any strap geometry visible THROUGH the
+translucent buckle</strong> (the strap inner ends must be <em>masked/cut</em>, not merely z-indexed — translucent glass reveals
+what&#39;s under it).</li>
+<li>Sunrise marker drawn as a filled dot (it is a <strong>ring</strong>) or off the dashed line; Maghrib off the line; <strong>Dhuhr
+on the apex</strong>.</li>
+<li>The moon&#39;s dark limb rendered as a <strong>black cutout</strong>, or a jaggy/stroked moon edge.</li>
+<li>A <strong>generic</strong> glow standing in for a gated optical phenomenon.</li>
+<li><strong>Claiming direct local rain/lightning observations from model or uncalibrated radar data</strong>, or letting
+hourly forecasts overwrite current conditions in real time. The owner&#39;s PR42 policy explicitly permits
+labelled fresh current-model rain/snow with supporting admitted quantities. Keep condition presentation,
+model effect permissions and direct-observation authority separate; see DESIGN.md.</li>
+<li>Clouds that <strong>reseed / slideshow</strong> on weather refresh or per render tick.</li>
+<li>Replacing the accurate PBR moon lighting with a flat sprite; making physics &quot;ugly&quot;.</li>
+</ul>
+<h2>Commit policy</h2>
+<p>Do not commit or push unless the user explicitly asks. When asked: commit the <strong>relevant source + docs</strong>
+(<code>index.html</code>, <code>config.js</code>, <code>builder.html</code>, <code>install.sh</code>/<code>install.ps1</code>, <code>presets/</code>, <code>tests/</code>, the <code>*.md</code> docs) —
+<strong>never</strong> the stray research scratch files (<code>noaa_clouds.html</code>, <code>*_photopills.html</code>, <code>_mag_extract.txt</code>, etc.).
+<code>main</code> deploys to GitHub Pages, so a commit to <code>main</code> is a deploy. End commit messages with the standard
+<code>Co-Authored-By</code> line.</p>
+<h2>Running / debugging common scenarios</h2>
+<p>Configuration and diagnostics are read from the fragment after #. Append &amp;debugMotion=1 or &amp;motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them.</p>
+<p>Real-time motion diagnostic:</p>
+<pre><code class="language-text">index.html#lat=24.47&amp;lon=39.61&amp;label=Madinah&amp;method=4&amp;debugMotion=1
+</code></pre>
+<p>Full-motion override (the normal default respects reduced motion):</p>
+<pre><code class="language-text">index.html#lat=24.47&amp;lon=39.61&amp;label=Madinah&amp;method=4&amp;debugMotion=1&amp;motion=full
+</code></pre>
+<p>Solar noon halo diagnostic:</p>
+<pre><code class="language-text">index.html#lat=24.47&amp;lon=39.61&amp;label=Madinah&amp;method=4&amp;simTime=12:30&amp;debugOptic=halo
+</code></pre>
+<p>Query-only negative control: these flags are not read from before #.</p>
+<pre><code class="language-text">index.html?debugMotion=1&amp;motion=full#lat=24.47&amp;lon=39.61
+</code></pre>
+<p>simTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels.</p>
+<p>Lunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use <code>qaState().clouds.hash</code> as motion proof.</p>
+<p>Serve the folder statically and open <code>index.html#lat=24.47&amp;lon=39.61&amp;label=Madinah&amp;method=4</code>.</p>
+<ul>
+<li>Day positions: <code>&amp;simTime=12:30</code> (noon), <code>&amp;simTime=05:50</code> (sunrise), <code>&amp;simTime=18:55</code> (sunset/golden hour).</li>
+<li>Weather visuals: <code>&amp;simWx=2&amp;simCloud=50</code> (broken), <code>&amp;simWx=3&amp;simCloud=100</code> (overcast), <code>&amp;simWx=63</code> (rain),
+<code>&amp;simWx=95</code> (thunder), <code>&amp;simWx=45</code> (fog).</li>
+<li><strong>Weather-truth QA</strong>: <code>&amp;simWx=95&amp;simPrecip=0</code> must downgrade (no thunder/rain); <code>&amp;simWx=95&amp;simPrecip=5</code> keeps
+thunder; check <code>qaState().wxTruth</code> for the source/reason chain.</li>
+<li>Moon: <code>&amp;simMoon=0.08&amp;simWax=1&amp;simMoonAlt=20&amp;simMoonH=42</code> (crescent), <code>&amp;simMoon=0.92…</code> (gibbous), <code>&amp;simMoon=0.98…</code>
+(full); thin-cloud halo/corona via <code>&amp;simWx=2&amp;simCloud=30</code> on a moon scene.</li>
+<li><strong>Live motion</strong>: load real-time (no <code>simTime</code>) and <strong>watch ~15–60s</strong> — clouds must drift/morph, stars
+scintillate, sky breathe. <code>&amp;debugMotion=1</code> shows rAF/s, cloud-paint/s, reduced-motion, paused, <strong>cloud Δ 10s/60s</strong>,
+star Δ, reason. <code>&amp;motion=full</code> forces motion under OS reduced-motion. <code>&amp;timeScale=1800</code> fast-forwards a day.</li>
+<li><strong>Moon opacity</strong>: any night moon — confirm <strong>no stars show through the disc</strong>; new moon (<code>&amp;simMoon=0.01</code>) shows a
+faint <strong>opaque</strong> ashen calendar disc with <code>qaState().moonTruth.moonlightOpacity == 0</code>.</li>
+<li>Readouts: <code>&amp;debugLayers=1</code>, <code>&amp;debugMoon=1</code>, <code>&amp;debugMotion=1</code>, <code>&amp;qa=1</code> then <code>window.qaState()</code> (incl. <code>wxTruth</code>,
+<code>moonTruth</code>). <code>&amp;debugDawn=…</code> is a deprecated no-op (dawn is not painted).</li>
+<li>Preview gotcha: <code>simTime</code> without <code>timeScale</code> freezes the clock (TIMESCALE 0), so cloud drift won&#39;t be visible
+in a still test — use the direct <code>paintClouds(t)</code> probe or a real-time / <code>timeScale</code> watch to see motion.</li>
+</ul>
+<h2>Frozen V1 compatibility snapshot</h2>
+<p>v1/ is the frozen pre-overhaul compatibility snapshot. Normal builds and renderer integrations must neither regenerate, overwrite nor delete it. Any deliberate change requires explicit owner authority and disclosure.</p>
+<p>Run <code>python tools/verify_v1.py</code> after builds/integrations. It verifies V1 independently
+of the current root runtime. See <code>docs/V1_PRESERVATION.md</code> for provenance, storage
+isolation, focused comparison checks and the pending deployment smoke procedure.</p>
+</article></body></html>

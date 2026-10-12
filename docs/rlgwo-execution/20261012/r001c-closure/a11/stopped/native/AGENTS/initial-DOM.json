@@ -1,0 +1,1168 @@
+{
+  "topHeaders": [],
+  "topOcclusion": 0,
+  "url": "https://github.com/theislampill/salah_widget/blob/80e703864a74e3f67bc3d9b399fc1bbe64ea93b4/AGENTS.md",
+  "sourceIdentity": true,
+  "documentRendered": true,
+  "bodyText": "Running / debugging common scenarios\nConfiguration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them.\nReal-time motion diagnostic:\nindex.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1\n\nFull-motion override (the normal default respects reduced motion):\nindex.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full\n\nSolar noon halo diagnostic:\nindex.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo\n\nQuery-only negative control: these flags are not read from before #.\nindex.html?debugMotion=1&motion=full#lat=24.47&lon=39.61\n\nsimTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels.\nLunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use qaState().clouds.hash as motion proof.\nServe the folder statically and open index.html#lat=24.47&lon=39.61&label=Madinah&method=4.\nDay positions: &simTime=12:30 (noon), &simTime=05:50 (sunrise), &simTime=18:55 (sunset/golden hour).\nWeather visuals: &simWx=2&simCloud=50 (broken), &simWx=3&simCloud=100 (overcast), &simWx=63 (rain), &simWx=95 (thunder), &simWx=45 (fog).\nWeather-truth QA: &simWx=95&simPrecip=0 must downgrade (no thunder/rain); &simWx=95&simPrecip=5 keeps thunder; check qaState().wxTruth for the source/reason chain.\nMoon: &simMoon=0.08&simWax=1&simMoonAlt=20&simMoonH=42 (crescent), &simMoon=0.92… (gibbous), &simMoon=0.98… (full); thin-cloud halo/corona via &simWx=2&simCloud=30 on a moon scene.\nLive motion: load real-time (no simTime) and watch ~15–60s — clouds must drift/morph, stars scintillate, sky breathe. &debugMotion=1 shows rAF/s, cloud-paint/s, reduced-motion, paused, cloud Δ 10s/60s, star Δ, reason. &motion=full forces motion under OS reduced-motion. &timeScale=1800 fast-forwards a day.\nMoon opacity: any night moon — confirm no stars show through the disc; new moon (&simMoon=0.01) shows a faint opaque ashen calendar disc with qaState().moonTruth.moonlightOpacity == 0.\nReadouts: &debugLayers=1, &debugMoon=1, &debugMotion=1, &qa=1 then window.qaState() (incl. wxTruth, moonTruth). &debugDawn=… is a deprecated no-op (dawn is not painted).\nPreview gotcha: simTime without timeScale freezes the clock (TIMESCALE 0), so cloud drift won't be visible in a still test — use the direct paintClouds(t) probe or a real-time / timeScale watch to see motion.",
+  "selections": [
+    {
+      "expected": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1\n",
+      "selected": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1",
+      "textContent": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1\n",
+      "exposed": true,
+      "rects": [
+        {
+          "x": 386,
+          "y": 4061.09375,
+          "width": 500.984375,
+          "height": 16
+        }
+      ],
+      "formatterLF": "GitHub omits the formatter LF; protected payload preserved"
+    },
+    {
+      "expected": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full\n",
+      "selected": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full",
+      "textContent": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full\n",
+      "exposed": true,
+      "rects": [
+        {
+          "x": 386,
+          "y": 4168.796875,
+          "width": 590.71875,
+          "height": 16
+        }
+      ],
+      "formatterLF": "GitHub omits the formatter LF; protected payload preserved"
+    },
+    {
+      "expected": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo\n",
+      "selected": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo",
+      "textContent": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo\n",
+      "exposed": true,
+      "rects": [
+        {
+          "x": 386,
+          "y": 4276.5,
+          "width": 620.625,
+          "height": 16
+        }
+      ],
+      "formatterLF": "GitHub omits the formatter LF; protected payload preserved"
+    },
+    {
+      "expected": "index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61\n",
+      "selected": "index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61",
+      "textContent": "index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61\n",
+      "exposed": true,
+      "rects": [
+        {
+          "x": 386,
+          "y": 4384.203125,
+          "width": 418.734375,
+          "height": 16
+        }
+      ],
+      "formatterLF": "GitHub omits the formatter LF; protected payload preserved"
+    }
+  ],
+  "elements": [
+    {
+      "index": 0,
+      "tag": "DIV",
+      "text": "Running / debugging common scenarios",
+      "visibleText": "Running / debugging common scenarios",
+      "rect": {
+        "x": 370,
+        "y": 3837.90625,
+        "width": 861,
+        "height": 38.1875
+      },
+      "exposed": true
+    },
+    {
+      "index": 1,
+      "tag": "P",
+      "text": "Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them.",
+      "visibleText": "Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them.",
+      "rect": {
+        "x": 370,
+        "y": 3892.09375,
+        "width": 861,
+        "height": 96
+      },
+      "exposed": true
+    },
+    {
+      "index": 2,
+      "tag": "P",
+      "text": "Real-time motion diagnostic:",
+      "visibleText": "Real-time motion diagnostic:",
+      "rect": {
+        "x": 370,
+        "y": 4004.09375,
+        "width": 861,
+        "height": 24
+      },
+      "exposed": true
+    },
+    {
+      "index": 3,
+      "tag": "DIV",
+      "text": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1\n\n    \n      \n    \n\n      \n    \n\n    \n  ",
+      "visibleText": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1\n",
+      "rect": {
+        "x": 370,
+        "y": 4044.09375,
+        "width": 861,
+        "height": 51.703125
+      },
+      "exposed": true
+    },
+    {
+      "index": 4,
+      "tag": "P",
+      "text": "Full-motion override (the normal default respects reduced motion):",
+      "visibleText": "Full-motion override (the normal default respects reduced motion):",
+      "rect": {
+        "x": 370,
+        "y": 4111.796875,
+        "width": 861,
+        "height": 24
+      },
+      "exposed": true
+    },
+    {
+      "index": 5,
+      "tag": "DIV",
+      "text": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full\n\n    \n      \n    \n\n      \n    \n\n    \n  ",
+      "visibleText": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full\n",
+      "rect": {
+        "x": 370,
+        "y": 4151.796875,
+        "width": 861,
+        "height": 51.703125
+      },
+      "exposed": true
+    },
+    {
+      "index": 6,
+      "tag": "P",
+      "text": "Solar noon halo diagnostic:",
+      "visibleText": "Solar noon halo diagnostic:",
+      "rect": {
+        "x": 370,
+        "y": 4219.5,
+        "width": 861,
+        "height": 24
+      },
+      "exposed": true
+    },
+    {
+      "index": 7,
+      "tag": "DIV",
+      "text": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo\n\n    \n      \n    \n\n      \n    \n\n    \n  ",
+      "visibleText": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo\n",
+      "rect": {
+        "x": 370,
+        "y": 4259.5,
+        "width": 861,
+        "height": 51.703125
+      },
+      "exposed": true
+    },
+    {
+      "index": 8,
+      "tag": "P",
+      "text": "Query-only negative control: these flags are not read from before #.",
+      "visibleText": "Query-only negative control: these flags are not read from before #.",
+      "rect": {
+        "x": 370,
+        "y": 4327.203125,
+        "width": 861,
+        "height": 24
+      },
+      "exposed": true
+    },
+    {
+      "index": 9,
+      "tag": "DIV",
+      "text": "index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61\n\n    \n      \n    \n\n      \n    \n\n    \n  ",
+      "visibleText": "index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61\n",
+      "rect": {
+        "x": 370,
+        "y": 4367.203125,
+        "width": 861,
+        "height": 51.703125
+      },
+      "exposed": true
+    },
+    {
+      "index": 10,
+      "tag": "P",
+      "text": "simTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels.",
+      "visibleText": "simTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels.",
+      "rect": {
+        "x": 370,
+        "y": 4434.90625,
+        "width": 861,
+        "height": 48
+      },
+      "exposed": true
+    },
+    {
+      "index": 11,
+      "tag": "P",
+      "text": "Lunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use qaState().clouds.hash as motion proof.",
+      "visibleText": "Lunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use qaState().clouds.hash as motion proof.",
+      "rect": {
+        "x": 370,
+        "y": 4498.90625,
+        "width": 861,
+        "height": 72
+      },
+      "exposed": true
+    },
+    {
+      "index": 12,
+      "tag": "P",
+      "text": "Serve the folder statically and open index.html#lat=24.47&lon=39.61&label=Madinah&method=4.",
+      "visibleText": "Serve the folder statically and open index.html#lat=24.47&lon=39.61&label=Madinah&method=4.",
+      "rect": {
+        "x": 370,
+        "y": 4586.90625,
+        "width": 861,
+        "height": 24
+      },
+      "exposed": true
+    },
+    {
+      "index": 13,
+      "tag": "UL",
+      "text": "\nDay positions: &simTime=12:30 (noon), &simTime=05:50 (sunrise), &simTime=18:55 (sunset/golden hour).\nWeather visuals: &simWx=2&simCloud=50 (broken), &simWx=3&simCloud=100 (overcast), &simWx=63 (rain),\n&simWx=95 (thunder), &simWx=45 (fog).\nWeather-truth QA: &simWx=95&simPrecip=0 must downgrade (no thunder/rain); &simWx=95&simPrecip=5 keeps\nthunder; check qaState().wxTruth for the source/reason chain.\nMoon: &simMoon=0.08&simWax=1&simMoonAlt=20&simMoonH=42 (crescent), &simMoon=0.92… (gibbous), &simMoon=0.98…\n(full); thin-cloud halo/corona via &simWx=2&simCloud=30 on a moon scene.\nLive motion: load real-time (no simTime) and watch ~15–60s — clouds must drift/morph, stars\nscintillate, sky breathe. &debugMotion=1 shows rAF/s, cloud-paint/s, reduced-motion, paused, cloud Δ 10s/60s,\nstar Δ, reason. &motion=full forces motion under OS reduced-motion. &timeScale=1800 fast-forwards a day.\nMoon opacity: any night moon — confirm no stars show through the disc; new moon (&simMoon=0.01) shows a\nfaint opaque ashen calendar disc with qaState().moonTruth.moonlightOpacity == 0.\nReadouts: &debugLayers=1, &debugMoon=1, &debugMotion=1, &qa=1 then window.qaState() (incl. wxTruth,\nmoonTruth). &debugDawn=… is a deprecated no-op (dawn is not painted).\nPreview gotcha: simTime without timeScale freezes the clock (TIMESCALE 0), so cloud drift won't be visible\nin a still test — use the direct paintClouds(t) probe or a real-time / timeScale watch to see motion.\n",
+      "visibleText": "Day positions: &simTime=12:30 (noon), &simTime=05:50 (sunrise), &simTime=18:55 (sunset/golden hour).\nWeather visuals: &simWx=2&simCloud=50 (broken), &simWx=3&simCloud=100 (overcast), &simWx=63 (rain), &simWx=95 (thunder), &simWx=45 (fog).\nWeather-truth QA: &simWx=95&simPrecip=0 must downgrade (no thunder/rain); &simWx=95&simPrecip=5 keeps thunder; check qaState().wxTruth for the source/reason chain.\nMoon: &simMoon=0.08&simWax=1&simMoonAlt=20&simMoonH=42 (crescent), &simMoon=0.92… (gibbous), &simMoon=0.98… (full); thin-cloud halo/corona via &simWx=2&simCloud=30 on a moon scene.\nLive motion: load real-time (no simTime) and watch ~15–60s — clouds must drift/morph, stars scintillate, sky breathe. &debugMotion=1 shows rAF/s, cloud-paint/s, reduced-motion, paused, cloud Δ 10s/60s, star Δ, reason. &motion=full forces motion under OS reduced-motion. &timeScale=1800 fast-forwards a day.\nMoon opacity: any night moon — confirm no stars show through the disc; new moon (&simMoon=0.01) shows a faint opaque ashen calendar disc with qaState().moonTruth.moonlightOpacity == 0.\nReadouts: &debugLayers=1, &debugMoon=1, &debugMotion=1, &qa=1 then window.qaState() (incl. wxTruth, moonTruth). &debugDawn=… is a deprecated no-op (dawn is not painted).\nPreview gotcha: simTime without timeScale freezes the clock (TIMESCALE 0), so cloud drift won't be visible in a still test — use the direct paintClouds(t) probe or a real-time / timeScale watch to see motion.",
+      "rect": {
+        "x": 370,
+        "y": 4626.90625,
+        "width": 861,
+        "height": 412
+      },
+      "exposed": true
+    }
+  ],
+  "inkRects": [
+    {
+      "x": 370,
+      "y": 3836.90625,
+      "width": 444.5625,
+      "height": 32,
+      "elementIndex": 0,
+      "textNodeText": "Running / debugging common scenarios"
+    },
+    {
+      "x": 370,
+      "y": 3893.09375,
+      "width": 829.0625,
+      "height": 21,
+      "elementIndex": 1,
+      "textNodeText": "Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them."
+    },
+    {
+      "x": 370,
+      "y": 3917.09375,
+      "width": 822.75,
+      "height": 21,
+      "elementIndex": 1,
+      "textNodeText": "Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them."
+    },
+    {
+      "x": 370,
+      "y": 3941.09375,
+      "width": 819.453125,
+      "height": 21,
+      "elementIndex": 1,
+      "textNodeText": "Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them."
+    },
+    {
+      "x": 370,
+      "y": 3965.09375,
+      "width": 416.484375,
+      "height": 21,
+      "elementIndex": 1,
+      "textNodeText": "Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them."
+    },
+    {
+      "x": 370,
+      "y": 4005.09375,
+      "width": 203.21875,
+      "height": 21,
+      "elementIndex": 2,
+      "textNodeText": "Real-time motion diagnostic:"
+    },
+    {
+      "x": 386,
+      "y": 4061.09375,
+      "width": 500.984375,
+      "height": 16,
+      "elementIndex": 3,
+      "textNodeText": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1\n"
+    },
+    {
+      "x": 370,
+      "y": 4112.796875,
+      "width": 472.390625,
+      "height": 21,
+      "elementIndex": 4,
+      "textNodeText": "Full-motion override (the normal default respects reduced motion):"
+    },
+    {
+      "x": 386,
+      "y": 4168.796875,
+      "width": 590.71875,
+      "height": 16,
+      "elementIndex": 5,
+      "textNodeText": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full\n"
+    },
+    {
+      "x": 370,
+      "y": 4220.5,
+      "width": 192.140625,
+      "height": 21,
+      "elementIndex": 6,
+      "textNodeText": "Solar noon halo diagnostic:"
+    },
+    {
+      "x": 386,
+      "y": 4276.5,
+      "width": 620.625,
+      "height": 16,
+      "elementIndex": 7,
+      "textNodeText": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo\n"
+    },
+    {
+      "x": 370,
+      "y": 4328.203125,
+      "width": 478.28125,
+      "height": 21,
+      "elementIndex": 8,
+      "textNodeText": "Query-only negative control: these flags are not read from before #."
+    },
+    {
+      "x": 386,
+      "y": 4384.203125,
+      "width": 418.734375,
+      "height": 16,
+      "elementIndex": 9,
+      "textNodeText": "index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61\n"
+    },
+    {
+      "x": 370,
+      "y": 4435.90625,
+      "width": 823.34375,
+      "height": 21,
+      "elementIndex": 10,
+      "textNodeText": "simTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels."
+    },
+    {
+      "x": 370,
+      "y": 4459.90625,
+      "width": 580.171875,
+      "height": 21,
+      "elementIndex": 10,
+      "textNodeText": "simTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels."
+    },
+    {
+      "x": 370,
+      "y": 4499.90625,
+      "width": 816.140625,
+      "height": 21,
+      "elementIndex": 11,
+      "textNodeText": "Lunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use "
+    },
+    {
+      "x": 370,
+      "y": 4523.90625,
+      "width": 835.359375,
+      "height": 21,
+      "elementIndex": 11,
+      "textNodeText": "Lunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use "
+    },
+    {
+      "x": 370,
+      "y": 4547.90625,
+      "width": 328.03125,
+      "height": 21,
+      "elementIndex": 11,
+      "textNodeText": "Lunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use "
+    },
+    {
+      "x": 703.46875,
+      "y": 4551.90625,
+      "width": 157.03125,
+      "height": 16,
+      "elementIndex": 11,
+      "textNodeText": "qaState().clouds.hash"
+    },
+    {
+      "x": 865.9375,
+      "y": 4547.90625,
+      "width": 121.15625,
+      "height": 21,
+      "elementIndex": 11,
+      "textNodeText": " as motion proof."
+    },
+    {
+      "x": 370,
+      "y": 4587.90625,
+      "width": 252.703125,
+      "height": 21,
+      "elementIndex": 12,
+      "textNodeText": "Serve the folder statically and open "
+    },
+    {
+      "x": 628.140625,
+      "y": 4591.90625,
+      "width": 396.3125,
+      "height": 16,
+      "elementIndex": 12,
+      "textNodeText": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4"
+    },
+    {
+      "x": 1029.890625,
+      "y": 4587.90625,
+      "width": 3.46875,
+      "height": 21,
+      "elementIndex": 12,
+      "textNodeText": "."
+    },
+    {
+      "x": 402,
+      "y": 4627.90625,
+      "width": 103.296875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "Day positions: "
+    },
+    {
+      "x": 510.734375,
+      "y": 4631.90625,
+      "width": 104.6875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simTime=12:30"
+    },
+    {
+      "x": 620.859375,
+      "y": 4627.90625,
+      "width": 58.75,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (noon), "
+    },
+    {
+      "x": 685.046875,
+      "y": 4631.90625,
+      "width": 104.6875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simTime=05:50"
+    },
+    {
+      "x": 795.171875,
+      "y": 4627.90625,
+      "width": 71.390625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (sunrise), "
+    },
+    {
+      "x": 872,
+      "y": 4631.90625,
+      "width": 104.6875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simTime=18:55"
+    },
+    {
+      "x": 982.125,
+      "y": 4627.90625,
+      "width": 156.171875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (sunset/golden hour)."
+    },
+    {
+      "x": 402,
+      "y": 4655.90625,
+      "width": 117.65625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "Weather visuals: "
+    },
+    {
+      "x": 525.09375,
+      "y": 4659.90625,
+      "width": 149.546875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simWx=2&simCloud=50"
+    },
+    {
+      "x": 680.078125,
+      "y": 4655.90625,
+      "width": 71.609375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (broken), "
+    },
+    {
+      "x": 757.125,
+      "y": 4659.90625,
+      "width": 157.03125,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simWx=3&simCloud=100"
+    },
+    {
+      "x": 919.59375,
+      "y": 4655.90625,
+      "width": 80.609375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (overcast), "
+    },
+    {
+      "x": 1005.640625,
+      "y": 4659.90625,
+      "width": 67.296875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simWx=63"
+    },
+    {
+      "x": 1078.375,
+      "y": 4655.90625,
+      "width": 48.53125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (rain),\n"
+    },
+    {
+      "x": 1132.34375,
+      "y": 4659.90625,
+      "width": 67.296875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simWx=95"
+    },
+    {
+      "x": 402,
+      "y": 4679.90625,
+      "width": 73.453125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (thunder), "
+    },
+    {
+      "x": 480.890625,
+      "y": 4683.90625,
+      "width": 67.296875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simWx=45"
+    },
+    {
+      "x": 553.625,
+      "y": 4679.90625,
+      "width": 41.3125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (fog)."
+    },
+    {
+      "x": 402,
+      "y": 4707.90625,
+      "width": 130.109375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "Weather-truth QA"
+    },
+    {
+      "x": 532.109375,
+      "y": 4707.90625,
+      "width": 7.859375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ": "
+    },
+    {
+      "x": 545.40625,
+      "y": 4711.90625,
+      "width": 157.03125,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simWx=95&simPrecip=0"
+    },
+    {
+      "x": 707.875,
+      "y": 4707.90625,
+      "width": 257.65625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " must downgrade (no thunder/rain); "
+    },
+    {
+      "x": 970.96875,
+      "y": 4711.90625,
+      "width": 157.03125,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simWx=95&simPrecip=5"
+    },
+    {
+      "x": 1133.4375,
+      "y": 4707.90625,
+      "width": 45.265625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " keeps\nthunder; check "
+    },
+    {
+      "x": 402,
+      "y": 4731.90625,
+      "width": 108.328125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " keeps\nthunder; check "
+    },
+    {
+      "x": 515.765625,
+      "y": 4735.90625,
+      "width": 127.125,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "qaState().wxTruth"
+    },
+    {
+      "x": 648.328125,
+      "y": 4731.90625,
+      "width": 201.375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " for the source/reason chain."
+    },
+    {
+      "x": 402,
+      "y": 4759.90625,
+      "width": 50.03125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "Moon: "
+    },
+    {
+      "x": 457.46875,
+      "y": 4763.90625,
+      "width": 358.921875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simMoon=0.08&simWax=1&simMoonAlt=20&simMoonH=42"
+    },
+    {
+      "x": 821.828125,
+      "y": 4759.90625,
+      "width": 80.234375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (crescent), "
+    },
+    {
+      "x": 907.5,
+      "y": 4763.90625,
+      "width": 104.6875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simMoon=0.92…"
+    },
+    {
+      "x": 1017.625,
+      "y": 4759.90625,
+      "width": 79.21875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (gibbous), "
+    },
+    {
+      "x": 1102.28125,
+      "y": 4763.90625,
+      "width": 104.6875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simMoon=0.98…"
+    },
+    {
+      "x": 402,
+      "y": 4783.90625,
+      "width": 230.65625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "\n(full); thin-cloud halo/corona via "
+    },
+    {
+      "x": 638.09375,
+      "y": 4787.90625,
+      "width": 149.546875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simWx=2&simCloud=30"
+    },
+    {
+      "x": 793.078125,
+      "y": 4783.90625,
+      "width": 129.125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " on a moon scene."
+    },
+    {
+      "x": 402,
+      "y": 4811.90625,
+      "width": 85.46875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "Live motion"
+    },
+    {
+      "x": 487.46875,
+      "y": 4811.90625,
+      "width": 138.859375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ": load real-time (no "
+    },
+    {
+      "x": 631.765625,
+      "y": 4815.90625,
+      "width": 52.34375,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "simTime"
+    },
+    {
+      "x": 689.546875,
+      "y": 4811.90625,
+      "width": 40.21875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ") and "
+    },
+    {
+      "x": 729.765625,
+      "y": 4811.90625,
+      "width": 106.46875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "watch ~15–60s"
+    },
+    {
+      "x": 836.234375,
+      "y": 4811.90625,
+      "width": 338.546875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " — clouds must drift/morph, stars\nscintillate, sky breathe. "
+    },
+    {
+      "x": 402,
+      "y": 4835.90625,
+      "width": 62.171875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " — clouds must drift/morph, stars\nscintillate, sky breathe. "
+    },
+    {
+      "x": 469.609375,
+      "y": 4839.90625,
+      "width": 104.6875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&debugMotion=1"
+    },
+    {
+      "x": 579.734375,
+      "y": 4835.90625,
+      "width": 380.953125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " shows rAF/s, cloud-paint/s, reduced-motion, paused, "
+    },
+    {
+      "x": 960.6875,
+      "y": 4835.90625,
+      "width": 113.3125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "cloud Δ 10s/60s"
+    },
+    {
+      "x": 1074,
+      "y": 4835.90625,
+      "width": 107.078125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ",\nstar Δ, reason. "
+    },
+    {
+      "x": 407.4375,
+      "y": 4863.90625,
+      "width": 89.734375,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&motion=full"
+    },
+    {
+      "x": 502.609375,
+      "y": 4859.90625,
+      "width": 300.03125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " forces motion under OS reduced-motion. "
+    },
+    {
+      "x": 808.078125,
+      "y": 4863.90625,
+      "width": 112.171875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&timeScale=1800"
+    },
+    {
+      "x": 925.6875,
+      "y": 4859.90625,
+      "width": 143.25,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " fast-forwards a day."
+    },
+    {
+      "x": 402,
+      "y": 4887.90625,
+      "width": 100.609375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "Moon opacity"
+    },
+    {
+      "x": 502.609375,
+      "y": 4887.90625,
+      "width": 203.171875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ": any night moon — confirm "
+    },
+    {
+      "x": 705.78125,
+      "y": 4887.90625,
+      "width": 223.265625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "no stars show through the disc"
+    },
+    {
+      "x": 929.046875,
+      "y": 4887.90625,
+      "width": 92.015625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "; new moon ("
+    },
+    {
+      "x": 1026.5,
+      "y": 4891.90625,
+      "width": 97.21875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&simMoon=0.01"
+    },
+    {
+      "x": 1129.15625,
+      "y": 4887.90625,
+      "width": 101.1875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ") shows a\nfaint "
+    },
+    {
+      "x": 402,
+      "y": 4911.90625,
+      "width": 54.84375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "opaque"
+    },
+    {
+      "x": 456.84375,
+      "y": 4911.90625,
+      "width": 180.671875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " ashen calendar disc with "
+    },
+    {
+      "x": 642.953125,
+      "y": 4915.90625,
+      "width": 306.578125,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "qaState().moonTruth.moonlightOpacity == 0"
+    },
+    {
+      "x": 954.96875,
+      "y": 4911.90625,
+      "width": 3.46875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "."
+    },
+    {
+      "x": 402,
+      "y": 4939.90625,
+      "width": 73.53125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "Readouts: "
+    },
+    {
+      "x": 480.96875,
+      "y": 4943.90625,
+      "width": 104.6875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&debugLayers=1"
+    },
+    {
+      "x": 591.09375,
+      "y": 4939.90625,
+      "width": 7.859375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ", "
+    },
+    {
+      "x": 604.390625,
+      "y": 4943.90625,
+      "width": 89.734375,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&debugMoon=1"
+    },
+    {
+      "x": 699.5625,
+      "y": 4939.90625,
+      "width": 7.859375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ", "
+    },
+    {
+      "x": 712.859375,
+      "y": 4943.90625,
+      "width": 104.6875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&debugMotion=1"
+    },
+    {
+      "x": 822.984375,
+      "y": 4939.90625,
+      "width": 7.859375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ", "
+    },
+    {
+      "x": 836.28125,
+      "y": 4943.90625,
+      "width": 37.390625,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&qa=1"
+    },
+    {
+      "x": 879.109375,
+      "y": 4939.90625,
+      "width": 40.671875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " then "
+    },
+    {
+      "x": 925.21875,
+      "y": 4943.90625,
+      "width": 119.640625,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "window.qaState()"
+    },
+    {
+      "x": 1050.296875,
+      "y": 4939.90625,
+      "width": 41.265625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " (incl. "
+    },
+    {
+      "x": 1097,
+      "y": 4943.90625,
+      "width": 52.34375,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "wxTruth"
+    },
+    {
+      "x": 1154.78125,
+      "y": 4939.90625,
+      "width": 3.46875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": ",\n"
+    },
+    {
+      "x": 407.4375,
+      "y": 4967.90625,
+      "width": 67.296875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "moonTruth"
+    },
+    {
+      "x": 480.171875,
+      "y": 4963.90625,
+      "width": 12.6875,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "). "
+    },
+    {
+      "x": 498.296875,
+      "y": 4967.90625,
+      "width": 89.734375,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "&debugDawn=…"
+    },
+    {
+      "x": 593.46875,
+      "y": 4963.90625,
+      "width": 316.859375,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " is a deprecated no-op (dawn is not painted)."
+    },
+    {
+      "x": 402,
+      "y": 4991.90625,
+      "width": 115.40625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": "Preview gotcha: "
+    },
+    {
+      "x": 522.84375,
+      "y": 4995.90625,
+      "width": 52.34375,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "simTime"
+    },
+    {
+      "x": 580.625,
+      "y": 4991.90625,
+      "width": 62.53125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " without "
+    },
+    {
+      "x": 648.59375,
+      "y": 4995.90625,
+      "width": 67.296875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "timeScale"
+    },
+    {
+      "x": 721.328125,
+      "y": 4991.90625,
+      "width": 501.28125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " freezes the clock (TIMESCALE 0), so cloud drift won't be visible\nin a still test — use the direct "
+    },
+    {
+      "x": 402,
+      "y": 5015.90625,
+      "width": 151.015625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " freezes the clock (TIMESCALE 0), so cloud drift won't be visible\nin a still test — use the direct "
+    },
+    {
+      "x": 558.453125,
+      "y": 5019.90625,
+      "width": 104.6875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "paintClouds(t)"
+    },
+    {
+      "x": 668.578125,
+      "y": 5015.90625,
+      "width": 161.515625,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " probe or a real-time / "
+    },
+    {
+      "x": 835.53125,
+      "y": 5019.90625,
+      "width": 67.296875,
+      "height": 16,
+      "elementIndex": 13,
+      "textNodeText": "timeScale"
+    },
+    {
+      "x": 908.265625,
+      "y": 5015.90625,
+      "width": 151.78125,
+      "height": 21,
+      "elementIndex": 13,
+      "textNodeText": " watch to see motion."
+    }
+  ],
+  "negativeSelection": null,
+  "boundary": {
+    "start": "Running / debugging common scenarios",
+    "next": "Frozen V1 compatibility snapshot"
+  },
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "dpr": 1,
+  "scroll": {
+    "x": 0,
+    "y": 3828
+  },
+  "document": {
+    "width": 1280,
+    "height": 5334
+  },
+  "visualViewport": {
+    "width": 1280,
+    "height": 900,
+    "scale": 1
+  },
+  "pageErrors": 0
+}

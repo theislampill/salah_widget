@@ -1,0 +1,49 @@
+{
+  "kind": "PRIVATE_GIT_CONTROL_DIAGNOSTIC",
+  "rows": [
+    {
+      "target": "old",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--no-index",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control\\old",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control\\old"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "target": "new",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--no-index",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control\\old",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control\\new"
+      ],
+      "exitCode": 3,
+      "stdout": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control\\new:1: trailing whitespace.\n+two\r\n",
+      "stderr": ""
+    },
+    {
+      "target": "bad",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--no-index",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control\\old",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control\\bad"
+      ],
+      "exitCode": 3,
+      "stdout": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control\\bad:1: trailing whitespace.\n+two \r\n",
+      "stderr": ""
+    }
+  ],
+  "cause": "Global core.autocrlf emits line-ending warnings for extensionless control files; byte-exact read-only comparison now explicitly disables conversion",
+  "nativeOrOriginalTests": 0
+}

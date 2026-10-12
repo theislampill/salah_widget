@@ -1,0 +1,49 @@
+{
+  "schema": "r001c-standard-git-no-index-status-control/1",
+  "rows": [
+    {
+      "target": "old",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--no-index",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control-lf\\old",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control-lf\\old"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "target": "new",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--no-index",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control-lf\\old",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control-lf\\new"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "target": "bad",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--no-index",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control-lf\\old",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control-lf\\bad"
+      ],
+      "exitCode": 3,
+      "stdout": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\git-whitespace-control-lf\\bad:1: trailing whitespace.\n+two \n",
+      "stderr": ""
+    }
+  ],
+  "originalTestsOrNative": 0,
+  "framing": "Explicit raw LF bytes, same as proposal files; Windows text writes had introduced CRLF in earlier tiny controls"
+}

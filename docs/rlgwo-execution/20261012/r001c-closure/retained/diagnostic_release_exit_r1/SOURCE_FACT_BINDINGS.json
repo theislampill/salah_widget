@@ -1,0 +1,127 @@
+{
+  "source": {
+    "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+    "bytes": 367870,
+    "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+  },
+  "regions": [
+    {
+      "id": "parser",
+      "file": "src/native/index.html",
+      "startLine": 672,
+      "endLine": 672,
+      "sha256": "07de2c4a2c6f9e192caa8084d7784e31c01add99124b84a0c3dfe15e19a3acfd",
+      "text": "const q = new URLSearchParams(location.hash.slice(1));\n"
+    },
+    {
+      "id": "flags-and-reduced-motion",
+      "file": "src/native/index.html",
+      "startLine": 736,
+      "endLine": 746,
+      "sha256": "b2ce5446211e88dce5871316561254a664d053b7e234afa69895760c16cbeb6f",
+      "text": "const DEBUGLAYERS = q.get(\"debugLayers\")===\"1\";   // &debugLayers=1 → live read-out of every sky/cloud layer opacity\nconst DEBUGMOON = q.get(\"debugMoon\")===\"1\";       // &debugMoon=1 → moon layer radii/opacities + a pixel-ring across the limb\nconst DEBUGDAWN = q.get(\"debugDawn\");             // DEPRECATED no-op: dawn is not a painted overlay anymore (true dawn = the physical twilight sky + Fajr marker; false dawn is not rendered). Kept only so old URLs don't error.\nconst DEBUGOPTIC = q.get(\"debugOptic\");           // &debugOptic=halo|sundogs|pillar|anticrep|paraselene|lunarhalo → force the corresponding QA branch; lunar forces retain moonlight eligibility\nconst QA = q.get(\"qa\")===\"1\";                     // &qa=1 → reset lastWxAt/lastWxTry on boot; window.qaState() is always assigned\nconst DEBUGMOTION = q.get(\"debugMotion\")===\"1\";   // &debugMotion=1 → live motion telemetry overlay (rAF & cloud-paint rates, reduced-motion, paused, cloud/star Δ over 10s/60s, wx source, timeScale, reason)\nconst MOTIONFULL = (q.get(\"motion\")||\"\")===\"full\";// &motion=full → force full animation even under OS prefers-reduced-motion. DEFAULT respects accessibility (motion reduced when the OS asks), but this gives an honest override for testing and for users who want it\n// SINGLE SOURCE for the reduced-motion decision (was duplicated as _REDUCED + _RM). Evaluated LIVE so a mid-session\n// OS toggle is honoured (matchMedia is cheap); &motion=full overrides. The CSS @media (prefers-reduced-motion) blocks\n// read the SAME native signal, gated by the .motionfull opt-out class — one decision, consulted by both JS and CSS.\nconst isMotionReduced = () => !MOTIONFULL && !!(window.matchMedia && window.matchMedia(\"(prefers-reduced-motion: reduce)\").matches);\n"
+    },
+    {
+      "id": "time-scale",
+      "file": "src/native/index.html",
+      "startLine": 863,
+      "endLine": 873,
+      "sha256": "98aab98c4beaf4441307586a9be73eddc924b373891de87b156e72543e9c8620",
+      "text": "// ---- SINGLE TEMPORAL SOURCE OF TRUTH -------------------------------------------------------------\n// Ordinary loads follow Date.now(); explicit previews use simBase + realElapsed·timeScale. EVERYTHING\n// visual (sun altitude, sky colour, prayer state, countdown, arc, moon) consumes the same simNow() API.\n// An explicit timeScale=1 is an anchored 1× preview; >1 fast-forwards (3600 = 1s/hour). A fixed simTime=\n// without timeScale= freezes the scene. Parameter presence expresses preview intent, not just its rate.\nconst _RAFNOW = ()=> (typeof performance!=='undefined' && performance.now) ? performance.now() : Date.now();\nconst _tsParam=q.get(\"timeScale\");\nlet TIMESCALE = _tsParam!=null ? Math.max(0,+_tsParam||0) : (SIM.time!=null ? 0 : 1);\nlet ADVANCING = _tsParam!=null && TIMESCALE>0;          // a running fast-forward → show the sim clock\nlet FOLLOW_WALL_CLOCK = _tsParam==null && SIM.time==null && TIMESCALE===1;\nlet _clockPreview=false; // explicit runtime clock control retains forecast provenance while paused\n"
+    },
+    {
+      "id": "lunar-permission",
+      "file": "src/native/index.html",
+      "startLine": 2693,
+      "endLine": 2708,
+      "sha256": "ec0bd8d4c391c360c91375e0d2d3a278de1fb6947c3b827a81f46ffb8fe2a617",
+      "text": "// Nothing here is keyed to a prayer NAME. paint(A) below is the ONLY place this state touches the DOM.\n// Lunar body presence/light uses accepted celestial inputs, independently of\n// timetable acquisition. Both initial and ordinary paint consume these SAME\n// expressions; a pending prayer request grants neither a phase nor moonlight.\nfunction nativeLunarPresentation(moon,solarElevation,surfaceFailed){\n  const mFrac=clamp(moon.frac),moonUp=clamp((moon.alt+2)/6);\n  const darkness=clamp(-(solarElevation+3)/9),phaseVis=clamp((mFrac-0.02)/0.05);\n  const moonObject=surfaceFailed?0:moonUp*darkness*phaseVis;\n  const moonLightEligible=moonObject>0;\n  const moonLightReason=surfaceFailed?\"surface-unavailable\":darkness===0?\"daylight\":moonUp===0?\"below-horizon\":phaseVis===0?\"near-new\":\"eligible\";\n  const moonLocalWash=moonLightEligible?clamp(mFrac*moonUp*1.15):0;\n  const moonGlow=moonLightEligible?(0.03+0.24*mFrac*mFrac):0;\n  const moonlight=moonObject*(0.35+0.65*mFrac),moonShow=clamp(darkness*1.8);\n  return {mFrac,moonUp,darkness,phaseVis,moonObject,moonLightEligible,moonLightReason,moonLocalWash,moonGlow,moonlight,moonStrength:moonlight,moonShow,moonPresence:moonShow};\n}\nfunction lunarPresentation(solarElevation){ return nativeLunarPresentation(moonSky,solarElevation,_pbrFailed); }\n"
+    },
+    {
+      "id": "physical-and-force-block",
+      "file": "src/native/index.html",
+      "startLine": 2805,
+      "endLine": 2840,
+      "sha256": "72541a2f394ed385a31e469081b3db88bb48a10627f21bcee8f5d44c4f49e987",
+      "text": "  const belt=Math.max(0,1-Math.abs(sm.altDeg+4)/5)*((cls===\"clear\"||cls===\"cloud\")?1:0);\n  const skyL=skyLum(sm.altDeg);\n  // DAWN. (See the authoritative note just below `dep` for the true-dawn / false-dawn policy.)\n  const dep=-sm.altDeg, morning=M.nowMin<M.noon, clearish=(cls===\"clear\"||cls===\"cloud\"||cls===\"fog\");\n  // TRUE DAWN is the physical twilight sky (the gradient/glow above) + the Fajr marker — NOT painted. `trueDawn`\n  // is kept ONLY as a 0..1 DIAGNOSTIC scalar (qaState), never rendered. FALSE DAWN (zodiacal light) is NOT rendered\n  // at all (fail-closed): a generic CSS cone read as a decorative lens-flare slash and showed under a bright moon.\n  // A faithful zodiacal cue is FUTURE WORK (needs real ecliptic-tilt projection + strict dark-sky/no-moon/low-LP/\n  // clear-sky gating + very faint, no foreground-crossing streak, never implying Fajr). See DESIGN.md.\n  const trueDawn = (morning&&clearish) ? clamp((17.5-dep)/3.0)*clamp(dep/1.5) : 0;\n  // — cloud LAYERS (low/mid/high): prefer the real forecast layering; else split total coverage by condition.\n  //   low = horizon deck (thick band), mid = broad deck, high = thin upper veil. Coverage is DATA-driven, so a\n  //   clear sky shows NO cloud body and overcast fills the deck — not a blanket texture keyed to a data-fx name.\n  let clLow,clMid,clHigh;\n  if(current && current.cloudLow!=null){ clLow=clamp(current.cloudLow/100); clMid=clamp(current.cloudMid/100); clHigh=clamp(current.cloudHigh/100); }\n  else { const sp=({clear:[0,0,0],cloud:[.2,.55,.4],overcast:[.92,.85,.5],fog:[1,.2,0],drizzle:[.72,.6,.2],rain:[.9,.85,.3],thunder:[.92,.9,.6],snow:[.82,.7,.3]})[cls]||[0,0,0]; clLow=sp[0]; clMid=sp[1]; clHigh=sp[2]; }\n  // LUNAR OPTICS — two DISTINCT phenomena gated by cloud TYPE: a 22° ICE-crystal HALO ring from thin CIRRUS (high\n  // cloud), and a water-droplet CORONA aureole from thin ALTOSTRATUS/FOG. Dew point or humidity alone\n  // does not establish a droplet column: a humid clear scene must not grow a smooth veil over Earthshine. Both need a bright\n  // above-horizon moon in a dark sky; thick low cloud kills both. They are near-exclusive (ice vs water cloud).\n  const moonLume=moonLightEligible?moonUp*darkness*clamp(0.25+0.75*mFrac):0;\n  let lunarHalo    =clamp((clHigh-0.06)/0.34)*clamp((0.66-clHigh)/0.42)*(1-clLow)*(1-0.7*clMid)*moonLume;   // `let`: forceable via &debugOptic=lunarhalo\n  const lunarCorona=clamp(Math.max((clMid-0.08)/0.36,(cls===\"fog\"?0.7:0)))*clamp((0.72-clMid)/0.5)*(1-0.45*clLow)*moonLume;\n  // — crepuscular rays (light shafts): only when the sun is up, the deck is BROKEN (gaps to shine through),\n  //   and there's participating medium (humidity/haze). Clear dry sky → 0; solid overcast → directional≈0 → 0.\n  const broken=clamp(1-Math.abs(clMid-0.45)/0.42);                 // peaks at half-cover (gaps); 0 at clear & solid\n  const ray=Math.min(0.5, clamp(sm.altDeg/8)*broken*(1-0.8*clLow)*clamp(0.3+0.7*D.humid)*directional*(cls===\"fog\"?0.25:1));\n  // ICE-CRYSTAL & RAY OPTICS — all CONDITION-GATED (never random). Thin CIRRUS (high cloud, no thick low/mid) →\n  // 22° HALO + SUNDOGS; cold air + a low sun → SUN PILLAR; broken cloud/haze + low sun → ANTICREPUSCULAR rays\n  // (the faint mirror of the crepuscular `ray`). Forced individually by &debugOptic= for inspection.\n  const cirrus=clamp((clHigh-0.06)/0.34)*clamp((0.72-clHigh)/0.42)*(1-clLow)*(1-0.55*clMid), sunUpO=clamp((sm.altDeg+1)/6);\n  let sunHalo=cirrus*sunUpO, sunDogs=cirrus*sunUpO*clamp((12-sm.altDeg)/12), sunPillar=D.cold*clamp((6-sm.altDeg)/8)*clamp((sm.altDeg+5)/7)*(0.45+0.55*cirrus), antiCrep=ray*0.5;\n  // LUNAR PARASELENAE / moondogs: the lunar analogue of sundogs — lateral spots at the moon's elevation, RARE,\n  // needing a bright moon + thin ice cloud (cirrus). Lateral only when plausible.\n  let moonParhelia=cirrus*moonLume*clamp((14-moonSky.alt)/16);\n  if(DEBUGOPTIC===\"halo\")sunHalo=0.95; else if(DEBUGOPTIC===\"sundogs\")sunDogs=0.95; else if(DEBUGOPTIC===\"pillar\")sunPillar=0.9; else if(DEBUGOPTIC===\"anticrep\")antiCrep=0.8; else if(DEBUGOPTIC===\"paraselene\")moonParhelia=moonLightEligible?0.9:0; else if(DEBUGOPTIC===\"lunarhalo\")lunarHalo=moonLightEligible?0.95:0;\n"
+    },
+    {
+      "id": "overlay-and-loop",
+      "file": "src/native/index.html",
+      "startLine": 3338,
+      "endLine": 3353,
+      "sha256": "12d1722d1137acc09d69fc3eab561535eb2bd04081cafd35f50642cd5d0a64a8",
+      "text": "const _motHist=[];\nfunction _cloudAlphaNow(){ try{ const cv=document.querySelector('.cloudcanvas'),x=cv.getContext('2d'),d=x.getImageData(0,0,cv.width,cv.height).data; let a=0; for(let i=3;i<d.length;i+=4)a+=d[i]; return a; }catch(e){ return 0; } }\nfunction _starSampleNow(){ const els=document.querySelectorAll('.stars circle'); for(const e of els){ if(e.style.display!=='none' && getComputedStyle(e).animationName==='tw') return +getComputedStyle(e).opacity; } return 0; }   // sample a VISIBLE twinkling star (not a display:none pool star) so starΔ is representative\nfunction updateMotionDbg(rafPS, cloudPS, cEl){\n  const dm=document.querySelector('.dbgmotion'); if(!dm) return; if(dm.style.display!=='block') dm.style.display='block';\n  _motHist.push({a:_cloudAlphaNow(), s:_starSampleNow()}); if(_motHist.length>61)_motHist.shift();\n  const cur=_motHist[_motHist.length-1], h10=_motHist[Math.max(0,_motHist.length-11)], h60=_motHist[0];\n  const pct=(a,b)=> b? (Math.abs(a-b)/b*100):0;\n  const starAnim=(()=>{ const e=document.querySelector('.stars circle'); return e?getComputedStyle(e).animationName==='tw':false; })();\n  const wt=(()=>{try{return qaState().wxTruth;}catch(e){return {};}})(); const rm=isMotionReduced();   // LIVE (honours a mid-session OS toggle)\n  dm.textContent=`MOTION rAF ${rafPS}/s  cloudPaint ${cloudPS}/s\\n`\n    +`reduced ${rm?'YES':'no'}  motion=full ${MOTIONFULL?'YES':'no'}  paused ${cEl.classList.contains('paused')?'YES':'no'}\\n`\n    +`timeScale ${TIMESCALE}  advancing ${ADVANCING?'yes':'no'}\\n`\n    +`cloudΔ 10s ${pct(cur.a,h10&&h10.a).toFixed(1)}%  60s ${pct(cur.a,h60&&h60.a).toFixed(1)}%\\n`\n    +`starΔ 10s ${(cur.s-(h10?h10.s:cur.s)).toFixed(3)}  starAnim ${starAnim?'on':'OFF'}\\n`\n    +`wx ${wt.currentWeatherSource||'?'}  fx ${cEl.dataset.fx||'?'}\\n`\n"
+    },
+    {
+      "id": "full-class-and-loop",
+      "file": "src/native/index.html",
+      "startLine": 3547,
+      "endLine": 3572,
+      "sha256": "a82dbbc4b061a4d9c3e05f12e91c48662332afd381ab968e38dd2e4a661448a2",
+      "text": "// (wind/precip-driven), independent of this clock. Stops entirely when the iframe is hidden/offscreen.\nfunction startRenderLoop(){\n  if(!simulationReady()) return;\n  if(_loopStarted) return; _loopStarted=true;\n  const cEl=document.querySelector(\".c\");\n  if(MOTIONFULL && cEl) cEl.classList.add(\"motionfull\");    // CSS reduced-motion rules are scoped to .c:not(.motionfull)\n  let _raf=null, _onScreen=true, _lastSec=-1, _lastWx=0, _lastCloud=0;\n  const visible=()=>_onScreen && document.visibilityState!==\"hidden\";\n  // —— MOTION TELEMETRY (&debugMotion=1): prove the sky is actually alive in normal real-time ——\n  let _rafN=0,_cloudN=0,_tickAcc=_RAFNOW(),_rafPS=0,_cloudPS=0;   // loop rate counters (consumed only by the debugMotion overlay, which now lives at module scope)\n  function loop(){\n    _rafN++;\n    if(!simulationReady()){ _raf=requestAnimationFrame(loop); return; }\n    const n=nowParts();\n    maintainPrayerDay();                               // promotion, rollover and cold same-day recovery share this visible opportunity\n    const rt=_RAFNOW();\n    if(!ADVANCING && rt-_lastWx>30000){ _lastWx=rt; fetchWeather(); fetchRadar(); }    // refresh real weather ~½-min + radar (self-throttled ~10min); both held during a fast sweep\n    const sec=Math.floor(simNow()/1000);\n    if(sec!==_lastSec || _renderDirty){ _lastSec=sec; _renderDirty=false; render(); if(ADVANCING) updateSimClock(n); }\n    // Cloud evolution uses bounded visual intervals, with CLOCK's preview rate. Reduced-motion\n    // paints changed state at the same held axes, never a substitute epoch like 1000.\n    const reduced=isMotionReduced(); syncCloudMotionPreference(reduced,rt);\n    if(reduced){ if(_cloudDirty){ paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; } }\n    else if(rt-_lastCloud>76){ _lastCloud=rt; paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; }\n    if(rt-_tickAcc>=1000){ _rafPS=Math.round(_rafN*1000/(rt-_tickAcc)); _cloudPS=Math.round(_cloudN*1000/(rt-_tickAcc)); _rafN=0;_cloudN=0;_tickAcc=rt; if(DEBUGMOTION) updateMotionDbg(_rafPS,_cloudPS,cEl); }\n    // Optional sky presents after native UI/cloud work, using a freshly\n"
+    }
+  ],
+  "priorSemanticOwnerReassociation": [
+    {
+      "old": {
+        "file": "src/native/index.html",
+        "lines": [
+          672,
+          672
+        ],
+        "fileSha256": "ec59b3ff64e06713d652af5b30f04a18fcde404b92b4595bc1cee96818a6ec65",
+        "excerptSha256": "07de2c4a2c6f9e192caa8084d7784e31c01add99124b84a0c3dfe15e19a3acfd",
+        "excerpt": "const q = new URLSearchParams(location.hash.slice(1));\n"
+      },
+      "current": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "occurrences": 1,
+      "exactSourceRegionReused": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "old": {
+        "file": "src/native/index.html",
+        "lines": [
+          735,
+          746
+        ],
+        "fileSha256": "ec59b3ff64e06713d652af5b30f04a18fcde404b92b4595bc1cee96818a6ec65",
+        "excerptSha256": "33baad4c4fed8196fd7f44a9405d9a3cccaa5bd0e359814baf232a592c9314d2",
+        "excerpt": "// (LPOLL is bound from CONFIG.lp in bindConfig — &lp= still flows through the shared config parser.)\nconst DEBUGLAYERS = q.get(\"debugLayers\")===\"1\";   // &debugLayers=1 → live read-out of every sky/cloud layer opacity\nconst DEBUGMOON = q.get(\"debugMoon\")===\"1\";       // &debugMoon=1 → moon layer radii/opacities + a pixel-ring across the limb\nconst DEBUGDAWN = q.get(\"debugDawn\");             // DEPRECATED no-op: dawn is not a painted overlay anymore (true dawn = the physical twilight sky + Fajr marker; false dawn is not rendered). Kept only so old URLs don't error.\nconst DEBUGOPTIC = q.get(\"debugOptic\");           // &debugOptic=halo|sundogs|pillar|anticrep|paraselene|lunarhalo → force the corresponding QA branch; lunar forces retain moonlight eligibility\nconst QA = q.get(\"qa\")===\"1\";                     // &qa=1 → reset lastWxAt/lastWxTry on boot; window.qaState() is always assigned\nconst DEBUGMOTION = q.get(\"debugMotion\")===\"1\";   // &debugMotion=1 → live motion telemetry overlay (rAF & cloud-paint rates, reduced-motion, paused, cloud/star Δ over 10s/60s, wx source, timeScale, reason)\nconst MOTIONFULL = (q.get(\"motion\")||\"\")===\"full\";// &motion=full → force full animation even under OS prefers-reduced-motion. DEFAULT respects accessibility (motion reduced when the OS asks), but this gives an honest override for testing and for users who want it\n// SINGLE SOURCE for the reduced-motion decision (was duplicated as _REDUCED + _RM). Evaluated LIVE so a mid-session\n// OS toggle is honoured (matchMedia is cheap); &motion=full overrides. The CSS @media (prefers-reduced-motion) blocks\n// read the SAME native signal, gated by the .motionfull opt-out class — one decision, consulted by both JS and CSS.\nconst isMotionReduced = () => !MOTIONFULL && !!(window.matchMedia && window.matchMedia(\"(prefers-reduced-motion: reduce)\").matches);\n"
+      },
+      "current": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "occurrences": 1,
+      "exactSourceRegionReused": true,
+      "wholeFileEqualityClaimed": false
+    },
+    {
+      "old": {
+        "file": "src/native/index.html",
+        "lines": [
+          2852,
+          2855
+        ],
+        "fileSha256": "ec59b3ff64e06713d652af5b30f04a18fcde404b92b4595bc1cee96818a6ec65",
+        "excerptSha256": "18393ce706cea9a0cc206dd9d2fc824d60cbc727c5b6ef8572be9487291e6bb3",
+        "excerpt": "  // LUNAR PARASELENAE / moondogs: the lunar analogue of sundogs — lateral spots at the moon's elevation, RARE,\n  // needing a bright moon + thin ice cloud (cirrus). Lateral only when plausible.\n  let moonParhelia=cirrus*moonLume*clamp((14-moonSky.alt)/16);\n  if(DEBUGOPTIC===\"halo\")sunHalo=0.95; else if(DEBUGOPTIC===\"sundogs\")sunDogs=0.95; else if(DEBUGOPTIC===\"pillar\")sunPillar=0.9; else if(DEBUGOPTIC===\"anticrep\")antiCrep=0.8; else if(DEBUGOPTIC===\"paraselene\")moonParhelia=moonLightEligible?0.9:0; else if(DEBUGOPTIC===\"lunarhalo\")lunarHalo=moonLightEligible?0.95:0;\n"
+      },
+      "current": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "occurrences": 1,
+      "exactSourceRegionReused": true,
+      "wholeFileEqualityClaimed": false
+    }
+  ]
+}

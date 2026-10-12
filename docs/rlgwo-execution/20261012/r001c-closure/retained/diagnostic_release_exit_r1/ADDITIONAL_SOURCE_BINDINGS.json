@@ -1,0 +1,54 @@
+{
+  "native": {
+    "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+    "bytes": 367870,
+    "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+  },
+  "regions": [
+    {
+      "id": "calendar-earthshine-source",
+      "file": "src/native/index.html",
+      "startLine": 1880,
+      "endLine": 1885,
+      "text": "  if(!_moonCv){ _moonCv=document.createElement(\"canvas\"); _moonCv.width=N; _moonCv.height=N; _moonCtx=_moonCv.getContext(\"2d\"); _moonOut=_moonCtx.createImageData(N,N); }\n  const out=_moonOut.data;\n  frac=clamp(frac);\n  const pa=Math.acos(2*frac-1), Lx=(waxing?1:-1)*Math.sin(pa), Lz=Math.cos(pa);   // sun dir: waxing → lit on the RIGHT, waning → lit on the LEFT. Only the light side flips; the maria/relief texture is fixed, so the moon shows ONE upright face and the terminator just sweeps across (no record-player spin) — and it matches the footer phase emoji\n  const esFloor=0.09, es=esFloor+0.34*Math.pow(1-frac,1.7);                             // smooth earthshine curve (steeper-than-linear toward full): MODERATE at crescent so the lit crescent clearly dominates, FAINT-but-visible ashen at gibbous (never black), small floor at full\n  for(let oy=0;oy<N;oy++) for(let ox=0;ox<N;ox++){\n",
+      "sha256": "9d6996ee854914660445c72269aeab0b490db44040a9f1bad71b0687c0c7f84a",
+      "claimCeiling": "Source architecture only; no new pixels or V5 surface qualification."
+    },
+    {
+      "id": "shared-initial-paint-permission",
+      "file": "src/native/index.html",
+      "startLine": 2693,
+      "endLine": 2740,
+      "text": "// Nothing here is keyed to a prayer NAME. paint(A) below is the ONLY place this state touches the DOM.\n// Lunar body presence/light uses accepted celestial inputs, independently of\n// timetable acquisition. Both initial and ordinary paint consume these SAME\n// expressions; a pending prayer request grants neither a phase nor moonlight.\nfunction nativeLunarPresentation(moon,solarElevation,surfaceFailed){\n  const mFrac=clamp(moon.frac),moonUp=clamp((moon.alt+2)/6);\n  const darkness=clamp(-(solarElevation+3)/9),phaseVis=clamp((mFrac-0.02)/0.05);\n  const moonObject=surfaceFailed?0:moonUp*darkness*phaseVis;\n  const moonLightEligible=moonObject>0;\n  const moonLightReason=surfaceFailed?\"surface-unavailable\":darkness===0?\"daylight\":moonUp===0?\"below-horizon\":phaseVis===0?\"near-new\":\"eligible\";\n  const moonLocalWash=moonLightEligible?clamp(mFrac*moonUp*1.15):0;\n  const moonGlow=moonLightEligible?(0.03+0.24*mFrac*mFrac):0;\n  const moonlight=moonObject*(0.35+0.65*mFrac),moonShow=clamp(darkness*1.8);\n  return {mFrac,moonUp,darkness,phaseVis,moonObject,moonLightEligible,moonLightReason,moonLocalWash,moonGlow,moonlight,moonStrength:moonlight,moonShow,moonPresence:moonShow};\n}\nfunction lunarPresentation(solarElevation){ return nativeLunarPresentation(moonSky,solarElevation,_pbrFailed); }\nfunction paintCelestialWithoutTimetable(){\n  const identity=skySceneIdentity(),sun=window.SalahNativeSkyHost?.cloudLighting?.()?.sun;\n  if(identity===null||!Number.isFinite(sun?.altDeg))return;\n  if(identity!==_skySceneKey){beginSkyScene();_skySceneKey=identity;}\n  const n=nowParts();if(moonGeometryObservation({nowMin:n.h*60+n.mi+n.s/60}).fresh!==true)renderMoon();\n  projectStars(simDate());\n  const a=lunarPresentation(sun.altDeg),c=$(\".c\");\n  c.style.setProperty(\"--moonfeat\",\"1\");c.style.setProperty(\"--moonocc\",\"1\");\n  c.style.setProperty(\"--moongrp\",a.moonShow.toFixed(3));c.style.setProperty(\"--moonbeam\",(0.6*a.moonlight).toFixed(3));\n  _skyMoonPresence=a.moonShow;window.SalahMoonRuntime?.request();updateSkySurface();\n  // Publish the native body and matching real catalogue in this synchronous\n  // turn. No prayer surrogate, sleep, fade or whole-card loading gate.\n  c.classList.remove(\"sky-pending\");\n  // Preserve the existing first-theme transition suppression until paint(A)\n  // installs its complete palette; pending prayer data must not cause a fade.\n}\nfunction atmosphere(M){\n  const day=isDayNow(M.nowMin);\n  const decision=weatherDecision(),current=decision.record,code=decision.renderCode,info=weatherHeader(decision,day);\n  const cls=wxClass(code), w=WX[cls];\n  // The prayer arc's altitude fit passes through admitted timetable events;\n  // it is not an independent solar ephemeris. Keep its decorative x/y, but\n  // drive body/horizon presence and lunar day fade from the SAME accepted\n  // physical Sun already used by the sky and cloud-facing illumination.\n  const cloudLighting=window.SalahNativeSkyHost?.cloudLighting?.()??null;\n  const nativeMetrics=sunMetrics(M),physicalElevation=cloudLighting?.sun?.altDeg;\n  const sm=Number.isFinite(physicalElevation)?{...nativeMetrics,altDeg:physicalElevation}:nativeMetrics;\n  const S=physSky(M, sm);                                       // sky colours DERIVED from solar elevation\n  const D=wxDrivers(current);                                   // the same eligible snapshot supplies every weather consumer\n  const airDrift=_airDrift();                                   // slow non-looping transparency/air-mass wander (0..1) — makes a clear sky breathe over 15–60 min\n  const {mFrac,moonUp,darkness,phaseVis,moonObject,moonLightEligible,moonLightReason,moonLocalWash,moonGlow,moonlight,moonStrength,moonShow,moonPresence}=lunarPresentation(sm.altDeg);\n  // — lunar state (from the REAL ephemeris in moonSky, set by renderMoon). Three regimes: a real above-\n",
+      "sha256": "523236db669913b0dcbdf97edd1064da41be37749e4989f07dc6b42c48d763da",
+      "claimCeiling": "Source architecture only; no new pixels or V5 surface qualification."
+    },
+    {
+      "id": "calendar-body-opaque-source",
+      "file": "src/native/index.html",
+      "startLine": 2768,
+      "endLine": 2772,
+      "text": "  // faint stars COME AND GO with the slow transparency drift (×0.84..1.06) — a clear night is never frozen.\n  const stars=S.stars*w.st*(1-0.55*moonlight)*(1-0.45*D.haze*(1-0.55*altClarity))*(1-0.16*D.humid)*(1-0.5*LPOLL)*(0.84+0.22*airDrift);\n  const moon =1;   // .mfeatures + occluder are FULLY opaque within the group; the group (--moongrp=moonShow) carries the night fade. The Moon is OPAQUE — no stars show through the disc\n  // Milky Way GEOMETRY: the galactic centre's altitude sets prominence (bright bulge up vs faint outer arm) and\n  // its hour angle tilts the band — so the MW RISES, tilts and SETS through the night and shifts with season +\n",
+      "sha256": "642643edf25aea94a6fa0c359ac984cfab9219e74e155eaec228aca9d5e36ee5",
+      "claimCeiling": "Source architecture only; no new pixels or V5 surface qualification."
+    },
+    {
+      "id": "body-occ-light-separation",
+      "file": "src/native/index.html",
+      "startLine": 2910,
+      "endLine": 2914,
+      "text": "    starOpacity: stars, milkyWayOpacity: milkyWay, mwTilt,\n    starTurb: 0.62+0.62*clamp(0.5*D.humid+0.42*D.wind+0.3*D.haze),   // scintillation amplitude ← live air turbulence (humidity/wind/haze)\n    moonDisc: moon, moonOcc: moon, moonBeam: 0.6*moonlight, moonGrp: moonShow,   // PBR surface/group presence; binary stellar occlusion is applied independently in paint()\n    moonSky: mixRGB(g1,g2,0.22), starBlur: Math.max(0,Math.min(0.6, (w.blur + 0.6*D.humid)*(1-0.5*altClarity) + 0.3*(airDrift-0.5))), lunarHalo, lunarCorona,\n    // —— accent / text ——\n",
+      "sha256": "8a0dd0121c8b8289eb20c5ea1eb239e9e1d39f4269b3043cb630dec52c5c28b9",
+      "claimCeiling": "Source architecture only; no new pixels or V5 surface qualification."
+    },
+    {
+      "id": "glow-independent-of-body",
+      "file": "src/native/index.html",
+      "startLine": 3025,
+      "endLine": 3031,
+      "text": "  // initial surface in the earlier geometry-only renderMoon() would be wasted\n  // when paint() establishes the scene epoch, and could delay first interaction.\n  window.SalahMoonRuntime?.request(); updateSkySurface();\n  c.style.setProperty(\"--moon-sky\",rgb(A.moonSky));             // occluder tracks the live sky colour\n  const mg=$(\".mglow\"); if(mg) mg.style.setProperty(\"--mgo\",A.moonGlow.toFixed(3));   // physical glow only; never gate the opaque PBR/calendar surface\n  refreshStarAppearance(A);                                   // same consumed lunar permission, without moving held star positions\n  c.style.setProperty(\"--mrad\",(_REDUCED?1:1+0.10*Math.sin(simNow()/1000/17)+0.12*A.aerosolDensity).toFixed(3));   // moon-glow radiance: gentle simTime breathing, a touch stronger in haze (subtle, not the dominant element)\n",
+      "sha256": "bad3107453850ab2c66c810aacf1a6d670320e280e8a7faee741ebd944c7f719",
+      "claimCeiling": "Source architecture only; no new pixels or V5 surface qualification."
+    }
+  ]
+}

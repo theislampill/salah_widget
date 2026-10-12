@@ -1,0 +1,27 @@
+{
+  "atUtc": "2026-10-12T11:45:11.709093+00:00",
+  "reviewer": "/root",
+  "implementer": "/root/r0010_isolated_release_path_r1",
+  "decision": "PASS_BOUNDED_EXPECTATION_OWNERSHIP_CORRECTION_FOR_FINAL_CAPTURE",
+  "sourceSealSha256": "57305bdcca24f88063b863d5d54bf4314c26242d2b4df2bbba7a6fccf0dad6b7",
+  "driverSha256": "15ea62fd0c35e2ce531c525055ed37f2eca3912b47575bafcb0f2bd8c91d09be",
+  "bindingSha256": "cd860d6158ff84aac9f24c3fd05c8382e29cceacfc9bf281de1afef2483d7a03",
+  "controls": [
+    {
+      "id": "old-shared-array-RED",
+      "exitCode": 1,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "9d11a639918f2495aa3a12b4b4a3b1f28f833c35ae4a91670f72799a96b7fbac"
+    },
+    {
+      "id": "new-isolated-expectations-GREEN",
+      "exitCode": 0,
+      "stdoutSha256": "6b87a3c2ec55e30ada7ed90fc6288417d513e21774f008c00036361bb69ed024",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "semanticReview": "Per-document arrays are now independent; DESIGN adds only its two extra clock constraints. Actual prepared producer verifies counts8/10/8/4/1, unchanged base8, distinct identity. Old reference alias fails the same guard before browser; no oracle relaxed.",
+  "costBoundary": "Two prior failed public captures preserved. Only this cause-supported final finite capture admitted; if no accepted evidence, preserve blocker and stop this path.",
+  "nativeEvidenceAccepted": false,
+  "nodeCredit": 0
+}

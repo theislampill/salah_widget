@@ -1,0 +1,140 @@
+{
+  "schema": "r001c-a10-one-added-optics-paragraph-inputs/1",
+  "sourceRoot": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget",
+  "recordedRootDesignatedHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+  "source": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\OPTICS.md",
+  "sourceSha256": "8abd464e3d6115c554b0b4b5af719fe56b7ff87bf0acd08392a60d2ac8e4c669",
+  "sourceStartHeading": "## Diagnostic recipes",
+  "sourceEndHeading": "## Group 1 — Diffuse (participating media + thermal)",
+  "regionSha256": "aa0a15f6cf4710199c25dfdaebee5e7dc00df4dc402abb7c80bb187a25473dd7",
+  "oldRegionSha256": "18d91968994023c14900a3447089b1da167b04dd40f1eeb0ac25472b8520733c",
+  "addedSourceSha256": "56069f1d83c2322db67cd361b0f81334482da9e0e2b68abfebdcd2f505bf3e7e",
+  "html": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\diagnostic_a10_final_join_r2\\rendered-input\\OPTICS.html",
+  "htmlSha256": "cad49ea76d607173614e808d2f2ca7e04df5a22f5b6d54d546ddef60e7739efd",
+  "targetText": "Current lunar light permission: The shared nativeLunarPresentation helper grants moonLightEligible only when its phase, lunar-altitude, solar-darkness and failed-surface checks permit it. When the helper reports near-new, below-horizon, daylight or surface-unavailable, it withdraws atmospheric moonlight; diagnostics do not override that permission. Calendar-body Earthshine and the stellar cutout are separate. This gate does not establish current V5 surface availability or native optical pixels.",
+  "targetTextSha256": "812d6fa1177cfd6ce4cd102172a9ad1aa178c22d3d8e2fb5ca1168457ad03bf7",
+  "sectionElements": [
+    {
+      "tag": "h2",
+      "text": "Diagnostic recipes"
+    },
+    {
+      "tag": "p",
+      "text": "Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them."
+    },
+    {
+      "tag": "p",
+      "text": "Real-time motion diagnostic:"
+    },
+    {
+      "tag": "pre",
+      "text": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1\n"
+    },
+    {
+      "tag": "p",
+      "text": "Full-motion override (the normal default respects reduced motion):"
+    },
+    {
+      "tag": "pre",
+      "text": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full\n"
+    },
+    {
+      "tag": "p",
+      "text": "Solar noon halo diagnostic:"
+    },
+    {
+      "tag": "pre",
+      "text": "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo\n"
+    },
+    {
+      "tag": "p",
+      "text": "Query-only negative control: these flags are not read from before #."
+    },
+    {
+      "tag": "pre",
+      "text": "index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61\n"
+    },
+    {
+      "tag": "p",
+      "text": "simTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels."
+    },
+    {
+      "tag": "p",
+      "text": "Lunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use qaState().clouds.hash as motion proof."
+    },
+    {
+      "tag": "p",
+      "text": "Current lunar light permission: The shared nativeLunarPresentation helper grants moonLightEligible only when its phase, lunar-altitude, solar-darkness and failed-surface checks permit it. When the helper reports near-new, below-horizon, daylight or surface-unavailable, it withdraws atmospheric moonlight; diagnostics do not override that permission. Calendar-body Earthshine and the stellar cutout are separate. This gate does not establish current V5 surface availability or native optical pixels."
+    },
+    {
+      "tag": "p",
+      "text": "Contract per phenomenon: family · inputs · gate · shape · NOT-shape · off-conditions · prod/debug · verdict."
+    },
+    {
+      "tag": "hr",
+      "text": ""
+    }
+  ],
+  "existingURLPayloads": [
+    "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1\n",
+    "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full\n",
+    "index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo\n",
+    "index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61\n"
+  ],
+  "startHeading": "Diagnostic recipes",
+  "endHeading": "Group 1 — Diffuse (participating media + thermal)",
+  "node": "C:\\Users\\theis\\AppData\\Local\\OpenAI\\Codex\\bin\\node.exe",
+  "playwright": "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright",
+  "playwrightVersion": "1.62.1",
+  "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1228\\chrome-win64\\chrome.exe",
+  "browserVersion": "149.0.7827.55",
+  "evidenceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence",
+  "files": {
+    "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\OPTICS.md": {
+      "bytes": 13932,
+      "sha256": "8abd464e3d6115c554b0b4b5af719fe56b7ff87bf0acd08392a60d2ac8e4c669"
+    },
+    "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\diagnostic_a10_final_join_r2\\rendered-input\\OPTICS.html": {
+      "bytes": 18034,
+      "sha256": "cad49ea76d607173614e808d2f2ca7e04df5a22f5b6d54d546ddef60e7739efd"
+    },
+    "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\diagnostic_a10_final_join_r2\\frozen-source\\OPTICS.md": {
+      "bytes": 13932,
+      "sha256": "8abd464e3d6115c554b0b4b5af719fe56b7ff87bf0acd08392a60d2ac8e4c669"
+    },
+    "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\diagnostic_design_section_capture_r1\\design_section_capture.cjs": {
+      "bytes": 18476,
+      "sha256": "44b65802f546a56354ee26a9e1b83bc1a2381a875bdb5d6cdd6172083fe881d3"
+    },
+    "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\diagnostic_design_section_capture_r1\\inputs\\docs_contract.cjs": {
+      "bytes": 8630,
+      "sha256": "ab1a19924335ecc74cecaf490dbb3412731cfa4e4411b358d3709e865c7efa78"
+    },
+    "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\diagnostic_a10_review_r1\\FINAL_CAPTURE_CONTRACT.json": {
+      "bytes": 7928,
+      "sha256": "98c54b14f95f415afb99cf79c691526fcae4d7878100b7f30e8143bd21ba95eb"
+    },
+    "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\diagnostic_a10_review_r1\\COMMENT_BINDING_CONTRACT.json": {
+      "bytes": 4788,
+      "sha256": "2602af6f379fb869f772465408993e5ddcf389a35e7a4d45d983719f6bdc8705"
+    },
+    "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\final-remaining-doc-join-r3\\receipt.json": {
+      "bytes": 1906,
+      "sha256": "f4283b754a6e95f7f27ec4fd19af3beb72b77d9ad26ea9d072848a8ed9a8f51f"
+    },
+    "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1228\\chrome-win64\\chrome.exe": {
+      "bytes": 4059648,
+      "sha256": "b798f9e53a98d29eb7f36f8c409f905d3184780a04d2bcb56989067194784bd1"
+    },
+    "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright\\package.json": {
+      "bytes": 1416,
+      "sha256": "ca170ec143a88ed3043ac953eb3b2377b2b97304104f4e1e23316684ce2c35af"
+    },
+    "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright\\index.js": {
+      "bytes": 648,
+      "sha256": "4e98f65f0a9d9bcab8cffc0c5cfdd87fd3f5b0be74fc494ff166a466b204cd44"
+    }
+  },
+  "scope": "Actual rectangle union and pixels for only the added permission paragraph; entire section is source/DOM identity/context readback, with no old URL Range/pixel replay.",
+  "resourceAuthority": "Root actual exclusive capacity-one grant and positive process/owner identity are external prerequisites; a supplied lease token alone is not lease authority."
+}

@@ -1,0 +1,270 @@
+{
+  "schema": "r0020-exact-current-public-clock-clauses/1",
+  "source": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001c_whole_delivery_r1\\a11-public-r2\\bodies\\raw-commit\\DESIGN.md",
+    "bytes": 38354,
+    "sha256": "8ea79974c6eb2d6df877d204135bff33b3466f78c3f78e2ce676cf9c0d4f9f05"
+  },
+  "acceptedRegionalInput": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0020_release_exit_r1\\OWNED_PROSE_AND_DIFF.json",
+    "bytes": 13238,
+    "sha256": "c43fe7e8002bde5857edbc94bfd722bcf1b89245eae2378b262c7bf35cc454fc"
+  },
+  "currentOwnerLocator": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0020_whole_closure_r2\\DELIVERED_CLAUSE_LOCATIONS.json",
+    "bytes": 5760,
+    "sha256": "a9f6a4fdd6e131540e33fd574be2c4c9bdd0a8e05e570c58c5f76ae524d59e43"
+  },
+  "regions": [
+    {
+      "id": "R20-AUTHORITY",
+      "file": "DESIGN.md",
+      "finalStartLine": 201,
+      "finalEndLine": 201,
+      "startByte": 17350,
+      "endByteExclusive": 18221,
+      "text": "There is one temporal API, `simNow()` / `simDate()` / `nowParts()`, with two authorities. With neither `simTime` nor `timeScale`, `simNow()` reads the current device `Date.now()` on every call; a timezone change reformats that instant. Explicit previews use a validated anchor plus independent elapsed time multiplied by `TIMESCALE`. An explicit `timeScale=1` remains a 1\u00d7 anchored preview with ADVANCING, forecast weather, star reprojection and the SIM readout. `timeScale=60` advances 60\u00d7; `simTime=HH:MM` without a scale is frozen. Existing scale parsing preserves frozen behavior for zero, empty, invalid and clamped negative values. Independent elapsed behavior assumes a supported native `performance.now()` host; the existing `Date.now()` fallback has no separate wall-step guarantee. Injected wall corrections do not establish native sleep/wake or NTP behavior.",
+      "sha256": "53a482d43e81bda55a07a6d059de2b9463df80a8a90298cf7a3a5b762700348a",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            157,
+            157
+          ],
+          "finalLines": [
+            201,
+            208
+          ]
+        }
+      ],
+      "acceptedEquality": "BYTE_EXACT_ORIGINAL_INDEPENDENT_DOCS_CANDIDATE",
+      "references": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\clock-date-doc-review\\proposed\\DESIGN.md",
+          "bytes": 38832,
+          "sha256": "a8bfa21b3fab3cbdea1d15134c5ae6ae2a3490c60ae1cad7715e5c921274cd0b"
+        }
+      ],
+      "disposition": "PASS_EXACT_R0020_CLOCK_DOCUMENTATION_OWN_FACT",
+      "boundary": "The surrounding shared motion/weather/calendar and sibling documentation is outside this review."
+    },
+    {
+      "id": "R20-DIRECTION",
+      "file": "DESIGN.md",
+      "finalStartLine": 203,
+      "finalEndLine": 203,
+      "startByte": 18223,
+      "endByteExclusive": 18631,
+      "text": "**Clock correction direction:** In ordinary direct-wall mode, forward and backward device wall corrections are followed by the next `Date.now()` read. An explicit `timeScale=1` is an anchored preview, not ordinary wall-clock mode. Independent elapsed behavior still has the stated native-host assumption and wall-clock fallback limitation; this source distinction does not qualify sleep/wake or NTP behavior.",
+      "sha256": "5654dd69b5a8069125fbac2b011c92730c54abdddd0c2a1e22b962ba5757b35d",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            157,
+            157
+          ],
+          "finalLines": [
+            201,
+            208
+          ]
+        }
+      ],
+      "acceptedEquality": "BYTE_EXACT_ACCEPTED_R2_CLOCK_HUNK_AND_R3_ROOT_JOIN",
+      "references": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\final_remaining_doc_delta_r2\\hunks\\0.new",
+          "bytes": 1283,
+          "sha256": "c7a7cd8c0aeca221c4190c8eb1f4f9af87f7926609cbbba6645c63c4b4e3fd6d"
+        },
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\final-remaining-doc-join-r3\\receipt.json",
+          "bytes": 1906,
+          "sha256": "f4283b754a6e95f7f27ec4fd19af3beb72b77d9ad26ea9d072848a8ed9a8f51f"
+        }
+      ],
+      "disposition": "PASS_EXACT_R0020_CLOCK_DOCUMENTATION_OWN_FACT",
+      "boundary": "The surrounding shared motion/weather/calendar and sibling documentation is outside this review."
+    },
+    {
+      "id": "R20-PRECISION",
+      "file": "DESIGN.md",
+      "finalStartLine": 205,
+      "finalEndLine": 205,
+      "startByte": 18633,
+      "endByteExclusive": 19510,
+      "text": "Explicit local times and prayer/weather endpoints use the same minute-precision inverse. Inputs are finite integer Gregorian fields, positive years representable by Date and Intl, hours 0\u201323 and minutes 0\u201359 in an Intl-supported zone. A profile exhaustively projects each UTC minute from the strict UTC midnight coordinate U\u221224 hours through U+48 hours, inclusive: 4,321 projections. Gregorian/Latin/h23 projection must show whole-minute offsets whose magnitude is at most 24 hours throughout that window. A final full-field round trip accepts exactly one inverse; gaps, folds, invalid dates/zones and unsupported representations are unavailable. This does not certify historical second offsets or arbitrary IANA history. At most four exact zone/day profiles, including unsupported profiles, are retained in memory and reused; the inverse adds no persistent cache schema.",
+      "sha256": "4681a569ce0e3bbf16f02faf4ba651b40c3d899236cb19fa5e2add9e90a204ab",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            157,
+            157
+          ],
+          "finalLines": [
+            201,
+            208
+          ]
+        }
+      ],
+      "acceptedEquality": "BYTE_EXACT_ORIGINAL_INDEPENDENT_DOCS_CANDIDATE",
+      "references": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\clock-date-doc-review\\proposed\\DESIGN.md",
+          "bytes": 38832,
+          "sha256": "a8bfa21b3fab3cbdea1d15134c5ae6ae2a3490c60ae1cad7715e5c921274cd0b"
+        }
+      ],
+      "disposition": "PASS_EXACT_R0020_CLOCK_DOCUMENTATION_OWN_FACT",
+      "boundary": "The surrounding shared motion/weather/calendar and sibling documentation is outside this review."
+    },
+    {
+      "id": "R20-INVALID",
+      "file": "DESIGN.md",
+      "finalStartLine": 207,
+      "finalEndLine": 207,
+      "startByte": 19512,
+      "endByteExclusive": 19943,
+      "text": "An invalid explicit scene clears its numeric anchor and withdraws clock-dependent sky, arc, prayer and calendar output, shows `Simulation time unavailable` / `SIM unavailable`, and keeps configuration recovery reachable. Valid configuration recovery restores the prior visibility. An unavailable scene does not qualify normal night appearance or live motion. Ordinary loads without clock overrides keep their direct-wall authority.",
+      "sha256": "c9ae769c261b29f025ba4ebad0b8d2d9dd207031959498c755aa0b36e50d810a",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            157,
+            157
+          ],
+          "finalLines": [
+            201,
+            208
+          ]
+        }
+      ],
+      "acceptedEquality": "BYTE_EXACT_ORIGINAL_INDEPENDENT_DOCS_CANDIDATE",
+      "references": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\clock-date-doc-review\\proposed\\DESIGN.md",
+          "bytes": 38832,
+          "sha256": "a8bfa21b3fab3cbdea1d15134c5ae6ae2a3490c60ae1cad7715e5c921274cd0b"
+        }
+      ],
+      "disposition": "PASS_EXACT_R0020_CLOCK_DOCUMENTATION_OWN_FACT",
+      "boundary": "The surrounding shared motion/weather/calendar and sibling documentation is outside this review."
+    },
+    {
+      "id": "R20-FRAGMENT",
+      "file": "DESIGN.md",
+      "finalStartLine": 301,
+      "finalEndLine": 301,
+      "startByte": 28137,
+      "endByteExclusive": 28285,
+      "text": "The fragment's `timeScale` sets the explicit scene clock rate; `timeScale=1` remains an anchored 1\u00d7 preview. A query-only `?timeScale=` is ignored.",
+      "sha256": "b4c0a5fa0ba60b2ff36c98a0858adddb5d62e88bc05c9d90aff0e0d77cb13bf8",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            248,
+            248
+          ],
+          "finalLines": [
+            301,
+            301
+          ]
+        }
+      ],
+      "acceptedEquality": "BYTE_EXACT_INDEPENDENT_FRAGMENT_CORRECTION_AND_ROOT_JOIN",
+      "references": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\clock_fragment_doc_review_r1\\proposal\\new.utf8",
+          "bytes": 207,
+          "sha256": "161da1fb6984092467dab1a3c6bede89953dbc791cae9179b9e2eb78edd0f996"
+        },
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\clock-fragment-doc-r1\\receipt.json",
+          "bytes": 1913,
+          "sha256": "3525bf6a639e9d6b573ab5cb34176d66e3bd2c6f22d0719f83fb365abef5fd1e"
+        }
+      ],
+      "disposition": "PASS_EXACT_R0020_CLOCK_DOCUMENTATION_OWN_FACT",
+      "boundary": "The surrounding shared motion/weather/calendar and sibling documentation is outside this review."
+    },
+    {
+      "id": "R20-SCALE",
+      "file": "DESIGN.md",
+      "finalStartLine": 522,
+      "finalEndLine": 522,
+      "startByte": 44408,
+      "endByteExclusive": 44697,
+      "text": "- `timeScale=<n>` \u2014 an explicit positive scale enables an anchored preview, including `timeScale=1` (1\u00d7) and `timeScale=60` (60\u00d7), with ADVANCING, forecast weather, reprojected stars and the SIM readout. With neither clock override, ordinary mode follows the current device wall clock.",
+      "sha256": "e6ce74962a9f611b6bbd1fe0db8196b8698b55f739502f8589e22d35ef47a001",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            335,
+            337
+          ],
+          "finalLines": [
+            521,
+            523
+          ]
+        }
+      ],
+      "acceptedEquality": "BYTE_EXACT_ORIGINAL_INDEPENDENT_DOCS_CANDIDATE",
+      "references": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\clock-date-doc-review\\proposed\\DESIGN.md",
+          "bytes": 38832,
+          "sha256": "a8bfa21b3fab3cbdea1d15134c5ae6ae2a3490c60ae1cad7715e5c921274cd0b"
+        }
+      ],
+      "disposition": "PASS_EXACT_R0020_CLOCK_DOCUMENTATION_OWN_FACT",
+      "boundary": "The surrounding shared motion/weather/calendar and sibling documentation is outside this review."
+    },
+    {
+      "id": "R20-SIMTIME",
+      "file": "DESIGN.md",
+      "finalStartLine": 523,
+      "finalEndLine": 523,
+      "startByte": 44698,
+      "endByteExclusive": 44929,
+      "text": "- `simTime=HH:MM` \u2014 a validated local-time anchor, frozen when `timeScale` is absent; a positive explicit scale advances that anchor independently of device wall corrections. Unresolvable gap/fold times show an unavailable scene.",
+      "sha256": "3246406cad6ad1c2f63da7626fff3abf6f2b2de8a42473b7f091d564c8f571f0",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            335,
+            337
+          ],
+          "finalLines": [
+            521,
+            523
+          ]
+        }
+      ],
+      "acceptedEquality": "BYTE_EXACT_ORIGINAL_INDEPENDENT_DOCS_CANDIDATE",
+      "references": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\clock-date-doc-review\\proposed\\DESIGN.md",
+          "bytes": 38832,
+          "sha256": "a8bfa21b3fab3cbdea1d15134c5ae6ae2a3490c60ae1cad7715e5c921274cd0b"
+        }
+      ],
+      "disposition": "PASS_EXACT_R0020_CLOCK_DOCUMENTATION_OWN_FACT",
+      "boundary": "The surrounding shared motion/weather/calendar and sibling documentation is outside this review."
+    }
+  ],
+  "publicDocumentOnly": true,
+  "independentAcceptance": "PENDING_R0020_OWNER_AND_ROOT"
+}

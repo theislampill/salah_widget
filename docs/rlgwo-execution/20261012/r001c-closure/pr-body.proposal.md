@@ -1,0 +1,3 @@
+Correct the diagnostic examples in AGENTS, DESIGN and OPTICS to use the fragment parser and the six supported force names, with complete recipes and the existing physical, accessibility and pixel-evidence caveats. Bind the existing diagnostic fixture to the exact widget script and preserve its strengthened reuse admission and force controls. Implements #28.
+
+Validation: exact-main guarded patch and syntax checks; eight focused owner-binding controls; accepted A01–A10 qualification, raw results and rendered evidence retained at their original scopes. No runtime changes or original native/test replay. Public delivery, A11 readbacks and manual issue closure remain separate.
