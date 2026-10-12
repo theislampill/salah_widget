@@ -1,0 +1,15 @@
+# R0008 qualification and delivery proof
+
+The original sixteen mandatory rows, their original dispositions, accepted qualification review and root JOIN remain preserved. The seven shared clock clauses are already delivered exactly once in DESIGN at current main `ba6d15d6f305451a7eccbbd30e2a47138c9a22b3` through approved PR46 and its documentation-only successor. This publication adds evidence and closure bindings; it contains no runtime, DESIGN or frozen V1 edit.
+
+A12 reuses the independently accepted original 24 date-only scene/recovery/mode cases. Its reached-consumer predicate binds the literal pre-script coordinates, simWx0, invalid boot withdrawal, actual applyConfig/provider recovery and settled model/render/clock consumers. It grants no pending-preview pixels or elapsed-cost equivalence.
+
+A13 additionally acquired the four original instrumented/uninstrumented profile cases in Windows Chromium148.0.7778.96 and Firefox150.0.2,325×530/DPR1, on delivered f443. The separate independent review accepted all102 original assertions and32 captures, actual trusted-input/native-rAF observations, count/cache/eviction and matched cost evidence. The raw statuses remain PARTIAL_NATIVE_SCOPE. Uninstrumented cold resolver builds measured10.1–13.2ms in Chromium and9–12ms in Firefox; reuse measured0–0.1ms. Warm heartbeat waits were6.2/5ms, versus cold80.7–131.5/85–103ms. These finite cold-transition delays and observer/ordering/transport costs remain explicit; no production deadline or sole resolver attribution is claimed.
+
+The accepted WEATHER18/114/44 and native28/426/110 campaigns remain unchanged. A14 retains its matched invalid/recovery proof and directly applicable original f443 normal opaque-calendar-Moon, visible-motion and narrow reduced/full/offscreen controls. Date-only503/fallback-font images grant none of those whole-sky properties. Mac, actual parent, PR43/S1/L1 and other programme gates remain separate.
+
+`EVIDENCE_PACKAGE.json` binds the original130167912-byte accepted ZIP. Concatenate `accepted-evidence.zip.part01`, `part02`, `part03` in ordinal order; retain their exact bytes. `PUBLICATION_MANIFEST.json` names its924 payload files. `delivery-supplement.zip` retains26 exact donor/currentness/alias payloads. `main-profile-addendum.zip` supplies 149 additional source, input, result, capture, custody and independent-review payloads. `ADDITIVE_PUBLICATION_MANIFEST.json` and `ADDITIVE_REFERENCE_READBACK.json` bind every new required member/alias without copying the old archives or managed executable binaries.
+
+Read `MAIN_APPLICABILITY_FINAL.json`, `ROW_DISPOSITIONS_FINAL.json` and `WHOLE_CLOSURE_CERTIFICATE_PROPOSAL.json` with the retained original qualification/root JOIN. Separate independent acceptance resolves the fixed pending A13 preparation labels; no raw record or original row status was rewritten.
+
+Root still performs the whole transfer/publication review, immutable public evidence and delivered-document consumer readbacks, reviewed proof-comment readback and justified authorized manual issue closure. This private/publication proposal itself awards no node or closure credit.
