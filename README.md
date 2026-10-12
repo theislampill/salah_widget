@@ -294,6 +294,34 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
 | `install.sh` / `install.ps1` | Optional setup wizard (macOS-Linux / Windows): detects the browser, downloads the TablissNG extension asset, and stages the preset for manual import. No silent installs. |
 | `presets/salah-widget.tablissng.json` | A ready-made TablissNG dashboard export (this widget in self-configuring mode) that the installer imports. |
 
+### Deterministic smoke test
+
+The no-build [smoke page](tests/smoke.html) characterizes the widget with controlled inputs. Copy a complete candidate tree to a disposable directory and use a fresh disposable browser profile or isolated test context. Serve it on an unused loopback origin; do not use your normal widget/Pages origin or clear its storage. For example, replace the directory below with your disposable copy:
+
+```powershell
+python -m http.server 8765 --bind 127.0.0.1 --directory 'C:\path\to\disposable-tree'
+```
+
+Open each mode as a separate document:
+
+- `http://127.0.0.1:8765/tests/smoke.html?fixture=healthy`
+- `http://127.0.0.1:8765/tests/smoke.html?fixture=reject`
+- `http://127.0.0.1:8765/tests/smoke.html?fixture=hang`
+- `http://127.0.0.1:8765/tests/smoke.html?fixture=bootstrap-error`
+
+`healthy` supplies matched prayer responses. `reject` rejects prayer fetches; `hang` leaves them pending. Neither negative mode can count an unconsumed response as ready. Their readiness deadline normally produces **INCOMPLETE**, with **FAIL** taking precedence if an error is recorded. `bootstrap-error` deliberately fails before widget parsing and is **FAIL**. These are separate controlled runs, not an offline skip or successful fallback.
+
+The denominator is **30 named required callbacks**, with **141 expected assertions** in the current source. **PASS** requires every callback to finish with exactly its declared assertion count and no failed assertion or other error. The executed count includes cases recorded as `executed` or `failed`; `pending` or `missing` cases remain missing. A recorded failed assertion or callback, harness or bootstrap error makes the summary **FAIL**, even when cases are also missing. With no recorded failure, any missing case makes it **INCOMPLETE**. The `pass`/`fail` counters count assertion/error log lines, not completed callbacks; read `required.total`, `required.executed`, `required.missing` and each case in `window.__smoke`. Late callbacks cannot complete a missing case. The existing limits are 8 seconds for scene readiness, 4 seconds for a required callback and 3 seconds for Moon image decoding.
+
+[The wrapper](tests/widget-fixture.html) installs a fresh private Map-backed `localStorage` for each fixture before product parsing; config checks receive separate private or denied stores. No test requires clearing user-origin data. It starts no-argument `Date`/`Date.now()` at **2026-09-07T09:30:00.000Z**, retains explicit date arguments (controlled cases can advance the private clock), and uses latitude **24.47**, longitude **39.61**, Madinah, method **4**, school **0**, timezone **Asia/Riyadh** and `qa=1`. Its only admitted Aladhan requests are the four-parameter timings requests for **07-09-2026** and **08-09-2026**. Synthetic timings are Fajr 05:00, Sunrise 06:00, Dhuhr 12:00, Asr 15:30, Sunset/Maghrib 18:00 and Isha 19:30. Gregorian and invented Hijri fields are test inputs, not a Hijri conversion claim. The initial 12:30 scene checks actual current Dhuhr, next Asr 15:30 and 180 minutes remaining. Weather uses a fixed Open-Meteo model input and an empty RainViewer index; admitted synthetic weather records exercise their own lane. None is a direct local weather observation.
+
+Readiness binds the unique run, attempt, document, exact scene hash and fetched `index.html` SHA-256. It also requires actual current-day `Response.json()` consumption, the matching weather bridge and prayer/render state. An earlier iframe, matching hash alone or stale response is insufficient. Save the final summary, `window.__smoke`, every attempt's fixture/request/JSON/error ledger, browser/version and file hashes before opening the next mode. The fixture's source digest identifies the fetched index; record config, wrapper and other runtime identities separately.
+
+The wrapper keeps product script bodies unchanged and rejects unknown script/digest/resource anchors. Its current anchors reject the inline Moon startup/refinement layout (`moon-initial-code` / `moon-refinement-code`) with **Unreviewed widget script anchors**; that entry needs a separately reviewed wrapper adaptation before this instrument can qualify it. Retain the failure rather than bypassing the guard. The fixture removes the three known external font links and its policy blocks fonts and external connections. Controlled time, synthetic providers and suppressed fonts cannot certify appearance, readability, normal-live **M0** motion, public deployment or every platform. The smoke page's scope notice and separate native/delivery gates still apply.
+
+For an authorized public delivery check, use a separate fresh browser profile or isolated test context with no owner settings. Open the delivered HTTPS `tests/smoke.html` under the site's base URL, with each of the same four `?fixture=` modes. Bind the served README, index, config and wrapper hashes to the exact approved release; a loopback run does not supply public delivery evidence.
+
+
 ---
 
 ## Credits

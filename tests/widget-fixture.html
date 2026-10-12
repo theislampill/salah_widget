@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'">
 <title>R0017 isolated widget fixture</title>
 </head>
 <body><pre id="fixture-error">Loading verified widget source…</pre>
@@ -16,7 +16,7 @@
   const fixed=NativeDate.parse("2026-09-07T09:30:00.000Z"),rootURL=new URL("../",location.href);
   let clockNow=fixed;
   const documentId=crypto.randomUUID(),ownedDocument=document;
-  const policy="default-src 'none'; script-src 'self' 'unsafe-inline' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'";
+  const policy="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'";
   const report=window.__widgetFixture={mode,run,attempt,documentId,hash,state:"setup",error:null,sourceSha256:null,
     weatherOracle:"joined R0024: useful model; local permission requires admitted synthetic fixture",bridgeSha256:null,
     storageIsolated:false,clockFixed:false,clockNow:fixed,fetchIntercepted:false,initialStorageEntries:0,ledger:[],storageEvents:[],consoleErrors:[],weatherEvents:[]};
