@@ -7,6 +7,29 @@ const index=fs.readFileSync(path.join(root,"index.html")),wrapper=fs.readFileSyn
 const script=[...wrapper.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)][0][1];
 const todayURL="https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0";
 const tomorrowURL="https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0";
+// A mutation control must change one known anchor, never pass on unchanged bytes.
+function replaceOnce(source,before,after,label){
+  assert.notEqual(before,"",label+": empty mutation anchor");
+  assert.notEqual(before,after,label+": unchanged replacement");
+  assert.equal(source.split(before).length-1,1,label+": expected exactly one mutation anchor");
+  const changed=source.replace(before,after);
+  assert.notEqual(changed,source,label+": mutation changed no bytes");
+  return changed;
+}
+const sourceText=index.toString("utf8");
+const actualScripts=[...sourceText.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+const firstPaint=actualScripts[1]?.[1].includes('id="native-first-paint-code"')?actualScripts[1]:null;
+const legacyHostCount=sourceText.split('src="moon/moon-host.js"').length-1;
+// The synthetic branch tests the wrapper's legacy script allowlist only. Its
+// product bodies remain unchanged; it never executes a legacy Moon runtime.
+const legacyFlag='<script>if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;</script>';
+const legacyHost='<script src="moon/moon-host.js"></script>';
+const legacySource=legacyHostCount===0
+  ?replaceOnce(sourceText,'</body>',legacyFlag+legacyHost+'</body>','legacy structural fixture')
+  :sourceText;
+const sourceProfiles={actual:{scriptCount:actualScripts.length,firstPaint:!!firstPaint,legacyHostCount},
+  legacyMoon:{input:legacyHostCount===0?"source-derived structural fixture":"actual source",
+    sourceSha256:crypto.createHash("sha256").update(legacySource).digest("hex"),runtimeQualified:false}};
 async function setup(mode="healthy",options={}){
   let sourceCalls=0,realStorageCalls=0;const errorEl={};
   const source=options.source??index;
@@ -20,10 +43,31 @@ async function setup(mode="healthy",options={}){
   });ctx.window=ctx;
   Object.defineProperty(ctx,"localStorage",{configurable:true,get(){realStorageCalls++;throw Error("Real storage access forbidden");}});
   // Expose completion of the existing wrapper IIFE, changing no transport logic.
-  const exposed=script.replace("start().catch(failure);","return start().catch(failure);");
-  assert.notEqual(exposed,script,"wrapper completion anchor missing");
+  const activeWrapper=options.wrapper??wrapper;
+  const activeScript=[...activeWrapper.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)][0][1];
+  const exposed=activeScript.replace("start().catch(failure);","window.__fixturePolicy=policy;return start().catch(failure);");
+  assert.notEqual(exposed,activeScript,"wrapper completion anchor missing");
   await vm.runInContext(exposed,ctx,{filename:"actual widget-fixture script (parser deliberately stopped)"});
-  return {ctx,report:ctx.__widgetFixture,errorEl,sourceCalls,realStorageCalls};
+  const metaPolicy=activeWrapper.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+  return {ctx,report:ctx.__widgetFixture,errorEl,sourceCalls,realStorageCalls,metaPolicy,policy:ctx.__fixturePolicy};
+}
+// CSP3 gates WebAssembly compilation separately from JavaScript eval. These
+// source-only controls read the actual wrapper's produced policy; they do not
+// execute a browser/worker or claim that a lunar surface meets its deadline.
+const originalPolicy="default-src 'none'; script-src 'self' 'unsafe-inline' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'";
+const wasmPolicy=originalPolicy.replace("'unsafe-inline' blob:","'unsafe-inline' 'wasm-unsafe-eval' blob:");
+function admitMoonPolicies(h){
+  assert.equal(h.metaPolicy,h.policy,"initial and wrapped policies must both admit the required capability");
+  assert.equal(h.policy,wasmPolicy,"only WebAssembly compilation may be added to the retained policy");
+  assert.ok(!h.policy.includes("'unsafe-eval'"),"general JavaScript eval remains forbidden");
+}
+function policyWrapper(metaPolicy,bodyPolicy){
+  const meta=wrapper.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+  const body=wrapper.match(/const policy="([^"]+)";/)[1];
+  let changed=wrapper;
+  if(meta!==metaPolicy)changed=replaceOnce(changed,'content="'+meta+'"','content="'+metaPolicy+'"','initial CSP');
+  if(body!==bodyPolicy)changed=replaceOnce(changed,'const policy="'+body+'";','const policy="'+bodyPolicy+'";','wrapped CSP');
+  return changed;
 }
 const results=[];
 async function check(name,fn){try{await fn();results.push({name,result:"PASS"});}catch(e){results.push({name,result:"FAIL",error:e.message});}}
@@ -35,6 +79,18 @@ async function main(){
     assert.match(h.report.error,/Controlled parser stop/);assert.match(h.errorEl.textContent,/Fixture bootstrap error/);
     assert.equal(h.ctx.Date.now(),1788773400000);assert.equal(new h.ctx.Date().toISOString(),"2026-09-07T09:30:00.000Z");
     assert.equal(new h.ctx.Date(0).toISOString(),"1970-01-01T00:00:00.000Z");assert.equal(h.ctx.Date.UTC(1970,0,1),0);assert.equal(h.ctx.Date.parse("1970-01-01T00:00:00Z"),0);
+  });
+  await check("both actual fixture policies admit required WASM without general eval",async()=>{
+    const h=await setup();admitMoonPolicies(h);
+    assert.equal(h.sourceCalls,1);assert.equal(h.realStorageCalls,0);assert.match(h.report.error,/Controlled parser stop/);
+  });
+  await check("old, one-sided and broader fixture policies cannot satisfy the capability contract",async()=>{
+    for(const [meta,body] of [[originalPolicy,originalPolicy],[originalPolicy,wasmPolicy],[wasmPolicy,originalPolicy],
+      [wasmPolicy.replace("'wasm-unsafe-eval'","'unsafe-eval'"),wasmPolicy.replace("'wasm-unsafe-eval'","'unsafe-eval'")]]){
+      const h=await setup("healthy",{wrapper:policyWrapper(meta,body)});
+      assert.throws(()=>admitMoonPolicies(h),/policies must both|only WebAssembly/);
+      assert.equal(h.sourceCalls,1);assert.equal(h.realStorageCalls,0);assert.match(h.report.error,/Controlled parser stop/);
+    }
   });
   await check("healthy transport uses real Response/json and distinct synthetic dates",async()=>{
     const h=await setup(),today=await h.ctx.fetch(todayURL,{cache:"no-store"}),tomorrow=await h.ctx.fetch(new URL(tomorrowURL));
@@ -85,18 +141,38 @@ async function main(){
     const h=await setup("healthy",{rejectSource:true});assert.match(h.report.error,/Controlled source fetch rejection/);assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
   });
   await check("changed script anchor fails before hook installation",async()=>{
-    const changed=index.toString("utf8").replace('<script src="config.js"></script>','<script src="other.js"></script>');
+    const changed=replaceOnce(sourceText,'<script src="config.js"></script>','<script src="other.js"></script>','config script');
     const h=await setup("healthy",{source:changed});assert.match(h.report.error,/Unreviewed widget script anchors/);assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
   });
-  for(const changed of [
-    index.toString('utf8').replace('window.__SALAH_MOON_OFFLINE__=true;','window.__SALAH_MOON_OFFLINE__=false;'),
-    index.toString('utf8').replace('src="moon/moon-host.js"','src="moon/unreviewed.js"'),
-    index.toString('utf8').replace('</body>','<script>window.unreviewed=true;</script></body>')
-  ])await check("unreviewed Moon or extra script fails before hook installation",async()=>{
-    const h=await setup('healthy',{source:changed});assert.match(h.report.error,/Unreviewed widget script anchors/);assert.equal(h.report.storageIsolated,false);
+  if(firstPaint)await check("current first-paint digest mismatch fails before hook installation",async()=>{
+    const digest=firstPaint[1].match(/data-sha256="([a-f0-9]{64})"/);
+    assert.ok(digest,"current first-paint digest attribute missing");
+    const wrong=digest[1]==="0".repeat(64)?"1".repeat(64):"0".repeat(64);
+    const changed=replaceOnce(sourceText,digest[0],'data-sha256="'+wrong+'"','first-paint digest');
+    const h=await setup('healthy',{source:changed});assert.match(h.report.error,/First-paint source identity mismatch/);
+    assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
+  });
+  await check("legacy Moon structural branch admits its exact positive source before parser stop",async()=>{
+    assert.equal(legacySource.split('src="moon/moon-host.js"').length-1,1,"legacy host is absent or ambiguous");
+    const h=await setup('healthy',{source:legacySource});assert.match(h.report.error,/Controlled parser stop/);
+    assert.equal(h.report.storageIsolated,true);assert.equal(h.realStorageCalls,0);
+    assert.equal(h.report.sourceSha256,sourceProfiles.legacyMoon.sourceSha256);
+  });
+  for(const [name,before,after] of [
+    ["offline flag",legacyFlag,legacyFlag.replace('true;','false;')],
+    ["host",'src="moon/moon-host.js"','src="moon/unreviewed.js"']
+  ])await check("legacy Moon structural "+name+" mutant fails before hook installation",async()=>{
+    const changed=replaceOnce(legacySource,before,after,'legacy Moon '+name);
+    const h=await setup('healthy',{source:changed});assert.match(h.report.error,/Unreviewed widget script anchors/);
+    assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
+  });
+  await check("extra script fails before hook installation on actual source",async()=>{
+    const changed=replaceOnce(sourceText,'</body>','<script>window.unreviewed=true;</script></body>','extra script');
+    const h=await setup('healthy',{source:changed});assert.match(h.report.error,/Unreviewed widget script anchors/);
+    assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
   });
   console.log(JSON.stringify({kind:"source-bound wrapper transport/hooks; controlled parser stop, no widget/native qualification",root,
-    indexSha256:crypto.createHash("sha256").update(index).digest("hex"),wrapperSha256:crypto.createHash("sha256").update(wrapper).digest("hex"),results},null,2));
+    indexSha256:crypto.createHash("sha256").update(index).digest("hex"),wrapperSha256:crypto.createHash("sha256").update(wrapper).digest("hex"),sourceProfiles,results},null,2));
   if(results.some(r=>r.result==="FAIL"))process.exitCode=1;
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});

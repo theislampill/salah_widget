@@ -118,28 +118,156 @@ async function scene(hash,name,fn,ready=prayerReady){const result=await loadUnti
   if(!result.w){if(result.error)line("fail",name+" — fixture bootstrap: "+result.error);missing(name,result.reason);return;}
   await required(name,ok=>fn(result.w,result.w.qaState(),ok));
 }
+// Current publication/content owns the stage; preview/refinement labels report quality.
+// This does not wait on calendar or lit-side assertion values or on refinement.
+function calendarStageReady(s){return !!(s && s.sameOwner && s.elapsedMs>=0 && s.elapsedMs<8000 && s.prayerReady &&
+  s.parentVisible && s.childVisible && s.frameInView && s.frameWidth===325 && s.frameHeight===530 &&
+  !s.paused && s.composed && s.current && typeof s.acceptedIdentity==="string" && s.acceptedIdentity.length>0 &&
+  s.surfaceIdentity===s.acceptedIdentity && s.surfaceSource===s.runtimeSource &&
+   typeof s.runtimeSource==="string" && s.runtimeSource.length>0 && s.surfaceAvailable===true && s.contentPublished===true && s.visibleOwner===true &&
+   Number.isInteger(s.surfaceWidth) && s.surfaceWidth>=8 && s.surfaceWidth<=768 && s.surfaceHeight===s.surfaceWidth && s.expectedSurfaceSize===s.surfaceWidth &&
+   Number.isInteger(s.opaqueVisiblePixels) && s.opaqueVisiblePixels>0 && s.nonopaqueVisiblePixels===0 && s.legacyVisible===false && s.nativePaused===false && s.currentAfter===true &&
+   Number.isSafeInteger(s.runtimeEpoch) && s.runtimeEpoch>=0 && s.runtimeEpochAfter===s.runtimeEpoch &&
+   Number.isSafeInteger(s.nativeGeneration) && s.nativeGeneration>=0 && s.runtimeGeneration===s.nativeGeneration &&
+   s.nativeGenerationAfter===s.nativeGeneration && s.runtimeGenerationAfter===s.nativeGeneration &&
+   typeof s.nativeSceneIdentity==="string" && s.nativeSceneIdentity.length>0 && s.nativeSceneIdentityAfter===s.nativeSceneIdentity &&
+   s.acceptedIdentityAfter===s.acceptedIdentity && s.runtimeSourceAfter===s.runtimeSource &&
+   Number.isFinite(s.phaseErrorBound) && s.phaseErrorBound>=0 && s.phaseMaxError===.0416 && s.phaseErrorBound<=s.phaseMaxError);}
+async function calendarScene(hash,name,fn,extraReady){
+  const style=fr.getAttribute("style"),attempt=_r+1,want=hash+"&tz=Asia/Riyadh&qa=1";
+  let active=true,doc=null,id=null,started=0;
+  const trace={schema:"r0017-calendar-stage/v1",attempt,hash:want,budgetMs:8000,styleBefore:style,styleRestored:false,observation:null,readyObservation:null};
+  const ready=ww=>{let s=null;
+    try{
+      const f=ww.__widgetFixture,owner=ww.__smokeWeather?.identity?.();
+      const sameOwner=active && document.getElementById("w")===fr && fr.isConnected && fr.ownerDocument===document && fr.contentWindow===ww &&
+        f && f.state==="ready" && f.run===smokeRun && f.attempt===attempt && _r===attempt && f.hash===want && hashOf(ww)===want &&
+        /^[a-f0-9-]{36}$/.test(f.documentId||"") && f.sourceSha256===expectedSourceSha &&
+        owner && owner.run===smokeRun && owner.attempt===attempt && owner.documentId===f.documentId && owner.hash===want && owner.sourceSha256===f.sourceSha256;
+      if(!sameOwner || (doc && (ww.document!==doc || f.documentId!==id)))return false;
+      if(!doc){doc=ww.document;id=f.documentId;}
+       const q=ww.qaState(),api=ww.SalahMoonRuntime,runtime=api?.state,surface=q?.moonTruth?.surface,card=doc.querySelector(".c"),r=fr.getBoundingClientRect();
+       const native=ww.SalahMoonHost?.capture?.(),backing=api?.surface?.(),photo=doc.querySelector(".mphoto"),cv=doc.querySelector(".moon-detail-canvas"),detail=ww.SalahMoonDetail?.state;
+       const href=photo?.getAttribute("href")||"",contentPublished=!!backing && href.length>50 && href===backing.toDataURL();
+       let visibleOwner=false,opaqueVisiblePixels=0,nonopaqueVisiblePixels=0;
+       if(cv?.isConnected && ww.SalahMoonDetail?.available && detail?.visible===true && detail.renders>0 &&
+         Number.isInteger(cv.width) && cv.width>0 && Number.isInteger(cv.height) && cv.height>0 && cv.width*cv.height<=1024*1024){
+         const cr=cv.getBoundingClientRect(),clip=card?.getBoundingClientRect(),cs=ww.getComputedStyle(cv);
+         if(clip && cr.width>0 && cr.height>0 && cs.visibility==="visible" && cs.display!=="none" && +cs.opacity>0){
+           const left=Math.max(cr.left,clip.left,0),top=Math.max(cr.top,clip.top,0),right=Math.min(cr.right,clip.right,ww.innerWidth),bottom=Math.min(cr.bottom,clip.bottom,ww.innerHeight);
+           if(right>left && bottom>top){
+             const x=Math.max(0,Math.floor((left-cr.left)*cv.width/cr.width)),y=Math.max(0,Math.floor((top-cr.top)*cv.height/cr.height));
+             const width=Math.min(cv.width-x,Math.ceil((right-cr.left)*cv.width/cr.width)-x),height=Math.min(cv.height-y,Math.ceil((bottom-cr.top)*cv.height/cr.height)-y);
+             if(width>0 && height>0){const data=cv.getContext("2d")?.getImageData(x,y,width,height).data;
+               if(data?.length===width*height*4){visibleOwner=true;for(let i=3;i<data.length;i+=4){if(data[i]===255)opaqueVisiblePixels++;else if(data[i]!==0)nonopaqueVisiblePixels++;}}
+             }
+           }
+         }
+       }
+       const nativeAfter=ww.SalahMoonHost?.capture?.(),after=api?.state;
+      s={sameOwner:true,run:f.run,attempt:f.attempt,documentId:f.documentId,hash:f.hash,sourceSha256:f.sourceSha256,
+        elapsedMs:performance.now()-started,prayerReady:prayerReady(ww),parentVisible:document.visibilityState==="visible",childVisible:doc.visibilityState==="visible",
+        frameInView:r.right>0 && r.bottom>0 && r.left<innerWidth && r.top<innerHeight,frameWidth:r.width,frameHeight:r.height,
+        paused:!card || card.classList.contains("paused"),composed:!!card && card.classList.contains("real-sky-composed"),
+        current:runtime?.current===true,acceptedIdentity:runtime?.accepted?.identity??null,runtimeSource:runtime?.visibleSource??null,
+         surfaceIdentity:surface?.identity??null,surfaceSource:surface?.visibleSource??null,
+         surfaceAvailable:!!backing,contentPublished,visibleOwner,opaqueVisiblePixels,nonopaqueVisiblePixels,legacyVisible:surface?.legacyVisible??null,
+         surfaceWidth:backing?.width??null,surfaceHeight:backing?.height??null,expectedSurfaceSize:runtime?.accepted?.scene?.outSize??null,
+         nativePaused:native?.paused??null,runtimeEpoch:runtime?.epoch??null,runtimeEpochAfter:after?.epoch??null,
+         runtimeGeneration:runtime?.generation??null,runtimeGenerationAfter:after?.generation??null,nativeGeneration:native?.generation??null,nativeGenerationAfter:nativeAfter?.generation??null,
+         nativeSceneIdentity:native?.sceneIdentity??null,nativeSceneIdentityAfter:nativeAfter?.sceneIdentity??null,
+         currentAfter:after?.current===true,acceptedIdentityAfter:after?.accepted?.identity??null,runtimeSourceAfter:after?.visibleSource??null,
+         phaseErrorBound:runtime?.phasePrecision?.targetPositionErrorBound??null,phaseMaxError:runtime?.phasePrecision?.maximumPositionErrorDevicePixels??null};
+      trace.observation=s;
+      if(calendarStageReady(s) && (!extraReady || extraReady(ww))){trace.readyObservation=s;return true;}
+    }catch(e){trace.observationError=String(e.message||e);}
+    return false;
+  };
+  try{
+    fr.setAttribute("style","position:fixed;left:20px;top:60px;width:325px;height:530px;border:0");
+    // The original loadUntil(8000) and 150ms polling remain; no second wait.
+    started=performance.now();
+    return await scene(hash,name,(ww,q,ok)=>{
+      if(!ready(ww))throw Error("Calendar fixture lost its exact current composed stage within the original window");
+      return fn(ww,q,ok);
+    },ready);
+  }finally{
+    active=false;
+    if(style===null)fr.removeAttribute("style");else fr.setAttribute("style",style);
+    trace.styleAfter=fr.getAttribute("style");trace.styleRestored=trace.styleAfter===style;
+    const row=attempts.find(r=>r.attempt===attempt);if(row)row.calendarView=trace;
+  }
+}
+
+// Cloud presentation is established before loadUntil navigates the next document.
+// Observer entries therefore start from this in-view presentation; later adverse
+// visibility still fails the unchanged 2500ms helper and original sample guards.
+async function cloudScene(hash,name,fn){
+  const style=fr.getAttribute("style"),attempt=_r+1,want=hash+"&tz=Asia/Riyadh&qa=1";
+  let active=true;
+  const trace={schema:"r0017-cloud-stage/v1",attempt,hash:want,budgetMs:8000,styleBefore:style,styleRestored:false,beforeNavigation:null,loadedOwner:null};
+  const frameOwned=()=>active && document.getElementById("w")===fr && fr.isConnected && fr.ownerDocument===document;
+  try{
+    if(!frameOwned())throw Error("Cloud staging lost its exact parent frame owner");
+    fr.setAttribute("style","position:fixed;left:20px;top:60px;width:325px;height:530px;border:0");
+    const r=fr.getBoundingClientRect();
+    trace.beforeNavigation={nextAttempt:attempt,currentAttempt:_r,parentVisible:document.visibilityState==="visible",parentWidth:innerWidth,parentHeight:innerHeight,
+      frameOwned:frameOwned(),frameRect:{left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height}};
+    return await scene(hash,name,(ww,q,ok)=>{
+      const f=ww.__widgetFixture,owner=ww.__smokeWeather?.identity?.();
+      if(!frameOwned() || fr.contentWindow!==ww || !f || f.state!=="ready" || f.run!==smokeRun || f.attempt!==attempt || _r!==attempt ||
+        f.hash!==want || hashOf(ww)!==want || f.sourceSha256!==expectedSourceSha || !/^[a-f0-9-]{36}$/.test(f.documentId||"") ||
+        !owner || owner.run!==smokeRun || owner.attempt!==attempt || owner.documentId!==f.documentId || owner.hash!==want || owner.sourceSha256!==f.sourceSha256)
+        throw Error("Cloud staging lost its exact loaded frame owner");
+      trace.loadedOwner={run:f.run,attempt:f.attempt,documentId:f.documentId,hash:f.hash,sourceSha256:f.sourceSha256};
+      return fn(ww,q,ok);
+    });
+  }finally{
+    active=false;
+    if(style===null)fr.removeAttribute("style");else fr.setAttribute("style",style);
+    trace.styleAfter=fr.getAttribute("style");trace.styleRestored=trace.styleAfter===style;
+    const row=attempts.find(r=>r.attempt===attempt);if(row)row.cloudStage=trace;
+  }
+}
+
 // Elapsed cloud motion needs an in-view frame and the real observer's resume.
 async function withCloudFrameInView(ww,fn){
   const doc=ww.document,f=ww.__widgetFixture,id=f&&f.documentId,want=hashOf(ww),attempt=_r,style=fr.getAttribute("style");
   let active=true;
+  const trace={schema:"r0017-cloud-visibility-diagnostic/v1",run:smokeRun,attempt,documentId:id,hash:want,sourceSha256:expectedSourceSha,
+    styleBefore:style,phase:"owner-entry",waitPolls:0,lastWait:null,samples:[],error:null};
   const owned=()=>{const current=ww.__widgetFixture;
     if(!active || document.getElementById("w")!==fr || !fr.isConnected || fr.ownerDocument!==document || fr.contentWindow!==ww || ww.document!==doc ||
       !current || current.state!=="ready" || current.run!==smokeRun || current.attempt!==attempt || _r!==attempt || current.documentId!==id ||
       current.hash!==want || hashOf(ww)!==want || current.sourceSha256!==expectedSourceSha)throw Error("Cloud continuity lost its exact frame owner");
   };
-  const visible=()=>{const r=fr.getBoundingClientRect(),card=doc.querySelector(".c");return document.visibilityState==="visible" && doc.visibilityState==="visible" &&
-    r.right>0 && r.bottom>0 && r.left<innerWidth && r.top<innerHeight && card && !card.classList.contains("paused");};
-  const sampleReady=()=>{owned();if(!visible())throw Error("Cloud continuity frame is no longer visible and resumed");};
+  const visible=phase=>{const r=fr.getBoundingClientRect(),card=doc.querySelector(".c");
+    const parentVisibility=document.visibilityState,childVisibility=doc.visibilityState,
+      parentWidth=innerWidth,parentHeight=innerHeight,cardPresent=!!card,cardPaused=card?card.classList.contains("paused"):null;
+    const ready=parentVisibility==="visible" && childVisibility==="visible" &&
+      r.right>0 && r.bottom>0 && r.left<parentWidth && r.top<parentHeight && cardPresent && !cardPaused;
+    const sample={phase,parentMonotonicMs:performance.now(),childMonotonicMs:ww.performance.now(),
+      parentVisibility,childVisibility,parentWidth,parentHeight,frameRect:{left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height},
+      cardPresent,cardPaused,predicateResult:ready};
+    if(phase==="visibility-wait"){trace.waitPolls++;trace.lastWait=sample;}
+    else if(trace.samples.length<2)trace.samples.push(sample);
+    return ready;
+  };
+  const sampleReady=phase=>{owned();trace.phase=phase;if(!visible(phase))throw Error("Cloud continuity frame is no longer visible and resumed");};
   owned();
   try{
     fr.setAttribute("style","position:fixed;left:20px;top:60px;width:325px;height:530px;border:0");
     return await bounded((async()=>{
-      while(true){owned();if(visible())break;await new Promise(resolve=>setTimeout(resolve,25));}
-      sampleReady();return fn(sampleReady);
+      trace.phase="visibility-wait";
+      while(true){owned();if(visible("visibility-wait"))break;await new Promise(resolve=>setTimeout(resolve,25));}
+      sampleReady("ready-before-first-paint");return fn(sampleReady);
     })(),2500,"cloud continuity visibility/sample");
-  }finally{
+  }catch(e){trace.error=String(e&&e.message||e);throw e;}
+  finally{
     active=false;
     if(style===null)fr.removeAttribute("style");else fr.setAttribute("style",style);
+    trace.styleAfter=fr.getAttribute("style");trace.styleRestored=trace.styleAfter===style;
+    const row=attempts.find(r=>r.attempt===attempt);if(row)row.cloudVisibility=trace;
   }
 }
 const base="lat=24.47&lon=39.61&label=Madinah&method=4";
@@ -354,7 +482,7 @@ async function run(){
   head("R0024 actual model admission + independent synthetic present consumers");
   await weatherConsumers();
   head("moon truthfulness + no painted dawn");
-  await scene(base+"&simTime=01:00&simWx=0&simMoon=0.01&simWax=1&simMoonAlt=-20","new/below-horizon moon: opaque calendar disc, NO moonlight",(ww,q,ok)=>{
+  await calendarScene(base+"&simTime=01:00&simWx=0&simMoon=0.01&simWax=1&simMoonAlt=-20","new/below-horizon moon: opaque calendar disc, NO moonlight",(ww,q,ok)=>{
     ok("moonlightOpacity is 0",q.moonTruth.moonlightOpacity===0,q.moonTruth.moonlightOpacity);
     ok("calendarMoonVisible (slot not empty)",q.moonTruth.calendarMoonVisible===true);
     const grp=+ww.getComputedStyle(ww.document.querySelector(".c")).getPropertyValue("--moongrp");
@@ -385,11 +513,11 @@ async function run(){
       resolve((lc?L/lc:0)>(rc?R/rc:0)?"LEFT":"RIGHT");
     }catch(e){reject(e);}};im.onerror=()=>reject(Error("PBR moon image decode failed"));im.src=href;}),3000,"PBR moon image decode");
   }
-  await scene(base+"&simTime=02:00&simWx=0&simMoon=0.3&simWax=1&simMoonAlt=55&simMoonH=0","waxing moon orientation",async(ww,q,ok)=>{
+  await calendarScene(base+"&simTime=02:00&simWx=0&simMoon=0.3&simWax=1&simMoonAlt=55&simMoonH=0","waxing moon orientation",async(ww,q,ok)=>{
     const feat=ww.document.querySelector(".mfeatures");ok("moon is upright (no rotation)",!(feat&&feat.getAttribute("transform")));
     const side=await moonLitSide(ww);ok("waxing lit side is RIGHT",side==="RIGHT",side);
   },moonReady);
-  await scene(base+"&simTime=02:00&simWx=0&simMoon=0.3&simWax=0&simMoonAlt=55&simMoonH=0","waning moon orientation",async(ww,q,ok)=>{
+  await calendarScene(base+"&simTime=02:00&simWx=0&simMoon=0.3&simWax=0&simMoonAlt=55&simMoonH=0","waning moon orientation",async(ww,q,ok)=>{
     const side=await moonLitSide(ww);ok("waning lit side is LEFT",side==="LEFT",side);
   },moonReady);
   head("explicit motion preferences (no assumption about restored OS preference)");
@@ -409,11 +537,11 @@ async function run(){
     ok("override fixture restores exact matchMedia function",ww.matchMedia===original);
   });
   head("cloud continuity (bounded accelerated elapsed frames; NOT normal-live M0 evidence)");
-  await scene(base+"&simWx=3&simCloud=100&timeScale=1800&motion=full","cloud continuity",(ww,q,ok)=>withCloudFrameInView(ww,async sampleReady=>{
+  await cloudScene(base+"&simWx=3&simCloud=100&timeScale=1800&motion=full","cloud continuity",(ww,q,ok)=>withCloudFrameInView(ww,async sampleReady=>{
     const seed1=ww.qaState().wxTruth.cloudFieldSeed,cv=ww.document.querySelector(".cloudcanvas"),x=cv.getContext("2d");
     const grab=()=>{const d=x.getImageData(0,0,cv.width,cv.height).data;let a=0,h=0;for(let i=3;i<d.length;i+=4){a+=d[i];h=(h+d[i]*(((i>>2)*2654435761>>>20)&2047))%2147483647;}return {a,h};};
     const start=ww.performance.now();ww.paintClouds(ww.simNow()/1000);const g1=grab();await new Promise(resolve=>setTimeout(resolve,350));
-    sampleReady();ww.paintClouds(ww.simNow()/1000);const g2=grab();
+    sampleReady("post-350ms-before-second-paint");ww.paintClouds(ww.simNow()/1000);const g2=grab();
     ok("actual monotonic interval elapsed",ww.performance.now()-start>=300);
     ok("accelerated overcast deck present + evolves",g1.a>0&&g1.h!==g2.h,"alpha="+g1.a+" changed="+(g1.h!==g2.h));
     ok("cloudFieldSeed stable across controlled paints",seed1===ww.qaState().wxTruth.cloudFieldSeed);
