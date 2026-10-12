@@ -1,0 +1,24 @@
+{
+  "schema": "r0014-final-inventory-failure/1",
+  "atUtc": "2026-10-12T13:57:03.212202+00:00",
+  "status": "FINAL_CLOSED_INVENTORY_ASSERTION_FAILED; NOT_ADMITTED_OR_PUBLISHED",
+  "originalFailedManifest": {
+    "path": "retained-failed-inventory-01/MANIFEST.json",
+    "bytes": 20063,
+    "sha256": "90b00c6ed8fd9817640f7949b6d6a429d540388f755917a9eefd8803a3a40365"
+  },
+  "originalProvisionalSeal": {
+    "path": "retained-failed-inventory-01/SEAL.json",
+    "bytes": 2337,
+    "sha256": "807d71745c4a3f83e37d6ae120ab37cdcdde5d281f1770e78aca7ab6cfa02ee9"
+  },
+  "missingMembers": [
+    "inputs/pre-delivery/MANIFEST.json",
+    "inputs/pre-delivery/SEAL.json"
+  ],
+  "cause": "Basename exclusions accidentally omitted archived pre-delivery files, while intended exclusions were root-level manifest/seal only. Content/source/318 operative pin checks had passed.",
+  "correction": "Exclude exact root-relative MANIFEST.json and SEAL.json only; preserve failed inventory/seal and all archived files in the final closed inventory",
+  "sourceNativeBrowserPublicEffects": false,
+  "newRunner": false,
+  "failureIsNotAnIndependentReviewCycleOrSubjectRun": true
+}

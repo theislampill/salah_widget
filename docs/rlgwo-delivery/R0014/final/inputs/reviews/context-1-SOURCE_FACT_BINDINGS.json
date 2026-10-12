@@ -1,0 +1,297 @@
+{
+  "assertions": [
+    {
+      "id": "minimum-host",
+      "READMEClaimLines": [
+        62,
+        67
+      ],
+      "sourceRegionIds": [
+        "PS-HOST-PARAMS"
+      ],
+      "assertion": "Windows PowerShell5.1 is the script-declared floor; powershell.exe is the selected Windows host.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "bounded-seven",
+      "READMEClaimLines": [
+        62,
+        68,
+        116
+      ],
+      "sourceRegionIds": [
+        "PS-HOST-PARAMS"
+      ],
+      "assertion": "Supported PowerShell7 alternative pwsh.exe is bounded to retained7.6.6 proof, not arbitrary future versions.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "response-string",
+      "READMEClaimLines": [
+        63,
+        66,
+        67
+      ],
+      "sourceRegionIds": [
+        "BUILDER-WINDOWS-CMD"
+      ],
+      "assertion": "Existing irm|iex expression executes response text in the chosen host; unchanged builder command preserved.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "one-host-policy",
+      "READMEClaimLines": [
+        69,
+        107,
+        118
+      ],
+      "sourceRegionIds": [
+        "PS-HOST-PARAMS"
+      ],
+      "assertion": "Choose one normal-mode host; shown commands add no policy bypass. Policy refusal is not successful installation.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "pinned-download",
+      "READMEClaimLines": [
+        95,
+        105,
+        110
+      ],
+      "sourceRegionIds": [
+        "PS-HOST-PARAMS"
+      ],
+      "assertion": "18ff exact install.ps1 URL and Invoke-WebRequest -UseBasicParsing -OutFile preserve distributed bytes; fresh public bytes equal current d4d0 source.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "review-without-resaving",
+      "READMEClaimLines": [
+        106,
+        107,
+        111
+      ],
+      "sourceRegionIds": [
+        "PS-HOST-PARAMS"
+      ],
+      "assertion": "Get-Content -LiteralPath reads the quoted file; no Set-Content rewrite or encoding change instructed. UTF8 string parse is not substituted for exact-file native ParseFile.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "quoted-file",
+      "READMEClaimLines": [
+        112,
+        113,
+        117,
+        118
+      ],
+      "sourceRegionIds": [
+        "PS-HOST-PARAMS"
+      ],
+      "assertion": "Both selected hosts use -NoProfile and quoted .\\install.ps1 with -File; -DryRun optional preview, next normal form has effects and is not executed as a docs check.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "offline-preview",
+      "READMEClaimLines": [
+        96,
+        112,
+        117
+      ],
+      "sourceRegionIds": [
+        "PS-PREVIEW-ENTRY"
+      ],
+      "assertion": "DryRun only discovers local state/prints plan; whole-entry guard precedes prompts/normal work. Accepted R0016 boundaries reused without re-review or execution.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "configuration-carry",
+      "READMEClaimLines": [
+        81,
+        82,
+        83,
+        84
+      ],
+      "sourceRegionIds": [
+        "BUILDER-WINDOWS-CMD",
+        "PS-HOST-PARAMS",
+        "PS-CONFIG-MANUAL"
+      ],
+      "assertion": "Builder carries encoded hash in SALAH_WIDGET_HASH; reviewed-file user retains env or supplies WidgetHash; preset iframe replaces local=1 with that configuration.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "manual-outcome",
+      "READMEClaimLines": [
+        86,
+        87,
+        88,
+        89,
+        90
+      ],
+      "sourceRegionIds": [
+        "PS-MANUAL-CALLER",
+        "PS-CONFIG-MANUAL"
+      ],
+      "assertion": "Downloads/staging/clipboard/opened manual pages differ from manual extension install/preset import; no silent install/direct browser extension storage writes; import replaces dashboard.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    },
+    {
+      "id": "conditional-location",
+      "READMEClaimLines": [
+        90,
+        91
+      ],
+      "sourceRegionIds": [
+        "BUILDER-HASH-ALLOW"
+      ],
+      "assertion": "Preserved iframe geolocation delegation/host limitation and coarse fallback; no actual parent/Tabliss version qualification introduced.",
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS"
+    }
+  ],
+  "regions": [
+    {
+      "id": "PS-HOST-PARAMS",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\install.ps1",
+        "bytes": 26157,
+        "sha256": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215"
+      },
+      "startLine": 1,
+      "endLine": 27,
+      "text": "# Salah Widget Installer for Windows\n# Safe wizard: detects browsers/profiles, refuses legacy Tabliss profiles, downloads TablissNG release assets,\n# and stages the Salah Widget preset for manual import into TablissNG.\n#\n# Usage:\n#   powershell -ExecutionPolicy Bypass -File .\\install.ps1\n#   powershell -ExecutionPolicy Bypass -File .\\install.ps1 -PresetUrl \"https://raw.githubusercontent.com/YOU/REPO/main/presets/salah-widget.tablissng.json\"\n#   powershell -File .\\install.ps1 -DryRun  # offline local discovery; no writes, network, clipboard or browser opens\n#\n# Environment overrides:\n#   SALAH_WIDGET_HASH        Optional URL-hash config (lat=..&lon=..&method=..) baked into the widget iframe\n#   SALAH_WIDGET_PRESET_URL  Raw URL to your TablissNG preset JSON\n#   SALAH_INSTALL_SOURCE     github | store | ask\n#   TABLISSNG_REPO           owner/repo for upstream TablissNG, default BookCatKid/TablissNG\n\n#requires -Version 5.1\n\n[CmdletBinding()]\nparam(\n    [string]$PresetUrl = $(if ($env:SALAH_WIDGET_PRESET_URL) { $env:SALAH_WIDGET_PRESET_URL } else { \"https://raw.githubusercontent.com/theislampill/salah_widget/main/presets/salah-widget.tablissng.json\" }),\n    [string]$WidgetHash = $(if ($env:SALAH_WIDGET_HASH) { $env:SALAH_WIDGET_HASH } else { \"\" }),\n    [ValidateSet(\"ask\", \"github\", \"store\")]\n    [string]$InstallSource = $(if ($env:SALAH_INSTALL_SOURCE) { $env:SALAH_INSTALL_SOURCE } else { \"github\" }),\n    [string]$TablissNgRepo = $(if ($env:TABLISSNG_REPO) { $env:TABLISSNG_REPO } else { \"BookCatKid/TablissNG\" }),\n    [switch]$DryRun,\n    [switch]$NoOpen\n)\n",
+      "regionSha256": "f7eebc244ec289890bc37df7260a122bb6fe2b6cf83015d1ccbc0f1349f8a88d"
+    },
+    {
+      "id": "PS-CONFIG-MANUAL",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\install.ps1",
+        "bytes": 26157,
+        "sha256": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215"
+      },
+      "startLine": 383,
+      "endLine": 441,
+      "text": "function Download-Preset {\n    if ($DryRun) { Write-Host \"[dry-run] Preset staging suppressed.\"; return $null }\n    if (-not $PresetUrl) {\n        Write-Warn \"No preset URL configured. Set -PresetUrl or SALAH_WIDGET_PRESET_URL.\"\n        return $null\n    }\n\n    $presetFile = Join-Path $PresetRoot \"salah-widget.tablissng.json\"\n    Write-Host \"Downloading Salah Widget preset:\"\n    Write-Host \"  $PresetUrl\"\n\n    try {\n        Invoke-WebRequest -UseBasicParsing -Uri $PresetUrl -OutFile $presetFile\n        if ($WidgetHash) {\n            # bake the builder's chosen configuration into the staged preset's iframe URL\n            # (replaces the default #local=1 hash) so the user's settings carry through the install\n            $raw = (Get-Content -Raw -LiteralPath $presetFile).Replace(\"local=1\", $WidgetHash)\n            [System.IO.File]::WriteAllText($presetFile, $raw, (New-Object System.Text.UTF8Encoding $false))\n            Write-Ok \"Applied your widget configuration to the preset (#$WidgetHash).\"\n        }\n        try {\n            Get-Content -Raw -LiteralPath $presetFile | ConvertFrom-Json | Out-Null\n            Write-Ok \"Preset JSON is parseable: $presetFile\"\n        } catch {\n            Write-Warn \"Downloaded preset is not parseable JSON. Check the preset file before publishing.\"\n        }\n        return $presetFile\n    } catch {\n        Write-Warn \"Could not download preset from the configured URL.\"\n        Write-Warn \"Configure -PresetUrl after you publish the preset JSON in your repository.\"\n        return $null\n    }\n}\n\nfunction Show-ImportInstructions($Target, [string]$PresetFile) {\n    if ($DryRun) { Write-Host \"[dry-run] Would guide manual preset import; no artifact resolved.\"; return }\n    Write-Section \"Import Salah Widget preset for $($Target.Browser) / $($Target.ProfileName)\"\n    if ($PresetFile) {\n        Write-Host \"Preset file:\"\n        Write-Host \"  $PresetFile\"\n        if (Copy-Text $PresetFile) {\n            Write-Ok \"Copied the preset file path to clipboard.\"\n        }\n    } else {\n        Write-Warn \"Preset file is not available yet.\"\n    }\n\n    Write-Host \"\"\n    Write-Host \"Manual import path:\"\n    Write-Host \"  1. Open a new tab controlled by TablissNG.\"\n    Write-Host \"  2. Open TablissNG settings.\"\n    Write-Host \"  3. Use Import/Restore settings.\"\n    Write-Host \"  4. Select the preset JSON file above.\"\n    Write-Host \"\"\n    Write-Host \"This wizard does not directly write into browser extension storage.\"\n    Write-Host \"That avoids corrupting profiles and avoids touching legacy Tabliss.\"\n    Write-Warn \"Importing the preset replaces your current TablissNG dashboard.\"\n\n    Open-TargetUrl $Target $Target.Config.NewTabUrl\n",
+      "regionSha256": "47aa0284ad490ee6d32b91fc5d5b395a11848847dfc9271a29881b4a848aaaaa"
+    },
+    {
+      "id": "PS-MANUAL-CALLER",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\install.ps1",
+        "bytes": 26157,
+        "sha256": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215"
+      },
+      "startLine": 444,
+      "endLine": 505,
+      "text": "function Install-TablissNG($Target) {\n    if ($DryRun) { Write-Host \"[dry-run] Manual installation actions suppressed; release and paths unresolved.\"; return }\n    $source = $InstallSource\n    if ($source -eq \"ask\") {\n        Write-Host \"\"\n        Write-Host \"Install source for $($Target.Browser):\"\n        Write-Host \"  1) GitHub latest release/manual install\"\n        Write-Host \"  2) Official browser store page\"\n        $choice = Read-Host \"Choose [1/2] (default 1)\"\n        if ($choice -eq \"2\") { $source = \"store\" } else { $source = \"github\" }\n    }\n\n    if ($source -eq \"store\") {\n        Write-Section \"Open official store page for $($Target.Browser)\"\n        Write-Host $Target.Config.StoreUrl\n        Open-TargetUrl $Target $Target.Config.StoreUrl\n        Write-Host \"Finish the browser's normal extension install, then return here.\"\n        Read-Host \"Press Enter after TablissNG is installed\"\n        return\n    }\n\n    Write-Section \"Download TablissNG from GitHub latest release for $($Target.Browser)\"\n    try {\n        $asset = Select-TablissNgAsset $Target.Family\n        $path = Download-Asset $asset\n\n        if ($Target.Family -eq \"chromium\") {\n            $unpacked = Expand-ChromiumAsset $path\n            Write-Host \"\"\n            Write-Host \"Chromium-family install steps:\"\n            Write-Host \"  1. Open Extensions.\"\n            Write-Host \"  2. Enable Developer mode.\"\n            Write-Host \"  3. Click Load unpacked.\"\n            Write-Host \"  4. Select this folder:\"\n            Write-Host \"     $unpacked\"\n            if (Copy-Text $unpacked) {\n                Write-Ok \"Copied unpacked extension folder path to clipboard.\"\n            }\n            Open-TargetUrl $Target $Target.Config.ManagerUrl\n        } elseif ($Target.Family -eq \"firefox\") {\n            Write-Host \"\"\n            Write-Host \"Firefox-family install steps:\"\n            Write-Host \"  1. Open Add-ons Manager.\"\n            Write-Host \"  2. Click the gear icon.\"\n            Write-Host \"  3. Click Install Add-on From File.\"\n            Write-Host \"  4. Select this file:\"\n            Write-Host \"     $path\"\n            if (Copy-Text $path) {\n                Write-Ok \"Copied XPI path to clipboard.\"\n            }\n            Open-TargetUrl $Target $Target.Config.ManagerUrl\n        }\n\n        Write-Host \"\"\n        Write-Host \"Finish the browser's install prompt, then return here.\"\n        Read-Host \"Press Enter after TablissNG is installed\"\n    } catch {\n        Write-Warn $_.Exception.Message\n        Write-Warn \"Falling back to official store page.\"\n        Open-TargetUrl $Target $Target.Config.StoreUrl\n        Read-Host \"Press Enter after TablissNG is installed\"\n    }\n",
+      "regionSha256": "f0f5f02f1edf4d5fa47d0ef1c22ac60311cef39a06f0dead92d8a39ba2579613"
+    },
+    {
+      "id": "PS-PREVIEW-ENTRY",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\install.ps1",
+        "bytes": 26157,
+        "sha256": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215"
+      },
+      "startLine": 521,
+      "endLine": 561,
+      "text": "Write-Section \"Detecting browsers\"\n$targets = @(Get-Targets)\n\nif ($targets.Count -eq 0) {\n    Write-Err \"No supported browser profiles or installs were detected.\"\n    exit 1\n}\n\nforeach ($t in $targets) {\n    $status = if ($t.HasLegacyTabliss) {\n        \"legacy Tabliss detected: SKIP\"\n    } elseif ($t.HasTablissNG) {\n        \"TablissNG detected\"\n    } else {\n        \"TablissNG not detected\"\n    }\n    Write-Host (\"[{0}] {1} / {2} - {3}\" -f $t.Index, $t.Browser, $t.ProfileName, $status)\n}\n\n# Preview is a whole-entry boundary: no terminal prompts or artifact helpers run.\nif ($DryRun) {\n    Write-Section \"Offline preview\"\n    $eligibleCount=0\n    foreach ($target in $targets) {\n        if ($target.HasLegacyTabliss) { Write-Warn \"Legacy Tabliss: refusing $($target.Browser) / $($target.ProfileName).\"; continue }\n        $eligibleCount++\n        Write-Host \"Would prepare $($target.Browser) / $($target.ProfileName).\"\n        if (-not $target.HasTablissNG) {\n            if ($InstallSource -eq \"ask\") { Write-Host \"Install source unresolved: GitHub manual route or official store page.\" }\n            elseif ($InstallSource -eq \"store\") { Write-Host \"Would open official store: $($target.Config.StoreUrl)\" }\n            else { Write-Host \"Would resolve/download GitHub release; release/version/path unresolved until execution.\" }\n        }\n        if ($PresetUrl) { Write-Host \"Would stage configured preset and guide manual import; path unresolved until execution.\" }\n        else { Write-Warn \"No preset URL configured; preset import cannot be prepared.\" }\n        Write-Host \"Would open the browser's manual installation/import pages and offer clipboard paths.\"\n    }\n    Write-Warn \"Importing the preset replaces your current TablissNG dashboard.\"\n    if ($eligibleCount -eq 0) { Write-Err \"No eligible target; preview made no changes.\"; exit 1 }\n    Write-Host \"Preview only; no changes made. No network requests were made.\"\n    exit 0\n}\n",
+      "regionSha256": "b71fb31ce053d6d5db58c9420bfffdff6e992a7cc5959e004b775885e32716c3"
+    },
+    {
+      "id": "BUILDER-HASH-ALLOW",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "startLine": 200,
+      "endLine": 224,
+      "text": "const base=location.href.replace(/builder\\.html.*$/,\"\").replace(/[?#].*$/,\"\");\n\n// embed mode: \"portable\" (fixed lat/lon baked in) | \"local\" (generic #local=1 auto-detect)\nlet embedMode=\"portable\", builderLocation=null;\nfunction formConfig(){\n  return { lat:$(\"lat\").value.trim(), lon:$(\"lon\").value.trim(), label:$(\"label\").value.trim(),\n    method:$(\"method\").value, school:$(\"school\").value, time:$(\"time\").value, units:$(\"units\").value,\n    appearance:$(\"appearance\").value,\n    datefmt:$(\"dfcode\").value.trim()||\"YYYY-MM-DD\", source:builderLocation?builderLocation.source:\"manual\", locationEvidence:builderLocation };\n}\n// SINGLE shared serializer (config.js) → builder and widget can't drift apart.\nfunction hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode===\"local\"?{mode:\"local\",explicitPrefs:[\"method\",\"units\",\"appearance\"]}:{explicitPrefs:[\"appearance\"]}) : \"\"; }\nlet rev=0;\nfunction url(){ return base+\"#\"+hash(); }\n// the widget reads only location.hash, so a changing ?r= query is ignored by it but\n// forces the iframe to actually reload (a hash-only change wouldn't re-run the script).\nfunction previewUrl(){ return base+\"?r=\"+(rev++)+\"#\"+hash(); }\nfunction snippet(){\n  const allow = embedMode===\"local\" ? '\\n  allow=\"geolocation\"' : '';\n  return `<iframe\\n  title=\"Prayer Times\"\\n  referrerpolicy=\"no-referrer\"${allow}\\n  src=\"${url()}\"\\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\\n  scrolling=\"no\">\\n</iframe>`;\n}\nfunction update(){\n  $(\"code\").value=snippet();\n  $(\"pv\").allow = embedMode===\"local\" ? \"geolocation\" : \"\";\n  $(\"pv\").src=previewUrl();\n",
+      "regionSha256": "0745332253a447c71627236fb0b29d22472fa2a5026b1af4e0eae22f5e1f467d"
+    },
+    {
+      "id": "BUILDER-WINDOWS-CMD",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "startLine": 373,
+      "endLine": 390,
+      "text": "const INSTALL_REPO=\"theislampill/salah_widget\";\n// Build the install one-liner. The wizard installs a generic auto-detect preset by default; if the user has\n// configured the widget here (anything other than the plain \"#local=1\" default), carry that config to the wizard\n// via SALAH_WIDGET_HASH so the installed widget keeps their settings (no need to re-configure after installing).\nfunction installCmd(){\n  const p=((navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||navigator.userAgent||\"\").toLowerCase();\n  const win=p.includes(\"win\");\n  const h=(typeof hash===\"function\")?hash():\"\";          // same config hash as the embed snippet (respects portable / local mode)\n  const carry = !!h && h!==\"local=1\";                     // only pass it when it differs from the default auto-detect\n  let cmd;\n  if(win){\n    const base=`irm https://raw.githubusercontent.com/${INSTALL_REPO}/main/install.ps1 | iex`;\n    cmd = carry ? `$env:SALAH_WIDGET_HASH='${h}'; ${base}` : base;\n  } else {\n    const base=`curl -fsSL https://raw.githubusercontent.com/${INSTALL_REPO}/main/install.sh`;\n    cmd = carry ? `${base} | SALAH_WIDGET_HASH='${h}' bash` : `${base} | bash`;\n  }\n  return { cmd, carry };\n",
+      "regionSha256": "1a77b75e44f3a4f561519432c75fc8aafba8ebf1da1d84d96955db4b2343c550"
+    }
+  ],
+  "exactAcceptedSourceAndFixtureObjects": [
+    {
+      "acceptedObject": {
+        "path": "install.ps1",
+        "blob": "fdcf3e867199e8fba8e6f70eb65fdafa51f9c5a4",
+        "sha256": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215",
+        "bytes": 26157,
+        "reviewed_native_blob": "fdcf3e867199e8fba8e6f70eb65fdafa51f9c5a4",
+        "source_or_fixture_identical": true
+      },
+      "currentFile": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\install.ps1",
+        "bytes": 26157,
+        "sha256": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215"
+      }
+    },
+    {
+      "acceptedObject": {
+        "path": "tests/install-entry-native.py",
+        "blob": "4c3fc5f4df743fc029812c70262d301b81337afa",
+        "sha256": "5ceb35b6798ed68a07aff97def0baae7c95301864ae8d1b3e38b3d377f7760c2",
+        "bytes": 12320,
+        "reviewed_native_blob": "4c3fc5f4df743fc029812c70262d301b81337afa",
+        "source_or_fixture_identical": true
+      },
+      "currentFile": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\tests\\install-entry-native.py",
+        "bytes": 12320,
+        "sha256": "5ceb35b6798ed68a07aff97def0baae7c95301864ae8d1b3e38b3d377f7760c2"
+      }
+    },
+    {
+      "acceptedObject": {
+        "path": "tests/install-powershell.ps1",
+        "blob": "636a319a9f9950abbd014f260c4a9b830bb306a2",
+        "sha256": "e2fbfcff900af9087ff758177b20dd7e7a172671d67464d1a9ec77de3cfc61ba",
+        "bytes": 8144,
+        "reviewed_native_blob": "636a319a9f9950abbd014f260c4a9b830bb306a2",
+        "source_or_fixture_identical": true
+      },
+      "currentFile": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\tests\\install-powershell.ps1",
+        "bytes": 8144,
+        "sha256": "e2fbfcff900af9087ff758177b20dd7e7a172671d67464d1a9ec77de3cfc61ba"
+      }
+    },
+    {
+      "acceptedObject": {
+        "path": "tests/install-powershell-guards.ps1",
+        "blob": "dfc0c92d72444e4d4ce36601c6e96e4d66d6e05f",
+        "sha256": "4d860ad39c048d2a3d8ae193a665e02826dc28f4892fa4f51020347d2cb628f4",
+        "bytes": 3786,
+        "reviewed_native_blob": "dfc0c92d72444e4d4ce36601c6e96e4d66d6e05f",
+        "source_or_fixture_identical": true
+      },
+      "currentFile": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\tests\\install-powershell-guards.ps1",
+        "bytes": 3786,
+        "sha256": "4d860ad39c048d2a3d8ae193a665e02826dc28f4892fa4f51020347d2cb628f4"
+      }
+    }
+  ],
+  "sourceRebind": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\weather\\r0014-qualification-r1\\inputs\\accepted\\native-rebind.json",
+    "bytes": 40902,
+    "sha256": "39ed57662547b65cad3372d9c62b8264c65f72e1aa33ca7b8fb85a5add8fec42"
+  },
+  "ASCIIStaticSourcePreserved": true,
+  "installerAndBuilderRewritten": false,
+  "nativeTestsOrNormalInstallerRun": false,
+  "docCommandComparisonOnly": true
+}

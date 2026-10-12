@@ -1,0 +1,237 @@
+{
+  "schema": "r0014-whole-owner-source-freeze/1",
+  "atUtc": "2026-10-12T12:30:09.331734+00:00",
+  "owner": "/root/r0014_whole_owner",
+  "worktree": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget",
+  "base": "ba6d15d6f305451a7eccbbd30e2a47138c9a22b3",
+  "tree": "d80db80785c7b64a74ffff5257e98860c507f3b6",
+  "origin": "https://github.com/theislampill/salah_widget.git",
+  "status": " M README.md\n",
+  "scope": "Four exact HR-approved Windows README regions plus one bounded Windows preview-meaning paragraph; private installer/source/generator/fixtures unchanged.",
+  "approvedRegions": [
+    {
+      "id": "R14-WINDOWS-RESPONSE-HOST",
+      "acceptedUtf8Sha256": "f6c7c8d2fa9094d1f89394e54075cf0097ccc7f167e330e330b0acf29247fae6",
+      "privateUtf8Sha256": "f6c7c8d2fa9094d1f89394e54075cf0097ccc7f167e330e330b0acf29247fae6",
+      "privateStartLine": 61,
+      "sharedStartLine": 61,
+      "privateAndCurrentSharedEqualToAccepted": true
+    },
+    {
+      "id": "R14-CONFIG-MANUAL",
+      "acceptedUtf8Sha256": "b79c891693f79856f826035a3c3a20adbd30822c8a6ee55e006284e353b53c55",
+      "privateUtf8Sha256": "b79c891693f79856f826035a3c3a20adbd30822c8a6ee55e006284e353b53c55",
+      "privateStartLine": 71,
+      "sharedStartLine": 81,
+      "privateAndCurrentSharedEqualToAccepted": true
+    },
+    {
+      "id": "R14-PINNED-REVIEW-INTRO",
+      "acceptedUtf8Sha256": "dbb3423f6ce9175c37c8eaeed4cfc441648c49ec16890935685d0ce36ae3f7d5",
+      "privateUtf8Sha256": "dbb3423f6ce9175c37c8eaeed4cfc441648c49ec16890935685d0ce36ae3f7d5",
+      "privateStartLine": 86,
+      "sharedStartLine": 93,
+      "privateAndCurrentSharedEqualToAccepted": true
+    },
+    {
+      "id": "R14-WINDOWS-FILE-ROUTE",
+      "acceptedUtf8Sha256": "a8e16a2957009ae152dd04bc4e51164e61c943028b25a69b28303b6a29bd5a98",
+      "privateUtf8Sha256": "a8e16a2957009ae152dd04bc4e51164e61c943028b25a69b28303b6a29bd5a98",
+      "privateStartLine": 91,
+      "sharedStartLine": 105,
+      "privateAndCurrentSharedEqualToAccepted": true
+    }
+  ],
+  "additionalPreviewFact": {
+    "id": "R14-OFFLINE-PREVIEW-MEANING",
+    "text": "With reviewed local files, `-DryRun` performs offline local discovery and prints\nplanned actions. Preview creates no staging or usable artifacts and is neither\ninstallation nor staged completion.",
+    "utf8Sha256": "de906cfbb4631be34dcf9a3f3626114fa9d5354690975b080e8595cfc9753322",
+    "privateStartLine": 106,
+    "reason": "ba6 documentation base lacks the shared common preview paragraph. Original R0014 D3 requires local-discovery/plan and non-installation/staging meaning. This bounded paragraph makes the standalone Windows candidate complete without a sibling delivery prerequisite.",
+    "source": "install.ps1 whole-entry DryRun branch and accepted R0016 common preview facts",
+    "sourceLines": [
+      540,
+      562
+    ],
+    "sourceRegionSha256": "0fa035f817d9654b63214560143eaad8dfb8856585210623f2143c540de73120",
+    "sourceRegionText": "# Preview is a whole-entry boundary: no terminal prompts or artifact helpers run.\nif ($DryRun) {\n    Write-Section \"Offline preview\"\n    $eligibleCount=0\n    foreach ($target in $targets) {\n        if ($target.HasLegacyTabliss) { Write-Warn \"Legacy Tabliss: refusing $($target.Browser) / $($target.ProfileName).\"; continue }\n        $eligibleCount++\n        Write-Host \"Would prepare $($target.Browser) / $($target.ProfileName).\"\n        if (-not $target.HasTablissNG) {\n            if ($InstallSource -eq \"ask\") { Write-Host \"Install source unresolved: GitHub manual route or official store page.\" }\n            elseif ($InstallSource -eq \"store\") { Write-Host \"Would open official store: $($target.Config.StoreUrl)\" }\n            else { Write-Host \"Would resolve/download GitHub release; release/version/path unresolved until execution.\" }\n        }\n        if ($PresetUrl) { Write-Host \"Would stage configured preset and guide manual import; path unresolved until execution.\" }\n        else { Write-Warn \"No preset URL configured; preset import cannot be prepared.\" }\n        Write-Host \"Would open the browser's manual installation/import pages and offer clipboard paths.\"\n    }\n    Write-Warn \"Importing the preset replaces your current TablissNG dashboard.\"\n    if ($eligibleCount -eq 0) { Write-Err \"No eligible target; preview made no changes.\"; exit 1 }\n    Write-Host \"Preview only; no changes made. No network requests were made.\"\n    exit 0\n}\n\n",
+    "acceptedCommonPreviewReview": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0016_release_exit_r1\\execution\\R0016\\release-review.json",
+      "bytes": 16179,
+      "sha256": "54ee98ef656c8c738be1cd83f5e81d37ba8ffda4633081d353b1e52e61f5f9ec"
+    },
+    "exactNewProseIndependentReview": "PENDING_ROOT_ASTRA",
+    "nativeImplementationChanged": false,
+    "sharedCurrentEquivalentCommonPreviewAlreadyPresent": true,
+    "integrationRule": "Root may consume its existing accepted common-preview paragraphs as the equivalent fact rather than insert a duplicate private summary."
+  },
+  "nativeSourceRebind": [
+    {
+      "relative": "install.ps1",
+      "acceptedSha256": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215",
+      "private": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\install.ps1",
+        "bytes": 26157,
+        "sha256": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215"
+      },
+      "sharedReadOnlyDonor": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\install.ps1",
+        "bytes": 26157,
+        "sha256": "d4d0cd3efef8a1b22f66d4317e464cfe9af667db59b2bddb2f70ebf12a278215"
+      },
+      "unchangedRelevantSource": true
+    },
+    {
+      "relative": "src/native/builder.html",
+      "acceptedSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+      "private": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\src\\native\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "sharedReadOnlyDonor": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\src\\native\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "unchangedRelevantSource": true
+    },
+    {
+      "relative": "builder.html",
+      "acceptedSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+      "private": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "sharedReadOnlyDonor": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "unchangedRelevantSource": true
+    },
+    {
+      "relative": "src/native/config.js",
+      "acceptedSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "private": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "sharedReadOnlyDonor": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "unchangedRelevantSource": true
+    },
+    {
+      "relative": "config.js",
+      "acceptedSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "private": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "sharedReadOnlyDonor": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "unchangedRelevantSource": true
+    },
+    {
+      "relative": "tests/install-entry-native.py",
+      "acceptedSha256": "5ceb35b6798ed68a07aff97def0baae7c95301864ae8d1b3e38b3d377f7760c2",
+      "private": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\tests\\install-entry-native.py",
+        "bytes": 12320,
+        "sha256": "5ceb35b6798ed68a07aff97def0baae7c95301864ae8d1b3e38b3d377f7760c2"
+      },
+      "sharedReadOnlyDonor": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\tests\\install-entry-native.py",
+        "bytes": 12320,
+        "sha256": "5ceb35b6798ed68a07aff97def0baae7c95301864ae8d1b3e38b3d377f7760c2"
+      },
+      "unchangedRelevantSource": true
+    },
+    {
+      "relative": "tests/install-powershell.ps1",
+      "acceptedSha256": "e2fbfcff900af9087ff758177b20dd7e7a172671d67464d1a9ec77de3cfc61ba",
+      "private": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\tests\\install-powershell.ps1",
+        "bytes": 8144,
+        "sha256": "e2fbfcff900af9087ff758177b20dd7e7a172671d67464d1a9ec77de3cfc61ba"
+      },
+      "sharedReadOnlyDonor": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\tests\\install-powershell.ps1",
+        "bytes": 8144,
+        "sha256": "e2fbfcff900af9087ff758177b20dd7e7a172671d67464d1a9ec77de3cfc61ba"
+      },
+      "unchangedRelevantSource": true
+    },
+    {
+      "relative": "tests/install-powershell-guards.ps1",
+      "acceptedSha256": "4d860ad39c048d2a3d8ae193a665e02826dc28f4892fa4f51020347d2cb628f4",
+      "private": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\tests\\install-powershell-guards.ps1",
+        "bytes": 3786,
+        "sha256": "4d860ad39c048d2a3d8ae193a665e02826dc28f4892fa4f51020347d2cb628f4"
+      },
+      "sharedReadOnlyDonor": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\tests\\install-powershell-guards.ps1",
+        "bytes": 3786,
+        "sha256": "4d860ad39c048d2a3d8ae193a665e02826dc28f4892fa4f51020347d2cb628f4"
+      },
+      "unchangedRelevantSource": true
+    },
+    {
+      "relative": "tests/install-mutations.py",
+      "acceptedSha256": "48764931caedacc0d9ff990baeb51b3213c86e29db567cec84f8ba99435bdb3f",
+      "private": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\tests\\install-mutations.py",
+        "bytes": 6802,
+        "sha256": "48764931caedacc0d9ff990baeb51b3213c86e29db567cec84f8ba99435bdb3f"
+      },
+      "sharedReadOnlyDonor": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\tests\\install-mutations.py",
+        "bytes": 6802,
+        "sha256": "48764931caedacc0d9ff990baeb51b3213c86e29db567cec84f8ba99435bdb3f"
+      },
+      "unchangedRelevantSource": true
+    }
+  ],
+  "privateREADME": {
+    "path": "C:\\Users\\theis\\.codex\\worktrees\\r0014-whole-owner\\salah_widget\\README.md",
+    "bytes": 20245,
+    "sha256": "eacbbc1c77d815c62e2cb5cad4c4f63508db406438c2f5fec689e7a0bc7a0470"
+  },
+  "currentSharedREADMEReadOnlyDonor": {
+    "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\README.md",
+    "bytes": 34653,
+    "sha256": "b14791ffca9552d841066d6c8fff02c353f052b8952ef15d187fd340ebe317d1"
+  },
+  "patch": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0014_whole_owner_r1\\README.latest-main.patch",
+    "bytes": 3581,
+    "sha256": "935b53d96a3a5c5361c4d2e57f640ec14bbe6b53d9e24c4653a5da2080017ea8"
+  },
+  "preparedREADME": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0014_whole_owner_r1\\README.latest-main.md",
+    "bytes": 20245,
+    "sha256": "eacbbc1c77d815c62e2cb5cad4c4f63508db406438c2f5fec689e7a0bc7a0470"
+  },
+  "readmeGitBlob": "9842f69acad59c4f5390563b3b91b3158101490f",
+  "outsideInstallerEqualToLatestMain": true,
+  "latestMainAcceptedPrivacyLocationParagraphsPreserved": true,
+  "PR45PR46LocalPreferenceAndOtherBaselineContentPreservedByExactOutsideInstallerEquality": true,
+  "frozenV1TrackedDiff": "",
+  "priorBase80Freeze": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0014_whole_owner_r1\\SOURCE_FREEZE.json",
+    "bytes": 9562,
+    "sha256": "47b523f05a971f0ffc3489459674d7a13f8eb5e626eceb54caab3a80ae62eb2c"
+  },
+  "sharedWrites": 0,
+  "commitPushBrowserInstallerRuns": 0
+}

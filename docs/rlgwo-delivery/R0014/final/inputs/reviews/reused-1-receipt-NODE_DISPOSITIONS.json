@@ -1,0 +1,1465 @@
+{
+  "schema": "rlgwo-independent-node-review/2",
+  "reviewId": "HR-20261009-FINAL",
+  "supersedesAvailabilityOnlyFrom": "HR-20261009-R1: its missing-batch section is superseded; sixteen semantic decisions retained",
+  "evidenceCut": {
+    "specCommit": "21e7a84365fae37a86cae5c7d5e41008c0adc53f",
+    "graphSha256": "9ac372cfcce4df94ee0e678b907e66c131fe49f72cc55106143aa35dbdb0a6e7",
+    "evidenceCutUtc": "2026-10-09T11:07:20.216008+00:00",
+    "mainAtCut": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "publishedPr43AtCut": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+    "reviewIsCurrentGitHubReadback": false,
+    "inputZip": {
+      "name": "handoff.zip",
+      "bytes": 383317937,
+      "sha256": "76da6004ffb0419084470a5792815cbc256fa86d6b5ec30784e19533689570fb"
+    },
+    "reviewedAuthorSha256": "e57a01d586652613f2009d37d01c91765d4e87eae41a3b34b439d731d1508e8d",
+    "infoDraftSha256": "5a62e39037fd7b53017a202af2236744c1ebfad49e169739e3ef0ee7ab7067a1",
+    "generatedContextSha256": "51c09cfdd0bb535018ba76c02878c7bb8574b82a957de0c62392ed379f4834ef",
+    "suppliedBatches": [
+      "01_P1_weather_evidence",
+      "02_P1_weather_information_and_docs",
+      "03_prayer_documentation",
+      "04_installer_documentation",
+      "05_settings_privacy_and_diagnostics"
+    ],
+    "noMergeDeployOrIssueClosureAuthority": true,
+    "batch05Archive": {
+      "name": "05_settings_privacy_and_diagnostics(1).zip",
+      "bytes": 42077304,
+      "sha256": "7966e15b428c70deb84e2754a703b14c72544555270ea03b8c38c9544670e2e4",
+      "originalFilenameCopyHasIdenticalBytes": true,
+      "manifestFilesVerified": 458,
+      "manifestSha256": "28b40631a05aea27810fcfead7159e48db99e82c5fb7e0f2c9fac196fc9e5497"
+    },
+    "priorReview": {
+      "reviewId": "HR-20261009-R1",
+      "archiveSha256": "debab4cce64b583c6e576373497834559ad33cdd38f62ca5fa813859d4afdd27",
+      "manifestFilesReverified": 138,
+      "first16DispositionsCarriedForward": true,
+      "priorTestsNotRerunInFinalPass": true
+    },
+    "allSubmittedNodesNowReviewed": true,
+    "batch05PackagingDifference": {
+      "advertisedOuterSha256": "fa7f7272dee53d0ba6fb80aa2f7d85278cca7f2b2ae9e7929914a3f0723fb06f",
+      "advertisedBytes": 42107188,
+      "advertisedManifestSha256": "3e89d0dcbdda992dfe07373779cda86b922d5c144418606f6d2aba4052741286",
+      "advertisedManifestFiles": 464,
+      "actualManifestFiles": 458,
+      "admission": "Review explicitly binds actual internally verified upload, not the different advertised outer ZIP. Shared ACTIVE_LEDGER, RECONCILIATION and GITHUB_READBACK are byte-identical to handoff authority. No whole-archive interchangeability asserted.",
+      "additionalUploadNeededForThisScopedReview": false
+    }
+  },
+  "suppliedNodes": 22,
+  "reviewedNodes": 22,
+  "inventoryNodes": 22,
+  "counts": {
+    "INSUFFICIENT_EVIDENCE": 8,
+    "REQUEST_CHANGES": 5,
+    "PASS": 9
+  },
+  "notReviewed": [],
+  "nodes": [
+    {
+      "node": "R000B-EVIDENCE",
+      "rlgwo": "R000B",
+      "issues": [
+        {
+          "number": 11,
+          "url": "https://github.com/theislampill/salah_widget/issues/11",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P1",
+      "batch": "01_P1_weather_evidence",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SOURCE_AND_CONTROL_SCOPE",
+        "description": "Freshness/target admission, finite raw and derived radar epochs, and independently discriminating clock/consumer mutants."
+      },
+      "basis": "Fresh Linux Node replay on exact e57a01d5 authored source passes the healthy R000B suite and its named mutants. Generated context is pinned older51c09c; it is not the completed authored-to-generated join.",
+      "literalExitCriteria": [
+        "Binding B04 oracle: validate raw numeric frame and index seconds, convert each once, and require a finite valid derived epoch before Image dispatch or admission/install. Absent/null/string/negative/nonfinite raw frame time or finite-seconds multiplication overflow must dispatch no Image and install no invalid frame/index epoch; an invalid index epoch must not be installed or used as a frame-time substitute. For every rejection radarEvidence.available=false and radarPrecipNow()=0; pre-existing authority rejection alone cannot pass the admission row. Fresh finite frame/index control samples the actual fixture Image/canvas and preserves separate frame/index/receipt clocks. Check generated/index multiplication independently of a healthy frame; do not call Infinity a finite valid epoch.",
+        "Derived currentValidAt must remain unavailable/nonfinite and currentEligible=false on malformed time; lastWxAt not renewed, no live current chip/temp/particles; valid hourly cannot substitute for live current. Stored raw diagnostic record may survive with null epoch. Healthy control installs/cache temp20 and eligible quantity-supported model rain, direct observation false, strikes off.",
+        "M1 old-current must wrongly become eligible and its no-current witness RED; M2 repeated old-frame must wrongly become diagnostic-available and its frame-age witness RED; M3 expired header/temp/cloud/effects withdrawal witness RED; M4 captured-zone witness RED. One anchor per mutation, one mutation per run; healthy fresh/timezone controls still pass. Full final-source GREEN paired with each expected assertion RED.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Required authored semantics and discriminating controls",
+          "status": "SATISFIED_IN_AUTHORED_SOURCE_SCOPE",
+          "evidence": "receipts/weather/R000B/receipt.json"
+        },
+        {
+          "criterion": "Required final generated consumer binding",
+          "status": "UNVERIFIED",
+          "evidence": "Node card explicitly says entries have not been regenerated with this join."
+        },
+        {
+          "criterion": "Exact inputs, outputs and scoped disposition",
+          "status": "SATISFIED_FOR_REPLAY_ONLY",
+          "evidence": "INPUT_SCOPE.json and fresh-execution-index.json"
+        }
+      ],
+      "missingEvidence": [
+        "Exact generated entry/config and runtime identity after the shared author join.",
+        "Same healthy and one-at-a-time mutation controls against the generated consumer, with exact hashes and no authored-source override."
+      ],
+      "requiredAction": "Retain the accepted authored guard/tests. Regenerate once in the owned integration checkout, verify generation and rerun only these final-generated controls. Native weather/public delivery remain separately named DAG nodes; do not launch a Moon/scientific rerun.",
+      "findings": [],
+      "sourceReferences": [
+        "01_P1_weather_evidence/source/current-root/src/native/index.html:1015-1040,1205-1471",
+        "01_P1_weather_evidence/nodes/R000B-EVIDENCE.md",
+        "01_P1_weather_evidence/source/current-root/tools/qa/run_weather_mutants.py"
+      ],
+      "sourceCardSha256": "f7e28b365340c38d077ebda6e4bf53e4c3c0289a1e5a838fe5f0c8706667e5b7",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R000C-EVIDENCE",
+      "rlgwo": "R000C",
+      "issues": [
+        {
+          "number": 12,
+          "url": "https://github.com/theislampill/salah_widget/issues/12",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P1",
+      "batch": "01_P1_weather_evidence",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SOURCE_AND_CONTROL_SCOPE",
+        "description": "Finite/null/unit handling and discriminating HTTP/cache/hourly consumer controls, including the corrected real consumer extractor."
+      },
+      "basis": "Fresh Linux Node replay on exact e57a01d5 authored source passes the healthy R000C suite and its named mutants. Generated context is pinned older51c09c; it is not the completed authored-to-generated join.",
+      "literalExitCriteria": [
+        "Each source mutation makes corresponding installed/cache/consumer assertion fail, unchanged healthy input temp20, true0, negative C/F and wet controls pass. HTTP500 mutant witness must be otherwise healthy-shaped, because malformed500 may remain rejected by another gate. Preserve changed fragment, original/mutant source hashes, test command and expected assertion failure; one variant at a time.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Required authored semantics and discriminating controls",
+          "status": "SATISFIED_IN_AUTHORED_SOURCE_SCOPE",
+          "evidence": "receipts/weather/R000C/receipt.json"
+        },
+        {
+          "criterion": "Required final generated consumer binding",
+          "status": "UNVERIFIED",
+          "evidence": "Node card explicitly says entries have not been regenerated with this join."
+        },
+        {
+          "criterion": "Exact inputs, outputs and scoped disposition",
+          "status": "SATISFIED_FOR_REPLAY_ONLY",
+          "evidence": "INPUT_SCOPE.json and fresh-execution-index.json"
+        }
+      ],
+      "missingEvidence": [
+        "Exact generated entry/config and runtime identity after the shared author join.",
+        "Same healthy and one-at-a-time mutation controls against the generated consumer, with exact hashes and no authored-source override."
+      ],
+      "requiredAction": "Retain the accepted authored guard/tests. Regenerate once in the owned integration checkout, verify generation and rerun only these final-generated controls. Native weather/public delivery remain separately named DAG nodes; do not launch a Moon/scientific rerun.",
+      "findings": [],
+      "sourceReferences": [
+        "01_P1_weather_evidence/source/current-root/src/native/index.html:1015-1040,1205-1471",
+        "01_P1_weather_evidence/nodes/R000C-EVIDENCE.md",
+        "01_P1_weather_evidence/source/current-root/tools/qa/run_weather_mutants.py"
+      ],
+      "sourceCardSha256": "a0642f5a5ee29c5ad4b0322655818b7ea584ff522b6ad231998de152cc9a0f04",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R000D-EVIDENCE",
+      "rlgwo": "R000D",
+      "issues": [
+        {
+          "number": 13,
+          "url": "https://github.com/theislampill/salah_widget/issues/13",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P1",
+      "batch": "01_P1_weather_evidence",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SOURCE_AND_CONTROL_SCOPE",
+        "description": "Fetch/body and Image deadlines, successor-owner cleanup and bounded semantic mutation controls."
+      },
+      "basis": "Fresh Linux Node replay on exact e57a01d5 authored source passes the healthy R000D suite and its named mutants. Generated context is pinned older51c09c; it is not the completed authored-to-generated join.",
+      "literalExitCriteria": [
+        "Body mutant must produce unsettled/owned-busy at10000 or unauthorized late state and fail bounded-body assertion; cleanup mutant must clear B and fail successor-busy assertion; Image mutant must leave owned wait/handlers and fail image deadline assertion. Healthy weather/two stages9999+9999=19998ms still accepted; ordinary error, delayed timer absolute10001, old load/error/rejection remain paired controls. Runner itself has bounded outer watchdog so a mutant cannot hang the evidence lane.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Required authored semantics and discriminating controls",
+          "status": "SATISFIED_IN_AUTHORED_SOURCE_SCOPE",
+          "evidence": "receipts/weather/R000D/receipt.json"
+        },
+        {
+          "criterion": "Required final generated consumer binding",
+          "status": "UNVERIFIED",
+          "evidence": "Node card explicitly says entries have not been regenerated with this join."
+        },
+        {
+          "criterion": "Exact inputs, outputs and scoped disposition",
+          "status": "SATISFIED_FOR_REPLAY_ONLY",
+          "evidence": "INPUT_SCOPE.json and fresh-execution-index.json"
+        }
+      ],
+      "missingEvidence": [
+        "Exact generated entry/config and runtime identity after the shared author join.",
+        "Same healthy and one-at-a-time mutation controls against the generated consumer, with exact hashes and no authored-source override."
+      ],
+      "requiredAction": "Retain the accepted authored guard/tests. Regenerate once in the owned integration checkout, verify generation and rerun only these final-generated controls. Native weather/public delivery remain separately named DAG nodes; do not launch a Moon/scientific rerun.",
+      "findings": [],
+      "sourceReferences": [
+        "01_P1_weather_evidence/source/current-root/src/native/index.html:1015-1040,1205-1471",
+        "01_P1_weather_evidence/nodes/R000D-EVIDENCE.md",
+        "01_P1_weather_evidence/source/current-root/tools/qa/run_weather_mutants.py"
+      ],
+      "sourceCardSha256": "5539c73f4584c60cef78abc097ef9ad5755cc4ad746707687275a8ccf6cecdee",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0024-INFO",
+      "rlgwo": "R0024",
+      "issues": [
+        {
+          "number": 36,
+          "url": "https://github.com/theislampill/salah_widget/issues/36",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P1",
+      "batch": "02_P1_weather_information_and_docs",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_PROPOSAL_SEMANTICS_AND_CONTAINED_CONTROLS",
+        "description": "Formatter is downstream of admitted decisions, preserves model/SIM/unknown distinctions, interval/event units, settings action and existing aria-describedby tokens."
+      },
+      "basis": "Fresh14 contained Node cases pass on the final5a62e390 draft. The actual widget accessibility/hover consumer has not been qualified.",
+      "literalExitCriteria": [
+        "Accessible/hover information says Current: SIM supported dry; Nearby: precipitation8–12km; Approach: qualified SIM interval10–30min (with absolute zone interval available) for C, nearby only/no supported arrival for unqualified movement, and current wet plus later approach both retained. No local particles for C. Word SIM cannot be removed; production no-qualified-source shows nearby unavailable/no supported arrival. Parent button Widget settings/persistence warning/action name remains intact.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "C/nearby/approach/unqualified/current-wet and live-unavailable semantics",
+          "status": "SATISFIED_IN_DRAFT_CONTROLS",
+          "evidence": "receipts/info.stdout.txt"
+        },
+        {
+          "criterion": "Information reaches actual accessible/hover widget and preserves local settings/persistence behavior",
+          "status": "UNVERIFIED_NATIVE_CONSUMER",
+          "evidence": "Node card reports contained DOM only."
+        },
+        {
+          "criterion": "Inputs and truthful test scope",
+          "status": "SATISFIED_FOR_DRAFT_REPLAY_ONLY"
+        }
+      ],
+      "missingEvidence": [
+        "Generated candidate containing the INFO patch and exact source/config/runtime identities.",
+        "Focused actual-widget accessible-name/description/title and local-button checks for C, nearby-without-arrival, current-wet-plus-later-approach and production unavailable.",
+        "Preservation of settings keyboard/click action and persistence warning on that consumer; retained failure control must bind review-r0, not silently substitute final draft."
+      ],
+      "requiredAction": "Integrate the formatter through the sole source integrator and run the requested focused native UI cases. Do not invent a provider, require a new field study, or replace absolute target-zone intervals with a stale relative countdown. Scope/render/resource gates outside INFO stay separate.",
+      "findings": [],
+      "sourceReferences": [
+        "02_P1_weather_information_and_docs/run/workers/weather/drafts/weather-information.patch",
+        "02_P1_weather_information_and_docs/run/workers/weather/drafts/tests/r0024-information.test.cjs",
+        "02_P1_weather_information_and_docs/nodes/R0024-INFO.md"
+      ],
+      "sourceCardSha256": "2c431e1d277f3bd829ec4baa0bb121f1f108b68bbd1d72cf0023272a09ac8f7c",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R000B-DOCS",
+      "rlgwo": "R000B",
+      "issues": [
+        {
+          "number": 11,
+          "url": "https://github.com/theislampill/salah_widget/issues/11",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "02_P1_weather_information_and_docs",
+      "verdict": "REQUEST_CHANGES",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "RETAIN_CORRECT_CLOCK_AND_MODEL_DISTINCTIONS",
+        "description": "The proposed15/20-minute dual-age/current-model and radar limitations are useful and should be retained."
+      },
+      "basis": "Literal documentation exit is not covered: the draft says cache retention is less than24hours; source loadWx rejects receipt ages>=6hours, and several named clock/unavailable/skew facts are omitted.",
+      "literalExitCriteria": [
+        "State separate model-valid/currentTime/currentZone/preceding interval/retrievedAt, radar frameGeneratedAt/indexGeneratedAt/retrievedAt; processing duration not epoch; 15m/20m inclusive both source+receipt, future allowance0, cache retention6h not authority; expired unavailable dash/blank/effects off, prayer cache distinct, clock-skew limitation, no local observation/coverage/offline guarantee. Correct contradictory current nowcast wording only where it presents current behavior; preserve historical commit provenance.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Explicit clocks and6h retention vs current/radar authority",
+          "status": "INCOMPLETE",
+          "finding": "HR-D01"
+        },
+        {
+          "criterion": "Expiry display, distinct prayer cache, skew/no-guarantee boundaries",
+          "status": "INCOMPLETE",
+          "finding": "HR-D01"
+        },
+        {
+          "criterion": "Bounded source/retrieval and model/radar distinction",
+          "status": "PARTIALLY_SATISFIED"
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Revise only the weather prose: name raw model currentTime/currentZone, preceding interval, currentValidAt and retrievedAt; separate frameGeneratedAt/indexGeneratedAt/retrievedAt and processing duration; state cache read acceptance age<6h,15m/20m inclusive both source+receipt with zero future tolerance; describe dash/blank/effect withdrawal, separate prayer cache and client-clock limitation. Do not change cache schema, retention or auto-delete cached records.",
+      "findings": [
+        "HR-D01"
+      ],
+      "sourceReferences": [
+        "02_P1_weather_information_and_docs/run/workers/weather/drafts/docs/DESIGN.md:286-303",
+        "01_P1_weather_evidence/source/current-root/src/native/index.html:1212,1246-1270,1288-1331,1448-1468",
+        "02_P1_weather_information_and_docs/nodes/R000B-DOCS.md"
+      ],
+      "sourceCardSha256": "f538fdab1115578364ce0a183907419d88022cc6258e91febe97ccb7801f6fe9",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R000C-DOCS",
+      "rlgwo": "R000C",
+      "issues": [
+        {
+          "number": 12,
+          "url": "https://github.com/theislampill/salah_widget/issues/12",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "02_P1_weather_information_and_docs",
+      "verdict": "REQUEST_CHANGES",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "RETAIN_CORRECT_AMOUNT_AND_PROBABILITY_NULL_ZERO_PROSE",
+        "description": "Existing model amount/probability zero/null statements are correct but not the complete temperature/value contract."
+      },
+      "basis": "The required public distinction between unavailable temperature and genuine0degrees, finite negative/request-bound units, partial condition retention and old-cache ambiguity is not explicit.",
+      "literalExitCriteria": [
+        "Explain unavailable temp blank versus genuine0°; absent/invalid quantities retain null/reason and cannot authorize particles, genuine0 is dry model amount not fabricated measurement. Valid condition can remain despite absent optional measurements; Celsius/Fahrenheit request-bound and finite negative values allowed; no new validator package, cache migration or retrospective claim distinguishing old coerced0 from genuine0.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Unavailable temperature vs0degrees and optional measurements",
+          "status": "INCOMPLETE",
+          "finding": "HR-D02"
+        },
+        {
+          "criterion": "Request-bound C/F, negative values and no historical-zero reinterpretation",
+          "status": "INCOMPLETE",
+          "finding": "HR-D02"
+        },
+        {
+          "criterion": "Quantity/probability null-zero preservation",
+          "status": "SATISFIED_PROSE_SCOPE"
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Add the specific missing README/linked design facts. Explain blank temperature vs genuine0degrees, null/reason values, inability of absent quantities to authorise wet particles, condition retention despite optional missing measurements, captured Celsius/Fahrenheit units and finite negatives. Explicitly disclaim a cache migration or retrospective recovery of whether old coerced zero was genuine. No validator package or runtime rewrite.",
+      "findings": [
+        "HR-D02"
+      ],
+      "sourceReferences": [
+        "02_P1_weather_information_and_docs/run/workers/weather/drafts/docs/README.md:190-204",
+        "02_P1_weather_information_and_docs/run/workers/weather/drafts/docs/DESIGN.md:299-307",
+        "01_P1_weather_evidence/source/current-root/src/native/index.html:1223-1238,1257-1270,1670-1682",
+        "02_P1_weather_information_and_docs/nodes/R000C-DOCS.md"
+      ],
+      "sourceCardSha256": "a3b02199e6e2838158570afd91a59620b3e70f9292c8d112ee55a19240caea6b",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R000D-DOCS",
+      "rlgwo": "R000D",
+      "issues": [
+        {
+          "number": 13,
+          "url": "https://github.com/theislampill/salah_widget/issues/13",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "02_P1_weather_information_and_docs",
+      "verdict": "REQUEST_CHANGES",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "RETAIN_CORRECT_INDIVIDUAL10S_AND_BEST_EFFORT_CANCELLATION_PROSE",
+        "description": "The separate fetch/body, manifest and Image waits and60s/10min retry eligibility are correctly distinguished."
+      },
+      "basis": "The literal timing documentation exit also requires the combined radar bound, accepted-current+track shortcut, visible-loop opportunity and absolute-deadline rejection of late settlement. These are missing or not explicit enough.",
+      "literalExitCriteria": [
+        "Weather fetch+body shares10s timer, radar manifest fetch+body shares10s, Image independent10s after src assignment, combined radar application wait<=20s under runnable JS. Abort best effort; wrapper settles if ignored; Image handlers detach without physical cancel promise. Existing60s weather/10m radar/15m accepted-current+track shortcut/~30s render opportunity; timeout release is not instant retry/recovery. Suspended JS delays callback, absolute monotonic guard rejects late completion when resumed. No provider-health/offline/memory recovery assertion.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Individual wait stages, best-effort cancellation",
+          "status": "SATISFIED_PROSE_SCOPE"
+        },
+        {
+          "criterion": "Combined radar bound and retry opportunity/shortcut",
+          "status": "INCOMPLETE",
+          "finding": "HR-D03"
+        },
+        {
+          "criterion": "Delayed callback cannot admit a late completion; timer not guaranteed wall-time recovery",
+          "status": "INCOMPLETE",
+          "finding": "HR-D03"
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Complete the bounded wait paragraph: manifest<=10s plus a separate Image wait<=10s after dispatch, nominal combined application budget<=20s under runnable JS;60s weather/10min radar opportunities with the15m accepted-current+track shortcut and approximately30s live render opportunity; timeout release is not immediate retry. Explain the absolute elapsed deadline, late completion rejection on resume, suspended-JS caveat and best-effort physical abort. Preserve actual fallback-clock limitations; do not claim guaranteed wall-clock recovery.",
+      "findings": [
+        "HR-D03"
+      ],
+      "sourceReferences": [
+        "02_P1_weather_information_and_docs/run/workers/weather/drafts/docs/README.md:210-218",
+        "01_P1_weather_evidence/source/current-root/src/native/index.html:1029-1041,1333-1471,3479",
+        "02_P1_weather_information_and_docs/nodes/R000D-DOCS.md"
+      ],
+      "sourceCardSha256": "b547acf9c4f328ff1fb6795df11eb3acf2d3847b1af6d09e4847682cd12902f4",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0024-DOCS",
+      "rlgwo": "R0024",
+      "issues": [
+        {
+          "number": 36,
+          "url": "https://github.com/theislampill/salah_widget/issues/36",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "02_P1_weather_information_and_docs",
+      "verdict": "PASS",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_CANDIDATE_DOCUMENTATION_OWN_SCOPE",
+        "description": "The current-model/SIM/nearby/approach/forecast/unknown documentation is acceptable against its exact candidate owners."
+      },
+      "basis": "The scoped clauses preserve the owner-approved model rain/snow policy without converting it into direct observation or lightning permission. They correctly label units/windows/probability limitations and remove the current ground-truth promise while preserving historical provenance.",
+      "literalExitCriteria": [
+        "Document CURRENT MODEL ESTIMATE versus direct current simulation QA, nearby/horizon/forecast/unknown; eligible model quantities may show rain/snow without observation adapter, WMOthunder grants no strike, forecast never current. Live observation/nearby/arrival adapters unqualified/unavailable, fresh alpha mosaic not local measurement/mm/coverage health. Amount preceding interval and optional probability event/window, missingprobability not0. Accessible chip information is bounded and derived; no useful arrival service/accuracy nowcast promise, field study, telemetry/GPS/provider requirement. Correct current nowcast/ground-truth wording in DESIGN370/HANDOFF172–173; keep historic90928c8 descriptions as history.",
+        "Exact inputs/environment/hash/raw outputs and independent disposition retained; no falseGREEN or unexecuted claim."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Current model vs direct SIM/nearby/approach/forecast/unknown and effect permissions",
+          "status": "SATISFIED_CANDIDATE_PROSE"
+        },
+        {
+          "criterion": "Unavailable live adapters, calibrated radar/probability/arrival exclusions and bounded information",
+          "status": "SATISFIED_CANDIDATE_PROSE"
+        },
+        {
+          "criterion": "Correct current wording without rewriting historical90928c8 provenance",
+          "status": "SATISFIED_CANDIDATE_DIFF"
+        },
+        {
+          "criterion": "Source/evidence identity and independent disposition",
+          "status": "SATISFIED_FOR_PROPOSED_DOCUMENTATION"
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Credit this candidate documentation review after ordinary drift reconciliation. Coalesce the shared patch with HR-D01/D02/D03 corrections and publish the present-tense information-UI claims only with the INFO implementation. This is not approval of the whole shared patch, native INFO, resources, release or issue36 closure.",
+      "findings": [],
+      "sourceReferences": [
+        "02_P1_weather_information_and_docs/run/workers/weather/drafts/weather-docs.patch",
+        "02_P1_weather_information_and_docs/run/workers/weather/drafts/src/native/index.html",
+        "02_P1_weather_information_and_docs/authority/planning/OWNER_AMENDMENTS.md",
+        "02_P1_weather_information_and_docs/nodes/R0024-DOCS.md"
+      ],
+      "sourceCardSha256": "002d1978eaa8981524e9e34ae20ec457f2760a40a0e3eadbf06412dc207cca00",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0002-DOC",
+      "rlgwo": "R0002",
+      "issues": [
+        {
+          "number": 2,
+          "url": "https://github.com/theislampill/salah_widget/issues/2",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "03_prayer_documentation",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SOURCE_ACCURATE_GUARDED_DOCUMENTATION_PROPOSAL",
+        "description": "Required six-event admission, optional Sunset/Hijri and no fabricated precise times; cache and recovery limitations."
+      },
+      "basis": "The exact six-snippet successor patch is source-accurate; fresh11 pure-owner checks and guarded patch/source checks pass. The literal mapped documentation row expressly requires bound source AND related native outcomes, which the packet itself records as pending.",
+      "literalExitCriteria": [
+        "All mapped residual acceptance assertions satisfied with raw inputs/artifacts and independent review; no unresolved counterexample or false pass.",
+        "Actual output identity/status recorded; unexecuted/proposed commands never reported as PASS."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Enumerated source facts and guarded documentation diff",
+          "status": "SATISFIED_SOURCE_PROPOSAL",
+          "evidence": "receipts/portable-run-02/results.json"
+        },
+        {
+          "criterion": "Bound related native outcomes in literal mapped acceptance",
+          "status": "UNVERIFIED",
+          "evidence": "03_prayer_documentation/run/workers/weather/prayer-doc-review/PER_OWN_EXIT.json"
+        },
+        {
+          "criterion": "Truthful output identity/status and scoped independent review",
+          "status": "SATISFIED_PROPOSED_NOT_DELIVERED"
+        }
+      ],
+      "missingEvidence": [
+        "Relevant native admission/optional-date/current-data recovery outcomes supporting those clauses.",
+        "Final coalesced hunk identity and root acceptance of exact successor patch618888ca, rather than older worker draft."
+      ],
+      "requiredAction": "Retain/admit the exact guarded documentation proposal. Link existing unchanged relevant native receipts where valid; execute only genuinely absent related DAG cases. Do not re-run product campaigns merely because prose changed, block authoring on unrelated native nodes, overwrite later README/DESIGN work, or call these fresh pure controls native evidence.",
+      "findings": [],
+      "sourceReferences": [
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/prayer-docs.patch",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/GUARDS.json",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/CLAUSE_BINDINGS.json",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/PER_OWN_EXIT.json"
+      ],
+      "sourceCardSha256": "2690a1c60ed8b5176ea7a14577aaa84b614381a2718ea838d83cb0aa46372e5e",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0004-DOC",
+      "rlgwo": "R0004",
+      "issues": [
+        {
+          "number": 4,
+          "url": "https://github.com/theislampill/salah_widget/issues/4",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "03_prayer_documentation",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SOURCE_ACCURATE_GUARDED_DOCUMENTATION_PROPOSAL",
+        "description": "Location-zone hint/resolution, selected legacy cache keys, wrong-day cache as metadata only and bounded corrected-day requests; corrected ARCHITECTURE loader prose."
+      },
+      "basis": "The exact six-snippet successor patch is source-accurate; fresh11 pure-owner checks and guarded patch/source checks pass. The literal mapped documentation row expressly requires bound source AND related native outcomes, which the packet itself records as pending.",
+      "literalExitCriteria": [
+        "All mapped residual acceptance assertions satisfied with raw inputs/artifacts and independent review; no unresolved counterexample or false pass.",
+        "Actual output identity/status recorded; unexecuted/proposed commands never reported as PASS."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Enumerated source facts and guarded documentation diff",
+          "status": "SATISFIED_SOURCE_PROPOSAL",
+          "evidence": "receipts/portable-run-02/results.json"
+        },
+        {
+          "criterion": "Bound related native outcomes in literal mapped acceptance",
+          "status": "UNVERIFIED",
+          "evidence": "03_prayer_documentation/run/workers/weather/prayer-doc-review/PER_OWN_EXIT.json"
+        },
+        {
+          "criterion": "Truthful output identity/status and scoped independent review",
+          "status": "SATISFIED_PROPOSED_NOT_DELIVERED"
+        }
+      ],
+      "missingEvidence": [
+        "Relevant native location-day/cache/correction/request-owner outcomes, not just pure cache or zone helpers.",
+        "Final coalesced hunk identity and root acceptance of exact successor patch618888ca, rather than older worker draft."
+      ],
+      "requiredAction": "Retain/admit the exact guarded documentation proposal. Link existing unchanged relevant native receipts where valid; execute only genuinely absent related DAG cases. Do not re-run product campaigns merely because prose changed, block authoring on unrelated native nodes, overwrite later README/DESIGN work, or call these fresh pure controls native evidence.",
+      "findings": [],
+      "sourceReferences": [
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/prayer-docs.patch",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/GUARDS.json",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/CLAUSE_BINDINGS.json",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/PER_OWN_EXIT.json"
+      ],
+      "sourceCardSha256": "97a6caefde2c9b9f2df38eb19c193fc72fc7aa55784461403a1d1aec4620e820",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0006-DOC",
+      "rlgwo": "R0006",
+      "issues": [
+        {
+          "number": 6,
+          "url": "https://github.com/theislampill/salah_widget/issues/6",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "03_prayer_documentation",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SOURCE_ACCURATE_GUARDED_DOCUMENTATION_PROPOSAL",
+        "description": "Three10-second full attempts,900/1800ms backoff,nominal32700ms plus scheduling,60-second operation-start cadence and hidden/offscreen/fallback-clock limitations."
+      },
+      "basis": "The exact six-snippet successor patch is source-accurate; fresh11 pure-owner checks and guarded patch/source checks pass. The literal mapped documentation row expressly requires bound source AND related native outcomes, which the packet itself records as pending.",
+      "literalExitCriteria": [
+        "All mapped residual acceptance assertions satisfied with raw inputs/artifacts and independent review; no unresolved counterexample or false pass.",
+        "Actual output identity/status recorded; unexecuted/proposed commands never reported as PASS."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Enumerated source facts and guarded documentation diff",
+          "status": "SATISFIED_SOURCE_PROPOSAL",
+          "evidence": "receipts/portable-run-02/results.json"
+        },
+        {
+          "criterion": "Bound related native outcomes in literal mapped acceptance",
+          "status": "UNVERIFIED",
+          "evidence": "03_prayer_documentation/run/workers/weather/prayer-doc-review/PER_OWN_EXIT.json"
+        },
+        {
+          "criterion": "Truthful output identity/status and scoped independent review",
+          "status": "SATISFIED_PROPOSED_NOT_DELIVERED"
+        }
+      ],
+      "missingEvidence": [
+        "Bound native async-attempt/body/recovery/cadence outcomes supporting the documented timing and ownership behavior.",
+        "Final coalesced hunk identity and root acceptance of exact successor patch618888ca, rather than older worker draft."
+      ],
+      "requiredAction": "Retain/admit the exact guarded documentation proposal. Link existing unchanged relevant native receipts where valid; execute only genuinely absent related DAG cases. Do not re-run product campaigns merely because prose changed, block authoring on unrelated native nodes, overwrite later README/DESIGN work, or call these fresh pure controls native evidence.",
+      "findings": [],
+      "sourceReferences": [
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/prayer-docs.patch",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/GUARDS.json",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/CLAUSE_BINDINGS.json",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/PER_OWN_EXIT.json"
+      ],
+      "sourceCardSha256": "4152e5d3f7fe6c4107d9305aab1bf88c5627b2e34f8f97dc16d5f65a81cb847d",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0007-DOC",
+      "rlgwo": "R0007",
+      "issues": [
+        {
+          "number": 7,
+          "url": "https://github.com/theislampill/salah_widget/issues/7",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "03_prayer_documentation",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SOURCE_ACCURATE_GUARDED_DOCUMENTATION_PROPOSAL",
+        "description": "Elapsed countdown vs wall-time arc,nearest-second buckets,matching tomorrow,unavailable gap/fold inverse and frozen-preview restoration."
+      },
+      "basis": "The exact six-snippet successor patch is source-accurate; fresh11 pure-owner checks and guarded patch/source checks pass. The literal mapped documentation row expressly requires bound source AND related native outcomes, which the packet itself records as pending.",
+      "literalExitCriteria": [
+        "All mapped residual acceptance assertions satisfied with raw inputs/artifacts and independent review; no unresolved counterexample or false pass.",
+        "Actual output identity/status recorded; unexecuted/proposed commands never reported as PASS."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Enumerated source facts and guarded documentation diff",
+          "status": "SATISFIED_SOURCE_PROPOSAL",
+          "evidence": "receipts/portable-run-02/results.json"
+        },
+        {
+          "criterion": "Bound related native outcomes in literal mapped acceptance",
+          "status": "UNVERIFIED",
+          "evidence": "03_prayer_documentation/run/workers/weather/prayer-doc-review/PER_OWN_EXIT.json"
+        },
+        {
+          "criterion": "Truthful output identity/status and scoped independent review",
+          "status": "SATISFIED_PROPOSED_NOT_DELIVERED"
+        }
+      ],
+      "missingEvidence": [
+        "Bound native countdown/DST/next-day/dirty-frame outcomes supporting those clauses.",
+        "Final coalesced hunk identity and root acceptance of exact successor patch618888ca, rather than older worker draft."
+      ],
+      "requiredAction": "Retain/admit the exact guarded documentation proposal. Link existing unchanged relevant native receipts where valid; execute only genuinely absent related DAG cases. Do not re-run product campaigns merely because prose changed, block authoring on unrelated native nodes, overwrite later README/DESIGN work, or call these fresh pure controls native evidence.",
+      "findings": [],
+      "sourceReferences": [
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/prayer-docs.patch",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/GUARDS.json",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/CLAUSE_BINDINGS.json",
+        "03_prayer_documentation/run/workers/weather/prayer-doc-review/PER_OWN_EXIT.json"
+      ],
+      "sourceCardSha256": "48c8531e851226146335b3f4ad9db337f17451f2dd6b1d3e046dbd51200e8c51",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0013-DOCS",
+      "rlgwo": "R0013",
+      "issues": [
+        {
+          "number": 19,
+          "url": "https://github.com/theislampill/salah_widget/issues/19",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "04_installer_documentation",
+      "verdict": "REQUEST_CHANGES",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "RETAIN_PINNED_REVIEW_ROUTE_TERMINAL_AND_CACHE_FACTS",
+        "description": "The normal commands, selected host, controlling-terminal/default-answer, path and per-attempt cache guidance are useful; do not discard them."
+      },
+      "basis": "README_INSTALLER_REPLACEMENT.md lines23-25 says EOF refuses before staging. Actual main stages at731 before later install questions at571/580/589/615; manual-ack EOF can follow successful asset staging and clipboard/open operations.",
+      "literalExitCriteria": [
+        "All enumerated facts and pinned recipe are complete; no changed invocation/runtime/permission contract"
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Pinned review route,terminal/default/path/cache/manual configuration facts",
+          "status": "MOSTLY_SATISFIED_CANDIDATE"
+        },
+        {
+          "criterion": "Accurate EOF stage/effect boundary",
+          "status": "CONTRADICTED_BY_SOURCE_AND_COMPONENT_CONTROL",
+          "finding": "HR-I01"
+        },
+        {
+          "criterion": "No invocation/runtime/permission change",
+          "status": "SATISFIED_CANDIDATE_DIFF"
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Correct the universal EOF sentence and clarify the plan wording: no controlling terminal or EOF at initial target selection refuses before staging; EOF at later source/manual prompts refuses further progress but staging or earlier requested effects may already have occurred. Preserve partial-bundle retention and manual-pending state. Do not change installer cleanup or delete retained bundles to make the overbroad sentence true. Re-review this small prose correction against pinned call order.",
+      "findings": [
+        "HR-I01"
+      ],
+      "sourceReferences": [
+        "04_installer_documentation/run/workers/install/README_INSTALLER_REPLACEMENT.md:23-27",
+        "04_installer_documentation/source/current-root/install.sh:71-78,180-185,566-616,703-757",
+        "04_installer_documentation/authority/planning/REMAINING_RLGWOs/R0013.md:sectionD",
+        "receipts/portable-run-02/installer-component/receipt.json"
+      ],
+      "sourceCardSha256": "b639f71f0e23a429d4ddfe154249d0c567647f330042153d7f2ea62df54be5ac",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0014-DOCS",
+      "rlgwo": "R0014",
+      "issues": [
+        {
+          "number": 20,
+          "url": "https://github.com/theislampill/salah_widget/issues/20",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "04_installer_documentation",
+      "verdict": "PASS",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_CANDIDATE_DOCUMENTATION_OWN_SCOPE",
+        "description": "Windows host-specific instructions and byte-preserving pinned file review route."
+      },
+      "basis": "Exact pinned unchanged installer source and builder command generator support the proposed clauses. Fresh6 pure builder cases pass; local CommonMark HTML and Chromium documentation screenshots were inspected. No installer or native platform campaign was executed.",
+      "literalExitCriteria": [
+        "Complete accurate host/file instructions; no script or builder change"
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Declared Windows PowerShell5.1 floor and separate supportedPowerShell7/retained7.6.6 scope",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "Response-string execution vs preserved downloaded bytes and quoted-File path",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "Configured execution policy,one selected host,manual preset/config/dashboard boundaries",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "Exact proposed artifact and independent review",
+          "status": "SATISFIED_DOCUMENTATION_ONLY"
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Credit this scoped documentation review after exact hunk/source drift checks. The shared README replacement still needs HR-I01 correction before whole-patch publication. Keep native platform/UID/whole-entry/readback/delivery and parent issue closure separate. Do not ask again for the deferred Mac or run installers merely to accept these prose clauses.",
+      "findings": [],
+      "sourceReferences": [
+        "04_installer_documentation/run/workers/install/README_INSTALLER_REPLACEMENT.md",
+        "04_installer_documentation/run/workers/install/README.patch",
+        "04_installer_documentation/source/current-root/install.sh",
+        "04_installer_documentation/source/current-root/install.ps1",
+        "04_installer_documentation/source/current-root/src/native/builder.html:370-391",
+        "receipts/installer-doc-run-02/receipt.json"
+      ],
+      "sourceCardSha256": "dcd831df473e08c54d07b81b16a44defd35a405b0882bb89aeaef503387ba359",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0015-DOCS",
+      "rlgwo": "R0015",
+      "issues": [
+        {
+          "number": 21,
+          "url": "https://github.com/theislampill/salah_widget/issues/21",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "04_installer_documentation",
+      "verdict": "PASS",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_CANDIDATE_DOCUMENTATION_OWN_SCOPE",
+        "description": "Retained HOME manual-bundle,verified scratch and per-attempt cache lifetime guidance."
+      },
+      "basis": "Exact pinned unchanged installer source and builder command generator support the proposed clauses. Fresh6 pure builder cases pass; local CommonMark HTML and Chromium documentation screenshots were inspected. No installer or native platform campaign was executed.",
+      "literalExitCriteria": [
+        "Each enumerated lifecycle fact accurate; no auto-delete/install/indefinite-liveness promise"
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Exact separate scratch/retained root patterns",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "Retain unpacked folder while installed;optional manual preset/XPI deletion only",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "Completed/partial bundles survive exit/failure/interrupt;only unchanged verified scratch cleaned",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "No cross-run cached-path trust,automatic installation/deletion or indefinite-liveness promise",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "Exact proposed artifact and independent review",
+          "status": "SATISFIED_DOCUMENTATION_ONLY"
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Credit this scoped documentation review after exact hunk/source drift checks. The shared README replacement still needs HR-I01 correction before whole-patch publication. Keep native platform/UID/whole-entry/readback/delivery and parent issue closure separate. Do not ask again for the deferred Mac or run installers merely to accept these prose clauses.",
+      "findings": [],
+      "sourceReferences": [
+        "04_installer_documentation/run/workers/install/README_INSTALLER_REPLACEMENT.md",
+        "04_installer_documentation/run/workers/install/README.patch",
+        "04_installer_documentation/source/current-root/install.sh",
+        "04_installer_documentation/source/current-root/install.ps1",
+        "04_installer_documentation/source/current-root/src/native/builder.html:370-391",
+        "receipts/installer-doc-run-02/receipt.json"
+      ],
+      "sourceCardSha256": "8e62c6cae4f403ede15a5cc1fa118b9b54d494e5dfe20c675a279a83dc809d8b",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0016-DOCS",
+      "rlgwo": "R0016",
+      "issues": [
+        {
+          "number": 22,
+          "url": "https://github.com/theislampill/salah_widget/issues/22",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "04_installer_documentation",
+      "verdict": "PASS",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR or release",
+      "narrowApprovedScope": {
+        "status": "PASS_CANDIDATE_DOCUMENTATION_OWN_SCOPE",
+        "description": "Offline local preview and normalNoOpen distinction."
+      },
+      "basis": "Exact pinned unchanged installer source and builder command generator support the proposed clauses. Fresh6 pure builder cases pass; local CommonMark HTML and Chromium documentation screenshots were inspected. No installer or native platform campaign was executed.",
+      "literalExitCriteria": [
+        "All mode distinctions complete; copied normal command/manual completion/config preserved"
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Reviewed local DRY_RUN/-DryRun commands and offline discovery/plan only",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "No prompt,network,staging/artifact/write/cleanup/clipboard/browser/profile/extension effects inpreview",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "Unresolved remote source/version/path and explicit invalid/noeligible/legacy refusals",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "NoOpen only suppresses opens in otherwise effectful normal mode;buildernormal command unchanged",
+          "status": "SATISFIED_CANDIDATE_DOCUMENTATION"
+        },
+        {
+          "criterion": "Exact proposed artifact and independent review",
+          "status": "SATISFIED_DOCUMENTATION_ONLY"
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Credit this scoped documentation review after exact hunk/source drift checks. The shared README replacement still needs HR-I01 correction before whole-patch publication. Keep native platform/UID/whole-entry/readback/delivery and parent issue closure separate. Do not ask again for the deferred Mac or run installers merely to accept these prose clauses.",
+      "findings": [],
+      "sourceReferences": [
+        "04_installer_documentation/run/workers/install/README_INSTALLER_REPLACEMENT.md",
+        "04_installer_documentation/run/workers/install/README.patch",
+        "04_installer_documentation/source/current-root/install.sh",
+        "04_installer_documentation/source/current-root/install.ps1",
+        "04_installer_documentation/source/current-root/src/native/builder.html:370-391",
+        "receipts/installer-doc-run-02/receipt.json"
+      ],
+      "sourceCardSha256": "7e287eae0b0e533bb2b7936d6b72ac0f53d9fef718c6c32fe0ca2d20a2d91046",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-R1",
+        "dispositionCarriedForward": true,
+        "evidenceManifestReverifiedInFinalReview": true,
+        "testsRerunInThisFinalPass": false
+      }
+    },
+    {
+      "node": "R0010-DOC",
+      "rlgwo": "R0010",
+      "issues": [
+        {
+          "number": 16,
+          "url": "https://github.com/theislampill/salah_widget/issues/16",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "05_settings_privacy_and_diagnostics",
+      "verdict": "PASS",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR, rendered widget or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SCOPED_SOURCE_DOCUMENTATION_OR_VM_FIXTURE",
+        "description": "Source-accurate candidate README local-mode explanation and examples; no native geolocation or delivered-host claim."
+      },
+      "basis": "The adjacent local=1 paragraph correctly separates generic automatic setup, selected builder preferences for a fresh viewer, and saved-viewer precedence. Complete supplied config-owner VM checks confirm the described precedence and serialization. No new runtime behaviour is claimed.",
+      "literalExitCriteria": [
+        "Exact documentation candidate has raw semantic-review receipt and candidate hashes; merge/public delivery remains explicitly pending.",
+        "All assigned documentation assertions are checked on the candidate; their delivered/public components are reserved for later DELIVERY/CLOSE.",
+        "Candidate artifact and integration collision owners are independently reviewed."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Exact documentation candidate has raw semantic-review receipt and candidate hashes; merge/public delivery remains explicitly pending.",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "README102 and113–122 contain all three required facts beside the unchanged generic iframe; actual config serialize/resolve/applyHashPrefs and builder hash support them.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        },
+        {
+          "criterion": "All assigned documentation assertions are checked on the candidate; their delivered/public components are reserved for later DELIVERY/CLOSE.",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "Fresh config probe cases1–6 pass. Source, candidate and patch identities retained. No rendered-widget or production publication inferred.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        },
+        {
+          "criterion": "Candidate artifact and integration collision owners are independently reviewed.",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "Exact five-file patch produces declared candidates and reverses cleanly on its base. Whole-patch application to dirty current-root fails; owner must coalesce only approved hunks.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Credit the exact scoped review after current source/hunk reconciliation. Coalesce through the single documentation integrator; do not apply the full old shared-file patch over later approved work. Keep native/platform/render/integration/public-delivery and whole-issue closure gates separate.",
+      "findings": [],
+      "sourceReferences": [
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/candidate/README.md:80-122",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/source/config.js:152-175,298-327",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/source/builder.html:211",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/patches/settings-docs.patch",
+        "receipts/batch05/patch-binding.json",
+        "receipts/batch05/config-contract-results.json"
+      ],
+      "sourceCardSha256": "1b2fcd95c8229c186ec4c55d038ea4b683c3128e5b5a948739ea3f12483338ee",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-FINAL",
+        "dispositionCarriedForward": false,
+        "newIndependentSourceReview": true,
+        "freshSourceVmChecks": true,
+        "fullWidgetCampaignExecuted": false
+      }
+    },
+    {
+      "node": "R0011-DOC",
+      "rlgwo": "R0011",
+      "issues": [
+        {
+          "number": 17,
+          "url": "https://github.com/theislampill/salah_widget/issues/17",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "05_settings_privacy_and_diagnostics",
+      "verdict": "PASS",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR, rendered widget or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SCOPED_SOURCE_DOCUMENTATION_OR_VM_FIXTURE",
+        "description": "Candidate README persistence, warning and Reset/host-limit prose only."
+      },
+      "basis": "The candidate describes session-only operation on failed saving, retained warning, config-key-only Reset, failed-reset preservation, and conditional partition/TablissNG permissions. Source outcomes and isolated storage controls support the prose without inventing host-policy evidence.",
+      "literalExitCriteria": [
+        "Exact documentation candidate has raw semantic-review receipt and candidate hashes; merge/public delivery remains explicitly pending.",
+        "All assigned documentation assertions are checked on the candidate; their delivered/public components are reserved for later DELIVERY/CLOSE.",
+        "Candidate artifact and integration collision owners are independently reviewed."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Exact documentation candidate has raw semantic-review receipt and candidate hashes; merge/public delivery remains explicitly pending.",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "README110–111 and146–150 distinguish applying session settings from saving, success from failure, Reset key scope, and writable partitions.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        },
+        {
+          "criterion": "All assigned documentation assertions are checked on the candidate; their delivered/public components are reserved for later DELIVERY/CLOSE.",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "Actual config saveLocal/clearLocal and native applyConfig/persistence/reset owners inspected; fresh config cases7–12 pass. Private Map controls are not a browser-storage-policy test.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        },
+        {
+          "criterion": "Candidate artifact and integration collision owners are independently reviewed.",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "Source/candidate/patch hashes are bound. Coalesce shared privacy/local-mode hunks with R001B/R0023 and other batches; the remaining Credits contradiction is owned separately by HR-S01.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Credit the exact scoped review after current source/hunk reconciliation. Coalesce through the single documentation integrator; do not apply the full old shared-file patch over later approved work. Keep native/platform/render/integration/public-delivery and whole-issue closure gates separate.",
+      "findings": [],
+      "sourceReferences": [
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/candidate/README.md:104-111,146-150",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/source/config.js:178-218",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/source/src/native/index.html:3349-3359,3514-3540,3713-3740",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/patches/settings-docs.patch",
+        "receipts/batch05/patch-binding.json",
+        "receipts/batch05/config-contract-results.json"
+      ],
+      "sourceCardSha256": "811ef39fb2192481c2836af60e979dd0266f49ffe6a02a7dc2d16c9b0754c96a",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-FINAL",
+        "dispositionCarriedForward": false,
+        "newIndependentSourceReview": true,
+        "freshSourceVmChecks": true,
+        "fullWidgetCampaignExecuted": false
+      }
+    },
+    {
+      "node": "R001B-DOCS",
+      "rlgwo": "R001B",
+      "issues": [
+        {
+          "number": 27,
+          "url": "https://github.com/theislampill/salah_widget/issues/27",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "05_settings_privacy_and_diagnostics",
+      "verdict": "REQUEST_CHANGES",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR, rendered widget or release",
+      "narrowApprovedScope": {
+        "status": "RETAIN_CORRECT_SOURCE_ACCURATE_PROPOSAL",
+        "description": "Retain the eight request groups, precise constructed fields, no-provider-retention caveat, optional browser acquisition, writable-partition and Reset limits. No runtime rewrite is needed."
+      },
+      "basis": "The detailed eight-group request table and storage/permission caveats are correct within inspected source/VM scope, but the same candidate README Credits still says the widget stores nothing about you. That retained blanket statement contradicts saved config and caches and fails the whole-document privacy contract. Narrow R001B tests miss it because the existing composed guard is assigned OTHER.",
+      "literalExitCriteria": [
+        "Every enumerated fact complete; no retained/server-policy claim; optional precise/host/storage/Reset boundary accurate"
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Every enumerated fact complete; no retained/server-policy claim; optional precise/host/storage/Reset boundary accurate",
+          "status": "INCOMPLETE",
+          "basis": "PARTIAL: all enumerated request rows and bounded local/permission caveats are supported, but README235 retains the false blanket no-storage statement. HR-S01 must be corrected before this node passes.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json",
+            "receipts/batch05/privacy-consistency.json"
+          ]
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Correct the remaining Credits phrase in the candidate and final coalesced README. Add a whole-README bounded privacy consistency assertion to the appropriate R001B/composed selection, preserving strengthened reuse checks. Return minimal before/after source-bound prose plus RED/GREEN control; do not change storage/runtime behaviour to fit the old wording.",
+      "findings": [
+        "HR-S01"
+      ],
+      "sourceReferences": [
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/candidate/README.md:124-150,231-235",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/source/config.js:178-218",
+        "05_settings_privacy_and_diagnostics/source/current-root/tests/rlgwo-docs-contract.cjs:28-32,57-60,364-380,443-447",
+        "receipts/batch05/privacy-consistency.json",
+        "receipts/batch05/fresh-R001B.stdout",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/patches/settings-docs.patch",
+        "receipts/batch05/patch-binding.json",
+        "receipts/batch05/config-contract-results.json"
+      ],
+      "sourceCardSha256": "9185c2bc38743bce8c0308a70773ad2ec632830c06ead2b6df22c8faeee85677",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-FINAL",
+        "dispositionCarriedForward": false,
+        "newIndependentSourceReview": true,
+        "freshSourceVmChecks": true,
+        "fullWidgetCampaignExecuted": false
+      }
+    },
+    {
+      "node": "R001C-DOCS",
+      "rlgwo": "R001C",
+      "issues": [
+        {
+          "number": 28,
+          "url": "https://github.com/theislampill/salah_widget/issues/28",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "05_settings_privacy_and_diagnostics",
+      "verdict": "PASS",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR, rendered widget or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SCOPED_SOURCE_DOCUMENTATION_OR_VM_FIXTURE",
+        "description": "The selected diagnostic documents and literal/flag semantics; not visible optics, motion, reduced-motion browser behaviour or a lighting fix."
+      },
+      "basis": "Selected AGENTS/DESIGN/OPTICS diagnostic recipes use the real fragment parser, retain labelled query-negative controls, enumerate exactly the six actual force branches and explain physical eligibility, simTime freeze, reduced-motion/full override and pixel-evidence limits. All selected literal callbacks execute successfully.",
+      "literalExitCriteria": [
+        "Every required prose/literal complete; no runtime parser/force/gate change"
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Every required prose/literal complete; no runtime parser/force/gate change",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "Selected owners no longer retain an unlabelled positive query-only diagnostic recipe; complete real-time/full-motion/noon recipes and six-force enum match executed source. Thirty-eight fresh R001C callbacks plus relevant mutants discriminate the changes; parser/force production bytes are unchanged.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Credit the exact scoped review after current source/hunk reconciliation. Coalesce through the single documentation integrator; do not apply the full old shared-file patch over later approved work. Keep native/platform/render/integration/public-delivery and whole-issue closure gates separate.",
+      "findings": [],
+      "sourceReferences": [
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/candidate/AGENTS.md:144-187",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/candidate/DESIGN.md:319-379",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/candidate/OPTICS.md:13-45",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/LITERAL_INVENTORY.json",
+        "receipts/batch05/fresh-R001C.stdout",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/patches/settings-docs.patch",
+        "receipts/batch05/patch-binding.json",
+        "receipts/batch05/config-contract-results.json"
+      ],
+      "sourceCardSha256": "024576b3b3714795da7a9d571226bcfc8972ae59578a4c262f15fa490930a208",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-FINAL",
+        "dispositionCarriedForward": false,
+        "newIndependentSourceReview": true,
+        "freshSourceVmChecks": true,
+        "fullWidgetCampaignExecuted": false
+      }
+    },
+    {
+      "node": "R001C-FORCE-FIXTURE",
+      "rlgwo": "R001C",
+      "issues": [
+        {
+          "number": 28,
+          "url": "https://github.com/theislampill/salah_widget/issues/28",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "05_settings_privacy_and_diagnostics",
+      "verdict": "PASS",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR, rendered widget or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SCOPED_SOURCE_DOCUMENTATION_OR_VM_FIXTURE",
+        "description": "Scoped source/VM diagnostic fixture and literal/force/mutation evidence. No whole-widget optical rendering, real motion or parent-host qualification."
+      },
+      "basis": "The repaired fixture uses the actual production lunarPresentation and force path with legitimate _pbrFailed context. Fresh execution verifies six healthy forces, both lunar forces across five ineligibility/surface-failure inputs, unsupported corona, literal parsing and intended mutant failures. Original bootstrap/anchor failures remain retained as harness history rather than product proof.",
+      "literalExitCriteria": [
+        "Every literal and healthy/ineligible/surface-unavailable/corona/mutant check has valid execution cause/result; old failed attempt preserved"
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Every literal and healthy/ineligible/surface-unavailable/corona/mutant check has valid execution cause/result; old failed attempt preserved",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "Every submitted literal/force scope executes to its intended assertion:38 fresh R001C named checks; six healthy forces and ten lunar ineligibility checks inside their case; unsupported corona has no force. Seven supplied mutants fail at named assertions across diagnostic/privacy scopes, and two invalid scope invocations reject. Historical source-anchor/_pbrFailed failures are preserved. Current-root strengthened reuse guards must not be replaced by the older worker fixture.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Credit the exact scoped review after current source/hunk reconciliation. Coalesce through the single documentation integrator; do not apply the full old shared-file patch over later approved work. Keep native/platform/render/integration/public-delivery and whole-issue closure gates separate.",
+      "findings": [],
+      "sourceReferences": [
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/candidate/tests/rlgwo-docs-contract.cjs",
+        "05_settings_privacy_and_diagnostics/source/current-root/tests/rlgwo-docs-contract.cjs",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/source/index.html",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/logs/baseline-force.stdout.jsonl",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/MUTANTS.json",
+        "receipts/batch05/execution-index.json",
+        "receipts/batch05/fixture-candidate-to-current-root.diff",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/patches/settings-docs.patch",
+        "receipts/batch05/patch-binding.json",
+        "receipts/batch05/config-contract-results.json"
+      ],
+      "sourceCardSha256": "761df7d2e1f6c7ba07fc639474830bed3e780279fba6a89f2e0370735b630f3e",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-FINAL",
+        "dispositionCarriedForward": false,
+        "newIndependentSourceReview": true,
+        "freshSourceVmChecks": true,
+        "fullWidgetCampaignExecuted": false
+      }
+    },
+    {
+      "node": "R0023-DOC",
+      "rlgwo": "R0023",
+      "issues": [
+        {
+          "number": 35,
+          "url": "https://github.com/theislampill/salah_widget/issues/35",
+          "stateAtCapture": "OPEN"
+        }
+      ],
+      "priority": "P2",
+      "batch": "05_settings_privacy_and_diagnostics",
+      "verdict": "PASS",
+      "reviewScope": "Exact submitted candidate and literal node-local exit, not whole issue, PR, rendered widget or release",
+      "narrowApprovedScope": {
+        "status": "PASS_SCOPED_SOURCE_DOCUMENTATION_OR_VM_FIXTURE",
+        "description": "Candidate schema/lifecycle/recipient documentation for source, intent, accuracy, acquiredAt, provider, area, bounds and savedAt; not native host or public delivery."
+      },
+      "basis": "Candidate DESIGN and README match the actual locationEvidence schema, finite/nonnegative accuracy versus unknown, finite-positive acquiredAt<=Date.now with zero future skew, independent savedAt, conservative legacy handling, saved browser-source compatibility and portable fixed-site privacy. Fresh full-config controls confirm these behaviours without new thresholds or presence claims.",
+      "literalExitCriteria": [
+        "Exact documentation candidate has raw semantic-review receipt and candidate hashes; merge/public delivery remains explicitly pending.",
+        "All assigned documentation assertions are checked on the candidate; their delivered/public components are reserved for later DELIVERY/CLOSE.",
+        "Candidate artifact and integration collision owners are independently reviewed."
+      ],
+      "criterionDispositions": [
+        {
+          "criterion": "Exact documentation candidate has raw semantic-review receipt and candidate hashes; merge/public delivery remains explicitly pending.",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "DESIGN386–407 and README146–150 state the exact schema/lifecycle, zero future skew, conservative legacy/old-reader and configured-site/portable boundaries; not a freshness/accuracy guarantee.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        },
+        {
+          "criterion": "All assigned documentation assertions are checked on the candidate; their delivered/public components are reserved for later DELIVERY/CLOSE.",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "Complete supplied config owner passes fresh cases13–24 including malformed/future epochs, genuine accuracy0, unchanged fix on resave, saved-reader downgrade, nondestructive legacy load, private-field omission and bounds/text limits. Native form/source paths inspected separately.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        },
+        {
+          "criterion": "Candidate artifact and integration collision owners are independently reviewed.",
+          "status": "SATISFIED_CANDIDATE_REVIEW",
+          "basis": "Candidate/document identities and shared patch are bound. Join R0011/R001B without duplication and correct shared Credits under HR-S01 before whole README publication. Public/native/issue gates remain separate.",
+          "evidence": [
+            "receipts/batch05/execution-index.json",
+            "receipts/batch05/config-contract-results.json",
+            "receipts/batch05/patch-binding.json"
+          ]
+        }
+      ],
+      "missingEvidence": [],
+      "requiredAction": "Credit the exact scoped review after current source/hunk reconciliation. Coalesce through the single documentation integrator; do not apply the full old shared-file patch over later approved work. Keep native/platform/render/integration/public-delivery and whole-issue closure gates separate.",
+      "findings": [],
+      "sourceReferences": [
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/candidate/DESIGN.md:386-407",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/candidate/README.md:104-111,146-150",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/source/config.js:45-84,118-127,152-175,178-218",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/source/src/native/index.html:3617-3628,3696-3740",
+        "05_settings_privacy_and_diagnostics/run/workers/settings_docs/patches/settings-docs.patch",
+        "receipts/batch05/patch-binding.json",
+        "receipts/batch05/config-contract-results.json"
+      ],
+      "sourceCardSha256": "de8cf4f550bdf51b6c74258f29192376af51d13f3b70be7d70a7ea932b2b41ee",
+      "issueClosureAuthorized": false,
+      "mergeAuthorized": false,
+      "reviewProvenance": {
+        "reviewId": "HR-20261009-FINAL",
+        "dispositionCarriedForward": false,
+        "newIndependentSourceReview": true,
+        "freshSourceVmChecks": true,
+        "fullWidgetCampaignExecuted": false
+      }
+    }
+  ],
+  "accounting": "Node-local review decisions, not DAG-wide completion, whole-issue closure or merge approval. PASS hunks may share files with rejected hunks. Reconcile exact source/hunk identities before credit.",
+  "effectsPerformed": {
+    "productionWrites": false,
+    "githubWrites": false,
+    "merge": false,
+    "deployment": false,
+    "issueClosure": false,
+    "reviewScratchArtifactsOnly": true
+  }
+}

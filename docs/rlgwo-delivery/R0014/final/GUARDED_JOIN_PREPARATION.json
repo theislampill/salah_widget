@@ -1,0 +1,182 @@
+{
+  "schema": "r0014-guarded-final-join-preparation/1",
+  "atUtc": "2026-10-12T13:46:11.763307+00:00",
+  "owner": "/root/r0014_whole_owner",
+  "mutationPerformed": false,
+  "graph": {
+    "sha256": "9ac372cfcce4df94ee0e678b907e66c131fe49f72cc55106143aa35dbdb0a6e7",
+    "nodes": 213,
+    "edges": 409,
+    "unchanged": true
+  },
+  "ledgerReadOnlyPreimage": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\ACTIVE_LEDGER.json",
+    "bytes": 3517421,
+    "sha256": "3603c4aabc6894c2b39977621b7b53dd2033c18d12ca7458106ee7965039b252"
+  },
+  "targetNodePreimages": [
+    {
+      "id": "R0014-DOCS",
+      "executionStatus": "COMPLETE_EXIT_VERIFIED",
+      "outputReceipts": [
+        "evidence\\independent-review-HR-20261009-FINAL\\joined-admission-wave-01\\nodes\\R0014-DOCS.json"
+      ],
+      "lastUpdatedAtUtc": "2026-10-09T14:11:32.880093+00:00"
+    },
+    {
+      "id": "R0014-QUALIFY",
+      "executionStatus": "RETURNED_PREPARATION_AWAITING_REVIEW_OR_CONSUMER",
+      "outputReceipts": [],
+      "lastUpdatedAtUtc": "2026-10-09T15:31:07.039269+00:00"
+    },
+    {
+      "id": "R0014-DELIVER",
+      "executionStatus": "COMPLETE_EXIT_VERIFIED",
+      "outputReceipts": [
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\execution\\R0014\\docs-delivery.json"
+      ],
+      "lastUpdatedAtUtc": "2026-10-12T13:30:39.822803+00:00"
+    },
+    {
+      "id": "CLOSE-R0014",
+      "executionStatus": "WAITING_PREDECESSORS",
+      "outputReceipts": [],
+      "lastUpdatedAtUtc": "2026-10-09T07:28:55.802864+00:00"
+    },
+    {
+      "id": "R0014-DELIVERY-CONFIRM",
+      "executionStatus": "WAITING_PREDECESSORS",
+      "outputReceipts": [],
+      "lastUpdatedAtUtc": "2026-10-09T07:28:55.802864+00:00"
+    },
+    {
+      "id": "R0014-RELEASE-REVIEW",
+      "executionStatus": "COMPLETE_EXIT_VERIFIED",
+      "outputReceipts": [
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\execution\\R0014\\release-review.json",
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0014-release-exit-join-r1\\receipt.json"
+      ],
+      "lastUpdatedAtUtc": "2026-10-10T00:47:21.618450+00:00"
+    },
+    {
+      "id": "R0014-MERGE-AUTHORITY",
+      "executionStatus": "COMPLETE_EXIT_VERIFIED",
+      "outputReceipts": [
+        "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\execution\\R0014\\merge-authority.json"
+      ],
+      "lastUpdatedAtUtc": "2026-10-12T13:30:39.822803+00:00"
+    }
+  ],
+  "wholeLedgerDriftRule": "Reacquire current ledger. Unrelated serialized root changes are allowed after exact affected-node/interface compatibility check. Never overwrite unrelated rows or reuse stale whole-ledger bytes. Immutable graph stays213/409.",
+  "preserveAlreadyComplete": [
+    "R0014-DOCS",
+    "R0014-RELEASE-REVIEW",
+    "R0014-MERGE-AUTHORITY",
+    "R0014-DELIVER"
+  ],
+  "proposedRootOperations": [
+    {
+      "order": 1,
+      "operation": "MANDATORY_INDEPENDENT_FINAL_CERTIFICATE_REVIEW",
+      "subject": {
+        "path": "evidence/R0014/closure-certificate.json",
+        "bytes": 48881,
+        "sha256": "17ae67925dc80f60f78e2a56724d24ad62828815e6e5223515b6d5fbea4cc71b"
+      },
+      "consumes": [
+        {
+          "path": "evidence/R0014/qualification.json",
+          "bytes": 37644,
+          "sha256": "175ddb4cc9af07cb807247edfc818f644a24222f45812a5f21058b477050aff2"
+        },
+        {
+          "path": "evidence/R0014/docs/windows-guidance.json",
+          "bytes": 34816,
+          "sha256": "4f3ac073cd8c6fc4ebb85e0266cb201a4f590600cc33ccd90d2756f568bba803"
+        },
+        {
+          "path": "evidence/R0014/delivery/readback.json",
+          "bytes": 32000,
+          "sha256": "48dc0abe1fff6e6d68d4dcb6b186ab78a21a9c00b172ba344742e4418ddb3568"
+        },
+        {
+          "path": "evidence/R0014/native-reuse.json",
+          "bytes": 96691,
+          "sha256": "3e7214bf3197c0c936a5fc2d5b87f58860c7d01b03affa4cc8c6291471dd6fce"
+        },
+        {
+          "path": "evidence/R0014/adverse-and-limits.json",
+          "bytes": 10177,
+          "sha256": "5020e560a81c3f20d9d1351bdd7e718692b49f241e4a03a56ae7c66767e8d9e5"
+        },
+        {
+          "path": "BOUND_INPUTS.json",
+          "bytes": 57186,
+          "sha256": "5c8a4f9b0b4abdb7ec060ac5124689ffcc074438dbd19765c48e6ea7a3f1998f"
+        },
+        {
+          "path": "EVIDENCE_URL_READBACK.json",
+          "bytes": 10782,
+          "sha256": "efa94b6d12f20cb868f93348d75e0034238827145af0c104dcc5b67da7d1c70c"
+        }
+      ],
+      "precondition": "Reviewer differs from worker author; verify final manifest and claims/limits. Consume earlier substantive prose/head review rather than replay it."
+    },
+    {
+      "order": 2,
+      "operation": "ROOT_CANONICAL_WRITE_AND_JOIN_R0014_QUALIFY",
+      "node": "R0014-QUALIFY",
+      "output": "evidence/R0014/qualification.json",
+      "preparedOutput": {
+        "path": "evidence/R0014/qualification.json",
+        "bytes": 37644,
+        "sha256": "175ddb4cc9af07cb807247edfc818f644a24222f45812a5f21058b477050aff2"
+      },
+      "precondition": "Exact final certificate/QUALIFY evidence accepted by root; each original parent/child proof admitted, no unknown mandatory case."
+    },
+    {
+      "order": 3,
+      "operation": "EXISTING_AUTHORIZED_EVIDENCE_ONLY_BRANCH_PUBLICATION_AND_ACTUAL_READBACK",
+      "precondition": "Root exact accepted portable cut; use established #35/#8 evidence route; no second production merge/deploy",
+      "requires": "Actual immutable public evidence commit/path/URL/status/bytes/hash receipt for published members; preserved four PNG bytes, native historical links and honest failures."
+    },
+    {
+      "order": 4,
+      "operation": "ROOT_CANONICAL_WRITE_AND_JOIN_R0014_DELIVERY_CONFIRM",
+      "node": "R0014-DELIVERY-CONFIRM",
+      "output": "evidence/R0014/delivery/readback.json",
+      "preparedOutput": {
+        "path": "evidence/R0014/delivery/readback.json",
+        "bytes": 32000,
+        "sha256": "48dc0abe1fff6e6d68d4dcb6b186ab78a21a9c00b172ba344742e4418ddb3568"
+      },
+      "precondition": "QUALIFY accepted; existing actual PR48 delivery and public consumer proof complete; new evidence publication/readback bound."
+    },
+    {
+      "order": 5,
+      "operation": "ROOT_FINAL_CERTIFICATE_COMMENT_MANUAL_CLOSE_AND_INDEPENDENT_ISSUE_READBACK",
+      "node": "CLOSE-R0014",
+      "output": "evidence/R0014/closure-certificate.json",
+      "preparedOutput": {
+        "path": "evidence/R0014/closure-certificate.json",
+        "bytes": 48881,
+        "sha256": "17ae67925dc80f60f78e2a56724d24ad62828815e6e5223515b6d5fbea4cc71b"
+      },
+      "precondition": "Root current issue/discussion/authority checked, prior mandatory outputs accepted and delivered evidence reachable. Actual issue state readback required before COMPLETE_EXIT_VERIFIED."
+    }
+  ],
+  "nodeCreditByWorker": 0,
+  "allowedNewCompletionNodesOnly": [
+    "R0014-QUALIFY",
+    "R0014-DELIVERY-CONFIRM",
+    "CLOSE-R0014"
+  ],
+  "noNativeRerun": true,
+  "noNewRunner": true,
+  "noNewApprovalOrDuplicateProductionMerge": true,
+  "finalPrivateSourceReadback": {
+    "path": "FINAL_SOURCE_READBACK.json",
+    "bytes": 4647,
+    "sha256": "a4c6a5ea76f56cec03c809a7e22b61f0a467df50921f9e40b3299dfe6fb3c88d"
+  }
+}

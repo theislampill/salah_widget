@@ -1,0 +1,12 @@
+{
+  "schema": "r0014-evidence-assembly-attempt/1",
+  "attemptExitCode": 1,
+  "subjectNativeOrBrowserExecuted": false,
+  "cause": "The evidence assembly required textEqualsExpected=true for fullDocumentSelections. The retained raw full-fence records contain expected/selected/exposed only, and the reviewed derived optional textEqualsExpected field is null.",
+  "correction": "Check recorded exposed=true plus exact selected==expected without its single final LF, as already admitted by root. No raw result or gate changed.",
+  "retainedInspection": "All six original Windows fullDocumentSelections have exposed=true, equal=false, selectedEqualsExpectedMinusOneLF=true, textEqualsExpected=null.",
+  "priorPureMetadataInspectionErrors": [
+    "A read-only summary requested missing source-regions directory; no file was created or changed.",
+    "A read-only JSON shape summary assumed an index field in the raw fullDocumentSelections records; actual keys are expected, selected, exposed."
+  ]
+}
