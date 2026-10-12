@@ -403,6 +403,13 @@ function mentions(name, tokens) {
       assert(!sources['README.md'].includes('no tracking'), 'remove unsupported blanket claim');
       assert(!privacy.includes('stores nothing about you on any server'));
     });
+    await check('docs: README privacy whole-document storage consistency', () => {
+      const readme = sources['README.md'];
+      assert(!/stores nothing about you|does no tracking|no tracking/i.test(readme), 'whole README retains an unsupported blanket privacy claim');
+      assert(readme.includes("Saved configuration uses this browser's storage."), 'keep local-storage disclosure');
+      assert(readme.includes('Provider retention or handling is not established by this widget-source description.'), 'keep provider-policy uncertainty');
+      assert(readme.includes('salah_widget:config:v1') && readme.includes('does not erase prayer/weather caches or data held by external providers'), 'keep exact Reset scope');
+    });
     await check('docs: builder privacy recipients, details link and host guidance', () => {
       const note = sources['builder.html'].match(/<p class="note"><strong>Self-configuring embeds &amp; privacy:<\/strong>[\s\S]*?<\/p>/)?.[0];
       assert(note, 'existing privacy paragraph');
