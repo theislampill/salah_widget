@@ -103,8 +103,9 @@ A generic `#local=1` embed chooses method and units automatically after area det
 
 The in-widget settings panel supports location (name, latitude, longitude), calculation
 method, Asr school, 12/24-hour, date format, and temperature units. A **location pin** beside
-the location field shows the source — **red** = estimated from your IP (the default),
-**glowing** = precise GPS (tap it to request browser permission), **grey** = manually set.
+the location field identifies an estimated area, browser/saved browser position, or manually
+selected site. Its title reports available accuracy in metres and original fix age; tap it
+to request a browser position.
 Type a place name to **search** (Enter cycles multiple matches; **Shift+Enter** keeps a custom
 display name without moving the coordinates). Changes **save automatically** when you close the
 panel; the **↺** icon resets (clears your saved settings and re-detects).
@@ -122,24 +123,31 @@ config → coarse IP/timezone detect → manual setup → safe error state.
 
 ### Auto-detect, precise location & privacy
 
-- **Coarse auto-detect is approximate** — it's based on your **IP address and timezone**, not
-  GPS. It necessarily sends your IP to the geolocation provider
-  ([GeoJS](https://www.geojs.io/), with [ipinfo.io](https://ipinfo.io) as a fallback); this
-  widget itself does no tracking and stores nothing about you on any server. We say
-  **"estimated area,"** never "precise location."
-- **Precise location is optional and user-triggered.** The "Use precise location" button asks
-  your browser's permission (`navigator.geolocation`) — it is **never** called automatically.
-  In an iframe it usually requires `allow="geolocation"` on the `<iframe>` (the local-mode
-  snippet from the builder includes it). If a host (e.g. TablissNG) strips that attribute or
-  you deny permission, the widget falls back gracefully — coarse auto-detect and manual setup
-  still work.
-- **Saved settings stay local** to your browser/profile. If storage is blocked or partitioned
-  (private browsing, strict third-party-iframe storage), saving is unavailable — the widget
-  says so and your changes still apply **for the current session** (it never crashes).
-- **TablissNG:** coarse auto-detect works inside the iframe if your network/ad-blocker allows
-  the request; precise location works only if TablissNG preserves `allow="geolocation"`;
-  saved settings persist only if it doesn't partition iframe storage. All three degrade
-  gracefully when not available.
+Saved configuration uses this browser's storage. Local persistence does not prevent external requests: the table below describes the current recipients, triggers and sent fields. This is a description of source construction and caller controls, not a new transmission trace. Connection IP accompanies external requests. Provider retention or handling is not established by this widget-source description.
+
+| Request group | Trigger | Recipient | Sent fields and limits |
+| --- | --- | --- | --- |
+| Approximate area detection | Builder initialization; widget coarse-detection paths, including local/preferLocal resolution and Reset re-detection when the resolver requires it. | GeoJS `https://get.geojs.io/v1/ip/geo.json`, then `https://ipinfo.io/json` on failure. | Connection IP; neither URL has typed-query or coordinate parameters. IANA timezone detection uses local `Intl`. IP-derived area is approximate and is not precise permission or GPS. |
+| Place/postcode search | Builder one-second debounce or Enter; widget Settings Enter. Trimmed queries shorter than 2 make no request. | Nominatim `https://nominatim.openstreetmap.org/search` | `q` contains the trimmed query; `format=jsonv2`, `addressdetails=1`, `limit=5`. `countrycodes` is the known home country only for a query containing a digit; alphabetic London has no digit-country bias. |
+| Canadian-style prefix assist | Whitespace removed from a query with a leading letter-digit-letter pattern; in addition to Nominatim. | Zippopotam `https://api.zippopotam.us/ca/<FSA>` | First 3 matched characters, uppercased: `M5V2T6` → `/ca/M5V`. No complete postcode or widget coordinates are appended. This is a prefix test, not complete-postcode validation; malformed longer queries with that prefix also trigger it. |
+| Builder coordinate reverse lookup | Eligible coordinate edits after 700 ms debounce, or permission-granted builder location acquisition. Stale/non-numeric coordinates and both automatic label/method controls off produce no request. | BigDataCloud `https://api.bigdatacloud.net/data/reverse-geocode-client` | `latitude`, `longitude`, `localityLanguage=en`, e.g. `51.5`/`-0.12`. This is the builder caller; in-widget browser location does not invoke builder reverse geocoding. |
+| Prayer requests | Eligible date-specific prayer acquisition, subject to existing cache/currentness rules. | Aladhan `https://api.aladhan.com/v1/timings/<date>` | `latitude`, `longitude`, `method`, `school`; requested date in the path. |
+| Weather requests | Eligible active current/hourly acquisition, subject to cache, simulation and currentness guards. | Open-Meteo `https://api.open-meteo.com/v1/forecast` | `latitude`, `longitude`, `timezone`, `temperature_unit` (celsius/fahrenheit), `wind_speed_unit=ms`, `forecast_days=3`, and the current/hourly field selections listed below. These requests do not establish direct local precipitation observation. |
+| Radar evidence requests | Eligible manifest, then returned latest-past frame/tile under existing weather guards. | RainViewer `https://api.rainviewer.com/public/weather-maps.json` and returned tile host/frame. | Returned host + frame path + `/256/<z>/<x>/<y>/2/1_1.png`; x/y indices derive from coordinates and disclose a location-derived area. The manifest has no coordinate query. Image alpha is not millimetres or direct local observation. |
+| Font loading | Page stylesheet/font loading, subject to cache/network policy. | Google Fonts stylesheet `fonts.googleapis.com` and font resources `fonts.gstatic.com`. | Family/style/weight stylesheet request and returned font-resource URLs; no widget location/search fields in these source URLs. Cache-dependent declarations do not mean every font is fetched on every load. |
+
+Open-Meteo's exact selected fields are:
+
+```text
+current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall
+hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day
+```
+
+- **Browser location is optional and user-triggered.** The location pin requests one browser position after permission. Its reported accuracy may be known in metres or unknown; five decimal places do not measure accuracy. In an iframe, the local snippet includes `allow="geolocation"`, and the embedding parent's Permissions Policy and user grant also apply. Stripping delegation or restricting parent policy can block acquisition; coarse/manual setup remains available.
+- **Acquisition and saving are separate.** A browser position retains its original acquisition time and reported accuracy; a saved browser position is a stored target and does not establish current presence. Saving settings does not renew a fix. Missing, malformed, nonpositive or future acquisition timestamps stay unknown; future timestamps have zero skew allowance against `Date.now()`. Portable URLs describe a configured destination and omit private acquisition history.
+- **Storage outcome is measured.** Saved settings use this browser's storage. If writing is unavailable, changes still apply for the current session and Settings shows a retained warning. A partition can be writable and retain settings within that partition. Saving and persistence depend on the host's actual storage permissions and lifetime; blocked writes cause the session-only warning.
+- **Reset scope.** Reset removes only the saved widget configuration (`salah_widget:config:v1`); it does not erase prayer/weather caches or data held by external providers. Successful removal may re-detect the area and issue the coarse request above. Failed removal reports the failure and leaves the existing target usable.
+- **TablissNG conditions.** Coarse acquisition depends on permitted provider access; browser position depends on preserved delegation, parent policy and user grant; saving depends on writable host storage and its lifetime. These conditions are not a claim that a particular TablissNG version or partition policy has been qualified.
 
 ---
 
@@ -223,8 +231,10 @@ config → coarse IP/timezone detect → manual setup → safe error state.
 ## Credits
 
 Prayer time calculations by the [Aladhan API](https://aladhan.com/prayer-times-api), and
-weather by [Open-Meteo](https://open-meteo.com) — both free and key-less. The widget makes
-direct browser requests to these APIs and stores nothing about you.
+weather by [Open-Meteo](https://open-meteo.com) — both free and key-less. These
+browser requests carry the configured location and request context. Settings
+and caches are stored in the browser when storage is available.
+Provider retention or handling is not established by this widget-source description.
 
 ## Preserved V1 compatibility URL
 

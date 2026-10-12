@@ -371,9 +371,28 @@ inline page script by **both** `index.html` and `builder.html` — one un-forkab
 normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately relaxes the old "single self-contained
 `index.html`" rule; `index.html` keeps a one-line **legacy fallback** to hash-only parsing if `config.js` 404s.)
 
-- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, lp, seed, source, savedAt}`,
-  `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, manual, fallback}`. Persisted under
-  `salah_widget:config:v1` (separate from the prayer/weather caches; every access wrapped in try/catch).
+- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, appearance, lp, seed, source, origin, savedAt, locationEvidence}`.
+  `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, place, manual, fallback}`; `origin`, when present,
+  preserves the acquisition origin independently of the storage marker. Persisted under `salah_widget:config:v1`
+  (separate from prayer/weather caches; every access wrapped in try/catch).
+- **Location evidence:** `{intent, source, accuracyM, acquiredAt, provider, area, bounds}`.
+  `intent ∈ {fixed-site, device-position, coarse-area, unknown}` and evidence
+  `source ∈ {hash, manual, place, browser-geolocation, coarse-ip, legacy, unknown}`. Coordinates select the
+  target; this record does not certify the viewer's current presence. Browser `accuracyM` is finite numeric
+  metres ≥ 0 or `null` (a reported 0 stays 0); decimal places do not establish accuracy. `acquiredAt` is a finite
+  numeric epoch > 0 and ≤ actual `Date.now()`, or `null`. The future-timestamp skew allowance is zero;
+  missing/nonpositive/future/malformed time stays unknown, never an age-0 clamp. `provider`/`area` retain
+  available text bounded to 80/240 characters. `bounds` is `{south,north,west,east}` with finite ordered
+  latitudes in [-90,90] and longitudes in [-180,180], or `null`; no radius is invented.
+- **Fix and persistence lifecycle:** `savedAt` is successful settings-write time, separate from `acquiredAt`.
+  Saving label/units/method cannot renew a fix. Label/reverse naming retains compatible evidence; coordinate
+  edits choose a manual fixed site and clear incompatible acquisition claims. Legacy records retain usable
+  coordinates/preferences without substituting `savedAt`; reads do not destructively rewrite them. Saving
+  browser-derived targets retains private evidence but downgrades the top-level source for old readers to a
+  configured site. Portable hashes describe a fixed configured destination and omit private acquisition history.
+  Denied persistence preserves useful in-memory metadata and prior saved bytes with the session-only warning;
+  a writable partition may persist within its own permissions and lifetime. No new freshness/radius threshold
+  or continuous location tracking follows from this schema.
 - **Precedence:** explicit hardcoded hash (unless `local`/`preferLocal`) → saved local → coarse IP/timezone detect
   → manual setup → safe error. **Stale localStorage never overrides an intentional hardcoded embed.**
 - **Sync vs async:** hardcoded resolves **synchronously at module load** (byte-identical boot timing — proven by
