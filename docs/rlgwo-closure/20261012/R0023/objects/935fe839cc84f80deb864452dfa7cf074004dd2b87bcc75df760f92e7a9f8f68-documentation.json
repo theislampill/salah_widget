@@ -1,0 +1,447 @@
+{
+  "schema": "r0023-documentation/v1",
+  "node": "R0023-DOC",
+  "stage": "PRE_DELIVERY_CANDIDATE",
+  "status": "ACCEPTED_SCOPE_ALIAS_PROPOSAL_CURRENTNESS_REVIEW_PENDING",
+  "interfaceId": "r0023-documentation/v1",
+  "canonicalTarget": "evidence/R0023/documentation.json",
+  "canonicalPreimageAbsentAtPreparation": true,
+  "historicalCanonicalFileClaimed": false,
+  "actualExistingDocAdmission": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\independent-review-HR-20261009-FINAL\\joined-admission-wave-01\\nodes\\R0023-DOC.json",
+    "bytes": 5591,
+    "sha256": "937c6d1297a7aaa9670237e4bc8bad08ec9396123237bab8eb298dd1642a4ebf"
+  },
+  "actualJoinedSemanticReview": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\doc_join_review\\REPORT.json",
+    "bytes": 29002,
+    "sha256": "cb878153dc3cd0636acd3a48f04d73fe6a75f6a294a68f61aa3026f21461d451"
+  },
+  "actualSharedDocJoin": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\shared-docs-HR-FINAL-r1\\coalesced\\receipt.json",
+    "bytes": 122917,
+    "sha256": "f6d10e3c5c3bd5bcdd8e4f57dbfbd7f24e6da7481d082a22afcacda1f4fa35a9"
+  },
+  "currentAcceptedReleaseReview": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\execution\\R0023\\release-review.json",
+    "bytes": 16069,
+    "sha256": "16ad2a8412ff34fd168774977b04dba0618b7a12182e97c6be6f51db38b89481"
+  },
+  "currentAcceptedReleaseRootJoin": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-release-exit-join-r1\\receipt.json",
+    "bytes": 2675,
+    "sha256": "bd3707ce0107a04988295d7e214be0c738e37314c6a4ac4d6a3abc64979f638a"
+  },
+  "exactOwnedProseAndHunks": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\OWNED_PROSE_AND_DIFF.json",
+    "bytes": 12328,
+    "sha256": "40f49dcc03840bbda5ed0f1127c11e287c623d29f4e038c1e986f3f1d129d819"
+  },
+  "ownedRegions": [
+    {
+      "id": "R23-README-PIN",
+      "file": "README.md",
+      "finalStartLine": 193,
+      "finalEndLine": 197,
+      "text": "The in-widget settings panel supports location (name, latitude, longitude), calculation\nmethod, Asr school, 12/24-hour, date format, and temperature units. A **location pin** beside\nthe location field identifies an estimated area, browser/saved browser position, or manually\nselected site. Its title reports available accuracy in metres and original fix age; tap it\nto request a browser position.\n",
+      "sha256": "a21b8f1a838fd19924c8f5e906bb71eb8f7c5f29e52418a0955832a9f1e88ea3",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            104,
+            105
+          ],
+          "finalLines": [
+            195,
+            197
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-README-ACQUIRE",
+      "file": "README.md",
+      "finalStartLine": 237,
+      "finalEndLine": 237,
+      "text": "- **Browser location is optional and user-triggered.** The location pin requests one browser position after permission. Its reported accuracy may be known in metres or unknown; five decimal places do not measure accuracy. In an iframe, the local snippet includes `allow=\"geolocation\"`, and the embedding parent's Permissions Policy and user grant also apply. Stripping delegation or restricting parent policy can block acquisition; coarse/manual setup remains available.\n",
+      "sha256": "54b168edb3dd77acfd48dfc5c940fda55aa068b9c845d5bdbd910ece6f4618bc",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            123,
+            140
+          ],
+          "finalLines": [
+            217,
+            241
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-README-FIX-SAVE",
+      "file": "README.md",
+      "finalStartLine": 238,
+      "finalEndLine": 238,
+      "text": "- **Acquisition and saving are separate.** A browser position retains its original acquisition time and reported accuracy; a saved browser position is a stored target and does not establish current presence. Saving settings does not renew a fix. Missing, malformed, nonpositive or future acquisition timestamps stay unknown; future timestamps have zero skew allowance against `Date.now()`. Portable URLs describe a configured destination and omit private acquisition history.\n",
+      "sha256": "ee67463eb12f0af7ce512e7835f98e987603998f108ef3c73b0b43472de9dbce",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            123,
+            140
+          ],
+          "finalLines": [
+            217,
+            241
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-README-STORAGE",
+      "file": "README.md",
+      "finalStartLine": 239,
+      "finalEndLine": 239,
+      "text": "- **Storage outcome is measured.** Saved settings use this browser's storage. If writing is unavailable, changes still apply for the current session and Settings shows a retained warning. A partition can be writable and retain settings within that partition. Saving and persistence depend on the host's actual storage permissions and lifetime; blocked writes cause the session-only warning.\n",
+      "sha256": "21299afbfe41c1531362732f7cae8ab3d2db746b96eb1336c4dd1c28907aac51",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            123,
+            140
+          ],
+          "finalLines": [
+            217,
+            241
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-README-HOST",
+      "file": "README.md",
+      "finalStartLine": 241,
+      "finalEndLine": 241,
+      "text": "- **TablissNG conditions.** Coarse acquisition depends on permitted provider access; browser position depends on preserved delegation, parent policy and user grant; saving depends on writable host storage and its lifetime. These conditions are not a claim that a particular TablissNG version or partition policy has been qualified.\n",
+      "sha256": "5e42283ed5702b986bd906b9c3f67e61defba88855dd391ae00855be0d1a855d",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            123,
+            140
+          ],
+          "finalLines": [
+            217,
+            241
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-DESIGN-CONFIG",
+      "file": "DESIGN.md",
+      "finalStartLine": 542,
+      "finalEndLine": 545,
+      "text": "- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, appearance, lp, seed, source, origin, savedAt, locationEvidence}`.\n  `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, place, manual, fallback}`; `origin`, when present,\n  preserves the acquisition origin independently of the storage marker. Persisted under `salah_widget:config:v1`\n  (separate from prayer/weather caches; every access wrapped in try/catch).\n",
+      "sha256": "76ced5f326ac7c1848b758231464792133a83583f61e56e55b2d0e22352fa1a6",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            356,
+            358
+          ],
+          "finalLines": [
+            542,
+            563
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-DESIGN-EVIDENCE",
+      "file": "DESIGN.md",
+      "finalStartLine": 546,
+      "finalEndLine": 554,
+      "text": "- **Location evidence:** `{intent, source, accuracyM, acquiredAt, provider, area, bounds}`.\n  `intent ∈ {fixed-site, device-position, coarse-area, unknown}` and evidence\n  `source ∈ {hash, manual, place, browser-geolocation, coarse-ip, legacy, unknown}`. Coordinates select the\n  target; this record does not certify the viewer's current presence. Browser `accuracyM` is finite numeric\n  metres ≥ 0 or `null` (a reported 0 stays 0); decimal places do not establish accuracy. `acquiredAt` is a finite\n  numeric epoch > 0 and ≤ actual `Date.now()`, or `null`. The future-timestamp skew allowance is zero;\n  missing/nonpositive/future/malformed time stays unknown, never an age-0 clamp. `provider`/`area` retain\n  available text bounded to 80/240 characters. `bounds` is `{south,north,west,east}` with finite ordered\n  latitudes in [-90,90] and longitudes in [-180,180], or `null`; no radius is invented.\n",
+      "sha256": "5c98b49568425d38f02632eeb730506fdcf14988899a9e8cba29ea2001ea3449",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            356,
+            358
+          ],
+          "finalLines": [
+            542,
+            563
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-DESIGN-LIFECYCLE",
+      "file": "DESIGN.md",
+      "finalStartLine": 555,
+      "finalEndLine": 563,
+      "text": "- **Fix and persistence lifecycle:** `savedAt` is successful settings-write time, separate from `acquiredAt`.\n  Saving label/units/method cannot renew a fix. Label/reverse naming retains compatible evidence; coordinate\n  edits choose a manual fixed site and clear incompatible acquisition claims. Legacy records retain usable\n  coordinates/preferences without substituting `savedAt`; reads do not destructively rewrite them. Saving\n  browser-derived targets retains private evidence but downgrades the top-level source for old readers to a\n  configured site. Portable hashes describe a fixed configured destination and omit private acquisition history.\n  Denied persistence preserves useful in-memory metadata and prior saved bytes with the session-only warning;\n  a writable partition may persist within its own permissions and lifetime. No new freshness/radius threshold\n  or continuous location tracking follows from this schema.\n",
+      "sha256": "20ce6b58f49ee61fcffec177f06c81a87c0e6a7cbbcc17fab78bd2b03732d883",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            356,
+            358
+          ],
+          "finalLines": [
+            542,
+            563
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    }
+  ],
+  "currentSourceFacts": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\SOURCE_FACT_BINDINGS.json",
+    "bytes": 39516,
+    "sha256": "8dd99dc80ba7f22ba8b53ec393af8d73132ae505ecfe5cd2c48723229e69ec6d"
+  },
+  "literalSourceAssertions": [
+    {
+      "id": "L01",
+      "claim": "LocationEvidence has exact intent/source/accuracyM/acquiredAt/provider/area/bounds fields and documented intent/source domains.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L02",
+      "claim": "Coordinates choose a target; acquisition source does not certify current viewer presence.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE",
+        "R23-README-FIX-SAVE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization",
+        "available-pin-accuracy-and-original-age"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L03",
+      "claim": "Reported accuracy is finite numeric metres>=0 ornull; genuine0 stays0, decimals are not measured precision.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE",
+        "R23-README-ACQUIRE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization",
+        "one-shot-user-location-and-permission-result",
+        "one-shot-location-owner-and-failure"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L04",
+      "claim": "AcquiredAt is finite numeric positive<=actualDate.now; zero future allowance; malformed/missing/nonpositive/future isnull, never age0.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE",
+        "R23-README-FIX-SAVE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization",
+        "available-pin-accuracy-and-original-age"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L05",
+      "claim": "Provider/area text is bounded80/240; finite ordered south/north/west/east bounds have documented geographic ranges ornull, with no invented radius.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L06",
+      "claim": "Successful savedAt is settings-write time separate from original acquiredAt; label/units/method resaves cannot renew a fix.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE",
+        "R23-README-FIX-SAVE"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle",
+        "form-evidence-carry"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L07",
+      "claim": "Label/reverse naming keeps compatible evidence; coordinate edits choose manual fixedsite and clear incompatible acquisition claims.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE"
+      ],
+      "sourceRegions": [
+        "name-versus-coordinate-edits",
+        "form-evidence-carry"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L08",
+      "claim": "Legacy records keep usable targets/preferences without savedAt-as-fix; load does not destructively rewrite stored bytes.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle",
+        "evidence-schema-domain-and-normalization"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L09",
+      "claim": "Browser-derived save retains private evidence/origin and downgrades top-level source to configured site for old readers.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L10",
+      "claim": "Portable hash selects fixed configured destination and omits private acquisition history.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE",
+        "R23-README-FIX-SAVE"
+      ],
+      "sourceRegions": [
+        "portable-whitelist-private-omission"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L11",
+      "claim": "Denied save leaves input evidence useful and existing bytes unchanged with session warning; writable partition depends on actual permissions/lifetime.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE",
+        "R23-README-STORAGE",
+        "R23-README-HOST"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle",
+        "persistence-before-provider-await"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L12",
+      "claim": "One user-triggered browser request reports available accuracy/originalfix age; unsupported/denied leaves manual choice usable, without new tracking/freshness thresholds.",
+      "docRegions": [
+        "R23-README-PIN",
+        "R23-README-ACQUIRE",
+        "R23-DESIGN-LIFECYCLE"
+      ],
+      "sourceRegions": [
+        "one-shot-user-location-and-permission-result",
+        "available-pin-accuracy-and-original-age",
+        "one-shot-location-owner-and-failure"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L13",
+      "claim": "Local iframe snippet delegates geolocation conditionally; actual parent policy and user grant still apply, with no claimedhost qualification.",
+      "docRegions": [
+        "R23-README-ACQUIRE",
+        "R23-README-HOST"
+      ],
+      "sourceRegions": [
+        "conditional-local-iframe-delegation",
+        "one-shot-user-location-and-permission-result",
+        "one-shot-location-owner-and-failure"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L14",
+      "claim": "Configuration origin is independent of storage marker and the private configuration key is separate from prayer/weather caches.",
+      "docRegions": [
+        "R23-DESIGN-CONFIG"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle",
+        "normalized-config-evidence"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    }
+  ],
+  "currentRegionalEquality": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+    "bytes": 35505,
+    "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+  },
+  "sourceRuntimeScope": "e718fe9e58f37535de4dc496a2da3bf2b05808153287e1fe328398ea59c0df53",
+  "delivery": "PENDING",
+  "wholeREADMEPASS": false,
+  "wholeDESIGNPASS": false,
+  "newNodeCredit": 0,
+  "rootMaterialized": false,
+  "requiresDistinctAliasAndCandidateReview": true,
+  "meaning": "Explicit data/provenance alias for earned DOC scope; not a new prose change or historical canonical availability claim"
+}

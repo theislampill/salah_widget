@@ -1,0 +1,200 @@
+{
+  "atUtc": "2026-10-09T23:40:26.617570+00:00",
+  "acquiredLedger": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\ACTIVE_LEDGER.json",
+    "bytes": 2307004,
+    "sha256": "01ce8f2129b3cf9162a748e8f37346623577debfe6c4a35f58e67595950cd4c0"
+  },
+  "nodes": [
+    {
+      "id": "R0023-DOC",
+      "executionStatus": "COMPLETE_EXIT_VERIFIED",
+      "outputReceipts": [
+        "evidence\\independent-review-HR-20261009-FINAL\\joined-admission-wave-01\\nodes\\R0023-DOC.json"
+      ],
+      "progress": {
+        "unmetPredecessors": [],
+        "owners": [
+          "root",
+          "doc_join_review"
+        ],
+        "evidence": [
+          "workers/settings_docs/REPORT.json",
+          "evidence\\independent-review-HR-20261009-FINAL\\RECONCILIATION.json",
+          "intake\\pro-review-HR-20261009-FINAL\\RLGWO_Final_Independent_Review\\NODE_DISPOSITIONS.json",
+          "concurrency\\expansion-wave-01\\doc_join_review.json",
+          "evidence\\independent-review-HR-20261009-FINAL\\joined-admission-wave-01\\nodes\\R0023-DOC.json",
+          "workers\\doc_join_review\\REPORT.json",
+          "integration\\shared-docs-HR-FINAL-r1\\coalesced\\receipt.json"
+        ],
+        "exitCriteriaVerified": true,
+        "state": "COMPLETE",
+        "reason": "Actual joined source and exact node-local exits independently reviewed and current-byte reconciled; public/native/issue/release gates remain separate.",
+        "exitCriteriaDisposition": [
+          {
+            "criterion": "Exact documentation candidate has raw semantic-review receipt and candidate hashes; merge/public delivery remains explicitly pending.",
+            "disposition": "SATISFIED",
+            "evidence": [
+              "evidence\\independent-review-HR-20261009-FINAL\\joined-admission-wave-01\\nodes\\R0023-DOC.json",
+              "workers\\doc_join_review\\REPORT.json",
+              "integration\\shared-docs-HR-FINAL-r1\\coalesced\\receipt.json"
+            ]
+          },
+          {
+            "criterion": "All assigned documentation assertions are checked on the candidate; their delivered/public components are reserved for later DELIVERY/CLOSE.",
+            "disposition": "SATISFIED",
+            "evidence": [
+              "evidence\\independent-review-HR-20261009-FINAL\\joined-admission-wave-01\\nodes\\R0023-DOC.json",
+              "workers\\doc_join_review\\REPORT.json",
+              "integration\\shared-docs-HR-FINAL-r1\\coalesced\\receipt.json"
+            ]
+          },
+          {
+            "criterion": "Candidate artifact and integration collision owners are independently reviewed.",
+            "disposition": "SATISFIED",
+            "evidence": [
+              "evidence\\independent-review-HR-20261009-FINAL\\joined-admission-wave-01\\nodes\\R0023-DOC.json",
+              "workers\\doc_join_review\\REPORT.json",
+              "integration\\shared-docs-HR-FINAL-r1\\coalesced\\receipt.json"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "R0023-METADATA",
+      "executionStatus": "SOURCE_ADMITTED_READY_FOR_ROOT_NATIVE",
+      "outputReceipts": [],
+      "progress": {
+        "unmetPredecessors": [],
+        "owners": [
+          "root"
+        ],
+        "evidence": [
+          "concurrency\\expansion-wave-01\\location_metadata.json",
+          "workers\\location_metadata\\REPORT.json",
+          "concurrency/expansion-wave-04/assignments/prayer_countdown.json",
+          "concurrency/expansion-wave-05/assignments/location_policy.json",
+          "concurrency\\expansion-wave-06\\assignments\\location_metadata.json",
+          "workers/location_metadata_dispatch_review_r2/REPORT.json"
+        ],
+        "exitCriteriaVerified": false,
+        "state": "READY",
+        "reason": "Independent exact source admission returned and consumed. Original native first frontier is runnable after live entry checks and capacity-one lease; no native or node PASS."
+      }
+    },
+    {
+      "id": "R0023-POLICY",
+      "executionStatus": "RETURNED_PREPARATION_AWAITING_REVIEW_OR_CONSUMER",
+      "outputReceipts": [],
+      "progress": {
+        "unmetPredecessors": [],
+        "owners": [
+          "root"
+        ],
+        "evidence": [
+          "concurrency\\expansion-wave-01\\location_policy.json",
+          "concurrency\\expansion-wave-03\\assignments\\smoke_native.json",
+          "workers/location_policy/REPORT.json",
+          "concurrency/expansion-wave-04/assignments/location_policy.json",
+          "concurrency/expansion-wave-05/assignments/location_metadata.json",
+          "workers/location_policy_fixture_review_r2/REPORT.json"
+        ],
+        "exitCriteriaVerified": false,
+        "state": "READY",
+        "reason": "Affirmative-intent and fresh-output source controls admitted; actual policy cases await root queue."
+      }
+    },
+    {
+      "id": "R0023-QUALIFY",
+      "executionStatus": "WAITING_PREDECESSORS",
+      "outputReceipts": [],
+      "progress": {
+        "unmetPredecessors": [
+          "R0023-METADATA",
+          "R0023-POLICY"
+        ],
+        "owners": [],
+        "evidence": [],
+        "exitCriteriaVerified": false,
+        "state": "NOT_STARTED",
+        "reason": "Node exit execution has not begun; waiting for ordinary incomplete DAG predecessors. Preparatory drafts do not satisfy the node."
+      }
+    },
+    {
+      "id": "CLOSE-R0023",
+      "executionStatus": "WAITING_PREDECESSORS",
+      "outputReceipts": [],
+      "progress": {
+        "unmetPredecessors": [
+          "R0023-DELIVER",
+          "R0023-METADATA",
+          "R0023-POLICY",
+          "R0023-QUALIFY"
+        ],
+        "owners": [],
+        "evidence": [],
+        "exitCriteriaVerified": false,
+        "state": "NOT_STARTED",
+        "reason": "Node exit execution has not begun; waiting for ordinary incomplete DAG predecessors. Preparatory drafts do not satisfy the node."
+      }
+    },
+    {
+      "id": "R0023-RELEASE-REVIEW",
+      "executionStatus": "EXECUTING_BOUNDED_INDEPENDENT_REVIEW",
+      "outputReceipts": [],
+      "progress": {
+        "unmetPredecessors": [],
+        "owners": [
+          "root",
+          "diagnostic_release_exit"
+        ],
+        "evidence": [
+          "concurrency\\expansion-wave-03\\assignments\\release_settings_docs.json",
+          "workers\\release_settings_docs\\REPORT.json",
+          "concurrency/expansion-wave-04/assignments/timezone_weather.json",
+          "concurrency/expansion-wave-05/assignments/release_privacy_diagnostics.json",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\cbal-r0023-review-admission-r1\\receipt.json"
+        ],
+        "exitCriteriaVerified": false,
+        "state": "EXECUTING",
+        "reason": "Close the next accepted P1 docs-only review gate without repeating native campaigns",
+        "remainingGate": "integration",
+        "remainingGateDetail": "Bind accepted semantic/source proof to the exact current owned documentation diff; independently satisfy this node-local review and root JOIN. Whole final-PR freeze and unrelated native/platform gates are not prerequisites for this docs-only exit."
+      }
+    },
+    {
+      "id": "R0023-DELIVER",
+      "executionStatus": "WAITING_PREDECESSORS",
+      "outputReceipts": [],
+      "progress": {
+        "unmetPredecessors": [
+          "R0023-MERGE-AUTHORITY",
+          "R0023-RELEASE-REVIEW"
+        ],
+        "owners": [],
+        "evidence": [],
+        "exitCriteriaVerified": false,
+        "state": "NOT_STARTED",
+        "reason": "Node exit execution has not begun; waiting for ordinary incomplete DAG predecessors. Preparatory drafts do not satisfy the node."
+      }
+    },
+    {
+      "id": "R0023-MERGE-AUTHORITY",
+      "executionStatus": "GATED_AUTHORITY",
+      "outputReceipts": [],
+      "progress": {
+        "unmetPredecessors": [
+          "R0023-RELEASE-REVIEW"
+        ],
+        "owners": [
+          "root"
+        ],
+        "evidence": [],
+        "exitCriteriaVerified": false,
+        "state": "BLOCKED",
+        "reason": "Future exact-head merge/deployment authority absent. No approval request until concrete reviewed candidate; not a blocker to unrelated implementation."
+      }
+    }
+  ]
+}

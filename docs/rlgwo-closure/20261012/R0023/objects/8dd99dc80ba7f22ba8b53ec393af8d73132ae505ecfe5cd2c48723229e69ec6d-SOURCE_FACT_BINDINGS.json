@@ -1,0 +1,755 @@
+{
+  "sourceFiles": [
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+      "bytes": 23025,
+      "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\config.js",
+      "bytes": 23025,
+      "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\builder.html",
+      "bytes": 30333,
+      "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+      "bytes": 367870,
+      "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+    }
+  ],
+  "exactSettingsOwnerRegion": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\inputs\\current-settings-owner.js",
+    "bytes": 16769,
+    "sha256": "d79cd6f73a084b94bed2043bed582a1b3602c4d994aea169f238a9fa563d87f7"
+  },
+  "settingsOwnerMatchesAcceptedSource": true,
+  "configAndBuilderWholeHashExact": true,
+  "sourceRegions": [
+    {
+      "id": "evidence-schema-domain-and-normalization",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 48,
+      "endLine": 85,
+      "text": "  function finiteNumber(x) { return typeof x === \"number\" && isFinite(x) ? x : null; }\n  function boundsNumber(x) { return typeof x === \"number\" || typeof x === \"string\" && x.trim() ? numOrNull(x) : null; }\n  function textOrNull(x, max) { return typeof x === \"string\" && x ? x.slice(0, max) : null; }\n  function locationBounds(b) {\n    if (!b || [b.south,b.north,b.west,b.east].some(function (n) { return finiteNumber(n) === null; })) return null;\n    if (b.south < -90 || b.north > 90 || b.south > b.north || b.west < -180 || b.east > 180 || b.west > b.east) return null;\n    return { south:b.south, north:b.north, west:b.west, east:b.east };\n  }\n  // Coordinates select a target. Evidence describes acquisition, never presence\n  // \"here now\". No decimal-derived accuracy or savedAt-derived fix timestamp.\n  function normalizeLocationEvidence(raw, cfg) {\n    cfg = cfg || {};\n    var origins = [\"hash\",\"manual\",\"place\",\"browser-geolocation\",\"coarse-ip\",\"legacy\",\"unknown\"];\n    var original = cfg.origin || cfg.source, source = raw && origins.indexOf(raw.source) >= 0 ? raw.source : original;\n    var intent = source === \"browser-geolocation\" ? \"device-position\" : source === \"coarse-ip\" ? \"coarse-area\"\n      : [\"hash\",\"manual\",\"place\"].indexOf(source) >= 0 ? \"fixed-site\" : \"unknown\";\n    if (source === \"browser-geolocation\" && (!raw || raw.source !== source)) source = \"legacy\";\n    if (source === \"localStorage\") source = \"legacy\";\n    if (origins.indexOf(source) < 0) source = \"unknown\";\n    if (source === \"legacy\" && raw && [\"fixed-site\",\"device-position\",\"coarse-area\",\"unknown\"].indexOf(raw.intent) >= 0) intent = raw.intent;\n    var accuracy = source === \"browser-geolocation\" && raw ? finiteNumber(raw.accuracyM) : null;\n    var acquired = source === \"browser-geolocation\" && raw ? finiteNumber(raw.acquiredAt) : null;\n    if (accuracy !== null && accuracy < 0) accuracy = null;\n    // Zero skew allowance: future/nonpositive epochs remain unknown, not age 0.\n    if (acquired !== null && (acquired <= 0 || acquired > Date.now())) acquired = null;\n    return { intent:intent, source:source, accuracyM:accuracy, acquiredAt:acquired,\n      provider:textOrNull(raw && raw.provider || (source === \"coarse-ip\" && cfg.detectProvider), 80),\n      area:textOrNull(raw && raw.area || (source === \"coarse-ip\" && cfg.area), 240),\n      bounds:locationBounds(raw && raw.bounds) };\n  }\n  // Both one-shot acquisition callers consume this exact Position contract.\n  function browserLocationEvidence(pos) {\n    return normalizeLocationEvidence({ source:\"browser-geolocation\", accuracyM:pos && pos.coords && pos.coords.accuracy,\n      acquiredAt: pos && pos.timestamp }, {});\n  }\n  function placeLocationEvidence(c) {\n    return normalizeLocationEvidence({ source:\"place\", provider:c && c.provider, area:c && c.norm, bounds:c && c.bounds }, {});\n  }\n",
+      "sha256": "214cec5998fc92944fceaa01da8ae01c667192db310ee39c6ec49240912537f5"
+    },
+    {
+      "id": "normalized-config-evidence",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 125,
+      "endLine": 129,
+      "text": "    c.source = (typeof c.source === \"string\" && c.source) ? c.source : \"fallback\";\n    c.savedAt = numOrNull(c.savedAt);\n    c.locationEvidence = normalizeLocationEvidence(c.locationEvidence, c);\n    c.v = 1;\n    return c;\n",
+      "sha256": "131da1bd6795173c49fa9fcb878f077530525679ee77339d6686f2b702d916ab"
+    },
+    {
+      "id": "portable-whitelist-private-omission",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 152,
+      "endLine": 175,
+      "text": "  function serialize(cfg, opts) {\n    opts = opts || {};\n    var c = normalize(cfg), p = new URLSearchParams(), local = opts.mode === \"local\";\n    var explicit = local && Array.isArray(opts.explicitPrefs) ? opts.explicitPrefs : [];\n    if (local) p.set(\"local\", \"1\");\n    else if (opts.mode === \"preferLocal\") p.set(\"preferLocal\", \"1\");\n    if (!local) {\n      if (c.lat != null) p.set(\"lat\", String(c.lat));\n      if (c.lon != null) p.set(\"lon\", String(c.lon));\n      if (c.label) p.set(\"label\", c.label);\n      p.set(\"method\", c.method);\n      p.set(\"school\", c.school);\n    } else {\n      // Local: non-default or explicitly selected preferences, never coordinates.\n      if (c.method !== DEFAULTS.method || explicit.indexOf(\"method\") >= 0) p.set(\"method\", c.method);\n      if (c.school !== DEFAULTS.school) p.set(\"school\", c.school);\n    }\n    if (c.time === \"12\") p.set(\"time\", \"12\");\n    if (c.datefmt && c.datefmt !== DEFAULTS.datefmt) p.set(\"datefmt\", c.datefmt);\n    if (c.units === \"c\" || explicit.indexOf(\"units\") >= 0) p.set(\"units\", c.units);\n    if (c.appearance !== DEFAULTS.appearance || Array.isArray(opts.explicitPrefs) && opts.explicitPrefs.indexOf(\"appearance\") >= 0) p.set(\"appearance\", c.appearance);\n    if (c.lp > 0) p.set(\"lp\", String(c.lp));\n    if (c.seed != null) p.set(\"seed\", String(c.seed));\n    return p.toString();\n",
+      "sha256": "f52c17305892f17bc735fffb6a06f197481bcbdf8507fa03a4267c8b52dcee0c"
+    },
+    {
+      "id": "private-load-save-old-reader-lifecycle",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 178,
+      "endLine": 218,
+      "text": "  // ---- localStorage (every access wrapped; never throws to the caller) -------\n  // Optional Storage-like input keeps characterization tests off the viewer's origin.\n  // Resolve the default getter inside each try: even accessing localStorage may throw.\n  function storageAvailable(storage) {\n    try {\n      var store = storage === undefined ? root.localStorage : storage;\n      var k = \"__sw_probe__\";\n      store.setItem(k, \"1\"); store.removeItem(k);\n      return { ok: true };\n    } catch (e) { return { ok: false, error: (e && e.name) || \"error\" }; }\n  }\n  function loadLocal(storage) {\n    try {\n      var store = storage === undefined ? root.localStorage : storage;\n      var raw = store.getItem(KEY);\n      if (!raw) return null;\n      var j = JSON.parse(raw);\n      if (!j || j.v !== 1) return null;            // version gate (future migrations)\n      var c = normalize(j);\n      if (!validate(c).ok) return null;            // corrupt/partial → ignore (fall through to detect)\n      c.origin = c.origin || c.source;             // preserve acquisition origin independently of the storage marker\n      c.source = \"localStorage\"; c.savedAt = numOrNull(j.savedAt);\n      return c;\n    } catch (e) { return null; }\n  }\n  function saveLocal(cfg, storage) {\n    try {\n      var store = storage === undefined ? root.localStorage : storage;\n      var c = normalize(cfg); c.v = 1; c.savedAt = Date.now();\n      // Old readers derive their pin state from source and ignore fix age. Keep\n      // private acquisition evidence, but let them read a configured site.\n      if (c.source === \"browser-geolocation\" || c.origin === \"browser-geolocation\") {\n        c.origin = c.origin || c.source; c.source = \"manual\";\n      }\n      store.setItem(KEY, JSON.stringify(c));\n      return { ok: true, savedAt: c.savedAt };\n    } catch (e) { return { ok: false, error: (e && e.name) || \"error\" }; }\n  }\n  function clearLocal(storage) {\n    try { var store = storage === undefined ? root.localStorage : storage; store.removeItem(KEY); return { ok: true }; }\n    catch (e) { return { ok: false, error: (e && e.name) || \"error\" }; }\n",
+      "sha256": "69d460e328e94f9f6e48b0f3feca744548e605257245b402301a3b70425a9663"
+    },
+    {
+      "id": "one-shot-user-location-and-permission-result",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 272,
+      "endLine": 291,
+      "text": "  // ---- precise geolocation (ONLY call from a user gesture) -------------------\n  function geolocate(opts) {\n    opts = opts || {};\n    return new Promise(function (resolve) {\n      if (!root.navigator || !root.navigator.geolocation) { resolve({ ok: false, error: \"unsupported\" }); return; }\n      root.navigator.geolocation.getCurrentPosition(\n        function (pos) { var evidence = browserLocationEvidence(pos);\n          resolve({ ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude,\n            accuracy:evidence.accuracyM, acquiredAt:evidence.acquiredAt, locationEvidence:evidence, source:\"browser-geolocation\" }); },\n        function (err) { resolve({ ok: false, error: (err && err.message) || \"denied\", code: err && err.code }); },\n        { enableHighAccuracy: false, timeout: opts.timeoutMs || 10000, maximumAge: 600000 }\n      );\n    });\n  }\n  function permissionState() {\n    try {\n      if (root.navigator && root.navigator.permissions && root.navigator.permissions.query)\n        return root.navigator.permissions.query({ name: \"geolocation\" }).then(function (s) { return s.state; }, function () { return \"unknown\"; });\n    } catch (e) {}\n    return Promise.resolve(\"unknown\");\n",
+      "sha256": "52b5a371b97e241be715edf03fdd3f1fa1d57965219e298315ac653958683c78"
+    },
+    {
+      "id": "persistence-before-provider-await",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 3437,
+      "endLine": 3455,
+      "text": "async function applyConfig(cfg, opts){\n  opts=opts||{};\n  cfg=window.SalahConfig?SalahConfig.normalize(cfg):cfg;\n  if(opts.save && window.SalahConfig){\n    const r=SalahConfig.saveLocal(cfg);\n    _publishPersistence(\"save\",r);                 // publish before any awaited provider work\n    if(r.ok){ cfg.origin=cfg.origin||cfg.source; cfg.source=\"localStorage\"; cfg.savedAt=r.savedAt; }   // acquisition evidence and original origin survive the storage marker\n  }\n  beginRuntimeGeneration();\n  bindConfig(cfg);\n  resetForNewLocation();\n  if(!simulationReady()) return;\n  if(lat==null||lon==null){ render(); return; }     // incomplete manual entry → nothing to load yet\n  startWeather();\n  const generation=_runtimeGeneration;\n  await loadPrayerData();\n  if(generation!==_runtimeGeneration) return;\n  startRenderLoop();                                  // no-op if already running\n}\n",
+      "sha256": "2789413ff85a434dfe3ce8c0127e9a1357ec04c3b2a8b9b209c64ab2f5025f27"
+    },
+    {
+      "id": "available-pin-accuracy-and-original-age",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 3644,
+      "endLine": 3657,
+      "text": "// Pin colours distinguish area/browser/site; browser provenance does not prove\n// the device is still there. Saved fixes keep their original epoch and accuracy.\nfunction _setPin(src){\n  _locSource=src;\n  const b=_byId(\"set-pin\"); if(!b) return;\n  b.classList.remove(\"lit\",\"glow\",\"off\");\n  b.classList.add(src===\"precise\"?\"glow\":src===\"ip\"?\"lit\":\"off\");\n  const evidence=_setLocationEvidence, accuracy=evidence && evidence.accuracyM!=null ? evidence.accuracyM+\" m\" : \"unknown\";\n  const age=evidence && evidence.acquiredAt!=null && evidence.acquiredAt<=Date.now() ? Math.floor((Date.now()-evidence.acquiredAt)/60000)+\" min old\" : \"time unknown\";\n  const t = src===\"precise\" ? (_setLocationSaved?\"Saved browser position\":\"Browser position\")+\" · accuracy \"+accuracy+\" · fix \"+age+\" — click to refresh\"\n          : src===\"ip\" ? \"Estimated from your IP — click to request browser location\"\n          : \"Configured site — click to request browser location\";\n  b.title = t; b.setAttribute(\"aria-label\", t);   // state-bearing accessible name (not color-only)\n}\n",
+      "sha256": "c6ad05a1067f5ede36992799eb334aba8542ef881a39a530c3da97d99df789fc"
+    },
+    {
+      "id": "form-evidence-carry",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 3693,
+      "endLine": 3708,
+      "text": "  if(!b.querySelector(\".gear\")){ const g=document.createElement(\"span\"); g.className=\"gear\"; g.textContent=\"⚙\"; g.setAttribute(\"aria-hidden\",\"true\"); b.appendChild(g); }\n  _renderPersistenceAffordance();\n  b.addEventListener(\"click\",_toggleSettings);\n  b.addEventListener(\"keydown\",e=>{ if(e.key===\"Enter\"||e.key===\" \"){ e.preventDefault(); _toggleSettings(); } });\n}\n\nfunction _settingsFormToConfig(){\n  const g=_byId, base={ lat:g(\"set-lat\").value.trim(), lon:g(\"set-lon\").value.trim(),\n    label:g(\"set-label\").value.trim(), method:g(\"set-method\").value, school:g(\"set-school\").value,\n    time:g(\"set-time\").value, units:g(\"set-units\").value,\n    appearance:g(\"set-appearance\").value,\n    datefmt:g(\"set-datefmt\").value.trim()||\"YYYY-MM-DD\",\n    tz:(CONFIG&&CONFIG.tz)||tz, lp:LPOLL, locationEvidence:_setLocationEvidence,\n    source:_setLocationOrigin };\n  return window.SalahConfig ? SalahConfig.normalize(base) : base;\n}\n",
+      "sha256": "9b188a34239003b0a5414d6ea161e5b07f145fb0b7f97bb7015cf38ba175d333"
+    },
+    {
+      "id": "name-versus-coordinate-edits",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 3742,
+      "endLine": 3750,
+      "text": "  // Name edits preserve acquisition; coordinate edits select a manual site.\n  [\"set-label\",\"set-lat\",\"set-lon\"].forEach(id=>_byId(id).addEventListener(\"input\",()=>{\n    _invalidateSetLocation();\n    if(id!==\"set-label\"){\n      _setLocationEvidence=window.SalahConfig?SalahConfig.normalize({source:\"manual\"}).locationEvidence:null;\n      _setLocationOrigin=\"manual\"; _setLocationSaved=false; _setPin(\"manual\");\n    }\n    _setStatus(\"Enter to search a place · Shift+Enter to keep the typed name.\");\n  }));\n",
+      "sha256": "31c827b2b8a4bb2667f1a0faad2b3813292ba0b432d91b1978f3b1197d8cd88e"
+    },
+    {
+      "id": "one-shot-location-owner-and-failure",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 3784,
+      "endLine": 3800,
+      "text": "async function _usePrecise(){    // the map-pin button → precise GPS (only place getCurrentPosition is called)\n  _invalidateSetLocation(); const owner=_captureSetLookup();\n  if(!window.SalahConfig){ _setStatus(\"Browser location unavailable.\",true); return; }\n  _setStatus(\"Requesting browser location…\");\n  let r; try{ r=await SalahConfig.geolocate({}); }catch(e){ r={ok:false,error:\"unavailable\"}; }\n  if(!_ownsSetLookup(owner)) return;\n  let permission=_geoPermission; try{ permission=await SalahConfig.permissionState(); }catch(e){}\n  if(!_ownsSetLookup(owner)) return;\n  _geoPermission=permission;\n  if(r.ok){ _byId(\"set-lat\").value=(+r.lat).toFixed(5); _byId(\"set-lon\").value=(+r.lon).toFixed(5); _geoLastError=null;\n    _setLocationEvidence=r.locationEvidence||SalahConfig.normalize({source:\"browser-geolocation\"}).locationEvidence; _setLocationOrigin=\"browser-geolocation\"; _setLocationSaved=false;\n    _setPin(\"precise\"); _setDirty=true;\n    _setStatus(_byId(\"set-pin\").title); }\n  else { _geoLastError=r.error||\"denied\";\n    _setStatus(r.error===\"unsupported\" ? \"Geolocation isn't available in this browser/iframe.\" :\n      \"Browser location unavailable (\"+(r.error||\"denied\")+\"). Type a place + Enter, or keep the selected location.\", true); }\n}\n",
+      "sha256": "9a50e3a95278b90e44a2604ec04dd0d22f248b5ad71c2415c85f550f49af2069"
+    },
+    {
+      "id": "conditional-local-iframe-delegation",
+      "source": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "startLine": 215,
+      "endLine": 224,
+      "text": "// forces the iframe to actually reload (a hash-only change wouldn't re-run the script).\nfunction previewUrl(){ return base+\"?r=\"+(rev++)+\"#\"+hash(); }\nfunction snippet(){\n  const allow = embedMode===\"local\" ? '\\n  allow=\"geolocation\"' : '';\n  return `<iframe\\n  title=\"Prayer Times\"\\n  referrerpolicy=\"no-referrer\"${allow}\\n  src=\"${url()}\"\\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\\n  scrolling=\"no\">\\n</iframe>`;\n}\nfunction update(){\n  $(\"code\").value=snippet();\n  $(\"pv\").allow = embedMode===\"local\" ? \"geolocation\" : \"\";\n  $(\"pv\").src=previewUrl();\n",
+      "sha256": "2caaa20defcd5122c3fa9964e8b633fa02356f4729572cde1cce60107ee8a950"
+    }
+  ],
+  "assertions": [
+    {
+      "id": "L01",
+      "claim": "LocationEvidence has exact intent/source/accuracyM/acquiredAt/provider/area/bounds fields and documented intent/source domains.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L02",
+      "claim": "Coordinates choose a target; acquisition source does not certify current viewer presence.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE",
+        "R23-README-FIX-SAVE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization",
+        "available-pin-accuracy-and-original-age"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L03",
+      "claim": "Reported accuracy is finite numeric metres>=0 ornull; genuine0 stays0, decimals are not measured precision.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE",
+        "R23-README-ACQUIRE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization",
+        "one-shot-user-location-and-permission-result",
+        "one-shot-location-owner-and-failure"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L04",
+      "claim": "AcquiredAt is finite numeric positive<=actualDate.now; zero future allowance; malformed/missing/nonpositive/future isnull, never age0.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE",
+        "R23-README-FIX-SAVE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization",
+        "available-pin-accuracy-and-original-age"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L05",
+      "claim": "Provider/area text is bounded80/240; finite ordered south/north/west/east bounds have documented geographic ranges ornull, with no invented radius.",
+      "docRegions": [
+        "R23-DESIGN-EVIDENCE"
+      ],
+      "sourceRegions": [
+        "evidence-schema-domain-and-normalization"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L06",
+      "claim": "Successful savedAt is settings-write time separate from original acquiredAt; label/units/method resaves cannot renew a fix.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE",
+        "R23-README-FIX-SAVE"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle",
+        "form-evidence-carry"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L07",
+      "claim": "Label/reverse naming keeps compatible evidence; coordinate edits choose manual fixedsite and clear incompatible acquisition claims.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE"
+      ],
+      "sourceRegions": [
+        "name-versus-coordinate-edits",
+        "form-evidence-carry"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L08",
+      "claim": "Legacy records keep usable targets/preferences without savedAt-as-fix; load does not destructively rewrite stored bytes.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle",
+        "evidence-schema-domain-and-normalization"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L09",
+      "claim": "Browser-derived save retains private evidence/origin and downgrades top-level source to configured site for old readers.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L10",
+      "claim": "Portable hash selects fixed configured destination and omits private acquisition history.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE",
+        "R23-README-FIX-SAVE"
+      ],
+      "sourceRegions": [
+        "portable-whitelist-private-omission"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L11",
+      "claim": "Denied save leaves input evidence useful and existing bytes unchanged with session warning; writable partition depends on actual permissions/lifetime.",
+      "docRegions": [
+        "R23-DESIGN-LIFECYCLE",
+        "R23-README-STORAGE",
+        "R23-README-HOST"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle",
+        "persistence-before-provider-await"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L12",
+      "claim": "One user-triggered browser request reports available accuracy/originalfix age; unsupported/denied leaves manual choice usable, without new tracking/freshness thresholds.",
+      "docRegions": [
+        "R23-README-PIN",
+        "R23-README-ACQUIRE",
+        "R23-DESIGN-LIFECYCLE"
+      ],
+      "sourceRegions": [
+        "one-shot-user-location-and-permission-result",
+        "available-pin-accuracy-and-original-age",
+        "one-shot-location-owner-and-failure"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L13",
+      "claim": "Local iframe snippet delegates geolocation conditionally; actual parent policy and user grant still apply, with no claimedhost qualification.",
+      "docRegions": [
+        "R23-README-ACQUIRE",
+        "R23-README-HOST"
+      ],
+      "sourceRegions": [
+        "conditional-local-iframe-delegation",
+        "one-shot-user-location-and-permission-result",
+        "one-shot-location-owner-and-failure"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    },
+    {
+      "id": "L14",
+      "claim": "Configuration origin is independent of storage marker and the private configuration key is separate from prayer/weather caches.",
+      "docRegions": [
+        "R23-DESIGN-CONFIG"
+      ],
+      "sourceRegions": [
+        "private-load-save-old-reader-lifecycle",
+        "normalized-config-evidence"
+      ],
+      "disposition": "SATISFIED_EXACT_CURRENT_OWNER_SOURCE_AND_ACCEPTED_SCOPE"
+    }
+  ],
+  "lineByLineOwnedProse": [
+    {
+      "file": "README.md",
+      "line": 193,
+      "text": "The in-widget settings panel supports location (name, latitude, longitude), calculation",
+      "docRegion": "R23-README-PIN",
+      "assertionIds": [
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "README.md",
+      "line": 194,
+      "text": "method, Asr school, 12/24-hour, date format, and temperature units. A **location pin** beside",
+      "docRegion": "R23-README-PIN",
+      "assertionIds": [
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "README.md",
+      "line": 195,
+      "text": "the location field identifies an estimated area, browser/saved browser position, or manually",
+      "docRegion": "R23-README-PIN",
+      "assertionIds": [
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "README.md",
+      "line": 196,
+      "text": "selected site. Its title reports available accuracy in metres and original fix age; tap it",
+      "docRegion": "R23-README-PIN",
+      "assertionIds": [
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "README.md",
+      "line": 197,
+      "text": "to request a browser position.",
+      "docRegion": "R23-README-PIN",
+      "assertionIds": [
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "README.md",
+      "line": 237,
+      "text": "- **Browser location is optional and user-triggered.** The location pin requests one browser position after permission. Its reported accuracy may be known in metres or unknown; five decimal places do not measure accuracy. In an iframe, the local snippet includes `allow=\"geolocation\"`, and the embedding parent's Permissions Policy and user grant also apply. Stripping delegation or restricting parent policy can block acquisition; coarse/manual setup remains available.",
+      "docRegion": "R23-README-ACQUIRE",
+      "assertionIds": [
+        "L03",
+        "L12",
+        "L13"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "README.md",
+      "line": 238,
+      "text": "- **Acquisition and saving are separate.** A browser position retains its original acquisition time and reported accuracy; a saved browser position is a stored target and does not establish current presence. Saving settings does not renew a fix. Missing, malformed, nonpositive or future acquisition timestamps stay unknown; future timestamps have zero skew allowance against `Date.now()`. Portable URLs describe a configured destination and omit private acquisition history.",
+      "docRegion": "R23-README-FIX-SAVE",
+      "assertionIds": [
+        "L02",
+        "L04",
+        "L06",
+        "L10"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "README.md",
+      "line": 239,
+      "text": "- **Storage outcome is measured.** Saved settings use this browser's storage. If writing is unavailable, changes still apply for the current session and Settings shows a retained warning. A partition can be writable and retain settings within that partition. Saving and persistence depend on the host's actual storage permissions and lifetime; blocked writes cause the session-only warning.",
+      "docRegion": "R23-README-STORAGE",
+      "assertionIds": [
+        "L11"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "README.md",
+      "line": 241,
+      "text": "- **TablissNG conditions.** Coarse acquisition depends on permitted provider access; browser position depends on preserved delegation, parent policy and user grant; saving depends on writable host storage and its lifetime. These conditions are not a claim that a particular TablissNG version or partition policy has been qualified.",
+      "docRegion": "R23-README-HOST",
+      "assertionIds": [
+        "L11",
+        "L13"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 542,
+      "text": "- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, appearance, lp, seed, source, origin, savedAt, locationEvidence}`.",
+      "docRegion": "R23-DESIGN-CONFIG",
+      "assertionIds": [
+        "L14"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 543,
+      "text": "  `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, place, manual, fallback}`; `origin`, when present,",
+      "docRegion": "R23-DESIGN-CONFIG",
+      "assertionIds": [
+        "L14"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 544,
+      "text": "  preserves the acquisition origin independently of the storage marker. Persisted under `salah_widget:config:v1`",
+      "docRegion": "R23-DESIGN-CONFIG",
+      "assertionIds": [
+        "L14"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 545,
+      "text": "  (separate from prayer/weather caches; every access wrapped in try/catch).",
+      "docRegion": "R23-DESIGN-CONFIG",
+      "assertionIds": [
+        "L14"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 546,
+      "text": "- **Location evidence:** `{intent, source, accuracyM, acquiredAt, provider, area, bounds}`.",
+      "docRegion": "R23-DESIGN-EVIDENCE",
+      "assertionIds": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 547,
+      "text": "  `intent ∈ {fixed-site, device-position, coarse-area, unknown}` and evidence",
+      "docRegion": "R23-DESIGN-EVIDENCE",
+      "assertionIds": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 548,
+      "text": "  `source ∈ {hash, manual, place, browser-geolocation, coarse-ip, legacy, unknown}`. Coordinates select the",
+      "docRegion": "R23-DESIGN-EVIDENCE",
+      "assertionIds": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 549,
+      "text": "  target; this record does not certify the viewer's current presence. Browser `accuracyM` is finite numeric",
+      "docRegion": "R23-DESIGN-EVIDENCE",
+      "assertionIds": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 550,
+      "text": "  metres ≥ 0 or `null` (a reported 0 stays 0); decimal places do not establish accuracy. `acquiredAt` is a finite",
+      "docRegion": "R23-DESIGN-EVIDENCE",
+      "assertionIds": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 551,
+      "text": "  numeric epoch > 0 and ≤ actual `Date.now()`, or `null`. The future-timestamp skew allowance is zero;",
+      "docRegion": "R23-DESIGN-EVIDENCE",
+      "assertionIds": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 552,
+      "text": "  missing/nonpositive/future/malformed time stays unknown, never an age-0 clamp. `provider`/`area` retain",
+      "docRegion": "R23-DESIGN-EVIDENCE",
+      "assertionIds": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 553,
+      "text": "  available text bounded to 80/240 characters. `bounds` is `{south,north,west,east}` with finite ordered",
+      "docRegion": "R23-DESIGN-EVIDENCE",
+      "assertionIds": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 554,
+      "text": "  latitudes in [-90,90] and longitudes in [-180,180], or `null`; no radius is invented.",
+      "docRegion": "R23-DESIGN-EVIDENCE",
+      "assertionIds": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 555,
+      "text": "- **Fix and persistence lifecycle:** `savedAt` is successful settings-write time, separate from `acquiredAt`.",
+      "docRegion": "R23-DESIGN-LIFECYCLE",
+      "assertionIds": [
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 556,
+      "text": "  Saving label/units/method cannot renew a fix. Label/reverse naming retains compatible evidence; coordinate",
+      "docRegion": "R23-DESIGN-LIFECYCLE",
+      "assertionIds": [
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 557,
+      "text": "  edits choose a manual fixed site and clear incompatible acquisition claims. Legacy records retain usable",
+      "docRegion": "R23-DESIGN-LIFECYCLE",
+      "assertionIds": [
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 558,
+      "text": "  coordinates/preferences without substituting `savedAt`; reads do not destructively rewrite them. Saving",
+      "docRegion": "R23-DESIGN-LIFECYCLE",
+      "assertionIds": [
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 559,
+      "text": "  browser-derived targets retains private evidence but downgrades the top-level source for old readers to a",
+      "docRegion": "R23-DESIGN-LIFECYCLE",
+      "assertionIds": [
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 560,
+      "text": "  configured site. Portable hashes describe a fixed configured destination and omit private acquisition history.",
+      "docRegion": "R23-DESIGN-LIFECYCLE",
+      "assertionIds": [
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 561,
+      "text": "  Denied persistence preserves useful in-memory metadata and prior saved bytes with the session-only warning;",
+      "docRegion": "R23-DESIGN-LIFECYCLE",
+      "assertionIds": [
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 562,
+      "text": "  a writable partition may persist within its own permissions and lifetime. No new freshness/radius threshold",
+      "docRegion": "R23-DESIGN-LIFECYCLE",
+      "assertionIds": [
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    },
+    {
+      "file": "DESIGN.md",
+      "line": 563,
+      "text": "  or continuous location tracking follows from this schema.",
+      "docRegion": "R23-DESIGN-LIFECYCLE",
+      "assertionIds": [
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "disposition": "PASS_IN_CONTEXT_OF_EXACT_LITERAL_REGION"
+    }
+  ],
+  "nativeWholeFileEquivalentToHistorical": false,
+  "e718OrCurrent07Equivalent": false,
+  "policyGrantOrBrowserQualificationInferred": false
+}

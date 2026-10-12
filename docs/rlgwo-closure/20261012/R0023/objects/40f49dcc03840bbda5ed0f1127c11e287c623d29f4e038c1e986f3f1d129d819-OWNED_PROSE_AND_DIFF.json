@@ -1,0 +1,246 @@
+{
+  "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+  "ownedDocumentationPaths": [
+    "README.md",
+    "DESIGN.md"
+  ],
+  "regions": [
+    {
+      "id": "R23-README-PIN",
+      "file": "README.md",
+      "finalStartLine": 193,
+      "finalEndLine": 197,
+      "text": "The in-widget settings panel supports location (name, latitude, longitude), calculation\nmethod, Asr school, 12/24-hour, date format, and temperature units. A **location pin** beside\nthe location field identifies an estimated area, browser/saved browser position, or manually\nselected site. Its title reports available accuracy in metres and original fix age; tap it\nto request a browser position.\n",
+      "sha256": "a21b8f1a838fd19924c8f5e906bb71eb8f7c5f29e52418a0955832a9f1e88ea3",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            104,
+            105
+          ],
+          "finalLines": [
+            195,
+            197
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-README-ACQUIRE",
+      "file": "README.md",
+      "finalStartLine": 237,
+      "finalEndLine": 237,
+      "text": "- **Browser location is optional and user-triggered.** The location pin requests one browser position after permission. Its reported accuracy may be known in metres or unknown; five decimal places do not measure accuracy. In an iframe, the local snippet includes `allow=\"geolocation\"`, and the embedding parent's Permissions Policy and user grant also apply. Stripping delegation or restricting parent policy can block acquisition; coarse/manual setup remains available.\n",
+      "sha256": "54b168edb3dd77acfd48dfc5c940fda55aa068b9c845d5bdbd910ece6f4618bc",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            123,
+            140
+          ],
+          "finalLines": [
+            217,
+            241
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-README-FIX-SAVE",
+      "file": "README.md",
+      "finalStartLine": 238,
+      "finalEndLine": 238,
+      "text": "- **Acquisition and saving are separate.** A browser position retains its original acquisition time and reported accuracy; a saved browser position is a stored target and does not establish current presence. Saving settings does not renew a fix. Missing, malformed, nonpositive or future acquisition timestamps stay unknown; future timestamps have zero skew allowance against `Date.now()`. Portable URLs describe a configured destination and omit private acquisition history.\n",
+      "sha256": "ee67463eb12f0af7ce512e7835f98e987603998f108ef3c73b0b43472de9dbce",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            123,
+            140
+          ],
+          "finalLines": [
+            217,
+            241
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-README-STORAGE",
+      "file": "README.md",
+      "finalStartLine": 239,
+      "finalEndLine": 239,
+      "text": "- **Storage outcome is measured.** Saved settings use this browser's storage. If writing is unavailable, changes still apply for the current session and Settings shows a retained warning. A partition can be writable and retain settings within that partition. Saving and persistence depend on the host's actual storage permissions and lifetime; blocked writes cause the session-only warning.\n",
+      "sha256": "21299afbfe41c1531362732f7cae8ab3d2db746b96eb1336c4dd1c28907aac51",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            123,
+            140
+          ],
+          "finalLines": [
+            217,
+            241
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-README-HOST",
+      "file": "README.md",
+      "finalStartLine": 241,
+      "finalEndLine": 241,
+      "text": "- **TablissNG conditions.** Coarse acquisition depends on permitted provider access; browser position depends on preserved delegation, parent policy and user grant; saving depends on writable host storage and its lifetime. These conditions are not a claim that a particular TablissNG version or partition policy has been qualified.\n",
+      "sha256": "5e42283ed5702b986bd906b9c3f67e61defba88855dd391ae00855be0d1a855d",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            123,
+            140
+          ],
+          "finalLines": [
+            217,
+            241
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-DESIGN-CONFIG",
+      "file": "DESIGN.md",
+      "finalStartLine": 542,
+      "finalEndLine": 545,
+      "text": "- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, appearance, lp, seed, source, origin, savedAt, locationEvidence}`.\n  `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, place, manual, fallback}`; `origin`, when present,\n  preserves the acquisition origin independently of the storage marker. Persisted under `salah_widget:config:v1`\n  (separate from prayer/weather caches; every access wrapped in try/catch).\n",
+      "sha256": "76ced5f326ac7c1848b758231464792133a83583f61e56e55b2d0e22352fa1a6",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            356,
+            358
+          ],
+          "finalLines": [
+            542,
+            563
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-DESIGN-EVIDENCE",
+      "file": "DESIGN.md",
+      "finalStartLine": 546,
+      "finalEndLine": 554,
+      "text": "- **Location evidence:** `{intent, source, accuracyM, acquiredAt, provider, area, bounds}`.\n  `intent ∈ {fixed-site, device-position, coarse-area, unknown}` and evidence\n  `source ∈ {hash, manual, place, browser-geolocation, coarse-ip, legacy, unknown}`. Coordinates select the\n  target; this record does not certify the viewer's current presence. Browser `accuracyM` is finite numeric\n  metres ≥ 0 or `null` (a reported 0 stays 0); decimal places do not establish accuracy. `acquiredAt` is a finite\n  numeric epoch > 0 and ≤ actual `Date.now()`, or `null`. The future-timestamp skew allowance is zero;\n  missing/nonpositive/future/malformed time stays unknown, never an age-0 clamp. `provider`/`area` retain\n  available text bounded to 80/240 characters. `bounds` is `{south,north,west,east}` with finite ordered\n  latitudes in [-90,90] and longitudes in [-180,180], or `null`; no radius is invented.\n",
+      "sha256": "5c98b49568425d38f02632eeb730506fdcf14988899a9e8cba29ea2001ea3449",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            356,
+            358
+          ],
+          "finalLines": [
+            542,
+            563
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    },
+    {
+      "id": "R23-DESIGN-LIFECYCLE",
+      "file": "DESIGN.md",
+      "finalStartLine": 555,
+      "finalEndLine": 563,
+      "text": "- **Fix and persistence lifecycle:** `savedAt` is successful settings-write time, separate from `acquiredAt`.\n  Saving label/units/method cannot renew a fix. Label/reverse naming retains compatible evidence; coordinate\n  edits choose a manual fixed site and clear incompatible acquisition claims. Legacy records retain usable\n  coordinates/preferences without substituting `savedAt`; reads do not destructively rewrite them. Saving\n  browser-derived targets retains private evidence but downgrades the top-level source for old readers to a\n  configured site. Portable hashes describe a fixed configured destination and omit private acquisition history.\n  Denied persistence preserves useful in-memory metadata and prior saved bytes with the session-only warning;\n  a writable partition may persist within its own permissions and lifetime. No new freshness/radius threshold\n  or continuous location tracking follows from this schema.\n",
+      "sha256": "20ce6b58f49ee61fcffec177f06c81a87c0e6a7cbbcc17fab78bd2b03732d883",
+      "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+      "overlappingContextDiff": [
+        {
+          "opcode": "replace",
+          "baseLines": [
+            356,
+            358
+          ],
+          "finalLines": [
+            542,
+            563
+          ]
+        }
+      ],
+      "equalOriginalHRCandidate": true,
+      "equalActualSemanticJoin": true,
+      "disposition": "PASS_EXACT_R0023_OWN_FACT_OR_ACCEPTED_SHARED_STORAGE_CONTEXT",
+      "boundary": "Only location/evidence/persistence/conditional-host scope; no new sibling/table/whole-document/native approval."
+    }
+  ],
+  "frozenDocs": [
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\README.md",
+      "bytes": 35877,
+      "sha256": "86622ef6a67bf16beba87612db8423220450cfbac77702dff06b7f208aa73a1c"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\DESIGN.md",
+      "bytes": 56308,
+      "sha256": "f517f7174f5f3214265ace51c74713f57e392bb22312c1c32658b3f0d8b0f16a"
+    }
+  ],
+  "contextualDiffs": [
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\README.md.diff",
+      "bytes": 35116,
+      "sha256": "cbe5e7cd20c2b561698bb5a19435de5fb160a4d3d4e2fa78268f2ed2a8459884"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\DESIGN.md.diff",
+      "bytes": 37869,
+      "sha256": "c63e4681370dc49d1633e29d40ee14867eb1fbb256ac8a10a1761361bd0f85ae"
+    }
+  ],
+  "acceptedOwnerProseChanged": false,
+  "originalWholeFilesCopiedOrApplied": false,
+  "sharedStorageExplanationDuplicated": false,
+  "wholeREADMEPASS": false,
+  "wholeDESIGNPASS": false
+}

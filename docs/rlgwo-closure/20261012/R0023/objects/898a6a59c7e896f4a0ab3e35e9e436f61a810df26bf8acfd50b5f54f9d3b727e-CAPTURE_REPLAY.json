@@ -1,0 +1,1085 @@
+{
+  "schema": "r0023-qualify-captured-approved-bytes-controls/1",
+  "sourcePins": {
+    "original": "fb46dbd7a37626bc854488ce32491c6fdebf0dad4451491bc9127e603887d113",
+    "fixed": "437492f2d296fc61759f2dd31e3611fb8060b6fcc8a26565e8fce5a0b277bf49"
+  },
+  "method": "Compile each exact source output loop and sha/pin/enc helpers against inert filesystem responses. No main or transaction execution.",
+  "cases": [
+    {
+      "name": "unchanged",
+      "expected": "accept",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 3,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 2,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 3,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": true
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": true
+      }
+    },
+    {
+      "name": "certificate-late-length",
+      "expected": "old-unsafe-fixed-safe",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 3,
+            "bytes": 24,
+            "sha256": "ccb280dd7f6db42c89f5c8bb648e63143d27fbfb66c5b17cf274e3424aaccfa9"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 2,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 3,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 24,
+            "sha256": "ccb280dd7f6db42c89f5c8bb648e63143d27fbfb66c5b17cf274e3424aaccfa9"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": true
+      }
+    },
+    {
+      "name": "certificate-before-capture-length",
+      "expected": "reject",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": true,
+        "reason": "AssertionError",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 24,
+            "sha256": "ccb280dd7f6db42c89f5c8bb648e63143d27fbfb66c5b17cf274e3424aaccfa9"
+          }
+        ],
+        "captured": [],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": true,
+        "reason": "Captured output differs from independently approved postimage",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 24,
+            "sha256": "ccb280dd7f6db42c89f5c8bb648e63143d27fbfb66c5b17cf274e3424aaccfa9"
+          }
+        ],
+        "captured": [],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      }
+    },
+    {
+      "name": "certificate-late-same-length",
+      "expected": "old-unsafe-fixed-safe",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 3,
+            "bytes": 38,
+            "sha256": "4fc1ca00a036ddd6b034474a2c1490a6eeb3d130395d503b65d812e7a85ab097"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 2,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 3,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "4fc1ca00a036ddd6b034474a2c1490a6eeb3d130395d503b65d812e7a85ab097"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": true
+      }
+    },
+    {
+      "name": "certificate-before-capture-same-length",
+      "expected": "reject",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": true,
+        "reason": "AssertionError",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "4fc1ca00a036ddd6b034474a2c1490a6eeb3d130395d503b65d812e7a85ab097"
+          }
+        ],
+        "captured": [],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": true,
+        "reason": "Captured output differs from independently approved postimage",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "4fc1ca00a036ddd6b034474a2c1490a6eeb3d130395d503b65d812e7a85ab097"
+          }
+        ],
+        "captured": [],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      }
+    },
+    {
+      "name": "certificate-after-capture",
+      "expected": "old-refuses-fixed-approved-snapshot",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": true,
+        "reason": "Certificate must be the exact independently approved acyclic derivation",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 38,
+            "sha256": "4fc1ca00a036ddd6b034474a2c1490a6eeb3d130395d503b65d812e7a85ab097"
+          }
+        ],
+        "captured": [],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": true
+      }
+    },
+    {
+      "name": "alias-late-length",
+      "expected": "old-unsafe-fixed-safe",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 3,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 2,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 3,
+            "bytes": 24,
+            "sha256": "ccb280dd7f6db42c89f5c8bb648e63143d27fbfb66c5b17cf274e3424aaccfa9"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 24,
+            "sha256": "ccb280dd7f6db42c89f5c8bb648e63143d27fbfb66c5b17cf274e3424aaccfa9"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": true
+      }
+    },
+    {
+      "name": "alias-before-capture-length",
+      "expected": "reject",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": true,
+        "reason": "AssertionError",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 3,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 24,
+            "sha256": "ccb280dd7f6db42c89f5c8bb648e63143d27fbfb66c5b17cf274e3424aaccfa9"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": true,
+        "reason": "Captured output differs from independently approved postimage",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 24,
+            "sha256": "ccb280dd7f6db42c89f5c8bb648e63143d27fbfb66c5b17cf274e3424aaccfa9"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      }
+    },
+    {
+      "name": "alias-late-same-length",
+      "expected": "old-unsafe-fixed-safe",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 3,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 2,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 3,
+            "bytes": 21,
+            "sha256": "235f825a9885c33732121b76209e27c91b92b420e67f9f0122ed8f5e3c547ea7"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "235f825a9885c33732121b76209e27c91b92b420e67f9f0122ed8f5e3c547ea7"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": true
+      }
+    },
+    {
+      "name": "alias-before-capture-same-length",
+      "expected": "reject",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": true,
+        "reason": "AssertionError",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 3,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "235f825a9885c33732121b76209e27c91b92b420e67f9f0122ed8f5e3c547ea7"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": true,
+        "reason": "Captured output differs from independently approved postimage",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "235f825a9885c33732121b76209e27c91b92b420e67f9f0122ed8f5e3c547ea7"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      }
+    },
+    {
+      "name": "alias-after-capture",
+      "expected": "old-refuses-fixed-approved-snapshot",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": true,
+        "reason": "AssertionError",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 3,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 2,
+            "bytes": 21,
+            "sha256": "235f825a9885c33732121b76209e27c91b92b420e67f9f0122ed8f5e3c547ea7"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": false,
+        "reason": null,
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "path": "C:/inert-candidate/documentation.json",
+            "read": 1,
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "captured": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "approved": [
+          {
+            "bytes": 38,
+            "sha256": "c2048160b51fef1ab994af22c1169d3c3e5cbfe35afa7dd395bb5b023eea020f"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": true
+      }
+    },
+    {
+      "name": "unapproved-certificate-derivation",
+      "expected": "reject",
+      "disposition": "PASS_DISCRIMINATING_CONTROL",
+      "original": {
+        "source": "original",
+        "rejected": true,
+        "reason": "Certificate must be the exact independently approved acyclic derivation",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 43,
+            "sha256": "f86ee40bf40669ab507f62d91c762e48173cbbd9154fa5c5307597c9b759bedc"
+          },
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 2,
+            "bytes": 43,
+            "sha256": "f86ee40bf40669ab507f62d91c762e48173cbbd9154fa5c5307597c9b759bedc"
+          }
+        ],
+        "captured": [],
+        "approved": [
+          {
+            "bytes": 43,
+            "sha256": "f86ee40bf40669ab507f62d91c762e48173cbbd9154fa5c5307597c9b759bedc"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      },
+      "fixed": {
+        "source": "fixed",
+        "rejected": true,
+        "reason": "Certificate must be the exact independently approved acyclic derivation",
+        "reads": [
+          {
+            "path": "C:/inert-review/certificate.json",
+            "read": 1,
+            "bytes": 43,
+            "sha256": "f86ee40bf40669ab507f62d91c762e48173cbbd9154fa5c5307597c9b759bedc"
+          }
+        ],
+        "captured": [],
+        "approved": [
+          {
+            "bytes": 43,
+            "sha256": "f86ee40bf40669ab507f62d91c762e48173cbbd9154fa5c5307597c9b759bedc"
+          },
+          {
+            "bytes": 21,
+            "sha256": "fedbe031fe6c09890c1eb64e7a1f101511c21db8c808fd9c13848394108c99d6"
+          }
+        ],
+        "acceptedApprovedBytesOnly": false
+      }
+    }
+  ],
+  "caseCount": 12,
+  "historicalOriginalPreserved": true,
+  "originalUnsafeAcceptances": 4,
+  "canonicalWrites": 0,
+  "nativeExecuted": false,
+  "nodeCredit": 0
+}

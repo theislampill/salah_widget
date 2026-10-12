@@ -1,0 +1,29 @@
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+response.body: Protocol error (Network.getResponseBody): No resource with given identifier found
+Response body is not available for a response that was navigated away from. Read response.body() before triggering any navigation.
+    at C:\Users\theis\Documents\Codex\salah-rlgwo-execution-20261009\workers\location_policy_builder_oracle_r1\native\residual-location-actions.cjs:162:246 {
+  log: [],
+  name: 'Error'
+}
+
+Node.js v22.16.0
+Traceback (most recent call last):
+  File "C:\Users\theis\Documents\Codex\salah-rlgwo-execution-20261009\workers\location_policy_builder_oracle_r1\root_guard.py", line 146, in <module>
+    if __name__ == '__main__': raise SystemExit(main())
+                                                ^^^^^^
+  File "C:\Users\theis\Documents\Codex\salah-rlgwo-execution-20261009\workers\location_policy_builder_oracle_r1\root_guard.py", line 145, in main
+    return execute(plan,args.lease,args.expected_seal)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theis\Documents\Codex\salah-rlgwo-execution-20261009\workers\location_policy_builder_oracle_r1\root_guard.py", line 131, in execute
+    output = Path(plan['output']); raw = (output/'results.json').read_bytes(); chain = json.loads(raw); manifest = read(output/'policy-manifest.json')
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theis\AppData\Local\Programs\Python\Python311\Lib\pathlib.py", line 1050, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theis\AppData\Local\Programs\Python\Python311\Lib\pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\location_policy_builder_oracle_r1\\execution-r0023-policy-builder-r1-01\\results.json'

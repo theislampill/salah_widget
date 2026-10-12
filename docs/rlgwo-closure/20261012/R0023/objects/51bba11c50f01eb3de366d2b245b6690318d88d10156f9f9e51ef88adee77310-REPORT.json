@@ -1,0 +1,131 @@
+{
+  "schema": "r0023-policy-builder8-source-admission/1",
+  "disposition": "PASS_BOUNDARY_ONLY",
+  "status": "PASS_AFFECTED_BUILDER8_SOURCE_PREFLIGHT_ONLY",
+  "bodyKey": "chromium:policy:builder8",
+  "reviewer": "/root/r0008_native_actual_exit_review_r1",
+  "consumer": "root",
+  "carrierSealSha256": "5cd4e88ec2d3f6c9feb550b7c47e324ecd8829073b1b23442f8290b3daaaf551",
+  "rootCommandSha256": "7ffb197b9d47254b4f8cec6ba57f4263921016fa4cc37d53114819b0f9c99231",
+  "nativeExecuted": false,
+  "nodeComplete": false,
+  "nodeCredit": 0,
+  "reviewedBoundary": {
+    "carrierSeal": {
+      "path": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/workers/location_policy_builder_oracle_r1/SEAL.json",
+      "bytes": 3432,
+      "sha256": "5cd4e88ec2d3f6c9feb550b7c47e324ecd8829073b1b23442f8290b3daaaf551"
+    },
+    "command": {
+      "path": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/workers/location_policy_builder_oracle_r1/ROOT_COMMAND.json",
+      "bytes": 9807,
+      "sha256": "7ffb197b9d47254b4f8cec6ba57f4263921016fa4cc37d53114819b0f9c99231"
+    },
+    "guard": {
+      "path": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/workers/location_policy_builder_oracle_r1/root_guard.py",
+      "bytes": 15272,
+      "sha256": "2941263c39ac75b5cdde45971f3d088cdb49f2a2b3489a2c2586ad3554dd573b"
+    },
+    "native": {
+      "path": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/workers/location_policy_builder_oracle_r1/native/residual-location-actions.cjs",
+      "bytes": 61430,
+      "sha256": "2e13db5d9b780a6fea30a89cd514a7cd40b12536dd3914c9b6f113e6851a9d3d"
+    },
+    "leaseRequirements": {
+      "path": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/workers/location_policy_builder_oracle_r1/LEASE_REQUIREMENTS.json",
+      "bytes": 3440,
+      "sha256": "e39c083bb0caa2a7a38dd8764b706ff7148a46760674026b1a45b0aa95a28c5e"
+    },
+    "rootCustodyWrapper": {
+      "path": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/integration/r0023-policy-builder8-admission-r1/execute_owned.py",
+      "bytes": 10157,
+      "sha256": "6741e18fbee3a78732c46fda35378fa4f00fc00ad980195698416f191d7f5621"
+    },
+    "outputDirectory": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/workers/location_policy_builder_oracle_r1/execution-r0023-policy-builder-r1-01",
+    "caseIds": [
+      "builder-native-top-level",
+      "builder-native-delegated",
+      "builder-native-noallow",
+      "builder-native-restrictive",
+      "builder-mock-denied",
+      "builder-mock-timeout",
+      "builder-mock-unavailable",
+      "builder-mock-unsupported"
+    ],
+    "caseCount": 8,
+    "originalLogicalCaseCount": 16,
+    "newCases": 0,
+    "runtimeFiles": 139,
+    "runtimeSha256": "e718fe9e58f37535de4dc496a2da3bf2b05808153287e1fe328398ea59c0df53",
+    "authoredSha256": "ec59b3ff64e06713d652af5b30f04a18fcde404b92b4595bc1cee96818a6ec65",
+    "generatedSha256": "14e1d92101dad56f1352a2b4a85a460067361ecdfca62093f9f9d1286b991fad",
+    "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "builderSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+  },
+  "affectedFindings": [
+    {
+      "function": "assertAllowedNativeEvidence",
+      "disposition": "PASS_SOURCE_ONLY",
+      "finding": "Actual failed builder callback/evidence timestamp1791625318383, accuracy25, intent and source already match. Original strict numeric equality rejects builder formConfig coordinate strings. Corrected builder branch requires strings, nonblank finite numeric values and exact52.52/13.41; widget strict numeric branch and exact timestamp/accuracy/intent/source predicates remain."
+    },
+    {
+      "function": "manualRecovery",
+      "disposition": "PASS_SOURCE_ONLY",
+      "finding": "Source-supported adjacent mismatch reproduces through exact production formConfig and full production SalahConfig.normalize in contained VM. Corrected raw builder form requires strings30/31, source manual and null locationEvidence; passive production normalization must yield numeric30/31 and fixed-site/manual. Original widget config branch remains unchanged. This source RED/GREEN is not an additional native failure or native recovery PASS."
+    }
+  ],
+  "containment": {
+    "changedFunctionsOnly": [
+      "assertAllowedNativeEvidence",
+      "manualRecovery"
+    ],
+    "outsideFunctionsSha256": "a1ec8aa43a553764fc1813f485a3913c430516a33d8f906be07d9498e4279756",
+    "outsideBytesEqual": true,
+    "unchanged": "Original descriptors/order/budgets, one-shot options, policy/mocked-error controls, server, production source bodies, Python front door, capture sequence and finally remain byte unchanged outside the two functions. No product/SDK/input changes."
+  },
+  "controls": {
+    "oracle": {
+      "path": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/workers/location_policy_builder_oracle_r1/CONTROLS.json",
+      "bytes": 5621,
+      "sha256": "326ae3bd2e295f8eace593257b30d718102a22e86dd8085d97234a1d54751fb6"
+    },
+    "oracleCount": 47,
+    "independentlyReproduced": 47,
+    "independentMethod": "Executed exact retained source-only oracle script in contained VM with filesystem output intercepted and all unexpected capabilities refused; reproduced exact retained controls bytes. No SDK/browser/server/socket/native acquisition or source write.",
+    "guard": {
+      "path": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/workers/location_policy_builder_oracle_r1/GUARD_CONTROLS.json",
+      "bytes": 4021,
+      "sha256": "b8452be545c6948a7295984cf9054dfec4e2e99f4606274038de057222b1a84e"
+    },
+    "guardCount": 34,
+    "guardDecision": "Inspected exact guard/control source and retained34 contained refusals/positives; independent exact sealed --verify-only returned0, original8 builderIDs/nativeNOT_RUN. Retained parser fixtures are synthetic source controls.",
+    "negativeScope": "Wrong timestamp/accuracy/type/blank/nonfinite/value/intent/source, wrong raw/manual normalized semantics, widget substitution, foreign/reordered receipts, false full claim, unexpected exit, expired/unzoned/foreign lease, absent review/seal all reject.",
+    "priorControls": "Original accepted9/13 controls and accepted widget native/pixel scope reused, not replayed."
+  },
+  "reuse": {
+    "widgetActualReviewSeal": "78b225f7d39c6dee9f899b2d987c5648849079f5bf8d706bc1f1b0840d2f7315",
+    "widgetActualReportSha256": "7c51be5e5fbf2d2380231df6354ff97efa490c9026fa45f5d5475e4cdf30cf1b",
+    "rootPartialConsumption": {
+      "path": "C:/Users/theis/Documents/Codex/salah-rlgwo-execution-20261009/integration/r0023-policy-bounded-admission-r1/partial8-consumption.json",
+      "bytes": 1783,
+      "sha256": "e154455c0da1668f90e0f48d3e30339a2d8c32ac4c8a822eec4d1a9c7d54b00b"
+    },
+    "originalRawResultsSha256": "082d94d6b1ac044ba48e9b4dd342e192494018b0404a6cdf82b64df73625fe5f",
+    "originalCustodySha256": "a46cf8d00baded49780a877c294762537ccf5c7c1345c0db4486d3c86525d57c",
+    "originalReleaseSha256": "88a61b445df1e54de7a5788d531415c79f588cd7f51ac6b30ac6fd88642a1f21",
+    "originalFailure": "Ninth remains raw FAIL with no crops/latersteps; seven NOT_RUN remain. Original connect_ex10035 ATTENTION and positive owned cleanup retained; original nativeSeconds null. No accepted widget acquisition/pixel replay."
+  },
+  "entryAndCustodyDecision": "Root guard verifies exact sealed20-file carrier population (only exact future output excluded), inherited121/80 source seals,139 current source files, original partial review/consumption/raw failures/known cleanup/tool pins and exact original--only8 argv. It checks independent source seal, finite timezone-aware named root lease and live exclusive root lease/integrator before dispatch. Root wrapper has exact scoped claim/CAS, owned Popen/terminal persisted before cleanup, source-bound A/B ports cross-associated to host/grants/document receipts, checked successful native Windows TCP query and observed owned PIDs before matching release. Failure/unknown completion retains attention/lease; no automatic retry.",
+  "terminalContract": "The physical builder-only raw manifest intentionally remains INCOMPLETE_OR_FAILED with missing acceptedwidget8; it cannot become full16 PASS. Actual terminal parser requires original ordered builder prefix plus explicit notRun, no late PASS after FAIL/CAUGHT/foreign path, correct exit0 full8 or exit1 stoppedFAIL. Root alone may assemble/review combined16 and JOIN later.",
+  "toolLimits": "Existing Python3.11.9/Node22.16.0/Playwright-core1.62.1/explicitChromium1223-148.0.7778.96 retained. No homogeneous SDK/browser, real sensor, actual owner permission, extension/newtab, font/physics/whole renderer or native qualification from this source review.",
+  "rootConditions": [
+    "Exact current issue/discussion and primary reconciliation",
+    "Consume exact independent report/seal and current author/command/guard/tool pins",
+    "Fresh direct-owned output, finite exclusive ACTUAL root lease",
+    "Retain actual raw/stopped failures and original clips/crops; independently review original builder8",
+    "Known owned terminal/process/endpoint cleanup; resource release distinct from subject validity",
+    "Independent complete16/canonical candidate/own-three-exit review and root JOIN remain pending"
+  ],
+  "conclusion": "Admit this exact source boundary for only the original eight builder cases. Accepted widget8 is reused; original ninth FAIL is preserved. Source-only recommendation supplies no actual case or node credit.",
+  "createdAtUtc": "2026-10-10T10:05:41.564560+00:00"
+}

@@ -1,0 +1,72 @@
+FAIL label and units saves a day later preserve fix age while savedAt advances 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 1791028800000
+- 1790942400000
+     ^
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:37:56)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL a cached five-minute fix retains its acquisition time 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 1790942400000
+- 1790942100000
+         ^
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:41:131)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL saved old browser target remains usable without becoming a current device claim 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 1791028800000
+- 1790856000000
+     ^
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:45:44)
+    at C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:59
+FAIL hardcoded local and preferLocal keep target semantics and preference precedence 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
+    accuracyM: 25,
++   acquiredAt: 1790942400000,
+-   acquiredAt: 1790856000000,
+    area: null,
+    bounds: null,
+    intent: 'device-position',
+    provider: null,
+    source: 'browser-geolocation'
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:106:149)
+    at C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:59
+FAIL later preference saves preserve private origin and fix while the older state stays manual 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 1791028800000
+- 1790942400000
+     ^
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:128:196)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL legacy browser record remains unchanged on read and conservatively migrates on explicit save 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
+    accuracyM: null,
++   acquiredAt: 1790942400000,
+-   acquiredAt: null,
+    area: null,
+    bounds: null,
+    intent: 'device-position',
+    provider: null,
+    source: 'legacy'
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:136:162)
+    at C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:59

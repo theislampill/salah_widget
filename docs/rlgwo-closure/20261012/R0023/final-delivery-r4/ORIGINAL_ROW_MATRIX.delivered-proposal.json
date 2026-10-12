@@ -1,0 +1,2303 @@
+{
+  "schema": "r0023-complete-delivered-original-row-matrix-proposal/1",
+  "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+  "all25OriginalRows": [
+    {
+      "obligation": "Represent selected target/intent separately from original acquisition source, known metre accuracy, original acquisition timestamp and settings persistence time.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-WX",
+        "C-STORE"
+      ],
+      "discriminator": "T-35 record assertions; targeted13 downstream interface cases.",
+      "expected": "Explicit fixed site, browser device position, coarse area, place/postcode and legacy/unknown distinguishable.",
+      "observed": "locationEvidence carries intent/source/accuracyM/acquiredAt/provider/area/bounds; CONFIG savedAt separate; weather capture copies original fields.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O01",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Capture finite coords.accuracy in metres and actual position.timestamp from both one-shot widget and builder acquisition; no zero/current-time fabrication for malformed metadata.",
+      "authoredOwnerRefs": [
+        "C-GEO-OWNER",
+        "B-ACQUIRE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-GEO",
+        "B-ACQUIRE",
+        "I-SET"
+      ],
+      "discriminator": "T-35 shared geolocation, form chain and builder; capture-time mutant.",
+      "expected": "Positive52.52,13.41/25m/T is exact through acquisition/form/apply/save/load.",
+      "observed": "Shared and both form paths retain25/T; actual settings acquisition/apply/save/load control passes; capture-time mutant caught.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O02",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Missing/NaN/negative/infinite/non-number accuracy remains unknown; valid reported0 is not decimal-derived precision.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "C-GEO-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "C-GEO",
+        "I-SET"
+      ],
+      "discriminator": "T-35 malformed accuracies/zero and manual five-decimal control.",
+      "expected": "Unknown accuracy null; no precision from formatting.",
+      "observed": "All malformed cases null;0 retained; manual52.52000/13.41000 fixed site has null accuracy/time.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O03",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Missing/nonpositive/future/malformed timestamp remains unknown, never age0; define/document actual clock/skew handling.",
+      "authoredOwnerRefs": [
+        "C-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-WX",
+        "I-SET"
+      ],
+      "discriminator": "T-35 timestamp matrix and source71–72.",
+      "expected": "Original fix time stays null across later save; future policy explicit.",
+      "observed": "Zero-skew Date.now() validation rejects future timestamps, null stays null after day-later save; source comment explains policy but delivered config documentation does not.",
+      "status": "unmet",
+      "scope": "logic satisfied; mandatory policy documentation missing",
+      "id": "R0023-O04",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "unmet",
+      "candidateDisposition": "ACCEPTED_SOURCE_DOCUMENTATION_SCOPE_ALIAS_AND_FINAL_REVIEW_PENDING",
+      "assignedAcceptanceIds": [
+        "R0023-A01"
+      ],
+      "acceptedArtifactRefs": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\proposed\\evidence\\R0023\\documentation.json",
+          "bytes": 20593,
+          "sha256": "935fe839cc84f80deb864452dfa7cf074004dd2b87bcc75df760f92e7a9f8f68"
+        },
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\execution\\R0023\\release-review.json",
+          "bytes": 16069,
+          "sha256": "16ad2a8412ff34fd168774977b04dba0618b7a12182e97c6be6f51db38b89481"
+        }
+      ],
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Save unrelated label/units/method preferences later advances savedAt only; preserve original source/metres/T and acquired age.",
+      "authoredOwnerRefs": [
+        "C-STORE-OWNER",
+        "I-FORM-OWNER",
+        "I-SET-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-STORE",
+        "I-FORM",
+        "I-SET"
+      ],
+      "discriminator": "T-35 label/units atT+1day; fix-age/label-clears/form-drop mutations.",
+      "expected": "AcquiredAt remainsT/accuracy25; savedAt T+1day; no second acquisition.",
+      "observed": "Actual form/apply/save/load chain retains metadata and one GPS call; age-renewal/dropped metadata/name clearing mutations fail.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O05",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Five-minute cached browser fix keeps original timestamp; stale saved browser target stays usable without claiming current viewer position.",
+      "authoredOwnerRefs": [
+        "C-GEO-OWNER",
+        "I-FORM-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-GEO",
+        "C-STORE",
+        "I-FORM",
+        "I-SET",
+        "I-WX"
+      ],
+      "discriminator": "T-35 cached/old saved position; downstream fix expiry and savedAt negative.",
+      "expected": "Saved browser position/age distinguish from fresh device presence; fixed sites are not age-stale.",
+      "observed": "Cached acquiredAt T−300000 unchanged; old target still usable and pin says Saved browser position, not GPS/current; downstream rejects expired device but admits configured site.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O06",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Coordinate edits select explicit manual site and clear incompatible acquisition claims; label-only edit/reverse naming cannot improve accuracy or renew timestamp.",
+      "authoredOwnerRefs": [
+        "B-INTENT-OWNER",
+        "I-SET-OWNER",
+        "I-FORM-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-INTENT",
+        "I-SET",
+        "I-FORM"
+      ],
+      "discriminator": "T-35 manual coordinate/name/reverse cases and late reverse after manual.",
+      "expected": "Manual target null accuracy/time; naming preserves acquired evidence.",
+      "observed": "Both form coordinate paths clear browser claims; label and units/reverse keep25/T; stale reverse cannot restore old evidence.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O07",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Place/postcode selection retains available provider/granularity/bounds without invented point precision; absent/malformed bounds explicitly unknown.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-SET-OWNER",
+        "B-INTENT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-PLACE",
+        "C-CONSUMER",
+        "I-SET",
+        "B-INTENT"
+      ],
+      "discriminator": "T-35 actual Nominatim bounds and malformed/absent bounds.",
+      "expected": "Real supplied bounds retained; null if malformed; accuracy/time not manufactured.",
+      "observed": "Berlin bounds52..53/13..14 and provider/area retained; absent/NaN/empty malformed bounds null.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O08",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Coarse-IP area/provider retained only with verified semantics; ambiguous scalar accuracy is not interpreted as metres.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "C-DEADLINE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "C-DEADLINE",
+        "I-WX"
+      ],
+      "discriminator": "T-35 actual GeoJS parser accuracy5; downstream coarse negative.",
+      "expected": "coarse-area, GeoJS/area, metric accuracy unknown.",
+      "observed": "Raw cfg.accuracy5 remains historical provider scalar; locationEvidence.accuracyM/acquiredAt null; weather does not borrow scalar precision.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O09",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Conservative legacy saved migration retains usable coordinates/preferences without savedAt-to-fix substitution; read does not destructively rewrite.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "C-STORE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "C-STORE",
+        "I-FORM"
+      ],
+      "discriminator": "T-35 legacy browser/unresolved/read/save/older preference rewrite.",
+      "expected": "Legacy acquisition unknown; explicit later save can conservatively represent site.",
+      "observed": "Legacy browser intent retained with unknown precision/time; original raw record unchanged on read; explicit save preserves coordinates/preferences and safe source.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O10",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Denied storage preserves accurate in-memory metadata and truthful session-only feedback; blocked/partitioned storage does not clear useful saved data.",
+      "authoredOwnerRefs": [
+        "C-STORE-OWNER",
+        "I-APPLY-OWNER",
+        "I-PERSIST-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-STORE",
+        "I-APPLY",
+        "I-PERSIST"
+      ],
+      "discriminator": "T-35 denied persistence; T-17 denied getter/read/remove sentinels.",
+      "expected": "25/T retained in memory after failed save; old storage intact.",
+      "observed": "Metadata/source stays browser-geolocation and status session-only; denied reads/deletion safeguards pass. Native writable partition/iframe policy remains unverified below.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O11",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Portable hashes intentionally describe configured destination; do not expose fine-grained acquisition history or imply sender fix is recipient presence.",
+      "authoredOwnerRefs": [
+        "C-SERIAL-OWNER",
+        "B-EXPORT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-SERIAL",
+        "B-EXPORT",
+        "C-RESOLVE",
+        "I-WX"
+      ],
+      "discriminator": "T-35 actual builder portable recipient and all serialization modes.",
+      "expected": "Portable recipient is hash fixed-site, selected coords, null accuracy/time; URLs omit private fix history.",
+      "observed": "Actual builder52.52/13.41 produces fixed-site recipient; accuracy/acquiredAt/timestamp/evidence/device source absent in portable/preferLocal/local hashes.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O12",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Explicit hardcoded, local, preferLocal, preview and copied snippet preserve location/metadata semantics and existing method/unit priority.",
+      "authoredOwnerRefs": [
+        "C-RESOLVE-OWNER",
+        "B-EXPORT-OWNER",
+        "I-BOOT-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-RESOLVE",
+        "B-EXPORT",
+        "I-BOOT"
+      ],
+      "discriminator": "T-35 hardcoded/local/preferLocal; T-16 actual export paths/precedence.",
+      "expected": "Fixed site never claims current recipient device; saved selections remain authoritative.",
+      "observed": "Hardcoded0,0 is fixed-site/unknown precision; preferLocal retains saved browser evidence+preferences; builder hash/snippet/preview share serializer.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O13",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Old/downgraded production consumers remain usable and conservatively see configured site/unknown, never false fresh precise GPS.",
+      "authoredOwnerRefs": [
+        "C-STORE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-STORE",
+        "I-FORM"
+      ],
+      "discriminator": "T-35 actual historical fd2972 consumer; legacy-source mutant.",
+      "expected": "Stored source manual with private origin+evidence; old pin manual and raw bytes unchanged.",
+      "observed": "Real older source fixture shows Manual location with correct coords/preferences and no rewrite; omission of conservative source rewrite fails relevant assertion.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O14",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "No old result wins new location intent; permission denied/timeout/unavailable/unsupported does not retry/prompt-loop or replace target evidence.",
+      "authoredOwnerRefs": [
+        "B-ACQUIRE-OWNER",
+        "I-SET-OWNER",
+        "C-GEO-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-ACQUIRE",
+        "I-SET",
+        "C-GEO"
+      ],
+      "discriminator": "T-35 stale GPS, denied1/timeout3/unsupported; held-out unavailable2; T-15.",
+      "expected": "One-shot user-triggered behavior; prior config preserved after failure.",
+      "observed": "All controlled cases pass with one or zero getCurrentPosition calls and unchanged current target; late old GPS cannot overwrite manual/save.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O15",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Keep one-shot existing highAccuracy=false/10minute cache/timeout, do not add watchPosition, auto prompt each refresh or demand precision for fixed site; no prayer method policy change.",
+      "authoredOwnerRefs": [
+        "C-GEO-OWNER",
+        "B-ACQUIRE-OWNER",
+        "I-SET-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-GEO",
+        "B-ACQUIRE",
+        "I-SET"
+      ],
+      "discriminator": "T-35 exact acquisition options and source search.",
+      "expected": "Existing options retained; accepted age/accuracy is product-scale policy, not GPS label.",
+      "observed": "Exact false/10000/600000 options; no continuous tracking in owners; weather admits configured sites separately.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O16",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Decision-useful diagnostics/pin/status identify target/source/accuracy/fix age honestly; original source and persistence time separately visible.",
+      "authoredOwnerRefs": [
+        "I-FORM-OWNER",
+        "I-SET-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "I-FORM",
+        "I-SET",
+        "I-WX"
+      ],
+      "discriminator": "T-35 saved/browser pin and qa source3174–3175, weather target3145.",
+      "expected": "Browser/Saved browser position with25m/time or unknown; no inaccurate GPS/current wording.",
+      "observed": "Current production pin names and qa fields are honest within source/controlled tests; native display/crops still require bridge; README contradicts below.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O17",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Update README recipient disclosure and config documentation for acquisition/fix versus savedAt, browser versus saved position, portable fixed site and conservative legacy/skew.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-FORM-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "D-LOCAL",
+        "D-STORAGE",
+        "D-CONFIG"
+      ],
+      "discriminator": "README105/128–139 and DESIGN339–341 actual target.",
+      "expected": "Documentation reflects metadata interface and honest precision/privacy.",
+      "observed": "README still says precise GPS/Use precise location and partitioned=unavailable; no acquisition age/portable evidence semantics. DESIGN WidgetConfig omits locationEvidence and its lifecycle/skew contract.",
+      "status": "unmet",
+      "scope": "mandatory documentation",
+      "id": "R0023-O18",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "unmet",
+      "candidateDisposition": "ACCEPTED_SOURCE_DOCUMENTATION_SCOPE_ALIAS_AND_FINAL_REVIEW_PENDING",
+      "assignedAcceptanceIds": [
+        "R0023-A11"
+      ],
+      "acceptedArtifactRefs": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\proposed\\evidence\\R0023\\documentation.json",
+          "bytes": 20593,
+          "sha256": "935fe839cc84f80deb864452dfa7cf074004dd2b87bcc75df760f92e7a9f8f68"
+        },
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\execution\\R0023\\release-review.json",
+          "bytes": 16069,
+          "sha256": "16ad2a8412ff34fd168774977b04dba0618b7a12182e97c6be6f51db38b89481"
+        }
+      ],
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Freeze/consume end-to-end location record in weather; distinguish precise-device/site/coarse/unknown and original fix age, immutable snapshot across body await.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-WX"
+      ],
+      "discriminator": "Fresh targeted13 R0024 interface cases: T-WX-TARGET/T-WX-COPY/T-WX-CONFIG.",
+      "expected": "Selected target evidence reaches weather without mutation or savedAt inflation.",
+      "observed": "All13 named downstream cases pass; actual config hash and actual save/load feed weather, stale/legacy/coarse/unknown rejection separate from fixed-site admission; body mutation cannot alter captured primitives.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O19",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Keep the location-meaning interface distinct from precipitation authority and product-scale device accuracy policy; fixed configured sites need no fresh GPS.",
+      "authoredOwnerRefs": [
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "I-WX"
+      ],
+      "discriminator": "R0023 target/intent invariant, binding H5/H8 context and distinct synthetic point-policy source.",
+      "expected": "Target/source/accuracy/age remain honest; no added direct-present adapter/GPS requirement for labelled current model estimate.",
+      "observed": "Audit preserves the H5/H8 amendment to R0024 model-presentation scope. It waives no R0023 metadata, documentation or native-proof obligation; synthetic point gates remain fixture controls rather than live observation.",
+      "status": "satisfied",
+      "scope": "owner policy compatibility; no R0023 waiver",
+      "id": "R0023-O20",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Iframe controls: top-level/delegated local embed/absent delegation/restrictive parent policy with controlled permission host or mocks; preserve local allow geolocation and no real owner permission interaction.",
+      "authoredOwnerRefs": [
+        "B-EXPORT-OWNER",
+        "C-GEO-OWNER",
+        "I-SET-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "B-EXPORT",
+        "C-GEO",
+        "I-SET"
+      ],
+      "discriminator": "Original iframe matrix; existing allow source only.",
+      "expected": "Actual form/acquisition behavior fails gracefully under denied policy; no automatic retry.",
+      "observed": "Controlled one-shot failure logic passes and local snippet includes allow; no native parent-policy matrix receipt located/executed.",
+      "status": "unverified",
+      "scope": "native iframe/Permissions Policy consumers",
+      "id": "R0023-O21",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "unverified",
+      "candidateDisposition": "EXACT_NATIVE_POLICY_PRODUCER_SCOPE_JOINED_FINAL_CANDIDATE_REVIEW_PENDING",
+      "assignedAcceptanceIds": [
+        "R0023-A07",
+        "R0023-A08"
+      ],
+      "acceptedArtifactRefs": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0023\\policy-manifest.json",
+          "bytes": 49323,
+          "sha256": "eee917feade50bf2f53070d1e5797cca120aa1f64e172a87ab11c465817837a8"
+        },
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\location_policy_final_actual_review_r1\\final-r1\\REPORT.json",
+          "bytes": 56053,
+          "sha256": "f4e403ac7cd40d2747b09cf994d97702bd052db3cc120188f80c1fada72ac070"
+        },
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-policy-exit-join-r1\\receipt.json",
+          "bytes": 6879,
+          "sha256": "78ed40bc02efe88b5630e6336624d825168b43388143f81a5511d18197f025e5"
+        }
+      ],
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Small real-browser integration proof must exercise actual full form→apply→save→load and builder path on bound bytes; helper-only tests cannot prove retained fields.",
+      "authoredOwnerRefs": [
+        "I-FORM-OWNER",
+        "I-SET-OWNER",
+        "B-ACQUIRE-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "I-FORM",
+        "I-SET",
+        "I-APPLY",
+        "C-STORE",
+        "B-ACQUIRE"
+      ],
+      "discriminator": "T-35-NATIVE and held-out applicability probe.",
+      "expected": "Usable current exact-script native wrapper/driver plus native form/persistence readback.",
+      "observed": "The original two-script fixture defect is retained. The isolated exact-six-script adaptation now loads actual widgets and one current GPS form→close/apply→save→reopen positive preserves25m/T, and hostile GPS/manual/closed-session/reset cases pass. Full metadata negative lifecycle/builder/iframe matrix is not claimed; documentation and remaining proof stay open.",
+      "status": "unverified",
+      "scope": "native current form positive credited; full metadata/builder/iframe matrix remains unverified",
+      "id": "R0023-O22",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "unverified",
+      "candidateDisposition": "EXACT57_METADATA_RECIPES_INDEPENDENTLY_ACCEPTED_FINAL_CANDIDATE_REVIEW_PENDING",
+      "assignedAcceptanceIds": [
+        "R0023-A02",
+        "R0023-A03",
+        "R0023-A04",
+        "R0023-A05",
+        "R0023-A06",
+        "R0023-A09"
+      ],
+      "acceptedArtifactRefs": [
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0023\\metadata-manifest.json",
+          "bytes": 112274,
+          "sha256": "b576409233dbdd523a22329e080ba170d88f6af8f9a5857184466cea1ce025ef"
+        },
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-metadata-exit-join-r1\\receipt.json",
+          "bytes": 6090,
+          "sha256": "5d8d907b5b72123c33ab9b79159a21744bbc37d0203da2bb63edd189db66d7be"
+        },
+        {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\location_metadata_final_actual_review_r1\\REPORT.json",
+          "bytes": 89864,
+          "sha256": "c4d548b028102b8bfed40a1695b2baf75c248b0776a9a967ba2a61cf47224dd3"
+        }
+      ],
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Original positive/control/negative metadata fixtures and end-to-end mutation tests preserve original expectations; source-equivalent historical evidence narrowly reused, exact candidate current tests fresh.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-FORM-OWNER",
+        "I-SET-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-FORM",
+        "I-SET",
+        "C-STORE",
+        "I-WX"
+      ],
+      "discriminator": "T-35/M-35 fresh ref and downstream13 fresh; public retained L-35.",
+      "expected": "Capture/drop/renewed-time/name/older-source regressions detected behaviorally.",
+      "observed": "31/31 metadata,5/5 mutants and13/13 downstream interface checks pass; each expected failure is behavioral with no bootstrap failure. Legacy actual consumer explicitly historical, not final browser proof.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O23",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Ownership links R000F/R0010/R0011/R001F/R001B remain interfaces rather than duplicate algorithms or administrative whole-issue blockers; serialized shared writers.",
+      "authoredOwnerRefs": [
+        "C-OWNER",
+        "I-FORM-OWNER",
+        "I-WX-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-CONSUMER",
+        "I-FORM",
+        "I-WX",
+        "C-STORE",
+        "B-INTENT"
+      ],
+      "discriminator": "Separate intent/serializer/storage/deadline owners and tested call interfaces.",
+      "expected": "Evidence lifecycle owns metadata; acquisition/request algorithms retain their original owner.",
+      "observed": "Metadata carries across existing owners; independent gates noted per interface; docs and native bridge gaps are local, not blanket N001/N002/N003 blocker.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O24",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    },
+    {
+      "obligation": "Rollback metadata/UI without deleting usable coords/preferences; older consumer degrades safely; stop on private URL leak/destructive migration/continuous tracking; closure exact-candidate end-to-end proof.",
+      "authoredOwnerRefs": [
+        "C-STORE-OWNER",
+        "C-SERIAL-OWNER"
+      ],
+      "deliveredConsumerRefs": [
+        "C-STORE",
+        "C-SERIAL",
+        "I-FORM",
+        "I-WX"
+      ],
+      "discriminator": "T-35 old-reader/private-hash/no data deletion controls and audit boundary.",
+      "expected": "Preserve usable target and private origin; no new provider/production change during audit.",
+      "observed": "Conservative downgrade and omitted URL history proven in controlled source; no public/runtime changes; native/docs increment remains proposed only.",
+      "status": "satisfied",
+      "scope": "controlled exact-source logic",
+      "id": "R0023-O25",
+      "contractBinding": {
+        "bodySha256": "edcbe2836c884dae1b45aa6a1358a0b6ec511e2b4de3bb6abef66088ad924f8d",
+        "revision": "2026-09-08T10:50:30Z",
+        "comments": []
+      },
+      "originalAuditDisposition": "satisfied",
+      "candidateDisposition": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+      "continuingConstraint": "No private URL leak/destructive migration/continuous tracking; conservative downgrade and rollback preserve usable target/preferences. Exact delivered end-to-end closure remains separate.",
+      "originalLiteralRowPreserved": true,
+      "acceptedIndependentQualification": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+      "acceptedRowDisposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+      "deliveredLocationSourceBinding": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\SOURCE_BINDING.json",
+      "finalDeliveryDisposition": "MERGED_AND_PUBLIC_READBACK_COMPLETE_AT_REQUIRED_SCOPE; PENDING_ROOT_FINAL_MATRIX_ACCEPTANCE_AND_CERTIFICATE_PUBLICATION",
+      "finalDeliveredSourceBinding": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\MERGE_BINDING.json",
+        "bytes": 7826,
+        "sha256": "b400872ec57f42aa04f9324e8ba42faea40cb30cb58d5b9b7e92e8e0e6651c6e"
+      },
+      "finalDeliveredDocumentation": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\final-delivery-r4\\DOCUMENTATION_DELIVERED.json",
+        "bytes": 8742,
+        "sha256": "1449fbcbceb789067faed8a88cd1d8b97dba485528115fb48df37ad14d1db184"
+      }
+    }
+  ],
+  "candidateIndependentQualification": {
+    "schema": "r0023-independent-qualification-decision-core/1",
+    "node": "R0023-QUALIFY",
+    "reviewer": "/root/r0023_qualify_capture_review_r2",
+    "status": "PASS_R0023_PRE_DELIVERY_QUALIFICATION_WITH_LIMITS",
+    "stage": "PRE_DELIVERY_CANDIDATE",
+    "atUtc": "2026-10-11T11:05:24.493924+00:00",
+    "sourceRuntimeSha256": "e718fe9e58f37535de4dc496a2da3bf2b05808153287e1fe328398ea59c0df53",
+    "materializedCandidate": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+      "bytes": 183743,
+      "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+    },
+    "documentationAlias": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\documentation.json",
+      "bytes": 20593,
+      "sha256": "935fe839cc84f80deb864452dfa7cf074004dd2b87bcc75df760f92e7a9f8f68"
+    },
+    "originalRowIds": [
+      "R0023-O01",
+      "R0023-O02",
+      "R0023-O03",
+      "R0023-O04",
+      "R0023-O05",
+      "R0023-O06",
+      "R0023-O07",
+      "R0023-O08",
+      "R0023-O09",
+      "R0023-O10",
+      "R0023-O11",
+      "R0023-O12",
+      "R0023-O13",
+      "R0023-O14",
+      "R0023-O15",
+      "R0023-O16",
+      "R0023-O17",
+      "R0023-O18",
+      "R0023-O19",
+      "R0023-O20",
+      "R0023-O21",
+      "R0023-O22",
+      "R0023-O23",
+      "R0023-O24",
+      "R0023-O25"
+    ],
+    "originalAcceptanceIds": [
+      "R0023-A01",
+      "R0023-A02",
+      "R0023-A03",
+      "R0023-A04",
+      "R0023-A05",
+      "R0023-A06",
+      "R0023-A07",
+      "R0023-A08",
+      "R0023-A09"
+    ],
+    "additionalDocAcceptanceId": "R0023-A11",
+    "laterDeliveredClosureAcceptanceId": "R0023-A10",
+    "ownExitDispositions": [
+      {
+        "literal": "Assigned native/source/semantic candidate evidence is independently reviewed and all original row obligations are accounted.",
+        "disposition": "SATISFIED",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0023\\metadata-manifest.json",
+            "bytes": 112274,
+            "sha256": "b576409233dbdd523a22329e080ba170d88f6af8f9a5857184466cea1ce025ef"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-metadata-exit-join-r1\\receipt.json",
+            "bytes": 6090,
+            "sha256": "5d8d907b5b72123c33ab9b79159a21744bbc37d0203da2bb63edd189db66d7be"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0023\\policy-manifest.json",
+            "bytes": 49323,
+            "sha256": "eee917feade50bf2f53070d1e5797cca120aa1f64e172a87ab11c465817837a8"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-policy-exit-join-r1\\receipt.json",
+            "bytes": 6879,
+            "sha256": "78ed40bc02efe88b5630e6336624d825168b43388143f81a5511d18197f025e5"
+          }
+        ]
+      },
+      {
+        "literal": "Reviewed-candidate certificate binds candidate hashes and accepted proof, with exact-head authority/merge/public delivery/completed closure explicitly pending.",
+        "disposition": "SATISFIED",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\documentation.json",
+            "bytes": 20593,
+            "sha256": "935fe839cc84f80deb864452dfa7cf074004dd2b87bcc75df760f92e7a9f8f68"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-exit-join-r2\\join.py",
+            "bytes": 23480,
+            "sha256": "437492f2d296fc61759f2dd31e3611fb8060b6fcc8a26565e8fce5a0b277bf49"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_capture_review_r2\\final-r1\\CAPTURE_REPLAY.json",
+            "bytes": 34686,
+            "sha256": "898a6a59c7e896f4a0ab3e35e9e436f61a810df26bf8acfd50b5f54f9d3b727e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\independent-review-HR-20261009-FINAL\\joined-admission-wave-01\\nodes\\R0023-DOC.json",
+            "bytes": 5591,
+            "sha256": "937c6d1297a7aaa9670237e4bc8bad08ec9396123237bab8eb298dd1642a4ebf"
+          }
+        ]
+      },
+      {
+        "literal": "No pre-delivery certificate attests an external effect; later DELIVERY/CLOSE consumes its output plus actual delivery/readback.",
+        "disposition": "SATISFIED",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\celestial-startup-repair-20261008\\planning-original-21e7a843\\docs\\rlgwo-execution\\20261008\\CLOSURE_DAG.json",
+            "bytes": 1507418,
+            "sha256": "9ac372cfcce4df94ee0e678b907e66c131fe49f72cc55106143aa35dbdb0a6e7"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\resumption-20261011-r1\\GITHUB_CURRENTNESS.json",
+            "bytes": 471,
+            "sha256": "a205b882429fb1ef1c65d6d29476666715a75fae298db82e775c687d53fde65b"
+          }
+        ]
+      }
+    ],
+    "rowDispositions": [
+      {
+        "id": "R0023-O01",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O02",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O03",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O04",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "unmet",
+        "scope": "logic satisfied; mandatory policy documentation missing",
+        "historicalCandidateMetadataRetained": "ACCEPTED_SOURCE_DOCUMENTATION_SCOPE_ALIAS_AND_FINAL_REVIEW_PENDING",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\proposed\\evidence\\R0023\\documentation.json",
+            "bytes": 20593,
+            "sha256": "935fe839cc84f80deb864452dfa7cf074004dd2b87bcc75df760f92e7a9f8f68"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\execution\\R0023\\release-review.json",
+            "bytes": 16069,
+            "sha256": "16ad2a8412ff34fd168774977b04dba0618b7a12182e97c6be6f51db38b89481"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O05",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O06",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O07",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O08",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O09",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O10",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O11",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O12",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O13",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O14",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O15",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O16",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O17",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O18",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "unmet",
+        "scope": "mandatory documentation",
+        "historicalCandidateMetadataRetained": "ACCEPTED_SOURCE_DOCUMENTATION_SCOPE_ALIAS_AND_FINAL_REVIEW_PENDING",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\proposed\\evidence\\R0023\\documentation.json",
+            "bytes": 20593,
+            "sha256": "935fe839cc84f80deb864452dfa7cf074004dd2b87bcc75df760f92e7a9f8f68"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\execution\\R0023\\release-review.json",
+            "bytes": 16069,
+            "sha256": "16ad2a8412ff34fd168774977b04dba0618b7a12182e97c6be6f51db38b89481"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O19",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O20",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "owner policy compatibility; no R0023 waiver",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O21",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "unverified",
+        "scope": "native iframe/Permissions Policy consumers",
+        "historicalCandidateMetadataRetained": "EXACT_NATIVE_POLICY_PRODUCER_SCOPE_JOINED_FINAL_CANDIDATE_REVIEW_PENDING",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0023\\policy-manifest.json",
+            "bytes": 49323,
+            "sha256": "eee917feade50bf2f53070d1e5797cca120aa1f64e172a87ab11c465817837a8"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\location_policy_final_actual_review_r1\\final-r1\\REPORT.json",
+            "bytes": 56053,
+            "sha256": "f4e403ac7cd40d2747b09cf994d97702bd052db3cc120188f80c1fada72ac070"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-policy-exit-join-r1\\receipt.json",
+            "bytes": 6879,
+            "sha256": "78ed40bc02efe88b5630e6336624d825168b43388143f81a5511d18197f025e5"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O22",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "unverified",
+        "scope": "native current form positive credited; full metadata/builder/iframe matrix remains unverified",
+        "historicalCandidateMetadataRetained": "EXACT57_METADATA_RECIPES_INDEPENDENTLY_ACCEPTED_FINAL_CANDIDATE_REVIEW_PENDING",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0023\\metadata-manifest.json",
+            "bytes": 112274,
+            "sha256": "b576409233dbdd523a22329e080ba170d88f6af8f9a5857184466cea1ce025ef"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-metadata-exit-join-r1\\receipt.json",
+            "bytes": 6090,
+            "sha256": "5d8d907b5b72123c33ab9b79159a21744bbc37d0203da2bb63edd189db66d7be"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\location_metadata_final_actual_review_r1\\REPORT.json",
+            "bytes": 89864,
+            "sha256": "c4d548b028102b8bfed40a1695b2baf75c248b0776a9a967ba2a61cf47224dd3"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O23",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O24",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      },
+      {
+        "id": "R0023-O25",
+        "disposition": "ACCEPTED_EXACT_CANDIDATE_SCOPE_WITH_LIMITS",
+        "originalAuditDispositionRetained": "satisfied",
+        "scope": "controlled exact-source logic",
+        "historicalCandidateMetadataRetained": "RETAINED_EXACT_ACCEPTED_SOURCE_OR_NATIVE_SCOPE",
+        "supportingArtifactRefs": [
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-qualify-candidate-r1\\reviewed-candidate-certificate.json",
+            "bytes": 183743,
+            "sha256": "8bc2cc3142628c5bd824e724a7e22c5d55af7ac7523ae994ed0c6c85235fc759"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_final_review_r1\\SOURCE_PREREAD.json",
+            "bytes": 10984,
+            "sha256": "6f82b680070cdb67a44d8c941a45c0ed9c7a8f8f222420ddfe18bc9592ef1faa"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_qualify_join_preparation_r1\\FINAL_SOURCE_FREEZE.json",
+            "bytes": 35505,
+            "sha256": "d1c966ef178e82393a236c0bba0f5a4b2d4f75d3f689a5e6af42a4de8873200e"
+          },
+          {
+            "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_release_exit_r1\\public-readback\\original-assessment",
+            "bytes": 148398,
+            "sha256": "3273b48a2a48f0730e06763c1b34fc2a7a4906c97229631efb35f827c29acab5"
+          }
+        ]
+      }
+    ],
+    "downstreamGates": [
+      {
+        "gate": "EXACT_HEAD_EFFECT_AUTHORITY",
+        "disposition": "PENDING",
+        "blocksQualificationOwnExit": false
+      },
+      {
+        "gate": "APPROVED_DOCS_MERGE",
+        "disposition": "PENDING",
+        "blocksQualificationOwnExit": false
+      },
+      {
+        "gate": "RUNTIME_MERGE_IF_NEW_APPROVED_COUNTEREXAMPLE",
+        "disposition": "PENDING",
+        "blocksQualificationOwnExit": false
+      },
+      {
+        "gate": "PUBLIC_RAW_AND_PAGES_DELIVERY_READBACK",
+        "disposition": "PENDING",
+        "blocksQualificationOwnExit": false
+      },
+      {
+        "gate": "IMMUTABLE_PUBLIC_EVIDENCE_AND_APPROVED_COMMENT",
+        "disposition": "PENDING",
+        "blocksQualificationOwnExit": false
+      },
+      {
+        "gate": "AUTHORIZED_MANUAL_ISSUE_CLOSE",
+        "disposition": "PENDING",
+        "blocksQualificationOwnExit": false
+      }
+    ],
+    "newDOCNodeCredit": 0,
+    "docsCanonicalPreimage": null,
+    "certificateCanonicalPreimage": null,
+    "delivered": false,
+    "issueClosed": false,
+    "wholeRuntimeEquivalenceToCurrent07": false,
+    "preservedLimits": [
+      "Reuse only when source bodies, consumed interfaces, synthetic inputs, clock contract and expected assertions are unchanged; tree equality alone does not prove a new native pathway.",
+      "Retain historical Node native=NOT_RUN scope; do not relabel VM results native or replay accepted #15/#18/#31 merely to populate a new report.",
+      "The 17 accepted native cases prove their named current consumer controls. Map-backed storage/reopen is not native persistence across reload, and injected JavaScript denial is not native iframe Permissions Policy.",
+      "Accepted public script/doc distribution and rollout baseline can be inherited on unchanged bytes; future doc edits need their own exact merged/public readback. Evidence publication SHA is distinct from product target SHA.",
+      "A changed provider/weather interface invalidates its affected consumer evidence; docs-only changes do not justify repeating atmospheric, terrain, motion or full-scene tests.",
+      "Widget sky remains loading/refining with a provisional large bright body; no renderer, first-paint, motion or astronomical visual approval.",
+      "Builder captures are scrolled views of the embed area and include a blank preview region; they do not establish renderer/preview pixel readiness.",
+      "Fix accuracy/age is exposed in raw title/accessible-name attributes, not a visibly expanded tooltip in these captures.",
+      "widget-cached full viewport shows a partial latitude display; the subsequent card crop and raw DOM show 52.52. Both images remain immutable; no stable startup/paint claim.",
+      "Four mutants are rejected at their original consumer assertion before capture; no missing crop is fabricated.",
+      "System fallback fonts and original viewport/DPR only; no broad typography, responsive, device, permission or host-container approval.",
+      "Original controlled Chromium metadata recipes only. Synthetic geolocation/providers, fixed-clock and system-font fixtures retain their accepted limits.",
+      "Native browser localStorage is used only in disposable contexts; source, generated index/config, served script bodies and admitted mutant variants are bound exactly.",
+      "Source139 e718 inventory and provenance f064 are distinct from whole current07/root/main or delivered/public artifacts; no outcome transfers to parked R000C or accepted R0008 siblings.",
+      "First case and unchanged source/runtime/tool/fixture reviews are inherited by exact pins; only remaining56 raw expected/observed, actual control failures, captures and affected final JOIN were reviewed now.",
+      "A fresh matching results receipt after awaited cleanup and root command/capacity provenance bounds this native chain; no new OS descendant census or real-device authority is claimed.",
+      "Raw producer PENDING independent-review labels and assembled candidate nodeCredit0 remain historical metadata; the separate sealed review and later root receipt supply node-local acceptance.",
+      "Source31/31/five mutants/old-reader evidence remains its original VM scope; metadata native cases remain their exact context only.",
+      "Actual POLICY parent/grant/callback controls must be independently accepted; synthetic consumer-error mocks cannot become native permission policy.",
+      "Alias is a proposed data/provenance output for earned DOC scope, not a claim its historical canonical path existed.",
+      "No whole README, renderer, motion, source-tree, current07, real host, mobile sensor, Apple, public delivery or issue closure qualification."
+    ]
+  },
+  "historicalAcceptanceMapRetained": {
+    "R0023-A01": {
+      "literalAcceptance": {
+        "id": "R0023-A01",
+        "fixture": "DESIGN332–355 at WidgetConfig339–341 and README105/128–139; known original acquire T versus savedAt and timestamp T+1 boundary.",
+        "consumer": "Delivered config documentation and recipient/privacy prose against normalizeLocationEvidence/browserLocationEvidence/saveLocal/loadLocal.",
+        "assertion": "Document zero-skew actual clock: finite numeric acquiredAt>0 and<=Date.now; future/nonpositive/malformed stays null, not age0; unrelated save does not renew. Explicitly distinguish browser position/saved position/configured site.",
+        "environment": "Read-only source/document review, then future delivered README/DESIGN readback.",
+        "expected": "Actual implemented rule documented; no freshness radius/age threshold invented.",
+        "artifact": "evidence/R0023/documentation.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-DOC",
+      "disposition": "ACCEPTED_EXACT_PRODUCER_SCOPE_FINAL_CANDIDATE_REVIEW_PENDING"
+    },
+    "R0023-A11": {
+      "literalAcceptance": {
+        "id": "R0023-A11",
+        "fixture": "README105/128–139 and DESIGN339–341, actual locationEvidence domains, private portable history and legacy saved record.",
+        "consumer": "Delivered README recipient/privacy and DESIGN WidgetConfig schema against actual config/form/export consumers.",
+        "assertion": "Describe source/intent/accuracyM/acquiredAt/provider/area/bounds, independent savedAt, browser versus saved position, manual fixed site and conservative non-destructive legacy/old-reader handling. Portable recipient gets configured destination with no private acquisition history. Join conditional partition wording with #17.",
+        "environment": "Read-only semantic review and future delivered README/DESIGN; no new behavior test for prose.",
+        "expected": "All metadata lifecycle/disclosure facts present and accurate; no unsupported precise GPS or current-presence claim.",
+        "artifact": "evidence/R0023/documentation-metadata-recipient.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-DOC",
+      "disposition": "ACCEPTED_EXACT_PRODUCER_SCOPE_FINAL_CANDIDATE_REVIEW_PENDING"
+    },
+    "R0023-A07": {
+      "literalAcceptance": {
+        "id": "R0023-A07",
+        "fixture": "Four native permission cases with real Date: A top-level allowed/granted, A parent delegated cross-origin B, noallow cross-origin B with default parent policy, restrictive parent geolocation=() plus iframeallow. Controlled browser location52.52/13.41/accuracy25; test context grants only owned A/B; seed same manual target.",
+        "consumer": "Unreplaced native navigator.geolocation and browser policy -> actual widget #set-pin / builder acquisition handlers.",
+        "assertion": "Zero geolocation calls at boot, exactly one after real button per case. Allowed cases native success25 and actual captured position.timestamp preserved; denied cases native errorcode1, manual target/evidence unchanged, error usable/no retry. Record exact parent header, iframeallow, origins/isSecureContext, grants, policy introspection if available, callback and UI. Manual30/31 recovery remains usable.",
+        "environment": "Windows actual Chromium recorded; two owned trustworthy loopback origins A/B, real Date clock, synthetic geolocation through browser context; no owner location or permission dialog. UTC/1000x900/DPR1.",
+        "expected": "User grant plus delegation succeeds; absent delegation/restrictive parent deny despite grant. Native policy is not bypassed with synthetic JS success.",
+        "artifact": "evidence/R0023/native-permission-matrix.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-POLICY",
+      "disposition": "EXACT_POLICY_PRODUCER_SCOPE_JOINED_FINAL_CANDIDATE_REVIEW_PENDING",
+      "canonicalPolicy": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0023\\policy-manifest.json",
+        "bytes": 49323,
+        "sha256": "eee917feade50bf2f53070d1e5797cca120aa1f64e172a87ab11c465817837a8"
+      },
+      "independentActualReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\location_policy_final_actual_review_r1\\final-r1\\REPORT.json",
+        "bytes": 56053,
+        "sha256": "f4e403ac7cd40d2747b09cf994d97702bd052db3cc120188f80c1fada72ac070"
+      },
+      "rootJoin": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-policy-exit-join-r1\\receipt.json",
+        "bytes": 6879,
+        "sha256": "78ed40bc02efe88b5630e6336624d825168b43388143f81a5511d18197f025e5"
+      }
+    },
+    "R0023-A08": {
+      "literalAcceptance": {
+        "id": "R0023-A08",
+        "fixture": "Separate deterministic consumer controls deniedcode1, timeoutcode3, unavailablecode2, absent geolocation API; existing one-shot options unchanged.",
+        "consumer": "Actual widget and builder buttons, current form/manual recovery.",
+        "assertion": "No automatic request/retry on boot or callback error; current target/evidence preserved, error shown and manual recovery/close works. Label these mocks as consumer errors, not native user-agent policy/sensor evidence.",
+        "environment": "Windows, one disposable Chromium context; record actual browser/build and Python/Playwright versions, UTC timezone, viewport 1000x900 and DPR 1; widget card 325x530. Provider data and dates are synthetic. Use the same context/origin only where persistence across reload is the tested contract. No owner browser profile, real location, real clipboard or installer execution.",
+        "expected": "Graceful negative path without prompt loop or continuous tracking.",
+        "artifact": "evidence/R0023/mock-error-consumers.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-POLICY",
+      "disposition": "EXACT_POLICY_PRODUCER_SCOPE_JOINED_FINAL_CANDIDATE_REVIEW_PENDING",
+      "canonicalPolicy": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0023\\policy-manifest.json",
+        "bytes": 49323,
+        "sha256": "eee917feade50bf2f53070d1e5797cca120aa1f64e172a87ab11c465817837a8"
+      },
+      "independentActualReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\location_policy_final_actual_review_r1\\final-r1\\REPORT.json",
+        "bytes": 56053,
+        "sha256": "f4e403ac7cd40d2747b09cf994d97702bd052db3cc120188f80c1fada72ac070"
+      },
+      "rootJoin": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0023-policy-exit-join-r1\\receipt.json",
+        "bytes": 6879,
+        "sha256": "78ed40bc02efe88b5630e6336624d825168b43388143f81a5511d18197f025e5"
+      }
+    },
+    "R0023-A02": {
+      "literalAcceptance": {
+        "id": "R0023-A02",
+        "fixture": "Widget and builder synthetic Position52.52/13.41/accuracy25/timestampT with T=1790942400000 (2026-10-02T12:00Z), UTC/DPR1; native disposable storage, first boot no saved config; actual pin click.",
+        "consumer": "Actual one-shot acquisition -> widget form -> apply/save -> native reload/load; builder acquisition -> form/preview/copy hash.",
+        "assertion": "Exactly25m/T in current widget evidence and native saved/load record; reported options highAccuracyfalse/timeout10000/maximumAge600000 and one call. Native reload has seed disabled. Builder retains25m/T privately in acquisition/form; portable copied recipient boots fixed-site/hash without private evidence.",
+        "environment": "Windows, one disposable Chromium context; record actual browser/build and Python/Playwright versions, UTC timezone, viewport 1000x900 and DPR 1; widget card 325x530. Provider data and dates are synthetic. Use the same context/origin only where persistence across reload is the tested contract. No owner browser profile, real location, real clipboard or installer execution.",
+        "expected": "No form field loss; current valid target usable; portable target conveys configured destination.",
+        "artifact": "evidence/R0023/metadata-positive-reload-builder.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-METADATA",
+      "disposition": "ACCEPTED_EXACT_PRODUCER_SCOPE_FINAL_CANDIDATE_REVIEW_PENDING"
+    },
+    "R0023-A03": {
+      "literalAcceptance": {
+        "id": "R0023-A03",
+        "fixture": "Two separate fresh controls: (a) after A02 acquire T, advance to T+86400000 and save label-only/units/method edits; (b) new realm/native context at clock T receives cached position timestamp T-300000 under existing options. Synthetic clock state is explicit on each reload; never run the five-minute-cache control at the day-later clock.",
+        "consumer": "Actual full widget/settings/save/load plus builder label/form/reverse path.",
+        "assertion": "Day-later control acquiredAt remains exact original T; cached control remains exact T-300000 at clock T. savedAt advances only on successful persistence; original source/metres retained. Visible pin/title distinguishes saved browser position and actual acquired age, not savedAt or here-now.",
+        "environment": "Windows, one disposable Chromium context; record actual browser/build and Python/Playwright versions, UTC timezone, viewport 1000x900 and DPR 1; widget card 325x530. Provider data and dates are synthetic. Use the same context/origin only where persistence across reload is the tested contract. No owner browser profile, real location, real clipboard or installer execution.",
+        "expected": "Unrelated preferences/name cannot renew fix or invent precision; cached age is tested independently without accidentally making it one day old.",
+        "artifact": "evidence/R0023/age-and-cached.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-METADATA",
+      "disposition": "ACCEPTED_EXACT_PRODUCER_SCOPE_FINAL_CANDIDATE_REVIEW_PENDING"
+    },
+    "R0023-A04": {
+      "literalAcceptance": {
+        "id": "R0023-A04",
+        "fixture": "Widget/builder acquired malformed fields: accuracy missing/NaN/-1/Infinity/string\"25\", valid0 boundary; timestamp missing/0/-1/NaN/Infinity/stringT/futureT+1 and positiveT boundary.",
+        "consumer": "Actual acquisition -> form -> apply/save/load and builder state, not normalize helper alone.",
+        "assertion": "Invalid accuracy/time -> null, valid0 remains0, validT remainsT, future/nonpositive never clamped to age0; coords remain usable. Inputs encoded through explicit synthetic Position controls with no JSON NaN-to-null ambiguity in receipt.",
+        "environment": "Windows, one disposable Chromium context; record actual browser/build and Python/Playwright versions, UTC timezone, viewport 1000x900 and DPR 1; widget card 325x530. Provider data and dates are synthetic. Use the same context/origin only where persistence across reload is the tested contract. No owner browser profile, real location, real clipboard or installer execution.",
+        "expected": "Known/unknown metadata semantics survive real consumer path.",
+        "artifact": "evidence/R0023/metadata-negative-boundaries.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-METADATA",
+      "disposition": "ACCEPTED_EXACT_PRODUCER_SCOPE_FINAL_CANDIDATE_REVIEW_PENDING"
+    },
+    "R0023-A05": {
+      "literalAcceptance": {
+        "id": "R0023-A05",
+        "fixture": "Five-decimal manual30.12345/31.12345, label-only priorGPS, coordinate edit afterGPS, NominatimBerlin bounds[52,53,13,14] and separate missing/reversed bounds; coarseIP with ambiguous scalaraccuracy; held oldGPS/current manual and closed/reopened session.",
+        "consumer": "Actual widget/builder form/selection/reverse/adoption and bound locationEvidence record.",
+        "assertion": "Manual coordinate change fixed-site/manual with incompatible accuracy/time cleared; label/reverse cannot improve evidence; place providerNominatim/bounds correct or null; coarse accuracy never fabricated metres; held old metadata cannot overwrite current intent. Reuse exact #15 stale controls when inputs unchanged.",
+        "environment": "Windows, one disposable Chromium context; record actual browser/build and Python/Playwright versions, UTC timezone, viewport 1000x900 and DPR 1; widget card 325x530. Provider data and dates are synthetic. Use the same context/origin only where persistence across reload is the tested contract. No owner browser profile, real location, real clipboard or installer execution.",
+        "expected": "Honest site/place/coarse/unknown distinctions and current ownership.",
+        "artifact": "evidence/R0023/intent-place-coarse.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-METADATA",
+      "disposition": "ACCEPTED_EXACT_PRODUCER_SCOPE_FINAL_CANDIDATE_REVIEW_PENDING"
+    },
+    "R0023-A06": {
+      "literalAcceptance": {
+        "id": "R0023-A06",
+        "fixture": "Native seed legacy v1 savedbrowser coords52.52/13.41, savedAt=T but no locationEvidence; fresh actual load without destructive write; separately setItemSecurityError after valid25/T acquisition with priorLondon bytes.",
+        "consumer": "Actual loadLocal/boot/UI and form/apply/save caller, metadata+bytes+warning.",
+        "assertion": "Legacy target remains usable with unknown fix/metres and no savedAt substitution; reading does not rewrite/delete bytes. Denied save preserves in-memory25/T, old stored bytes and session-only warning. Native reload does not assume failed write persisted.",
+        "environment": "Windows, one disposable Chromium context; record actual browser/build and Python/Playwright versions, UTC timezone, viewport 1000x900 and DPR 1; widget card 325x530. Provider data and dates are synthetic. Use the same context/origin only where persistence across reload is the tested contract. No owner browser profile, real location, real clipboard or installer execution.",
+        "expected": "Conservative old-record and denied-storage lifecycle; no useful data cleared.",
+        "artifact": "evidence/R0023/legacy-and-denied-save.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-METADATA",
+      "disposition": "ACCEPTED_EXACT_PRODUCER_SCOPE_FINAL_CANDIDATE_REVIEW_PENDING"
+    },
+    "R0023-A09": {
+      "literalAcceptance": {
+        "id": "R0023-A09",
+        "fixture": "Five retained metadata mutation classes: discard capture, renew acquiredAt on save, drop form evidence, reset evidence on name-only edit, expose false browser freshness to old reader; apply first four in isolated native candidate fixture to A02/A03/A05. Old-reader class uses retained accepted source-equivalent control.",
+        "consumer": "Actual acquisition/form/apply/save/load consumer for new native mutations; unchanged old-reader fixture independently retained.",
+        "assertion": "Corresponding native assertion must reject each changed behavior; old-reader five-mutant receipt remains accurately VM-scoped. Document why identical old-reader input/bytes permits reuse; do not relabel it native.",
+        "environment": "Windows, one disposable Chromium context; record actual browser/build and Python/Playwright versions, UTC timezone, viewport 1000x900 and DPR 1; widget card 325x530. Provider data and dates are synthetic. Use the same context/origin only where persistence across reload is the tested contract. No owner browser profile, real location, real clipboard or installer execution.",
+        "expected": "New consumer proof is discriminating; downgrade protection remains accepted.",
+        "artifact": "evidence/R0023/native-discriminators.json",
+        "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+      },
+      "producerNode": "R0023-METADATA",
+      "disposition": "ACCEPTED_EXACT_PRODUCER_SCOPE_FINAL_CANDIDATE_REVIEW_PENDING"
+    }
+  },
+  "currentAcceptanceDisposition": {
+    "R0023-A01": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW",
+    "R0023-A11": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW",
+    "R0023-A07": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW",
+    "R0023-A08": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW",
+    "R0023-A02": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW",
+    "R0023-A03": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW",
+    "R0023-A04": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW",
+    "R0023-A05": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW",
+    "R0023-A06": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW",
+    "R0023-A09": "ACCEPTED_PRE_DELIVERY_WITH_LOCATION_SOURCE_BINDING_PENDING_ROOT_REVIEW"
+  },
+  "laterDeliveredClosureAcceptance": [
+    {
+      "id": "R0023-A10",
+      "fixture": "Final metadata/docs/fixture candidate, original immutable target snapshot/weather source controls and actual public root/config/builder/README/DESIGN readbacks.",
+      "consumer": "Independent end-to-end closure certificate including native/source/evidence/platform boundaries.",
+      "assertion": "Every O04/O18/O21/O22 sub-obligation mapped; source positives31/31, five mutants, downstream13/13 and accepted currentGPS25/T are inherited narrowly; final docs actually delivered; no raw private acquisition fields in copied hash. Preserve original O25 exact candidate/rollback gate.",
+      "environment": "Future exact candidate review/public delivery; actual native policy environment recorded separately.",
+      "expected": "CLOSE-R0023 only after complete approved matrix and actual authorized delivery.",
+      "artifact": "evidence/R0023/closure-certificate.json",
+      "reviewGate": "Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure."
+    }
+  ],
+  "R0023_A10": "ACTUAL_AUTHORISED_MERGE_AND_PUBLIC_PROOF_PRESENT; PENDING_INDEPENDENT_FINAL_CERTIFICATE_PUBLICATION_READBACK_AND_MANUAL_CLOSE",
+  "atUtc": "2026-10-12T12:34:58.878892+00:00",
+  "sourceCommit": "ba6d15d6f305451a7eccbbd30e2a47138c9a22b3",
+  "originalRowsAndFailedControlsRewritten": false,
+  "primaryApprovedCompleteMatrix": false
+}

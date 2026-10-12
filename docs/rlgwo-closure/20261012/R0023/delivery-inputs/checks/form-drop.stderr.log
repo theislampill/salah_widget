@@ -1,0 +1,160 @@
+FAIL actual GPS form apply save load retains exactly 25 metres and original epoch 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   accuracyM: null,
++   acquiredAt: null,
+-   accuracyM: 25,
+-   acquiredAt: 1790942400000,
+    area: null,
+    bounds: null,
+    intent: 'device-position',
+    provider: null,
++   source: 'legacy'
+-   source: 'browser-geolocation'
+  }
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:32:62)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL label and units saves a day later preserve fix age while savedAt advances 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ null
+- 1790942400000
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:37:56)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL a cached five-minute fix retains its acquisition time 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ null
+- 1790942100000
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:41:84)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL display name edit alone preserves browser evidence and coordinates 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   accuracyM: null,
++   acquiredAt: null,
+-   accuracyM: 25,
+-   acquiredAt: 1790942400000,
+    area: null,
+    bounds: null,
+    intent: 'device-position',
+    provider: null,
++   source: 'legacy'
+-   source: 'browser-geolocation'
+  }
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:51:129)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL malformed accuracies stay unknown and zero metres is a valid reported value 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ null
+- 1790942400000
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:54:228)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL missing malformed and future timestamps stay unknown with no age-zero substitution 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+null !== 25
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:58:242)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL actual geocoder selection carries real bounds without invented point precision 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
+    accuracyM: null,
+    acquiredAt: null,
++   area: null,
++   bounds: null,
+-   area: 'Berlin, Germany',
+-   bounds: {
+-     east: 14,
+-     north: 53,
+-     south: 52,
+-     west: 13
+-   },
+    intent: 'fixed-site',
++   provider: null,
+-   provider: 'Nominatim',
+    source: 'place'
+  }
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:79:400)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL geocoder absent malformed bounds remain unknown 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
+    accuracyM: null,
+    acquiredAt: null,
++   area: null,
+-   area: 'Place, Country',
+    bounds: null,
+    intent: 'fixed-site',
+    provider: null,
+    source: 'place'
+  }
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:82:236)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL denied persistence retains accurate in-memory evidence with session-only feedback 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   accuracyM: null,
++   acquiredAt: null,
+-   accuracyM: 25,
+-   acquiredAt: 1790942400000,
+    area: null,
+    bounds: null,
+    intent: 'device-position',
+    provider: null,
++   source: 'legacy'
+-   source: 'browser-geolocation'
+  }
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:102:150)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL actual older consumer degrades a saved browser position to a configured site 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   accuracyM: null,
++   acquiredAt: null,
+-   accuracyM: 25,
+-   acquiredAt: 1790942400000,
+    area: null,
+    bounds: null,
+    intent: 'device-position',
+    provider: null,
++   source: 'legacy'
+-   source: 'browser-geolocation'
+  }
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:116:10)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51
+FAIL later preference saves preserve private origin and fix while the older state stays manual 
+ AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ null
+- 1790942400000
+
+    at Object.body (C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:128:196)
+    at async C:\Users\theis\.codex\worktrees\552b\salah_widget\tests\r0023-metadata.cjs:157:51

@@ -1,0 +1,253 @@
+{
+  "schema": "r0023-mechanical-accepted-documentation-input-join/1",
+  "atUtc": "2026-10-12T11:42:04.942651+00:00",
+  "acceptedR001BReview": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001b_release_exit_r1\\execution\\R001B\\release-review.json",
+    "bytes": 16130,
+    "sha256": "00bc05cec952df7366280da6f31b1dc2125c4dcb24470264bd44ca735536659a"
+  },
+  "acceptedR001BSeal": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001b_release_exit_r1\\SEAL.json",
+    "bytes": 659,
+    "sha256": "df0ead63ac58b5436dc05e89c567462f286c407464b7f983169ffe522ca2ed45"
+  },
+  "acceptedR001BProse": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001b_release_exit_r1\\OWNED_PROSE_AND_DIFF.json",
+    "bytes": 16670,
+    "sha256": "2dd7b6a90ca33986f369f7be54d8e0a479fed74281affd9e0750a00a6c95a5a0"
+  },
+  "acceptedReadmeContext": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\shared-docs-HR-FINAL-r1\\coalesced\\README.md",
+    "bytes": 34653,
+    "sha256": "b14791ffca9552d841066d6c8fff02c353f052b8952ef15d187fd340ebe317d1"
+  },
+  "privacyRegion": {
+    "id": "R1B-PRIVACY",
+    "startLine": 215,
+    "endLine": 241,
+    "text": "### Auto-detect, precise location & privacy\n\nSaved configuration uses this browser's storage. Local persistence does not prevent external requests: the table below describes the current recipients, triggers and sent fields. This is a description of source construction and caller controls, not a new transmission trace. Connection IP accompanies external requests. Provider retention or handling is not established by this widget-source description.\n\n| Request group | Trigger | Recipient | Sent fields and limits |\n| --- | --- | --- | --- |\n| Approximate area detection | Builder initialization; widget coarse-detection paths, including local/preferLocal resolution and Reset re-detection when the resolver requires it. | GeoJS `https://get.geojs.io/v1/ip/geo.json`, then `https://ipinfo.io/json` on failure. | Connection IP; neither URL has typed-query or coordinate parameters. IANA timezone detection uses local `Intl`. IP-derived area is approximate and is not precise permission or GPS. |\n| Place/postcode search | Builder one-second debounce or Enter; widget Settings Enter. Trimmed queries shorter than 2 make no request. | Nominatim `https://nominatim.openstreetmap.org/search` | `q` contains the trimmed query; `format=jsonv2`, `addressdetails=1`, `limit=5`. `countrycodes` is the known home country only for a query containing a digit; alphabetic London has no digit-country bias. |\n| Canadian-style prefix assist | Whitespace removed from a query with a leading letter-digit-letter pattern; in addition to Nominatim. | Zippopotam `https://api.zippopotam.us/ca/<FSA>` | First 3 matched characters, uppercased: `M5V2T6` → `/ca/M5V`. No complete postcode or widget coordinates are appended. This is a prefix test, not complete-postcode validation; malformed longer queries with that prefix also trigger it. |\n| Builder coordinate reverse lookup | Eligible coordinate edits after 700 ms debounce, or permission-granted builder location acquisition. Stale/non-numeric coordinates and both automatic label/method controls off produce no request. | BigDataCloud `https://api.bigdatacloud.net/data/reverse-geocode-client` | `latitude`, `longitude`, `localityLanguage=en`, e.g. `51.5`/`-0.12`. This is the builder caller; in-widget browser location does not invoke builder reverse geocoding. |\n| Prayer requests | Eligible date-specific prayer acquisition, subject to existing cache/currentness rules. | Aladhan `https://api.aladhan.com/v1/timings/<date>` | `latitude`, `longitude`, `method`, `school`; requested date in the path. |\n| Weather requests | Eligible active current/hourly acquisition, subject to cache, simulation and currentness guards. | Open-Meteo `https://api.open-meteo.com/v1/forecast` | `latitude`, `longitude`, `timezone`, `temperature_unit` (celsius/fahrenheit), `wind_speed_unit=ms`, `forecast_days=3`, and the current/hourly field selections listed below. These requests do not establish direct local precipitation observation. |\n| Radar evidence requests | Eligible manifest, then returned latest-past frame/tile under existing weather guards. | RainViewer `https://api.rainviewer.com/public/weather-maps.json` and returned tile host/frame. | Returned host + frame path + `/256/<z>/<x>/<y>/2/1_1.png`; x/y indices derive from coordinates and disclose a location-derived area. The manifest has no coordinate query. Image alpha is not millimetres or direct local observation. |\n| Font loading | Page stylesheet/font loading, subject to cache/network policy. | Google Fonts stylesheet `fonts.googleapis.com` and font resources `fonts.gstatic.com`. | Family/style/weight stylesheet request and returned font-resource URLs; no widget location/search fields in these source URLs. Cache-dependent declarations do not mean every font is fetched on every load. |\n\nOpen-Meteo's exact selected fields are:\n\n```text\ncurrent=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall\nhourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day\n```\n\n- **Browser location is optional and user-triggered.** The location pin requests one browser position after permission. Its reported accuracy may be known in metres or unknown; five decimal places do not measure accuracy. In an iframe, the local snippet includes `allow=\"geolocation\"`, and the embedding parent's Permissions Policy and user grant also apply. Stripping delegation or restricting parent policy can block acquisition; coarse/manual setup remains available.\n- **Acquisition and saving are separate.** A browser position retains its original acquisition time and reported accuracy; a saved browser position is a stored target and does not establish current presence. Saving settings does not renew a fix. Missing, malformed, nonpositive or future acquisition timestamps stay unknown; future timestamps have zero skew allowance against `Date.now()`. Portable URLs describe a configured destination and omit private acquisition history.\n- **Storage outcome is measured.** Saved settings use this browser's storage. If writing is unavailable, changes still apply for the current session and Settings shows a retained warning. A partition can be writable and retain settings within that partition. Saving and persistence depend on the host's actual storage permissions and lifetime; blocked writes cause the session-only warning.\n- **Reset scope.** Reset removes only the saved widget configuration (`salah_widget:config:v1`); it does not erase prayer/weather caches or data held by external providers. Successful removal may re-detect the area and issue the coarse request above. Failed removal reports the failure and leaves the existing target usable.\n- **TablissNG conditions.** Coarse acquisition depends on permitted provider access; browser position depends on preserved delegation, parent policy and user grant; saving depends on writable host storage and its lifetime. These conditions are not a claim that a particular TablissNG version or partition policy has been qualified.",
+    "utf8Sha256": "efa5d796a45037b158ded2f6c3146eae35f7d7dbe15f9a397c0f38bb346a2d41"
+  },
+  "creditsRegion": {
+    "id": "R1B-CREDITS-STORAGE",
+    "startLine": 437,
+    "endLine": 438,
+    "text": "browser requests carry the configured location and request context. Settings\nand caches are stored in the browser when storage is available.",
+    "partialLineOwnership": true,
+    "utf8Sha256": "f7098b78078fd7b3870b63f4b97267695ef2c1e2b6f5af5a75d2316f0748938f"
+  },
+  "actualFinalPrivacyExact": true,
+  "unchangedAcceptedR2Credits": true,
+  "R001BIntroNotJoined": true,
+  "sourceFactInput": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r001b_release_exit_r1\\SOURCE_FACT_BINDINGS.json",
+    "bytes": 42993,
+    "sha256": "47e985c420e5fe090ec00eb5a17653957eef6d3e3015a83babe677269e6b1a71"
+  },
+  "currentMainSourceBindings": [
+    {
+      "id": "CONFIG-KEY",
+      "relativeFile": "src\\native\\config.js",
+      "acceptedRegionSha256": "453a71d971dd6c5e810315c7d225df8fd2c7cac6d3e615d19810ea7ec65bcad1",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "CONFIG-FIX",
+      "relativeFile": "src\\native\\config.js",
+      "acceptedRegionSha256": "214cec5998fc92944fceaa01da8ae01c667192db310ee39c6ec49240912537f5",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "CONFIG-STORAGE",
+      "relativeFile": "src\\native\\config.js",
+      "acceptedRegionSha256": "4258de32e4f843fa7b13a7897cc0f9e465185850e599fe1f7c58fd3367fcd25c",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "CONFIG-COARSE",
+      "relativeFile": "src\\native\\config.js",
+      "acceptedRegionSha256": "d152be6c145e8514fde8a869cbf0706bc56bedb3cfa501e343c732fded4b05b8",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "CONFIG-GEOLOCATION",
+      "relativeFile": "src\\native\\config.js",
+      "acceptedRegionSha256": "52b5a371b97e241be715edf03fdd3f1fa1d57965219e298315ac653958683c78",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "CONFIG-SEARCH",
+      "relativeFile": "src\\native\\config.js",
+      "acceptedRegionSha256": "4ea0dd54ba49f727cf9d38272adaa6b53de35d8ec0ce2c5aedbe5d2e8faf6284",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "BUILDER-PRIVACY",
+      "relativeFile": "src\\native\\builder.html",
+      "acceptedRegionSha256": "f09fbd9f952e9fffb4ffcadb113d341bdf3c64982faa2de199e65062cb2af4ab",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "BUILDER-ALLOW",
+      "relativeFile": "src\\native\\builder.html",
+      "acceptedRegionSha256": "a60607359826852617fbfa708048fc77f33b32392518c7392ba459535356b45d",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "BUILDER-SEARCH",
+      "relativeFile": "src\\native\\builder.html",
+      "acceptedRegionSha256": "b4a4cc632a45483d464fdd44a8b2bd2f8fe4647aff0dc646410070207735bef8",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "BUILDER-REVERSE",
+      "relativeFile": "src\\native\\builder.html",
+      "acceptedRegionSha256": "4ce3902815eef8ae0f96be1eee87e160978be4b352192971abb64cbc1475505e",
+      "exactWholeRegion": true,
+      "wholeFileEqual": true
+    },
+    {
+      "id": "FONTS",
+      "relativeFile": "src\\native\\index.html",
+      "acceptedRegionSha256": "63472680dcdf70dc0720922a714380c18d67740baa5216aaf46409dc478a846c",
+      "exactWholeRegion": false,
+      "wholeFileEqual": false,
+      "exactDocumentedRequestConstruction": [
+        {
+          "text": "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">",
+          "sha256": "e0564d06b8b57566d131ba3e722230e9acf347c17f68939cb8abfbd6468966e1",
+          "occurrences": 1
+        },
+        {
+          "text": "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>",
+          "sha256": "07cd39730f639a9d2add20c8f84637359c452f6bc2f6874f7327cab70d738c1b",
+          "occurrences": 1
+        },
+        {
+          "text": "href=\"https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap\"",
+          "sha256": "67ed99826886026dcc35c8dc69f67d5db96987dc4487cd486ec45ab5b8981689",
+          "occurrences": 1
+        }
+      ],
+      "differenceLimit": "Accepted newer context has optional-font-loading comments/attributes; recipient and request URL are unchanged."
+    },
+    {
+      "id": "PRAYER-URL-CACHE",
+      "relativeFile": "src\\native\\index.html",
+      "acceptedRegionSha256": "3fcf06b2c9a231b925818364bd64aa61faac2dac5bb72bc6681c55e8d5823b15",
+      "exactWholeRegion": true,
+      "wholeFileEqual": false
+    },
+    {
+      "id": "WX-HOURLY",
+      "relativeFile": "src\\native\\index.html",
+      "acceptedRegionSha256": "71efea8423dc7598dfa03b0b26d2c48051cb38dcdce9f753cf8f52244cb5a267",
+      "exactWholeRegion": true,
+      "wholeFileEqual": false
+    },
+    {
+      "id": "WX-URL-CACHE",
+      "relativeFile": "src\\native\\index.html",
+      "acceptedRegionSha256": "58ea29897f2c33cee4218567da89964d222f111fabe0228cca59a54842a64e46",
+      "exactWholeRegion": true,
+      "wholeFileEqual": false
+    },
+    {
+      "id": "RADAR-URL",
+      "relativeFile": "src\\native\\index.html",
+      "acceptedRegionSha256": "f17f7d6aa8dc290e12e4efe5ecc3f949ba0e851e7cdebbe13d52e69869c71da3",
+      "exactWholeRegion": false,
+      "wholeFileEqual": false,
+      "exactDocumentedRequestConstruction": [
+        {
+          "text": "  if(SIM.wx!=null || !usableWeatherCoordinates(lat,lon) || radarBusy) return;       // real mode only\n",
+          "sha256": "745e28ea11fd1cac53a7bd166d21f60ba9aa51def7164294105067d21071d18f",
+          "occurrences": 1
+        },
+        {
+          "text": "    const result=await wxFetchJson(op,a,\"https://api.rainviewer.com/public/weather-maps.json\");\n",
+          "sha256": "64766ff05a6af022b8292251bc9e260dd3beafa171fafd790fd1fbf36858d7eb",
+          "occurrences": 1
+        },
+        {
+          "text": "    const j=result.data, host=j&&j.host, past=j&&j.radar&&j.radar.past;\n",
+          "sha256": "74ac47040f302cd1a7795e926a944639cd362a896662d2bd02d6aec392a1d382",
+          "occurrences": 1
+        },
+        {
+          "text": "      const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation\n",
+          "sha256": "bd31fad6eae18bc749ac114401466de42f60641bd80a2f2010c286cf3d699f60",
+          "occurrences": 1
+        },
+        {
+          "text": "      const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;\n",
+          "sha256": "149d1d5e5a480ca7affc1f7013e7541c42f933829404923e0b357f00c94d7aae",
+          "occurrences": 1
+        },
+        {
+          "text": "      const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;\n",
+          "sha256": "78112dd8979210898cf31356924c619bc524633ba70687f7173859ba560edd56",
+          "occurrences": 1
+        },
+        {
+          "text": "      const xt=Math.floor(fx), yt=Math.floor(fy);\n",
+          "sha256": "1290185dd3987879c2e28b84486a2aeedf26ddd833924ddc133d3a1165abb9e8",
+          "occurrences": 1
+        },
+        {
+          "text": "      const url=host+fr.path+\"/256/\"+z+\"/\"+xt+\"/\"+yt+\"/2/1_1.png\";\n",
+          "sha256": "2cca3c9ae87b5b50fb8949e43c507c081894f3bd71ae36a745ad16fbd7dedfd3",
+          "occurrences": 1
+        },
+        {
+          "text": "sample:image.sample,source:\"RainViewer mosaic\",quantitativeAuthority:\"unavailable (uncalibrated palette/alpha)\"};",
+          "sha256": "37d617e6d095772eb2eea02600a13605f28ae0a4ef96f3cc2d307d453b9fc3c8",
+          "occurrences": 1
+        }
+      ],
+      "differenceLimit": "Accepted newer context additionally validates derived radar epochs; manifest, latest-past frame, coordinate tile construction and unavailable observation authority are unchanged."
+    },
+    {
+      "id": "SESSION-SAVE",
+      "relativeFile": "src\\native\\index.html",
+      "acceptedRegionSha256": "9048e64e044ea848eefbd2157af8a79cd6d2491dc2a0751a6ab9f31de46e9fbe",
+      "exactWholeRegion": true,
+      "wholeFileEqual": false
+    },
+    {
+      "id": "SETTINGS-SEARCH",
+      "relativeFile": "src\\native\\index.html",
+      "acceptedRegionSha256": "dadf2481cf5cf4649db10c078f1073bce36389fb6fe62119f922d9f23b245d36",
+      "exactWholeRegion": true,
+      "wholeFileEqual": false
+    },
+    {
+      "id": "RESET",
+      "relativeFile": "src\\native\\index.html",
+      "acceptedRegionSha256": "975810982302b3f859608e1b7274dbd2afb76beeeac23b944396ca6122270e0b",
+      "exactWholeRegion": true,
+      "wholeFileEqual": false
+    }
+  ],
+  "sourceBindingLimit": "16 accepted complete regions are exact; the two explicit later-context differences retain exact documented request construction. No source requalification or new transmission trace.",
+  "priorCoalescedProof": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\addendum-r2\\CHECKS.json",
+    "bytes": 8176,
+    "sha256": "656d2de3f4c1d4da1840b28e829ea6602b36d7aeee84621192093115cf85b4a0"
+  },
+  "actualFinalReadmeEqualsPriorProofSha256": "02d137c45bfdebd505cb39a775a94445e9bfc2be6312d46d6629e5776731ed13",
+  "independentReviewOfThisJoin": "PENDING_ROOT",
+  "R001BWorkReopened": false,
+  "R001BIssue27Complete": false,
+  "wholeREADMEPASS": false,
+  "newNativeCampaign": false
+}

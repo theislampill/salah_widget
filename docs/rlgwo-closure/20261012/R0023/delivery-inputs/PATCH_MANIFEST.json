@@ -1,0 +1,147 @@
+{
+  "schema": "r0023-exact-main-semantic-patch/1",
+  "base": "88926dd12d22a6a8c1cd369d4823750778fccb48",
+  "baseTree": "d113e5fb0e121f0079180867cf6109a7f98bee96",
+  "patch": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\R0023-exact-main.patch",
+    "bytes": 7196,
+    "sha256": "a8472f8ad2bc576169f3f17bf9ec66d0b42b9305d9221d950832a12c0510daca"
+  },
+  "files": [
+    {
+      "file": "README.md",
+      "preimage": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\preimages\\README.md",
+        "bytes": 13638,
+        "sha256": "f73a924c9ab855d3e1de79d2ba5e3bb0fda20bc26812f0aa84782d92ead3aa38"
+      },
+      "postimage": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\postimages\\README.md",
+        "bytes": 14281,
+        "sha256": "d13fdb63f690e0deeb84a24f7f33be66bbe91b4b62b440c0a0e83a8e6ab557e8"
+      }
+    },
+    {
+      "file": "DESIGN.md",
+      "preimage": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\preimages\\DESIGN.md",
+        "bytes": 33824,
+        "sha256": "64bca5aa3b98a88ad25b83b861a987c10c9819904373556a23abc0b3cc75fb7d"
+      },
+      "postimage": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0023_whole_closure_r1\\postimages\\DESIGN.md",
+        "bytes": 35804,
+        "sha256": "3632581f4090352dae80e9f0fcace371c3f7f61eb0ef3268e4a2ec1ed45c0724"
+      }
+    }
+  ],
+  "semanticOperations": [
+    {
+      "file": "README.md",
+      "region": "R23-README-PIN",
+      "before": "The in-widget settings panel supports location (name, latitude, longitude), calculation\nmethod, Asr school, 12/24-hour, date format, and temperature units. A **location pin** beside\nthe location field shows the source — **red** = estimated from your IP (the default),\n**glowing** = precise GPS (tap it to request browser permission), **grey** = manually set.\n",
+      "after": "The in-widget settings panel supports location (name, latitude, longitude), calculation\nmethod, Asr school, 12/24-hour, date format, and temperature units. A **location pin** beside\nthe location field identifies an estimated area, browser/saved browser position, or manually\nselected site. Its title reports available accuracy in metres and original fix age; tap it\nto request a browser position.\n",
+      "preimageSha256": "096c9e4fbc2fef5a3bd5a287ae8a29431e127aef4b42a4e222853a5d360ae36c",
+      "postimageSha256": "a21b8f1a838fd19924c8f5e906bb71eb8f7c5f29e52418a0955832a9f1e88ea3"
+    },
+    {
+      "file": "README.md",
+      "region": "R23-README-ACQUIRE_AND_FIX",
+      "before": "- **Precise location is optional and user-triggered.** The \"Use precise location\" button asks\n  your browser's permission (`navigator.geolocation`) — it is **never** called automatically.\n  In an iframe it usually requires `allow=\"geolocation\"` on the `<iframe>` (the local-mode\n  snippet from the builder includes it). If a host (e.g. TablissNG) strips that attribute or\n  you deny permission, the widget falls back gracefully — coarse auto-detect and manual setup\n  still work.\n",
+      "after": "- **Browser location is optional and user-triggered.** The location pin requests one browser position after permission. Its reported accuracy may be known in metres or unknown; five decimal places do not measure accuracy. In an iframe, the local snippet includes `allow=\"geolocation\"`, and the embedding parent's Permissions Policy and user grant also apply. Stripping delegation or restricting parent policy can block acquisition; coarse/manual setup remains available.\n- **Acquisition and saving are separate.** A browser position retains its original acquisition time and reported accuracy; a saved browser position is a stored target and does not establish current presence. Saving settings does not renew a fix. Missing, malformed, nonpositive or future acquisition timestamps stay unknown; future timestamps have zero skew allowance against `Date.now()`. Portable URLs describe a configured destination and omit private acquisition history.\n",
+      "preimageSha256": "2410c7246980e4a51d60dfa016c32730bc382785f976efe296d91972ab316568",
+      "postimageSha256": "485df45d28fa20e3bfe992e649d9de71e8373287636bb5ac6e851a2bcde18ad0"
+    },
+    {
+      "file": "README.md",
+      "region": "R23-README-STORAGE",
+      "before": "- **Saved settings stay local** to your browser/profile. If storage is blocked or partitioned\n  (private browsing, strict third-party-iframe storage), saving is unavailable — the widget\n  says so and your changes still apply **for the current session** (it never crashes).\n",
+      "after": "- **Storage outcome is measured.** Saved settings use this browser's storage. If writing is unavailable, changes still apply for the current session and Settings shows a retained warning. A partition can be writable and retain settings within that partition. Saving and persistence depend on the host's actual storage permissions and lifetime; blocked writes cause the session-only warning.\n",
+      "preimageSha256": "742bb69a8c9dec94d946f084205feeef14fe0dbc566cf5da1543d437bf8dc2ef",
+      "postimageSha256": "21299afbfe41c1531362732f7cae8ab3d2db746b96eb1336c4dd1c28907aac51"
+    },
+    {
+      "file": "README.md",
+      "region": "R23-README-HOST",
+      "before": "- **TablissNG:** coarse auto-detect works inside the iframe if your network/ad-blocker allows\n  the request; precise location works only if TablissNG preserves `allow=\"geolocation\"`;\n  saved settings persist only if it doesn't partition iframe storage. All three degrade\n  gracefully when not available.\n",
+      "after": "- **TablissNG conditions.** Coarse acquisition depends on permitted provider access; browser position depends on preserved delegation, parent policy and user grant; saving depends on writable host storage and its lifetime. These conditions are not a claim that a particular TablissNG version or partition policy has been qualified.\n",
+      "preimageSha256": "e43bccdce9741fbd2af1e858279fea1f751480fd87ec9cc39020a93ef2220aa4",
+      "postimageSha256": "5e42283ed5702b986bd906b9c3f67e61defba88855dd391ae00855be0d1a855d"
+    },
+    {
+      "file": "DESIGN.md",
+      "region": "R23-DESIGN-CONFIG_EVIDENCE_LIFECYCLE",
+      "before": "- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, lp, seed, source, savedAt}`,\n  `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, manual, fallback}`. Persisted under\n  `salah_widget:config:v1` (separate from the prayer/weather caches; every access wrapped in try/catch).\n",
+      "after": "- **`WidgetConfig`**: `{v, lat, lon, tz, label, method, school, time, datefmt, units, appearance, lp, seed, source, origin, savedAt, locationEvidence}`.\n  `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, place, manual, fallback}`; `origin`, when present,\n  preserves the acquisition origin independently of the storage marker. Persisted under `salah_widget:config:v1`\n  (separate from prayer/weather caches; every access wrapped in try/catch).\n- **Location evidence:** `{intent, source, accuracyM, acquiredAt, provider, area, bounds}`.\n  `intent ∈ {fixed-site, device-position, coarse-area, unknown}` and evidence\n  `source ∈ {hash, manual, place, browser-geolocation, coarse-ip, legacy, unknown}`. Coordinates select the\n  target; this record does not certify the viewer's current presence. Browser `accuracyM` is finite numeric\n  metres ≥ 0 or `null` (a reported 0 stays 0); decimal places do not establish accuracy. `acquiredAt` is a finite\n  numeric epoch > 0 and ≤ actual `Date.now()`, or `null`. The future-timestamp skew allowance is zero;\n  missing/nonpositive/future/malformed time stays unknown, never an age-0 clamp. `provider`/`area` retain\n  available text bounded to 80/240 characters. `bounds` is `{south,north,west,east}` with finite ordered\n  latitudes in [-90,90] and longitudes in [-180,180], or `null`; no radius is invented.\n- **Fix and persistence lifecycle:** `savedAt` is successful settings-write time, separate from `acquiredAt`.\n  Saving label/units/method cannot renew a fix. Label/reverse naming retains compatible evidence; coordinate\n  edits choose a manual fixed site and clear incompatible acquisition claims. Legacy records retain usable\n  coordinates/preferences without substituting `savedAt`; reads do not destructively rewrite them. Saving\n  browser-derived targets retains private evidence but downgrades the top-level source for old readers to a\n  configured site. Portable hashes describe a fixed configured destination and omit private acquisition history.\n  Denied persistence preserves useful in-memory metadata and prior saved bytes with the session-only warning;\n  a writable partition may persist within its own permissions and lifetime. No new freshness/radius threshold\n  or continuous location tracking follows from this schema.\n",
+      "preimageSha256": "a5b5863b7010f2e729b024f83b3b610903e699d752e619d9dbbc747e6463419a",
+      "postimageSha256": "88f4851b9b785f2f7dc25fcfe248a0da638d536497072628209e0a66f8be32b3"
+    }
+  ],
+  "acceptedRegionReadback": [
+    {
+      "id": "R23-README-PIN",
+      "file": "README.md",
+      "textSha256": "a21b8f1a838fd19924c8f5e906bb71eb8f7c5f29e52418a0955832a9f1e88ea3",
+      "firstLine": 104,
+      "equalAcceptedProse": true
+    },
+    {
+      "id": "R23-README-ACQUIRE",
+      "file": "README.md",
+      "textSha256": "54b168edb3dd77acfd48dfc5c940fda55aa068b9c845d5bdbd910ece6f4618bc",
+      "firstLine": 131,
+      "equalAcceptedProse": true
+    },
+    {
+      "id": "R23-README-FIX-SAVE",
+      "file": "README.md",
+      "textSha256": "ee67463eb12f0af7ce512e7835f98e987603998f108ef3c73b0b43472de9dbce",
+      "firstLine": 132,
+      "equalAcceptedProse": true
+    },
+    {
+      "id": "R23-README-STORAGE",
+      "file": "README.md",
+      "textSha256": "21299afbfe41c1531362732f7cae8ab3d2db746b96eb1336c4dd1c28907aac51",
+      "firstLine": 133,
+      "equalAcceptedProse": true
+    },
+    {
+      "id": "R23-README-HOST",
+      "file": "README.md",
+      "textSha256": "5e42283ed5702b986bd906b9c3f67e61defba88855dd391ae00855be0d1a855d",
+      "firstLine": 134,
+      "equalAcceptedProse": true
+    },
+    {
+      "id": "R23-DESIGN-CONFIG",
+      "file": "DESIGN.md",
+      "textSha256": "76ced5f326ac7c1848b758231464792133a83583f61e56e55b2d0e22352fa1a6",
+      "firstLine": 339,
+      "equalAcceptedProse": true
+    },
+    {
+      "id": "R23-DESIGN-EVIDENCE",
+      "file": "DESIGN.md",
+      "textSha256": "5c98b49568425d38f02632eeb730506fdcf14988899a9e8cba29ea2001ea3449",
+      "firstLine": 343,
+      "equalAcceptedProse": true
+    },
+    {
+      "id": "R23-DESIGN-LIFECYCLE",
+      "file": "DESIGN.md",
+      "textSha256": "20ce6b58f49ee61fcffec177f06c81a87c0e6a7cbbcc17fab78bd2b03732d883",
+      "firstLine": 352,
+      "equalAcceptedProse": true
+    }
+  ],
+  "preservedDeliveredR0010Preferences": {
+    "text": "A generic `#local=1` embed chooses method and units automatically after area detection. A local embed exported by the builder includes the selected method and temperature units as defaults for a viewer with no saved configuration, for example `#local=1&method=2&units=f`. An existing saved configuration in that viewer’s browser takes priority over those defaults. The generic preset remains `#local=1`.",
+    "sha256": "27e24eb961fe93617c5b5d1c725177994921abbf5f2dc3062473817b7824cfa2"
+  },
+  "runtimeFilesChanged": [],
+  "V1FilesChanged": [],
+  "dirtyWholeDocsCopied": false,
+  "independentRootReview": "PENDING",
+  "mergeDeploymentAuthority": "PENDING_EXACT_HEAD"
+}

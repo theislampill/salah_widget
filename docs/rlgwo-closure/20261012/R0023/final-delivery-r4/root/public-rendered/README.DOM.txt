@@ -1,0 +1,855 @@
+- link "Skip to content":
+  - /url: "#start-of-content"
+- banner:
+  - heading "Navigation Menu" [level=2]
+  - link "Homepage":
+    - /url: /
+  - navigation "Global":
+    - list:
+      - button "Platform":
+        - text: Platform
+      - button "Solutions":
+        - text: Solutions
+      - button "Resources":
+        - text: Resources
+      - button "Open Source":
+        - text: Open Source
+      - button "Enterprise":
+        - text: Enterprise
+      - link "Pricing":
+        - /url: https://github.com/pricing
+  - button "Search or jump to, type / to search":
+  - link "Sign in":
+    - /url: /login?return_to=https%3A%2F%2Fgithub.com%2Ftheislampill%2Fsalah_widget%2Fblob%2Fba6d15d6f305451a7eccbbd30e2a47138c9a22b3%2FREADME.md
+    - generic: Sign in
+  - link "Sign up":
+    - /url: /signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fblob%2Fshow&source=header-repo&source_repo=theislampill%2Fsalah_widget
+    - generic: Sign up
+  - button "Appearance settings":
+- main:
+  - generic "Global navigation menu":
+    - navigation "Breadcrumbs":
+      - list:
+        - link "theislampill":
+          - /url: /theislampill
+          - generic: theislampill
+        - link "salah_widget":
+          - /url: /theislampill/salah_widget
+          - generic: salah_widget
+    - heading "Repository navigation" [level=2]
+    - navigation "Repository":
+      - list:
+        - link "Code":
+          - /url: /theislampill/salah_widget
+          - generic: Code
+        - link "Issues (24)":
+          - /url: /theislampill/salah_widget/issues
+          - generic: Issues
+          - generic: "24"
+          - generic: (24)
+        - link "Pull requests (2)":
+          - /url: /theislampill/salah_widget/pulls
+          - generic: Pull requests
+          - generic: "2"
+          - generic: (2)
+        - link "Actions":
+          - /url: /theislampill/salah_widget/actions
+          - generic: Actions
+        - link "Projects":
+          - /url: /theislampill/salah_widget/projects
+          - generic: Projects
+        - link "Security and quality":
+          - /url: /theislampill/salah_widget/security
+          - generic: Security and quality
+        - link "Insights":
+          - /url: /theislampill/salah_widget/pulse
+          - generic: Insights
+  - heading "Collapse file tree" [level=2]:
+    - button "Collapse file tree" [expanded]:
+  - heading "Files" [level=2]
+  - link "View file on default branch":
+    - /url: /theislampill/salah_widget/blob/main/README.md
+  - button "ba6d15d branch":
+    - generic: ba6d15d
+  - button "Search this repository (forward slash)":
+  - combobox "Go to file"
+  - navigation "File Tree Navigation":
+    - tree "Files":
+      - treeitem "docs" [level=1]:
+        - generic: docs
+      - treeitem "moon" [level=1]:
+        - generic: moon
+      - treeitem "plans" [level=1]:
+        - generic: plans
+      - treeitem "presets" [level=1]:
+        - generic: presets
+      - treeitem "real-sky" [level=1]:
+        - generic: real-sky
+      - treeitem "src" [level=1]:
+        - generic: src
+      - treeitem "tests" [level=1]:
+        - generic: tests
+      - treeitem "tools" [level=1]:
+        - generic: tools
+      - treeitem "v1" [level=1]:
+        - generic: v1
+      - treeitem "vendor" [level=1]:
+        - generic: vendor
+      - treeitem ".gitattributes" [level=1]:
+        - generic: .gitattributes
+      - treeitem ".gitignore" [level=1]:
+        - generic: .gitignore
+      - treeitem "AGENTS.md" [level=1]:
+        - generic: AGENTS.md
+      - treeitem "ARCHITECTURE.md" [level=1]:
+        - generic: ARCHITECTURE.md
+      - treeitem "DESIGN.md" [level=1]:
+        - generic: DESIGN.md
+      - treeitem "HANDOFF.md" [level=1]:
+        - generic: HANDOFF.md
+      - treeitem "OPTICS.md" [level=1]:
+        - generic: OPTICS.md
+      - treeitem "README.md" [level=1]:
+        - generic: README.md
+      - treeitem "builder.html" [level=1]:
+        - generic: builder.html
+      - treeitem "config.js" [level=1]:
+        - generic: config.js
+      - treeitem "index.html" [level=1]:
+        - generic: index.html
+      - treeitem "install.ps1" [level=1]:
+        - generic: install.ps1
+      - treeitem "install.sh" [level=1]:
+        - generic: install.sh
+      - treeitem "offline.html" [level=1]:
+        - generic: offline.html
+  - slider "Draggable pane splitter"
+  - navigation "Breadcrumbs":
+    - heading "Breadcrumbs" [level=2]
+    - list:
+      - link "salah_widget":
+        - /url: /theislampill/salah_widget/tree/ba6d15d6f305451a7eccbbd30e2a47138c9a22b3
+  - text: /
+  - heading "README.md" [level=1]
+  - button "Copy path":
+  - button "More file actions":
+  - heading "Latest commit" [level=2]
+  - img "theislampill"
+  - img "codex"
+  - link "commits by theislampill":
+    - /url: /theislampill/salah_widget/commits?author=theislampill
+    - text: theislampill
+  - generic: and
+  - link "commits by codex":
+    - /url: /theislampill/salah_widget/commits?author=codex
+    - text: codex
+  - 'link "docs: clarify location evidence and external request boundaries"':
+    - /url: /theislampill/salah_widget/commit/dc346e4769ec85eb2fe3e562eca0e8333d4ea5b4
+  - button "Open commit details":
+  - link "Commit dc346e4":
+    - /url: /theislampill/salah_widget/commit/dc346e4769ec85eb2fe3e562eca0e8333d4ea5b4
+    - text: dc346e4
+  - text: ·
+  - generic "Oct 12, 2026, 8:10 AM EDT": Oct 12, 202616 minutes ago
+  - heading "History" [level=2]
+  - link "History":
+    - /url: /theislampill/salah_widget/commits/ba6d15d6f305451a7eccbbd30e2a47138c9a22b3/README.md
+    - generic: History
+  - heading "File metadata and controls" [level=2]
+  - list "File view":
+    - button "Preview" [pressed]:
+      - generic: Preview
+    - button "Code":
+      - generic: Code
+    - button "Blame":
+      - generic: Blame
+  - generic "18.2 KB": 261 lines (209 loc) · 18.2 KB
+  - link "Raw":
+    - /url: https://github.com/theislampill/salah_widget/raw/ba6d15d6f305451a7eccbbd30e2a47138c9a22b3/README.md
+    - generic: Raw
+  - button "Copy raw file":
+  - button "Download raw file":
+  - button "Outline":
+  - region "README.md":
+    - article:
+      - heading "🕌 Salah Widget" [level=1]
+      - 'link "Permalink: 🕌 Salah Widget"':
+        - /url: "#-salah-widget"
+      - paragraph:
+        - text: A compact prayer-times widget you can embed anywhere that accepts an
+        - code: <iframe>
+        - text: — built for
+        - link "TablissNG":
+          - /url: https://github.com/BookCatKid/TablissNG
+        - text: new-tab dashboards, but works in Notion, a personal site, or anywhere else.
+      - paragraph:
+        - text: Static delivery, no server runtime or tracking. Configuration comes from the URL; prayer times come from the free
+        - link "Aladhan API":
+          - /url: https://aladhan.com/prayer-times-api
+        - text: . This
+        - strong: CP9 integration candidate is not the deployed main version
+        - text: . It adds an admitted star catalogue and physical sky in an optional worker while preserving the prayer widget. See
+        - link "integration, evidence and open gates":
+          - /url: /theislampill/salah_widget/blob/ba6d15d6f305451a7eccbbd30e2a47138c9a22b3/docs/real-sky/INTEGRATION.md
+        - text: .
+      - paragraph:
+        - text: For development, edit
+        - code: src/native/
+        - text: and the authored
+        - code: real-sky/native-*
+        - text: adapters, then run
+        - code: python tools/build_native.py
+        - text: . Serve with
+        - code: python -m http.server 8000
+        - text: and open
+        - code: http://localhost:8000/index.html
+        - text: .
+        - code: offline.html
+        - text: embeds sky assets for local file entry; live prayer/weather and fonts still need network access. Root entries and sky bundles are generated; do not hand-edit them.
+      - paragraph:
+        - strong: "Live widget:"
+        - link "https://theislampill.github.io/salah_widget/":
+          - /url: https://theislampill.github.io/salah_widget/
+        - strong: "Build your own embed:"
+        - link "https://theislampill.github.io/salah_widget/builder.html":
+          - /url: https://theislampill.github.io/salah_widget/builder.html
+      - separator
+      - heading "Quick start" [level=2]
+      - 'link "Permalink: Quick start"':
+        - /url: "#quick-start"
+      - paragraph:
+        - text: The easiest path is the
+        - strong:
+          - link "builder page":
+            - /url: https://theislampill.github.io/salah_widget/builder.html
+        - text: — it auto-detects your time zone, can use your browser location, shows a live preview, and gives you a copy-paste snippet.
+      - paragraph: "Or write the iframe yourself:"
+      - generic: <iframe title="Prayer Times" referrerpolicy="no-referrer" src="https://theislampill.github.io/salah_widget/#lat=24.4672&lon=39.6142&tz=Asia%2FRiyadh&label=Madinah&method=4&school=0" style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden" scrolling="no"> </iframe>
+      - button "Copy code to clipboard":
+      - paragraph:
+        - text: Everything after the
+        - code: "#"
+        - text: is configuration — change it to your own location.
+      - heading "Using it in TablissNG" [level=3]
+      - 'link "Permalink: Using it in TablissNG"':
+        - /url: "#using-it-in-tablissng"
+      - paragraph:
+        - text: TablissNG can't run scripts, but it can embed an iframe. Add an
+        - strong: HTML / iframe
+        - text: widget and paste the snippet above (with your own coordinates).
+      - heading "One-line install (optional setup wizard)" [level=3]
+      - 'link "Permalink: One-line install (optional setup wizard)"':
+        - /url: "#one-line-install-optional-setup-wizard"
+      - paragraph:
+        - text: Don't want to set TablissNG up by hand? A small installer detects your browser, downloads the right TablissNG extension asset, and stages a ready-made preset (this widget in self-configuring mode) for you to import. The
+        - strong: Install widget
+        - text: button on the
+        - link "builder":
+          - /url: https://theislampill.github.io/salah_widget/builder.html
+        - text: "copies the command for your OS:"
+      - generic: "# macOS / Linux"
+      - text: curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | bash
+      - button "Copy code to clipboard":
+      - generic: "# Windows PowerShell"
+      - text: irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex
+      - button "Copy code to clipboard":
+      - paragraph:
+        - text: If you've configured the widget in the builder, the
+        - strong: Install widget
+        - text: button bakes those settings into the install (via a
+        - code: SALAH_WIDGET_HASH
+        - text: the wizard writes into the preset's iframe), so you don't have to reconfigure after installing.
+      - paragraph:
+        - text: It
+        - strong: never
+        - text: silently installs extensions or writes to browser storage — it downloads the asset, opens the browser's own install page, and stages the preset for
+        - strong: manual
+        - text: "import. It runs code from this repo, so review-first works too:"
+        - code: curl -fsSLO …/install.sh
+        - text: →
+        - code: less install.sh
+        - text: →
+        - code: bash install.sh
+        - text: .
+        - strong: "Note:"
+        - text: importing the preset
+        - emphasis: replaces
+        - text: your current TablissNG dashboard with a clean layout containing the widget; precise in-widget location additionally needs the iframe's
+        - code: allow="geolocation"
+        - text: (some hosts strip it — coarse auto-detect still works).
+      - separator
+      - heading "Self-configuring (local) mode" [level=2]
+      - 'link "Permalink: Self-configuring (local) mode"':
+        - /url: "#self-configuring-local-mode"
+      - paragraph:
+        - text: If you don't want to hard-code coordinates — e.g. a generic embed that anyone can drop in — use
+        - strong: local mode
+        - text: . Add
+        - code: "#local=1"
+        - text: "to the URL and the widget will:"
+      - list:
+        - text: try a
+        - strong: coarse, permission-free area auto-detect
+        - text: (approximate, IP/timezone-based),
+        - listitem: show prayer times for that estimated area,
+        - text: let the viewer
+        - strong: open settings inside the widget
+        - text: (tap/click the header buckle — it morphs into a ⚙ gear on hover/focus; keyboard
+        - code: Enter
+        - text: /
+        - code: Space
+        - text: and touch work too) to correct the location or any setting,
+        - strong: save their choice locally
+        - text: (in their own browser) for next time.
+      - generic: <iframe title="Prayer Times" src="https://theislampill.github.io/salah_widget/#local=1" allow="geolocation" style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden" scrolling="no"> </iframe>
+      - button "Copy code to clipboard":
+      - paragraph:
+        - text: A generic
+        - code: "#local=1"
+        - text: embed chooses method and units automatically after area detection. A local embed exported by the builder includes the selected method and temperature units as defaults for a viewer with no saved configuration, for example
+        - code: "#local=1&method=2&units=f"
+        - text: . An existing saved configuration in that viewer’s browser takes priority over those defaults. The generic preset remains
+        - code: "#local=1"
+        - text: .
+      - paragraph:
+        - text: The in-widget settings panel supports location (name, latitude, longitude), calculation method, Asr school, 12/24-hour, date format, and temperature units. A
+        - strong: location pin
+        - text: beside the location field identifies an estimated area, browser/saved browser position, or manually selected site. Its title reports available accuracy in metres and original fix age; tap it to request a browser position. Type a place name to
+        - strong: search
+        - text: (Enter cycles multiple matches;
+        - strong: Shift+Enter
+        - text: keeps a custom display name without moving the coordinates). Changes
+        - strong: save automatically
+        - text: when you close the panel; the
+        - strong: ↺
+        - text: icon resets (clears your saved settings and re-detects).
+      - heading "Modes & precedence" [level=3]
+      - 'link "Permalink: Modes & precedence"':
+        - /url: "#modes--precedence"
+      - table:
+        - rowgroup:
+          - row "Mode URL Behaviour":
+            - columnheader "Mode"
+            - columnheader "URL"
+            - columnheader "Behaviour"
+        - rowgroup:
+          - 'row "Hardcoded #lat=…&lon=… Fixed location baked into the URL. Unchanged, classic behaviour. A saved local config never overrides it."':
+            - cell "Hardcoded":
+              - strong: Hardcoded
+            - cell "#lat=…&lon=…":
+              - code: "#lat=…&lon=…"
+            - cell "Fixed location baked into the URL. Unchanged, classic behaviour. A saved local config never overrides it.":
+              - text: Fixed location baked into the URL. Unchanged, classic behaviour. A saved local config
+              - strong: never
+              - text: overrides it.
+          - 'row "Local #local=1 Saved local config → else coarse auto-detect → else in-widget manual setup."':
+            - cell "Local":
+              - strong: Local
+            - cell "#local=1":
+              - code: "#local=1"
+            - cell "Saved local config → else coarse auto-detect → else in-widget manual setup."
+          - 'row "Prefer-local #preferLocal=1 Like hardcoded, but a saved local config (if any) may override the hash defaults — because the URL explicitly opted in."':
+            - cell "Prefer-local":
+              - strong: Prefer-local
+            - cell "#preferLocal=1":
+              - code: "#preferLocal=1"
+            - cell "Like hardcoded, but a saved local config (if any) may override the hash defaults — because the URL explicitly opted in.":
+              - text: Like hardcoded, but a saved local config (if any)
+              - strong: may
+              - text: override the hash defaults — because the URL explicitly opted in.
+      - paragraph:
+        - text: "Resolution order: explicit hardcoded hash (unless"
+        - code: local=1
+        - text: /
+        - code: preferLocal=1
+        - text: ) → saved local config → coarse IP/timezone detect → manual setup → safe error state.
+      - heading "Auto-detect, precise location & privacy" [level=3]
+      - 'link "Permalink: Auto-detect, precise location & privacy"':
+        - /url: "#auto-detect-precise-location--privacy"
+      - paragraph: "Saved configuration uses this browser's storage. Local persistence does not prevent external requests: the table below describes the current recipients, triggers and sent fields. This is a description of source construction and caller controls, not a new transmission trace. Connection IP accompanies external requests. Provider retention or handling is not established by this widget-source description."
+      - table:
+        - rowgroup:
+          - row "Request group Trigger Recipient Sent fields and limits":
+            - columnheader "Request group"
+            - columnheader "Trigger"
+            - columnheader "Recipient"
+            - columnheader "Sent fields and limits"
+        - rowgroup:
+          - row "Approximate area detection Builder initialization; widget coarse-detection paths, including local/preferLocal resolution and Reset re-detection when the resolver requires it. GeoJS https://get.geojs.io/v1/ip/geo.json, then https://ipinfo.io/json on failure. Connection IP; neither URL has typed-query or coordinate parameters. IANA timezone detection uses local Intl. IP-derived area is approximate and is not precise permission or GPS.":
+            - cell "Approximate area detection"
+            - cell "Builder initialization; widget coarse-detection paths, including local/preferLocal resolution and Reset re-detection when the resolver requires it."
+            - cell "GeoJS https://get.geojs.io/v1/ip/geo.json, then https://ipinfo.io/json on failure.":
+              - text: GeoJS
+              - code: https://get.geojs.io/v1/ip/geo.json
+              - text: ", then"
+              - code: https://ipinfo.io/json
+              - text: on failure.
+            - cell "Connection IP; neither URL has typed-query or coordinate parameters. IANA timezone detection uses local Intl. IP-derived area is approximate and is not precise permission or GPS.":
+              - text: Connection IP; neither URL has typed-query or coordinate parameters. IANA timezone detection uses local
+              - code: Intl
+              - text: . IP-derived area is approximate and is not precise permission or GPS.
+          - row "Place/postcode search Builder one-second debounce or Enter; widget Settings Enter. Trimmed queries shorter than 2 make no request. Nominatim https://nominatim.openstreetmap.org/search q contains the trimmed query; format=jsonv2, addressdetails=1, limit=5. countrycodes is the known home country only for a query containing a digit; alphabetic London has no digit-country bias.":
+            - cell "Place/postcode search"
+            - cell "Builder one-second debounce or Enter; widget Settings Enter. Trimmed queries shorter than 2 make no request."
+            - cell "Nominatim https://nominatim.openstreetmap.org/search":
+              - text: Nominatim
+              - code: https://nominatim.openstreetmap.org/search
+            - cell "q contains the trimmed query; format=jsonv2, addressdetails=1, limit=5. countrycodes is the known home country only for a query containing a digit; alphabetic London has no digit-country bias.":
+              - code: q
+              - text: contains the trimmed query;
+              - code: format=jsonv2
+              - text: ","
+              - code: addressdetails=1
+              - text: ","
+              - code: limit=5
+              - text: .
+              - code: countrycodes
+              - text: is the known home country only for a query containing a digit; alphabetic London has no digit-country bias.
+          - 'row "Canadian-style prefix assist Whitespace removed from a query with a leading letter-digit-letter pattern; in addition to Nominatim. Zippopotam https://api.zippopotam.us/ca/<FSA> First 3 matched characters, uppercased: M5V2T6 → /ca/M5V. No complete postcode or widget coordinates are appended. This is a prefix test, not complete-postcode validation; malformed longer queries with that prefix also trigger it."':
+            - cell "Canadian-style prefix assist"
+            - cell "Whitespace removed from a query with a leading letter-digit-letter pattern; in addition to Nominatim."
+            - cell "Zippopotam https://api.zippopotam.us/ca/<FSA>":
+              - text: Zippopotam
+              - code: https://api.zippopotam.us/ca/<FSA>
+            - 'cell "First 3 matched characters, uppercased: M5V2T6 → /ca/M5V. No complete postcode or widget coordinates are appended. This is a prefix test, not complete-postcode validation; malformed longer queries with that prefix also trigger it."':
+              - text: "First 3 matched characters, uppercased:"
+              - code: M5V2T6
+              - text: →
+              - code: /ca/M5V
+              - text: . No complete postcode or widget coordinates are appended. This is a prefix test, not complete-postcode validation; malformed longer queries with that prefix also trigger it.
+          - row "Builder coordinate reverse lookup Eligible coordinate edits after 700 ms debounce, or permission-granted builder location acquisition. Stale/non-numeric coordinates and both automatic label/method controls off produce no request. BigDataCloud https://api.bigdatacloud.net/data/reverse-geocode-client latitude, longitude, localityLanguage=en, e.g. 51.5/-0.12. This is the builder caller; in-widget browser location does not invoke builder reverse geocoding.":
+            - cell "Builder coordinate reverse lookup"
+            - cell "Eligible coordinate edits after 700 ms debounce, or permission-granted builder location acquisition. Stale/non-numeric coordinates and both automatic label/method controls off produce no request."
+            - cell "BigDataCloud https://api.bigdatacloud.net/data/reverse-geocode-client":
+              - text: BigDataCloud
+              - code: https://api.bigdatacloud.net/data/reverse-geocode-client
+            - cell "latitude, longitude, localityLanguage=en, e.g. 51.5/-0.12. This is the builder caller; in-widget browser location does not invoke builder reverse geocoding.":
+              - code: latitude
+              - text: ","
+              - code: longitude
+              - text: ","
+              - code: localityLanguage=en
+              - text: ", e.g."
+              - code: "51.5"
+              - text: /
+              - code: "-0.12"
+              - text: . This is the builder caller; in-widget browser location does not invoke builder reverse geocoding.
+          - row "Prayer requests Eligible date-specific prayer acquisition, subject to existing cache/currentness rules. Aladhan https://api.aladhan.com/v1/timings/<date> latitude, longitude, method, school; requested date in the path.":
+            - cell "Prayer requests"
+            - cell "Eligible date-specific prayer acquisition, subject to existing cache/currentness rules."
+            - cell "Aladhan https://api.aladhan.com/v1/timings/<date>":
+              - text: Aladhan
+              - code: https://api.aladhan.com/v1/timings/<date>
+            - cell "latitude, longitude, method, school; requested date in the path.":
+              - code: latitude
+              - text: ","
+              - code: longitude
+              - text: ","
+              - code: method
+              - text: ","
+              - code: school
+              - text: ; requested date in the path.
+          - row "Weather requests Eligible active current/hourly acquisition, subject to cache, simulation and currentness guards. Open-Meteo https://api.open-meteo.com/v1/forecast latitude, longitude, timezone, temperature_unit (celsius/fahrenheit), wind_speed_unit=ms, forecast_days=3, and the current/hourly field selections listed below. These requests do not establish direct local precipitation observation.":
+            - cell "Weather requests"
+            - cell "Eligible active current/hourly acquisition, subject to cache, simulation and currentness guards."
+            - cell "Open-Meteo https://api.open-meteo.com/v1/forecast":
+              - text: Open-Meteo
+              - code: https://api.open-meteo.com/v1/forecast
+            - cell "latitude, longitude, timezone, temperature_unit (celsius/fahrenheit), wind_speed_unit=ms, forecast_days=3, and the current/hourly field selections listed below. These requests do not establish direct local precipitation observation.":
+              - code: latitude
+              - text: ","
+              - code: longitude
+              - text: ","
+              - code: timezone
+              - text: ","
+              - code: temperature_unit
+              - text: (celsius/fahrenheit),
+              - code: wind_speed_unit=ms
+              - text: ","
+              - code: forecast_days=3
+              - text: ", and the current/hourly field selections listed below. These requests do not establish direct local precipitation observation."
+          - row "Radar evidence requests Eligible manifest, then returned latest-past frame/tile under existing weather guards. RainViewer https://api.rainviewer.com/public/weather-maps.json and returned tile host/frame. Returned host + frame path + /256/<z>/<x>/<y>/2/1_1.png; x/y indices derive from coordinates and disclose a location-derived area. The manifest has no coordinate query. Image alpha is not millimetres or direct local observation.":
+            - cell "Radar evidence requests"
+            - cell "Eligible manifest, then returned latest-past frame/tile under existing weather guards."
+            - cell "RainViewer https://api.rainviewer.com/public/weather-maps.json and returned tile host/frame.":
+              - text: RainViewer
+              - code: https://api.rainviewer.com/public/weather-maps.json
+              - text: and returned tile host/frame.
+            - cell "Returned host + frame path + /256/<z>/<x>/<y>/2/1_1.png; x/y indices derive from coordinates and disclose a location-derived area. The manifest has no coordinate query. Image alpha is not millimetres or direct local observation.":
+              - text: Returned host + frame path +
+              - code: /256/<z>/<x>/<y>/2/1_1.png
+              - text: ; x/y indices derive from coordinates and disclose a location-derived area. The manifest has no coordinate query. Image alpha is not millimetres or direct local observation.
+          - row "Font loading Page stylesheet/font loading, subject to cache/network policy. Google Fonts stylesheet fonts.googleapis.com and font resources fonts.gstatic.com. Family/style/weight stylesheet request and returned font-resource URLs; no widget location/search fields in these source URLs. Cache-dependent declarations do not mean every font is fetched on every load.":
+            - cell "Font loading"
+            - cell "Page stylesheet/font loading, subject to cache/network policy."
+            - cell "Google Fonts stylesheet fonts.googleapis.com and font resources fonts.gstatic.com.":
+              - text: Google Fonts stylesheet
+              - code: fonts.googleapis.com
+              - text: and font resources
+              - code: fonts.gstatic.com
+              - text: .
+            - cell "Family/style/weight stylesheet request and returned font-resource URLs; no widget location/search fields in these source URLs. Cache-dependent declarations do not mean every font is fetched on every load."
+      - paragraph: "Open-Meteo's exact selected fields are:"
+      - code: current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day
+      - button "Copy code to clipboard":
+      - list:
+        - strong: Browser location is optional and user-triggered.
+        - text: The location pin requests one browser position after permission. Its reported accuracy may be known in metres or unknown; five decimal places do not measure accuracy. In an iframe, the local snippet includes
+        - code: allow="geolocation"
+        - text: ", and the embedding parent's Permissions Policy and user grant also apply. Stripping delegation or restricting parent policy can block acquisition; coarse/manual setup remains available."
+        - strong: Acquisition and saving are separate.
+        - text: A browser position retains its original acquisition time and reported accuracy; a saved browser position is a stored target and does not establish current presence. Saving settings does not renew a fix. Missing, malformed, nonpositive or future acquisition timestamps stay unknown; future timestamps have zero skew allowance against
+        - code: Date.now()
+        - text: . Portable URLs describe a configured destination and omit private acquisition history.
+        - strong: Storage outcome is measured.
+        - text: Saved settings use this browser's storage. If writing is unavailable, changes still apply for the current session and Settings shows a retained warning. A partition can be writable and retain settings within that partition. Saving and persistence depend on the host's actual storage permissions and lifetime; blocked writes cause the session-only warning.
+        - strong: Reset scope.
+        - text: Reset removes only the saved widget configuration (
+        - code: salah_widget:config:v1
+        - text: ); it does not erase prayer/weather caches or data held by external providers. Successful removal may re-detect the area and issue the coarse request above. Failed removal reports the failure and leaves the existing target usable.
+        - strong: TablissNG conditions.
+        - text: Coarse acquisition depends on permitted provider access; browser position depends on preserved delegation, parent policy and user grant; saving depends on writable host storage and its lifetime. These conditions are not a claim that a particular TablissNG version or partition policy has been qualified.
+      - separator
+      - heading "Configuration (URL hash parameters)" [level=2]
+      - 'link "Permalink: Configuration (URL hash parameters)"':
+        - /url: "#configuration-url-hash-parameters"
+      - table:
+        - rowgroup:
+          - row "Param Required Default Description":
+            - columnheader "Param"
+            - columnheader "Required"
+            - columnheader "Default"
+            - columnheader "Description"
+        - rowgroup:
+          - row "lat ✅ — Latitude, e.g. 28.93084":
+            - cell "lat":
+              - code: lat
+            - cell "✅"
+            - cell "—"
+            - cell "Latitude, e.g. 28.93084":
+              - text: Latitude, e.g.
+              - code: "28.93084"
+          - row "lon ✅ — Longitude, e.g. -82.39122":
+            - cell "lon":
+              - code: lon
+            - cell "✅"
+            - cell "—"
+            - cell "Longitude, e.g. -82.39122":
+              - text: Longitude, e.g.
+              - code: "-82.39122"
+          - row "tz auto Auto-detected from the coordinates — you normally don't need to set it. The countdown and day-rollover use the location's zone (so Madinah always shows Madinah time, whatever device you view it on). Pass an IANA zone (e.g. Europe/London, / encoded as %2F) only as a fallback for the first paint.":
+            - cell "tz":
+              - code: tz
+            - cell
+            - cell "auto":
+              - emphasis: auto
+            - cell "Auto-detected from the coordinates — you normally don't need to set it. The countdown and day-rollover use the location's zone (so Madinah always shows Madinah time, whatever device you view it on). Pass an IANA zone (e.g. Europe/London, / encoded as %2F) only as a fallback for the first paint.":
+              - strong: Auto-detected from the coordinates
+              - text: — you normally don't need to set it. The countdown and day-rollover use the
+              - emphasis: location's
+              - text: zone (so Madinah always shows Madinah time, whatever device you view it on). Pass an IANA zone (e.g.
+              - code: Europe/London
+              - text: ","
+              - code: /
+              - text: encoded as
+              - code: "%2F"
+              - text: ) only as a fallback for the first paint.
+          - row "label Prayer Times Location name shown on the widget. Encode spaces as %20.":
+            - cell "label":
+              - code: label
+            - cell
+            - cell "Prayer Times":
+              - code: Prayer Times
+            - cell "Location name shown on the widget. Encode spaces as %20.":
+              - text: Location name shown on the widget. Encode spaces as
+              - code: "%20"
+              - text: .
+          - row "method 2 (ISNA) Calculation method — see table below.":
+            - cell "method":
+              - code: method
+            - cell
+            - cell "2 (ISNA)":
+              - code: "2"
+              - text: (ISNA)
+            - cell "Calculation method — see table below."
+          - 'row "school 0 Asr calculation: 0 = standard, 1 = Hanafi (later Asr)."':
+            - cell "school":
+              - code: school
+            - cell
+            - cell "0":
+              - code: "0"
+            - 'cell "Asr calculation: 0 = standard, 1 = Hanafi (later Asr)."':
+              - text: "Asr calculation:"
+              - code: "0"
+              - text: = standard,
+              - code: "1"
+              - text: = Hanafi (later Asr).
+          - 'row "time 24 Clock format: 24 (15:45) or 12 (3:45 PM)."':
+            - cell "time":
+              - code: time
+            - cell
+            - cell "24":
+              - code: "24"
+            - 'cell "Clock format: 24 (15:45) or 12 (3:45 PM)."':
+              - text: "Clock format:"
+              - code: "24"
+              - text: (15:45) or
+              - code: "12"
+              - text: (3:45 PM).
+          - row "datefmt YYYY-MM-DD Date format as a token string — YYYY/YY year, MMMM/MMM/MM/M month, DD/D day (e.g. DD MMMM YYYY, MMM D, YYYY). The old preset keys iso/us/eu/long still work. Applies to both the Gregorian and Hijri dates.":
+            - cell "datefmt":
+              - code: datefmt
+            - cell
+            - cell "YYYY-MM-DD":
+              - code: YYYY-MM-DD
+            - cell "Date format as a token string — YYYY/YY year, MMMM/MMM/MM/M month, DD/D day (e.g. DD MMMM YYYY, MMM D, YYYY). The old preset keys iso/us/eu/long still work. Applies to both the Gregorian and Hijri dates.":
+              - text: Date format as a token string —
+              - code: YYYY
+              - text: /
+              - code: YY
+              - text: year,
+              - code: MMMM
+              - text: /
+              - code: MMM
+              - text: /
+              - code: MM
+              - text: /
+              - code: M
+              - text: month,
+              - code: DD
+              - text: /
+              - code: D
+              - text: day (e.g.
+              - code: DD MMMM YYYY
+              - text: ","
+              - code: MMM D, YYYY
+              - text: ). The old preset keys
+              - code: iso
+              - text: /
+              - code: us
+              - text: /
+              - code: eu
+              - text: /
+              - code: long
+              - text: still work. Applies to both the Gregorian and Hijri dates.
+          - 'row "units f Weather temperature: f (°F) or c (°C)."':
+            - cell "units":
+              - code: units
+            - cell
+            - cell "f":
+              - code: f
+            - 'cell "Weather temperature: f (°F) or c (°C)."':
+              - text: "Weather temperature:"
+              - code: f
+              - text: (°F) or
+              - code: c
+              - text: (°C).
+          - 'row "local — #local=1 → self-configuring mode: coarse auto-detect + in-widget settings, saved locally. When set, hash lat/lon are ignored in favour of the saved/detected config."':
+            - cell "local":
+              - code: local
+            - cell
+            - cell "—"
+            - 'cell "#local=1 → self-configuring mode: coarse auto-detect + in-widget settings, saved locally. When set, hash lat/lon are ignored in favour of the saved/detected config."':
+              - code: "#local=1"
+              - text: →
+              - link "self-configuring mode":
+                - /url: "#self-configuring-local-mode"
+              - text: ": coarse auto-detect + in-widget settings, saved locally. When set, hash"
+              - code: lat
+              - text: /
+              - code: lon
+              - text: are ignored in favour of the saved/detected config.
+          - 'row "preferLocal — #preferLocal=1 → use hash lat/lon as defaults, but let a saved local config override them (opt-in)."':
+            - cell "preferLocal":
+              - code: preferLocal
+            - cell
+            - cell "—"
+            - cell "#preferLocal=1 → use hash lat/lon as defaults, but let a saved local config override them (opt-in).":
+              - code: "#preferLocal=1"
+              - text: → use hash
+              - code: lat
+              - text: /
+              - code: lon
+              - text: as defaults, but let a saved local config override them (opt-in).
+          - row "lp 0 Light-pollution dial 0–1 — raises the night-sky glow and erases the faintest stars / Milky Way.":
+            - cell "lp":
+              - code: lp
+            - cell
+            - cell "0":
+              - code: "0"
+            - cell "Light-pollution dial 0–1 — raises the night-sky glow and erases the faintest stars / Milky Way.":
+              - text: Light-pollution dial
+              - code: "0"
+              - text: –
+              - code: "1"
+              - text: — raises the night-sky glow and erases the faintest stars / Milky Way.
+      - blockquote:
+        - paragraph:
+          - text: "Tip: don't know your coordinates? Right-click your location on"
+          - link "OpenStreetMap":
+            - /url: https://www.openstreetmap.org
+          - text: →
+          - strong: Show address
+          - text: ", or just use the 📍 button on the builder page."
+      - heading "Calculation methods" [level=3]
+      - 'link "Permalink: Calculation methods"':
+        - /url: "#calculation-methods"
+      - table:
+        - rowgroup:
+          - row "method Authority":
+            - columnheader "method":
+              - code: method
+            - columnheader "Authority"
+        - rowgroup:
+          - row "0 Shia Ithna-Ashari":
+            - cell "0"
+            - cell "Shia Ithna-Ashari"
+          - row "1 University of Islamic Sciences, Karachi":
+            - cell "1"
+            - cell "University of Islamic Sciences, Karachi"
+          - row "2 Islamic Society of North America (ISNA)":
+            - cell "2"
+            - cell "Islamic Society of North America (ISNA)"
+          - row "3 Muslim World League":
+            - cell "3"
+            - cell "Muslim World League"
+          - row "4 Umm al-Qura University, Makkah":
+            - cell "4"
+            - cell "Umm al-Qura University, Makkah"
+          - row "5 Egyptian General Authority of Survey":
+            - cell "5"
+            - cell "Egyptian General Authority of Survey"
+          - row "7 Institute of Geophysics, University of Tehran":
+            - cell "7"
+            - cell "Institute of Geophysics, University of Tehran"
+          - row "8 Gulf Region":
+            - cell "8"
+            - cell "Gulf Region"
+          - row "9 Kuwait":
+            - cell "9"
+            - cell "Kuwait"
+          - row "10 Qatar":
+            - cell "10"
+            - cell "Qatar"
+          - row "11 Majlis Ugama Islam Singapura, Singapore":
+            - cell "11"
+            - cell "Majlis Ugama Islam Singapura, Singapore"
+          - row "12 Union des Organisations Islamiques de France":
+            - cell "12"
+            - cell "Union des Organisations Islamiques de France"
+          - row "13 Diyanet İşleri Başkanlığı, Turkey":
+            - cell "13"
+            - cell "Diyanet İşleri Başkanlığı, Turkey"
+          - row "14 Spiritual Administration of Muslims of Russia":
+            - cell "14"
+            - cell "Spiritual Administration of Muslims of Russia"
+          - row "15 Moonsighting Committee Worldwide":
+            - cell "15"
+            - cell "Moonsighting Committee Worldwide"
+          - row "16 Dubai":
+            - cell "16"
+            - cell "Dubai"
+      - separator
+      - heading "Features" [level=2]
+      - 'link "Permalink: Features"':
+        - /url: "#features"
+      - list:
+        - strong: Live local weather
+        - text: — current condition and temperature (from Open-Meteo) shown in the header.
+        - strong: Weather-reactive color theme
+        - text: "— the palette shifts with the sky: warm gold under a clear day, deep indigo on a clear night, muted grey when cloudy, cool steel-blue for rain, icy for snow, and charcoal-violet for thunderstorms. Day vs. night is derived from the prayer Sunrise/Sunset times, so it always matches the widget."
+        - strong: Next prayer
+        - text: front and centre with a live, per-second countdown.
+        - strong: Progress bar
+        - text: showing how far you are through the current interval.
+        - strong: Time-zone correct
+        - text: — the time zone is resolved from the coordinates, so the times and countdown always reflect the
+        - emphasis: location's
+        - text: clock, no matter where you view the widget.
+        - strong: Offline-friendly
+        - text: — the day's times are cached in
+        - code: localStorage
+        - text: ", so the widget paints instantly on reload and survives a flaky connection."
+        - strong: Auto-retry
+        - text: on API hiccups, and an automatic refresh when the day rolls over.
+        - listitem: Passed prayers dim; the upcoming one is highlighted.
+        - text: Gregorian (CE) date bottom-left and Hijri (AH) date bottom-right, in your chosen
+        - code: datefmt
+        - text: (defaults to ISO
+        - code: YYYY-MM-DD
+        - text: ).
+      - separator
+      - heading "Files" [level=2]
+      - 'link "Permalink: Files"':
+        - /url: "#files"
+      - table:
+        - rowgroup:
+          - row "File Purpose":
+            - columnheader "File"
+            - columnheader "Purpose"
+        - rowgroup:
+          - row "index.html The widget itself.":
+            - cell "index.html":
+              - code: index.html
+            - cell "The widget itself."
+          - row "builder.html Interactive embed-code generator (portable and self-configuring snippets).":
+            - cell "builder.html":
+              - code: builder.html
+            - cell "Interactive embed-code generator (portable and self-configuring snippets).":
+              - text: Interactive embed-code generator (portable
+              - strong: and
+              - text: self-configuring snippets).
+          - row "config.js Shared WidgetConfig module (window.SalahConfig) — parse / validate / serialize / load-save local config / coarse auto-detect. Loaded by both index.html and builder.html so config logic can't fork.":
+            - cell "config.js":
+              - code: config.js
+            - cell "Shared WidgetConfig module (window.SalahConfig) — parse / validate / serialize / load-save local config / coarse auto-detect. Loaded by both index.html and builder.html so config logic can't fork.":
+              - text: Shared
+              - code: WidgetConfig
+              - text: module (
+              - code: window.SalahConfig
+              - text: ) — parse / validate / serialize / load-save local config / coarse auto-detect. Loaded by both
+              - code: index.html
+              - text: and
+              - code: builder.html
+              - text: so config logic can't fork.
+          - 'row "install.sh / install.ps1 Optional setup wizard (macOS-Linux / Windows): detects the browser, downloads the TablissNG extension asset, and stages the preset for manual import. No silent installs."':
+            - cell "install.sh / install.ps1":
+              - code: install.sh
+              - text: /
+              - code: install.ps1
+            - 'cell "Optional setup wizard (macOS-Linux / Windows): detects the browser, downloads the TablissNG extension asset, and stages the preset for manual import. No silent installs."'
+          - row "presets/salah-widget.tablissng.json A ready-made TablissNG dashboard export (this widget in self-configuring mode) that the installer imports.":
+            - cell "presets/salah-widget.tablissng.json":
+              - code: presets/salah-widget.tablissng.json
+            - cell "A ready-made TablissNG dashboard export (this widget in self-configuring mode) that the installer imports."
+      - separator
+      - heading "Credits" [level=2]
+      - 'link "Permalink: Credits"':
+        - /url: "#credits"
+      - paragraph:
+        - text: Prayer time calculations by the
+        - link "Aladhan API":
+          - /url: https://aladhan.com/prayer-times-api
+        - text: ", and weather by"
+        - link "Open-Meteo":
+          - /url: https://open-meteo.com
+        - text: — both free and key-less. These browser requests carry the configured location and request context. Settings and caches are stored in the browser when storage is available. Provider retention or handling is not established by this widget-source description.
+      - heading "Preserved V1 compatibility URL" [level=2]
+      - 'link "Permalink: Preserved V1 compatibility URL"':
+        - /url: "#preserved-v1-compatibility-url"
+      - paragraph:
+        - text: After the preservation PR is merged and Pages deploys,
+        - code: /salah_widget/v1/
+        - text: serves the frozen pre-overhaul application. The root URL remains the current version. V1's clock, location, prayer timetable, weather and externally hosted fonts remain live. Local settings and caches use V1-specific keys; valid existing root settings are copied once without changing root data.
+      - generic: <iframe title="Prayer Times" referrerpolicy="no-referrer" allow="geolocation" src="https://theislampill.github.io/salah_widget/v1/#local=1" style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden" scrolling="no"> </iframe>
+      - button "Copy code to clipboard":
+      - paragraph:
+        - text: For the current version, change only
+        - code: src
+        - text: to
+        - code: https://theislampill.github.io/salah_widget/#local=1
+        - text: . The iframe dimensions and internal card layout are unchanged. See
+        - link "preservation provenance, validation and limitations":
+          - /url: /theislampill/salah_widget/blob/ba6d15d6f305451a7eccbbd30e2a47138c9a22b3/docs/V1_PRESERVATION.md
+        - text: .
+- alert
