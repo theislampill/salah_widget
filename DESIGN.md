@@ -137,7 +137,13 @@ Islamically distinct — and represented honestly. **Neither false nor true dawn
 
 ## Atmosphere state model
 
-There is **one** temporal source: `simTime = simBase + realElapsed*TIMESCALE` (`simNow()`/`simDate()`/`nowParts()`).
+There is one temporal API, `simNow()` / `simDate()` / `nowParts()`, with two authorities. With neither `simTime` nor `timeScale`, `simNow()` reads the current device `Date.now()` on every call; a timezone change reformats that instant. Explicit previews use a validated anchor plus independent elapsed time multiplied by `TIMESCALE`. An explicit `timeScale=1` remains a 1× anchored preview with ADVANCING, forecast weather, star reprojection and the SIM readout. `timeScale=60` advances 60×; `simTime=HH:MM` without a scale is frozen. Existing scale parsing preserves frozen behavior for zero, empty, invalid and clamped negative values. Independent elapsed behavior assumes a supported native `performance.now()` host; the existing `Date.now()` fallback has no separate wall-step guarantee. Injected wall corrections do not establish native sleep/wake or NTP behavior.
+
+**Clock correction direction:** In ordinary direct-wall mode, forward and backward device wall corrections are followed by the next `Date.now()` read. An explicit `timeScale=1` is an anchored preview, not ordinary wall-clock mode. Independent elapsed behavior still has the stated native-host assumption and wall-clock fallback limitation; this source distinction does not qualify sleep/wake or NTP behavior.
+
+Explicit local times and prayer/weather endpoints use the same minute-precision inverse. Inputs are finite integer Gregorian fields, positive years representable by Date and Intl, hours 0–23 and minutes 0–59 in an Intl-supported zone. A profile exhaustively projects each UTC minute from the strict UTC midnight coordinate U−24 hours through U+48 hours, inclusive: 4,321 projections. Gregorian/Latin/h23 projection must show whole-minute offsets whose magnitude is at most 24 hours throughout that window. A final full-field round trip accepts exactly one inverse; gaps, folds, invalid dates/zones and unsupported representations are unavailable. This does not certify historical second offsets or arbitrary IANA history. At most four exact zone/day profiles, including unsupported profiles, are retained in memory and reused; the inverse adds no persistent cache schema.
+
+An invalid explicit scene clears its numeric anchor and withdraws clock-dependent sky, arc, prayer and calendar output, shows `Simulation time unavailable` / `SIM unavailable`, and keeps configuration recovery reachable. Valid configuration recovery restores the prior visibility. An unavailable scene does not qualify normal night appearance or live motion. Ordinary loads without clock overrides keep their direct-wall authority.
 Each render tick:
 
 1. `atmosphere(M)` derives **one pure state vector** from the physical drivers (solar elevation, lunar geometry/
@@ -228,7 +234,7 @@ dew point alone is not a water-droplet column and cannot enable a corona.
   in a 15–60s real-time glance** — a moderate wind carries a cluster ~25–30% of the card width per minute (≈70
   screen-px/min; gentle in calm air, fast in a gale), with a slower in-place grow/erode on top. (Earlier rates
   were ~100× too slow → the deck read as a frozen wallpaper even though the QA hash "changed" every frame — see
-  "Live motion".) Time is `simNow` seconds, so `?timeScale=` accelerates it; reduced-motion paints one frozen frame.
+  "Live motion".) The fragment's `timeScale` sets the explicit scene clock rate; `timeScale=1` remains an anchored 1× preview. A query-only `?timeScale=` is ignored. reduced-motion paints one frozen frame.
 - **Lighting**: warm sun rim / silver lining on the sun-facing side, cool moonlit edges at night, leaden
   undersides in storm, lit tops / shaded bases for volume; rain/fog diffuse.
 - **Continuity**: the cloud field has a **stable identity** (`_cloudFieldSeed` = location + day + optional
@@ -345,9 +351,8 @@ Common hash options:
 
 - `lat`, `lon`, `label`, `method`, `units` — location + calc method + °C/°F.
 - `seed` — varies the synthetic star draw + cloud field identity.
-- `timeScale=<n>` — fast-forward (n× real time); enables ADVANCING (forecast-driven weather, re-projected stars,
-  the sim clock).
-- `simTime=HH:MM` — freeze the clock at a time (TIMESCALE 0).
+- `timeScale=<n>` — an explicit positive scale enables an anchored preview, including `timeScale=1` (1×) and `timeScale=60` (60×), with ADVANCING, forecast weather, reprojected stars and the SIM readout. With neither clock override, ordinary mode follows the current device wall clock.
+- `simTime=HH:MM` — a validated local-time anchor, frozen when `timeScale` is absent; a positive explicit scale advances that anchor independently of device wall corrections. Unresolvable gap/fold times show an unavailable scene.
 - `simWx=<wmo code>` — force a weather class; `simPrecip=<mm>` — force synthetic preview precip (to QA the precip gate,
   e.g. `simWx=95&simPrecip=0` ⇒ dry forecast-thunder ⇒ downgraded). `simTemp`, `simFeels`, `simWind`,
   `simWindDir`, `simHumid`, `simCloud`, `simMoon`, `simWax`, `simMoonAlt`, `simMoonH`.
