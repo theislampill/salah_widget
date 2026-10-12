@@ -272,6 +272,14 @@ temperature or amount; no old temperature survives a rejected record.
 - RainViewer palette alpha is unitless imagery, never millimetres or local
   observation authority. A newly fetched mosaic cannot renew old source evidence.
 
+`qaState().wxTruth.requests.weather` and `.radar` retain the last small attempt
+diagnostic: `generation`, `operationId`, `attemptId`, `state` and `reason`.
+The active stages are `fetch`, `body` and, for radar, `image`; an `unavailable`
+result with `fetch timeout`, `body timeout` or `image timeout` identifies the
+bounded stage. `received` describes wrapper completion, not freshness or provider
+health. Slot release, retry eligibility and a healthy replacement consumer are
+separate facts; the README's Weather retry description gives their timing limits.
+
 ## Star / night-sky system
 
 - A synthetic **catalog** projected to the local dome by sidereal time + latitude. In real-time the **positions

@@ -257,6 +257,27 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   eligible opportunity starts one operation without background or catch-up guarantees.
   Real elapsed eligibility is independent of `simTime`, `timeScale` and wall-clock
   correction. The retained `Date.now()` fallback is not claimed monotonic.
+- **Weather retry** — fetch plus JSON body consumption shares one 10-second application
+  attempt. A radar manifest fetch plus JSON body shares a separate 10-second
+  attempt; once accepted, a new 10-second Image attempt covers dispatch and
+  result consumption. The nominal combined radar application wait is at most
+  20 seconds while JavaScript is runnable; this is not a hard wall-time recovery
+  guarantee during blocked/suspended execution or scheduling delays.
+  Weather retry is eligible after 60 seconds and radar after 10 minutes from
+  their respective last attempt starts, using the existing client wall clock.
+  An eligible current record plus a retained hourly track can skip weather
+  refetch for less than 15 minutes after the last accepted current receipt.
+  Valid coordinates and free request ownership still matter. The ordinary
+  visible render loop offers approximately 30-second opportunities outside an
+  advancing sweep; eligibility and timeout release are not immediate retry or
+  successful recovery.
+  On performance-clock hosts, the absolute elapsed attempt deadline is checked
+  as well as the timer: a late fetch/body/Image completion is rejected even if
+  suspension delayed timer delivery. The existing `Date.now()` fallback is a
+  wall clock and is not promised to be monotonic. Timeouts settle the wrapper,
+  release ownership and ignore late results; abort is best effort and detached
+  Image handlers do not prove physical cancellation of every download. No
+  provider-health, offline-service or memory-recovery guarantee is implied.
 - Passed prayers dim; the upcoming one is highlighted.
 - Gregorian (CE) date bottom-left and Hijri (AH) date bottom-right, in your chosen
   `datefmt` (defaults to ISO `YYYY-MM-DD`).
