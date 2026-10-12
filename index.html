@@ -5750,7 +5750,12 @@ window.SalahNativeSkyHost=Object.freeze({
   _cp9SiteElevation=Object.freeze({heightM,generation,lat:latitude,lon:longitude});return true;
  },
  lunarSurface(){return window.SalahMoonRuntime?.surface()??null;},
- cloudLighting(){return window.SalahNativeCloudLighting?.(this.capture(false))??null;},
+ cloudLighting(){
+  if(window.SalahNativeCloudLighting==null)return null;
+  const snapshot=this.capture(false);
+  // Manual setup has no accepted observer yet; optional lighting stays unavailable.
+  return snapshot.lat==null||snapshot.lon==null?null:window.SalahNativeCloudLighting(snapshot)??null;
+ },
  capture(includePresentation=true){
   const identity=simulationReady()?skySceneIdentity():null;
   const cw=selectedWeather();
