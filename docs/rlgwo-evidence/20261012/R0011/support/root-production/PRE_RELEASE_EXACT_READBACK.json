@@ -1,0 +1,50 @@
+{
+  "atUtc": "2026-10-12T20:16:08.051945+00:00",
+  "PR": {
+    "body": "When saved settings are unavailable and no location has resolved, optional cloud lighting previously called the astronomical snapshot path with missing coordinates. It now returns unavailable lighting until both coordinates are present. Existing validation of resolved locations, clocks and cameras is preserved.\n\nThe four-file change contains the native host guard, its regression test, and the two deterministic generated entries. Frozen V1 and all other production/configuration files remain unchanged. Runtime SHA256: `7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4`.\n\nValidation is complete for the R0011 candidate: 18 exact integrated host/preview tests, repeated deterministic build and frozen-V1 verification pass. All 33 original native contexts are independently accepted: 11 retained contexts through exact regional source equivalence, plus 21 new positive contexts and the caught ignoreReset negative control on the generated guarded consumer. The complete matrix contains 30 positives and three caught mutants. Original failures, injected-fault limits and the second-reset invocation distinction remain recorded.\n\nIndependent whole-candidate review SHA256: `128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7`. The R0011-EVIDENCE and R0011-QUALIFY exits are verified and joined. Exact head `b24ffa7262d8f49b48558d321898f907cdf7eb80` is compatible with current main `4e786ff51777b0c529deb929546724af56f2bbdf`, preserving its later README/DESIGN changes.\n\nOwner-authorised production release for R0011 / issue #17. Public runtime delivery, final independently accepted certificate publication/readback and manual issue closure follow the merge; this PR does not automatically close the issue. These checks do not qualify unrelated startup, whole-scene, Firefox or actual-parent obligations.\r\n",
+    "files": [
+      {
+        "path": "index.html",
+        "additions": 6,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "offline.html",
+        "additions": 6,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "real-sky/native-host-hooks.js",
+        "additions": 6,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "tests/real-sky/native-cloud-unresolved.test.mjs",
+        "additions": 77,
+        "deletions": 0,
+        "changeType": "ADDED"
+      }
+    ],
+    "headRefOid": "b24ffa7262d8f49b48558d321898f907cdf7eb80",
+    "isDraft": true,
+    "mergeable": "MERGEABLE",
+    "state": "OPEN",
+    "statusCheckRollup": []
+  },
+  "currentMain": "4e786ff51777b0c529deb929546724af56f2bbdf",
+  "mergeTree": "ca8293fb391ebed8809a2c1194a420a972241d70",
+  "fourFileHashes": {
+    "index.html": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+    "offline.html": "34104f7d88cb57f7f820f12185590a9cd469c417b53d594de80179c73bf1c1b8",
+    "real-sky/native-host-hooks.js": "007529ccb3a3ba73e14fd739e9fbaa9b2030e66e56ca6b2c997ffaa578b6d6eb",
+    "tests/real-sky/native-cloud-unresolved.test.mjs": "b89b7a8d0226ebfb5668d6c3e7b6e412ba98796fc8b1b19b9585d75deb53fe2c"
+  },
+  "originalNativeCasesAccepted": 33,
+  "independentReviewSha256": "128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7",
+  "V1Unchanged": true,
+  "noVisibleFailingChecks": true,
+  "normalProtectionEnforcedMergeOnly": true
+}

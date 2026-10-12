@@ -1,0 +1,30 @@
+{
+  "schema": "r0011-bounded-managed-process-observation/1",
+  "phase": "PRE_NATIVE",
+  "observedAtUtc": "2026-10-12T14:53:50.243253+00:00",
+  "launcher": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-r1-mutant-hideWarning\\native\\residual-location-native.py",
+  "ownedLauncherPid": null,
+  "command": "[Console]::OutputEncoding=[Text.UTF8Encoding]::new($false); ConvertTo-Json -InputObject @((Get-CimInstance Win32_Process | Where-Object { $_.ProcessId -gt 0 -and ($_.CommandLine -like '*C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-r1-mutant-hideWarning\\native\\residual-location-native.py*' -or $_.CommandLine -like '*C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-r1-mutant-hideWarning\\native\\residual-location-actions.cjs*' -or ($_.Name -eq 'chrome.exe' -and $_.CommandLine -like '*playwright_chromiumdev_profile-*')) }) | Select-Object ProcessId,ParentProcessId,CreationDate,ExecutablePath) -Depth 4 -Compress",
+  "exitCode": 0,
+  "rows": [
+    {
+      "ProcessId": 16876,
+      "ParentProcessId": 62072,
+      "CreationDate": "/Date(1791816829646)/",
+      "ExecutablePath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    }
+  ],
+  "stdout": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-r1-mutant-hideWarning\\prelaunch-managed-census.stdout",
+    "bytes": 170,
+    "sha256": "525382534674b3e028c3ca2d415bce3eef983e460c100049c779af209e50efdc"
+  },
+  "stderr": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-r1-mutant-hideWarning\\prelaunch-managed-census.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "scope": "Actual owned launcher PID, exact staged native Python/Node command fragments, and Playwright chromium profile command lines; not complete historical descendants or user Chrome",
+  "completeHistoricalDescendantInventory": false,
+  "ownedEndpointInventory": "NOT_RECORDED"
+}

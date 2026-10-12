@@ -1,0 +1,143 @@
+{
+  "schema": "r0011-real-retained-native-projection-adverse-controls/1",
+  "status": "PASS_SOURCE_CONSUMER_CONTROLS_ONLY",
+  "controls": [
+    {
+      "label": "actual native null CONFIG reproduces original pre-demand TypeError",
+      "disposition": "REJECTED",
+      "checks": [],
+      "error": {
+        "name": "TypeError",
+        "code": null,
+        "assertion": null,
+        "message": "Cannot read properties of null (reading 'lat')"
+      }
+    },
+    {
+      "label": "same immutable native observation satisfies explicit null active/diagnostic clause",
+      "disposition": "ACCEPTED",
+      "checks": [
+        {
+          "name": "load fallback has no adopted target",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "label": "adopted global target refuses despite old null diagnostics",
+      "disposition": "REJECTED",
+      "checks": [
+        {
+          "name": "load fallback has no adopted target",
+          "passed": false,
+          "detail": {
+            "lat": 51.5,
+            "lon": -0.12
+          }
+        }
+      ],
+      "error": {
+        "name": "Error",
+        "code": "CONSUMER_ASSERTION",
+        "assertion": "load fallback has no adopted target",
+        "message": "load fallback has no adopted target: {\"lat\":51.5,\"lon\":-0.12}"
+      }
+    },
+    {
+      "label": "non-null diagnostic latitude refuses",
+      "disposition": "REJECTED",
+      "checks": [
+        {
+          "name": "load fallback has no adopted target",
+          "passed": false,
+          "detail": null
+        }
+      ],
+      "error": {
+        "name": "Error",
+        "code": "CONSUMER_ASSERTION",
+        "assertion": "load fallback has no adopted target",
+        "message": "load fallback has no adopted target: null"
+      }
+    },
+    {
+      "label": "non-null diagnostic longitude refuses",
+      "disposition": "REJECTED",
+      "checks": [
+        {
+          "name": "load fallback has no adopted target",
+          "passed": false,
+          "detail": null
+        }
+      ],
+      "error": {
+        "name": "Error",
+        "code": "CONSUMER_ASSERTION",
+        "assertion": "load fallback has no adopted target",
+        "message": "load fallback has no adopted target: null"
+      }
+    },
+    {
+      "label": "missing active-config key refuses",
+      "disposition": "REJECTED",
+      "checks": [
+        {
+          "name": "load fallback has no adopted target",
+          "passed": false
+        }
+      ],
+      "error": {
+        "name": "Error",
+        "code": "CONSUMER_ASSERTION",
+        "assertion": "load fallback has no adopted target",
+        "message": "load fallback has no adopted target: undefined"
+      }
+    },
+    {
+      "label": "object with null coordinates refuses rather than replacing nullable contract",
+      "disposition": "REJECTED",
+      "checks": [
+        {
+          "name": "load fallback has no adopted target",
+          "passed": false,
+          "detail": {
+            "lat": null,
+            "lon": null
+          }
+        }
+      ],
+      "error": {
+        "name": "Error",
+        "code": "CONSUMER_ASSERTION",
+        "assertion": "load fallback has no adopted target",
+        "message": "load fallback has no adopted target: {\"lat\":null,\"lon\":null}"
+      }
+    },
+    {
+      "label": "missing diagnostic object refuses",
+      "disposition": "REJECTED",
+      "checks": [],
+      "error": {
+        "name": "TypeError",
+        "code": null,
+        "assertion": null,
+        "message": "Cannot read properties of null (reading 'lat')"
+      }
+    }
+  ],
+  "controlCount": 8,
+  "actualNativeResult": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-getter\\native-runs\\first-root\\top-read-getter\\result.json",
+    "bytes": 38903,
+    "sha256": "04615bf64feb3efccc5a31c2e541ebfb002ddf1c81029467b25ddc36e4320b5d"
+  },
+  "oldRowStatus": "FAIL",
+  "oldOriginalChecks": 0,
+  "nativeObservationReplayedThroughPredicate": true,
+  "newNativeBrowserRuns": 0,
+  "productOrOperativeDriverWrites": 0,
+  "originalNativeAcceptanceConferred": false,
+  "cycleReset": false
+}

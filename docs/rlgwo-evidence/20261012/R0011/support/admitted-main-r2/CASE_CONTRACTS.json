@@ -1,0 +1,2304 @@
+{
+  "schema": "r0011-original22-on-exact-production-guard-main/1",
+  "preparedCaseIds": [
+    "top-read-getter",
+    "top-read-read",
+    "top-read-malformed",
+    "top-read-v2",
+    "top-save-recovery",
+    "top-reset-held",
+    "top-reset-success",
+    "top-reset-failure",
+    "top-reset-superseded",
+    "top-reset-denied-narrow",
+    "iframe-reset-denied",
+    "iframe-read-getter",
+    "iframe-read-read",
+    "iframe-read-malformed",
+    "iframe-read-v2",
+    "iframe-save-recovery",
+    "iframe-reset-held",
+    "iframe-reset-success",
+    "iframe-reset-failure",
+    "iframe-reset-superseded",
+    "iframe-reset-denied-narrow",
+    "mutant-ignoreReset"
+  ],
+  "remainingCaseIds": [
+    "top-read-getter",
+    "top-read-read",
+    "top-read-malformed",
+    "top-read-v2",
+    "top-save-recovery",
+    "top-reset-held",
+    "top-reset-success",
+    "top-reset-failure",
+    "top-reset-superseded",
+    "top-reset-denied-narrow",
+    "iframe-reset-denied",
+    "iframe-read-getter",
+    "iframe-read-read",
+    "iframe-read-malformed",
+    "iframe-read-v2",
+    "iframe-save-recovery",
+    "iframe-reset-held",
+    "iframe-reset-success",
+    "iframe-reset-failure",
+    "iframe-reset-superseded",
+    "iframe-reset-denied-narrow",
+    "mutant-ignoreReset"
+  ],
+  "excludedCompletedIds": [
+    "top-save-denied",
+    "mutant-ignoreSave",
+    "mutant-hideWarning",
+    "top-quota-denied",
+    "top-save-denied-narrow",
+    "top-quota-denied-narrow",
+    "iframe-save-denied",
+    "iframe-quota-denied",
+    "iframe-save-denied-narrow",
+    "iframe-quota-denied-narrow",
+    "top-reset-denied"
+  ],
+  "cases": {
+    "top-read-getter": {
+      "id": "top-read-getter",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-read-getter",
+        "type": "readFault",
+        "container": "top",
+        "fault": "getter",
+        "acceptance": "R0011-A03"
+      },
+      "type": "readFault",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-read-getter",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": "selected denied load operation reached",
+        "seed": "manual",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "getter denial session warning",
+      "expectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "selected denied load operation reached",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "getter denial session warning",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 15,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "top-read-read": {
+      "id": "top-read-read",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-read-read",
+        "type": "readFault",
+        "container": "top",
+        "fault": "read",
+        "acceptance": "R0011-A03"
+      },
+      "type": "readFault",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-read-read",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": "selected denied load operation reached",
+        "seed": "manual",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "read failure does not preclude later writable save",
+      "expectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "selected denied load operation reached",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 15,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "top-read-malformed": {
+      "id": "top-read-malformed",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-read-malformed",
+        "type": "readFault",
+        "container": "top",
+        "fault": "malformed",
+        "acceptance": "R0011-A03"
+      },
+      "type": "readFault",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-read-malformed",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": null,
+        "seed": "malformed",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "read failure does not preclude later writable save",
+      "expectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 14,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "top-read-v2": {
+      "id": "top-read-v2",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-read-v2",
+        "type": "readFault",
+        "container": "top",
+        "fault": "v2",
+        "acceptance": "R0011-A03"
+      },
+      "type": "readFault",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-read-v2",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": null,
+        "seed": "v2",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "read failure does not preclude later writable save",
+      "expectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 14,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "top-save-recovery": {
+      "id": "top-save-recovery",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-save-recovery",
+        "type": "saveRecovery",
+        "container": "top",
+        "acceptance": "R0011-A04"
+      },
+      "type": "saveRecovery",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-save-recovery",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-save-recovery\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-save-recovery",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-save-recovery-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "check": "initial save failed with old native bytes",
+        "fault": "save/SecurityError",
+        "recoveryToggle": "denySave=false",
+        "throughCloseLaterChoice": {
+          "units": "c",
+          "time": "12"
+        }
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "reopened successful outcome replaces old failure",
+      "expectedCheckNames": [
+        "initial save failed with old native bytes",
+        "later save normalized bytes",
+        "later save clears warning",
+        "successful save retains normalized source/origin/time",
+        "successful persistence restores normal opener",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "reopened successful outcome replaces old failure",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 11,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "top-reset-held": {
+      "id": "top-reset-held",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-reset-held",
+        "type": "resetSuccess",
+        "container": "top",
+        "detect": "held",
+        "acceptance": "R0011-A04"
+      },
+      "type": "resetSuccess",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-held",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-held\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-reset-held",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-held-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "initial reset failed with saved bytes",
+          "reset removed only config",
+          "one denied and one recovered removal attempt",
+          "cleared detecting stage"
+        ],
+        "recoveryToggle": "denyRemove=false",
+        "coarseInitiallyHeld": 1,
+        "detect": "held"
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "cleared detecting stage",
+      "expectedCheckNames": [
+        "initial reset failed with saved bytes",
+        "successful persistence restores normal opener",
+        "reset removed only config",
+        "one denied and one recovered removal attempt",
+        "cleared detecting stage",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 9,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "top-reset-success": {
+      "id": "top-reset-success",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-reset-success",
+        "type": "resetSuccess",
+        "container": "top",
+        "detect": "success",
+        "acceptance": "R0011-A04"
+      },
+      "type": "resetSuccess",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-success",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-success\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-reset-success",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-success-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "initial reset failed with saved bytes",
+          "reset removed only config",
+          "one denied and one recovered removal attempt",
+          "cleared detecting stage"
+        ],
+        "recoveryToggle": "denyRemove=false",
+        "coarseInitiallyHeld": 1,
+        "detect": "success"
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "reset save:false does not write config",
+      "expectedCheckNames": [
+        "initial reset failed with saved bytes",
+        "successful persistence restores normal opener",
+        "reset removed only config",
+        "one denied and one recovered removal attempt",
+        "cleared detecting stage",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "successful reset does not recreate config",
+        "reset truthful stage",
+        "reset save:false does not write config",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 16,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "top-reset-failure": {
+      "id": "top-reset-failure",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-reset-failure",
+        "type": "resetSuccess",
+        "container": "top",
+        "detect": "failure",
+        "acceptance": "R0011-A04"
+      },
+      "type": "resetSuccess",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-failure",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-failure\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-reset-failure",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-failure-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "initial reset failed with saved bytes",
+          "reset removed only config",
+          "one denied and one recovered removal attempt",
+          "cleared detecting stage"
+        ],
+        "recoveryToggle": "denyRemove=false",
+        "coarseInitiallyHeld": 1,
+        "detect": "failure"
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "reset save:false does not write config",
+      "expectedCheckNames": [
+        "initial reset failed with saved bytes",
+        "successful persistence restores normal opener",
+        "reset removed only config",
+        "one denied and one recovered removal attempt",
+        "cleared detecting stage",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "successful reset does not recreate config",
+        "reset truthful stage",
+        "reset save:false does not write config",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 16,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "top-reset-superseded": {
+      "id": "top-reset-superseded",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-reset-superseded",
+        "type": "resetSuccess",
+        "container": "top",
+        "detect": "superseded",
+        "acceptance": "R0011-A04"
+      },
+      "type": "resetSuccess",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-superseded",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-superseded\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-reset-superseded",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-superseded-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "initial reset failed with saved bytes",
+          "reset removed only config",
+          "one denied and one recovered removal attempt",
+          "cleared detecting stage"
+        ],
+        "recoveryToggle": "denyRemove=false",
+        "coarseInitiallyHeld": 1,
+        "detect": "superseded"
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "current manual edit owns late reset",
+      "expectedCheckNames": [
+        "initial reset failed with saved bytes",
+        "successful persistence restores normal opener",
+        "reset removed only config",
+        "one denied and one recovered removal attempt",
+        "cleared detecting stage",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "current manual edit owns late reset",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 14,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "top-reset-denied-narrow": {
+      "id": "top-reset-denied-narrow",
+      "recipe": {
+        "group": "r0011",
+        "name": "top-reset-denied-narrow",
+        "type": "resetDenied",
+        "container": "top",
+        "narrow": true,
+        "lookup": "search",
+        "acceptance": "R0011-A05",
+        "also": [
+          "R0011-A02"
+        ]
+      },
+      "type": "resetDenied",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-denied-narrow",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-denied-narrow\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-top-reset-denied-narrow",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-reset-denied-narrow-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "check": "denied config removal reached actual reset caller",
+        "mutantReached": true,
+        "operation": "reset",
+        "key": "salah_widget:config:v1",
+        "sourcePredicate": "storageFaults.some(reset/config)",
+        "pendingBeforeReset": "search",
+        "returnedObsoleteCallback": true
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "reset reopened retained warning",
+      "expectedCheckNames": [
+        "native card dimensions retained",
+        "denied config removal reached actual reset caller",
+        "reset-failed warning",
+        "failed reset native bytes retained",
+        "failed reset active target retained",
+        "failed reset no coarse",
+        "one config removal",
+        "obsolete result cannot overwrite reset warning",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "native Tab wraps first",
+        "native Shift+Tab wraps last",
+        "Escape returns exact opener",
+        "native outside status attributes",
+        "native outside status contains retained outcome",
+        "native opener exposes failure state",
+        "native idless footer links remain focus controls",
+        "native card dimensions retained",
+        "reset reopened retained warning",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 22,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-reset-denied": {
+      "id": "iframe-reset-denied",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-reset-denied",
+        "type": "resetDenied",
+        "container": "iframe",
+        "acceptance": "R0011-A02",
+        "also": [
+          "R0011-A05"
+        ]
+      },
+      "type": "resetDenied",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-denied",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-denied\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-reset-denied",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-denied-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "check": "denied config removal reached actual reset caller",
+        "mutantReached": true,
+        "operation": "reset",
+        "key": "salah_widget:config:v1",
+        "sourcePredicate": "storageFaults.some(reset/config)",
+        "pendingBeforeReset": "gps",
+        "returnedObsoleteCallback": true
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "reset reopened retained warning",
+      "expectedCheckNames": [
+        "native card dimensions retained",
+        "denied config removal reached actual reset caller",
+        "reset-failed warning",
+        "failed reset native bytes retained",
+        "failed reset active target retained",
+        "failed reset no coarse",
+        "one config removal",
+        "obsolete result cannot overwrite reset warning",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "native Tab wraps first",
+        "native Shift+Tab wraps last",
+        "Escape returns exact opener",
+        "native outside status attributes",
+        "native outside status contains retained outcome",
+        "native opener exposes failure state",
+        "native idless footer links remain focus controls",
+        "native card dimensions retained",
+        "reset reopened retained warning",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 22,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-read-getter": {
+      "id": "iframe-read-getter",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-read-getter",
+        "type": "readFault",
+        "container": "iframe",
+        "fault": "getter",
+        "acceptance": "R0011-A03"
+      },
+      "type": "readFault",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-read-getter",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": "selected denied load operation reached",
+        "seed": "manual",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "getter denial session warning",
+      "expectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "selected denied load operation reached",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "getter denial session warning",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 15,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-read-read": {
+      "id": "iframe-read-read",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-read-read",
+        "type": "readFault",
+        "container": "iframe",
+        "fault": "read",
+        "acceptance": "R0011-A03"
+      },
+      "type": "readFault",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-read-read",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": "selected denied load operation reached",
+        "seed": "manual",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "read failure does not preclude later writable save",
+      "expectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "selected denied load operation reached",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 15,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-read-malformed": {
+      "id": "iframe-read-malformed",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-read-malformed",
+        "type": "readFault",
+        "container": "iframe",
+        "fault": "malformed",
+        "acceptance": "R0011-A03"
+      },
+      "type": "readFault",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-read-malformed",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": null,
+        "seed": "malformed",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "read failure does not preclude later writable save",
+      "expectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 14,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-read-v2": {
+      "id": "iframe-read-v2",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-read-v2",
+        "type": "readFault",
+        "container": "iframe",
+        "fault": "v2",
+        "acceptance": "R0011-A03"
+      },
+      "type": "readFault",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-read-v2",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": null,
+        "seed": "v2",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "read failure does not preclude later writable save",
+      "expectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 14,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-save-recovery": {
+      "id": "iframe-save-recovery",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-save-recovery",
+        "type": "saveRecovery",
+        "container": "iframe",
+        "acceptance": "R0011-A04"
+      },
+      "type": "saveRecovery",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-save-recovery",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-save-recovery\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-save-recovery",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-save-recovery-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "check": "initial save failed with old native bytes",
+        "fault": "save/SecurityError",
+        "recoveryToggle": "denySave=false",
+        "throughCloseLaterChoice": {
+          "units": "c",
+          "time": "12"
+        }
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "reopened successful outcome replaces old failure",
+      "expectedCheckNames": [
+        "initial save failed with old native bytes",
+        "later save normalized bytes",
+        "later save clears warning",
+        "successful save retains normalized source/origin/time",
+        "successful persistence restores normal opener",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "reopened successful outcome replaces old failure",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 11,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-reset-held": {
+      "id": "iframe-reset-held",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-reset-held",
+        "type": "resetSuccess",
+        "container": "iframe",
+        "detect": "held",
+        "acceptance": "R0011-A04"
+      },
+      "type": "resetSuccess",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-held",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-held\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-reset-held",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-held-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "initial reset failed with saved bytes",
+          "reset removed only config",
+          "one denied and one recovered removal attempt",
+          "cleared detecting stage"
+        ],
+        "recoveryToggle": "denyRemove=false",
+        "coarseInitiallyHeld": 1,
+        "detect": "held"
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "cleared detecting stage",
+      "expectedCheckNames": [
+        "initial reset failed with saved bytes",
+        "successful persistence restores normal opener",
+        "reset removed only config",
+        "one denied and one recovered removal attempt",
+        "cleared detecting stage",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 9,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-reset-success": {
+      "id": "iframe-reset-success",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-reset-success",
+        "type": "resetSuccess",
+        "container": "iframe",
+        "detect": "success",
+        "acceptance": "R0011-A04"
+      },
+      "type": "resetSuccess",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-success",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-success\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-reset-success",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-success-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "initial reset failed with saved bytes",
+          "reset removed only config",
+          "one denied and one recovered removal attempt",
+          "cleared detecting stage"
+        ],
+        "recoveryToggle": "denyRemove=false",
+        "coarseInitiallyHeld": 1,
+        "detect": "success"
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "reset save:false does not write config",
+      "expectedCheckNames": [
+        "initial reset failed with saved bytes",
+        "successful persistence restores normal opener",
+        "reset removed only config",
+        "one denied and one recovered removal attempt",
+        "cleared detecting stage",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "successful reset does not recreate config",
+        "reset truthful stage",
+        "reset save:false does not write config",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 16,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-reset-failure": {
+      "id": "iframe-reset-failure",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-reset-failure",
+        "type": "resetSuccess",
+        "container": "iframe",
+        "detect": "failure",
+        "acceptance": "R0011-A04"
+      },
+      "type": "resetSuccess",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-failure",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-failure\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-reset-failure",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-failure-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "initial reset failed with saved bytes",
+          "reset removed only config",
+          "one denied and one recovered removal attempt",
+          "cleared detecting stage"
+        ],
+        "recoveryToggle": "denyRemove=false",
+        "coarseInitiallyHeld": 1,
+        "detect": "failure"
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "reset save:false does not write config",
+      "expectedCheckNames": [
+        "initial reset failed with saved bytes",
+        "successful persistence restores normal opener",
+        "reset removed only config",
+        "one denied and one recovered removal attempt",
+        "cleared detecting stage",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "successful reset does not recreate config",
+        "reset truthful stage",
+        "reset save:false does not write config",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 16,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-reset-superseded": {
+      "id": "iframe-reset-superseded",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-reset-superseded",
+        "type": "resetSuccess",
+        "container": "iframe",
+        "detect": "superseded",
+        "acceptance": "R0011-A04"
+      },
+      "type": "resetSuccess",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-superseded",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-superseded\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-reset-superseded",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-superseded-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "checks": [
+          "initial reset failed with saved bytes",
+          "reset removed only config",
+          "one denied and one recovered removal attempt",
+          "cleared detecting stage"
+        ],
+        "recoveryToggle": "denyRemove=false",
+        "coarseInitiallyHeld": 1,
+        "detect": "superseded"
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "current manual edit owns late reset",
+      "expectedCheckNames": [
+        "initial reset failed with saved bytes",
+        "successful persistence restores normal opener",
+        "reset removed only config",
+        "one denied and one recovered removal attempt",
+        "cleared detecting stage",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "current manual edit owns late reset",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 14,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "iframe-reset-denied-narrow": {
+      "id": "iframe-reset-denied-narrow",
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-reset-denied-narrow",
+        "type": "resetDenied",
+        "container": "iframe",
+        "narrow": true,
+        "lookup": "search",
+        "acceptance": "R0011-A05",
+        "also": [
+          "R0011-A02"
+        ]
+      },
+      "type": "resetDenied",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-denied-narrow",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-denied-narrow\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-iframe-reset-denied-narrow",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-reset-denied-narrow-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": null,
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "8abf480b572761070e89bf59d4e2be10d74c9074350573e5dde6e30fb99ab756",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": null
+      },
+      "prerequisite": {
+        "check": "denied config removal reached actual reset caller",
+        "mutantReached": true,
+        "operation": "reset",
+        "key": "salah_widget:config:v1",
+        "sourcePredicate": "storageFaults.some(reset/config)",
+        "pendingBeforeReset": "search",
+        "returnedObsoleteCallback": true
+      },
+      "expectedStatus": "PASS",
+      "expectedOracle": "reset reopened retained warning",
+      "expectedCheckNames": [
+        "native card dimensions retained",
+        "denied config removal reached actual reset caller",
+        "reset-failed warning",
+        "failed reset native bytes retained",
+        "failed reset active target retained",
+        "failed reset no coarse",
+        "one config removal",
+        "obsolete result cannot overwrite reset warning",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "native Tab wraps first",
+        "native Shift+Tab wraps last",
+        "Escape returns exact opener",
+        "native outside status attributes",
+        "native outside status contains retained outcome",
+        "native opener exposes failure state",
+        "native idless footer links remain focus controls",
+        "native card dimensions retained",
+        "reset reopened retained warning",
+        "native card dimensions retained"
+      ],
+      "sourceExpectedAssertionCount": 22,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "exact generated consumer with explicit fixture hooks",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": false
+    },
+    "mutant-ignoreReset": {
+      "id": "mutant-ignoreReset",
+      "recipe": {
+        "group": "r0011",
+        "name": "mutant-ignoreReset",
+        "type": "resetDenied",
+        "container": "top",
+        "mutant": "ignoreReset",
+        "acceptance": "R0011-A07"
+      },
+      "type": "resetDenied",
+      "prepared": true,
+      "sourceAdmission": "NOT_GRANTED",
+      "native": "NOT_RUN",
+      "durationSeconds": null,
+      "fresh": {
+        "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r2",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-mutant-ignoreReset",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-mutant-ignoreReset\\native-runs\\first-root",
+        "leaseId": "root-r0011-whole-main-r2-mutant-ignoreReset",
+        "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-mutant-ignoreReset-admission.json",
+        "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r2\\review-approval.json",
+        "owner": "/root",
+        "acquired": false
+      },
+      "mutation": {
+        "name": "ignoreReset",
+        "file": "index.html",
+        "from": "const r=window.SalahConfig?SalahConfig.clearLocal():{ok:false,error:\"unavailable\"};",
+        "to": "const attemptedReset=window.SalahConfig?SalahConfig.clearLocal():{ok:false,error:\"unavailable\"};const r={ok:true};",
+        "oracle": "reset-failed warning"
+      },
+      "sourceOverride": {
+        "widgetPage": {
+          "sha": "ff9e0c2db0c3c426f421f9d134da996628b5c47d879235df9e5e12f7ef3751ee",
+          "attrs": [
+            " src=\"config.js\"",
+            " id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"",
+            "",
+            " src=\"real-sky/native-sky.js\"",
+            "",
+            " src=\"moon/moon-host.js\""
+          ],
+          "bodiesSha256": [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d",
+            "017190f21e71b06aebe9a11bd2060cff73dab9231e1a80122995873047699e52",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ]
+        },
+        "fixtureMutation": {
+          "name": "ignoreReset",
+          "file": "index.html",
+          "baseSha256": "82c1235d39936056df342b5d70d47dac96a7d7bab12c96290fb8a6fa2d9fbf22",
+          "mutatedSha256": "ff9e0c2db0c3c426f421f9d134da996628b5c47d879235df9e5e12f7ef3751ee"
+        }
+      },
+      "prerequisite": {
+        "check": "denied config removal reached actual reset caller",
+        "mutantReached": true,
+        "operation": "reset",
+        "key": "salah_widget:config:v1",
+        "sourcePredicate": "storageFaults.some(reset/config)",
+        "pendingBeforeReset": "gps",
+        "returnedObsoleteCallback": true
+      },
+      "expectedStatus": "CAUGHT",
+      "expectedOracle": "reset-failed warning",
+      "expectedCheckNames": [
+        "native card dimensions retained",
+        "denied config removal reached actual reset caller",
+        "native card dimensions retained",
+        "reset-failed warning"
+      ],
+      "sourceExpectedAssertionCount": 4,
+      "countBasis": "Unchanged source/helper expansion; native only observed for the distinct retained positive",
+      "terminalCounts": {
+        "selected": 1,
+        "executed": 1,
+        "notRun": 0
+      },
+      "admissionGap": "INDEPENDENT_SOURCE_REVIEW_AND_ACTUAL_ROOT_NATIVE_ADMISSION_PENDING",
+      "sourceKind": "isolated counterfactual",
+      "observationBudgets": {
+        "waitDefaultMs": 10000,
+        "productTimingThresholdChanged": false,
+        "cardDimensions": [
+          325,
+          530
+        ],
+        "cardTolerancePx": 0.1
+      },
+      "requiresIndependentResetPositive": true
+    }
+  },
+  "recommendedFirstCase": "top-read-getter",
+  "runnableAfterNewIndependentApprovalOnly": [
+    "top-read-getter",
+    "top-read-read",
+    "top-read-malformed",
+    "top-read-v2",
+    "top-save-recovery",
+    "top-reset-held",
+    "top-reset-success",
+    "top-reset-failure",
+    "top-reset-superseded",
+    "top-reset-denied-narrow",
+    "iframe-reset-denied",
+    "iframe-read-getter",
+    "iframe-read-read",
+    "iframe-read-malformed",
+    "iframe-read-v2",
+    "iframe-save-recovery",
+    "iframe-reset-held",
+    "iframe-reset-success",
+    "iframe-reset-failure",
+    "iframe-reset-superseded",
+    "iframe-reset-denied-narrow",
+    "mutant-ignoreReset"
+  ],
+  "other23NonRunnable": [],
+  "originalRecipeCount": 33,
+  "originalManifestSha256": "b8c18b5302ed2de5554f642251e1a307bf375fbfd47afee856ffce4d968c7f71",
+  "nativeDriverSha256": "5a13ab571cdcebf13579168d992f1703c32c31402b503f41203948a92d491207",
+  "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+  "existingBudgetPreserved": true,
+  "nativeAdmissionGranted": false,
+  "whole31Approval": false,
+  "sourcePreparedCount": 22,
+  "batches": {
+    "remaining-positive-and-warning": [
+      "top-read-getter",
+      "top-read-read",
+      "top-read-malformed",
+      "top-read-v2",
+      "top-save-recovery",
+      "top-reset-held",
+      "top-reset-success",
+      "top-reset-failure",
+      "top-reset-superseded",
+      "top-reset-denied-narrow",
+      "iframe-reset-denied",
+      "iframe-read-getter",
+      "iframe-read-read",
+      "iframe-read-malformed",
+      "iframe-read-v2",
+      "iframe-save-recovery",
+      "iframe-reset-held",
+      "iframe-reset-success",
+      "iframe-reset-failure",
+      "iframe-reset-superseded",
+      "iframe-reset-denied-narrow"
+    ],
+    "reset-mutant-after-accepted-positive": [
+      "mutant-ignoreReset"
+    ]
+  },
+  "expectedCheckNamesBasis": "Original fc18 action/keyboard demands unchanged; independently accepted0ad open-entry applicability correction only"
+}

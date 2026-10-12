@@ -1,0 +1,2225 @@
+{
+  "schema": "r0011-original-native-acceptance-evidence/v1",
+  "status": "INDEPENDENTLY_ACCEPTED_ORIGINAL_ROW_EVIDENCE_ROOT_JOIN_PENDING",
+  "issue": 17,
+  "originalAcceptance": {
+    "id": "R0011-A03",
+    "originalPredicateLiteral": "| R0011-A03 / R0011-O15 | Fresh realm before navigation: localStorage getter throws; separate getItem SecurityError, malformed JSON and v2 input records. First capture load-time fallback and stored bytes, then enter useful manual30/31 form after failed/empty detection. Consumer: Native boot/loadLocal/manual Settings apply/close and warning UI. | No uncaught storage error; loadLocal fallback null. Immediately after load, malformed/future record bytes are not deleted or destructively migrated. Later explicit valid manual apply remains usable; denied write is session-only, while a normal writable manual save may intentionally replace the config record and reports success. Keep load preservation and later authorized save as separate observations. Expected: Manual recovery stays usable; read failure alone does not predetermine whether a later native write succeeds. | Windows, one disposable Chromium context; record actual browser/build and Python/Playwright versions, UTC timezone, viewport 1000x900 and DPR 1; widget card 325x530. Provider data and dates are synthetic. Use the same context/origin only where persistence across reload is the tested contract. No owner browser profile, real location, real clipboard or installer execution. | `evidence/R0011/read-failure-recovery.json`; Independent cold reviewer reads raw trace and mapped crops; primary reconciles source/consumer identity before closure. |",
+    "specification": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\celestial-startup-repair-20261008\\planning-original-21e7a843\\docs\\rlgwo-execution\\20261008\\REMAINING_RLGWOs\\R0011.md",
+      "bytes": 40468,
+      "sha256": "1e8b99046b52c48e180d3fc1308494b82ae8b6eda5e304e1aaa80d8f6c7bed0d"
+    },
+    "sourceLine": 99,
+    "literalArtifact": "evidence/R0011/read-failure-recovery.json",
+    "originalCaseIds": [
+      "top-read-getter",
+      "top-read-read",
+      "top-read-malformed",
+      "top-read-v2",
+      "iframe-read-getter",
+      "iframe-read-read",
+      "iframe-read-malformed",
+      "iframe-read-v2"
+    ],
+    "independentWholeRowDecision": "PASS_NATIVE_TRACES_PIXELS"
+  },
+  "sourceCandidate": {
+    "PR": 52,
+    "reviewedHead": "b24ffa7262d8f49b48558d321898f907cdf7eb80",
+    "reviewedBase": "ec6e628289da074fda2af6e8511a72bd5cd2ef95",
+    "observedCurrentMain": "4e786ff51777b0c529deb929546724af56f2bbdf",
+    "computedCleanMergeTree": "ca8293fb391ebed8809a2c1194a420a972241d70",
+    "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+    "runtimeMembers": 135,
+    "authoredIndexSha256": "19dd9ba814fdb426b75e4282aca2e3bf20569b5b55ef9764d13e786c84c7b012",
+    "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "recordedBuildSourceRef": "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+    "sourceRefMeaning": "Exact153677 production base plus independently reviewed guard/test in disposable receiver; not yet committed/deployed",
+    "actualNativeSourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+    "exactCompatibility": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-production-guard-delivery-20261012-r1\\CURRENT_MAIN_MERGE_COMPATIBILITY.json",
+      "bytes": 867,
+      "sha256": "e6443c93e7efa8f970315b877233e002d8a2bcd81925f63c234866183adb71da"
+    },
+    "changedFilesFromMain": [
+      "index.html",
+      "offline.html",
+      "real-sky/native-host-hooks.js",
+      "tests/real-sky/native-cloud-unresolved.test.mjs"
+    ],
+    "latestREADMEAndDESIGNPreserved": true,
+    "V1Unchanged": true,
+    "actualRuntimeMergedCommit": null,
+    "ownerRuntimeReleaseApproval": null,
+    "actualRuntimePublicReadback": null
+  },
+  "cases": [
+    {
+      "caseId": "top-read-getter",
+      "acceptance": [
+        "R0011-A03"
+      ],
+      "expectedStatus": "PASS",
+      "rawStatus": "PASS",
+      "caseResult": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\top-read-getter\\result.json",
+        "bytes": 112066,
+        "sha256": "879f8a537e1f9be41be5ae94195c7b25b4ab421d9cb69b76393344caa278f692"
+      },
+      "checksPointer": "/checks",
+      "observedCheckCount": 15,
+      "originalExpectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "selected denied load operation reached",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "getter denial session warning",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "snapshotPointers": [
+        "/snapshots/native boot fallback before explicit manual write",
+        "/snapshots/through-close manual recovery"
+      ],
+      "sourceBindingPointer": "/sourceBinding",
+      "accessibilityPointer": null,
+      "nativeEnvironment": {
+        "browser": "chromium",
+        "version": "154.0.8037.98",
+        "os": "win32",
+        "node": "v22.16.0",
+        "playwright": "1.62.1",
+        "viewport": {
+          "width": 1000,
+          "height": 900
+        },
+        "dpr": 1,
+        "timezone": "UTC"
+      },
+      "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+      "crops": [
+        {
+          "rawCropPointer": "/crops/0",
+          "geometryPointer": "/crops/0/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\top-read-getter\\boot-manual-fallback.png",
+              "bytes": 56665,
+              "sha256": "454b2b3dac792592962e486acd42deda5a2faf11ac44799cb96b0598690f0f65"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\top-read-getter\\boot-manual-fallback-card.png",
+              "bytes": 43143,
+              "sha256": "82902ec603e228b0fdb4c70d0eec1e44ea78c07b39684d41798afdb81d94fc09"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\top-read-getter\\boot-manual-fallback-buckle.png",
+              "bytes": 288,
+              "sha256": "3df91035a95136e49feece0a7df24a6440eb399756e589f24479a881750e4fae"
+            },
+            "statusFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\top-read-getter\\boot-manual-fallback-status.png",
+              "bytes": 3554,
+              "sha256": "51ba407acf5111f3183090b0826ce10edfdb3ecaad2f1b48c6c28df44910445e"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        },
+        {
+          "rawCropPointer": "/crops/1",
+          "geometryPointer": "/crops/1/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\top-read-getter\\manual-recovery.png",
+              "bytes": 136694,
+              "sha256": "269e440ce4e540a58898784ee7f85d829ffbd4393293aacfd23dbd67566e3523"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\top-read-getter\\manual-recovery-card.png",
+              "bytes": 117564,
+              "sha256": "d798a63f21ee49e1b1d4651288e0471a0d7f82dc4c7fce7a5f56015f7246a349"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\top-read-getter\\manual-recovery-buckle.png",
+              "bytes": 1169,
+              "sha256": "b45a6a32e7a8f6dfb2d9382cad7703e13f810fe8097baffbf4bce49be9753a2a"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        }
+      ],
+      "actualCurrentProductionCandidateNativeContext": true,
+      "independentAccepted": true,
+      "independentReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\REPORT.json",
+        "bytes": 256785,
+        "sha256": "128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7"
+      },
+      "independentReviewSeal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\SEAL.json",
+        "bytes": 1984,
+        "sha256": "f24228bcafd0605a30fb0f6580fb5ba9ecb5f16d7e6f46961ac9b318055aaad3"
+      },
+      "independentDecision": "PASS",
+      "oldNativeOrPixelsRelabelledMain": false,
+      "replayed": false,
+      "dispatch": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\dispatch-result.json",
+        "bytes": 4639,
+        "sha256": "1e0fa09423885755c6cd012869f6318130bd5a95d6167da9a8da7336930d0613"
+      },
+      "rollingCleanup": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\rolling-cleanup.json",
+        "bytes": 1345,
+        "sha256": "6b27f2273043a85a1e5060299783783d6d4fc61c2d2fb039d688b517019c42b1"
+      },
+      "nativeTerminal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\results.json",
+        "bytes": 532,
+        "sha256": "7d4a6d6209e44390c5f05f2762e7fe158dbf710df9a17f6cba7b103cc6d11276"
+      },
+      "activeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+      "actualDispatchIdentity": {
+        "schema": "root-r0011-first-native-dispatch/1",
+        "status": "PASSED_NATIVE_CASE_PENDING_TRACE_PIXEL_REVIEW",
+        "leaseId": "root-r0011-whole-main-r2-top-read-getter",
+        "startedAtUtc": "2026-10-12T19:24:32.182605+00:00",
+        "command": [
+          "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-I",
+          "-S",
+          "-B",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native\\residual-location-native.py",
+          "--source-root",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+          "--source-ref",
+          "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "--group",
+          "r0011",
+          "--browser",
+          "chromium",
+          "--node",
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--package-root",
+          "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules",
+          "--executable",
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "--only",
+          "top-read-getter",
+          "--out",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root",
+          "--lease-authorized"
+        ],
+        "sourceRuntime": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+        "packetSealSha256": "8285d043fa8f401cb5d60134c4288bf312b9f327fc9a912189f93bb05b2614fa",
+        "sourceReviewReportSha256": "dcc754b67db01c81e3c3071df10021f274be1039963e4f2ebdf66d9ec405ebe7",
+        "sourceReviewSealSha256": "bcac23acb41815cf2c3b5bd447214655186cd7c8807cba523dd8153f01c78c40",
+        "sourceReviewer": "/root/r0010_isolated_release_review_r1",
+        "nativeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+        "sourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+        "toolBindingsSha256": "5c1a71aa5e1e27a5bd032ae3f7dd025ae4826613f8b34d8648c6d50311301523",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root",
+        "rootAdmissionSha256": "4059d40d60e7fa9199b5a3d6e6cc855d1944621bf7b13cb056d1c94b6aadec76",
+        "onlyCase": "top-read-getter",
+        "negativeLater": null,
+        "nativeStarted": true,
+        "nativeComplete": true,
+        "independentTracePixelReview": "PENDING",
+        "caseContractsSha256": "6293bfe760ec4297b81e7e9ff9a2cb845418599a0c2042238041d805e4ace168",
+        "rootDriverSha256": "70f35c610dae078cc4c778ac94de9d058e47e96fc3b8d79a03e8a08ca6e0e3c0",
+        "reviewApprovalSha256": "db4ae0d850316b9dc8489243054772148e5320d783562a8c116472b5e90f9726",
+        "guardReviewReportSha256": "96bacc4e8611e14c4c23195bf74220a994fa2d5891555ace982c35bca3c1544c",
+        "guardReviewSealSha256": "26edfdf6ea86d065f9f90e0fe08a5f87d8c3ccc15ca4d2918b4792cc1f10ed67",
+        "processId": 65368,
+        "exitCode": 0,
+        "resultsSha256": "7d4a6d6209e44390c5f05f2762e7fe158dbf710df9a17f6cba7b103cc6d11276",
+        "results": {
+          "schema": "residual-native-results/v1",
+          "sourceRef": "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "group": "r0011",
+          "selected": [
+            "top-read-getter"
+          ],
+          "executed": [
+            {
+              "name": "top-read-getter",
+              "status": "PASS",
+              "result": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\native-runs\\first-root\\top-read-getter\\result.json"
+            }
+          ],
+          "notRun": [],
+          "independentPixels": "PENDING",
+          "closure": "NOT_AUTHORIZED"
+        },
+        "caseResultSha256": "879f8a537e1f9be41be5ae94195c7b25b4ab421d9cb69b76393344caa278f692",
+        "nativeCompletionBasis": "VALIDATED_EXPECTED_POST_CLEANUP_TERMINAL_MANIFEST_AND_CASE_READBACK",
+        "consumerStatus": "PASS",
+        "actualBoundedCleanup": {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-getter\\rolling-cleanup.json",
+          "bytes": 1345,
+          "sha256": "6b27f2273043a85a1e5060299783783d6d4fc61c2d2fb039d688b517019c42b1"
+        },
+        "cleanupLimits": "Actual wrapper wait and managed-process readback plus pinned awaited browser/server terminal. No explicit endpoint inventory or complete historical descendants.",
+        "finishedAtUtc": "2026-10-12T19:24:36.627786+00:00",
+        "unknownCompletion": false
+      },
+      "priorPreparationMetadataExcludedFromOperativeBinding": {
+        "native": "NOT_RUN",
+        "driverSha256": "5a13ab571cdcebf13579168d992f1703c32c31402b503f41203948a92d491207",
+        "fresh": {
+          "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r1",
+          "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-getter",
+          "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-getter\\native-runs\\first-root",
+          "leaseId": "root-r0011-whole-main-r1-top-read-getter",
+          "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-getter-admission.json",
+          "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r1\\review-approval.json",
+          "owner": "/root",
+          "acquired": false
+        }
+      },
+      "recipe": {
+        "group": "r0011",
+        "name": "top-read-getter",
+        "type": "readFault",
+        "container": "top",
+        "fault": "getter",
+        "acceptance": "R0011-A03"
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": "selected denied load operation reached",
+        "seed": "manual",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "mutation": null
+    },
+    {
+      "caseId": "top-read-read",
+      "acceptance": [
+        "R0011-A03"
+      ],
+      "expectedStatus": "PASS",
+      "rawStatus": "PASS",
+      "caseResult": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\top-read-read\\result.json",
+        "bytes": 105084,
+        "sha256": "b8271547a2abc169b6e12429f31f895ce42d8f31b6cbf8eb90b58c2ddd561dcd"
+      },
+      "checksPointer": "/checks",
+      "observedCheckCount": 15,
+      "originalExpectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "selected denied load operation reached",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "snapshotPointers": [
+        "/snapshots/native boot fallback before explicit manual write",
+        "/snapshots/through-close manual recovery"
+      ],
+      "sourceBindingPointer": "/sourceBinding",
+      "accessibilityPointer": null,
+      "nativeEnvironment": {
+        "browser": "chromium",
+        "version": "154.0.8037.98",
+        "os": "win32",
+        "node": "v22.16.0",
+        "playwright": "1.62.1",
+        "viewport": {
+          "width": 1000,
+          "height": 900
+        },
+        "dpr": 1,
+        "timezone": "UTC"
+      },
+      "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+      "crops": [
+        {
+          "rawCropPointer": "/crops/0",
+          "geometryPointer": "/crops/0/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\top-read-read\\boot-manual-fallback.png",
+              "bytes": 56665,
+              "sha256": "454b2b3dac792592962e486acd42deda5a2faf11ac44799cb96b0598690f0f65"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\top-read-read\\boot-manual-fallback-card.png",
+              "bytes": 43143,
+              "sha256": "82902ec603e228b0fdb4c70d0eec1e44ea78c07b39684d41798afdb81d94fc09"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\top-read-read\\boot-manual-fallback-buckle.png",
+              "bytes": 288,
+              "sha256": "3df91035a95136e49feece0a7df24a6440eb399756e589f24479a881750e4fae"
+            },
+            "statusFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\top-read-read\\boot-manual-fallback-status.png",
+              "bytes": 3554,
+              "sha256": "51ba407acf5111f3183090b0826ce10edfdb3ecaad2f1b48c6c28df44910445e"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        },
+        {
+          "rawCropPointer": "/crops/1",
+          "geometryPointer": "/crops/1/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\top-read-read\\manual-recovery.png",
+              "bytes": 136673,
+              "sha256": "eb6ba3c9c10708ef5a01aca8d5c08ff148148b8734d0f2fb434368292eebe7dc"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\top-read-read\\manual-recovery-card.png",
+              "bytes": 117532,
+              "sha256": "7b657383c5d3cc44c1b3772697248f649e18f732943027ebff35dd4c7650faa7"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\top-read-read\\manual-recovery-buckle.png",
+              "bytes": 1189,
+              "sha256": "afa125ab190e42f8434a525415a4c1228bfd64f2353d45db80b7dfd6b1eaf96d"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        }
+      ],
+      "actualCurrentProductionCandidateNativeContext": true,
+      "independentAccepted": true,
+      "independentReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\REPORT.json",
+        "bytes": 256785,
+        "sha256": "128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7"
+      },
+      "independentReviewSeal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\SEAL.json",
+        "bytes": 1984,
+        "sha256": "f24228bcafd0605a30fb0f6580fb5ba9ecb5f16d7e6f46961ac9b318055aaad3"
+      },
+      "independentDecision": "PASS",
+      "oldNativeOrPixelsRelabelledMain": false,
+      "replayed": false,
+      "dispatch": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\dispatch-result.json",
+        "bytes": 4615,
+        "sha256": "ca833a0e21fd210c2c5098bc02272f3ad071da60f3335272fb01aded6aa609da"
+      },
+      "rollingCleanup": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\rolling-cleanup.json",
+        "bytes": 1335,
+        "sha256": "17d48921a3ce1d0183c02b235ef59adafb43f20138f9efa9f568c9e6777a7a3d"
+      },
+      "nativeTerminal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\results.json",
+        "bytes": 524,
+        "sha256": "37e8e3697a177d64e0085cc28be62884f5000f8adc6bdbf59665c3c7733f17a4"
+      },
+      "activeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+      "actualDispatchIdentity": {
+        "schema": "root-r0011-first-native-dispatch/1",
+        "status": "PASSED_NATIVE_CASE_PENDING_TRACE_PIXEL_REVIEW",
+        "leaseId": "root-r0011-whole-main-r2-top-read-read",
+        "startedAtUtc": "2026-10-12T19:24:39.547961+00:00",
+        "command": [
+          "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-I",
+          "-S",
+          "-B",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native\\residual-location-native.py",
+          "--source-root",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+          "--source-ref",
+          "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "--group",
+          "r0011",
+          "--browser",
+          "chromium",
+          "--node",
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--package-root",
+          "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules",
+          "--executable",
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "--only",
+          "top-read-read",
+          "--out",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root",
+          "--lease-authorized"
+        ],
+        "sourceRuntime": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+        "packetSealSha256": "8285d043fa8f401cb5d60134c4288bf312b9f327fc9a912189f93bb05b2614fa",
+        "sourceReviewReportSha256": "dcc754b67db01c81e3c3071df10021f274be1039963e4f2ebdf66d9ec405ebe7",
+        "sourceReviewSealSha256": "bcac23acb41815cf2c3b5bd447214655186cd7c8807cba523dd8153f01c78c40",
+        "sourceReviewer": "/root/r0010_isolated_release_review_r1",
+        "nativeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+        "sourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+        "toolBindingsSha256": "5c1a71aa5e1e27a5bd032ae3f7dd025ae4826613f8b34d8648c6d50311301523",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root",
+        "rootAdmissionSha256": "c9c551af241b5d9d4c51b95b1595ea226b567f735c1646ab6f1ffaca242a262d",
+        "onlyCase": "top-read-read",
+        "negativeLater": null,
+        "nativeStarted": true,
+        "nativeComplete": true,
+        "independentTracePixelReview": "PENDING",
+        "caseContractsSha256": "6293bfe760ec4297b81e7e9ff9a2cb845418599a0c2042238041d805e4ace168",
+        "rootDriverSha256": "70f35c610dae078cc4c778ac94de9d058e47e96fc3b8d79a03e8a08ca6e0e3c0",
+        "reviewApprovalSha256": "db4ae0d850316b9dc8489243054772148e5320d783562a8c116472b5e90f9726",
+        "guardReviewReportSha256": "96bacc4e8611e14c4c23195bf74220a994fa2d5891555ace982c35bca3c1544c",
+        "guardReviewSealSha256": "26edfdf6ea86d065f9f90e0fe08a5f87d8c3ccc15ca4d2918b4792cc1f10ed67",
+        "processId": 30888,
+        "exitCode": 0,
+        "resultsSha256": "37e8e3697a177d64e0085cc28be62884f5000f8adc6bdbf59665c3c7733f17a4",
+        "results": {
+          "schema": "residual-native-results/v1",
+          "sourceRef": "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "group": "r0011",
+          "selected": [
+            "top-read-read"
+          ],
+          "executed": [
+            {
+              "name": "top-read-read",
+              "status": "PASS",
+              "result": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\native-runs\\first-root\\top-read-read\\result.json"
+            }
+          ],
+          "notRun": [],
+          "independentPixels": "PENDING",
+          "closure": "NOT_AUTHORIZED"
+        },
+        "caseResultSha256": "b8271547a2abc169b6e12429f31f895ce42d8f31b6cbf8eb90b58c2ddd561dcd",
+        "nativeCompletionBasis": "VALIDATED_EXPECTED_POST_CLEANUP_TERMINAL_MANIFEST_AND_CASE_READBACK",
+        "consumerStatus": "PASS",
+        "actualBoundedCleanup": {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-read\\rolling-cleanup.json",
+          "bytes": 1335,
+          "sha256": "17d48921a3ce1d0183c02b235ef59adafb43f20138f9efa9f568c9e6777a7a3d"
+        },
+        "cleanupLimits": "Actual wrapper wait and managed-process readback plus pinned awaited browser/server terminal. No explicit endpoint inventory or complete historical descendants.",
+        "finishedAtUtc": "2026-10-12T19:24:43.186513+00:00",
+        "unknownCompletion": false
+      },
+      "priorPreparationMetadataExcludedFromOperativeBinding": {
+        "native": "NOT_RUN",
+        "driverSha256": "5a13ab571cdcebf13579168d992f1703c32c31402b503f41203948a92d491207",
+        "fresh": {
+          "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r1",
+          "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-read",
+          "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-read\\native-runs\\first-root",
+          "leaseId": "root-r0011-whole-main-r1-top-read-read",
+          "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-read-admission.json",
+          "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r1\\review-approval.json",
+          "owner": "/root",
+          "acquired": false
+        }
+      },
+      "recipe": {
+        "group": "r0011",
+        "name": "top-read-read",
+        "type": "readFault",
+        "container": "top",
+        "fault": "read",
+        "acceptance": "R0011-A03"
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": "selected denied load operation reached",
+        "seed": "manual",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "mutation": null
+    },
+    {
+      "caseId": "top-read-malformed",
+      "acceptance": [
+        "R0011-A03"
+      ],
+      "expectedStatus": "PASS",
+      "rawStatus": "PASS",
+      "caseResult": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\top-read-malformed\\result.json",
+        "bytes": 95438,
+        "sha256": "591eda472b780301f472965461d90bc5877737eba44cd38b8188772abe5cee97"
+      },
+      "checksPointer": "/checks",
+      "observedCheckCount": 14,
+      "originalExpectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "snapshotPointers": [
+        "/snapshots/native boot fallback before explicit manual write",
+        "/snapshots/through-close manual recovery"
+      ],
+      "sourceBindingPointer": "/sourceBinding",
+      "accessibilityPointer": null,
+      "nativeEnvironment": {
+        "browser": "chromium",
+        "version": "154.0.8037.98",
+        "os": "win32",
+        "node": "v22.16.0",
+        "playwright": "1.62.1",
+        "viewport": {
+          "width": 1000,
+          "height": 900
+        },
+        "dpr": 1,
+        "timezone": "UTC"
+      },
+      "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+      "crops": [
+        {
+          "rawCropPointer": "/crops/0",
+          "geometryPointer": "/crops/0/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\top-read-malformed\\boot-manual-fallback.png",
+              "bytes": 56665,
+              "sha256": "454b2b3dac792592962e486acd42deda5a2faf11ac44799cb96b0598690f0f65"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\top-read-malformed\\boot-manual-fallback-card.png",
+              "bytes": 43143,
+              "sha256": "82902ec603e228b0fdb4c70d0eec1e44ea78c07b39684d41798afdb81d94fc09"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\top-read-malformed\\boot-manual-fallback-buckle.png",
+              "bytes": 288,
+              "sha256": "3df91035a95136e49feece0a7df24a6440eb399756e589f24479a881750e4fae"
+            },
+            "statusFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\top-read-malformed\\boot-manual-fallback-status.png",
+              "bytes": 3554,
+              "sha256": "51ba407acf5111f3183090b0826ce10edfdb3ecaad2f1b48c6c28df44910445e"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        },
+        {
+          "rawCropPointer": "/crops/1",
+          "geometryPointer": "/crops/1/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\top-read-malformed\\manual-recovery.png",
+              "bytes": 136673,
+              "sha256": "eb6ba3c9c10708ef5a01aca8d5c08ff148148b8734d0f2fb434368292eebe7dc"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\top-read-malformed\\manual-recovery-card.png",
+              "bytes": 117532,
+              "sha256": "7b657383c5d3cc44c1b3772697248f649e18f732943027ebff35dd4c7650faa7"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\top-read-malformed\\manual-recovery-buckle.png",
+              "bytes": 1189,
+              "sha256": "afa125ab190e42f8434a525415a4c1228bfd64f2353d45db80b7dfd6b1eaf96d"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        }
+      ],
+      "actualCurrentProductionCandidateNativeContext": true,
+      "independentAccepted": true,
+      "independentReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\REPORT.json",
+        "bytes": 256785,
+        "sha256": "128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7"
+      },
+      "independentReviewSeal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\SEAL.json",
+        "bytes": 1984,
+        "sha256": "f24228bcafd0605a30fb0f6580fb5ba9ecb5f16d7e6f46961ac9b318055aaad3"
+      },
+      "independentDecision": "PASS",
+      "oldNativeOrPixelsRelabelledMain": false,
+      "replayed": false,
+      "dispatch": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\dispatch-result.json",
+        "bytes": 4675,
+        "sha256": "9a976ed5f60e2b9538311573371267275d39dbf15e1239bb5b3e3873be1cb73b"
+      },
+      "rollingCleanup": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\rolling-cleanup.json",
+        "bytes": 1360,
+        "sha256": "2365743b966d2dc0a3598958aafa36e208d555420b5540f7ca88a6a23bdb6bf2"
+      },
+      "nativeTerminal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\results.json",
+        "bytes": 544,
+        "sha256": "57883b52031600f017056c57e5a303f8015c0e9e7032e12e019dea9702228216"
+      },
+      "activeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+      "actualDispatchIdentity": {
+        "schema": "root-r0011-first-native-dispatch/1",
+        "status": "PASSED_NATIVE_CASE_PENDING_TRACE_PIXEL_REVIEW",
+        "leaseId": "root-r0011-whole-main-r2-top-read-malformed",
+        "startedAtUtc": "2026-10-12T19:24:46.178438+00:00",
+        "command": [
+          "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-I",
+          "-S",
+          "-B",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native\\residual-location-native.py",
+          "--source-root",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+          "--source-ref",
+          "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "--group",
+          "r0011",
+          "--browser",
+          "chromium",
+          "--node",
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--package-root",
+          "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules",
+          "--executable",
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "--only",
+          "top-read-malformed",
+          "--out",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root",
+          "--lease-authorized"
+        ],
+        "sourceRuntime": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+        "packetSealSha256": "8285d043fa8f401cb5d60134c4288bf312b9f327fc9a912189f93bb05b2614fa",
+        "sourceReviewReportSha256": "dcc754b67db01c81e3c3071df10021f274be1039963e4f2ebdf66d9ec405ebe7",
+        "sourceReviewSealSha256": "bcac23acb41815cf2c3b5bd447214655186cd7c8807cba523dd8153f01c78c40",
+        "sourceReviewer": "/root/r0010_isolated_release_review_r1",
+        "nativeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+        "sourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+        "toolBindingsSha256": "5c1a71aa5e1e27a5bd032ae3f7dd025ae4826613f8b34d8648c6d50311301523",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root",
+        "rootAdmissionSha256": "3f7c6b1ffd20f7a7b9c9d95373df336f7428e91d3f66ab1b81e97ca826d5a582",
+        "onlyCase": "top-read-malformed",
+        "negativeLater": null,
+        "nativeStarted": true,
+        "nativeComplete": true,
+        "independentTracePixelReview": "PENDING",
+        "caseContractsSha256": "6293bfe760ec4297b81e7e9ff9a2cb845418599a0c2042238041d805e4ace168",
+        "rootDriverSha256": "70f35c610dae078cc4c778ac94de9d058e47e96fc3b8d79a03e8a08ca6e0e3c0",
+        "reviewApprovalSha256": "db4ae0d850316b9dc8489243054772148e5320d783562a8c116472b5e90f9726",
+        "guardReviewReportSha256": "96bacc4e8611e14c4c23195bf74220a994fa2d5891555ace982c35bca3c1544c",
+        "guardReviewSealSha256": "26edfdf6ea86d065f9f90e0fe08a5f87d8c3ccc15ca4d2918b4792cc1f10ed67",
+        "processId": 25708,
+        "exitCode": 0,
+        "resultsSha256": "57883b52031600f017056c57e5a303f8015c0e9e7032e12e019dea9702228216",
+        "results": {
+          "schema": "residual-native-results/v1",
+          "sourceRef": "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "group": "r0011",
+          "selected": [
+            "top-read-malformed"
+          ],
+          "executed": [
+            {
+              "name": "top-read-malformed",
+              "status": "PASS",
+              "result": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\native-runs\\first-root\\top-read-malformed\\result.json"
+            }
+          ],
+          "notRun": [],
+          "independentPixels": "PENDING",
+          "closure": "NOT_AUTHORIZED"
+        },
+        "caseResultSha256": "591eda472b780301f472965461d90bc5877737eba44cd38b8188772abe5cee97",
+        "nativeCompletionBasis": "VALIDATED_EXPECTED_POST_CLEANUP_TERMINAL_MANIFEST_AND_CASE_READBACK",
+        "consumerStatus": "PASS",
+        "actualBoundedCleanup": {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-malformed\\rolling-cleanup.json",
+          "bytes": 1360,
+          "sha256": "2365743b966d2dc0a3598958aafa36e208d555420b5540f7ca88a6a23bdb6bf2"
+        },
+        "cleanupLimits": "Actual wrapper wait and managed-process readback plus pinned awaited browser/server terminal. No explicit endpoint inventory or complete historical descendants.",
+        "finishedAtUtc": "2026-10-12T19:24:49.909475+00:00",
+        "unknownCompletion": false
+      },
+      "priorPreparationMetadataExcludedFromOperativeBinding": {
+        "native": "NOT_RUN",
+        "driverSha256": "5a13ab571cdcebf13579168d992f1703c32c31402b503f41203948a92d491207",
+        "fresh": {
+          "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r1",
+          "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-malformed",
+          "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-malformed\\native-runs\\first-root",
+          "leaseId": "root-r0011-whole-main-r1-top-read-malformed",
+          "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-malformed-admission.json",
+          "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r1\\review-approval.json",
+          "owner": "/root",
+          "acquired": false
+        }
+      },
+      "recipe": {
+        "group": "r0011",
+        "name": "top-read-malformed",
+        "type": "readFault",
+        "container": "top",
+        "fault": "malformed",
+        "acceptance": "R0011-A03"
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": null,
+        "seed": "malformed",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "mutation": null
+    },
+    {
+      "caseId": "top-read-v2",
+      "acceptance": [
+        "R0011-A03"
+      ],
+      "expectedStatus": "PASS",
+      "rawStatus": "PASS",
+      "caseResult": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\top-read-v2\\result.json",
+        "bytes": 96732,
+        "sha256": "5b7a5dc2b19fb64387973859b8c8cd4e6e2a1ff072bed2ca390ff0dba0bdea95"
+      },
+      "checksPointer": "/checks",
+      "observedCheckCount": 14,
+      "originalExpectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "snapshotPointers": [
+        "/snapshots/native boot fallback before explicit manual write",
+        "/snapshots/through-close manual recovery"
+      ],
+      "sourceBindingPointer": "/sourceBinding",
+      "accessibilityPointer": null,
+      "nativeEnvironment": {
+        "browser": "chromium",
+        "version": "154.0.8037.98",
+        "os": "win32",
+        "node": "v22.16.0",
+        "playwright": "1.62.1",
+        "viewport": {
+          "width": 1000,
+          "height": 900
+        },
+        "dpr": 1,
+        "timezone": "UTC"
+      },
+      "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+      "crops": [
+        {
+          "rawCropPointer": "/crops/0",
+          "geometryPointer": "/crops/0/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\top-read-v2\\boot-manual-fallback.png",
+              "bytes": 56665,
+              "sha256": "454b2b3dac792592962e486acd42deda5a2faf11ac44799cb96b0598690f0f65"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\top-read-v2\\boot-manual-fallback-card.png",
+              "bytes": 43143,
+              "sha256": "82902ec603e228b0fdb4c70d0eec1e44ea78c07b39684d41798afdb81d94fc09"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\top-read-v2\\boot-manual-fallback-buckle.png",
+              "bytes": 288,
+              "sha256": "3df91035a95136e49feece0a7df24a6440eb399756e589f24479a881750e4fae"
+            },
+            "statusFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\top-read-v2\\boot-manual-fallback-status.png",
+              "bytes": 3554,
+              "sha256": "51ba407acf5111f3183090b0826ce10edfdb3ecaad2f1b48c6c28df44910445e"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        },
+        {
+          "rawCropPointer": "/crops/1",
+          "geometryPointer": "/crops/1/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\top-read-v2\\manual-recovery.png",
+              "bytes": 136673,
+              "sha256": "eb6ba3c9c10708ef5a01aca8d5c08ff148148b8734d0f2fb434368292eebe7dc"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\top-read-v2\\manual-recovery-card.png",
+              "bytes": 117532,
+              "sha256": "7b657383c5d3cc44c1b3772697248f649e18f732943027ebff35dd4c7650faa7"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\top-read-v2\\manual-recovery-buckle.png",
+              "bytes": 1189,
+              "sha256": "afa125ab190e42f8434a525415a4c1228bfd64f2353d45db80b7dfd6b1eaf96d"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        }
+      ],
+      "actualCurrentProductionCandidateNativeContext": true,
+      "independentAccepted": true,
+      "independentReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\REPORT.json",
+        "bytes": 256785,
+        "sha256": "128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7"
+      },
+      "independentReviewSeal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\SEAL.json",
+        "bytes": 1984,
+        "sha256": "f24228bcafd0605a30fb0f6580fb5ba9ecb5f16d7e6f46961ac9b318055aaad3"
+      },
+      "independentDecision": "PASS",
+      "oldNativeOrPixelsRelabelledMain": false,
+      "replayed": false,
+      "dispatch": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\dispatch-result.json",
+        "bytes": 4591,
+        "sha256": "102b5657178e0af24c4649b1dd5f3557d0934b958e6fd190ee1d0941e18112ca"
+      },
+      "rollingCleanup": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\rolling-cleanup.json",
+        "bytes": 1325,
+        "sha256": "9575adfbf2d695948dbaf319872c81745c95e032afb5d5185c1a455ddf2ad633"
+      },
+      "nativeTerminal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\results.json",
+        "bytes": 516,
+        "sha256": "b5ccb4f183d73211590cfb49b6feefe5abeb634a687d68a9c8e97aed5c74d606"
+      },
+      "activeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+      "actualDispatchIdentity": {
+        "schema": "root-r0011-first-native-dispatch/1",
+        "status": "PASSED_NATIVE_CASE_PENDING_TRACE_PIXEL_REVIEW",
+        "leaseId": "root-r0011-whole-main-r2-top-read-v2",
+        "startedAtUtc": "2026-10-12T19:24:52.952055+00:00",
+        "command": [
+          "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-I",
+          "-S",
+          "-B",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native\\residual-location-native.py",
+          "--source-root",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+          "--source-ref",
+          "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "--group",
+          "r0011",
+          "--browser",
+          "chromium",
+          "--node",
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--package-root",
+          "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules",
+          "--executable",
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "--only",
+          "top-read-v2",
+          "--out",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root",
+          "--lease-authorized"
+        ],
+        "sourceRuntime": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+        "packetSealSha256": "8285d043fa8f401cb5d60134c4288bf312b9f327fc9a912189f93bb05b2614fa",
+        "sourceReviewReportSha256": "dcc754b67db01c81e3c3071df10021f274be1039963e4f2ebdf66d9ec405ebe7",
+        "sourceReviewSealSha256": "bcac23acb41815cf2c3b5bd447214655186cd7c8807cba523dd8153f01c78c40",
+        "sourceReviewer": "/root/r0010_isolated_release_review_r1",
+        "nativeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+        "sourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+        "toolBindingsSha256": "5c1a71aa5e1e27a5bd032ae3f7dd025ae4826613f8b34d8648c6d50311301523",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root",
+        "rootAdmissionSha256": "39715f6b815c8a8e7959678443e139f922560b27abbfd945369cd3992f4adcc4",
+        "onlyCase": "top-read-v2",
+        "negativeLater": null,
+        "nativeStarted": true,
+        "nativeComplete": true,
+        "independentTracePixelReview": "PENDING",
+        "caseContractsSha256": "6293bfe760ec4297b81e7e9ff9a2cb845418599a0c2042238041d805e4ace168",
+        "rootDriverSha256": "70f35c610dae078cc4c778ac94de9d058e47e96fc3b8d79a03e8a08ca6e0e3c0",
+        "reviewApprovalSha256": "db4ae0d850316b9dc8489243054772148e5320d783562a8c116472b5e90f9726",
+        "guardReviewReportSha256": "96bacc4e8611e14c4c23195bf74220a994fa2d5891555ace982c35bca3c1544c",
+        "guardReviewSealSha256": "26edfdf6ea86d065f9f90e0fe08a5f87d8c3ccc15ca4d2918b4792cc1f10ed67",
+        "processId": 43036,
+        "exitCode": 0,
+        "resultsSha256": "b5ccb4f183d73211590cfb49b6feefe5abeb634a687d68a9c8e97aed5c74d606",
+        "results": {
+          "schema": "residual-native-results/v1",
+          "sourceRef": "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "group": "r0011",
+          "selected": [
+            "top-read-v2"
+          ],
+          "executed": [
+            {
+              "name": "top-read-v2",
+              "status": "PASS",
+              "result": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\native-runs\\first-root\\top-read-v2\\result.json"
+            }
+          ],
+          "notRun": [],
+          "independentPixels": "PENDING",
+          "closure": "NOT_AUTHORIZED"
+        },
+        "caseResultSha256": "5b7a5dc2b19fb64387973859b8c8cd4e6e2a1ff072bed2ca390ff0dba0bdea95",
+        "nativeCompletionBasis": "VALIDATED_EXPECTED_POST_CLEANUP_TERMINAL_MANIFEST_AND_CASE_READBACK",
+        "consumerStatus": "PASS",
+        "actualBoundedCleanup": {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-top-read-v2\\rolling-cleanup.json",
+          "bytes": 1325,
+          "sha256": "9575adfbf2d695948dbaf319872c81745c95e032afb5d5185c1a455ddf2ad633"
+        },
+        "cleanupLimits": "Actual wrapper wait and managed-process readback plus pinned awaited browser/server terminal. No explicit endpoint inventory or complete historical descendants.",
+        "finishedAtUtc": "2026-10-12T19:24:56.785765+00:00",
+        "unknownCompletion": false
+      },
+      "priorPreparationMetadataExcludedFromOperativeBinding": {
+        "native": "NOT_RUN",
+        "driverSha256": "5a13ab571cdcebf13579168d992f1703c32c31402b503f41203948a92d491207",
+        "fresh": {
+          "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r1",
+          "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-v2",
+          "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-v2\\native-runs\\first-root",
+          "leaseId": "root-r0011-whole-main-r1-top-read-v2",
+          "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-top-read-v2-admission.json",
+          "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r1\\review-approval.json",
+          "owner": "/root",
+          "acquired": false
+        }
+      },
+      "recipe": {
+        "group": "r0011",
+        "name": "top-read-v2",
+        "type": "readFault",
+        "container": "top",
+        "fault": "v2",
+        "acceptance": "R0011-A03"
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": null,
+        "seed": "v2",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "mutation": null
+    },
+    {
+      "caseId": "iframe-read-getter",
+      "acceptance": [
+        "R0011-A03"
+      ],
+      "expectedStatus": "PASS",
+      "rawStatus": "PASS",
+      "caseResult": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\iframe-read-getter\\result.json",
+        "bytes": 112120,
+        "sha256": "35919133db0732cc6a0e6b0903c88199d6a39fb41b3b649801c638a0dc1e07fb"
+      },
+      "checksPointer": "/checks",
+      "observedCheckCount": 15,
+      "originalExpectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "selected denied load operation reached",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "getter denial session warning",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "snapshotPointers": [
+        "/snapshots/native boot fallback before explicit manual write",
+        "/snapshots/through-close manual recovery"
+      ],
+      "sourceBindingPointer": "/sourceBinding",
+      "accessibilityPointer": null,
+      "nativeEnvironment": {
+        "browser": "chromium",
+        "version": "154.0.8037.98",
+        "os": "win32",
+        "node": "v22.16.0",
+        "playwright": "1.62.1",
+        "viewport": {
+          "width": 1000,
+          "height": 900
+        },
+        "dpr": 1,
+        "timezone": "UTC"
+      },
+      "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+      "crops": [
+        {
+          "rawCropPointer": "/crops/0",
+          "geometryPointer": "/crops/0/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\iframe-read-getter\\boot-manual-fallback.png",
+              "bytes": 50745,
+              "sha256": "be9b53e59587b1663e29bfd84cd7df76bae2a30026c1b75793bc5a2148d5e6ac"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\iframe-read-getter\\boot-manual-fallback-card.png",
+              "bytes": 43122,
+              "sha256": "decff9c10ff9adb50e8c13275447ea8f7b5c906c7132fa1e74f627b0bcca8cb5"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\iframe-read-getter\\boot-manual-fallback-buckle.png",
+              "bytes": 288,
+              "sha256": "3df91035a95136e49feece0a7df24a6440eb399756e589f24479a881750e4fae"
+            },
+            "statusFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\iframe-read-getter\\boot-manual-fallback-status.png",
+              "bytes": 3554,
+              "sha256": "51ba407acf5111f3183090b0826ce10edfdb3ecaad2f1b48c6c28df44910445e"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        },
+        {
+          "rawCropPointer": "/crops/1",
+          "geometryPointer": "/crops/1/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\iframe-read-getter\\manual-recovery.png",
+              "bytes": 131293,
+              "sha256": "ae9e8c4c7a973fe7979bb9cd8eda1b302fc6f45644f374b050502a94cdfd2a1b"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\iframe-read-getter\\manual-recovery-card.png",
+              "bytes": 117555,
+              "sha256": "776c6d0cba77e5a502bd9d73c22ebc1c750640975f5fa999be8c30db5883c42f"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\iframe-read-getter\\manual-recovery-buckle.png",
+              "bytes": 1169,
+              "sha256": "b45a6a32e7a8f6dfb2d9382cad7703e13f810fe8097baffbf4bce49be9753a2a"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        }
+      ],
+      "actualCurrentProductionCandidateNativeContext": true,
+      "independentAccepted": true,
+      "independentReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\REPORT.json",
+        "bytes": 256785,
+        "sha256": "128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7"
+      },
+      "independentReviewSeal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\SEAL.json",
+        "bytes": 1984,
+        "sha256": "f24228bcafd0605a30fb0f6580fb5ba9ecb5f16d7e6f46961ac9b318055aaad3"
+      },
+      "independentDecision": "PASS",
+      "oldNativeOrPixelsRelabelledMain": false,
+      "replayed": false,
+      "dispatch": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\dispatch-result.json",
+        "bytes": 4675,
+        "sha256": "38fb701d56d18ced2685a0222a519a41b42452256a3ede45f0118ce401a7abab"
+      },
+      "rollingCleanup": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\rolling-cleanup.json",
+        "bytes": 1360,
+        "sha256": "dd26fa0220b3de6b2ec2196cdf635c0dfc41bf200d363d13b1e86112fddb1e87"
+      },
+      "nativeTerminal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\results.json",
+        "bytes": 544,
+        "sha256": "cb61aa98b6880af926c49458fd473fffd923d47e0e0dabe8eab8238a574d71d7"
+      },
+      "activeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+      "actualDispatchIdentity": {
+        "schema": "root-r0011-first-native-dispatch/1",
+        "status": "PASSED_NATIVE_CASE_PENDING_TRACE_PIXEL_REVIEW",
+        "leaseId": "root-r0011-whole-main-r2-iframe-read-getter",
+        "startedAtUtc": "2026-10-12T19:25:49.471717+00:00",
+        "command": [
+          "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-I",
+          "-S",
+          "-B",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native\\residual-location-native.py",
+          "--source-root",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+          "--source-ref",
+          "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "--group",
+          "r0011",
+          "--browser",
+          "chromium",
+          "--node",
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--package-root",
+          "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules",
+          "--executable",
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "--only",
+          "iframe-read-getter",
+          "--out",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root",
+          "--lease-authorized"
+        ],
+        "sourceRuntime": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+        "packetSealSha256": "8285d043fa8f401cb5d60134c4288bf312b9f327fc9a912189f93bb05b2614fa",
+        "sourceReviewReportSha256": "dcc754b67db01c81e3c3071df10021f274be1039963e4f2ebdf66d9ec405ebe7",
+        "sourceReviewSealSha256": "bcac23acb41815cf2c3b5bd447214655186cd7c8807cba523dd8153f01c78c40",
+        "sourceReviewer": "/root/r0010_isolated_release_review_r1",
+        "nativeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+        "sourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+        "toolBindingsSha256": "5c1a71aa5e1e27a5bd032ae3f7dd025ae4826613f8b34d8648c6d50311301523",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root",
+        "rootAdmissionSha256": "553c47691cd850df6f7291a85eb6ff221aa90c253fda565b8095b40223d5ba2c",
+        "onlyCase": "iframe-read-getter",
+        "negativeLater": null,
+        "nativeStarted": true,
+        "nativeComplete": true,
+        "independentTracePixelReview": "PENDING",
+        "caseContractsSha256": "6293bfe760ec4297b81e7e9ff9a2cb845418599a0c2042238041d805e4ace168",
+        "rootDriverSha256": "70f35c610dae078cc4c778ac94de9d058e47e96fc3b8d79a03e8a08ca6e0e3c0",
+        "reviewApprovalSha256": "db4ae0d850316b9dc8489243054772148e5320d783562a8c116472b5e90f9726",
+        "guardReviewReportSha256": "96bacc4e8611e14c4c23195bf74220a994fa2d5891555ace982c35bca3c1544c",
+        "guardReviewSealSha256": "26edfdf6ea86d065f9f90e0fe08a5f87d8c3ccc15ca4d2918b4792cc1f10ed67",
+        "processId": 62660,
+        "exitCode": 0,
+        "resultsSha256": "cb61aa98b6880af926c49458fd473fffd923d47e0e0dabe8eab8238a574d71d7",
+        "results": {
+          "schema": "residual-native-results/v1",
+          "sourceRef": "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "group": "r0011",
+          "selected": [
+            "iframe-read-getter"
+          ],
+          "executed": [
+            {
+              "name": "iframe-read-getter",
+              "status": "PASS",
+              "result": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\native-runs\\first-root\\iframe-read-getter\\result.json"
+            }
+          ],
+          "notRun": [],
+          "independentPixels": "PENDING",
+          "closure": "NOT_AUTHORIZED"
+        },
+        "caseResultSha256": "35919133db0732cc6a0e6b0903c88199d6a39fb41b3b649801c638a0dc1e07fb",
+        "nativeCompletionBasis": "VALIDATED_EXPECTED_POST_CLEANUP_TERMINAL_MANIFEST_AND_CASE_READBACK",
+        "consumerStatus": "PASS",
+        "actualBoundedCleanup": {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-getter\\rolling-cleanup.json",
+          "bytes": 1360,
+          "sha256": "dd26fa0220b3de6b2ec2196cdf635c0dfc41bf200d363d13b1e86112fddb1e87"
+        },
+        "cleanupLimits": "Actual wrapper wait and managed-process readback plus pinned awaited browser/server terminal. No explicit endpoint inventory or complete historical descendants.",
+        "finishedAtUtc": "2026-10-12T19:25:53.024573+00:00",
+        "unknownCompletion": false
+      },
+      "priorPreparationMetadataExcludedFromOperativeBinding": {
+        "native": "NOT_RUN",
+        "driverSha256": "5a13ab571cdcebf13579168d992f1703c32c31402b503f41203948a92d491207",
+        "fresh": {
+          "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r1",
+          "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-getter",
+          "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-getter\\native-runs\\first-root",
+          "leaseId": "root-r0011-whole-main-r1-iframe-read-getter",
+          "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-getter-admission.json",
+          "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r1\\review-approval.json",
+          "owner": "/root",
+          "acquired": false
+        }
+      },
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-read-getter",
+        "type": "readFault",
+        "container": "iframe",
+        "fault": "getter",
+        "acceptance": "R0011-A03"
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": "selected denied load operation reached",
+        "seed": "manual",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "mutation": null
+    },
+    {
+      "caseId": "iframe-read-read",
+      "acceptance": [
+        "R0011-A03"
+      ],
+      "expectedStatus": "PASS",
+      "rawStatus": "PASS",
+      "caseResult": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\iframe-read-read\\result.json",
+        "bytes": 105138,
+        "sha256": "dab09f9e308894ec54940a3e13f2ca1f58e00e22630033c07e83ca0cb4d47288"
+      },
+      "checksPointer": "/checks",
+      "observedCheckCount": 15,
+      "originalExpectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "selected denied load operation reached",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "snapshotPointers": [
+        "/snapshots/native boot fallback before explicit manual write",
+        "/snapshots/through-close manual recovery"
+      ],
+      "sourceBindingPointer": "/sourceBinding",
+      "accessibilityPointer": null,
+      "nativeEnvironment": {
+        "browser": "chromium",
+        "version": "154.0.8037.98",
+        "os": "win32",
+        "node": "v22.16.0",
+        "playwright": "1.62.1",
+        "viewport": {
+          "width": 1000,
+          "height": 900
+        },
+        "dpr": 1,
+        "timezone": "UTC"
+      },
+      "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+      "crops": [
+        {
+          "rawCropPointer": "/crops/0",
+          "geometryPointer": "/crops/0/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\iframe-read-read\\boot-manual-fallback.png",
+              "bytes": 50745,
+              "sha256": "be9b53e59587b1663e29bfd84cd7df76bae2a30026c1b75793bc5a2148d5e6ac"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\iframe-read-read\\boot-manual-fallback-card.png",
+              "bytes": 43122,
+              "sha256": "decff9c10ff9adb50e8c13275447ea8f7b5c906c7132fa1e74f627b0bcca8cb5"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\iframe-read-read\\boot-manual-fallback-buckle.png",
+              "bytes": 288,
+              "sha256": "3df91035a95136e49feece0a7df24a6440eb399756e589f24479a881750e4fae"
+            },
+            "statusFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\iframe-read-read\\boot-manual-fallback-status.png",
+              "bytes": 3554,
+              "sha256": "51ba407acf5111f3183090b0826ce10edfdb3ecaad2f1b48c6c28df44910445e"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        },
+        {
+          "rawCropPointer": "/crops/1",
+          "geometryPointer": "/crops/1/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\iframe-read-read\\manual-recovery.png",
+              "bytes": 131263,
+              "sha256": "4da8a8531ae1255d1cead4adc34673d33453555daa3dd60070a8bcc2338604e5"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\iframe-read-read\\manual-recovery-card.png",
+              "bytes": 117521,
+              "sha256": "6a34ecf94746c228c82353017ca34a328c675eba21c55a876ea9f7c26d71cc79"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\iframe-read-read\\manual-recovery-buckle.png",
+              "bytes": 1189,
+              "sha256": "afa125ab190e42f8434a525415a4c1228bfd64f2353d45db80b7dfd6b1eaf96d"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        }
+      ],
+      "actualCurrentProductionCandidateNativeContext": true,
+      "independentAccepted": true,
+      "independentReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\REPORT.json",
+        "bytes": 256785,
+        "sha256": "128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7"
+      },
+      "independentReviewSeal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\SEAL.json",
+        "bytes": 1984,
+        "sha256": "f24228bcafd0605a30fb0f6580fb5ba9ecb5f16d7e6f46961ac9b318055aaad3"
+      },
+      "independentDecision": "PASS",
+      "oldNativeOrPixelsRelabelledMain": false,
+      "replayed": false,
+      "dispatch": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\dispatch-result.json",
+        "bytes": 4651,
+        "sha256": "7f949bfcf0427889f2128fed99c1126f16ce1fca3d0d4d57962a6f25f62c42ff"
+      },
+      "rollingCleanup": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\rolling-cleanup.json",
+        "bytes": 1350,
+        "sha256": "22bfb158e6294f5e86387eacd34f00cedda574461bfb8d84fe6bb274379088b4"
+      },
+      "nativeTerminal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\results.json",
+        "bytes": 536,
+        "sha256": "ddd6c9c543684fdc9d2482d8ed4cb52d3e77b3d1b971e2b4877ad4a3fe3b20fa"
+      },
+      "activeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+      "actualDispatchIdentity": {
+        "schema": "root-r0011-first-native-dispatch/1",
+        "status": "PASSED_NATIVE_CASE_PENDING_TRACE_PIXEL_REVIEW",
+        "leaseId": "root-r0011-whole-main-r2-iframe-read-read",
+        "startedAtUtc": "2026-10-12T19:25:55.969648+00:00",
+        "command": [
+          "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-I",
+          "-S",
+          "-B",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native\\residual-location-native.py",
+          "--source-root",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+          "--source-ref",
+          "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "--group",
+          "r0011",
+          "--browser",
+          "chromium",
+          "--node",
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--package-root",
+          "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules",
+          "--executable",
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "--only",
+          "iframe-read-read",
+          "--out",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root",
+          "--lease-authorized"
+        ],
+        "sourceRuntime": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+        "packetSealSha256": "8285d043fa8f401cb5d60134c4288bf312b9f327fc9a912189f93bb05b2614fa",
+        "sourceReviewReportSha256": "dcc754b67db01c81e3c3071df10021f274be1039963e4f2ebdf66d9ec405ebe7",
+        "sourceReviewSealSha256": "bcac23acb41815cf2c3b5bd447214655186cd7c8807cba523dd8153f01c78c40",
+        "sourceReviewer": "/root/r0010_isolated_release_review_r1",
+        "nativeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+        "sourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+        "toolBindingsSha256": "5c1a71aa5e1e27a5bd032ae3f7dd025ae4826613f8b34d8648c6d50311301523",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root",
+        "rootAdmissionSha256": "c7c94c52f1d29df38e2ad9ce5b292d197c8c374be7a6df032cc08e863fe3007e",
+        "onlyCase": "iframe-read-read",
+        "negativeLater": null,
+        "nativeStarted": true,
+        "nativeComplete": true,
+        "independentTracePixelReview": "PENDING",
+        "caseContractsSha256": "6293bfe760ec4297b81e7e9ff9a2cb845418599a0c2042238041d805e4ace168",
+        "rootDriverSha256": "70f35c610dae078cc4c778ac94de9d058e47e96fc3b8d79a03e8a08ca6e0e3c0",
+        "reviewApprovalSha256": "db4ae0d850316b9dc8489243054772148e5320d783562a8c116472b5e90f9726",
+        "guardReviewReportSha256": "96bacc4e8611e14c4c23195bf74220a994fa2d5891555ace982c35bca3c1544c",
+        "guardReviewSealSha256": "26edfdf6ea86d065f9f90e0fe08a5f87d8c3ccc15ca4d2918b4792cc1f10ed67",
+        "processId": 28720,
+        "exitCode": 0,
+        "resultsSha256": "ddd6c9c543684fdc9d2482d8ed4cb52d3e77b3d1b971e2b4877ad4a3fe3b20fa",
+        "results": {
+          "schema": "residual-native-results/v1",
+          "sourceRef": "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "group": "r0011",
+          "selected": [
+            "iframe-read-read"
+          ],
+          "executed": [
+            {
+              "name": "iframe-read-read",
+              "status": "PASS",
+              "result": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\native-runs\\first-root\\iframe-read-read\\result.json"
+            }
+          ],
+          "notRun": [],
+          "independentPixels": "PENDING",
+          "closure": "NOT_AUTHORIZED"
+        },
+        "caseResultSha256": "dab09f9e308894ec54940a3e13f2ca1f58e00e22630033c07e83ca0cb4d47288",
+        "nativeCompletionBasis": "VALIDATED_EXPECTED_POST_CLEANUP_TERMINAL_MANIFEST_AND_CASE_READBACK",
+        "consumerStatus": "PASS",
+        "actualBoundedCleanup": {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-read\\rolling-cleanup.json",
+          "bytes": 1350,
+          "sha256": "22bfb158e6294f5e86387eacd34f00cedda574461bfb8d84fe6bb274379088b4"
+        },
+        "cleanupLimits": "Actual wrapper wait and managed-process readback plus pinned awaited browser/server terminal. No explicit endpoint inventory or complete historical descendants.",
+        "finishedAtUtc": "2026-10-12T19:25:59.484682+00:00",
+        "unknownCompletion": false
+      },
+      "priorPreparationMetadataExcludedFromOperativeBinding": {
+        "native": "NOT_RUN",
+        "driverSha256": "5a13ab571cdcebf13579168d992f1703c32c31402b503f41203948a92d491207",
+        "fresh": {
+          "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r1",
+          "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-read",
+          "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-read\\native-runs\\first-root",
+          "leaseId": "root-r0011-whole-main-r1-iframe-read-read",
+          "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-read-admission.json",
+          "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r1\\review-approval.json",
+          "owner": "/root",
+          "acquired": false
+        }
+      },
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-read-read",
+        "type": "readFault",
+        "container": "iframe",
+        "fault": "read",
+        "acceptance": "R0011-A03"
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": "selected denied load operation reached",
+        "seed": "manual",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "mutation": null
+    },
+    {
+      "caseId": "iframe-read-malformed",
+      "acceptance": [
+        "R0011-A03"
+      ],
+      "expectedStatus": "PASS",
+      "rawStatus": "PASS",
+      "caseResult": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\iframe-read-malformed\\result.json",
+        "bytes": 95492,
+        "sha256": "b27d876e8fe9e72f1ab63d9b56c5b77bef6ce20f0e1fbe67d3bbf0b1401c299a"
+      },
+      "checksPointer": "/checks",
+      "observedCheckCount": 14,
+      "originalExpectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "snapshotPointers": [
+        "/snapshots/native boot fallback before explicit manual write",
+        "/snapshots/through-close manual recovery"
+      ],
+      "sourceBindingPointer": "/sourceBinding",
+      "accessibilityPointer": null,
+      "nativeEnvironment": {
+        "browser": "chromium",
+        "version": "154.0.8037.98",
+        "os": "win32",
+        "node": "v22.16.0",
+        "playwright": "1.62.1",
+        "viewport": {
+          "width": 1000,
+          "height": 900
+        },
+        "dpr": 1,
+        "timezone": "UTC"
+      },
+      "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+      "crops": [
+        {
+          "rawCropPointer": "/crops/0",
+          "geometryPointer": "/crops/0/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\iframe-read-malformed\\boot-manual-fallback.png",
+              "bytes": 50745,
+              "sha256": "be9b53e59587b1663e29bfd84cd7df76bae2a30026c1b75793bc5a2148d5e6ac"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\iframe-read-malformed\\boot-manual-fallback-card.png",
+              "bytes": 43122,
+              "sha256": "decff9c10ff9adb50e8c13275447ea8f7b5c906c7132fa1e74f627b0bcca8cb5"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\iframe-read-malformed\\boot-manual-fallback-buckle.png",
+              "bytes": 288,
+              "sha256": "3df91035a95136e49feece0a7df24a6440eb399756e589f24479a881750e4fae"
+            },
+            "statusFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\iframe-read-malformed\\boot-manual-fallback-status.png",
+              "bytes": 3554,
+              "sha256": "51ba407acf5111f3183090b0826ce10edfdb3ecaad2f1b48c6c28df44910445e"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        },
+        {
+          "rawCropPointer": "/crops/1",
+          "geometryPointer": "/crops/1/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\iframe-read-malformed\\manual-recovery.png",
+              "bytes": 131263,
+              "sha256": "4da8a8531ae1255d1cead4adc34673d33453555daa3dd60070a8bcc2338604e5"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\iframe-read-malformed\\manual-recovery-card.png",
+              "bytes": 117521,
+              "sha256": "6a34ecf94746c228c82353017ca34a328c675eba21c55a876ea9f7c26d71cc79"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\iframe-read-malformed\\manual-recovery-buckle.png",
+              "bytes": 1189,
+              "sha256": "afa125ab190e42f8434a525415a4c1228bfd64f2353d45db80b7dfd6b1eaf96d"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        }
+      ],
+      "actualCurrentProductionCandidateNativeContext": true,
+      "independentAccepted": true,
+      "independentReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\REPORT.json",
+        "bytes": 256785,
+        "sha256": "128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7"
+      },
+      "independentReviewSeal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\SEAL.json",
+        "bytes": 1984,
+        "sha256": "f24228bcafd0605a30fb0f6580fb5ba9ecb5f16d7e6f46961ac9b318055aaad3"
+      },
+      "independentDecision": "PASS",
+      "oldNativeOrPixelsRelabelledMain": false,
+      "replayed": false,
+      "dispatch": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\dispatch-result.json",
+        "bytes": 4711,
+        "sha256": "7420a4948e06094567ae9eca6e5a2e69803bdd30884e8be9102a49da3a191734"
+      },
+      "rollingCleanup": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\rolling-cleanup.json",
+        "bytes": 1375,
+        "sha256": "d79f9e0e4f8bef3f90efa918928a3850956b8c0ddd38fa6a28c7fe0183132f29"
+      },
+      "nativeTerminal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\results.json",
+        "bytes": 556,
+        "sha256": "c467ece6330fd7a1cef553013f326778af86d0c649d2e0bee7ade43b78112987"
+      },
+      "activeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+      "actualDispatchIdentity": {
+        "schema": "root-r0011-first-native-dispatch/1",
+        "status": "PASSED_NATIVE_CASE_PENDING_TRACE_PIXEL_REVIEW",
+        "leaseId": "root-r0011-whole-main-r2-iframe-read-malformed",
+        "startedAtUtc": "2026-10-12T19:26:02.286822+00:00",
+        "command": [
+          "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-I",
+          "-S",
+          "-B",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native\\residual-location-native.py",
+          "--source-root",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+          "--source-ref",
+          "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "--group",
+          "r0011",
+          "--browser",
+          "chromium",
+          "--node",
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--package-root",
+          "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules",
+          "--executable",
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "--only",
+          "iframe-read-malformed",
+          "--out",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root",
+          "--lease-authorized"
+        ],
+        "sourceRuntime": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+        "packetSealSha256": "8285d043fa8f401cb5d60134c4288bf312b9f327fc9a912189f93bb05b2614fa",
+        "sourceReviewReportSha256": "dcc754b67db01c81e3c3071df10021f274be1039963e4f2ebdf66d9ec405ebe7",
+        "sourceReviewSealSha256": "bcac23acb41815cf2c3b5bd447214655186cd7c8807cba523dd8153f01c78c40",
+        "sourceReviewer": "/root/r0010_isolated_release_review_r1",
+        "nativeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+        "sourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+        "toolBindingsSha256": "5c1a71aa5e1e27a5bd032ae3f7dd025ae4826613f8b34d8648c6d50311301523",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root",
+        "rootAdmissionSha256": "ea67d2526700d1b66197d63578d4edb8ca255f89cab1574dde00d4a07d61eb37",
+        "onlyCase": "iframe-read-malformed",
+        "negativeLater": null,
+        "nativeStarted": true,
+        "nativeComplete": true,
+        "independentTracePixelReview": "PENDING",
+        "caseContractsSha256": "6293bfe760ec4297b81e7e9ff9a2cb845418599a0c2042238041d805e4ace168",
+        "rootDriverSha256": "70f35c610dae078cc4c778ac94de9d058e47e96fc3b8d79a03e8a08ca6e0e3c0",
+        "reviewApprovalSha256": "db4ae0d850316b9dc8489243054772148e5320d783562a8c116472b5e90f9726",
+        "guardReviewReportSha256": "96bacc4e8611e14c4c23195bf74220a994fa2d5891555ace982c35bca3c1544c",
+        "guardReviewSealSha256": "26edfdf6ea86d065f9f90e0fe08a5f87d8c3ccc15ca4d2918b4792cc1f10ed67",
+        "processId": 58852,
+        "exitCode": 0,
+        "resultsSha256": "c467ece6330fd7a1cef553013f326778af86d0c649d2e0bee7ade43b78112987",
+        "results": {
+          "schema": "residual-native-results/v1",
+          "sourceRef": "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "group": "r0011",
+          "selected": [
+            "iframe-read-malformed"
+          ],
+          "executed": [
+            {
+              "name": "iframe-read-malformed",
+              "status": "PASS",
+              "result": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\native-runs\\first-root\\iframe-read-malformed\\result.json"
+            }
+          ],
+          "notRun": [],
+          "independentPixels": "PENDING",
+          "closure": "NOT_AUTHORIZED"
+        },
+        "caseResultSha256": "b27d876e8fe9e72f1ab63d9b56c5b77bef6ce20f0e1fbe67d3bbf0b1401c299a",
+        "nativeCompletionBasis": "VALIDATED_EXPECTED_POST_CLEANUP_TERMINAL_MANIFEST_AND_CASE_READBACK",
+        "consumerStatus": "PASS",
+        "actualBoundedCleanup": {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-malformed\\rolling-cleanup.json",
+          "bytes": 1375,
+          "sha256": "d79f9e0e4f8bef3f90efa918928a3850956b8c0ddd38fa6a28c7fe0183132f29"
+        },
+        "cleanupLimits": "Actual wrapper wait and managed-process readback plus pinned awaited browser/server terminal. No explicit endpoint inventory or complete historical descendants.",
+        "finishedAtUtc": "2026-10-12T19:26:05.869283+00:00",
+        "unknownCompletion": false
+      },
+      "priorPreparationMetadataExcludedFromOperativeBinding": {
+        "native": "NOT_RUN",
+        "driverSha256": "5a13ab571cdcebf13579168d992f1703c32c31402b503f41203948a92d491207",
+        "fresh": {
+          "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r1",
+          "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-malformed",
+          "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-malformed\\native-runs\\first-root",
+          "leaseId": "root-r0011-whole-main-r1-iframe-read-malformed",
+          "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-malformed-admission.json",
+          "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r1\\review-approval.json",
+          "owner": "/root",
+          "acquired": false
+        }
+      },
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-read-malformed",
+        "type": "readFault",
+        "container": "iframe",
+        "fault": "malformed",
+        "acceptance": "R0011-A03"
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": null,
+        "seed": "malformed",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "mutation": null
+    },
+    {
+      "caseId": "iframe-read-v2",
+      "acceptance": [
+        "R0011-A03"
+      ],
+      "expectedStatus": "PASS",
+      "rawStatus": "PASS",
+      "caseResult": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\iframe-read-v2\\result.json",
+        "bytes": 96786,
+        "sha256": "e1fad723fcfae14f5b2f9c585a0f69a410fb146da2bbc14f7b76369a1ad69ba7"
+      },
+      "checksPointer": "/checks",
+      "observedCheckCount": 14,
+      "originalExpectedCheckNames": [
+        "load fallback has no adopted target",
+        "load record preserved before explicit save",
+        "load is non-destructive",
+        "no uncaught storage failure",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained",
+        "manual recovery useful",
+        "read failure does not preclude later writable save",
+        "unrelated key preserved: salah:fixture",
+        "unrelated key preserved: salahwx:fixture",
+        "unrelated key preserved: unrelated:fixture",
+        "native card dimensions retained"
+      ],
+      "snapshotPointers": [
+        "/snapshots/native boot fallback before explicit manual write",
+        "/snapshots/through-close manual recovery"
+      ],
+      "sourceBindingPointer": "/sourceBinding",
+      "accessibilityPointer": null,
+      "nativeEnvironment": {
+        "browser": "chromium",
+        "version": "154.0.8037.98",
+        "os": "win32",
+        "node": "v22.16.0",
+        "playwright": "1.62.1",
+        "viewport": {
+          "width": 1000,
+          "height": 900
+        },
+        "dpr": 1,
+        "timezone": "UTC"
+      },
+      "runtimeSha256": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+      "crops": [
+        {
+          "rawCropPointer": "/crops/0",
+          "geometryPointer": "/crops/0/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\iframe-read-v2\\boot-manual-fallback.png",
+              "bytes": 50745,
+              "sha256": "be9b53e59587b1663e29bfd84cd7df76bae2a30026c1b75793bc5a2148d5e6ac"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\iframe-read-v2\\boot-manual-fallback-card.png",
+              "bytes": 43122,
+              "sha256": "decff9c10ff9adb50e8c13275447ea8f7b5c906c7132fa1e74f627b0bcca8cb5"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\iframe-read-v2\\boot-manual-fallback-buckle.png",
+              "bytes": 288,
+              "sha256": "3df91035a95136e49feece0a7df24a6440eb399756e589f24479a881750e4fae"
+            },
+            "statusFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\iframe-read-v2\\boot-manual-fallback-status.png",
+              "bytes": 3554,
+              "sha256": "51ba407acf5111f3183090b0826ce10edfdb3ecaad2f1b48c6c28df44910445e"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        },
+        {
+          "rawCropPointer": "/crops/1",
+          "geometryPointer": "/crops/1/geometry",
+          "files": {
+            "file": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\iframe-read-v2\\manual-recovery.png",
+              "bytes": 131263,
+              "sha256": "4da8a8531ae1255d1cead4adc34673d33453555daa3dd60070a8bcc2338604e5"
+            },
+            "cardFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\iframe-read-v2\\manual-recovery-card.png",
+              "bytes": 117521,
+              "sha256": "6a34ecf94746c228c82353017ca34a328c675eba21c55a876ea9f7c26d71cc79"
+            },
+            "buckleFile": {
+              "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\iframe-read-v2\\manual-recovery-buckle.png",
+              "bytes": 1189,
+              "sha256": "afa125ab190e42f8434a525415a4c1228bfd64f2353d45db80b7dfd6b1eaf96d"
+            }
+          },
+          "viewport": {
+            "width": 1000,
+            "height": 900
+          },
+          "dpr": 1,
+          "fontMode": "explicit system fallback",
+          "spokenAnnouncement": "NOT_OBSERVED",
+          "independentPixelDecision": "PASS_BOUND_CAPTURE_STATE_CARD_INSPECTED"
+        }
+      ],
+      "actualCurrentProductionCandidateNativeContext": true,
+      "independentAccepted": true,
+      "independentReview": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\REPORT.json",
+        "bytes": 256785,
+        "sha256": "128e83e0aadc8eb37c22dc4e39b60f728f34f0a9628ccce875e942a8d069afa7"
+      },
+      "independentReviewSeal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_actual_whole_independent_review_20261012_r2\\SEAL.json",
+        "bytes": 1984,
+        "sha256": "f24228bcafd0605a30fb0f6580fb5ba9ecb5f16d7e6f46961ac9b318055aaad3"
+      },
+      "independentDecision": "PASS",
+      "oldNativeOrPixelsRelabelledMain": false,
+      "replayed": false,
+      "dispatch": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\dispatch-result.json",
+        "bytes": 4627,
+        "sha256": "9342e77274340eed111197af6bbf54cd7e2e4337893f5076d0d12dd12903fca0"
+      },
+      "rollingCleanup": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\rolling-cleanup.json",
+        "bytes": 1340,
+        "sha256": "6a026500c9101c26c7aab32c3352e2f5ff938afc438c898ce028d3f420cf3123"
+      },
+      "nativeTerminal": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\results.json",
+        "bytes": 528,
+        "sha256": "814db32fba205358de574362b7eb25d3d1eedae1af59ee1a9fb11b5d2214e633"
+      },
+      "activeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+      "actualDispatchIdentity": {
+        "schema": "root-r0011-first-native-dispatch/1",
+        "status": "PASSED_NATIVE_CASE_PENDING_TRACE_PIXEL_REVIEW",
+        "leaseId": "root-r0011-whole-main-r2-iframe-read-v2",
+        "startedAtUtc": "2026-10-12T19:26:08.736493+00:00",
+        "command": [
+          "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-I",
+          "-S",
+          "-B",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native\\residual-location-native.py",
+          "--source-root",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+          "--source-ref",
+          "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "--group",
+          "r0011",
+          "--browser",
+          "chromium",
+          "--node",
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--package-root",
+          "C:\\Users\\theis\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules",
+          "--executable",
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "--only",
+          "iframe-read-v2",
+          "--out",
+          "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root",
+          "--lease-authorized"
+        ],
+        "sourceRuntime": "7aed5f4c43a198d6ecd13152e8d8f18c595c946a30f8e25e8e0137eddd5c79c4",
+        "packetSealSha256": "8285d043fa8f401cb5d60134c4288bf312b9f327fc9a912189f93bb05b2614fa",
+        "sourceReviewReportSha256": "dcc754b67db01c81e3c3071df10021f274be1039963e4f2ebdf66d9ec405ebe7",
+        "sourceReviewSealSha256": "bcac23acb41815cf2c3b5bd447214655186cd7c8807cba523dd8153f01c78c40",
+        "sourceReviewer": "/root/r0010_isolated_release_review_r1",
+        "nativeDriverSha256": "ef86c4f4fdd1bf074bb80d89bd64b9a634fbfcf03f445bae07d683112ed971bd",
+        "sourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_current_main_guard_release_20261012_r1\\guarded-main",
+        "toolBindingsSha256": "5c1a71aa5e1e27a5bd032ae3f7dd025ae4826613f8b34d8648c6d50311301523",
+        "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2",
+        "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root",
+        "rootAdmissionSha256": "ff84ec28db05abb93126603105eb0d204b1c145096ed9d08c8ea949b44a20ff3",
+        "onlyCase": "iframe-read-v2",
+        "negativeLater": null,
+        "nativeStarted": true,
+        "nativeComplete": true,
+        "independentTracePixelReview": "PENDING",
+        "caseContractsSha256": "6293bfe760ec4297b81e7e9ff9a2cb845418599a0c2042238041d805e4ace168",
+        "rootDriverSha256": "70f35c610dae078cc4c778ac94de9d058e47e96fc3b8d79a03e8a08ca6e0e3c0",
+        "reviewApprovalSha256": "db4ae0d850316b9dc8489243054772148e5320d783562a8c116472b5e90f9726",
+        "guardReviewReportSha256": "96bacc4e8611e14c4c23195bf74220a994fa2d5891555ace982c35bca3c1544c",
+        "guardReviewSealSha256": "26edfdf6ea86d065f9f90e0fe08a5f87d8c3ccc15ca4d2918b4792cc1f10ed67",
+        "processId": 23292,
+        "exitCode": 0,
+        "resultsSha256": "814db32fba205358de574362b7eb25d3d1eedae1af59ee1a9fb11b5d2214e633",
+        "results": {
+          "schema": "residual-native-results/v1",
+          "sourceRef": "1536779492a4c687a6e3ebe6c56d72dd7e6ba968",
+          "group": "r0011",
+          "selected": [
+            "iframe-read-v2"
+          ],
+          "executed": [
+            {
+              "name": "iframe-read-v2",
+              "status": "PASS",
+              "result": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\native-runs\\first-root\\iframe-read-v2\\result.json"
+            }
+          ],
+          "notRun": [],
+          "independentPixels": "PENDING",
+          "closure": "NOT_AUTHORIZED"
+        },
+        "caseResultSha256": "e1fad723fcfae14f5b2f9c585a0f69a410fb146da2bbc14f7b76369a1ad69ba7",
+        "nativeCompletionBasis": "VALIDATED_EXPECTED_POST_CLEANUP_TERMINAL_MANIFEST_AND_CASE_READBACK",
+        "consumerStatus": "PASS",
+        "actualBoundedCleanup": {
+          "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r2-iframe-read-v2\\rolling-cleanup.json",
+          "bytes": 1340,
+          "sha256": "6a026500c9101c26c7aab32c3352e2f5ff938afc438c898ce028d3f420cf3123"
+        },
+        "cleanupLimits": "Actual wrapper wait and managed-process readback plus pinned awaited browser/server terminal. No explicit endpoint inventory or complete historical descendants.",
+        "finishedAtUtc": "2026-10-12T19:26:12.188465+00:00",
+        "unknownCompletion": false
+      },
+      "priorPreparationMetadataExcludedFromOperativeBinding": {
+        "native": "NOT_RUN",
+        "driverSha256": "5a13ab571cdcebf13579168d992f1703c32c31402b503f41203948a92d491207",
+        "fresh": {
+          "packet": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_whole_owner_main_r1",
+          "effectRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-v2",
+          "nativeOutput": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-v2\\native-runs\\first-root",
+          "leaseId": "root-r0011-whole-main-r1-iframe-read-v2",
+          "admission": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\R0011\\whole-owner-main-r1-iframe-read-v2-admission.json",
+          "reviewApproval": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r0011-whole-owner-main-r1\\review-approval.json",
+          "owner": "/root",
+          "acquired": false
+        }
+      },
+      "recipe": {
+        "group": "r0011",
+        "name": "iframe-read-v2",
+        "type": "readFault",
+        "container": "iframe",
+        "fault": "v2",
+        "acceptance": "R0011-A03"
+      },
+      "prerequisite": {
+        "checks": [
+          "load fallback has no adopted target",
+          "load record preserved before explicit save",
+          "load is non-destructive",
+          "no uncaught storage failure"
+        ],
+        "deniedOperationCheck": null,
+        "seed": "v2",
+        "throughCloseManualTarget": [
+          30,
+          31
+        ]
+      },
+      "mutation": null
+    }
+  ],
+  "independentDecision": "PASS",
+  "selfAwardedIndependentAcceptance": false,
+  "limits": [
+    "Original11 native/pixels retain e718 identities; only exact regional persistence source semantics transfer to main. New22 actual cases bind runtime7aed/activeef86, no private45b acquisition.",
+    "Controlled JavaScript faults prove actual same-origin/iframe native handlers; no real third-party host policy/partition-lifetime, native reload persistence, screen-reader speech or Apple/mobile claim.",
+    "No new first-paint, default live-motion or whole physical-scene qualification is claimed; source changes remain the bounded unavailable-coordinate host guard only.",
+    "Unused four-widget nativeRuntimeScripts literal and stale seed native/driver/fresh fields are retained outside operative case bindings. Actual6/2 pages/source/dispatch pins control.",
+    "A04 reset-success cases retain initial denied removal followed by restored ordinary removeItem: one recovered successful reset invocation removes config; two total attempts and detection stages are distinct. No uncontested one-total-call proof is fabricated.",
+    "All failures and two unproductive source-review cycles retained; exactly one final approved predicate review plus serial22 pass, no further correction authority and no aggregate hard timeout claim."
+  ]
+}

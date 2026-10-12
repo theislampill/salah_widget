@@ -1,0 +1,116 @@
+{
+  "baseHead": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+  "frozenReadme": {
+    "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\README.md",
+    "bytes": 35877,
+    "sha256": "86622ef6a67bf16beba87612db8423220450cfbac77702dff06b7f208aa73a1c"
+  },
+  "contextualDiff": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0011_release_exit_r1\\README.diff",
+    "bytes": 35116,
+    "sha256": "cbe5e7cd20c2b561698bb5a19435de5fb160a4d3d4e2fa78268f2ed2a8459884"
+  },
+  "ownedClauses": [
+    {
+      "id": "R0011-C01",
+      "file": "README.md",
+      "line": 200,
+      "text": "panel. If persistence fails, changes apply for this session and Settings retains a warning. The **↺** icon removes only saved widget configuration and then re-detects if removal succeeds; prayer/weather caches and provider-held data are unaffected.",
+      "sha256": "6ae4052eef5d99509cef0869581026fa96ea9f91153967d502a41d0fa5d02ab7",
+      "baseInterval": [
+        108,
+        108
+      ],
+      "verdict": "PASS_EXACT_ACCEPTED_OWNED_CLAUSE_REBOUND",
+      "originalSemanticReview": "HR-20261009-FINAL / R0011-DOC",
+      "scope": "Persistence, Reset, conditional host/storage facts only; adjacent peer location/privacy prose not re-reviewed."
+    },
+    {
+      "id": "R0011-C02",
+      "file": "README.md",
+      "line": 239,
+      "text": "- **Storage outcome is measured.** Saved settings use this browser's storage. If writing is unavailable, changes still apply for the current session and Settings shows a retained warning. A partition can be writable and retain settings within that partition. Saving and persistence depend on the host's actual storage permissions and lifetime; blocked writes cause the session-only warning.",
+      "sha256": "52a534f0529f386fef100c27ea84457b5492a28c91d1873dfcaa909969bfc5c4",
+      "baseInterval": [
+        123,
+        140
+      ],
+      "verdict": "PASS_EXACT_ACCEPTED_OWNED_CLAUSE_REBOUND",
+      "originalSemanticReview": "HR-20261009-FINAL / R0011-DOC",
+      "scope": "Persistence, Reset, conditional host/storage facts only; adjacent peer location/privacy prose not re-reviewed."
+    },
+    {
+      "id": "R0011-C03",
+      "file": "README.md",
+      "line": 240,
+      "text": "- **Reset scope.** Reset removes only the saved widget configuration (`salah_widget:config:v1`); it does not erase prayer/weather caches or data held by external providers. Successful removal may re-detect the area and issue the coarse request above. Failed removal reports the failure and leaves the existing target usable.",
+      "sha256": "2f17207e64873ced928758b666e395199f1f949c025205fc4cdbdb80332f302e",
+      "baseInterval": [
+        123,
+        140
+      ],
+      "verdict": "PASS_EXACT_ACCEPTED_OWNED_CLAUSE_REBOUND",
+      "originalSemanticReview": "HR-20261009-FINAL / R0011-DOC",
+      "scope": "Persistence, Reset, conditional host/storage facts only; adjacent peer location/privacy prose not re-reviewed."
+    },
+    {
+      "id": "R0011-C04",
+      "file": "README.md",
+      "line": 241,
+      "text": "- **TablissNG conditions.** Coarse acquisition depends on permitted provider access; browser position depends on preserved delegation, parent policy and user grant; saving depends on writable host storage and its lifetime. These conditions are not a claim that a particular TablissNG version or partition policy has been qualified.",
+      "sha256": "1583c0a2d3e00b5be5ad8781573640f96e9e73b89aa58e47049723ef60ee9cfd",
+      "baseInterval": [
+        123,
+        140
+      ],
+      "verdict": "PASS_EXACT_ACCEPTED_OWNED_CLAUSE_REBOUND",
+      "originalSemanticReview": "HR-20261009-FINAL / R0011-DOC",
+      "scope": "Persistence, Reset, conditional host/storage facts only; adjacent peer location/privacy prose not re-reviewed."
+    }
+  ],
+  "contextualSharedGuards": [
+    {
+      "id": "storage-introduction",
+      "approvedPostimage": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\release_settings_docs\\guards\\storage-introduction.new",
+        "bytes": 533,
+        "sha256": "d8e4b73d82f172eab636231548bd39c04ffaa1fabdc2f4519401d488cc555b1d"
+      },
+      "currentWholeGuardOccurrences": 1,
+      "credit": "Context only; changed peer location wording in one mixed guard does not rewrite or invalidate exact owned clauses."
+    },
+    {
+      "id": "local-defaults-settings-warning",
+      "approvedPostimage": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\release_settings_docs\\guards\\local-defaults-settings-warning.new",
+        "bytes": 1286,
+        "sha256": "551511e0b5fa9ced59590934a76edff8fb43ff36222d990fc24a11b6f23c5ce5"
+      },
+      "currentWholeGuardOccurrences": 0,
+      "credit": "Context only; changed peer location wording in one mixed guard does not rewrite or invalidate exact owned clauses."
+    },
+    {
+      "id": "shared-privacy-acquisition-storage",
+      "approvedPostimage": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\release_settings_docs\\guards\\shared-privacy-acquisition-storage.new",
+        "bytes": 6328,
+        "sha256": "c7bf3db2a3641dbda58b48b3d439a945079e9b8849b9d6bfab4dec939d1faeab"
+      },
+      "currentWholeGuardOccurrences": 1,
+      "credit": "Context only; changed peer location wording in one mixed guard does not rewrite or invalidate exact owned clauses."
+    },
+    {
+      "id": "storage-credits-integrity",
+      "approvedPostimage": {
+        "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\release_settings_docs\\guards\\storage-credits-integrity.new",
+        "bytes": 575,
+        "sha256": "f5cf4de7aeed17599be7c2e2320c6c6ccaff6fb65772e9ca3d58d4ec088cddae"
+      },
+      "currentWholeGuardOccurrences": 1,
+      "credit": "Context only; changed peer location wording in one mixed guard does not rewrite or invalidate exact owned clauses."
+    }
+  ],
+  "oldWholeFilesReplaced": false,
+  "acceptedProseChanged": false,
+  "wholeReadmePASS": false
+}
