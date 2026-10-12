@@ -59,21 +59,53 @@ your OS:
 curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | bash
 ```
 ```powershell
-# Windows PowerShell
+# Windows PowerShell 5.1 (powershell.exe), or supported PowerShell 7 (pwsh.exe)
 irm https://raw.githubusercontent.com/theislampill/salah_widget/main/install.ps1 | iex
 ```
 
-If you've configured the widget in the builder, the **Install widget** button bakes those
-settings into the install (via a `SALAH_WIDGET_HASH` the wizard writes into the preset's
-iframe), so you don't have to reconfigure after installing.
+The Windows response-string command executes the downloaded text in the host
+where you paste it. Windows PowerShell 5.1 is the declared minimum; the retained
+PowerShell 7 qualification is version 7.6.6. The commands below use one selected
+host. Your execution policy still applies; a policy refusal is not installation.
 
-It **never** silently installs extensions or writes to browser storage — it downloads the
-asset, opens the browser's own install page, and stages the preset for **manual** import. It
-runs code from this repo, so review-first works too:
+If you configured the widget in the builder, **Install widget** carries its
+encoded settings through `SALAH_WIDGET_HASH` into the preset iframe. For a
+reviewed local-file invocation, keep that environment value, or pass
+`-WidgetHash` on Windows, if you want the same configuration.
+
+The wizard downloads and stages files, offers clipboard paths and opens the
+browser's manual pages. Extension installation and preset import remain manual;
+it does not silently install extensions or write to browser extension storage.
+**Importing the preset replaces your current TablissNG dashboard** with the
+widget layout. Precise in-widget location also needs the iframe's
+`allow="geolocation"`; hosts may strip it, while coarse auto-detect still works.
+
+It runs code from this repo, so review-first works too:
 `curl -fsSLO …/install.sh` → `less install.sh` → `bash install.sh`.
-**Note:** importing the preset *replaces* your current TablissNG dashboard with a clean layout
-containing the widget; precise in-widget location additionally needs the iframe's
-`allow="geolocation"` (some hosts strip it — coarse auto-detect still works).
+
+#### Review a pinned file first
+
+These examples download the installer at a pinned source commit. Read it,
+use the optional offline preview, then run normal mode when ready:
+
+On Windows, `Invoke-WebRequest -OutFile` keeps the downloaded file bytes. Review
+with `Get-Content -LiteralPath`; do not resave the file through
+`Get-Content`/`Set-Content` or change its encoding. Choose either host below:
+
+```powershell
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1" -OutFile ".\install.ps1"
+Get-Content -LiteralPath ".\install.ps1"
+powershell.exe -NoProfile -File ".\install.ps1" -DryRun
+powershell.exe -NoProfile -File ".\install.ps1"
+```
+
+For the supported PowerShell 7 host, replace the two `powershell.exe` calls with
+`pwsh.exe -NoProfile -File ".\install.ps1" -DryRun` and
+`pwsh.exe -NoProfile -File ".\install.ps1"`. Run one host's normal command.
+
+With reviewed local files, `-DryRun` performs offline local discovery and prints
+planned actions. Preview creates no staging or usable artifacts and is neither
+installation nor staged completion.
 
 ---
 
