@@ -11,13 +11,78 @@ const { execFileSync } = require('node:child_process');
 const root = path.resolve(process.argv[2] || path.join(__dirname, '..'));
 const sourceOnly = process.argv.includes('--source-only');
 const ref = process.argv.find(arg => arg.startsWith('--ref='))?.slice(6);
+const scope = process.argv.find(arg => arg.startsWith('--scope='))?.slice(8);
+assert(!scope || ['R001B', 'R001C'].includes(scope), 'scope must be R001B or R001C');
+assert(!(scope && sourceOnly), 'owner scope includes its mandatory docs; source-only cannot narrow it');
+const docsRoot = process.argv.find(arg => arg.startsWith('--docs-root='))?.slice(12);
+const reusePath = process.argv.find(arg => arg.startsWith('--reuse-manifest='))?.slice(17);
+const reuse = reusePath ? JSON.parse(fs.readFileSync(path.resolve(reusePath), 'utf8')) : null;
+const digest = text => crypto.createHash('sha256').update(text).digest('hex');
+const reuseNames = new Set([
+  'source: exact M5V2T6 search recipients', 'source: London has no Canadian request or digit bias',
+  'source: trimmed short query sends nothing', 'source: digit bias and prefix are actual triggers',
+  'source caller: builder debounce and Enter', 'source caller: builder reverse coordinates and disabled controls',
+  'source: coarse URLs and fallback', 'source: Reset key scope preserves unrelated caches',
+  'source: complete fragment motion recipe and query negative'
+]);
+function ownerOf(name) {
+  if (reuseNames.has(name)) return name.includes('fragment motion') ? 'R001C' : 'R001B';
+  if (/^source: six real force|^docs: (?:AGENTS|DESIGN|OPTICS)|^recipe: (?:AGENTS|DESIGN|OPTICS)|^docs: DESIGN enum|^docs: diagnostic/.test(name)) return 'R001C';
+  if (/^docs: README privacy|^docs: builder privacy|^docs mutant: removing a disclosed provider/.test(name)) return 'R001B';
+  return 'OTHER';
+}
+const selectedLedger = [];
 const docNames = ['README.md', 'AGENTS.md', 'DESIGN.md', 'OPTICS.md', 'ARCHITECTURE.md', 'HANDOFF.md'];
 const sources = Object.fromEntries(['config.js', 'builder.html', 'index.html', ...docNames]
-  .map(name => [name, ref ? execFileSync('git', ['show', `${ref}:${name}`], { cwd: root, encoding: 'utf8' }) : fs.readFileSync(path.join(root, name), 'utf8')]));
+  .map(name => [name, docsRoot && docNames.includes(name) ? fs.readFileSync(path.join(path.resolve(docsRoot), name), 'utf8') : ref ? execFileSync('git', ['show', `${ref}:${name}`], { cwd: root, encoding: 'utf8', maxBuffer:32*1024*1024 }) : fs.readFileSync(path.join(root, name), 'utf8')]));
 const results = [];
+function requiredReuseBindings(name) {
+  if (name === 'source: complete fragment motion recipe and query negative') {
+    return { sources: [], helpers: ['parsed'], parser: true };
+  }
+  const builderCase = ['source caller: builder debounce and Enter',
+    'source caller: builder reverse coordinates and disabled controls'].includes(name);
+  return { sources: builderCase ? ['config.js', 'builder.html'] : ['config.js'],
+    helpers: builderCase ? ['context', 'builder'] : ['context'], parser: false };
+}
+function requiredDigest(value, label) {
+  assert(typeof value === 'string' && /^[a-f0-9]{64}$/.test(value), `${label}: required SHA-256 binding`);
+}
+function requiredDigestMap(map, keys, label) {
+  assert(map && typeof map === 'object' && !Array.isArray(map), `${label}: required binding map`);
+  assert.deepEqual(Object.keys(map).sort(), [...keys].sort(), `${label}: exact mandatory binding keys`);
+  for (const key of keys) requiredDigest(map[key], `${label}/${key}`);
+}
 async function check(name, run) {
-  try { await run(); results.push({ name, status: 'PASS' }); }
-  catch (error) { results.push({ name, status: 'FAIL', error: error.message }); }
+  const owner = ownerOf(name);
+  if (scope && owner !== scope) { selectedLedger.push({name, owner, status:'NOT_SELECTED'}); return; }
+  selectedLedger.push({name, owner, status:'SELECTED'});
+  if (scope && reuseNames.has(name)) {
+    try {
+      assert(reuse?.schema === 'settings-docs-reuse/v1' && Array.isArray(reuse.cases), 'valid accepted reuse manifest required');
+      assert(reuse.cases.every(row => row && typeof row === 'object' && !Array.isArray(row) && typeof row.name === 'string'), 'invalid reuse record');
+      const matches = reuse.cases.filter(row => row.name === name);
+      assert.equal(matches.length, 1, `${name}: one exact accepted reuse receipt required`);
+      const row = matches[0], bindings = requiredReuseBindings(name);
+      assert(row.status === 'PASS', `${name}: accepted PASS receipt required`);
+      assert.equal(row.sourceRef, '18ff14860ff41c084b1db5f396bb62aa9c22b1be', 'accepted donor source identity required');
+      assert.equal(row.receipt, 'https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/docs-contract-primary.json', 'accepted immutable receipt identity required');
+      requiredDigest(row.callbackSha256, `${name}/callback`);
+      assert.equal(digest(run.toString().replace(/\s+/g, ' ').trim()), row.callbackSha256, 'reused callback changed');
+      if (bindings.sources.length || row.sourceSha256 !== undefined) requiredDigestMap(row.sourceSha256, bindings.sources, `${name}/source`);
+      requiredDigestMap(row.helperSha256, bindings.helpers, `${name}/helper`);
+      for (const file of bindings.sources) assert.equal(digest(sources[file]), row.sourceSha256[file], `reused ${file} changed`);
+      for (const helper of bindings.helpers) assert.equal(digest(({context,builder,parsed})[helper].toString().replace(/\s+/g, ' ').trim()), row.helperSha256[helper], `reused ${helper} fixture inputs changed`);
+      if (bindings.parser || row.parserSha256 !== undefined) {
+        requiredDigest(row.parserSha256, `${name}/parser`);
+        assert.equal(digest(qLine + '\n' + flags), row.parserSha256, 'reused parser declarations changed');
+      }
+      results.push({name,owner,status:'REUSED',receipt:row.receipt,sourceRef:row.sourceRef,bindingKeys:bindings});
+    } catch(error) { results.push({name,owner,status:'FAIL',error:error.message}); }
+    return;
+  }
+  try { await run(); results.push({ name, owner, status: 'PASS' }); }
+  catch (error) { results.push({ name, owner, status: 'FAIL', error: error.message }); }
 }
 function region(source, start, end) {
   const a = source.indexOf(start), b = source.indexOf(end, a + start.length);
@@ -179,29 +244,86 @@ function mentions(name, tokens) {
   });
   await check('source: six real force branches and unsupported-string mutant', () => {
     assert.deepEqual(forceNames, claimedNames);
-    // R0022 force branches consume the actual physical permission; older source has no such binding.
-    const eligibility = /^\s*const moonLightEligible\s*=/m.test(sources['index.html'])
-      ? region(sources['index.html'], '  const mFrac=clamp(moonSky.frac);', '\n  const moonLightReason') : '';
-    const clampLine = sources['index.html'].match(/^const clamp\s*=.*$/m)?.[0]; assert(clampLine, 'production clamp present');
-    const forced = (name, moonSky = { frac: 0.98, alt: 20 }, sm = { altDeg: -18 }) => vm.runInNewContext(
+    const source = sources['index.html'];
+    let clampLine = source.match(/^const clamp\s*=.*$/m)?.[0]; assert(clampLine, 'production clamp present');
+    let eligibility = '';
+    if (source.includes('function nativeLunarPresentation(')) {
+      // Bind the exact current delegated owner; embedded first-paint helpers
+      // are separate lexical owners. Script ordinal alone grants no authority.
+      const wrapper = "function lunarPresentation(solarElevation){ return nativeLunarPresentation(moonSky,solarElevation,_pbrFailed); }";
+      const scripts = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)];
+      const owners = scripts.filter(match => match[2].includes(wrapper));
+      assert.equal(owners.length,1,'unique delegated lunar script owner required');
+      const [_,attrs,body] = owners[0];
+      assert.equal(attrs,"",'delegated owner script role changed');
+      const signature = "function nativeLunarPresentation(moon,solarElevation,surfaceFailed){";
+      assert.equal([...body.matchAll(/^function nativeLunarPresentation\(/gm)].length,1,'unique delegated lunar helper required');
+      assert.equal([...body.matchAll(/^function lunarPresentation\(/gm)].length,1,'unique delegated lunar wrapper required');
+      const helper = region(body,signature,'\n}') + '\n}';
+      assert.equal(digest(helper),"9b7d34b9b20517da2027f424db17f223d8f08e719518221a23439109d11b5f5e",'delegated lunar helper changed');
+      const clamps = [...body.matchAll(/^const clamp\s*=.*$/gm)].map(match => match[0]);
+      assert.equal(clamps.length,1,'unique delegated widget clamp required');
+      assert.equal(digest(clamps[0]),"3996c2802e4d300d16f9cbffc98d15f9b14467f8d2068ae9d24ae8179e34fb8c",'delegated widget clamp changed');
+      const calls = [...body.matchAll(/^  const \{mFrac,.*\}=lunarPresentation\(sm.altDeg\);$/gm)].map(match => match[0]);
+      assert.equal(calls.length,1,'unique delegated atmosphere lunar call required');
+      assert.equal(digest(calls[0]),"9fc8a550af80cf2ff526fcf69d40c4d9863135f551c97386e6ff65bce799d46f",'delegated atmosphere lunar call changed');
+      assert.equal(digest(body),"5855c29ae0496734b791ded1e1f62939d8605d253ab836cea66a5bf122770ab7",'delegated native script changed');
+      assert.equal(digest(source),"c773af444ed1071f9ba6b62b8e635c8d38b1b7f73de995c781ed23c0d307499a",'delegated current generated entry changed');
+      clampLine = clamps[0];
+      eligibility = helper + '\n' + wrapper + '\n' + calls[0];
+    } else if (source.includes('function lunarPresentation(')) {
+      // PR43 moved the semantic owner into this unique production function.
+      const functionStart=source.match(/^function lunarPresentation\([^)]*\)\{$/m)?.[0];
+      assert(functionStart, 'unique production lunarPresentation signature required');
+      eligibility = region(source, functionStart, '\n}') + '\n}';
+      const call = source.match(/^  const \{mFrac,.*\}=lunarPresentation\(sm.altDeg\);$/m)?.[0];
+      assert(call, 'actual atmosphere lunarPresentation call required');
+      eligibility += '\n' + call;
+    } else if (/^\s*const moonLightEligible\s*=/m.test(source)) {
+      // The delivered inline atmosphere owns this clamp. Embedded helpers are separate scripts.
+      const scripts = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)];
+      const owners = scripts.filter(match => match[2].includes(qLine) && match[2].includes('function atmosphere(M){'));
+      assert.equal(owners.length,1,'unique inline widget script owner required');
+      const [_,attrs,body] = owners[0];
+      assert.equal(attrs,"",'inline widget script role changed');
+      assert.equal(digest(source),"ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee",'delivered inline generated entry changed');
+      assert.equal(digest(body),"67e279dfb1c4eefe34c0aa3179345f368b3711af37377a258839da4790f801a6",'delivered inline widget script changed');
+      const clamps = [...body.matchAll(/^const clamp\s*=.*$/gm)].map(match => match[0]);
+      assert.equal(clamps.length,1,'unique inline widget clamp required');
+      assert.equal(digest(clamps[0]),"3996c2802e4d300d16f9cbffc98d15f9b14467f8d2068ae9d24ae8179e34fb8c",'inline widget clamp changed');
+      clampLine = clamps[0];
+      const starts = [...body.matchAll(/^  const mFrac=clamp\(moonSky.frac\)[,;]/gm)].map(match => match[0]);
+      assert.equal(starts.length,1,'unique inline lunar eligibility start required');
+      eligibility = region(body,starts[0],'\n  const moonLightReason');
+      assert.equal(digest(eligibility),"6e3e72bf469a69dd98b50215ca207bccdec8ec2b53dc7156095222d319193782",'inline lunar eligibility changed');
+    }
+    const forced = (name, moonSky={frac:0.98,alt:20}, sm={altDeg:-18}, pbrFailed=false) => vm.runInNewContext(
       `${clampLine}\n${eligibility}\nlet sunHalo=0,sunDogs=0,sunPillar=0,antiCrep=0,moonParhelia=0,lunarHalo=0;\n${forceBlock}\n[sunHalo,sunDogs,sunPillar,antiCrep,moonParhelia,lunarHalo]`,
-      { DEBUGOPTIC: name, moonSky, sm });
-    for (const name of forceNames) {
-      const flags = parsed(`${base}&simTime=12:30&debugOptic=${name}`); assert.equal(flags.DEBUGOPTIC, name);
-      const state = forced(name);
-      assert.equal(state.filter(x => x > 0).length, 1, `${name} has one actual force assignment`);
+      {DEBUGOPTIC:name, moonSky, sm, _pbrFailed:pbrFailed});
+    for (const [index,name] of forceNames.entries()) {
+      const flags = parsed(`${base}&simTime=12:30&debugOptic=${name}`); assert.equal(flags.DEBUGOPTIC,name);
+      const expected = [0,0,0,0,0,0]; expected[index]=[0.95,0.95,0.9,0.8,0.9,0.95][index];
+      const state = Array.from(forced(name)); assert.deepEqual(state,expected, `${name} exact actual force output`);
+      selectedLedger.push({owner:'R001C',kind:'force',name,state,context:{moonSky:{frac:0.98,alt:20},sm:{altDeg:-18},_pbrFailed:false}});
     }
-    if (eligibility) for (const name of ['paraselene', 'lunarhalo']) {
-      for (const [reason, moonSky, sm] of [
-        ['near-new', { frac: 0.01, alt: 20 }, { altDeg: -18 }],
-        ['phase cutoff', { frac: 0.02, alt: 20 }, { altDeg: -18 }],
-        ['below-horizon', { frac: 0.98, alt: -10 }, { altDeg: -18 }],
-        ['daylight', { frac: 0.98, alt: 20 }, { altDeg: 20 }]
-      ]) assert(forced(name, moonSky, sm).every(x => x === 0), `${name} must preserve ${reason} ineligibility`);
+    if (eligibility) for (const name of ['paraselene','lunarhalo']) {
+      for (const [reason,moonSky,sm,pbrFailed] of [
+        ['near-new',{frac:0.01,alt:20},{altDeg:-18},false],
+        ['phase cutoff',{frac:0.02,alt:20},{altDeg:-18},false],
+        ['below-horizon',{frac:0.98,alt:-10},{altDeg:-18},false],
+        ['daylight',{frac:0.98,alt:20},{altDeg:20},false],
+        ['surface-unavailable',{frac:0.98,alt:20},{altDeg:-18},true]
+      ]) {
+        const state=Array.from(forced(name,moonSky,sm,pbrFailed));
+        assert(state.every(x=>x===0),`${name} must preserve ${reason} ineligibility`);
+        selectedLedger.push({owner:'R001C',kind:'force-boundary',name,reason,state,context:{moonSky,sm,_pbrFailed:pbrFailed}});
+      }
     }
-    assert.equal(parsed(`${base}&debugOptic=corona`).DEBUGOPTIC, 'corona');
+    assert.equal(parsed(`${base}&debugOptic=corona`).DEBUGOPTIC,'corona');
     assert(!forceNames.includes('corona'));
-    assert.throws(() => assert.deepEqual([...claimedNames, 'corona'], forceNames), 'unsupported enum mutant must fail');
+    const corona=Array.from(forced('corona')); assert(corona.every(x=>x===0),'unsupported corona has no forced output');
+    selectedLedger.push({owner:'R001C',kind:'force-negative',name:'corona',state:corona});
+    assert.throws(()=>assert.deepEqual([...claimedNames,'corona'],forceNames),'unsupported enum mutant must fail');
   });
   if (!historicalBaseline) {
     await check('source: actual appearance exports, saved precedence and private fix age', async () => {
@@ -291,14 +413,15 @@ function mentions(name, tokens) {
       const doc = sources[name];
       await check(`docs: ${name} no positive query-only diagnostic recipe`, () => {
         for (const [index, line] of doc.split('\n').entries()) {
-          if (/\?(?:debugMotion|debugOptic|debugLayers|debugMoon|motion)=/.test(line)) assert(/query-only.*not read/.test(line), `${name}:${index + 1}: ${line.trim()}`);
+          if (/\?(?:debugMotion|debugOptic|debugLayers|debugMoon|motion)=/.test(line)) assert(/query-only.*not read/.test(line) || /Query-only negative control:.*not read/.test(doc.split('\n').slice(Math.max(0,index-4),index).join(' ')), `${name}:${index + 1}: ${line.trim()}`);
         }
       });
       for (const [index, line] of doc.split('\n').entries()) {
         const recipes = [...line.matchAll(/`([^`]*(?:&debugMotion=1|&motion=full|&debugOptic=[a-z]+|&debugLayers=1|&debugMoon=1)[^`]*)`/g)].map(m => m[1]);
-        if (/^index\.html#/.test(line)) recipes.push(line.trim());
+        if (/^index\.html[?#]/.test(line) && !/Query-only negative control:.*not read/.test(doc.split('\n').slice(Math.max(0,index-4),index).join(' '))) recipes.push(line.trim());
         for (const recipe of recipes) await check(`recipe: ${name}:${index + 1}: ${recipe}`, () => {
           const actual = parsed(recipe.startsWith('&') ? base + recipe : recipe);
+          selectedLedger.push({owner:ownerOf(`recipe: ${name}`),kind:'literal',file:name,line:index+1,recipe,hash:actual.q.toString(),flags:{DEBUGMOTION:actual.DEBUGMOTION,MOTIONFULL:actual.MOTIONFULL,DEBUGOPTIC:actual.DEBUGOPTIC,DEBUGLAYERS:actual.DEBUGLAYERS,DEBUGMOON:actual.DEBUGMOON}});
           if (recipe.includes('debugMotion=1')) assert.equal(actual.DEBUGMOTION, true);
           if (recipe.includes('motion=full')) assert.equal(actual.MOTIONFULL, true);
           if (recipe.includes('debugLayers=1')) assert.equal(actual.DEBUGLAYERS, true);
@@ -380,6 +503,6 @@ function mentions(name, tokens) {
   }
   for (const result of results) console.log(JSON.stringify(result));
   const failed = results.filter(r => r.status === 'FAIL').length;
-  console.log(JSON.stringify({ summary: { cases: results.length, passed: results.length - failed, failed, scope: sourceOnly ? 'source-only' : 'source-and-docs', sourceRef: ref || 'working tree', browser: 'NOT_RUN', network: 'intercepted, no transmission' }, fixtureSha256: crypto.createHash('sha256').update(fs.readFileSync(__filename)).digest('hex'), sha256: Object.fromEntries(Object.entries(sources).map(([name, text]) => [name, crypto.createHash('sha256').update(text).digest('hex')])) }));
+  console.log(JSON.stringify({ summary: { cases: results.length, passed: results.filter(r=>r.status==='PASS').length, reused:results.filter(r=>r.status==='REUSED').length, failed, scope: scope || (sourceOnly ? 'source-only' : 'source-and-docs'), sourceRef: ref || 'working tree', docsSource:docsRoot || (ref || root), selectedLedger, browser: 'NOT_RUN', network: 'intercepted, no transmission' }, fixtureSha256: crypto.createHash('sha256').update(fs.readFileSync(__filename)).digest('hex'), sha256: Object.fromEntries(Object.entries(sources).map(([name, text]) => [name, crypto.createHash('sha256').update(text).digest('hex')])) }));
   process.exitCode = failed ? 1 : 0;
 })().catch(error => { console.error(error.stack); process.exitCode = 2; });
