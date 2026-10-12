@@ -279,7 +279,7 @@ temperature or amount; no old temperature survives a rejected record.
   from live air turbulence `--star-turb`). **All bright anchors twinkle** (the eye tracks them) ~1.5× deeper than
   the dust bed, and their **4-ray glints scintillate** too (`@keyframes glintpulse` around each glint's projected
   base opacity `--go`) — so the luminaries shimmer instead of sitting static. CSS scintillation is disabled under
-  OS `prefers-reduced-motion` unless `?motion=full` overrides it.
+  OS `prefers-reduced-motion` unless `&motion=full` overrides it.
 
 ## Live motion & accessibility
 
@@ -291,10 +291,10 @@ static-looking sky is a regression, not a "polish" gap.
   animations, independent of `render()`. The loop **pauses** (and CSS via `.c.paused`) when the iframe is hidden or
   scrolled offscreen (visibilitychange + IntersectionObserver) — battery for a 24/7 embed.
 - **Accessibility.** Under OS `prefers-reduced-motion: reduce` the CSS reduced-motion block stops all atmospheric/
-  weather animation and the cloud loop paints **one frozen frame** (no animation). `?motion=full` is an honest
+  weather animation and the cloud loop paints **one frozen frame** (no animation). `&motion=full` is an honest
   **override** (adds `.c.motionfull`, clears the JS `_RM`/`_REDUCED` flags) so motion runs even under the OS
   preference — for testing or for users who want it. The default still respects the preference.
-- **`?debugMotion=1`** overlays live telemetry: rAF ticks/s, cloud-paint/s, reduced-motion, `motion=full`, paused,
+- **`&debugMotion=1`** overlays live telemetry: rAF ticks/s, cloud-paint/s, reduced-motion, `motion=full`, paused,
   `timeScale`/advancing, **cloud Δ over 10s/60s**, **star Δ** + whether the twinkle animation is active, the
   weather source, and the reason motion is reduced (if any).
 - **The qaState-hash trap (read this).** `qaState().clouds.hash` is position-weighted and flips on sub-pixel change,
@@ -311,7 +311,37 @@ static-looking sky is a regression, not a "polish" gap.
 
 ## URL / hash & debug parameters
 
-Config and debug are read from the URL **hash** (`#…`). Common:
+Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them.
+
+Real-time motion diagnostic:
+
+```text
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1
+```
+
+Full-motion override (the normal default respects reduced motion):
+
+```text
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full
+```
+
+Solar noon halo diagnostic:
+
+```text
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo
+```
+
+Query-only negative control: these flags are not read from before #.
+
+```text
+index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61
+```
+
+simTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels.
+
+Lunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use `qaState().clouds.hash` as motion proof.
+
+Common hash options:
 
 - `lat`, `lon`, `label`, `method`, `units` — location + calc method + °C/°F.
 - `seed` — varies the synthetic star draw + cloud field identity.
@@ -325,7 +355,7 @@ Config and debug are read from the URL **hash** (`#…`). Common:
 - `debugLayers=1`, `debugMoon=1`, `debugMotion=1` — on-card readouts (layers / moon / live-motion telemetry).
   `debugDawn=…` — **deprecated no-op** (dawn is not a painted overlay; nothing to force).
   `motion=full` — force full animation even under OS `prefers-reduced-motion` (accessibility override; default respects it).
-- `debugOptic=halo|sundogs|pillar|anticrep|paraselene` — force a (normally condition-gated) optical phenomenon.
+- `debugOptic=halo|sundogs|pillar|anticrep|paraselene|lunarhalo` — force a (normally condition-gated) optical phenomenon.
 - `local=1` — self-configuring mode (coarse auto-detect + in-widget settings, saved locally).
   `preferLocal=1` — hardcoded defaults that a saved local config may override (opt-in). `lp=0..1` — light-pollution dial.
 
@@ -389,7 +419,7 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   random) — corner sun + entry path + low-sun **refraction flattening**; crepuscular `.godray` + **anticrepuscular**
   rays; Belt of Venus; solar **22° halo**, **sundogs/parhelia + parhelic circle**, **sun pillar** (all ice-crystal/
   cirrus/cold gated, **registered to the visible corner sun** via `--sunvx/--sunvy`); lunar **22° halo + corona +
-  paraselenae** and earthshine. Each can be forced via `?debugOptic=`. They are **art-directed approximations
+  paraselenae** and earthshine. Dedicated diagnostic forcing is limited to halo, sundogs, pillar, anticrep, paraselene and lunarhalo; physical-only effects retain their scene inputs. They are **art-directed approximations
   (believable, not photometric)**; the moon's halo/pillar may show as partial arcs because the halo radius exceeds
   the (mostly in-frame) disc. The **corner-sun body stays top-left** in all states (a layout stylization — the moon
   owns top-right); the azimuthal horizon glow correctly moves left→right dawn→dusk.
@@ -403,9 +433,9 @@ in frame, earthshine), gibbous (earthshine), full moon (bright opaque disc, loca
 ashen OPAQUE calendar disc — never an empty slot, never moonlight), thin-cloud night (halo/corona).
 **Moon must be OPAQUE — no stars visible through the disc, in any phase.** Weather truth: `simWx=95&simPrecip=0`
 (must downgrade), `simWx=95&simPrecip=5` (thunder), `simWx=65&simPrecip=0` (downgrade), real-time live (source =
-current, not forecast). **Live motion (`?debugMotion=1`): a real 15–60s watch — clouds drift/morph, stars
+current, not forecast). **Live motion (`&debugMotion=1`): a real 15–60s watch — clouds drift/morph, stars
 scintillate, sky breathes; cloud Δ 10s ≫ 0. "No visible motion in normal live view" is a FAIL (do NOT trust the
-qaState hash).** Optics: force each via `?debugOptic=` and confirm it rings the **visible** sun. Accessibility:
-`prefers-reduced-motion` freezes motion by default; `?motion=full` overrides. Layout: footer visible + header
+qaState hash).** Optics: use the six supported forces with suitable solar/lunar scene inputs; solar effects register to the **visible** sun, and lunar effects retain physical eligibility. Accessibility:
+`prefers-reduced-motion` freezes motion by default; `&motion=full` overrides. Layout: footer visible + header
 buckle cut-out (no strap through the buckle) + readability in every scene. Dawn: near-Fajr brightening comes only
 from the real twilight sky (no painted band/cone), Fajr clear on the arc.

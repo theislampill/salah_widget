@@ -45,7 +45,7 @@ close N001/N002/N003 or authorize merge/deployment.
   layers/radius/alpha **+ disc opacity/occlusion (no stars through)**, buckle cut-out vs strap, rain origin vs
   cloud columns) and reports numbers + crops.
 - **Live-motion auditor** — proves the default real-time widget actually animates over 15–60s (cloud drift/morph,
-  star scintillation, sky breathing) via `?debugMotion=1` Δ / a clip / a centroid-drift probe. **Must NOT cite the
+  star scintillation, sky breathing) via `&debugMotion=1` Δ / a clip / a centroid-drift probe. **Must NOT cite the
   `qaState().clouds.hash` as motion evidence** (it flips on sub-pixel change — it produced false PASS reports).
 - **Atmospheric-optics researcher** — supplies condition gates, geometry, colour orders, gradient recipes for each
   phenomenon before it is coded.
@@ -87,8 +87,8 @@ A cycle PASSES only when, with **screenshot/clip evidence**:
 - I — Stars beautiful/alive/varied; **not** a spinning or static image; anchors + their glints **scintillate**.
 - J — Header belt (buckle **cut-out**, no strap through it) + footer + prayer UI intact and readable in every scene.
 - **M0 (live motion) — the default real-time widget VISIBLY animates over 15–60s where the scene allows (clouds
-  drift/morph, stars scintillate, sky breathes). Proven by a real watch / `?debugMotion=1` Δ, NEVER the qaState
-  hash. Accessibility: `prefers-reduced-motion` reduces it by default; `?motion=full` overrides.**
+  drift/morph, stars scintillate, sky breathes). Proven by a real watch / `&debugMotion=1` Δ, NEVER the qaState
+  hash. Accessibility: `prefers-reduced-motion` reduces it by default; `&motion=full` overrides.**
 - K/L/M — DESIGN.md + AGENTS.md + HANDOFF.md current; high-value comments present; approximations stated honestly.
 
 ## Evidence requirements (per cycle)
@@ -105,7 +105,7 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
 ## Forbidden regressions (instant FAIL)
 
 - **No visible motion in normal live real-time view** (a static "wallpaper" sky). Verify with a real 15–60s watch
-  / `?debugMotion=1` 10s–60s Δ — **NOT** the `qaState().clouds.hash` (it flips on sub-pixel change and lies).
+  / `&debugMotion=1` 10s–60s Δ — **NOT** the `qaState().clouds.hash` (it flips on sub-pixel change and lies).
 - The **moon rendered transparent** — stars visible *through* the disc, in ANY phase. The Moon is an opaque body.
 - An **empty moon slot / moonless normal night.** A new/below-horizon moon must still show a faint **ashen OPAQUE
   calendar disc** (no moonlight) — never blank sky, never a "new moon invisible" rule.
@@ -142,6 +142,36 @@ Do not commit or push unless the user explicitly asks. When asked: commit the **
 `Co-Authored-By` line.
 
 ## Running / debugging common scenarios
+
+Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them.
+
+Real-time motion diagnostic:
+
+```text
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1
+```
+
+Full-motion override (the normal default respects reduced motion):
+
+```text
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&debugMotion=1&motion=full
+```
+
+Solar noon halo diagnostic:
+
+```text
+index.html#lat=24.47&lon=39.61&label=Madinah&method=4&simTime=12:30&debugOptic=halo
+```
+
+Query-only negative control: these flags are not read from before #.
+
+```text
+index.html?debugMotion=1&motion=full#lat=24.47&lon=39.61
+```
+
+simTime without timeScale freezes the clock-driven scene. Use the real-time recipe above for a 15–60 second motion check. Flag activation alone does not prove visible motion or correct optical pixels.
+
+Lunar force checks require an eligible night Moon. Near-new, below-horizon, daylight and unavailable-surface cases cannot gain moonlight from a diagnostic flag. Retain the physical scene inputs and crops for optics, and the real 15–60 second watch/clip/delta for motion; never use `qaState().clouds.hash` as motion proof.
 
 Serve the folder statically and open `index.html#lat=24.47&lon=39.61&label=Madinah&method=4`.
 
