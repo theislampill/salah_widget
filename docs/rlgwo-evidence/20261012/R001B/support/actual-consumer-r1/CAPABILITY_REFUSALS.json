@@ -1,0 +1,59 @@
+{
+  "schema": "rlgwo-owned-computer-use-capability-refusal/1",
+  "worker": "/root/r0010_isolated_release_path_r1",
+  "atUtc": "2026-10-12T14:10:55.627573+00:00",
+  "evidenceClass": "AUTHOR_RECORDED_EXACT_TOOL_CALLS_AND_RETURNS_FROM_CURRENT_CONVERSATION; NOT_PAGE_OR_PIXEL_PROOF",
+  "admission": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\r001b-whole-delivery-review-20261012-r1\\PUBLIC_CAPTURE_ADMISSION.json",
+    "bytes": 1531,
+    "sha256": "2b8df6ec2a0d0adac37b770ca88a9d38b273d050d0d5a558ac8e3e702a7ffdbd"
+  },
+  "calls": [
+    {
+      "sequence": 1,
+      "tool": "mcp__cua_repl.js",
+      "code": "await cua.getState();",
+      "return": {
+        "apps": [],
+        "browsers": []
+      }
+    },
+    {
+      "sequence": 2,
+      "tool": "mcp__cua_repl.js",
+      "code": "var r001bBrowser = await cua.getBrowser({url:'https://github.com/theislampill/salah_widget/blob/78c54632ce85f5d1738d29db67f7b355a784b82f/README.md'});",
+      "returnLiteral": "No browser is available"
+    },
+    {
+      "sequence": 3,
+      "tool": "mcp__cua_repl.js",
+      "code": "var r001bTab = await cua.createBrowserTab('chrome','https://github.com/theislampill/salah_widget/blob/78c54632ce85f5d1738d29db67f7b355a784b82f/README.md',{sessionName:'📄 R001B'});",
+      "returnLiteral": "Browser is not available: chrome"
+    },
+    {
+      "sequence": 4,
+      "tool": "mcp__cua_repl.js",
+      "code": "var r001bIab = await cua.createBrowserTab('iab','https://github.com/theislampill/salah_widget/blob/78c54632ce85f5d1738d29db67f7b355a784b82f/README.md',{visible:true});",
+      "returnLiteral": "Browser is not available: iab"
+    },
+    {
+      "sequence": 5,
+      "tool": "mcp__cua_repl.js",
+      "code": "await cua.getState();",
+      "return": {
+        "apps": [],
+        "browsers": []
+      }
+    }
+  ],
+  "nativeComputerAPIs": "Explicitly disabled by current tool instructions",
+  "result": "STOPPED_CHILD_CAPABILITY_UNAVAILABLE_BEFORE_PAGE_ACQUISITION",
+  "browserNativeStarted": false,
+  "returnedTabHandles": [],
+  "returnedSessionHandles": [],
+  "screenshots": [],
+  "actualPageState": null,
+  "newHarnessOrProxy": false,
+  "additionalChildRetryAllowed": false,
+  "rootDirection": "Root confirmed its retained browserID2 is available with empty tabs and instructed no child retry; reclaim the same A10 lease and perform original direct public capture."
+}

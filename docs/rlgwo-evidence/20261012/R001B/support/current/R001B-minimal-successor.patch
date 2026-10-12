@@ -1,0 +1,27 @@
+--- a/README.md
++++ b/README.md
+@@ -4,7 +4,7 @@
+ `<iframe>` — built for [TablissNG](https://github.com/BookCatKid/TablissNG) new-tab
+ dashboards, but works in Notion, a personal site, or anywhere else.
+ 
+-Static delivery, no server runtime or tracking. Configuration comes from the URL;
++Static delivery, with saved configuration in browser storage and service requests described below. Configuration comes from the URL;
+ prayer times come from the free [Aladhan API](https://aladhan.com/prayer-times-api).
+ This **CP9 integration candidate is not the deployed main version**. It adds an
+ admitted star catalogue and physical sky in an optional worker while preserving
+--- a/tests/rlgwo-docs-contract.cjs
++++ b/tests/rlgwo-docs-contract.cjs
+@@ -403,6 +403,13 @@
+       assert(!sources['README.md'].includes('no tracking'), 'remove unsupported blanket claim');
+       assert(!privacy.includes('stores nothing about you on any server'));
+     });
++    await check('docs: README privacy whole-document storage consistency', () => {
++      const readme = sources['README.md'];
++      assert(!/stores nothing about you|does no tracking|no tracking/i.test(readme), 'whole README retains an unsupported blanket privacy claim');
++      assert(readme.includes("Saved configuration uses this browser's storage."), 'keep local-storage disclosure');
++      assert(readme.includes('Provider retention or handling is not established by this widget-source description.'), 'keep provider-policy uncertainty');
++      assert(readme.includes('salah_widget:config:v1') && readme.includes('does not erase prayer/weather caches or data held by external providers'), 'keep exact Reset scope');
++    });
+     await check('docs: builder privacy recipients, details link and host guidance', () => {
+       const note = sources['builder.html'].match(/<p class="note"><strong>Self-configuring embeds &amp; privacy:<\/strong>[\s\S]*?<\/p>/)?.[0];
+       assert(note, 'existing privacy paragraph');

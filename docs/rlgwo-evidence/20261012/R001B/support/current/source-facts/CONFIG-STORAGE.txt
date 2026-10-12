@@ -1,0 +1,42 @@
+  // ---- localStorage (every access wrapped; never throws to the caller) -------
+  // Optional Storage-like input keeps characterization tests off the viewer's origin.
+  // Resolve the default getter inside each try: even accessing localStorage may throw.
+  function storageAvailable(storage) {
+    try {
+      var store = storage === undefined ? root.localStorage : storage;
+      var k = "__sw_probe__";
+      store.setItem(k, "1"); store.removeItem(k);
+      return { ok: true };
+    } catch (e) { return { ok: false, error: (e && e.name) || "error" }; }
+  }
+  function loadLocal(storage) {
+    try {
+      var store = storage === undefined ? root.localStorage : storage;
+      var raw = store.getItem(KEY);
+      if (!raw) return null;
+      var j = JSON.parse(raw);
+      if (!j || j.v !== 1) return null;            // version gate (future migrations)
+      var c = normalize(j);
+      if (!validate(c).ok) return null;            // corrupt/partial → ignore (fall through to detect)
+      c.origin = c.origin || c.source;             // preserve acquisition origin independently of the storage marker
+      c.source = "localStorage"; c.savedAt = numOrNull(j.savedAt);
+      return c;
+    } catch (e) { return null; }
+  }
+  function saveLocal(cfg, storage) {
+    try {
+      var store = storage === undefined ? root.localStorage : storage;
+      var c = normalize(cfg); c.v = 1; c.savedAt = Date.now();
+      // Old readers derive their pin state from source and ignore fix age. Keep
+      // private acquisition evidence, but let them read a configured site.
+      if (c.source === "browser-geolocation" || c.origin === "browser-geolocation") {
+        c.origin = c.origin || c.source; c.source = "manual";
+      }
+      store.setItem(KEY, JSON.stringify(c));
+      return { ok: true, savedAt: c.savedAt };
+    } catch (e) { return { ok: false, error: (e && e.name) || "error" }; }
+  }
+  function clearLocal(storage) {
+    try { var store = storage === undefined ? root.localStorage : storage; store.removeItem(KEY); return { ok: true }; }
+    catch (e) { return { ok: false, error: (e && e.name) || "error" }; }
+  }

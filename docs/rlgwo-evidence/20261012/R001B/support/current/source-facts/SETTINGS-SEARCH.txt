@@ -1,0 +1,10 @@
+// forward-geocode search on the location field (same shared SalahConfig.geocodeSearch as the builder):
+// type a place/postcode + Enter → search → fill lat/lon; multiple matches cycle on Enter.
+async function _runSetSearch(q){
+  const owner=_captureSetLookup(), bias=_setHomeCC;
+  _setStatus("Searching…");
+  let cands=[];
+  try{ if(window.SalahConfig) cands=await SalahConfig.geocodeSearch(q,{homeCC:bias}); }catch(e){}
+  if(!_ownsSetLookup(owner)) return;
+  if(!cands.length){ _setCands=[]; _setStatus("Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for browser location.",true); return; }
+  _setCands=cands; _setCandIdx=0; _setCandOwner={...owner,label:_byId("set-label").value}; _showSetCand();

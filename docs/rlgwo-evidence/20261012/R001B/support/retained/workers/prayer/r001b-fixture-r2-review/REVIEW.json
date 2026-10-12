@@ -1,0 +1,199 @@
+{
+  "schema": "r001b-r2-independent-fixture-review/1",
+  "status": "PASS_FIXTURE_EXIT_ONLY",
+  "completedUtc": "2026-10-09T08:22:59.683351+00:00",
+  "nodeId": "R001B-SCOPED-FIXTURE",
+  "candidateFixtureSha256": "0163ebdb5a876158e0e1830ce901ee56491be4a3c4e200eca91a837c54f55d86",
+  "specRef": "21e7a84365fae37a86cae5c7d5e41008c0adc53f",
+  "sourceRef": "f0647b44e10c9ce4f80895b52861893c347512fd",
+  "immutableNode": {
+    "id": "R001B-SCOPED-FIXTURE",
+    "issueObligations": [
+      "R001B:27-01",
+      "R001B:27-02",
+      "R001B:27-03",
+      "R001B:27-04",
+      "R001B:27-05",
+      "R001B:27-06",
+      "R001B:27-07",
+      "R001B:27-08",
+      "R001B:27-09",
+      "R001B:27-12"
+    ],
+    "priority": "P2",
+    "kind": "fixture",
+    "owner": "shared documentation fixture integrator",
+    "scope": "Add proposed R001B/R001C owner-case scope reporting while preserving default runner; current accepted-source rows appear as explicit reuse, changed docs execute their scoped assertions.",
+    "sourceRevision": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "inputs": [
+      {
+        "id": "doc-contract-cli/v1",
+        "contract": "Existing ref/source-only runner and case ledger; no scope flag yet",
+        "status": "SATISFIED",
+        "evidence": [
+          "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/rlgwo-docs-contract.cjs",
+          "https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/docs-contract-primary.json"
+        ]
+      },
+      {
+        "id": "reconciled-execution-target/v1",
+        "contract": "Exact current source/spec/contract drift and pending-work/resource ledger; only affected proof invalidated."
+      }
+    ],
+    "outputs": [
+      {
+        "id": "r001b-doc-scope/v1",
+        "contract": "Reviewed --scope=R001B|R001C case ledger/default preservation; semantic final doc assertions",
+        "artifact": "tests/rlgwo-docs-contract.cjs"
+      }
+    ],
+    "entryCriteria": [
+      "No changes to product source or asserted thresholds; coordinate R001C VM-fixture hunk"
+    ],
+    "exitCriteria": [
+      "Each owner mandatory row maps selected assertion/reuse/render/public gate; default all-case behavior unchanged; no hiding failure"
+    ],
+    "tests": [
+      "PROPOSED scoped command after implementation: node tests/rlgwo-docs-contract.cjs . --ref=<FINAL_COMMIT> --scope=R001B; not current syntax"
+    ],
+    "resources": [
+      "single-documentation-fixture-writer"
+    ],
+    "sharedFiles": [
+      "tests/rlgwo-docs-contract.cjs"
+    ],
+    "estimate": {
+      "activeHours": [
+        0.75,
+        1.5
+      ],
+      "exclusiveMachineMinutes": [
+        3,
+        8
+      ],
+      "confidence": "medium",
+      "basis": "Small CLI/filter/reporting hunk, case ledger review; not a broad test framework"
+    },
+    "status": "WAITING_INPUTS_AND_INTAKE",
+    "executionEligibility": "COLD_REVIEW_PENDING; satisfy entry criteria and any pending acquisition/authorization before execution",
+    "parentIssues": [
+      27
+    ],
+    "specification": {
+      "path": "REMAINING_RLGWOs/R001B.md",
+      "revision": 1
+    },
+    "author": "E",
+    "authoredPlanningStatus": "READY_PENDING_REVIEW",
+    "inputMetadataPath": "metadata/R001B.json"
+  },
+  "immutableDagSha256": "9ac372cfcce4df94ee0e678b907e66c131fe49f72cc55106143aa35dbdb0a6e7",
+  "criterionDispositions": [
+    {
+      "criterion": "Each owner mandatory row maps selected assertion/reuse/render/public gate",
+      "disposition": "PASS_MAPPING_ONLY",
+      "evidence": "MANDATORY_ROW_MAP.json",
+      "scope": "Same10 parents/11 acceptance cases;4 accepted rows preserved. Current selected assertion/reuse names match. Semantic/render/public gate completion is not claimed."
+    },
+    {
+      "criterion": "default all-case behavior unchanged",
+      "disposition": "PASS_BOUNDED_DISPATCH_AND_BYTE_PRESERVATION",
+      "evidence": "CONTROLS.json: defaultDispatch",
+      "scope": "Actual default check invokes failing and outside-owner callbacks;29 original static names retained; input/owner prefix and callback/threshold/report tail byte-identical to original reviewed draft. No default all-owner campaign replay."
+    },
+    {
+      "criterion": "no hiding failure",
+      "disposition": "PASS_REPAIRED_BINDING_ADMISSION",
+      "evidence": "CONTROLS.json: admissionCases and parserControls",
+      "scope": "Changed-config complete/absent/partial controls reject; healthy partial maps reject exact affected cases; valid positive reuse preserved; direct parser missing bindings fail."
+    }
+  ],
+  "findingDisposition": {
+    "id": "R001B-REUSE-BINDINGS",
+    "status": "RESOLVED_IN_REVIEWED_R2_BYTES",
+    "originalReviewRetained": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\r001b-fixture-review\\REVIEW.json",
+    "originalStatus": "FAIL_EXIT_NO_HIDDEN_FAILURE",
+    "repair": "Per-case exact required digest-map keys, valid callback/digest, donor/receipt identity and unique accepted record are required before REUSED."
+  },
+  "checkedBehavior": {
+    "actualHealthyScope": {
+      "cases": 12,
+      "passed": 4,
+      "reused": 8,
+      "failed": 0
+    },
+    "changedConfigComplete": {
+      "cases": 12,
+      "passed": 4,
+      "reused": 0,
+      "failed": 8
+    },
+    "changedConfigAbsentBindings": {
+      "cases": 12,
+      "passed": 4,
+      "reused": 0,
+      "failed": 8
+    },
+    "changedConfigPartialBindings": {
+      "cases": 12,
+      "passed": 4,
+      "reused": 0,
+      "failed": 8
+    },
+    "healthyConfigPartialBindings": {
+      "cases": 12,
+      "passed": 4,
+      "reused": 5,
+      "failed": 3
+    },
+    "directOriginalChangedInputAssertionFailed": true,
+    "directParserAdmission": [
+      {
+        "label": "parser-complete",
+        "status": "REUSED"
+      },
+      {
+        "label": "parser-missing-digest",
+        "status": "FAIL"
+      },
+      {
+        "label": "parser-missing-helper",
+        "status": "FAIL"
+      }
+    ]
+  },
+  "remainingOwnFixtureExitPrerequisites": [],
+  "rootConsumptionBoundary": "Root alone integrates/reconciles the exact fixture output and final source/fixture identity. This return does not mutate its ledger or declare the issue complete.",
+  "stillSeparate": [
+    "Final independent semantic/callsite documentation qualification",
+    "Actual rendered README/builder/details-target evidence",
+    "Exact-head release review/authority and required integration/delivery",
+    "New public/raw/rendered readbacks and final case artifacts/certificate",
+    "Separately authorized issue closure/readback"
+  ],
+  "effects": {
+    "writeOwner": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\prayer\\r001b-fixture-r2-review",
+    "sourceOrLedgerEdits": false,
+    "browserOrTerrainRuns": false,
+    "newAgents": false,
+    "allOwnerCampaignReplay": false,
+    "previousR1AndR001BSealsChanged": false,
+    "externalEffects": false
+  },
+  "evidence": [
+    "CONTROLS.json",
+    "command-receipt.json",
+    "healthy.stdout.jsonl",
+    "changed-config-complete.stdout.jsonl",
+    "changed-config-absent-bindings.stdout.jsonl",
+    "changed-config-partial-bindings.stdout.jsonl",
+    "healthy-config-partial-bindings.stdout.jsonl",
+    "INPUT_BINDING.json",
+    "MANDATORY_ROW_MAP.json"
+  ],
+  "limits": [
+    "No all-owner/R001C campaign replay",
+    "No browser, native, semantic/rendered docs, delivery/public or issue closure qualification",
+    "Only actual scoped runner and direct admission/default checks; injected source/manifest in VM memory"
+  ]
+}

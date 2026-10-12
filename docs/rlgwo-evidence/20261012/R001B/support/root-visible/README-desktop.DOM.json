@@ -1,0 +1,77 @@
+{
+  "clientWidth": 846,
+  "headers": [
+    "Request group",
+    "Trigger",
+    "Recipient",
+    "Sent fields and limits"
+  ],
+  "rect": {
+    "bottom": 2717.6146240234375,
+    "height": 2126.875,
+    "left": 369.6666870117187,
+    "right": 1216.0000610351562,
+    "top": 590.7396240234375,
+    "width": 846.3333740234375,
+    "x": 369.6666870117187,
+    "y": 590.7396240234375
+  },
+  "reset": "Reset scope. Reset removes only the saved widget configuration (salah_widget:config:v1); it does not erase prayer/weather caches or data held by external providers. Successful removal may re-detect the area and issue the coarse request above. Failed removal reports the failure and leaves the existing target usable.",
+  "rows": [
+    [
+      "Approximate area detection",
+      "Builder initialization; widget coarse-detection paths, including local/preferLocal resolution and Reset re-detection when the resolver requires it.",
+      "GeoJS https://get.geojs.io/v1/ip/geo.json, then https://ipinfo.io/json on failure.",
+      "Connection IP; neither URL has typed-query or coordinate parameters. IANA timezone detection uses local Intl. IP-derived area is approximate and is not precise permission or GPS."
+    ],
+    [
+      "Place/postcode search",
+      "Builder one-second debounce or Enter; widget Settings Enter. Trimmed queries shorter than 2 make no request.",
+      "Nominatim https://nominatim.openstreetmap.org/search",
+      "q contains the trimmed query; format=jsonv2, addressdetails=1, limit=5. countrycodes is the known home country only for a query containing a digit; alphabetic London has no digit-country bias."
+    ],
+    [
+      "Canadian-style prefix assist",
+      "Whitespace removed from a query with a leading letter-digit-letter pattern; in addition to Nominatim.",
+      "Zippopotam https://api.zippopotam.us/ca/<FSA>",
+      "First 3 matched characters, uppercased: M5V2T6 → /ca/M5V. No complete postcode or widget coordinates are appended. This is a prefix test, not complete-postcode validation; malformed longer queries with that prefix also trigger it."
+    ],
+    [
+      "Builder coordinate reverse lookup",
+      "Eligible coordinate edits after 700 ms debounce, or permission-granted builder location acquisition. Stale/non-numeric coordinates and both automatic label/method controls off produce no request.",
+      "BigDataCloud https://api.bigdatacloud.net/data/reverse-geocode-client",
+      "latitude, longitude, localityLanguage=en, e.g. 51.5/-0.12. This is the builder caller; in-widget browser location does not invoke builder reverse geocoding."
+    ],
+    [
+      "Prayer requests",
+      "Eligible date-specific prayer acquisition, subject to existing cache/currentness rules.",
+      "Aladhan https://api.aladhan.com/v1/timings/<date>",
+      "latitude, longitude, method, school; requested date in the path."
+    ],
+    [
+      "Weather requests",
+      "Eligible active current/hourly acquisition, subject to cache, simulation and currentness guards.",
+      "Open-Meteo https://api.open-meteo.com/v1/forecast",
+      "latitude, longitude, timezone, temperature_unit (celsius/fahrenheit), wind_speed_unit=ms, forecast_days=3, and the current/hourly field selections listed below. These requests do not establish direct local precipitation observation."
+    ],
+    [
+      "Radar evidence requests",
+      "Eligible manifest, then returned latest-past frame/tile under existing weather guards.",
+      "RainViewer https://api.rainviewer.com/public/weather-maps.json and returned tile host/frame.",
+      "Returned host + frame path + /256/<z>/<x>/<y>/2/1_1.png; x/y indices derive from coordinates and disclose a location-derived area. The manifest has no coordinate query. Image alpha is not millimetres or direct local observation."
+    ],
+    [
+      "Font loading",
+      "Page stylesheet/font loading, subject to cache/network policy.",
+      "Google Fonts stylesheet fonts.googleapis.com and font resources fonts.gstatic.com.",
+      "Family/style/weight stylesheet request and returned font-resource URLs; no widget location/search fields in these source URLs. Cache-dependent declarations do not mean every font is fetched on every load."
+    ]
+  ],
+  "scrollWidth": 878,
+  "url": "https://github.com/theislampill/salah_widget/blob/78c54632ce85f5d1738d29db67f7b355a784b82f/README.md#auto-detect-precise-location--privacy",
+  "viewport": {
+    "dpr": 1.0000000298023224,
+    "height": 900,
+    "width": 1280
+  }
+}

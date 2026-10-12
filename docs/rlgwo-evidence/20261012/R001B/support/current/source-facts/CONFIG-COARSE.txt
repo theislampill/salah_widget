@@ -1,0 +1,48 @@
+  // taken from the device (Intl) first — the honest "where the clock is" — falling
+  // back to the provider's zone. Returns a normalized coarse-ip config or {ok:false}.
+  function detectTz() {
+    try { return (Intl.DateTimeFormat().resolvedOptions().timeZone) || ""; } catch (e) { return ""; }
+  }
+  function methodForCC(cc) { cc = String(cc || "").toUpperCase(); return (cc === "US" || cc === "CA" || cc === "MX") ? "2" : "4"; }
+  function unitsForCC(cc) { return String(cc || "").toUpperCase() === "US" ? "f" : "c"; }   // US → imperial (°F); everywhere else → metric (°C)
+  function coarseDetect(opts) {
+    opts = opts || {};
+    var timeoutMs = opts.timeoutMs || 6000, tzIntl = detectTz();
+    var providers = [
+      { name: "GeoJS", url: "https://get.geojs.io/v1/ip/geo.json", parse: function (j) {
+          return { lat: parseFloat(j.latitude), lon: parseFloat(j.longitude),
+            label: j.city || j.region || j.country || "",   // concise: the small header shows just the locality
+            area: [j.city, j.region, j.country].filter(Boolean).join(", "),
+            tz: j.timezone || "", cc: j.country_code, accuracy: j.accuracy != null ? +j.accuracy : null }; } },
+      { name: "ipinfo", url: "https://ipinfo.io/json", parse: function (j) {
+          var loc = String(j.loc || "").split(",");
+          return { lat: parseFloat(loc[0]), lon: parseFloat(loc[1]),
+            label: j.city || j.region || j.country || "",
+            area: [j.city, j.region, j.country].filter(Boolean).join(", "),
+            tz: j.timezone || "", cc: j.country, accuracy: null }; } }
+    ];
+    return (function next(i) {
+      if (i >= providers.length) return Promise.resolve({ ok: false, source: "coarse-ip", status: "failed" });
+      var p = providers[i], ac = new AbortController(), to;
+      // Headers are not completion: the deadline owns the whole body/parse wait.
+      // Reject as well as abort so an abort-ignorant body cannot hold fallback.
+      var deadline = new Promise(function (_, reject) {
+        to = setTimeout(function () { reject(new Error("coarse location timeout")); ac.abort(); }, timeoutMs);
+      });
+      var work = Promise.resolve().then(function () {
+        return fetch(p.url, { signal: ac.signal, mode: "cors", referrerPolicy: "no-referrer", cache: "no-store" });
+      }).then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+        .then(function (j) {
+          var d = p.parse(j);
+          if (d.lat == null || d.lon == null || isNaN(d.lat) || isNaN(d.lon)) throw new Error("no coords");
+          var cfg = normalize({ lat: d.lat, lon: d.lon, label: d.label || "",
+            tz: tzIntl || d.tz || "", method: methodForCC(d.cc), units: unitsForCC(d.cc), source: "coarse-ip",
+            detectProvider:p.name, area:d.area || d.label || "" });
+          cfg.source = "coarse-ip"; cfg.detectProvider = p.name; cfg.accuracy = d.accuracy; cfg.area = d.area || cfg.label;
+          return { ok: true, cfg: cfg, source: "coarse-ip", provider: p.name, status: "ok" };
+        });
+      // The race handles late work without another fallback or adoption effect.
+      return Promise.race([work, deadline]).then(function (result) { clearTimeout(to); return result; },
+        function () { clearTimeout(to); return next(i + 1); });
+    })(0);
+  }

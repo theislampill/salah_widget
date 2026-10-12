@@ -1,0 +1,226 @@
+{
+  "schema": "hr-s01-minimal-private-correction-return/1",
+  "atUtc": "2026-10-09T13:39:54.949722+00:00",
+  "status": "RETURNED_SOURCE_CONTROLS_PASS_PENDING_INDEPENDENT_REVIEW_AND_ROOT_COALESCING",
+  "author": "/root/settings_docs",
+  "finding": "HR-S01",
+  "node": "R001B-DOCS",
+  "scope": "One Credits phrase and one R001B-selected whole-README doc guard only",
+  "authority": {
+    "finding": {
+      "path": "authority/FINDINGS.json",
+      "bytes": 6658,
+      "sha256": "2c1fbf24cb24f9919dc5b30ceb20c5bd0b9c0fa8149a6b9fc93d76fbdde6bec5"
+    },
+    "literalNode": {
+      "path": "authority/submitted-context/batch05/nodes/R001B-DOCS.json",
+      "bytes": 13270,
+      "sha256": "9185c2bc38743bce8c0308a70773ad2ec632830c06ead2b6df22c8faeee85677"
+    },
+    "originalRedGreenReview": {
+      "path": "authority/receipts/batch05/privacy-consistency.json",
+      "bytes": 1394,
+      "sha256": "0206699ffe17bf9fd15059818362bec23843ec2db341b211e4d2ddc1e85defb6"
+    },
+    "proManifest": {
+      "path": "authority/PRO_MANIFEST.json",
+      "bytes": 40310,
+      "sha256": "3052cd334c7ab4427c94518dfc07774c186c8e26e9172f6873414a7e489c368f"
+    }
+  },
+  "beforeAfter": {
+    "README": {
+      "before": {
+        "path": "before/input/README.md",
+        "bytes": 18727,
+        "sha256": "2b3f565f67f0897b26187b87715c63c94629029006d0cc90d83ca6ed9b2a08ad"
+      },
+      "after": {
+        "path": "candidate/README.md",
+        "bytes": 18813,
+        "sha256": "18cb06d89562eab513b7b3626b4b59f7d58fa2bb28470858eaf0ee00bb4f5465"
+      }
+    },
+    "runner": {
+      "before": {
+        "path": "before/tests/rlgwo-docs-contract.cjs",
+        "bytes": 39561,
+        "sha256": "0163ebdb5a876158e0e1830ce901ee56491be4a3c4e200eca91a837c54f55d86"
+      },
+      "after": {
+        "path": "candidate/tests/rlgwo-docs-contract.cjs",
+        "bytes": 40290,
+        "sha256": "ef41fe13a42e781c3ab1715fe5c530284aea75ab55e310b33fdf76f1f0042017"
+      }
+    },
+    "clauses": {
+      "path": "CLAUSES.json",
+      "bytes": 6790,
+      "sha256": "e012c7c593098334e473cff4d15c83efeaa7db54419baafc29ff64e64533e980"
+    }
+  },
+  "patches": [
+    {
+      "path": "patches/README-credits.patch",
+      "bytes": 501,
+      "sha256": "0a33ab9c78f2c828a5d3c0f2f649732c9c2a25b711b33965347068618d0a52be"
+    },
+    {
+      "path": "patches/R001B-whole-README-guard.patch",
+      "bytes": 1514,
+      "sha256": "051752576289db1290fe5e9183210059e63a43734ff34a2551f61b4c4dad3c5c"
+    },
+    {
+      "path": "patches/privacy-doc-correction.patch",
+      "bytes": 2015,
+      "sha256": "c8ae0d54ac0919176a89a3538dd74f682afa45ca8d512cf4ae76e1119d6fe7e3"
+    }
+  ],
+  "protectedPreservation": {
+    "acceptedPrivacyRowsUnchanged": true,
+    "storageRuntimePolicyUnchanged": true,
+    "allOldFixtureBytesPreservedWhenNewBlockRemoved": true,
+    "sourceDonorCallbackHelperParserExactKeysSchemaReceiptUniquenessUnchanged": true,
+    "old455aFixtureCopiedOrUsed": false,
+    "R001CSelectedRowsAndForceLedgerExact": true,
+    "sourceInputChanges": []
+  },
+  "verification": {
+    "boundedAssertions": 35,
+    "scopedNodeRuns": 8,
+    "allIntendedOutcomesPass": true,
+    "outcomes": {
+      "old-scoped-false-green": {
+        "cases": 12,
+        "passed": 4,
+        "reused": 8,
+        "failed": 0
+      },
+      "new-guard-original-credits-RED": {
+        "cases": 13,
+        "passed": 4,
+        "reused": 8,
+        "failed": 1
+      },
+      "new-guard-corrected-credits-GREEN": {
+        "cases": 13,
+        "passed": 5,
+        "reused": 8,
+        "failed": 0
+      },
+      "old-R001C": {
+        "cases": 38,
+        "passed": 37,
+        "reused": 1,
+        "failed": 0
+      },
+      "new-R001C": {
+        "cases": 38,
+        "passed": 37,
+        "reused": 1,
+        "failed": 0
+      },
+      "whole-doc-outside-section-negative": {
+        "cases": 13,
+        "passed": 4,
+        "reused": 8,
+        "failed": 1
+      },
+      "provider-uncertainty-negative": {
+        "cases": 13,
+        "passed": 4,
+        "reused": 8,
+        "failed": 1
+      },
+      "mandatory-reuse-bindings-negative": {
+        "cases": 13,
+        "passed": 5,
+        "reused": 0,
+        "failed": 8
+      }
+    },
+    "controls": {
+      "path": "CONTROLS.json",
+      "bytes": 215368,
+      "sha256": "24d9290eaf3162a2de36eb145ed9fe80be5cb501ec987050cdba86542ad9a009"
+    },
+    "run": {
+      "path": "CONTROL_RUN.json",
+      "bytes": 357,
+      "sha256": "d84b3ab59b4fd107a462cfdb7139a7534fe26062842b59d490e66dc755dd26bb"
+    },
+    "originalScopedFalseGreenRetained": true,
+    "originalWholeDocRedRetained": true,
+    "incompleteReuseStillFailsAllEight": true,
+    "existingSourceReceiptsRemainReusedNotFreshPass": true,
+    "candidateReadmeMatchesProBoundedExample": true
+  },
+  "rootApplicability": {
+    "preimage": {
+      "path": "before/ROOT/README.md",
+      "bytes": 13808,
+      "sha256": "b0a763d82e2aa82e402381f6bafd134ededa55490730d7b116de4af1f097f8d4"
+    },
+    "creditsOnlyPreview": {
+      "path": "candidate/ROOT-README-CREDITS-ONLY.md",
+      "bytes": 13894,
+      "sha256": "de3be104261d15f9cb3dc6ee4e16ba4bb17fc5ac2d40e33c062ae26fd55e86d1"
+    },
+    "focusedHunkApplies": true,
+    "everyOtherBytePreserved": true,
+    "wholeRootPrivacyPass": false,
+    "dependency": "Root coalesces already accepted disclosure and other current README additions before final whole-document review."
+  },
+  "sourceMap": {
+    "path": "SOURCE_MAP.json",
+    "bytes": 1925,
+    "sha256": "d6587b9055d3319c9cb29d8bc346e34ad842d108c379fd3b7ff6427b1f9bb61b"
+  },
+  "commands": {
+    "boundedChecks": [
+      "C:/Users/theis/AppData/Local/Programs/Python/Python311/python.exe",
+      "-I",
+      "-S",
+      "-B",
+      "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\settings_docs\\pro-privacy-doc-correction-r1\\checks.py"
+    ],
+    "fixedR001B": [
+      "C:\\Users\\theis\\AppData\\Local\\OpenAI\\Codex\\bin\\node.exe",
+      "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\settings_docs\\pro-privacy-doc-correction-r1\\candidate\\tests\\rlgwo-docs-contract.cjs",
+      "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\settings_docs\\pro-privacy-doc-correction-r1\\candidate",
+      "--scope=R001B",
+      "--reuse-manifest=C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\settings_docs\\pro-privacy-doc-correction-r1\\input\\reuse.json"
+    ],
+    "fixedR001C": [
+      "C:\\Users\\theis\\AppData\\Local\\OpenAI\\Codex\\bin\\node.exe",
+      "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\settings_docs\\pro-privacy-doc-correction-r1\\candidate\\tests\\rlgwo-docs-contract.cjs",
+      "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\settings_docs\\pro-privacy-doc-correction-r1\\candidate",
+      "--scope=R001C",
+      "--reuse-manifest=C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\settings_docs\\pro-privacy-doc-correction-r1\\input\\reuse.json"
+    ],
+    "replayPolicy": "Logs are immutable source evidence. Use a fresh private copy if re-executing checks; do not overwrite retained logs."
+  },
+  "nextRootOperation": "Independently review the exact Credits hunk and append-only current strengthened fixture delta; root alone coalesces current README and rechecks final whole-doc R001B with strict complete reuse/source bindings and retained sibling scopes.",
+  "limits": [
+    "This is a private source/VM return, not integrated final ROOT documentation or delivered/public proof.",
+    "No runtime storage, host/geolocation permission, browser rendering, provider policy or transmission qualification is supplied.",
+    "Current ROOT Credits-only preview is applicability evidence and is not a whole-document privacy PASS.",
+    "This return does not supersede other semantic decisions or change storage/cache policy."
+  ],
+  "effects": {
+    "nativeRuns": 0,
+    "browserRuns": 0,
+    "buildRuns": 0,
+    "Git": false,
+    "sharedWrites": 0,
+    "ledgerWrites": 0,
+    "networkTransmission": false,
+    "GitHub": false,
+    "newAgents": 0
+  },
+  "independentlyApproved": false,
+  "rootIntegrated": false,
+  "nodeComplete": false,
+  "issueClosed": false,
+  "deliveredOrPublic": false
+}

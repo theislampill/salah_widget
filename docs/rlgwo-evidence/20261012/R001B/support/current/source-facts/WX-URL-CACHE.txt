@@ -1,0 +1,29 @@
+async function fetchWeather(){
+  if(SIM.wx!=null) return;                 // simulated weather: never overwrite
+  if(!usableWeatherCoordinates(lat,lon)||wxBusy) return;
+  const now=Date.now();
+  if(selectedWeather(now) && weatherTrack && now-lastWxAt < _WX_CURRENT_TTL) return;   // need the hourly TRACK too — a fresh current-weather cache must not block timeScale demos
+  if(now-lastWxTry < 60*1000) return;
+  const op=beginRequest("weather"); if(!op) return;
+  const captured={lat:op.lat,lon:op.lon,units:op.units,zone:op.requestZone,cacheKey:op.weatherCacheKey,
+    target:captureWeatherTarget(op.generation,op.lat,op.lon)};
+  const a=beginAttempt(op,_WX_BODY_WAIT); if(!a){ finishRequest(op); return; }
+  lastWxTry=now; wxBusy=true;
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;
+  try{
+    const result=await wxFetchJson(op,a,u); if(!result.ok||!attemptEligible(op,a)) return;
+    const j=result.data;
+    if(!j||typeof j!=="object"||Array.isArray(j)||j.error===true) return;
+    if(!wxResponseZoneMatches(j,captured.zone)){
+      wxAttemptState(op,a,"unavailable","response timezone unavailable or contradicts captured request"); return;
+    }
+    const ctx={...captured,retrievedAt:Date.now()}, current=wxUnitsMatch(j.current_units,ctx)?admitWeatherRecord(j.current,ctx):null;
+    const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);
+    if(!attemptEligible(op,a)) return;                     // includes delayed-timer absolute expiry after normalization
+    if((current||track)&&elevation!=null) siteElev=elevation;
+    if(current&&attemptEligible(op,a)&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
+      weather=current;
+      if(weatherEligibility(current,ctx.retrievedAt).eligible) lastWxAt=ctx.retrievedAt;
+      try{ if(attemptEligible(op,a)) localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}
+    }
+    if(track&&attemptEligible(op,a)) weatherTrack=track;

@@ -1,0 +1,30 @@
+async function fetchRadar(){
+  if(SIM.wx!=null || !usableWeatherCoordinates(lat,lon) || radarBusy) return;       // real mode only
+  const now=Date.now(); if(now-lastRadarAt < _RADAR_REFRESH) return;   // radar updates ~10 min
+  const op=beginRequest("radar"); if(!op) return;
+  const captured={lat:op.lat,lon:op.lon,target:captureWeatherTarget(op.generation,op.lat,op.lon)};
+  let a=beginAttempt(op,_RADAR_BODY_WAIT); if(!a){ finishRequest(op); return; }
+  lastRadarAt=now; radarBusy=true;
+  try{
+    const result=await wxFetchJson(op,a,"https://api.rainviewer.com/public/weather-maps.json");
+    if(!result.ok||!attemptEligible(op,a)) return;
+    const j=result.data, host=j&&j.host, past=j&&j.radar&&j.radar.past;
+    if(typeof host==="string"&&Array.isArray(past)&&past.length){
+      const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
+      if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
+      const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;
+      const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+      if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
+      const xt=Math.floor(fx), yt=Math.floor(fy);
+      const url=host+fr.path+"/256/"+z+"/"+xt+"/"+yt+"/2/1_1.png";
+      if(!attemptEligible(op,a)) return;
+      finishAttempt(op,a); a=beginAttempt(op,_RADAR_IMAGE_WAIT); if(!a) return;
+      const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
+      if(!image.ok||!attemptEligible(op,a)) return;
+      const retrievedAt=Date.now();
+      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt:fr.time*1000,
+        indexGeneratedAt:j.generated*1000,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
+    }
+  }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
+  finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }
+}

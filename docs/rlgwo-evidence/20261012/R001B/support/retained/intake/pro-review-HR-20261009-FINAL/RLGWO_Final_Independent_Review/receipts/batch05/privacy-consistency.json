@@ -1,0 +1,37 @@
+{
+  "finding": "HR-S01",
+  "priority": "P2",
+  "node": "R001B-DOCS",
+  "candidateReadmeSha256": "2b3f565f67f0897b26187b87715c63c94629029006d0cc90d83ca6ed9b2a08ad",
+  "witness": [
+    {
+      "line": 235,
+      "text": "direct browser requests to these APIs and stores nothing about you."
+    }
+  ],
+  "existingGuard": {
+    "file": "source/current-root/tests/rlgwo-docs-contract.cjs",
+    "line": 446,
+    "name": "docs composed: fix acquisition age and portable privacy survive saving",
+    "scopeClassification": "OTHER; not selected by scope R001B"
+  },
+  "originalScopedRunPassDoesNotProveWholeDocumentConsistency": true,
+  "cases": [
+    {
+      "case": "red",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "inputSha256": "2b3f565f67f0897b26187b87715c63c94629029006d0cc90d83ca6ed9b2a08ad",
+      "candidateWasEdited": false
+    },
+    {
+      "case": "illustrative-green",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "inputSha256": "18cb06d89562eab513b7b3626b4b59f7d58fa2bb28470858eaf0ee00bb4f5465",
+      "candidateWasEdited": false
+    }
+  ],
+  "boundedCorrection": "stores saved configuration and caches in browser storage, as described in the privacy and Reset sections above",
+  "qualification": "Documentation consistency only, not a newly demonstrated runtime data leak or provider-policy claim. Green is an illustrative one-phrase correction, not a delivered fix."
+}

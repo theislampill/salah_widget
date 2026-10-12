@@ -1,0 +1,120 @@
+{
+  "bodyWidth": 375,
+  "headers": [
+    {
+      "rect": {
+        "bottom": 440.5833549499512,
+        "height": 36.66666793823242,
+        "left": 33,
+        "right": 168.1875,
+        "top": 403.9166870117187,
+        "width": 135.1875,
+        "x": 33,
+        "y": 403.9166870117187
+      },
+      "text": "Request group"
+    },
+    {
+      "rect": {
+        "bottom": 440.5833549499512,
+        "height": 36.66666793823242,
+        "left": 168.1875,
+        "right": 322.8541717529297,
+        "top": 403.9166870117187,
+        "width": 154.6666717529297,
+        "x": 168.1875,
+        "y": 403.9166870117187
+      },
+      "text": "Trigger"
+    },
+    {
+      "rect": {
+        "bottom": 440.5833549499512,
+        "height": 36.66666793823242,
+        "left": 322.85418701171875,
+        "right": 674.4479370117188,
+        "top": 403.9166870117187,
+        "width": 351.59375,
+        "x": 322.85418701171875,
+        "y": 403.9166870117187
+      },
+      "text": "Recipient"
+    },
+    {
+      "rect": {
+        "bottom": 440.5833549499512,
+        "height": 36.66666793823242,
+        "left": 674.4479370117188,
+        "right": 909.875030517578,
+        "top": 403.9166870117187,
+        "width": 235.42709350585935,
+        "x": 674.4479370117188,
+        "y": 403.9166870117187
+      },
+      "text": "Sent fields and limits"
+    }
+  ],
+  "reset": "Reset scope. Reset removes only the saved widget configuration (salah_widget:config:v1); it does not erase prayer/weather caches or data held by external providers. Successful removal may re-detect the area and issue the coarse request above. Failed removal reports the failure and leaves the existing target usable.",
+  "rows": [
+    [
+      "Approximate area detection",
+      "Builder initialization; widget coarse-detection paths, including local/preferLocal resolution and Reset re-detection when the resolver requires it.",
+      "GeoJS https://get.geojs.io/v1/ip/geo.json, then https://ipinfo.io/json on failure.",
+      "Connection IP; neither URL has typed-query or coordinate parameters. IANA timezone detection uses local Intl. IP-derived area is approximate and is not precise permission or GPS."
+    ],
+    [
+      "Place/postcode search",
+      "Builder one-second debounce or Enter; widget Settings Enter. Trimmed queries shorter than 2 make no request.",
+      "Nominatim https://nominatim.openstreetmap.org/search",
+      "q contains the trimmed query; format=jsonv2, addressdetails=1, limit=5. countrycodes is the known home country only for a query containing a digit; alphabetic London has no digit-country bias."
+    ],
+    [
+      "Canadian-style prefix assist",
+      "Whitespace removed from a query with a leading letter-digit-letter pattern; in addition to Nominatim.",
+      "Zippopotam https://api.zippopotam.us/ca/<FSA>",
+      "First 3 matched characters, uppercased: M5V2T6 → /ca/M5V. No complete postcode or widget coordinates are appended. This is a prefix test, not complete-postcode validation; malformed longer queries with that prefix also trigger it."
+    ],
+    [
+      "Builder coordinate reverse lookup",
+      "Eligible coordinate edits after 700 ms debounce, or permission-granted builder location acquisition. Stale/non-numeric coordinates and both automatic label/method controls off produce no request.",
+      "BigDataCloud https://api.bigdatacloud.net/data/reverse-geocode-client",
+      "latitude, longitude, localityLanguage=en, e.g. 51.5/-0.12. This is the builder caller; in-widget browser location does not invoke builder reverse geocoding."
+    ],
+    [
+      "Prayer requests",
+      "Eligible date-specific prayer acquisition, subject to existing cache/currentness rules.",
+      "Aladhan https://api.aladhan.com/v1/timings/<date>",
+      "latitude, longitude, method, school; requested date in the path."
+    ],
+    [
+      "Weather requests",
+      "Eligible active current/hourly acquisition, subject to cache, simulation and currentness guards.",
+      "Open-Meteo https://api.open-meteo.com/v1/forecast",
+      "latitude, longitude, timezone, temperature_unit (celsius/fahrenheit), wind_speed_unit=ms, forecast_days=3, and the current/hourly field selections listed below. These requests do not establish direct local precipitation observation."
+    ],
+    [
+      "Radar evidence requests",
+      "Eligible manifest, then returned latest-past frame/tile under existing weather guards.",
+      "RainViewer https://api.rainviewer.com/public/weather-maps.json and returned tile host/frame.",
+      "Returned host + frame path + /256/<z>/<x>/<y>/2/1_1.png; x/y indices derive from coordinates and disclose a location-derived area. The manifest has no coordinate query. Image alpha is not millimetres or direct local observation."
+    ],
+    [
+      "Font loading",
+      "Page stylesheet/font loading, subject to cache/network policy.",
+      "Google Fonts stylesheet fonts.googleapis.com and font resources fonts.gstatic.com.",
+      "Family/style/weight stylesheet request and returned font-resource URLs; no widget location/search fields in these source URLs. Cache-dependent declarations do not mean every font is fetched on every load."
+    ]
+  ],
+  "table": {
+    "clientWidth": 309,
+    "overflowX": "auto",
+    "scrollLeft": 0,
+    "scrollWidth": 878
+  },
+  "url": "https://github.com/theislampill/salah_widget/blob/78c54632ce85f5d1738d29db67f7b355a784b82f/README.md#auto-detect-precise-location--privacy",
+  "viewport": {
+    "dpr": 1.0000000298023224,
+    "height": 844,
+    "width": 390
+  }
+}

@@ -1,0 +1,17 @@
+  function geocodeSearch(query, opts) {
+    opts = opts || {};
+    var q = String(query == null ? "" : query).trim();
+    if (q.length < 2) return Promise.resolve([]);
+    var homeCC = opts.homeCC || "";
+    var ac = new AbortController(), to = setTimeout(function () { ac.abort(); }, opts.timeoutMs || 8000);
+    var bias = (/\d/.test(q) && homeCC) ? ("&countrycodes=" + homeCC) : "";      // a digit ⇒ likely a postcode ⇒ keep it in the viewer's country
+    var bare = q.replace(/\s/g, ""), caFSA = /^[A-Za-z]\d[A-Za-z]/.test(bare) ? bare.slice(0, 3).toUpperCase() : null;
+    var jobs = [ fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5" + bias + "&q=" + encodeURIComponent(q), { signal: ac.signal })
+      .then(function (r) { return r.json(); }).then(_nomCands).catch(function () { return []; }) ];
+    if (caFSA) jobs.push( fetch("https://api.zippopotam.us/ca/" + caFSA, { signal: ac.signal })
+      .then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { var c = _zipCand(j); return c ? [c] : []; }).catch(function () { return []; }) );
+    return Promise.all(jobs).then(function (res) {
+      clearTimeout(to);
+      return _dedupeCands(res.reduce(function (a, b) { return a.concat(b); }, []));
+    }).catch(function () { clearTimeout(to); return []; });
+  }

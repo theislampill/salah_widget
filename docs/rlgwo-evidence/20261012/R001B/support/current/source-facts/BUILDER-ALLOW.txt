@@ -1,0 +1,8 @@
+function snippet(){
+  const allow = embedMode==="local" ? '\n  allow="geolocation"' : '';
+  return `<iframe\n  title="Prayer Times"\n  referrerpolicy="no-referrer"${allow}\n  src="${url()}"\n  style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden"\n  scrolling="no">\n</iframe>`;
+}
+function update(){
+  $("code").value=snippet();
+  $("pv").allow = embedMode==="local" ? "geolocation" : "";
+  $("pv").src=previewUrl();

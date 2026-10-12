@@ -1,0 +1,484 @@
+{
+  "assertions": [
+    {
+      "id": "intro",
+      "READMEClaimLines": [
+        7
+      ],
+      "sourceRegionIds": [
+        "CONFIG-STORAGE",
+        "PRAYER-URL-CACHE",
+        "WX-URL-CACHE"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Static delivery does not imply absence of browser saved configuration or external service requests."
+    },
+    {
+      "id": "privacy-disclaimer",
+      "READMEClaimLines": [
+        217
+      ],
+      "sourceRegionIds": [
+        "CONFIG-COARSE",
+        "CONFIG-SEARCH",
+        "PRAYER-URL-CACHE",
+        "WX-URL-CACHE",
+        "RADAR-URL",
+        "FONTS"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Disclosure describes request constructors/callers, not new transmissions or provider retention/handling. Connection IP is external-request context, not a newly measured leak."
+    },
+    {
+      "id": "approximate-area",
+      "READMEClaimLines": [
+        221
+      ],
+      "sourceRegionIds": [
+        "CONFIG-COARSE",
+        "RESET"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "GeoJS then ipinfo fallback have no typed-query/coordinate URL parameters; local Intl timezone and approximate area do not establish GPS or permission."
+    },
+    {
+      "id": "place-search",
+      "READMEClaimLines": [
+        222
+      ],
+      "sourceRegionIds": [
+        "CONFIG-SEARCH",
+        "BUILDER-SEARCH",
+        "SETTINGS-SEARCH"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Trimmed length<2 returns without requests; Nominatim q/format/addressdetails/limit and digit+homeCC countrycodes; builder1000ms/Enter and widget Enter callers."
+    },
+    {
+      "id": "canadian-prefix",
+      "READMEClaimLines": [
+        223
+      ],
+      "sourceRegionIds": [
+        "CONFIG-SEARCH"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Whitespace removed, leading letter-digit-letter triggers only uppercase first3 FSA plus Nominatim, including malformed longer strings. No full postcode/coordinates appended."
+    },
+    {
+      "id": "builder-reverse",
+      "READMEClaimLines": [
+        224
+      ],
+      "sourceRegionIds": [
+        "BUILDER-REVERSE",
+        "CONFIG-GEOLOCATION"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "700ms coordinate edits, ownership and numeric guards, both auto-controls off return; BigDataCloud lat/lon/localityLanguage=en; widget geolocation does not call builder reverse."
+    },
+    {
+      "id": "prayer",
+      "READMEClaimLines": [
+        225
+      ],
+      "sourceRegionIds": [
+        "PRAYER-URL-CACHE"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Eligible request pathdate and latitude/longitude/method/school; caches and adopted currentness are boundaries, not newly qualified behavior."
+    },
+    {
+      "id": "weather",
+      "READMEClaimLines": [
+        226
+      ],
+      "sourceRegionIds": [
+        "WX-URL-CACHE",
+        "WX-HOURLY"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Eligible simulation/currentness/caches guards and exact lat/lon/zone/unit/day/field constructor. No direct local observation claim."
+    },
+    {
+      "id": "radar",
+      "READMEClaimLines": [
+        227
+      ],
+      "sourceRegionIds": [
+        "RADAR-URL"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Coordinate-free manifest; returned latest-past host/frame with location-derived tile indices; uncalibrated alpha is not precipitation amounts/observation."
+    },
+    {
+      "id": "font",
+      "READMEClaimLines": [
+        228
+      ],
+      "sourceRegionIds": [
+        "FONTS"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Google stylesheet family/style/weight and gstatic declaration omit widget query/coordinates; declarations are cache/network conditional, not every-load transmission proof."
+    },
+    {
+      "id": "weather-current-fields",
+      "READMEClaimLines": [
+        233
+      ],
+      "sourceRegionIds": [
+        "WX-URL-CACHE"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Exact current-field sequence matches current URL constructor."
+    },
+    {
+      "id": "weather-hourly-fields",
+      "READMEClaimLines": [
+        234
+      ],
+      "sourceRegionIds": [
+        "WX-HOURLY"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Exact hourly-field sequence matches current _WX_HOURLY."
+    },
+    {
+      "id": "optional-browser-position",
+      "READMEClaimLines": [
+        237
+      ],
+      "sourceRegionIds": [
+        "CONFIG-GEOLOCATION",
+        "BUILDER-ALLOW"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "One-shot optional user gesture; reported accuracy or unknown, decimal precision is not accuracy; local allow is conditional on actual parent policy and grant."
+    },
+    {
+      "id": "acquisition-vs-save",
+      "READMEClaimLines": [
+        238
+      ],
+      "sourceRegionIds": [
+        "CONFIG-FIX",
+        "CONFIG-STORAGE"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Acquisition time/accuracy preserved apart from savedAt; future/nonpositive malformed evidence remains unknown, zero future allowance; portable target omits private fix history, not presence."
+    },
+    {
+      "id": "storage-outcome",
+      "READMEClaimLines": [
+        239
+      ],
+      "sourceRegionIds": [
+        "CONFIG-STORAGE",
+        "SESSION-SAVE"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Save failure still binds session target; retained persistence warning and measured write outcome, writable partition/lifetime conditional, no blanket partition failure."
+    },
+    {
+      "id": "reset-boundary",
+      "READMEClaimLines": [
+        240
+      ],
+      "sourceRegionIds": [
+        "CONFIG-KEY",
+        "CONFIG-STORAGE",
+        "RESET",
+        "PRAYER-URL-CACHE",
+        "WX-URL-CACHE"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Only config KEY removed; failure publishes result before return and leaves prior target; success may coarse re-detect. Caches/providers are not erased."
+    },
+    {
+      "id": "conditional-host",
+      "READMEClaimLines": [
+        241
+      ],
+      "sourceRegionIds": [
+        "CONFIG-COARSE",
+        "CONFIG-GEOLOCATION",
+        "CONFIG-STORAGE",
+        "BUILDER-PRIVACY",
+        "BUILDER-ALLOW"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Access/delegation/policy/grant/storage/lifetime conditions retained; no qualified TablissNG version or actual-parent claim."
+    },
+    {
+      "id": "credits-request-storage",
+      "READMEClaimLines": [
+        437,
+        438
+      ],
+      "sourceRegionIds": [
+        "PRAYER-URL-CACHE",
+        "WX-URL-CACHE",
+        "RADAR-URL",
+        "CONFIG-STORAGE"
+      ],
+      "independentDisposition": "ACCURATE_SOURCE_SUPPORTED_WITH_STATED_LIMITS",
+      "assertion": "Credited prayer/weather/radar constructors carry configured location/context; settings and caches use browser storage if available. Old blanket no-storage claim removed."
+    }
+  ],
+  "regions": [
+    {
+      "id": "CONFIG-KEY",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 21,
+      "endLine": 21,
+      "text": "  var KEY = \"salah_widget:config:v1\";   // versioned persistence key (NOT shared with prayer/weather caches)\n",
+      "regionSha256": "453a71d971dd6c5e810315c7d225df8fd2c7cac6d3e615d19810ea7ec65bcad1"
+    },
+    {
+      "id": "CONFIG-FIX",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 48,
+      "endLine": 85,
+      "text": "  function finiteNumber(x) { return typeof x === \"number\" && isFinite(x) ? x : null; }\n  function boundsNumber(x) { return typeof x === \"number\" || typeof x === \"string\" && x.trim() ? numOrNull(x) : null; }\n  function textOrNull(x, max) { return typeof x === \"string\" && x ? x.slice(0, max) : null; }\n  function locationBounds(b) {\n    if (!b || [b.south,b.north,b.west,b.east].some(function (n) { return finiteNumber(n) === null; })) return null;\n    if (b.south < -90 || b.north > 90 || b.south > b.north || b.west < -180 || b.east > 180 || b.west > b.east) return null;\n    return { south:b.south, north:b.north, west:b.west, east:b.east };\n  }\n  // Coordinates select a target. Evidence describes acquisition, never presence\n  // \"here now\". No decimal-derived accuracy or savedAt-derived fix timestamp.\n  function normalizeLocationEvidence(raw, cfg) {\n    cfg = cfg || {};\n    var origins = [\"hash\",\"manual\",\"place\",\"browser-geolocation\",\"coarse-ip\",\"legacy\",\"unknown\"];\n    var original = cfg.origin || cfg.source, source = raw && origins.indexOf(raw.source) >= 0 ? raw.source : original;\n    var intent = source === \"browser-geolocation\" ? \"device-position\" : source === \"coarse-ip\" ? \"coarse-area\"\n      : [\"hash\",\"manual\",\"place\"].indexOf(source) >= 0 ? \"fixed-site\" : \"unknown\";\n    if (source === \"browser-geolocation\" && (!raw || raw.source !== source)) source = \"legacy\";\n    if (source === \"localStorage\") source = \"legacy\";\n    if (origins.indexOf(source) < 0) source = \"unknown\";\n    if (source === \"legacy\" && raw && [\"fixed-site\",\"device-position\",\"coarse-area\",\"unknown\"].indexOf(raw.intent) >= 0) intent = raw.intent;\n    var accuracy = source === \"browser-geolocation\" && raw ? finiteNumber(raw.accuracyM) : null;\n    var acquired = source === \"browser-geolocation\" && raw ? finiteNumber(raw.acquiredAt) : null;\n    if (accuracy !== null && accuracy < 0) accuracy = null;\n    // Zero skew allowance: future/nonpositive epochs remain unknown, not age 0.\n    if (acquired !== null && (acquired <= 0 || acquired > Date.now())) acquired = null;\n    return { intent:intent, source:source, accuracyM:accuracy, acquiredAt:acquired,\n      provider:textOrNull(raw && raw.provider || (source === \"coarse-ip\" && cfg.detectProvider), 80),\n      area:textOrNull(raw && raw.area || (source === \"coarse-ip\" && cfg.area), 240),\n      bounds:locationBounds(raw && raw.bounds) };\n  }\n  // Both one-shot acquisition callers consume this exact Position contract.\n  function browserLocationEvidence(pos) {\n    return normalizeLocationEvidence({ source:\"browser-geolocation\", accuracyM:pos && pos.coords && pos.coords.accuracy,\n      acquiredAt: pos && pos.timestamp }, {});\n  }\n  function placeLocationEvidence(c) {\n    return normalizeLocationEvidence({ source:\"place\", provider:c && c.provider, area:c && c.norm, bounds:c && c.bounds }, {});\n  }\n",
+      "regionSha256": "214cec5998fc92944fceaa01da8ae01c667192db310ee39c6ec49240912537f5"
+    },
+    {
+      "id": "CONFIG-STORAGE",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 178,
+      "endLine": 219,
+      "text": "  // ---- localStorage (every access wrapped; never throws to the caller) -------\n  // Optional Storage-like input keeps characterization tests off the viewer's origin.\n  // Resolve the default getter inside each try: even accessing localStorage may throw.\n  function storageAvailable(storage) {\n    try {\n      var store = storage === undefined ? root.localStorage : storage;\n      var k = \"__sw_probe__\";\n      store.setItem(k, \"1\"); store.removeItem(k);\n      return { ok: true };\n    } catch (e) { return { ok: false, error: (e && e.name) || \"error\" }; }\n  }\n  function loadLocal(storage) {\n    try {\n      var store = storage === undefined ? root.localStorage : storage;\n      var raw = store.getItem(KEY);\n      if (!raw) return null;\n      var j = JSON.parse(raw);\n      if (!j || j.v !== 1) return null;            // version gate (future migrations)\n      var c = normalize(j);\n      if (!validate(c).ok) return null;            // corrupt/partial → ignore (fall through to detect)\n      c.origin = c.origin || c.source;             // preserve acquisition origin independently of the storage marker\n      c.source = \"localStorage\"; c.savedAt = numOrNull(j.savedAt);\n      return c;\n    } catch (e) { return null; }\n  }\n  function saveLocal(cfg, storage) {\n    try {\n      var store = storage === undefined ? root.localStorage : storage;\n      var c = normalize(cfg); c.v = 1; c.savedAt = Date.now();\n      // Old readers derive their pin state from source and ignore fix age. Keep\n      // private acquisition evidence, but let them read a configured site.\n      if (c.source === \"browser-geolocation\" || c.origin === \"browser-geolocation\") {\n        c.origin = c.origin || c.source; c.source = \"manual\";\n      }\n      store.setItem(KEY, JSON.stringify(c));\n      return { ok: true, savedAt: c.savedAt };\n    } catch (e) { return { ok: false, error: (e && e.name) || \"error\" }; }\n  }\n  function clearLocal(storage) {\n    try { var store = storage === undefined ? root.localStorage : storage; store.removeItem(KEY); return { ok: true }; }\n    catch (e) { return { ok: false, error: (e && e.name) || \"error\" }; }\n  }\n",
+      "regionSha256": "4258de32e4f843fa7b13a7897cc0f9e465185850e599fe1f7c58fd3367fcd25c"
+    },
+    {
+      "id": "CONFIG-COARSE",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 223,
+      "endLine": 270,
+      "text": "  // taken from the device (Intl) first — the honest \"where the clock is\" — falling\n  // back to the provider's zone. Returns a normalized coarse-ip config or {ok:false}.\n  function detectTz() {\n    try { return (Intl.DateTimeFormat().resolvedOptions().timeZone) || \"\"; } catch (e) { return \"\"; }\n  }\n  function methodForCC(cc) { cc = String(cc || \"\").toUpperCase(); return (cc === \"US\" || cc === \"CA\" || cc === \"MX\") ? \"2\" : \"4\"; }\n  function unitsForCC(cc) { return String(cc || \"\").toUpperCase() === \"US\" ? \"f\" : \"c\"; }   // US → imperial (°F); everywhere else → metric (°C)\n  function coarseDetect(opts) {\n    opts = opts || {};\n    var timeoutMs = opts.timeoutMs || 6000, tzIntl = detectTz();\n    var providers = [\n      { name: \"GeoJS\", url: \"https://get.geojs.io/v1/ip/geo.json\", parse: function (j) {\n          return { lat: parseFloat(j.latitude), lon: parseFloat(j.longitude),\n            label: j.city || j.region || j.country || \"\",   // concise: the small header shows just the locality\n            area: [j.city, j.region, j.country].filter(Boolean).join(\", \"),\n            tz: j.timezone || \"\", cc: j.country_code, accuracy: j.accuracy != null ? +j.accuracy : null }; } },\n      { name: \"ipinfo\", url: \"https://ipinfo.io/json\", parse: function (j) {\n          var loc = String(j.loc || \"\").split(\",\");\n          return { lat: parseFloat(loc[0]), lon: parseFloat(loc[1]),\n            label: j.city || j.region || j.country || \"\",\n            area: [j.city, j.region, j.country].filter(Boolean).join(\", \"),\n            tz: j.timezone || \"\", cc: j.country, accuracy: null }; } }\n    ];\n    return (function next(i) {\n      if (i >= providers.length) return Promise.resolve({ ok: false, source: \"coarse-ip\", status: \"failed\" });\n      var p = providers[i], ac = new AbortController(), to;\n      // Headers are not completion: the deadline owns the whole body/parse wait.\n      // Reject as well as abort so an abort-ignorant body cannot hold fallback.\n      var deadline = new Promise(function (_, reject) {\n        to = setTimeout(function () { reject(new Error(\"coarse location timeout\")); ac.abort(); }, timeoutMs);\n      });\n      var work = Promise.resolve().then(function () {\n        return fetch(p.url, { signal: ac.signal, mode: \"cors\", referrerPolicy: \"no-referrer\", cache: \"no-store\" });\n      }).then(function (r) { if (!r.ok) throw new Error(\"http \" + r.status); return r.json(); })\n        .then(function (j) {\n          var d = p.parse(j);\n          if (d.lat == null || d.lon == null || isNaN(d.lat) || isNaN(d.lon)) throw new Error(\"no coords\");\n          var cfg = normalize({ lat: d.lat, lon: d.lon, label: d.label || \"\",\n            tz: tzIntl || d.tz || \"\", method: methodForCC(d.cc), units: unitsForCC(d.cc), source: \"coarse-ip\",\n            detectProvider:p.name, area:d.area || d.label || \"\" });\n          cfg.source = \"coarse-ip\"; cfg.detectProvider = p.name; cfg.accuracy = d.accuracy; cfg.area = d.area || cfg.label;\n          return { ok: true, cfg: cfg, source: \"coarse-ip\", provider: p.name, status: \"ok\" };\n        });\n      // The race handles late work without another fallback or adoption effect.\n      return Promise.race([work, deadline]).then(function (result) { clearTimeout(to); return result; },\n        function () { clearTimeout(to); return next(i + 1); });\n    })(0);\n  }\n",
+      "regionSha256": "d152be6c145e8514fde8a869cbf0706bc56bedb3cfa501e343c732fded4b05b8"
+    },
+    {
+      "id": "CONFIG-GEOLOCATION",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 272,
+      "endLine": 291,
+      "text": "  // ---- precise geolocation (ONLY call from a user gesture) -------------------\n  function geolocate(opts) {\n    opts = opts || {};\n    return new Promise(function (resolve) {\n      if (!root.navigator || !root.navigator.geolocation) { resolve({ ok: false, error: \"unsupported\" }); return; }\n      root.navigator.geolocation.getCurrentPosition(\n        function (pos) { var evidence = browserLocationEvidence(pos);\n          resolve({ ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude,\n            accuracy:evidence.accuracyM, acquiredAt:evidence.acquiredAt, locationEvidence:evidence, source:\"browser-geolocation\" }); },\n        function (err) { resolve({ ok: false, error: (err && err.message) || \"denied\", code: err && err.code }); },\n        { enableHighAccuracy: false, timeout: opts.timeoutMs || 10000, maximumAge: 600000 }\n      );\n    });\n  }\n  function permissionState() {\n    try {\n      if (root.navigator && root.navigator.permissions && root.navigator.permissions.query)\n        return root.navigator.permissions.query({ name: \"geolocation\" }).then(function (s) { return s.state; }, function () { return \"unknown\"; });\n    } catch (e) {}\n    return Promise.resolve(\"unknown\");\n",
+      "regionSha256": "52b5a371b97e241be715edf03fdd3f1fa1d57965219e298315ac653958683c78"
+    },
+    {
+      "id": "CONFIG-SEARCH",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\config.js",
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "startLine": 360,
+      "endLine": 376,
+      "text": "  function geocodeSearch(query, opts) {\n    opts = opts || {};\n    var q = String(query == null ? \"\" : query).trim();\n    if (q.length < 2) return Promise.resolve([]);\n    var homeCC = opts.homeCC || \"\";\n    var ac = new AbortController(), to = setTimeout(function () { ac.abort(); }, opts.timeoutMs || 8000);\n    var bias = (/\\d/.test(q) && homeCC) ? (\"&countrycodes=\" + homeCC) : \"\";      // a digit ⇒ likely a postcode ⇒ keep it in the viewer's country\n    var bare = q.replace(/\\s/g, \"\"), caFSA = /^[A-Za-z]\\d[A-Za-z]/.test(bare) ? bare.slice(0, 3).toUpperCase() : null;\n    var jobs = [ fetch(\"https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5\" + bias + \"&q=\" + encodeURIComponent(q), { signal: ac.signal })\n      .then(function (r) { return r.json(); }).then(_nomCands).catch(function () { return []; }) ];\n    if (caFSA) jobs.push( fetch(\"https://api.zippopotam.us/ca/\" + caFSA, { signal: ac.signal })\n      .then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { var c = _zipCand(j); return c ? [c] : []; }).catch(function () { return []; }) );\n    return Promise.all(jobs).then(function (res) {\n      clearTimeout(to);\n      return _dedupeCands(res.reduce(function (a, b) { return a.concat(b); }, []));\n    }).catch(function () { clearTimeout(to); return []; });\n  }\n",
+      "regionSha256": "4ea0dd54ba49f727cf9d38272adaa6b53de35d8ec0ce2c5aedbe5d2e8faf6284"
+    },
+    {
+      "id": "BUILDER-PRIVACY",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "startLine": 192,
+      "endLine": 192,
+      "text": "  <p class=\"note\"><strong>Self-configuring embeds &amp; privacy:</strong> location is approximate and uses <a href=\"https://www.geojs.io/\" target=\"_blank\" rel=\"noreferrer\">GeoJS</a>, with ipinfo.io as fallback. Place/postcode searches go to Nominatim and, for matching Canadian-style prefixes, Zippopotam. Builder reverse lookups send coordinates to BigDataCloud; the widget also requests prayer, weather, radar and font resources. Saved settings stay in your browser, which does not prevent these service requests. Precise location is optional and requires browser/host permission. An iframe host, including TablissNG, can strip <code>allow=\"geolocation\"</code>; coarse/manual setup remain available. Storage policies can limit persistence. <a href=\"https://github.com/theislampill/salah_widget#auto-detect-precise-location--privacy\" target=\"_blank\" rel=\"noreferrer\">Request details</a>.</p>\n",
+      "regionSha256": "f09fbd9f952e9fffb4ffcadb113d341bdf3c64982faa2de199e65062cb2af4ab"
+    },
+    {
+      "id": "BUILDER-ALLOW",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "startLine": 217,
+      "endLine": 224,
+      "text": "function snippet(){\n  const allow = embedMode===\"local\" ? '\\n  allow=\"geolocation\"' : '';\n  return `<iframe\\n  title=\"Prayer Times\"\\n  referrerpolicy=\"no-referrer\"${allow}\\n  src=\"${url()}\"\\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\\n  scrolling=\"no\">\\n</iframe>`;\n}\nfunction update(){\n  $(\"code\").value=snippet();\n  $(\"pv\").allow = embedMode===\"local\" ? \"geolocation\" : \"\";\n  $(\"pv\").src=previewUrl();\n",
+      "regionSha256": "a60607359826852617fbfa708048fc77f33b32392518c7392ba459535356b45d"
+    },
+    {
+      "id": "BUILDER-SEARCH",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "startLine": 300,
+      "endLine": 326,
+      "text": "async function doSearch(q){\n  clearTimeout(tipRevert);\n  const owner=captureLookup(), bias=homeCC;\n  let cands=[];\n  try{ cands = window.SalahConfig ? await SalahConfig.geocodeSearch(q,{homeCC:bias}) : []; }catch(e){}\n  if(!ownsLookup(owner)) return;\n  stopDots();\n  if(!cands.length) searchFailed(owner);\n  else if(cands.length===1) foundSingle(cands[0]);\n  else { multiCands=cands; multiIdx=0; multiOwner={...owner,label:$(\"label\").value}; showMulti(); }\n}\n$(\"label\").addEventListener(\"input\",()=>{\n  labelAuto=false;                                  // a display-name edit does not change the target's acquisition\n  const q=$(\"label\").value.trim();\n  searchReset();\n  if(q.length<2) return;                            // nothing meaningful to search\n  startDots();                                        // \"Searching…\" immediately…\n  srchDebounce=setTimeout(()=>doSearch(q), 1000);     // …but only fetch after a 1 s pause\n});\n$(\"label\").addEventListener(\"keydown\",(e)=>{          // Enter cycles matches, or forces the lookup now (no 1 s wait)\n  if(e.key!==\"Enter\") return;\n  e.preventDefault();\n  if(multiCands.length>1 && multiOwner && ownsLookup(multiOwner) && multiOwner.label===$(\"label\").value){ multiIdx=(multiIdx+1)%multiCands.length; showMulti(); return; }\n  multiCands=[]; multiOwner=null;\n  const q=$(\"label\").value.trim();\n  if(q.length>=2){ clearTimeout(srchDebounce); startDots(); doSearch(q); }\n});\n",
+      "regionSha256": "b4a4cc632a45483d464fdd44a8b2bd2f8fe4647aff0dc646410070207735bef8"
+    },
+    {
+      "id": "BUILDER-REVERSE",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\builder.html",
+        "bytes": 30333,
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+      },
+      "startLine": 327,
+      "endLine": 343,
+      "text": "async function fillNameFromCoords(edit=locationEdit){\n  if(edit!==locationEdit) return;\n  if(!labelAuto && !methodAuto) return;\n  const la=$(\"lat\").value.trim(), lo=$(\"lon\").value.trim();\n  if(!la||!lo||isNaN(+la)||isNaN(+lo)) return;\n  const owner=captureLookup();\n  try{\n    const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(la)}&longitude=${encodeURIComponent(lo)}&localityLanguage=en`,{referrerPolicy:\"no-referrer\"});\n    const j=await r.json();\n    if(!ownsLookup(owner)) return;\n    if(j.countryCode) homeCC=j.countryCode.toLowerCase();   // upgrade the postcode-bias country to the actual detected location\n    if(labelAuto){ const name=(j.city||j.locality||j.principalSubdivision||j.countryName||\"\").trim(); if(name) $(\"label\").value=name; }\n    if(methodAuto) $(\"method\").value = (j.continentCode===\"NA\") ? \"2\" : \"4\";   // ISNA for North America\n    update();\n  }catch(e){}\n}\n[\"lat\",\"lon\"].forEach(f=>$(f).addEventListener(\"input\",()=>{ builderLocation=null; searchReset(); setGeoPin(\"off\"); const edit=locationEdit; geoTimer=setTimeout(()=>fillNameFromCoords(edit),700); }));\n",
+      "regionSha256": "4ce3902815eef8ae0f96be1eee87e160978be4b352192971abb64cbc1475505e"
+    },
+    {
+      "id": "FONTS",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 7,
+      "endLine": 11,
+      "text": "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n<!-- Typography is optional: a slow font service cannot delay accepted sky/UI inputs.\n     The same stylesheet and existing fallback stack apply when it is available. -->\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap\" media=\"print\" onload=\"this.media='all'\">\n",
+      "regionSha256": "63472680dcdf70dc0720922a714380c18d67740baa5216aaf46409dc478a846c"
+    },
+    {
+      "id": "PRAYER-URL-CACHE",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 1058,
+      "endLine": 1080,
+      "text": "function readPrayerCache(key=cacheKey()){\n  try{\n    const j=JSON.parse(localStorage.getItem(key));\n    if(recordObject(j)){ const admitted=admitPrayerRecord(j.data,j.date); if(admitted.ok) return admitted; }\n  }catch(e){}\n  return null;\n}\nfunction loadCache(dateStr,key=cacheKey()){\n  const cached=readPrayerCache(key); return cached && cached.date===dateStr ? cached.data : null;\n}\nfunction saveCache(dateStr,data,key=cacheKey()){\n  const admitted=admitPrayerRecord(data,dateStr); if(!admitted.ok) return;\n  try{ localStorage.setItem(key,JSON.stringify({date:dateStr,data:admitted.data})); }catch(e){}\n}\nasync function fetchTimings(dateStr,operation=null){\n  const op=operation||beginRequest(\"current\",dateStr), own=!operation;\n  if(!op || !requestEligible(op)) throw new Error(\"obsolete prayer request\");\n  // Pure transport: only guarded caller adoption may change the resolved timezone or cache.\n  const u=`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${enc(op.lat)}&longitude=${enc(op.lon)}&method=${enc(op.method)}&school=${enc(op.school)}`;\n  let err;\n  try{\n    while((op.prayerAttempts||0)<3){\n      if(!requestEligible(op)) throw new Error(\"obsolete prayer request\");\n",
+      "regionSha256": "3fcf06b2c9a231b925818364bd64aa61faac2dac5bb72bc6681c55e8d5823b15"
+    },
+    {
+      "id": "WX-HOURLY",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 1220,
+      "endLine": 1220,
+      "text": "const _WX_HOURLY=\"temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day\";\n",
+      "regionSha256": "71efea8423dc7598dfa03b0b26d2c48051cb38dcdce9f753cf8f52244cb5a267"
+    },
+    {
+      "id": "WX-URL-CACHE",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 1367,
+      "endLine": 1395,
+      "text": "async function fetchWeather(){\n  if(SIM.wx!=null) return;                 // simulated weather: never overwrite\n  if(!usableWeatherCoordinates(lat,lon)||wxBusy) return;\n  const now=Date.now();\n  if(selectedWeather(now) && weatherTrack && now-lastWxAt < _WX_CURRENT_TTL) return;   // need the hourly TRACK too — a fresh current-weather cache must not block timeScale demos\n  if(now-lastWxTry < 60*1000) return;\n  const op=beginRequest(\"weather\"); if(!op) return;\n  const captured={lat:op.lat,lon:op.lon,units:op.units,zone:op.requestZone,cacheKey:op.weatherCacheKey,\n    target:captureWeatherTarget(op.generation,op.lat,op.lon)};\n  const a=beginAttempt(op,_WX_BODY_WAIT); if(!a){ finishRequest(op); return; }\n  lastWxTry=now; wxBusy=true;\n  const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units===\"c\"?\"celsius\":\"fahrenheit\"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;\n  try{\n    const result=await wxFetchJson(op,a,u); if(!result.ok||!attemptEligible(op,a)) return;\n    const j=result.data;\n    if(!j||typeof j!==\"object\"||Array.isArray(j)||j.error===true) return;\n    if(!wxResponseZoneMatches(j,captured.zone)){\n      wxAttemptState(op,a,\"unavailable\",\"response timezone unavailable or contradicts captured request\"); return;\n    }\n    const ctx={...captured,retrievedAt:Date.now()}, current=wxUnitsMatch(j.current_units,ctx)?admitWeatherRecord(j.current,ctx):null;\n    const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);\n    if(!attemptEligible(op,a)) return;                     // includes delayed-timer absolute expiry after normalization\n    if((current||track)&&elevation!=null) siteElev=elevation;\n    if(current&&attemptEligible(op,a)&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){\n      weather=current;\n      if(weatherEligibility(current,ctx.retrievedAt).eligible) lastWxAt=ctx.retrievedAt;\n      try{ if(attemptEligible(op,a)) localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}\n    }\n    if(track&&attemptEligible(op,a)) weatherTrack=track;\n",
+      "regionSha256": "58ea29897f2c33cee4218567da89964d222f111fabe0228cca59a54842a64e46"
+    },
+    {
+      "id": "RADAR-URL",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 1442,
+      "endLine": 1473,
+      "text": "async function fetchRadar(){\n  if(SIM.wx!=null || !usableWeatherCoordinates(lat,lon) || radarBusy) return;       // real mode only\n  const now=Date.now(); if(now-lastRadarAt < _RADAR_REFRESH) return;   // radar updates ~10 min\n  const op=beginRequest(\"radar\"); if(!op) return;\n  const captured={lat:op.lat,lon:op.lon,target:captureWeatherTarget(op.generation,op.lat,op.lon)};\n  let a=beginAttempt(op,_RADAR_BODY_WAIT); if(!a){ finishRequest(op); return; }\n  lastRadarAt=now; radarBusy=true;\n  try{\n    const result=await wxFetchJson(op,a,\"https://api.rainviewer.com/public/weather-maps.json\");\n    if(!result.ok||!attemptEligible(op,a)) return;\n    const j=result.data, host=j&&j.host, past=j&&j.radar&&j.radar.past;\n    if(typeof host===\"string\"&&Array.isArray(past)&&past.length){\n      const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation\n      if(!fr||typeof fr.path!==\"string\"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;\n      // Validate each derived epoch before Image dispatch; finite raw seconds can overflow in milliseconds.\n      const frameGeneratedAt=wxNumber(fr.time*1000,0), indexGeneratedAt=wxNumber(j.generated*1000,0);\n      if(frameGeneratedAt==null||indexGeneratedAt==null) return;\n      const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;\n      const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;\n      if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles\n      const xt=Math.floor(fx), yt=Math.floor(fy);\n      const url=host+fr.path+\"/256/\"+z+\"/\"+xt+\"/\"+yt+\"/2/1_1.png\";\n      if(!attemptEligible(op,a)) return;\n      finishAttempt(op,a); a=beginAttempt(op,_RADAR_IMAGE_WAIT); if(!a) return;\n      const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);\n      if(!image.ok||!attemptEligible(op,a)) return;\n      const retrievedAt=Date.now();\n      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt,\n        indexGeneratedAt,sample:image.sample,source:\"RainViewer mosaic\",quantitativeAuthority:\"unavailable (uncalibrated palette/alpha)\"};\n    }\n  }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }\n  finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }\n",
+      "regionSha256": "f17f7d6aa8dc290e12e4efe5ecc3f949ba0e851e7cdebbe13d52e69869c71da3"
+    },
+    {
+      "id": "SESSION-SAVE",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 3435,
+      "endLine": 3455,
+      "text": "// Apply a new WidgetConfig at RUNTIME (settings panel) — IN-MEMORY, no reload, so it still\n// works when third-party-iframe localStorage is blocked/partitioned. opts.save persists it.\nasync function applyConfig(cfg, opts){\n  opts=opts||{};\n  cfg=window.SalahConfig?SalahConfig.normalize(cfg):cfg;\n  if(opts.save && window.SalahConfig){\n    const r=SalahConfig.saveLocal(cfg);\n    _publishPersistence(\"save\",r);                 // publish before any awaited provider work\n    if(r.ok){ cfg.origin=cfg.origin||cfg.source; cfg.source=\"localStorage\"; cfg.savedAt=r.savedAt; }   // acquisition evidence and original origin survive the storage marker\n  }\n  beginRuntimeGeneration();\n  bindConfig(cfg);\n  resetForNewLocation();\n  if(!simulationReady()) return;\n  if(lat==null||lon==null){ render(); return; }     // incomplete manual entry → nothing to load yet\n  startWeather();\n  const generation=_runtimeGeneration;\n  await loadPrayerData();\n  if(generation!==_runtimeGeneration) return;\n  startRenderLoop();                                  // no-op if already running\n}\n",
+      "regionSha256": "9048e64e044ea848eefbd2157af8a79cd6d2491dc2a0751a6ab9f31de46e9fbe"
+    },
+    {
+      "id": "SETTINGS-SEARCH",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 3659,
+      "endLine": 3668,
+      "text": "// forward-geocode search on the location field (same shared SalahConfig.geocodeSearch as the builder):\n// type a place/postcode + Enter → search → fill lat/lon; multiple matches cycle on Enter.\nasync function _runSetSearch(q){\n  const owner=_captureSetLookup(), bias=_setHomeCC;\n  _setStatus(\"Searching…\");\n  let cands=[];\n  try{ if(window.SalahConfig) cands=await SalahConfig.geocodeSearch(q,{homeCC:bias}); }catch(e){}\n  if(!_ownsSetLookup(owner)) return;\n  if(!cands.length){ _setCands=[]; _setStatus(\"Couldn’t find “\"+q+\"”. Set coordinates below, or tap the pin for browser location.\",true); return; }\n  _setCands=cands; _setCandIdx=0; _setCandOwner={...owner,label:_byId(\"set-label\").value}; _showSetCand();\n",
+      "regionSha256": "dadf2481cf5cf4649db10c078f1073bce36389fb6fe62119f922d9f23b245d36"
+    },
+    {
+      "id": "RESET",
+      "file": {
+        "path": "C:\\Users\\theis\\.codex\\worktrees\\pr43-review-revision\\salah_widget\\src\\native\\index.html",
+        "bytes": 367870,
+        "sha256": "cbd5e37608dcb502b0824ea5c145cc9ba242d1970e512cd4f9572be414cd818b"
+      },
+      "startLine": 3801,
+      "endLine": 3823,
+      "text": "async function _resetLocal(){\n  _invalidateSetLocation(); const owner=_captureSetLookup(), prefOwner={..._setPrefVersions};\n  const r=window.SalahConfig?SalahConfig.clearLocal():{ok:false,error:\"unavailable\"};\n  _publishPersistence(\"reset\",r);\n  if(!r.ok){\n    _setStatus(\"Enter to search a place · Shift+Enter to keep the typed name.\"); return; // the reset also cancelled any pending lookup\n  }\n  _setStatus(\"Detecting your area…\");\n  let d=null; try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){}\n  if(!_ownsSetLookup(owner)) return;\n  if(d&&d.ok){ const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg);\n    // Reset still owns the detected location, while preferences edited since\n    // dispatch (or during apply's await) own their fields and their close-save.\n    Object.assign(c,_newerSetPrefs(prefOwner));\n    await applyConfig(c,{save:false});\n    if(!_ownsSetLookup(owner)) return;\n    const prefs=_newerSetPrefs(prefOwner);\n    _populateSettingsForm();\n    Object.entries(prefs).forEach(([key,value])=>{ _byId(_SET_PREF_IDS[key]).value=value; });\n    _syncDateFromBox(); _setDirty=Object.keys(prefs).length>0;\n    _setStatus(\"Using estimated area: \"+(d.cfg.area||d.cfg.label||\"\")); }\n  else { _setStatus(\"Enter your location.\",true); }\n}\n",
+      "regionSha256": "975810982302b3f859608e1b7274dbd2afb76beeeac23b944396ca6122270e0b"
+    }
+  ],
+  "wholeFileConfigAndBuilderEquality": true,
+  "strong0163GuardsPreservedInCurrent51bdd": [
+    {
+      "start": "function ownerOf(",
+      "end": "const selectedLedger",
+      "exactEqual": true,
+      "bytes": 422,
+      "sha256": "605979d1391888038ba56664d7cb8bdc47b9269a664d94e798c21704e82160d2"
+    },
+    {
+      "start": "function requiredReuseBindings(",
+      "end": "function region(",
+      "exactEqual": true,
+      "bytes": 3554,
+      "sha256": "481e9724272ec8ad14fda4eaf0c30e70a6c0f2bc1555b1fd419ed4c6416b615d"
+    },
+    {
+      "start": "function region(",
+      "end": "function context(",
+      "exactEqual": true,
+      "bytes": 307,
+      "sha256": "a8ded9c55d5180007f7fedce2f17f265ebd13563d976ad99f07bdca9029f16fb"
+    }
+  ],
+  "original0163": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\settings_docs\\pro-privacy-doc-correction-r1\\before\\tests\\rlgwo-docs-contract.cjs",
+    "bytes": 39561,
+    "sha256": "0163ebdb5a876158e0e1830ce901ee56491be4a3c4e200eca91a837c54f55d86"
+  },
+  "HR_S01GuardExactOnce": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\settings_docs\\pro-privacy-doc-correction-r1\\guard-block.txt",
+    "bytes": 729,
+    "sha256": "5c5102e92dfa2b519b411ec9a9d9b456d4600b899a1e2d2a51bc490d68e8d5db"
+  },
+  "boundedWholeDocumentContradictionCheck": "Existing R001B guard's exact blanket-storage/privacy strings checked throughout current README; this is not whole-document factual approval.",
+  "noProductTestsRun": true,
+  "unsupportedProviderRetentionOrNativeResultIntroduced": false
+}

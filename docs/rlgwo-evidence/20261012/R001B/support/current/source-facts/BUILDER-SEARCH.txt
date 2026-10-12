@@ -1,0 +1,27 @@
+async function doSearch(q){
+  clearTimeout(tipRevert);
+  const owner=captureLookup(), bias=homeCC;
+  let cands=[];
+  try{ cands = window.SalahConfig ? await SalahConfig.geocodeSearch(q,{homeCC:bias}) : []; }catch(e){}
+  if(!ownsLookup(owner)) return;
+  stopDots();
+  if(!cands.length) searchFailed(owner);
+  else if(cands.length===1) foundSingle(cands[0]);
+  else { multiCands=cands; multiIdx=0; multiOwner={...owner,label:$("label").value}; showMulti(); }
+}
+$("label").addEventListener("input",()=>{
+  labelAuto=false;                                  // a display-name edit does not change the target's acquisition
+  const q=$("label").value.trim();
+  searchReset();
+  if(q.length<2) return;                            // nothing meaningful to search
+  startDots();                                        // "Searching…" immediately…
+  srchDebounce=setTimeout(()=>doSearch(q), 1000);     // …but only fetch after a 1 s pause
+});
+$("label").addEventListener("keydown",(e)=>{          // Enter cycles matches, or forces the lookup now (no 1 s wait)
+  if(e.key!=="Enter") return;
+  e.preventDefault();
+  if(multiCands.length>1 && multiOwner && ownsLookup(multiOwner) && multiOwner.label===$("label").value){ multiIdx=(multiIdx+1)%multiCands.length; showMulti(); return; }
+  multiCands=[]; multiOwner=null;
+  const q=$("label").value.trim();
+  if(q.length>=2){ clearTimeout(srchDebounce); startDots(); doSearch(q); }
+});

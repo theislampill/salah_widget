@@ -1,0 +1,21 @@
+// Apply a new WidgetConfig at RUNTIME (settings panel) — IN-MEMORY, no reload, so it still
+// works when third-party-iframe localStorage is blocked/partitioned. opts.save persists it.
+async function applyConfig(cfg, opts){
+  opts=opts||{};
+  cfg=window.SalahConfig?SalahConfig.normalize(cfg):cfg;
+  if(opts.save && window.SalahConfig){
+    const r=SalahConfig.saveLocal(cfg);
+    _publishPersistence("save",r);                 // publish before any awaited provider work
+    if(r.ok){ cfg.origin=cfg.origin||cfg.source; cfg.source="localStorage"; cfg.savedAt=r.savedAt; }   // acquisition evidence and original origin survive the storage marker
+  }
+  beginRuntimeGeneration();
+  bindConfig(cfg);
+  resetForNewLocation();
+  if(!simulationReady()) return;
+  if(lat==null||lon==null){ render(); return; }     // incomplete manual entry → nothing to load yet
+  startWeather();
+  const generation=_runtimeGeneration;
+  await loadPrayerData();
+  if(generation!==_runtimeGeneration) return;
+  startRenderLoop();                                  // no-op if already running
+}

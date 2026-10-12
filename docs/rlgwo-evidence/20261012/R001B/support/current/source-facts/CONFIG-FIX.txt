@@ -1,0 +1,38 @@
+  function finiteNumber(x) { return typeof x === "number" && isFinite(x) ? x : null; }
+  function boundsNumber(x) { return typeof x === "number" || typeof x === "string" && x.trim() ? numOrNull(x) : null; }
+  function textOrNull(x, max) { return typeof x === "string" && x ? x.slice(0, max) : null; }
+  function locationBounds(b) {
+    if (!b || [b.south,b.north,b.west,b.east].some(function (n) { return finiteNumber(n) === null; })) return null;
+    if (b.south < -90 || b.north > 90 || b.south > b.north || b.west < -180 || b.east > 180 || b.west > b.east) return null;
+    return { south:b.south, north:b.north, west:b.west, east:b.east };
+  }
+  // Coordinates select a target. Evidence describes acquisition, never presence
+  // "here now". No decimal-derived accuracy or savedAt-derived fix timestamp.
+  function normalizeLocationEvidence(raw, cfg) {
+    cfg = cfg || {};
+    var origins = ["hash","manual","place","browser-geolocation","coarse-ip","legacy","unknown"];
+    var original = cfg.origin || cfg.source, source = raw && origins.indexOf(raw.source) >= 0 ? raw.source : original;
+    var intent = source === "browser-geolocation" ? "device-position" : source === "coarse-ip" ? "coarse-area"
+      : ["hash","manual","place"].indexOf(source) >= 0 ? "fixed-site" : "unknown";
+    if (source === "browser-geolocation" && (!raw || raw.source !== source)) source = "legacy";
+    if (source === "localStorage") source = "legacy";
+    if (origins.indexOf(source) < 0) source = "unknown";
+    if (source === "legacy" && raw && ["fixed-site","device-position","coarse-area","unknown"].indexOf(raw.intent) >= 0) intent = raw.intent;
+    var accuracy = source === "browser-geolocation" && raw ? finiteNumber(raw.accuracyM) : null;
+    var acquired = source === "browser-geolocation" && raw ? finiteNumber(raw.acquiredAt) : null;
+    if (accuracy !== null && accuracy < 0) accuracy = null;
+    // Zero skew allowance: future/nonpositive epochs remain unknown, not age 0.
+    if (acquired !== null && (acquired <= 0 || acquired > Date.now())) acquired = null;
+    return { intent:intent, source:source, accuracyM:accuracy, acquiredAt:acquired,
+      provider:textOrNull(raw && raw.provider || (source === "coarse-ip" && cfg.detectProvider), 80),
+      area:textOrNull(raw && raw.area || (source === "coarse-ip" && cfg.area), 240),
+      bounds:locationBounds(raw && raw.bounds) };
+  }
+  // Both one-shot acquisition callers consume this exact Position contract.
+  function browserLocationEvidence(pos) {
+    return normalizeLocationEvidence({ source:"browser-geolocation", accuracyM:pos && pos.coords && pos.coords.accuracy,
+      acquiredAt: pos && pos.timestamp }, {});
+  }
+  function placeLocationEvidence(c) {
+    return normalizeLocationEvidence({ source:"place", provider:c && c.provider, area:c && c.norm, bounds:c && c.bounds }, {});
+  }

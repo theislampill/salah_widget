@@ -1,0 +1,17 @@
+async function fillNameFromCoords(edit=locationEdit){
+  if(edit!==locationEdit) return;
+  if(!labelAuto && !methodAuto) return;
+  const la=$("lat").value.trim(), lo=$("lon").value.trim();
+  if(!la||!lo||isNaN(+la)||isNaN(+lo)) return;
+  const owner=captureLookup();
+  try{
+    const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(la)}&longitude=${encodeURIComponent(lo)}&localityLanguage=en`,{referrerPolicy:"no-referrer"});
+    const j=await r.json();
+    if(!ownsLookup(owner)) return;
+    if(j.countryCode) homeCC=j.countryCode.toLowerCase();   // upgrade the postcode-bias country to the actual detected location
+    if(labelAuto){ const name=(j.city||j.locality||j.principalSubdivision||j.countryName||"").trim(); if(name) $("label").value=name; }
+    if(methodAuto) $("method").value = (j.continentCode==="NA") ? "2" : "4";   // ISNA for North America
+    update();
+  }catch(e){}
+}
+["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ builderLocation=null; searchReset(); setGeoPin("off"); const edit=locationEdit; geoTimer=setTimeout(()=>fillNameFromCoords(edit),700); }));

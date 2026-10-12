@@ -1,0 +1,20 @@
+  // ---- precise geolocation (ONLY call from a user gesture) -------------------
+  function geolocate(opts) {
+    opts = opts || {};
+    return new Promise(function (resolve) {
+      if (!root.navigator || !root.navigator.geolocation) { resolve({ ok: false, error: "unsupported" }); return; }
+      root.navigator.geolocation.getCurrentPosition(
+        function (pos) { var evidence = browserLocationEvidence(pos);
+          resolve({ ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude,
+            accuracy:evidence.accuracyM, acquiredAt:evidence.acquiredAt, locationEvidence:evidence, source:"browser-geolocation" }); },
+        function (err) { resolve({ ok: false, error: (err && err.message) || "denied", code: err && err.code }); },
+        { enableHighAccuracy: false, timeout: opts.timeoutMs || 10000, maximumAge: 600000 }
+      );
+    });
+  }
+  function permissionState() {
+    try {
+      if (root.navigator && root.navigator.permissions && root.navigator.permissions.query)
+        return root.navigator.permissions.query({ name: "geolocation" }).then(function (s) { return s.state; }, function () { return "unknown"; });
+    } catch (e) {}
+    return Promise.resolve("unknown");

@@ -1,0 +1,23 @@
+function readPrayerCache(key=cacheKey()){
+  try{
+    const j=JSON.parse(localStorage.getItem(key));
+    if(recordObject(j)){ const admitted=admitPrayerRecord(j.data,j.date); if(admitted.ok) return admitted; }
+  }catch(e){}
+  return null;
+}
+function loadCache(dateStr,key=cacheKey()){
+  const cached=readPrayerCache(key); return cached && cached.date===dateStr ? cached.data : null;
+}
+function saveCache(dateStr,data,key=cacheKey()){
+  const admitted=admitPrayerRecord(data,dateStr); if(!admitted.ok) return;
+  try{ localStorage.setItem(key,JSON.stringify({date:dateStr,data:admitted.data})); }catch(e){}
+}
+async function fetchTimings(dateStr,operation=null){
+  const op=operation||beginRequest("current",dateStr), own=!operation;
+  if(!op || !requestEligible(op)) throw new Error("obsolete prayer request");
+  // Pure transport: only guarded caller adoption may change the resolved timezone or cache.
+  const u=`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${enc(op.lat)}&longitude=${enc(op.lon)}&method=${enc(op.method)}&school=${enc(op.school)}`;
+  let err;
+  try{
+    while((op.prayerAttempts||0)<3){
+      if(!requestEligible(op)) throw new Error("obsolete prayer request");

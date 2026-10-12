@@ -1,0 +1,23 @@
+async function _resetLocal(){
+  _invalidateSetLocation(); const owner=_captureSetLookup(), prefOwner={..._setPrefVersions};
+  const r=window.SalahConfig?SalahConfig.clearLocal():{ok:false,error:"unavailable"};
+  _publishPersistence("reset",r);
+  if(!r.ok){
+    _setStatus("Enter to search a place · Shift+Enter to keep the typed name."); return; // the reset also cancelled any pending lookup
+  }
+  _setStatus("Detecting your area…");
+  let d=null; try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){}
+  if(!_ownsSetLookup(owner)) return;
+  if(d&&d.ok){ const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg);
+    // Reset still owns the detected location, while preferences edited since
+    // dispatch (or during apply's await) own their fields and their close-save.
+    Object.assign(c,_newerSetPrefs(prefOwner));
+    await applyConfig(c,{save:false});
+    if(!_ownsSetLookup(owner)) return;
+    const prefs=_newerSetPrefs(prefOwner);
+    _populateSettingsForm();
+    Object.entries(prefs).forEach(([key,value])=>{ _byId(_SET_PREF_IDS[key]).value=value; });
+    _syncDateFromBox(); _setDirty=Object.keys(prefs).length>0;
+    _setStatus("Using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
+  else { _setStatus("Enter your location.",true); }
+}

@@ -1,0 +1,9 @@
+## R001B actual consumer addendum
+
+The exact reviewed PR49 source is bound at `78c54632ce85f5d1738d29db67f7b355a784b82f`, base `ec76c7e369ec32dc06019853ec3984b4e6e347ec`. The20,296-byte README SHA256 is `337c8584ecb8b95651649af4e2a573c63a42f67164e18b8fa7c98d266212bbbc`; all three accepted R001B introduction/privacy/Credits regions are exact. Root’s current-base join retained unrelated accepted prose, so the original standalone whole README is not substituted.
+
+The child browser service returned no enabled surfaces and refused Chrome and the in-app browser. No browser, tab, page state or pixels were acquired. [Capability refusals](CAPABILITY_REFUSALS.json) and [empty cleanup](CLEANUP.json) are retained; this is no A10 PASS. Root confirmed its retained browserID2 is available and takes the same original public-document scope. No new harness or child retry is authorized.
+
+The [exact owned disclosure locator](PUBLIC_SCOPE_LOCATOR.json) gives the four headers, eight rows,36cells, Reset wording and original desktop/narrow samples. Actual GitHub readable/table-access proof and actual builder Request details navigation remain mandatory. The [source control](UNCHANGED_DETAILS_SOURCE_CONTROL.json) binds the actual source href to current main; before PR49merge that main destination is not PR49 introduction delivery. Existing unchanged builder/local controls remain usable at their prior scope.
+
+[Remaining whole qualification](proposed-evidence/evidence/R001B/qualification.json) and [certificate proposal](proposed-evidence/evidence/R001B/closure-certificate.json) retain every original source/accepted/failure and consumer/effect boundary. Exact owner-approved merge/Pages, changed public/raw bodies, actual rendered delivery, independent final review and immutable certificate/comment/issue readbacks remain root responsibilities. The issue is not certified complete.
