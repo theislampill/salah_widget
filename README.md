@@ -4,7 +4,7 @@ A compact prayer-times widget you can embed anywhere that accepts an
 `<iframe>` — built for [TablissNG](https://github.com/BookCatKid/TablissNG) new-tab
 dashboards, but works in Notion, a personal site, or anywhere else.
 
-Static delivery, no server runtime or tracking. Configuration comes from the URL;
+Static delivery, with saved configuration in browser storage and service requests described below. Configuration comes from the URL;
 prayer times come from the free [Aladhan API](https://aladhan.com/prayer-times-api).
 This **CP9 integration candidate is not the deployed main version**. It adds an
 admitted star catalogue and physical sky in an optional worker while preserving
