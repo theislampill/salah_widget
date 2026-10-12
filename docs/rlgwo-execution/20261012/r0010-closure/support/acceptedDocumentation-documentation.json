@@ -1,0 +1,175 @@
+{
+  "schema": "r0010-documentation/v1",
+  "interface": "r0010-documentation/v1",
+  "node": "R0010-DOC",
+  "targetArtifact": "evidence/R0010/documentation.json",
+  "status": "REVIEWED_LOCAL_DOCUMENTATION_CARRIER_PROPOSAL",
+  "originalNodeCompletion": "COMPLETE_EXIT_VERIFIED_PRESERVED",
+  "originalAdmission": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\evidence\\independent-review-HR-20261009-FINAL\\joined-admission-wave-01\\nodes\\R0010-DOC.json",
+    "bytes": 4894,
+    "sha256": "dd7c2e58f7921de3b1efd1197091953964254fb39f73062a09ae912db9c264c5"
+  },
+  "originalIndependentDecision": {
+    "node": "R0010-DOC",
+    "disposition": "SATISFIED",
+    "scope": "ACTUAL_ROOT_DOCUMENTATION_OR_EXACT_ENUMERATED_VM_CASES",
+    "originalProVerdict": "PASS",
+    "originalProScope": {
+      "status": "PASS_SCOPED_SOURCE_DOCUMENTATION_OR_VM_FIXTURE",
+      "description": "Source-accurate candidate README local-mode explanation and examples; no native geolocation or delivered-host claim."
+    },
+    "literalExitCriteria": [
+      {
+        "criterion": "Exact documentation candidate has raw semantic-review receipt and candidate hashes; merge/public delivery remains explicitly pending.",
+        "disposition": "SATISFIED_IN_THIS_LOCAL_DOCUMENTATION_REVIEW_SCOPE"
+      },
+      {
+        "criterion": "All assigned documentation assertions are checked on the candidate; their delivered/public components are reserved for later DELIVERY/CLOSE.",
+        "disposition": "SATISFIED_IN_THIS_LOCAL_DOCUMENTATION_REVIEW_SCOPE"
+      },
+      {
+        "criterion": "Candidate artifact and integration collision owners are independently reviewed.",
+        "disposition": "SATISFIED_IN_THIS_LOCAL_DOCUMENTATION_REVIEW_SCOPE"
+      }
+    ],
+    "basis": "The accepted exact paragraph remains immediately beside the local example: generic local mode selects method/units automatically, builder local mode carries fresh defaults, saved configuration wins, and the generic preset remains local=1. Config source is the reviewed unchanged 91a3 owner. Exact ROOT postimage and independent collision/reversal evidence are retained.",
+    "evidenceLocations": [
+      {
+        "file": "README.md",
+        "lines": [
+          181,
+          191
+        ],
+        "fileSha256": "b14791ffca9552d841066d6c8fff02c353f052b8952ef15d187fd340ebe317d1"
+      },
+      {
+        "file": "README.md",
+        "lines": [
+          202,
+          211
+        ],
+        "fileSha256": "b14791ffca9552d841066d6c8fff02c353f052b8952ef15d187fd340ebe317d1"
+      }
+    ],
+    "remainingGapsInAllocatedScope": [],
+    "limits": [
+      "Merged/public README and native builder preference/reload delivery remain later DELIVERY/CLOSE gates."
+    ]
+  },
+  "originalProPASS": "PRESERVED_FROM_HR_20261009_FINAL_NO_NEW_PRO_QUEUE",
+  "candidate": {
+    "README": {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\README.md",
+      "bytes": 34653,
+      "sha256": "b14791ffca9552d841066d6c8fff02c353f052b8952ef15d187fd340ebe317d1"
+    },
+    "config": {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\src\\native\\config.js",
+      "bytes": 23025,
+      "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+    },
+    "builder": {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\552b\\salah_widget\\src\\native\\builder.html",
+      "bytes": 30333,
+      "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e"
+    },
+    "dirtyJoinedCandidate": true,
+    "releaseHead": null
+  },
+  "acceptance": "R0010-A01",
+  "acceptedHunkBindings": [
+    {
+      "file": "README.md",
+      "lineStart": 181,
+      "lineEnd": 191,
+      "fileSha256": "b14791ffca9552d841066d6c8fff02c353f052b8952ef15d187fd340ebe317d1",
+      "excerptSha256": "012622b1cf4a009e3e295cfe87ceb2c73b66f1e17d382bbb189e4a3102dce673",
+      "bytes": 640,
+      "excerptUtf8": "```html\n<iframe\n  title=\"Prayer Times\"\n  src=\"https://theislampill.github.io/salah_widget/#local=1\"\n  allow=\"geolocation\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>\n```\n\nA generic `#local=1` embed chooses method and units automatically after area detection. A local embed exported by the builder includes the selected method and temperature units as defaults for a viewer with no saved configuration, for example `#local=1&method=2&units=f`. An existing saved configuration in that viewer\u2019s browser takes priority over those defaults. The generic preset remains `#local=1`.\n"
+    },
+    {
+      "file": "README.md",
+      "lineStart": 202,
+      "lineEnd": 211,
+      "fileSha256": "b14791ffca9552d841066d6c8fff02c353f052b8952ef15d187fd340ebe317d1",
+      "excerptSha256": "0c5846ed737a04acf86879a3ce414af090727b9238ba9afc7fd7a64b866b1029",
+      "bytes": 676,
+      "excerptUtf8": "### Modes & precedence\n\n| Mode | URL | Behaviour |\n|------|-----|-----------|\n| **Hardcoded** | `#lat=\u2026&lon=\u2026` | Fixed location baked into the URL. Unchanged, classic behaviour. A saved local config **never** overrides it. |\n| **Local** | `#local=1` | Saved local config \u2192 else coarse auto-detect \u2192 else in-widget manual setup. |\n| **Prefer-local** | `#preferLocal=1` | Like hardcoded, but a saved local config (if any) **may** override the hash defaults \u2014 because the URL explicitly opted in. |\n\nResolution order: explicit hardcoded hash (unless `local=1`/`preferLocal=1`) \u2192 saved local\nconfig \u2192 coarse IP/timezone detect \u2192 manual setup \u2192 safe error state.\n"
+    }
+  ],
+  "sourceFactBindings": [
+    {
+      "id": "config-serialization",
+      "owners": [
+        "R0010-RELEASE-REVIEW",
+        "R0023-RELEASE-REVIEW"
+      ],
+      "source": "config.js",
+      "sourceSHA256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "lineStart": 148,
+      "lineEnd": 175,
+      "excerpt": "inputs/source-regions/config-serialization.txt",
+      "excerptSHA256": "1e2e1a89c851905eb7b7a9bf81a67d7f83732d368f364d3225a686e61ade3e5b",
+      "bytes": 1665,
+      "reviewedDonor": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\intake\\pro-review-HR-20261009-FINAL\\RLGWO_Final_Independent_Review\\submitted-context\\batch05\\worker\\source\\config.js",
+      "reviewedDonorSHA256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "currentOccurrences": 1,
+      "reviewedDonorOccurrences": 1,
+      "claim": "exact assigned fact-region equality; prior semantic proof reused, not rerun",
+      "scope": "EXACT_R0010_FACT_OWNER_BYTE_REBIND_ONLY"
+    },
+    {
+      "id": "config-local-precedence",
+      "owners": [
+        "R0010-RELEASE-REVIEW"
+      ],
+      "source": "config.js",
+      "sourceSHA256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "lineStart": 295,
+      "lineEnd": 327,
+      "excerpt": "inputs/source-regions/config-local-precedence.txt",
+      "excerptSHA256": "b3671e4aadc8b28dfdad1025c3f018b8db58d7c732b9d48b7b02d9f845f7abb3",
+      "bytes": 1791,
+      "reviewedDonor": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\intake\\pro-review-HR-20261009-FINAL\\RLGWO_Final_Independent_Review\\submitted-context\\batch05\\worker\\source\\config.js",
+      "reviewedDonorSHA256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "currentOccurrences": 1,
+      "reviewedDonorOccurrences": 1,
+      "claim": "exact assigned fact-region equality; prior semantic proof reused, not rerun",
+      "scope": "EXACT_R0010_FACT_OWNER_BYTE_REBIND_ONLY"
+    },
+    {
+      "id": "builder-canonical-export",
+      "owners": [
+        "R0010-RELEASE-REVIEW"
+      ],
+      "source": "src/native/builder.html",
+      "sourceSHA256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+      "lineStart": 208,
+      "lineEnd": 214,
+      "excerpt": "inputs/source-regions/builder-canonical-export.txt",
+      "excerptSHA256": "ef7075ccb47d0fb379a4b53f68b77e7d6999f760a6ef67fc27bc580530722711",
+      "bytes": 568,
+      "reviewedDonor": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\intake\\pro-review-HR-20261009-FINAL\\RLGWO_Final_Independent_Review\\submitted-context\\batch05\\worker\\source\\builder.html",
+      "reviewedDonorSHA256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+      "currentOccurrences": 1,
+      "reviewedDonorOccurrences": 1,
+      "claim": "exact assigned fact-region equality; prior semantic proof reused, not rerun",
+      "scope": "EXACT_R0010_FACT_OWNER_BYTE_REBIND_ONLY"
+    }
+  ],
+  "collisionJoinReceipt": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\shared-docs-HR-FINAL-r1\\coalesced\\receipt.json",
+    "sha256": "f6d10e3c5c3bd5bcdd8e4f57dbfbd7f24e6da7481d082a22afcacda1f4fa35a9"
+  },
+  "collisionPatch": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\shared-docs-HR-FINAL-r1\\coalesced\\JOINED.patch",
+    "sha256": "192466baad79fa1b7bbd25f3ee12450634a823231e3c49211833ad3f04c99b3e"
+  },
+  "semanticReviewReplayed": false,
+  "sourceOrDocumentationEdited": false,
+  "namedArtifactPathGap": "Root-only join of this exact carrier; not a new source/native/documentation gap or revocation of original COMPLETE credit.",
+  "mergePublicDelivery": "PENDING_LATER_DELIVERY_CLOSE",
+  "wholeREADMEPASS": false,
+  "retainedOTHERFailures": 13
+}

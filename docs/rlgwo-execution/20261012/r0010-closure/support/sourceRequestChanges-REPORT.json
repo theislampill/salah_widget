@@ -1,0 +1,151 @@
+{
+  "schema": "r0010-delivered-native-independent-source-review/1",
+  "atUtc": "2026-10-12T08:37:05.062682+00:00",
+  "decision": "REQUEST_CHANGES",
+  "reviewer": "/root/r0010_isolated_release_review_r1",
+  "author": "/root/r0010_isolated_release_path_r1",
+  "node": "CLOSE-R0010",
+  "issue": 16,
+  "authorSeal": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_delivered_native_closure_r1\\SEAL.json",
+    "bytes": 450,
+    "sha256": "b959e853461371845d1bc67bc0bd6852104cf2114784437c9c18e7a5db2a6efa"
+  },
+  "authorReport": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_delivered_native_closure_r1\\REPORT.json",
+    "bytes": 9476,
+    "sha256": "9c29421dfa91bda58ccdf57c324c3c7c3c0482e8bb49eb492b1819b1ceed7673"
+  },
+  "authorManifest": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_delivered_native_closure_r1\\MANIFEST.json",
+    "bytes": 47056,
+    "sha256": "de0dab17bb751808f49cf49d2f8e3643566b5b069d66502325cd137c2bba85d3"
+  },
+  "authority": {
+    "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\integration\\two-rlgwo-owner-execution-20261012-r1\\AUTHORIZATION.json",
+    "bytes": 2605,
+    "sha256": "dfbb98a6f3812d299b77315c5a62c3b24c19691b7b50a851003596a9a4c4c48f"
+  },
+  "authorityVerifiedDirectlyWithRoot": true,
+  "scope": [
+    "fresh-2-f",
+    "fresh-2-c",
+    "fresh-4-f",
+    "fresh-4-c",
+    "generic-local",
+    "saved-native-reload",
+    "prefer-local-fresh",
+    "prefer-local-saved",
+    "mutant-omitMethod",
+    "mutant-omitUnits"
+  ],
+  "deliveredHead": "88926dd12d22a6a8c1cd369d4823750778fccb48",
+  "runtimeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+  "runtimeFiles": 135,
+  "reviewerIndependence": {
+    "authoredSubjectSource": false,
+    "canonicalIntegration": false,
+    "writeRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_isolated_release_review_r1\\delivered-native-source-admission-r1",
+    "retainedEarlierSealUnchanged": true,
+    "spawnedAgents": 0,
+    "formalImplementAuditLifecycleClaim": false
+  },
+  "findings": [
+    {
+      "id": "R0010-SOURCE-IDENTITY-01",
+      "priority": "BLOCKING_SOURCE_ADMISSION",
+      "file": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_delivered_native_closure_r1\\CASE_SELECTION.json",
+      "lines": [
+        128,
+        129
+      ],
+      "problem": "The sealed case manifest binds sourceRoot to historical candidates/rlgwo-weather-info-01 and runtimeSha256 to e718fe9e, while ROOT_COMMAND, executable source binding, boundary, report and actual delivered snapshot bind to delivered88926dd/f443cf08. This makes the manifest an ambiguous/wrong target input for closure consumption.",
+      "actual": {
+        "caseSourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\candidates\\rlgwo-weather-info-01",
+        "caseRuntime": "e718fe9e58f37535de4dc496a2da3bf2b05808153287e1fe328398ea59c0df53",
+        "deliveredSourceRoot": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_delivered_native_closure_r1\\input\\main",
+        "deliveredRuntime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260"
+      },
+      "effect": "No source admission for this exact seal; every scheduled case shares the inconsistent manifest header. The executable source guard is correctly rebound, so this is not a product/native counterexample.",
+      "affectedCases": [
+        "fresh-2-f",
+        "fresh-2-c",
+        "fresh-4-f",
+        "fresh-4-c",
+        "generic-local",
+        "saved-native-reload",
+        "prefer-local-fresh",
+        "prefer-local-saved",
+        "mutant-omitMethod",
+        "mutant-omitUnits"
+      ],
+      "requiredCorrection": [
+        "In one new immutable successor, bind CASE_SELECTION.sourceRoot to that successor executable binding.candidateRoot and runtimeSha256 to f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260; bind deliveredHead/sourceRef explicitly if retained as manifest metadata.",
+        "Preserve the old e718/source-root values only under an explicit originalQualificationBasis field, rather than as the operative target.",
+        "Align the selection description with the ROOT_COMMAND explicit ordered ten --only selectors. The ten original case objects, original predicates/timezones and retained old receipts remain unchanged.",
+        "Add a cheap connected consistency check tying the case-manifest header to the binding, command and boundary, with the old source-root/runtime pair as a rejected control.",
+        "Refresh affected references/manifest/report/seal, preserve this predecessor, and return the exact successor for affected-source rereview before any native launch."
+      ]
+    }
+  ],
+  "verified": {
+    "authorMembers": 229,
+    "completeServedRuntimeFilesExactDeliveredGitObjects": 135,
+    "canonicalRuntimeDigestExact": true,
+    "READMEConfigBuilderAndNativeSourceExactDeliveredGitObjects": true,
+    "rootQueueCommandAndActionOriginalTenAgree": true,
+    "qualifiedPythonFrontDoorByteExact": true,
+    "originalLauncherVerifyFreshPathsFreeLedgerCAS_ASTExact": true,
+    "qualifiedLauncherLifecycleASTExactExceptTwoReceiptLabels": true,
+    "freshConnectedSourceControls": 23,
+    "freshInertLifecycleControls": 11,
+    "actualReadOnlyPreflight": "PASS; six widget/two builder script anchors; Node22.16.0/Playwright1.62.1; no lease/native/browser/server",
+    "protectedPreferenceMutationConsumerBodies": "Verified by exact connected source controls; predicate, two omissions, complete visible fields, saved/prefer/generic/reload/server bodies retained",
+    "freshNativeOutputAndDispatchAbsent": true,
+    "retainedOriginalEvidenceAndTwoRiyadhControls": "Original seals/manifests/reports hash-verified; not replayed or promoted",
+    "preparationDiagnostics": "Both sealed diagnostics retained; no native case attempts or reset"
+  },
+  "evidence": {
+    "verification": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_isolated_release_review_r1\\delivered-native-source-admission-r1\\VERIFICATION.json",
+      "bytes": 157620,
+      "sha256": "fe8b233edab33507a03cbd09017111991a226c44579b9ff4150ab0893e2575e8"
+    },
+    "connectedControls": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_isolated_release_review_r1\\delivered-native-source-admission-r1\\CONNECTED_REPLAY.json",
+      "bytes": 5787,
+      "sha256": "598521e6309128822a5c134c2fc14986cd93128a0e82f7155896c57cbd2ad7d8"
+    },
+    "inertLifecycle": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_isolated_release_review_r1\\delivered-native-source-admission-r1\\lifecycle-replay\\LIFECYCLE_CONTROL.json",
+      "bytes": 12238,
+      "sha256": "bc8ade294a247db521cba7e25e159008b554ef5b2c5feaa0a0ee51f080b6814d"
+    },
+    "reviewerProbeDiagnostic": {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\salah-rlgwo-execution-20261009\\workers\\r0010_isolated_release_review_r1\\delivered-native-source-admission-r1\\REPLAY_BOUNDARY_DIAGNOSTIC.txt",
+      "bytes": 1320,
+      "sha256": "3a797263de9d963f14a3e11a29f1e442aa1fd8002e7372704e74da6490585e29"
+    }
+  },
+  "reviewerProbeNote": "A first reviewer replay used a separate VM realm, causing prototype equality refusal on the same ten names. It was corrected to the same realm while retaining exact sealed source/assertions; failure is retained. Lifecycle replay changed only output confinement to this reviewer lane; actual lifecycle AST/native source-path guard and inert cases stayed exact. These are review-helper diagnostics, not native case attempts or reset authority.",
+  "nativeApplicability": false,
+  "sourceAdmission": "REQUEST_CHANGES",
+  "actualNative": "NOT_RUN",
+  "nodeComplete": false,
+  "nativeCaseAttemptsObserved": 0,
+  "perCaseBudget": "Carry the affected-source correction/review history forward for all ten scheduled original cases. This review does not reset the authorized maximum two additional correction/review cycles or spend native contexts.",
+  "effects": {
+    "nativeProcesses": 0,
+    "browserOrServer": 0,
+    "realLedgerWrites": 0,
+    "canonicalNodeOrJoinWrites": 0,
+    "GitHubWrites": 0,
+    "sharedSourceWrites": 0
+  },
+  "limits": [
+    "Source/inert controls are not native evidence.",
+    "No actual delivered A02-A05 batch result, whole-issue closure, public certificate or current renderer qualification is granted.",
+    "Root remains canonical/public integrator; corrected source admission, actual independent results and assembled original-obligation closure review remain."
+  ],
+  "nextAction": "Author preserves b959e853 predecessor and makes one metadata/consistency-control successor addressing this sole finding, then returns exact successor seal for rereview. Do not launch native using this REQUEST_CHANGES admission."
+}
