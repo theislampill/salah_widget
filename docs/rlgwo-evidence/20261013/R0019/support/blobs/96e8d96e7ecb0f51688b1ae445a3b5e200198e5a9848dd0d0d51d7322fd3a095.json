@@ -1,0 +1,430 @@
+{
+  "schema": "r0019-independent-actual-access-case-review/1",
+  "reviewerIdentity": "/root/r0019_parser_admission_20261013",
+  "nodeId": "R0019-ACCESS",
+  "fixtureProducerNode": "R0019-ACCESS",
+  "evidenceTarget": "R0019-ACCESS",
+  "caseId": "firefox-long--unescaped-control",
+  "verdict": "PASS_EXACT_R0019_ORIGINAL_UNESCAPED_CONTROL_WITH_LIMITS",
+  "blockingFindings": [],
+  "rawStatus": "MUTANT_DETECTED",
+  "acceptedCasePresent": true,
+  "acceptedCase": {
+    "engine": "firefox",
+    "case": "long",
+    "variant": "unescaped-control",
+    "result": {
+      "originalIdentity": {
+        "bytes": 425893,
+        "sha256": "f20d815b28a2663e6781ce44ed1505f257a3be6b5c95004a13b741d4525df538"
+      },
+      "artifact": "support/blobs/f20d815b28a2663e6781ce44ed1505f257a3be6b5c95004a13b741d4525df538.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "manifest": {
+      "originalIdentity": {
+        "bytes": 4327,
+        "sha256": "f0d4426cb6f32df950b38520b9d55b056fd43fe0fc41f4fb5474c759fe3a7e57"
+      },
+      "artifact": "support/blobs/f0d4426cb6f32df950b38520b9d55b056fd43fe0fc41f4fb5474c759fe3a7e57.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "dispatch": {
+      "originalIdentity": {
+        "bytes": 1028429,
+        "sha256": "b1b73768e9a27fd907edaa43ddf07ea6e2b35b5413f478698da5d8c814b9671d"
+      },
+      "custodyAlias": "private-source-alias:db550fb4785e87eb4d019680148c856648fda5c32ebd5e155b78a94fb02fe931",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "sourceSelection": {
+      "originalIdentity": {
+        "bytes": 6386,
+        "sha256": "cd40a22717f8d421254c158bf4812b6d2b6df3e95ea006f286a041e10475c14a"
+      },
+      "custodyAlias": "private-source-alias:41f926fc1f104a06e8f6acea1a7de27e3dfd7a2edb094f8ca05c119c8d41947e",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "sourceSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+    "fixtureSha256": "dfea0cc50835db6f5b51454c334ad0a73b9a4d49813849c9df7dfbfd93a11e99",
+    "adapterSha256": "b5a925fe1339b347eea1de613725225e9916776e25d660d722e0cf56124fb0fb",
+    "originalPayload": "<svg onload=\"window.__sw_sec_probe=1\"></svg> \u0627\u0644\u062a\u0627\u0631\u064a\u062e & \"' YYYY",
+    "positiveDiscriminator": "Original connected #dateDialog SVG and literal canary1 reached after native trigger; original15000ms shared deadline unchanged.",
+    "primaryImage": {
+      "originalIdentity": {
+        "bytes": 49738,
+        "sha256": "01af3fc2af10aea7ca574b4b822e718df196c8380f84d5a3bc74350eb74bc834"
+      },
+      "artifact": "support/blobs/01af3fc2af10aea7ca574b4b822e718df196c8380f84d5a3bc74350eb74bc834.png",
+      "publishedIdentity": "supporting-files.json",
+      "size": [
+        325,
+        530
+      ]
+    },
+    "controlOnly": true,
+    "productPass": false
+  },
+  "actualAssertions": [
+    {
+      "label": "Reached disposable unescaped full-value sink creates SVG and fires literal canary",
+      "result": "PASS"
+    }
+  ],
+  "actualReturn": {
+    "result": {
+      "originalIdentity": {
+        "bytes": 425893,
+        "sha256": "f20d815b28a2663e6781ce44ed1505f257a3be6b5c95004a13b741d4525df538"
+      },
+      "artifact": "support/blobs/f20d815b28a2663e6781ce44ed1505f257a3be6b5c95004a13b741d4525df538.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "manifest": {
+      "originalIdentity": {
+        "bytes": 4327,
+        "sha256": "f0d4426cb6f32df950b38520b9d55b056fd43fe0fc41f4fb5474c759fe3a7e57"
+      },
+      "artifact": "support/blobs/f0d4426cb6f32df950b38520b9d55b056fd43fe0fc41f4fb5474c759fe3a7e57.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "dispatch": {
+      "originalIdentity": {
+        "bytes": 1028429,
+        "sha256": "b1b73768e9a27fd907edaa43ddf07ea6e2b35b5413f478698da5d8c814b9671d"
+      },
+      "custodyAlias": "private-source-alias:db550fb4785e87eb4d019680148c856648fda5c32ebd5e155b78a94fb02fe931",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "expectedControl": {
+      "kind": "unescaped-date-value",
+      "healthy": false,
+      "rawStatus": "MUTANT_DETECTED",
+      "discriminator": "Reached SVG and literal canary1",
+      "image": {
+        "originalIdentity": {
+          "bytes": 49738,
+          "sha256": "01af3fc2af10aea7ca574b4b822e718df196c8380f84d5a3bc74350eb74bc834"
+        },
+        "artifact": "support/blobs/01af3fc2af10aea7ca574b4b822e718df196c8380f84d5a3bc74350eb74bc834.png",
+        "publishedIdentity": "supporting-files.json"
+      },
+      "independentDisposition": "PENDING",
+      "productPass": false
+    },
+    "pageErrors": [],
+    "returnedStateNames": [
+      "initial",
+      "native-unescaped-positive-control"
+    ],
+    "nativeElapsedSeconds": 8.280999999999949,
+    "driverCleanupReturn": "SOURCE_BOUND_NORMAL_POST_CLOSE_RETURN"
+  },
+  "association": {
+    "binding": {
+      "originalIdentity": {
+        "bytes": 35962,
+        "sha256": "0f63136084ba3d9b24f2f4315de7b56f1f081db4b2473d73a19880b96f7d1c2e"
+      },
+      "custodyAlias": "private-source-alias:3e4a25f9f52a2559dfddf108bb583383a1b1e385c1e38a3d8dbe989c61fa6f29",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "proposalSeal": {
+      "originalIdentity": {
+        "bytes": 226,
+        "sha256": "da1a19a79f24dbfd025a1d6405b26fad049b2d6e1cc09d737c4c12a205b83908"
+      },
+      "custodyAlias": "private-source-alias:2346284529c751dc861a20179a84c391d4bec9c2ba73744fae293733a75af7e5",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "approvedSourceReview": {
+      "originalIdentity": {
+        "bytes": 9648,
+        "sha256": "ebfd0ad275f6297da630976ea55e3cff146ce0d8928104579acd17338389d857"
+      },
+      "custodyAlias": "private-source-alias:42a434fcaa031b0ffc96c725d39aa6e59ae3bea6e48fd6370fc3d534fed5b456",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "approvedSourceReviewSeal": {
+      "originalIdentity": {
+        "bytes": 918,
+        "sha256": "f78321b542ff705bacd8198b8342eb0df4ac674914735b4197ce62efdc06333a"
+      },
+      "custodyAlias": "private-source-alias:6b02b53810f2171c2e7344e3a721a9ccd93fc646e8be6c56cd084f0623d7be0c",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "sourceConsumption": {
+      "originalIdentity": {
+        "bytes": 5583,
+        "sha256": "c65ea6726383924309aa2eab7ac782a42cab2b3339fc705f91af4c6208badced"
+      },
+      "custodyAlias": "private-source-alias:9790c8fd3183f71d0b41e0ec0ece2bf178f2df7bf1839406d8e3c12ec90527a0",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "inputAuthority": {
+      "originalIdentity": {
+        "bytes": 28751,
+        "sha256": "a20eaea1403512722e04d78c915436282d8a783b9189fd4a57d505c13ced59c3"
+      },
+      "custodyAlias": "private-source-alias:9c6f3a409f729565ef849351eb6e5c062b6c9a6840dba94c7db933d7f2b5662b",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "changedInputAdmission": {
+      "originalIdentity": {
+        "bytes": 5081,
+        "sha256": "47430ffe1a8350b48ec23aea5cfd1c45b01b48d25d60dffe7a0cab3b30157183"
+      },
+      "custodyAlias": "private-source-alias:a2a49b32629a0b25fd20be160abc4004394364c555a60d55863f9832ecced183",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "requiredUiRuntime": {
+      "schemaVersion": 1,
+      "scope": "Exact required ACCESS UI stylesheet only; no complete runtime or optional JS/worker/assets admission",
+      "sourceSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+      "files": {
+        "real-sky/native-sky.css": {
+          "bytes": 1854,
+          "sha256": "298a11d0d91a801de2e8f63b7e4997ff33d7a7423ebd0e4c8a0bbd5710f68f31"
+        }
+      }
+    },
+    "sourceIdentity": {
+      "sourceSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+      "effectiveSourceSha256": "9b97d463ec140a86d836cdc67a3c8e0c3db598e2ff2905c8c94b073e6a79a69e",
+      "sourceMutation": "unescaped-date-value",
+      "scriptLayout": {
+        "id": "access_font_01",
+        "nativeOrdinal": 2,
+        "scripts": [
+          {
+            "ordinal": 0,
+            "attrs": " src=\"config.js\"",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "bootCount": 0
+          },
+          {
+            "ordinal": 1,
+            "attrs": " id=\"native-first-paint-code\" data-sha256=\"41f1bffb47c6ce03664506179394d409778460cdcf806d59a8ab90bc96e16ad6\"",
+            "sha256": "41f1bffb47c6ce03664506179394d409778460cdcf806d59a8ab90bc96e16ad6",
+            "bytes": 282464,
+            "bootCount": 0
+          },
+          {
+            "ordinal": 2,
+            "attrs": "",
+            "sha256": "3cce5da94200339ac63a2b05b659e1584c52c2e99d1e39517612a5ae2cec3643",
+            "bytes": 5744411,
+            "bootCount": 1
+          },
+          {
+            "ordinal": 3,
+            "attrs": " src=\"real-sky/native-sky.js\"",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "bootCount": 0
+          }
+        ]
+      },
+      "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "fixtureSha256": "dfea0cc50835db6f5b51454c334ad0a73b9a4d49813849c9df7dfbfd93a11e99",
+      "originalFixtureSha256": "7faf06af3f9a32256811410874cefde484a61d045ccbe9b5c56cf0b220f4d005",
+      "adapterSha256": "b5a925fe1339b347eea1de613725225e9916776e25d660d722e0cf56124fb0fb",
+      "runtimeTreeSha256": null,
+      "optionalTransport": "HTTP 503; no whole-sky/first-scene/performance qualification",
+      "fonts": "Native FontFaceSet only; browser driver supplies explicit missing/delayed/loaded policy"
+    },
+    "receiptPrefixRebind": {
+      "path": "private-source-alias:daae8ab91b5457367092c0bd6d9b6bfee1e1fa24a3f0131c5a1b6734a761e90b",
+      "countBefore": 9,
+      "countAfter": 12,
+      "changes": [
+        {
+          "target": "private-source-alias:3fd1f14d3033990cf6904f64ef285888c40b6fe37e9a00333282cf7584343a1e",
+          "oldSha256": "f6909a13a4506a44f15f3b314979cb94e16ef2280559e898ad8ef0c1bf724c0d",
+          "currentSha256": "170b4e2a66136ebda9143f4602743a5613cc5e99a5c167bc3dc038d677c57425",
+          "acceptedJoin": {
+            "originalIdentity": {
+              "bytes": 9972,
+              "sha256": "ca7f37f815978107bb3ed157a496df2dc9af2737115c76e0d03bb66abec2a2d4"
+            },
+            "artifact": "support/blobs/ca7f37f815978107bb3ed157a496df2dc9af2737115c76e0d03bb66abec2a2d4.json",
+            "publishedIdentity": "supporting-files.json"
+          }
+        },
+        {
+          "target": "private-source-alias:bbd4aa2e155ac00c33ee0ce6c1bbb73a707a0462e4b179729e5b4082f963709c",
+          "oldSha256": "b41dd07476a5ca98d764679860b52edc629113ad078a3165eabce14e943d24f9",
+          "currentSha256": "b658993bcbe517a88646343efdd6d56db3048db4a9c566163e17bff26bb978d7",
+          "acceptedJoin": {
+            "originalIdentity": {
+              "bytes": 9972,
+              "sha256": "ca7f37f815978107bb3ed157a496df2dc9af2737115c76e0d03bb66abec2a2d4"
+            },
+            "artifact": "support/blobs/ca7f37f815978107bb3ed157a496df2dc9af2737115c76e0d03bb66abec2a2d4.json",
+            "publishedIdentity": "supporting-files.json"
+          }
+        }
+      ],
+      "result": "Exact two canonical-output replacements and three appended references match accepted Oct12 LAYOUT JOIN; implementation/oracle/selector/runtime/driver/source identity unchanged."
+    }
+  },
+  "originalGate": {
+    "budgetMs": 15000,
+    "loadGate": {
+      "schema": "r0019-unescaped-real-load-gate/1",
+      "budgetMs": 15000,
+      "elapsedBeforeReleaseMs": 14.999999999417923,
+      "beforeRelease": {
+        "readyState": "interactive",
+        "svg": true,
+        "namespace": "http://www.w3.org/2000/svg",
+        "onloadAttribute": "window.__sw_sec_probe=1",
+        "handlerType": "object"
+      },
+      "releaseBeforeInitialCapture": true,
+      "eventSynthesized": false,
+      "handlerInvoked": false,
+      "canaryAssigned": false
+    },
+    "positiveState": {
+      "canary": 1,
+      "svg": true,
+      "open": true,
+      "modal": true,
+      "active": "dateClose",
+      "viewport": [
+        325,
+        530,
+        1
+      ],
+      "correctlyNamespacedConnectedSvgNodes": 2,
+      "observerElapsedMs": 1140,
+      "literalHandlerAttribute": "window.__sw_sec_probe=1"
+    },
+    "timingEvidence": "The byte-identical native driver retains a single time.monotonic() deadline, spends remaining time on SVG/load/click/canary waits, and calls remaining() after the successful conjunction before capture. Actual control returns its original assertion PASS and MUTANT_DETECTED.",
+    "trace": {
+      "canary0AtDOMContentLoadedMs": 590,
+      "firstObservedCanary1Ms": 641,
+      "trustedWindowLoadMs": 779,
+      "initialClosedCaptureMs": 824,
+      "originalPositiveOpenCaptureMs": 1140,
+      "nativeTrustedTriggerFocus": true,
+      "nativeTrustedCloseFocus": true,
+      "svgLoadEventSeparatelyCaptured": false
+    },
+    "scope": "Canary1 exists before click and persists in the reached open full-value consumer. No claim that click caused the handler, or that a trusted SVG-load event was separately observed."
+  },
+  "pixels": {
+    "personallyViewed": true,
+    "images": [
+      {
+        "originalIdentity": {
+          "bytes": 132824,
+          "sha256": "e2bf3cd4d29600854005fa4600ab95ca52d4285fefcb4f570a57d10a745f2bfd"
+        },
+        "artifact": "support/blobs/e2bf3cd4d29600854005fa4600ab95ca52d4285fefcb4f570a57d10a745f2bfd.png",
+        "publishedIdentity": "supporting-files.json",
+        "size": [
+          325,
+          530
+        ]
+      },
+      {
+        "originalIdentity": {
+          "bytes": 49738,
+          "sha256": "01af3fc2af10aea7ca574b4b822e718df196c8380f84d5a3bc74350eb74bc834"
+        },
+        "artifact": "support/blobs/01af3fc2af10aea7ca574b4b822e718df196c8380f84d5a3bc74350eb74bc834.png",
+        "publishedIdentity": "supporting-files.json",
+        "size": [
+          325,
+          530
+        ]
+      }
+    ],
+    "observations": [
+      "Initial325x530 capture retains the actual card/header/prayer stack and compact literal format.",
+      "Positive325x530 capture shows the actual Calendar dates modal, Close, Gregorian/Hijri labels and year tails.",
+      "The disposable injected SVG elements occupy native blank layout boxes. This is the intended unsafe positive control; it supplies no healthy geometry or art qualification."
+    ]
+  },
+  "healthyAcceptedReuse": {
+    "actualSourceReview": {
+      "originalIdentity": {
+        "bytes": 9648,
+        "sha256": "ebfd0ad275f6297da630976ea55e3cff146ce0d8928104579acd17338389d857"
+      },
+      "custodyAlias": "private-source-alias:42a434fcaa031b0ffc96c725d39aa6e59ae3bea6e48fd6370fc3d534fed5b456",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "nativeLiteralResult": {
+      "originalIdentity": {
+        "bytes": 2109182,
+        "sha256": "aa2bf8775143187b796aa03824d881180c03e55557d1f44a43afd570c4efd67c"
+      },
+      "artifact": "support/blobs/aa2bf8775143187b796aa03824d881180c03e55557d1f44a43afd570c4efd67c.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "healthyFixtureSha256": "7df8cd41685531d4d9ec7a246857a6703dc36dc15989515a76c53dbf145bdf93",
+    "retainedCanary0NoSvgStates": 9,
+    "actualHealthyFixtureByteParityPreviouslyVerified": true,
+    "nativeReplayed": false,
+    "limitation": "Existing healthy acceptance is preserved through exact fixture/source parity; the unsafe control is not presented as productPass."
+  },
+  "custody": {
+    "leaseId": "root-r0019-firefox-parser-20261013-r1",
+    "nativeChildReturned": true,
+    "childReturnKnown": true,
+    "cleanupKnown": true,
+    "driverCleanupReturn": "SOURCE_BOUND_NORMAL_POST_CLOSE_RETURN",
+    "originalFiniteSeconds": {
+      "native": 240,
+      "cleanupReserve": 40,
+      "leaseMaximum": 300
+    },
+    "custodyErrors": [],
+    "postProcesses": [],
+    "postListeners": [],
+    "endpointExplicitRefusals": 3,
+    "finishedBeforeOriginalLeaseExpiry": true,
+    "receiptHoldRequired": false,
+    "receiptTerminalCurrent": true,
+    "currentResourceRelease": "ROOT separately verifies and owns release. This reviewer neither changes the ledger nor claims live resource FREE.",
+    "kernelLiveOwnershipClaimedByReviewer": false
+  },
+  "retainedFailure": {
+    "result": {
+      "originalIdentity": {
+        "bytes": 4284108,
+        "sha256": "151d7d03beb72b487d097f51c27d435637268c514afdf25fcdc8ef5e27742ef9"
+      },
+      "custodyAlias": "private-source-alias:cb6369f963017a6664e478d0b84af543a0aae0dab269884f9d7c2e5c192d0777",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "rawStatus": "FAIL",
+    "originalNativeWindowRequalified": false
+  },
+  "matrixImplication": {
+    "individuallyAcceptedCaseDelta": 1,
+    "priorAcceptedAccess": 54,
+    "expectedAcceptedAccessAfterExactRootReconciliation": 55,
+    "requiredAccessCases": 55,
+    "retainedAcceptedLayout": 10,
+    "parentIssueClosureInferred": false,
+    "automaticNodeCompleteInferred": false
+  },
+  "limits": [
+    "One actual returned native positive control accepted; no source review replay or native/browser rerun.",
+    "Canonical case JOIN/count, current live resource release, ACCESS/QUALIFY/certificate/delivery and issue closure remain ROOT/owner work.",
+    "Date-only optional transport503 and explicit missing-font lifecycle do not qualify whole sky, motion, appearance, font coverage or performance.",
+    "Original failed controls and original custody limitations remain immutable history."
+  ],
+  "productPass": false,
+  "nativeExecutedByReviewer": false,
+  "sourceChangedByReviewer": false,
+  "nodeCredit": 0,
+  "nodeComplete": false,
+  "canonicalEffects": false,
+  "next": "ROOT consumes this exact individual acceptance once for the 55th ACCESS case, reconciles resource release separately, and continues remaining certificate/delivery gates."
+}

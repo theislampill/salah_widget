@@ -1,0 +1,907 @@
+{
+  "schema": "r0019-independent-actual-access-case-review/1",
+  "atUtc": "2026-10-12T10:46:21.163261+00:00",
+  "reviewerIdentity": "/root/r0023_qualify_capture_review_r2",
+  "nodeId": "R0019-ACCESS",
+  "fixtureProducerNode": "R0019-ACCESS",
+  "evidenceTarget": "R0019-ACCESS",
+  "caseId": "chromium-long--unescaped-control",
+  "verdict": "PASS_EXACT_EXPECTED_ACCESS_UNESCAPED_NATIVE_CONTROL_WITH_LIMITS",
+  "blockingFindings": [],
+  "rawStatus": "MUTANT_DETECTED",
+  "acceptedCase": {
+    "engine": "chromium",
+    "case": "long",
+    "variant": "unescaped-control",
+    "recipe": {
+      "suite": "access",
+      "name": "long",
+      "variant": "unescaped-control",
+      "clock": "2026-09-08T09:30:00Z",
+      "mono": 0,
+      "zone": "Asia/Riyadh",
+      "lat": 24.47,
+      "lon": 39.61,
+      "method": "4",
+      "units": "f",
+      "format": "<svg onload=\"window.__sw_sec_probe=1\"></svg> \u0627\u0644\u062a\u0627\u0631\u064a\u062e & \"' YYYY",
+      "simWx": "0",
+      "records": {
+        "08-09-2026": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "26-03-1448",
+              "day": "26",
+              "month": {
+                "number": 3,
+                "en": "Rab\u012b\u02bf al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "09-09-2026": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "27-03-1448",
+              "day": "27",
+              "month": {
+                "number": 3,
+                "en": "Rab\u012b\u02bf al-awwal"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "Asia/Riyadh",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        }
+      },
+      "hold": [],
+      "initialPolicies": {},
+      "countResolver": false,
+      "originalCase": "literal",
+      "mutant": "unescaped-date-value",
+      "saved": false,
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&tz=Asia%2FRiyadh&time=24&datefmt=%3Csvg+onload%3D%22window.__sw_sec_probe%3D1%22%3E%3C%2Fsvg%3E+%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE+%26+%22%27+YYYY&units=f&motion=full&simWx=0"
+    },
+    "result": {
+      "originalIdentity": {
+        "bytes": 388519,
+        "sha256": "794b581dd656e49bacf550cc89ed04f65eba1a65e78708566bbd7b0259a4030d"
+      },
+      "artifact": "support/blobs/794b581dd656e49bacf550cc89ed04f65eba1a65e78708566bbd7b0259a4030d.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "manifest": {
+      "originalIdentity": {
+        "bytes": 4387,
+        "sha256": "9198dca478684cb58388cf536b277840de838fa17e5e0b54d3abcb1f550fa1ee"
+      },
+      "artifact": "support/blobs/9198dca478684cb58388cf536b277840de838fa17e5e0b54d3abcb1f550fa1ee.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "dispatch": {
+      "originalIdentity": {
+        "bytes": 740259,
+        "sha256": "efd25f4ff4180498e34b5c2f3e87a2d74b64dc6e2b7bc2ff2e322c6b7f7185c7"
+      },
+      "custodyAlias": "private-source-alias:0c84321d68d1d5f7fae6cb2dca727899652fef97e5f5a7e55ed1951c78c8133c",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "primaryImage": {
+      "originalIdentity": {
+        "bytes": 37158,
+        "sha256": "ec619e5fd37f91cd7e19e190f3d04f43c9fe741e740a4e9ce5d30cb107f03b23"
+      },
+      "artifact": "support/blobs/ec619e5fd37f91cd7e19e190f3d04f43c9fe741e740a4e9ce5d30cb107f03b23.png",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "primaryGeometry": null,
+    "images": {
+      "initial": {
+        "originalIdentity": {
+          "bytes": 104741,
+          "sha256": "7400dacff2ad6dc21037c09845c2f14a4b8bfce2e19b386cd10a5efe6694d24e"
+        },
+        "artifact": "support/blobs/7400dacff2ad6dc21037c09845c2f14a4b8bfce2e19b386cd10a5efe6694d24e.png",
+        "publishedIdentity": "supporting-files.json"
+      },
+      "native-unescaped-positive-control": {
+        "originalIdentity": {
+          "bytes": 37158,
+          "sha256": "ec619e5fd37f91cd7e19e190f3d04f43c9fe741e740a4e9ce5d30cb107f03b23"
+        },
+        "artifact": "support/blobs/ec619e5fd37f91cd7e19e190f3d04f43c9fe741e740a4e9ce5d30cb107f03b23.png",
+        "publishedIdentity": "supporting-files.json"
+      }
+    },
+    "geometry": {},
+    "association": {
+      "runtimeTreeSha256": "7978895b8cda009e579cee27f0c8751ba363f1a8202b4bab884b21700c1c74d9",
+      "indexSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+      "sourceIdentity": {
+        "sourceSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+        "effectiveSourceSha256": "2854c76e0b2ff6d2ed121262c27a12f3cc9d0373de60159793a43df180355b47",
+        "sourceMutation": "unescaped-date-value",
+        "scriptLayout": {
+          "id": "access_font_01",
+          "nativeOrdinal": 2,
+          "scripts": [
+            {
+              "ordinal": 0,
+              "attrs": " src=\"config.js\"",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0,
+              "bootCount": 0
+            },
+            {
+              "ordinal": 1,
+              "attrs": " id=\"native-first-paint-code\" data-sha256=\"41f1bffb47c6ce03664506179394d409778460cdcf806d59a8ab90bc96e16ad6\"",
+              "sha256": "41f1bffb47c6ce03664506179394d409778460cdcf806d59a8ab90bc96e16ad6",
+              "bytes": 282464,
+              "bootCount": 0
+            },
+            {
+              "ordinal": 2,
+              "attrs": "",
+              "sha256": "3cce5da94200339ac63a2b05b659e1584c52c2e99d1e39517612a5ae2cec3643",
+              "bytes": 5744411,
+              "bootCount": 1
+            },
+            {
+              "ordinal": 3,
+              "attrs": " src=\"real-sky/native-sky.js\"",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0,
+              "bootCount": 0
+            }
+          ]
+        },
+        "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+        "fixtureSha256": "e55759fd51329797ed22973b3663e1b9d46cdb657e83ebd0d93f1578b8d8f8f5",
+        "originalFixtureSha256": "7faf06af3f9a32256811410874cefde484a61d045ccbe9b5c56cf0b220f4d005",
+        "adapterSha256": "7bb2261d7a3a29e55302e35ed40339653926a110ed65e9942352ff0ecd8134a5",
+        "runtimeTreeSha256": null,
+        "optionalTransport": "HTTP 503; no whole-sky/first-scene/performance qualification",
+        "fonts": "Native FontFaceSet only; browser driver supplies explicit missing/delayed/loaded policy"
+      },
+      "binding": {
+        "originalIdentity": {
+          "bytes": 35357,
+          "sha256": "4f0a0053f5736f945a1c558269c4090f71165718d057772f9a6f33267884d8e1"
+        },
+        "custodyAlias": "private-source-alias:638ef4ab77e82fc7b6edd736f208d25f820d4686ba4528f96e71c9595d12ec9a",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "selection": {
+        "originalIdentity": {
+          "bytes": 6353,
+          "sha256": "511293d8f1253b5c93260d428d32d09fa7d90d43fd861adf609ac50ac0de1f04"
+        },
+        "custodyAlias": "private-source-alias:db4c0bc030cc3a5ea512da7d45426c18687609db6dfa27f76410cf4bd9d61498",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "approvedSourceReview": {
+        "originalIdentity": {
+          "bytes": 17443,
+          "sha256": "6e3e6a3b005d2edc180860ee87dbad2b65c9f244c411482d8cc15e048dd26aa4"
+        },
+        "custodyAlias": "private-source-alias:c9f4946c391795a1d1e3717e7457ceab4971b041d3ad7750ee16ff9134ce9893",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "approvedSourceReviewSeal": {
+        "originalIdentity": {
+          "bytes": 858,
+          "sha256": "b2a1d7a88a767a62b51b3e09bcf5f8591185681cfb4bdecf150f6a94292d480e"
+        },
+        "custodyAlias": "private-source-alias:76aa944385e5b55d76a088bec1c10dbea8db36bac7813d7348c80464538f04b7",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "sourceConsumption": {
+        "originalIdentity": {
+          "bytes": 5965,
+          "sha256": "b0733d32968f588b4f75ba375cef9e521daaffc4b30a6c93e57365e903a01023"
+        },
+        "custodyAlias": "private-source-alias:951decc54a40220710fc810a8867839f771eeaa0b1866b729ad5a88ef1f4f9dd",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "approvedFixtureBinding": {
+        "originalIdentity": {
+          "bytes": 25220,
+          "sha256": "c100ac492ee20d3ea95b2b1c7791ba337ca0bde4529ca027cafdd76e82e2aa00"
+        },
+        "custodyAlias": "private-source-alias:658ea1d8da866e0f943be7022c797d91f7ee782009f0bf2d4ce4802ae15283e0",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "requiredUiRuntime": {
+        "schemaVersion": 1,
+        "scope": "Exact required ACCESS UI stylesheet only; no complete runtime or optional JS/worker/assets admission",
+        "sourceSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+        "files": {
+          "real-sky/native-sky.css": {
+            "bytes": 1854,
+            "sha256": "298a11d0d91a801de2e8f63b7e4997ff33d7a7423ebd0e4c8a0bbd5710f68f31"
+          }
+        }
+      },
+      "rootLauncher": {
+        "originalIdentity": {
+          "bytes": 27837,
+          "sha256": "7de084183d23be7cd9904fc9bc7320aa922095db15610c08fcb819b4b3918204"
+        },
+        "custodyAlias": "private-source-alias:d11094ea4938912c5b839b7305af2d9dd0fb7c860b1ef6e79179619daf62c091",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "authorSeal": {
+        "originalIdentity": {
+          "bytes": 221,
+          "sha256": "ce05bcc69cebfd6d87a2fbfa89b16cfecc90eda199d4dc19f292be4e70452be9"
+        },
+        "custodyAlias": "private-source-alias:dfff6d9bcbaec2a7bb89ebc3d957c7ebe92247348b830666c55e542c6278b083",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "ownerClarification": {
+        "originalIdentity": {
+          "bytes": 21584,
+          "sha256": "97ad96feacd0fc61c5858cdf86042bb4bb9bd9e0fa22f88766140697c75ec3b7"
+        },
+        "artifact": "support/blobs/97ad96feacd0fc61c5858cdf86042bb4bb9bd9e0fa22f88766140697c75ec3b7.json",
+        "publishedIdentity": "supporting-files.json"
+      },
+      "fixtureProducerNode": "R0019-ACCESS",
+      "evidenceTarget": "R0019-ACCESS"
+    },
+    "custody": {
+      "lease": {
+        "node": "R0019-ACCESS",
+        "engine": "chromium",
+        "binding": {
+          "originalIdentity": {
+            "bytes": 35357,
+            "sha256": "4f0a0053f5736f945a1c558269c4090f71165718d057772f9a6f33267884d8e1"
+          },
+          "custodyAlias": "private-source-alias:f3cc4d8565765612540a39a2deb342631c146162c6236c805518a52cb6b5a88c",
+          "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+        },
+        "command": [
+          "private-source-alias:0982d53af06639f2f3800594c9b13638f67ce508a597c0eab7acff1ab8dbe425",
+          "-B",
+          "private-source-alias:d80cf4e3a4464c55fef9706988cdfbe8dbe59201c5614294e59d22d46baddb5d",
+          "--execute-root-native",
+          "--lease-id",
+          "R0019-chromium-long--unescaped-control-6e27a73d-3905-4481-8ecd-1ce3d1610b33",
+          "--proposal-seal-sha256",
+          "ce05bcc69cebfd6d87a2fbfa89b16cfecc90eda199d4dc19f292be4e70452be9",
+          "--binding",
+          "private-source-alias:f3cc4d8565765612540a39a2deb342631c146162c6236c805518a52cb6b5a88c",
+          "--binding-bytes",
+          "35357",
+          "--binding-sha256",
+          "4f0a0053f5736f945a1c558269c4090f71165718d057772f9a6f33267884d8e1"
+        ],
+        "runtimeSha256": "7978895b8cda009e579cee27f0c8751ba363f1a8202b4bab884b21700c1c74d9",
+        "indexSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+        "engineExecutableSha256": "290fa7018fda22c52ada5eddb0113baf3ebc41fd0fde6085eddb19793606c635",
+        "startedAtUtc": "2026-10-12T10:23:04.833416+00:00",
+        "expiresAtUtc": "2026-10-12T10:28:04.833416+00:00",
+        "holder": "root",
+        "status": "ACTIVE",
+        "capacity": 1,
+        "leaseId": "R0019-chromium-long--unescaped-control-6e27a73d-3905-4481-8ecd-1ce3d1610b33",
+        "unknownChildCompletion": false,
+        "sessionId": null,
+        "scope": "Only original chromium-long--unescaped-control at final renewed cycle2of2, fresh contract-long-unescaped-control-chromium-r3; original15000ms and all checks/crops/geometry/source/custody guards retained; accepted53ACCESS+9LAYOUT and all rawFAILs preserved.",
+        "outputPath": "private-source-alias:2f7e2e9850cf5e6da6d49005891178ed019d0e7da3086b226295a1127fd7b477",
+        "sourceConsumption": {
+          "originalIdentity": {
+            "bytes": 5965,
+            "sha256": "b0733d32968f588b4f75ba375cef9e521daaffc4b30a6c93e57365e903a01023"
+          },
+          "custodyAlias": "private-source-alias:248771f538964745b6d17914cb07ec016c54aa48de2f22e85e6d14fef73f3de5",
+          "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+        },
+        "delegatedOperator": "/root/r0022_balance_native_carrier_r1",
+        "delegation": {
+          "originalIdentity": {
+            "bytes": 64486,
+            "sha256": "ed9d33d26db86acd087ebd3a507fc1276490d87f11d443749c1632cd8beeff0e"
+          },
+          "custodyAlias": "private-source-alias:b0df3aa4c6d81bd3036c0ac554919540772deea7a2dc5b81590c38f15a099aff",
+          "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+        },
+        "renewedOwnerGrant": {
+          "originalIdentity": {
+            "bytes": 2605,
+            "sha256": "dfbb98a6f3812d299b77315c5a62c3b24c19691b7b50a851003596a9a4c4c48f"
+          },
+          "custodyAlias": "private-source-alias:fb7ee0bacbd25f2dae82140972aad38c960ec890473c8cd23121bbd4e4893b8e",
+          "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+        },
+        "fixtureProducerNode": "R0019-ACCESS",
+        "evidenceTarget": "R0019-ACCESS",
+        "correctionReviewCycle": 2
+      },
+      "admission": {
+        "originalIdentity": {
+          "bytes": 7098,
+          "sha256": "cd026abf0fb8bce5f95340c29f13161118c14548db453b908d5aded0e009dee1"
+        },
+        "custodyAlias": "private-source-alias:c044421ffbc055326121581a04ff0078625264b3fa5e353a8db9fdcd573447ab",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "intent": {
+        "originalIdentity": {
+          "bytes": 1787,
+          "sha256": "063366f6e2811d0ff66d32f8a794deba81dafac2c78371f02c5ddd3dfdc92a79"
+        },
+        "custodyAlias": "private-source-alias:8adb1159eb28ff9dd032e18fbbd5e8d6f61655fea8a2d44cd820dd87158fcf11",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "release": {
+        "originalIdentity": {
+          "bytes": 3341,
+          "sha256": "bca380de5a1e164f22bc934d7153660a5cdc349733c38a43a5df033097aead26"
+        },
+        "custodyAlias": "private-source-alias:a5f0ef8ce4fe6a508fce248ee9c2f6717ef2ff0995ea7e4d9131a3ed200612b4",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "commandReturn": {
+        "originalIdentity": {
+          "bytes": 496,
+          "sha256": "3763817e5ad8503e4e98dffe82357f825fe2aaefadb262a6ee503830b152f46e"
+        },
+        "custodyAlias": "private-source-alias:c8d117ec952c6bed12f1a6b6796973ffb22b2498dd342144ee28cb252652cf23",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "kernelLiveOwnershipClaimed": false,
+      "kind": "SOURCE_BOUND_NORMAL_POST_CLOSE_RETURN_AND_QUALIFIED_CURRENT_ABSENCE",
+      "endpointAssociation": {
+        "schema": "r0019-source-bound-post-close-endpoint/1",
+        "kind": "SOURCE_BOUND_NORMAL_POST_CLOSE_RETURN",
+        "url": "http://127.0.0.1:59967/index.html#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&tz=Asia%2FRiyadh&time=24&datefmt=%3Csvg+onload%3D%22window.__sw_sec_probe%3D1%22%3E%3C%2Fsvg%3E+%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE+%26+%22%27+YYYY&units=f&motion=full&simWx=0",
+        "port": 59967,
+        "result": {
+          "originalIdentity": {
+            "bytes": 388519,
+            "sha256": "794b581dd656e49bacf550cc89ed04f65eba1a65e78708566bbd7b0259a4030d"
+          },
+          "artifact": "support/blobs/794b581dd656e49bacf550cc89ed04f65eba1a65e78708566bbd7b0259a4030d.json",
+          "publishedIdentity": "supporting-files.json"
+        },
+        "manifest": {
+          "originalIdentity": {
+            "bytes": 4387,
+            "sha256": "9198dca478684cb58388cf536b277840de838fa17e5e0b54d3abcb1f550fa1ee"
+          },
+          "artifact": "support/blobs/9198dca478684cb58388cf536b277840de838fa17e5e0b54d3abcb1f550fa1ee.json",
+          "publishedIdentity": "supporting-files.json"
+        },
+        "leaseId": "R0019-chromium-long--unescaped-control-6e27a73d-3905-4481-8ecd-1ce3d1610b33",
+        "engine": "chromium",
+        "case": "long",
+        "variant": "unescaped-control",
+        "driverSha256": "2fe088c5776992a2ac96b937ea78bb3f66271e2c84ca29fb99ef846d7ef04a62",
+        "adapterSha256": "7bb2261d7a3a29e55302e35ed40339653926a110ed65e9942352ff0ecd8134a5",
+        "extensionSha256": "e6192bbb313f777d3be12d8c0da4d0f602462d8b7f13844b340ebff881f76c5c"
+      },
+      "cleanupKnown": true,
+      "childReturnKnown": true,
+      "releaseInsideOriginalLease": true,
+      "originalResultReclassified": false
+    },
+    "auxiliaryEvidence": [
+      {
+        "originalIdentity": {
+          "bytes": 461,
+          "sha256": "c7ee456d48d71780d764a0faf9f09dc7e1919074ea4f7e7785631e3f3bdee8bc"
+        },
+        "custodyAlias": "private-source-alias:f1eb8583696b4a6a9a723055d1acea4d45275321e629f99377e55425d1153b72",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      }
+    ],
+    "controlDisposition": {
+      "kind": "unescaped-date-value",
+      "healthy": false,
+      "actualCondition": true,
+      "originalRawStatusPreserved": "MUTANT_DETECTED",
+      "expectedFailureRetained": true,
+      "productPass": false,
+      "literalConsumer": "real SVG and literal canary1",
+      "canaryBeforeTrustedClick": true,
+      "trustedClickCausedOnload": false
+    }
+  },
+  "correctionReviewCycle": 2,
+  "actualAssertions": [
+    {
+      "label": "Reached disposable unescaped full-value sink creates SVG and fires literal canary",
+      "result": "PASS"
+    }
+  ],
+  "actualReturn": {
+    "result": {
+      "originalIdentity": {
+        "bytes": 388519,
+        "sha256": "794b581dd656e49bacf550cc89ed04f65eba1a65e78708566bbd7b0259a4030d"
+      },
+      "artifact": "support/blobs/794b581dd656e49bacf550cc89ed04f65eba1a65e78708566bbd7b0259a4030d.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "manifest": {
+      "originalIdentity": {
+        "bytes": 4387,
+        "sha256": "9198dca478684cb58388cf536b277840de838fa17e5e0b54d3abcb1f550fa1ee"
+      },
+      "artifact": "support/blobs/9198dca478684cb58388cf536b277840de838fa17e5e0b54d3abcb1f550fa1ee.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "dispatch": {
+      "originalIdentity": {
+        "bytes": 740259,
+        "sha256": "efd25f4ff4180498e34b5c2f3e87a2d74b64dc6e2b7bc2ff2e322c6b7f7185c7"
+      },
+      "custodyAlias": "private-source-alias:0c84321d68d1d5f7fae6cb2dca727899652fef97e5f5a7e55ed1951c78c8133c",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "commandReturn": {
+      "originalIdentity": {
+        "bytes": 496,
+        "sha256": "3763817e5ad8503e4e98dffe82357f825fe2aaefadb262a6ee503830b152f46e"
+      },
+      "custodyAlias": "private-source-alias:c8d117ec952c6bed12f1a6b6796973ffb22b2498dd342144ee28cb252652cf23",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "error": null,
+    "captureError": null,
+    "returnedChecks": 1,
+    "returnedStates": 2,
+    "crops": 2
+  },
+  "association": {
+    "runtimeTreeSha256": "7978895b8cda009e579cee27f0c8751ba363f1a8202b4bab884b21700c1c74d9",
+    "indexSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+    "sourceIdentity": {
+      "sourceSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+      "effectiveSourceSha256": "2854c76e0b2ff6d2ed121262c27a12f3cc9d0373de60159793a43df180355b47",
+      "sourceMutation": "unescaped-date-value",
+      "scriptLayout": {
+        "id": "access_font_01",
+        "nativeOrdinal": 2,
+        "scripts": [
+          {
+            "ordinal": 0,
+            "attrs": " src=\"config.js\"",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "bootCount": 0
+          },
+          {
+            "ordinal": 1,
+            "attrs": " id=\"native-first-paint-code\" data-sha256=\"41f1bffb47c6ce03664506179394d409778460cdcf806d59a8ab90bc96e16ad6\"",
+            "sha256": "41f1bffb47c6ce03664506179394d409778460cdcf806d59a8ab90bc96e16ad6",
+            "bytes": 282464,
+            "bootCount": 0
+          },
+          {
+            "ordinal": 2,
+            "attrs": "",
+            "sha256": "3cce5da94200339ac63a2b05b659e1584c52c2e99d1e39517612a5ae2cec3643",
+            "bytes": 5744411,
+            "bootCount": 1
+          },
+          {
+            "ordinal": 3,
+            "attrs": " src=\"real-sky/native-sky.js\"",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "bootCount": 0
+          }
+        ]
+      },
+      "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+      "fixtureSha256": "e55759fd51329797ed22973b3663e1b9d46cdb657e83ebd0d93f1578b8d8f8f5",
+      "originalFixtureSha256": "7faf06af3f9a32256811410874cefde484a61d045ccbe9b5c56cf0b220f4d005",
+      "adapterSha256": "7bb2261d7a3a29e55302e35ed40339653926a110ed65e9942352ff0ecd8134a5",
+      "runtimeTreeSha256": null,
+      "optionalTransport": "HTTP 503; no whole-sky/first-scene/performance qualification",
+      "fonts": "Native FontFaceSet only; browser driver supplies explicit missing/delayed/loaded policy"
+    },
+    "binding": {
+      "originalIdentity": {
+        "bytes": 35357,
+        "sha256": "4f0a0053f5736f945a1c558269c4090f71165718d057772f9a6f33267884d8e1"
+      },
+      "custodyAlias": "private-source-alias:638ef4ab77e82fc7b6edd736f208d25f820d4686ba4528f96e71c9595d12ec9a",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "selection": {
+      "originalIdentity": {
+        "bytes": 6353,
+        "sha256": "511293d8f1253b5c93260d428d32d09fa7d90d43fd861adf609ac50ac0de1f04"
+      },
+      "custodyAlias": "private-source-alias:db4c0bc030cc3a5ea512da7d45426c18687609db6dfa27f76410cf4bd9d61498",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "approvedSourceReview": {
+      "originalIdentity": {
+        "bytes": 17443,
+        "sha256": "6e3e6a3b005d2edc180860ee87dbad2b65c9f244c411482d8cc15e048dd26aa4"
+      },
+      "custodyAlias": "private-source-alias:c9f4946c391795a1d1e3717e7457ceab4971b041d3ad7750ee16ff9134ce9893",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "approvedSourceReviewSeal": {
+      "originalIdentity": {
+        "bytes": 858,
+        "sha256": "b2a1d7a88a767a62b51b3e09bcf5f8591185681cfb4bdecf150f6a94292d480e"
+      },
+      "custodyAlias": "private-source-alias:76aa944385e5b55d76a088bec1c10dbea8db36bac7813d7348c80464538f04b7",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "sourceConsumption": {
+      "originalIdentity": {
+        "bytes": 5965,
+        "sha256": "b0733d32968f588b4f75ba375cef9e521daaffc4b30a6c93e57365e903a01023"
+      },
+      "custodyAlias": "private-source-alias:951decc54a40220710fc810a8867839f771eeaa0b1866b729ad5a88ef1f4f9dd",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "approvedFixtureBinding": {
+      "originalIdentity": {
+        "bytes": 25220,
+        "sha256": "c100ac492ee20d3ea95b2b1c7791ba337ca0bde4529ca027cafdd76e82e2aa00"
+      },
+      "custodyAlias": "private-source-alias:658ea1d8da866e0f943be7022c797d91f7ee782009f0bf2d4ce4802ae15283e0",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "requiredUiRuntime": {
+      "schemaVersion": 1,
+      "scope": "Exact required ACCESS UI stylesheet only; no complete runtime or optional JS/worker/assets admission",
+      "sourceSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+      "files": {
+        "real-sky/native-sky.css": {
+          "bytes": 1854,
+          "sha256": "298a11d0d91a801de2e8f63b7e4997ff33d7a7423ebd0e4c8a0bbd5710f68f31"
+        }
+      }
+    },
+    "rootLauncher": {
+      "originalIdentity": {
+        "bytes": 27837,
+        "sha256": "7de084183d23be7cd9904fc9bc7320aa922095db15610c08fcb819b4b3918204"
+      },
+      "custodyAlias": "private-source-alias:d11094ea4938912c5b839b7305af2d9dd0fb7c860b1ef6e79179619daf62c091",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "authorSeal": {
+      "originalIdentity": {
+        "bytes": 221,
+        "sha256": "ce05bcc69cebfd6d87a2fbfa89b16cfecc90eda199d4dc19f292be4e70452be9"
+      },
+      "custodyAlias": "private-source-alias:dfff6d9bcbaec2a7bb89ebc3d957c7ebe92247348b830666c55e542c6278b083",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "ownerClarification": {
+      "originalIdentity": {
+        "bytes": 21584,
+        "sha256": "97ad96feacd0fc61c5858cdf86042bb4bb9bd9e0fa22f88766140697c75ec3b7"
+      },
+      "artifact": "support/blobs/97ad96feacd0fc61c5858cdf86042bb4bb9bd9e0fa22f88766140697c75ec3b7.json",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "fixtureProducerNode": "R0019-ACCESS",
+    "evidenceTarget": "R0019-ACCESS"
+  },
+  "custody": {
+    "lease": {
+      "node": "R0019-ACCESS",
+      "engine": "chromium",
+      "binding": {
+        "originalIdentity": {
+          "bytes": 35357,
+          "sha256": "4f0a0053f5736f945a1c558269c4090f71165718d057772f9a6f33267884d8e1"
+        },
+        "custodyAlias": "private-source-alias:f3cc4d8565765612540a39a2deb342631c146162c6236c805518a52cb6b5a88c",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "command": [
+        "private-source-alias:0982d53af06639f2f3800594c9b13638f67ce508a597c0eab7acff1ab8dbe425",
+        "-B",
+        "private-source-alias:d80cf4e3a4464c55fef9706988cdfbe8dbe59201c5614294e59d22d46baddb5d",
+        "--execute-root-native",
+        "--lease-id",
+        "R0019-chromium-long--unescaped-control-6e27a73d-3905-4481-8ecd-1ce3d1610b33",
+        "--proposal-seal-sha256",
+        "ce05bcc69cebfd6d87a2fbfa89b16cfecc90eda199d4dc19f292be4e70452be9",
+        "--binding",
+        "private-source-alias:f3cc4d8565765612540a39a2deb342631c146162c6236c805518a52cb6b5a88c",
+        "--binding-bytes",
+        "35357",
+        "--binding-sha256",
+        "4f0a0053f5736f945a1c558269c4090f71165718d057772f9a6f33267884d8e1"
+      ],
+      "runtimeSha256": "7978895b8cda009e579cee27f0c8751ba363f1a8202b4bab884b21700c1c74d9",
+      "indexSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+      "engineExecutableSha256": "290fa7018fda22c52ada5eddb0113baf3ebc41fd0fde6085eddb19793606c635",
+      "startedAtUtc": "2026-10-12T10:23:04.833416+00:00",
+      "expiresAtUtc": "2026-10-12T10:28:04.833416+00:00",
+      "holder": "root",
+      "status": "ACTIVE",
+      "capacity": 1,
+      "leaseId": "R0019-chromium-long--unescaped-control-6e27a73d-3905-4481-8ecd-1ce3d1610b33",
+      "unknownChildCompletion": false,
+      "sessionId": null,
+      "scope": "Only original chromium-long--unescaped-control at final renewed cycle2of2, fresh contract-long-unescaped-control-chromium-r3; original15000ms and all checks/crops/geometry/source/custody guards retained; accepted53ACCESS+9LAYOUT and all rawFAILs preserved.",
+      "outputPath": "private-source-alias:2f7e2e9850cf5e6da6d49005891178ed019d0e7da3086b226295a1127fd7b477",
+      "sourceConsumption": {
+        "originalIdentity": {
+          "bytes": 5965,
+          "sha256": "b0733d32968f588b4f75ba375cef9e521daaffc4b30a6c93e57365e903a01023"
+        },
+        "custodyAlias": "private-source-alias:248771f538964745b6d17914cb07ec016c54aa48de2f22e85e6d14fef73f3de5",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "delegatedOperator": "/root/r0022_balance_native_carrier_r1",
+      "delegation": {
+        "originalIdentity": {
+          "bytes": 64486,
+          "sha256": "ed9d33d26db86acd087ebd3a507fc1276490d87f11d443749c1632cd8beeff0e"
+        },
+        "custodyAlias": "private-source-alias:b0df3aa4c6d81bd3036c0ac554919540772deea7a2dc5b81590c38f15a099aff",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "renewedOwnerGrant": {
+        "originalIdentity": {
+          "bytes": 2605,
+          "sha256": "dfbb98a6f3812d299b77315c5a62c3b24c19691b7b50a851003596a9a4c4c48f"
+        },
+        "custodyAlias": "private-source-alias:fb7ee0bacbd25f2dae82140972aad38c960ec890473c8cd23121bbd4e4893b8e",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "fixtureProducerNode": "R0019-ACCESS",
+      "evidenceTarget": "R0019-ACCESS",
+      "correctionReviewCycle": 2
+    },
+    "admission": {
+      "originalIdentity": {
+        "bytes": 7098,
+        "sha256": "cd026abf0fb8bce5f95340c29f13161118c14548db453b908d5aded0e009dee1"
+      },
+      "custodyAlias": "private-source-alias:c044421ffbc055326121581a04ff0078625264b3fa5e353a8db9fdcd573447ab",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "intent": {
+      "originalIdentity": {
+        "bytes": 1787,
+        "sha256": "063366f6e2811d0ff66d32f8a794deba81dafac2c78371f02c5ddd3dfdc92a79"
+      },
+      "custodyAlias": "private-source-alias:8adb1159eb28ff9dd032e18fbbd5e8d6f61655fea8a2d44cd820dd87158fcf11",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "release": {
+      "originalIdentity": {
+        "bytes": 3341,
+        "sha256": "bca380de5a1e164f22bc934d7153660a5cdc349733c38a43a5df033097aead26"
+      },
+      "custodyAlias": "private-source-alias:a5f0ef8ce4fe6a508fce248ee9c2f6717ef2ff0995ea7e4d9131a3ed200612b4",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "commandReturn": {
+      "originalIdentity": {
+        "bytes": 496,
+        "sha256": "3763817e5ad8503e4e98dffe82357f825fe2aaefadb262a6ee503830b152f46e"
+      },
+      "custodyAlias": "private-source-alias:c8d117ec952c6bed12f1a6b6796973ffb22b2498dd342144ee28cb252652cf23",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "kernelLiveOwnershipClaimed": false,
+    "kind": "SOURCE_BOUND_NORMAL_POST_CLOSE_RETURN_AND_QUALIFIED_CURRENT_ABSENCE",
+    "endpointAssociation": {
+      "schema": "r0019-source-bound-post-close-endpoint/1",
+      "kind": "SOURCE_BOUND_NORMAL_POST_CLOSE_RETURN",
+      "url": "http://127.0.0.1:59967/index.html#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&tz=Asia%2FRiyadh&time=24&datefmt=%3Csvg+onload%3D%22window.__sw_sec_probe%3D1%22%3E%3C%2Fsvg%3E+%D8%A7%D9%84%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE+%26+%22%27+YYYY&units=f&motion=full&simWx=0",
+      "port": 59967,
+      "result": {
+        "originalIdentity": {
+          "bytes": 388519,
+          "sha256": "794b581dd656e49bacf550cc89ed04f65eba1a65e78708566bbd7b0259a4030d"
+        },
+        "artifact": "support/blobs/794b581dd656e49bacf550cc89ed04f65eba1a65e78708566bbd7b0259a4030d.json",
+        "publishedIdentity": "supporting-files.json"
+      },
+      "manifest": {
+        "originalIdentity": {
+          "bytes": 4387,
+          "sha256": "9198dca478684cb58388cf536b277840de838fa17e5e0b54d3abcb1f550fa1ee"
+        },
+        "artifact": "support/blobs/9198dca478684cb58388cf536b277840de838fa17e5e0b54d3abcb1f550fa1ee.json",
+        "publishedIdentity": "supporting-files.json"
+      },
+      "leaseId": "R0019-chromium-long--unescaped-control-6e27a73d-3905-4481-8ecd-1ce3d1610b33",
+      "engine": "chromium",
+      "case": "long",
+      "variant": "unescaped-control",
+      "driverSha256": "2fe088c5776992a2ac96b937ea78bb3f66271e2c84ca29fb99ef846d7ef04a62",
+      "adapterSha256": "7bb2261d7a3a29e55302e35ed40339653926a110ed65e9942352ff0ecd8134a5",
+      "extensionSha256": "e6192bbb313f777d3be12d8c0da4d0f602462d8b7f13844b340ebff881f76c5c"
+    },
+    "cleanupKnown": true,
+    "childReturnKnown": true,
+    "releaseInsideOriginalLease": true,
+    "originalResultReclassified": false
+  },
+  "pixels": {
+    "personallyViewed": true,
+    "images": [
+      {
+        "artifact": {
+          "originalIdentity": {
+            "bytes": 104741,
+            "sha256": "7400dacff2ad6dc21037c09845c2f14a4b8bfce2e19b386cd10a5efe6694d24e"
+          },
+          "artifact": "support/blobs/7400dacff2ad6dc21037c09845c2f14a4b8bfce2e19b386cd10a5efe6694d24e.png",
+          "publishedIdentity": "supporting-files.json"
+        },
+        "size": [
+          325,
+          530
+        ]
+      },
+      {
+        "artifact": {
+          "originalIdentity": {
+            "bytes": 37158,
+            "sha256": "ec619e5fd37f91cd7e19e190f3d04f43c9fe741e740a4e9ce5d30cb107f03b23"
+          },
+          "artifact": "support/blobs/ec619e5fd37f91cd7e19e190f3d04f43c9fe741e740a4e9ce5d30cb107f03b23.png",
+          "publishedIdentity": "supporting-files.json"
+        },
+        "size": [
+          325,
+          530
+        ]
+      }
+    ],
+    "scope": "Actual unsafe full-value SVG/canary1 discriminator reached through admitted disposable mutant; trusted click opens the modal. Canary1 and real SVG load are already present while closed, so no click-caused onload claim"
+  },
+  "retainedPriorFailure": {
+    "changedInputAdmission": {
+      "originalIdentity": {
+        "bytes": 5057,
+        "sha256": "b5e91d849c08316ace3020eea8006f3326a6a9d2702ab9825fa2fa886af63408"
+      },
+      "custodyAlias": "private-source-alias:af3213d15550fc346265dd722018c712f9e788ad3aebc24b76f77c32a68dcb78",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "refs": {
+      "priorResult": {
+        "originalIdentity": {
+          "bytes": 1808261,
+          "sha256": "85c842c7eb24b2ffca6bcc6935c38025f5f68551a36bcdb8210718f0078c4640"
+        },
+        "custodyAlias": "private-source-alias:c29393fbefd47c7e40dbd9798efa499228a313acbc296a924d90a6da6ff0042c",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "priorManifest": {
+        "originalIdentity": {
+          "bytes": 4376,
+          "sha256": "334e1f6e735cd43bc007b61362f5aef5261bbd9e9bc5f9b13aceea50a898e8fb"
+        },
+        "custodyAlias": "private-source-alias:f88315b2860850c91a187fd95b3def8fac009a6561338281b7ca5c836c26259f",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "priorDispatch": {
+        "originalIdentity": {
+          "bytes": 3693165,
+          "sha256": "78b01618b46327ba384c3f4c6f8bd86aca2e35219a25ae472c3090442829a047"
+        },
+        "custodyAlias": "private-source-alias:bb67ffe7da8c4fe4565e659ee43e0d7c23f34a0af0c820af2c7ee0a1a1b2ee23",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "priorBinding": {
+        "originalIdentity": {
+          "bytes": 35218,
+          "sha256": "a08c6b4c5c141b4fb9334a69c689be691538fd4d88ea2455118194a189b86c56"
+        },
+        "custodyAlias": "private-source-alias:b2d6ca1bfc06cf9be148ec1287197399ed2bd51bf88177d1679c1cba3032b720",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "priorRelease": {
+        "originalIdentity": {
+          "bytes": 2024,
+          "sha256": "a41a186ac9036829285a24963ae40af0aa20a7905dc294c4f043c4567afe2d3c"
+        },
+        "custodyAlias": "private-source-alias:d77512b1fd1c3681289e166afb13e0aab0574f134f1f19aba7e4bce8df41a0c6",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "priorActualReview": {
+        "originalIdentity": {
+          "bytes": 15837,
+          "sha256": "736f753aca16c8ca3e2c9ac49f4915b13b761c3a55a080498d0b274058e0e92d"
+        },
+        "custodyAlias": "private-source-alias:7130ec3f76cdd4c89eae75d298d1e06c11b00d0ecae0d0bd93baf9d50ff12130",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "priorActualReviewSeal": {
+        "originalIdentity": {
+          "bytes": 737,
+          "sha256": "3ae93e99b5dc6aed5757ee9b35a04d98fbf814f54d67352eda6a8a58de173c7a"
+        },
+        "custodyAlias": "private-source-alias:e363b12fe6cc9205f7be75d69827892f2b018a9b6846b935443022d4953b5185",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      },
+      "priorIntent": {
+        "originalIdentity": {
+          "bytes": 1787,
+          "sha256": "b3e3fd1cab6744a927d0bacc05f236d695a40016905d4b4cd89a72cd066fdd3d"
+        },
+        "custodyAlias": "private-source-alias:99d2db378b78cd66213f9e53729353feb17d76d0cf32c78e842783b792ffc776",
+        "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+      }
+    }
+  },
+  "limits": [
+    "This disposable mutant demonstrates the original positive unsafe-sink discriminator. It is expected adverse-control evidence and never healthy product PASS.",
+    "Initial closed state already has canary1 after genuine SVG-load/window-load; the subsequent trusted click proves modal opening, not that click caused the handler execution.",
+    "Two retained image/state pairs were inspected; no written geometry, tail/selection/native O13 or post-Close restoration snapshot is attributed to this sole positive-control run.",
+    "The exact base/custom input, source mutation, missing-font503 policy and requiredCSS remain scoped; no whole-runtime/public/native latency equivalence.",
+    "No source-admission, native execution or canonical acceptance/JOIN/node credit by this independent reviewer; previous accepted scopes remain at their exact scope."
+  ],
+  "productPass": false,
+  "nativeExecutedByReviewer": false,
+  "nodeCredit": 0
+}

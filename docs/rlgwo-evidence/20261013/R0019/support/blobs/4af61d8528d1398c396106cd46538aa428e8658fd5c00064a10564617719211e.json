@@ -1,0 +1,5252 @@
+{
+  "case": "faults",
+  "variant": "title-only",
+  "status": "EXPECTED_NATIVE_FAULT_CAUGHT_REVIEW_PENDING",
+  "source": {
+    "sourceSha256": "a6abe0f16430cdfa56059b188488faaa5abf6a137445fc17ce1cd990f5a18238",
+    "effectiveSourceSha256": "bab4f79ffdfdd937f7ade396d37a097bcb853656903df50e334ff4067f89826a",
+    "sourceMutation": "title-only-triggers",
+    "scriptLayout": {
+      "id": "access_font_01",
+      "nativeOrdinal": 2,
+      "scripts": [
+        {
+          "ordinal": 0,
+          "attrs": " src=\"config.js\"",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "bootCount": 0
+        },
+        {
+          "ordinal": 1,
+          "attrs": " id=\"native-first-paint-code\" data-sha256=\"41f1bffb47c6ce03664506179394d409778460cdcf806d59a8ab90bc96e16ad6\"",
+          "sha256": "41f1bffb47c6ce03664506179394d409778460cdcf806d59a8ab90bc96e16ad6",
+          "bytes": 282464,
+          "bootCount": 0
+        },
+        {
+          "ordinal": 2,
+          "attrs": "",
+          "sha256": "3cce5da94200339ac63a2b05b659e1584c52c2e99d1e39517612a5ae2cec3643",
+          "bytes": 5744411,
+          "bootCount": 1
+        },
+        {
+          "ordinal": 3,
+          "attrs": " src=\"real-sky/native-sky.js\"",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "bootCount": 0
+        }
+      ]
+    },
+    "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "fixtureSha256": "2ec112d24080730752050eccca2564a29e3bf78c7e054a680fcf25b9fb062b83",
+    "originalFixtureSha256": "7faf06af3f9a32256811410874cefde484a61d045ccbe9b5c56cf0b220f4d005",
+    "adapterSha256": "7bb2261d7a3a29e55302e35ed40339653926a110ed65e9942352ff0ecd8134a5",
+    "runtimeTreeSha256": null,
+    "optionalTransport": "HTTP 503; no whole-sky/first-scene/performance qualification",
+    "fonts": "Native FontFaceSet only; browser driver supplies explicit missing/delayed/loaded policy"
+  },
+  "url": "http://127.0.0.1:49357/index.html#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&tz=UTC&time=24&datefmt=YYYY-MM-DD&units=f&motion=full&simWx=0",
+  "checks": [
+    {
+      "label": "Full Gregorian equals the last painted projection",
+      "result": "PASS"
+    },
+    {
+      "label": "Full Hijri equals the last painted projection",
+      "result": "PASS"
+    },
+    {
+      "label": "Preview/reason use that same projection",
+      "result": "PASS"
+    },
+    {
+      "label": "Compact Gregorian retains complete source text despite CSS ellipsis",
+      "result": "PASS"
+    },
+    {
+      "label": "Compact Hijri retains complete source text despite CSS ellipsis",
+      "result": "PASS"
+    },
+    {
+      "label": "Accessible button names retain the selected complete values",
+      "result": "PASS"
+    },
+    {
+      "label": "Disclosure fault setup reaches healthy prayer/date/native dialog consumer",
+      "result": "PASS"
+    },
+    {
+      "label": "Disclosure fault discriminator: both native button/Tab/key routes remain available",
+      "result": "EXPECTED_FAIL_RETAINED",
+      "error": "Disclosure fault discriminator: both native button/Tab/key routes remain available",
+      "observed": [
+        {
+          "trigger": "ceDateButton",
+          "tag": "SPAN",
+          "tabIndex": -1,
+          "tabReached": false,
+          "keyOpened": false
+        },
+        {
+          "trigger": "ahDateButton",
+          "tag": "SPAN",
+          "tabIndex": -1,
+          "tabReached": false,
+          "keyOpened": false
+        }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "name": "fault-closed-baseline",
+      "state": {
+        "clock": {
+          "wall": 1788803999000,
+          "mono": 0,
+          "nativePerformance": 847.2000000029802
+        },
+        "now": 1788803999000,
+        "nowFinite": true,
+        "parts": {
+          "y": 2026,
+          "mo": 9,
+          "d": 7,
+          "h": 17,
+          "mi": 59,
+          "s": 59,
+          "dateStr": "07-09-2026"
+        },
+        "valid": true,
+        "zone": "UTC",
+        "clockAnchor": null,
+        "anchorFinite": false,
+        "clockMode": {
+          "followWall": true,
+          "rate": 1,
+          "advancing": false
+        },
+        "generation": 0,
+        "loopStarted": true,
+        "sceneBuilt": true,
+        "sceneBuilds": {
+          "stars": 1,
+          "weather": 1
+        },
+        "config": {
+          "v": 1,
+          "lat": 24.47,
+          "lon": 39.61,
+          "tz": "UTC",
+          "label": "Madinah",
+          "method": "4",
+          "school": "0",
+          "time": "24",
+          "datefmt": "YYYY-MM-DD",
+          "units": "f",
+          "appearance": "glass",
+          "lp": 0,
+          "seed": null,
+          "source": "hash",
+          "savedAt": null,
+          "locationEvidence": {
+            "intent": "fixed-site",
+            "source": "hash",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          }
+        },
+        "mode": "hardcoded",
+        "day": "07-09-2026",
+        "today": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "tomorrow": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448",
+              "method": "HJCoSA"
+            }
+          },
+          "meta": {
+            "latitude": 24.47,
+            "longitude": 39.61,
+            "timezone": "UTC",
+            "method": {
+              "id": 4
+            },
+            "school": "STANDARD"
+          }
+        },
+        "date": {
+          "gregorianText": "2026-09-07",
+          "hijriText": "1448-02-19",
+          "previewDay": "20",
+          "previewText": "\ud83c\udf18 20",
+          "explanation": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+          "requestedGregorianDay": "07-09-2026",
+          "loadedGregorianDay": "07-09-2026",
+          "selectedGregorianDay": "07-09-2026",
+          "timezone": "UTC",
+          "beforeOrAfterMaghrib": "before",
+          "maghribRollAvailable": true,
+          "maghribRollApplied": false,
+          "selectedSource": "today",
+          "calendarSource": "Aladhan",
+          "hijriMethod": "HJCoSA",
+          "unavailableReason": null,
+          "selectionReason": null,
+          "staleDateState": "current",
+          "hijriAnomaly": null
+        },
+        "model": {
+          "t": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:00",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "20:00"
+          },
+          "noon": 720,
+          "decl": 0.0881528850400248,
+          "doy": 250,
+          "sunrise": 360,
+          "sunset": 1080,
+          "nowMin": 1079.9833333333333,
+          "nowAbs": 1079.9833333333333,
+          "warmEnd": 1080,
+          "dots": [
+            {
+              "k": "Fajr",
+              "abs": 300
+            },
+            {
+              "k": "Sunrise",
+              "abs": 360
+            },
+            {
+              "k": "Dhuhr",
+              "abs": 720
+            },
+            {
+              "k": "Asr",
+              "abs": 900
+            },
+            {
+              "k": "Maghrib",
+              "abs": 1080
+            },
+            {
+              "k": "Isha",
+              "abs": 1200
+            }
+          ],
+          "currentKey": "Asr",
+          "nextKey": "Maghrib",
+          "nextTime": "18:00",
+          "leftMin": 0.016666666666666666,
+          "nowEpoch": 1788803999000,
+          "nextEpoch": 1788804000000,
+          "nextDateStr": "07-09-2026",
+          "nextZone": "UTC",
+          "progress": 0.9999074074074075,
+          "needTomorrow": false
+        },
+        "cnFit": "Asr|360|1080|",
+        "slots": {
+          "current": null,
+          "prefetch": null,
+          "weather": null,
+          "radar": null
+        },
+        "cooldown": {
+          "current": {
+            "day": "07-09-2026",
+            "nextTry": 60000
+          },
+          "prefetch": {
+            "day": "08-09-2026",
+            "nextTry": 60000
+          }
+        },
+        "weather": {
+          "code": 0,
+          "temp": 72,
+          "feels": 72,
+          "rh": 45,
+          "dew": 52.2,
+          "wind": 3,
+          "windDir": 225,
+          "gust": 5,
+          "cloud": 0,
+          "precip": 0,
+          "vis": 20000,
+          "isDay": 1,
+          "src": "sim"
+        },
+        "track": null,
+        "weatherEligibility": {
+          "eligible": false,
+          "sourceAgeMs": null,
+          "receiptAgeMs": null,
+          "reason": "current model time/interval unavailable, future or expired"
+        },
+        "selectedWeather": {
+          "code": 0,
+          "temp": 72,
+          "feels": 72,
+          "rh": 45,
+          "dew": 52.2,
+          "wind": 3,
+          "windDir": 225,
+          "gust": 5,
+          "cloud": 0,
+          "precip": 0,
+          "vis": 20000,
+          "isDay": 1,
+          "src": "sim"
+        },
+        "profileKeys": [
+          "[\"UTC\",2026,9,7]"
+        ],
+        "limits": {
+          "prayerAttempt": 10000,
+          "weatherBody": 10000,
+          "rolloverRetry": 60000
+        },
+        "activeFrames": [
+          [
+            26,
+            "loop"
+          ]
+        ],
+        "requests": [
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 468.5,
+            "id": 1,
+            "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+            "kind": "prayer",
+            "day": "07-09-2026",
+            "key": "prayer:07-09-2026",
+            "owner": {
+              "generation": 0,
+              "operationId": 1,
+              "kind": "current",
+              "requestedDay": "07-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 1,
+              "attempt": {
+                "attemptId": 1,
+                "deadlineAt": 10000,
+                "expired": false
+              }
+            },
+            "settled": true,
+            "bodyRead": true,
+            "aborted": false
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 497.29999999701977,
+            "id": 2,
+            "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+            "kind": "prayer",
+            "day": "08-09-2026",
+            "key": "prayer:08-09-2026",
+            "owner": {
+              "generation": 0,
+              "operationId": 2,
+              "kind": "prefetch",
+              "requestedDay": "08-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 1,
+              "attempt": {
+                "attemptId": 2,
+                "deadlineAt": 10000,
+                "expired": false
+              }
+            },
+            "settled": true,
+            "bodyRead": true,
+            "aborted": false
+          }
+        ],
+        "effects": {
+          "effects": [
+            {
+              "event": "get",
+              "wall": 1788803999000,
+              "mono": 0,
+              "nativePerformance": 323.40000000596046,
+              "key": "salahwx:24.47|39.61|f"
+            },
+            {
+              "event": "get",
+              "wall": 1788803999000,
+              "mono": 0,
+              "nativePerformance": 468.09999999403954,
+              "key": "salah:24.47|39.61|UTC|4|0"
+            },
+            {
+              "event": "set",
+              "wall": 1788803999000,
+              "mono": 0,
+              "nativePerformance": 481,
+              "key": "salah:24.47|39.61|UTC|4|0",
+              "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:00\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"20:00\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\",\"method\":\"HJCoSA\"}},\"meta\":{\"latitude\":24.47,\"longitude\":39.61,\"timezone\":\"UTC\",\"method\":{\"id\":4},\"school\":\"STANDARD\"}}}"
+            }
+          ],
+          "requests": [
+            {
+              "event": "requested",
+              "wall": 1788803999000,
+              "mono": 0,
+              "nativePerformance": 468.5,
+              "id": 1,
+              "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "key": "prayer:07-09-2026",
+              "owner": {
+                "generation": 0,
+                "operationId": 1,
+                "kind": "current",
+                "requestedDay": "07-09-2026",
+                "requestZone": "UTC",
+                "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                "prayerAttempts": 1,
+                "attempt": {
+                  "attemptId": 1,
+                  "deadlineAt": 10000,
+                  "expired": false
+                }
+              },
+              "settled": true,
+              "bodyRead": true,
+              "aborted": false
+            },
+            {
+              "event": "requested",
+              "wall": 1788803999000,
+              "mono": 0,
+              "nativePerformance": 497.29999999701977,
+              "id": 2,
+              "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+              "kind": "prayer",
+              "day": "08-09-2026",
+              "key": "prayer:08-09-2026",
+              "owner": {
+                "generation": 0,
+                "operationId": 2,
+                "kind": "prefetch",
+                "requestedDay": "08-09-2026",
+                "requestZone": "UTC",
+                "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                "prayerAttempts": 1,
+                "attempt": {
+                  "attemptId": 2,
+                  "deadlineAt": 10000,
+                  "expired": false
+                }
+              },
+              "settled": true,
+              "bodyRead": true,
+              "aborted": false
+            }
+          ],
+          "storage": [
+            [
+              "salah:24.47|39.61|UTC|4|0",
+              "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:00\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"20:00\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\",\"method\":\"HJCoSA\"}},\"meta\":{\"latitude\":24.47,\"longitude\":39.61,\"timezone\":\"UTC\",\"method\":{\"id\":4},\"school\":\"STANDARD\"}}}"
+            ]
+          ]
+        },
+        "frames": [
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 312.90000000596046,
+            "id": 1,
+            "name": ""
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 453.79999999701977,
+            "id": 2,
+            "name": "tick"
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 453.90000000596046,
+            "id": 3,
+            "name": ""
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 455.29999999701977,
+            "id": 1,
+            "name": "",
+            "t": 237.3
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 455.29999999701977,
+            "id": 4,
+            "name": "start"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 455.40000000596046,
+            "id": 2,
+            "name": "tick",
+            "t": 237.3
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 459.09999999403954,
+            "id": 5,
+            "name": "tick"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 459.09999999403954,
+            "id": 3,
+            "name": "",
+            "t": 237.3
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 459.09999999403954,
+            "id": 6,
+            "name": ""
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 460.5,
+            "id": 4,
+            "name": "start",
+            "t": 459.6
+          },
+          {
+            "event": "cancelled",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 460.59999999403954,
+            "id": 4
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 461.5,
+            "id": 5,
+            "name": "tick",
+            "t": 459.6
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 465.20000000298023,
+            "id": 7,
+            "name": "tick"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 465.20000000298023,
+            "id": 6,
+            "name": "",
+            "t": 459.6
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 468.90000000596046,
+            "id": 7,
+            "name": "tick",
+            "t": 465
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 473.29999999701977,
+            "id": 8,
+            "name": "tick"
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 547.2999999970198,
+            "id": 9,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 658.2000000029802,
+            "id": 8,
+            "name": "tick",
+            "t": 656.8
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 662.7000000029802,
+            "id": 11,
+            "name": "tick"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 662.7000000029802,
+            "id": 9,
+            "name": "loop",
+            "t": 656.8
+          },
+          {
+            "event": "cancelled",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 669.5,
+            "id": 11
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 669.5,
+            "id": 12,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 670.9000000059605,
+            "id": 12,
+            "name": "loop",
+            "t": 667.9
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 671,
+            "id": 14,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 671.2999999970198,
+            "id": 14,
+            "name": "loop",
+            "t": 670.6
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 671.2999999970198,
+            "id": 15,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 673.5999999940395,
+            "id": 15,
+            "name": "loop",
+            "t": 673.4
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 673.5999999940395,
+            "id": 16,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 676.2999999970198,
+            "id": 16,
+            "name": "loop",
+            "t": 676.2
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 676.4000000059605,
+            "id": 17,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 679.0999999940395,
+            "id": 17,
+            "name": "loop",
+            "t": 679
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 679.0999999940395,
+            "id": 18,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 681.7999999970198,
+            "id": 18,
+            "name": "loop",
+            "t": 681.7
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 681.9000000059605,
+            "id": 19,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 685.2000000029802,
+            "id": 19,
+            "name": "loop",
+            "t": 684.5
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 685.2000000029802,
+            "id": 21,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 687.2999999970198,
+            "id": 21,
+            "name": "loop",
+            "t": 687.3
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 687.4000000059605,
+            "id": 23,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 843.7999999970198,
+            "id": 23,
+            "name": "loop",
+            "t": 842.9
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 844,
+            "id": 25,
+            "name": "loop"
+          },
+          {
+            "event": "fired",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 845.7000000029802,
+            "id": 25,
+            "name": "loop",
+            "t": 845.6
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 845.7999999970198,
+            "id": 26,
+            "name": "loop"
+          }
+        ],
+        "timers": [
+          {
+            "event": "cancelled",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 313.09999999403954,
+            "id": null
+          },
+          {
+            "event": "cancelled",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 325.59999999403954,
+            "id": null
+          },
+          {
+            "event": "cancelled",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 461.5,
+            "id": null
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 461.5,
+            "id": 2,
+            "ms": 120000
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 468.40000000596046,
+            "id": 3,
+            "ms": 10000
+          },
+          {
+            "event": "cancelled",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 480.40000000596046,
+            "id": 3
+          },
+          {
+            "event": "requested",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 497.29999999701977,
+            "id": 4,
+            "ms": 10000
+          },
+          {
+            "event": "cancelled",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 548.0999999940395,
+            "id": 4
+          },
+          {
+            "event": "cancelled",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 555.9000000059605,
+            "id": 2
+          }
+        ],
+        "inputEvents": [],
+        "fitMeasurements": [
+          {
+            "event": "fit-measureText",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 502.79999999701977,
+            "text": "Asr",
+            "font": "600 30px Fraunces, Georgia, \"Times New Roman\", serif",
+            "width": 53.73046875,
+            "ascent": 21,
+            "descent": 0
+          }
+        ],
+        "trace": [
+          {
+            "event": "pre-script-installed",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 76.59999999403954,
+            "fontStatus": "loaded"
+          },
+          {
+            "event": "readonly-hooks-installed",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 312.90000000596046
+          },
+          {
+            "event": "buildStars",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 315.59999999403954
+          },
+          {
+            "event": "buildWeather",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 316
+          },
+          {
+            "event": "actual-render",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 402.40000000596046,
+            "state": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 402.59999999403954
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": false,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": null,
+              "today": null,
+              "tomorrow": null,
+              "date": {
+                "gregorianText": "",
+                "hijriText": "",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Calendar state unavailable. calendar convention unavailable. Zone UTC; requested Gregorian day unavailable; loaded day unavailable.",
+                "requestedGregorianDay": null,
+                "loadedGregorianDay": null,
+                "selectedGregorianDay": null,
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "unavailable",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": null,
+                "calendarSource": null,
+                "hijriMethod": null,
+                "unavailableReason": "Hijri date unavailable",
+                "selectionReason": "hijri-unavailable",
+                "staleDateState": "calendar-unavailable",
+                "hijriAnomaly": null
+              },
+              "model": null,
+              "cnFit": "",
+              "slots": {
+                "current": null,
+                "prefetch": null,
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  1,
+                  ""
+                ]
+              ]
+            }
+          },
+          {
+            "event": "beginRequest",
+            "args": [
+              "current",
+              "07-09-2026"
+            ],
+            "operation": {
+              "generation": 0,
+              "operationId": 1,
+              "kind": "current",
+              "requestedDay": "07-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 0,
+              "attempt": null
+            },
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 468.09999999403954
+          },
+          {
+            "event": "beginAttempt",
+            "operation": {
+              "generation": 0,
+              "operationId": 1,
+              "kind": "current",
+              "requestedDay": "07-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 1,
+              "attempt": {
+                "attemptId": 1,
+                "deadlineAt": 10000,
+                "expired": false
+              }
+            },
+            "timeoutMs": 10000,
+            "accepted": true,
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 468.40000000596046
+          },
+          {
+            "event": "body-released",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 468.59999999403954,
+            "id": 1,
+            "key": "prayer:07-09-2026"
+          },
+          {
+            "event": "json-entered",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 468.59999999403954,
+            "id": 1
+          },
+          {
+            "event": "adoptPrayerBundle",
+            "requestedDay": "07-09-2026",
+            "payloadDay": "07-09-2026",
+            "operation": {
+              "generation": 0,
+              "operationId": 1,
+              "kind": "current",
+              "requestedDay": "07-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 1,
+              "attempt": null
+            },
+            "value": true,
+            "before": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 480.5
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": false,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": null,
+              "today": null,
+              "tomorrow": null,
+              "date": {
+                "gregorianText": "",
+                "hijriText": "",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Calendar state unavailable. calendar convention unavailable. Zone UTC; requested Gregorian day unavailable; loaded day unavailable.",
+                "requestedGregorianDay": null,
+                "loadedGregorianDay": null,
+                "selectedGregorianDay": null,
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "unavailable",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": null,
+                "calendarSource": null,
+                "hijriMethod": null,
+                "unavailableReason": "Hijri date unavailable",
+                "selectionReason": "hijri-unavailable",
+                "staleDateState": "calendar-unavailable",
+                "hijriAnomaly": null
+              },
+              "model": null,
+              "cnFit": "",
+              "slots": {
+                "current": {
+                  "generation": 0,
+                  "operationId": 1,
+                  "kind": "current",
+                  "requestedDay": "07-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": null
+                },
+                "prefetch": null,
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  8,
+                  "tick"
+                ]
+              ]
+            },
+            "after": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 481
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": false,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": "07-09-2026",
+              "today": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "07-09-2026",
+                    "day": "07",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "19-02-1448",
+                    "day": "19",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "tomorrow": null,
+              "date": {
+                "gregorianText": "",
+                "hijriText": "",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Calendar state unavailable. calendar convention unavailable. Zone UTC; requested Gregorian day unavailable; loaded day unavailable.",
+                "requestedGregorianDay": null,
+                "loadedGregorianDay": null,
+                "selectedGregorianDay": null,
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "unavailable",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": null,
+                "calendarSource": null,
+                "hijriMethod": null,
+                "unavailableReason": "Hijri date unavailable",
+                "selectionReason": "hijri-unavailable",
+                "staleDateState": "calendar-unavailable",
+                "hijriAnomaly": null
+              },
+              "model": null,
+              "cnFit": "",
+              "slots": {
+                "current": {
+                  "generation": 0,
+                  "operationId": 1,
+                  "kind": "current",
+                  "requestedDay": "07-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": null
+                },
+                "prefetch": null,
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  8,
+                  "tick"
+                ]
+              ]
+            }
+          },
+          {
+            "event": "zoneDay",
+            "args": [
+              2026,
+              9,
+              7,
+              "UTC"
+            ],
+            "key": "[\"UTC\",2026,9,7]",
+            "hit": false,
+            "supported": true,
+            "profileCount": 1,
+            "projections": 0,
+            "durationMs": 15
+          },
+          {
+            "event": "epochForTzTime",
+            "args": [
+              2026,
+              9,
+              7,
+              18,
+              0,
+              "UTC"
+            ],
+            "value": 1788804000000,
+            "globalZone": "UTC",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 496.5
+          },
+          {
+            "event": "beginRequest",
+            "args": [
+              "prefetch",
+              "08-09-2026"
+            ],
+            "operation": {
+              "generation": 0,
+              "operationId": 2,
+              "kind": "prefetch",
+              "requestedDay": "08-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 0,
+              "attempt": null
+            },
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 497.29999999701977
+          },
+          {
+            "event": "beginAttempt",
+            "operation": {
+              "generation": 0,
+              "operationId": 2,
+              "kind": "prefetch",
+              "requestedDay": "08-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 1,
+              "attempt": {
+                "attemptId": 2,
+                "deadlineAt": 10000,
+                "expired": false
+              }
+            },
+            "timeoutMs": 10000,
+            "accepted": true,
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 497.29999999701977
+          },
+          {
+            "event": "body-released",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 497.40000000596046,
+            "id": 2,
+            "key": "prayer:08-09-2026"
+          },
+          {
+            "event": "fitCn",
+            "before": "",
+            "after": "Asr|360|1080|",
+            "measurements": 1,
+            "faces": [],
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 527.9000000059605
+          },
+          {
+            "event": "actual-render",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 541.5,
+            "state": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 541.5
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": false,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": "07-09-2026",
+              "today": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "07-09-2026",
+                    "day": "07",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "19-02-1448",
+                    "day": "19",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "tomorrow": null,
+              "date": {
+                "gregorianText": "2026-09-07",
+                "hijriText": "1448-02-19",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+                "requestedGregorianDay": "07-09-2026",
+                "loadedGregorianDay": "07-09-2026",
+                "selectedGregorianDay": "07-09-2026",
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "before",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": "today",
+                "calendarSource": "Aladhan",
+                "hijriMethod": "HJCoSA",
+                "unavailableReason": null,
+                "selectionReason": null,
+                "staleDateState": "current",
+                "hijriAnomaly": null
+              },
+              "model": {
+                "t": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "noon": 720,
+                "decl": 0.0881528850400248,
+                "doy": 250,
+                "sunrise": 360,
+                "sunset": 1080,
+                "nowMin": 1079.9833333333333,
+                "nowAbs": 1079.9833333333333,
+                "warmEnd": 1080,
+                "dots": [
+                  {
+                    "k": "Fajr",
+                    "abs": 300
+                  },
+                  {
+                    "k": "Sunrise",
+                    "abs": 360
+                  },
+                  {
+                    "k": "Dhuhr",
+                    "abs": 720
+                  },
+                  {
+                    "k": "Asr",
+                    "abs": 900
+                  },
+                  {
+                    "k": "Maghrib",
+                    "abs": 1080
+                  },
+                  {
+                    "k": "Isha",
+                    "abs": 1200
+                  }
+                ],
+                "currentKey": "Asr",
+                "nextKey": "Maghrib",
+                "nextTime": "18:00",
+                "leftMin": 0.016666666666666666,
+                "nowEpoch": 1788803999000,
+                "nextEpoch": 1788804000000,
+                "nextDateStr": "07-09-2026",
+                "nextZone": "UTC",
+                "progress": 0.9999074074074075,
+                "needTomorrow": false
+              },
+              "cnFit": "Asr|360|1080|",
+              "slots": {
+                "current": {
+                  "generation": 0,
+                  "operationId": 1,
+                  "kind": "current",
+                  "requestedDay": "07-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": null
+                },
+                "prefetch": {
+                  "generation": 0,
+                  "operationId": 2,
+                  "kind": "prefetch",
+                  "requestedDay": "08-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": {
+                    "attemptId": 2,
+                    "deadlineAt": 10000,
+                    "expired": false
+                  }
+                },
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [
+                "[\"UTC\",2026,9,7]"
+              ],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  8,
+                  "tick"
+                ]
+              ]
+            }
+          },
+          {
+            "event": "finishRequest",
+            "operation": {
+              "generation": 0,
+              "operationId": 1,
+              "kind": "current",
+              "requestedDay": "07-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 1,
+              "attempt": null
+            },
+            "value": true,
+            "before": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 547
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": false,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": "07-09-2026",
+              "today": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "07-09-2026",
+                    "day": "07",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "19-02-1448",
+                    "day": "19",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "tomorrow": null,
+              "date": {
+                "gregorianText": "2026-09-07",
+                "hijriText": "1448-02-19",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+                "requestedGregorianDay": "07-09-2026",
+                "loadedGregorianDay": "07-09-2026",
+                "selectedGregorianDay": "07-09-2026",
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "before",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": "today",
+                "calendarSource": "Aladhan",
+                "hijriMethod": "HJCoSA",
+                "unavailableReason": null,
+                "selectionReason": null,
+                "staleDateState": "current",
+                "hijriAnomaly": null
+              },
+              "model": {
+                "t": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "noon": 720,
+                "decl": 0.0881528850400248,
+                "doy": 250,
+                "sunrise": 360,
+                "sunset": 1080,
+                "nowMin": 1079.9833333333333,
+                "nowAbs": 1079.9833333333333,
+                "warmEnd": 1080,
+                "dots": [
+                  {
+                    "k": "Fajr",
+                    "abs": 300
+                  },
+                  {
+                    "k": "Sunrise",
+                    "abs": 360
+                  },
+                  {
+                    "k": "Dhuhr",
+                    "abs": 720
+                  },
+                  {
+                    "k": "Asr",
+                    "abs": 900
+                  },
+                  {
+                    "k": "Maghrib",
+                    "abs": 1080
+                  },
+                  {
+                    "k": "Isha",
+                    "abs": 1200
+                  }
+                ],
+                "currentKey": "Asr",
+                "nextKey": "Maghrib",
+                "nextTime": "18:00",
+                "leftMin": 0.016666666666666666,
+                "nowEpoch": 1788803999000,
+                "nextEpoch": 1788804000000,
+                "nextDateStr": "07-09-2026",
+                "nextZone": "UTC",
+                "progress": 0.9999074074074075,
+                "needTomorrow": false
+              },
+              "cnFit": "Asr|360|1080|",
+              "slots": {
+                "current": {
+                  "generation": 0,
+                  "operationId": 1,
+                  "kind": "current",
+                  "requestedDay": "07-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": null
+                },
+                "prefetch": {
+                  "generation": 0,
+                  "operationId": 2,
+                  "kind": "prefetch",
+                  "requestedDay": "08-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": {
+                    "attemptId": 2,
+                    "deadlineAt": 10000,
+                    "expired": false
+                  }
+                },
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [
+                "[\"UTC\",2026,9,7]"
+              ],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  8,
+                  "tick"
+                ]
+              ]
+            },
+            "after": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 547.0999999940395
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": false,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": "07-09-2026",
+              "today": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "07-09-2026",
+                    "day": "07",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "19-02-1448",
+                    "day": "19",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "tomorrow": null,
+              "date": {
+                "gregorianText": "2026-09-07",
+                "hijriText": "1448-02-19",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+                "requestedGregorianDay": "07-09-2026",
+                "loadedGregorianDay": "07-09-2026",
+                "selectedGregorianDay": "07-09-2026",
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "before",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": "today",
+                "calendarSource": "Aladhan",
+                "hijriMethod": "HJCoSA",
+                "unavailableReason": null,
+                "selectionReason": null,
+                "staleDateState": "current",
+                "hijriAnomaly": null
+              },
+              "model": {
+                "t": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "noon": 720,
+                "decl": 0.0881528850400248,
+                "doy": 250,
+                "sunrise": 360,
+                "sunset": 1080,
+                "nowMin": 1079.9833333333333,
+                "nowAbs": 1079.9833333333333,
+                "warmEnd": 1080,
+                "dots": [
+                  {
+                    "k": "Fajr",
+                    "abs": 300
+                  },
+                  {
+                    "k": "Sunrise",
+                    "abs": 360
+                  },
+                  {
+                    "k": "Dhuhr",
+                    "abs": 720
+                  },
+                  {
+                    "k": "Asr",
+                    "abs": 900
+                  },
+                  {
+                    "k": "Maghrib",
+                    "abs": 1080
+                  },
+                  {
+                    "k": "Isha",
+                    "abs": 1200
+                  }
+                ],
+                "currentKey": "Asr",
+                "nextKey": "Maghrib",
+                "nextTime": "18:00",
+                "leftMin": 0.016666666666666666,
+                "nowEpoch": 1788803999000,
+                "nextEpoch": 1788804000000,
+                "nextDateStr": "07-09-2026",
+                "nextZone": "UTC",
+                "progress": 0.9999074074074075,
+                "needTomorrow": false
+              },
+              "cnFit": "Asr|360|1080|",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "generation": 0,
+                  "operationId": 2,
+                  "kind": "prefetch",
+                  "requestedDay": "08-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": {
+                    "attemptId": 2,
+                    "deadlineAt": 10000,
+                    "expired": false
+                  }
+                },
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [
+                "[\"UTC\",2026,9,7]"
+              ],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  8,
+                  "tick"
+                ]
+              ]
+            }
+          },
+          {
+            "event": "json-entered",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 547.0999999940395,
+            "id": 2
+          },
+          {
+            "event": "adoptPrayerBundle",
+            "requestedDay": "08-09-2026",
+            "payloadDay": "08-09-2026",
+            "operation": {
+              "generation": 0,
+              "operationId": 2,
+              "kind": "prefetch",
+              "requestedDay": "08-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 1,
+              "attempt": null
+            },
+            "value": true,
+            "before": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 548.2000000029802
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": true,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": "07-09-2026",
+              "today": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "07-09-2026",
+                    "day": "07",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "19-02-1448",
+                    "day": "19",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "tomorrow": null,
+              "date": {
+                "gregorianText": "2026-09-07",
+                "hijriText": "1448-02-19",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+                "requestedGregorianDay": "07-09-2026",
+                "loadedGregorianDay": "07-09-2026",
+                "selectedGregorianDay": "07-09-2026",
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "before",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": "today",
+                "calendarSource": "Aladhan",
+                "hijriMethod": "HJCoSA",
+                "unavailableReason": null,
+                "selectionReason": null,
+                "staleDateState": "current",
+                "hijriAnomaly": null
+              },
+              "model": {
+                "t": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "noon": 720,
+                "decl": 0.0881528850400248,
+                "doy": 250,
+                "sunrise": 360,
+                "sunset": 1080,
+                "nowMin": 1079.9833333333333,
+                "nowAbs": 1079.9833333333333,
+                "warmEnd": 1080,
+                "dots": [
+                  {
+                    "k": "Fajr",
+                    "abs": 300
+                  },
+                  {
+                    "k": "Sunrise",
+                    "abs": 360
+                  },
+                  {
+                    "k": "Dhuhr",
+                    "abs": 720
+                  },
+                  {
+                    "k": "Asr",
+                    "abs": 900
+                  },
+                  {
+                    "k": "Maghrib",
+                    "abs": 1080
+                  },
+                  {
+                    "k": "Isha",
+                    "abs": 1200
+                  }
+                ],
+                "currentKey": "Asr",
+                "nextKey": "Maghrib",
+                "nextTime": "18:00",
+                "leftMin": 0.016666666666666666,
+                "nowEpoch": 1788803999000,
+                "nextEpoch": 1788804000000,
+                "nextDateStr": "07-09-2026",
+                "nextZone": "UTC",
+                "progress": 0.9999074074074075,
+                "needTomorrow": false
+              },
+              "cnFit": "Asr|360|1080|",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "generation": 0,
+                  "operationId": 2,
+                  "kind": "prefetch",
+                  "requestedDay": "08-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": null
+                },
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [
+                "[\"UTC\",2026,9,7]"
+              ],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  8,
+                  "tick"
+                ],
+                [
+                  9,
+                  "loop"
+                ]
+              ]
+            },
+            "after": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 548.2999999970198
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": true,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": "07-09-2026",
+              "today": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "07-09-2026",
+                    "day": "07",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "19-02-1448",
+                    "day": "19",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "tomorrow": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "08-09-2026",
+                    "day": "08",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "20-02-1448",
+                    "day": "20",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "date": {
+                "gregorianText": "2026-09-07",
+                "hijriText": "1448-02-19",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+                "requestedGregorianDay": "07-09-2026",
+                "loadedGregorianDay": "07-09-2026",
+                "selectedGregorianDay": "07-09-2026",
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "before",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": "today",
+                "calendarSource": "Aladhan",
+                "hijriMethod": "HJCoSA",
+                "unavailableReason": null,
+                "selectionReason": null,
+                "staleDateState": "current",
+                "hijriAnomaly": null
+              },
+              "model": {
+                "t": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "noon": 720,
+                "decl": 0.0881528850400248,
+                "doy": 250,
+                "sunrise": 360,
+                "sunset": 1080,
+                "nowMin": 1079.9833333333333,
+                "nowAbs": 1079.9833333333333,
+                "warmEnd": 1080,
+                "dots": [
+                  {
+                    "k": "Fajr",
+                    "abs": 300
+                  },
+                  {
+                    "k": "Sunrise",
+                    "abs": 360
+                  },
+                  {
+                    "k": "Dhuhr",
+                    "abs": 720
+                  },
+                  {
+                    "k": "Asr",
+                    "abs": 900
+                  },
+                  {
+                    "k": "Maghrib",
+                    "abs": 1080
+                  },
+                  {
+                    "k": "Isha",
+                    "abs": 1200
+                  }
+                ],
+                "currentKey": "Asr",
+                "nextKey": "Maghrib",
+                "nextTime": "18:00",
+                "leftMin": 0.016666666666666666,
+                "nowEpoch": 1788803999000,
+                "nextEpoch": 1788804000000,
+                "nextDateStr": "07-09-2026",
+                "nextZone": "UTC",
+                "progress": 0.9999074074074075,
+                "needTomorrow": false
+              },
+              "cnFit": "Asr|360|1080|",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "generation": 0,
+                  "operationId": 2,
+                  "kind": "prefetch",
+                  "requestedDay": "08-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": null
+                },
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [
+                "[\"UTC\",2026,9,7]"
+              ],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  8,
+                  "tick"
+                ],
+                [
+                  9,
+                  "loop"
+                ]
+              ]
+            }
+          },
+          {
+            "event": "finishRequest",
+            "operation": {
+              "generation": 0,
+              "operationId": 2,
+              "kind": "prefetch",
+              "requestedDay": "08-09-2026",
+              "requestZone": "UTC",
+              "cacheKey": "salah:24.47|39.61|UTC|4|0",
+              "prayerAttempts": 1,
+              "attempt": null
+            },
+            "value": true,
+            "before": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 548.2999999970198
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": true,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": "07-09-2026",
+              "today": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "07-09-2026",
+                    "day": "07",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "19-02-1448",
+                    "day": "19",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "tomorrow": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "08-09-2026",
+                    "day": "08",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "20-02-1448",
+                    "day": "20",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "date": {
+                "gregorianText": "2026-09-07",
+                "hijriText": "1448-02-19",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+                "requestedGregorianDay": "07-09-2026",
+                "loadedGregorianDay": "07-09-2026",
+                "selectedGregorianDay": "07-09-2026",
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "before",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": "today",
+                "calendarSource": "Aladhan",
+                "hijriMethod": "HJCoSA",
+                "unavailableReason": null,
+                "selectionReason": null,
+                "staleDateState": "current",
+                "hijriAnomaly": null
+              },
+              "model": {
+                "t": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "noon": 720,
+                "decl": 0.0881528850400248,
+                "doy": 250,
+                "sunrise": 360,
+                "sunset": 1080,
+                "nowMin": 1079.9833333333333,
+                "nowAbs": 1079.9833333333333,
+                "warmEnd": 1080,
+                "dots": [
+                  {
+                    "k": "Fajr",
+                    "abs": 300
+                  },
+                  {
+                    "k": "Sunrise",
+                    "abs": 360
+                  },
+                  {
+                    "k": "Dhuhr",
+                    "abs": 720
+                  },
+                  {
+                    "k": "Asr",
+                    "abs": 900
+                  },
+                  {
+                    "k": "Maghrib",
+                    "abs": 1080
+                  },
+                  {
+                    "k": "Isha",
+                    "abs": 1200
+                  }
+                ],
+                "currentKey": "Asr",
+                "nextKey": "Maghrib",
+                "nextTime": "18:00",
+                "leftMin": 0.016666666666666666,
+                "nowEpoch": 1788803999000,
+                "nextEpoch": 1788804000000,
+                "nextDateStr": "07-09-2026",
+                "nextZone": "UTC",
+                "progress": 0.9999074074074075,
+                "needTomorrow": false
+              },
+              "cnFit": "Asr|360|1080|",
+              "slots": {
+                "current": null,
+                "prefetch": {
+                  "generation": 0,
+                  "operationId": 2,
+                  "kind": "prefetch",
+                  "requestedDay": "08-09-2026",
+                  "requestZone": "UTC",
+                  "cacheKey": "salah:24.47|39.61|UTC|4|0",
+                  "prayerAttempts": 1,
+                  "attempt": null
+                },
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [
+                "[\"UTC\",2026,9,7]"
+              ],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  8,
+                  "tick"
+                ],
+                [
+                  9,
+                  "loop"
+                ]
+              ]
+            },
+            "after": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 548.4000000059605
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": true,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": "07-09-2026",
+              "today": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "07-09-2026",
+                    "day": "07",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "19-02-1448",
+                    "day": "19",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "tomorrow": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "08-09-2026",
+                    "day": "08",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "20-02-1448",
+                    "day": "20",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "date": {
+                "gregorianText": "2026-09-07",
+                "hijriText": "1448-02-19",
+                "previewDay": null,
+                "previewText": "",
+                "explanation": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+                "requestedGregorianDay": "07-09-2026",
+                "loadedGregorianDay": "07-09-2026",
+                "selectedGregorianDay": "07-09-2026",
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "before",
+                "maghribRollAvailable": false,
+                "maghribRollApplied": false,
+                "selectedSource": "today",
+                "calendarSource": "Aladhan",
+                "hijriMethod": "HJCoSA",
+                "unavailableReason": null,
+                "selectionReason": null,
+                "staleDateState": "current",
+                "hijriAnomaly": null
+              },
+              "model": {
+                "t": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "noon": 720,
+                "decl": 0.0881528850400248,
+                "doy": 250,
+                "sunrise": 360,
+                "sunset": 1080,
+                "nowMin": 1079.9833333333333,
+                "nowAbs": 1079.9833333333333,
+                "warmEnd": 1080,
+                "dots": [
+                  {
+                    "k": "Fajr",
+                    "abs": 300
+                  },
+                  {
+                    "k": "Sunrise",
+                    "abs": 360
+                  },
+                  {
+                    "k": "Dhuhr",
+                    "abs": 720
+                  },
+                  {
+                    "k": "Asr",
+                    "abs": 900
+                  },
+                  {
+                    "k": "Maghrib",
+                    "abs": 1080
+                  },
+                  {
+                    "k": "Isha",
+                    "abs": 1200
+                  }
+                ],
+                "currentKey": "Asr",
+                "nextKey": "Maghrib",
+                "nextTime": "18:00",
+                "leftMin": 0.016666666666666666,
+                "nowEpoch": 1788803999000,
+                "nextEpoch": 1788804000000,
+                "nextDateStr": "07-09-2026",
+                "nextZone": "UTC",
+                "progress": 0.9999074074074075,
+                "needTomorrow": false
+              },
+              "cnFit": "Asr|360|1080|",
+              "slots": {
+                "current": null,
+                "prefetch": null,
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [
+                "[\"UTC\",2026,9,7]"
+              ],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  8,
+                  "tick"
+                ],
+                [
+                  9,
+                  "loop"
+                ]
+              ]
+            }
+          },
+          {
+            "event": "zoneDay",
+            "args": [
+              2026,
+              9,
+              7,
+              "UTC"
+            ],
+            "key": "[\"UTC\",2026,9,7]",
+            "hit": true,
+            "supported": true,
+            "profileCount": 1,
+            "projections": 0,
+            "durationMs": 0
+          },
+          {
+            "event": "epochForTzTime",
+            "args": [
+              2026,
+              9,
+              7,
+              18,
+              0,
+              "UTC"
+            ],
+            "value": 1788804000000,
+            "globalZone": "UTC",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 663.0999999940395
+          },
+          {
+            "event": "fitCn",
+            "before": "Asr|360|1080|",
+            "after": "Asr|360|1080|",
+            "measurements": 0,
+            "faces": [],
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 664
+          },
+          {
+            "event": "actual-render",
+            "wall": 1788803999000,
+            "mono": 0,
+            "nativePerformance": 669.4000000059605,
+            "state": {
+              "clock": {
+                "wall": 1788803999000,
+                "mono": 0,
+                "nativePerformance": 669.4000000059605
+              },
+              "now": 1788803999000,
+              "nowFinite": true,
+              "parts": {
+                "y": 2026,
+                "mo": 9,
+                "d": 7,
+                "h": 17,
+                "mi": 59,
+                "s": 59,
+                "dateStr": "07-09-2026"
+              },
+              "valid": true,
+              "zone": "UTC",
+              "clockAnchor": null,
+              "anchorFinite": false,
+              "clockMode": {
+                "followWall": true,
+                "rate": 1,
+                "advancing": false
+              },
+              "generation": 0,
+              "loopStarted": true,
+              "sceneBuilt": true,
+              "sceneBuilds": {
+                "stars": 1,
+                "weather": 1
+              },
+              "config": {
+                "v": 1,
+                "lat": 24.47,
+                "lon": 39.61,
+                "tz": "UTC",
+                "label": "Madinah",
+                "method": "4",
+                "school": "0",
+                "time": "24",
+                "datefmt": "YYYY-MM-DD",
+                "units": "f",
+                "appearance": "glass",
+                "lp": 0,
+                "seed": null,
+                "source": "hash",
+                "savedAt": null,
+                "locationEvidence": {
+                  "intent": "fixed-site",
+                  "source": "hash",
+                  "accuracyM": null,
+                  "acquiredAt": null,
+                  "provider": null,
+                  "area": null,
+                  "bounds": null
+                }
+              },
+              "mode": "hardcoded",
+              "day": "07-09-2026",
+              "today": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "07-09-2026",
+                    "day": "07",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "19-02-1448",
+                    "day": "19",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "tomorrow": {
+                "timings": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "date": {
+                  "gregorian": {
+                    "date": "08-09-2026",
+                    "day": "08",
+                    "month": {
+                      "number": 9,
+                      "en": "September"
+                    },
+                    "year": "2026"
+                  },
+                  "hijri": {
+                    "date": "20-02-1448",
+                    "day": "20",
+                    "month": {
+                      "number": 2,
+                      "en": "Safar"
+                    },
+                    "year": "1448",
+                    "method": "HJCoSA"
+                  }
+                },
+                "meta": {
+                  "latitude": 24.47,
+                  "longitude": 39.61,
+                  "timezone": "UTC",
+                  "method": {
+                    "id": 4
+                  },
+                  "school": "STANDARD"
+                }
+              },
+              "date": {
+                "gregorianText": "2026-09-07",
+                "hijriText": "1448-02-19",
+                "previewDay": "20",
+                "previewText": "\ud83c\udf18 20",
+                "explanation": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+                "requestedGregorianDay": "07-09-2026",
+                "loadedGregorianDay": "07-09-2026",
+                "selectedGregorianDay": "07-09-2026",
+                "timezone": "UTC",
+                "beforeOrAfterMaghrib": "before",
+                "maghribRollAvailable": true,
+                "maghribRollApplied": false,
+                "selectedSource": "today",
+                "calendarSource": "Aladhan",
+                "hijriMethod": "HJCoSA",
+                "unavailableReason": null,
+                "selectionReason": null,
+                "staleDateState": "current",
+                "hijriAnomaly": null
+              },
+              "model": {
+                "t": {
+                  "Fajr": "05:00",
+                  "Sunrise": "06:00",
+                  "Dhuhr": "12:00",
+                  "Asr": "15:00",
+                  "Sunset": "18:00",
+                  "Maghrib": "18:00",
+                  "Isha": "20:00"
+                },
+                "noon": 720,
+                "decl": 0.0881528850400248,
+                "doy": 250,
+                "sunrise": 360,
+                "sunset": 1080,
+                "nowMin": 1079.9833333333333,
+                "nowAbs": 1079.9833333333333,
+                "warmEnd": 1080,
+                "dots": [
+                  {
+                    "k": "Fajr",
+                    "abs": 300
+                  },
+                  {
+                    "k": "Sunrise",
+                    "abs": 360
+                  },
+                  {
+                    "k": "Dhuhr",
+                    "abs": 720
+                  },
+                  {
+                    "k": "Asr",
+                    "abs": 900
+                  },
+                  {
+                    "k": "Maghrib",
+                    "abs": 1080
+                  },
+                  {
+                    "k": "Isha",
+                    "abs": 1200
+                  }
+                ],
+                "currentKey": "Asr",
+                "nextKey": "Maghrib",
+                "nextTime": "18:00",
+                "leftMin": 0.016666666666666666,
+                "nowEpoch": 1788803999000,
+                "nextEpoch": 1788804000000,
+                "nextDateStr": "07-09-2026",
+                "nextZone": "UTC",
+                "progress": 0.9999074074074075,
+                "needTomorrow": false
+              },
+              "cnFit": "Asr|360|1080|",
+              "slots": {
+                "current": null,
+                "prefetch": null,
+                "weather": null,
+                "radar": null
+              },
+              "cooldown": {
+                "current": {
+                  "day": "07-09-2026",
+                  "nextTry": 60000
+                },
+                "prefetch": {
+                  "day": "08-09-2026",
+                  "nextTry": 60000
+                }
+              },
+              "weather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "track": null,
+              "weatherEligibility": {
+                "eligible": false,
+                "sourceAgeMs": null,
+                "receiptAgeMs": null,
+                "reason": "current model time/interval unavailable, future or expired"
+              },
+              "selectedWeather": {
+                "code": 0,
+                "temp": 72,
+                "feels": 72,
+                "rh": 45,
+                "dew": 52.2,
+                "wind": 3,
+                "windDir": 225,
+                "gust": 5,
+                "cloud": 0,
+                "precip": 0,
+                "vis": 20000,
+                "isDay": 1,
+                "src": "sim"
+              },
+              "profileKeys": [
+                "[\"UTC\",2026,9,7]"
+              ],
+              "limits": {
+                "prayerAttempt": 10000,
+                "weatherBody": 10000,
+                "rolloverRetry": 60000
+              },
+              "activeFrames": [
+                [
+                  11,
+                  "tick"
+                ]
+              ]
+            }
+          }
+        ],
+        "capabilities": {
+          "dialogElement": true,
+          "showModal": true,
+          "close": true,
+          "maxTouchPoints": 1,
+          "intersectionObserver": true,
+          "fontFaceSet": true
+        },
+        "fonts": {
+          "status": "loaded",
+          "faces": [],
+          "fraunces": true,
+          "inter": true
+        },
+        "typography": {
+          "cnFit": "Asr|360|1080|",
+          "currentInk": {
+            "left": 136.296875,
+            "right": 188.6875,
+            "top": 121,
+            "bottom": 156,
+            "width": 52.390625,
+            "height": 35
+          },
+          "heroInk": {
+            "left": 94.40625,
+            "right": 230.59375,
+            "top": 177,
+            "bottom": 229,
+            "width": 136.1875,
+            "height": 52
+          },
+          "horizon": {
+            "x": 17.291187286376953,
+            "y": 157,
+            "width": 290.4176330566406,
+            "height": 0,
+            "bottom": 157,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          "bar": {
+            "x": 16,
+            "y": 249,
+            "width": 293,
+            "height": 6,
+            "bottom": 255,
+            "scrollWidth": 293,
+            "clientWidth": 293,
+            "scrollHeight": 6,
+            "clientHeight": 6,
+            "font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          "rail": {
+            "length": 505.01531982421875,
+            "points": [
+              {
+                "x": 17.29118639331753,
+                "y": 233
+              },
+              {
+                "x": 19.798956073340722,
+                "y": 232.97962951660156
+              },
+              {
+                "x": 22.3059123378689,
+                "y": 232.9146728515625
+              },
+              {
+                "x": 24.81160810438253,
+                "y": 232.81317138671875
+              },
+              {
+                "x": 27.31494342674643,
+                "y": 232.66265869140625
+              },
+              {
+                "x": 29.814457709102307,
+                "y": 232.45790100097656
+              },
+              {
+                "x": 32.308621209354726,
+                "y": 232.1944580078125
+              },
+              {
+                "x": 34.79611446574583,
+                "y": 231.87408447265625
+              },
+              {
+                "x": 37.27211618585102,
+                "y": 231.47329711914062
+              },
+              {
+                "x": 39.73195663064213,
+                "y": 230.9823455810547
+              },
+              {
+                "x": 42.17136767759162,
+                "y": 230.3970489501953
+              },
+              {
+                "x": 44.58209345542778,
+                "y": 229.701904296875
+              },
+              {
+                "x": 46.95118183200643,
+                "y": 228.87489318847656
+              },
+              {
+                "x": 49.27200234623279,
+                "y": 227.91928100585938
+              },
+              {
+                "x": 51.526097688836565,
+                "y": 226.81353759765625
+              },
+              {
+                "x": 53.70697379677983,
+                "y": 225.5679931640625
+              },
+              {
+                "x": 55.80075974545236,
+                "y": 224.17877197265625
+              },
+              {
+                "x": 57.79159168308064,
+                "y": 222.64390563964844
+              },
+              {
+                "x": 59.68896442995233,
+                "y": 220.99325561523438
+              },
+              {
+                "x": 61.4770482338081,
+                "y": 219.22311401367188
+              },
+              {
+                "x": 63.16848643674689,
+                "y": 217.35919189453125
+              },
+              {
+                "x": 64.76097542714265,
+                "y": 215.4088134765625
+              },
+              {
+                "x": 66.26555965876176,
+                "y": 213.38882446289062
+              },
+              {
+                "x": 67.68826716794806,
+                "y": 211.30970764160156
+              },
+              {
+                "x": 69.03433791338387,
+                "y": 209.1793975830078
+              },
+              {
+                "x": 70.319794877909,
+                "y": 207.01129150390625
+              },
+              {
+                "x": 71.53756809557899,
+                "y": 204.80398559570312
+              },
+              {
+                "x": 72.69839891336733,
+                "y": 202.5657196044922
+              },
+              {
+                "x": 73.81971218303099,
+                "y": 200.30711364746094
+              },
+              {
+                "x": 74.89014139983614,
+                "y": 198.02365112304688
+              },
+              {
+                "x": 75.92163276025803,
+                "y": 195.72207641601562
+              },
+              {
+                "x": 76.91847901425119,
+                "y": 193.4050750732422
+              },
+              {
+                "x": 77.89327046022576,
+                "y": 191.07862854003906
+              },
+              {
+                "x": 78.83198840901002,
+                "y": 188.73712158203125
+              },
+              {
+                "x": 79.74492712505793,
+                "y": 186.38528442382812
+              },
+              {
+                "x": 80.63891787771452,
+                "y": 184.02609252929688
+              },
+              {
+                "x": 81.52032212079581,
+                "y": 181.6621551513672
+              },
+              {
+                "x": 82.3747877476579,
+                "y": 179.2881622314453
+              },
+              {
+                "x": 83.21618189407607,
+                "y": 176.90943145751953
+              },
+              {
+                "x": 84.04542145809884,
+                "y": 174.52638244628906
+              },
+              {
+                "x": 84.87101616293697,
+                "y": 172.14205932617188
+              },
+              {
+                "x": 85.67811377573821,
+                "y": 169.7513198852539
+              },
+              {
+                "x": 86.47903558763407,
+                "y": 167.35846710205078
+              },
+              {
+                "x": 87.27412259376655,
+                "y": 164.96363830566406
+              },
+              {
+                "x": 88.06666350283865,
+                "y": 162.5679702758789
+              },
+              {
+                "x": 88.85823447017346,
+                "y": 160.17198944091797
+              },
+              {
+                "x": 89.64260665117683,
+                "y": 157.7735824584961
+              },
+              {
+                "x": 90.42697125451039,
+                "y": 155.37518310546875
+              },
+              {
+                "x": 91.21133585784395,
+                "y": 152.97676849365234
+              },
+              {
+                "x": 92.00471788826636,
+                "y": 150.58139038085938
+              },
+              {
+                "x": 92.7926364187467,
+                "y": 148.18416595458984
+              },
+              {
+                "x": 93.58168402203059,
+                "y": 145.78732299804688
+              },
+              {
+                "x": 94.37502058643406,
+                "y": 143.39191436767578
+              },
+              {
+                "x": 95.17379791777013,
+                "y": 140.9983367919922
+              },
+              {
+                "x": 95.98194124900688,
+                "y": 138.6079330444336
+              },
+              {
+                "x": 96.78858420161878,
+                "y": 136.21703338623047
+              },
+              {
+                "x": 97.60159239688161,
+                "y": 133.82831573486328
+              },
+              {
+                "x": 98.42131440760726,
+                "y": 131.44192504882812
+              },
+              {
+                "x": 99.25689648127151,
+                "y": 129.06114196777344
+              },
+              {
+                "x": 100.09431235103284,
+                "y": 126.68097686767578
+              },
+              {
+                "x": 100.93844961392678,
+                "y": 124.30325317382812
+              },
+              {
+                "x": 101.79528705144332,
+                "y": 121.93009948730469
+              },
+              {
+                "x": 102.66847710043697,
+                "y": 119.56304931640625
+              },
+              {
+                "x": 103.55181364932302,
+                "y": 117.1998062133789
+              },
+              {
+                "x": 104.446471236924,
+                "y": 114.84084701538086
+              },
+              {
+                "x": 105.35467012049789,
+                "y": 112.48717498779297
+              },
+              {
+                "x": 106.28482151354774,
+                "y": 110.14221954345703
+              },
+              {
+                "x": 107.22975694042141,
+                "y": 107.80321884155273
+              },
+              {
+                "x": 108.192931818558,
+                "y": 105.47179412841797
+              },
+              {
+                "x": 109.17635423046048,
+                "y": 103.14897537231445
+              },
+              {
+                "x": 110.18774582167804,
+                "y": 100.83841323852539
+              },
+              {
+                "x": 111.216672140865,
+                "y": 98.5356330871582
+              },
+              {
+                "x": 112.2727795617055,
+                "y": 96.24536895751953
+              },
+              {
+                "x": 113.3602812686209,
+                "y": 93.97005462646484
+              },
+              {
+                "x": 114.48026844606561,
+                "y": 91.71078109741211
+              },
+              {
+                "x": 115.63202879307633,
+                "y": 89.4677848815918
+              },
+              {
+                "x": 116.81581995042704,
+                "y": 87.2417221069336
+              },
+              {
+                "x": 118.04670632572497,
+                "y": 85.04171752929688
+              },
+              {
+                "x": 119.31304104045286,
+                "y": 82.86220359802246
+              },
+              {
+                "x": 120.6285927206783,
+                "y": 80.71250534057617
+              },
+              {
+                "x": 121.99516485181906,
+                "y": 78.59525108337402
+              },
+              {
+                "x": 123.41325756008342,
+                "y": 76.5126781463623
+              },
+              {
+                "x": 124.89175945217326,
+                "y": 74.4732666015625
+              },
+              {
+                "x": 126.42452503786248,
+                "y": 72.4748306274414
+              },
+              {
+                "x": 128.02599735583289,
+                "y": 70.53194999694824
+              },
+              {
+                "x": 129.69573690123477,
+                "y": 68.64804458618164
+              },
+              {
+                "x": 131.43516827599478,
+                "y": 66.82933521270752
+              },
+              {
+                "x": 133.25080069849048,
+                "y": 65.0876636505127
+              },
+              {
+                "x": 135.14250534833488,
+                "y": 63.43021297454834
+              },
+              {
+                "x": 137.1102140264996,
+                "y": 61.86490535736084
+              },
+              {
+                "x": 139.1578746989622,
+                "y": 60.40763807296753
+              },
+              {
+                "x": 141.2721733998444,
+                "y": 59.05018901824951
+              },
+              {
+                "x": 143.46325662903865,
+                "y": 57.82235813140869
+              },
+              {
+                "x": 145.71608271194717,
+                "y": 56.713587045669556
+              },
+              {
+                "x": 148.0300151243048,
+                "y": 55.74102234840393
+              },
+              {
+                "x": 150.39815818657308,
+                "y": 54.91134011745453
+              },
+              {
+                "x": 152.80994862701934,
+                "y": 54.22140419483185
+              },
+              {
+                "x": 155.25830890202926,
+                "y": 53.67651969194412
+              },
+              {
+                "x": 157.73649488546081,
+                "y": 53.29178085923195
+              },
+              {
+                "x": 160.23403423761917,
+                "y": 53.06838636100292
+              },
+              {
+                "x": 162.7404546188096,
+                "y": 53.0003013551468
+              },
+              {
+                "x": 165.24604145631952,
+                "y": 53.09625255316496
+              },
+              {
+                "x": 167.7402617890956,
+                "y": 53.35497239232063
+              },
+              {
+                "x": 170.21350713180283,
+                "y": 53.77034121751785
+              },
+              {
+                "x": 172.657245028221,
+                "y": 54.336385846138
+              },
+              {
+                "x": 175.06092736195708,
+                "y": 55.05577874183655
+              },
+              {
+                "x": 177.41770391949152,
+                "y": 55.917868852615356
+              },
+              {
+                "x": 179.72045169119107,
+                "y": 56.91674494743347
+              },
+              {
+                "x": 181.96218406547933,
+                "y": 58.04816722869873
+              },
+              {
+                "x": 184.13924860550185,
+                "y": 59.30090856552124
+              },
+              {
+                "x": 186.24256726281118,
+                "y": 60.67581081390381
+              },
+              {
+                "x": 188.2726401636156,
+                "y": 62.15794277191162
+              },
+              {
+                "x": 190.22589064775886,
+                "y": 63.741421699523926
+              },
+              {
+                "x": 192.10231871524098,
+                "y": 65.41635227203369
+              },
+              {
+                "x": 193.90607692912474,
+                "y": 67.17054843902588
+              },
+              {
+                "x": 195.63090613413667,
+                "y": 69.0034408569336
+              },
+              {
+                "x": 197.29046129129702,
+                "y": 70.89650344848633
+              },
+              {
+                "x": 198.87552795410156,
+                "y": 72.85329818725586
+              },
+              {
+                "x": 200.39679063700012,
+                "y": 74.86063957214355
+              },
+              {
+                "x": 201.86332738844015,
+                "y": 76.90878295898438
+              },
+              {
+                "x": 203.27037943177305,
+                "y": 78.99895477294922
+              },
+              {
+                "x": 204.6284191066936,
+                "y": 81.12176895141602
+              },
+              {
+                "x": 205.9327785685911,
+                "y": 83.2784423828125
+              },
+              {
+                "x": 207.1912628173828,
+                "y": 85.46252822875977
+              },
+              {
+                "x": 208.41435934810315,
+                "y": 87.66694641113281
+              },
+              {
+                "x": 209.59164128707627,
+                "y": 89.89647674560547
+              },
+              {
+                "x": 210.73653626522776,
+                "y": 92.14300537109375
+              },
+              {
+                "x": 211.85215112718484,
+                "y": 94.40448760986328
+              },
+              {
+                "x": 212.93128708661612,
+                "y": 96.68383407592773
+              },
+              {
+                "x": 213.98237051236427,
+                "y": 98.9764289855957
+              },
+              {
+                "x": 215.00919023934057,
+                "y": 101.28015899658203
+              },
+              {
+                "x": 216.014565160719,
+                "y": 103.5933952331543
+              },
+              {
+                "x": 216.99364556781316,
+                "y": 105.91808319091797
+              },
+              {
+                "x": 217.95175098483844,
+                "y": 108.25162124633789
+              },
+              {
+                "x": 218.8973077806376,
+                "y": 110.5903549194336
+              },
+              {
+                "x": 219.82088933395127,
+                "y": 112.93798446655273
+              },
+              {
+                "x": 220.72590559619968,
+                "y": 115.29289627075195
+              },
+              {
+                "x": 221.61841870324085,
+                "y": 117.65265655517578
+              },
+              {
+                "x": 222.50229326668432,
+                "y": 120.01568603515625
+              },
+              {
+                "x": 223.37007285942465,
+                "y": 122.3847885131836
+              },
+              {
+                "x": 224.22486432608912,
+                "y": 124.75865173339844
+              },
+              {
+                "x": 225.06668282201736,
+                "y": 127.13725280761719
+              },
+              {
+                "x": 225.90400018207097,
+                "y": 129.51744842529297
+              },
+              {
+                "x": 226.7363769014003,
+                "y": 131.89936065673828
+              },
+              {
+                "x": 227.5550531936904,
+                "y": 134.28607940673828
+              },
+              {
+                "x": 228.36636399091302,
+                "y": 136.6753921508789
+              },
+              {
+                "x": 229.17241588527872,
+                "y": 139.0665054321289
+              },
+              {
+                "x": 229.98010455632613,
+                "y": 141.45702362060547
+              },
+              {
+                "x": 230.77735119835805,
+                "y": 143.8510971069336
+              },
+              {
+                "x": 231.5697026656846,
+                "y": 146.24683380126953
+              },
+              {
+                "x": 232.35812890004303,
+                "y": 148.64388275146484
+              },
+              {
+                "x": 233.1474038334216,
+                "y": 151.04066467285156
+              },
+              {
+                "x": 233.93904299978482,
+                "y": 153.4366226196289
+              },
+              {
+                "x": 234.72322573904265,
+                "y": 155.83509063720703
+              },
+              {
+                "x": 235.35917410123147,
+                "y": 157.77296447753906
+              },
+              {
+                "x": 236.1417503744869,
+                "y": 160.17195892333984
+              },
+              {
+                "x": 236.9332834534726,
+                "y": 162.56793975830078
+              },
+              {
+                "x": 237.7258622508938,
+                "y": 164.96359252929688
+              },
+              {
+                "x": 238.5209568346961,
+                "y": 167.35840606689453
+              },
+              {
+                "x": 239.32187106892215,
+                "y": 169.7512664794922
+              },
+              {
+                "x": 240.12898383706303,
+                "y": 172.14200592041016
+              },
+              {
+                "x": 240.9549953137414,
+                "y": 174.52619171142578
+              },
+              {
+                "x": 241.78418941174525,
+                "y": 176.90926361083984
+              },
+              {
+                "x": 242.62518951933262,
+                "y": 179.28811645507812
+              },
+              {
+                "x": 243.47985974327992,
+                "y": 181.66201782226562
+              },
+              {
+                "x": 244.36106696694583,
+                "y": 184.0260467529297
+              },
+              {
+                "x": 245.2550501419326,
+                "y": 186.38525390625
+              },
+              {
+                "x": 246.1679926468154,
+                "y": 188.73709106445312
+              },
+              {
+                "x": 247.10697202520856,
+                "y": 191.07846069335938
+              },
+              {
+                "x": 248.08150583040916,
+                "y": 193.40504455566406
+              },
+              {
+                "x": 249.0783482955674,
+                "y": 195.72206115722656
+              },
+              {
+                "x": 250.10985102249404,
+                "y": 198.0236358642578
+              },
+              {
+                "x": 251.18037874900688,
+                "y": 200.30706787109375
+              },
+              {
+                "x": 252.30172232934984,
+                "y": 202.56565856933594
+              },
+              {
+                "x": 253.4624243267512,
+                "y": 204.8040008544922
+              },
+              {
+                "x": 254.6802013332561,
+                "y": 207.01129150390625
+              },
+              {
+                "x": 255.9656469312765,
+                "y": 209.17938232421875
+              },
+              {
+                "x": 257.31172904321704,
+                "y": 211.30970764160156
+              },
+              {
+                "x": 258.73443655240334,
+                "y": 213.38882446289062
+              },
+              {
+                "x": 260.2391496044094,
+                "y": 215.40867614746094
+              },
+              {
+                "x": 261.831521140923,
+                "y": 217.35919189453125
+              },
+              {
+                "x": 263.52297828803626,
+                "y": 219.22312927246094
+              },
+              {
+                "x": 265.31100525936836,
+                "y": 220.9932403564453
+              },
+              {
+                "x": 267.208423472259,
+                "y": 222.64390563964844
+              },
+              {
+                "x": 269.1992440433826,
+                "y": 224.1787872314453
+              },
+              {
+                "x": 271.2929996813758,
+                "y": 225.56797790527344
+              },
+              {
+                "x": 273.4739136776682,
+                "y": 226.81353759765625
+              },
+              {
+                "x": 275.7279976537672,
+                "y": 227.91928100585938
+              },
+              {
+                "x": 278.04879543498413,
+                "y": 228.87489318847656
+              },
+              {
+                "x": 280.4179084389897,
+                "y": 229.701904296875
+              },
+              {
+                "x": 282.82863800566076,
+                "y": 230.39697265625
+              },
+              {
+                "x": 285.2680414749404,
+                "y": 230.9823455810547
+              },
+              {
+                "x": 287.7278440313824,
+                "y": 231.47329711914062
+              },
+              {
+                "x": 290.203893111924,
+                "y": 231.8740997314453
+              },
+              {
+                "x": 292.6913996292373,
+                "y": 232.1944580078125
+              },
+              {
+                "x": 295.18554418531517,
+                "y": 232.45790100097656
+              },
+              {
+                "x": 297.6850234209481,
+                "y": 232.66265869140625
+              },
+              {
+                "x": 300.1883824235302,
+                "y": 232.81317138671875
+              },
+              {
+                "x": 302.69407534841764,
+                "y": 232.9146728515625
+              },
+              {
+                "x": 305.20104132183525,
+                "y": 232.97962951660156
+              },
+              {
+                "x": 307.7088256835938,
+                "y": 233
+              }
+            ],
+            "scope": "Readonly screen-coordinate path samples; no inferred glyph clearance or pixel verdict."
+          },
+          "heroCenterError": 0
+        },
+        "dom": {
+          "current": "Asr",
+          "next": "18:00",
+          "countdown": "1s left until Maghrib",
+          "sim": "",
+          "rows": 6,
+          "ce": "2026-09-07CE",
+          "ah": "\u06471448-02-19 | \ud83c\udf18 20",
+          "gregorian": "2026-09-07",
+          "hijri": "1448-02-19",
+          "preview": "\ud83c\udf18 20",
+          "reason": "Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+          "ceLabel": "Show complete Gregorian date: 2026-09-07",
+          "ahLabel": "Show complete Hijri date: 1448-02-19. Before Maghrib; the displayed Hijri date has not advanced. Aladhan; HJCoSA. Zone UTC; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+          "active": "",
+          "hasFocus": true,
+          "open": false,
+          "modal": false,
+          "canary": 0,
+          "svg": false,
+          "viewport": [
+            325,
+            530,
+            1
+          ]
+        },
+        "geometry": {
+          ".c": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "bottom": 530,
+            "scrollWidth": 323,
+            "clientWidth": 323,
+            "scrollHeight": 534,
+            "clientHeight": 528,
+            "font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          ".e": {
+            "x": 63.546875,
+            "y": 19.5,
+            "width": 93.453125,
+            "height": 18,
+            "bottom": 37.5,
+            "scrollWidth": 91,
+            "clientWidth": 91,
+            "scrollHeight": 16,
+            "clientHeight": 16,
+            "font": "system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "11px",
+            "whiteSpace": "nowrap",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          ".times": {
+            "x": 16,
+            "y": 292.1875,
+            "width": 293,
+            "height": 202.21875,
+            "bottom": 494.40625,
+            "scrollWidth": 293,
+            "clientWidth": 293,
+            "scrollHeight": 202,
+            "clientHeight": 202,
+            "font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          ".d": {
+            "x": 16,
+            "y": 502.40625,
+            "width": 293,
+            "height": 17.9375,
+            "bottom": 520.34375,
+            "scrollWidth": 293,
+            "clientWidth": 293,
+            "scrollHeight": 18,
+            "clientHeight": 18,
+            "font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "11.5px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          ".cn": {
+            "x": 16,
+            "y": 122,
+            "width": 293,
+            "height": 34.5,
+            "bottom": 156.5,
+            "scrollWidth": 293,
+            "clientWidth": 293,
+            "scrollHeight": 35,
+            "clientHeight": 35,
+            "font": "Fraunces, Georgia, \"Times New Roman\", serif",
+            "fontSize": "30px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          ".nt": {
+            "x": 16,
+            "y": 180,
+            "width": 293,
+            "height": 46,
+            "bottom": 226,
+            "scrollWidth": 293,
+            "clientWidth": 293,
+            "scrollHeight": 49,
+            "clientHeight": 46,
+            "font": "Fraunces, Georgia, \"Times New Roman\", serif",
+            "fontSize": "46px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          ".arc .rail": {
+            "x": 17.291187286376953,
+            "y": 53,
+            "width": 290.4176330566406,
+            "height": 180,
+            "bottom": 233,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          ".arc .horizon": {
+            "x": 17.291187286376953,
+            "y": 157,
+            "width": 290.4176330566406,
+            "height": 0,
+            "bottom": 157,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          ".bar": {
+            "x": 16,
+            "y": 249,
+            "width": 293,
+            "height": 6,
+            "bottom": 255,
+            "scrollWidth": 293,
+            "clientWidth": 293,
+            "scrollHeight": 6,
+            "clientHeight": 6,
+            "font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          "#dateDialog": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "bottom": 0,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "font": "Inter, system-ui, sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          "#dateGregorian": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "bottom": 0,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "font": "Inter, system-ui, sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "anywhere",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          "#dateHijri": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "bottom": 0,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "font": "Inter, system-ui, sans-serif",
+            "fontSize": "14px",
+            "whiteSpace": "normal",
+            "overflowWrap": "anywhere",
+            "visibility": "visible",
+            "direction": "ltr"
+          },
+          "#dateClose": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "bottom": 0,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "font": "Inter, system-ui, sans-serif",
+            "fontSize": "12px",
+            "whiteSpace": "normal",
+            "overflowWrap": "normal",
+            "visibility": "visible",
+            "direction": "ltr"
+          }
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Exact accepted disposable single mutation paired with ordinary source; native/raw/pixel independent review remains required.",
+    "Date-only synthetic clocks/provider/Map and settled fallback fonts; no final04 font18 equivalence, AT speech, performance, M0, public delivery or node completion."
+  ],
+  "pageErrors": [],
+  "fontPolicy": "missing",
+  "fontTransports": [
+    {
+      "event": "request",
+      "url": "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap",
+      "kind": "css",
+      "policy": "missing",
+      "family": null
+    },
+    {
+      "event": "failed",
+      "url": "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap",
+      "failure": "net::ERR_ABORTED"
+    }
+  ],
+  "fontRoutingDisablesCache": true,
+  "fontFamilyMap": {},
+  "cacheAttribution": [],
+  "serverReceipts": [
+    {
+      "originalIdentity": {
+        "bytes": 6105746,
+        "sha256": "2ec112d24080730752050eccca2564a29e3bf78c7e054a680fcf25b9fb062b83"
+      },
+      "custodyAlias": "private-source-alias:213456c5dc963e03ec1f27600c46c954c70224985fa62603db2fb2ab1ca06d35",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY",
+      "status": 200,
+      "runtimeInventory": false
+    },
+    {
+      "originalIdentity": {
+        "bytes": 23025,
+        "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+      },
+      "custodyAlias": "private-source-alias:0ad09149f0572f6cdaf5a224970ea0d2971fcfbeaac4ace8f9eb22f22c2952cd",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY",
+      "status": 200,
+      "runtimeInventory": false
+    },
+    {
+      "originalIdentity": {
+        "bytes": 49,
+        "sha256": "9575879da21a2d725f8fedbd0a031be9fb8e4943794b54c0dd20abbb178aedf2"
+      },
+      "custodyAlias": "private-source-alias:7c6f1332e38fccc71dd2cbcb889f9e32102eeafc2905b9b7bb320faeef8f7777",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY",
+      "status": 503,
+      "runtimeInventory": false
+    },
+    {
+      "originalIdentity": {
+        "bytes": 1854,
+        "sha256": "298a11d0d91a801de2e8f63b7e4997ff33d7a7423ebd0e4c8a0bbd5710f68f31"
+      },
+      "custodyAlias": "private-source-alias:59466e453830d928ba9de96228d7e0df6be39e1f67257009ef86a1ddefe1a277",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY",
+      "status": 200,
+      "runtimeInventory": true
+    },
+    {
+      "originalIdentity": {
+        "bytes": 49,
+        "sha256": "9575879da21a2d725f8fedbd0a031be9fb8e4943794b54c0dd20abbb178aedf2"
+      },
+      "custodyAlias": "private-source-alias:f6c10f821d8b8ec45f87e34d0aca6e9c5f69064255a2bc36566eaa56497253e8",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY",
+      "status": 503,
+      "runtimeInventory": false
+    },
+    {
+      "originalIdentity": {
+        "bytes": 49,
+        "sha256": "9575879da21a2d725f8fedbd0a031be9fb8e4943794b54c0dd20abbb178aedf2"
+      },
+      "custodyAlias": "private-source-alias:37913dadda30e69fac3ffea9075cb2484dca02b846fb3cc09ab835425e7bdf70",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY",
+      "status": 503,
+      "runtimeInventory": false
+    }
+  ]
+}
