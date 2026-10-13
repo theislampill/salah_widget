@@ -78,6 +78,10 @@ the art is "realism-adjacent" (believable, never random). Two standing rules:
 
 - Card is a fixed **325×530** with `overflow:hidden`. Margins, the prayer panel, the arc, the list grid, and the
   **date footer must stay fully visible** (the footer was clipped once when the header grew — never again).
+
+Either CE or AH is a stable native button that opens the same labeled Calendar dates dialog. The compact footer, accessible names and complete values consume one last-painted calendar projection, including any preview, unavailable/stale explanation and provider convention. Opening and closing this read-only view do not format or select another date, apply settings, save storage or request providers. Stable dialog/Close nodes survive ticks; unchanged text and attributes are not rewritten. Native modal behavior supplies background containment, Escape and focus return to the connected initiating trigger. Browser UI focus transfer is allowed; no custom circular focus trap or unmeasured assistive-technology speech behavior is promised.
+
+Complete values keep their 14px font, normal whitespace, anywhere wrapping and selectable literal text. The dialog scrolls vertically within viewport−28px height and at most 297px width, with horizontal overflow hidden. Very long values must remain obtainable through scrolling/selection and a usable Close route. The inner card and the current builder preview/copy iframe are 325×530. The owner clarification for #25 keeps the public builder preview/copy iframe at 325×530, equal to the inner card; the optional 330×534 personal TablissNG comparison is separate. Declared supported engines require actual native modal capability/input qualification; an unsupported declared host needs an approved tested fallback or resolved support policy before compatibility closure.
 - **Header belt**: a bare `1fr auto 1fr` grid (no background of its own) holding two **content-fit** glass straps
   — location (left) and temperature (right) — flanking a **~25px circular icon "buckle"** that is *centred on the
   widget* and **cuts** the belt. The three children are **explicitly column-pinned** (`.e`→1, `.buckle`→2,
