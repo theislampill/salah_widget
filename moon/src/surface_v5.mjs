@@ -22,11 +22,18 @@ function mapAdmitted(c,p){
  if(r.some(x=>x< -2e-14||x>1+2e-14))throw new Error('gamut solve failed');
  return r.map(x=>Math.max(0,Math.min(1,x)));
 }
-function mapSurfaceRgb(solar,earth,profile){
+// A render owns one admitted profile. Reuse that private snapshot across its
+// receivers while retaining the original per-RGB admission and mapping order.
+function createSurfaceRgbMapper(profile){
  const p=admitProfile(profile);
- if(solar?.length!==3||earth?.length!==3||![...solar,...earth].every(x=>finiteNumber(x)&&x>=0))throw new RangeError('finite nonnegative RGB required');
- const c=Array.from(solar,(x,i)=>x+earth[i]);if(c.some(x=>!Number.isFinite(x)))throw new RangeError('source overflow');
- return mapAdmitted(c,p);
+ return (solar,earth)=>{
+  if(solar?.length!==3||earth?.length!==3||![...solar,...earth].every(x=>finiteNumber(x)&&x>=0))throw new RangeError('finite nonnegative RGB required');
+  const c=Array.from(solar,(x,i)=>x+earth[i]);if(c.some(x=>!Number.isFinite(x)))throw new RangeError('source overflow');
+  return mapAdmitted(c,p);
+ };
+}
+function mapSurfaceRgb(solar,earth,profile){
+ return createSurfaceRgbMapper(profile)(solar,earth);
 }
 const decodeSrgb=x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4;
 const encodeSrgb=x=>x<=.0031308?12.92*x:1.055*x**(1/2.4)-.055;

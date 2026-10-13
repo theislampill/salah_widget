@@ -8,10 +8,10 @@ const independentBase=base!==candidate;
 const units=['asset-digest.mjs','surface_v5.mjs','moon-detail.mjs','moon-calendar.mjs','moon-engine.mjs','moon-quality.mjs','moon-pool.mjs'];
 function api(variant='candidate',worker=false){
  const messages=[],self={postMessage(m){messages.push(m);},addEventListener(){}};
- const source=units.map(n=>fs.readFileSync(variant==='candidate'&&n==='moon-engine.mjs'?path.join(candidate,n):path.join(base,n),'utf8')).join('\n');
- const counters='const outputWork={display:0,quality:0};const originalDisplay=renderSurfaceFrame,originalQuality=projectSurfaceCodes;renderSurfaceFrame=(...a)=>{outputWork.display++;return originalDisplay(...a);};projectSurfaceCodes=(...a)=>{outputWork.quality++;return originalQuality(...a);};';
+ const source=units.map(n=>fs.readFileSync(variant==='candidate'&&['moon-engine.mjs','surface_v5.mjs'].includes(n)?path.join(candidate,n):path.join(base,n),'utf8')).join('\n');
+ const counters='const profileWork={calls:0},originalProfile=admitProfile;admitProfile=(...a)=>{profileWork.calls++;return originalProfile(...a);};const outputWork={display:0,quality:0};const originalDisplay=renderSurfaceFrame,originalQuality=projectSurfaceCodes;renderSurfaceFrame=(...a)=>{outputWork.display++;return originalDisplay(...a);};projectSurfaceCodes=(...a)=>{outputWork.quality++;return originalQuality(...a);};';
  const workerSource=worker?fs.readFileSync(path.join(variant==='candidate'?candidate:base,'moon-worker.mjs'),'utf8'):'';
- return {...Function('performance','MessageChannel','self',source+'\n'+counters+'\n'+workerSource+'\nreturn {MoonEngine,MoonPool,canonicalScene,outputWork,bridge:moonRowBridge,dispatch:self.onmessage};')({now:()=>0},undefined,self),messages};
+ return {...Function('performance','MessageChannel','self',source+'\n'+counters+'\n'+workerSource+'\nreturn {MoonEngine,MoonPool,canonicalScene,outputWork,profileWork,mapSurfaceRgb,preparedMapper:typeof createSurfaceRgbMapper==="function"?createSurfaceRgbMapper:null,profile:MOON_PROFILE,bridge:moonRowBridge,dispatch:self.onmessage};')({now:()=>0},undefined,self),messages};
 }
 function engine(a){
  const memory={buffer:new ArrayBuffer(262144)},pixPointer=4096,counterPointer=256,maskPointer=1024,trace=[];
@@ -166,7 +166,10 @@ test('actual shard message selects fields-only and retains exactly the old trans
  }
  const next=await actual('candidate');
  assert.deepEqual(stable(next.reply),stable(old.reply));assert.deepEqual(next.trace,old.trace);
- assert.deepEqual(next.calls,{display:0,quality:0});assert.deepEqual(old.calls,{display:1,quality:2});
+ assert.deepEqual(next.calls,{display:0,quality:0});
+ // An independent baseline now denotes accepted fields-only850425. The portable
+ // old-row witness still constructs discarded standalone products explicitly.
+ assert.deepEqual(old.calls,independentBase?{display:0,quality:0}:{display:1,quality:2});
 });
 test('actual shard route rejects cancelled and malformed-owner replies without publication',async()=>{
  for(const fault of ['cancel','owner']){
@@ -180,4 +183,40 @@ test('actual shard route rejects cancelled and malformed-owner replies without p
   const error=a.messages.find(m=>m.kind==='shard-error');assert.ok(error);
   if(fault==='cancel')assert.equal(error.name,'AbortError');else assert.match(error.error,/row range/);
  }
+});
+
+// Mutation discriminator: restoring profile admission in the receiver loop
+// restores N*N admissions. Full physical calls/fields remain covered above.
+test('quality-field mapping admits one stable profile per render instead of per receiver',async()=>{
+ for(const fieldsOnly of [true,false]){
+  const a=api(),e=engine(a);await e.render(scene(a),{...opts,fieldsOnly});
+  assert.equal(a.profileWork.calls,fieldsOnly?3:4,'scene + fingerprint + prepared mapper (+ standalone display), independent of receiver count');
+  assert.equal(e.trace.filter(x=>x[0]==='lighting').length,9,'original full receiver initialization retained');
+ }
+});
+test('prepared mapping preserves exact accepted V5 values across calendar and reference profiles',()=>{
+ const old=api('base'),next=api();assert.equal(typeof next.preparedMapper,'function');
+ const profiles=[old.profile,{...old.profile,profile_id:'unboosted-v5-01',mode:'reference',lift:0},
+  {...old.profile,profile_id:'controlled-rgb',exposure:1.75,lift:.002,knee:.000013}];
+ const inputs=[[[0,0,0],[0,0,0]],[[1e-18,2e-8,.006],[.009,0,1e-8]],[[1,0,0],[0,.25,.5]],[[1e308,0,0],[0,0,0]]];
+ let seed=12345;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+ for(let i=0;i<128;i++)inputs.push([Array.from({length:3},()=>10**(-14+random()*16)),Array.from({length:3},()=>10**(-14+random()*16))]);
+ for(const p of profiles){const mapped=next.preparedMapper(p);for(const [solar,earth]of inputs)
+  assert.deepEqual(mapped(solar,earth),old.mapSurfaceRgb(solar,earth,p));}
+ assert.deepEqual(next.preparedMapper(old.profile)([0,0,0],[0,0,0]),[0,0,0]);
+});
+test('prepared mapper keeps original profile and per-RGB rejection boundaries',()=>{
+ const old=api('base'),next=api();assert.equal(typeof next.preparedMapper,'function');
+ const badProfiles=[null,{...old.profile,extra:true},{...old.profile,exposure:0},{...old.profile,knee:NaN},{...old.profile,mode:'reference',lift:.003}];
+ const failure=f=>{try{f();assert.fail('accepted malformed input');}catch(e){return [e.constructor.name,e.message];}};
+ for(const p of badProfiles)assert.deepEqual(failure(()=>next.preparedMapper(p)),failure(()=>old.mapSurfaceRgb([0,0,0],[0,0,0],p)));
+ const mapped=next.preparedMapper(old.profile);
+ for(const [solar,earth]of [[null,[0,0,0]],[[1,2],[0,0,0]],[[NaN,0,0],[0,0,0]],[[0,0,0],[-1,0,0]],[[Infinity,0,0],[0,0,0]],[[1e308,0,0],[1e308,0,0]]])
+  assert.deepEqual(failure(()=>mapped(solar,earth)),failure(()=>old.mapSurfaceRgb(solar,earth,old.profile)));
+});
+test('prepared profile is private to the admitted render and cannot follow later caller mutation',()=>{
+ const old=api('base'),next=api(),p={...old.profile},before={...p};assert.equal(typeof next.preparedMapper,'function');
+ const mapped=next.preparedMapper(p),solar=[.03,.01,.02],earth=[.001,.002,.001];p.exposure=10;p.profile_id='caller-changed';
+ assert.deepEqual(mapped(solar,earth),old.mapSurfaceRgb(solar,earth,before));
+ assert.notDeepEqual(mapped(solar,earth),old.mapSurfaceRgb(solar,earth,p));
 });

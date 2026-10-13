@@ -115,12 +115,12 @@ class MoonEngine{
    }
    const result={...(fieldsOnly?{}:{rgba}),width:s.outSize,height:s.outSize,scene:s,profileIdentity:await profileFingerprint(s.profile),physicalIdentity:await digestBytes(new TextEncoder().encode(JSON.stringify([this.manifestIdentity,s.basis,s.sun,s.earth,s.distance,N,s.extent,radial,azimuth]))),diagnostics:{kernel:'metric-radial-terrain-wasm-mb1',cameraReused:reused,cameraMs,lightingMs:litMs,totalMs:performance.now()-start,knownSurfaceSamples:known,unresolvedShading:unknown,unresolvedContour:counters[7],shadowedFacingSamples:shadowed,sourceSamples:radial*azimuth,analyticClearSun:analytic,analyticSamples:counters[3],shadowRays:counters[2],blockerWitnesses:counters[4],memoryBytes:e.memory.buffer.byteLength,model:'V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy'}};
    if(qualityFields){
-    const receiverCodes=new Float32Array(N*N*3),ambiguous=new Uint8Array(N*N),surfaceLinear=new Float32Array(N*N*3);
+    const mapReceiver=createSurfaceRgbMapper(s.profile),receiverCodes=new Float32Array(N*N*3),ambiguous=new Uint8Array(N*N),surfaceLinear=new Float32Array(N*N*3);
     for(let i=0;i<N*N;i++){
      // Preserve the coverage admission formerly performed by the discarded
      // display mapping. Light admission remains in mapSurfaceRgb below.
      if(fieldsOnly&&(!finite(coverage[i])||coverage[i]<-1e-12||coverage[i]>1+1e-12))throw new RangeError('coverage');
-     const c=mapSurfaceRgb(solar.subarray(3*i,3*i+3),earth.subarray(3*i,3*i+3),s.profile);
+     const c=mapReceiver(solar.subarray(3*i,3*i+3),earth.subarray(3*i,3*i+3));
      for(let k=0;k<3;k++){receiverCodes[3*i+k]=encodeSrgb(c[k])*255;surfaceLinear[3*i+k]=c[k]*coverage[i];}
      const p=i*24;ambiguous[i]=((pix[p+20]===2&&pix[p+14]>1e-12)?1:0)|((pix[p+21]===2&&pix[p+13]+pix[p+16]>1e-15)?2:0);
     }Object.assign(result,{receiverCodes,ambiguous,surfaceLinear,surfaceCoverage:new Float32Array(coverage),surfaceSize:N,surfaceExtent:s.extent});

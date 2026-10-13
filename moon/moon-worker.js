@@ -56,11 +56,18 @@ function mapAdmitted(c,p){
  if(r.some(x=>x< -2e-14||x>1+2e-14))throw new Error('gamut solve failed');
  return r.map(x=>Math.max(0,Math.min(1,x)));
 }
-function mapSurfaceRgb(solar,earth,profile){
+// A render owns one admitted profile. Reuse that private snapshot across its
+// receivers while retaining the original per-RGB admission and mapping order.
+function createSurfaceRgbMapper(profile){
  const p=admitProfile(profile);
- if(solar?.length!==3||earth?.length!==3||![...solar,...earth].every(x=>finiteNumber(x)&&x>=0))throw new RangeError('finite nonnegative RGB required');
- const c=Array.from(solar,(x,i)=>x+earth[i]);if(c.some(x=>!Number.isFinite(x)))throw new RangeError('source overflow');
- return mapAdmitted(c,p);
+ return (solar,earth)=>{
+  if(solar?.length!==3||earth?.length!==3||![...solar,...earth].every(x=>finiteNumber(x)&&x>=0))throw new RangeError('finite nonnegative RGB required');
+  const c=Array.from(solar,(x,i)=>x+earth[i]);if(c.some(x=>!Number.isFinite(x)))throw new RangeError('source overflow');
+  return mapAdmitted(c,p);
+ };
+}
+function mapSurfaceRgb(solar,earth,profile){
+ return createSurfaceRgbMapper(profile)(solar,earth);
 }
 const decodeSrgb=x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4;
 const encodeSrgb=x=>x<=.0031308?12.92*x:1.055*x**(1/2.4)-.055;
@@ -421,12 +428,12 @@ class MoonEngine{
    }
    const result={...(fieldsOnly?{}:{rgba}),width:s.outSize,height:s.outSize,scene:s,profileIdentity:await profileFingerprint(s.profile),physicalIdentity:await digestBytes(new TextEncoder().encode(JSON.stringify([this.manifestIdentity,s.basis,s.sun,s.earth,s.distance,N,s.extent,radial,azimuth]))),diagnostics:{kernel:'metric-radial-terrain-wasm-mb1',cameraReused:reused,cameraMs,lightingMs:litMs,totalMs:performance.now()-start,knownSurfaceSamples:known,unresolvedShading:unknown,unresolvedContour:counters[7],shadowedFacingSamples:shadowed,sourceSamples:radial*azimuth,analyticClearSun:analytic,analyticSamples:counters[3],shadowRays:counters[2],blockerWitnesses:counters[4],memoryBytes:e.memory.buffer.byteLength,model:'V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy'}};
    if(qualityFields){
-    const receiverCodes=new Float32Array(N*N*3),ambiguous=new Uint8Array(N*N),surfaceLinear=new Float32Array(N*N*3);
+    const mapReceiver=createSurfaceRgbMapper(s.profile),receiverCodes=new Float32Array(N*N*3),ambiguous=new Uint8Array(N*N),surfaceLinear=new Float32Array(N*N*3);
     for(let i=0;i<N*N;i++){
      // Preserve the coverage admission formerly performed by the discarded
      // display mapping. Light admission remains in mapSurfaceRgb below.
      if(fieldsOnly&&(!finite(coverage[i])||coverage[i]<-1e-12||coverage[i]>1+1e-12))throw new RangeError('coverage');
-     const c=mapSurfaceRgb(solar.subarray(3*i,3*i+3),earth.subarray(3*i,3*i+3),s.profile);
+     const c=mapReceiver(solar.subarray(3*i,3*i+3),earth.subarray(3*i,3*i+3));
      for(let k=0;k<3;k++){receiverCodes[3*i+k]=encodeSrgb(c[k])*255;surfaceLinear[3*i+k]=c[k]*coverage[i];}
      const p=i*24;ambiguous[i]=((pix[p+20]===2&&pix[p+14]>1e-12)?1:0)|((pix[p+21]===2&&pix[p+13]+pix[p+16]>1e-15)?2:0);
     }Object.assign(result,{receiverCodes,ambiguous,surfaceLinear,surfaceCoverage:new Float32Array(coverage),surfaceSize:N,surfaceExtent:s.extent});
