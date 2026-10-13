@@ -282,6 +282,8 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
 - Gregorian (CE) date bottom-left and Hijri (AH) date bottom-right, in your chosen
   `datefmt` (defaults to ISO `YYYY-MM-DD`).
 
+Click or tap either CE or AH date, or Tab to it and press Enter or Space, to open **Calendar dates**. It shows both complete selected dates, any preview and the current explanation. Scroll and select long values to read their full text. Close or Escape dismisses the view and returns focus to the date that opened it. Reading dates does not apply settings, save data or request another calendar value.
+
 ---
 
 ## Files
