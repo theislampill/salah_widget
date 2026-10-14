@@ -47,7 +47,7 @@ self.onmessage=e=>{
   const token=shardSerial;
   (async()=>{
    if(!shardEngine)throw new Error('Moon row not booted');const engine=await shardEngine;
-   const result=await engine.render(m.scene,{...m.options,diagnostic:'fields',qualityFields:true,cancelled:()=>token!==shardSerial,onProgress:progress=>self.postMessage({kind:'shard-progress',id:m.id,progress})});
+   const result=await engine.render(m.scene,{...m.options,diagnostic:'fields',qualityFields:true,fieldsOnly:true,cancelled:()=>token!==shardSerial,onProgress:progress=>self.postMessage({kind:'shard-progress',id:m.id,progress})});
    if(token!==shardSerial)throw new DOMException('Superseded Moon rows','AbortError');
    const N=m.scene.size,[lo,hi]=m.options.rowOwner;
    if(!Number.isInteger(lo)||!Number.isInteger(hi)||lo<0||hi>N||hi<=lo)throw new Error('Moon row range');

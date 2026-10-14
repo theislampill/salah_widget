@@ -1,0 +1,5448 @@
+{
+  "schema": "native-solar-preservation/1",
+  "source": "src/native/index.html",
+  "preimageSha256": "a81b32b46d1153c2cc41f57f6e615f1237a4491774ad383820a18a903013bfcf",
+  "scope": "Existing native radiometry and style sink output acquired before the missing-timetable correction. No scientific, weather permission, native timing or visual qualification.",
+  "cases": [
+    {
+      "name": "-20/unavailable/full",
+      "input": {
+        "solarElevationDeg": -20,
+        "record": null,
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.1751",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "-20/unavailable/reduced",
+      "input": {
+        "solarElevationDeg": -20,
+        "record": null,
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "-20/clear/full",
+      "input": {
+        "solarElevationDeg": -20,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.1769",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "-20/clear/reduced",
+      "input": {
+        "solarElevationDeg": -20,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "-20/overcast/full",
+      "input": {
+        "solarElevationDeg": -20,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,171,47)",
+          "sunMidRGB": "rgb(206,141,35)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,171,47)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,170,47)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,167,46)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,162,43)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,152,39)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,142,35)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(200,131,32)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0016095761317133747,
+            "displayCctK": 2006.2036827436307,
+            "bodyRadianceScale": 1.3275328162964186
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,171,47)",
+          "--sunmid": "rgb(206,141,35)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,171,47) 0%,rgb(223,170,47) 20%,rgb(222,167,46) 40%,rgb(219,162,43) 60%,rgb(213,152,39) 80%,rgb(207,142,35) 90%,rgb(200,131,32) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.035",
+          "--sunpulse": "1.1751",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "-20/overcast/reduced",
+      "input": {
+        "solarElevationDeg": -20,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,171,47)",
+          "sunMidRGB": "rgb(206,141,35)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,171,47)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,170,47)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,167,46)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,162,43)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,152,39)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,142,35)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(200,131,32)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0016095761317133747,
+            "displayCctK": 2006.2036827436307,
+            "bodyRadianceScale": 1.3275328162964186
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,171,47)",
+          "--sunmid": "rgb(206,141,35)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,171,47) 0%,rgb(223,170,47) 20%,rgb(222,167,46) 40%,rgb(219,162,43) 60%,rgb(213,152,39) 80%,rgb(207,142,35) 90%,rgb(200,131,32) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.035",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "-20/fog/full",
+      "input": {
+        "solarElevationDeg": -20,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,170,45)",
+          "sunMidRGB": "rgb(206,140,33)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,170,45)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,169,45)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,166,43)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,161,41)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,151,37)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,141,33)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(199,130,30)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0006211601147257885,
+            "displayCctK": 2002.428510009548,
+            "bodyRadianceScale": 1.3229070293369167
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,170,45)",
+          "--sunmid": "rgb(206,140,33)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,170,45) 0%,rgb(223,169,45) 20%,rgb(222,166,43) 40%,rgb(219,161,41) 60%,rgb(213,151,37) 80%,rgb(207,141,33) 90%,rgb(199,130,30) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.030",
+          "--sunpulse": "1.1751",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "-20/fog/reduced",
+      "input": {
+        "solarElevationDeg": -20,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,170,45)",
+          "sunMidRGB": "rgb(206,140,33)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,170,45)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,169,45)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,166,43)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,161,41)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,151,37)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,141,33)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(199,130,30)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0006211601147257885,
+            "displayCctK": 2002.428510009548,
+            "bodyRadianceScale": 1.3229070293369167
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,170,45)",
+          "--sunmid": "rgb(206,140,33)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,170,45) 0%,rgb(223,169,45) 20%,rgb(222,166,43) 40%,rgb(219,161,41) 60%,rgb(213,151,37) 80%,rgb(207,141,33) 90%,rgb(199,130,30) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.030",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "-1.5/unavailable/full",
+      "input": {
+        "solarElevationDeg": -1.5,
+        "record": null,
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.1751",
+          "--sunflat": "0.948"
+        }
+      }
+    },
+    {
+      "name": "-1.5/unavailable/reduced",
+      "input": {
+        "solarElevationDeg": -1.5,
+        "record": null,
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.0000",
+          "--sunflat": "0.948"
+        }
+      }
+    },
+    {
+      "name": "-1.5/clear/full",
+      "input": {
+        "solarElevationDeg": -1.5,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.1769",
+          "--sunflat": "0.948"
+        }
+      }
+    },
+    {
+      "name": "-1.5/clear/reduced",
+      "input": {
+        "solarElevationDeg": -1.5,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.0000",
+          "--sunflat": "0.948"
+        }
+      }
+    },
+    {
+      "name": "-1.5/overcast/full",
+      "input": {
+        "solarElevationDeg": -1.5,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,171,47)",
+          "sunMidRGB": "rgb(206,141,35)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,171,47)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,170,47)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,167,46)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,162,43)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,152,39)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,142,35)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(200,131,32)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0016095761317133747,
+            "displayCctK": 2006.2036827436307,
+            "bodyRadianceScale": 1.3275328162964186
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,171,47)",
+          "--sunmid": "rgb(206,141,35)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,171,47) 0%,rgb(223,170,47) 20%,rgb(222,167,46) 40%,rgb(219,162,43) 60%,rgb(213,152,39) 80%,rgb(207,142,35) 90%,rgb(200,131,32) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.035",
+          "--sunpulse": "1.1751",
+          "--sunflat": "0.948"
+        }
+      }
+    },
+    {
+      "name": "-1.5/overcast/reduced",
+      "input": {
+        "solarElevationDeg": -1.5,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,171,47)",
+          "sunMidRGB": "rgb(206,141,35)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,171,47)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,170,47)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,167,46)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,162,43)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,152,39)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,142,35)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(200,131,32)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0016095761317133747,
+            "displayCctK": 2006.2036827436307,
+            "bodyRadianceScale": 1.3275328162964186
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,171,47)",
+          "--sunmid": "rgb(206,141,35)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,171,47) 0%,rgb(223,170,47) 20%,rgb(222,167,46) 40%,rgb(219,162,43) 60%,rgb(213,152,39) 80%,rgb(207,142,35) 90%,rgb(200,131,32) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.035",
+          "--sunpulse": "1.0000",
+          "--sunflat": "0.948"
+        }
+      }
+    },
+    {
+      "name": "-1.5/fog/full",
+      "input": {
+        "solarElevationDeg": -1.5,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,170,45)",
+          "sunMidRGB": "rgb(206,140,33)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,170,45)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,169,45)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,166,43)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,161,41)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,151,37)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,141,33)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(199,130,30)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0006211601147257885,
+            "displayCctK": 2002.428510009548,
+            "bodyRadianceScale": 1.3229070293369167
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,170,45)",
+          "--sunmid": "rgb(206,140,33)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,170,45) 0%,rgb(223,169,45) 20%,rgb(222,166,43) 40%,rgb(219,161,41) 60%,rgb(213,151,37) 80%,rgb(207,141,33) 90%,rgb(199,130,30) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.030",
+          "--sunpulse": "1.1751",
+          "--sunflat": "0.948"
+        }
+      }
+    },
+    {
+      "name": "-1.5/fog/reduced",
+      "input": {
+        "solarElevationDeg": -1.5,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,170,45)",
+          "sunMidRGB": "rgb(206,140,33)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,170,45)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,169,45)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,166,43)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,161,41)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,151,37)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,141,33)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(199,130,30)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0006211601147257885,
+            "displayCctK": 2002.428510009548,
+            "bodyRadianceScale": 1.3229070293369167
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "0.000",
+          "--sunbodyamt": "0.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,170,45)",
+          "--sunmid": "rgb(206,140,33)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,170,45) 0%,rgb(223,169,45) 20%,rgb(222,166,43) 40%,rgb(219,161,41) 60%,rgb(213,151,37) 80%,rgb(207,141,33) 90%,rgb(199,130,30) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "164.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "30.9%",
+          "--sunray": "0.030",
+          "--sunpulse": "1.0000",
+          "--sunflat": "0.948"
+        }
+      }
+    },
+    {
+      "name": "0/unavailable/full",
+      "input": {
+        "solarElevationDeg": 0,
+        "record": null,
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 216
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.214",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "216.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "40.8%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.1751",
+          "--sunflat": "0.925"
+        }
+      }
+    },
+    {
+      "name": "0/unavailable/reduced",
+      "input": {
+        "solarElevationDeg": 0,
+        "record": null,
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 216
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.214",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "216.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "40.8%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.0000",
+          "--sunflat": "0.925"
+        }
+      }
+    },
+    {
+      "name": "0/clear/full",
+      "input": {
+        "solarElevationDeg": 0,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 216
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.214",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "216.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "40.8%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.1769",
+          "--sunflat": "0.925"
+        }
+      }
+    },
+    {
+      "name": "0/clear/reduced",
+      "input": {
+        "solarElevationDeg": 0,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 216
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(225,152,11)",
+          "sunMidRGB": "rgb(207,121,8)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(225,152,11)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(224,151,11)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(223,148,10)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(220,143,10)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(214,132,9)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(208,122,8)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(201,112,8)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.008233458768278988,
+            "displayCctK": 2030.9666873334306,
+            "bodyRadianceScale": 1.3585325870355458
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "0.214",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(225,152,11)",
+          "--sunmid": "rgb(207,121,8)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(225,152,11) 0%,rgb(224,151,11) 20%,rgb(223,148,10) 40%,rgb(220,143,10) 60%,rgb(214,132,9) 80%,rgb(208,122,8) 90%,rgb(201,112,8) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "216.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "40.8%",
+          "--sunray": "0.100",
+          "--sunpulse": "1.0000",
+          "--sunflat": "0.925"
+        }
+      }
+    },
+    {
+      "name": "0/overcast/full",
+      "input": {
+        "solarElevationDeg": 0,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": false,
+        "horizon": 216
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,171,47)",
+          "sunMidRGB": "rgb(206,141,35)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,171,47)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,170,47)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,167,46)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,162,43)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,152,39)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,142,35)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(200,131,32)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0016095761317133747,
+            "displayCctK": 2006.2036827436307,
+            "bodyRadianceScale": 1.3275328162964186
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "0.214",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,171,47)",
+          "--sunmid": "rgb(206,141,35)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,171,47) 0%,rgb(223,170,47) 20%,rgb(222,167,46) 40%,rgb(219,162,43) 60%,rgb(213,152,39) 80%,rgb(207,142,35) 90%,rgb(200,131,32) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "216.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "40.8%",
+          "--sunray": "0.035",
+          "--sunpulse": "1.1751",
+          "--sunflat": "0.925"
+        }
+      }
+    },
+    {
+      "name": "0/overcast/reduced",
+      "input": {
+        "solarElevationDeg": 0,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": true,
+        "horizon": 216
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,171,47)",
+          "sunMidRGB": "rgb(206,141,35)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,171,47)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,170,47)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,167,46)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,162,43)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,152,39)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,142,35)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(200,131,32)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0016095761317133747,
+            "displayCctK": 2006.2036827436307,
+            "bodyRadianceScale": 1.3275328162964186
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "0.214",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,171,47)",
+          "--sunmid": "rgb(206,141,35)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,171,47) 0%,rgb(223,170,47) 20%,rgb(222,167,46) 40%,rgb(219,162,43) 60%,rgb(213,152,39) 80%,rgb(207,142,35) 90%,rgb(200,131,32) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "216.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "40.8%",
+          "--sunray": "0.035",
+          "--sunpulse": "1.0000",
+          "--sunflat": "0.925"
+        }
+      }
+    },
+    {
+      "name": "0/fog/full",
+      "input": {
+        "solarElevationDeg": 0,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": false,
+        "horizon": 216
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,170,45)",
+          "sunMidRGB": "rgb(206,140,33)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,170,45)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,169,45)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,166,43)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,161,41)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,151,37)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,141,33)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(199,130,30)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0006211601147257885,
+            "displayCctK": 2002.428510009548,
+            "bodyRadianceScale": 1.3229070293369167
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "0.214",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,170,45)",
+          "--sunmid": "rgb(206,140,33)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,170,45) 0%,rgb(223,169,45) 20%,rgb(222,166,43) 40%,rgb(219,161,41) 60%,rgb(213,151,37) 80%,rgb(207,141,33) 90%,rgb(199,130,30) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "216.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "40.8%",
+          "--sunray": "0.030",
+          "--sunpulse": "1.1751",
+          "--sunflat": "0.925"
+        }
+      }
+    },
+    {
+      "name": "0/fog/reduced",
+      "input": {
+        "solarElevationDeg": 0,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": true,
+        "horizon": 216
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(224,170,45)",
+          "sunMidRGB": "rgb(206,140,33)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(224,170,45)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(223,169,45)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(222,166,43)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(219,161,41)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(213,151,37)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(207,141,33)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(199,130,30)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 37.91960837783634,
+            "beamTransmission": 0.0006211601147257885,
+            "displayCctK": 2002.428510009548,
+            "bodyRadianceScale": 1.3229070293369167
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "0.214",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "1.000",
+          "--suncore": "rgb(224,170,45)",
+          "--sunmid": "rgb(206,140,33)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(224,170,45) 0%,rgb(223,169,45) 20%,rgb(222,166,43) 40%,rgb(219,161,41) 60%,rgb(213,151,37) 80%,rgb(207,141,33) 90%,rgb(199,130,30) 96%,transparent 100%)",
+          "--sundisc": "1.100",
+          "--sunlift": "216.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "40.8%",
+          "--sunray": "0.030",
+          "--sunpulse": "1.0000",
+          "--sunflat": "0.925"
+        }
+      }
+    },
+    {
+      "name": "5.5/unavailable/full",
+      "input": {
+        "solarElevationDeg": 5.5,
+        "record": null,
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(243,227,182)",
+          "sunMidRGB": "rgb(234,211,153)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(243,227,182)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(242,226,181)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(242,225,179)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(240,223,174)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(237,217,164)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(234,211,154)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(230,204,143)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 9.520673255417702,
+            "beamTransmission": 0.33032194037144336,
+            "displayCctK": 3242.3668514942674,
+            "bodyRadianceScale": 2.8659066809383544
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(243,227,182)",
+          "--sunmid": "rgb(234,211,153)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(243,227,182) 0%,rgb(242,226,181) 20%,rgb(242,225,179) 40%,rgb(240,223,174) 60%,rgb(237,217,164) 80%,rgb(234,211,154) 90%,rgb(230,204,143) 96%,transparent 100%)",
+          "--sundisc": "1.067",
+          "--sunlift": "146.9px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "27.7%",
+          "--sunray": "0.155",
+          "--sunpulse": "1.1531",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "5.5/unavailable/reduced",
+      "input": {
+        "solarElevationDeg": 5.5,
+        "record": null,
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(243,227,182)",
+          "sunMidRGB": "rgb(234,211,153)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(243,227,182)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(242,226,181)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(242,225,179)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(240,223,174)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(237,217,164)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(234,211,154)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(230,204,143)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 9.520673255417702,
+            "beamTransmission": 0.33032194037144336,
+            "displayCctK": 3242.3668514942674,
+            "bodyRadianceScale": 2.8659066809383544
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(243,227,182)",
+          "--sunmid": "rgb(234,211,153)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(243,227,182) 0%,rgb(242,226,181) 20%,rgb(242,225,179) 40%,rgb(240,223,174) 60%,rgb(237,217,164) 80%,rgb(234,211,154) 90%,rgb(230,204,143) 96%,transparent 100%)",
+          "--sundisc": "1.067",
+          "--sunlift": "146.9px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "27.7%",
+          "--sunray": "0.155",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "5.5/clear/full",
+      "input": {
+        "solarElevationDeg": 5.5,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(243,227,182)",
+          "sunMidRGB": "rgb(234,211,153)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(243,227,182)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(242,226,181)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(242,225,179)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(240,223,174)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(237,217,164)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(234,211,154)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(230,204,143)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 9.520673255417702,
+            "beamTransmission": 0.33032194037144336,
+            "displayCctK": 3242.3668514942674,
+            "bodyRadianceScale": 2.8659066809383544
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(243,227,182)",
+          "--sunmid": "rgb(234,211,153)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(243,227,182) 0%,rgb(242,226,181) 20%,rgb(242,225,179) 40%,rgb(240,223,174) 60%,rgb(237,217,164) 80%,rgb(234,211,154) 90%,rgb(230,204,143) 96%,transparent 100%)",
+          "--sundisc": "1.067",
+          "--sunlift": "146.9px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "27.7%",
+          "--sunray": "0.155",
+          "--sunpulse": "1.1549",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "5.5/clear/reduced",
+      "input": {
+        "solarElevationDeg": 5.5,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(243,227,182)",
+          "sunMidRGB": "rgb(234,211,153)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(243,227,182)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(242,226,181)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(242,225,179)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(240,223,174)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(237,217,164)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(234,211,154)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(230,204,143)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 9.520673255417702,
+            "beamTransmission": 0.33032194037144336,
+            "displayCctK": 3242.3668514942674,
+            "bodyRadianceScale": 2.8659066809383544
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(243,227,182)",
+          "--sunmid": "rgb(234,211,153)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(243,227,182) 0%,rgb(242,226,181) 20%,rgb(242,225,179) 40%,rgb(240,223,174) 60%,rgb(237,217,164) 80%,rgb(234,211,154) 90%,rgb(230,204,143) 96%,transparent 100%)",
+          "--sundisc": "1.067",
+          "--sunlift": "146.9px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "27.7%",
+          "--sunray": "0.155",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "5.5/overcast/full",
+      "input": {
+        "solarElevationDeg": 5.5,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(239,221,174)",
+          "sunMidRGB": "rgb(229,202,145)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(239,221,174)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(239,221,174)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(238,219,171)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(237,216,166)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(233,210,156)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(229,203,146)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(225,195,135)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 9.520673255417702,
+            "beamTransmission": 0.22664032887044577,
+            "displayCctK": 2873.5248178212537,
+            "bodyRadianceScale": 2.3806767391136865
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(239,221,174)",
+          "--sunmid": "rgb(229,202,145)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(239,221,174) 0%,rgb(239,221,174) 20%,rgb(238,219,171) 40%,rgb(237,216,166) 60%,rgb(233,210,156) 80%,rgb(229,203,146) 90%,rgb(225,195,135) 96%,transparent 100%)",
+          "--sundisc": "1.067",
+          "--sunlift": "146.9px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "27.7%",
+          "--sunray": "0.054",
+          "--sunpulse": "1.1531",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "5.5/overcast/reduced",
+      "input": {
+        "solarElevationDeg": 5.5,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(239,221,174)",
+          "sunMidRGB": "rgb(229,202,145)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(239,221,174)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(239,221,174)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(238,219,171)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(237,216,166)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(233,210,156)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(229,203,146)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(225,195,135)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 9.520673255417702,
+            "beamTransmission": 0.22664032887044577,
+            "displayCctK": 2873.5248178212537,
+            "bodyRadianceScale": 2.3806767391136865
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(239,221,174)",
+          "--sunmid": "rgb(229,202,145)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(239,221,174) 0%,rgb(239,221,174) 20%,rgb(238,219,171) 40%,rgb(237,216,166) 60%,rgb(233,210,156) 80%,rgb(229,203,146) 90%,rgb(225,195,135) 96%,transparent 100%)",
+          "--sundisc": "1.067",
+          "--sunlift": "146.9px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "27.7%",
+          "--sunray": "0.054",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "5.5/fog/full",
+      "input": {
+        "solarElevationDeg": 5.5,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(237,215,157)",
+          "sunMidRGB": "rgb(226,194,126)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(237,215,157)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(237,215,156)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(236,213,153)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(234,210,148)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(231,203,137)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(226,195,127)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(221,187,117)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 9.520673255417702,
+            "beamTransmission": 0.18192975079061635,
+            "displayCctK": 2711.2791216877185,
+            "bodyRadianceScale": 2.1714312337000847
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(237,215,157)",
+          "--sunmid": "rgb(226,194,126)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(237,215,157) 0%,rgb(237,215,156) 20%,rgb(236,213,153) 40%,rgb(234,210,148) 60%,rgb(231,203,137) 80%,rgb(226,195,127) 90%,rgb(221,187,117) 96%,transparent 100%)",
+          "--sundisc": "1.067",
+          "--sunlift": "146.9px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "27.7%",
+          "--sunray": "0.046",
+          "--sunpulse": "1.1531",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "5.5/fog/reduced",
+      "input": {
+        "solarElevationDeg": 5.5,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(237,215,157)",
+          "sunMidRGB": "rgb(226,194,126)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(237,215,157)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(237,215,156)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(236,213,153)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(234,210,148)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(231,203,137)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(226,195,127)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(221,187,117)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 9.520673255417702,
+            "beamTransmission": 0.18192975079061635,
+            "displayCctK": 2711.2791216877185,
+            "bodyRadianceScale": 2.1714312337000847
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(237,215,157)",
+          "--sunmid": "rgb(226,194,126)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(237,215,157) 0%,rgb(237,215,156) 20%,rgb(236,213,153) 40%,rgb(234,210,148) 60%,rgb(231,203,137) 80%,rgb(226,195,127) 90%,rgb(221,187,117) 96%,transparent 100%)",
+          "--sundisc": "1.067",
+          "--sunlift": "146.9px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "27.7%",
+          "--sunray": "0.046",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "10/unavailable/full",
+      "input": {
+        "solarElevationDeg": 10,
+        "record": null,
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(247,240,228)",
+          "sunMidRGB": "rgb(240,230,212)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(247,240,228)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(247,240,227)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(246,239,226)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(245,238,224)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(243,235,218)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(241,231,213)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(238,226,206)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 5.586035879851202,
+            "beamTransmission": 0.5509095362291924,
+            "displayCctK": 4072.014184748349,
+            "bodyRadianceScale": 3.89825662955262
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(247,240,228)",
+          "--sunmid": "rgb(240,230,212)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(247,240,228) 0%,rgb(247,240,227) 20%,rgb(246,239,226) 40%,rgb(245,238,224) 60%,rgb(243,235,218) 80%,rgb(241,231,213) 90%,rgb(238,226,206) 96%,transparent 100%)",
+          "--sundisc": "1.040",
+          "--sunlift": "133.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "25.1%",
+          "--sunray": "0.200",
+          "--sunpulse": "1.1351",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "10/unavailable/reduced",
+      "input": {
+        "solarElevationDeg": 10,
+        "record": null,
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(247,240,228)",
+          "sunMidRGB": "rgb(240,230,212)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(247,240,228)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(247,240,227)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(246,239,226)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(245,238,224)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(243,235,218)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(241,231,213)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(238,226,206)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 5.586035879851202,
+            "beamTransmission": 0.5509095362291924,
+            "displayCctK": 4072.014184748349,
+            "bodyRadianceScale": 3.89825662955262
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(247,240,228)",
+          "--sunmid": "rgb(240,230,212)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(247,240,228) 0%,rgb(247,240,227) 20%,rgb(246,239,226) 40%,rgb(245,238,224) 60%,rgb(243,235,218) 80%,rgb(241,231,213) 90%,rgb(238,226,206) 96%,transparent 100%)",
+          "--sundisc": "1.040",
+          "--sunlift": "133.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "25.1%",
+          "--sunray": "0.200",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "10/clear/full",
+      "input": {
+        "solarElevationDeg": 10,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(247,240,228)",
+          "sunMidRGB": "rgb(240,230,212)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(247,240,228)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(247,240,227)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(246,239,226)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(245,238,224)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(243,235,218)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(241,231,213)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(238,226,206)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 5.586035879851202,
+            "beamTransmission": 0.5509095362291924,
+            "displayCctK": 4072.014184748349,
+            "bodyRadianceScale": 3.89825662955262
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(247,240,228)",
+          "--sunmid": "rgb(240,230,212)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(247,240,228) 0%,rgb(247,240,227) 20%,rgb(246,239,226) 40%,rgb(245,238,224) 60%,rgb(243,235,218) 80%,rgb(241,231,213) 90%,rgb(238,226,206) 96%,transparent 100%)",
+          "--sundisc": "1.040",
+          "--sunlift": "133.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "25.1%",
+          "--sunray": "0.200",
+          "--sunpulse": "1.1369",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "10/clear/reduced",
+      "input": {
+        "solarElevationDeg": 10,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(247,240,228)",
+          "sunMidRGB": "rgb(240,230,212)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(247,240,228)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(247,240,227)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(246,239,226)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(245,238,224)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(243,235,218)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(241,231,213)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(238,226,206)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 5.586035879851202,
+            "beamTransmission": 0.5509095362291924,
+            "displayCctK": 4072.014184748349,
+            "bodyRadianceScale": 3.89825662955262
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(247,240,228)",
+          "--sunmid": "rgb(240,230,212)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(247,240,228) 0%,rgb(247,240,227) 20%,rgb(246,239,226) 40%,rgb(245,238,224) 60%,rgb(243,235,218) 80%,rgb(241,231,213) 90%,rgb(238,226,206) 96%,transparent 100%)",
+          "--sundisc": "1.040",
+          "--sunlift": "133.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "25.1%",
+          "--sunray": "0.200",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "10/overcast/full",
+      "input": {
+        "solarElevationDeg": 10,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(245,238,224)",
+          "sunMidRGB": "rgb(238,227,206)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(245,238,224)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(245,238,223)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(245,237,222)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(243,235,219)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(241,231,213)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(238,227,207)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(235,222,199)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 5.586035879851202,
+            "beamTransmission": 0.44980742856454375,
+            "displayCctK": 3733.662998327597,
+            "bodyRadianceScale": 3.4250987656820646
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(245,238,224)",
+          "--sunmid": "rgb(238,227,206)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(245,238,224) 0%,rgb(245,238,223) 20%,rgb(245,237,222) 40%,rgb(243,235,219) 60%,rgb(241,231,213) 80%,rgb(238,227,207) 90%,rgb(235,222,199) 96%,transparent 100%)",
+          "--sundisc": "1.040",
+          "--sunlift": "133.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "25.1%",
+          "--sunray": "0.070",
+          "--sunpulse": "1.1351",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "10/overcast/reduced",
+      "input": {
+        "solarElevationDeg": 10,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(245,238,224)",
+          "sunMidRGB": "rgb(238,227,206)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(245,238,224)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(245,238,223)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(245,237,222)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(243,235,219)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(241,231,213)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(238,227,207)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(235,222,199)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 5.586035879851202,
+            "beamTransmission": 0.44980742856454375,
+            "displayCctK": 3733.662998327597,
+            "bodyRadianceScale": 3.4250987656820646
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(245,238,224)",
+          "--sunmid": "rgb(238,227,206)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(245,238,224) 0%,rgb(245,238,223) 20%,rgb(245,237,222) 40%,rgb(243,235,219) 60%,rgb(241,231,213) 80%,rgb(238,227,207) 90%,rgb(235,222,199) 96%,transparent 100%)",
+          "--sundisc": "1.040",
+          "--sunlift": "133.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "25.1%",
+          "--sunray": "0.070",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "10/fog/full",
+      "input": {
+        "solarElevationDeg": 10,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(244,236,217)",
+          "sunMidRGB": "rgb(236,223,197)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(244,236,217)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(244,235,217)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(243,234,215)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(242,232,212)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(240,228,205)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(237,224,198)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(233,218,190)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 5.586035879851202,
+            "beamTransmission": 0.3996335902842209,
+            "displayCctK": 3562.4219120786674,
+            "bodyRadianceScale": 3.1902852025301542
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(244,236,217)",
+          "--sunmid": "rgb(236,223,197)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(244,236,217) 0%,rgb(244,235,217) 20%,rgb(243,234,215) 40%,rgb(242,232,212) 60%,rgb(240,228,205) 80%,rgb(237,224,198) 90%,rgb(233,218,190) 96%,transparent 100%)",
+          "--sundisc": "1.040",
+          "--sunlift": "133.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "25.1%",
+          "--sunray": "0.060",
+          "--sunpulse": "1.1351",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "10/fog/reduced",
+      "input": {
+        "solarElevationDeg": 10,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(244,236,217)",
+          "sunMidRGB": "rgb(236,223,197)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(244,236,217)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(244,235,217)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(243,234,215)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(242,232,212)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(240,228,205)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(237,224,198)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(233,218,190)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 5.586035879851202,
+            "beamTransmission": 0.3996335902842209,
+            "displayCctK": 3562.4219120786674,
+            "bodyRadianceScale": 3.1902852025301542
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(244,236,217)",
+          "--sunmid": "rgb(236,223,197)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(244,236,217) 0%,rgb(244,235,217) 20%,rgb(243,234,215) 40%,rgb(242,232,212) 60%,rgb(240,228,205) 80%,rgb(237,224,198) 90%,rgb(233,218,190) 96%,transparent 100%)",
+          "--sundisc": "1.040",
+          "--sunlift": "133.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "25.1%",
+          "--sunray": "0.060",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "39.9/unavailable/full",
+      "input": {
+        "solarElevationDeg": 39.9,
+        "record": null,
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,240)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5566337508759365,
+            "beamTransmission": 0.9301937440337426,
+            "displayCctK": 5498.531982935676,
+            "bodyRadianceScale": 5.673306722077915
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(251,248,246) 0%,rgb(251,248,246) 20%,rgb(251,248,246) 40%,rgb(251,248,246) 60%,rgb(249,246,243) 80%,rgb(247,244,240) 90%,rgb(246,243,239) 96%,transparent 100%)",
+          "--sundisc": "0.861",
+          "--sunlift": "40.3px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.6%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0155",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "39.9/unavailable/reduced",
+      "input": {
+        "solarElevationDeg": 39.9,
+        "record": null,
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,240)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5566337508759365,
+            "beamTransmission": 0.9301937440337426,
+            "displayCctK": 5498.531982935676,
+            "bodyRadianceScale": 5.673306722077915
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(251,248,246) 0%,rgb(251,248,246) 20%,rgb(251,248,246) 40%,rgb(251,248,246) 60%,rgb(249,246,243) 80%,rgb(247,244,240) 90%,rgb(246,243,239) 96%,transparent 100%)",
+          "--sundisc": "0.861",
+          "--sunlift": "40.3px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.6%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "39.9/clear/full",
+      "input": {
+        "solarElevationDeg": 39.9,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,240)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5566337508759365,
+            "beamTransmission": 0.9301937440337426,
+            "displayCctK": 5498.531982935676,
+            "bodyRadianceScale": 5.673306722077915
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(251,248,246) 0%,rgb(251,248,246) 20%,rgb(251,248,246) 40%,rgb(251,248,246) 60%,rgb(249,246,243) 80%,rgb(247,244,240) 90%,rgb(246,243,239) 96%,transparent 100%)",
+          "--sundisc": "0.861",
+          "--sunlift": "40.3px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.6%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0173",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "39.9/clear/reduced",
+      "input": {
+        "solarElevationDeg": 39.9,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,240)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5566337508759365,
+            "beamTransmission": 0.9301937440337426,
+            "displayCctK": 5498.531982935676,
+            "bodyRadianceScale": 5.673306722077915
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(251,248,246) 0%,rgb(251,248,246) 20%,rgb(251,248,246) 40%,rgb(251,248,246) 60%,rgb(249,246,243) 80%,rgb(247,244,240) 90%,rgb(246,243,239) 96%,transparent 100%)",
+          "--sundisc": "0.861",
+          "--sunlift": "40.3px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.6%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "39.9/overcast/full",
+      "input": {
+        "solarElevationDeg": 39.9,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(248,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5566337508759365,
+            "beamTransmission": 0.9075819093264186,
+            "displayCctK": 5498.032878585393,
+            "bodyRadianceScale": 5.567483335647639
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(251,249,246) 0%,rgb(251,249,246) 20%,rgb(251,249,246) 40%,rgb(251,249,246) 60%,rgb(248,246,243) 80%,rgb(247,244,241) 90%,rgb(246,243,239) 96%,transparent 100%)",
+          "--sundisc": "0.861",
+          "--sunlift": "40.3px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.6%",
+          "--sunray": "0.140",
+          "--sunpulse": "1.0155",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "39.9/overcast/reduced",
+      "input": {
+        "solarElevationDeg": 39.9,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(248,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5566337508759365,
+            "beamTransmission": 0.9075819093264186,
+            "displayCctK": 5498.032878585393,
+            "bodyRadianceScale": 5.567483335647639
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(251,249,246) 0%,rgb(251,249,246) 20%,rgb(251,249,246) 40%,rgb(251,249,246) 60%,rgb(248,246,243) 80%,rgb(247,244,241) 90%,rgb(246,243,239) 96%,transparent 100%)",
+          "--sundisc": "0.861",
+          "--sunlift": "40.3px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.6%",
+          "--sunray": "0.140",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "39.9/fog/full",
+      "input": {
+        "solarElevationDeg": 39.9,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(250,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(248,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5566337508759365,
+            "beamTransmission": 0.8946463753052042,
+            "displayCctK": 5497.741767263546,
+            "bodyRadianceScale": 5.506945036428355
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(250,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(250,248,246) 0%,rgb(250,248,246) 20%,rgb(250,248,246) 40%,rgb(250,248,246) 60%,rgb(248,246,243) 80%,rgb(247,244,241) 90%,rgb(246,243,239) 96%,transparent 100%)",
+          "--sundisc": "0.861",
+          "--sunlift": "40.3px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.6%",
+          "--sunray": "0.120",
+          "--sunpulse": "1.0155",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "39.9/fog/reduced",
+      "input": {
+        "solarElevationDeg": 39.9,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(250,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(248,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5566337508759365,
+            "beamTransmission": 0.8946463753052042,
+            "displayCctK": 5497.741767263546,
+            "bodyRadianceScale": 5.506945036428355
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(250,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sunprofile": "radial-gradient(circle closest-side,rgb(250,248,246) 0%,rgb(250,248,246) 20%,rgb(250,248,246) 40%,rgb(250,248,246) 60%,rgb(248,246,243) 80%,rgb(247,244,241) 90%,rgb(246,243,239) 96%,transparent 100%)",
+          "--sundisc": "0.861",
+          "--sunlift": "40.3px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.6%",
+          "--sunray": "0.120",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "40/unavailable/full",
+      "input": {
+        "solarElevationDeg": 40,
+        "record": null,
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,240)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5534066629239198,
+            "beamTransmission": 0.930584062114592,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.675133410696291
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0151",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "40/unavailable/reduced",
+      "input": {
+        "solarElevationDeg": 40,
+        "record": null,
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,240)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5534066629239198,
+            "beamTransmission": 0.930584062114592,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.675133410696291
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "40/clear/full",
+      "input": {
+        "solarElevationDeg": 40,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,240)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5534066629239198,
+            "beamTransmission": 0.930584062114592,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.675133410696291
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0169",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "40/clear/reduced",
+      "input": {
+        "solarElevationDeg": 40,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,240)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5534066629239198,
+            "beamTransmission": 0.930584062114592,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.675133410696291
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "40/overcast/full",
+      "input": {
+        "solarElevationDeg": 40,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5534066629239198,
+            "beamTransmission": 0.9080922886942844,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.569871911089251
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.140",
+          "--sunpulse": "1.0151",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "40/overcast/reduced",
+      "input": {
+        "solarElevationDeg": 40,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5534066629239198,
+            "beamTransmission": 0.9080922886942844,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.569871911089251
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.140",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "40/fog/full",
+      "input": {
+        "solarElevationDeg": 40,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(250,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(248,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5534066629239198,
+            "beamTransmission": 0.8952239821917884,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.509648236657569
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(250,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.120",
+          "--sunpulse": "1.0151",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "40/fog/reduced",
+      "input": {
+        "solarElevationDeg": 40,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(250,248,246)",
+          "sunMidRGB": "rgb(246,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(250,248,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(248,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(247,244,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(246,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.5534066629239198,
+            "beamTransmission": 0.8952239821917884,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.509648236657569
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(250,248,246)",
+          "--sunmid": "rgb(246,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.120",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "60/unavailable/full",
+      "input": {
+        "solarElevationDeg": 60,
+        "record": null,
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,246)",
+          "sunMidRGB": "rgb(247,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(248,245,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(247,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.153992233363676,
+            "beamTransmission": 0.9801800591800947,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.907242676962843
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,246)",
+          "--sunmid": "rgb(247,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0151",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "60/unavailable/reduced",
+      "input": {
+        "solarElevationDeg": 60,
+        "record": null,
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0,
+          "gust": 0,
+          "windX": -0.7,
+          "humid": 0,
+          "rh": 0.5,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,246)",
+          "sunMidRGB": "rgb(247,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(248,245,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(247,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.153992233363676,
+            "beamTransmission": 0.9801800591800947,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.907242676962843
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,246)",
+          "--sunmid": "rgb(247,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "60/clear/full",
+      "input": {
+        "solarElevationDeg": 60,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,246)",
+          "sunMidRGB": "rgb(247,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(248,245,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(247,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.153992233363676,
+            "beamTransmission": 0.9801800591800947,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.907242676962843
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,246)",
+          "--sunmid": "rgb(247,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0169",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "60/clear/reduced",
+      "input": {
+        "solarElevationDeg": 60,
+        "record": {
+          "temp": 28,
+          "rh": 45,
+          "vis": 20000,
+          "cloud": 0,
+          "wind": 2,
+          "code": 0
+        },
+        "cls": "clear",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0.07692307692307693,
+          "cold": 0,
+          "wind": 0.1111111111111111,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.45,
+          "cloud": 0,
+          "haze": 0
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,246)",
+          "sunMidRGB": "rgb(247,243,239)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,246)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,246,243)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(248,245,241)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(247,243,239)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.153992233363676,
+            "beamTransmission": 0.9801800591800947,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.907242676962843
+          },
+          "sunCloudT": 1
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,246)",
+          "--sunmid": "rgb(247,243,239)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.400",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "60/overcast/full",
+      "input": {
+        "solarElevationDeg": 60,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,247)",
+          "sunMidRGB": "rgb(247,244,240)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,247,244)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(248,245,242)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(247,244,240)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.153992233363676,
+            "beamTransmission": 0.9735295813635855,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.87611844078158
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,247)",
+          "--sunmid": "rgb(247,244,240)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.140",
+          "--sunpulse": "1.0151",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "60/overcast/reduced",
+      "input": {
+        "solarElevationDeg": 60,
+        "record": {
+          "temp": 15,
+          "rh": 85,
+          "vis": 8000,
+          "cloud": 100,
+          "wind": 5,
+          "code": 3
+        },
+        "cls": "overcast",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.3333333333333333,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 0.85,
+          "cloud": 1,
+          "haze": 0.631578947368421
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,247)",
+          "sunMidRGB": "rgb(247,244,240)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,247,244)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(248,245,242)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(247,244,240)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.153992233363676,
+            "beamTransmission": 0.9735295813635855,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.87611844078158
+          },
+          "sunCloudT": 0.35
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,247)",
+          "--sunmid": "rgb(247,244,240)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.140",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "60/fog/full",
+      "input": {
+        "solarElevationDeg": 60,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": false,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,247)",
+          "sunMidRGB": "rgb(247,244,240)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,247,244)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(248,245,242)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(247,244,240)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.153992233363676,
+            "beamTransmission": 0.969670993796668,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.858060250968406
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,247)",
+          "--sunmid": "rgb(247,244,240)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.120",
+          "--sunpulse": "1.0151",
+          "--sunflat": "1.000"
+        }
+      }
+    },
+    {
+      "name": "60/fog/reduced",
+      "input": {
+        "solarElevationDeg": 60,
+        "record": {
+          "temp": 8,
+          "rh": 100,
+          "vis": 500,
+          "cloud": 90,
+          "wind": 1,
+          "code": 45
+        },
+        "cls": "fog",
+        "reduced": true,
+        "horizon": 164
+      },
+      "expected": {
+        "driver": {
+          "heat": 0,
+          "cold": 0,
+          "wind": 0.037037037037037035,
+          "gust": 0,
+          "windX": 0.7071067811865475,
+          "humid": 0,
+          "rh": 1,
+          "cloud": 0.9,
+          "haze": 1
+        },
+        "radiometry": {
+          "sunCoreRGB": "rgb(251,249,247)",
+          "sunMidRGB": "rgb(247,244,240)",
+          "sunProfile": [
+            {
+              "radius": 0,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.2,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.4,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.6,
+              "colour": "rgb(251,249,247)"
+            },
+            {
+              "radius": 0.8,
+              "colour": "rgb(249,247,244)"
+            },
+            {
+              "radius": 0.9,
+              "colour": "rgb(248,245,242)"
+            },
+            {
+              "radius": 0.96,
+              "colour": "rgb(247,244,240)"
+            }
+          ],
+          "sunRadiometry": {
+            "airmass": 1.153992233363676,
+            "beamTransmission": 0.969670993796668,
+            "displayCctK": 5500,
+            "bodyRadianceScale": 5.858060250968406
+          },
+          "sunCloudT": 0.3
+        },
+        "properties": {
+          "--sunamt": "1.000",
+          "--sunbodyamt": "1.000",
+          "--sunlow": "0.000",
+          "--suncore": "rgb(251,249,247)",
+          "--sunmid": "rgb(247,244,240)",
+          "--sundisc": "0.860",
+          "--sunlift": "40.0px",
+          "--sunx2": "20.0px",
+          "--sunvx": "6.2%",
+          "--sunvy": "7.5%",
+          "--sunray": "0.120",
+          "--sunpulse": "1.0000",
+          "--sunflat": "1.000"
+        }
+      }
+    }
+  ]
+}
