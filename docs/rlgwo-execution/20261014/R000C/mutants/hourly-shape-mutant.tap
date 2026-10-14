@@ -1,0 +1,359 @@
+TAP version 13
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\hourly-shape.html SHA256 f7b272cb5f22682928329b335b90bc1a45a55391920891953bb850d50d780c51
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 f7b272cb5f22682928329b335b90bc1a45a55391920891953bb850d50d780c51
+# Subtest: R000C bad hourly mismatched required array cannot discard good current
+not ok 1 - R000C bad hourly mismatched required array cannot discard good current
+  ---
+  duration_ms: 49.5431
+  type: 'test'
+  location: 'C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs:299:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   apparent_temperature: [
+    +     null,
+    +     null
+    +   ],
+    +   cloud_cover: [
+    +     null,
+    +     null
+    +   ],
+    +   cloud_cover_high: [
+    +     null,
+    +     null
+    +   ],
+    +   cloud_cover_low: [
+    +     null,
+    +     null
+    +   ],
+    +   cloud_cover_mid: [
+    +     null,
+    +     null
+    +   ],
+    +   dew_point_2m: [
+    +     null,
+    +     null
+    +   ],
+    +   ep: [
+    +     1788814800000,
+    +     1788818400000
+    +   ],
+    +   is_day: [
+    +     null,
+    +     null
+    +   ],
+    +   precipitation: [
+    +     2,
+    +     0
+    +   ],
+    +   precipitationUnit: 'mm',
+    +   product: 'hourly weather model',
+    +   provider: 'Open-Meteo',
+    +   quantityKind: 'preceding-hour-amount',
+    +   relative_humidity_2m: [
+    +     null,
+    +     null
+    +   ],
+    +   retrievedAt: 1788814800000,
+    +   target: {
+    +     accuracyM: null,
+    +     acquiredAt: null,
+    +     area: null,
+    +     bounds: null,
+    +     generation: 0,
+    +     intent: 'unknown',
+    +     lat: 24.47,
+    +     lon: 39.61,
+    +     provider: null,
+    +     source: 'unknown'
+    +   },
+    +   temperature_2m: [
+    +     20
+    +   ],
+    +   units: 'c',
+    +   visibility: [
+    +     null,
+    +     null
+    +   ],
+    +   weather_code: [
+    +     95,
+    +     3
+    +   ],
+    +   wind_direction_10m: [
+    +     180,
+    +     180
+    +   ],
+    +   wind_gusts_10m: [
+    +     null,
+    +     null
+    +   ],
+    +   wind_speed_10m: [
+    +     null,
+    +     null
+    +   ],
+    +   zone: 'UTC'
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    ep:
+      0: 1788814800000
+      1: 1788818400000
+    units: 'c'
+    zone: 'UTC'
+    target:
+      generation: 0
+      lat: 24.47
+      lon: 39.61
+      intent: 'unknown'
+      source: 'unknown'
+      accuracyM: ~
+      acquiredAt: ~
+      provider: ~
+      area: ~
+      bounds: ~
+    retrievedAt: 1788814800000
+    provider: 'Open-Meteo'
+    product: 'hourly weather model'
+    quantityKind: 'preceding-hour-amount'
+    precipitationUnit: 'mm'
+    temperature_2m:
+      0: 20
+    apparent_temperature:
+      0: ~
+      1: ~
+    relative_humidity_2m:
+      0: ~
+      1: ~
+    dew_point_2m:
+      0: ~
+      1: ~
+    cloud_cover:
+      0: ~
+      1: ~
+    cloud_cover_low:
+      0: ~
+      1: ~
+    cloud_cover_mid:
+      0: ~
+      1: ~
+    cloud_cover_high:
+      0: ~
+      1: ~
+    wind_speed_10m:
+      0: ~
+      1: ~
+    wind_direction_10m:
+      0: 180
+      1: 180
+    wind_gusts_10m:
+      0: ~
+      1: ~
+    precipitation:
+      0: 2
+      1: 0
+    weather_code:
+      0: 95
+      1: 3
+    visibility:
+      0: ~
+      1: ~
+    is_day:
+      0: ~
+      1: ~
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\theis\.codex\worktrees\4e5e\salah_widget\tests\r000c-weather.test.cjs:301:36)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: R000C bad hourly mismatched optional array cannot discard good current
+not ok 2 - R000C bad hourly mismatched optional array cannot discard good current
+  ---
+  duration_ms: 30.9305
+  type: 'test'
+  location: 'C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs:299:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   apparent_temperature: [
+    +     null,
+    +     null
+    +   ],
+    +   cloud_cover: [
+    +     null,
+    +     null
+    +   ],
+    +   cloud_cover_high: [
+    +     null,
+    +     null
+    +   ],
+    +   cloud_cover_low: [
+    +     null,
+    +     null
+    +   ],
+    +   cloud_cover_mid: [
+    +     null,
+    +     null
+    +   ],
+    +   dew_point_2m: [
+    +     null,
+    +     null
+    +   ],
+    +   ep: [
+    +     1788814800000,
+    +     1788818400000
+    +   ],
+    +   is_day: [
+    +     null,
+    +     null
+    +   ],
+    +   precipitation: [
+    +     2,
+    +     0
+    +   ],
+    +   precipitationUnit: 'mm',
+    +   product: 'hourly weather model',
+    +   provider: 'Open-Meteo',
+    +   quantityKind: 'preceding-hour-amount',
+    +   relative_humidity_2m: [
+    +     null,
+    +     null
+    +   ],
+    +   retrievedAt: 1788814800000,
+    +   target: {
+    +     accuracyM: null,
+    +     acquiredAt: null,
+    +     area: null,
+    +     bounds: null,
+    +     generation: 0,
+    +     intent: 'unknown',
+    +     lat: 24.47,
+    +     lon: 39.61,
+    +     provider: null,
+    +     source: 'unknown'
+    +   },
+    +   temperature_2m: [
+    +     20,
+    +     19
+    +   ],
+    +   units: 'c',
+    +   visibility: [
+    +     20000
+    +   ],
+    +   weather_code: [
+    +     95,
+    +     3
+    +   ],
+    +   wind_direction_10m: [
+    +     180,
+    +     180
+    +   ],
+    +   wind_gusts_10m: [
+    +     null,
+    +     null
+    +   ],
+    +   wind_speed_10m: [
+    +     null,
+    +     null
+    +   ],
+    +   zone: 'UTC'
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    ep:
+      0: 1788814800000
+      1: 1788818400000
+    units: 'c'
+    zone: 'UTC'
+    target:
+      generation: 0
+      lat: 24.47
+      lon: 39.61
+      intent: 'unknown'
+      source: 'unknown'
+      accuracyM: ~
+      acquiredAt: ~
+      provider: ~
+      area: ~
+      bounds: ~
+    retrievedAt: 1788814800000
+    provider: 'Open-Meteo'
+    product: 'hourly weather model'
+    quantityKind: 'preceding-hour-amount'
+    precipitationUnit: 'mm'
+    temperature_2m:
+      0: 20
+      1: 19
+    apparent_temperature:
+      0: ~
+      1: ~
+    relative_humidity_2m:
+      0: ~
+      1: ~
+    dew_point_2m:
+      0: ~
+      1: ~
+    cloud_cover:
+      0: ~
+      1: ~
+    cloud_cover_low:
+      0: ~
+      1: ~
+    cloud_cover_mid:
+      0: ~
+      1: ~
+    cloud_cover_high:
+      0: ~
+      1: ~
+    wind_speed_10m:
+      0: ~
+      1: ~
+    wind_direction_10m:
+      0: 180
+      1: 180
+    wind_gusts_10m:
+      0: ~
+      1: ~
+    precipitation:
+      0: 2
+      1: 0
+    weather_code:
+      0: 95
+      1: 3
+    visibility:
+      0: 20000
+    is_day:
+      0: ~
+      1: ~
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\theis\.codex\worktrees\4e5e\salah_widget\tests\r000c-weather.test.cjs:301:36)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 199.6363

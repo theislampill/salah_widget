@@ -1,0 +1,63 @@
+--- fixture-v3/run_r000c_native.py
++++ tools/qa/run_r000c_native.py
+@@ -99,6 +99,8 @@
+     parser.add_argument('--single-document', action='store_true')
+     parser.add_argument('--boundary-observer', action='store_true',
+         help='Night only: unchanged full assertions at watch boundaries; passive recovery polling and no diagnostic reads inside watches')
++    parser.add_argument('--host-watch-wait', action='store_true',
++        help='Headed boundary-observer only: use the retained preservation driver host sleep during each unchanged watch')
+     args = parser.parse_args()
+     root, out = args.root.resolve(), args.out.resolve()
+     if out.is_relative_to(root):
+@@ -121,6 +123,8 @@
+         raise ValueError('Empty or unknown case selection')
+     if args.boundary_observer and any(not c.get('night') for c in selected):
+         raise ValueError('Boundary observer is scoped to the night recovery cases')
++    if args.host_watch_wait and not (args.boundary_observer and args.headed):
++        raise ValueError('Host watch wait requires the headed boundary-observer mode')
+     wrapper = root / 'tests/rlgwo/weather-browser-fixture.html'
+     served_wrapper = wrapper.read_bytes()
+     document_binding = None
+@@ -168,6 +172,7 @@
+               'driverSha256': sha(Path(__file__).read_bytes()), 'wrapperSha256': sha(wrapper.read_bytes()),
+               'servedHtmlSha256': sha(served_wrapper), 'documentMode': 'single-document-preparse' if args.single_document else 'original-document-wrapper',
+               'observerMode': 'full-diagnostic-boundaries-passive-recovery' if args.boundary_observer else 'original-full-diagnostic-every-five-seconds',
++              'watchWaitMode': 'host-monotonic-sleep' if args.host_watch_wait else 'browser-timeout',
+               'tileSha256': sha(tile), 'cases': [], 'limitations': __doc__}
+     dump(out / 'results.json', report)
+     try:
+@@ -177,7 +182,7 @@
+                 case_out.mkdir()
+                 dump(case_out / 'case-input.json', case)
+                 row = {'id': case['id'], 'status': 'FAIL', 'observations': [], 'checks': {},
+-                       'observerMode': report['observerMode'], 'watches': []}
++                       'observerMode': report['observerMode'], 'watchWaitMode': report['watchWaitMode'], 'watches': []}
+                 browser = context = page = None
+                 errors = []
+                 try:
+@@ -223,7 +228,11 @@
+                     watch_start = time.monotonic()
+                     initial_reads = [case['watchSeconds']] if args.boundary_observer else range(5, case['watchSeconds'] + 1, 5)
+                     for elapsed in initial_reads:
+-                        page.wait_for_timeout(max(0, watch_start + elapsed - time.monotonic()) * 1000)
++                        remaining = max(0, watch_start + elapsed - time.monotonic())
++                        if args.host_watch_wait:
++                            time.sleep(remaining)
++                        else:
++                            page.wait_for_timeout(remaining * 1000)
+                         if elapsed == case['watchSeconds']:
+                             row['watches'].append({'stage': 'initial', 'startHostMonotonic': watch_start,
+                                 'endHostMonotonic': time.monotonic(), 'requiredSeconds': case['watchSeconds']})
+@@ -236,7 +245,11 @@
+                         recovered_start = time.monotonic()
+                         recovered_reads = [30] if args.boundary_observer else range(5, 31, 5)
+                         for elapsed in recovered_reads:
+-                            page.wait_for_timeout(max(0, recovered_start + elapsed - time.monotonic()) * 1000)
++                            remaining = max(0, recovered_start + elapsed - time.monotonic())
++                            if args.host_watch_wait:
++                                time.sleep(remaining)
++                            else:
++                                page.wait_for_timeout(remaining * 1000)
+                             if elapsed == 30:
+                                 row['watches'].append({'stage': 'recovered', 'startHostMonotonic': recovered_start,
+                                     'endHostMonotonic': time.monotonic(), 'requiredSeconds': 30})

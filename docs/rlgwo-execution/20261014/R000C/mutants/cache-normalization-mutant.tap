@@ -1,0 +1,47 @@
+TAP version 13
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\cache-normalization.html SHA256 15ca8b78fa218fd349669cb61bedeeaa2f6b57014227988917dd4b6777bc02eb
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 15ca8b78fa218fd349669cb61bedeeaa2f6b57014227988917dd4b6777bc02eb
+# Subtest: R000C cache normalization contains malformed code but healthy fetch recovers
+not ok 1 - R000C cache normalization contains malformed code but healthy fetch recovers
+  ---
+  duration_ms: 7.369
+  type: 'test'
+  location: 'C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs:320:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   code: 999,
+    +   precip: 'Infinity',
+    +   temp: '0'
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    code: 999
+    temp: '0'
+    precip: 'Infinity'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\theis\.codex\worktrees\4e5e\salah_widget\tests\r000c-weather.test.cjs:322:68)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 128.17

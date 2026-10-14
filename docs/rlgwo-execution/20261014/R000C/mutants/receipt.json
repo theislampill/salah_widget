@@ -1,0 +1,227 @@
+{
+  "schema": "r000c-four-source-mutations/v1",
+  "source": "index.html",
+  "nodeVersion": "v22.16.0",
+  "sourceSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+  "oracleSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+  "candidateUnchanged": true,
+  "mutations": [
+    {
+      "id": "temperature-round",
+      "beforeSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+      "afterSha256": "9c745f4627879d88032cf39602b825619bc05ac3f22bba209c500dd2b2e4653e",
+      "before": "const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);",
+      "after": "if(current){ const cu=j.current; current.temp=Math.round(cu.temperature_2m); }\n    const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);",
+      "oracleSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "original": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^R000C temperature null survives",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\index.html"
+        },
+        "exitCode": 0,
+        "log": "temperature-round-original.tap",
+        "sha256": "9d6397657f0eb5b3a404a660981b1bc96d5e6fc8da4c522861df2a4d84d475eb"
+      },
+      "mutant": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^R000C temperature null survives",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\temperature-round.html"
+        },
+        "exitCode": 1,
+        "log": "temperature-round-mutant.tap",
+        "sha256": "83a309e96aafd38957422be3e2c00a4a57d706ee55d8f9b49e3269d1f370d8c1"
+      },
+      "positive": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^control: actual fresh acquisition|^R000C temperature (zero|negative) |^R000C negative Fahrenheit|^R000C missing optional arrays and two null endpoints",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\temperature-round.html"
+        },
+        "exitCode": 0,
+        "log": "temperature-round-positive.tap",
+        "sha256": "76386523350903a8ee6c057b052dd14d70d542b49fca027ddd178e467e1d8354"
+      },
+      "status": "KILLED_BY_ORIGINAL_ASSERTION"
+    },
+    {
+      "id": "http-ok",
+      "beforeSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+      "afterSha256": "1c8371aadb3bd7561e456b0e31f3b23d646096da7415ca756d739fe2e0996883",
+      "before": "if(r.ok!==true) return finish(null,\"HTTP unavailable\");",
+      "after": "// MUTANT: HTTP status admission removed.",
+      "oracleSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "original": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^R000C HTTP 500 healthy-shaped body",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\index.html"
+        },
+        "exitCode": 0,
+        "log": "http-ok-original.tap",
+        "sha256": "6053861ce61b05e4b5315d8f437e5b3b66eee4b46fc61a2640900a5cc07d34de"
+      },
+      "mutant": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^R000C HTTP 500 healthy-shaped body",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\http-ok.html"
+        },
+        "exitCode": 1,
+        "log": "http-ok-mutant.tap",
+        "sha256": "235fc6a44348537e60de506bdeb5705cfe24cb727a1add030c592bfaa3311e9b"
+      },
+      "positive": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^control: actual fresh acquisition|^R000C temperature (zero|negative) |^R000C negative Fahrenheit|^R000C missing optional arrays and two null endpoints",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\http-ok.html"
+        },
+        "exitCode": 0,
+        "log": "http-ok-positive.tap",
+        "sha256": "aa661160eb47ba5eaa7a974db0301ae1d932b295a0003f792be9c0ef44203fa9"
+      },
+      "status": "KILLED_BY_ORIGINAL_ASSERTION"
+    },
+    {
+      "id": "cache-normalization",
+      "beforeSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+      "afterSha256": "15ca8b78fa218fd349669cb61bedeeaa2f6b57014227988917dd4b6777bc02eb",
+      "before": "const w=admitWeatherRecord(j.w,{units,zone:tz,retrievedAt:receipt},true);",
+      "after": "const w=j.w; // MUTANT: raw cache bypasses admission.",
+      "oracleSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "original": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^R000C cache",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\index.html"
+        },
+        "exitCode": 0,
+        "log": "cache-normalization-original.tap",
+        "sha256": "670c419261f1d71e7d0ea39f99f47966b010b23616cadb1c9c179eef09857d77"
+      },
+      "mutant": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^R000C cache",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\cache-normalization.html"
+        },
+        "exitCode": 1,
+        "log": "cache-normalization-mutant.tap",
+        "sha256": "faf94642b5094280a24a192f8fb797f69336ff6dc7ddfc74d4b6050ba71ae0ac"
+      },
+      "positive": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^control: actual fresh acquisition|^R000C temperature (zero|negative) |^R000C negative Fahrenheit|^R000C missing optional arrays and two null endpoints",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\cache-normalization.html"
+        },
+        "exitCode": 0,
+        "log": "cache-normalization-positive.tap",
+        "sha256": "99edb812285f4adee6e84ace68337bbcbb9cd551c0a5ef7e6cfd1525ba056c13"
+      },
+      "status": "KILLED_BY_ORIGINAL_ASSERTION"
+    },
+    {
+      "id": "hourly-shape",
+      "beforeSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+      "afterSha256": "f7b272cb5f22682928329b335b90bc1a45a55391920891953bb850d50d780c51",
+      "before": "const a=h[k], required=k===\"temperature_2m\"||k===\"weather_code\";\n    if(!Object.prototype.hasOwnProperty.call(h,k)&&!required){ T[k]=Array(len).fill(null); continue; }\n    if(!Array.isArray(a)||a.length!==len) return null;",
+      "after": "const a=h[k]||[], required=k===\"temperature_2m\"||k===\"weather_code\";\n    if(!Object.prototype.hasOwnProperty.call(h,k)&&!required){ T[k]=Array(len).fill(null); continue; }\n    // MUTANT: loose hourly arrays without required alignment/shape validation.",
+      "oracleSha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "original": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^R000C bad hourly mismatched (required|optional) array",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\index.html"
+        },
+        "exitCode": 0,
+        "log": "hourly-shape-original.tap",
+        "sha256": "acf0595daa05976059cbb558b502a2eb7d620cedc307dfb4522c52d4a873e136"
+      },
+      "mutant": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^R000C bad hourly mismatched (required|optional) array",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\hourly-shape.html"
+        },
+        "exitCode": 1,
+        "log": "hourly-shape-mutant.tap",
+        "sha256": "9765628fb35d32e7adba8ed3a47765be610a9cf2b1dc6475c49b8357913b5c5c"
+      },
+      "positive": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^control: actual fresh acquisition|^R000C temperature (zero|negative) |^R000C negative Fahrenheit|^R000C missing optional arrays and two null endpoints",
+          "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\hourly-shape.html"
+        },
+        "exitCode": 0,
+        "log": "hourly-shape-positive.tap",
+        "sha256": "26df80787ef73084607e2295d9d56f9260ce10e07dab4b26457393a1b32055da"
+      },
+      "status": "KILLED_BY_ORIGINAL_ASSERTION"
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "r000c-retained-serialization-failure/v1",
+  "status": "FAIL_INCOMPLETE_NO_WATCH_CREDIT",
+  "acquisition": "native/firefox-reduced-host-wait",
+  "exitCode": 1,
+  "error": "ValueError: Out of range float values are not JSON compliant: nan",
+  "location": "Initial capture appended a state, then dump() json.dumps(... allow_nan=False) failed. Final receipt dump failed for the same retained in-memory observation. No original observation JSON was written.",
+  "unknown": "Exact NaN field/path unavailable because the failed in-memory row was not serialized before the process ended. No specific diagnostic/product cause inferred.",
+  "scope": "No initial or recovered30s watch was reached; input/results/partial native video retained. This is a recorder-reporting failure, not a weather assertion result.",
+  "files": [
+    {
+      "path": "results.json",
+      "bytes": 24541,
+      "sha256": "d44932033f7b7ed0670dd27b643051f78c3da956e41eac60d1b083887abf3ffc"
+    },
+    {
+      "path": "R000C-night-reduced/case-input.json",
+      "bytes": 206,
+      "sha256": "5eec12b5adfaa0e677da73b9750dd7493e955dffe9a43dd040dfa14a4ab383a4"
+    },
+    {
+      "path": "R000C-night-reduced/video/page@5a68397feffba9b77d888156c8881b42.webm",
+      "bytes": 2906,
+      "sha256": "f03f2c14fce2bc6fa53da934b6e2bd5c4517c7faf90056bd39f716b1ec0ad7f9"
+    }
+  ],
+  "partialVideoProbe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "width": 390,
+        "height": 600
+      }
+    ],
+    "format": {
+      "duration": "1.560000"
+    }
+  },
+  "nextRepair": "Reporter-only tagged encoding for native non-finite diagnostics, preserving finite values/null/rawstrings and unchanged original predicates."
+}

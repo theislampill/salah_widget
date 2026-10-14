@@ -1,0 +1,137 @@
+TAP version 13
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\r000c-evidence\\mutants\\http-ok.html SHA256 1c8371aadb3bd7561e456b0e31f3b23d646096da7415ca756d739fe2e0996883
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 1c8371aadb3bd7561e456b0e31f3b23d646096da7415ca756d739fe2e0996883
+# Subtest: R000C HTTP 500 healthy-shaped body cannot mutate any admitted state
+not ok 1 - R000C HTTP 500 healthy-shaped body cannot mutate any admitted state
+  ---
+  duration_ms: 48.8936
+  type: 'test'
+  location: 'C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\tests\\r000c-weather.test.cjs:206:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   admission: {
+    +     cloudHigh: 'unavailable',
+    +     cloudLow: 'unavailable',
+    +     cloudMid: 'unavailable',
+    +     rain: 'unavailable',
+    +     showers: 'unavailable',
+    +     snow: 'unavailable',
+    +     vis: 'unavailable'
+    +   },
+    +   cloud: 95,
+    +   cloudHigh: null,
+    +   cloudLow: null,
+    +   cloudMid: null,
+    +   code: 95,
+    +   currentIntervalSec: 900,
+    +   currentTime: '2026-09-07T21:00',
+    +   currentValidAt: 1788814800000,
+    +   currentZone: 'UTC',
+    +   dew: 18,
+    +   feels: 19,
+    +   gust: 4,
+    +   isDay: 1,
+    +   precip: 2,
+    +   precipitationUnit: 'mm',
+    +   product: 'current weather model',
+    +   provider: 'Open-Meteo',
+    +   quantityKind: 'preceding-interval-amount',
+    +   rain: null,
+    +   retrievedAt: 1788814800000,
+    +   rh: 90,
+    +   showers: null,
+    +   snow: null,
+    +   src: 'current',
+    +   target: {
+    +     accuracyM: null,
+    +     acquiredAt: null,
+    +     area: null,
+    +     bounds: null,
+    +     generation: 0,
+    +     intent: 'unknown',
+    +     lat: 24.47,
+    +     lon: 39.61,
+    +     provider: null,
+    +     source: 'unknown'
+    +   },
+    +   temp: 20,
+    +   units: 'c',
+    +   vis: null,
+    +   wind: 2,
+    +   windDir: 180
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    code: 95
+    units: 'c'
+    src: 'current'
+    admission:
+      cloudLow: 'unavailable'
+      cloudMid: 'unavailable'
+      cloudHigh: 'unavailable'
+      rain: 'unavailable'
+      showers: 'unavailable'
+      snow: 'unavailable'
+      vis: 'unavailable'
+    target:
+      generation: 0
+      lat: 24.47
+      lon: 39.61
+      intent: 'unknown'
+      source: 'unknown'
+      accuracyM: ~
+      acquiredAt: ~
+      provider: ~
+      area: ~
+      bounds: ~
+    provider: 'Open-Meteo'
+    product: 'current weather model'
+    quantityKind: 'preceding-interval-amount'
+    precipitationUnit: 'mm'
+    temp: 20
+    feels: 19
+    rh: 90
+    dew: 18
+    wind: 2
+    windDir: 180
+    gust: 4
+    cloud: 95
+    cloudLow: ~
+    cloudMid: ~
+    cloudHigh: ~
+    precip: 2
+    rain: ~
+    showers: ~
+    snow: ~
+    vis: ~
+    isDay: 1
+    currentTime: '2026-09-07T21:00'
+    currentZone: 'UTC'
+    currentValidAt: 1788814800000
+    currentIntervalSec: 900
+    retrievedAt: 1788814800000
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\theis\.codex\worktrees\4e5e\salah_widget\tests\r000c-weather.test.cjs:208:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 169.1011
