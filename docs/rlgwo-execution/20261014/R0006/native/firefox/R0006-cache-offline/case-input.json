@@ -1,0 +1,90 @@
+{
+  "caseId": "R0006-cache-offline",
+  "entry": "index.html",
+  "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+  "clockPolicy": {
+    "mode": "advancing",
+    "epoch": "2026-09-07T12:00:00Z"
+  },
+  "cacheSeeds": [
+    {
+      "key": "salah:24.47|39.61|UTC|4|0",
+      "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}"
+    }
+  ],
+  "responseRules": [
+    {
+      "id": "healthy",
+      "kind": "prayer",
+      "failure": true
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "first-current",
+      "firstRender": true,
+      "selector": ".c",
+      "readOnly": false,
+      "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.peekSlots().current===null&&window.__prayerFixture.requests.filter(r=>r.kind==='prayer'&&r.url.includes('/07-09-2026?')).length===3",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "warm-retained",
+      "selector": ".c",
+      "firstRender": false,
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "firstCurrent": true,
+      "equals": {
+        "currentDay": "07-09-2026",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "warm-retained",
+      "equals": {
+        "currentDay": "07-09-2026",
+        "timezone": "UTC"
+      },
+      "noInvalidText": true
+    }
+  ],
+  "acceptanceIds": [
+    "R0006-A04"
+  ],
+  "reviewRequirements": [
+    "original first-frame crop",
+    "325x530 card/header/footer readable",
+    "exact source/input/environment binding",
+    "preserve selected raw cache bytes under denied writes",
+    "healthy network positive request count for corrupt seed"
+  ],
+  "reusedRecipeFrom": "R0002-cache-valid-offline",
+  "offline": true
+}

@@ -275,8 +275,9 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
 - **Bounded retry** — each prayer operation has at most three attempts, with
   900/1800 ms backoffs and a 10000 ms deadline for the full asynchronous fetch/body
   attempt. Bootstrap and corrected-day requests share that budget. Three timeouts
-  total a nominal 32700 ms, plus event-loop scheduling; timers cannot preempt
-  synchronous parsing or a blocked event loop and do not guarantee provider latency.
+  total a nominal 32.7 seconds (32700 ms), plus event-loop scheduling; timers cannot
+  preempt synchronous parsing or a blocked event loop. This is neither a hard
+  real-time CPU guarantee nor a guarantee of provider latency.
   Same-day no-data recovery and failed tomorrow acquisition use a 60-second
   operation-start cadence on `performance.now()` hosts, with busy ownership preventing
   overlap. A valid matching tomorrow suppresses redundant requests; day and generation

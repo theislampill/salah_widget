@@ -1,0 +1,1350 @@
+{
+  "schema": "r0006-native-trace-review/v1",
+  "cases": [
+    {
+      "caseId": "R0006-cold-body",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 34,
+      "firstCurrentOrdinal": 30,
+      "lowLevelPrayerAttempts": 5,
+      "highLevelOperations": 3,
+      "currentOperations": 2,
+      "prefetchOperations": 1,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 527.6000000089407,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 527.5,
+          "timerFireMs": 10532,
+          "actualTimerDelayMs": 10004.5,
+          "timerSchedulingDelayMs": 4.5
+        },
+        {
+          "requestSerial": 4,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 4,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "requestElapsedMs": 11439.40000000596,
+          "timer": 14,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 11439.20000000298,
+          "timerFireMs": 21440.70000000298,
+          "actualTimerDelayMs": 10001.5,
+          "timerSchedulingDelayMs": 1.5
+        },
+        {
+          "requestSerial": 5,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 5,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "requestElapsedMs": 23242.10000000894,
+          "timer": 19,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 23242,
+          "timerFireMs": 33243,
+          "actualTimerDelayMs": 10001,
+          "timerSchedulingDelayMs": 1
+        },
+        {
+          "requestSerial": 6,
+          "operationId": 4,
+          "kind": "current",
+          "attemptId": 6,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 60541,
+          "timer": 28,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 60540.90000000596,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 7,
+          "operationId": 5,
+          "kind": "prefetch",
+          "attemptId": 7,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 60570.29999999702,
+          "timer": 29,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 60570.29999999702,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [
+        {
+          "operationId": 3,
+          "nominalMs": 900,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 13,
+              "actualMs": 906.7999999970198,
+              "schedulingDelayMs": 6.799999997019768
+            }
+          ]
+        },
+        {
+          "operationId": 3,
+          "nominalMs": 1800,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 18,
+              "actualMs": 1801.2000000029802,
+              "schedulingDelayMs": 1.2000000029802322
+            }
+          ]
+        }
+      ],
+      "recovery": {
+        "operationStartElapsedMs": 527.2999999970198,
+        "eligibleElapsedMs": 60527.29999999702,
+        "fourthCurrentRequestMs": 60541,
+        "firstRecoveredRenderMs": 60617.29999999702,
+        "eligibleToRequestMs": 13.700000002980232,
+        "exhaustedCheckpointMs": 33263.20000000298,
+        "nominalAllTimeoutMs": 32700,
+        "firstRecoveredOrdinal": 30,
+        "actualThirdDeadlineElapsedMs": 32715.70000000298,
+        "allTimeoutSchedulingExcessMs": 15.700000002980232
+      },
+      "retainedCaptureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 31,
+          "afterOrdinal": 31,
+          "receiptOrdinal": 30
+        }
+      ],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        },
+        {
+          "name": "early-recovery",
+          "rejected": true,
+          "reason": "recovery before operation-start cooldown"
+        },
+        {
+          "name": "headers-only",
+          "rejected": true,
+          "reason": "body settled before deadline"
+        },
+        {
+          "name": "late-cache-write",
+          "rejected": true,
+          "reason": "late body changed storageLogLength"
+        }
+      ],
+      "traceSha256": "77acb03a76fd6622cac0616d351af0f8902246c9bed90086ac3754c6907c75d5",
+      "acquisition": "browser/chromium/R0006-cold-body"
+    },
+    {
+      "caseId": "R0006-frozen-recovery",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 4,
+      "firstCurrentOrdinal": 3,
+      "lowLevelPrayerAttempts": 5,
+      "highLevelOperations": 3,
+      "currentOperations": 2,
+      "prefetchOperations": 1,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 271.90000000596046,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 271.90000000596046,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 4,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 4,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "requestElapsedMs": 1172.6000000089407,
+          "timer": 12,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 1172.6000000089407,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 5,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 5,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "requestElapsedMs": 2973.2999999970198,
+          "timer": 14,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 2973.2000000029802,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 6,
+          "operationId": 4,
+          "kind": "current",
+          "attemptId": 6,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 60274.60000000894,
+          "timer": 17,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 60274.5,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 7,
+          "operationId": 5,
+          "kind": "prefetch",
+          "attemptId": 7,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 60294,
+          "timer": 18,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 60294,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [
+        {
+          "operationId": 3,
+          "nominalMs": 900,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 4,
+              "actualMs": 900.1000000089407,
+              "schedulingDelayMs": 0.10000000894069672
+            }
+          ]
+        },
+        {
+          "operationId": 3,
+          "nominalMs": 1800,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 13,
+              "actualMs": 1800.4000000059605,
+              "schedulingDelayMs": 0.4000000059604645
+            }
+          ]
+        }
+      ],
+      "recovery": {
+        "operationStartElapsedMs": 271.70000000298023,
+        "eligibleElapsedMs": 60271.70000000298,
+        "fourthCurrentRequestMs": 60274.60000000894,
+        "firstRecoveredRenderMs": 60357.10000000894,
+        "eligibleToRequestMs": 2.9000000059604645,
+        "exhaustedCheckpointMs": 2979.9000000059605,
+        "nominalAllTimeoutMs": null,
+        "firstRecoveredOrdinal": 3
+      },
+      "retainedCaptureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 4,
+          "afterOrdinal": 4,
+          "receiptOrdinal": 3
+        }
+      ],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        }
+      ],
+      "traceSha256": "e369ad26ce38f525d7af0c16b2cfa4bdeb2576e54134a0002a3e788781c1d089",
+      "acquisition": "browser/chromium/R0006-frozen-recovery"
+    },
+    {
+      "caseId": "R0006-cache-denied",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 5,
+      "firstCurrentOrdinal": 2,
+      "lowLevelPrayerAttempts": 2,
+      "highLevelOperations": 2,
+      "currentOperations": 1,
+      "prefetchOperations": 1,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 249.5,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 249.5,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 4,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 4,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 413.1000000089407,
+          "timer": 4,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 413.1000000089407,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [],
+      "recovery": null,
+      "retainedCaptureMismatches": [],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        },
+        {
+          "name": "blank-after-cache-adoption",
+          "rejected": true,
+          "reason": "unavailable output fabricated a clock"
+        }
+      ],
+      "traceSha256": "50d6d1353a57f715085f51e3184d7726a1b9861a9fb81a4179063d03e857f103",
+      "acquisition": "batch3/chromium/R0006-cache-denied"
+    },
+    {
+      "caseId": "R0006-cache-offline",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 4,
+      "firstCurrentOrdinal": 2,
+      "lowLevelPrayerAttempts": 6,
+      "highLevelOperations": 2,
+      "currentOperations": 1,
+      "prefetchOperations": 1,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 257.29999999701977,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 257.29999999701977,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 4,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 4,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 427.29999999701977,
+          "timer": 4,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 427.29999999701977,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 5,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attemptId": 5,
+          "prayerAttempts": 2,
+          "day": "08-09-2026",
+          "requestElapsedMs": 1328.5999999940395,
+          "timer": 14,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 1328.5999999940395,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 6,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 6,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "requestElapsedMs": 1332,
+          "timer": 16,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 1331.8999999910593,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 7,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attemptId": 7,
+          "prayerAttempts": 3,
+          "day": "08-09-2026",
+          "requestElapsedMs": 3132.3999999910593,
+          "timer": 18,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 3132.3999999910593,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 8,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 8,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "requestElapsedMs": 3132.5,
+          "timer": 19,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 3132.5,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [
+        {
+          "operationId": 4,
+          "nominalMs": 900,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 5,
+              "actualMs": 900.5,
+              "schedulingDelayMs": 0.5
+            }
+          ]
+        },
+        {
+          "operationId": 4,
+          "nominalMs": 1800,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 15,
+              "actualMs": 1800.4000000059605,
+              "schedulingDelayMs": 0.4000000059604645
+            }
+          ]
+        },
+        {
+          "operationId": 3,
+          "nominalMs": 900,
+          "association": "concurrent candidates; no unique owner assertion",
+          "candidates": [
+            {
+              "timer": 5,
+              "actualMs": 900.5,
+              "schedulingDelayMs": 0.5
+            },
+            {
+              "timer": 6,
+              "actualMs": 903.8999999910593,
+              "schedulingDelayMs": 3.8999999910593033
+            }
+          ]
+        },
+        {
+          "operationId": 3,
+          "nominalMs": 1800,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 17,
+              "actualMs": 1800.4000000059605,
+              "schedulingDelayMs": 0.4000000059604645
+            }
+          ]
+        }
+      ],
+      "recovery": null,
+      "retainedCaptureMismatches": [],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        },
+        {
+          "name": "blank-after-cache-adoption",
+          "rejected": true,
+          "reason": "unavailable output fabricated a clock"
+        }
+      ],
+      "traceSha256": "c87d058c9da6d7352f9ddcecf4d209528821cd25c08a6026b2ec04ef6a5cfd5e",
+      "acquisition": "batch3/chromium/R0006-cache-offline"
+    },
+    {
+      "caseId": "R0006-generation-late-cleanup",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 5,
+      "firstCurrentOrdinal": 2,
+      "lowLevelPrayerAttempts": 3,
+      "highLevelOperations": 3,
+      "currentOperations": 2,
+      "prefetchOperations": 1,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 233.8999999910593,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 233.8999999910593,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 6,
+          "operationId": 6,
+          "kind": "current",
+          "attemptId": 6,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 764.5,
+          "timer": 13,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 764.3999999910593,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 7,
+          "operationId": 7,
+          "kind": "prefetch",
+          "attemptId": 7,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 1914,
+          "timer": 15,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 1914,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [],
+      "recovery": null,
+      "retainedCaptureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 3,
+          "afterOrdinal": 3,
+          "receiptOrdinal": 2
+        }
+      ],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        }
+      ],
+      "traceSha256": "adb3fd754df0ccde477973977286972bb6c5ddd3109fc6bb3ac8695985a831f5",
+      "acquisition": "batch3/chromium/R0006-generation-late-cleanup"
+    },
+    {
+      "caseId": "R0006-offline-entry",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 6,
+      "firstCurrentOrdinal": 2,
+      "lowLevelPrayerAttempts": 4,
+      "highLevelOperations": 2,
+      "currentOperations": 1,
+      "prefetchOperations": 1,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 279.29999999701977,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 279.20000000298023,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 4,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 4,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "requestElapsedMs": 1180.1000000089407,
+          "timer": 79,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 1180.1000000089407,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 5,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 5,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "requestElapsedMs": 2980.7000000029802,
+          "timer": 82,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 2980.6000000089407,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 6,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attemptId": 6,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 3000.2999999970198,
+          "timer": 83,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 3000.2999999970198,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [
+        {
+          "operationId": 3,
+          "nominalMs": 900,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 4,
+              "actualMs": 900.2000000029802,
+              "schedulingDelayMs": 0.20000000298023224
+            }
+          ]
+        },
+        {
+          "operationId": 3,
+          "nominalMs": 1800,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 80,
+              "actualMs": 1800.4000000059605,
+              "schedulingDelayMs": 0.4000000059604645
+            }
+          ]
+        }
+      ],
+      "recovery": null,
+      "retainedCaptureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 3,
+          "afterOrdinal": 3,
+          "receiptOrdinal": 2
+        }
+      ],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        }
+      ],
+      "traceSha256": "ef24d8a70bb2170f9d3161d7de6e15225c1fff735b13e1f32e14bfb7399fe0aa",
+      "acquisition": "batch3/chromium/R0006-offline-entry"
+    },
+    {
+      "caseId": "R0006-third-success",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 6,
+      "firstCurrentOrdinal": 2,
+      "lowLevelPrayerAttempts": 4,
+      "highLevelOperations": 2,
+      "currentOperations": 1,
+      "prefetchOperations": 1,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 389.90000000596046,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 389.79999999701977,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 4,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 4,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "requestElapsedMs": 1294.9000000059605,
+          "timer": 12,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 1294.9000000059605,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 5,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 5,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "requestElapsedMs": 3095.4000000059605,
+          "timer": 14,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 3095.4000000059605,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 6,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attemptId": 6,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 3115.5,
+          "timer": 15,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 3115.5,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [
+        {
+          "operationId": 3,
+          "nominalMs": 900,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 4,
+              "actualMs": 901.4000000059605,
+              "schedulingDelayMs": 1.4000000059604645
+            }
+          ]
+        },
+        {
+          "operationId": 3,
+          "nominalMs": 1800,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 13,
+              "actualMs": 1800.5,
+              "schedulingDelayMs": 0.5
+            }
+          ]
+        }
+      ],
+      "recovery": null,
+      "retainedCaptureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 3,
+          "afterOrdinal": 3,
+          "receiptOrdinal": 2
+        }
+      ],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        }
+      ],
+      "traceSha256": "61d10e73432ec39e6eba14e17fa2dabfcaad4f284f1e069a11aadebbfb54a042",
+      "acquisition": "batch3/chromium/R0006-third-success"
+    },
+    {
+      "caseId": "R0006-tomorrow-promotion",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 74,
+      "firstCurrentOrdinal": 2,
+      "lowLevelPrayerAttempts": 3,
+      "highLevelOperations": 3,
+      "currentOperations": 1,
+      "prefetchOperations": 2,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 233.70000000298023,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 233.59999999403954,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 4,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attemptId": 4,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 246.8999999910593,
+          "timer": 4,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 246.8999999910593,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 5,
+          "operationId": 5,
+          "kind": "prefetch",
+          "attemptId": 5,
+          "prayerAttempts": 1,
+          "day": "09-09-2026",
+          "requestElapsedMs": 65076.20000000298,
+          "timer": 28,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 65076.20000000298,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [],
+      "recovery": null,
+      "retainedCaptureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 5,
+          "afterOrdinal": 5,
+          "receiptOrdinal": 2
+        }
+      ],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        }
+      ],
+      "traceSha256": "80f2cd4c60e3daf5c604ebbde6530b423ee3f93691e672616695e523c25d0f16",
+      "acquisition": "batch3/chromium/R0006-tomorrow-promotion"
+    },
+    {
+      "caseId": "R0006-accelerated-recovery",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 3021,
+      "firstCurrentOrdinal": 2890,
+      "lowLevelPrayerAttempts": 5,
+      "highLevelOperations": 3,
+      "currentOperations": 2,
+      "prefetchOperations": 1,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 253.5,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 253.5,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 4,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 4,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "requestElapsedMs": 1156.5,
+          "timer": 12,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 1156.3999999910593,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 5,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 5,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "requestElapsedMs": 2958,
+          "timer": 15,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 2958,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 6,
+          "operationId": 4,
+          "kind": "current",
+          "attemptId": 6,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 60259.79999999702,
+          "timer": 54,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 60259.79999999702,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 7,
+          "operationId": 5,
+          "kind": "prefetch",
+          "attemptId": 7,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 60277.29999999702,
+          "timer": 56,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 60277.29999999702,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [
+        {
+          "operationId": 3,
+          "nominalMs": 900,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 4,
+              "actualMs": 902.1000000089407,
+              "schedulingDelayMs": 2.1000000089406967
+            }
+          ]
+        },
+        {
+          "operationId": 3,
+          "nominalMs": 1800,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 13,
+              "actualMs": 1801.3999999910593,
+              "schedulingDelayMs": 1.3999999910593033
+            }
+          ]
+        }
+      ],
+      "recovery": {
+        "operationStartElapsedMs": 253.3999999910593,
+        "eligibleElapsedMs": 60253.39999999106,
+        "fourthCurrentRequestMs": 60259.79999999702,
+        "firstRecoveredRenderMs": 60322.89999999106,
+        "eligibleToRequestMs": 6.4000000059604645,
+        "exhaustedCheckpointMs": 2968.2999999970198,
+        "nominalAllTimeoutMs": null,
+        "firstRecoveredOrdinal": 2890
+      },
+      "retainedCaptureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 2892,
+          "afterOrdinal": 2893,
+          "receiptOrdinal": 2890
+        }
+      ],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        }
+      ],
+      "traceSha256": "e781d9c0daff8e2a151773dee90a9a13212ea751f0cf3f9b734edebb9eebd82c",
+      "acquisition": "batch4/R0006-accelerated-recovery"
+    },
+    {
+      "caseId": "R0006-hidden-resume",
+      "status": "PASS_NATIVE_TRACE_PIXELS_SEPARATE",
+      "completedRenderCount": 8,
+      "firstCurrentOrdinal": 4,
+      "lowLevelPrayerAttempts": 5,
+      "highLevelOperations": 3,
+      "currentOperations": 2,
+      "prefetchOperations": 1,
+      "attempts": [
+        {
+          "requestSerial": 3,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 3,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 364.6000000089407,
+          "timer": 3,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 364.5,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 4,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 4,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "requestElapsedMs": 1265.6000000089407,
+          "timer": 12,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 1265.6000000089407,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 5,
+          "operationId": 3,
+          "kind": "current",
+          "attemptId": 5,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "requestElapsedMs": 3066.6000000089407,
+          "timer": 14,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 3066.5,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 6,
+          "operationId": 4,
+          "kind": "current",
+          "attemptId": 6,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "requestElapsedMs": 65106.80000001192,
+          "timer": 607,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 65106.80000001192,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        },
+        {
+          "requestSerial": 8,
+          "operationId": 6,
+          "kind": "prefetch",
+          "attemptId": 8,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "requestElapsedMs": 65340.40000000596,
+          "timer": 610,
+          "nominalDeadlineMs": 10000,
+          "timerStartMs": 65340.40000000596,
+          "timerFireMs": null,
+          "actualTimerDelayMs": null,
+          "timerSchedulingDelayMs": null
+        }
+      ],
+      "backoffs": [
+        {
+          "operationId": 3,
+          "nominalMs": 900,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 4,
+              "actualMs": 900.3999999910593,
+              "schedulingDelayMs": 0.3999999910593033
+            }
+          ]
+        },
+        {
+          "operationId": 3,
+          "nominalMs": 1800,
+          "association": "unique",
+          "candidates": [
+            {
+              "timer": 13,
+              "actualMs": 1800.4000000059605,
+              "schedulingDelayMs": 0.4000000059604645
+            }
+          ]
+        }
+      ],
+      "recovery": {
+        "operationStartElapsedMs": 364.40000000596046,
+        "eligibleElapsedMs": 60364.40000000596,
+        "fourthCurrentRequestMs": 65106.80000001192,
+        "firstRecoveredRenderMs": 65385.70000000298,
+        "eligibleToRequestMs": 4742.4000000059605,
+        "exhaustedCheckpointMs": 3079.9000000059605,
+        "nominalAllTimeoutMs": null,
+        "firstRecoveredOrdinal": 4,
+        "hiddenAtMs": 3233.6000000089407,
+        "hiddenAfterFenceMs": 65071.10000000894
+      },
+      "retainedCaptureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 5,
+          "afterOrdinal": 5,
+          "receiptOrdinal": 4
+        }
+      ],
+      "negativeControls": [
+        {
+          "name": "missing-render",
+          "rejected": true,
+          "reason": "missing original completed renders"
+        },
+        {
+          "name": "unbounded-deadline",
+          "rejected": true,
+          "reason": "full asynchronous deadline changed"
+        },
+        {
+          "name": "surviving-owned-timer",
+          "rejected": true,
+          "reason": "owned timer survived settlement"
+        },
+        {
+          "name": "changed-clock-mode",
+          "rejected": true,
+          "reason": "original clock mode changed"
+        }
+      ],
+      "traceSha256": "98c7c4497d88a45a3afddfee80401e9cb94b00979352544d91e418289d207e63",
+      "acquisition": "batch8/chromium/R0006-hidden-resume"
+    }
+  ]
+}

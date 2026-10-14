@@ -14,7 +14,9 @@ def digest(data):
 
 def dump(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2, ensure_ascii=False)+"\n", encoding="utf-8")
+    with path.open('w',encoding='utf-8') as stream:
+        json.dump(value,stream,indent=2,ensure_ascii=False)
+        stream.write('\n')
 
 def validate_cases(packet, root):
     if packet.get("schema") != "remaining-prayer-cases/v1":
@@ -39,7 +41,7 @@ def validate_cases(packet, root):
         if case["clockPolicy"]["mode"] not in ("native","fixed","advancing"):
             raise ValueError("clock policy unsupported")
         for action in case["orderedActions"]:
-            if action["type"] not in ("wait","release","reject","setRule","clock","settings","capture","sleep","iframeVisibility","dialog","checkpoint","waitImage","releaseImage"):
+            if action["type"] not in ("wait","release","reject","setRule","clock","settings","capture","sleep","iframeVisibility","widgetOffscreen","dialog","checkpoint","waitImage","releaseImage"):
                 raise ValueError("unsupported action: "+action["type"])
             if action.get('firstRender') and not action.get('firstPredicate'):
                 raise ValueError('first-render capture requires an exact observation predicate')
@@ -244,7 +246,7 @@ def main(argv=None):
                         route,target=image_pending.pop(action["id"])
                         route.fulfill(status=200,body=base64.b64decode(target["pngBase64"]),headers={"Content-Type":"image/png","Access-Control-Allow-Origin":"*"})
                         image_receipts.append({"stage":"native-image-release","url":route.request.url,"rule":target["id"],"alpha":target["alpha"],"at":time.monotonic()})
-                    elif kind=="wait":frame.wait_for_function(action["predicate"],timeout=action.get("timeoutMs",15000))
+                    elif kind=="wait":frame.wait_for_function(action["predicate"],timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf"))
                     elif kind=="sleep":time.sleep(action["ms"]/1000)
                     elif kind=="release" or kind=="reject":frame.evaluate("([type,id,n])=>window.__prayerFixture[type](id,n)",[kind,action["id"],action.get("occurrence",1)])
                     elif kind=="setRule":frame.evaluate("([id,patch])=>window.__prayerFixture.setRule(id,patch)",[action["id"],action["patch"]])
@@ -259,6 +261,14 @@ def main(argv=None):
                     elif kind=="iframeVisibility":
                         if not case.get("iframe"):raise ValueError("visibility control requires actual iframe")
                         page.locator("#actual-consumer").evaluate("(el,visible)=>el.style.display=visible?'block':'none'",action["visible"])
+                    elif kind=="widgetOffscreen":
+                        # Move actual geometry; the widget's own IntersectionObserver
+                        # must pause/resume its loop. No visibility flag is mocked.
+                        card=frame.locator('.c')
+                        if action['offscreen']:
+                            original_translate=card.evaluate('(el)=>el.style.translate')
+                            card.evaluate("(el)=>el.style.translate='0 1200px'")
+                        else:card.evaluate('(el,value)=>el.style.translate=value',original_translate)
                     elif kind=="dialog":frame.locator(action["selector"]).click()
                     elif kind in ("checkpoint","capture"):
                         if action.get('firstRender'):
@@ -306,7 +316,19 @@ def main(argv=None):
                     # do not advance the fixture clock or call product rendering.
                     page.wait_for_timeout(1000)
                     trace["nativePresentationTailMs"]=1000
-                raw=frame.evaluate("(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,resourceTiming:f.resourceTiming(),fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight}))}}})()")
+                export_expression="(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,resourceTiming:f.resourceTiming(),fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight}))}}})()"
+                # Fast previews produce thousands of complete render receipts. Seal
+                # the observation cut in fixture-owned storage, then transport every
+                # receipt in bounded JSON batches. One large protocol object/string
+                # can exceed Node's string limit. No product state/timer is touched.
+                if case.get('jsonTraceTransport'):
+                    raw=frame.evaluate(export_expression.replace('snapshots:f.snapshots,','snapshotCount:(f.exportSnapshots=f.snapshots.slice()).length,'))
+                    count=raw.pop('snapshotCount');raw['snapshots']=[]
+                    for start in range(0,count,16):
+                        raw['snapshots'].extend(json.loads(frame.evaluate('([a,b])=>JSON.stringify(window.__prayerFixture.exportSnapshots.slice(a,b))',[start,min(start+16,count)])))
+                    trace['traceTransport']={'kind':'complete-json-batches','snapshotCount':count,'batchSize':16}
+                else:
+                    raw=frame.evaluate(export_expression)
                 trace["checkpointSnapshots"]=trace["snapshots"];trace["snapshots"]=raw["snapshots"]+trace["checkpointSnapshots"];trace.update({key:value for key,value in raw.items() if key!="snapshots"});trace["pageErrors"]=errors
                 trace["nativeImageReceipts"]=image_receipts
                 check_expected(trace,case["expected"])
