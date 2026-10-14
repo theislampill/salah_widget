@@ -1,0 +1,213 @@
+{
+  "schema": "r0017-independent-deployment-admission/v1",
+  "disposition": "OWNER_CONDITIONAL_CRITERIA_SATISFIED_FOR_READY_AND_NORMAL_MERGE",
+  "reviewer": {
+    "task": "/root/r0017_review",
+    "requestedModel": "gpt-6-astra",
+    "requestedReasoningEffort": "max",
+    "identityScope": "Requested host spawn routing only; no independent backend/hardware attestation. Same reviewer; no nested agents."
+  },
+  "authority": "Owner-approved implementation and disclosed limits; conditional authority already covers this verified deployment-only descendant, ready transition and normal merge. No new owner gate is required for this exact head.",
+  "identity": {
+    "repository": "theislampill/salah_widget",
+    "pullRequest": "https://github.com/theislampill/salah_widget/pull/62",
+    "head": "02ab7a9308e0aaa1f4fedee391e4857324268e57",
+    "tree": "16ab2429a5a77d09dee10a2f3c95d42e9c8d5763",
+    "soleParentAndApprovedImplementation": "7fb3dd33b5efb2a8d8a187bd5e2a5901b900fce6",
+    "baseAndCurrentMain": "763a460e98dc23c7f0e95bf346274f1685b3c654",
+    "runtimeFiles": 135,
+    "runtimeSha256": "5ff3fdf5a13cd3a798addfef972ed9a2c865f87cce531a23847015dcdc8a7d46",
+    "worktreeClean": true,
+    "cumulativePrChangedPaths": 16,
+    "additionalChangedPaths": [
+      ".github/workflows/r0017-pages-payload.yml",
+      "_config.yml",
+      "docs/rlgwo-execution/20261014/R000C/README.md",
+      "docs/rlgwo-execution/20261014/R0017_READINESS.md",
+      "tools/verify_r0017_pages_payload.py"
+    ],
+    "binding": "Local Git and public GitHub commit metadata agree on head, tree and sole parent. The complete diff from the approved implementation contains only the five listed paths; all other Git blobs, including all 135 runtime files and authored/scientific/smoke/test files, are unchanged."
+  },
+  "conditionalFindings": [
+    {
+      "condition": "Approved ancestry and bounded delta",
+      "status": "SATISFIED",
+      "evidence": "Public/local exact head is a direct child of approved 7fb. Only the five listed deployment-membership, verification and compact-link paths differ; worktree clean."
+    },
+    {
+      "condition": "Runtime and authored/scientific/smoke/test preservation",
+      "status": "SATISFIED",
+      "evidence": "All other Git blobs and all 135 runtime identities unchanged. Independently compared all 286 protected receipt hashes/sizes to candidate Git blobs: zero mismatches."
+    },
+    {
+      "condition": "Complete build-equivalent output <= decimal 1 GB",
+      "status": "SATISFIED",
+      "evidence": "Actual pinned Jekyll CI build completed SUCCESS: 5825 regular files / 897967831 bytes; headroom 102032169. Inspected verifier traverses complete _site, rejects symlinks and enforces the limit."
+    },
+    {
+      "condition": "Protected consumers and usable evidence",
+      "status": "SATISFIED",
+      "evidence": "All 286 protected outputs present and byte-identical. Independent 110-document/782-link source scan found zero relative links into the exclusion. Public unchanged native tree and original cases/archive-map resolve; README explains logical JSON/XZ paths."
+    },
+    {
+      "condition": "Raw ZIP remains outside deployment",
+      "status": "SATISFIED",
+      "evidence": "ZIP absent from candidate tree and actual output check. Unchanged external commit/blob/hash preserves prior independent 326-member/181-original verification; no archive replay."
+    },
+    {
+      "condition": "Independent exact-head/base/build/public evidence and applicable checks",
+      "status": "SATISFIED",
+      "evidence": "Local/public commit, body, successful measure check, authenticated artifact and four immutable public records agree. MERGEABLE/CLEAN. Branch-protection rules/rulesets empty, distinguished from actual CI SUCCESS."
+    },
+    {
+      "condition": "Issue OPEN and closing references empty",
+      "status": "SATISFIED",
+      "evidence": "Fresh readback: issue23 OPEN, stateReason null, closedAt null; closingIssuesReferences empty. PR62 Draft OPEN/unmerged."
+    }
+  ],
+  "build": {
+    "runId": 38653904508,
+    "jobId": 116158990273,
+    "runUrl": "https://github.com/theislampill/salah_widget/actions/runs/38653904508",
+    "conclusion": "SUCCESS",
+    "completedAt": "2026-10-14T23:25:39Z",
+    "buildAction": "actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697",
+    "image": "ghcr.io/actions/jekyll-build-pages:v1.0.13",
+    "imageDigest": "sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041",
+    "workflowPermissions": {
+      "contents": "read",
+      "pages": "read"
+    },
+    "regularFiles": 5825,
+    "regularFileBytes": 897967831,
+    "limitBytes": 1000000000,
+    "headroomBytes": 102032169,
+    "pathSizeManifestSha256": "8809e80a97b62b9769a62e94309bedc83a3aa8515787f0395871f85edffdaf89",
+    "configSha256": "0f846f7efb27c391c66dffc66913f3eb452d5769e13170db64c2d0cd32a3e5c8",
+    "protectedOutputFiles": 286
+  },
+  "artifact": {
+    "id": 11935802684,
+    "bytes": 16325,
+    "sha256": "7627a486e8c10d0205e8d547d468afaf6469760eaa02086d2e4a670db3821f2c",
+    "member": "r0017-pages-payload.json",
+    "memberBytes": 48469,
+    "memberSha256": "751cec9ab9ffdcf8d52b685b9a01f8bdd76a8dbe63fca38491e4f0ffd544b524",
+    "independentReadback": "Authenticated GitHub artifact acquisition, artifact digest and single JSON member checked; member bytes equal the retained receipt. HTTP Date was Wed, 14 Oct 2026 23:27:48 GMT."
+  },
+  "exclusion": {
+    "onlyExcludedPath": "docs/rlgwo-execution/20261014/R000C/native",
+    "files": 7266,
+    "sourceBytes": 300654655,
+    "gitTree": "2f452a4ba3cbe353f25327a39d2f026d53838b16",
+    "immutableEvidenceCommit": "2f9a5b82cd83e3ae7b994f110b58efc92bbb46a6",
+    "nativeTreeUrl": "https://github.com/theislampill/salah_widget/tree/2f9a5b82cd83e3ae7b994f110b58efc92bbb46a6/docs/rlgwo-execution/20261014/R000C/native",
+    "publicCases": {
+      "bytes": 2770821,
+      "sha256": "2f7323ba07e9db201b6da12197af3a814ad87604a716e4626c4db1d867377726",
+      "equalsCandidateOriginal": true
+    },
+    "publicArchiveMap": {
+      "bytes": 3440394,
+      "sha256": "0023a1fc87d96d20935eb7a7b48032483b426050ba10980cadb4da18ffde3781",
+      "equalsCandidateOriginal": true
+    },
+    "externalR0017Zip": {
+      "bytes": 16582607,
+      "sha256": "3544f2349137495e2b7b49beb38a46de52a480ffa6c5472a88f24284708c7d8c",
+      "gitBlob": "9b7882c7404ca3d0c01109bf79612cb3518a116b",
+      "membersPreviouslyIndependentlyVerified": 326,
+      "unchangedOriginalMembers": 181,
+      "revalidationBasis": "Same immutable evidence commit, archive blob/hash and approved manifest; no large archive replay."
+    }
+  },
+  "publicReadback": {
+    "evidenceCommit": "f6ddca6e055ff64323c5e0f89a1e61674598efc7",
+    "baseUrl": "https://raw.githubusercontent.com/theislampill/salah_widget/f6ddca6e055ff64323c5e0f89a1e61674598efc7/docs/rlgwo-execution/20261014/R0017_DELIVERY/",
+    "records": [
+      {
+        "path": "preflight/r0017-pages-payload.json",
+        "bytes": 48469,
+        "sha256": "751cec9ab9ffdcf8d52b685b9a01f8bdd76a8dbe63fca38491e4f0ffd544b524",
+        "status": 200,
+        "equalsRetained": true
+      },
+      {
+        "path": "preflight-run.json",
+        "bytes": 2836,
+        "sha256": "442c619197b6cd5962b84bd2bc453d309fece977def06f85c91cc7add2029fbb",
+        "status": 200,
+        "equalsRetained": true
+      },
+      {
+        "path": "preflight-build.log",
+        "bytes": 50679,
+        "sha256": "3d2bd508d773dab0587bd1066a81be5cf0cbd6468825e247313b9dadf59b4ff6",
+        "status": 200,
+        "equalsRetained": true
+      },
+      {
+        "path": "exclusion-link-scan.json",
+        "bytes": 149,
+        "sha256": "22cce9fd55bca5152505a429dfef323db2822b03c08678d4ef6d030e7dc7df8a",
+        "status": 200,
+        "equalsRetained": true
+      }
+    ],
+    "httpDates": [
+      "Wed, 14 Oct 2026 23:30:50 GMT",
+      "Wed, 14 Oct 2026 23:30:51 GMT"
+    ],
+    "prBody": {
+      "bytes": 9312,
+      "sha256": "ef447718082a6580d02c24c04b4fb822c1b225a84f8e6cd3ccece7c9e7f7523d",
+      "equalsRetainedDeliveryPrBody": true,
+      "assessment": "Accurately distinguishes owner-approved implementation, current conditional admission, successful build-equivalent output, original bounded qualification and unperformed delivery/certificate/closure."
+    },
+    "prState": {
+      "state": "OPEN",
+      "isDraft": true,
+      "mergedAt": null,
+      "mergeable": "MERGEABLE",
+      "mergeStateStatus": "CLEAN",
+      "closingIssuesReferences": []
+    },
+    "issue23": {
+      "state": "OPEN",
+      "stateReason": null,
+      "closedAt": null
+    },
+    "protections": {
+      "branchProtectionRuleCount": 0,
+      "repositoryRulesets": [],
+      "actualExactHeadCheck": "measure SUCCESS; absence of protections is not itself a passing test"
+    },
+    "pages": {
+      "sourceBranch": "main",
+      "sourcePath": "/",
+      "buildType": "legacy",
+      "latestBuildStatus": "built",
+      "latestBuildCommit": "763a460e98dc23c7f0e95bf346274f1685b3c654",
+      "candidateAlreadyDeployed": false
+    }
+  },
+  "limits": [
+    "This is actual preflight output proof, not the later merged deployment. Inspected verifier/log/artifact and independently bound protected hashes; no independent build or browser/product-test replay.",
+    "Verifier reference-count fields are declarations. Independent source/link inspection supplies the no-direct-excluded-link claim; it is not a rendered browser-link test.",
+    "Original 11 rows plus six residual mappings, BLOCKED report and failures retain their existing scope. Four final local 30/141 passes and maximum Moon 7768 ms do not prove universal reliability.",
+    "Same-runtime Firefox 29/30 live-synthetic failure remains unexplained and material. Owner accepts that limit; later passes do not cure or explain it.",
+    "Summed WASM allocation remains 653262848 versus 326631424 bytes, excluding other browser memory; low-memory devices unqualified.",
+    "Fixed-clock/font-suppressed smoke is not M0/general appearance qualification. Existing supplemental still/composition limits remain. R0021/issue33 owns substantially faster first-complete presentation.",
+    "Historical 1200392504-byte Pages payload and prior packaging projections remain unchanged contrary/history records. Evidence branch must not merge into Pages source. No account/domain/profile/credential setting changes."
+  ],
+  "blockingFindings": [],
+  "requiredNextEffects": [
+    "Publish this report unchanged, then recheck exact head/base/check/issue dependencies and execute the already authorized ready transition and normal merge without bypassing protections.",
+    "Bind the actual merge and successful Pages deployment; verify actual deployed size, all 135 public runtime hashes, protected consumers, exclusion and usable external evidence.",
+    "Run the unchanged public 30/141 healthy instrument for both engines/preferences, retaining first results and pixels, original deadlines, native JSON/prayer consumer and disposable storage. No local asset substitution. Verify ordinary public root consumer separately; passive timing does not replace assertions.",
+    "Publish and independently read back the completed CLOSE-R0017 certificate only after delivery passes, then intentionally close issue23 as completed and independently read back its final state. Preserve any failed public attempt."
+  ],
+  "terminalScope": "PREMERGE_CONDITIONAL_ADMISSION_COMPLETE; NORMAL_MERGE_AND_PUBLIC_DELIVERY_NOT_YET_PERFORMED",
+  "reviewerEffects": "Read-only inspection plus this report only; no source edit, GitHub mutation, merge, browser/test replay or nested agent.",
+  "memoryUse": "Procedural continuity only: MEMORY.md lines 183-186. All consequential current facts in this report derive from live/local inspection, inspected raw evidence or explicitly identified unchanged prior qualification."
+}
