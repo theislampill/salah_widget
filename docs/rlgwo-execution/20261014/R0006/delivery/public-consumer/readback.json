@@ -1,0 +1,1685 @@
+{
+  "schema": "r0006-public-consumer/v1",
+  "status": "PASS_POST_DELIVERY_PUBLIC_CONSUMER",
+  "mergeCommit": "7827099dff3c9bc5ecb1b7a67dc4c25414bcfb69",
+  "readAtUtc": "2026-10-14T12:06:25.368811+00:00",
+  "playwrightVersion": "1.60.0",
+  "caseInputSha256": "abea7564245e334f2b1653aed4eeed008b7c824fc6cc007440abd5cb45bd1002",
+  "preloadSha256": "c95000ea6ffb79027460e2910be035700beeabdea475dcac290a00195875e74a",
+  "sourceObserverInserted": false,
+  "productionResponseRewritten": false,
+  "results": [
+    {
+      "engine": "chromium",
+      "version": "148.0.7778.96",
+      "headless": true,
+      "executable": "chrome.exe",
+      "executableSha256": "290fa7018fda22c52ada5eddb0113baf3ebc41fd0fde6085eddb19793606c635",
+      "states": [
+        {
+          "stage": "current",
+          "observed": {
+            "next": "15:30",
+            "left": "3h 29m left until Asr",
+            "rows": 6,
+            "times": "Fajr05:00Sunrise06:00Dhuhr12:00Asr15:30Maghrib18:00Isha19:30",
+            "date": "2026-09-07CE",
+            "hijri": "\u06471448-02-19 | \ud83c\udf18 19",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 7,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T12:00:03.448Z",
+            "realElapsedMs": 3449.7000000029802,
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=24.47&longitude=39.61&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=UTC",
+                "kind": "weather",
+                "realElapsedMs": 440.1000000089407,
+                "wallUtcMs": 1788782400440.1,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 442.70000000298023,
+                "wallUtcMs": 1788782400442.7,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 453.40000000596046,
+                "wallUtcMs": 1788782400453.4,
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 1
+              },
+              {
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 1354.4000000059605,
+                "wallUtcMs": 1788782401354.4,
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 2
+              },
+              {
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 3155,
+                "wallUtcMs": 1788782403155,
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 1
+              },
+              {
+                "serial": 6,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 3170.800000011921,
+                "wallUtcMs": 1788782403170.8,
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 2
+              }
+            ],
+            "unexpected": [],
+            "storage": [
+              {
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}"
+              }
+            ],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:24.47|39.61|f",
+                "value": null,
+                "realElapsedMs": 439.6000000089407
+              },
+              {
+                "operation": "get",
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": null,
+                "realElapsedMs": 453.20000000298023
+              },
+              {
+                "operation": "set",
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}",
+                "denied": false,
+                "realElapsedMs": 3156.6000000089407
+              }
+            ],
+            "pending": [],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 440.1000000089407,
+                "wallUtcMs": 1788782400440.1,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=24.47&longitude=39.61&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=UTC",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 442.70000000298023,
+                "wallUtcMs": 1788782400442.7,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 453.40000000596046,
+                "wallUtcMs": 1788782400453.4,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 1354.4000000059605,
+                "wallUtcMs": 1788782401354.4,
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 2
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 3155,
+                "wallUtcMs": 1788782403155,
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 3155,
+                "wallUtcMs": 1788782403155,
+                "key": "healthy:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 3155.1000000089407,
+                "wallUtcMs": 1788782403155.1,
+                "key": "healthy:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 3155.7000000029802,
+                "wallUtcMs": 1788782403155.7,
+                "key": "healthy:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 3170.800000011921,
+                "wallUtcMs": 1788782403170.8,
+                "serial": 6,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 2
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 3170.800000011921,
+                "wallUtcMs": 1788782403170.8,
+                "key": "healthy:2",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 3421.9000000059605,
+                "wallUtcMs": 1788782403421.9,
+                "key": "healthy:2"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 3422.1000000089407,
+                "wallUtcMs": 1788782403422.1,
+                "key": "healthy:2"
+              }
+            ],
+            "timerLog": [
+              {
+                "operation": "start",
+                "id": 1,
+                "ms": 9999.90000000596,
+                "realElapsedMs": 440
+              },
+              {
+                "operation": "start",
+                "id": 2,
+                "ms": 10000,
+                "realElapsedMs": 442.70000000298023
+              },
+              {
+                "operation": "start",
+                "id": 3,
+                "ms": 10000,
+                "realElapsedMs": 453.40000000596046
+              },
+              {
+                "operation": "clear",
+                "id": 1,
+                "realElapsedMs": 454
+              },
+              {
+                "operation": "clear",
+                "id": 2,
+                "realElapsedMs": 454.1000000089407
+              },
+              {
+                "operation": "clear",
+                "id": 3,
+                "realElapsedMs": 454.1000000089407
+              },
+              {
+                "operation": "start",
+                "id": 4,
+                "ms": 900,
+                "realElapsedMs": 454.1000000089407
+              },
+              {
+                "operation": "start",
+                "id": 5,
+                "ms": 15000,
+                "realElapsedMs": 693.3000000119209
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 701.7000000029802
+              },
+              {
+                "operation": "start",
+                "id": 7,
+                "ms": 120000,
+                "realElapsedMs": 701.7000000029802
+              },
+              {
+                "operation": "start",
+                "id": 8,
+                "ms": 15000,
+                "realElapsedMs": 1075.7000000029802
+              },
+              {
+                "operation": "clear",
+                "id": 5,
+                "realElapsedMs": 1078.5
+              },
+              {
+                "operation": "fire",
+                "id": 4,
+                "realElapsedMs": 1354.4000000059605
+              },
+              {
+                "operation": "start",
+                "id": 10,
+                "ms": 10000,
+                "realElapsedMs": 1354.4000000059605
+              },
+              {
+                "operation": "clear",
+                "id": 10,
+                "realElapsedMs": 1354.4000000059605
+              },
+              {
+                "operation": "start",
+                "id": 11,
+                "ms": 1800,
+                "realElapsedMs": 1354.4000000059605
+              },
+              {
+                "operation": "clear",
+                "id": 8,
+                "realElapsedMs": 1375
+              },
+              {
+                "operation": "start",
+                "id": 12,
+                "ms": 15000,
+                "realElapsedMs": 1375.1000000089407
+              },
+              {
+                "operation": "clear",
+                "id": 7,
+                "realElapsedMs": 2663.2000000029802
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 2663.4000000059605
+              },
+              {
+                "operation": "start",
+                "id": 13,
+                "ms": 240000,
+                "realElapsedMs": 2663.4000000059605
+              },
+              {
+                "operation": "clear",
+                "id": 12,
+                "realElapsedMs": 2766.4000000059605
+              },
+              {
+                "operation": "fire",
+                "id": 11,
+                "realElapsedMs": 3154.9000000059605
+              },
+              {
+                "operation": "start",
+                "id": 14,
+                "ms": 10000,
+                "realElapsedMs": 3154.9000000059605
+              },
+              {
+                "operation": "clear",
+                "id": 14,
+                "realElapsedMs": 3156.300000011921
+              },
+              {
+                "operation": "start",
+                "id": 15,
+                "ms": 10000,
+                "realElapsedMs": 3170.7000000029802
+              },
+              {
+                "operation": "clear",
+                "id": 13,
+                "realElapsedMs": 3211.6000000089407
+              },
+              {
+                "operation": "start",
+                "id": 16,
+                "ms": 15000,
+                "realElapsedMs": 3422.1000000089407
+              },
+              {
+                "operation": "clear",
+                "id": 15,
+                "realElapsedMs": 3423.6000000089407
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 3446.300000011921
+              },
+              {
+                "operation": "start",
+                "id": 17,
+                "ms": 240000,
+                "realElapsedMs": 3446.300000011921
+              }
+            ],
+            "activeTimers": [
+              16,
+              17
+            ]
+          },
+          "screenshot": "chromium-current.png",
+          "pngSha256": "d34fadb27f3e3afc8a0c48c57f9c008756e0fc0f2c97533a6a189274e2058d1a"
+        },
+        {
+          "stage": "settled",
+          "observed": {
+            "next": "15:30",
+            "left": "3h 29m left until Asr",
+            "rows": 6,
+            "times": "Fajr05:00Sunrise06:00Dhuhr12:00Asr15:30Maghrib18:00Isha19:30",
+            "date": "2026-09-07CE",
+            "hijri": "\u06471448-02-19 | \ud83c\udf18 19",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 7,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T12:00:05.932Z",
+            "realElapsedMs": 5932.300000011921,
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=24.47&longitude=39.61&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=UTC",
+                "kind": "weather",
+                "realElapsedMs": 440.1000000089407,
+                "wallUtcMs": 1788782400440.1,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 442.70000000298023,
+                "wallUtcMs": 1788782400442.7,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 453.40000000596046,
+                "wallUtcMs": 1788782400453.4,
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 1
+              },
+              {
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 1354.4000000059605,
+                "wallUtcMs": 1788782401354.4,
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 2
+              },
+              {
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 3155,
+                "wallUtcMs": 1788782403155,
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 1
+              },
+              {
+                "serial": 6,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 3170.800000011921,
+                "wallUtcMs": 1788782403170.8,
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 2
+              }
+            ],
+            "unexpected": [],
+            "storage": [
+              {
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}"
+              }
+            ],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:24.47|39.61|f",
+                "value": null,
+                "realElapsedMs": 439.6000000089407
+              },
+              {
+                "operation": "get",
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": null,
+                "realElapsedMs": 453.20000000298023
+              },
+              {
+                "operation": "set",
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}",
+                "denied": false,
+                "realElapsedMs": 3156.6000000089407
+              }
+            ],
+            "pending": [],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 440.1000000089407,
+                "wallUtcMs": 1788782400440.1,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=24.47&longitude=39.61&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=UTC",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 442.70000000298023,
+                "wallUtcMs": 1788782400442.7,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 453.40000000596046,
+                "wallUtcMs": 1788782400453.4,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 1354.4000000059605,
+                "wallUtcMs": 1788782401354.4,
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 2
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 3155,
+                "wallUtcMs": 1788782403155,
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 3155,
+                "wallUtcMs": 1788782403155,
+                "key": "healthy:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 3155.1000000089407,
+                "wallUtcMs": 1788782403155.1,
+                "key": "healthy:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 3155.7000000029802,
+                "wallUtcMs": 1788782403155.7,
+                "key": "healthy:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 3170.800000011921,
+                "wallUtcMs": 1788782403170.8,
+                "serial": 6,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 2
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 3170.800000011921,
+                "wallUtcMs": 1788782403170.8,
+                "key": "healthy:2",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 3421.9000000059605,
+                "wallUtcMs": 1788782403421.9,
+                "key": "healthy:2"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 3422.1000000089407,
+                "wallUtcMs": 1788782403422.1,
+                "key": "healthy:2"
+              }
+            ],
+            "timerLog": [
+              {
+                "operation": "start",
+                "id": 1,
+                "ms": 9999.90000000596,
+                "realElapsedMs": 440
+              },
+              {
+                "operation": "start",
+                "id": 2,
+                "ms": 10000,
+                "realElapsedMs": 442.70000000298023
+              },
+              {
+                "operation": "start",
+                "id": 3,
+                "ms": 10000,
+                "realElapsedMs": 453.40000000596046
+              },
+              {
+                "operation": "clear",
+                "id": 1,
+                "realElapsedMs": 454
+              },
+              {
+                "operation": "clear",
+                "id": 2,
+                "realElapsedMs": 454.1000000089407
+              },
+              {
+                "operation": "clear",
+                "id": 3,
+                "realElapsedMs": 454.1000000089407
+              },
+              {
+                "operation": "start",
+                "id": 4,
+                "ms": 900,
+                "realElapsedMs": 454.1000000089407
+              },
+              {
+                "operation": "start",
+                "id": 5,
+                "ms": 15000,
+                "realElapsedMs": 693.3000000119209
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 701.7000000029802
+              },
+              {
+                "operation": "start",
+                "id": 7,
+                "ms": 120000,
+                "realElapsedMs": 701.7000000029802
+              },
+              {
+                "operation": "start",
+                "id": 8,
+                "ms": 15000,
+                "realElapsedMs": 1075.7000000029802
+              },
+              {
+                "operation": "clear",
+                "id": 5,
+                "realElapsedMs": 1078.5
+              },
+              {
+                "operation": "fire",
+                "id": 4,
+                "realElapsedMs": 1354.4000000059605
+              },
+              {
+                "operation": "start",
+                "id": 10,
+                "ms": 10000,
+                "realElapsedMs": 1354.4000000059605
+              },
+              {
+                "operation": "clear",
+                "id": 10,
+                "realElapsedMs": 1354.4000000059605
+              },
+              {
+                "operation": "start",
+                "id": 11,
+                "ms": 1800,
+                "realElapsedMs": 1354.4000000059605
+              },
+              {
+                "operation": "clear",
+                "id": 8,
+                "realElapsedMs": 1375
+              },
+              {
+                "operation": "start",
+                "id": 12,
+                "ms": 15000,
+                "realElapsedMs": 1375.1000000089407
+              },
+              {
+                "operation": "clear",
+                "id": 7,
+                "realElapsedMs": 2663.2000000029802
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 2663.4000000059605
+              },
+              {
+                "operation": "start",
+                "id": 13,
+                "ms": 240000,
+                "realElapsedMs": 2663.4000000059605
+              },
+              {
+                "operation": "clear",
+                "id": 12,
+                "realElapsedMs": 2766.4000000059605
+              },
+              {
+                "operation": "fire",
+                "id": 11,
+                "realElapsedMs": 3154.9000000059605
+              },
+              {
+                "operation": "start",
+                "id": 14,
+                "ms": 10000,
+                "realElapsedMs": 3154.9000000059605
+              },
+              {
+                "operation": "clear",
+                "id": 14,
+                "realElapsedMs": 3156.300000011921
+              },
+              {
+                "operation": "start",
+                "id": 15,
+                "ms": 10000,
+                "realElapsedMs": 3170.7000000029802
+              },
+              {
+                "operation": "clear",
+                "id": 13,
+                "realElapsedMs": 3211.6000000089407
+              },
+              {
+                "operation": "start",
+                "id": 16,
+                "ms": 15000,
+                "realElapsedMs": 3422.1000000089407
+              },
+              {
+                "operation": "clear",
+                "id": 15,
+                "realElapsedMs": 3423.6000000089407
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 3446.300000011921
+              },
+              {
+                "operation": "start",
+                "id": 17,
+                "ms": 240000,
+                "realElapsedMs": 3446.300000011921
+              },
+              {
+                "operation": "clear",
+                "id": 16,
+                "realElapsedMs": 4413.20000000298
+              }
+            ],
+            "activeTimers": [
+              17
+            ]
+          },
+          "screenshot": "chromium-settled.png",
+          "pngSha256": "70302821c65773715fde16eb1702500771df0ab35a2bbd535536484305770335"
+        }
+      ],
+      "pageErrors": [],
+      "url": "https://theislampill.github.io/salah_widget/",
+      "httpStatus": 200,
+      "sourceSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+      "sourceExact": true,
+      "observedCurrentAttemptIntervalsMs": [
+        901.0,
+        1800.5999999940395
+      ],
+      "status": "PASS_POST_DELIVERY_PUBLIC_CONSUMER"
+    },
+    {
+      "engine": "firefox",
+      "version": "150.0.2",
+      "headless": true,
+      "executable": "firefox.exe",
+      "executableSha256": "960a9a013187e337fc03b685ec8bed803791033620985e99fa66438b4fcd6c80",
+      "states": [
+        {
+          "stage": "current",
+          "observed": {
+            "next": "15:30",
+            "left": "3h 29m left until Asr",
+            "rows": 6,
+            "times": "Fajr05:00Sunrise06:00Dhuhr12:00Asr15:30Maghrib18:00Isha19:30",
+            "date": "2026-09-07CE",
+            "hijri": "\u06471448-02-19 | \ud83c\udf18 19",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 7,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T12:00:03.262Z",
+            "realElapsedMs": 3262,
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=24.47&longitude=39.61&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=UTC",
+                "kind": "weather",
+                "realElapsedMs": 342,
+                "wallUtcMs": 1788782400342,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 343,
+                "wallUtcMs": 1788782400343,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 350,
+                "wallUtcMs": 1788782400350,
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 1
+              },
+              {
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 1253,
+                "wallUtcMs": 1788782401253,
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 2
+              },
+              {
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 3067,
+                "wallUtcMs": 1788782403067,
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 1
+              },
+              {
+                "serial": 6,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 3081,
+                "wallUtcMs": 1788782403081,
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 2
+              }
+            ],
+            "unexpected": [],
+            "storage": [
+              {
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}"
+              }
+            ],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:24.47|39.61|f",
+                "value": null,
+                "realElapsedMs": 342
+              },
+              {
+                "operation": "get",
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": null,
+                "realElapsedMs": 350
+              },
+              {
+                "operation": "set",
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}",
+                "denied": false,
+                "realElapsedMs": 3069
+              }
+            ],
+            "pending": [],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 342,
+                "wallUtcMs": 1788782400342,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=24.47&longitude=39.61&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=UTC",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 343,
+                "wallUtcMs": 1788782400343,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 350,
+                "wallUtcMs": 1788782400350,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 1253,
+                "wallUtcMs": 1788782401253,
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 2
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 3067,
+                "wallUtcMs": 1788782403067,
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 3067,
+                "wallUtcMs": 1788782403067,
+                "key": "healthy:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 3067,
+                "wallUtcMs": 1788782403067,
+                "key": "healthy:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 3068,
+                "wallUtcMs": 1788782403068,
+                "key": "healthy:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 3081,
+                "wallUtcMs": 1788782403081,
+                "serial": 6,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 2
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 3081,
+                "wallUtcMs": 1788782403081,
+                "key": "healthy:2",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 3234,
+                "wallUtcMs": 1788782403234,
+                "key": "healthy:2"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 3235,
+                "wallUtcMs": 1788782403235,
+                "key": "healthy:2"
+              }
+            ],
+            "timerLog": [
+              {
+                "operation": "start",
+                "id": 1,
+                "ms": 10000,
+                "realElapsedMs": 342
+              },
+              {
+                "operation": "start",
+                "id": 2,
+                "ms": 10000,
+                "realElapsedMs": 342
+              },
+              {
+                "operation": "start",
+                "id": 3,
+                "ms": 10000,
+                "realElapsedMs": 350
+              },
+              {
+                "operation": "clear",
+                "id": 1,
+                "realElapsedMs": 351
+              },
+              {
+                "operation": "clear",
+                "id": 2,
+                "realElapsedMs": 351
+              },
+              {
+                "operation": "clear",
+                "id": 3,
+                "realElapsedMs": 351
+              },
+              {
+                "operation": "start",
+                "id": 4,
+                "ms": 900,
+                "realElapsedMs": 351
+              },
+              {
+                "operation": "start",
+                "id": 5,
+                "ms": 15000,
+                "realElapsedMs": 370
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 372
+              },
+              {
+                "operation": "start",
+                "id": 7,
+                "ms": 120000,
+                "realElapsedMs": 372
+              },
+              {
+                "operation": "start",
+                "id": 8,
+                "ms": 15000,
+                "realElapsedMs": 597
+              },
+              {
+                "operation": "clear",
+                "id": 5,
+                "realElapsedMs": 597
+              },
+              {
+                "operation": "clear",
+                "id": 8,
+                "realElapsedMs": 980
+              },
+              {
+                "operation": "start",
+                "id": 10,
+                "ms": 15000,
+                "realElapsedMs": 980
+              },
+              {
+                "operation": "fire",
+                "id": 4,
+                "realElapsedMs": 1253
+              },
+              {
+                "operation": "start",
+                "id": 11,
+                "ms": 10000,
+                "realElapsedMs": 1253
+              },
+              {
+                "operation": "clear",
+                "id": 11,
+                "realElapsedMs": 1253
+              },
+              {
+                "operation": "start",
+                "id": 12,
+                "ms": 1800,
+                "realElapsedMs": 1253
+              },
+              {
+                "operation": "clear",
+                "id": 10,
+                "realElapsedMs": 2259
+              },
+              {
+                "operation": "clear",
+                "id": 7,
+                "realElapsedMs": 2410
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 2410
+              },
+              {
+                "operation": "start",
+                "id": 13,
+                "ms": 240000,
+                "realElapsedMs": 2410
+              },
+              {
+                "operation": "fire",
+                "id": 12,
+                "realElapsedMs": 3067
+              },
+              {
+                "operation": "start",
+                "id": 14,
+                "ms": 10000,
+                "realElapsedMs": 3067
+              },
+              {
+                "operation": "clear",
+                "id": 14,
+                "realElapsedMs": 3068
+              },
+              {
+                "operation": "start",
+                "id": 15,
+                "ms": 10000,
+                "realElapsedMs": 3081
+              },
+              {
+                "operation": "clear",
+                "id": 13,
+                "realElapsedMs": 3108
+              },
+              {
+                "operation": "start",
+                "id": 16,
+                "ms": 15000,
+                "realElapsedMs": 3235
+              },
+              {
+                "operation": "clear",
+                "id": 15,
+                "realElapsedMs": 3236
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 3259
+              },
+              {
+                "operation": "start",
+                "id": 17,
+                "ms": 240000,
+                "realElapsedMs": 3259
+              }
+            ],
+            "activeTimers": [
+              16,
+              17
+            ]
+          },
+          "screenshot": "firefox-current.png",
+          "pngSha256": "56f65b9d36bbe6d2e122d5bf02b7e006ff47850e25a9c52e238306fb1ef3b681"
+        },
+        {
+          "stage": "settled",
+          "observed": {
+            "next": "15:30",
+            "left": "3h 29m left until Asr",
+            "rows": 6,
+            "times": "Fajr05:00Sunrise06:00Dhuhr12:00Asr15:30Maghrib18:00Isha19:30",
+            "date": "2026-09-07CE",
+            "hijri": "\u06471448-02-19 | \ud83c\udf18 19",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 7,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T12:00:05.690Z",
+            "realElapsedMs": 5690,
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=24.47&longitude=39.61&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=UTC",
+                "kind": "weather",
+                "realElapsedMs": 342,
+                "wallUtcMs": 1788782400342,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 343,
+                "wallUtcMs": 1788782400343,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 350,
+                "wallUtcMs": 1788782400350,
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 1
+              },
+              {
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 1253,
+                "wallUtcMs": 1788782401253,
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 2
+              },
+              {
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 3067,
+                "wallUtcMs": 1788782403067,
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 1
+              },
+              {
+                "serial": 6,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 3081,
+                "wallUtcMs": 1788782403081,
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 2
+              }
+            ],
+            "unexpected": [],
+            "storage": [
+              {
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}"
+              }
+            ],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:24.47|39.61|f",
+                "value": null,
+                "realElapsedMs": 342
+              },
+              {
+                "operation": "get",
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": null,
+                "realElapsedMs": 350
+              },
+              {
+                "operation": "set",
+                "key": "salah:24.47|39.61|UTC|4|0",
+                "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}",
+                "denied": false,
+                "realElapsedMs": 3069
+              }
+            ],
+            "pending": [],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 342,
+                "wallUtcMs": 1788782400342,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=24.47&longitude=39.61&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=UTC",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 343,
+                "wallUtcMs": 1788782400343,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 350,
+                "wallUtcMs": 1788782400350,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 1253,
+                "wallUtcMs": 1788782401253,
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "failed",
+                "occurrence": 2
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 3067,
+                "wallUtcMs": 1788782403067,
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 3067,
+                "wallUtcMs": 1788782403067,
+                "key": "healthy:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 3067,
+                "wallUtcMs": 1788782403067,
+                "key": "healthy:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 3068,
+                "wallUtcMs": 1788782403068,
+                "key": "healthy:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 3081,
+                "wallUtcMs": 1788782403081,
+                "serial": 6,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "healthy",
+                "occurrence": 2
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 3081,
+                "wallUtcMs": 1788782403081,
+                "key": "healthy:2",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 3234,
+                "wallUtcMs": 1788782403234,
+                "key": "healthy:2"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 3235,
+                "wallUtcMs": 1788782403235,
+                "key": "healthy:2"
+              }
+            ],
+            "timerLog": [
+              {
+                "operation": "start",
+                "id": 1,
+                "ms": 10000,
+                "realElapsedMs": 342
+              },
+              {
+                "operation": "start",
+                "id": 2,
+                "ms": 10000,
+                "realElapsedMs": 342
+              },
+              {
+                "operation": "start",
+                "id": 3,
+                "ms": 10000,
+                "realElapsedMs": 350
+              },
+              {
+                "operation": "clear",
+                "id": 1,
+                "realElapsedMs": 351
+              },
+              {
+                "operation": "clear",
+                "id": 2,
+                "realElapsedMs": 351
+              },
+              {
+                "operation": "clear",
+                "id": 3,
+                "realElapsedMs": 351
+              },
+              {
+                "operation": "start",
+                "id": 4,
+                "ms": 900,
+                "realElapsedMs": 351
+              },
+              {
+                "operation": "start",
+                "id": 5,
+                "ms": 15000,
+                "realElapsedMs": 370
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 372
+              },
+              {
+                "operation": "start",
+                "id": 7,
+                "ms": 120000,
+                "realElapsedMs": 372
+              },
+              {
+                "operation": "start",
+                "id": 8,
+                "ms": 15000,
+                "realElapsedMs": 597
+              },
+              {
+                "operation": "clear",
+                "id": 5,
+                "realElapsedMs": 597
+              },
+              {
+                "operation": "clear",
+                "id": 8,
+                "realElapsedMs": 980
+              },
+              {
+                "operation": "start",
+                "id": 10,
+                "ms": 15000,
+                "realElapsedMs": 980
+              },
+              {
+                "operation": "fire",
+                "id": 4,
+                "realElapsedMs": 1253
+              },
+              {
+                "operation": "start",
+                "id": 11,
+                "ms": 10000,
+                "realElapsedMs": 1253
+              },
+              {
+                "operation": "clear",
+                "id": 11,
+                "realElapsedMs": 1253
+              },
+              {
+                "operation": "start",
+                "id": 12,
+                "ms": 1800,
+                "realElapsedMs": 1253
+              },
+              {
+                "operation": "clear",
+                "id": 10,
+                "realElapsedMs": 2259
+              },
+              {
+                "operation": "clear",
+                "id": 7,
+                "realElapsedMs": 2410
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 2410
+              },
+              {
+                "operation": "start",
+                "id": 13,
+                "ms": 240000,
+                "realElapsedMs": 2410
+              },
+              {
+                "operation": "fire",
+                "id": 12,
+                "realElapsedMs": 3067
+              },
+              {
+                "operation": "start",
+                "id": 14,
+                "ms": 10000,
+                "realElapsedMs": 3067
+              },
+              {
+                "operation": "clear",
+                "id": 14,
+                "realElapsedMs": 3068
+              },
+              {
+                "operation": "start",
+                "id": 15,
+                "ms": 10000,
+                "realElapsedMs": 3081
+              },
+              {
+                "operation": "clear",
+                "id": 13,
+                "realElapsedMs": 3108
+              },
+              {
+                "operation": "start",
+                "id": 16,
+                "ms": 15000,
+                "realElapsedMs": 3235
+              },
+              {
+                "operation": "clear",
+                "id": 15,
+                "realElapsedMs": 3236
+              },
+              {
+                "operation": "clear",
+                "id": null,
+                "realElapsedMs": 3259
+              },
+              {
+                "operation": "start",
+                "id": 17,
+                "ms": 240000,
+                "realElapsedMs": 3259
+              },
+              {
+                "operation": "clear",
+                "id": 16,
+                "realElapsedMs": 4134
+              }
+            ],
+            "activeTimers": [
+              17
+            ]
+          },
+          "screenshot": "firefox-settled.png",
+          "pngSha256": "a6b187851b4b52512df2430cc234c234401290b6bd967a18b17b78b6d0bcbfff"
+        }
+      ],
+      "pageErrors": [],
+      "url": "https://theislampill.github.io/salah_widget/",
+      "httpStatus": 200,
+      "sourceSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+      "sourceExact": true,
+      "observedCurrentAttemptIntervalsMs": [
+        903,
+        1814
+      ],
+      "status": "PASS_POST_DELIVERY_PUBLIC_CONSUMER"
+    }
+  ],
+  "scope": "Bounded actual deployed root delivery confirmation in disposable headless Chromium and Firefox using the unchanged accepted R0006-third-success controlled ingress. Native timer execution, performance.now and animation unchanged. Date advances from the original September 7 UTC fixture; storage is disposable. Current and settled endpoint screenshots confirm delivered consumer usability; no first-frame, continuous-motion or new whole-scene qualification credit.",
+  "completedAtUtc": "2026-10-14T12:06:40.610029+00:00"
+}

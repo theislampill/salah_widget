@@ -1,0 +1,125 @@
+{
+  "schema": "r0006-independent-owner-authorized-premerge/v1",
+  "status": "PASS_EXACT_PREMERGE_PRECONDITIONS",
+  "observedAtUtc": "2026-10-14T11:57:35.824479+00:00",
+  "head": "f1d8a50cfcab75ce11ebaede90f427c1f935def6",
+  "base": "c431733c57f76e2b441ee8f8cd85a1fa6675de55",
+  "tree": "f043f093c774257d95a8632f1e1faadad1d20dc3",
+  "requestedMethod": "MERGE_COMMIT",
+  "checks": {
+    "exactPublicHeadBase": true,
+    "exactMain": true,
+    "openDraftAwaitingAuthorizedReady": true,
+    "mergeableClean": true,
+    "mergeCommitAllowed": true,
+    "noBranchProtectionRequirement": true,
+    "noApplicableRulesetRequirements": true,
+    "noReportedRequiredChecks": true,
+    "localExactHeadTreeBase": true,
+    "clean": true,
+    "exactR0006Scope": true,
+    "candidateHashesUnchanged": true,
+    "runtimeUnchanged": true,
+    "frozenV1Unchanged": true,
+    "packetManifestUnchanged": true
+  },
+  "requiredChecksConclusion": "No branch protection or applicable branch rules are configured; no required/status check runs are reported. This is not a CI test PASS claim.",
+  "runtimeFiles": 135,
+  "frozenV1Files": 5,
+  "changedFiles": 667,
+  "candidateHashes": {
+    "README.md": "4e0b2fa49c3b496af950466239e3384c6a3121e06210031bbb9c0ad797c3cd4d",
+    "tests/rlgwo/R0006-cases.json": "6f0b6b34441441ee621d461bb1928484f1136690c9ed4d30c0ce43503170c803",
+    "tests/rlgwo/R0006-promotion-polling.json": "66b59afd2af1b9d8b2fd7ca9b8dc81b9af7deb796e55c06daff5658ffa0f4baa",
+    "tools/cp9/r0006_verify.py": "ff65592be458c0283eb656da87599141cb1a2cc2ca103ad0b202c5c162b78649",
+    "tools/cp9/r0007_browser.py": "df8d23875aa689364ac394bccfece57019efb698875a208269e8755dd317fbc3"
+  },
+  "continuedIndependentQualification": "A01-A06 prior exact-head and all902 public-object PASS remains current because head/tree/base, candidate/runtime/preservation and packet identities remain unchanged. No native replay or full artifact redownload.",
+  "priorFinalHeadReceiptSha256": "fc880f0368edfc3e758109949ee86ce8e43683e26ed633acce6abd5de8532bbf",
+  "priorPublishedCommentReceiptSha256": "0edb0371ef816bc912f288ec978d695b6f9766fb0f98aee93a7fc13c8b70b428",
+  "contraryScopeRetained": "All rejected Firefox first/continuous frames remain failures. Fresh functional clips have no continuous or motion credit; exact prior qualified preservation controls supply the separate predicate.",
+  "authority": "Owner explicitly authorized marking ready and a merge commit of the exact head over exact base, conditional on these preconditions. No second approval is needed. Executor owns serialized effects; reviewer performed read-only checks only.",
+  "commandReceipts": {
+    "pr": {
+      "args": [
+        "gh",
+        "pr",
+        "view",
+        "59",
+        "--repo",
+        "theislampill/salah_widget",
+        "--json",
+        "number,url,state,isDraft,headRefOid,baseRefOid,mergeable,mergeStateStatus,reviewDecision,statusCheckRollup,headRefName,baseRefName"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"baseRefName\":\"main\",\"baseRefOid\":\"c431733c57f76e2b441ee8f8cd85a1fa6675de55\",\"headRefName\":\"codex/r0006-close\",\"headRefOid\":\"f1d8a50cfcab75ce11ebaede90f427c1f935def6\",\"isDraft\":true,\"mergeStateStatus\":\"CLEAN\",\"mergeable\":\"MERGEABLE\",\"number\":59,\"reviewDecision\":\"\",\"state\":\"OPEN\",\"statusCheckRollup\":[],\"url\":\"https://github.com/theislampill/salah_widget/pull/59\"}\n",
+      "stderr": "",
+      "observedAtUtc": "2026-10-14T11:57:35.542513+00:00"
+    },
+    "protection": {
+      "args": [
+        "gh",
+        "api",
+        "repos/theislampill/salah_widget/branches/main/protection"
+      ],
+      "exitCode": 1,
+      "stdout": "{\"message\":\"Branch not protected\",\"documentation_url\":\"https://docs.github.com/rest/branches/branch-protection#get-branch-protection\",\"status\":\"404\"}",
+      "stderr": "gh: Branch not protected (HTTP 404)\n",
+      "observedAtUtc": "2026-10-14T11:57:35.140060+00:00"
+    },
+    "rules": {
+      "args": [
+        "gh",
+        "api",
+        "repos/theislampill/salah_widget/rules/branches/main"
+      ],
+      "exitCode": 0,
+      "stdout": "[]",
+      "stderr": "",
+      "observedAtUtc": "2026-10-14T11:57:35.140060+00:00"
+    },
+    "requiredChecks": {
+      "args": [
+        "gh",
+        "pr",
+        "checks",
+        "59",
+        "--repo",
+        "theislampill/salah_widget",
+        "--required",
+        "--json",
+        "name,state,workflow,bucket"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "no checks reported on the 'codex/r0006-close' branch\n",
+      "observedAtUtc": "2026-10-14T11:57:35.469394+00:00"
+    },
+    "repository": {
+      "args": [
+        "gh",
+        "api",
+        "repos/theislampill/salah_widget",
+        "--jq",
+        "{full_name,allow_merge_commit,default_branch,archived,disabled}"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"allow_merge_commit\":true,\"archived\":false,\"default_branch\":\"main\",\"disabled\":false,\"full_name\":\"theislampill/salah_widget\"}\n",
+      "stderr": "",
+      "observedAtUtc": "2026-10-14T11:57:35.180440+00:00"
+    },
+    "main": {
+      "args": [
+        "gh",
+        "api",
+        "repos/theislampill/salah_widget/git/ref/heads/main"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"ref\":\"refs/heads/main\",\"node_id\":\"REF_kwDOS6MzkK9yZWZzL2hlYWRzL21haW4\",\"url\":\"https://api.github.com/repos/theislampill/salah_widget/git/refs/heads/main\",\"object\":{\"sha\":\"c431733c57f76e2b441ee8f8cd85a1fa6675de55\",\"type\":\"commit\",\"url\":\"https://api.github.com/repos/theislampill/salah_widget/git/commits/c431733c57f76e2b441ee8f8cd85a1fa6675de55\"}}",
+      "stderr": "",
+      "observedAtUtc": "2026-10-14T11:57:35.165908+00:00"
+    }
+  },
+  "effects": "Read-only Git/GitHub/file inspection; private receipt write only. No browser/GUI/source/Git/GitHub mutation.",
+  "next": "Executor may perform already-authorized serialized ready/merge commit with immediate exact-head/base precondition checks; reviewer awaits resulting merge/Pages/public-consumer proof for A07 delivery and final closure readback."
+}
