@@ -5875,6 +5875,11 @@
           "timeoutMs": 15000
         },
         {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.timings?.Fajr==='05:03'&&s.dom['.times'].text.includes('05:03'))",
+          "timeoutMs": 5000
+        },
+        {
           "type": "capture",
           "name": "warm-retained",
           "selector": ".c",
@@ -5891,7 +5896,10 @@
             "dom/.c/geometry/height": 530,
             "today/timings/Fajr": "04:47"
           },
-          "noInvalidText": true
+          "noInvalidText": true,
+          "contains": {
+            "dom/.times/text": "04:47"
+          }
         },
         {
           "stage": "warm-retained",
@@ -5900,7 +5908,10 @@
             "timezone": "UTC",
             "today/timings/Fajr": "05:03"
           },
-          "noInvalidText": true
+          "noInvalidText": true,
+          "contains": {
+            "dom/.times/text": "05:03"
+          }
         }
       ],
       "acceptanceIds": [

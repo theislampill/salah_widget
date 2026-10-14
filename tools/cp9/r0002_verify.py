@@ -139,6 +139,9 @@ def audit(trace, case):
         if cid == 'R0002-cache-distinct-denied-write':
             require(current[0]['today']['timings']['Fajr'] == '04:47' and
                     warm['today']['timings']['Fajr'] == '05:03', 'denied storage confused with admitted memory')
+            timetable(warm, warm['today']['timings'])
+            require(any(s['today']['timings']['Fajr'] == '05:03' for s in current),
+                    'refreshed memory did not reach an actual completed render')
     if cid.startswith('R0002-optional-'):
         footer, dialog = checkpoint(trace, 'footer'), checkpoint(trace, 'disclosure')
         require(len(requests) == 1, 'optional data caused required prayer retries')
