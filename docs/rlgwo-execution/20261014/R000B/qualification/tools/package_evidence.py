@@ -98,6 +98,8 @@ def main():
             put(file, Path(name))
     for name in ['package_evidence.py', 'verify_projection.py', 'reconcile_handoff_currentness.py', 'verify_handoff_cases.py']:
         put(EVIDENCE / name, Path('qualification/tools') / name)
+    for name in ['README.md', 'DESIGN.md', 'HANDOFF.md']:
+        put(ROOT / name, Path('qualified-documents') / name)
     put(EVIDENCE / 'public-README.md', Path('README.md'))
     # Exact evidence bytes and raw TAP whitespace survive Git on Windows.
     attributes = b'* -text\n*.tap -whitespace\n*.diff -whitespace\n'

@@ -44,6 +44,11 @@ for file in sorted((E / 'independent-review').rglob('*')):
 put(E / 'public-README.md', 'README.md')
 put(E / 'package_evidence.py', 'qualification/tools/package_evidence.py')
 put(E / 'sync_final_metadata.py', 'qualification/tools/sync_final_metadata.py')
+ROOT = Path(r'C:\Users\theis\.codex\worktrees\r000b-close\salah_widget')
+certificate = json.loads((E / 'reviewed-candidate-certificate.json').read_bytes())
+for name in ['README.md', 'DESIGN.md', 'HANDOFF.md']:
+    assert sha((ROOT / name).read_bytes()) == certificate['candidateFiles'][name]
+    put(ROOT / name, Path('qualified-documents') / name)
 (P / 'cases.json').write_text(json.dumps({'schema': 'r000b-native-evidence/v1',
     'acquisitions': json.loads((E / 'selection.json').read_bytes())}, indent=2) + '\n', encoding='utf-8')
 mapping['files'] = list(rows.values())

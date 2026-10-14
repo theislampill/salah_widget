@@ -67,7 +67,7 @@ receipts are not presented as newly executed night or all-phase Moon evidence.
 | B13 | Actual source acquisition and per-use controls in `green.tap`, including malformed JSON versus labelled VM-only non-finite inputs, four-hour source ages, repeated stale radar, source/receipt boundaries and healthy quantitative recovery. |
 | B14 | `mutants/receipt.json` and each paired original, mutant and positive-control TAP. |
 | B16 | Six final Chromium/Firefox default/reduced/full cases; independently accepted scoped native states, recovery and motion, with original failures and first-state omissions retained. |
-| B17 | Existing README, DESIGN and HANDOFF weather/diagnostic sections; independent fact-to-source review. |
+| B17 | Exact qualified README, DESIGN and HANDOFF copies in qualified-documents/, bound to the source candidate hashes; independent fact-to-source review. |
 | B18 | Independent exact-candidate, public-head, delivery and completed-closure records are separate stages. |
 
 ## Native method
