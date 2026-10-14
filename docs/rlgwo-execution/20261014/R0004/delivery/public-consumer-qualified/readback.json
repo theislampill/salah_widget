@@ -1,0 +1,1198 @@
+{
+  "schema": "r0004-public-consumer/v1",
+  "status": "PASS_POST_DELIVERY_PUBLIC_CONSUMER",
+  "mergeCommit": "c431733c57f76e2b441ee8f8cd85a1fa6675de55",
+  "readAtUtc": "2026-10-14T09:56:00.264639+00:00",
+  "playwrightVersion": "1.60.0",
+  "caseInputSha256": "19fec234743217fa3dfc37cb37592db0c5701316936fedfdc6822817cf488d4d",
+  "preloadSha256": "6c6411ca2875e9fe7f82f8fd34449a14839887d7b02ce43b9fcc80d2917f78fa",
+  "sourceObserverInserted": false,
+  "productionResponseRewritten": false,
+  "results": [
+    {
+      "engine": "chromium",
+      "version": "148.0.7778.96",
+      "headless": true,
+      "executable": "chrome.exe",
+      "executableSha256": "290fa7018fda22c52ada5eddb0113baf3ebc41fd0fde6085eddb19793606c635",
+      "states": [
+        {
+          "stage": "loading",
+          "observed": {
+            "next": "\u2014",
+            "left": "Prayer times unavailable",
+            "rows": 6,
+            "times": "Fajr\u2014Sunrise\u2014Dhuhr\u2014Asr\u2014Maghrib\u2014Isha\u2014",
+            "date": "Gregorian date unavailable",
+            "hijri": "Hijri date unavailable",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 0,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T22:00:00.000Z",
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "realElapsedMs": 415.40000000596046,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 422.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 438.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              }
+            ],
+            "unexpected": [],
+            "storage": [],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:35.68|139.69|f",
+                "value": null,
+                "realElapsedMs": 414.20000000298023
+              },
+              {
+                "operation": "get",
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": null,
+                "realElapsedMs": 438.1000000089407
+              }
+            ],
+            "pending": [
+              "bootstrap:1"
+            ],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 415.40000000596046,
+                "wallUtcMs": 1788818400000,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 422.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 438.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 438.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 438.79999999701977,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 438.90000000596046,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              }
+            ]
+          },
+          "screenshot": "chromium-loading.png",
+          "pngSha256": "fb391d8266c9eac13c796214af22f0c0e163c064dca9084061d9c4f36e9f3180"
+        },
+        {
+          "stage": "corrected-request",
+          "observed": {
+            "next": "\u2014",
+            "left": "Prayer times unavailable",
+            "rows": 6,
+            "times": "Fajr\u2014Sunrise\u2014Dhuhr\u2014Asr\u2014Maghrib\u2014Isha\u2014",
+            "date": "Gregorian date unavailable",
+            "hijri": "Hijri date unavailable",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 0,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T22:00:00.000Z",
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "realElapsedMs": 415.40000000596046,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 422.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 438.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "corrected",
+                "occurrence": 1
+              }
+            ],
+            "unexpected": [],
+            "storage": [],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:35.68|139.69|f",
+                "value": null,
+                "realElapsedMs": 414.20000000298023
+              },
+              {
+                "operation": "get",
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": null,
+                "realElapsedMs": 438.1000000089407
+              }
+            ],
+            "pending": [
+              "corrected:1"
+            ],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 415.40000000596046,
+                "wallUtcMs": 1788818400000,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 422.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 438.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 438.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 438.79999999701977,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 438.90000000596046,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "release",
+                "realElapsedMs": 1276.6000000089407,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 1277.7999999970198,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "corrected",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              }
+            ]
+          },
+          "screenshot": "chromium-corrected-request.png",
+          "pngSha256": "fb391d8266c9eac13c796214af22f0c0e163c064dca9084061d9c4f36e9f3180"
+        },
+        {
+          "stage": "current",
+          "observed": {
+            "next": "12:00",
+            "left": "5h 0m left until Dhuhr",
+            "rows": 6,
+            "times": "Fajr05:00Sunrise06:00Dhuhr12:00Asr15:30Maghrib18:00Isha19:30",
+            "date": "2026-09-08CE",
+            "hijri": "\u06471448-02-20 | \ud83c\udf18 21",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 7,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T22:00:00.000Z",
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "realElapsedMs": 415.40000000596046,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 422.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 438.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "corrected",
+                "occurrence": 1
+              },
+              {
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/09-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 1492.1000000089407,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "prefetch",
+                "occurrence": 1
+              }
+            ],
+            "unexpected": [],
+            "storage": [
+              {
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": "{\"date\":\"08-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"08-09-2026\",\"day\":\"08\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"20-02-1448\",\"day\":\"20\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"Asia/Tokyo\"}}}"
+              }
+            ],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:35.68|139.69|f",
+                "value": null,
+                "realElapsedMs": 414.20000000298023
+              },
+              {
+                "operation": "get",
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": null,
+                "realElapsedMs": 438.1000000089407
+              },
+              {
+                "operation": "set",
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": "{\"date\":\"08-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"08-09-2026\",\"day\":\"08\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"20-02-1448\",\"day\":\"20\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"Asia/Tokyo\"}}}",
+                "denied": false,
+                "realElapsedMs": 1477.6000000089407
+              }
+            ],
+            "pending": [],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 415.40000000596046,
+                "wallUtcMs": 1788818400000,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 422.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 438.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 438.29999999701977,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 438.79999999701977,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 438.90000000596046,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "release",
+                "realElapsedMs": 1276.6000000089407,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 1277.7999999970198,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "corrected",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 1278.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "release",
+                "realElapsedMs": 1476.6000000089407,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 1476.7999999970198,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 1492.1000000089407,
+                "wallUtcMs": 1788818400000,
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/09-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "prefetch",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 1492.1000000089407,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 1719.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 1719.4000000059605,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1"
+              },
+              {
+                "type": "release",
+                "realElapsedMs": 1732.6000000089407,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 1732.7000000029802,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1"
+              }
+            ]
+          },
+          "screenshot": "chromium-current.png",
+          "pngSha256": "9912794bc88dab919ff6de83f98d4dbe4bb0f61f5b68b51205d7acda52ccb81a"
+        }
+      ],
+      "pageErrors": [],
+      "url": "https://theislampill.github.io/salah_widget/",
+      "httpStatus": 200,
+      "sourceSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+      "sourceExact": true,
+      "status": "PASS_POST_DELIVERY_PUBLIC_CONSUMER"
+    },
+    {
+      "engine": "firefox",
+      "version": "150.0.2",
+      "headless": true,
+      "executable": "firefox.exe",
+      "executableSha256": "960a9a013187e337fc03b685ec8bed803791033620985e99fa66438b4fcd6c80",
+      "states": [
+        {
+          "stage": "loading",
+          "observed": {
+            "next": "\u2014",
+            "left": "Prayer times unavailable",
+            "rows": 6,
+            "times": "Fajr\u2014Sunrise\u2014Dhuhr\u2014Asr\u2014Maghrib\u2014Isha\u2014",
+            "date": "Gregorian date unavailable",
+            "hijri": "Hijri date unavailable",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 0,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T22:00:00.000Z",
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              }
+            ],
+            "unexpected": [],
+            "storage": [],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:35.68|139.69|f",
+                "value": null,
+                "realElapsedMs": 335
+              },
+              {
+                "operation": "get",
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": null,
+                "realElapsedMs": 345
+              }
+            ],
+            "pending": [
+              "bootstrap:1"
+            ],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              }
+            ]
+          },
+          "screenshot": "firefox-loading.png",
+          "pngSha256": "d553d165b172312d6a6963a04e1de9f6dc73ba0f14f4aaa169008ede56149b9c"
+        },
+        {
+          "stage": "corrected-request",
+          "observed": {
+            "next": "\u2014",
+            "left": "Prayer times unavailable",
+            "rows": 6,
+            "times": "Fajr\u2014Sunrise\u2014Dhuhr\u2014Asr\u2014Maghrib\u2014Isha\u2014",
+            "date": "Gregorian date unavailable",
+            "hijri": "Hijri date unavailable",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 0,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T22:00:00.000Z",
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "corrected",
+                "occurrence": 1
+              }
+            ],
+            "unexpected": [],
+            "storage": [],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:35.68|139.69|f",
+                "value": null,
+                "realElapsedMs": 335
+              },
+              {
+                "operation": "get",
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": null,
+                "realElapsedMs": 345
+              }
+            ],
+            "pending": [
+              "corrected:1"
+            ],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "release",
+                "realElapsedMs": 970,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "corrected",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              }
+            ]
+          },
+          "screenshot": "firefox-corrected-request.png",
+          "pngSha256": "d553d165b172312d6a6963a04e1de9f6dc73ba0f14f4aaa169008ede56149b9c"
+        },
+        {
+          "stage": "current",
+          "observed": {
+            "next": "12:00",
+            "left": "5h 0m left until Dhuhr",
+            "rows": 6,
+            "times": "Fajr05:00Sunrise06:00Dhuhr12:00Asr15:30Maghrib18:00Isha19:30",
+            "date": "2026-09-08CE",
+            "hijri": "\u06471448-02-20 | \ud83c\udf18 21",
+            "card": {
+              "width": 325,
+              "height": 530
+            },
+            "arcPaths": 7,
+            "browserTimezone": "America/New_York",
+            "fixtureUtc": "2026-09-07T22:00:00.000Z",
+            "requests": [
+              {
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "corrected",
+                "occurrence": 1
+              },
+              {
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/09-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "realElapsedMs": 1161,
+                "wallUtcMs": 1788818400000,
+                "owner": null,
+                "cooldown": null,
+                "rule": "prefetch",
+                "occurrence": 1
+              }
+            ],
+            "unexpected": [],
+            "storage": [
+              {
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": "{\"date\":\"08-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"08-09-2026\",\"day\":\"08\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"20-02-1448\",\"day\":\"20\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"Asia/Tokyo\"}}}"
+              }
+            ],
+            "storageLog": [
+              {
+                "operation": "get",
+                "key": "salahwx:35.68|139.69|f",
+                "value": null,
+                "realElapsedMs": 335
+              },
+              {
+                "operation": "get",
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": null,
+                "realElapsedMs": 345
+              },
+              {
+                "operation": "set",
+                "key": "salah:35.68|139.69|America/New_York|2|0",
+                "value": "{\"date\":\"08-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"08-09-2026\",\"day\":\"08\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"20-02-1448\",\"day\":\"20\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"Asia/Tokyo\"}}}",
+                "denied": false,
+                "realElapsedMs": 1148
+              }
+            ],
+            "pending": [],
+            "events": [
+              {
+                "type": "fetch",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "serial": 1,
+                "url": "https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=ms&timezone=America%2FNew_York",
+                "kind": "weather",
+                "owner": null,
+                "cooldown": null,
+                "rule": "weather-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 336,
+                "wallUtcMs": 1788818400000,
+                "serial": 2,
+                "url": "https://api.rainviewer.com/public/weather-maps.json",
+                "kind": "radar",
+                "owner": null,
+                "cooldown": null,
+                "rule": "radar-offline",
+                "occurrence": 1
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "serial": 3,
+                "url": "https://api.aladhan.com/v1/timings/07-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "bootstrap",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 346,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "release",
+                "realElapsedMs": 970,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "key": "bootstrap:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "serial": 4,
+                "url": "https://api.aladhan.com/v1/timings/08-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "corrected",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 971,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "release",
+                "realElapsedMs": 1146,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 1147,
+                "wallUtcMs": 1788818400000,
+                "key": "corrected:1"
+              },
+              {
+                "type": "fetch",
+                "realElapsedMs": 1161,
+                "wallUtcMs": 1788818400000,
+                "serial": 5,
+                "url": "https://api.aladhan.com/v1/timings/09-09-2026?latitude=35.68&longitude=139.69&method=2&school=0",
+                "kind": "prayer",
+                "owner": null,
+                "cooldown": null,
+                "rule": "prefetch",
+                "occurrence": 1
+              },
+              {
+                "type": "headers",
+                "realElapsedMs": 1161,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1",
+                "status": 200
+              },
+              {
+                "type": "json-start",
+                "realElapsedMs": 1302,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1"
+              },
+              {
+                "type": "body-hold",
+                "realElapsedMs": 1302,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1"
+              },
+              {
+                "type": "release",
+                "realElapsedMs": 1317,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1"
+              },
+              {
+                "type": "json-settle",
+                "realElapsedMs": 1318,
+                "wallUtcMs": 1788818400000,
+                "key": "prefetch:1"
+              }
+            ]
+          },
+          "screenshot": "firefox-current.png",
+          "pngSha256": "62c1fc097bf943e6fb6bee659970f8886e650fc79870ff1abd5ee80d434e5f69"
+        }
+      ],
+      "pageErrors": [],
+      "url": "https://theislampill.github.io/salah_widget/",
+      "httpStatus": 200,
+      "sourceSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+      "sourceExact": true,
+      "status": "PASS_POST_DELIVERY_PUBLIC_CONSUMER"
+    }
+  ],
+  "scope": "Actual deployed root in disposable headless Chromium/Firefox with accepted omitted-zone22 controlled ingress. Native timers/animation unchanged. Public loading, corrected-request hold and current endpoints plus request/date/card receipts confirm delivery. These endpoint screenshots do not replace the separately qualified original first-current videos or qualify new motion/Moon/whole-scene startup."
+}
