@@ -40,6 +40,14 @@ is retained without product-defect or mutation-kill credit.
 
 ## Native evidence
 
+The raw `native/` recordings and traces are retained byte-for-byte in the
+[immutable Git evidence tree](https://github.com/theislampill/salah_widget/tree/2f9a5b82cd83e3ae7b994f110b58efc92bbb46a6/docs/rlgwo-execution/20261014/R000C/native)
+and excluded only from the Pages payload. Resolve `native/...` paths in the case,
+manifest and archive-map records beneath that tree; apply the existing `.json.xz`
+mapping below. The [complete immutable packet](https://github.com/theislampill/salah_widget/tree/2f9a5b82cd83e3ae7b994f110b58efc92bbb46a6/docs/rlgwo-execution/20261014/R000C)
+preserves the original relative paths, reviews, bytes and dispositions. This
+publication-membership change does not alter any qualification or certificate.
+
 [cases.json](cases.json) accounts for every selected, rejected and incomplete
 acquisition. [fixture-review.json](fixture-review.json) binds canonical inputs,
 all preserved driver/packet versions, original receipt/video hashes and browser

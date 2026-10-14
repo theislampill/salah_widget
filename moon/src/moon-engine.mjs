@@ -72,16 +72,21 @@ class MoonEngine{
   if(!e.init_assets(ptrs[0],manifest.assets.dem.shape[1],manifest.assets.dem.shape[0],ptrs[1],manifest.assets.colour.shape[1],manifest.assets.colour.shape[0]))throw new Error('Moon numeric asset admission');
   const engine=new MoonEngine();engine.e=e;engine.p=e.alloc_buffer(15*8);engine.cameraKey=null;engine.manifestIdentity=await digestBytes(new TextEncoder().encode(JSON.stringify(manifest)));engine.maskPointer=e.alloc_buffer(768*768);engine.lightKey=null;engine.active=false;return engine;
  }
- async render(scene,{radial=8,azimuth=32,cancelled=()=>false,onProgress=()=>{},diagnostic=false,analytic=true,lightingMask=null,qualityFields=false}={}){
+ async render(scene,{radial=8,azimuth=32,cancelled=()=>false,onProgress=()=>{},diagnostic=false,analytic=true,lightingMask=null,qualityFields=false,rowOwner=null}={}){
   if(this.active)throw new Error('One owned Moon computation at a time');
   if(!Number.isInteger(radial)||!Number.isInteger(azimuth)||radial<1||radial>64||azimuth<4||azimuth>256||radial*azimuth>8192)throw new RangeError('Source quadrature');
   const s=admitScene(scene),e=this.e,start=performance.now();
-  const lightKey=JSON.stringify([s.size,s.basis,s.sun,s.earth,s.distance,s.extent]);
+  const rows=rowOwner??[0,s.size];
+  if(!Array.isArray(rows)||rows.length!==2||!Number.isInteger(rows[0])||!Number.isInteger(rows[1])||rows[0]<0||rows[1]>s.size||rows[0]>=rows[1])throw new RangeError('Moon row owner');
+  const [lo,hi]=rows;
+  const lightKey=JSON.stringify([s.size,s.basis,s.sun,s.earth,s.distance,s.extent,lo,hi]);
   if(lightingMask!==null&&(!(lightingMask instanceof Uint8Array)||lightingMask.length!==s.size*s.size||lightingMask.some(x=>x>3)||this.lightKey!==lightKey))throw new Error('Sparse source refinement requires the same admitted physical scene');
   if(lightingMask)new Uint8Array(e.memory.buffer,this.maskPointer,lightingMask.length).set(lightingMask);
   this.active=true;
   try{
-   const cameraKey=JSON.stringify([s.size,s.basis,s.distance,s.extent]);let arr=new Float64Array(e.memory.buffer,this.p,15);arr.set(s.basis);arr.set(s.sun,9);arr.set(s.earth,12);
+   // An owned half initializes only its own receivers. Bind both caches to that
+   // half; begin_scene zeroes all other rows before ownership can change.
+   const cameraKey=JSON.stringify([s.size,s.basis,s.distance,s.extent,lo,hi]);let arr=new Float64Array(e.memory.buffer,this.p,15);arr.set(s.basis);arr.set(s.sun,9);arr.set(s.earth,12);
    let reused=this.cameraKey===cameraKey;
    if(!reused){if(!e.begin_scene(s.size,this.p,this.p+72,this.p+96,s.distance,s.extent,1e-5,.002,.85,.31873105385527434,.266*Math.PI/180,radial,azimuth))throw new Error('Moon scene refused');this.cameraKey=null;}
    else if(!e.set_lights(this.p+72,this.p+96,radial,azimuth))throw new Error('Moon source refused');
@@ -91,33 +96,36 @@ class MoonEngine{
     stage==='camera'?e.camera_rows(first,count):(lightingMask?e.light_rows_selected(first,count,3,1,analytic?1:0,this.maskPointer):e.light_rows(first,count,3,1,analytic?1:0));
     if(performance.now()-lastYield>8){onProgress({stage,row:first+count,total:N});await pause();lastYield=performance.now();}
    };
-   if(!reused){for(let y=0;y<N;y+=4)await step('camera',y,Math.min(4,N-y));this.cameraKey=cameraKey;}
+   if(!reused){for(let y=lo;y<hi;y+=4)await step('camera',y,Math.min(4,hi-y));this.cameraKey=cameraKey;}
    const cameraMs=performance.now()-start;
-   for(let y=0;y<N;y++)await step('lighting',y,1);
+   for(let y=lo;y<hi;y++)await step('lighting',y,1);
    if(cancelled())throw new DOMException('Superseded Moon job','AbortError');
    this.lightKey=lightKey;
    const litMs=performance.now()-start-cameraMs,pix=new Float64Array(e.memory.buffer,e.get_pixels(),N*N*24),counters=Array.from(new Float64Array(e.memory.buffer,e.get_counters(),8));
    if(counters[7]>0)throw new Error('Unresolved lunar outer contour; current legacy fallback required');
    const solar=new Float32Array(N*N*3),earth=new Float32Array(N*N*3),coverage=new Float64Array(N*N);let known=0,unknown=0,shadowed=0;
-   for(let i=0;i<N*N;i++){
+   for(let i=lo*N;i<hi*N;i++){
     const p=i*24;coverage[i]=pix[p+17];if(pix[p+18]===1)known++;if(pix[p+18]===2)unknown++;
     if(pix[p+14]>1e-8&&pix[p+12]<pix[p+14]*.01)shadowed++;
     for(let k=0;k<3;k++){solar[3*i+k]=pix[p+6+k]*pix[p+12]*e.material_gain();earth[3*i+k]=pix[p+6+k]*pix[p+13]*e.material_gain();}
    }
-   const display=renderSurfaceFrame({width:N,height:N,solar,earth,coverage,profile:s.profile,outSize:s.outSize,scale:N/(s.diameter*s.extent),centreX:N/2,centreY:N/2});
-   const rgba=new Uint8ClampedArray(s.outSize*s.outSize*4);
-   for(let i=0;i<display.coverage.length;i++){for(let k=0;k<3;k++)rgba[4*i+k]=Math.floor(display.straightSrgb[3*i+k]*255+.5);rgba[4*i+3]=Math.floor(display.coverage[i]*255+.5);}
+   // Row results are receiver fields, not independent display images. The pool
+   // filters and projects once after joining, including cross-boundary taps.
+   const display=rowOwner?null:renderSurfaceFrame({width:N,height:N,solar,earth,coverage,profile:s.profile,outSize:s.outSize,scale:N/(s.diameter*s.extent),centreX:N/2,centreY:N/2});
+   const rgba=display?new Uint8ClampedArray(s.outSize*s.outSize*4):undefined;
+   if(display)for(let i=0;i<display.coverage.length;i++){for(let k=0;k<3;k++)rgba[4*i+k]=Math.floor(display.straightSrgb[3*i+k]*255+.5);rgba[4*i+3]=Math.floor(display.coverage[i]*255+.5);}
    const result={rgba,width:s.outSize,height:s.outSize,scene:s,profileIdentity:await profileFingerprint(s.profile),physicalIdentity:await digestBytes(new TextEncoder().encode(JSON.stringify([this.manifestIdentity,s.basis,s.sun,s.earth,s.distance,N,s.extent,radial,azimuth]))),diagnostics:{kernel:'metric-radial-terrain-wasm-mb1',cameraReused:reused,cameraMs,lightingMs:litMs,totalMs:performance.now()-start,knownSurfaceSamples:known,unresolvedShading:unknown,unresolvedContour:counters[7],shadowedFacingSamples:shadowed,sourceSamples:radial*azimuth,analyticClearSun:analytic,analyticSamples:counters[3],shadowRays:counters[2],blockerWitnesses:counters[4],memoryBytes:e.memory.buffer.byteLength,model:'V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy'}};
+   result.diagnostics.rowOwner=[lo,hi];
    if(qualityFields){
     const receiverCodes=new Float32Array(N*N*3),ambiguous=new Uint8Array(N*N),surfaceLinear=new Float32Array(N*N*3);
-    for(let i=0;i<N*N;i++){
+    for(let i=lo*N;i<hi*N;i++){
      const c=mapSurfaceRgb(solar.subarray(3*i,3*i+3),earth.subarray(3*i,3*i+3),s.profile);
      for(let k=0;k<3;k++){receiverCodes[3*i+k]=encodeSrgb(c[k])*255;surfaceLinear[3*i+k]=c[k]*coverage[i];}
      const p=i*24;ambiguous[i]=((pix[p+20]===2&&pix[p+14]>1e-12)?1:0)|((pix[p+21]===2&&pix[p+13]+pix[p+16]>1e-15)?2:0);
     }Object.assign(result,{receiverCodes,ambiguous,surfaceLinear,surfaceCoverage:new Float32Array(coverage),surfaceSize:N,surfaceExtent:s.extent});
-    result.qualityImages=[projectSurfaceCodes({size:N,linear:surfaceLinear,coverage,extent:s.extent},312),projectSurfaceCodes({size:N,linear:surfaceLinear,coverage,extent:s.extent},312,[.37,-.21])];
+    if(!rowOwner)result.qualityImages=[projectSurfaceCodes({size:N,linear:surfaceLinear,coverage,extent:s.extent},312),projectSurfaceCodes({size:N,linear:surfaceLinear,coverage,extent:s.extent},312,[.37,-.21])];
    }
-   if(diagnostic)Object.assign(result,{solar,earth,coverage,...(diagnostic==='fields'?{}:{pixels:pix.slice()}),displayLinear:display.premultipliedLinear});
+   if(diagnostic)Object.assign(result,{solar,earth,coverage,...(diagnostic==='fields'?{}:{pixels:pix.slice()}),displayLinear:display?.premultipliedLinear});
    return result;
   }catch(error){this.lightKey=null;throw error;}finally{this.active=false;}
  }
