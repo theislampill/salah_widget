@@ -136,6 +136,7 @@ def main(argv=None):
     p.add_argument("--cases",type=Path,required=True)
     p.add_argument("--output",type=Path,required=True)
     p.add_argument("--validate-only",action="store_true")
+    p.add_argument("--video-only",action="store_true",help="Avoid screenshot-induced compositor changes; extract stills from retained native video afterward")
     p.add_argument("--case-id",action="append")
     p.add_argument("--capacity-lease",type=Path)
     args=p.parse_args(argv)
@@ -251,17 +252,42 @@ def main(argv=None):
                         row["checkpoint"]=action["name"];trace["snapshots"].append(row)
                         if kind=="capture":
                             before=frame.evaluate("window.__prayerFixture.ordinal")
-                            # Page clip avoids locator.screenshot's temporary viewport resize,
-                            # which otherwise also changes the recorded native video.
-                            clip=frame.locator(action.get("selector",".c")).bounding_box()
-                            page.screenshot(path=str(case_output/(action["name"]+".png")),clip=clip)
+                            # Even page.screenshot(clip=...) changes recorded compositor
+                            # dimensions in these engines. Keep the native viewport intact;
+                            # retain the requested bounds for optional offline image crops.
+                            bounds=frame.locator(action.get("selector",".c")).bounding_box()
+                            if not args.video_only:
+                                page.screenshot(path=str(case_output/(action["name"]+".png")))
                             after=frame.evaluate("window.__prayerFixture.ordinal")
-                            dump(case_output/(action["name"]+"-presentation.json"),{"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"]})
+                            dump(case_output/(action["name"]+"-presentation.json"),{"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"],"capture":"native-video-only" if args.video_only else "native-full-viewport","requestedSelector":action.get("selector",".c"),"requestedBounds":bounds,"viewport":page.viewport_size})
+                            if action.get("preservation"):
+                                # Separate warm-preservation checkpoint, never a first-prayer
+                                # observer. The existing lunar diagnostic may admit a pending
+                                # preview; retain the pre/post visible surface to expose that.
+                                preservation=frame.evaluate("""(()=>{
+                                  const photo=document.querySelector('.mphoto'),card=document.querySelector('.c');
+                                  const before={href:photo?.getAttribute('href'),classes:card?.className};
+                                  const state=window.SalahMoonRuntime?.state;
+                                  return {wallUtcMs:Date.now(),realElapsedMs:performance.now()-window.__prayerFixture.started,
+                                    native:window.SalahMoonHost?.capture(),state,consumed:prayerCopy(_lastMoonPaint),
+                                    location:{lat,lon,tz},dpr:devicePixelRatio,
+                                    motion:{preference:matchMedia('(prefers-reduced-motion: reduce)').matches,full:MOTIONFULL,reduced:isMotionReduced()},
+                                    presentationCss:Object.fromEntries(['--moongrp','--moonfeat','--moonbeam'].map(k=>[k,getComputedStyle(card).getPropertyValue(k)])),
+                                    before,after:{href:photo?.getAttribute('href'),classes:card?.className},
+                                    geometry:prayerDom('.mphoto').geometry};
+                                })()""")
+                                dump(case_output/(action["name"]+"-preservation.json"),preservation)
                             if action.get("firstRender") and not (before==after==row["renderOrdinal"]):
                                 # Preserve the failed still association. Continue collecting the
                                 # native video and original assertions; this is not a first-frame PASS.
                                 trace["captureMismatches"].append({"capture":action["name"],"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"]})
                                 if action["name"]!="first-current":raise AssertionError("first-render crop crossed another product render")
+                if args.video_only:
+                    # Completed DOM writes can precede the recorder's next frame.
+                    # Keep observing through native presentation before closing;
+                    # do not advance the fixture clock or call product rendering.
+                    page.wait_for_timeout(1000)
+                    trace["nativePresentationTailMs"]=1000
                 raw=frame.evaluate("(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,resourceTiming:f.resourceTiming(),fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight}))}}})()")
                 trace["checkpointSnapshots"]=trace["snapshots"];trace["snapshots"]=raw["snapshots"]+trace["checkpointSnapshots"];trace.update({key:value for key,value in raw.items() if key!="snapshots"});trace["pageErrors"]=errors
                 trace["nativeImageReceipts"]=image_receipts
@@ -272,7 +298,8 @@ def main(argv=None):
             trace["failure"]=repr(error)
             try:
                 trace["rawOnFailure"]=frame.evaluate("(()=>{const f=window.__prayerFixture;return {events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,unexpected:f.unexpected}})()")
-                frame.locator(".c").screenshot(path=str(case_output/"failure.png"))
+                if not args.video_only:
+                    page.screenshot(path=str(case_output/"failure.png"))
             except Exception as capture_error:trace["failureCapture"]=repr(capture_error)
         finally:
             dump(case_output/"trace.json",trace)
