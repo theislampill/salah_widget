@@ -242,8 +242,10 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   then displays hours and whole minutes at one hour or more, whole minutes at one
   minute or more, and seconds below one minute.
 - **Progress bar** showing how far you are through the current interval.
-- **Time-zone correct** — the time zone is resolved from the coordinates, so the times and
-  countdown always reflect the *location's* clock, no matter where you view the widget.
+- **Time-zone correct** — a supplied `tz` is an initial hint. Valid selected-cache or
+  prayer-provider metadata resolves the location's time zone; a timetable is accepted
+  as current only for that zone's civil date at adoption. The times and countdown
+  reflect the *location's* clock, no matter where you view the widget.
   If the prayer endpoint is nonexistent, ambiguous or otherwise unsupported, or
   required next-day data is missing or for the wrong day, the next-time field shows
   **—** and the countdown reads **Countdown unavailable**. The valid current-day
@@ -256,6 +258,11 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   Valid current data survives a failed refresh or denied persistence. Existing
   `salah:lat|lon|_cacheTz|method|school` bytes remain compatible without scanning,
   purging or migration; this is not an offline-application guarantee.
+  The selected legacy key retains the configuration's initial zone component even
+  after the location zone resolves. A zone-free key is not a replacement for it.
+  With no usable cached zone, boot may request the hint's day first. Valid metadata
+  can then require one corrected current-day request; the bootstrap day's record
+  cannot be displayed as current for a different resolved civil date.
 - **Invalid prayer records** — Fajr, Sunrise, Dhuhr, Asr, Maghrib and Isha all
   require valid clocks, a matching Gregorian date and a usable IANA time zone.
   Malformed records and unsuccessful or contradictory provider responses are
@@ -277,6 +284,10 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   eligible opportunity starts one operation without background or catch-up guarantees.
   Real elapsed eligibility is independent of `simTime`, `timeScale` and wall-clock
   correction. The retained `Date.now()` fallback is not claimed monotonic.
+  Day rollover and settings changes recheck the response's day and request owner
+  before adoption. If the day moves again during correction, the original operation
+  settles without another correction; existing bounded recovery remains eligible.
+  Accepted changes mark the prayer presentation dirty for the next visible render.
 - **Weather retry** — fetch plus JSON body consumption shares one 10-second application
   attempt. A radar manifest fetch plus JSON body shares a separate 10-second
   attempt; once accepted, a new 10-second Image attempt covers dispatch and
