@@ -29,9 +29,15 @@ assert len(consumer['results'])==2
 assert all(len(r['states'])==5 and all(r['sequenceChecks'].values()) for r in consumer['results'])
 assert all(all(s['checks'].values()) for r in consumer['results'] for s in r['states'])
 matrix=read(Q/'acceptance-matrix.json');candidate=read(Q/'reviewed-candidate-certificate.json')
+stored={r['path'] for r in read(Q/'manifest.json')['files']}|{'manifest.json'}
+archive={r['originalPath']:r for r in read(Q/'archive-map.json')['files']}
+def public_evidence_path(original):
+ path=original if original in stored else archive[original]['path']
+ assert path in stored,path
+ return VP+path
 rows=copy.deepcopy(matrix['rows'])
 for row in rows:
- row['qualificationEvidence']=[VP+p for p in row.pop('evidence')]
+ row['qualificationEvidence']=[public_evidence_path(p) for p in row.pop('evidence')]
  if row['id']=='B18':
   row['qualificationStageStatus']=row['status']
   row['status']='JOINED_REVIEW_PUBLIC_HEAD_AUTHORITY_MERGE_AND_DELIVERY_ACCEPTED'
