@@ -120,6 +120,8 @@ function instrument(source,spec){
   'wall-countdown':['leftMin, nowEpoch, nextEpoch,','leftMin:nextMin-nowMin, nowEpoch, nextEpoch,'],
   'sec-only':['if(sec!==_lastSec || _renderDirty)','if(sec!==_lastSec)'],
   'epoch-plus24':['const nextEpoch=nextDay ?','const nextEpoch=tomorrowFlag && nextDay && currentDay ? epochForTzTime(currentDay.y,currentDay.mo,currentDay.d,nextHour,nextMinute,nextZone)+86400000 : nextDay ?'],
+  'early-cache-filter':['const cached=readPrayerCache(op.cacheKey);','const rawCached=readPrayerCache(op.cacheKey); const cached=rawCached && rawCached.date===prayerCivilDay() ? rawCached : null;'],
+  'removed-day-check':['if(day!==requested){','if(false){'],
   'unconditional-finally':['if(!requestEligible(op)) return false;\n  _requestSlots[op.kind]=null; return true;','_requestSlots[op.kind]=null; return true;']
  };
  if(spec.variant&&spec.variant!=='no-abort'){

@@ -116,22 +116,35 @@ independent time loops (a convention, not an enforced boundary).
   `renderMoon` must run before `atmosphere` in a tick**, so `atmosphere` is "pure" only given that ordering.
 - **`cloudState`** (mutated in `paint` ease-vs-snap branch, read in `paintClouds`): the no-slideshow continuity
   invariant lives here — easy to break with a careless reseed.
-- **`tz`** (`let`, reassigned from the Aladhan response): `cacheKey`/`wxKey` are captured once at load, so a wrong
-  URL `tz` hint causes a benign one-time cache miss + a small clock re-anchor near t0.
+- **`tz`** is an initial hint until admitted selected-cache or guarded provider metadata resolves the location
+  zone. `loadPrayerData` validates selected cache metadata **before** filtering by the resolved civil day;
+  valid wrong-day metadata may resolve the zone without qualifying that timetable as current. `_cacheTz`
+  retains the configuration's initial zone for the legacy prayer key; resolving `tz` does not migrate, scan
+  or delete cache bytes. Each operation captures its own configuration, generation and cache keys, rather
+  than capturing request identity once for the widget's lifetime.
 - **Reduced motion** — the two duplicated JS `matchMedia` checks are unified behind one **live** helper
   `isMotionReduced()` (`paint`'s `_REDUCED` and the loop's `_RM` both call it; `?motion=full` overrides). The CSS
   `@media (prefers-reduced-motion)` blocks read the SAME native signal gated by the `.motionfull` class — they are
   the live native signal, not duplicated logic. One decision, consulted by JS and CSS.
 
 ## Control-flow (CFG) findings
-- **Boot:** DOM scaffold builds before data; a hard `if(!lat||!lon){ showError; return }` means **the rAF loop
-  never starts without coordinates**. Cached times render first so the card isn't blank during the prayer fetch.
-- **Prayer fetch has three call-sites with three error policies:** boot (`await`, shows error if no `today`),
-  tomorrow-prefetch (swallowed), and **day-rollover (swallowed, no retry, no stale signal)** — see Remaining risks.
+- **Boot:** DOM scaffold builds before data. The selected legacy cache is admitted before its zone metadata
+  is used; only a record matching the resolved location's current civil day may paint current before refresh.
+  Wrong-day or unusable cache cannot provide a current timetable; unavailable output retains the six rows.
+- **Prayer fetch:** the current loader, tomorrow prefetch and day rollover share owned requests and classified
+  adoption. With no usable cached zone, the loader requests the hint-derived day, resolves valid metadata and
+  makes at most one corrected-day request if the actual civil date differs. Bootstrap, correction and retries
+  share the three-attempt budget (900/1800 ms backoffs, 10000 ms full fetch/body deadline per attempt).
+  Settlement rechecks generation, ownership and civil day; an obsolete response cannot write another
+  configuration's state or cache. If the day changes again, the operation settles without recursive correction.
+  Missing-current and failed-prefetch recovery use the existing 60-second operation-start cadence, with no
+  overlapping owner. A stale retained record keeps its actual date; it is never relabelled current.
 - **`fetchWeather` guards, in order:** `SIM.wx` → reentrancy (`wxBusy`) → 15-min freshness (needs *both*
   `weather` and `weatherTrack`) → 60-s try-throttle; `finally` always clears `wxBusy`; network/parse errors are
   swallowed and the last good state is held (Basically Available).
-- **Render loop:** `render()` runs once per sim-second; the cloud canvas repaints ~13 fps; reduced-motion paints
+- **Render loop:** `render()` runs on a changed sim-second **or a dirty prayer presentation**; adoption updates
+  zone, record, accepted day and stale status together before marking the frame dirty. The next eligible
+  visible frame consumes that change, including frozen previews. The cloud canvas repaints ~13 fps; reduced-motion paints
   one frozen cloud frame; the loop stops entirely when hidden/offscreen.
 
 ## Data-lineage (SSA) — classification of key values
