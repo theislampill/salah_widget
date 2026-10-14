@@ -1,0 +1,60 @@
+# R0017 Moon readiness countermeasure
+
+The original smoke instrument could not execute its required Moon callbacks in
+Firefox within the existing eight-second scene deadline. The owner amendment
+permits the adjacent startup repair recorded here. The original failed attempts
+and independent BLOCKED assessment remain evidence; later results do not rewrite
+them.
+
+## Cause and change
+
+Both original terrain row workers computed the entire camera and first lighting
+pass, although the pool retained only half of each result. Fresh cold and warm
+documents remained late after successful source/asset delivery. Removing this
+duplicate work alone was insufficient for the waxing and waning scenes.
+
+The authored `moon-engine.mjs` now computes only validated owned rows, with the
+row bounds included in both camera and lighting cache identities. A change of
+ownership resets the camera allocation before reuse. The existing kernel remains
+unchanged. Per-worker display filtering and quality projections are omitted;
+those discarded intermediates are still computed globally after joining.
+
+The native pool uses four disjoint row owners. Every reply must have the correct
+scene, profile and row identity and valid complete field shapes. The pool joins
+material and diagnostics as well as illumination/coverage, then performs the
+existing full-frame filtering and adaptive quality decisions. Missing, foreign,
+malformed or cancelled work cannot authorize publication.
+
+This is a memory-for-latency tradeoff: measured summed WASM linear memory at the
+540-pixel receiver raster is 653,262,848 bytes, versus 326,631,424 bytes for the
+previous two-worker pool. These figures exclude asset copies, JavaScript buffers
+and other browser memory. Timings are scoped to the recorded Windows browsers
+and machine; they are not universal device-performance guarantees.
+
+## Preservation and evidence
+
+Kernel/WASM, DEM/colour assets, V5 mapping/profile, phase and geometry, native
+surface adoption/currentness, opacity, detail composition, prayer/weather/config,
+and the smoke page/fixture remain byte-identical to the reviewed base. Generated
+host, worker, offline entry and build manifest come from `tools/build_native.py`.
+Frozen V1 is separately verified.
+
+The original 30 named callbacks, 141 expected assertions and 4/8/3-second limits
+remain intact. Real-WASM comparisons cover both orientations, near-new through
+full phases, two/four owners, odd raster boundaries, sparse refinement, calendar
+output and counters. Recovery tests interrupt actual camera/lighting work; fourth
+reply, cancellation and partial-boot controls retain fail-closed ownership.
+
+Chromium and Firefox each complete all 30 callbacks and 141 assertions under
+both native motion preferences. The slowest accepted Moon stage is 7,768 ms.
+An earlier attempt on the same final runtime remains INCOMPLETE at 29/30 because
+the live-synthetic installation case missed readiness. Its cause is unproven;
+the later passing runs do not establish a reliability guarantee or rewrite it.
+
+The [acceptance ledger](R0017_ACCEPTANCE.json), [raw evidence](R0017_EVIDENCE.zip),
+[file manifest](R0017_EVIDENCE_MANIFEST.json) and
+[independent review](R0017_REVIEW.json) bind runtime/browser identities, native
+results, original pixels and retained failures. Controlled fixed-clock smoke is
+not normal-live M0 or general appearance qualification. Public Pages execution
+and the issue certificate remain separate post-merge requirements; this document
+grants no merge or closure authority.
