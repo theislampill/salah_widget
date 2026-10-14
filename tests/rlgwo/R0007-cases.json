@@ -1,0 +1,4530 @@
+{
+  "schema": "remaining-prayer-cases/v1",
+  "issue": 7,
+  "sourceCommit": "3c4221c518fd12e50eca73b89744be3c0db39c34",
+  "specCommit": "21e7a84365fae37a86cae5c7d5e41008c0adc53f",
+  "sourceFiles": {
+    "src/native/index.html": "b3094034d50bf0867a0f62c9f3e86a61f132c0126bed2a3fcdbd1bde38bc4dbd",
+    "index.html": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+    "offline.html": "40d79b23e42ed776eb6a3cdc3329e58f740cbe44220c4883dcbff245e4c7c0c3",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "tools/cp9/browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0"
+  },
+  "cases": [
+    {
+      "caseId": "R0007-spring-24",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-03-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='08-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "08-03-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 150,
+            "render/acceptedUtcMs": 1772951400000,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "2h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A04"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T06:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 150,
+        "duration": "2h 30m"
+      },
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-spring-12",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=12&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-03-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='08-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "08-03-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "5:00 AM",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 150,
+            "render/acceptedUtcMs": 1772951400000,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "2h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A04"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T06:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 150,
+        "duration": "2h 30m"
+      },
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-fall-24",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-11-01T05:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "01-11-2026",
+                  "day": "01",
+                  "month": {
+                    "number": 11,
+                    "en": "November"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "01-11-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "01-11-2026",
+                  "day": "01",
+                  "month": {
+                    "number": 11,
+                    "en": "November"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='01-11-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "01-11-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 270,
+            "render/acceptedUtcMs": 1793511000000,
+            "render/nextEpoch": 1793527200000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "4h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A04"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-11-01T05:30:00Z",
+        "target": "2026-11-01T10:00:00Z",
+        "leftMin": 270,
+        "duration": "4h 30m"
+      },
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-fall-12",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=12&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-11-01T05:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "01-11-2026",
+                  "day": "01",
+                  "month": {
+                    "number": 11,
+                    "en": "November"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "01-11-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "01-11-2026",
+                  "day": "01",
+                  "month": {
+                    "number": 11,
+                    "en": "November"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='01-11-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "01-11-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "5:00 AM",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 270,
+            "render/acceptedUtcMs": 1793511000000,
+            "render/nextEpoch": 1793527200000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "4h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A04"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-11-01T05:30:00Z",
+        "target": "2026-11-01T10:00:00Z",
+        "leftMin": 270,
+        "duration": "4h 30m"
+      },
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-ordinary-24",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T05:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 210,
+            "render/acceptedUtcMs": 1788759000000,
+            "render/nextEpoch": 1788771600000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "3h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A04"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-09-07T05:30:00Z",
+        "target": "2026-09-07T09:00:00Z",
+        "leftMin": 210,
+        "duration": "3h 30m"
+      },
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-ordinary-12",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=12&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T05:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "5:00 AM",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 210,
+            "render/acceptedUtcMs": 1788759000000,
+            "render/nextEpoch": 1788771600000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "3h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A04"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-09-07T05:30:00Z",
+        "target": "2026-09-07T09:00:00Z",
+        "leftMin": 210,
+        "duration": "3h 30m"
+      },
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-overnight-held-recovery24",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=23%3A30",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "07-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "08-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "failure": false
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.left'].text==='Countdown unavailable')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "tomorrow"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "checkpoint",
+          "name": "matching-tomorrow-settled",
+          "readOnly": true
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.nt'].text==='05:00')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.dom['.nt'].text==='05:00'"
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": "07-03-2026",
+            "dom/.nt/text": "\u2014",
+            "dom/.left/text": "Countdown unavailable",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "dom/.nt/text": "05:00",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "render/leftMin": 270,
+            "render/acceptedUtcMs": 1772944200000,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "4h 30m"
+          }
+        },
+        {
+          "stage": "matching-tomorrow-settled",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "wallUtcMs": 1772944200000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A05"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable today rows/date/arc",
+        "no clock/manual render calls",
+        "first dirty frame at identical04:30Z epoch",
+        "unsupported gap/fold unavailable, not automatically replaced"
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T04:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 270,
+        "duration": "4h 30m",
+        "sameEpochBeforeAfter": true
+      }
+    },
+    {
+      "caseId": "R0007-overnight-held-recovery12",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=12&tz=America%2FNew_York&simTime=23%3A30",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "07-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "08-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "failure": false
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.left'].text==='Countdown unavailable')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "tomorrow"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "checkpoint",
+          "name": "matching-tomorrow-settled",
+          "readOnly": true
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.nt'].text==='5:00 AM')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.dom['.nt'].text==='5:00 AM'"
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": "07-03-2026",
+            "dom/.nt/text": "\u2014",
+            "dom/.left/text": "Countdown unavailable",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "dom/.nt/text": "5:00 AM",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "render/leftMin": 270,
+            "render/acceptedUtcMs": 1772944200000,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "4h 30m"
+          }
+        },
+        {
+          "stage": "matching-tomorrow-settled",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "wallUtcMs": 1772944200000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A05"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable today rows/date/arc",
+        "no clock/manual render calls",
+        "first dirty frame at identical04:30Z epoch",
+        "unsupported gap/fold unavailable, not automatically replaced"
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T04:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 270,
+        "duration": "4h 30m",
+        "sameEpochBeforeAfter": true
+      }
+    },
+    {
+      "caseId": "R0007-overnight-missing",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=23%3A30",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "07-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "08-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": false,
+          "phase": "body",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.left'].text==='Countdown unavailable')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": "07-03-2026",
+            "dom/.nt/text": "\u2014",
+            "dom/.left/text": "Countdown unavailable",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A05"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable today rows/date/arc",
+        "no clock/manual render calls",
+        "first dirty frame at identical04:30Z epoch",
+        "unsupported gap/fold unavailable, not automatically replaced"
+      ]
+    },
+    {
+      "caseId": "R0007-overnight-wrong-day",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=23%3A30",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "07-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "08-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": false,
+          "phase": "body",
+          "failure": false
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.left'].text==='Countdown unavailable')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": "07-03-2026",
+            "dom/.nt/text": "\u2014",
+            "dom/.left/text": "Countdown unavailable",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A05"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable today rows/date/arc",
+        "no clock/manual render calls",
+        "first dirty frame at identical04:30Z epoch",
+        "unsupported gap/fold unavailable, not automatically replaced"
+      ]
+    },
+    {
+      "caseId": "R0007-overnight-gap",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=23%3A30",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "07-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "08-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "02:30",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": false,
+          "phase": "body",
+          "failure": false
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.left'].text==='Countdown unavailable')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": "07-03-2026",
+            "dom/.nt/text": "\u2014",
+            "dom/.left/text": "Countdown unavailable",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A05"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable today rows/date/arc",
+        "no clock/manual render calls",
+        "first dirty frame at identical04:30Z epoch",
+        "unsupported gap/fold unavailable, not automatically replaced"
+      ]
+    },
+    {
+      "caseId": "R0007-overnight-fold",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=23%3A30",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-11-01T03:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "31-10-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "31-10-2026",
+                  "day": "31",
+                  "month": {
+                    "number": 10,
+                    "en": "October"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "01-11-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "01:30",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "01-11-2026",
+                  "day": "01",
+                  "month": {
+                    "number": 11,
+                    "en": "November"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": false,
+          "phase": "body",
+          "failure": false
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='31-10-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.left'].text==='Countdown unavailable')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": "31-10-2026",
+            "dom/.nt/text": "\u2014",
+            "dom/.left/text": "Countdown unavailable",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A05"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable today rows/date/arc",
+        "no clock/manual render calls",
+        "first dirty frame at identical04:30Z epoch",
+        "unsupported gap/fold unavailable, not automatically replaced"
+      ]
+    },
+    {
+      "caseId": "R0007-spring-24-wall-countdown",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-03-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='08-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "08-03-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 150,
+            "render/acceptedUtcMs": 1772951400000,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "2h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A01"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T06:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 150,
+        "duration": "2h 30m"
+      },
+      "variant": "wall-countdown",
+      "expectedFailure": true,
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-fall-24-wall-countdown",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-11-01T05:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "01-11-2026",
+                  "day": "01",
+                  "month": {
+                    "number": 11,
+                    "en": "November"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "01-11-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "01-11-2026",
+                  "day": "01",
+                  "month": {
+                    "number": 11,
+                    "en": "November"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='01-11-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "01-11-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 270,
+            "render/acceptedUtcMs": 1793511000000,
+            "render/nextEpoch": 1793527200000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "4h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A01"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-11-01T05:30:00Z",
+        "target": "2026-11-01T10:00:00Z",
+        "leftMin": 270,
+        "duration": "4h 30m"
+      },
+      "variant": "wall-countdown",
+      "expectedFailure": true,
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-ordinary-24-wall-countdown",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T05:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 210,
+            "render/acceptedUtcMs": 1788759000000,
+            "render/nextEpoch": 1788771600000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "3h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A01"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-09-07T05:30:00Z",
+        "target": "2026-09-07T09:00:00Z",
+        "leftMin": 210,
+        "duration": "3h 30m"
+      },
+      "variant": "wall-countdown",
+      "expectedFailure": false,
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-overnight-held-recovery24-sec-only",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=23%3A30",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "07-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "08-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "failure": false
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.left'].text==='Countdown unavailable')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "tomorrow"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "checkpoint",
+          "name": "matching-tomorrow-settled",
+          "readOnly": true
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.nt'].text==='05:00')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.dom['.nt'].text==='05:00'"
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": "07-03-2026",
+            "dom/.nt/text": "\u2014",
+            "dom/.left/text": "Countdown unavailable",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "dom/.nt/text": "05:00",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "render/leftMin": 270,
+            "render/acceptedUtcMs": 1772944200000,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "4h 30m"
+          }
+        },
+        {
+          "stage": "matching-tomorrow-settled",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "wallUtcMs": 1772944200000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A06"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable today rows/date/arc",
+        "no clock/manual render calls",
+        "first dirty frame at identical04:30Z epoch",
+        "unsupported gap/fold unavailable, not automatically replaced"
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T04:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 270,
+        "duration": "4h 30m",
+        "sameEpochBeforeAfter": true
+      },
+      "variant": "sec-only",
+      "expectedFailure": true
+    },
+    {
+      "caseId": "R0007-overnight-held-recovery24-epoch-plus24",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=23%3A30",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "07-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "08-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "failure": false
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.left'].text==='Countdown unavailable')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "tomorrow"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "checkpoint",
+          "name": "matching-tomorrow-settled",
+          "readOnly": true
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.nt'].text==='05:00')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.dom['.nt'].text==='05:00'"
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": "07-03-2026",
+            "dom/.nt/text": "\u2014",
+            "dom/.left/text": "Countdown unavailable",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "dom/.nt/text": "05:00",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "render/leftMin": 270,
+            "render/acceptedUtcMs": 1772944200000,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "4h 30m"
+          }
+        },
+        {
+          "stage": "matching-tomorrow-settled",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false,
+            "wallUtcMs": 1772944200000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A06"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable today rows/date/arc",
+        "no clock/manual render calls",
+        "first dirty frame at identical04:30Z epoch",
+        "unsupported gap/fold unavailable, not automatically replaced"
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T04:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 270,
+        "duration": "4h 30m",
+        "sameEpochBeforeAfter": true
+      },
+      "variant": "epoch-plus24",
+      "expectedFailure": true
+    },
+    {
+      "caseId": "R0007-spring-24-offline",
+      "entry": "offline.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-03-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='08-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "08-03-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 150,
+            "render/acceptedUtcMs": 1772951400000,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "2h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A04",
+        "R0007-A07"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T06:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 150,
+        "duration": "2h 30m"
+      },
+      "iframe": false,
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-spring-24-iframe",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-03-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='08-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "08-03-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 150,
+            "render/acceptedUtcMs": 1772951400000,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "2h 30m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A04",
+        "R0007-A07"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T06:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 150,
+        "duration": "2h 30m"
+      },
+      "iframe": true,
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "DOC-duration-seconds58",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T08:59:01.600Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 0.9733333333333334,
+            "render/acceptedUtcMs": 1788771541600,
+            "render/nextEpoch": 1788771600000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "58s"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A03"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "Retain actual first completed render, footer/card PNG, source/fixture/environment bindings.",
+        "The 59600 and3599600 millisecond cases distinguish rounding before minute/hour decomposition.",
+        "Native performance/rAF/timers remain actual; no manual render call."
+      ],
+      "independentEndpoint": {
+        "now": "2026-09-07T08:59:01.600Z",
+        "target": "2026-09-07T09:00:00Z",
+        "remainingMilliseconds": 58400,
+        "durationLiteral": "58s",
+        "construction": "Producer clock input changes; no carried trace field or product state is seeded."
+      },
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "DOC-duration-round-to-minute",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T08:59:00.400Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 0.9933333333333333,
+            "render/acceptedUtcMs": 1788771540400,
+            "render/nextEpoch": 1788771600000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "1m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A03"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "Retain actual first completed render, footer/card PNG, source/fixture/environment bindings.",
+        "The 59600 and3599600 millisecond cases distinguish rounding before minute/hour decomposition.",
+        "Native performance/rAF/timers remain actual; no manual render call."
+      ],
+      "independentEndpoint": {
+        "now": "2026-09-07T08:59:00.400Z",
+        "target": "2026-09-07T09:00:00Z",
+        "remainingMilliseconds": 59600,
+        "durationLiteral": "1m",
+        "construction": "Producer clock input changes; no carried trace field or product state is seeded."
+      },
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "DOC-duration-round-to-hour",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T08:00:00.400Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "capture-current",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "times": 1,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "release",
+          "id": "capture-current"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "firstRender": false,
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/leftMin": 59.99333333333333,
+            "render/acceptedUtcMs": 1788768000400,
+            "render/nextEpoch": 1788771600000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.left/text": "1h 0m"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A03"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "Retain actual first completed render, footer/card PNG, source/fixture/environment bindings.",
+        "The 59600 and3599600 millisecond cases distinguish rounding before minute/hour decomposition.",
+        "Native performance/rAF/timers remain actual; no manual render call."
+      ],
+      "independentEndpoint": {
+        "now": "2026-09-07T08:00:00.400Z",
+        "target": "2026-09-07T09:00:00Z",
+        "remainingMilliseconds": 3599600,
+        "durationLiteral": "1h 0m",
+        "construction": "Producer clock input changes; no carried trace field or product state is seeded."
+      },
+      "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+    },
+    {
+      "caseId": "R0007-overnight-held-recovery-live24",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York",
+      "clockPolicy": {
+        "mode": "advancing",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "07-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "08-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "failure": false
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.left'].text==='Countdown unavailable')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "tomorrow"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.dom['.nt'].text==='05:00')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.dom['.nt'].text==='05:00'"
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": "07-03-2026",
+            "dom/.nt/text": "\u2014",
+            "dom/.left/text": "Countdown unavailable",
+            "clock/TIMESCALE": 1,
+            "clock/FOLLOW_WALL_CLOCK": true,
+            "clock/ADVANCING": false,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "dom/.nt/text": "05:00",
+            "clock/TIMESCALE": 1,
+            "clock/FOLLOW_WALL_CLOCK": true,
+            "clock/ADVANCING": false,
+            "render/nextEpoch": 1772960400000,
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "numberRange": {
+            "render/acceptedUtcMs": [
+              1772944200000,
+              1772944230000
+            ],
+            "render/leftMin": [
+              269.5,
+              270
+            ]
+          },
+          "regex": {
+            "dom/.left/text": "^4h (29|30)m left until Fajr$"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A05"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "Actual first recovered render/crop; live mode is distinct from frozen mode.",
+        "No fixture clock action or manual render; release only the controlled tomorrow body.",
+        "Raw UTC acceptance and target endpoint, readable native SVG/card; no motion qualification from this recovery case."
+      ],
+      "independentEndpoint": {
+        "initialNow": "2026-03-08T04:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "initialElapsedMinutes": 270,
+        "nativeAcceptedInstantWindowMs": [
+          1772944200000,
+          1772944230000
+        ],
+        "scope": "Actual elapsed fixture clock at 1x, no simTime/timeScale; native performance/rAF/timers unchanged. Ranges read retained consumer values after measurement."
+      }
+    }
+  ],
+  "nativeStatus": "RECIPE_ONLY_RESULTS_ARE_SEPARATE",
+  "retainedSharedPreservationPacket": {
+    "path": "R0007-preservation-cases.json",
+    "sha256": "493c0099770d36f6cfe3c481f48877e800017dabea4b1a4c20a255801405f9ca",
+    "caseIds": [
+      "shared-preservation-no-preference",
+      "shared-preservation-reduce",
+      "shared-preservation-reduce-full",
+      "R0007-warm-ashen-below-horizon"
+    ],
+    "disposition": "NO_NATIVE_CREDIT; source/input/environment/current CSS and Moon/motion equivalence require root reconciliation."
+  }
+}
