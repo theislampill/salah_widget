@@ -137,6 +137,19 @@ def audit(trace, case):
         warm = checkpoint(trace, 'warm-retained')
         require(warm['currentDay'] == day, 'valid memory blanked')
         if cid == 'R0002-cache-distinct-denied-write':
+            require(requests[0]['rule'] == 'healthy', 'current-day hold consumed by another request')
+            prefetch = [r for r in trace['requests'] if r['kind'] == 'prayer' and
+                        '/08-09-2026?' in r['url']]
+            require(len(prefetch) == 1 and prefetch[0]['rule'] == 'healthy-next',
+                    'prefetch/current rule identities conflated')
+            holds = [e for e in trace['events'] if e['type'] == 'body-hold' and e['key'] == 'healthy:1']
+            releases = [e for e in trace['events'] if e['type'] == 'release' and e['key'] == 'healthy:1']
+            require(len(holds) == len(releases) == 1 and
+                    releases[0]['realElapsedMs'] - holds[0]['realElapsedMs'] >= 750,
+                    'current body hold did not preserve the seed presentation interval')
+            require(all(s['today']['timings']['Fajr'] == '04:47' for s in current
+                        if s['realElapsedMs'] < releases[0]['realElapsedMs']),
+                    'new current data arrived before its body release')
             require(current[0]['today']['timings']['Fajr'] == '04:47' and
                     warm['today']['timings']['Fajr'] == '05:03', 'denied storage confused with admitted memory')
             timetable(warm, warm['today']['timings'])
