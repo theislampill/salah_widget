@@ -1,0 +1,194 @@
+{
+  "caseId": "R0007-fall-12",
+  "entry": "index.html",
+  "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=12&tz=America%2FNew_York",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-11-01T05:30:00Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "capture-current",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "01-11-2026",
+              "day": "01",
+              "month": {
+                "number": 11,
+                "en": "November"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "America/New_York"
+          }
+        }
+      },
+      "dateFromRequest": true,
+      "day": "01-11-2026",
+      "times": 1,
+      "hold": true,
+      "phase": "body"
+    },
+    {
+      "id": "healthy",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "01-11-2026",
+              "day": "01",
+              "month": {
+                "number": 11,
+                "en": "November"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "America/New_York"
+          }
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('capture-current:1')"
+    },
+    {
+      "type": "capture",
+      "name": "loading",
+      "readOnly": true
+    },
+    {
+      "type": "sleep",
+      "ms": 250
+    },
+    {
+      "type": "release",
+      "id": "capture-current"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='01-11-2026'&&s.render)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "first-current",
+      "firstRender": true,
+      "selector": ".c",
+      "readOnly": false,
+      "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+    },
+    {
+      "type": "capture",
+      "name": "actual-arc",
+      "firstRender": false,
+      "selector": ".arc",
+      "readOnly": false
+    }
+  ],
+  "expected": [
+    {
+      "firstCurrent": true,
+      "equals": {
+        "currentDay": "01-11-2026",
+        "timezone": "America/New_York"
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "first-current",
+      "equals": {
+        "dom/.nt/text": "5:00 AM",
+        "render/nextKey": "Fajr",
+        "render/nextTime": "05:00",
+        "render/leftMin": 270,
+        "render/acceptedUtcMs": 1793511000000,
+        "render/nextEpoch": 1793527200000,
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true,
+      "contains": {
+        "dom/.left/text": "4h 30m"
+      }
+    }
+  ],
+  "acceptanceIds": [
+    "R0007-A04"
+  ],
+  "status": "PREPARED_NOT_EXECUTED",
+  "reviewRequirements": [
+    "original first-frame crop",
+    "325x530 card/header/footer readable",
+    "exact source/input/environment binding"
+  ],
+  "independentEndpoint": {
+    "now": "2026-11-01T05:30:00Z",
+    "target": "2026-11-01T10:00:00Z",
+    "leftMin": 270,
+    "duration": "4h 30m"
+  },
+  "acquisition": "Native recording starts during the held current body. Earliest completed-render receipt and every intervening prayer surface are retained; first presented frame requires independent video review. No callback, timer, clock or product render is delayed by instrumentation."
+}
