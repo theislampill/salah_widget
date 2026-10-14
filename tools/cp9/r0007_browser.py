@@ -7,7 +7,7 @@ Native claims remain PARTIAL pending independent pixels/preservation review.
 import argparse, functools, hashlib, http.server, importlib.util, json, os
 import subprocess, sys, threading, time, base64, re, math
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
@@ -198,6 +198,21 @@ def main(argv=None):
                 browser=getattr(playwright,family).launch(**options)
                 context=browser.new_context(viewport={"width":370,"height":570},device_scale_factor=1,timezone_id="America/New_York",reduced_motion=case.get("motionPreference","no-preference"),record_video_dir=str(case_output/"video"),record_video_size={"width":370,"height":570})
                 page=context.new_page();errors=[];page.on("pageerror",lambda error:errors.append(str(error)))
+                if case.get('offline'):
+                    # The static local origin supplies the installed document/assets.
+                    # All other native network requests, including fonts, fail offline;
+                    # provider promises independently fail through the bound fixture.
+                    local_origin=('http',f'127.0.0.1:{server.server_port}')
+                    trace['nativeNetworkReceipts']=[]
+                    def offline_route(route):
+                        target=urlsplit(route.request.url)
+                        local=(target.scheme,target.netloc)==local_origin
+                        receipt={'url':route.request.url,'method':route.request.method,'resourceType':route.request.resource_type,'atMonotonic':time.monotonic(),'disposition':'same-origin-pass-through' if local else 'aborted-offline','returned':False}
+                        trace['nativeNetworkReceipts'].append(receipt)
+                        if local:route.continue_()
+                        else:route.abort('internetdisconnected')
+                        receipt['returned']=True
+                    page.route('**/*',offline_route)
                 image_pending={};image_receipts=[]
                 def image_route(route):
                     target=next((r for r in case.get("imageRules",[]) if r["pathContains"] in route.request.url),None)

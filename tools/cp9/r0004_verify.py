@@ -95,6 +95,18 @@ def audit(trace, case):
     if case.get('offline'):
         require(trace['storage'] == case['cacheSeeds'], 'offline legacy bytes changed')
         require(not writes, 'offline cache written')
+        receipts = trace.get('nativeNetworkReceipts', [])
+        documents = [r for r in receipts if r['resourceType'] == 'document']
+        require(len(documents) == 1, 'native offline network boundary not established')
+        document = urlparse(documents[0]['url'])
+        require(document.scheme == 'http' and document.hostname == '127.0.0.1', 'offline document origin not local')
+        local = document.scheme+'://'+document.netloc
+        for r in receipts:
+            url = urlparse(r['url'])
+            expected = 'same-origin-pass-through' if url.scheme+'://'+url.netloc == local else 'aborted-offline'
+            require(r['returned'] and r['disposition'] == expected, 'native external request escaped offline boundary')
+        require(all(r.get('failure') for r in case['responseRules']
+                    if r['kind'] in ('prayer', 'weather', 'radar')), 'offline provider input permits success')
 
     unavailable = cid.endswith(('cache-wrong', 'cache-zone-free', 'mutant-early-filter', 'mutant-day-check'))
     require(bool(current) != unavailable, 'expected first-current availability missing or fabricated')
