@@ -229,8 +229,16 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
 
 ## Features
 
-- **Live local weather** — current condition and temperature (from Open-Meteo) shown in
-  the header.
+- **Current model weather** — Open-Meteo condition and temperature in the header
+  are current model estimates, not direct local observations. A missing, null or
+  invalid temperature stays blank; genuine numerical zero displays `0°`.
+  Celsius, Fahrenheit and legitimate negative temperatures remain supported.
+  A valid condition can remain visible when optional measurements are unavailable.
+  Invalid or missing precipitation cannot authorize wet effects; a genuine zero
+  is a valid dry amount. Eligible quantities can support labelled model rain or
+  snow, while a thunder condition alone cannot authorize lightning. These value
+  rules require no new provider, configuration field, cache migration or installer
+  change.
 - **Weather-reactive color theme** — the palette shifts with the sky: warm gold under a
   clear day, deep indigo on a clear night, muted grey when cloudy, cool steel-blue for
   rain, icy for snow, and charcoal-violet for thunderstorms. Day vs. night is derived

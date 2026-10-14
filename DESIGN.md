@@ -260,6 +260,17 @@ was connected. One admitted decision supplies icon, temperature, condition,
 effect permissions and provenance. A usable condition survives a missing
 temperature or amount; no old temperature survives a rejected record.
 
+Optional measurements retain the distinction between unavailable and zero through
+admission, cache and display. A missing, null or invalid temperature leaves the
+temperature text empty; genuine numerical zero displays `0°`. Finite negative
+temperatures remain valid in the requested Celsius or Fahrenheit units. Missing
+or invalid precipitation stays unavailable and cannot authorize wet effects;
+numerical `0` is a valid dry amount, not missing data. A valid condition can still
+appear with its model/uncertainty disclosure when an optional measurement is
+unavailable. These rules use the existing provider, configuration and cache
+schema; they do not retroactively distinguish a legacy coerced zero from a
+genuine recorded zero.
+
 - Fresh, correct-target `current` WMO categories supply condition emojis and
   `data-fx`. Titles/accessible labels/QA disclose provider, model status and the
   absence of direct local observation. Unknown weather is an em dash with no

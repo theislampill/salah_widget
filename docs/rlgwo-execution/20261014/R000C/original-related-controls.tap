@@ -1,0 +1,971 @@
+TAP version 13
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\index.html SHA256 7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de
+# Subtest: control: healthy weather and readable tile reach actual current consumers
+ok 1 - control: healthy weather and readable tile reach actual current consumers
+  ---
+  duration_ms: 105.9834
+  type: 'test'
+  ...
+# Subtest: R000D weather headers is busy at 9999ms and released at 10000ms
+ok 2 - R000D weather headers is busy at 9999ms and released at 10000ms
+  ---
+  duration_ms: 5.6767
+  type: 'test'
+  ...
+# Subtest: R000D weather headers timeout permits healthy retry only after existing throttle
+ok 3 - R000D weather headers timeout permits healthy retry only after existing throttle
+  ---
+  duration_ms: 38.4065
+  type: 'test'
+  ...
+# Subtest: R000D weather body is busy at 9999ms and released at 10000ms
+ok 4 - R000D weather body is busy at 9999ms and released at 10000ms
+  ---
+  duration_ms: 3.3175
+  type: 'test'
+  ...
+# Subtest: R000D weather body timeout permits healthy retry only after existing throttle
+ok 5 - R000D weather body timeout permits healthy retry only after existing throttle
+  ---
+  duration_ms: 43.2852
+  type: 'test'
+  ...
+# Subtest: R000D radar headers is busy at 9999ms and released at 10000ms
+ok 6 - R000D radar headers is busy at 9999ms and released at 10000ms
+  ---
+  duration_ms: 2.3222
+  type: 'test'
+  ...
+# Subtest: R000D radar headers timeout permits healthy retry only after existing throttle
+ok 7 - R000D radar headers timeout permits healthy retry only after existing throttle
+  ---
+  duration_ms: 4.64
+  type: 'test'
+  ...
+# Subtest: R000D radar body is busy at 9999ms and released at 10000ms
+ok 8 - R000D radar body is busy at 9999ms and released at 10000ms
+  ---
+  duration_ms: 2.1592
+  type: 'test'
+  ...
+# Subtest: R000D radar body timeout permits healthy retry only after existing throttle
+ok 9 - R000D radar body timeout permits healthy retry only after existing throttle
+  ---
+  duration_ms: 4.6487
+  type: 'test'
+  ...
+# Subtest: R000D delayed timer delivery cannot admit weather body after absolute elapsed deadline
+ok 10 - R000D delayed timer delivery cannot admit weather body after absolute elapsed deadline
+  ---
+  duration_ms: 3.107
+  type: 'test'
+  ...
+# Subtest: R000D timeout reason cannot renew stale current, accepted timestamp or cache
+ok 11 - R000D timeout reason cannot renew stale current, accepted timestamp or cache
+  ---
+  duration_ms: 35.7356
+  type: 'test'
+  ...
+# Subtest: R000D explicit advancing scene still uses ten seconds of real elapsed attempt time
+ok 12 - R000D explicit advancing scene still uses ten seconds of real elapsed attempt time
+  ---
+  duration_ms: 4.4089
+  type: 'test'
+  ...
+# Subtest: R000D radar image deadline detaches handlers and retained callbacks cannot install
+ok 13 - R000D radar image deadline detaches handlers and retained callbacks cannot install
+  ---
+  duration_ms: 3.2796
+  type: 'test'
+  ...
+# Subtest: control: manifest 9999ms then image 9999ms succeeds within combined bound
+ok 14 - control: manifest 9999ms then image 9999ms succeeds within combined bound
+  ---
+  duration_ms: 4.5201
+  type: 'test'
+  ...
+# Subtest: R000D image absolute deadline rejects late load even before its timer callback
+ok 15 - R000D image absolute deadline rejects late load even before its timer callback
+  ---
+  duration_ms: 3.3804
+  type: 'test'
+  ...
+# Subtest: R000D saved old timeout after success cannot clear a new active weather owner
+ok 16 - R000D saved old timeout after success cannot clear a new active weather owner
+  ---
+  duration_ms: 33.1464
+  type: 'test'
+  ...
+# Subtest: R0003 weather obsolete error/finally cannot release successor
+ok 17 - R0003 weather obsolete error/finally cannot release successor
+  ---
+  duration_ms: 31.4102
+  type: 'test'
+  ...
+# Subtest: R0003 radar obsolete error/finally cannot release successor
+ok 18 - R0003 radar obsolete error/finally cannot release successor
+  ---
+  duration_ms: 2.5967
+  type: 'test'
+  ...
+# Subtest: R0003 old weather success cannot install or persist after target/unit replacement
+ok 19 - R0003 old weather success cannot install or persist after target/unit replacement
+  ---
+  duration_ms: 36.6136
+  type: 'test'
+  ...
+# Subtest: R0003 old image onload cannot install or clear current target image attempt
+ok 20 - R0003 old image onload cannot install or clear current target image attempt
+  ---
+  duration_ms: 2.7212
+  type: 'test'
+  ...
+# Subtest: control: ordinary weather rejection releases its timers and slots
+ok 21 - control: ordinary weather rejection releases its timers and slots
+  ---
+  duration_ms: 3.1689
+  type: 'test'
+  ...
+# Subtest: control: ordinary malformed JSON releases its timers and slots
+ok 22 - control: ordinary malformed JSON releases its timers and slots
+  ---
+  duration_ms: 3.2989
+  type: 'test'
+  ...
+# Subtest: control: ordinary image error releases its timers and slots
+ok 23 - control: ordinary image error releases its timers and slots
+  ---
+  duration_ms: 35.758
+  type: 'test'
+  ...
+# Subtest: control: ordinary canvas failure releases its timers and slots
+ok 24 - control: ordinary canvas failure releases its timers and slots
+  ---
+  duration_ms: 33.02
+  type: 'test'
+  ...
+# {
+#   "kind": "actual-source R0017 weather oracles; VM boundaries, no browser/native qualification",
+#   "root": "C:\\\\Users\\\\theis\\\\.codex\\\\worktrees\\\\4e5e\\\\salah_widget",
+#   "sourceSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+#   "smokeSha256": "8f332e35d8012feef103454ee230999d8786118a4699f685b671bfcafa192e4e",
+#   "wrapperSha256": "ae16f42f04b45942c87e4cfdeb5c600e45702dbc2310ff9e8523f6f55a215d2a",
+#   "fixtureSha256": "cc69d9c23c4de3d7fc8dcf8e5734f7cccd02097c3a9267980ea7258cae8e26a3",
+#   "required": {
+#     "groups": 30,
+#     "assertions": 141
+#   },
+#   "results": [
+#     {
+#       "name": "all thirteen actual smoke model/proxy assertions obey joined weather policy",
+#       "result": "PASS"
+#     },
+#     {
+#       "name": "contained positive reaches actual admitted current model, atmosphere, paint and QA",
+#       "result": "PASS"
+#     },
+#     {
+#       "name": "all eleven actual shared-smoke weather consumer callbacks reach their required assertions",
+#       "result": "PASS"
+#     },
+#     {
+#       "name": "mutant killed: live bridge writes before refusing; useful model positive remains",
+#       "result": "PASS"
+#     },
+#     {
+#       "name": "mutant killed: synthetic bridge never admits wet; model positives remain",
+#       "result": "PASS"
+#     },
+#     {
+#       "name": "mutant killed: target generation bridge is a no-op after admitted wet positive",
+#       "result": "PASS"
+#     }
+#   ],
+#   "consumerGroups": [
+#     {
+#       "name": "live model wet is useful; model particles labelled",
+#       "expected": 9,
+#       "assertions": [
+#         {
+#           "label": "current model passed actual admission",
+#           "condition": true
+#         },
+#         {
+#           "label": "model thunder category + amount remain useful",
+#           "condition": true
+#         },
+#         {
+#           "label": "actual model temperature + condition icon consumed",
+#           "condition": true
+#         },
+#         {
+#           "label": "current is estimated wet, local observation unavailable",
+#           "condition": true
+#         },
+#         {
+#           "label": "all live strong permissions are off",
+#           "condition": true
+#         },
+#         {
+#           "label": "model-estimated rain is visible without observed lightning",
+#           "condition": true
+#         },
+#         {
+#           "label": "no fabricated nearby or arrival",
+#           "condition": true
+#         },
+#         {
+#           "label": "actual current transport JSON was consumed",
+#           "condition": true
+#         },
+#         {
+#           "label": "visible estimate is also accessible",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "live model expiry + admitted recovery",
+#       "expected": 8,
+#       "assertions": [
+#         {
+#           "label": "fresh current model positive before expiry",
+#           "condition": true
+#         },
+#         {
+#           "label": "source/receipt expiry removes current eligibility",
+#           "condition": true
+#         },
+#         {
+#           "label": "expired current temperature withdrawn",
+#           "condition": true
+#         },
+#         {
+#           "label": "expired current physical inputs withdrawn",
+#           "condition": true
+#         },
+#         {
+#           "label": "expiry cannot retain particles",
+#           "condition": true
+#         },
+#         {
+#           "label": "fresh admitted input restores model eligibility",
+#           "condition": true
+#         },
+#         {
+#           "label": "fresh admitted input restores actual chip",
+#           "condition": true
+#         },
+#         {
+#           "label": "recovered live model remains estimated wet with no observed authority",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "live synthetic installation is refused",
+#       "expected": 4,
+#       "assertions": [
+#         {
+#           "label": "valid synthetic input is refused in ordinary live lane",
+#           "condition": true
+#         },
+#         {
+#           "label": "refusal occurred before synthetic-state write",
+#           "condition": true
+#         },
+#         {
+#           "label": "refusal is logged for exact input",
+#           "condition": true
+#         },
+#         {
+#           "label": "actual live model remains useful without synthetic observation authority",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "admitted synthetic wet overrides model dry",
+#       "expected": 8,
+#       "assertions": [
+#         {
+#           "label": "model-clear input is actually admitted",
+#           "condition": true
+#         },
+#         {
+#           "label": "actual versioned present admission is positive",
+#           "condition": true
+#         },
+#         {
+#           "label": "exact captured target generation is consumed",
+#           "condition": true
+#         },
+#         {
+#           "label": "supported wet records model-dry disagreement",
+#           "condition": true
+#         },
+#         {
+#           "label": "admitted wet reaches actual rain paint",
+#           "condition": true
+#         },
+#         {
+#           "label": "permission is rain with no fabricated lightning",
+#           "condition": true
+#         },
+#         {
+#           "label": "unknown amount remains null",
+#           "condition": true
+#         },
+#         {
+#           "label": "synthetic lane is visibly marked",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "admitted synthetic snow + lightning",
+#       "expected": 6,
+#       "assertions": [
+#         {
+#           "label": "actual snow evidence admitted",
+#           "condition": true
+#         },
+#         {
+#           "label": "snow reaches actual snow paint",
+#           "condition": true
+#         },
+#         {
+#           "label": "snow cannot invent rain or lightning",
+#           "condition": true
+#         },
+#         {
+#           "label": "actual lightning evidence admitted",
+#           "condition": true
+#         },
+#         {
+#           "label": "observed synthetic lightning reaches actual thunder paint",
+#           "condition": true
+#         },
+#         {
+#           "label": "rain and lightning permissions independently consumed",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "synthetic exclusive lease expiry",
+#       "expected": 5,
+#       "assertions": [
+#         {
+#           "label": "admitted wet positive before lease end",
+#           "condition": true
+#         },
+#         {
+#           "label": "wet remains active one millisecond before end",
+#           "condition": true
+#         },
+#         {
+#           "label": "validUntil is exclusive",
+#           "condition": true
+#         },
+#         {
+#           "label": "actual paint withdraws immediately",
+#           "condition": true
+#         },
+#         {
+#           "label": "readable expired evidence has no permission",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "synthetic rain end + outage",
+#       "expected": 8,
+#       "assertions": [
+#         {
+#           "label": "wet source starts actual rain",
+#           "condition": true
+#         },
+#         {
+#           "label": "operational direct dry evidence is admitted",
+#           "condition": true
+#         },
+#         {
+#           "label": "rain end is supported dry with model-wet disagreement",
+#           "condition": true
+#         },
+#         {
+#           "label": "dry immediately withdraws actual particles",
+#           "condition": true
+#         },
+#         {
+#           "label": "fresh wet recovery restores actual rain",
+#           "condition": true
+#         },
+#         {
+#           "label": "null outage calls actual unavailable admission",
+#           "condition": true
+#         },
+#         {
+#           "label": "outage remains fixture lane and model estimate",
+#           "condition": true
+#         },
+#         {
+#           "label": "outage cannot resume preview particles",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "synthetic target + coverage rejection",
+#       "expected": 6,
+#       "assertions": [
+#         {
+#           "label": "wet positive precedes wrong-target control",
+#           "condition": true
+#         },
+#         {
+#           "label": "wrong generation rejected by actual admission",
+#           "condition": true
+#         },
+#         {
+#           "label": "wrong target cannot retain particles",
+#           "condition": true
+#         },
+#         {
+#           "label": "fresh wet positive recovers before coverage control",
+#           "condition": true
+#         },
+#         {
+#           "label": "outside target coverage is unavailable",
+#           "condition": true
+#         },
+#         {
+#           "label": "coverage rejection immediately withdraws particles",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "synthetic underlying source age rejection",
+#       "expected": 4,
+#       "assertions": [
+#         {
+#           "label": "fresh underlying observation positive",
+#           "condition": true
+#         },
+#         {
+#           "label": "fresh receipt/frame does not renew old source",
+#           "condition": true
+#         },
+#         {
+#           "label": "old source has no present authority",
+#           "condition": true
+#         },
+#         {
+#           "label": "old source immediately withdraws actual particles",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "synthetic dry point + nearby are independent",
+#       "expected": 4,
+#       "assertions": [
+#         {
+#           "label": "qualified point-dry is admitted",
+#           "condition": true
+#         },
+#         {
+#           "label": "surrounding precipitation remains separately qualified",
+#           "condition": true
+#         },
+#         {
+#           "label": "explicit trajectory supports only a later horizon interval",
+#           "condition": true
+#         },
+#         {
+#           "label": "nearby/approach cannot rain at a supported-dry point",
+#           "condition": true
+#         }
+#       ]
+#     },
+#     {
+#       "name": "synthetic target generation clears permission",
+#       "expected": 4,
+#       "assertions": [
+#         {
+#           "label": "actual wet positive precedes target supersession",
+#           "condition": true
+#         },
+#         {
+#           "label": "actual owner generation advanced",
+#           "condition": true
+#         },
+#         {
+#           "label": "superseded evidence no longer available",
+#           "condition": true
+#         },
+#         {
+#           "label": "target supersession withdraws actual particles",
+#           "condition": true
+#         }
+#       ]
+#     }
+#   ]
+# }
+# Subtest: tests\\r0017-weather.cjs
+ok 2 - tests\\r0017-weather.cjs
+  ---
+  duration_ms: 4006.2089
+  type: 'test'
+  ...
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\index.html SHA256 7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de
+# Subtest: R0003 response zone contradictory Riyadh cannot mutate current, track, elevation, accepted time or cache
+ok 26 - R0003 response zone contradictory Riyadh cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 19.9968
+  type: 'test'
+  ...
+# Subtest: R0003 response zone invalid IANA cannot mutate current, track, elevation, accepted time or cache
+ok 27 - R0003 response zone invalid IANA cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 3.7598
+  type: 'test'
+  ...
+# Subtest: R0003 response zone empty cannot mutate current, track, elevation, accepted time or cache
+ok 28 - R0003 response zone empty cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 3.1421
+  type: 'test'
+  ...
+# Subtest: R0003 response zone null cannot mutate current, track, elevation, accepted time or cache
+ok 29 - R0003 response zone null cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 3.422
+  type: 'test'
+  ...
+# Subtest: R0003 response zone non-string cannot mutate current, track, elevation, accepted time or cache
+ok 30 - R0003 response zone non-string cannot mutate current, track, elevation, accepted time or cache
+  ---
+  duration_ms: 3.148
+  type: 'test'
+  ...
+# Subtest: control: R0003 absent New York response metadata preserves captured DST conversion
+ok 31 - control: R0003 absent New York response metadata preserves captured DST conversion
+  ---
+  duration_ms: 39.0695
+  type: 'test'
+  ...
+# Subtest: control: R0003 matching New York response metadata preserves captured DST conversion
+ok 32 - control: R0003 matching New York response metadata preserves captured DST conversion
+  ---
+  duration_ms: 34.9124
+  type: 'test'
+  ...
+# Subtest: control: R0003 canonical alias New York response metadata preserves captured DST conversion
+ok 33 - control: R0003 canonical alias New York response metadata preserves captured DST conversion
+  ---
+  duration_ms: 34.8714
+  type: 'test'
+  ...
+# Subtest: control: R0003 Etc/UTC canonical alias preserves a UTC request
+ok 34 - control: R0003 Etc/UTC canonical alias preserves a UTC request
+  ---
+  duration_ms: 32.3216
+  type: 'test'
+  ...
+# WEATHER source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\index.html SHA256 7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de
+# WEATHER config source C:\\Users\\theis\\.codex\\worktrees\\4e5e\\salah_widget\\config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# WEATHER request-owner SHA256 7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de
+# Subtest: R0024/H5 live model rain presents supported particles without direct-observation authority
+ok 35 - R0024/H5 live model rain presents supported particles without direct-observation authority
+  ---
+  duration_ms: 56.4679
+  type: 'test'
+  ...
+# Subtest: R0024/H5 live model snow presents supported particles without direct-observation authority
+ok 36 - R0024/H5 live model snow presents supported particles without direct-observation authority
+  ---
+  duration_ms: 36.9957
+  type: 'test'
+  ...
+# Subtest: R0024/H5 live model thunder presents supported particles without direct-observation authority
+ok 37 - R0024/H5 live model thunder presents supported particles without direct-observation authority
+  ---
+  duration_ms: 36.6373
+  type: 'test'
+  ...
+# Subtest: R0024 eligible model-clear chip visibly distinguishes estimate from local observation
+ok 38 - R0024 eligible model-clear chip visibly distinguishes estimate from local observation
+  ---
+  duration_ms: 39.4993
+  type: 'test'
+  ...
+# Subtest: R0024 no current data is visible unknown, with no retained weather consumers
+ok 39 - R0024 no current data is visible unknown, with no retained weather consumers
+  ---
+  duration_ms: 6.5719
+  type: 'test'
+  ...
+# Subtest: control: explicit advancing forecast retains its marked preview positive
+ok 40 - control: explicit advancing forecast retains its marked preview positive
+  ---
+  duration_ms: 38.6555
+  type: 'test'
+  ...
+# Subtest: R0024 A qualified synthetic present wet reaches actual rain with model dry disagreement
+ok 41 - R0024 A qualified synthetic present wet reaches actual rain with model dry disagreement
+  ---
+  duration_ms: 37.879
+  type: 'test'
+  ...
+# Subtest: R0024 qualified synthetic present snow and observed lightning have separate actual positives
+ok 42 - R0024 qualified synthetic present snow and observed lightning have separate actual positives
+  ---
+  duration_ms: 108.9286
+  type: 'test'
+  ...
+# Subtest: R0024 synthetic input cannot upgrade the ordinary live lane
+ok 43 - R0024 synthetic input cannot upgrade the ordinary live lane
+  ---
+  duration_ms: 35.9421
+  type: 'test'
+  ...
+# Subtest: R0024 source-bound positive expires at its exact lease end without cloud smoothing
+ok 44 - R0024 source-bound positive expires at its exact lease end without cloud smoothing
+  ---
+  duration_ms: 37.515
+  type: 'test'
+  ...
+# Subtest: R0024 rain end, source outage and target supersession each withdraw the actual wet consumer
+ok 45 - R0024 rain end, source outage and target supersession each withdraw the actual wet consumer
+  ---
+  duration_ms: 45.2998
+  type: 'test'
+  ...
+# Subtest: R0024 B operational qualified negative retains model rain as disagreement with no particles
+ok 46 - R0024 B operational qualified negative retains model rain as disagreement with no particles
+  ---
+  duration_ms: 33.8337
+  type: 'test'
+  ...
+# Subtest: R0024 C dry point plus qualified nearby arrival stays independent and cannot rain locally
+ok 47 - R0024 C dry point plus qualified nearby arrival stays independent and cannot rain locally
+  ---
+  duration_ms: 37.4498
+  type: 'test'
+  ...
+# Subtest: R0024 current synthetic rain and later approach coexist without WMO veto
+ok 48 - R0024 current synthetic rain and later approach coexist without WMO veto
+  ---
+  duration_ms: 37.914
+  type: 'test'
+  ...
+# Subtest: R0024 missing or invalid surrounding quality cannot veto separately qualified present wet
+ok 49 - R0024 missing or invalid surrounding quality cannot veto separately qualified present wet
+  ---
+  duration_ms: 33.9978
+  type: 'test'
+  ...
+# Subtest: R0024 D no decoded radar observation plus model rain is estimated wet, never confirmed dry
+ok 50 - R0024 D no decoded radar observation plus model rain is estimated wet, never confirmed dry
+  ---
+  duration_ms: 36.7499
+  type: 'test'
+  ...
+# Subtest: R0024 E 18-minute mosaic remains diagnostic while fresh receipt grants no local observation or ETA
+ok 51 - R0024 E 18-minute mosaic remains diagnostic while fresh receipt grants no local observation or ETA
+  ---
+  duration_ms: 35.2984
+  type: 'test'
+  ...
+# Subtest: R0024 G no coverage cannot acquire present wet or strong negative from a fresh composite
+ok 52 - R0024 G no coverage cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 78.1333
+  type: 'test'
+  ...
+# Subtest: R0024 G unknown health cannot acquire present wet or strong negative from a fresh composite
+ok 53 - R0024 G unknown health cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 81.5707
+  type: 'test'
+  ...
+# Subtest: R0024 G stale underlying observation cannot acquire present wet or strong negative from a fresh composite
+ok 54 - R0024 G stale underlying observation cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 77.1164
+  type: 'test'
+  ...
+# Subtest: R0024 G unknown underlying age cannot acquire present wet or strong negative from a fresh composite
+ok 55 - R0024 G unknown underlying age cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 77.8647
+  type: 'test'
+  ...
+# Subtest: R0024 G weak returns cannot acquire present wet or strong negative from a fresh composite
+ok 56 - R0024 G weak returns cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 82.3911
+  type: 'test'
+  ...
+# Subtest: R0024 G interpolated returns cannot acquire present wet or strong negative from a fresh composite
+ok 57 - R0024 G interpolated returns cannot acquire present wet or strong negative from a fresh composite
+  ---
+  duration_ms: 83.7306
+  type: 'test'
+  ...
+# Subtest: R0024 F fixed site unknown precision has honest point admission
+ok 58 - R0024 F fixed site unknown precision has honest point admission
+  ---
+  duration_ms: 2.0882
+  type: 'test'
+  ...
+# Subtest: R0024 F recent precise device has honest point admission
+ok 59 - R0024 F recent precise device has honest point admission
+  ---
+  duration_ms: 2.6384
+  type: 'test'
+  ...
+# Subtest: R0024 F device accuracy boundary has honest point admission
+ok 60 - R0024 F device accuracy boundary has honest point admission
+  ---
+  duration_ms: 2.6595
+  type: 'test'
+  ...
+# Subtest: R0024 F broad device fix has honest point admission
+ok 61 - R0024 F broad device fix has honest point admission
+  ---
+  duration_ms: 4.3165
+  type: 'test'
+  ...
+# Subtest: R0024 F coarse IP unknown accuracy has honest point admission
+ok 62 - R0024 F coarse IP unknown accuracy has honest point admission
+  ---
+  duration_ms: 4.9766
+  type: 'test'
+  ...
+# Subtest: R0024 F saved device unknown original fix has honest point admission
+ok 63 - R0024 F saved device unknown original fix has honest point admission
+  ---
+  duration_ms: 4.5823
+  type: 'test'
+  ...
+# Subtest: R0024 F expired original device fix has honest point admission
+ok 64 - R0024 F expired original device fix has honest point admission
+  ---
+  duration_ms: 4.265
+  type: 'test'
+  ...
+# Subtest: R0024 F unknown intent has honest point admission
+ok 65 - R0024 F unknown intent has honest point admission
+  ---
+  duration_ms: 4.1889
+  type: 'test'
+  ...
+# Subtest: R0024 original device fix lease expires independently of a fresh weather download
+ok 66 - R0024 original device fix lease expires independently of a fresh weather download
+  ---
+  duration_ms: 36.5067
+  type: 'test'
+  ...
+# Subtest: R0024 future valid interval rejects an apparent current fixture before the actual renderer
+ok 67 - R0024 future valid interval rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 36.6358
+  type: 'test'
+  ...
+# Subtest: R0024 future measurement rejects an apparent current fixture before the actual renderer
+ok 68 - R0024 future measurement rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 35.9306
+  type: 'test'
+  ...
+# Subtest: R0024 future receipt rejects an apparent current fixture before the actual renderer
+ok 69 - R0024 future receipt rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 33.8186
+  type: 'test'
+  ...
+# Subtest: R0024 future frame rejects an apparent current fixture before the actual renderer
+ok 70 - R0024 future frame rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 34.4112
+  type: 'test'
+  ...
+# Subtest: R0024 future issue rejects an apparent current fixture before the actual renderer
+ok 71 - R0024 future issue rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 34.3463
+  type: 'test'
+  ...
+# Subtest: R0024 expired valid interval rejects an apparent current fixture before the actual renderer
+ok 72 - R0024 expired valid interval rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 32.8214
+  type: 'test'
+  ...
+# Subtest: R0024 unbounded lease rejects an apparent current fixture before the actual renderer
+ok 73 - R0024 unbounded lease rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 32.1006
+  type: 'test'
+  ...
+# Subtest: R0024 null source time rejects an apparent current fixture before the actual renderer
+ok 74 - R0024 null source time rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 33.0017
+  type: 'test'
+  ...
+# Subtest: R0024 wrong source/product rejects an apparent current fixture before the actual renderer
+ok 75 - R0024 wrong source/product rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 33.1308
+  type: 'test'
+  ...
+# Subtest: R0024 unitless amount rejects an apparent current fixture before the actual renderer
+ok 76 - R0024 unitless amount rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 32.4686
+  type: 'test'
+  ...
+# Subtest: R0024 wrong target generation rejects an apparent current fixture before the actual renderer
+ok 77 - R0024 wrong target generation rejects an apparent current fixture before the actual renderer
+  ---
+  duration_ms: 36.6571
+  type: 'test'
+  ...
+# Subtest: R0024 model amount keeps its preceding interval and average rate, never instantaneous onset
+ok 78 - R0024 model amount keeps its preceding interval and average rate, never instantaneous onset
+  ---
+  duration_ms: 37.2979
+  type: 'test'
+  ...
+# Subtest: R0024 qualified measured rate and interval amount retain different physical quantities
+ok 79 - R0024 qualified measured rate and interval amount retain different physical quantities
+  ---
+  duration_ms: 70.3272
+  type: 'test'
+  ...
+# Subtest: R0024 future forecast amount is stepped with its own window, no interpolated onset or fabricated probability
+ok 80 - R0024 future forecast amount is stepped with its own window, no interpolated onset or fabricated probability
+  ---
+  duration_ms: 33.6385
+  type: 'test'
+  ...
+# Subtest: R0024 null precipitation is unknown while actual zero remains an estimated dry model value
+ok 81 - R0024 null precipitation is unknown while actual zero remains an estimated dry model value
+  ---
+  duration_ms: 68.3374
+  type: 'test'
+  ...
+# Subtest: R0024 new target generation excludes retained current, track and radar diagnostics
+ok 82 - R0024 new target generation excludes retained current, track and radar diagnostics
+  ---
+  duration_ms: 33.6562
+  type: 'test'
+  ...
+# Subtest: R0024 synchronous acquisition captures original evidence primitives before the body can mutate config
+ok 83 - R0024 synchronous acquisition captures original evidence primitives before the body can mutate config
+  ---
+  duration_ms: 31.3234
+  type: 'test'
+  ...
+# Subtest: R0024 provider trusted flags and dense/empty/sparse palette input have no production permission path
+ok 84 - R0024 provider trusted flags and dense/empty/sparse palette input have no production permission path
+  ---
+  duration_ms: 99.952
+  type: 'test'
+  ...
+# Subtest: R0024 stable inputs reuse pure reconciliation until the next eligibility boundary
+ok 85 - R0024 stable inputs reuse pure reconciliation until the next eligibility boundary
+  ---
+  duration_ms: 37.6432
+  type: 'test'
+  ...
+# Subtest: R0024 browser source with missing original fix time cannot borrow a recent settings savedAt
+ok 86 - R0024 browser source with missing original fix time cannot borrow a recent settings savedAt
+  ---
+  duration_ms: 6.5587
+  type: 'test'
+  ...
+# Subtest: R0024 conflict or unknown present states cannot borrow wet model permission
+ok 87 - R0024 conflict or unknown present states cannot borrow wet model permission
+  ---
+  duration_ms: 68.241
+  type: 'test'
+  ...
+# Subtest: R0024 qualified area negative and invalid approach remain independent from current phase
+ok 88 - R0024 qualified area negative and invalid approach remain independent from current phase
+  ---
+  duration_ms: 31.9449
+  type: 'test'
+  ...
+# Subtest: R0024 earlier surrounding expiry cannot withdraw a still-qualified current wet point
+ok 89 - R0024 earlier surrounding expiry cannot withdraw a still-qualified current wet point
+  ---
+  duration_ms: 37.6524
+  type: 'test'
+  ...
+# Subtest: R0024 reversed time cannot resurrect a future local observation and future forecast is never current
+ok 90 - R0024 reversed time cannot resurrect a future local observation and future forecast is never current
+  ---
+  duration_ms: 33.7802
+  type: 'test'
+  ...
+# Subtest: R0024 model data expiring after resume removes every current atmosphere input and keeps forecast separate
+ok 91 - R0024 model data expiring after resume removes every current atmosphere input and keeps forecast separate
+  ---
+  duration_ms: 34.4675
+  type: 'test'
+  ...
+# Subtest: R0024 unrepresentable derived average or interval stays null rather than infinity
+ok 92 - R0024 unrepresentable derived average or interval stays null rather than infinity
+  ---
+  duration_ms: 71.5883
+  type: 'test'
+  ...
+# Subtest: R0024 caller-provided synthetic probability zero stays distinct from unavailable and grants no current condition
+ok 93 - R0024 caller-provided synthetic probability zero stays distinct from unavailable and grants no current condition
+  ---
+  duration_ms: 2.3811
+  type: 'test'
+  ...
+# Subtest: R0024 dry centre with three wet palette neighbours remains estimated dry with unknown local evidence
+ok 94 - R0024 dry centre with three wet palette neighbours remains estimated dry with unknown local evidence
+  ---
+  duration_ms: 33.0457
+  type: 'test'
+  ...
+# Subtest: R0024 explicit SIM wet positives and dry negatives retain their own source label
+ok 95 - R0024 explicit SIM wet positives and dry negatives retain their own source label
+  ---
+  duration_ms: 19.6825
+  type: 'test'
+  ...
+# Subtest: R0024 actual accepted CONFIG hash parser supplies a configured site without manufactured fix precision
+ok 96 - R0024 actual accepted CONFIG hash parser supplies a configured site without manufactured fix precision
+  ---
+  duration_ms: 35.6121
+  type: 'test'
+  ...
+# Subtest: R0024 actual accepted CONFIG save/load preserves original browser epoch while WEATHER declines an expired device claim
+ok 97 - R0024 actual accepted CONFIG save/load preserves original browser epoch while WEATHER declines an expired device claim
+  ---
+  duration_ms: 34.2305
+  type: 'test'
+  ...
+1..97
+# tests 97
+# suites 0
+# pass 97
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7286.8967

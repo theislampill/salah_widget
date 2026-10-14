@@ -1,0 +1,71 @@
+{
+  "schema": "r000c-primary-visual-reconciliation/v1",
+  "status": "PASS_ORIGINAL_C16_SCOPE_LOCAL_PACKET_REVIEW_COMPLETE",
+  "runtimeSha256": "5003d304bd0dba119fbc74773cd8e9a97113948259203d8c5390c9062fcc7514",
+  "qualifiedScopes": [
+    {
+      "id": "C15",
+      "scope": "Six exact weather admission/header/effect states in each browser; Firefox state crops only",
+      "evidence": [
+        "independent-review/native-readback-check.json",
+        "independent-review/firefox-day-readback-check.json"
+      ]
+    },
+    {
+      "id": "C16-chromium",
+      "scope": "Original affected night/default/reduced/full controls and state pixels",
+      "evidence": [
+        "independent-review/reviewed-frontier.md",
+        "native/chromium"
+      ]
+    },
+    {
+      "id": "C16-firefox-default",
+      "scope": "Predeclared recovered30s control only",
+      "evidence": [
+        "boundary-pilot-primary-review.json",
+        "independent-review/boundary-pilot-review.md"
+      ]
+    },
+    {
+      "id": "C16-firefox-full",
+      "scope": "Predeclared recovered30s full override control only",
+      "evidence": [
+        "boundary-preferences-primary-review.json",
+        "independent-review/boundary-preferences-review.md"
+      ]
+    },
+    {
+      "id": "C16-firefox-reduced",
+      "scope": "Affected native dry/wet state pixels and held reduced behavior, with exact unchanged policy evidence. No continuous30s reduced PASS.",
+      "evidence": [
+        "native/firefox-boundary-preferences/R000C-night-reduced/receipt.json",
+        "native/firefox-boundary-preferences/R000C-night-reduced/pixel-review/index.json",
+        "preservation-reuse.json",
+        "independent-review/c16-scope-reconciliation.json"
+      ],
+      "primaryViewedOriginals": [
+        {
+          "ordinal": 750,
+          "ptsSeconds": 30.0
+        },
+        {
+          "ordinal": 3000,
+          "ptsSeconds": 120.0
+        }
+      ],
+      "continuousWatchStatus": "FAIL_RETAINED_107_40_SECOND_BLANK"
+    }
+  ],
+  "limits": [
+    "No failed watch is relabeled or replaced by a shorter healthy tail.",
+    "A03 requires30s no-preference motion plus reduced/full controls; no separate30s reduced watch is added as an original requirement.",
+    "Retained Honolulu/SIM controls support only their exact unchanged policy claim, not affected Riyadh-zone weather ingress.",
+    "Headed activity diagnostics failed; no override enters product or qualification driver.",
+    "No unique render-to-native-frame join, startup guarantee, universal scene or scientific qualification is claimed."
+  ],
+  "independentScopeReview": {
+    "path": "independent-review/c16-reduced-scope-audit.md",
+    "sha256": "d958d4aca78ffe681241d9159d3314c249c013d534bd30fb6bdb36361b961d2d"
+  }
+}
