@@ -2091,7 +2091,21 @@ function startNativeSky(pack,workerSource,physical){
  const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,presentationRejections:0,presentationUtcMs:null,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
  let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,paintedJob=null,previousPresentation=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
  function publish(){const preview=window.SalahSkyPreview?.state.status==='ready';badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.availability?.reason==='rate-throughput'?`${preview?'Sky preview · r':'R'}efinement unavailable at ${status.availability.rate}×`:preview?'Sky preview · refining…':status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent. A current preview is distinct from registered diffuse refinement.';canvas.dataset.status=status.status;}
- function clear(reason='invalidated'){if(card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');window.SalahMoonDetail?.clear();card.classList.remove('real-sky-composed');frame=null;job=null;status.last=null;paintedFrame=null;paintedJob=null;status.presentationUtcMs=null;status.displayed=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;publish();}
+ function clear(reason='invalidated'){
+  const preview=window.SalahSkyPreview,previewCurrent=!!preview?.frame?.current?.(),previewOwnsDetail=previewCurrent&&window.SalahMoonDetail?.state?.skyOwner==='atmospheric-preview';
+  if(card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');
+  if(!previewOwnsDetail)window.SalahMoonDetail?.clear();
+  card.classList.remove('real-sky-composed');
+  // A withdrawn refinement must not expose an expired preview whose ready flag
+  // also hides the independently current SVG Moon until the next native paint.
+  if(!previewCurrent)preview?.clear(reason);
+  frame=null;job=null;status.last=null;paintedFrame=null;paintedJob=null;status.presentationUtcMs=null;status.displayed=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;
+  // Complete the handoff in this turn; otherwise the compositor can expose the
+  // fallback background/raw lunar cutout before native's next paint. The existing
+  // preview owner keeps its target, age and publication-headroom checks.
+  if(!previewOwnsDetail)preview?.update?.();
+  publish();
+ }
  // Identity/age fences do not consume decorative solar geometry. Measure the
  // presented body only for an accepted atmospheric display, not every guard.
  function snapshot(){return host.capture(false);}

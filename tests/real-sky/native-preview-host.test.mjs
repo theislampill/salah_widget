@@ -6,6 +6,8 @@ import vm from 'node:vm';
 // Exercise the actual host with deterministic stage costs. Foreground capture
 // is presentation work, while the astronomical job must keep its original UTC.
 const source=fs.readFileSync(new URL('../../real-sky/native-preview-host.mjs',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replace('export function startNativeSkyPreview','function startNativeSkyPreview');
+const refinedSource=fs.readFileSync(new URL('../../real-sky/native-host.mjs',import.meta.url),'utf8');
+const refinedClear=refinedSource.slice(refinedSource.indexOf(' function clear('),refinedSource.indexOf(' // Identity/age fences'));
 function host({foregroundMs=25,skyMs=30,timeScale=600,parseMs=0,starMs=0,detailMs=0,throwDetail=false}={}){
  let now=0,raf=null,cancelled=0,starRenders=0;const classes=new Set(),draws=[],rgba=new Uint8ClampedArray(325*530*4);for(let i=3;i<rgba.length;i+=4)rgba[i]=255;
  const ctx={putImageData(){draws.push(now);},drawImage(){},getImageData:()=>({data:rgba})};
@@ -21,7 +23,11 @@ function host({foregroundMs=25,skyMs=30,timeScale=600,parseMs=0,starMs=0,detailM
  s.window.SalahNativeSkyHost={capture:()=>({utcMs:now*timeScale,generation:1,timeScale,sceneIdentity:'A',lat:1,lon:2})};
  s.window.SalahMoonDetail={clear(){},compose(){now+=Array.isArray(detailMs)?detailMs.shift()??0:detailMs;if(Array.isArray(throwDetail)?throwDetail.shift():throwDetail)throw Error('controlled detail readback failure');}};
  vm.createContext(s);vm.runInContext(source+'\nstartNativeSkyPreview();',s);
- return {s,classes,draws,get now(){return now;},get starRenders(){return starRenders;},get cancelled(){return cancelled;},get state(){return s.window.SalahSkyPreview.state;},tick(t,actual){now=actual;raf(t);},present(t,actual){now=actual;s.window.SalahSkyPreview.present(t);}};
+ return {s,classes,draws,get now(){return now;},get starRenders(){return starRenders;},get cancelled(){return cancelled;},get state(){return s.window.SalahSkyPreview.state;},tick(t,actual){now=actual;raf(t);},present(t,actual){now=actual;s.window.SalahSkyPreview.present(t);},withdraw(actual){
+  now=actual;
+  Object.assign(s,{card,frame:{},job:{},status:{},paintedFrame:{},paintedJob:{},previousPresentation:{},previousMoonBottom:0,ctx:{clearRect(){}},canvas:canvas(),publish(){}});
+  vm.runInContext(refinedClear+'\nclear("accepted weather changed");',s);
+ }};
 }
 test('foreground preparation cannot consume the new astronomical calculation age budget',()=>{
  const h=host();assert.equal(h.state.status,'ready');assert.ok(h.classes.has('real-sky-preview-ready'));
@@ -97,4 +103,57 @@ test('late catalogue hash completion cannot resurrect a revoked asset admission'
  const late=h.s.window.SalahSkyPreview.admitCatalogue({sha256:'old',wait:new Promise(r=>release=r)});
  await h.s.window.SalahSkyPreview.admitCatalogue(null);release();await late;
  h.present(10,10);assert.equal(h.state.catalogue,null);assert.equal(h.starRenders,0);
+});
+
+test('ordinary presentation republishes a fresh preview after weather withdrawal',()=>{
+ const h=host({foregroundMs:0,skyMs:1,timeScale:1}),composed=[];
+ const original=h.s.window.SalahMoonDetail.compose;
+ h.s.window.SalahMoonDetail.compose=(frame,...args)=>{composed.push(frame.current());return original(frame,...args);};
+ h.s.window.SalahNativeSkyHost.capture=()=>({utcMs:h.now,generation:2,timeScale:1,sceneIdentity:'A',lat:1,lon:2});
+ h.s.window.SalahSkyPreview.clear('accepted weather changed');
+ assert.equal(h.classes.has('real-sky-preview-ready'),false);
+ h.present(500,500);
+ assert.equal(h.state.status,'ready');assert.equal(h.state.utcMs,500);
+ assert.equal(h.classes.has('real-sky-preview-ready'),true);assert.deepEqual(composed,[true]);
+});
+
+test('refined withdrawal publishes the replacement preview in the same turn without waiting for native paint',()=>{
+ const h=host({foregroundMs:0,skyMs:1,timeScale:1}),original=h.state.utcMs,composed=[];
+ h.classes.add('real-sky-composed');
+ h.s.window.SalahNativeSkyHost.capture=()=>({utcMs:h.now,generation:2,timeScale:1,sceneIdentity:'A',lat:1,lon:2});
+ h.s.window.SalahMoonDetail.compose=frame=>composed.push(frame.current());
+ assert.equal(h.s.window.SalahSkyPreview.frame.current(),false,'old atmosphere is no longer eligible');
+ h.withdraw(500);
+ assert.equal(h.classes.has('real-sky-composed'),false);
+ assert.equal(h.classes.has('real-sky-preview-ready'),true,'must not expose the CSS background and raw black lunar cutout between paint turns');
+ assert.equal(h.state.status,'ready');assert.ok(h.state.utcMs>original);assert.equal(h.state.utcMs,500);
+ assert.equal(h.s.window.SalahSkyPreview.frame.current(),true);assert.deepEqual(composed,[true]);
+});
+
+test('same-turn withdrawal cannot fabricate a preview when accepted input is absent',()=>{
+ const h=host({foregroundMs:0,skyMs:1,timeScale:1});h.classes.add('real-sky-composed');
+ h.s.window.SalahNativeSkyHost.capture=()=>({utcMs:h.now,generation:2,timeScale:1,sceneIdentity:null,lat:null,lon:null});
+ h.withdraw(500);
+ assert.equal(h.classes.has('real-sky-composed'),false);assert.equal(h.classes.has('real-sky-preview-ready'),false);
+ assert.equal(h.state.status,'pending');
+});
+
+test('a still-current preview recomposes lunar detail before withdrawal returns without relabelling its UTC',()=>{
+ const h=host({foregroundMs:0,skyMs:1,timeScale:1}),original=h.state.utcMs;let visible=true;
+ h.classes.add('real-sky-composed');
+ h.s.window.SalahMoonDetail={state:{skyOwner:'refined-sky'},clear(){visible=false;},compose(frame){visible=frame.current();}};
+ assert.equal(h.s.window.SalahSkyPreview.frame.current(),true);
+ h.withdraw(500);
+ assert.equal(visible,true,'current preview must own its visible lunar detail before a compositor can present');
+ assert.equal(h.state.utcMs,original,'a still-current image retains its original accepted UTC');
+ assert.equal(h.s.window.SalahSkyPreview.frame.current(),true);
+});
+
+test('withdrawal preserves already-current preview-owned detail and pixels',()=>{
+ const h=host({foregroundMs:0,skyMs:1,timeScale:1}),original=h.state.utcMs,draws=h.draws.length;let visible=true;
+ h.classes.add('real-sky-composed');
+ h.s.window.SalahMoonDetail={state:{skyOwner:'atmospheric-preview'},clear(){visible=false;},compose(frame){visible=frame.current();}};
+ h.withdraw(500);
+ assert.equal(visible,true);assert.equal(h.state.utcMs,original);assert.equal(h.draws.length,draws);
+ assert.equal(h.classes.has('real-sky-preview-ready'),true);
 });

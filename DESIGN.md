@@ -271,6 +271,35 @@ unavailable. These rules use the existing provider, configuration and cache
 schema; they do not retroactively distinguish a legacy coerced zero from a
 genuine recorded zero.
 
+Temporal authority keeps `currentTime` (provider `current.time`), `currentZone`
+(the captured request timezone), `currentValidAt`, `currentIntervalSec` and
+`retrievedAt` separate. Calendar-invalid or ambiguous/unresolvable wall times and
+nonpositive/nonfinite intervals are unavailable. The interval describes the
+preceding aggregation period; it is not an extra freshness allowance. Provider
+`generationtime_ms` is processing duration, not a source epoch. Current source
+and receipt ages must each satisfy **0 through 900000 ms inclusive** (15 minutes),
+evaluated again at each real-time use. There is no future-skew allowance: +1 ms
+is ineligible. A skewed client clock can therefore withhold otherwise useful data.
+
+RainViewer `past[].time` becomes `frameGeneratedAt`, `generated` becomes
+`indexGeneratedAt`, and completed acquisition has its own `retrievedAt`.
+Both seconds inputs must be raw finite nonnegative numbers whose derived
+milliseconds are valid Date epochs before Image dispatch or metadata installation.
+Index generation never substitutes for a missing frame timestamp. Frame and
+receipt ages each satisfy **0 through 1200000 ms inclusive** (20 minutes);
+downloading the same stale frame again cannot renew its source age. Index time
+is retained separately, not used as the frame freshness clock. Mosaic generation
+does not date every contributing radar measurement or certify selected-site
+coverage, rain amount or direct observation.
+
+Six-hour weather-cache retention is distinct from live authority. Compatible
+legacy cache bytes may remain without usable source metadata; acquisition can
+replace them, while failed refreshes cannot renew them. Expired or invalid current
+authority yields an em dash, blank temperature, and no unsupported cloud,
+precipitation or lightning effects. The neutral sky remains decorative; hourly
+data cannot substitute for live current. Prayer-cache stale state remains separate,
+and cache retention is not an offline-app guarantee.
+
 - Fresh, correct-target `current` WMO categories supply condition emojis and
   `data-fx`. Titles/accessible labels/QA disclose provider, model status and the
   absence of direct local observation. Unknown weather is an em dash with no
@@ -294,6 +323,15 @@ result with `fetch timeout`, `body timeout` or `image timeout` identifies the
 bounded stage. `received` describes wrapper completion, not freshness or provider
 health. Slot release, retry eligibility and a healthy replacement consumer are
 separate facts; the README's Weather retry description gives their timing limits.
+For freshness inspection, `qaState().cache.weatherSourceAgeSec` and
+`weatherAgeSec` report source and receipt ages, with `currentEligible`,
+`weatherStale` and `currentUnavailableReason`. `wxTruth.model.sourceValidAt`,
+`retrievedAt` and `quantity.from`/`to` describe the selected model and preceding
+interval when available. `wxTruth.radarFrameAgeSec` and `radarAgeSec` are frame
+and receipt ages; `radarAvailable` concerns unitless imagery, not rain authority.
+The raw record retains its index epoch separately; the QA age summary does not
+expose an index-age field. Displayed ages are rounded seconds; exact eligibility
+uses milliseconds, so the rounded age alone cannot decide a boundary.
 
 ## Star / night-sky system
 
@@ -444,7 +482,10 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
 
 ## Known approximations (honest)
 
-- Weather "current" is a model **nowcast, not radar** — the precip gate is conservative, not ground-truth.
+- Weather `current` is a source-dated **model estimate**, not a direct local observation.
+  Its preceding-interval amount is not instantaneous rainfall. Source/receipt
+  expiry, client clock skew and radar coverage limit availability; radar imagery
+  remains unitless and supplies no ground-truth precipitation amount.
 - The arc's declination fit absorbs refraction to make sunrise/sunset land on the line (a visual calibration).
 - Dhuhr's "hair past the apex" is a small deliberate offset (post-zawāl cue), since minute-resolution data can put
   Dhuhr exactly on solar noon.

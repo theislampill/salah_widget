@@ -239,6 +239,19 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   snow, while a thunder condition alone cannot authorize lightning. These value
   rules require no new provider, configuration field, cache migration or installer
   change.
+  Freshness uses the model's source-valid `current.time` in the captured request
+  timezone, its positive preceding-interval duration, and retrieval time separately.
+  Both source and retrieval ages must be between zero and **15 minutes, inclusive**;
+  even a timestamp 1 ms in the future is ineligible. A new download cannot renew
+  an old source record. Invalid or expired current data shows an em dash and blank
+  temperature and stops unsupported clouds, rain/snow particles and lightning.
+  Optional missing precipitation alone does not invalidate an otherwise eligible
+  model condition. Client clock skew can temporarily withhold useful data.
+  Radar retains mosaic frame-generation, index-generation and retrieval times
+  separately: frame and retrieval ages each have an inclusive **20-minute** limit,
+  with no future allowance. Index time never replaces a missing frame time.
+  Valid timestamps do not establish local radar coverage or ground observation;
+  imagery remains unitless and cannot authorize precipitation amounts or strikes.
 - **Weather-reactive color theme** — the palette shifts with the sky: warm gold under a
   clear day, deep indigo on a clear night, muted grey when cloudy, cool steel-blue for
   rain, icy for snow, and charcoal-violet for thunderstorms. Day vs. night is derived
@@ -311,6 +324,11 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   visible render loop offers approximately 30-second opportunities outside an
   advancing sweep; eligibility and timeout release are not immediate retry or
   successful recovery.
+  The weather cache's six-hour retention window is storage compatibility, not
+  live authority. Retained legacy records without valid source metadata remain
+  unavailable until a healthy eligible response arrives; failed refreshes cannot
+  renew their source or receipt time. Prayer-cache rules are separate. These
+  caches do not make the widget a self-contained offline app.
   On performance-clock hosts, the absolute elapsed attempt deadline is checked
   as well as the timer: a late fetch/body/Image completion is rejected even if
   suspension delayed timer delivery. The existing `Date.now()` fallback is a
