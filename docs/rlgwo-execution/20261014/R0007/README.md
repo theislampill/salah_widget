@@ -6,15 +6,15 @@ The acceptance authority is the [immutable R0007 specification](https://github.c
 
 ## Result and acceptance matrix
 
-Independent acceptance is being finalized. The original audit's accepted rows are reused only after exact source-region comparison; the missing rendered-consumer and documentation obligations are exercised here.
+[Independent pre-delivery acceptance passed](qualification/independent-review.md) for 7.12, 7.14, 7.15 and 7.16.a. The original audit's accepted rows are reused only after exact source-region comparison. The remaining gate is owner-authorized delivery under 7.16.b; this packet does not claim issue closure.
 
 | Obligation | Evidence and exact predicate | Result |
 |---|---|---|
 | 7.01–7.11, 7.13 | Audited `18ff14860ff41c084b1db5f396bb62aa9c22b1be` converter, clock, admission, model, formatter, arc and render-loop owners match current source. Existing source controls: 126 pass, zero failures/skips/TODO. | Reused with currentness verified |
-| 7.12 | Six original/wall-subtraction pairs have identical native SVG and card, arc, prayer-row, buckle and footer geometry. Original screenshots independently inspected. Motion, preference and opaque-Moon controls are separate native acquisitions. | Independent preservation review pending |
+| 7.12 | Six original/wall-subtraction pairs have identical native SVG and card, arc, prayer-row, buckle and footer geometry. Original screenshots independently inspected. Motion, preference and opaque-Moon controls are separate native acquisitions. | PASS, scoped native preservation |
 | 7.14 | README explains elapsed instants, IANA zone/DST, unchanged wall-time timetable/arc, actual formatter precision, unavailable endpoints/data and next eligible frozen recovery. | Candidate verified; delivery reserved |
-| 7.15 | Chromium and Firefox present spring 150 min / 2h 30m, first fall 270 min / 4h 30m, ordinary 210 min / 3h 30m in both time formats. Missing tomorrow shows `—` / `Countdown unavailable`; valid March 8 data restores 270 min at the identical March 8 04:30Z accepted epoch. Wrong-day/gap/fold and original mutation controls retained. | Functional predicates pass; final presentation review pending |
-| 7.16 | Exact source/runtime inventory, controlled inputs, raw traces, original videos, immutable hashes and independent review. | Qualification in progress; exact-head merge/delivery reserved |
+| 7.15 | Chromium and Firefox present spring 150 min / 2h 30m, first fall 270 min / 4h 30m, ordinary 210 min / 3h 30m in both time formats. Missing tomorrow shows `—` / `Countdown unavailable`; valid March 8 data restores 270 min at the identical March 8 04:30Z accepted epoch. Wrong-day/gap/fold and original mutation controls retained. | PASS, actual rendered consumers |
+| 7.16 | Exact source/runtime inventory, controlled inputs, raw traces, original videos, immutable hashes and independent review. | 7.16.a PASS; 7.16.b exact-head merge/delivery reserved |
 
 ## Exact identities and controlled environment
 
@@ -34,7 +34,7 @@ Independent acceptance is being finalized. The original audit's accepted rows ar
 
 `presentation/` retains native video-only acquisitions and extracted first-current images. Initial stills could cross render ordinal 2→3; those failed unique-ordinal associations remain recorded as PARTIAL. Acceptance instead requires independently inspected first presented prayer pixels plus exhaustive correct completed prayer-render receipts. Footer badge arrival is separately inspected and is not asserted byte-identical across those two renders. Frozen recovery retains its stronger exact earliest-valid ordinal/crop association in both formats and engines.
 
-`preservation/` contains 30-second default, reduced-motion and forced-full controls, current-surface receipts, and warm ashen controls. Firefox headless recordings contain intermittent missing regions; these are failed continuous-preservation evidence and are not promoted to PASS. Any qualified replacement environment is identified separately in the independent review; the originals remain retained.
+`preservation/` contains 30-second default, reduced-motion and forced-full controls, current-surface receipts, and warm ashen controls. Firefox headless recordings contain intermittent missing regions; these are failed continuous-preservation evidence and are not promoted to PASS. The accepted Firefox preservation controls and two formatter replacements are in `headed-replacement/firefox/`, using the same installed engine and recorder with `headless=false`. The independent review selects each accepted acquisition; the failed originals remain retained.
 
 [Current public consumer readback](qualification/public-consumer-before/readback.json) proves that the already-deployed root bytes match this runtime and that the actual served root presents the controlled spring result in both browsers. The frozen V1 source and compatibility smoke also match. This pre-merge readback does not deliver the changed README or this candidate evidence.
 
