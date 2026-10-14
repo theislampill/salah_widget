@@ -1,0 +1,181 @@
+{
+  "schema": "r0025-cause-bound-firefox-timer-source-correction/1",
+  "status": "PASS_CHEAP_AFFECTED_CONTROLS_PENDING_EXISTING_REVIEW_ROOT_BINDING_REASSOCIATION_AND_ONE_NATIVE_ATTEMPT",
+  "actualFailedCost": {
+    "originalIdentity": {
+      "bytes": 2996964,
+      "sha256": "6b65844f75560b9063f5dad01a7d95614eb7e6595422e55fd10f620e3cea5527"
+    },
+    "artifact": "support/blobs/6b65844f75560b9063f5dad01a7d95614eb7e6595422e55fd10f620e3cea5527.json",
+    "publishedIdentity": "supporting-files.json"
+  },
+  "actualCalibration": {
+    "positiveStepsMs": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "minimumPositiveStepMs": 1,
+    "attempts": 1000001,
+    "scope": "instrument-clock resolution control outside every painter duration"
+  },
+  "soleOriginalProblem": [
+    "native timer resolution insufficient for adopted absolute tolerance"
+  ],
+  "originalCollector": {
+    "originalIdentity": {
+      "bytes": 17231,
+      "sha256": "dccfcdd229bbfea232bf6ed42691b55652cc9809ca783c36bb0e2c5fb7afe4aa"
+    },
+    "artifact": "support/blobs/dccfcdd229bbfea232bf6ed42691b55652cc9809ca783c36bb0e2c5fb7afe4aa.py",
+    "publishedIdentity": "supporting-files.json"
+  },
+  "correctedCollector": {
+    "originalIdentity": {
+      "bytes": 17496,
+      "sha256": "bbf920ce72ebbdba0a29af331b1e01d08d5156c90a4cd86f5575a35534cf534c"
+    },
+    "artifact": "support/blobs/bbf920ce72ebbdba0a29af331b1e01d08d5156c90a4cd86f5575a35534cf534c.py",
+    "publishedIdentity": "supporting-files.json"
+  },
+  "fixtureFiles": {
+    "r0025-painter-cost.py": {
+      "originalIdentity": {
+        "bytes": 17496,
+        "sha256": "bbf920ce72ebbdba0a29af331b1e01d08d5156c90a4cd86f5575a35534cf534c"
+      },
+      "artifact": "support/blobs/bbf920ce72ebbdba0a29af331b1e01d08d5156c90a4cd86f5575a35534cf534c.py",
+      "publishedIdentity": "supporting-files.json"
+    },
+    "cost_boundary.js": {
+      "originalIdentity": {
+        "bytes": 6703,
+        "sha256": "957b5feb523de70f7db34ae24eac8baa05d3624ecffcd456e13f41e2f579bfaa"
+      },
+      "custodyAlias": "private-source-alias:7b8d8167c69ce8f14d29318c3964c9490a83e1fc8b321f168b971c75fe3c5f11",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "prepare_cost.py": {
+      "originalIdentity": {
+        "bytes": 9926,
+        "sha256": "351d425328334423e2f6f14760ca915bbd9aa5afb538640cbdac10858abd0331"
+      },
+      "custodyAlias": "private-source-alias:1649b6f4d9284444425d66ae1d5633dc3735f8a7b7cda6fc9b8b409476ce407b",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    }
+  },
+  "fixtureSha256": "da5f8c55e6065bd4e9ef73182bf5e0ca2257cdbdbdb6efab832c2a105eb5f6c2",
+  "originalFixtureSha256": "932030e423dc36915524b1b8d7208854a495421f554a43e6371c6622759409bf",
+  "protocol": {
+    "originalIdentity": {
+      "bytes": 4929,
+      "sha256": "03eab835be82f6e6e5b2780b6fff3948784b55c2dab4daacf2cf10a525009935"
+    },
+    "custodyAlias": "private-source-alias:eb5abd693e200efd8a3259cba78fa2a9dd3c28ff76d86c4115349860b820bdcf",
+    "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+  },
+  "protocolByteIdentical": true,
+  "sourceRestoresByteExactlyAfterOnlyTwoInsertions": true,
+  "measurementCalibrationStatisticsBudgetScheduleEntryBodiesUnchanged": true,
+  "launchEffect": {
+    "engine": "firefox",
+    "api": "BrowserType.launch firefox_user_prefs",
+    "prefs": {
+      "privacy.resistFingerprinting.reduceTimerPrecision.microseconds": 100
+    },
+    "profile": "One new Playwright-owned disposable benchmark process/context for both arms; no persistent context or user/global profile",
+    "privacyReductionAndJitterFlags": "unchanged, neither is disabled",
+    "securitySandboxNetworkPolicy": "unchanged"
+  },
+  "primarySourceSupport": [
+    {
+      "url": "https://raw.githubusercontent.com/mozilla/gecko-dev/master/modules/libpref/init/StaticPrefList.yaml",
+      "evidence": "Timer reduction and jitter default enabled; numeric microseconds preference defaults1000 and controls resolution."
+    },
+    {
+      "url": "https://playwright.dev/python/docs/api/class-browsertype",
+      "evidence": "firefox_user_prefs supported launch parameter."
+    }
+  ],
+  "installedSDKImplementation": {
+    "file": {
+      "originalIdentity": {
+        "bytes": 18694,
+        "sha256": "a75581feabf6e938f5c7ed4a83b4e6f07cafbd30051ee91142c19dad966cc70d"
+      },
+      "custodyAlias": "private-source-alias:48ff066f28cc8b6d8688b6d8fcde5607d431919499ffa0830b467e4ec48a01f8",
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+    },
+    "lines": "64-70",
+    "evidence": "Launch-owned userPrefs forwarded to Browser.enable."
+  },
+  "controls": {
+    "originalIdentity": {
+      "bytes": 1282,
+      "sha256": "483829f4a0726119463aa6396bb78be56139e352ab2ad4dedaebae7042c0cfa5"
+    },
+    "custodyAlias": "private-source-alias:c50876c49662b86715bbfcacf5f8ac533e366ba7c8ad779b752c53e85e9ed945",
+    "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+  },
+  "controlsCount": 3,
+  "red": {
+    "originalIdentity": {
+      "bytes": 971,
+      "sha256": "04d23fb3071b32b68dd5f4f331ec2a6156df22e5d8f7fbed17c4cb015aef4e17"
+    },
+    "custodyAlias": "private-source-alias:d28554f541071d6fb04aa3d3fcf656d05679d76257192ddde9ebb836929223a0",
+    "publicAvailability": "NOT_CLAIMED_PRIVATE_CUSTODY_OR_DEPENDENCY"
+  },
+  "nativeEffectiveness": "UNVERIFIED_ORIGINAL_CALIBRATION_STILL_MANDATORY",
+  "numericalBudget": "Unchangedmax(.25ms,10%before), same noise rule; no tuning from failure",
+  "rootRequiredBeforeGrant": [
+    "ExistingCOSTreviewer exact launch-only source/profile effect and originalG interpretation",
+    "ROOT pre-run fixture-only association rebind of452 adoption to new fixture; protocol03/absolute.25/relative.1/schedule/noise unchanged",
+    "ROOT matching scene6fa consumer-reuse association rebind, no original native scene replay",
+    "Exact corrected caller/source/lease/output binding admitted; ROOT alone invokes one finite rerun"
+  ],
+  "maxNativeAttempts": 1,
+  "native": false,
+  "nodeCredit": 0
+}

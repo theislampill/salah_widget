@@ -1,0 +1,127 @@
+{
+  "schema": "r0025-exact-selected-owner-association/1",
+  "targetCommit": "866b8b792a19905c9cd933ad7bf38d89c39cc842",
+  "generatedSha256": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+  "authoredSha256": "b3094034d50bf0867a0f62c9f3e86a61f132c0126bed2a3fcdbd1bde38bc4dbd",
+  "classicSha256": "b8bb87a6d025792cc3f95b9d8a2dd558e35df3796dc39a12375ac60b7d6d5614",
+  "acceptedOwnerReuse": [
+    {
+      "region": "cloudNoise",
+      "source": "generated",
+      "sha256": "58d384b9d76828ba876c908a8b8555cc474022ca095c651199146c759b216c36",
+      "acceptedSha256": "58d384b9d76828ba876c908a8b8555cc474022ca095c651199146c759b216c36",
+      "equal": true
+    },
+    {
+      "region": "cloudNoise",
+      "source": "authored",
+      "sha256": "58d384b9d76828ba876c908a8b8555cc474022ca095c651199146c759b216c36",
+      "acceptedSha256": "58d384b9d76828ba876c908a8b8555cc474022ca095c651199146c759b216c36",
+      "equal": true
+    },
+    {
+      "region": "cloudIdentityMotion",
+      "source": "generated",
+      "sha256": "68d8648af84439d76df37680e640a38a5dd928a62eac29d62560b8c107596e49",
+      "acceptedSha256": "68d8648af84439d76df37680e640a38a5dd928a62eac29d62560b8c107596e49",
+      "equal": true
+    },
+    {
+      "region": "cloudIdentityMotion",
+      "source": "authored",
+      "sha256": "68d8648af84439d76df37680e640a38a5dd928a62eac29d62560b8c107596e49",
+      "acceptedSha256": "68d8648af84439d76df37680e640a38a5dd928a62eac29d62560b8c107596e49",
+      "equal": true
+    },
+    {
+      "region": "cloudPainter",
+      "source": "generated",
+      "sha256": "f5d033a158df355a57c192b540e651813b59a27f712f2d9dc332646e31d2b44a",
+      "acceptedSha256": "fcaf49836f2e49d9cbed6990b3d93257d4372601ba2c282dee681819a0b3b4dd",
+      "equal": false
+    },
+    {
+      "region": "cloudPainter",
+      "source": "authored",
+      "sha256": "f5d033a158df355a57c192b540e651813b59a27f712f2d9dc332646e31d2b44a",
+      "acceptedSha256": "fcaf49836f2e49d9cbed6990b3d93257d4372601ba2c282dee681819a0b3b4dd",
+      "equal": false
+    },
+    {
+      "region": "cloudStateSetter",
+      "source": "generated",
+      "sha256": "b40114126ee31525e124c6026cb165ffa76d67625576a13c6cc8437be7373ec8",
+      "acceptedSha256": "b40114126ee31525e124c6026cb165ffa76d67625576a13c6cc8437be7373ec8",
+      "equal": true
+    },
+    {
+      "region": "cloudStateSetter",
+      "source": "authored",
+      "sha256": "b40114126ee31525e124c6026cb165ffa76d67625576a13c6cc8437be7373ec8",
+      "acceptedSha256": "b40114126ee31525e124c6026cb165ffa76d67625576a13c6cc8437be7373ec8",
+      "equal": true
+    },
+    {
+      "region": "visualClock",
+      "source": "generated",
+      "sha256": "b8b22c248367cdb0fe549575d314b0cfe0ef3fd3616c888828bd2ee35a45fc36",
+      "acceptedSha256": "a486f8d1628f63c29411a938e38257acf288950484c15f48a1b1811dec500e69",
+      "equal": false
+    },
+    {
+      "region": "visualClock",
+      "source": "authored",
+      "sha256": "b8b22c248367cdb0fe549575d314b0cfe0ef3fd3616c888828bd2ee35a45fc36",
+      "acceptedSha256": "a486f8d1628f63c29411a938e38257acf288950484c15f48a1b1811dec500e69",
+      "equal": false
+    },
+    {
+      "region": "civilClock",
+      "source": "generated",
+      "sha256": "e6f62af952208feb0ddf5743dbfedae93b3e3ac70b2d99ec5d8f9d5961d2c997",
+      "acceptedSha256": "e6f62af952208feb0ddf5743dbfedae93b3e3ac70b2d99ec5d8f9d5961d2c997",
+      "equal": true
+    },
+    {
+      "region": "civilClock",
+      "source": "authored",
+      "sha256": "e6f62af952208feb0ddf5743dbfedae93b3e3ac70b2d99ec5d8f9d5961d2c997",
+      "acceptedSha256": "e6f62af952208feb0ddf5743dbfedae93b3e3ac70b2d99ec5d8f9d5961d2c997",
+      "equal": true
+    }
+  ],
+  "costSelection": {
+    "startCharacter": 186838,
+    "endCharacter": 198127,
+    "sourceBlockSha256": "c3a8de69e07da602f4bfbbd443c6ef78e933030bf517104314b138a4e3acaf8e",
+    "helpers": [
+      "const clamp= x => Math.min(1,Math.max(0,x));",
+      "const lerp =(a,b,t)=>a+(b-a)*t;",
+      "const mixRGB=(A,T,s)=>[lerp(A[0],T[0],s),lerp(A[1],T[1],s),lerp(A[2],T[2],s)];",
+      "const _RAFNOW = ()=> (typeof performance!=='undefined' && performance.now) ? performance.now() : Date.now();",
+      "const isMotionReduced = () => !MOTIONFULL && !!(window.matchMedia && window.matchMedia(\"(prefers-reduced-motion: reduce)\").matches);"
+    ],
+    "kind": "exact selected source, unchanged bodies; external clock/DOM/config boundaries controlled",
+    "selectedEngineSha256": "9c6e9542ea085cf977edf0eac0b9029d4b3798dd2e614048cc331de067d3f888",
+    "equalRetainedSelectedEngine": false,
+    "authoredGeneratedSelectedEngineEqual": true
+  },
+  "missingRetainedRuntimePathsInGit": [
+    "moon/assets/initial-compact.bin",
+    "moon/assets/initial-receivers.bin",
+    "moon/initial-compact-manifest.json",
+    "moon/initial-manifest.json",
+    "moon/tools/build_initial.cjs",
+    "moon/tools/qualify_initial.cjs",
+    "real-sky/native-startup-timing.js"
+  ],
+  "runtimeBinding": "PENDING_ROOT_CANONICAL_INVENTORY; partial tracked tree is not labelled a whole runtime",
+  "v1Trees": {
+    "base": "87d4e9c9bd2b9d2a00164ab109fe00e9c25f9055",
+    "target": "87d4e9c9bd2b9d2a00164ab109fe00e9c25f9055"
+  },
+  "v1Unchanged": true,
+  "nativeExecuted": false,
+  "productEdits": false,
+  "acceptedCasesReplayed": false
+}

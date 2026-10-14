@@ -1,0 +1,300 @@
+{
+  "schema": "r0025-final-independent-original-acceptance-addendum/1",
+  "issue": 37,
+  "canonicalId": "R0025",
+  "atUtc": "2026-10-14T00:05:37.959767+00:00",
+  "disposition": "PASS_ORIGINAL_REVIEW_AND_RELEASE_REVIEW_WITH_EXACT_UNCHANGED_CONSUMER_REUSE",
+  "signature": {
+    "kind": "Recorded independent decision, not a cryptographic signature",
+    "reviewer": "independent-reviewer-sha256:78390c72b7c4029d1d0d6ca17c37aedf1d583f8e0a7d4501aca96edd4f546de0",
+    "role": "Different reviewer from executor, fixture author and ROOT publisher",
+    "atUtc": "2026-10-14T00:05:37.959767+00:00"
+  },
+  "originalContract": {
+    "specificationIdentity": {
+      "bytes": 40900,
+      "sha256": "3c333ae86571184b3a91c010141e45a10a7bc946293ce73db3ea09c4f2c638c8"
+    },
+    "graphIdentity": {
+      "bytes": 1507418,
+      "sha256": "9ac372cfcce4df94ee0e678b907e66c131fe49f72cc55106143aa35dbdb0a6e7"
+    },
+    "originalIssueBodySha256": "c2b574ca342880f7b646be7779f9ba71fe2fdc1463b39422b7eab30ec3ea5c20",
+    "contractChanged": false
+  },
+  "sourceCommit": "3c4221c518fd12e50eca73b89744be3c0db39c34",
+  "sourceTree": "60e73957244c559e3fb64e9e6243b8b453f1c77c",
+  "source": {
+    "generated": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+    "authored": "b3094034d50bf0867a0f62c9f3e86a61f132c0126bed2a3fcdbd1bde38bc4dbd",
+    "config": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "runtimeTree": "5003d304bd0dba119fbc74773cd8e9a97113948259203d8c5390c9062fcc7514"
+  },
+  "runtimeFiles": 135,
+  "qualificationRows": [
+    {
+      "id": "R0025-A01",
+      "parentRow": "25-07",
+      "originalRecordLiteral": "| `R0025-A01` / `25-07` | Original2026-09-08/Madinah18:10 finite scene; T1788880200; native144x232 canvas; equal monotonic time; wind3->3.1, heading225->45, calm0, reverse/gust variants from original source controls → Actual weather.wind/dir/gust -> render/applyCloudState -> paintClouds(T), native Canvas2D getImageData only in fixture | Hold target/seed/coverage/tints/solar+Moon light and civil+monotonic time fixed; record all state keys. Raw cloud premultiplied RGB before/after exactly equal for position-only pure wind setter; repeat equal-time paint is idempotent. If another actual lighting input changes, isolate and label that contribution rather than fake parity. Expected: Named same-instant pure-position operators pass; a disposable reintroduced wind-times-civil-epoch phase mutant produces a reached native-raster failure. Reversing setter/advance is not a same-instant discriminator because elapsed is zero. | Windows; installed Chromium and Firefox serially, record exact versions (audit used Chromium 148.0.7778.96 / Firefox 150.0.2); isolated localhost profile/context; actual 325x530 CSS card, desktop 1100x900 and constrained 375x800 viewport where UI matters; DPR 1 and 2 where raster/geometry matters. These are future runs, not claimed execution. Evidence: `evidence/R0025/pixels/wind-{engine}.json`. Gate: Independent recomputation plus raw/composite crops; state trace alone does not pass. |",
+      "status": "SATISFIED",
+      "satisfied": true,
+      "basis": "Accepted actual original native operators/reached controls in four engine/DPR profiles and explicit unchanged accepted-input reuse",
+      "independentComponentDecisionIdentity": {
+        "bytes": 30654,
+        "sha256": "4358be146338ee027f6e7d74bd6d389dcd211f4fec596c86e13202c381391a47"
+      },
+      "publicComponentEvidenceArtifact": "pixels/results.json"
+    },
+    {
+      "id": "R0025-A02",
+      "parentRow": "25-07",
+      "originalRecordLiteral": "| `R0025-A02` / `25-07` | Day B1788912000 sec at B±.038; month2026-10-01T00:00Z; year2027-01-01T00:00Z; ordinary referenceB-1 toB-1+.076; current visual axes stepped76ms, same civil/weather scene; fixed established target/seed → Actual current cloud identity/motion/population and native painter at ordinary civil boundaries | No boundary-dependent population replacement; same established state/monotonic elapsed yields identical current rendered pair to ordinary control when only civil-day label differs. Compare raw population/noise identity and native RGBA; any ordinary small lifecycle delta is recorded, not judged by historic fixed AA count. Daily-reseed mutant has an extra visible/state discontinuity. Expected: Day/month/year current native boundaries are continuous and relevant reseed mutant detected | Windows; installed Chromium and Firefox serially, record exact versions (audit used Chromium 148.0.7778.96 / Firefox 150.0.2); isolated localhost profile/context; actual 325x530 CSS card, desktop 1100x900 and constrained 375x800 viewport where UI matters; DPR 1 and 2 where raster/geometry matters. These are future runs, not claimed execution. Evidence: `evidence/R0025/pixels/boundaries-{engine}.json`. Gate: Reviewer validates independent elapsed/civil axes and visually inspects native boundary/ordinary pairs. |",
+      "status": "SATISFIED",
+      "satisfied": true,
+      "basis": "Accepted actual original native operators/reached controls in four engine/DPR profiles and explicit unchanged accepted-input reuse",
+      "independentComponentDecisionIdentity": {
+        "bytes": 30654,
+        "sha256": "4358be146338ee027f6e7d74bd6d389dcd211f4fec596c86e13202c381391a47"
+      },
+      "publicComponentEvidenceArtifact": "pixels/results.json"
+    },
+    {
+      "id": "R0025-A03",
+      "parentRow": "25-07",
+      "originalRecordLiteral": "| `R0025-A03` / `25-07` | Byte-identical no-op source, uninstrumented/current fixture one-shot first painter image, original prepatch wind/day controls and phase-diagnostic first-image parity where preserved → Actual native cloud canvas, source hash and complete fixture entry | No-op/current first-image fixture preserves current source-bound cloud raster exactly; full-card diagnostic need not be byte-identical. Retain original failing and first-image mechanism-control history without reverting accepted solar/phase/current-camera changes. Any unavailable original private PNG is explicit; deterministic original source inputs reproduce the witness in disposable fixture. Expected: Native raster harness has a positive no-op/first-image control and preserved/reproduced historical failing witness | Windows; installed Chromium and Firefox serially, record exact versions (audit used Chromium 148.0.7778.96 / Firefox 150.0.2); isolated localhost profile/context; actual 325x530 CSS card, desktop 1100x900 and constrained 375x800 viewport where UI matters; DPR 1 and 2 where raster/geometry matters. These are future runs, not claimed execution. Evidence: `evidence/R0025/pixels/no-op-and-original-{engine}.json`. Gate: Different reviewer checks provenance and adaptation map; old full-card art is not silently reimposed. |",
+      "status": "SATISFIED",
+      "satisfied": true,
+      "basis": "Accepted actual original native operators/reached controls in four engine/DPR profiles and explicit unchanged accepted-input reuse",
+      "independentComponentDecisionIdentity": {
+        "bytes": 30654,
+        "sha256": "4358be146338ee027f6e7d74bd6d389dcd211f4fec596c86e13202c381391a47"
+      },
+      "publicComponentEvidenceArtifact": "pixels/results.json"
+    },
+    {
+      "id": "R0025-A04",
+      "parentRow": "25-07",
+      "originalRecordLiteral": "| `R0025-A04` / `25-07` | Real finite current weatherwind3, normal clock1x15–60s or unchanged exact final-v49 clip; clear-sky negative; empty/deck return, hidden/reduced/full, wall correction/explicit seek and periodic-wrap cases at current interfaces → Actual painter and source/native lifecycle, not hash; accepted normal motion reused at unchangedowners | Retain visible travel/lifecycle and current permission/column behavior. Source-selected old-wind/reseed/frozen-interval/empty-deck/wrap faults each reach relevant oracle. Do not freeze product to satisfy equal-time pixels. Reuse existing actual normal1x20..98s proof if no relevant source/input change; any repair requires affected elapsed motion and column recheck. Expected: Equal-time continuity coexists with real elapsed motion and all relevant faults discriminate | Windows; installed Chromium and Firefox serially, record exact versions (audit used Chromium 148.0.7778.96 / Firefox 150.0.2); isolated localhost profile/context; actual 325x530 CSS card, desktop 1100x900 and constrained 375x800 viewport where UI matters; DPR 1 and 2 where raster/geometry matters. These are future runs, not claimed execution. Evidence: `evidence/R0025/pixels/preservation-and-mutants.json`. Gate: Independent visual/controller review; Moon continuity-v45 is excluded as cloud wind proof. |",
+      "status": "SATISFIED",
+      "satisfied": true,
+      "basis": "Accepted actual original native operators/reached controls in four engine/DPR profiles and explicit unchanged accepted-input reuse",
+      "independentComponentDecisionIdentity": {
+        "bytes": 30654,
+        "sha256": "4358be146338ee027f6e7d74bd6d389dcd211f4fec596c86e13202c381391a47"
+      },
+      "publicComponentEvidenceArtifact": "pixels/results.json"
+    },
+    {
+      "id": "R0025-A06",
+      "parentRow": "25-07",
+      "originalRecordLiteral": "| `R0025-A06` / `25-07` | Same established nonempty native cloud fixture with explicit fragment simTime=18:10&timeScale=1&motion=full; assert FOLLOW_WALL_CLOCK=false, TIMESCALE=1, _cloudMotion.paused=false and _cloudMotion.reduced=false before the control (simTime-only TIMESCALE0 or suspended/reduced integration is inadmissible). Advance civil and monotonic time by500ms at rate1, below the2s suspension boundary, then change wind3/direction225 to calm0; repeat from identical state with direction45/wind3.1 → Actual applyCloudState must advanceCloudMotion before installing the new cloudState.wx/wspd; actual native paintClouds follows | Compute each expected phase as wrap(oldPhase - oldWx*oldWspd*0.5*(0.024+di*0.006),1.25), with life/wander advanced by the same0.5s. Compare native RGBA to an independently stepped old-velocity control. The accepted ordering mutant installing new velocity before advance must fail the exact phase oracle; retain reached nonempty native images and all deltas. Subsequent elapsed interval uses the new velocity. Equal-time A01 remains a separate raster control. Expected: Healthy positive elapsed integrates old wind before replacement; the ordering mutant reaches and fails this positive-elapsed oracle, not elapsed0 | Windows; installed Chromium and Firefox serially, record exact versions (audit used Chromium 148.0.7778.96 / Firefox 150.0.2); isolated localhost profile/context; actual 325x530 CSS card, desktop 1100x900 and constrained 375x800 viewport where UI matters; DPR 1 and 2 where raster/geometry matters. These are future runs, not claimed execution. Evidence: `evidence/R0025/pixels/positive-elapsed-order-{engine}.json`. Gate: Independent equation/source-order reader checks healthy and mutant source hashes plus nonempty native images; accepted source-control receipt may be reused only at unchanged exact owners/inputs. |",
+      "status": "SATISFIED",
+      "satisfied": true,
+      "basis": "Accepted actual original native operators/reached controls in four engine/DPR profiles and explicit unchanged accepted-input reuse",
+      "independentComponentDecisionIdentity": {
+        "bytes": 30654,
+        "sha256": "4358be146338ee027f6e7d74bd6d389dcd211f4fec596c86e13202c381391a47"
+      },
+      "publicComponentEvidenceArtifact": "pixels/results.json"
+    },
+    {
+      "id": "R0025-A05",
+      "parentRow": "25-10",
+      "originalRecordLiteral": "| `R0025-A05` / `25-10` | One quiescent actual browser setup; same144x232 painter input/canvas/DPR/weather/tints/coverage; oldfd2972 selected painter and exact candidate; warm5s +four paired5s ABBA blocks → Actual paintClouds invocation self-time and retained _cloudMotion/columns/cluster/provider/rAF state | Apply only pre-adopted proposed median/p95 budget max(.25ms,10%baseline) fromG; raw counts/durations and allocation/listener/provider inventories retained. Finite phase3/life3/wander and columns144; no unbounded history/per-cluster persistence or new permanent loop. Unequal/noisy setup INCOMPLETE; no GPU/battery inference. Expected: Original bounded before/after painter cost/state gate passes or remains honestly unverified | Windows; installed Chromium and Firefox serially, record exact versions (audit used Chromium 148.0.7778.96 / Firefox 150.0.2); isolated localhost profile/context; actual 325x530 CSS card, desktop 1100x900 and constrained 375x800 viewport where UI matters; DPR 1 and 2 where raster/geometry matters. These are future runs, not claimed execution. Evidence: `evidence/R0025/cost/results.json`. Gate: Independent reviewer checks adopted-before-run budget, identical measured scope/setup and original contract; N001 is not a substitute. |",
+      "status": "SATISFIED",
+      "satisfied": true,
+      "basis": "Accepted original both-engine selected painter cost with adopted-before-run budget and retained exceptions",
+      "componentDecisionArtifact": "support/blobs/8aa03f2d8d1bc4952e40cd6430b91c73476da49c1c1c190a74f9e30c342a5d79.json"
+    }
+  ],
+  "acceptedOriginalRowsExact": [
+    "| `25-01` | satisfied: Stable accepted target/seed population and unchanged art owners are supported by9 continuity+16 lifecycle source cases and six reached cloud faults. |",
+    "| `25-02` | satisfied: Actual painter commands/noise/columns preserve equal-time wind refresh and old-velocity receipt order while allowing positive elapsed travel; native raster remains a separate residual. |",
+    "| `25-03` | satisfied: Empty-deck, long-gap, bounded retention and periodic-copy/edge state are covered by the accepted lifecycle controls. |",
+    "| `25-04` | satisfied: Civil/visual clocks, hidden/resumed/reduced/full rebase, explicit seek and one native controller are covered by source/native lifecycle controls with their stated OS limits. |",
+    "| `25-05` | satisfied: Original initial coverage snap and.08 easing persist; source-bound startup cloud imagery supports actual accepted deck establishment. |",
+    "| `25-06` | satisfied: Actual visible columns and rain permission/expiry controls plus native positive rain imagery preserve source-linked precipitation without an observed-rain inference. |",
+    "| `25-08` | satisfied: Exact current actual normal1x clip/contact sheet proves visible cloud motion over20..98s; no hash or frozen simTime is used. |",
+    "| `25-09` | satisfied: Accepted target change clears cloud/rain state and currentness through actual source/lifecycle consumers; no whole-issue prerequisite is introduced. |",
+    "| `25-11` | satisfied: High-value continuity/time comments, current approved art, geometry/UI and affected weather/material interfaces remain true; this does not waive native raster/cost residuals. |"
+  ],
+  "acceptedOriginalRowDispositions": [
+    {
+      "id": "25-01",
+      "status": "SATISFIED_RETAINED_AT_EXACT_UNCHANGED_RELEVANT_OWNERS"
+    },
+    {
+      "id": "25-02",
+      "status": "SATISFIED_RETAINED_AT_EXACT_UNCHANGED_RELEVANT_OWNERS"
+    },
+    {
+      "id": "25-03",
+      "status": "SATISFIED_RETAINED_AT_EXACT_UNCHANGED_RELEVANT_OWNERS"
+    },
+    {
+      "id": "25-04",
+      "status": "SATISFIED_RETAINED_AT_EXACT_UNCHANGED_RELEVANT_OWNERS"
+    },
+    {
+      "id": "25-05",
+      "status": "SATISFIED_RETAINED_AT_EXACT_UNCHANGED_RELEVANT_OWNERS"
+    },
+    {
+      "id": "25-06",
+      "status": "SATISFIED_RETAINED_AT_EXACT_UNCHANGED_RELEVANT_OWNERS"
+    },
+    {
+      "id": "25-08",
+      "status": "SATISFIED_RETAINED_AT_EXACT_UNCHANGED_RELEVANT_OWNERS"
+    },
+    {
+      "id": "25-09",
+      "status": "SATISFIED_RETAINED_AT_EXACT_UNCHANGED_RELEVANT_OWNERS"
+    },
+    {
+      "id": "25-11",
+      "status": "SATISFIED_RETAINED_AT_EXACT_UNCHANGED_RELEVANT_OWNERS"
+    }
+  ],
+  "canonicalInterfaces": {
+    "r0025-native-pixels/v1": {
+      "identity": {
+        "bytes": 30209,
+        "sha256": "43ed2e89324279f0c23fee84794c0e6ace3b86949127ea276073534559c25bf0"
+      },
+      "artifact": "pixels/results.json",
+      "healthyOriginal": 60,
+      "reachedNativeFaults": 24
+    },
+    "r0025-painter-cost/v1": {
+      "identity": {
+        "bytes": 5984,
+        "sha256": "57f9a274e5205a9eba709debe624c118c8c5c72d498337413643d656a4b30aaa"
+      },
+      "artifact": "cost/results.json",
+      "status": "SATISFIED",
+      "engines": [
+        "chromium",
+        "firefox"
+      ]
+    },
+    "r0025-review/v1": {
+      "candidateArtifact": "review.json",
+      "thisIndependentAddendumConsumesCandidate": true
+    },
+    "r0025-delivery/v1": {
+      "candidateArtifact": "delivery.json",
+      "sourceAndConsumerReuseAccepted": true,
+      "actualEvidencePublicationAndComment": "PENDING_ROOT_ACTUAL_EFFECT_READBACK"
+    }
+  },
+  "componentSignatures": {
+    "PIXELS": {
+      "originalIdentity": {
+        "bytes": 30654,
+        "sha256": "4358be146338ee027f6e7d74bd6d389dcd211f4fec596c86e13202c381391a47"
+      },
+      "publicAvailability": "NOT_CLAIMED_PRIVATE_INDEPENDENT_RECONCILIATION",
+      "publicComponentEvidenceArtifact": "pixels/results.json"
+    },
+    "COST": {
+      "originalIdentity": {
+        "bytes": 6627,
+        "sha256": "8aa03f2d8d1bc4952e40cd6430b91c73476da49c1c1c190a74f9e30c342a5d79"
+      },
+      "artifact": "support/blobs/8aa03f2d8d1bc4952e40cd6430b91c73476da49c1c1c190a74f9e30c342a5d79.json"
+    }
+  },
+  "sourceAndNormalMotionReuse": {
+    "r0025ProductSourceChanged": false,
+    "fullRuntimeEqualToHistorical18ffClaimed": false,
+    "sixOriginalCloudTimeRegionsEqualAccepted18ff": true,
+    "threeOriginalTestSourcesEqual": true,
+    "acceptedContinuityLifecycleSemanticControls": [
+      9,
+      16,
+      6
+    ],
+    "ownerEqualityEvidence": {
+      "originalIdentity": {
+        "bytes": 3904,
+        "sha256": "b2494893011184602899447f0be553897271f6e78ef40972f36bc22da28e4346"
+      },
+      "artifact": "support/blobs/b2494893011184602899447f0be553897271f6e78ef40972f36bc22da28e4346.json"
+    },
+    "normal1xMotion": "Retained original accepted final-v49 20..98s clip/contact-sheet scope only; relevant cloud/time owners and original accepted inputs preserved. No hash or Moon continuity panel used as native raster or motion proof.",
+    "normal1xClip": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/docs/real-sky/evidence/startup-cloud-20261007/final-v49/motion/chromium-normal1x-cold.webm"
+  },
+  "originalReviewExits": {
+    "allPixelAndCostOutputsCompleteSameSelectedSource": true,
+    "differentReviewerRawAndPairControls": "Exact previously accepted independent per-case/raw/composite/recomputation and per-engine COST decisions consumed; no author self-credit or rerun substituted",
+    "unchangedNormalMotionAndAcceptedInterfacesRetained": true,
+    "noUnresolvedMandatoryImplementationOrEvidenceRow": true,
+    "futurePublicationAndClosureRemainPending": true
+  },
+  "deliveryReuseDecision": {
+    "status": "ACCEPT_EXACT_UNCHANGED_OWNER_SOURCE_AND_CONSUMER_REUSE",
+    "mandatoryExitLiteral": "- [ ] Exit: If runtime unchanged, delivered18ff identity remains verified and exact consumer reuse is explicit; if repaired, affected native pixel/lifecycle/rain/motion owners requalify on final delivered tree; Evidence comment precedes closure; no Plan07 or CP9 programme status is promoted",
+    "proposedActionLiteral": "- Proposed final public readback: match served source/runtime digest and run one actual native cloud equal-time/elapsed positive on isolated public entry; reuse already verified ordinary1x motion if all its relevant owners/inputs remain unchanged.",
+    "reason": "The original mandatory exit permits explicit consumer reuse for evidence-only unchanged-runtime work. R0025 introduces no runtime repair; its original accepted cloud/time owners match18ff and its actual native consumers bind the exact currently delivered3c/5003 source and recorded original inputs/environments. The proposed public native action is not a separate mandatory duplicate acquisition. Fresh9-resource source readback and the earlier independently accepted16-resource public source/native delivery receipts establish the delivered identity at their stated scopes.",
+    "freshCurrentPublicSource": {
+      "originalIdentity": {
+        "bytes": 17473,
+        "sha256": "a3333ae111ab6f15c06c317ab5996708fc1eadae9e4ffd932806e87a5f4f9032"
+      },
+      "artifact": "support/blobs/a3333ae111ab6f15c06c317ab5996708fc1eadae9e4ffd932806e87a5f4f9032.json"
+    },
+    "priorQualifiedPublicSourceIdentity": {
+      "bytes": 10724,
+      "sha256": "0bb14766e56925c127ac28f4c0e4a06098bbac5121cd0c035302aedf9dace26e"
+    },
+    "freshPublicNativeExecuted": false,
+    "defaultNetworkOrBootstrapOrFullWidgetTransferred": false
+  },
+  "publicationSafety": {
+    "retainedProposalArtifact": "closure-certificate.json",
+    "retainedProposalIdentity": {
+      "bytes": 51017,
+      "sha256": "b722738846cb8b84db9d729317201a4288d04a1c9f8a5f907b440d109ac12bbd"
+    },
+    "retainedSelectionManifestIdentity": {
+      "bytes": 214425,
+      "sha256": "316f3f9674837583c3f2683010917d85e89d3d94655c8e638e223e477dc1de40"
+    },
+    "publicManifestArtifact": "supporting-files.json",
+    "publicManifestIdentity": {
+      "bytes": 144558,
+      "sha256": "13e2a340de2c4d44cf6b5da21bfa1747d3250e3313e80b2ab0ebcad9cedf6109"
+    },
+    "selectedOriginalFiles": 300,
+    "selectedOriginalBytes": 65020648,
+    "all3912ArtifactReferencesResolveWithinReviewedSet": true,
+    "all84NativeCasePointersAndRawStatusesMatchOriginal": true,
+    "jsonProjectionPreservesAllOtherValuesAndOriginalIdentities": true,
+    "nativeImagesRawArraysAndSmallSourceBytesUnchanged": true,
+    "privacyFindings": [],
+    "rawFailureAndFaultStatusesPreserved": true,
+    "privateBindingsControllerArchivesExcluded": true,
+    "genericLoopbackConstructorIsSourceCodeOnly": true,
+    "actualPublicAvailability": "PENDING_IMMUTABLE_ROOT_COMMIT_AND_READBACK"
+  },
+  "supersession": {
+    "scope": "This signed addendum supplies final qualification acceptance for all six original rows and retains all nine accepted rows. It supersedes only the staged pre-review proposal qualification pending labels and missing independent signature. The retained proposal remains unchanged historical evidence.",
+    "otherActualEffects": "Publication, proof-comment readback and actual issue closure fields remain pending until separately bound actual receipts."
+  },
+  "limits": [
+    "Exact selected native Canvas2D cloud foreground and declared G scene scopes; no new whole-sky/font/default-scheduler/UI qualification.",
+    "Original raw getImageData equality is retained; Firefox native PNG versus raw differences are disclosed, and amplified/fixed-background panels remain diagnostics.",
+    "COST is selected synchronous paintClouds self-time/state at its original adopted budget. Chromium evidence is retained; Firefox uses the admitted isolated100us profile. The first1ms Firefox result remains INCOMPLETE. No GPU/battery/full-pipeline/exclusive-hardware/default-coarse-Firefox/cross-engine speed claim.",
+    "All failed/incomplete/adverse historical results remain visible. No Plan07, CP9 or other issue/program completion credit."
+  ],
+  "pendingActualBindings": [
+    "ROOT immutable evidence commit for exact reviewed300 files plus this addendum; no runtime/main/Pages effect.",
+    "Actual public package hash/readback and source/currentness association at the final evidence commit.",
+    "Actual proof comment serving as final issue certificate, naming both unchanged proposal and this acceptance addendum plus exact publication/delivery receipts; comment body read back before closure.",
+    "Independent bounded final public/comment receipt acceptance, then ROOT actual completed-state closure and final GitHub/ledger readback."
+  ],
+  "wholeIssueComplete": false,
+  "issueClosureClaimed": false,
+  "reviewerNativeOrGitOrPublicEffects": 0
+}
