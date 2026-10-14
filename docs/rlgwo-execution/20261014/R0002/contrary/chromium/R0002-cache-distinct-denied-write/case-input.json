@@ -1,0 +1,196 @@
+{
+  "caseId": "R0002-cache-distinct-denied-write",
+  "entry": "index.html",
+  "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T12:00:00Z"
+  },
+  "cacheSeeds": [
+    {
+      "key": "salah:24.47|39.61|UTC|4|0",
+      "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"04:47\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}"
+    }
+  ],
+  "responseRules": [
+    {
+      "id": "healthy",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:03",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "dateFromRequest": true,
+      "hold": true,
+      "phase": "body",
+      "times": 1
+    },
+    {
+      "id": "healthy-next",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:03",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "first-current",
+      "firstRender": true,
+      "selector": ".c",
+      "readOnly": false,
+      "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+    },
+    {
+      "type": "sleep",
+      "ms": 750
+    },
+    {
+      "type": "release",
+      "id": "healthy"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.peekSlots().current===null&&window.__prayerFixture.storageLog.some(r=>r.operation==='set'&&r.key==='salah:24.47|39.61|UTC|4|0'&&r.denied)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.timings?.Fajr==='05:03'&&s.dom['.times'].text.includes('05:03'))",
+      "timeoutMs": 5000
+    },
+    {
+      "type": "capture",
+      "name": "warm-retained",
+      "selector": ".c",
+      "firstRender": false,
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "firstCurrent": true,
+      "equals": {
+        "currentDay": "07-09-2026",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530,
+        "today/timings/Fajr": "04:47"
+      },
+      "noInvalidText": true,
+      "contains": {
+        "dom/.times/text": "04:47"
+      }
+    },
+    {
+      "stage": "warm-retained",
+      "equals": {
+        "currentDay": "07-09-2026",
+        "timezone": "UTC",
+        "today/timings/Fajr": "05:03"
+      },
+      "noInvalidText": true,
+      "contains": {
+        "dom/.times/text": "05:03"
+      }
+    }
+  ],
+  "acceptanceIds": [
+    "R0002-A03"
+  ],
+  "reviewRequirements": [
+    "original first-frame crop",
+    "325x530 card/header/footer readable",
+    "exact source/input/environment binding",
+    "preserve selected raw cache bytes under denied writes",
+    "healthy network positive request count for corrupt seed"
+  ],
+  "storageWriteDenied": true,
+  "originalCaseSha256": "82873df16a34c4c1d5ccf5ed45ba8cbb2819ac6bb2e4409e0fdf30ca49de1f79",
+  "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898"
+}

@@ -1,0 +1,143 @@
+{
+  "caseId": "R0002-optional-bad-range-numeric",
+  "entry": "index.html",
+  "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=YYYY-MM-DD",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T12:00:00Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "healthy",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "99",
+              "month": {
+                "number": 99,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "first-current",
+      "firstRender": true,
+      "selector": ".c",
+      "readOnly": false,
+      "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+    },
+    {
+      "type": "capture",
+      "name": "footer",
+      "firstRender": false,
+      "selector": ".d",
+      "readOnly": true
+    },
+    {
+      "type": "sleep",
+      "ms": 900
+    },
+    {
+      "type": "dialog",
+      "selector": "#ahDateButton"
+    },
+    {
+      "type": "capture",
+      "name": "disclosure",
+      "firstRender": false,
+      "selector": "#dateDialog",
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "firstCurrent": true,
+      "equals": {
+        "currentDay": "07-09-2026",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "first-current",
+      "equals": {
+        "dom/#ah/text": "Hijri date unavailable"
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "disclosure",
+      "equals": {
+        "dom/#dateHijri/text": "Hijri date unavailable"
+      },
+      "noInvalidText": true,
+      "contains": {
+        "dom/#dateReason/text": "Hijri date unavailable"
+      }
+    }
+  ],
+  "acceptanceIds": [
+    "R0002-A04"
+  ],
+  "reviewRequirements": [
+    "original first-frame crop",
+    "325x530 card/header/footer readable",
+    "exact source/input/environment binding",
+    "six usable required rows",
+    "footer and actual full date dialog unavailable reason",
+    "numeric-only missing/non-string name positive; name-bearing format unavailable"
+  ],
+  "originalCaseSha256": "a844799dcf98187adb04d9998ea01734273064bf928bd6cc747d36ffb7e7a4b1",
+  "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+}

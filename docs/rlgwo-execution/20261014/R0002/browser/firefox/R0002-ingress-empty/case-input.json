@@ -1,0 +1,329 @@
+{
+  "caseId": "R0002-ingress-empty",
+  "entry": "index.html",
+  "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T12:00:00Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "invalid-loading",
+      "kind": "prayer",
+      "day": "07-09-2026",
+      "times": 1,
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {},
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "httpStatus": 200,
+      "hold": true,
+      "phase": "body"
+    },
+    {
+      "id": "invalid",
+      "kind": "prayer",
+      "day": "07-09-2026",
+      "times": 2,
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {},
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "httpStatus": 200
+    },
+    {
+      "id": "healthy",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "dateFromRequest": true,
+      "day": "07-09-2026",
+      "hold": true,
+      "phase": "body",
+      "times": 1
+    },
+    {
+      "id": "healthy-prefetch",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "dateFromRequest": true,
+      "day": "08-09-2026",
+      "hold": true,
+      "phase": "body",
+      "times": 1
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('invalid-loading:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "loading",
+      "selector": ".c",
+      "firstRender": false,
+      "readOnly": true
+    },
+    {
+      "type": "sleep",
+      "ms": 750
+    },
+    {
+      "type": "release",
+      "id": "invalid-loading"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.events.some(e=>e.type==='error-output'&&e.message==='Could not load prayer times')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "unavailable",
+      "firstRender": false,
+      "selector": ".c",
+      "readOnly": false
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('healthy:1')",
+      "timeoutMs": 75000
+    },
+    {
+      "type": "release",
+      "id": "healthy"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+      "timeoutMs": 75000
+    },
+    {
+      "type": "capture",
+      "name": "first-recovered",
+      "firstRender": true,
+      "selector": ".c",
+      "readOnly": false,
+      "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('healthy-prefetch:1')",
+      "timeoutMs": 3000
+    },
+    {
+      "type": "release",
+      "id": "healthy-prefetch"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.tomorrowDay==='08-09-2026'&&s.render)",
+      "timeoutMs": 5000
+    },
+    {
+      "type": "capture",
+      "name": "settled-recovered",
+      "selector": ".c",
+      "firstRender": false,
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "unavailable",
+      "equals": {
+        "currentDay": null,
+        "dom/.nt/text": "—"
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "first-recovered",
+      "equals": {
+        "currentDay": "07-09-2026",
+        "timezone": "UTC",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "settled-recovered",
+      "equals": {
+        "currentDay": "07-09-2026",
+        "tomorrowDay": "08-09-2026",
+        "timezone": "UTC"
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "first-recovered",
+      "retryPolicy": {
+        "day": "07-09-2026",
+        "recoveryFence": true
+      },
+      "requestCounts": [
+        {
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "exact": 4
+        }
+      ],
+      "equals": {
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      }
+    }
+  ],
+  "acceptanceIds": [
+    "R0002-A02"
+  ],
+  "reviewRequirements": [
+    "original first-frame crop",
+    "325x530 card/header/footer readable",
+    "exact source/input/environment binding",
+    "no invalid zone/cache adoption before request4",
+    "separate operation/attempt and prefetch counts",
+    "healthy provider before elapsed60000ms"
+  ],
+  "originalCaseSha256": "17cd901ab454e269f671db949436862fa1e2077522b6af88971efcb5a5ea85a2",
+  "originalExpectedSha256": "9b29f9dcc1a6baa30b078fbf2e62915b9e253be1251a6c954a96160fdff528b1"
+}
