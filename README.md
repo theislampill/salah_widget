@@ -256,6 +256,15 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   Valid current data survives a failed refresh or denied persistence. Existing
   `salah:lat|lon|_cacheTz|method|school` bytes remain compatible without scanning,
   purging or migration; this is not an offline-application guarantee.
+- **Invalid prayer records** — Fajr, Sunrise, Dhuhr, Asr, Maghrib and Isha all
+  require valid clocks, a matching Gregorian date and a usable IANA time zone.
+  Malformed records and unsuccessful or contradictory provider responses are
+  rejected before adoption or caching. Sunset is optional, with Maghrib as its
+  fallback. Supported parenthesized clock suffixes and equal or reordered polar
+  schedules remain valid; increasing event order is not required. With no usable
+  current record, the six timetable rows and next time show **—** rather than
+  invented times. Healthy same-day data restores the timetable without a reload
+  at the next eligible visible recovery opportunity described below.
 - **Bounded retry** — each prayer operation has at most three attempts, with
   900/1800 ms backoffs and a 10000 ms deadline for the full asynchronous fetch/body
   attempt. Bootstrap and corrected-day requests share that budget. Three timeouts
@@ -292,6 +301,12 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
 - Passed prayers dim; the upcoming one is highlighted.
 - Gregorian (CE) date bottom-left and Hijri (AH) date bottom-right, in your chosen
   `datefmt` (defaults to ISO `YYYY-MM-DD`).
+  Missing or malformed optional Hijri data does not invalidate the six required
+  prayer times. Without a usable selected Hijri date, its value is **Hijri date
+  unavailable**; the compact footer may truncate it, and **Calendar dates** shows
+  the complete explanation. Structural checks require month 1–12, day 1–30 and
+  a positive integer year; they do not calculate a religious calendar.
+  Name-bearing formats require a string month name; numeric-only formats do not.
 
 Click or tap either CE or AH date, or Tab to it and press Enter or Space, to open **Calendar dates**. It shows both complete selected dates, any preview and the current explanation. Scroll and select long values to read their full text. Close or Escape dismisses the view and returns focus to the date that opened it. Reading dates does not apply settings, save data or request another calendar value.
 

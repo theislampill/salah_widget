@@ -1,0 +1,6163 @@
+{
+  "schema": "remaining-prayer-cases/v1",
+  "issue": 2,
+  "sourceCommit": "9d1bffe009e802f626344ebd863269e637d948e4",
+  "specCommit": "21e7a84365fae37a86cae5c7d5e41008c0adc53f",
+  "sourceFiles": {
+    "index.html": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+    "offline.html": "40d79b23e42ed776eb6a3cdc3329e58f740cbe44220c4883dcbff245e4c7c0c3",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "src/native/index.html": "b3094034d50bf0867a0f62c9f3e86a61f132c0126bed2a3fcdbd1bde38bc4dbd",
+    "tools/cp9/browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+    "tests/rlgwo/prayer-browser-fixture.cjs": "f74f54f40f15eb7c6269d9f463eaac396e20a2301925a5c67c38a91b8de222ce",
+    "tools/cp9/r0007_browser.py": "7dc5eb53ddb2fdb8499372129e7608adc0992c5ad38f083fa289fd60f05d1997"
+  },
+  "cases": [
+    {
+      "caseId": "R0002-ingress-empty",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "invalid-loading",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 1,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {},
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "invalid",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 2,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {},
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "healthy-prefetch",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('invalid-loading:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 750
+        },
+        {
+          "type": "release",
+          "id": "invalid-loading"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='error-output'&&e.message==='Could not load prayer times')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy:1')",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "release",
+          "id": "healthy"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy-prefetch:1')",
+          "timeoutMs": 3000
+        },
+        {
+          "type": "release",
+          "id": "healthy-prefetch"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.tomorrowDay==='08-09-2026'&&s.render)",
+          "timeoutMs": 5000
+        },
+        {
+          "type": "capture",
+          "name": "settled-recovered",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": null,
+            "dom/.nt/text": "—"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "settled-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "tomorrowDay": "08-09-2026",
+            "timezone": "UTC"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "retryPolicy": {
+            "day": "07-09-2026",
+            "recoveryFence": true
+          },
+          "requestCounts": [
+            {
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "exact": 4
+            }
+          ],
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A02"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "no invalid zone/cache adoption before request4",
+        "separate operation/attempt and prefetch counts",
+        "healthy provider before elapsed60000ms"
+      ],
+      "originalCaseSha256": "17cd901ab454e269f671db949436862fa1e2077522b6af88971efcb5a5ea85a2",
+      "originalExpectedSha256": "9b29f9dcc1a6baa30b078fbf2e62915b9e253be1251a6c954a96160fdff528b1"
+    },
+    {
+      "caseId": "R0002-ingress-missing-fajr",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "invalid-loading",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 1,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "invalid",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 2,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "healthy-prefetch",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('invalid-loading:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 750
+        },
+        {
+          "type": "release",
+          "id": "invalid-loading"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='error-output'&&e.message==='Could not load prayer times')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy:1')",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "release",
+          "id": "healthy"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy-prefetch:1')",
+          "timeoutMs": 3000
+        },
+        {
+          "type": "release",
+          "id": "healthy-prefetch"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.tomorrowDay==='08-09-2026'&&s.render)",
+          "timeoutMs": 5000
+        },
+        {
+          "type": "capture",
+          "name": "settled-recovered",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": null,
+            "dom/.nt/text": "—"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "settled-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "tomorrowDay": "08-09-2026",
+            "timezone": "UTC"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "retryPolicy": {
+            "day": "07-09-2026",
+            "recoveryFence": true
+          },
+          "requestCounts": [
+            {
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "exact": 4
+            }
+          ],
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A02"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "no invalid zone/cache adoption before request4",
+        "separate operation/attempt and prefetch counts",
+        "healthy provider before elapsed60000ms"
+      ],
+      "originalCaseSha256": "cd9690761a1c903312f7af203d9fa61e06a7a7b7a06d7c721121aefeac212719",
+      "originalExpectedSha256": "9b29f9dcc1a6baa30b078fbf2e62915b9e253be1251a6c954a96160fdff528b1"
+    },
+    {
+      "caseId": "R0002-ingress-exponent",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "invalid-loading",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 1,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "1e999:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "invalid",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 2,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "1e999:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "healthy-prefetch",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('invalid-loading:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 750
+        },
+        {
+          "type": "release",
+          "id": "invalid-loading"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='error-output'&&e.message==='Could not load prayer times')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy:1')",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "release",
+          "id": "healthy"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy-prefetch:1')",
+          "timeoutMs": 3000
+        },
+        {
+          "type": "release",
+          "id": "healthy-prefetch"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.tomorrowDay==='08-09-2026'&&s.render)",
+          "timeoutMs": 5000
+        },
+        {
+          "type": "capture",
+          "name": "settled-recovered",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": null,
+            "dom/.nt/text": "—"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "settled-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "tomorrowDay": "08-09-2026",
+            "timezone": "UTC"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "retryPolicy": {
+            "day": "07-09-2026",
+            "recoveryFence": true
+          },
+          "requestCounts": [
+            {
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "exact": 4
+            }
+          ],
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A02"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "no invalid zone/cache adoption before request4",
+        "separate operation/attempt and prefetch counts",
+        "healthy provider before elapsed60000ms"
+      ],
+      "originalCaseSha256": "66cf2d4b165b4f83925f2707f8eaf6378f207e7ba3f4ea733e605ee27b70d116",
+      "originalExpectedSha256": "9b29f9dcc1a6baa30b078fbf2e62915b9e253be1251a6c954a96160fdff528b1"
+    },
+    {
+      "caseId": "R0002-ingress-range",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "invalid-loading",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 1,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "25:99",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "invalid",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 2,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "25:99",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "healthy-prefetch",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('invalid-loading:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 750
+        },
+        {
+          "type": "release",
+          "id": "invalid-loading"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='error-output'&&e.message==='Could not load prayer times')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy:1')",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "release",
+          "id": "healthy"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy-prefetch:1')",
+          "timeoutMs": 3000
+        },
+        {
+          "type": "release",
+          "id": "healthy-prefetch"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.tomorrowDay==='08-09-2026'&&s.render)",
+          "timeoutMs": 5000
+        },
+        {
+          "type": "capture",
+          "name": "settled-recovered",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": null,
+            "dom/.nt/text": "—"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "settled-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "tomorrowDay": "08-09-2026",
+            "timezone": "UTC"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "retryPolicy": {
+            "day": "07-09-2026",
+            "recoveryFence": true
+          },
+          "requestCounts": [
+            {
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "exact": 4
+            }
+          ],
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A02"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "no invalid zone/cache adoption before request4",
+        "separate operation/attempt and prefetch counts",
+        "healthy provider before elapsed60000ms"
+      ],
+      "originalCaseSha256": "c4051cecb561e303f18e2a25790a0f851d1b511bd7a083040a02a8da4f97bbd9",
+      "originalExpectedSha256": "9b29f9dcc1a6baa30b078fbf2e62915b9e253be1251a6c954a96160fdff528b1"
+    },
+    {
+      "caseId": "R0002-ingress-wrong-day",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "invalid-loading",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 1,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "06-09-2026",
+                  "day": "06",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "invalid",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 2,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "06-09-2026",
+                  "day": "06",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 200
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "healthy-prefetch",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('invalid-loading:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 750
+        },
+        {
+          "type": "release",
+          "id": "invalid-loading"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='error-output'&&e.message==='Could not load prayer times')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy:1')",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "release",
+          "id": "healthy"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy-prefetch:1')",
+          "timeoutMs": 3000
+        },
+        {
+          "type": "release",
+          "id": "healthy-prefetch"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.tomorrowDay==='08-09-2026'&&s.render)",
+          "timeoutMs": 5000
+        },
+        {
+          "type": "capture",
+          "name": "settled-recovered",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": null,
+            "dom/.nt/text": "—"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "settled-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "tomorrowDay": "08-09-2026",
+            "timezone": "UTC"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "retryPolicy": {
+            "day": "07-09-2026",
+            "recoveryFence": true
+          },
+          "requestCounts": [
+            {
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "exact": 4
+            }
+          ],
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A02"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "no invalid zone/cache adoption before request4",
+        "separate operation/attempt and prefetch counts",
+        "healthy provider before elapsed60000ms"
+      ],
+      "originalCaseSha256": "65009b411f3a21f3213c3bb9733ee896ed1054e5bd9ef92927f5eb19007a5814",
+      "originalExpectedSha256": "9b29f9dcc1a6baa30b078fbf2e62915b9e253be1251a6c954a96160fdff528b1"
+    },
+    {
+      "caseId": "R0002-ingress-zone",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "invalid-loading",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 1,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Invalid/Zone"
+              }
+            }
+          },
+          "httpStatus": 200,
+          "hold": true,
+          "phase": "body"
+        },
+        {
+          "id": "invalid",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 2,
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Invalid/Zone"
+              }
+            }
+          },
+          "httpStatus": 200
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "healthy-prefetch",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('invalid-loading:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 750
+        },
+        {
+          "type": "release",
+          "id": "invalid-loading"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='error-output'&&e.message==='Could not load prayer times')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy:1')",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "release",
+          "id": "healthy"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy-prefetch:1')",
+          "timeoutMs": 3000
+        },
+        {
+          "type": "release",
+          "id": "healthy-prefetch"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.tomorrowDay==='08-09-2026'&&s.render)",
+          "timeoutMs": 5000
+        },
+        {
+          "type": "capture",
+          "name": "settled-recovered",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": null,
+            "dom/.nt/text": "—"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "settled-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "tomorrowDay": "08-09-2026",
+            "timezone": "UTC"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "retryPolicy": {
+            "day": "07-09-2026",
+            "recoveryFence": true
+          },
+          "requestCounts": [
+            {
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "exact": 4
+            }
+          ],
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A02"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "no invalid zone/cache adoption before request4",
+        "separate operation/attempt and prefetch counts",
+        "healthy provider before elapsed60000ms"
+      ],
+      "originalCaseSha256": "a3cf7434d0a5fa12a0535ac654e9880b0bd4818db0fe02194e9c266b9f1e0972",
+      "originalExpectedSha256": "9b29f9dcc1a6baa30b078fbf2e62915b9e253be1251a6c954a96160fdff528b1"
+    },
+    {
+      "caseId": "R0002-ingress-http500",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "invalid-loading",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 1,
+          "payload": {
+            "code": 500,
+            "status": "ERROR",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 500,
+          "hold": true,
+          "phase": "headers"
+        },
+        {
+          "id": "invalid",
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "times": 2,
+          "payload": {
+            "code": 500,
+            "status": "ERROR",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "httpStatus": 500
+        },
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "healthy-prefetch",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-09-2026",
+          "hold": true,
+          "phase": "body",
+          "times": 1
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('invalid-loading:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 750
+        },
+        {
+          "type": "release",
+          "id": "invalid-loading"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='error-output'&&e.message==='Could not load prayer times')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": false
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy:1')",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "release",
+          "id": "healthy"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 75000
+        },
+        {
+          "type": "capture",
+          "name": "first-recovered",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('healthy-prefetch:1')",
+          "timeoutMs": 3000
+        },
+        {
+          "type": "release",
+          "id": "healthy-prefetch"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.tomorrowDay==='08-09-2026'&&s.render)",
+          "timeoutMs": 5000
+        },
+        {
+          "type": "capture",
+          "name": "settled-recovered",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "currentDay": null,
+            "dom/.nt/text": "—"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "settled-recovered",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "tomorrowDay": "08-09-2026",
+            "timezone": "UTC"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-recovered",
+          "retryPolicy": {
+            "day": "07-09-2026",
+            "recoveryFence": true
+          },
+          "requestCounts": [
+            {
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "exact": 4
+            }
+          ],
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A02"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "no invalid zone/cache adoption before request4",
+        "separate operation/attempt and prefetch counts",
+        "healthy provider before elapsed60000ms"
+      ],
+      "originalCaseSha256": "3f691d0dbaf00c6adb2699acd2df08bb38ee8fc950f80e9028976b0979a16614",
+      "originalExpectedSha256": "9b29f9dcc1a6baa30b078fbf2e62915b9e253be1251a6c954a96160fdff528b1"
+    },
+    {
+      "caseId": "R0002-cache-null-timings",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [
+        {
+          "key": "salah:24.47|39.61|UTC|4|0",
+          "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":null,\"meta\":{\"timezone\":\"UTC\"}}}"
+        }
+      ],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A03"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "preserve selected raw cache bytes under denied writes",
+        "healthy network positive request count for corrupt seed"
+      ],
+      "originalCaseSha256": "7b33542507bef555796dd27c02ba8d5c054c59bf0907f5fd67e791723f259e84",
+      "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898"
+    },
+    {
+      "caseId": "R0002-cache-broken-json",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [
+        {
+          "key": "salah:24.47|39.61|UTC|4|0",
+          "value": "{broken"
+        }
+      ],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A03"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "preserve selected raw cache bytes under denied writes",
+        "healthy network positive request count for corrupt seed"
+      ],
+      "originalCaseSha256": "d412b64b40570b80eeac3a31c844e6224edf1f04d36a7df720ceaad22b2c255f",
+      "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898"
+    },
+    {
+      "caseId": "R0002-cache-valid-offline",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [
+        {
+          "key": "salah:24.47|39.61|UTC|4|0",
+          "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}"
+        }
+      ],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.peekSlots().current===null&&window.__prayerFixture.requests.filter(r=>r.kind==='prayer'&&r.url.includes('/07-09-2026?')).length===3",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "warm-retained",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "warm-retained",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC"
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A03"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "preserve selected raw cache bytes under denied writes",
+        "healthy network positive request count for corrupt seed"
+      ],
+      "originalCaseSha256": "7d22105a66f15802a9ee252529cab0ff379c633eac3d3f71fffbfa27cd22e4af",
+      "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898"
+    },
+    {
+      "caseId": "R0002-cache-valid-denied-write",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [
+        {
+          "key": "salah:24.47|39.61|UTC|4|0",
+          "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}"
+        }
+      ],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.peekSlots().current===null&&window.__prayerFixture.storageLog.some(r=>r.operation==='set'&&r.key==='salah:24.47|39.61|UTC|4|0'&&r.denied)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "warm-retained",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "warm-retained",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC"
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A03"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "preserve selected raw cache bytes under denied writes",
+        "healthy network positive request count for corrupt seed"
+      ],
+      "storageWriteDenied": true,
+      "originalCaseSha256": "82873df16a34c4c1d5ccf5ed45ba8cbb2819ac6bb2e4409e0fdf30ca49de1f79",
+      "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898"
+    },
+    {
+      "caseId": "R0002-optional-missing-numeric",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=YYYY-MM-DD",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "5be8403a3c6ba5f454e4acaa79a3d1ee30a2756a9ba32a59f9188810035b0505",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-optional-missing-named",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=DD+MMMM+YYYY",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "060b0fa944782eccc58d51e0f68bd54407cf487e0376a326fe6b8beb9611c86a",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-optional-bad-day-numeric",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=YYYY-MM-DD",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "nonnumeric",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "15f900418dcc6e851428fe02bcfea142d062a3f7846f5f824785c6cf44b08509",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-optional-bad-day-named",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=DD+MMMM+YYYY",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "nonnumeric",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "05bedb4bfbfb44e14d3761eb6c944aa2e549ce6eeaf7b004841944da9d67be13",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-optional-bad-range-numeric",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=YYYY-MM-DD",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "99",
+                  "month": {
+                    "number": 99,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "a844799dcf98187adb04d9998ea01734273064bf928bd6cc747d36ffb7e7a4b1",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-optional-bad-range-named",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=DD+MMMM+YYYY",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "99",
+                  "month": {
+                    "number": 99,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "db491eb0772836a30e8366ba45cb79f1de17ffa44e63be46186b39036f974c4f",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-optional-numeric-name-numeric",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=YYYY-MM-DD",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": 7
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "1448-02-19"
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "2f59b938d7fc212863815a06d410e61b639e2d2e47bdf20c27796dd829d0cadc",
+      "originalExpectedSha256": "cc920796d647f0299b3b8c1feb450f4deecb683efa25a904083ab44b195e8b58"
+    },
+    {
+      "caseId": "R0002-optional-numeric-name-named",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=DD+MMMM+YYYY",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": 7
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "162898b4e0ed606bf91ce4408f423fbe7a4a5691ed14918f75860e25a17a4927",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-optional-ah31-numeric",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=YYYY-MM-DD",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "31",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "26f9bc64a04483b8b516718e434c315870fa2629bb0d0dd3d7080dc3048fd99e",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-optional-ah31-named",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=DD+MMMM+YYYY",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "31",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "78314b0aecb4b046cf7fcfd9b1118ead032ede75fe3575e2d052a3be4decf812",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-optional-missing-name-numeric",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=YYYY-MM-DD",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "1448-02-19"
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "2618384c6bff928c14b89cf50dc1f4e1e36f7f932a963b3c50e36b6a874ba24f",
+      "originalExpectedSha256": "cc920796d647f0299b3b8c1feb450f4deecb683efa25a904083ab44b195e8b58"
+    },
+    {
+      "caseId": "R0002-optional-missing-name-named",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC&datefmt=DD+MMMM+YYYY",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "capture",
+          "name": "footer",
+          "firstRender": false,
+          "selector": ".d",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 900
+        },
+        {
+          "type": "dialog",
+          "selector": "#ahDateButton"
+        },
+        {
+          "type": "capture",
+          "name": "disclosure",
+          "firstRender": false,
+          "selector": "#dateDialog",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "first-current",
+          "equals": {
+            "dom/#ah/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "disclosure",
+          "equals": {
+            "dom/#dateHijri/text": "Hijri date unavailable"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/#dateReason/text": "Hijri date unavailable"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A04"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable required rows",
+        "footer and actual full date dialog unavailable reason",
+        "numeric-only missing/non-string name positive; name-bearing format unavailable"
+      ],
+      "originalCaseSha256": "04c21975b2720a230d0b3fd274de404112e0f5a950be6983a50aecb568c418d7",
+      "originalExpectedSha256": "93aa5c03c92dd8981569a73e30831c30e4ec1bfc00453289bb7d3809494e24b0"
+    },
+    {
+      "caseId": "R0002-suffix-no-sunset",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00 (UTC)",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "originalCaseSha256": "5cb935c8bf421f61771f91a2da9fd7fbeef274ba17b9f735a5fd02c48185f368",
+      "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898"
+    },
+    {
+      "caseId": "R0002-original-ordinary",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "day": "07-09-2026"
+        },
+        {
+          "id": "future-offline",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-ordinary.json",
+        "sha256": "40c6412a36a4644ec9db9a5c92ae2e682aa22dfd6bac45be249886cfe7e76282",
+        "unchanged": true
+      },
+      "originalCaseSha256": "96e5693119562513f56eaf89afe070b8d4159d698c15627075992d4fee223ce2",
+      "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898"
+    },
+    {
+      "caseId": "R0002-tromso-summer-network",
+      "entry": "index.html",
+      "hash": "#lat=69.6492&lon=18.9553&label=Madinah&method=3&school=0&time=24&tz=Europe%2FOslo",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-06-21T10:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "00:46",
+                "Sunrise": "00:46",
+                "Dhuhr": "12:46",
+                "Asr": "17:58",
+                "Sunset": "00:46",
+                "Maghrib": "00:46",
+                "Isha": "00:46",
+                "Imsak": "00:36",
+                "Midnight": "12:46",
+                "Firstthird": "08:46",
+                "Lastthird": "16:46"
+              },
+              "date": {
+                "readable": "21 Jun 2026",
+                "timestamp": "1782018000",
+                "hijri": {
+                  "date": "06-01-1448",
+                  "format": "DD-MM-YYYY",
+                  "day": "6",
+                  "weekday": {
+                    "en": "Al Ahad",
+                    "ar": "الاحد"
+                  },
+                  "month": {
+                    "number": 1,
+                    "en": "Muḥarram",
+                    "ar": "مُحَرَّم",
+                    "days": 29
+                  },
+                  "year": "1448",
+                  "designation": {
+                    "abbreviated": "AH",
+                    "expanded": "Anno Hegirae"
+                  },
+                  "holidays": [],
+                  "adjustedHolidays": [],
+                  "method": "HJCoSA"
+                },
+                "gregorian": {
+                  "date": "21-06-2026",
+                  "format": "DD-MM-YYYY",
+                  "day": "21",
+                  "weekday": {
+                    "en": "Sunday"
+                  },
+                  "month": {
+                    "number": 6,
+                    "en": "June"
+                  },
+                  "year": "2026",
+                  "designation": {
+                    "abbreviated": "AD",
+                    "expanded": "Anno Domini"
+                  },
+                  "lunarSighting": false
+                }
+              },
+              "meta": {
+                "latitude": 69.6492,
+                "longitude": 18.9553,
+                "timezone": "Europe/Oslo",
+                "method": {
+                  "id": 3,
+                  "name": "Muslim World League",
+                  "params": {
+                    "Fajr": 18,
+                    "Isha": 17
+                  },
+                  "location": {
+                    "latitude": 51.5194682,
+                    "longitude": -0.1360365
+                  }
+                },
+                "latitudeAdjustmentMethod": "ANGLE_BASED",
+                "midnightMode": "STANDARD",
+                "school": "STANDARD",
+                "offset": {
+                  "Imsak": 0,
+                  "Fajr": 0,
+                  "Sunrise": 0,
+                  "Dhuhr": 0,
+                  "Asr": 0,
+                  "Maghrib": 0,
+                  "Sunset": 0,
+                  "Isha": 0,
+                  "Midnight": 0
+                }
+              }
+            }
+          },
+          "day": "21-06-2026"
+        },
+        {
+          "id": "future-offline",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='21-06-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "21-06-2026",
+            "timezone": "Europe/Oslo",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-tromso-summer.json",
+        "sha256": "1a0ef89fa1a68cb0ccdd29f3ceb1a8bafed32dc45c5a2bb8430feaad7d6fe1c4",
+        "unchanged": true
+      }
+    },
+    {
+      "caseId": "R0002-tromso-summer-network-12",
+      "entry": "index.html",
+      "hash": "#lat=69.6492&lon=18.9553&label=Madinah&method=3&school=0&time=12&tz=Europe%2FOslo",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-06-21T10:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "00:46",
+                "Sunrise": "00:46",
+                "Dhuhr": "12:46",
+                "Asr": "17:58",
+                "Sunset": "00:46",
+                "Maghrib": "00:46",
+                "Isha": "00:46",
+                "Imsak": "00:36",
+                "Midnight": "12:46",
+                "Firstthird": "08:46",
+                "Lastthird": "16:46"
+              },
+              "date": {
+                "readable": "21 Jun 2026",
+                "timestamp": "1782018000",
+                "hijri": {
+                  "date": "06-01-1448",
+                  "format": "DD-MM-YYYY",
+                  "day": "6",
+                  "weekday": {
+                    "en": "Al Ahad",
+                    "ar": "الاحد"
+                  },
+                  "month": {
+                    "number": 1,
+                    "en": "Muḥarram",
+                    "ar": "مُحَرَّم",
+                    "days": 29
+                  },
+                  "year": "1448",
+                  "designation": {
+                    "abbreviated": "AH",
+                    "expanded": "Anno Hegirae"
+                  },
+                  "holidays": [],
+                  "adjustedHolidays": [],
+                  "method": "HJCoSA"
+                },
+                "gregorian": {
+                  "date": "21-06-2026",
+                  "format": "DD-MM-YYYY",
+                  "day": "21",
+                  "weekday": {
+                    "en": "Sunday"
+                  },
+                  "month": {
+                    "number": 6,
+                    "en": "June"
+                  },
+                  "year": "2026",
+                  "designation": {
+                    "abbreviated": "AD",
+                    "expanded": "Anno Domini"
+                  },
+                  "lunarSighting": false
+                }
+              },
+              "meta": {
+                "latitude": 69.6492,
+                "longitude": 18.9553,
+                "timezone": "Europe/Oslo",
+                "method": {
+                  "id": 3,
+                  "name": "Muslim World League",
+                  "params": {
+                    "Fajr": 18,
+                    "Isha": 17
+                  },
+                  "location": {
+                    "latitude": 51.5194682,
+                    "longitude": -0.1360365
+                  }
+                },
+                "latitudeAdjustmentMethod": "ANGLE_BASED",
+                "midnightMode": "STANDARD",
+                "school": "STANDARD",
+                "offset": {
+                  "Imsak": 0,
+                  "Fajr": 0,
+                  "Sunrise": 0,
+                  "Dhuhr": 0,
+                  "Asr": 0,
+                  "Maghrib": 0,
+                  "Sunset": 0,
+                  "Isha": 0,
+                  "Midnight": 0
+                }
+              }
+            }
+          },
+          "day": "21-06-2026"
+        },
+        {
+          "id": "future-offline",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='21-06-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "21-06-2026",
+            "timezone": "Europe/Oslo",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-tromso-summer.json",
+        "sha256": "1a0ef89fa1a68cb0ccdd29f3ceb1a8bafed32dc45c5a2bb8430feaad7d6fe1c4",
+        "unchanged": true
+      }
+    },
+    {
+      "caseId": "R0002-tromso-summer-cache",
+      "entry": "index.html",
+      "hash": "#lat=69.6492&lon=18.9553&label=Madinah&method=3&school=0&time=24&tz=Europe%2FOslo",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-06-21T10:00:00Z"
+      },
+      "cacheSeeds": [
+        {
+          "key": "salah:69.6492|18.9553|Europe/Oslo|3|0",
+          "value": "{\"date\":\"21-06-2026\",\"data\":{\"timings\":{\"Fajr\":\"00:46\",\"Sunrise\":\"00:46\",\"Dhuhr\":\"12:46\",\"Asr\":\"17:58\",\"Sunset\":\"00:46\",\"Maghrib\":\"00:46\",\"Isha\":\"00:46\",\"Imsak\":\"00:36\",\"Midnight\":\"12:46\",\"Firstthird\":\"08:46\",\"Lastthird\":\"16:46\"},\"date\":{\"readable\":\"21 Jun 2026\",\"timestamp\":\"1782018000\",\"hijri\":{\"date\":\"06-01-1448\",\"format\":\"DD-MM-YYYY\",\"day\":\"6\",\"weekday\":{\"en\":\"Al Ahad\",\"ar\":\"الاحد\"},\"month\":{\"number\":1,\"en\":\"Muḥarram\",\"ar\":\"مُحَرَّم\",\"days\":29},\"year\":\"1448\",\"designation\":{\"abbreviated\":\"AH\",\"expanded\":\"Anno Hegirae\"},\"holidays\":[],\"adjustedHolidays\":[],\"method\":\"HJCoSA\"},\"gregorian\":{\"date\":\"21-06-2026\",\"format\":\"DD-MM-YYYY\",\"day\":\"21\",\"weekday\":{\"en\":\"Sunday\"},\"month\":{\"number\":6,\"en\":\"June\"},\"year\":\"2026\",\"designation\":{\"abbreviated\":\"AD\",\"expanded\":\"Anno Domini\"},\"lunarSighting\":false}},\"meta\":{\"latitude\":69.6492,\"longitude\":18.9553,\"timezone\":\"Europe/Oslo\",\"method\":{\"id\":3,\"name\":\"Muslim World League\",\"params\":{\"Fajr\":18,\"Isha\":17},\"location\":{\"latitude\":51.5194682,\"longitude\":-0.1360365}},\"latitudeAdjustmentMethod\":\"ANGLE_BASED\",\"midnightMode\":\"STANDARD\",\"school\":\"STANDARD\",\"offset\":{\"Imsak\":0,\"Fajr\":0,\"Sunrise\":0,\"Dhuhr\":0,\"Asr\":0,\"Maghrib\":0,\"Sunset\":0,\"Isha\":0,\"Midnight\":0}}}}"
+        }
+      ],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='21-06-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.peekSlots().current===null&&window.__prayerFixture.requests.filter(r=>r.kind==='prayer'&&r.url.includes('/21-06-2026?')).length===3",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "warm-retained",
+          "selector": ".c",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "21-06-2026",
+            "timezone": "Europe/Oslo",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-tromso-summer.json",
+        "sha256": "1a0ef89fa1a68cb0ccdd29f3ceb1a8bafed32dc45c5a2bb8430feaad7d6fe1c4",
+        "unchanged": true
+      }
+    },
+    {
+      "caseId": "R0002-tromso-summer-cache-12",
+      "entry": "index.html",
+      "hash": "#lat=69.6492&lon=18.9553&label=Madinah&method=3&school=0&time=12&tz=Europe%2FOslo",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-06-21T10:00:00Z"
+      },
+      "cacheSeeds": [
+        {
+          "key": "salah:69.6492|18.9553|Europe/Oslo|3|0",
+          "value": "{\"date\":\"21-06-2026\",\"data\":{\"timings\":{\"Fajr\":\"00:46\",\"Sunrise\":\"00:46\",\"Dhuhr\":\"12:46\",\"Asr\":\"17:58\",\"Sunset\":\"00:46\",\"Maghrib\":\"00:46\",\"Isha\":\"00:46\",\"Imsak\":\"00:36\",\"Midnight\":\"12:46\",\"Firstthird\":\"08:46\",\"Lastthird\":\"16:46\"},\"date\":{\"readable\":\"21 Jun 2026\",\"timestamp\":\"1782018000\",\"hijri\":{\"date\":\"06-01-1448\",\"format\":\"DD-MM-YYYY\",\"day\":\"6\",\"weekday\":{\"en\":\"Al Ahad\",\"ar\":\"الاحد\"},\"month\":{\"number\":1,\"en\":\"Muḥarram\",\"ar\":\"مُحَرَّم\",\"days\":29},\"year\":\"1448\",\"designation\":{\"abbreviated\":\"AH\",\"expanded\":\"Anno Hegirae\"},\"holidays\":[],\"adjustedHolidays\":[],\"method\":\"HJCoSA\"},\"gregorian\":{\"date\":\"21-06-2026\",\"format\":\"DD-MM-YYYY\",\"day\":\"21\",\"weekday\":{\"en\":\"Sunday\"},\"month\":{\"number\":6,\"en\":\"June\"},\"year\":\"2026\",\"designation\":{\"abbreviated\":\"AD\",\"expanded\":\"Anno Domini\"},\"lunarSighting\":false}},\"meta\":{\"latitude\":69.6492,\"longitude\":18.9553,\"timezone\":\"Europe/Oslo\",\"method\":{\"id\":3,\"name\":\"Muslim World League\",\"params\":{\"Fajr\":18,\"Isha\":17},\"location\":{\"latitude\":51.5194682,\"longitude\":-0.1360365}},\"latitudeAdjustmentMethod\":\"ANGLE_BASED\",\"midnightMode\":\"STANDARD\",\"school\":\"STANDARD\",\"offset\":{\"Imsak\":0,\"Fajr\":0,\"Sunrise\":0,\"Dhuhr\":0,\"Asr\":0,\"Maghrib\":0,\"Sunset\":0,\"Isha\":0,\"Midnight\":0}}}}"
+        }
+      ],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='21-06-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.peekSlots().current===null&&window.__prayerFixture.requests.filter(r=>r.kind==='prayer'&&r.url.includes('/21-06-2026?')).length===3",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "warm-retained",
+          "selector": ".c",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "21-06-2026",
+            "timezone": "Europe/Oslo",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-tromso-summer.json",
+        "sha256": "1a0ef89fa1a68cb0ccdd29f3ceb1a8bafed32dc45c5a2bb8430feaad7d6fe1c4",
+        "unchanged": true
+      }
+    },
+    {
+      "caseId": "R0002-tromso-winter-network",
+      "entry": "index.html",
+      "hash": "#lat=69.6492&lon=18.9553&label=Madinah&method=3&school=0&time=24&tz=Europe%2FOslo",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-12-21T11:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "06:28",
+                "Sunrise": "11:42",
+                "Dhuhr": "11:42",
+                "Asr": "12:14",
+                "Sunset": "11:42",
+                "Maghrib": "11:42",
+                "Isha": "16:44",
+                "Imsak": "06:18",
+                "Midnight": "23:42",
+                "Firstthird": "19:42",
+                "Lastthird": "03:42"
+              },
+              "date": {
+                "readable": "21 Dec 2026",
+                "timestamp": "1797832800",
+                "hijri": {
+                  "date": "12-07-1448",
+                  "format": "DD-MM-YYYY",
+                  "day": "12",
+                  "weekday": {
+                    "en": "Al Athnayn",
+                    "ar": "الاثنين"
+                  },
+                  "month": {
+                    "number": 7,
+                    "en": "Rajab",
+                    "ar": "رَجَب",
+                    "days": 30
+                  },
+                  "year": "1448",
+                  "designation": {
+                    "abbreviated": "AH",
+                    "expanded": "Anno Hegirae"
+                  },
+                  "holidays": [],
+                  "adjustedHolidays": [],
+                  "method": "HJCoSA"
+                },
+                "gregorian": {
+                  "date": "21-12-2026",
+                  "format": "DD-MM-YYYY",
+                  "day": "21",
+                  "weekday": {
+                    "en": "Monday"
+                  },
+                  "month": {
+                    "number": 12,
+                    "en": "December"
+                  },
+                  "year": "2026",
+                  "designation": {
+                    "abbreviated": "AD",
+                    "expanded": "Anno Domini"
+                  },
+                  "lunarSighting": false
+                }
+              },
+              "meta": {
+                "latitude": 69.6492,
+                "longitude": 18.9553,
+                "timezone": "Europe/Oslo",
+                "method": {
+                  "id": 3,
+                  "name": "Muslim World League",
+                  "params": {
+                    "Fajr": 18,
+                    "Isha": 17
+                  },
+                  "location": {
+                    "latitude": 51.5194682,
+                    "longitude": -0.1360365
+                  }
+                },
+                "latitudeAdjustmentMethod": "ANGLE_BASED",
+                "midnightMode": "STANDARD",
+                "school": "STANDARD",
+                "offset": {
+                  "Imsak": 0,
+                  "Fajr": 0,
+                  "Sunrise": 0,
+                  "Dhuhr": 0,
+                  "Asr": 0,
+                  "Maghrib": 0,
+                  "Sunset": 0,
+                  "Isha": 0,
+                  "Midnight": 0
+                }
+              }
+            }
+          },
+          "day": "21-12-2026"
+        },
+        {
+          "id": "future-offline",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='21-12-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "21-12-2026",
+            "timezone": "Europe/Oslo",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-tromso-winter.json",
+        "sha256": "b7a56f538c5b306b4c7ba8e8e447870e607311c58815365563c5cc14198b2a5c",
+        "unchanged": true
+      }
+    },
+    {
+      "caseId": "R0002-tromso-winter-network-12",
+      "entry": "index.html",
+      "hash": "#lat=69.6492&lon=18.9553&label=Madinah&method=3&school=0&time=12&tz=Europe%2FOslo",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-12-21T11:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "06:28",
+                "Sunrise": "11:42",
+                "Dhuhr": "11:42",
+                "Asr": "12:14",
+                "Sunset": "11:42",
+                "Maghrib": "11:42",
+                "Isha": "16:44",
+                "Imsak": "06:18",
+                "Midnight": "23:42",
+                "Firstthird": "19:42",
+                "Lastthird": "03:42"
+              },
+              "date": {
+                "readable": "21 Dec 2026",
+                "timestamp": "1797832800",
+                "hijri": {
+                  "date": "12-07-1448",
+                  "format": "DD-MM-YYYY",
+                  "day": "12",
+                  "weekday": {
+                    "en": "Al Athnayn",
+                    "ar": "الاثنين"
+                  },
+                  "month": {
+                    "number": 7,
+                    "en": "Rajab",
+                    "ar": "رَجَب",
+                    "days": 30
+                  },
+                  "year": "1448",
+                  "designation": {
+                    "abbreviated": "AH",
+                    "expanded": "Anno Hegirae"
+                  },
+                  "holidays": [],
+                  "adjustedHolidays": [],
+                  "method": "HJCoSA"
+                },
+                "gregorian": {
+                  "date": "21-12-2026",
+                  "format": "DD-MM-YYYY",
+                  "day": "21",
+                  "weekday": {
+                    "en": "Monday"
+                  },
+                  "month": {
+                    "number": 12,
+                    "en": "December"
+                  },
+                  "year": "2026",
+                  "designation": {
+                    "abbreviated": "AD",
+                    "expanded": "Anno Domini"
+                  },
+                  "lunarSighting": false
+                }
+              },
+              "meta": {
+                "latitude": 69.6492,
+                "longitude": 18.9553,
+                "timezone": "Europe/Oslo",
+                "method": {
+                  "id": 3,
+                  "name": "Muslim World League",
+                  "params": {
+                    "Fajr": 18,
+                    "Isha": 17
+                  },
+                  "location": {
+                    "latitude": 51.5194682,
+                    "longitude": -0.1360365
+                  }
+                },
+                "latitudeAdjustmentMethod": "ANGLE_BASED",
+                "midnightMode": "STANDARD",
+                "school": "STANDARD",
+                "offset": {
+                  "Imsak": 0,
+                  "Fajr": 0,
+                  "Sunrise": 0,
+                  "Dhuhr": 0,
+                  "Asr": 0,
+                  "Maghrib": 0,
+                  "Sunset": 0,
+                  "Isha": 0,
+                  "Midnight": 0
+                }
+              }
+            }
+          },
+          "day": "21-12-2026"
+        },
+        {
+          "id": "future-offline",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='21-12-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "21-12-2026",
+            "timezone": "Europe/Oslo",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-tromso-winter.json",
+        "sha256": "b7a56f538c5b306b4c7ba8e8e447870e607311c58815365563c5cc14198b2a5c",
+        "unchanged": true
+      }
+    },
+    {
+      "caseId": "R0002-tromso-winter-cache",
+      "entry": "index.html",
+      "hash": "#lat=69.6492&lon=18.9553&label=Madinah&method=3&school=0&time=24&tz=Europe%2FOslo",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-12-21T11:00:00Z"
+      },
+      "cacheSeeds": [
+        {
+          "key": "salah:69.6492|18.9553|Europe/Oslo|3|0",
+          "value": "{\"date\":\"21-12-2026\",\"data\":{\"timings\":{\"Fajr\":\"06:28\",\"Sunrise\":\"11:42\",\"Dhuhr\":\"11:42\",\"Asr\":\"12:14\",\"Sunset\":\"11:42\",\"Maghrib\":\"11:42\",\"Isha\":\"16:44\",\"Imsak\":\"06:18\",\"Midnight\":\"23:42\",\"Firstthird\":\"19:42\",\"Lastthird\":\"03:42\"},\"date\":{\"readable\":\"21 Dec 2026\",\"timestamp\":\"1797832800\",\"hijri\":{\"date\":\"12-07-1448\",\"format\":\"DD-MM-YYYY\",\"day\":\"12\",\"weekday\":{\"en\":\"Al Athnayn\",\"ar\":\"الاثنين\"},\"month\":{\"number\":7,\"en\":\"Rajab\",\"ar\":\"رَجَب\",\"days\":30},\"year\":\"1448\",\"designation\":{\"abbreviated\":\"AH\",\"expanded\":\"Anno Hegirae\"},\"holidays\":[],\"adjustedHolidays\":[],\"method\":\"HJCoSA\"},\"gregorian\":{\"date\":\"21-12-2026\",\"format\":\"DD-MM-YYYY\",\"day\":\"21\",\"weekday\":{\"en\":\"Monday\"},\"month\":{\"number\":12,\"en\":\"December\"},\"year\":\"2026\",\"designation\":{\"abbreviated\":\"AD\",\"expanded\":\"Anno Domini\"},\"lunarSighting\":false}},\"meta\":{\"latitude\":69.6492,\"longitude\":18.9553,\"timezone\":\"Europe/Oslo\",\"method\":{\"id\":3,\"name\":\"Muslim World League\",\"params\":{\"Fajr\":18,\"Isha\":17},\"location\":{\"latitude\":51.5194682,\"longitude\":-0.1360365}},\"latitudeAdjustmentMethod\":\"ANGLE_BASED\",\"midnightMode\":\"STANDARD\",\"school\":\"STANDARD\",\"offset\":{\"Imsak\":0,\"Fajr\":0,\"Sunrise\":0,\"Dhuhr\":0,\"Asr\":0,\"Maghrib\":0,\"Sunset\":0,\"Isha\":0,\"Midnight\":0}}}}"
+        }
+      ],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='21-12-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.peekSlots().current===null&&window.__prayerFixture.requests.filter(r=>r.kind==='prayer'&&r.url.includes('/21-12-2026?')).length===3",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "warm-retained",
+          "selector": ".c",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "21-12-2026",
+            "timezone": "Europe/Oslo",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-tromso-winter.json",
+        "sha256": "b7a56f538c5b306b4c7ba8e8e447870e607311c58815365563c5cc14198b2a5c",
+        "unchanged": true
+      }
+    },
+    {
+      "caseId": "R0002-tromso-winter-cache-12",
+      "entry": "index.html",
+      "hash": "#lat=69.6492&lon=18.9553&label=Madinah&method=3&school=0&time=12&tz=Europe%2FOslo",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-12-21T11:00:00Z"
+      },
+      "cacheSeeds": [
+        {
+          "key": "salah:69.6492|18.9553|Europe/Oslo|3|0",
+          "value": "{\"date\":\"21-12-2026\",\"data\":{\"timings\":{\"Fajr\":\"06:28\",\"Sunrise\":\"11:42\",\"Dhuhr\":\"11:42\",\"Asr\":\"12:14\",\"Sunset\":\"11:42\",\"Maghrib\":\"11:42\",\"Isha\":\"16:44\",\"Imsak\":\"06:18\",\"Midnight\":\"23:42\",\"Firstthird\":\"19:42\",\"Lastthird\":\"03:42\"},\"date\":{\"readable\":\"21 Dec 2026\",\"timestamp\":\"1797832800\",\"hijri\":{\"date\":\"12-07-1448\",\"format\":\"DD-MM-YYYY\",\"day\":\"12\",\"weekday\":{\"en\":\"Al Athnayn\",\"ar\":\"الاثنين\"},\"month\":{\"number\":7,\"en\":\"Rajab\",\"ar\":\"رَجَب\",\"days\":30},\"year\":\"1448\",\"designation\":{\"abbreviated\":\"AH\",\"expanded\":\"Anno Hegirae\"},\"holidays\":[],\"adjustedHolidays\":[],\"method\":\"HJCoSA\"},\"gregorian\":{\"date\":\"21-12-2026\",\"format\":\"DD-MM-YYYY\",\"day\":\"21\",\"weekday\":{\"en\":\"Monday\"},\"month\":{\"number\":12,\"en\":\"December\"},\"year\":\"2026\",\"designation\":{\"abbreviated\":\"AD\",\"expanded\":\"Anno Domini\"},\"lunarSighting\":false}},\"meta\":{\"latitude\":69.6492,\"longitude\":18.9553,\"timezone\":\"Europe/Oslo\",\"method\":{\"id\":3,\"name\":\"Muslim World League\",\"params\":{\"Fajr\":18,\"Isha\":17},\"location\":{\"latitude\":51.5194682,\"longitude\":-0.1360365}},\"latitudeAdjustmentMethod\":\"ANGLE_BASED\",\"midnightMode\":\"STANDARD\",\"school\":\"STANDARD\",\"offset\":{\"Imsak\":0,\"Fajr\":0,\"Sunrise\":0,\"Dhuhr\":0,\"Asr\":0,\"Maghrib\":0,\"Sunset\":0,\"Isha\":0,\"Midnight\":0}}}}"
+        }
+      ],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='21-12-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.peekSlots().current===null&&window.__prayerFixture.requests.filter(r=>r.kind==='prayer'&&r.url.includes('/21-12-2026?')).length===3",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "warm-retained",
+          "selector": ".c",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "21-12-2026",
+            "timezone": "Europe/Oslo",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-tromso-winter.json",
+        "sha256": "b7a56f538c5b306b4c7ba8e8e447870e607311c58815365563c5cc14198b2a5c",
+        "unchanged": true
+      }
+    },
+    {
+      "caseId": "R0002-cache-distinct-denied-write",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [
+        {
+          "key": "salah:24.47|39.61|UTC|4|0",
+          "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"04:47\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"}}}"
+        }
+      ],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:03",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "times": 1,
+          "day": "07-09-2026"
+        },
+        {
+          "id": "healthy-next",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:03",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true,
+          "day": "08-09-2026"
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        },
+        {
+          "type": "sleep",
+          "ms": 750
+        },
+        {
+          "type": "release",
+          "id": "healthy"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.peekSlots().current===null&&window.__prayerFixture.storageLog.some(r=>r.operation==='set'&&r.key==='salah:24.47|39.61|UTC|4|0'&&r.denied)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.timings?.Fajr==='05:03'&&s.dom['.times'].text.includes('05:03'))",
+          "timeoutMs": 5000
+        },
+        {
+          "type": "capture",
+          "name": "warm-retained",
+          "selector": ".c",
+          "firstRender": false,
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530,
+            "today/timings/Fajr": "04:47"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.times/text": "04:47"
+          }
+        },
+        {
+          "stage": "warm-retained",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC",
+            "today/timings/Fajr": "05:03"
+          },
+          "noInvalidText": true,
+          "contains": {
+            "dom/.times/text": "05:03"
+          }
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A03"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "preserve selected raw cache bytes under denied writes",
+        "healthy network positive request count for corrupt seed"
+      ],
+      "storageWriteDenied": true,
+      "originalCaseSha256": "82873df16a34c4c1d5ccf5ed45ba8cbb2819ac6bb2e4409e0fdf30ca49de1f79",
+      "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898"
+    },
+    {
+      "caseId": "R0002-offline",
+      "entry": "offline.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "day": "07-09-2026"
+        },
+        {
+          "id": "future-offline",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-ordinary.json",
+        "sha256": "40c6412a36a4644ec9db9a5c92ae2e682aa22dfd6bac45be249886cfe7e76282",
+        "unchanged": true
+      },
+      "originalCaseSha256": "96e5693119562513f56eaf89afe070b8d4159d698c15627075992d4fee223ce2",
+      "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898",
+      "iframe": false
+    },
+    {
+      "caseId": "R0002-iframe",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "day": "07-09-2026"
+        },
+        {
+          "id": "future-offline",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "selector": ".c",
+          "readOnly": false,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+        }
+      ],
+      "expected": [
+        {
+          "firstCurrent": true,
+          "equals": {
+            "currentDay": "07-09-2026",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A05"
+      ],
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding"
+      ],
+      "capturedFixture": {
+        "path": "tests/r0002-ordinary.json",
+        "sha256": "40c6412a36a4644ec9db9a5c92ae2e682aa22dfd6bac45be249886cfe7e76282",
+        "unchanged": true
+      },
+      "originalCaseSha256": "96e5693119562513f56eaf89afe070b8d4159d698c15627075992d4fee223ce2",
+      "originalExpectedSha256": "6ee4ba40b221b18308d1f4cada8c541946d2e2589f6fa933ab20f3e0a1d8a898",
+      "iframe": true
+    }
+  ],
+  "preparationAncestry": {
+    "packetSha256": "7354ecfbba1209df0bbb67b1494ef9bbab4b1f45a6ee82bca67ee28034f63879",
+    "status": "PREPARATION_REUSED_NO_PRIOR_NATIVE_ACCEPTANCE",
+    "changes": "Source rebound to current main; specification fixed clock restored for ingress; removed prior advancing-clock phase-alignment wait; native-video-only capture reused from R0007."
+  }
+}
