@@ -1,0 +1,582 @@
+{
+  "schema": "r000b-close-certificate/v1",
+  "marker": "CLOSE-R000B",
+  "status": "QUALIFIED_AND_DELIVERED_FOR_COMPLETED_CLOSURE",
+  "canonicalId": "R000B",
+  "title": "Expire weather and radar authority using source age as well as retrieval time",
+  "certifiedAtUtc": "2026-10-14T20:43:54.700287+00:00",
+  "issue": "https://github.com/theislampill/salah_widget/issues/11",
+  "pullRequest": "https://github.com/theislampill/salah_widget/pull/61",
+  "specification": {
+    "commit": "21e7a84365fae37a86cae5c7d5e41008c0adc53f",
+    "url": "https://github.com/theislampill/salah_widget/blob/21e7a84365fae37a86cae5c7d5e41008c0adc53f/docs/rlgwo-execution/20261008/REMAINING_RLGWOs/R000B.md"
+  },
+  "approvedHead": "573dc2b15af37b5d32faa4364f3e653b65431dfc",
+  "reviewedBase": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+  "reviewedSourceTree": "3656edba44b79ab7216c8cbf3546f4fe085bee9a",
+  "mergeCommit": "763a460e98dc23c7f0e95bf346274f1685b3c654",
+  "mergeParents": [
+    "16658749209e0c567f49a3fc9dc855f665afa6e4",
+    "573dc2b15af37b5d32faa4364f3e653b65431dfc"
+  ],
+  "mergeUrl": "https://github.com/theislampill/salah_widget/commit/763a460e98dc23c7f0e95bf346274f1685b3c654",
+  "runtimeSha256": "c2753a21c337ff0bc09cea05f15bfc7729dcc2295a924c11284399fdab6e9ea2",
+  "runtimeFiles": 135,
+  "exactHeadAuthority": {
+    "path": "delivery/owner-authorization.json",
+    "bytes": 869,
+    "sha256": "2edc4e0d60589d741c5849959f607f61c47a0f8879701524fa935ee08e617273"
+  },
+  "preMergeConditions": {
+    "path": "delivery/before-merge-gate.json",
+    "bytes": 43173,
+    "sha256": "7fdfa2f0db33dd3d84ed52f028bdac35dbc9c5bffa228f03599d00a37f90955a"
+  },
+  "changedScope": {
+    "fileCount": 17,
+    "authoredRuntimeOwners": 2,
+    "generatedConsumers": 3,
+    "existingDocs": 3,
+    "testsFixturesQa": 7,
+    "compactEvidenceIndexes": 2,
+    "candidateFileSha256": {
+      "src/native/index.html": "37fb7477e23d02329eacbf8ff94107fb3ea40a7d62020ef56a245af56e0ade00",
+      "index.html": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "offline.html": "dbda7e967be39d85ca6b970c06b4053d60335b6b50d59f7849512e1a22ccec6e",
+      "real-sky/native-host.mjs": "a5586f87ee14c0c1d24f5f933aefc1fad724454636fd4dd4a2ea9ded80642e0c",
+      "real-sky/native-sky.js": "7e47b46652fdb2a22b9ea4c1e15777ac636f789434fb53a0ea5492eeb3fa7568",
+      "tests/r000b-remaining.test.cjs": "88a9c2d15b12a6a251abf72efb49db5cb77b77bc2731d86f10c04de8b49c8e2c",
+      "tests/r000b-sky-withdrawal.test.mjs": "d9c9c5e61ad89c08af0a86db731334359d2d6848579bd6873c7214378a086b0d",
+      "tests/real-sky/native-preview-host.test.mjs": "1b393d609d6ab8b056030710a45b6c208f386ab472c3838204a47734814df445",
+      "tests/rlgwo/r000b-weather-fixture.html": "74f4b743a831760fae84dba5bb2e1dae8d6af901786876a46c9ce532854ccda5",
+      "tools/qa/run_r000b_native.py": "4944879b9f55a0a94bdfe7b9a84c6302d7b5180730dae97795b867eb6b38e9df",
+      "tools/qa/run_r000b_mutants.py": "93f18a543e7231a8b78cea8cb155345e64ebe12f90de9a734673715bc80e4e10",
+      "tools/qa/verify_r000b_receipts.py": "27ba10532f2558abb8c94857eab925c04fbf1add4769faf5ffb570001338fe66",
+      "README.md": "1b693dd5a9ac260fbe0f68a715c0f4770eb8c9204f894cae3a041508691eb218",
+      "DESIGN.md": "1364b0a7ca95a6efff981ab9f5a1cf2e59aefd79fe35a8bf8d1219d6d01cab88",
+      "HANDOFF.md": "c47e2ba6e71a2351d128b5f0cb1a179531c8b7261fa2b560b31df8f4d0e2c15a"
+    },
+    "additionalIndexes": [
+      "docs/rlgwo-execution/20261014/R000B/README.md",
+      "docs/rlgwo-execution/20261014/R000B/reference.json"
+    ]
+  },
+  "runtimeImpact": "Authored fetchRadar rejects invalid derived frame/index epochs before Image dispatch/install. Authored refined-sky withdrawal retires invalid preview readiness and completes the existing current preview presentation in the same turn when needed. Existing builder regenerated root index, sky bundle and standalone consumer; accepted authority policy, lunar geometry and frozen V1 remain unchanged.",
+  "temporalPolicy": {
+    "weatherSourceAndReceiptLimitMs": 900000,
+    "radarFrameAndReceiptLimitMs": 1200000,
+    "boundaries": "inclusive",
+    "futureAllowanceMs": 0,
+    "weatherFields": "source-valid/current time, positive interval seconds, captured request timezone, source age and receipt time remain distinct",
+    "radarFields": "raw numeric frame seconds, raw numeric index seconds, each valid finite derived Date epoch and receipt time remain distinct; missing frame time never borrows index time",
+    "unavailable": "Expired/invalid authority clears current weather values and disables unsupported weather effects; retained cache bytes do not confer live authority.",
+    "modelPolicy": "Preserve eligible current MODEL ESTIMATE conditions without a direct ground-observation requirement; optional unavailable precipitation does not alone suppress an otherwise valid current model condition."
+  },
+  "qualification": {
+    "originalRows": 18,
+    "sourceControls": {
+      "B04_B13Passed": 57,
+      "retainedBaselineAdmissionFailures": 4,
+      "mutantsKilledByIntendedAssertions": 4,
+      "mutationSyntaxCrashesCountAsDetection": false
+    },
+    "affectedSkyControlsPassed": 53,
+    "affectedInheritedPassed": 245,
+    "affectedInheritedFailed": 0,
+    "unchangedInheritedTodo": 4,
+    "native": "Original serial Chromium/Firefox default, reduced preference and motion=full cases; native1x source boundary, controlled503 and ordinary recovery; original clips/PNG alternative reviewed within declared scopes.",
+    "priorAcceptedRowsPreserved": [
+      "B01",
+      "B02",
+      "B03",
+      "B05",
+      "B06",
+      "B07",
+      "B08",
+      "B09",
+      "B10",
+      "B11",
+      "B12",
+      "B15"
+    ],
+    "originalMatrixUrl": "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/acceptance-matrix.json",
+    "rows": [
+      {
+        "id": "B01",
+        "obligation": "Retain current valid time, aggregation interval and retrieval time separately; do not invent source time.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "Source retains all five fields; W fresh/cache/old-source fixtures passed.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B02",
+        "obligation": "Retain radar mosaic frame generation, index generation and retrieval separately.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "Source records separate fields; repeated four-hour-old frame remains unavailable at 14,400s and 15,000s, receipt age returns to 0.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B03",
+        "obligation": "Finite current metadata and positive interval use explicit captured-zone, calendar-valid and unambiguous conversion.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "Actual wxEpoch reaches accepted shared converter; W gap/fold/zone and Z supplied-zone rejection/control cases passed.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B04",
+        "obligation": "Radar frame seconds must be finite and valid before epoch multiplication; absent frame time cannot borrow index time.",
+        "originalStatus": "unverified",
+        "status": "SOURCE_ACCEPTED",
+        "originalLimitations": "Complete nonfinite/overflow derived-epoch hostile cases not found; accessor fails closed on nonfinite epoch by source.",
+        "currentLimitations": "Contained source execution; actual browser expiry and preservation qualified separately in B16.",
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/red-qualified.tap",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/red-qualified-observations.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/green.tap",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/green-observations.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B05",
+        "obligation": "Use named 15-minute current authority bound on both source and receipt, inclusive; future allowance zero.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "All eight actual atmosphere consumer boundary cases passed.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B06",
+        "obligation": "Use named 20-minute radar source/frame and retrieval bounds, inclusive; six-hour cache retention never current authority.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "All eight boundary cases passed; legacy five-hour cache cannot drive current weather.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B07",
+        "obligation": "Evaluate expiry at every real-time consumer; apply one selected snapshot to code, chip, cloud layers, precipitation, temperature, humidity, wind and native sky.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "W old-source/outage, P resume and C cloud paint tests pass; native host reads selectedWeather at each capture.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B08",
+        "obligation": "Unavailable real-time presentation clears icon/temperature/effects without claiming measured clear; prayer stale row remains independent.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "Hotfix H render cases and W legacy/expiry chip cases pass. Neutral decorative clear atmosphere is not a measured-clear claim.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B09",
+        "obligation": "Legacy {w,ts} remains readable and storage bytes preserved; missing source metadata is nonauthoritative, not destructive migration.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "W cache tests pass; loadWx never deletes storage.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B10",
+        "obligation": "Cache current hit must not suppress missing hourly-track acquisition; accepted-current bookkeeping separate from attempts/rejected old source.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "W cache/old-source and D timeout prior-cache tests passed.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B11",
+        "obligation": "Preserve current clear versus hourly thunder, explicit SIM/ADVANCING forecast lanes; live radar excluded from SIM.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "W, P, H preview/current controls passed.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B12",
+        "obligation": "Combined temporal/ownership control captures New York zone before global Riyadh change; current-generation success07:30Z; obsolete attempt must not commit.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "W converter control and D old-success/finally/image controls passed; two real production interfaces are exercised.",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B13",
+        "obligation": "Four-hour old model/radar/repeated-frame, missing/NaN time, future+1ms/+24h cache, invalid interval and healthy wet restoration require final-tree discriminators.",
+        "originalStatus": "unverified",
+        "status": "SOURCE_ACCEPTED",
+        "originalLimitations": "Finite malformed epoch helper behavior is inspected; an explicit acquired NaN metadata case is not retained.",
+        "currentLimitations": "All declared malformed, stale and future source controls executed; labelled VM-only NaN is not a valid JSON wire value.",
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/green.tap",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/green-observations.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B14",
+        "obligation": "Independent source\u2192receipt, consumer-expiry bypass and global-zone mutants must make corresponding witnesses fail.",
+        "originalStatus": "unverified",
+        "status": "SOURCE_ACCEPTED",
+        "originalLimitations": null,
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/mutants/receipt.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/green.tap",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B15",
+        "obligation": "Disposable-browser fresh\u2192expired\u2192outage\u2192fresh sequence must show chip/data-fx and no wet effects after expiry, with crops.",
+        "originalStatus": "satisfied",
+        "status": "ACCEPTED_PRESERVED",
+        "originalObserved": "Executed V45 actual1x source expiry\u2192consumed HTTP503\u2192new native network retry recovery,136 frames; initial/expired/recovered pixels inspected. All material weather owner/admission/paint regions byte-equivalent to final root; historical reuse separately scoped.",
+        "originalLimitations": "Historical browser execution plus fresh source comparison; no new browser by C. Not an all-phase Moon/default-M0 claim.",
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/authority/accepted-assessment.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/v45-receipt-readback.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/historical-source-equivalence.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B16",
+        "obligation": "Preserve 325\u00d7530 card/header/footer, moon opacity and cloud continuity in the affected transitions.",
+        "originalStatus": "unverified",
+        "status": "SCOPED_NATIVE_ACCEPTED",
+        "originalLimitations": null,
+        "currentLimitations": [
+          "Original current/expired first-state Moon omissions are retained as the unchanged terrain cold-acquisition limitation; those frames are not complete-Moon PASS.",
+          "Final Chromium recovery and declared native motion intervals have scoped original-video pixel review. Final Firefox states, six-second recovery and thirty-second motion intervals use the independently qualified original-PNG alternative.",
+          "Every original Firefox recording keeps its blank/incomplete-frame result; no later PNG replaces a failed video frame.",
+          "Unchanged ten-minute radar expiry/retry is reused only through exact relevant source, fixture, driver and authority bindings. Old sky, Moon and motion acceptance is not reused.",
+          "Controlled provider input and native 1x scheduling do not certify live-provider measurements, all lunar phases or pixels between recorded observations."
+        ],
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/handoff-native-reconciliation.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-chromium-default-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-chromium-reduced-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-chromium-full-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-firefox-default-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-firefox-reduced-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-firefox-full-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-firefox-reduced-video-nominations-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/contrary-evidence.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B17",
+        "obligation": "Update DESIGN, README and diagnostics to distinguish model-valid time, interval, retrieval, mosaic generation and unavailable; no ground-observation/universal-coverage/offline guarantee.",
+        "originalStatus": "unmet",
+        "status": "DOCS_ACCEPTED",
+        "originalLimitations": null,
+        "documentScope": "Exact qualified candidate document copies, with hashes bound by the candidate certificate and public manifest; not the evidence branch root documents.",
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/qualified-documents/README.md",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/qualified-documents/DESIGN.md",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/qualified-documents/HANDOFF.md",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/post-handoff-currentness.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/atomic-handoff-source-review.json",
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ]
+      },
+      {
+        "id": "B18",
+        "obligation": "Joined temporal/cache/consumer review and evidence comment precede manual closure; public repair requires matching served-source/consumer readback.",
+        "originalStatus": "unverified",
+        "status": "JOINED_REVIEW_PUBLIC_HEAD_AUTHORITY_MERGE_AND_DELIVERY_ACCEPTED",
+        "originalLimitations": "Reviewer C proposes only; primary must reconcile.",
+        "currentLimitations": "This certificate is published before its independent public readback and the authorized intentional completed close. Those subsequent effects require their own actual receipts; no future issue state is asserted here.",
+        "qualificationEvidence": [
+          "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+        ],
+        "qualificationStageStatus": "LOCAL_JOINED_REVIEW_ACCEPTED__PUBLIC_HEAD_DELIVERY_AND_CLOSURE_PENDING",
+        "deliveryEvidence": [
+          "publication-review/public-head-review.json",
+          "publication-review/posted-public-review-readback.json",
+          "delivery/owner-authorization.json",
+          "delivery/before-merge-gate.json",
+          "independent-review/delivery/merge-review.json",
+          "required-delivery-receipt.json",
+          "independent-review/delivery/delivery-review.json"
+        ]
+      }
+    ]
+  },
+  "immutableQualificationEvidence": {
+    "commit": "885348adc26f9db468b39b65ba2c07cf130d26ca",
+    "manifestUrl": "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/manifest.json",
+    "manifestSha256": "54d4272917e4e68fe42bc2e07ee2b3dee49552cbba6e559413e9d7ff6d593bc5",
+    "storedFiles": 619,
+    "storedBytes": 1307142979,
+    "logicalOriginals": 8810,
+    "nativeAcquisitions": 21,
+    "originalWebms": 21,
+    "originalImages": 8435,
+    "losslessArchives": 34,
+    "branch": "codex/r000b-evidence-20261014",
+    "nonDeploying": true,
+    "mergedIntoMain": false,
+    "contraryEvidenceUrl": "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/contrary-evidence.json",
+    "independentJoinedReviewUrl": "https://github.com/theislampill/salah_widget/blob/885348adc26f9db468b39b65ba2c07cf130d26ca/docs/rlgwo-execution/20261014/R000B/independent-review/final-joined-review.json"
+  },
+  "publicHeadReview": {
+    "url": "https://github.com/theislampill/salah_widget/pull/61#issuecomment-6177218895",
+    "sha256": "aedec4cb0f977798c88d035cd815b28a7b68ba37db3b8bd8e33a8952a51bcdb3",
+    "publicFilesRead": 636,
+    "description": "Independent exact public PR head/base/tree and all619 evidence/17source raw artifact readback; no mismatch."
+  },
+  "independentReviewer": {
+    "agent": "/root/r000b_independent_review",
+    "model": "GPT-6 Astra",
+    "reasoning": "Max",
+    "readOnly": true
+  },
+  "independentDeliveryReview": {
+    "path": "independent-review/delivery/delivery-review.json",
+    "bytes": 37468,
+    "sha256": "d2d4ffa0c321ca8bdc11d6129e3f1ae76a38f1859e398f6816e41869ee1d19e9"
+  },
+  "delivery": {
+    "schema": "r000b-required-delivery-receipt/v1",
+    "status": "PASS_WITH_DECLARED_SCOPES_AND_RETAINED_LIMITATIONS",
+    "approvedHead": "573dc2b15af37b5d32faa4364f3e653b65431dfc",
+    "reviewedBase": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+    "mergeCommit": "763a460e98dc23c7f0e95bf346274f1685b3c654",
+    "sourceTree": "3656edba44b79ab7216c8cbf3546f4fe085bee9a",
+    "mergeParents": [
+      "16658749209e0c567f49a3fc9dc855f665afa6e4",
+      "573dc2b15af37b5d32faa4364f3e653b65431dfc"
+    ],
+    "mergeMethod": "merge commit",
+    "sourceScopeFiles": 17,
+    "pagesRun": "https://github.com/theislampill/salah_widget/actions/runs/38631069804",
+    "pagesStatus": "completed/success",
+    "pagesSource": {
+      "branch": "main",
+      "path": "/"
+    },
+    "pagesConfigurationChanged": false,
+    "servedRuntimeFiles": 135,
+    "allSelectedServedFiles": 149,
+    "bytesRead": 215200461,
+    "runtimeSha256": "c2753a21c337ff0bc09cea05f15bfc7729dcc2295a924c11284399fdab6e9ea2",
+    "servedMismatchCount": 0,
+    "sourceAndDocuments": {
+      "path": "delivery/source-docs-readback.json",
+      "bytes": 159935,
+      "sha256": "8eab293e491b0266a7787433d61efdfeeb2b3d604db2c5af43b77cd6664581c9"
+    },
+    "publicConsumer": {
+      "path": "delivery/public-consumer/readback.json",
+      "bytes": 188375,
+      "sha256": "d81ccf9cdcee55692d17ff5fcc512d9635ada47b5aadea2edb54ad24629074a0"
+    },
+    "primaryPixelReview": {
+      "path": "delivery/primary-public-consumer-review.json",
+      "bytes": 10928,
+      "sha256": "2b1ba050be28e1f4c8071190351bfcff89d0598f09e5afe7f807b4c8037885d6"
+    },
+    "independentDeliveryReview": {
+      "path": "independent-review/delivery/delivery-review.json",
+      "bytes": 37468,
+      "sha256": "d2d4ffa0c321ca8bdc11d6129e3f1ae76a38f1859e398f6816e41869ee1d19e9"
+    },
+    "engines": [
+      {
+        "engine": "chromium",
+        "version": "148.0.7778.96",
+        "executableSha256": "290fa7018fda22c52ada5eddb0113baf3ebc41fd0fde6085eddb19793606c635",
+        "states": [
+          "current",
+          "expired",
+          "503",
+          "restored",
+          "settled"
+        ],
+        "sequenceChecks": {
+          "ordinaryRetryIntervals": true,
+          "retainedStaleCache": true,
+          "healthyNewSource": true,
+          "native1x": true,
+          "settledInterval": true
+        }
+      },
+      {
+        "engine": "firefox",
+        "version": "150.0.2",
+        "executableSha256": "960a9a013187e337fc03b685ec8bed803791033620985e99fa66438b4fcd6c80",
+        "states": [
+          "current",
+          "expired",
+          "503",
+          "restored",
+          "settled"
+        ],
+        "sequenceChecks": {
+          "ordinaryRetryIntervals": true,
+          "retainedStaleCache": true,
+          "healthyNewSource": true,
+          "native1x": true,
+          "settledInterval": true
+        }
+      }
+    ],
+    "qualificationEvidenceCommit": "885348adc26f9db468b39b65ba2c07cf130d26ca",
+    "qualificationBulkOnPages": false,
+    "scope": "Authorized exact-source merge plus actual delivered source/docs and bounded public consumer endpoints. Original acceptance and contrary-evidence scopes remain unchanged.",
+    "limits": [
+      "The original current/expired first-state Moon omissions remain the inherited terrain cold-acquisition limitation. These frames are not complete-Moon PASS and no universal startup deadline is claimed.",
+      "Every retained Firefox native video keeps its blank/incomplete-frame failure. The independently qualified original PNG route supplies only its declared state, six-second recovery and thirty-second motion observations; later images never replace failed video frames.",
+      "The genuine earlier warm missing-Moon transition and intermediate blue-flash/black-limb frames remain failed contrary evidence. Only the affected repaired candidate and its reviewed observations receive acceptance.",
+      "The old ten-minute radar source/receipt expiry and ordinary-retry receipts are reused only for their unchanged relevant inputs/source/interfaces, not old Moon, sky or motion acceptance.",
+      "The new actual-Pages consumer confirms ten default-motion endpoints only. It is not a new continuous watch, first-Moon qualification, live-provider test, universal radar-coverage claim, ground-observation promise or offline-app guarantee.",
+      "Controlled fixture weather/prayer/Hijri inputs and advancing 2026-09-07 UTC clock are synthetic. Native scheduling/animation/retries remain real; no test helper forces acquisition or installs weather model state.",
+      "Source/receipt age depends on client/provider clocks; skew can withhold authority. Weather remains a disclosed current model estimate, and radar coverage can be absent.",
+      "No applicable CI checks or branch-protection rules were configured. Their absence is not CI PASS; the successful Pages deployment is a separate observed workflow.",
+      "GitHub prematurely auto-closed issue11 after the merge. The assertion detected it, evidence was retained and the issue was reopened before delivery qualification. This mitigated lifecycle failure is not erased or counted as the final closure."
+    ]
+  },
+  "deliveryEvidenceLocation": "This certificate and its relative delivery/review paths are in one immutable appended evidence commit. Its full commit URL and manifest hash are supplied in the issue certificate publication; the commit cannot contain its own hash.",
+  "deliveryReceipt": {
+    "path": "required-delivery-receipt.json",
+    "bytes": 4995,
+    "sha256": "066b0c69bd914ff7aa85d2c1f6b84c0a610b8f62a920d9d8b79479dafe0e2261"
+  },
+  "retainedLifecycleFinding": {
+    "id": "R000B-MERGE-LIFECYCLE-01",
+    "severity": "P2",
+    "status": "MITIGATED_OPEN_STATE_RESTORED_HISTORY_RETAINED",
+    "prematureClosedEvent": 33265433588,
+    "reopenedEvent": 33265528618,
+    "review": "independent-review/delivery/merge-review.json",
+    "causalLimit": "GitHub closing relation and timing observed; close event commit_id was null, so the exact keyword/UI creation mechanism is not asserted."
+  },
+  "limitations": [
+    "The original current/expired first-state Moon omissions remain the inherited terrain cold-acquisition limitation. These frames are not complete-Moon PASS and no universal startup deadline is claimed.",
+    "Every retained Firefox native video keeps its blank/incomplete-frame failure. The independently qualified original PNG route supplies only its declared state, six-second recovery and thirty-second motion observations; later images never replace failed video frames.",
+    "The genuine earlier warm missing-Moon transition and intermediate blue-flash/black-limb frames remain failed contrary evidence. Only the affected repaired candidate and its reviewed observations receive acceptance.",
+    "The old ten-minute radar source/receipt expiry and ordinary-retry receipts are reused only for their unchanged relevant inputs/source/interfaces, not old Moon, sky or motion acceptance.",
+    "The new actual-Pages consumer confirms ten default-motion endpoints only. It is not a new continuous watch, first-Moon qualification, live-provider test, universal radar-coverage claim, ground-observation promise or offline-app guarantee.",
+    "Controlled fixture weather/prayer/Hijri inputs and advancing 2026-09-07 UTC clock are synthetic. Native scheduling/animation/retries remain real; no test helper forces acquisition or installs weather model state.",
+    "Source/receipt age depends on client/provider clocks; skew can withhold authority. Weather remains a disclosed current model estimate, and radar coverage can be absent.",
+    "No applicable CI checks or branch-protection rules were configured. Their absence is not CI PASS; the successful Pages deployment is a separate observed workflow.",
+    "GitHub prematurely auto-closed issue11 after the merge. The assertion detected it, evidence was retained and the issue was reopened before delivery qualification. This mitigated lifecycle failure is not erased or counted as the final closure."
+  ],
+  "rollback": "Revert the two authored repairs and their generated consumers together; keep the prior accepted temporal authority fences and retained evidence. No data migration or cache deletion is introduced.",
+  "publicationAndClosureOrder": {
+    "certificatePublicReadback": "Must occur after publishing this exact certificate; no future readback is asserted here.",
+    "intentionalCompletedClose": "Owner authorized after independent certificate readback.",
+    "finalClosedStateVerification": "Independent live readback must confirm CLOSED/completed and certificate/evidence links after the close."
+  },
+  "primaryReconciliation": "The exact authorized delivered source preserves accepted B01-B03/B05-B12/B15. The remaining source, mutation, bounded native, documentation, independent public-head and delivery obligations are accepted only in the scopes stated here. No failed original or pending effect is promoted to PASS."
+}
