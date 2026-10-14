@@ -1,0 +1,853 @@
+{
+  "schema": "R000C-close-output/v1",
+  "canonicalId": "R000C",
+  "issue": "https://github.com/theislampill/salah_widget/issues/12",
+  "preparedAtUtc": "2026-10-14T15:37:21.022410+00:00",
+  "status": "QUALIFICATION_AND_DELIVERY_VERIFIED_PUBLICATION_AND_ISSUE_TRANSITION_PENDING",
+  "specCommit": "21e7a84365fae37a86cae5c7d5e41008c0adc53f",
+  "approvedHead": "9ae80bc6e729325320002d46d324a0b4aafc8f01",
+  "reviewedBase": "7827099dff3c9bc5ecb1b7a67dc4c25414bcfb69",
+  "mergeCommit": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+  "tree": "6ff810cd8337cf7cf80c5c6511320ebacc8ea103",
+  "exactHeadAuthority": "exact-head-authority.json",
+  "exactHeadAuthoritySha256": "e678f4d3ca4e19c6af2fe136b7494197851bc17de30d42a9d40fe0b03704ac5d",
+  "requiredDeliveryReceipt": "required-delivery-receipt.json",
+  "requiredDeliveryReceiptSha256": "ee27036a89c6a74a425601f06ef380ffb3b0dff06b255621433dca384db11c29",
+  "originalMatrixSha256": "274d3fed218a4a8b4d1c0bfed7afdf9669107a515e90021e69383a124fd2145f",
+  "originalRequirementMatrix": [
+    {
+      "id": "C01",
+      "obligation": "Reject non-OK transport before JSON/any installed state; malformed JSON, null/array/nonobject root and provider error never mutate/renew elevation/current/track/cache/accepted timestamp.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1323,
+          "end": 1386,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1323-L1386"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3447,
+          "end": 3511,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3447-L3511"
+        }
+      ],
+      "discriminator": "Healthy-shaped500, historical malformed500, ordinary400, malformed200 and prior valid-state preservation.",
+      "expected": "All invalid envelopes unavailable; busy eventually released by owner.",
+      "observed": "W HTTP/JSON/root tests passed; D ordinary/error/deadline paths passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 206,
+          "end": 236,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L206-L236"
+        },
+        {
+          "file": "tests/r000d-weather.test.cjs",
+          "start": 140,
+          "end": 145,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L140-L145"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C02",
+      "obligation": "Only finite number measurements admitted; null/undefined remain unavailable; no string/boolean/array/object coercion.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1213,
+          "end": 1276,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1276"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3337,
+          "end": 3400,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3337-L3400"
+        }
+      ],
+      "discriminator": "Null/missing/zero/negative temperatures and invalid precipitation/optional fields.",
+      "expected": "Stored/rendered null remains null, true numeric zero displays0\u00b0, negative finite C/F valid.",
+      "observed": "Actual wxNumber/wxValue use finite-number type checks. W mandatory null/missing/zero/negative temperature and invalid quantity/optional cases passed. Boolean/array/object exclusion is verified from the reachable source predicate.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 194,
+          "end": 205,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L194-L205"
+        },
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 242,
+          "end": 261,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L242-L261"
+        }
+      ],
+      "limitations": "Additional hostile-type cases were not separately executed; this is source proof plus the specified acquisition/cache/consumer controls."
+    },
+    {
+      "id": "C03",
+      "obligation": "Whitelist integer WMO domain; unsupported999/string95/negative/fractional code makes current unavailable, not broad thunder.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1244,
+          "end": 1261,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1244-L1261"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3368,
+          "end": 3385,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3368-L3385"
+        }
+      ],
+      "discriminator": "Actual current admission and atmosphere for unsupported code.",
+      "expected": "No authoritative current or accepted timestamp; independent valid hourly block may survive.",
+      "observed": "All four W unsupported-code cases passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 237,
+          "end": 241,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L237-L241"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C04",
+      "obligation": "Respect per-field bounds:humidity/cloud0\u2013100,direction0\u2013360,nonnegative precip/wind/gust/visibility,is_day exactly0/1; negative temps/elevation valid.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1213,
+          "end": 1276,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1276"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3337,
+          "end": 3400,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3337-L3400"
+        }
+      ],
+      "discriminator": "Invalid optionals and positive boundaries/negative elevation.",
+      "expected": "Invalid optional becomes null with reason and cannot authorize physical effect; finite legitimate values retained.",
+      "observed": "W invalid/boundary tests passed; source domain rules include all requested fields.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 249,
+          "end": 261,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L249-L261"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C05",
+      "obligation": "Missing/invalid precipitation remains unavailable rather than fabricated0mm; true0 is dry amount; neither invalid quantity nor radar can grant particles.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 2393,
+          "end": 2413,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2393-L2413"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 4420,
+          "end": 4440,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4420-L4440"
+        }
+      ],
+      "discriminator": "StringInfinity/NaN/Infinity/-1/missing/0 under raw95.",
+      "expected": "All unsupported amounts give no particles; numeric0 remains0; raw model condition may stay visible under later owner policy.",
+      "observed": "W invalid precipitation and H missing/contradictory tests passed; P null-versus-zero keeps current unknown vs model-estimated-dry.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 242,
+          "end": 247,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L242-L247"
+        },
+        {
+          "file": "tests/r0024-weather.test.cjs",
+          "start": 193,
+          "end": 198,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-weather.test.cjs#L193-L198"
+        },
+        {
+          "file": "tests/hotfix-prayer-weather.test.cjs",
+          "start": 125,
+          "end": 134,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L125-L134"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C06",
+      "obligation": "Captured request C/F and m/s units remain attached; supplied contradictory units reject only affected block; absent optional unit object allowed.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1213,
+          "end": 1276,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1276"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3337,
+          "end": 3400,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3337-L3400"
+        }
+      ],
+      "discriminator": "Fahrenheit negative, current/hourly \u00b0F contradiction, radians contradiction and matching/missing degree controls.",
+      "expected": "No unit relabelling; independent valid portion retained.",
+      "observed": "W C/F/current/hourly metadata cases passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 201,
+          "end": 205,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L201-L205"
+        },
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 262,
+          "end": 289,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L262-L289"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C07",
+      "obligation": "Preserve source time/interval/captured request zone; structural owner does not manufacture freshness; temporal invalidity stays unavailable.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1230,
+          "end": 1242,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1230-L1242"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3354,
+          "end": 3366,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3354-L3366"
+        }
+      ],
+      "discriminator": "Calendar-invalid hourly, gap/fold, unsupported zone, supplied contradictory/alias zones.",
+      "expected": "Captured correct zone supplies valid epoch; ambiguous/invalid cannot grant freshness.",
+      "observed": "W temporal and Z response-zone controls passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 397,
+          "end": 435,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L397-L435"
+        },
+        {
+          "file": "tests/r0024-response-zone.test.cjs",
+          "start": 14,
+          "end": 33,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-response-zone.test.cjs#L14-L33"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C08",
+      "obligation": "Stage current/track/elevation locally, deliberate independent commits; valid current survives invalid track, valid forecast never repairs invalid live current.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1355,
+          "end": 1386,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1355-L1386"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3479,
+          "end": 3511,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3479-L3511"
+        }
+      ],
+      "discriminator": "Bad current with good hourly and good current with malformed hourly.",
+      "expected": "Independent admitted portions, no forecast-as-current; no NaN/early elevation mutation.",
+      "observed": "W current/hourly malformed controls passed; final owned guard precedes elevation/current/track writers.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 237,
+          "end": 241,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L237-L241"
+        },
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 299,
+          "end": 301,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L299-L301"
+        },
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 382,
+          "end": 387,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L382-L387"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C09",
+      "obligation": "Hourly times nonempty, finite, calendar-valid, unambiguous, strictly increasing; required code/temp arrays aligned; no sorting/truncation.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1263,
+          "end": 1276,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1263-L1276"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3387,
+          "end": 3400,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3387-L3400"
+        }
+      ],
+      "discriminator": "Mismatched required/optional lengths, nonarray/null optional array, invalid/duplicate/decreasing/malformed time.",
+      "expected": "Reject track while preserving valid current; invalid code domain rejects track.",
+      "observed": "Source requires nonempty ordered valid epochs, aligned required/optional arrays and whitelisted hourly codes. W alignment/invalid-time/duplicate/decreasing/gap/fold controls passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 290,
+          "end": 302,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L290-L302"
+        },
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 410,
+          "end": 423,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L410-L423"
+        }
+      ],
+      "limitations": "Empty time array and unsupported hourly-code predicates were inspected in the actual owner; not claimed as separately executed cases."
+    },
+    {
+      "id": "C10",
+      "obligation": "Absent optional arrays become aligned nulls; invalid optional elements null; null-aware temp/wind interpolation and neighbor behavior; categorical code remains stepped; endpoint hold unchanged.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1463,
+          "end": 1488,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1463-L1488"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3589,
+          "end": 3614,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3589-L3614"
+        }
+      ],
+      "discriminator": "Both null endpoints, one valid neighbor, circular350\u219210 direction and endpoint code controls.",
+      "expected": "No manufactured0\u00b0/north wind/NaN driver; available neighbor and established categorical/endpoint semantics retained.",
+      "observed": "All actual wxAt W cases passed.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 303,
+          "end": 319,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L303-L319"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C11",
+      "obligation": "loadWx uses same normalized rules, same key/readable{w,ts}, preserves bytes and genuine old zero, malformed cache miss permits fetch.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1314,
+          "end": 1321,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1314-L1321"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3438,
+          "end": 3445,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3438-L3445"
+        }
+      ],
+      "discriminator": "Malformed999/string quantity cache then healthy fetch; legacy0 cache.",
+      "expected": "No malformed install, no deletion, true0 preserved under separate freshness fence.",
+      "observed": "W malformed normalized cache/healthy recovery and zero-valued legacy cases passed. Source JSON parse is inside the same loadWx try/catch and never deletes bytes.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 320,
+          "end": 347,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L320-L347"
+        }
+      ],
+      "limitations": "Malformed JSON cache exception handling is source-inspected, not claimed as an additional executed fixture."
+    },
+    {
+      "id": "C12",
+      "obligation": "One captured-generation owner guards all async commit/cache writes; old finally cannot clear successor; no new generation subsystem.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1005,
+          "end": 1044,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3129,
+          "end": 3168,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3129-L3168"
+        }
+      ],
+      "discriminator": "Old target/unit success, old-finally/load against active B; global unit/zone change.",
+      "expected": "No old install/persist/new-owner busy clear; captured key/units/zone retained.",
+      "observed": "D race controls and W captured context passed; generation source is shared.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 388,
+          "end": 408,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L388-L408"
+        },
+        {
+          "file": "tests/r000d-weather.test.cjs",
+          "start": 111,
+          "end": 139,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000d-weather.test.cjs#L111-L139"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C13",
+      "obligation": "Actual fetchWeather/loadWx/gate/atmosphere/paint must be reached, not a helper-only corrected parser.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1355,
+          "end": 1386,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1355-L1386"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3479,
+          "end": 3511,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3479-L3511"
+        }
+      ],
+      "discriminator": "Fixture actual declaration extraction and source hashes.",
+      "expected": "No production logic copy; source regions absent fail fixture; installed+persisted+actual header/effect assertions.",
+      "observed": "W fixture extraction + fresh acquisition/cache/paint tests passed on generated root; direct edited helper not used.",
+      "status": "satisfied",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 11,
+          "end": 49,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L11-L49"
+        },
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 153,
+          "end": 180,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L153-L180"
+        },
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 183,
+          "end": 192,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L183-L192"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C14",
+      "obligation": "Restore null rounding, remove HTTP gate, bypass cache normalization and restore loose hourly arrays in independent mutation controls.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1213,
+          "end": 1276,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1213-L1276"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3337,
+          "end": 3400,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3337-L3400"
+        }
+      ],
+      "discriminator": "Four isolated source mutations with corresponding minimal witnesses.",
+      "expected": "Each regression detected by actual call sites and state/cache/consumer assertions.",
+      "observed": "No current required-mutant execution receipt located; requested bounded mutation clearance.",
+      "status": "unverified",
+      "evidence": [],
+      "limitations": null
+    },
+    {
+      "id": "C15",
+      "obligation": "Disposable-browser null-temperature/genuine-zero/malformed-precip/healthy-wet cases must show actual header and data-fx; no fabricated0\u00b0/NaN\u00b0/invalid particles.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 2953,
+          "end": 2962,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2953-L2962"
+        },
+        {
+          "file": "src/native/index.html",
+          "start": 3068,
+          "end": 3078,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3068-L3078"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 4980,
+          "end": 4989,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4980-L4989"
+        },
+        {
+          "file": "index.html",
+          "start": 5096,
+          "end": 5106,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5096-L5106"
+        }
+      ],
+      "discriminator": "Real browser controlled acquisition/consumer/crops.",
+      "expected": "Null blank, numeric0 visible; invalid quantities no particles; genuine wet positive.",
+      "observed": "Node logic cases pass; retained V46 rain positive and earlier native smoke cannot supply exact required null/0/malformed acquisition pixel matrix.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "file": "tests/r000c-weather.test.cjs",
+          "start": 194,
+          "end": 205,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r000c-weather.test.cjs#L194-L205"
+        },
+        {
+          "file": "tests/hotfix-prayer-weather.test.cjs",
+          "start": 125,
+          "end": 134,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/hotfix-prayer-weather.test.cjs#L125-L134"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C16",
+      "obligation": "Preserve SIM/preview,325\u00d7530 geometry,header/footer,moon opacity and live motion; parser result cannot certify pixels.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 2953,
+          "end": 2962,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L2953-L2962"
+        },
+        {
+          "file": "src/native/index.html",
+          "start": 3068,
+          "end": 3078,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L3068-L3078"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 4980,
+          "end": 4989,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L4980-L4989"
+        },
+        {
+          "file": "index.html",
+          "start": 5096,
+          "end": 5106,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L5096-L5106"
+        }
+      ],
+      "discriminator": "Relevant browser scenes and retained visual controls.",
+      "expected": "No UI/renderer regression attributable to admission changes.",
+      "observed": "Scoped retained positive rain/readability and fresh Node cloud controls available; full required hostile/zero rendered controls absent.",
+      "status": "unverified",
+      "evidence": [
+        {
+          "file": "tests/r0024-cloud-expiry.test.cjs",
+          "start": 27,
+          "end": 82,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/tests/r0024-cloud-expiry.test.cjs#L27-L82"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C17",
+      "obligation": "README must explain exposed unavailable-value behavior; no schema/config/unit/installer/preset migration or new validator dependency.",
+      "authoredOwner": [
+        {
+          "file": "DESIGN.md",
+          "start": 244,
+          "end": 267,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267"
+        },
+        {
+          "file": "README.md",
+          "start": 188,
+          "end": 202,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L188-L202"
+        },
+        {
+          "file": "README.md",
+          "start": 223,
+          "end": 225,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L223-L225"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "DESIGN.md",
+          "start": 244,
+          "end": 267,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/DESIGN.md#L244-L267"
+        },
+        {
+          "file": "README.md",
+          "start": 188,
+          "end": 202,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L188-L202"
+        },
+        {
+          "file": "README.md",
+          "start": 223,
+          "end": 225,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L223-L225"
+        }
+      ],
+      "discriminator": "Read README+source dependencies.",
+      "expected": "Explain blank unavailable temperature/quantities without coercion; existing interfaces remain.",
+      "observed": "Small local normalizers/no dependency implemented; README feature text never describes blank unavailable measurement behavior.",
+      "status": "unmet",
+      "evidence": [
+        {
+          "file": "README.md",
+          "start": 188,
+          "end": 202,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/README.md#L188-L202"
+        }
+      ],
+      "limitations": null
+    },
+    {
+      "id": "C18",
+      "obligation": "Preserve original RED attribution, exact-tree independent reachability review and evidence comment; public claims need served consumer proof.",
+      "authoredOwner": [
+        {
+          "file": "src/native/index.html",
+          "start": 1005,
+          "end": 1044,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/src/native/index.html#L1005-L1044"
+        }
+      ],
+      "deliveredConsumer": [
+        {
+          "file": "index.html",
+          "start": 3129,
+          "end": 3168,
+          "url": "https://github.com/theislampill/salah_widget/blob/18ff14860ff41c084b1db5f396bb62aa9c22b1be/index.html#L3129-L3168"
+        }
+      ],
+      "discriminator": "Immutable issue contract, target/tree/hash, final-source audit and primary reconciliation.",
+      "expected": "No original defect attributed solely to PR42; no success claim beyond exact inputs.",
+      "observed": "Admission/expiry/deadline/zero/radar owners were carried by CP9 prerequisite commit3cf6ce2; PR42 altered approved presentation/clock/header. Original RED is reporter-preserved, not rerun here; closure held.",
+      "status": "unverified",
+      "evidence": [],
+      "limitations": null
+    }
+  ],
+  "originalRedAttribution": {
+    "reporterSource": "fd2972ba64225fe9d6848e92497e6d0ed20ea624",
+    "candidate": "9d9c43649748555afbe09e3ca49bc47db2d7e7bb",
+    "newHistoricalReplay": false
+  },
+  "executionDispositions": [
+    {
+      "id": "C01",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C02",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C03",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C04",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C05",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C06",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C07",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C08",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C09",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C10",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C11",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C12",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C13",
+      "status": "PRESERVED_EXACT_SPANS_AND_ORIGINAL_TESTS",
+      "evidence": "currentness.json"
+    },
+    {
+      "id": "C14",
+      "status": "PASS_SOURCE_MUTATIONS",
+      "evidence": "mutants/receipt.json",
+      "scope": "Four actual source mutations killed by unchanged original assertions; five positive controls survive each."
+    },
+    {
+      "id": "C15",
+      "status": "PASS_BOUNDED_NATIVE_STATE_PIXELS",
+      "evidence": "independent-review/firefox-day-readback-check.json",
+      "scope": "Six Chromium and six Firefox ingress cases; failed Firefox initial continuous watches are not credited."
+    },
+    {
+      "id": "C16",
+      "status": "PASS_ORIGINAL_SCOPED_NATIVE_AND_PRESERVATION_CONTROLS",
+      "evidence": "independent-review/c16-reduced-scope-audit.md",
+      "scope": "Actual affected state/pixels; complete default/full recovered30s controls; affected reduced behavior plus exact retained policy evidence. Every failed expanded watch remains FAIL; no new clean30s reduced watch is claimed."
+    },
+    {
+      "id": "C17",
+      "status": "PASS_SCOPED_DOC_REVIEW",
+      "evidence": "independent-review/final-candidate-review.md"
+    },
+    {
+      "id": "C18",
+      "status": "FINAL_QUALIFICATION_AUTHORITY_MERGE_DELIVERY_PASS",
+      "evidence": [
+        "exact-head-authority.json",
+        "required-delivery-receipt.json",
+        "independent-review/delivery-review.json"
+      ],
+      "scope": "Independent exact-tree/public-head review, owner authority, exact merge, Pages and actual public consumer verified. This immutable record precedes certificate publication/readback and the completed issue transition; the issue certificate and final readback record those later effects."
+    }
+  ],
+  "qualificationEvidence": {
+    "commit": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+    "path": "docs/rlgwo-execution/20261014/R000C",
+    "files": 7512,
+    "losslessOriginals": 7509,
+    "manifestSha256": "849c0909d2cca582497920769524cf6c62b3baa8050d95aa4584ebe8b18f2469",
+    "archiveMapSha256": "0023a1fc87d96d20935eb7a7b48032483b426050ba10980cadb4da18ffde3781"
+  },
+  "c16Limits": [
+    "Original A03 requires the30-second no-preference watch and reduced/full controls. Complete predeclared recovered30-second default/full intervals are qualified.",
+    "Affected reduced state/pixels/held behavior plus exact-source prior R0007 reduced-policy control support original reduced scope; no new clean30-second reduced continuous watch is claimed.",
+    "Every failed declared Firefox watch remains FAIL, including the reduced blank frame at107.40s; no later healthy tail, shortened interval or endpoint PNG rescues it.",
+    "The retained R0007 reduced control is Honolulu/SIM370x570/headed/offline-weather and supports unchanged reduced-motion policy, not current Madinah ingress.",
+    "No universal Firefox repair, startup/first-frame, whole-video, provider-health or new scientific claim. Boundary lunar diagnostics can adopt a pending preview, so loaded opaque Moon proof is not unassisted startup."
+  ],
+  "remainingSerializedEffects": [
+    "Publish/read back this evidence extension",
+    "Publish CLOSE-R000C issue certificate",
+    "Independent certificate readback",
+    "Close issue12 as completed",
+    "Independent closed-state and certificate URL verification"
+  ],
+  "historicalRecords": "Earlier candidate/acceptance pending fields are preserved as truthful records of their stage; this delivery extension and issue certificate carry later lifecycle evidence."
+}
