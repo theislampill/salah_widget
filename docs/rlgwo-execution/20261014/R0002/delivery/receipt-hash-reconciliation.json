@@ -1,0 +1,13 @@
+{
+  "schema": "r0002-review-receipt-hash-reconciliation/v1",
+  "status": "PASS_RECONCILED_WITHOUT_RECEIPT_REWRITE",
+  "artifact": "delivery-review.json",
+  "actualBytes": 29425,
+  "actualSha256": "561cc5828129c4f38b2c9fb4db43f31454d48bd9d93076911b19083c3c64e663",
+  "erroneouslyAnnouncedSha256": "7dd29f6c7b2197c7cbe1d566d638fd13eb54a0c5cfa9ca784399b59e0dca166b",
+  "announcedDigestEqualsLfNormalizedSavedBytes": true,
+  "crlfCount": 626,
+  "independentChecksPassing": 12,
+  "cause": "Reviewer hashed its in-memory LF serialization; Windows write_text saved CRLF bytes. The published archive binds the actual unchanged saved bytes.",
+  "containment": "Archive guard stopped before commit or push. Original discrepancy receipt retained. No source change, native replay, or receipt rewrite occurred."
+}
