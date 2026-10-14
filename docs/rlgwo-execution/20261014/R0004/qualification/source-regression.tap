@@ -1,0 +1,711 @@
+TAP version 13
+# {"sourceSHA256":"7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de","ordinaryFixtureSHA256":"40c6412a36a4644ec9db9a5c92ae2e682aa22dfd6bac45be249886cfe7e76282"}
+# Subtest: source and ordinary synthetic fixture identities
+ok 1 - source and ordinary synthetic fixture identities
+  ---
+  duration_ms: 59.603
+  type: 'test'
+  ...
+# Subtest: ordinary record reaches real loader/cache/model/arc
+ok 2 - ordinary record reaches real loader/cache/model/arc
+  ---
+  duration_ms: 120.0567
+  type: 'test'
+  ...
+# Subtest: ordinary provider 400 envelope stays rejected
+ok 3 - ordinary provider 400 envelope stays rejected
+  ---
+  duration_ms: 5.7446
+  type: 'test'
+  ...
+# Subtest: empty timings rejected before adoption/persistence
+ok 4 - empty timings rejected before adoption/persistence
+  ---
+  duration_ms: 5.4306
+  type: 'test'
+  ...
+# Subtest: missing Fajr rejected before adoption/persistence
+ok 5 - missing Fajr rejected before adoption/persistence
+  ---
+  duration_ms: 5.0241
+  type: 'test'
+  ...
+# Subtest: nonfinite exponent Dhuhr rejected before adoption/persistence
+ok 6 - nonfinite exponent Dhuhr rejected before adoption/persistence
+  ---
+  duration_ms: 4.5368
+  type: 'test'
+  ...
+# Subtest: out-of-range clock rejected before adoption/persistence
+ok 7 - out-of-range clock rejected before adoption/persistence
+  ---
+  duration_ms: 5.5696
+  type: 'test'
+  ...
+# Subtest: extra clock component rejected before adoption/persistence
+ok 8 - extra clock component rejected before adoption/persistence
+  ---
+  duration_ms: 4.8732
+  type: 'test'
+  ...
+# Subtest: missing clock component rejected before adoption/persistence
+ok 9 - missing clock component rejected before adoption/persistence
+  ---
+  duration_ms: 4.9463
+  type: 'test'
+  ...
+# Subtest: clock nonstring rejected before adoption/persistence
+ok 10 - clock nonstring rejected before adoption/persistence
+  ---
+  duration_ms: 5.12
+  type: 'test'
+  ...
+# Subtest: wrong requested Gregorian date rejected before adoption/persistence
+ok 11 - wrong requested Gregorian date rejected before adoption/persistence
+  ---
+  duration_ms: 5.4026
+  type: 'test'
+  ...
+# Subtest: contradictory Gregorian primitives rejected before adoption/persistence
+ok 12 - contradictory Gregorian primitives rejected before adoption/persistence
+  ---
+  duration_ms: 4.9504
+  type: 'test'
+  ...
+# Subtest: normalized impossible Gregorian date rejected before adoption/persistence
+ok 13 - normalized impossible Gregorian date rejected before adoption/persistence
+  ---
+  duration_ms: 4.722
+  type: 'test'
+  ...
+# Subtest: invalid timezone rejected before adoption/persistence
+ok 14 - invalid timezone rejected before adoption/persistence
+  ---
+  duration_ms: 10.6995
+  type: 'test'
+  ...
+# Subtest: offset string is not an IANA timezone rejected before adoption/persistence
+ok 15 - offset string is not an IANA timezone rejected before adoption/persistence
+  ---
+  duration_ms: 4.3945
+  type: 'test'
+  ...
+# Subtest: malformed optional Sunset rejected before adoption/persistence
+ok 16 - malformed optional Sunset rejected before adoption/persistence
+  ---
+  duration_ms: 4.5102
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":false,"httpStatus":500,"body":{"code":500,"status":"ERR
+ok 17 - HTTP/envelope contradiction {"httpOk":false,"httpStatus":500,"body":{"code":500,"status":"ERR
+  ---
+  duration_ms: 4.3602
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":false,"httpStatus":500,"body":{"code":200,"status":"OK"
+ok 18 - HTTP/envelope contradiction {"httpOk":false,"httpStatus":500,"body":{"code":200,"status":"OK"
+  ---
+  duration_ms: 4.4367
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":true,"body":{"code":500,"status":"ERROR","data":{"timin
+ok 19 - HTTP/envelope contradiction {"httpOk":true,"body":{"code":500,"status":"ERROR","data":{"timin
+  ---
+  duration_ms: 4.6109
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":true,"body":{"code":200,"status":"ERROR","data":{"timin
+ok 20 - HTTP/envelope contradiction {"httpOk":true,"body":{"code":200,"status":"ERROR","data":{"timin
+  ---
+  duration_ms: 4.3153
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":null,"body":{"code":200,"status":"OK","data":{"timings"
+ok 21 - HTTP/envelope contradiction {"httpOk":null,"body":{"code":200,"status":"OK","data":{"timings"
+  ---
+  duration_ms: 4.2722
+  type: 'test'
+  ...
+# Subtest: HTTP/envelope contradiction {"httpOk":true,"body":[]}
+ok 22 - HTTP/envelope contradiction {"httpOk":true,"body":[]}
+  ---
+  duration_ms: 4.3022
+  type: 'test'
+  ...
+# Subtest: corrupt matching cache misses and healthy live source recovers
+ok 23 - corrupt matching cache misses and healthy live source recovers
+  ---
+  duration_ms: 29.7834
+  type: 'test'
+  ...
+# Subtest: invalid cache is a miss
+ok 24 - invalid cache is a miss
+  ---
+  duration_ms: 31.4809
+  type: 'test'
+  ...
+# Subtest: invalid cache is a miss
+ok 25 - invalid cache is a miss
+  ---
+  duration_ms: 28.0006
+  type: 'test'
+  ...
+# Subtest: legacy valid cache survives denied network and writes
+ok 26 - legacy valid cache survives denied network and writes
+  ---
+  duration_ms: 30.1934
+  type: 'test'
+  ...
+# Subtest: valid live record survives storage denial
+ok 27 - valid live record survives storage denial
+  ---
+  duration_ms: 28.4389
+  type: 'test'
+  ...
+# Subtest: suffix clocks and absent Sunset remain compatible
+ok 28 - suffix clocks and absent Sunset remain compatible
+  ---
+  duration_ms: 30.1228
+  type: 'test'
+  ...
+# Subtest: complete Tromso summer network consumer replay
+ok 29 - complete Tromso summer network consumer replay
+  ---
+  duration_ms: 34.8859
+  type: 'test'
+  ...
+# Subtest: complete Tromso summer offline-cache consumer replay
+ok 30 - complete Tromso summer offline-cache consumer replay
+  ---
+  duration_ms: 26.8251
+  type: 'test'
+  ...
+# Subtest: complete Tromso winter network consumer replay
+ok 31 - complete Tromso winter network consumer replay
+  ---
+  duration_ms: 33.5225
+  type: 'test'
+  ...
+# Subtest: complete Tromso winter offline-cache consumer replay
+ok 32 - complete Tromso winter offline-cache consumer replay
+  ---
+  duration_ms: 27.9748
+  type: 'test'
+  ...
+# Subtest: missing optional AH does not discard usable timings
+ok 33 - missing optional AH does not discard usable timings
+  ---
+  duration_ms: 26.6382
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {}
+ok 34 - malformed optional AH remains unavailable {}
+  ---
+  duration_ms: 26.3284
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {"year":"1448","day":"bad","month":{"number":2,"en":"Safar"}}
+ok 35 - malformed optional AH remains unavailable {"year":"1448","day":"bad","month":{"number":2,"en":"Safar"}}
+  ---
+  duration_ms: 29.4803
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {"year":"1448","day":"99","month":{"number":99,"en":"Safar"}}
+ok 36 - malformed optional AH remains unavailable {"year":"1448","day":"99","month":{"number":99,"en":"Safar"}}
+  ---
+  duration_ms: 29.2717
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {"year":"1e999","day":"19","month":{"number":2,"en":"Safar"}}
+ok 37 - malformed optional AH remains unavailable {"year":"1e999","day":"19","month":{"number":2,"en":"Safar"}}
+  ---
+  duration_ms: 30.6203
+  type: 'test'
+  ...
+# Subtest: malformed optional AH remains unavailable {"year":"1448","day":"19","month":{"number":2,"en":7}}
+ok 38 - malformed optional AH remains unavailable {"year":"1448","day":"19","month":{"number":2,"en":7}}
+  ---
+  duration_ms: 30.2232
+  type: 'test'
+  ...
+# Subtest: longest formatter tokens preserved
+ok 39 - longest formatter tokens preserved
+  ---
+  duration_ms: 5.064
+  type: 'test'
+  ...
+# Subtest: numeric formatter needs no optional month name
+ok 40 - numeric formatter needs no optional month name
+  ---
+  duration_ms: 4.8117
+  type: 'test'
+  ...
+# Subtest: optional AH 31 is unavailable while real Gregorian 31 remains valid
+ok 41 - optional AH 31 is unavailable while real Gregorian 31 remains valid
+  ---
+  duration_ms: 32.8878
+  type: 'test'
+  ...
+# Subtest: valid AH month 2 day 30 stays displayable before explicit calendar caller joins
+ok 42 - valid AH month 2 day 30 stays displayable before explicit calendar caller joins
+  ---
+  duration_ms: 31.8673
+  type: 'test'
+  ...
+# Subtest: missing-config format literal constructor
+ok 43 - missing-config format literal constructor
+  ---
+  duration_ms: 4.6803
+  type: 'test'
+  ...
+# Subtest: missing-config format literal __proto__
+ok 44 - missing-config format literal __proto__
+  ---
+  duration_ms: 4.5605
+  type: 'test'
+  ...
+# Subtest: missing-config format literal toString
+ok 45 - missing-config format literal toString
+  ---
+  duration_ms: 3.8904
+  type: 'test'
+  ...
+# Subtest: missing-config format literal valueOf
+ok 46 - missing-config format literal valueOf
+  ---
+  duration_ms: 4.0672
+  type: 'test'
+  ...
+# Subtest: missing-config format literal hasOwnProperty
+ok 47 - missing-config format literal hasOwnProperty
+  ---
+  duration_ms: 4.4697
+  type: 'test'
+  ...
+# Subtest: format alias iso, config=true
+ok 48 - format alias iso, config=true
+  ---
+  duration_ms: 4.3349
+  type: 'test'
+  ...
+# Subtest: format alias iso, config=false
+ok 49 - format alias iso, config=false
+  ---
+  duration_ms: 4.178
+  type: 'test'
+  ...
+# Subtest: format alias us, config=true
+ok 50 - format alias us, config=true
+  ---
+  duration_ms: 4.5381
+  type: 'test'
+  ...
+# Subtest: format alias us, config=false
+ok 51 - format alias us, config=false
+  ---
+  duration_ms: 4.1091
+  type: 'test'
+  ...
+# Subtest: format alias eu, config=true
+ok 52 - format alias eu, config=true
+  ---
+  duration_ms: 4.1761
+  type: 'test'
+  ...
+# Subtest: format alias eu, config=false
+ok 53 - format alias eu, config=false
+  ---
+  duration_ms: 4.7751
+  type: 'test'
+  ...
+# Subtest: format alias long, config=true
+ok 54 - format alias long, config=true
+  ---
+  duration_ms: 13.4223
+  type: 'test'
+  ...
+# Subtest: format alias long, config=false
+ok 55 - format alias long, config=false
+  ---
+  duration_ms: 4.4175
+  type: 'test'
+  ...
+# Subtest: mutant bypassing network admission is killed by retries while bundle admission still contains it
+ok 56 - mutant bypassing network admission is killed by retries while bundle admission still contains it
+  ---
+  duration_ms: 8.0222
+  type: 'test'
+  ...
+# Subtest: mutant removing required clocks is killed before model consumption
+ok 57 - mutant removing required clocks is killed before model consumption
+  ---
+  duration_ms: 7.5256
+  type: 'test'
+  ...
+# Subtest: mutant bypassing selected-envelope admission is killed by cache miss oracle; bundle still contains it
+ok 58 - mutant bypassing selected-envelope admission is killed by cache miss oracle; bundle still contains it
+  ---
+  duration_ms: 29.9014
+  type: 'test'
+  ...
+# Subtest: mutant removing own-key alias guard is killed by literal output
+ok 59 - mutant removing own-key alias guard is killed by literal output
+  ---
+  duration_ms: 6.2888
+  type: 'test'
+  ...
+# Subtest: mutant strict ordering is killed by complete summer captured record
+ok 60 - mutant strict ordering is killed by complete summer captured record
+  ---
+  duration_ms: 6.7433
+  type: 'test'
+  ...
+# Subtest: mutant strict ordering is killed by complete winter captured record
+ok 61 - mutant strict ordering is killed by complete winter captured record
+  ---
+  duration_ms: 5.4073
+  type: 'test'
+  ...
+# Subtest: mutant dropping HTTP gate is killed independently of provider envelope
+ok 62 - mutant dropping HTTP gate is killed independently of provider envelope
+  ---
+  duration_ms: 6.7349
+  type: 'test'
+  ...
+# Subtest: R0003 actual applyConfig A then B: obsolete A cannot change current data, zone or B cache
+ok 63 - R0003 actual applyConfig A then B: obsolete A cannot change current data, zone or B cache
+  ---
+  duration_ms: 50.8296
+  type: 'test'
+  ...
+# Subtest: R0003 positive actual applyConfig: later B succeeds after early A completion
+ok 64 - R0003 positive actual applyConfig: later B succeeds after early A completion
+  ---
+  duration_ms: 28.1927
+  type: 'test'
+  ...
+# Subtest: R0003 ABA identity: original A remains obsolete when coordinates return to A
+ok 65 - R0003 ABA identity: original A remains obsolete when coordinates return to A
+  ---
+  duration_ms: 28.199
+  type: 'test'
+  ...
+# Subtest: R0003 same coordinates method-only owns its captured request and cache
+ok 66 - R0003 same coordinates method-only owns its captured request and cache
+  ---
+  duration_ms: 30.8193
+  type: 'test'
+  ...
+# Subtest: R0003 same coordinates school-only owns its captured request and cache
+ok 67 - R0003 same coordinates school-only owns its captured request and cache
+  ---
+  duration_ms: 29.7392
+  type: 'test'
+  ...
+# Subtest: R0003 obsolete rejection and retained old timer cannot release or report over B
+ok 68 - R0003 obsolete rejection and retained old timer cannot release or report over B
+  ---
+  duration_ms: 28.5235
+  type: 'test'
+  ...
+# Subtest: R0003 obsolete tomorrow body cannot enter new selection or its cache
+ok 69 - R0003 obsolete tomorrow body cannot enter new selection or its cache
+  ---
+  duration_ms: 30.8682
+  type: 'test'
+  ...
+# Subtest: R0003 winning response persists and reloads through actual selected-cache loader
+ok 70 - R0003 winning response persists and reloads through actual selected-cache loader
+  ---
+  duration_ms: 57.9296
+  type: 'test'
+  ...
+# Subtest: R0003 independent central slots retain B owners after A cleanup for all remote kinds
+ok 71 - R0003 independent central slots retain B owners after A cleanup for all remote kinds
+  ---
+  duration_ms: 6.4231
+  type: 'test'
+  ...
+# Subtest: R0003 abort removal leaves stale rejection and healthy B commitment intact
+ok 72 - R0003 abort removal leaves stale rejection and healthy B commitment intact
+  ---
+  duration_ms: 35.1537
+  type: 'test'
+  ...
+# Subtest: R0003 mutant unconditional finally is killed by replacement-slot ownership
+ok 73 - R0003 mutant unconditional finally is killed by replacement-slot ownership
+  ---
+  duration_ms: 7.7397
+  type: 'test'
+  ...
+# Subtest: R0003 historical Madinah/Riyadh to New York race preserves exact winning zone and Asr
+ok 74 - R0003 historical Madinah/Riyadh to New York race preserves exact winning zone and Asr
+  ---
+  duration_ms: 29.8185
+  type: 'test'
+  ...
+# Subtest: R0003 equator/prime-meridian current acquisition preserves numeric zero coordinates
+ok 75 - R0003 equator/prime-meridian current acquisition preserves numeric zero coordinates
+  ---
+  duration_ms: 29.7451
+  type: 'test'
+  ...
+# Subtest: R0003 recording DOM seeds actual SKY markup classes before source callers
+ok 76 - R0003 recording DOM seeds actual SKY markup classes before source callers
+  ---
+  duration_ms: 4.2415
+  type: 'test'
+  ...
+# Subtest: R0003 SKY natural cold boot retains authored pending state through builders and acquisition
+ok 77 - R0003 SKY natural cold boot retains authored pending state through builders and acquisition
+  ---
+  duration_ms: 28.8765
+  type: 'test'
+  ...
+# Subtest: R0003 SKY invalid boot reentry drops explicitly seeded prior-scene permission before its guard
+ok 78 - R0003 SKY invalid boot reentry drops explicitly seeded prior-scene permission before its guard
+  ---
+  duration_ms: 6.2541
+  type: 'test'
+  ...
+# Subtest: R0003 SKY accepted reset clears old scene after config and generation change
+ok 79 - R0003 SKY accepted reset clears old scene after config and generation change
+  ---
+  duration_ms: 31.4749
+  type: 'test'
+  ...
+# Subtest: R0003 SKY actual visibility rebases real elapsed cloud time and preserves held axes
+ok 80 - R0003 SKY actual visibility rebases real elapsed cloud time and preserves held axes
+  ---
+  duration_ms: 33.1088
+  type: 'test'
+  ...
+# Subtest: R0003 SKY same-day provider-zone reanchor reaches the actual projection identity guard
+ok 81 - R0003 SKY same-day provider-zone reanchor reaches the actual projection identity guard
+  ---
+  duration_ms: 49.7668
+  type: 'test'
+  ...
+# Subtest: R0003 SKY cold boot hook omission is non-discriminating with authored initial classes
+ok 82 - R0003 SKY cold boot hook omission is non-discriminating with authored initial classes
+  ---
+  duration_ms: 61.0376
+  type: 'test'
+  ...
+# Subtest: R0003 SKY reset-begin mutation is killed by the actual boundary effect
+ok 83 - R0003 SKY reset-begin mutation is killed by the actual boundary effect
+  ---
+  duration_ms: 34.5441
+  type: 'test'
+  ...
+# Subtest: R0003 SKY surface-drop mutation is killed by the actual boundary effect
+ok 84 - R0003 SKY surface-drop mutation is killed by the actual boundary effect
+  ---
+  duration_ms: 31.3564
+  type: 'test'
+  ...
+# Subtest: R0003 SKY elapsed-rebase mutation is killed by the actual boundary effect
+ok 85 - R0003 SKY elapsed-rebase mutation is killed by the actual boundary effect
+  ---
+  duration_ms: 5.1111
+  type: 'test'
+  ...
+# Subtest: R0003 SKY projection-identity mutation is killed by the actual boundary effect
+ok 86 - R0003 SKY projection-identity mutation is killed by the actual boundary effect
+  ---
+  duration_ms: 50.6429
+  type: 'test'
+  ...
+# Subtest: R0004 empty Tokyo cache: first accepted current paint is resolved-zone day 8
+ok 87 - R0004 empty Tokyo cache: first accepted current paint is resolved-zone day 8
+  ---
+  duration_ms: 47.8161
+  type: 'test'
+  ...
+# Subtest: R0004 selected main cache: valid resolved day 8 cache survives offline wrong hint
+ok 88 - R0004 selected main cache: valid resolved day 8 cache survives offline wrong hint
+  ---
+  duration_ms: 29.2504
+  type: 'test'
+  ...
+# Subtest: R0004 positive explicitly matching Tokyo day 8 cache survives offline refresh
+ok 89 - R0004 positive explicitly matching Tokyo day 8 cache survives offline refresh
+  ---
+  duration_ms: 26.4136
+  type: 'test'
+  ...
+# Subtest: R0004 wrong-day valid Tokyo cache cannot paint as current while offline
+ok 90 - R0004 wrong-day valid Tokyo cache cannot paint as current while offline
+  ---
+  duration_ms: 4.9064
+  type: 'test'
+  ...
+# Subtest: R0004 zone-free-only cache remains a miss; no scanning or deletion
+ok 91 - R0004 zone-free-only cache remains a miss; no scanning or deletion
+  ---
+  duration_ms: 4.5453
+  type: 'test'
+  ...
+# Subtest: R0004 both key variants choose only valid main envelope and preserve its bytes
+ok 92 - R0004 both key variants choose only valid main envelope and preserve its bytes
+  ---
+  duration_ms: 33.4654
+  type: 'test'
+  ...
+# Subtest: R0004 corrupt selected envelope cannot establish zone; healthy corrected body recovers
+ok 93 - R0004 corrupt selected envelope cannot establish zone; healthy corrected body recovers
+  ---
+  duration_ms: 29.8731
+  type: 'test'
+  ...
+# Subtest: R0004 correction still validates body identity; budget cannot make a third day request
+ok 94 - R0004 correction still validates body identity; budget cannot make a third day request
+  ---
+  duration_ms: 4.6623
+  type: 'test'
+  ...
+# {"warmLoop":{"frames":100,"elapsed":1600,"intl":105,"admission":0,"paints":1,"requests":0,"stale":false}}
+# Subtest: R0005 completed prefetch promotes at midnight while network is offline
+ok 95 - R0005 completed prefetch promotes at midnight while network is offline
+  ---
+  duration_ms: 49.7444
+  type: 'test'
+  ...
+# Subtest: R0005 positive normal next-day prefetch remains tomorrow before midnight
+ok 96 - R0005 positive normal next-day prefetch remains tomorrow before midnight
+  ---
+  duration_ms: 29.544
+  type: 'test'
+  ...
+# Subtest: R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day
+ok 97 - R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day
+  ---
+  duration_ms: 9.2306
+  type: 'test'
+  ...
+# Subtest: R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF
+ok 98 - R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF
+  ---
+  duration_ms: 52.7131
+  type: 'test'
+  ...
+# Subtest: R0005 held-out warm 100-frame control avoids repeated admission/Intl construction
+ok 99 - R0005 held-out warm 100-frame control avoids repeated admission/Intl construction
+  ---
+  duration_ms: 40.7751
+  type: 'test'
+  ...
+# Subtest: R0005 late next-day prefetch rescues current when midnight acquisition exhausts
+ok 100 - R0005 late next-day prefetch rescues current when midnight acquisition exhausts
+  ---
+  duration_ms: 32.2352
+  type: 'test'
+  ...
+# Subtest: R0005 payload neither current nor successor is discarded after further day movement
+ok 101 - R0005 payload neither current nor successor is discarded after further day movement
+  ---
+  duration_ms: 28.5698
+  type: 'test'
+  ...
+# Subtest: R0005 backward correction reclassifies and acquires the actual earlier civil day
+ok 102 - R0005 backward correction reclassifies and acquires the actual earlier civil day
+  ---
+  duration_ms: 48.252
+  type: 'test'
+  ...
+# Subtest: R0005 hidden next-day completion marks dirty and paints once on frozen visible resume
+ok 103 - R0005 hidden next-day completion marks dirty and paints once on frozen visible resume
+  ---
+  duration_ms: 31.3395
+  type: 'test'
+  ...
+# Subtest: R0005 usable next-day record suppresses redundant work; promotion allows one new successor
+ok 104 - R0005 usable next-day record suppresses redundant work; promotion allows one new successor
+  ---
+  duration_ms: 58.1946
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC
+ok 105 - R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC
+  ---
+  duration_ms: 29.4796
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC
+ok 106 - R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC
+  ---
+  duration_ms: 28.8686
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York
+ok 107 - R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York
+  ---
+  duration_ms: 28.9997
+  type: 'test'
+  ...
+# Subtest: R0005 mutant removing promotion is killed by offline completed prefetch
+ok 108 - R0005 mutant removing promotion is killed by offline completed prefetch
+  ---
+  duration_ms: 33.2559
+  type: 'test'
+  ...
+# Subtest: R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate
+ok 109 - R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate
+  ---
+  duration_ms: 11.234
+  type: 'test'
+  ...
+# Subtest: R0005 mutant removing dirty consumer is killed by frozen async visible resume
+ok 110 - R0005 mutant removing dirty consumer is killed by frozen async visible resume
+  ---
+  duration_ms: 31.3158
+  type: 'test'
+  ...
+# {"dayReturnSourceSha256":"7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de","evidence":"source-bound only; native repair verification remains separate"}
+# {"removedRetirementSha256":"d4fba9f2bdd81f930c95ef10888137c2966f3520d467d8caaf53890acdebe5b4","killedBy":"actual reverse acquisition in both formats"}
+# {"nullRetirementSha256":"d938d8eab9719e6e6e6a96f2b1537eaa6c008df601f0298b7c6d97633ad9b76f","killedBy":"actual pending current loader after late prefetch promotion"}
+# Subtest: R0005/R0020 accepted forward day permits prompt return and painted270m in 24h
+ok 111 - R0005/R0020 accepted forward day permits prompt return and painted270m in 24h
+  ---
+  duration_ms: 60.0573
+  type: 'test'
+  ...
+# Subtest: R0005/R0020 accepted forward day permits prompt return and painted270m in 12h
+ok 112 - R0005/R0020 accepted forward day permits prompt return and painted270m in 12h
+  ---
+  duration_ms: 41.0887
+  type: 'test'
+  ...
+# Subtest: R0006 failed same-day attempts retain60s cooldown through repeated frames
+ok 113 - R0006 failed same-day attempts retain60s cooldown through repeated frames
+  ---
+  duration_ms: 45.7373
+  type: 'test'
+  ...
+# Subtest: R0005/R0006 late prefetch promotion preserves owning current loader and finally
+ok 114 - R0005/R0006 late prefetch promotion preserves owning current loader and finally
+  ---
+  duration_ms: 36.3964
+  type: 'test'
+  ...
+# Subtest: R0005 remove-retirement mutant recreates the prompt reverse-day failure
+ok 115 - R0005 remove-retirement mutant recreates the prompt reverse-day failure
+  ---
+  duration_ms: 77.4302
+  type: 'test'
+  ...
+# Subtest: R0006 null-retirement mutant loses the actual owning loader's corrected-day request
+ok 116 - R0006 null-retirement mutant loses the actual owning loader's corrected-day request
+  ---
+  duration_ms: 36.3635
+  type: 'test'
+  ...
+1..116
+# tests 116
+# suites 0
+# pass 116
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3141.2805

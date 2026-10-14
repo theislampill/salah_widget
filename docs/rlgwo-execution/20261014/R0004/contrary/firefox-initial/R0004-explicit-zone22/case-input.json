@@ -1,0 +1,176 @@
+{
+  "caseId": "R0004-explicit-zone22",
+  "entry": "index.html",
+  "hash": "#lat=35.68&lon=139.69&label=Tokyo&method=2&school=0&time=24&tz=Asia%2FTokyo",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T22:00:00Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "direct",
+      "kind": "prayer",
+      "day": "08-09-2026",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Tokyo"
+          }
+        }
+      },
+      "dateFromRequest": true,
+      "hold": true,
+      "phase": "body"
+    },
+    {
+      "id": "prefetch",
+      "kind": "prayer",
+      "day": "09-09-2026",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "21-02-1448",
+              "day": "21",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Tokyo"
+          }
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('direct:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "loading",
+      "selector": ".c",
+      "readOnly": true
+    },
+    {
+      "type": "sleep",
+      "ms": 900
+    },
+    {
+      "type": "release",
+      "id": "direct"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='08-09-2026'&&s.render&&!s.flags.prayerStale)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "first-current",
+      "selector": ".c",
+      "readOnly": false,
+      "firstRender": true,
+      "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+    },
+    {
+      "type": "sleep",
+      "ms": 900
+    },
+    {
+      "type": "capture",
+      "name": "settled",
+      "selector": ".c",
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "first-current",
+      "equals": {
+        "currentDay": "08-09-2026",
+        "timezone": "Asia/Tokyo",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "settled",
+      "equals": {
+        "currentDay": "08-09-2026",
+        "timezone": "Asia/Tokyo",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    }
+  ]
+}
