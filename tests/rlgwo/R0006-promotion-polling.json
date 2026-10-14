@@ -1,0 +1,204 @@
+{
+  "schema": "remaining-prayer-cases/v1",
+  "issue": 6,
+  "sourceCommit": "c431733c57f76e2b441ee8f8cd85a1fa6675de55",
+  "specCommit": "21e7a84365fae37a86cae5c7d5e41008c0adc53f",
+  "sourceFiles": {
+    "src/native/index.html": "b3094034d50bf0867a0f62c9f3e86a61f132c0126bed2a3fcdbd1bde38bc4dbd",
+    "index.html": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+    "offline.html": "40d79b23e42ed776eb6a3cdc3329e58f740cbe44220c4883dcbff245e4c7c0c3",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "tools/build_native.py": "25bd8088051936b524d97ebe8fabee1c3ebf0d682e6909c294a45cc01a9a3bb5",
+    "tools/cp9/browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+    "tools/cp9/r0007_browser.py": "df8d23875aa689364ac394bccfece57019efb698875a208269e8755dd317fbc3",
+    "tests/rlgwo/prayer-browser-fixture.cjs": "fa41843fda4b162890d16c700ad677a4625cc592dd29858886c329c6bde1148b"
+  },
+  "cases": [
+    {
+      "caseId": "R0006-tomorrow-promotion",
+      "entry": "index.html",
+      "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+      "clockPolicy": {
+        "mode": "advancing",
+        "epoch": "2026-09-07T12:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&!s.render.unavailable&&!s.flags.prayerStale)",
+          "timeoutMs": 15000,
+          "polling": 100
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "selector": ".c",
+          "readOnly": false,
+          "firstRender": true,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&!s.render.unavailable&&!s.flags.prayerStale"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.tomorrowDay==='08-09-2026')",
+          "timeoutMs": 15000,
+          "polling": 100
+        },
+        {
+          "type": "wait",
+          "predicate": "performance.now()-window.__prayerFixture.started>=65000",
+          "timeoutMs": 75000,
+          "polling": 100
+        },
+        {
+          "type": "capture",
+          "name": "matching-tomorrow",
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "clock",
+          "epoch": "2026-09-08T00:00:01Z"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.currentDay==='08-09-2026'&&s.tomorrowDay==='09-09-2026')",
+          "timeoutMs": 15000,
+          "polling": 100
+        },
+        {
+          "type": "capture",
+          "name": "promoted",
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 1200
+        },
+        {
+          "type": "capture",
+          "name": "settled",
+          "selector": ".c",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "matching-tomorrow",
+          "equals": {
+            "currentDay": "07-09-2026",
+            "timezone": "UTC",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "requestCountCheckpoint": true,
+          "requestCounts": [
+            {
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "exact": 1
+            },
+            {
+              "kind": "prayer",
+              "day": "08-09-2026",
+              "exact": 1
+            }
+          ]
+        },
+        {
+          "stage": "settled",
+          "equals": {
+            "currentDay": "08-09-2026",
+            "timezone": "UTC",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true,
+          "requestCounts": [
+            {
+              "kind": "prayer",
+              "day": "07-09-2026",
+              "exact": 1
+            },
+            {
+              "kind": "prayer",
+              "day": "08-09-2026",
+              "exact": 1
+            },
+            {
+              "kind": "prayer",
+              "day": "09-09-2026",
+              "exact": 1
+            }
+          ]
+        }
+      ],
+      "reviewRequirements": [
+        "Original loading/unavailable/first recovered native pixels, not eventual DOM alone",
+        "All six rows, 325x530 card, arc, next output, header and date footer",
+        "Operation/attempt/prefetch separation and native elapsed deadlines",
+        "Retain every failed capture and original trace"
+      ],
+      "acceptanceIds": [
+        "R0006-A04"
+      ]
+    }
+  ]
+}
