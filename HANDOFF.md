@@ -169,8 +169,25 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
 - **Optics are art-directed approximations, not photometric** — but they now **register to the visible corner
   sun** (`--sunvx/--sunvy`), so the old "halo center-screen" bug is fixed. The moon's halo/paraselenae may still
   show as partial arcs (halo radius > the disc). Sun tone-mapping constants are tuned, not radiometric.
-- Weather precip evidence is Open-Meteo's **nowcast, not true radar** (documented limitation). If a CORS-safe
-  radar/nowcast precip source is found, wiring it into `gateWeatherCode` would make the gate ground-truth.
+- Weather is an Open-Meteo **current model estimate**, with source-valid time in
+  the captured request timezone, a preceding interval, and retrieval time kept
+  separate. Both source and receipt must be 0–15 minutes old, inclusive; future
+  timestamps are ineligible. RainViewer frame-generation, index-generation and
+  receipt times are distinct; frame and receipt each use 0–20 minutes, inclusive.
+  Missing frame time cannot borrow index time, and invalid derived epochs are
+  rejected before Image dispatch. Retaining cache bytes for six hours does not
+  preserve live authority: expired/invalid weather shows an em dash and blank
+  temperature and withdraws unsupported cloud/precipitation/lightning effects.
+  Valid optional-missing model conditions remain allowed. Clock skew, model
+  aggregation and radar coverage remain limitations; neither these checks nor
+  radar alpha establish ground observation or a self-contained offline app.
+  Existing DESIGN weather diagnostics distinguish source/receipt ages and current
+  eligibility; prayer-cache stale state is separate.
+  Refined-sky withdrawal also retires an invalid atmospheric preview's ready flag.
+  When needed, the existing preview owner completes a current presentation in the
+  same turn; a current preview keeps its own lunar detail. This does not extend
+  weather or sky freshness, retain obsolete atmospheric lighting, or alter lunar
+  geometry.
 
 ## Do NOT reintroduce (the user has explicitly rejected these)
 

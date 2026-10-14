@@ -1443,6 +1443,9 @@ async function fetchRadar(){
     if(typeof host==="string"&&Array.isArray(past)&&past.length){
       const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
       if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
+      const frameGeneratedAt=fr.time*1000, indexGeneratedAt=j.generated*1000;
+      // Finite seconds can overflow milliseconds or Date's epoch range. Reject before Image dispatch/install.
+      if(!Number.isFinite(new Date(frameGeneratedAt).getTime())||!Number.isFinite(new Date(indexGeneratedAt).getTime())) return;
       const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;
       const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
       if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
@@ -1453,8 +1456,8 @@ async function fetchRadar(){
       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
       if(!image.ok||!attemptEligible(op,a)) return;
       const retrievedAt=Date.now();
-      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt:fr.time*1000,
-        indexGeneratedAt:j.generated*1000,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
+      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt,
+        indexGeneratedAt,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
     }
   }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
   finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }
