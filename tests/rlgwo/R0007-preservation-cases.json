@@ -1,0 +1,420 @@
+{
+  "schema": "remaining-prayer-cases/v1",
+  "issue": 7,
+  "sourceCommit": "3c4221c518fd12e50eca73b89744be3c0db39c34",
+  "specCommit": "21e7a84365fae37a86cae5c7d5e41008c0adc53f",
+  "sourceFiles": {
+    "src/native/index.html": "b3094034d50bf0867a0f62c9f3e86a61f132c0126bed2a3fcdbd1bde38bc4dbd",
+    "index.html": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+    "offline.html": "40d79b23e42ed776eb6a3cdc3329e58f740cbe44220c4883dcbff245e4c7c0c3",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "tools/cp9/browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0"
+  },
+  "cases": [
+    {
+      "caseId": "shared-preservation-no-preference",
+      "entry": "index.html",
+      "hash": "#lat=21.31&lon=-157.86&label=Honolulu&method=2&school=0&time=24&tz=Pacific%2FHonolulu&simWx=2&simCloud=50",
+      "clockPolicy": {
+        "mode": "native"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Pacific/Honolulu"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay&&s.render)&&document.fonts.status==='loaded'",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-start",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-15s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-30s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "live-30s",
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "live-30s",
+          "reviewOnly": true,
+          "requirement": "Inspect original 30s video and crops for visible cloud/star motion, opacity, header/footer and reduced/full preference. No hash-motion inference."
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A06",
+        "R0003-A07",
+        "R0004-A06",
+        "R0006-A05",
+        "R0007-A07"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "real native Date/performance/rAF/timers; no simTime/timeScale",
+        "forced broken-cloud input disclosed",
+        "warm opaque lunar disc where actual native night scene supports it; otherwise separately schedule night",
+        "V1 exact file comparison remains a separate source certificate"
+      ],
+      "motionPreference": "no-preference"
+    },
+    {
+      "caseId": "shared-preservation-reduce",
+      "entry": "index.html",
+      "hash": "#lat=21.31&lon=-157.86&label=Honolulu&method=2&school=0&time=24&tz=Pacific%2FHonolulu&simWx=2&simCloud=50",
+      "clockPolicy": {
+        "mode": "native"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Pacific/Honolulu"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay&&s.render)&&document.fonts.status==='loaded'",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-start",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-15s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-30s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "live-30s",
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "live-30s",
+          "reviewOnly": true,
+          "requirement": "Inspect original 30s video and crops for visible cloud/star motion, opacity, header/footer and reduced/full preference. No hash-motion inference."
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A06",
+        "R0003-A07",
+        "R0004-A06",
+        "R0006-A05",
+        "R0007-A07"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "real native Date/performance/rAF/timers; no simTime/timeScale",
+        "forced broken-cloud input disclosed",
+        "warm opaque lunar disc where actual native night scene supports it; otherwise separately schedule night",
+        "V1 exact file comparison remains a separate source certificate"
+      ],
+      "motionPreference": "reduce"
+    },
+    {
+      "caseId": "shared-preservation-reduce-full",
+      "entry": "index.html",
+      "hash": "#lat=21.31&lon=-157.86&label=Honolulu&method=2&school=0&time=24&tz=Pacific%2FHonolulu&simWx=2&simCloud=50&motion=full",
+      "clockPolicy": {
+        "mode": "native"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Pacific/Honolulu"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay&&s.render)&&document.fonts.status==='loaded'",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-start",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-15s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-30s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "live-30s",
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "live-30s",
+          "reviewOnly": true,
+          "requirement": "Inspect original 30s video and crops for visible cloud/star motion, opacity, header/footer and reduced/full preference. No hash-motion inference."
+        }
+      ],
+      "acceptanceIds": [
+        "R0002-A06",
+        "R0003-A07",
+        "R0004-A06",
+        "R0006-A05",
+        "R0007-A07"
+      ],
+      "status": "PREPARED_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "real native Date/performance/rAF/timers; no simTime/timeScale",
+        "forced broken-cloud input disclosed",
+        "warm opaque lunar disc where actual native night scene supports it; otherwise separately schedule night",
+        "V1 exact file comparison remains a separate source certificate"
+      ],
+      "motionPreference": "reduce"
+    }
+  ],
+  "nativeStatus": "NOT_EXECUTED_CURRENT_TARGET",
+  "unresolvedMatrixRows": [
+    "All native receipts and original pixels remain unexecuted",
+    "Independent preservation/certificate/public delivery readback remains pending"
+  ],
+  "sharedPreservationPacket": "R0007-cases.json"
+}

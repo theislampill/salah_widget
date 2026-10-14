@@ -235,10 +235,21 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   clear day, deep indigo on a clear night, muted grey when cloudy, cool steel-blue for
   rain, icy for snow, and charcoal-violet for thunderstorms. Day vs. night is derived
   from the prayer Sunrise/Sunset times, so it always matches the widget.
-- **Next prayer** front and centre with a live, per-second countdown.
+- **Next prayer** front and centre. The countdown measures actual elapsed time from
+  the current instant to the selected prayer instant in the location's IANA time
+  zone, including DST changes. The timetable, prayer arc and progress keep their
+  existing wall-clock presentation. The duration rounds to the nearest second,
+  then displays hours and whole minutes at one hour or more, whole minutes at one
+  minute or more, and seconds below one minute.
 - **Progress bar** showing how far you are through the current interval.
 - **Time-zone correct** — the time zone is resolved from the coordinates, so the times and
   countdown always reflect the *location's* clock, no matter where you view the widget.
+  If the prayer endpoint is nonexistent, ambiguous or otherwise unsupported, or
+  required next-day data is missing or for the wrong day, the next-time field shows
+  **—** and the countdown reads **Countdown unavailable**. The valid current-day
+  timetable, date and arc remain available; no estimated tomorrow Fajr or invented
+  exact time is displayed. A valid matching tomorrow record restores the countdown
+  on the next eligible visible render, including in a frozen preview.
 - **Cached prayer data** — only an admitted selected current-day record can paint
   current before refresh. Corrupt cache is a miss; healthy live recovery remains
   reachable. Valid wrong-day cache may resolve the zone but cannot be called current.
