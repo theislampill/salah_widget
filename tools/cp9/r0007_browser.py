@@ -137,6 +137,7 @@ def main(argv=None):
     p.add_argument("--output",type=Path,required=True)
     p.add_argument("--validate-only",action="store_true")
     p.add_argument("--video-only",action="store_true",help="Avoid screenshot-induced compositor changes; extract stills from retained native video afterward")
+    p.add_argument("--headed",action="store_true",help="Use the installed engine's headed native compositor for recording qualification")
     p.add_argument("--case-id",action="append")
     p.add_argument("--capacity-lease",type=Path)
     args=p.parse_args(argv)
@@ -192,7 +193,9 @@ def main(argv=None):
         try:
             playwright=sync_playwright().start()
             if playwright:
-                browser=runtime.launch_browser(playwright)
+                family,options=runtime.browser_options()
+                if args.headed:options['headless']=False
+                browser=getattr(playwright,family).launch(**options)
                 context=browser.new_context(viewport={"width":370,"height":570},device_scale_factor=1,timezone_id="America/New_York",reduced_motion=case.get("motionPreference","no-preference"),record_video_dir=str(case_output/"video"),record_video_size={"width":370,"height":570})
                 page=context.new_page();errors=[];page.on("pageerror",lambda error:errors.append(str(error)))
                 image_pending={};image_receipts=[]
@@ -213,7 +216,7 @@ def main(argv=None):
                 else:
                     page.goto(f"http://127.0.0.1:{server.server_port}/{case['entry']}?case={quote(case['caseId'])}"+case["hash"],wait_until="domcontentloaded")
                     frame=page.main_frame
-                dump(case_output/"browser-identity.json",runtime.browser_identity(browser))
+                dump(case_output/"browser-identity.json",{**runtime.browser_identity(browser),"headless":not args.headed})
                 for action in case["orderedActions"]:
                     trace["actions"].append(action)
                     kind=action["type"]
