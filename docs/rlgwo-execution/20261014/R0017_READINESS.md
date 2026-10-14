@@ -82,3 +82,11 @@ The [packaging and Pages-size receipt](R0017_PACKAGING.json) distinguishes exact
 tracked-tree bytes, measured existing Pages payload, and the candidate estimate.
 No candidate deployment or size-limit certification is claimed. Pages still uses
 `main` at `/`; the evidence branch must never be merged into it.
+
+The owner-approved implementation is `7fb3dd33b5efb2a8d8a187bd5e2a5901b900fce6`.
+The packaging receipt above is historical for that head. The delivery-only
+successor uses the supported Jekyll exclusion for R000C raw native evidence,
+whose immutable resolver is documented in [R000C](R000C/README.md#native-evidence).
+The bounded PR62 Pages-payload check uses the active Pages builder and measures
+the entire generated output against 1,000,000,000 bytes while comparing protected
+consumers. Its compact receipt is retained with the final delivery evidence.

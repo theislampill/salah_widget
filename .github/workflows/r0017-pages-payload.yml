@@ -1,0 +1,38 @@
+name: R0017 Pages payload
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: read
+
+jobs:
+  measure:
+    # Bounded delivery qualification for the existing R0017 PR, not a new deployer.
+    if: github.event.pull_request.number == 62
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; active Pages checkout
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 4
+          persist-credentials: false
+      - name: Build with the active Pages builder
+        uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13 image
+        with:
+          source: ./
+          destination: ./_site
+          build_revision: ${{ github.event.pull_request.head.sha }}
+          verbose: false
+      - name: Measure complete output and protected consumers
+        run: python3 tools/verify_r0017_pages_payload.py --site _site --out "$RUNNER_TEMP/r0017-pages-payload.json"
+      - name: Retain the compact receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4; active Pages upload dependency
+        with:
+          name: r0017-pages-payload
+          path: ${{ runner.temp }}/r0017-pages-payload.json
+          if-no-files-found: error
