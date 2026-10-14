@@ -1,0 +1,23 @@
+--- candidate03/tools/cp9/pr43_entry_stream.py
++++ candidate04/tools/cp9/pr43_entry_stream.py
+@@ -172,10 +172,19 @@
+  finally:
+   release.set();server.shutdown();report.update(pageErrors=errors,requests=requests,runtimeUnchanged=runtime_identity(a.root)==identity);write(a.out/'results.json',report)
+  print(json.dumps({k:report.get(k) for k in ['status','error','pageErrors','decodedEntryBytes','gzipEntityBytes','runtimeUnchanged']}),flush=True)
++ return report
+ 
+ if __name__=='__main__':
+  parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,required=True);parser.add_argument('--out',type=Path,required=True)
+  parser.add_argument('--mode',choices=['held-tail','held-core','compressed','ordinary'],default='held-tail');parser.add_argument('--scene',choices=['night','day'],default='night');parser.add_argument('--kib-per-second',type=float,default=0);parser.add_argument('--dpr',type=float,default=1)
+  parser.add_argument('--moon',type=float);parser.add_argument('--waning',action='store_true');parser.add_argument('--moon-alt',type=float,default=20);parser.add_argument('--wait-final',action='store_true')
+  parser.add_argument('--scenario',choices=['cold','reload','new-document'],default='cold')
+- args=parser.parse_args();asyncio.run(run(args))
++ args=parser.parse_args();report=asyncio.run(run(args))
++ # A retained capture or zero browser exception count cannot turn a failed
++ # consumer control into success. Visual and S1 review still remain separate.
++ passed=report.get('status')=='OBSERVATIONS_REQUIRING_REVIEW' and report.get('runtimeUnchanged') is True and not report.get('pageErrors')
++ if args.mode.startswith('held-'):passed=passed and report.get('causalPass') is True
++ if args.wait_final:
++  final=report.get('finalRefinement',{});moon=final.get('moon',{})
++  passed=passed and moon.get('current') is True and moon.get('visibleSource')=='refined-terrain' and final.get('settingsOpen') is False
++ raise SystemExit(0 if passed else 1)

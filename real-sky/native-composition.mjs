@@ -70,7 +70,9 @@ export class NativeForegroundCapture{
  }
  prepareSolarMask(cloudRGBA,rows){
   validateNativeRGBA(cloudRGBA,325*rows,'solar cloud');
-  if(!this.solar){this.solar=document.createElement('canvas');this.solar.width=325;this.solar.height=530;this.sx=this.solar.getContext('2d');}
+  // This mask is exported on every changed foreground. CPU storage avoids a
+  // synchronous GPU readback before first paint; its coverage is unchanged.
+  if(!this.solar){this.solar=document.createElement('canvas');this.solar.width=325;this.solar.height=530;this.sx=this.solar.getContext('2d',{willReadFrequently:true});}
   const mask=nativeSolarTransmission(cloudRGBA);this.sx.clearRect(0,0,325,530);this.sx.fillStyle='#fff';this.sx.fillRect(0,rows,325,530-rows);this.sx.putImageData(new ImageData(mask,325,rows),0,0);
   return 'url("'+this.solar.toDataURL()+'")';
  }

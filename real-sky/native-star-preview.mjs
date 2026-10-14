@@ -9,6 +9,12 @@ import {spectralStarFlux} from './core/src/spectral.mjs';
 import {normaliseAtmosphere,directTransmission} from './core/src/atmosphere.mjs';
 import {nativeInverseCode} from './native-composition.mjs';
 import {nativeEncodingThresholds} from './native-encoding.mjs';
+import {sha256Hex} from './core/src/sha256.mjs';
+
+const bootstrapFields=['hygId','hip','raDeg','decDeg','epochJyear','vmag','bv','pmRaCosDecMasYr','pmDecMasYr','distancePc','radialVelocityKmS','spectralType','sed'];
+function freezeStarData(value){
+ if(value&&typeof value==='object'&&!Object.isFrozen(value)){for(const item of Object.values(value))freezeStarData(item);Object.freeze(value);}return value;
+}
 
 let previewEdges=null;
 const preparedFields=new WeakMap();
@@ -55,6 +61,29 @@ export function renderPreviewStars(sources,fluxAt,visible){
  * catalogue/diffuse quality tier. No prayer/solar-altitude visibility switch.
  */
 export class NativeStarPreview {
+ /** The builder binds these lossless calculation fields to the independently
+  * pinned full catalogue. No full pack, network, async digest or diffuse parse
+  * is on this admission path. This is the SAME <=4.5 preview, not a new sky. */
+ static fromBootstrap(text,pin){
+  if(typeof text!=='string'||!pin)throw new TypeError('bootstrap identity');
+  const bytes=new TextEncoder().encode(text);
+  if(bytes.length!==pin.bytes||bytes.length>130000)throw new RangeError('bootstrap size');
+  if(sha256Hex(bytes)!==pin.sha256)throw new Error('bootstrap content hash');
+  const b=JSON.parse(text);
+  if(b.parentSha256!==pin.parentSha256||!/^[a-f0-9]{64}$/.test(b.parentSha256))throw new Error('bootstrap parent ancestry');
+  if(b.schema!=='salah-real-sky/bootstrap/1'||b.maximumMagnitude!==4.5||JSON.stringify(b.fields)!==JSON.stringify(bootstrapFields)||!Number.isSafeInteger(b.totalRecords)||b.totalRecords<pin.records)throw new TypeError('bootstrap catalogue contract');
+  if(!Array.isArray(b.rows)||!b.rows.length||b.rows.length!==pin.records)throw new RangeError('bootstrap record count');
+  const stars=b.rows.map(row=>{
+   if(!Array.isArray(row)||row.length!==bootstrapFields.length)throw new TypeError('bootstrap record');
+   const s=Object.fromEntries(bootstrapFields.map((key,i)=>[key,row[i]]));
+   if(typeof s.vmag!=='number'||s.vmag>4.5)throw new RangeError('bootstrap magnitude');
+   return {...s,id:`hyg:${s.hygId}`,emission:{enabled:true}};
+  });
+  const renderer=Object.create(NativeStarPreview.prototype);
+  renderer.catalogue=freezeStarData(validateCatalogue({schema:'salah-real-sky/catalogue/2',stars}));
+  renderer.identity=Object.freeze({sha256:b.parentSha256,bootstrapSha256:pin.sha256,totalRecords:b.totalRecords,previewRecords:stars.length,maximumMagnitude:4.5});
+  return renderer;
+ }
  static async create(pack){
   // The same pinned byte/hash/schema admission, with the large catalogue hash
   // off the UI thread. The reference store's synchronous JS SHA-256 blocked

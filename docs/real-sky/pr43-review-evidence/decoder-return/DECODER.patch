@@ -1,0 +1,46 @@
+--- a/moon/src/moon-initial-compact.mjs
++++ b/moon/src/moon-initial-compact.mjs
+@@ -19,17 +19,22 @@
+   const lengths=bytes.subarray(at,at+(1<<width));at+=1<<width;const body=bytes.subarray(at,at+length);at+=length;
+   const sorted=[];for(let s=0;s<lengths.length;s++){if(lengths[s]>20)throw Error('Compact Huffman length');if(lengths[s])sorted.push([lengths[s],s]);}
+   sorted.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);if(!sorted.length)throw Error('Compact empty codebook');
+-  const firstCode=new Int32Array(21).fill(-1),firstIndex=new Int32Array(21),frequency=new Int32Array(21);let code=0,previous=0;
++  const firstCode=new Int32Array(21).fill(-1),firstIndex=new Int32Array(21),frequency=new Int32Array(21),prefix=new Uint16Array(256);let code=0,previous=0;
+   for(let j=0;j<sorted.length;j++){
+    const length=sorted[j][0];code*=2**(length-previous);if(code>=2**length)throw Error('Compact oversubscribed Huffman');
+-   if(!frequency[length]){firstCode[length]=code;firstIndex[length]=j;}frequency[length]++;code++;previous=length;
++   if(!frequency[length]){firstCode[length]=code;firstIndex[length]=j;}frequency[length]++;
++   if(length<=8){const start=code<<(8-length);prefix.fill((length<<8)|sorted[j][1],start,start+(1<<(8-length)));}
++   code++;previous=length;
+   }
+   let bit=0;const dense=new Uint16Array(N*N),out=new Uint16Array(count),mod=(1<<width)-1;
+   for(let ri=0;ri<count;ri++){
+    let word=0,symbol=-1;
+-   for(let length=1;length<=20;length++){
+-    if(bit>=body.length*8)throw Error('Compact truncated Huffman');word=word*2+((body[bit>>3]>>(7-(bit&7)))&1);bit++;
+-    const delta=word-firstCode[length];if(firstCode[length]>=0&&delta>=0&&delta<frequency[length]){symbol=sorted[firstIndex[length]+delta][1];break;}
++   // Short canonical words use an eight-bit prefix; long words and the final
++   // partial byte retain the exact original bit reader and rejection order.
++   if(body.length*8-bit>=8){const byte=bit>>3,hit=prefix[((body[byte]<<8|body[byte+1])>>>(8-(bit&7)))&255];if(hit){symbol=hit&255;bit+=hit>>>8;}}
++   if(symbol<0)for(let length=1;length<=20;length++){
++     if(bit>=body.length*8)throw Error('Compact truncated Huffman');word=word*2+((body[bit>>3]>>(7-(bit&7)))&1);bit++;
++     const delta=word-firstCode[length];if(firstCode[length]>=0&&delta>=0&&delta<frequency[length]){symbol=sorted[firstIndex[length]+delta][1];break;}
+    }
+    if(symbol<0)throw Error('Compact invalid Huffman word');
+    const i=indices[ri],x=i%N,y=Math.floor(i/N),pred=paeth(x?dense[i-1]:0,y?dense[i-N]:0,x&&y?dense[i-N-1]:0);
+@@ -48,9 +53,12 @@
+   const depth=fields[0].range[0]+channels[0][ri]/255*(fields[0].range[1]-fields[0].range[0]);d.setFloat32(at,depth,true);
+   let x=channels[1][ri]/31*2-1,y=channels[2][ri]/31*2-1,z=1-Math.abs(x)-Math.abs(y);
+   if(z<0){const old=x;x=(1-Math.abs(y))*(old>=0?1:-1);y=(1-Math.abs(old))*(y>=0?1:-1);}
+-  const norm=Math.hypot(x,y,z);for(const [k,c] of [x,y,z].entries())d.setInt16(at+4+2*k,Math.trunc(c/norm*32767+(c>=0?.5:-.5)),true);
+-  const g=channels[3][ri],col=[(channels[4][ri]+g)&31,g,(channels[5][ri]+g)&31];
+-  for(let k=0;k<3;k++){const range=fields[3+k].range;d.setUint16(at+10+2*k,Math.floor(range[0]+col[k]/31*(range[1]-range[0])+.5),true);}
++  const norm=Math.hypot(x,y,z);
++  d.setInt16(at+4,Math.trunc(x/norm*32767+(x>=0?.5:-.5)),true);
++  d.setInt16(at+6,Math.trunc(y/norm*32767+(y>=0?.5:-.5)),true);
++  d.setInt16(at+8,Math.trunc(z/norm*32767+(z>=0?.5:-.5)),true);
++  const g=channels[3][ri],red=(channels[4][ri]+g)&31,blue=(channels[5][ri]+g)&31;
++  for(let k=0;k<3;k++){const range=fields[3+k].range,col=k===0?red:k===1?g:blue;d.setUint16(at+10+2*k,Math.floor(range[0]+col/31*(range[1]-range[0])+.5),true);}
+   const h0=channels[6][ri],h1=(channels[7][ri]-h0+255)&255;d.setUint16(at+16,Math.floor(h0/255*65535+.5),true);d.setUint16(at+18,Math.floor(h1/255*65535+.5),true);
+  }
+  if(assetDigest(decoded)!==encoding.decodedSha256)throw Error('Compact decoded identity');return decoded;

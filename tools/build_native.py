@@ -3,6 +3,7 @@
 from pathlib import Path
 import re,json,shutil,hashlib
 from native_core_horizon import correct_horizon
+from native_star_bootstrap import star_bootstrap
 R=Path(__file__).resolve().parents[1]; S=R/'vendor/real-sky'; W=R; N=W/'real-sky'
 physical=(N/'checkpoint.json').exists() and json.loads((N/'checkpoint.json').read_text(encoding='utf-8'))['physical']
 # Same dependency ordering as the retained CP7.5 build, plus bounded native interfaces.
@@ -37,7 +38,8 @@ boot='''
 startNativeSkyAssets(pack=>startNativeSky(pack,WORKER_SOURCE,PHYSICAL_MODE),document.currentScript?.src);
 '''.replace('WORKER_SOURCE',json.dumps(worker)).replace('PHYSICAL_MODE',str(bool(physical)).lower())
 (N/'native-sky.js').write_text('(function(){"use strict";\n'+base+'\n'+concat([N/p for p in extra])+boot+'\n})();\n',encoding='utf-8',newline='\n')
-preview='(function(){"use strict";\n'+base+'\n'+concat([N/p for p in ['native-encoding.mjs','native-cloud-transfer.mjs','native-composition.mjs','native-preview.mjs','native-star-preview.mjs','native-preview-host.mjs','native-first-paint.mjs']])+'\nwindow.SalahNativeCloudLighting=nativeCloudSolarLighting;window.SalahStartSkyPreview=startNativeSkyPreview;prepareNativeFirstPaint();\n})();\n'
+bootstrap_text,bootstrap_pin=star_bootstrap(S)
+preview='(function(){"use strict";\n'+base+'\n'+concat([N/p for p in ['native-encoding.mjs','native-cloud-transfer.mjs','native-composition.mjs','native-preview.mjs','native-star-preview.mjs','native-preview-host.mjs','native-first-paint.mjs']])+'\nwindow.SalahStarBootstrap=NativeStarPreview.fromBootstrap('+json.dumps(bootstrap_text)+','+json.dumps(bootstrap_pin,separators=(',',':'))+');\nwindow.SalahNativeCloudLighting=nativeCloudSolarLighting;window.SalahStartSkyPreview=startNativeSkyPreview;window.SalahPrepareFirstPaint=prepareNativeFirstPaint;\n})();\n'
 pack={'catalogueText':(S/'data/bright-stars.json').read_text(encoding='utf-8'),'manifestText':(S/'data/registered-starlight/runtime-manifest.json').read_text(encoding='utf-8'),'assetTexts':{'128':(S/'data/registered-starlight/V-nside128.json').read_text(encoding='utf-8')} if physical else {}}
 (N/'native-data.js').write_text('window.__SALAH_REAL_SKY_PACK__='+json.dumps(pack,ensure_ascii=True,separators=(',',':'))+';\n',encoding='utf-8',newline='\n')
 # Source is pinned and retained locally. Only this explicit block replacement and hooks change index.
@@ -67,7 +69,6 @@ assert s.count(elevation_line)==1
 s=s.replace(elevation_line,elevation_line+"\n    // CP9 elevation custody: notify only after this operation's eligible native weather adoption.\n    if((current||track)&&elevation!=null&&attemptEligible(op,a)&&selectedWeather()) window.SalahNativeSkyHost?.acceptedElevation(elevation,op.generation,captured.lat,captured.lon);",1)
 s=s.replace('function beginSkyScene(){','function beginSkyScene(){\n  window.SalahSkyPreview?.clear("native beginSkyScene");\n  window.SalahRealSky?.invalidate("native beginSkyScene");',1)
 s=s.replace('  commitSkyScene(A);\n}','  commitSkyScene(A);\n  window.SalahNativeSkyHost?.notify();\n}',1)
-s=s.replace('  beginSkyScene();\n  if(!simulationReady()) return;','  beginSkyScene();\n  window.SalahStartSkyPreview?.();\n  if(!simulationReady()) return;',1)
 s=s.replace('\nboot();','\n'+(N/'native-host-hooks.js').read_text(encoding='utf-8')+'\nboot();',1)
 # The shared resolver and bounded atmosphere must run before static card markup
 # can paint. No visibility gate: the first card already has its accepted sky.
