@@ -1,0 +1,137 @@
+{
+  "schema": "r000b-independent-driver-currentness/v1",
+  "reviewer": "/root/r000b_independent_review",
+  "reviewedAtUtc": "2026-10-14T17:15:19.626Z",
+  "scope": "Read-only source review; no browser or external effect.",
+  "bindings": [
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\independent-source-review.json",
+      "bytes": 99338,
+      "sha256": "31a9753b2de6532d460de624769cf72b186e1d20ce570cc7b52b6f53d84d02fc"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tools\\qa\\run_r000b_native.py",
+      "bytes": 11518,
+      "sha256": "4944879b9f55a0a94bdfe7b9a84c6302d7b5180730dae97795b867eb6b38e9df"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\state-capture-fixture\\run_r000b_state_capture.py",
+      "bytes": 12759,
+      "sha256": "7f849959c9cb0b411b6c4275a51fd9e9c4cb390582cb877b19f06202f6b62b4b"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\motion-capture-fixture\\run_r000b_motion_capture.py",
+      "bytes": 15507,
+      "sha256": "8f6ebb11cc4a2995b86792aa2ee8b0496f6e54be4d6383037b435001e4a7f9a6"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\motion-capture-fixture\\manifest.json",
+      "bytes": 1478,
+      "sha256": "56c81fea0ac75f4a27ac68be8c814f89bea4738991cde7c82aea1b162dd16765"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\native-toolchain.json",
+      "bytes": 2469,
+      "sha256": "d5f25f61f3e70c2a644d34fe7834ab260cac8b97bb55ec55736821f4c8a990c5"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\r0007-close-20261014\\venv\\Lib\\site-packages\\playwright\\sync_api\\_context_manager.py",
+      "bytes": 3643,
+      "sha256": "d40604253e11521d64029b7154e164f81e33e1d11269da6b412015d6bb4b291b"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\r0007-close-20261014\\venv\\Lib\\site-packages\\playwright\\_impl\\_video.py",
+      "bytes": 2060,
+      "sha256": "63297dd16e3a143ca5ea93da3d23bcb859123e6e7baba779a838d6e4ccd1f36b"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\r0007-close-20261014\\venv\\Lib\\site-packages\\playwright\\driver\\package\\lib\\coreBundle.js",
+      "bytes": 3206963,
+      "sha256": "f74353fcb8e406756a70a6af0dfc4a5069acd577e35ec9d923ccf36ac009c2f5"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\r0007-close-20261014\\venv\\Lib\\site-packages\\playwright\\driver\\package\\package.json",
+      "bytes": 876,
+      "sha256": "6f7b58cc55449321279f11ca97d4e451c391738b77db32cdbcedf02851e3f097"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tools\\cp9\\r0007_browser.py",
+      "bytes": 28147,
+      "sha256": "df8d23875aa689364ac394bccfece57019efb698875a208269e8755dd317fbc3"
+    }
+  ],
+  "status": "CURRENT_PRIMARY_DRIVER_STATIC_LIFECYCLE_QUALIFIED",
+  "historicalSourceReport": {
+    "path": "C:/workspace/ai/r000b-execution-20261014/independent-source-review.json",
+    "sha256": "31a9753b2de6532d460de624769cf72b186e1d20ce570cc7b52b6f53d84d02fc",
+    "preserved": true,
+    "historicalDriverSha256": "c27c0a119049909e0b7323971297e97b95e59fa4784f9277e50ff50cb78bf229",
+    "limitation": "No exact archived c27c0a... source bytes are available. Do not infer a byte-for-byte diff or claim those historical driver bytes were executed by the completed primary cases."
+  },
+  "currentPrimaryDriver": {
+    "path": "tools/qa/run_r000b_native.py",
+    "sha256": "4944879b9f55a0a94bdfe7b9a84c6302d7b5180730dae97795b867eb6b38e9df",
+    "syntax": "PASS",
+    "directlyInspected": true,
+    "lineFindings": [
+      {
+        "line": 40,
+        "finding": "Explicit --python-packages path is inserted before Playwright import."
+      },
+      {
+        "line": 74,
+        "finding": "Checkpoint READ persists raw state and fixture progress; no new acquisition/install helper."
+      },
+      {
+        "line": 86,
+        "finding": "Explicit sync_playwright().start() keeps manager alive during native work and cleanup."
+      },
+      {
+        "line": 97,
+        "finding": "Each run has a unique UUID appended to its case identifier."
+      },
+      {
+        "line": 101,
+        "finding": "Initial/current, expiry,503 and healthy retry waits use the existing passive fixture/native request ledger."
+      },
+      {
+        "line": 116,
+        "finding": "The primary30-second watch has only native video and wait; no full diagnostic polling or screenshot capture during interval."
+      },
+      {
+        "line": 145,
+        "finding": "Context close and video path/hash collection precede browser.close() and pw.stop()."
+      }
+    ],
+    "lifecycleConclusion": "The identified v1 premature context-manager exit is fixed in the directly inspected current source. Completed receipt custody remains separately checked; this does not prove that every hypothetical exceptional cleanup path finalizes."
+  },
+  "actualNativeToolchain": {
+    "python": "C:/Users/theis/AppData/Local/Programs/Python/Python311/python.exe",
+    "pythonVersion": "3.11.9",
+    "packageRoot": "C:/Users/theis/Documents/Codex/r0007-close-20261014/venv/Lib/site-packages",
+    "playwrightVersion": "1.60.0",
+    "basis": "Parent supplied the exact native launch argument; native-toolchain.json retains selected import/path/package hashes. Files were independently read and hashed here. Primary case receipts themselves do not retain the package path, so no stronger retrospective invocation proof is asserted.",
+    "lifecycleSource": [
+      {
+        "path": "playwright/sync_api/_context_manager.py",
+        "lines": "79-98",
+        "finding": "stop is bound to __exit__; start calls __enter__; __exit__ stops the connection and closes the owned event loop."
+      },
+      {
+        "path": "playwright/_impl/_video.py",
+        "lines": "36-43",
+        "finding": "Video.path uses the retained artifact path; it must be collected before stopping the Playwright manager."
+      },
+      {
+        "path": "playwright/driver/package/lib/coreBundle.js",
+        "lines": "35614-35755",
+        "finding": "Actual1.60 unified video recorder uses25fps first-frame-relative filling and final padding; it does not supply a unique source-render timestamp ledger."
+      }
+    ]
+  },
+  "reconciliation": "The historical report's CP9 Playwright1.57 source references remain historical explanatory references only. This direct current1.60/current494 review supersedes them for the completed native-driver lifecycle. Product source B04/B13/B14/B17 conclusions and accepted-row currentness remain separately bound and are not widened.",
+  "limits": [
+    "No original v1 harness or Firefox pixel failure is repaired or erased by a static lifecycle PASS.",
+    "No claim of B16/B18 completion or continuous pixel qualification is made by this report."
+  ]
+}

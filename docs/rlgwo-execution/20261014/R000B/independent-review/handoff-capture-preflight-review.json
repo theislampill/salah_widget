@@ -1,0 +1,117 @@
+{
+  "schema": "r000b-independent-handoff-capture-preflight/v1",
+  "reviewer": "/root/r000b_independent_review",
+  "decision": "PASS_PREPARATION_ONLY",
+  "scope": "Read-only static qualification of the exact repaired private capture derivative before Firefox acquisition. No browser was launched by this reviewer.",
+  "target": {
+    "worktree": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget",
+    "base": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+    "runtimeTreeSha256": "7e497fd9daceb1c308fcda26ec44afadd7d08aef0fc3fdb2750bdbefa706df50",
+    "driverSha256": "825c7e91fbaecba103ea77343e10ae1e6f921fbd027c0d370290adce61c6eae4",
+    "baseDriverSha256": "8f6ebb11cc4a2995b86792aa2ee8b0496f6e54be4d6383037b435001e4a7f9a6"
+  },
+  "findings": [
+    {
+      "severity": "P1",
+      "status": "FIXED_BEFORE_ACQUISITION",
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\handoff-capture-fixture\\run_r000b_handoff_capture.v1.py",
+      "description": "The original de9fdf driver bracketed the third request dispatch, so a late JSON settlement or late consumer recovery could fall outside the pixel span while the check passed. Exact v1 bytes remain retained."
+    },
+    {
+      "severity": "none",
+      "status": "QUALIFIED",
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\handoff-capture-fixture\\run_r000b_handoff_capture.py",
+      "line": 201,
+      "description": "The repaired gate requires third request dispatch, its JSON settlement and the first subsequent passive eligible 24-degree/rain-on consumer in the recorded span, with at least two seconds after that consumer."
+    }
+  ],
+  "staticReview": {
+    "astParsed": true,
+    "diffFromQualifiedBase": "Only the title, a six-second full-viewport native PNG sequence beginning at fixture elapsed 147 seconds, and the post-run recovery gate are added. The existing checkpoint path, 30-second sequence, cleanup and custody path are unchanged.",
+    "window": "First after-clock and its host receipt define the start. The last capture starts at or beyond both six-second endpoints; all prefix/suffix images remain retained.",
+    "timingControls": "At least 48 images, maximum 250 ms start gap and capture duration, six to eight seconds of fixture coverage, at least six seconds of host coverage, and per-capture native elapsed/wall agreement.",
+    "observers": "Only native performance/Date clocks are read during the added span. No public-clear wrapper, full QA publication read, render, acquisition, model installation or clock change occurs there. The fixture's existing passive ledger is inspected after capture.",
+    "wholeImageCapture": "Native 390x600 viewport; full_page=False, animations allowed, no clip/resize/settling wait. Original video remains independent evidence."
+  },
+  "independentValidation": {
+    "status": "PASS",
+    "driverSha256": "825c7e91fbaecba103ea77343e10ae1e6f921fbd027c0d370290adce61c6eae4",
+    "gateSha256": "4ebbb90b5966ec905e44e98992347d1506d75a679414087afad687b083146bb3",
+    "controls": [
+      {
+        "case": "original",
+        "accepted": true,
+        "expected": true
+      },
+      {
+        "case": "late-json",
+        "accepted": false,
+        "expected": false
+      },
+      {
+        "case": "late-consumer",
+        "accepted": false,
+        "expected": false
+      },
+      {
+        "case": "missing-consumer",
+        "accepted": false,
+        "expected": false
+      },
+      {
+        "case": "missing-third",
+        "accepted": false,
+        "expected": false
+      }
+    ],
+    "adapter": "Use diagnostic before/after native clocks as beforeClock/afterClock; no values changed"
+  },
+  "limitations": [
+    "This is preparation qualification, not a native run or a visual PASS.",
+    "The native screenshots are bounded call-time observations. They cannot exclude a sub-capture gap, identify every physical refresh, or replace failures in the original videos.",
+    "The six-second recovery span and new 30-second interval must each be reviewed from their actual retained pixels, and the exact driver, runtime and fixture must match this report.",
+    "An initial local control invocation used the old diagnostic schema's nonexistent beforeClock field and stopped with KeyError before gate execution. The corrected explicit before/after-to-clock adapter preserves all values; all five actual-gate controls then passed."
+  ],
+  "bindings": [
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\handoff-capture-fixture\\run_r000b_handoff_capture.py",
+      "bytes": 18962,
+      "sha256": "825c7e91fbaecba103ea77343e10ae1e6f921fbd027c0d370290adce61c6eae4"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\handoff-capture-fixture\\run_r000b_handoff_capture.v1.py",
+      "bytes": 18419,
+      "sha256": "de9fdf2da5681dc298489a027e80aa26b41963a710c1583140da12ca22d820fe"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\handoff-capture-fixture\\manifest.json",
+      "bytes": 945,
+      "sha256": "d4f601195f873a24d3e8d873a3fe1b27aa8b0e09965d76ad21c6554d3f8f7f1d"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\handoff-capture-fixture\\recovery-gate-controls.json",
+      "bytes": 584,
+      "sha256": "4e4f03edf55cddc840ff1031dc5917d7447b5aa860c75d2c2faf864a6056103a"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\motion-capture-fixture\\run_r000b_motion_capture.py",
+      "bytes": 15507,
+      "sha256": "8f6ebb11cc4a2995b86792aa2ee8b0496f6e54be4d6383037b435001e4a7f9a6"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\native-recovery-diagnostic\\firefox-full\\receipt.json",
+      "bytes": 863581,
+      "sha256": "0cc5964f7be7e3183412247bb54742ed32b8598857ce1e90d4968b7deb95c7eb"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\candidate.json",
+      "bytes": 23279,
+      "sha256": "b5e5d08d637e87362b0b44be0b3807fcb90b9202a4fa8e7fc64d75037c95639e"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\rlgwo\\r000b-weather-fixture.html",
+      "bytes": 18342,
+      "sha256": "74f4b743a831760fae84dba5bb2e1dae8d6af901786876a46c9ce532854ccda5"
+    }
+  ]
+}

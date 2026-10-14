@@ -1,0 +1,107 @@
+{
+  "schema": "r000b-post-repair-source-preflight/v1",
+  "status": "SOURCE_CHECKS_PASS__NATIVE_JOIN_PENDING",
+  "reviewedBase": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+  "runtimeSha256": "c2753a21c337ff0bc09cea05f15bfc7729dcc2295a924c11284399fdab6e9ea2",
+  "files": [
+    {
+      "path": "src/native/index.html",
+      "sha256": "37fb7477e23d02329eacbf8ff94107fb3ea40a7d62020ef56a245af56e0ade00",
+      "bytes": 359244
+    },
+    {
+      "path": "index.html",
+      "sha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "bytes": 549445
+    },
+    {
+      "path": "offline.html",
+      "sha256": "dbda7e967be39d85ca6b970c06b4053d60335b6b50d59f7849512e1a22ccec6e",
+      "bytes": 80730482
+    },
+    {
+      "path": "real-sky/native-host.mjs",
+      "sha256": "a5586f87ee14c0c1d24f5f933aefc1fad724454636fd4dd4a2ea9ded80642e0c",
+      "bytes": 12666
+    },
+    {
+      "path": "real-sky/native-sky.js",
+      "sha256": "7e47b46652fdb2a22b9ea4c1e15777ac636f789434fb53a0ea5492eeb3fa7568",
+      "bytes": 333432
+    },
+    {
+      "path": "tests/r000b-remaining.test.cjs",
+      "sha256": "88a9c2d15b12a6a251abf72efb49db5cb77b77bc2731d86f10c04de8b49c8e2c",
+      "bytes": 12395
+    },
+    {
+      "path": "tests/r000b-sky-withdrawal.test.mjs",
+      "sha256": "d9c9c5e61ad89c08af0a86db731334359d2d6848579bd6873c7214378a086b0d",
+      "bytes": 5199
+    },
+    {
+      "path": "tests/real-sky/native-preview-host.test.mjs",
+      "sha256": "1b393d609d6ab8b056030710a45b6c208f386ab472c3838204a47734814df445",
+      "bytes": 12374
+    },
+    {
+      "path": "tests/rlgwo/r000b-weather-fixture.html",
+      "sha256": "74f4b743a831760fae84dba5bb2e1dae8d6af901786876a46c9ce532854ccda5",
+      "bytes": 18342
+    },
+    {
+      "path": "tools/qa/run_r000b_native.py",
+      "sha256": "4944879b9f55a0a94bdfe7b9a84c6302d7b5180730dae97795b867eb6b38e9df",
+      "bytes": 11518
+    },
+    {
+      "path": "tools/qa/run_r000b_mutants.py",
+      "sha256": "93f18a543e7231a8b78cea8cb155345e64ebe12f90de9a734673715bc80e4e10",
+      "bytes": 4236
+    },
+    {
+      "path": "tools/qa/verify_r000b_receipts.py",
+      "sha256": "27ba10532f2558abb8c94857eab925c04fbf1add4769faf5ffb570001338fe66",
+      "bytes": 7149
+    },
+    {
+      "path": "README.md",
+      "sha256": "1b693dd5a9ac260fbe0f68a715c0f4770eb8c9204f894cae3a041508691eb218",
+      "bytes": 33705
+    },
+    {
+      "path": "DESIGN.md",
+      "sha256": "1364b0a7ca95a6efff981ab9f5a1cf2e59aefd79fe35a8bf8d1219d6d01cab88",
+      "bytes": 46028
+    },
+    {
+      "path": "HANDOFF.md",
+      "sha256": "c47e2ba6e71a2351d128b5f0cb1a179531c8b7261fa2b560b31df8f4d0e2c15a",
+      "bytes": 17336
+    }
+  ],
+  "checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "-X",
+        "utf8",
+        "tools/verify_v1.py",
+        "--check-pages"
+      ],
+      "exitCode": 0,
+      "stdout": "PASS: frozen V1 payload and anchored manifest\r\nPASS: plain static V1 files; no Jekyll exclusion configuration (deployment still pending)\r\n",
+      "stderr": ""
+    }
+  ]
+}

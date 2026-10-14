@@ -1,0 +1,22 @@
+{
+  "schema": "r000b-playwright-alternative/v1",
+  "sourceMethod": "tools/cp9/r0007_browser.py:281-290 native full-viewport screenshot",
+  "baseDriver": "C:\\workspace\\ai\\r000b-execution-20261014\\state-capture-fixture\\run_r000b_state_capture.py",
+  "baseDriverSha256": "7f849959c9cb0b411b6c4275a51fd9e9c4cb390582cb877b19f06202f6b62b4b",
+  "driver": "run_r000b_motion_capture.py",
+  "driverSha256": "8f6ebb11cc4a2995b86792aa2ee8b0496f6e54be4d6383037b435001e4a7f9a6",
+  "scope": "Separate original acquisition. Keep ordinary native1x expiry/503/retry and5checkpoint screenshots. Replace only passive30s wait with declared100ms-target native full-viewport PNG capture. No fullQA polling inside interval. No old-video repair or cross-acquisition frame substitution.",
+  "thresholds": {
+    "durationSeconds": [
+      30,
+      60
+    ],
+    "targetCadenceMs": 100,
+    "minimumFrames": 240,
+    "maxStartGapMs": 250,
+    "maxCaptureMs": 250
+  },
+  "status": "STATIC_REVIEW_PENDING_NOT_EXECUTED",
+  "reviewInterval": "Predeclared30seconds begins after first original capture (first.afterClock elapsed and host receipt). Last original capture begins at or beyond both interval ends; all prefix/suffix images retained.",
+  "preexecutionReviewRepair": "Reviewer found before-to-before span did not guarantee30seconds of pixel coverage. Changed duration/stop to last.beforeClock minus first.afterClock, with additional host bound; no native acquisition yet."
+}

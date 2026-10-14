@@ -1,0 +1,156 @@
+{
+  "schema": "r000b-independent-diagnostic-preflight/v1",
+  "reviewer": "/root/r000b_independent_review",
+  "decision": "PASS_PREPARATION_ONLY_NOT_EXECUTED_AT_REVIEW",
+  "scope": "One disposable, unchanged-product Firefox full recovery diagnostic. No B16 acceptance, original-video replacement, product repair, browser launch or external effect by reviewer.",
+  "target": {
+    "root": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget",
+    "head": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+    "branch": "codex/r000b-close-20261014",
+    "driverSha256": "31b51f0cee3f3153e0ee827678b3bd3e723b974fe4d2bbe1b15d0c020ca5eb47"
+  },
+  "findings": [
+    {
+      "severity": "P1",
+      "status": "REPAIRED_BEFORE_EXECUTION",
+      "file": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-diagnostic-fixture\\run_r000b_recovery_diagnostic.v1.py",
+      "line": 37,
+      "description": "The original diagnostic evaluated before-state/stack before forwarding and after-state before returning. An observation exception could suppress the original clear or replace its return/throw, violating the claimed transparent forwarding.",
+      "repair": "The current driver isolates observation exceptions, forwards exactly once through Reflect.apply(original,this,args), returns inside try and logs inside finally. A distinct diagnosticObserverFidelity gate fails any logged observation error. Original v1 bytes are retained."
+    }
+  ],
+  "validation": {
+    "astParsed": true,
+    "exactExtractedObserver": true,
+    "forwardingControls": {
+      "node": "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+      "tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "cases": "Cross of original normal return / thrown object and no observation failure / before-read failure / after-read failure.",
+      "independentRun": {
+        "chunk_id": "4a23df",
+        "wall_time_seconds": 0.1977734,
+        "exit_code": 0,
+        "original_token_count": 338,
+        "output": "TAP version 13\n# Subtest: public clear forwarding: observation failure 0; original throws false\nok 1 - public clear forwarding: observation failure 0; original throws false\n  ---\n  duration_ms: 3.1927\n  type: 'test'\n  ...\n# Subtest: public clear forwarding: observation failure 0; original throws true\nok 2 - public clear forwarding: observation failure 0; original throws true\n  ---\n  duration_ms: 0.7944\n  type: 'test'\n  ...\n# Subtest: public clear forwarding: observation failure 1; original throws false\nok 3 - public clear forwarding: observation failure 1; original throws false\n  ---\n  duration_ms: 0.5332\n  type: 'test'\n  ...\n# Subtest: public clear forwarding: observation failure 1; original throws true\nok 4 - public clear forwarding: observation failure 1; original throws true\n  ---\n  duration_ms: 0.9178\n  type: 'test'\n  ...\n# Subtest: public clear forwarding: observation failure 2; original throws false\nok 5 - public clear forwarding: observation failure 2; original throws false\n  ---\n  duration_ms: 0.4005\n  type: 'test'\n  ...\n# Subtest: public clear forwarding: observation failure 2; original throws true\nok 6 - public clear forwarding: observation failure 2; original throws true\n  ---\n  duration_ms: 0.5128\n  type: 'test'\n  ...\n1..6\n# tests 6\n# suites 0\n# pass 6\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 67.7096\n"
+      }
+    }
+  },
+  "observationAnalysis": [
+    {
+      "source": "moon/src/moon-detail.mjs:49,121",
+      "finding": "Public state copies stored stat fields and CSS visibility; public clear only hides detail and clears its local last composition. No surface()/presentation() access in state."
+    },
+    {
+      "source": "src/native/index.html:3728-3735",
+      "finding": "SalahMoonHost.capture reads the accepted scene, native clock and Moon scalars. The declared native FOLLOW_WALL_CLOCK case makes simNow a Date.now read. It does not publish or request terrain."
+    },
+    {
+      "source": "real-sky/native-preview-host.mjs:53,124",
+      "finding": "Preview state clones status; frame returns the existing preview frame. frame.current checks nativeResultCurrent against host.capture(false)."
+    },
+    {
+      "source": "real-sky/native-host-hooks.js:17-46; src/native/index.html:955-968",
+      "finding": "capture(false) avoids MoonRuntime.surface and layout. It calls simulationReady; the valid native-clock branch clears the empty hidden-state map. This is conditionally non-publishing in this case, not a universally side-effect-free getter."
+    },
+    {
+      "source": "real-sky/native-host.mjs:102-104; real-sky/native-lifecycle.mjs:36",
+      "finding": "Real-sky state clones status and reads plain lifecycle counters; it does not invoke lifecycle.current/observe."
+    },
+    {
+      "source": "recovery-diagnostic-fixture/run_r000b_recovery_diagnostic.py:147-170",
+      "finding": "The bounded original PNG acquisition starts after fixture elapsed 147 seconds and continues until final before-clock is at least six seconds beyond first after-clock. Every capture is full 390x600 viewport, animations allowed. This is the six-second causal diagnostic, not the required 30-second B16 motion alternative."
+    }
+  ],
+  "limitations": [
+    "The wrapper sees calls to the public SalahMoonDetail.clear property. Lexically captured clear() calls inside MoonDetail.compose or other MoonDetail internals bypass it; absence of public clear events cannot rule those paths out.",
+    "The observer adds execution overhead, stack creation, state copies and read calls. A resulting diagnostic is a separate acquisition; it cannot retroactively associate original video frames with a source callback.",
+    "The candidate predicate detects a visible atmospheric-preview-owned detail becoming hidden while a preview frame is current. The actual caller stack and pixels still must be independently reviewed; a false predicate alone is not a complete diagnosis.",
+    "No full QA, MoonRuntime.state/surface/request, render, acquisition or model-install helper is used within the diagnostic capture interval. Existing checkpoint QA remains and may publish pending terrain before that interval.",
+    "Passing the forwarding controls does not prove behavior under arbitrary corrupted built-ins, out-of-memory or hostile error-to-string methods; those are outside this source-bound diagnostic.",
+    "All original Firefox recording failures, warm recovery Moon withdrawal and cold-start limitations remain retained."
+  ],
+  "bindings": [
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-diagnostic-fixture\\run_r000b_recovery_diagnostic.py",
+      "bytes": 16748,
+      "sha256": "31b51f0cee3f3153e0ee827678b3bd3e723b974fe4d2bbe1b15d0c020ca5eb47"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-diagnostic-fixture\\run_r000b_recovery_diagnostic.v1.py",
+      "bytes": 16063,
+      "sha256": "889efbebb4c8eeac93cc80f8770693e47a125d790a2bde6a9c7d8a94814f6f4e"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-diagnostic-fixture\\manifest.json",
+      "bytes": 1078,
+      "sha256": "ff301bf4972024f611c7114c5f3e88a5d36752d3a02614f241a236c2c0c76a4c"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-diagnostic-fixture\\observer-source.js",
+      "bytes": 1539,
+      "sha256": "b14fd5893592c87eca88372adf3eff6bb97139547489ffe4b5b3fc1ea9be6c4f"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-diagnostic-fixture\\observer-fidelity.test.cjs",
+      "bytes": 1319,
+      "sha256": "b6b6fab82f3d2428043591929e4f6d8f3d0186ef3908d3854820f0f839864b1c"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-diagnostic-fixture\\observer-fidelity.tap",
+      "bytes": 1351,
+      "sha256": "6e13dc366c9cf6fcb7f939834b3ca946d439fa92f84d75bf60a7800fb03ccb79"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\src\\native\\index.html",
+      "bytes": 359244,
+      "sha256": "37fb7477e23d02329eacbf8ff94107fb3ea40a7d62020ef56a245af56e0ade00"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\index.html",
+      "bytes": 549445,
+      "sha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-host.mjs",
+      "bytes": 11957,
+      "sha256": "d904064710e40921c29c5a8440eaffdb2f036aaa849d5273ba1f03e6ee5a3c70"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-preview-host.mjs",
+      "bytes": 11061,
+      "sha256": "b8db43b4b9875cd3d92cfdb11b07a19d97f1932e7293ccfb6b05cbde717d919a"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-host-hooks.js",
+      "bytes": 5596,
+      "sha256": "007529ccb3a3ba73e14fd739e9fbaa9b2030e66e56ca6b2c997ffaa578b6d6eb"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-contract.mjs",
+      "bytes": 4860,
+      "sha256": "91e6f44fbffa5f9d49ce49afd610dba0acd1341b894a2af461adb39be8398d1b"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-lifecycle.mjs",
+      "bytes": 5997,
+      "sha256": "dbe987b7459508e48be149c4446ad090ac0490f6b49d21bd98aa3b09051e5880"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\moon\\src\\moon-detail.mjs",
+      "bytes": 11235,
+      "sha256": "3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\moon\\src\\moon-native.mjs",
+      "bytes": 18369,
+      "sha256": "be82a60294c1376a2fd60e486660152f4194d7b92f27259ccb06069f2478a28a"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\rlgwo\\r000b-weather-fixture.html",
+      "bytes": 18342,
+      "sha256": "74f4b743a831760fae84dba5bb2e1dae8d6af901786876a46c9ce532854ccda5"
+    }
+  ]
+}

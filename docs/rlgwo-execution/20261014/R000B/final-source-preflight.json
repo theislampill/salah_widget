@@ -1,0 +1,110 @@
+{
+  "schema": "r000b-final-source-preflight/v1",
+  "createdAtUtc": "2026-10-14T17:10:43.332661+00:00",
+  "status": "SOURCE_AND_FROZEN_V1_PASS__NATIVE_PIXELS_PUBLICATION_PENDING",
+  "reviewedBase": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+  "files": [
+    {
+      "path": "src/native/index.html",
+      "sha256": "37fb7477e23d02329eacbf8ff94107fb3ea40a7d62020ef56a245af56e0ade00",
+      "bytes": 359244,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "index.html",
+      "sha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "bytes": 549445,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "offline.html",
+      "sha256": "db763abd4be27248beca02303156ea648a1c0cb2721ce9a40b585ee2b03b8a36",
+      "bytes": 80729773,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "tests/r000b-remaining.test.cjs",
+      "sha256": "88a9c2d15b12a6a251abf72efb49db5cb77b77bc2731d86f10c04de8b49c8e2c",
+      "bytes": 12395,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "tests/rlgwo/r000b-weather-fixture.html",
+      "sha256": "74f4b743a831760fae84dba5bb2e1dae8d6af901786876a46c9ce532854ccda5",
+      "bytes": 18342,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "tools/qa/run_r000b_native.py",
+      "sha256": "4944879b9f55a0a94bdfe7b9a84c6302d7b5180730dae97795b867eb6b38e9df",
+      "bytes": 11518,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "tools/qa/run_r000b_mutants.py",
+      "sha256": "93f18a543e7231a8b78cea8cb155345e64ebe12f90de9a734673715bc80e4e10",
+      "bytes": 4236,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "tools/qa/verify_r000b_receipts.py",
+      "sha256": "27ba10532f2558abb8c94857eab925c04fbf1add4769faf5ffb570001338fe66",
+      "bytes": 7149,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "1b693dd5a9ac260fbe0f68a715c0f4770eb8c9204f894cae3a041508691eb218",
+      "bytes": 33705,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "DESIGN.md",
+      "sha256": "1364b0a7ca95a6efff981ab9f5a1cf2e59aefd79fe35a8bf8d1219d6d01cab88",
+      "bytes": 46028,
+      "matchesAcquisitionPin": true
+    },
+    {
+      "path": "HANDOFF.md",
+      "sha256": "6e82845688d3963fca16cef37ae5d00a34e8ec07e0170379ecd7bc4fb90946ff",
+      "bytes": 16998,
+      "matchesAcquisitionPin": true
+    }
+  ],
+  "runtimeSha256": "7ce7f3502bf58bc4b29274dc61b2b73c01770c1c2f798c5faa8e0dc7a8e125f2",
+  "runtimeFileCount": 135,
+  "checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\theis\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "-X",
+        "utf8",
+        "tools/verify_v1.py",
+        "--check-pages"
+      ],
+      "exitCode": 0,
+      "stdout": "PASS: frozen V1 payload and anchored manifest\nPASS: plain static V1 files; no Jekyll exclusion configuration (deployment still pending)\n",
+      "stderr": ""
+    }
+  ],
+  "acceptedCurrentnessSha256": "ee42273c71a6f960f92a137ca28facd3c9cd7628096812ccec5172c2017a6094",
+  "sourceTestReceipts": {
+    "green.tap": "88daa167d14fb06b82ba054d648fe37e7bf19ab8376e7e440d3cb2aa6f768d1e",
+    "affected-regression.tap": "26d055838a68218a3e7d77838df3610c1a1cbcfe0f912f48913637dbda5cac94",
+    "red-qualified.tap": "f8a298c216141e953bff26fb1bb93fd8157361214566b2118fca04b1b155a1df",
+    "mutants/receipt.json": "5b368b079588a54caf1e664dac614a3429d4d705145e8b658438ca991e3d30c2",
+    "independent-source-review.json": "31a9753b2de6532d460de624769cf72b186e1d20ce570cc7b52b6f53d84d02fc"
+  },
+  "nativeAssertions": "native-reconciliation.json",
+  "nativeAssertionsSha256": "7666c00ddb1309b9c3882b3f3b042d3239c4d84ecfcc2931ea1252e8fe448a89"
+}

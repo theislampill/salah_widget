@@ -1,0 +1,78 @@
+{
+  "base": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+  "branch": "codex/r000b-close-20261014",
+  "dirty": "?? tests/r000b-remaining.test.cjs\n",
+  "regions": [
+    {
+      "region": "weather",
+      "historicalSha256": "0e34574989d8c42e9b9e9f5c887728305e24db4244f39ed033d3c3f50869018c",
+      "baseSha256": "0e34574989d8c42e9b9e9f5c887728305e24db4244f39ed033d3c3f50869018c",
+      "equal": true
+    },
+    {
+      "region": "consumer",
+      "historicalSha256": "f0d76b3c836dd1d285285dd874265fd28461cbb67694fbfa866a4cbdd20c2cdf",
+      "baseSha256": "f0d76b3c836dd1d285285dd874265fd28461cbb67694fbfa866a4cbdd20c2cdf",
+      "equal": true
+    },
+    {
+      "region": "cloud",
+      "historicalSha256": "fe98f8930cf17697e193b10d357702e57dd26b541cc0ae41272a2ee23b73d305",
+      "baseSha256": "fe98f8930cf17697e193b10d357702e57dd26b541cc0ae41272a2ee23b73d305",
+      "equal": true
+    },
+    {
+      "region": "selected",
+      "historicalSha256": "894fdfda27cc5189d424bfe893ac30281bd4121338149bd65f88fa0c113eb943",
+      "baseSha256": "894fdfda27cc5189d424bfe893ac30281bd4121338149bd65f88fa0c113eb943",
+      "equal": true
+    },
+    {
+      "region": "temporal",
+      "historicalSha256": "aee53a340ed9527f09a0abde3c0de8a1bbd25b04b6e8c5913e2f93f611c9e026",
+      "baseSha256": "aee53a340ed9527f09a0abde3c0de8a1bbd25b04b6e8c5913e2f93f611c9e026",
+      "equal": true
+    }
+  ],
+  "historicalBase": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+  "runtimeFiles": {
+    "index.html": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+    "src/native/index.html": "b3094034d50bf0867a0f62c9f3e86a61f132c0126bed2a3fcdbd1bde38bc4dbd",
+    "tools/build_native.py": "25bd8088051936b524d97ebe8fabee1c3ebf0d682e6909c294a45cc01a9a3bb5",
+    "real-sky/native-host-hooks.js": "007529ccb3a3ba73e14fd739e9fbaa9b2030e66e56ca6b2c997ffaa578b6d6eb",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+  },
+  "sourceRepair": {
+    "owner": "src/native/index.html",
+    "changedRegion": "fetchRadar",
+    "demonstratedFailure": "finite raw seconds overflow milliseconds or Date epoch range before Image dispatch",
+    "red": "red-qualified.tap",
+    "redObservations": "red-qualified-observations.json",
+    "green": "green.tap",
+    "greenObservations": "green-observations.json",
+    "unchangedAcceptedSource": "weather except fetchRadar; selectedWeather/temporal/atmosphere/cloud unchanged",
+    "rollback": "Revert authored guard and both generated consumers together; preserve all observations."
+  },
+  "currentFiles": {
+    "src/native/index.html": "37fb7477e23d02329eacbf8ff94107fb3ea40a7d62020ef56a245af56e0ade00",
+    "index.html": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+    "offline.html": "db763abd4be27248beca02303156ea648a1c0cb2721ce9a40b585ee2b03b8a36",
+    "tools/build_native.py": "25bd8088051936b524d97ebe8fabee1c3ebf0d682e6909c294a45cc01a9a3bb5",
+    "real-sky/native-host-hooks.js": "007529ccb3a3ba73e14fd739e9fbaa9b2030e66e56ca6b2c997ffaa578b6d6eb",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+  },
+  "baselineSourceFiles": {
+    "baseline-index.html": "7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de",
+    "baseline-src-native-index.html": "b3094034d50bf0867a0f62c9f3e86a61f132c0126bed2a3fcdbd1bde38bc4dbd"
+  },
+  "harnessDevelopmentFailures": [
+    {
+      "file": "baseline-red.tap",
+      "reason": "incorrect diagnostic property path, fixed to actual qa.cache.currentEligible; not product evidence"
+    },
+    {
+      "file": "red.tap",
+      "reason": "test-literal encoding error in Python source rewrite; fixed UTF-8; only red-qualified.tap is qualified product RED"
+    }
+  ]
+}

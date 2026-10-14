@@ -1,0 +1,134 @@
+TAP version 13
+# Subtest: foreground preparation cannot consume the new astronomical calculation age budget
+ok 1 - foreground preparation cannot consume the new astronomical calculation age budget
+  ---
+  duration_ms: 4.6317
+  type: 'test'
+  ...
+# Subtest: a near-expiry preview cannot be published without consumer callback headroom
+ok 2 - a near-expiry preview cannot be published without consumer callback headroom
+  ---
+  duration_ms: 1.1399
+  type: 'test'
+  ...
+# Subtest: deadline recovery is bounded and cannot turn a persistently slow calculation into a current frame
+ok 3 - deadline recovery is bounded and cannot turn a persistently slow calculation into a current frame
+  ---
+  duration_ms: 0.9547
+  type: 'test'
+  ...
+# Subtest: a throwing detail compositor cannot bypass publication headroom through retained-frame recovery
+ok 4 - a throwing detail compositor cannot bypass publication headroom through retained-frame recovery
+  ---
+  duration_ms: 0.9956
+  type: 'test'
+  ...
+# Subtest: a failed detail readback retains a sky only while its original owner has publication headroom
+ok 5 - a failed detail readback retains a sky only while its original owner has publication headroom
+  ---
+  duration_ms: 2.1333
+  type: 'test'
+  ...
+# Subtest: a delayed rAF timestamp never skips the accepted-clock expiry check
+ok 6 - a delayed rAF timestamp never skips the accepted-clock expiry check
+  ---
+  duration_ms: 1.0369
+  type: 'test'
+  ...
+# Subtest: native presentation handoff stops the duplicate loop and timestamps after native painting
+ok 7 - native presentation handoff stops the duplicate loop and timestamps after native painting
+  ---
+  duration_ms: 1.215
+  type: 'test'
+  ...
+# Subtest: catalogue admission preserves the current atmosphere and defers first stellar paint to a separate native turn
+ok 8 - catalogue admission preserves the current atmosphere and defers first stellar paint to a separate native turn
+  ---
+  duration_ms: 1.3114
+  type: 'test'
+  ...
+# Subtest: invalid catalogue cannot become the displayed identity or defer currentness validation
+ok 9 - invalid catalogue cannot become the displayed identity or defer currentness validation
+  ---
+  duration_ms: 1.5726
+  type: 'test'
+  ...
+# Subtest: late catalogue hash completion cannot resurrect a revoked asset admission
+ok 10 - late catalogue hash completion cannot resurrect a revoked asset admission
+  ---
+  duration_ms: 1.2902
+  type: 'test'
+  ...
+# Subtest: ordinary presentation republishes a fresh preview after weather withdrawal
+ok 11 - ordinary presentation republishes a fresh preview after weather withdrawal
+  ---
+  duration_ms: 1.4697
+  type: 'test'
+  ...
+# Subtest: refined withdrawal publishes the replacement preview in the same turn without waiting for native paint
+not ok 12 - refined withdrawal publishes the replacement preview in the same turn without waiting for native paint
+  ---
+  duration_ms: 1.3609
+  type: 'test'
+  location: 'C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\real-sky\\native-preview-host.test.mjs:120:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    must not expose the CSS background and raw black lunar cutout between paint turns
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/theis/.codex/worktrees/r000b-close/salah_widget/tests/real-sky/native-preview-host.test.mjs:128:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: same-turn withdrawal cannot fabricate a preview when accepted input is absent
+ok 13 - same-turn withdrawal cannot fabricate a preview when accepted input is absent
+  ---
+  duration_ms: 0.7762
+  type: 'test'
+  ...
+# Subtest: a still-current preview recomposes lunar detail before withdrawal returns without relabelling its UTC
+not ok 14 - a still-current preview recomposes lunar detail before withdrawal returns without relabelling its UTC
+  ---
+  duration_ms: 2.6237
+  type: 'test'
+  location: 'C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\real-sky\\native-preview-host.test.mjs:141:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    current preview must own its visible lunar detail before a compositor can present
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/theis/.codex/worktrees/r000b-close/salah_widget/tests/real-sky/native-preview-host.test.mjs:147:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 12
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 83.0101

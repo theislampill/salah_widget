@@ -1,0 +1,231 @@
+{
+  "schema": "r000b-four-source-mutations/v1",
+  "source": "index.html",
+  "nodeVersion": "v22.16.0",
+  "sourceSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+  "oracleSha256": "88a9c2d15b12a6a251abf72efb49db5cb77b77bc2731d86f10c04de8b49c8e2c",
+  "candidateUnchanged": true,
+  "mutations": [
+    {
+      "id": "weather-source-as-receipt",
+      "beforeSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "afterSha256": "e49c6c8ae1a2af5338892f0b791f1edf2050544750a47425b0d95cd9bbb32ab2",
+      "before": "const sourceAge=w&&wxNumber(w.currentValidAt)!=null?now-w.currentValidAt:null;",
+      "after": "const sourceAge=w&&wxNumber(w.retrievedAt)!=null?now-w.retrievedAt:null;",
+      "line": 3405,
+      "oracleSha256": "88a9c2d15b12a6a251abf72efb49db5cb77b77bc2731d86f10c04de8b49c8e2c",
+      "original": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^B13 M1 ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\index.html"
+        },
+        "exitCode": 0,
+        "log": "weather-source-as-receipt-original.tap",
+        "sha256": "9c9633aa9439de002ef259e2c7b2f5817397bc9a44c1e0a99590298e3b149813"
+      },
+      "mutant": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^B13 M1 ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\workspace\\ai\\r000b-execution-20261014\\mutants\\weather-source-as-receipt.html"
+        },
+        "exitCode": 1,
+        "log": "weather-source-as-receipt-mutant.tap",
+        "sha256": "c58e740a1d38d07af7f1a8090c56d7b06a46c173a89fe16e77cc971a5d5e0295"
+      },
+      "positive": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^positive ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\workspace\\ai\\r000b-execution-20261014\\mutants\\weather-source-as-receipt.html"
+        },
+        "exitCode": 0,
+        "log": "weather-source-as-receipt-positive.tap",
+        "sha256": "be678a11d995f231ca54652f3320aeda22f8a92db8c6d9f17570defd897d42a7"
+      },
+      "status": "KILLED_BY_ORIGINAL_ASSERTION"
+    },
+    {
+      "id": "radar-frame-as-receipt",
+      "beforeSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "afterSha256": "6315a9a6449d7adf27bdd6dda52b373c23db6dd75b4b12ffbccc8daad78dab30",
+      "before": "const frameAge=weatherRadar&&wxNumber(weatherRadar.frameGeneratedAt)!=null?now-weatherRadar.frameGeneratedAt:null;",
+      "after": "const frameAge=weatherRadar&&wxNumber(weatherRadar.retrievedAt)!=null?now-weatherRadar.retrievedAt:null;",
+      "line": 3521,
+      "oracleSha256": "88a9c2d15b12a6a251abf72efb49db5cb77b77bc2731d86f10c04de8b49c8e2c",
+      "original": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^B13 M2 ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\index.html"
+        },
+        "exitCode": 0,
+        "log": "radar-frame-as-receipt-original.tap",
+        "sha256": "29734a2ab1f4d57e0a42edd6cedb5cad54c228dab5922eba59bd25e76a5c3e5b"
+      },
+      "mutant": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^B13 M2 ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\workspace\\ai\\r000b-execution-20261014\\mutants\\radar-frame-as-receipt.html"
+        },
+        "exitCode": 1,
+        "log": "radar-frame-as-receipt-mutant.tap",
+        "sha256": "f091c2607b48b0864ddf579c90ae0382437e5582feac754625b0cbbb4a3b2524"
+      },
+      "positive": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^positive ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\workspace\\ai\\r000b-execution-20261014\\mutants\\radar-frame-as-receipt.html"
+        },
+        "exitCode": 0,
+        "log": "radar-frame-as-receipt-positive.tap",
+        "sha256": "77b6e8e491c935350d7ff4a799f326e5bb98cfad46d10ba8b149ec8352b51a51"
+      },
+      "status": "KILLED_BY_ORIGINAL_ASSERTION"
+    },
+    {
+      "id": "per-use-expiry-bypass",
+      "beforeSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "afterSha256": "2370c9e4db852126ffe78c8ed31d0c4a653bb08715a81b80c817f9bbfb8c1a09",
+      "before": "return weatherEligibility(weather,now).eligible?weather:null;",
+      "after": "return weather; // MUTANT: admission remains intact; per-use expiry bypassed.",
+      "line": 3417,
+      "oracleSha256": "88a9c2d15b12a6a251abf72efb49db5cb77b77bc2731d86f10c04de8b49c8e2c",
+      "original": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^B13 M3 ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\index.html"
+        },
+        "exitCode": 0,
+        "log": "per-use-expiry-bypass-original.tap",
+        "sha256": "67e58a513ad00c0197b1e3534b78bc034cd101493d9203b9666949285ec6527d"
+      },
+      "mutant": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^B13 M3 ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\workspace\\ai\\r000b-execution-20261014\\mutants\\per-use-expiry-bypass.html"
+        },
+        "exitCode": 1,
+        "log": "per-use-expiry-bypass-mutant.tap",
+        "sha256": "677e41359d0d1ebee91aaf39eecb4279b15269e36d0e1e8ac7625826fb55e540"
+      },
+      "positive": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^positive ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\workspace\\ai\\r000b-execution-20261014\\mutants\\per-use-expiry-bypass.html"
+        },
+        "exitCode": 0,
+        "log": "per-use-expiry-bypass-positive.tap",
+        "sha256": "2fd71328bd76fb2a72578e489d1ec5c041b24942e2b221972f75583f9b8cd5c6"
+      },
+      "status": "KILLED_BY_ORIGINAL_ASSERTION"
+    },
+    {
+      "id": "mutable-global-zone",
+      "beforeSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "afterSha256": "575413a4b44bdef4a7010a7dd89eb230c221eaf3fbf60d2ff63a03300e416c2d",
+      "before": "const ctx={...captured,retrievedAt:Date.now()}, current=",
+      "after": "const ctx={...captured,zone:tz,retrievedAt:Date.now()}, current=",
+      "line": 3500,
+      "oracleSha256": "88a9c2d15b12a6a251abf72efb49db5cb77b77bc2731d86f10c04de8b49c8e2c",
+      "original": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^B14 M4 ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\index.html"
+        },
+        "exitCode": 0,
+        "log": "mutable-global-zone-original.tap",
+        "sha256": "b397fb8585c12ad2188c6bb287479165e7061dafd7929c3ba06a453665319d14"
+      },
+      "mutant": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^B14 M4 ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\workspace\\ai\\r000b-execution-20261014\\mutants\\mutable-global-zone.html"
+        },
+        "exitCode": 1,
+        "log": "mutable-global-zone-mutant.tap",
+        "sha256": "d42cf5b478a7804a6b21605afcb5e104dd666e53636d59ca79183c7a2946d94b"
+      },
+      "positive": {
+        "command": [
+          "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+          "--test",
+          "--test-concurrency=1",
+          "--test-name-pattern=^positive ",
+          "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-remaining.test.cjs"
+        ],
+        "environment": {
+          "SALAH_WEATHER_SOURCE": "C:\\workspace\\ai\\r000b-execution-20261014\\mutants\\mutable-global-zone.html"
+        },
+        "exitCode": 0,
+        "log": "mutable-global-zone-positive.tap",
+        "sha256": "d94e5303e7989a573981931482e562994f442fbe55e83cf55e328f64ca3267d3"
+      },
+      "status": "KILLED_BY_ORIGINAL_ASSERTION"
+    }
+  ],
+  "status": "PASS"
+}

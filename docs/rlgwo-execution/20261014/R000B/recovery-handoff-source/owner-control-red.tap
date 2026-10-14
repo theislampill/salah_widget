@@ -1,0 +1,104 @@
+TAP version 13
+# Subtest: refined withdrawal retires obsolete preview ownership: ordinary wet recovery
+ok 1 - refined withdrawal retires obsolete preview ownership: ordinary wet recovery
+  ---
+  duration_ms: 2.4885
+  type: 'test'
+  ...
+# Subtest: refined withdrawal retires obsolete preview ownership: preview age exceeds its unchanged30-second bound
+ok 2 - refined withdrawal retires obsolete preview ownership: preview age exceeds its unchanged30-second bound
+  ---
+  duration_ms: 0.953
+  type: 'test'
+  ...
+# Subtest: refined withdrawal retires obsolete preview ownership: invalid accepted target
+ok 3 - refined withdrawal retires obsolete preview ownership: invalid accepted target
+  ---
+  duration_ms: 1.0193
+  type: 'test'
+  ...
+# Subtest: withdrawal cannot expose a preview-ready flag without a corresponding frame
+ok 4 - withdrawal cannot expose a preview-ready flag without a corresponding frame
+  ---
+  duration_ms: 0.9348
+  type: 'test'
+  ...
+# Subtest: a current preview retains its own visible detail at age0 when refined sky withdraws
+not ok 5 - a current preview retains its own visible detail at age0 when refined sky withdraws
+  ---
+  duration_ms: 2.4036
+  type: 'test'
+  location: 'C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-sky-withdrawal.test.mjs:57:30'
+  failureType: 'testCodeFailure'
+  error: |-
+    another sky owner cannot erase a current preview-owned Moon
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/theis/.codex/worktrees/r000b-close/salah_widget/tests/r000b-sky-withdrawal.test.mjs:62:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a current preview retains its own visible detail at age30000 when refined sky withdraws
+not ok 6 - a current preview retains its own visible detail at age30000 when refined sky withdraws
+  ---
+  duration_ms: 0.7662
+  type: 'test'
+  location: 'C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-sky-withdrawal.test.mjs:57:30'
+  failureType: 'testCodeFailure'
+  error: |-
+    another sky owner cannot erase a current preview-owned Moon
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/theis/.codex/worktrees/r000b-close/salah_widget/tests/r000b-sky-withdrawal.test.mjs:62:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: an expired preview-owned Moon is still withdrawn
+ok 7 - an expired preview-owned Moon is still withdrawn
+  ---
+  duration_ms: 0.6638
+  type: 'test'
+  ...
+# Subtest: a current preview does not invent unavailable lunar terrain
+ok 8 - a current preview does not invent unavailable lunar terrain
+  ---
+  duration_ms: 0.8237
+  type: 'test'
+  ...
+# Subtest: explicit preview withdrawal still removes its own ready flag and detail
+ok 9 - explicit preview withdrawal still removes its own ready flag and detail
+  ---
+  duration_ms: 0.8337
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 7
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 123.6766

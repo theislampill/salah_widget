@@ -1,0 +1,99 @@
+{
+  "schema": "r000b-independent-motion-capture-preflight/v1",
+  "reviewer": "/root/r000b_independent_review",
+  "reviewedAtUtc": "2026-10-14T17:15:19.626Z",
+  "scope": "Read-only source review; no browser or external effect.",
+  "bindings": [
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\independent-source-review.json",
+      "bytes": 99338,
+      "sha256": "31a9753b2de6532d460de624769cf72b186e1d20ce570cc7b52b6f53d84d02fc"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tools\\qa\\run_r000b_native.py",
+      "bytes": 11518,
+      "sha256": "4944879b9f55a0a94bdfe7b9a84c6302d7b5180730dae97795b867eb6b38e9df"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\state-capture-fixture\\run_r000b_state_capture.py",
+      "bytes": 12759,
+      "sha256": "7f849959c9cb0b411b6c4275a51fd9e9c4cb390582cb877b19f06202f6b62b4b"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\motion-capture-fixture\\run_r000b_motion_capture.py",
+      "bytes": 15507,
+      "sha256": "8f6ebb11cc4a2995b86792aa2ee8b0496f6e54be4d6383037b435001e4a7f9a6"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\motion-capture-fixture\\manifest.json",
+      "bytes": 1478,
+      "sha256": "56c81fea0ac75f4a27ac68be8c814f89bea4738991cde7c82aea1b162dd16765"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\native-toolchain.json",
+      "bytes": 2469,
+      "sha256": "d5f25f61f3e70c2a644d34fe7834ab260cac8b97bb55ec55736821f4c8a990c5"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\r0007-close-20261014\\venv\\Lib\\site-packages\\playwright\\sync_api\\_context_manager.py",
+      "bytes": 3643,
+      "sha256": "d40604253e11521d64029b7154e164f81e33e1d11269da6b412015d6bb4b291b"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\r0007-close-20261014\\venv\\Lib\\site-packages\\playwright\\_impl\\_video.py",
+      "bytes": 2060,
+      "sha256": "63297dd16e3a143ca5ea93da3d23bcb859123e6e7baba779a838d6e4ccd1f36b"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\r0007-close-20261014\\venv\\Lib\\site-packages\\playwright\\driver\\package\\lib\\coreBundle.js",
+      "bytes": 3206963,
+      "sha256": "f74353fcb8e406756a70a6af0dfc4a5069acd577e35ec9d923ccf36ac009c2f5"
+    },
+    {
+      "path": "C:\\Users\\theis\\Documents\\Codex\\r0007-close-20261014\\venv\\Lib\\site-packages\\playwright\\driver\\package\\package.json",
+      "bytes": 876,
+      "sha256": "6f7b58cc55449321279f11ca97d4e451c391738b77db32cdbcedf02851e3f097"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tools\\cp9\\r0007_browser.py",
+      "bytes": 28147,
+      "sha256": "df8d23875aa689364ac394bccfece57019efb698875a208269e8755dd317fbc3"
+    }
+  ],
+  "status": "PASS_PREPARATION_ONLY_NOT_EXECUTED_AT_REVIEW",
+  "candidateDriverSha256": "8f6ebb11cc4a2995b86792aa2ee8b0496f6e54be4d6383037b435001e4a7f9a6",
+  "baseDriverSha256": "7f849959c9cb0b411b6c4275a51fd9e9c4cb390582cb877b19f06202f6b62b4b",
+  "establishedMethod": "tools/cp9/r0007_browser.py:281-290 native whole-viewport page.screenshot",
+  "sourceReview": "The only behavioral delta from the state-capture driver replaces the passive30-second wait with a sequential original PNG acquisition loop and read-only clock bounds. Native input, runtime, ordinary acquisition/retry, checkpoint assertions and lifecycle remain unchanged.",
+  "preexecutionFinding": {
+    "oldCandidateSha256": "d95693a9719242e7fa37507208875f8120e5d4428507158a08c06fe1fef309e3",
+    "severity": "blocking-before-acquisition",
+    "problem": "A last.beforeClock-first.beforeClock span of30seconds does not guarantee30seconds between actual image acquisition instants, which lie inside their call/clock bounds.",
+    "resolution": "Review interval now begins after the first image's afterClock and its host receipt. Final image begins beyond both predeclared+30second endpoints. First/last image windows bracket the full interval; all prefix/suffix images remain retained.",
+    "nativeAttemptOnFailedDraft": false
+  },
+  "gates": {
+    "requiredDurationSeconds": 30,
+    "targetStartCadenceMs": 100,
+    "minimumOriginalFrames": 240,
+    "maxStartGapMs": 250,
+    "maxCaptureCallMs": 250,
+    "allFilesRetained": true,
+    "noInterpolation": true,
+    "noFullDiagnosticReadDuringWatch": true,
+    "nativeClockRate": 1
+  },
+  "qualificationRequired": [
+    "Inspect and hash the entire original PNG sequence and exact first/last timing bounds; do not accept target cadence in place of actual timing.",
+    "Retain blank, partial, slow or missing images and failed gates. No selection of a shorter healthy tail or replacement of frames across runs.",
+    "Acquire a same-route full-motion positive control so the reduced static-looking sequence cannot pass by a stale/cached raster route alone.",
+    "Reconcile native-source/fixture/runtime identity, original state transitions and observer differences for each new run.",
+    "Judge sampled route coverage and motion from actual pixels. A preparation PASS is not a continuous-motion PASS."
+  ],
+  "originalEvidenceDisposition": "Original Firefox reduced watch remains FAIL at native frames4276/171.04s and4474/178.96s. All prior failed recordings remain intact. Any eventual qualification belongs to this separate route/run; no native-video repair or causal attribution is inferred.",
+  "limits": [
+    "The established API previously qualified state screenshots; its new repeated sequence has not yet been qualified.",
+    "Declared10Hz target and250ms maximum gaps remain sampling limits. No claim of every physical refresh or unique source-render/native-frame identity is permitted.",
+    "No overall B16/B18 acceptance or release authority is granted by this preparation review."
+  ]
+}

@@ -1,0 +1,423 @@
+{
+  "schema": "r000b-independent-atomic-handoff-source-review/v1",
+  "reviewer": "/root/r000b_independent_review",
+  "decision": "PASS_BOUNDED_SAME_TURN_SOURCE_CONTRACT__NATIVE_PIXELS_PENDING",
+  "target": {
+    "worktree": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget",
+    "branch": "codex/r000b-close-20261014",
+    "base": "16658749209e0c567f49a3fc9dc855f665afa6e4",
+    "runtimeSha256": "c2753a21c337ff0bc09cea05f15bfc7729dcc2295a924c11284399fdab6e9ea2",
+    "sourceSha256": "a5586f87ee14c0c1d24f5f933aefc1fad724454636fd4dd4a2ea9ded80642e0c"
+  },
+  "findings": [
+    {
+      "severity": "P1",
+      "status": "SOURCE_ADDRESSED_NATIVE_REQUALIFICATION_REQUIRED",
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-host.mjs",
+      "line": 19,
+      "description": "The intermediate 7e497fd9 candidate withdrew both old refined and invalid preview owners, then returned before the next native preview paint. Its original Chromium reduced frame at PTS 150.00s exposes a bright blue-grey fallback sky and a black lunar dark half. A clean later interval or mere Moon presence does not pass the transition."
+    },
+    {
+      "severity": "P1",
+      "status": "SOURCE_ADDRESSED",
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-host.mjs",
+      "line": 31,
+      "description": "The final candidate completes the existing preview presentation synchronously after old full-frame/canvas withdrawal when the current preview does not already own the shared detail. This handles both an invalid preview needing a fresh snapshot and a still-current preview whose shared detail belonged to the withdrawing refined sky."
+    }
+  ],
+  "sourceAnalysis": {
+    "boundedDelta": "Authored native-host clear only, plus deterministic generated native-sky.js and offline.html. No styles, lunar geometry, terrain data, lunar physics, weather/radar freshness, source timestamps or core preview renderer changed.",
+    "ownership": "previewOwnsDetail requires preview.frame.current() and the atmospheric-preview skyOwner. An already-current preview-owned detail and its pixels are preserved. Otherwise obsolete detail is cleared and existing preview.update() is invoked once after full canvas/frame withdrawal, before status publication.",
+    "retainedChecks": "The unchanged update owner checks accepted input, hidden/paused state, exact target/generation/age, final publication headroom and bounded retry. It either republishes a still-current original-UTC image or computes a fresh accepted-UTC preview; it does not relabel stale pixels as new.",
+    "whyPriorConditionalWasInsufficient": "Calling update only for !previewCurrent misses a current preview whose shared lunar detail belongs to refined-sky and has just been cleared. The second genuine RED asserted visible detail before withdrawal returns while preserving its original UTC.",
+    "limits": "This is a controlled source/publication contract. It does not certify every possible clear reason, every Moon availability state or every physical compositor frame. Existing cold-start terrain-unavailable behavior remains separately bounded."
+  },
+  "evidence": {
+    "visualRed": {
+      "report": "independent-review/handoff-chromium-reduced-review.json",
+      "reportSha256": "1ec7fd27a409445f7912f6fe2ec82c0fdd6e0d48e4c23551ea11989406283788",
+      "frame": "native-handoff-qualified/chromium-reduced/pixel-review/frame-03750.png",
+      "description": "Original frame was manually viewed and independently decoded from original video; decoded RGB exactly matches the retained index/export. It remains a failure of the intermediate candidate."
+    },
+    "sourceRed": {
+      "archivedSourceSha256": "a4b1b057b69bd1949a109b99f32501115a4a909ce17342fdf2f24feb7136c79a",
+      "archivedTestSha256": "b99a4eb23aad88b1f58d402a9fe290fd7ec87ae0943c084af3c3dfab08f3e23e",
+      "tap": "recovery-handoff-source/flash-counterexample/red-qualified.tap",
+      "pass": 12,
+      "fail": 2,
+      "failedAssertions": [
+        "Invalid old preview must be replaced before full clear returns.",
+        "Still-current preview must recompose withdrawn refined-owned detail before return, retaining original UTC."
+      ]
+    },
+    "currentTests": {
+      "testSha256": "1b393d609d6ab8b056030710a45b6c208f386ab472c3838204a47734814df445",
+      "independentCommand": [
+        "C:\\workspace\\ai\\cp9-integration-20261005\\toolchain\\node-v22.16.0-win-x64\\node.exe",
+        "--test",
+        "tests/r000b-sky-withdrawal.test.mjs",
+        "tests/real-sky/native-preview-host.test.mjs",
+        "tests/real-sky/native-lifecycle.test.mjs",
+        "tests/real-sky/native-contract.test.mjs"
+      ],
+      "exitCode": 0,
+      "pass": 53,
+      "fail": 0,
+      "skipped": 0,
+      "todo": 0,
+      "durationMs": 116.571,
+      "controls": "Same-turn fresh publication, same-turn retained-current publication without UTC relabeling, absent input remaining unavailable, and preserved already-current preview-owned detail/pixels. Existing exact 30000/30001 ms and actual authority controls remain.",
+      "testScope": "The integration suite executes the actual full clear and complete actual preview-host code with controlled raster/canvas/currentness dependencies. Separate withdrawal tests use actual nativeJob/nativeResultCurrent. Neither test suite is a pixel oracle."
+    }
+  },
+  "currentness": {
+    "runtime": "c2753a21c337ff0bc09cea05f15bfc7729dcc2295a924c11284399fdab6e9ea2",
+    "runtimeVerified": 135,
+    "drift": [],
+    "changes": [
+      {
+        "path": "offline.html",
+        "before": {
+          "bytes": 80730161,
+          "sha256": "65b5c5d99ab2add5789c89b2f68868fcd1a0961950607e94aa2fa726d8536525"
+        },
+        "after": {
+          "bytes": 80730482,
+          "sha256": "dbda7e967be39d85ca6b970c06b4053d60335b6b50d59f7849512e1a22ccec6e"
+        }
+      },
+      {
+        "path": "real-sky/native-host.mjs",
+        "before": {
+          "bytes": 12345,
+          "sha256": "a4b1b057b69bd1949a109b99f32501115a4a909ce17342fdf2f24feb7136c79a"
+        },
+        "after": {
+          "bytes": 12666,
+          "sha256": "a5586f87ee14c0c1d24f5f933aefc1fad724454636fd4dd4a2ea9ded80642e0c"
+        }
+      },
+      {
+        "path": "real-sky/native-sky.js",
+        "before": {
+          "bytes": 333111,
+          "sha256": "d51102f8e6afabfb82830f5c29516edb15885b33ff95c2fe2f9e5552b0584fb4"
+        },
+        "after": {
+          "bytes": 333432,
+          "sha256": "7e47b46652fdb2a22b9ea4c1e15777ac636f789434fb53a0ea5492eeb3fa7568"
+        }
+      }
+    ],
+    "treeHashIndependentlyRecomputed": "c2753a21c337ff0bc09cea05f15bfc7729dcc2295a924c11284399fdab6e9ea2",
+    "acceptedRegions": [
+      {
+        "id": "motion-policy",
+        "sha256": "c7130510aa3ef8193be9ddc8315845f7adad27958c6bdfc4d8640302959814bc",
+        "matches": true
+      },
+      {
+        "id": "cloud-generator-motion",
+        "sha256": "fe98f8930cf17697e193b10d357702e57dd26b541cc0ae41272a2ee23b73d305",
+        "matches": true
+      },
+      {
+        "id": "request-owner",
+        "sha256": "23cefa8b79428fc20e988915ce6db1255ce50023bca9f0ab73c1ea0448eee856",
+        "matches": true
+      },
+      {
+        "id": "weather-admission-acquisition-decision-header",
+        "sha256": "0807485b55bed36960a3098fccda73120b51768f35b0ac42ba4e46a93d567f5d",
+        "matches": true
+      },
+      {
+        "id": "model-and-radar-gate",
+        "sha256": "4ca59118844413f9794dd2f38a2e3e4436d7eab5b8fd83bc76f94e974ff817e0",
+        "matches": true
+      },
+      {
+        "id": "weather-atmosphere-consumer",
+        "sha256": "f0d76b3c836dd1d285285dd874265fd28461cbb67694fbfa866a4cbdd20c2cdf",
+        "matches": true
+      },
+      {
+        "id": "cloud-per-use-consumer",
+        "sha256": "a2001bfa926f96db63014113a78182fecaf9cc99103a6d971adcdb7e5b828692",
+        "matches": true
+      },
+      {
+        "id": "weather-qa-consumer",
+        "sha256": "402a0deaab05bc6783f7c1a80424642f8253e2a0938606f15c4e08327ec1cd79",
+        "matches": true
+      },
+      {
+        "id": "weather-pre-radar",
+        "sha256": "bb926b28d81ca0602ef645bfd154bad58263ae2dfa5bdc8d229f488ae1c0b021",
+        "matches": true
+      },
+      {
+        "id": "weather-post-radar",
+        "sha256": "8070d12b8ec0b1438aead1d4b9fbd2a5c2973f3724470e3734df41249fb39ed6",
+        "matches": true
+      },
+      {
+        "id": "temporal",
+        "sha256": "aee53a340ed9527f09a0abde3c0de8a1bbd25b04b6e8c5913e2f93f611c9e026",
+        "matches": true
+      }
+    ],
+    "acceptedRows": [
+      "B01",
+      "B02",
+      "B03",
+      "B05",
+      "B06",
+      "B07",
+      "B08",
+      "B09",
+      "B10",
+      "B11",
+      "B12",
+      "B15"
+    ],
+    "pinsRechecked": 11,
+    "reportBindingsRechecked": 7,
+    "radarReuse": [
+      {
+        "receipt": "C:\\workspace\\ai\\r000b-execution-20261014\\native-qualified\\chromium-default\\receipt.json",
+        "sha256": "b69a9031d99d65c88641580401e791b8de97289f07bb0495e83bc302fc09afd6",
+        "status": "PASS_ASSERTIONS_PENDING_PIXEL_REVIEW",
+        "runtime": "7ce7f3502bf58bc4b29274dc61b2b73c01770c1c2f798c5faa8e0dc7a8e125f2",
+        "eventTimes": [
+          182,
+          600293.599999994
+        ],
+        "check": true,
+        "elapsed": 600572.5,
+        "eligibility": {
+          "available": true,
+          "frameAgeMs": 60572.400146484375,
+          "receiptAgeMs": 217.699951171875
+        }
+      },
+      {
+        "receipt": "C:\\workspace\\ai\\r000b-execution-20261014\\native-qualified\\firefox-default\\receipt.json",
+        "sha256": "0673ef73daa01b1026dcc987456c7f52b6477499eb2a8e8021caba2c2d0ac9c2",
+        "status": "PASS_ASSERTIONS_PENDING_PIXEL_REVIEW",
+        "runtime": "7ce7f3502bf58bc4b29274dc61b2b73c01770c1c2f798c5faa8e0dc7a8e125f2",
+        "eventTimes": [
+          294,
+          630008
+        ],
+        "check": true,
+        "elapsed": 630174,
+        "eligibility": {
+          "available": true,
+          "frameAgeMs": 60174,
+          "receiptAgeMs": 91
+        }
+      }
+    ],
+    "radarReuseScope": "Only unchanged acquisition, source/receipt expiry and ordinary >=10-minute retry. No new sky, Moon, cloud-pixel or motion credit from old default receipts.",
+    "sourceRowReuse": "B04/B13/B14 source/test/mutant identities and accepted B01-B03/B05-B12/B15 regions remain unchanged within their previously reviewed scope."
+  },
+  "documentation": {
+    "status": "PASS_SOURCE_FACTS_CURRENT",
+    "README": "Unchanged reviewed hash 1b693dd5a9ac260fbe0f68a715c0f4770eb8c9204f894cae3a041508691eb218.",
+    "DESIGN": "Unchanged reviewed hash 1364b0a7ca95a6efff981ab9f5a1cf2e59aefd79fe35a8bf8d1219d6d01cab88.",
+    "HANDOFF": "Current c47e2ba6e71a2351d128b5f0cb1a179531c8b7261fa2b560b31df8f4d0e2c15a describes invalid preview retirement and same-turn current presentation when needed, without claiming freshness or geometry changes. This describes successful eligible presentation; unchanged fail-closed behavior still applies when accepted input or publication is unavailable."
+  },
+  "acceptance": {
+    "B16": "PENDING final candidate pixel requalification; retained intermediate visual failure is not acquitted by this source PASS.",
+    "B17": "Source facts and diagnostic boundary wording reviewed; final candidate binding remains part of joined review.",
+    "B18": "PENDING delivery and final exact candidate review."
+  },
+  "bindings": [
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\baseline.json",
+      "bytes": 920,
+      "sha256": "1242110109bfa7003bb5f7ad92da651c3489ec6c4fe43278a41e01c3f52dcb71"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\build.txt",
+      "bytes": 175,
+      "sha256": "ae7bae6fcaabae35a99c6d495be8ff8fe65848be82e27089035a5bfc111b391b"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\candidate.json",
+      "bytes": 23279,
+      "sha256": "e68bcd1bb68f717d44847942c7686f291199c5c109d86371b54953cd12284f89"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\final-green.json",
+      "bytes": 604,
+      "sha256": "f426b8493eef326d75620aad88384e696a7d612f008a6df3a48fa198926784d2"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\final-green.tap",
+      "bytes": 11290,
+      "sha256": "7a7564c2d5ac952810408b6d3c5fee9a7fbec1b0dceb93f3c00f0bd3a382cbf7"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\green.json",
+      "bytes": 519,
+      "sha256": "41e862b9f0744518870fee36d6016034a9846b5d394077d3cddbdf18aec24310"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\green.tap",
+      "bytes": 11086,
+      "sha256": "7a16bc6f5f9fb9a9e520ecc7c91b31a71c0362320c799ed99cf28e0753363e6b"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\native-host.mjs",
+      "bytes": 12345,
+      "sha256": "a4b1b057b69bd1949a109b99f32501115a4a909ce17342fdf2f24feb7136c79a"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\native-preview-host.red.test.mjs",
+      "bytes": 11821,
+      "sha256": "b99a4eb23aad88b1f58d402a9fe290fd7ec87ae0943c084af3c3dfab08f3e23e"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\native-preview-host.test.mjs",
+      "bytes": 9123,
+      "sha256": "d7b14e9b1a93738343de18cb55968b240356e4cdcd420c50247a54687de379b1"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\r000b-sky-withdrawal.test.mjs",
+      "bytes": 5199,
+      "sha256": "d9c9c5e61ad89c08af0a86db731334359d2d6848579bd6873c7214378a086b0d"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\red-qualified.json",
+      "bytes": 376,
+      "sha256": "b58d1b9b4190fb6dc150ddf61845feac6a26956ca0415624c0d373ddecc1594e"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\red-qualified.tap",
+      "bytes": 5379,
+      "sha256": "50a4c2d50cccf260326ba92c4c146e076790f6f8e4134e2f0a096d25d3969253"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\red.json",
+      "bytes": 376,
+      "sha256": "69a08f5738e088f1811013e23199b5239ee85ec6321731b9553e33d383a36457"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\recovery-handoff-source\\flash-counterexample\\red.tap",
+      "bytes": 4180,
+      "sha256": "1314032892b79951926d76a837f6c9c1c390e2ad6dd99b966eb33573075dc542"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-host.mjs",
+      "bytes": 12666,
+      "sha256": "a5586f87ee14c0c1d24f5f933aefc1fad724454636fd4dd4a2ea9ded80642e0c"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-preview-host.mjs",
+      "bytes": 11061,
+      "sha256": "b8db43b4b9875cd3d92cfdb11b07a19d97f1932e7293ccfb6b05cbde717d919a"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-contract.mjs",
+      "bytes": 4860,
+      "sha256": "91e6f44fbffa5f9d49ce49afd610dba0acd1341b894a2af461adb39be8398d1b"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-lifecycle.mjs",
+      "bytes": 5997,
+      "sha256": "dbe987b7459508e48be149c4446ad090ac0490f6b49d21bd98aa3b09051e5880"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-sky.css",
+      "bytes": 1854,
+      "sha256": "298a11d0d91a801de2e8f63b7e4997ff33d7a7423ebd0e4c8a0bbd5710f68f31"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\real-sky\\native-sky.js",
+      "bytes": 333432,
+      "sha256": "7e47b46652fdb2a22b9ea4c1e15777ac636f789434fb53a0ea5492eeb3fa7568"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\src\\native\\index.html",
+      "bytes": 359244,
+      "sha256": "37fb7477e23d02329eacbf8ff94107fb3ea40a7d62020ef56a245af56e0ade00"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\index.html",
+      "bytes": 549445,
+      "sha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\offline.html",
+      "bytes": 80730482,
+      "sha256": "dbda7e967be39d85ca6b970c06b4053d60335b6b50d59f7849512e1a22ccec6e"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\r000b-sky-withdrawal.test.mjs",
+      "bytes": 5199,
+      "sha256": "d9c9c5e61ad89c08af0a86db731334359d2d6848579bd6873c7214378a086b0d"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\real-sky\\native-preview-host.test.mjs",
+      "bytes": 12374,
+      "sha256": "1b393d609d6ab8b056030710a45b6c208f386ab472c3838204a47734814df445"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\real-sky\\native-contract.test.mjs",
+      "bytes": 3539,
+      "sha256": "c77c58ff04752e60d525c6e289681a3f4132c83fcb3efcdb66dbe06d1168e449"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\tests\\real-sky\\native-lifecycle.test.mjs",
+      "bytes": 6496,
+      "sha256": "cab8ade0346eb097cb3c64e65cf8b3828e2447d2a9f368da3cce4bfd0c947026"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\README.md",
+      "bytes": 33705,
+      "sha256": "1b693dd5a9ac260fbe0f68a715c0f4770eb8c9204f894cae3a041508691eb218"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\DESIGN.md",
+      "bytes": 46028,
+      "sha256": "1364b0a7ca95a6efff981ab9f5a1cf2e59aefd79fe35a8bf8d1219d6d01cab88"
+    },
+    {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r000b-close\\salah_widget\\HANDOFF.md",
+      "bytes": 17336,
+      "sha256": "c47e2ba6e71a2351d128b5f0cb1a179531c8b7261fa2b560b31df8f4d0e2c15a"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\independent-review\\handoff-chromium-reduced-review.json",
+      "bytes": 35133,
+      "sha256": "1ec7fd27a409445f7912f6fe2ec82c0fdd6e0d48e4c23551ea11989406283788"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\independent-review\\recovery-handoff-source-review.json",
+      "bytes": 30230,
+      "sha256": "81f1904f587186db0b2a9a2401c9794695c4f580e29c2ce34cedeaba461ef68b"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\native-handoff-qualified\\chromium-reduced\\pixel-review\\frame-03750.png",
+      "bytes": 123411,
+      "sha256": "b95a4e283d60e65cf2491889061dfd94e51d50e9f96bfe7fa5f6b60010232f03"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\accepted-currentness.json",
+      "bytes": 10809,
+      "sha256": "ee42273c71a6f960f92a137ca28facd3c9cd7628096812ccec5172c2017a6094"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\post-handoff-currentness.json",
+      "bytes": 12790,
+      "sha256": "4dfebfb997631cc4ba420c6437ccbf8d2f8cb711afc950972b5b716a5d7831cd"
+    },
+    {
+      "path": "C:\\workspace\\ai\\r000b-execution-20261014\\reconcile_handoff_currentness.py",
+      "bytes": 3850,
+      "sha256": "8f190b9f028a1ae948d775a3eb76dc991976f764c70b93ece3feaddd2491837d"
+    }
+  ]
+}

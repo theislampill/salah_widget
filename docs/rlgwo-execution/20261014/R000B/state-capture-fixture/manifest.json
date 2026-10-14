@@ -1,0 +1,14 @@
+{
+  "schema": "r000b-supplemental-state-capture/v1",
+  "originalDriver": "tools/qa/run_r000b_native.py",
+  "originalDriverSha256": "4944879b9f55a0a94bdfe7b9a84c6302d7b5180730dae97795b867eb6b38e9df",
+  "supplementalDriver": "run_r000b_state_capture.py",
+  "supplementalDriverSha256": "7f849959c9cb0b411b6c4275a51fd9e9c4cb390582cb877b19f06202f6b62b4b",
+  "scope": "Separate disposable Firefox default context; identical actual ingress, clock, source, ordinary weather retries and read-only state checks. Adds native viewport PNG at each original checkpoint, with before/after host time and pixel hash. No radar-recovery repeat. Original bad video frames remain failed. Supplemental video is retained but not used to qualify or repair the original watch.",
+  "changes": [
+    "Resolve existing run_r000c_native import from reviewed checkout for external evidence-owned driver.",
+    "Add page.screenshot immediately after original diagnostic read and before checkpoint persistence; no DOM/style/time/model mutation.",
+    "Retain post-screenshot original read-only state and verify geometry/rows/current weather and source/receipt identity across native screenshot."
+  ],
+  "establishedMethod": "tools/cp9/r0007_browser.py:281-290; full-viewport page.screenshot with pre/post presentation readback, shared by R0002/R0004/R0006."
+}

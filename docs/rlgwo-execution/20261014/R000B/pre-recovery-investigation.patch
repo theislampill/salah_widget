@@ -1,0 +1,206 @@
+diff --git a/DESIGN.md b/DESIGN.md
+index cb4d83b..2f53d31 100644
+--- a/DESIGN.md
++++ b/DESIGN.md
+@@ -271,6 +271,35 @@ unavailable. These rules use the existing provider, configuration and cache
+ schema; they do not retroactively distinguish a legacy coerced zero from a
+ genuine recorded zero.
+ 
++Temporal authority keeps `currentTime` (provider `current.time`), `currentZone`
++(the captured request timezone), `currentValidAt`, `currentIntervalSec` and
++`retrievedAt` separate. Calendar-invalid or ambiguous/unresolvable wall times and
++nonpositive/nonfinite intervals are unavailable. The interval describes the
++preceding aggregation period; it is not an extra freshness allowance. Provider
++`generationtime_ms` is processing duration, not a source epoch. Current source
++and receipt ages must each satisfy **0 through 900000 ms inclusive** (15 minutes),
++evaluated again at each real-time use. There is no future-skew allowance: +1 ms
++is ineligible. A skewed client clock can therefore withhold otherwise useful data.
++
++RainViewer `past[].time` becomes `frameGeneratedAt`, `generated` becomes
++`indexGeneratedAt`, and completed acquisition has its own `retrievedAt`.
++Both seconds inputs must be raw finite nonnegative numbers whose derived
++milliseconds are valid Date epochs before Image dispatch or metadata installation.
++Index generation never substitutes for a missing frame timestamp. Frame and
++receipt ages each satisfy **0 through 1200000 ms inclusive** (20 minutes);
++downloading the same stale frame again cannot renew its source age. Index time
++is retained separately, not used as the frame freshness clock. Mosaic generation
++does not date every contributing radar measurement or certify selected-site
++coverage, rain amount or direct observation.
++
++Six-hour weather-cache retention is distinct from live authority. Compatible
++legacy cache bytes may remain without usable source metadata; acquisition can
++replace them, while failed refreshes cannot renew them. Expired or invalid current
++authority yields an em dash, blank temperature, and no unsupported cloud,
++precipitation or lightning effects. The neutral sky remains decorative; hourly
++data cannot substitute for live current. Prayer-cache stale state remains separate,
++and cache retention is not an offline-app guarantee.
++
+ - Fresh, correct-target `current` WMO categories supply condition emojis and
+   `data-fx`. Titles/accessible labels/QA disclose provider, model status and the
+   absence of direct local observation. Unknown weather is an em dash with no
+@@ -294,6 +323,15 @@ result with `fetch timeout`, `body timeout` or `image timeout` identifies the
+ bounded stage. `received` describes wrapper completion, not freshness or provider
+ health. Slot release, retry eligibility and a healthy replacement consumer are
+ separate facts; the README's Weather retry description gives their timing limits.
++For freshness inspection, `qaState().cache.weatherSourceAgeSec` and
++`weatherAgeSec` report source and receipt ages, with `currentEligible`,
++`weatherStale` and `currentUnavailableReason`. `wxTruth.model.sourceValidAt`,
++`retrievedAt` and `quantity.from`/`to` describe the selected model and preceding
++interval when available. `wxTruth.radarFrameAgeSec` and `radarAgeSec` are frame
++and receipt ages; `radarAvailable` concerns unitless imagery, not rain authority.
++The raw record retains its index epoch separately; the QA age summary does not
++expose an index-age field. Displayed ages are rounded seconds; exact eligibility
++uses milliseconds, so the rounded age alone cannot decide a boundary.
+ 
+ ## Star / night-sky system
+ 
+@@ -444,7 +482,10 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
+ 
+ ## Known approximations (honest)
+ 
+-- Weather "current" is a model **nowcast, not radar** — the precip gate is conservative, not ground-truth.
++- Weather `current` is a source-dated **model estimate**, not a direct local observation.
++  Its preceding-interval amount is not instantaneous rainfall. Source/receipt
++  expiry, client clock skew and radar coverage limit availability; radar imagery
++  remains unitless and supplies no ground-truth precipitation amount.
+ - The arc's declination fit absorbs refraction to make sunrise/sunset land on the line (a visual calibration).
+ - Dhuhr's "hair past the apex" is a small deliberate offset (post-zawāl cue), since minute-resolution data can put
+   Dhuhr exactly on solar noon.
+diff --git a/HANDOFF.md b/HANDOFF.md
+index 5379d25..ab5fc4d 100644
+--- a/HANDOFF.md
++++ b/HANDOFF.md
+@@ -169,8 +169,20 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
+ - **Optics are art-directed approximations, not photometric** — but they now **register to the visible corner
+   sun** (`--sunvx/--sunvy`), so the old "halo center-screen" bug is fixed. The moon's halo/paraselenae may still
+   show as partial arcs (halo radius > the disc). Sun tone-mapping constants are tuned, not radiometric.
+-- Weather precip evidence is Open-Meteo's **nowcast, not true radar** (documented limitation). If a CORS-safe
+-  radar/nowcast precip source is found, wiring it into `gateWeatherCode` would make the gate ground-truth.
++- Weather is an Open-Meteo **current model estimate**, with source-valid time in
++  the captured request timezone, a preceding interval, and retrieval time kept
++  separate. Both source and receipt must be 0–15 minutes old, inclusive; future
++  timestamps are ineligible. RainViewer frame-generation, index-generation and
++  receipt times are distinct; frame and receipt each use 0–20 minutes, inclusive.
++  Missing frame time cannot borrow index time, and invalid derived epochs are
++  rejected before Image dispatch. Retaining cache bytes for six hours does not
++  preserve live authority: expired/invalid weather shows an em dash and blank
++  temperature and withdraws unsupported cloud/precipitation/lightning effects.
++  Valid optional-missing model conditions remain allowed. Clock skew, model
++  aggregation and radar coverage remain limitations; neither these checks nor
++  radar alpha establish ground observation or a self-contained offline app.
++  Existing DESIGN weather diagnostics distinguish source/receipt ages and current
++  eligibility; prayer-cache stale state is separate.
+ 
+ ## Do NOT reintroduce (the user has explicitly rejected these)
+ 
+diff --git a/README.md b/README.md
+index d95c9ad..bf03f4e 100644
+--- a/README.md
++++ b/README.md
+@@ -239,6 +239,19 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
+   snow, while a thunder condition alone cannot authorize lightning. These value
+   rules require no new provider, configuration field, cache migration or installer
+   change.
++  Freshness uses the model's source-valid `current.time` in the captured request
++  timezone, its positive preceding-interval duration, and retrieval time separately.
++  Both source and retrieval ages must be between zero and **15 minutes, inclusive**;
++  even a timestamp 1 ms in the future is ineligible. A new download cannot renew
++  an old source record. Invalid or expired current data shows an em dash and blank
++  temperature and stops unsupported clouds, rain/snow particles and lightning.
++  Optional missing precipitation alone does not invalidate an otherwise eligible
++  model condition. Client clock skew can temporarily withhold useful data.
++  Radar retains mosaic frame-generation, index-generation and retrieval times
++  separately: frame and retrieval ages each have an inclusive **20-minute** limit,
++  with no future allowance. Index time never replaces a missing frame time.
++  Valid timestamps do not establish local radar coverage or ground observation;
++  imagery remains unitless and cannot authorize precipitation amounts or strikes.
+ - **Weather-reactive color theme** — the palette shifts with the sky: warm gold under a
+   clear day, deep indigo on a clear night, muted grey when cloudy, cool steel-blue for
+   rain, icy for snow, and charcoal-violet for thunderstorms. Day vs. night is derived
+@@ -311,6 +324,11 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
+   visible render loop offers approximately 30-second opportunities outside an
+   advancing sweep; eligibility and timeout release are not immediate retry or
+   successful recovery.
++  The weather cache's six-hour retention window is storage compatibility, not
++  live authority. Retained legacy records without valid source metadata remain
++  unavailable until a healthy eligible response arrives; failed refreshes cannot
++  renew their source or receipt time. Prayer-cache rules are separate. These
++  caches do not make the widget a self-contained offline app.
+   On performance-clock hosts, the absolute elapsed attempt deadline is checked
+   as well as the timer: a late fetch/body/Image completion is rejected even if
+   suspension delayed timer delivery. The existing `Date.now()` fallback is a
+diff --git a/index.html b/index.html
+index f2bcc93..e62cd75 100644
+--- a/index.html
++++ b/index.html
+@@ -3569,6 +3569,9 @@ async function fetchRadar(){
+     if(typeof host==="string"&&Array.isArray(past)&&past.length){
+       const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
+       if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
++      const frameGeneratedAt=fr.time*1000, indexGeneratedAt=j.generated*1000;
++      // Finite seconds can overflow milliseconds or Date's epoch range. Reject before Image dispatch/install.
++      if(!Number.isFinite(new Date(frameGeneratedAt).getTime())||!Number.isFinite(new Date(indexGeneratedAt).getTime())) return;
+       const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;
+       const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+       if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
+@@ -3579,8 +3582,8 @@ async function fetchRadar(){
+       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
+       if(!image.ok||!attemptEligible(op,a)) return;
+       const retrievedAt=Date.now();
+-      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt:fr.time*1000,
+-        indexGeneratedAt:j.generated*1000,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
++      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt,
++        indexGeneratedAt,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
+     }
+   }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
+   finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }
+diff --git a/offline.html b/offline.html
+index e6f9d4b..9b1c853 100644
+--- a/offline.html
++++ b/offline.html
+@@ -3971,6 +3971,9 @@ async function fetchRadar(){
+     if(typeof host==="string"&&Array.isArray(past)&&past.length){
+       const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
+       if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
++      const frameGeneratedAt=fr.time*1000, indexGeneratedAt=j.generated*1000;
++      // Finite seconds can overflow milliseconds or Date's epoch range. Reject before Image dispatch/install.
++      if(!Number.isFinite(new Date(frameGeneratedAt).getTime())||!Number.isFinite(new Date(indexGeneratedAt).getTime())) return;
+       const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;
+       const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+       if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
+@@ -3981,8 +3984,8 @@ async function fetchRadar(){
+       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
+       if(!image.ok||!attemptEligible(op,a)) return;
+       const retrievedAt=Date.now();
+-      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt:fr.time*1000,
+-        indexGeneratedAt:j.generated*1000,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
++      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt,
++        indexGeneratedAt,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
+     }
+   }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
+   finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }
+diff --git a/src/native/index.html b/src/native/index.html
+index 0a8ea5e..9a4abc0 100644
+--- a/src/native/index.html
++++ b/src/native/index.html
+@@ -1443,6 +1443,9 @@ async function fetchRadar(){
+     if(typeof host==="string"&&Array.isArray(past)&&past.length){
+       const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
+       if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
++      const frameGeneratedAt=fr.time*1000, indexGeneratedAt=j.generated*1000;
++      // Finite seconds can overflow milliseconds or Date's epoch range. Reject before Image dispatch/install.
++      if(!Number.isFinite(new Date(frameGeneratedAt).getTime())||!Number.isFinite(new Date(indexGeneratedAt).getTime())) return;
+       const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;
+       const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+       if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
+@@ -1453,8 +1456,8 @@ async function fetchRadar(){
+       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
+       if(!image.ok||!attemptEligible(op,a)) return;
+       const retrievedAt=Date.now();
+-      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt:fr.time*1000,
+-        indexGeneratedAt:j.generated*1000,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
++      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt,
++        indexGeneratedAt,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
+     }
+   }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
+   finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }
