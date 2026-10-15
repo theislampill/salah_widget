@@ -183,6 +183,15 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
   radar alpha establish ground observation or a self-contained offline app.
   Existing DESIGN weather diagnostics distinguish source/receipt ages and current
   eligibility; prayer-cache stale state is separate.
+  The weather header now exposes current, nearby, approach and forecast information
+  from one admitted decision through its name/title and `#weather-information`.
+  Local settings references the same accessible description. Live local observation
+  and arrival adapters remain unavailable; positive present/nearby/approach and
+  optional probability contracts are explicitly owned SIM fixtures. Do not infer
+  arrival from wind/distance or promote forecast/radar to present observation.
+  Snow uses the existing rain deck origin and cloud-column coupling; the weather
+  authority and motion gates remain unchanged. R0024 native/resource/delivery
+  qualification is tracked by candidate-bound evidence, not by this implementation note.
   Refined-sky withdrawal also retires an invalid atmospheric preview's ready flag.
   When needed, the existing preview owner completes a current presentation in the
   same turn; a current preview keeps its own lunar detail. This does not extend

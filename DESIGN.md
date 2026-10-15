@@ -328,6 +328,39 @@ and cache retention is not an offline-app guarantee.
 - RainViewer palette alpha is unitless imagery, never millimetres or local
   observation authority. A newly fetched mosaic cannot renew old source evidence.
 
+`weatherInformation(decision, day)` formats one admitted decision into cached
+`summary`, `currentText`, `spatialText`, `horizonText` and `forecastText` strings.
+The existing weather icon name/title append the summary. The clipped, accessible
+`#weather-information` description contains that same snapshot; `#wi` references
+it through `aria-describedby`. Local settings adds this reference without replacing
+existing description tokens, action name, persistence warning, role or focus behaviour.
+No live region, new control, provider request or weather permission is introduced.
+
+Current model estimates, qualified SIM present wet/dry/conflict, and unknown
+conditions remain distinct. Rejected synthetic quality retains any eligible model
+classification and quantity, with the rejection disclosed and present effects
+withheld. Qualified SIM nearby precipitation is a range, not an arrival time.
+Only a qualified synthetic trajectory supplies an approach interval. Current wet
+and future approach may coexist; distance, wind, WMO code, hourly forecast and
+radar alpha never imply an ETA. Live local observation, nearby and arrival adapters
+remain unavailable.
+
+Source validity, approach and forecast intervals use absolute target-zone times.
+Current model precipitation describes the preceding declared interval; mm/h is
+labelled an interval average, never an instantaneous measurement. Null and zero
+remain distinct. Forecast text retains provider/product, amount kind/units and
+valid interval. Probability requires the exact precipitation event/window; actual
+production hourly metadata supplies neither probability nor qualified event data.
+The separate `r0024-forecast-fixture/v1` decorator exercises this contract only in
+an owned preview and refuses live, wrong-owner/target, expired or malformed input.
+It is not a live prediction service or an accuracy claim.
+
+For diagnostics, enable `qa=1` and compare `qaState().wxTruth` with
+`qaState().weatherHeader.information` and `#weather-information.textContent`.
+The native fixture runner in `tools/qa/run_r0024_native.py` records the actual
+decision, accessible presentation, particles and pixels; QA fields alone cannot
+prove browser presentation or visible motion.
+
 `qaState().wxTruth.requests.weather` and `.radar` retain the last small attempt
 diagnostic: `generation`, `operationId`, `attemptId`, `state` and `reason`.
 The active stages are `fetch`, `body` and, for radar, `image`; an `unavailable`
