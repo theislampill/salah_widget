@@ -1,0 +1,172 @@
+TAP version 13
+# Subtest: midday fades only Fajr/Sunrise; future Maghrib/Isha remain normal
+ok 1 - midday fades only Fajr/Sunrise; future Maghrib/Isha remain normal
+  ---
+  duration_ms: 59.7664
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 00:00:00 preserves elapsed/current/upcoming hierarchy
+ok 2 - actual clock boundary 00:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.545
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 04:59:59 preserves elapsed/current/upcoming hierarchy
+ok 3 - actual clock boundary 04:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 35.5014
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 05:00:00 preserves elapsed/current/upcoming hierarchy
+ok 4 - actual clock boundary 05:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 38.5397
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 05:59:59 preserves elapsed/current/upcoming hierarchy
+ok 5 - actual clock boundary 05:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 36.387
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 06:00:00 preserves elapsed/current/upcoming hierarchy
+ok 6 - actual clock boundary 06:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 42.1337
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 06:19:59 preserves elapsed/current/upcoming hierarchy
+ok 7 - actual clock boundary 06:19:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 36.4549
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 06:20:00 preserves elapsed/current/upcoming hierarchy
+ok 8 - actual clock boundary 06:20:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 36.4309
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 11:59:59 preserves elapsed/current/upcoming hierarchy
+ok 9 - actual clock boundary 11:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.5432
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 12:00:00 preserves elapsed/current/upcoming hierarchy
+ok 10 - actual clock boundary 12:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.569
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 15:29:59 preserves elapsed/current/upcoming hierarchy
+ok 11 - actual clock boundary 15:29:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 36.2717
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 15:30:00 preserves elapsed/current/upcoming hierarchy
+ok 12 - actual clock boundary 15:30:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 39.022
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 17:59:59 preserves elapsed/current/upcoming hierarchy
+ok 13 - actual clock boundary 17:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 35.6198
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 18:00:00 preserves elapsed/current/upcoming hierarchy
+ok 14 - actual clock boundary 18:00:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 37.4685
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 19:29:59 preserves elapsed/current/upcoming hierarchy
+ok 15 - actual clock boundary 19:29:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 35.4167
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 19:30:00 preserves elapsed/current/upcoming hierarchy
+ok 16 - actual clock boundary 19:30:00 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 36.2632
+  type: 'test'
+  ...
+# Subtest: actual clock boundary 23:59:59 preserves elapsed/current/upcoming hierarchy
+ok 17 - actual clock boundary 23:59:59 preserves elapsed/current/upcoming hierarchy
+  ---
+  duration_ms: 36.0009
+  type: 'test'
+  ...
+# Subtest: actual midnight adoption resets elapsed statuses for the new civil day
+ok 18 - actual midnight adoption resets elapsed statuses for the new civil day
+  ---
+  duration_ms: 44.7361
+  type: 'test'
+  ...
+# Subtest: equal admitted clocks are normal at the event instant and past one second later
+ok 19 - equal admitted clocks are normal at the event instant and past one second later
+  ---
+  duration_ms: 40.7217
+  type: 'test'
+  ...
+# Subtest: all equal polar clocks preserve exact-instant and elapsed states without row ordering
+ok 20 - all equal polar clocks preserve exact-instant and elapsed states without row ordering
+  ---
+  duration_ms: 40.2023
+  type: 'test'
+  ...
+# Subtest: reordered admitted clocks classify elapsed time independently of displayed row index
+ok 21 - reordered admitted clocks classify elapsed time independently of displayed row index
+  ---
+  duration_ms: 36.732
+  type: 'test'
+  ...
+# Subtest: annotated admitted clocks use the same source clock parser as the model
+ok 22 - annotated admitted clocks use the same source clock parser as the model
+  ---
+  duration_ms: 38.1465
+  type: 'test'
+  ...
+# Subtest: missing tomorrow preserves next-key precedence while actual countdown stays unavailable
+ok 23 - missing tomorrow preserves next-key precedence while actual countdown stays unavailable
+  ---
+  duration_ms: 8.2455
+  type: 'test'
+  ...
+# Subtest: mutant fading every inactive row is rejected by the actual midday caller
+ok 24 - mutant fading every inactive row is rejected by the actual midday caller
+  ---
+  duration_ms: 43.9264
+  type: 'test'
+  ...
+# Subtest: mutant inferring elapsed state by row index is rejected by reordered timings
+ok 25 - mutant inferring elapsed state by row index is rejected by reordered timings
+  ---
+  duration_ms: 44.0509
+  type: 'test'
+  ...
+# Subtest: mutant fading equal-time events at the exact instant is rejected
+ok 26 - mutant fading equal-time events at the exact instant is rejected
+  ---
+  duration_ms: 42.0545
+  type: 'test'
+  ...
+# Subtest: mutant dropping current/next precedence is rejected after Isha
+ok 27 - mutant dropping current/next precedence is rejected after Isha
+  ---
+  duration_ms: 44.2474
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1057.1212

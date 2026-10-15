@@ -1,0 +1,68 @@
+{
+  "sourceSha256": "917a3c26176c4326319fcdc01ad814500569106ce016d02667336e486b472761",
+  "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+  "builderSha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+  "limit": "Actual source/config/settings/builder consumer controls with recording DOM; no native visual/focus claim",
+  "results": [
+    {
+      "name": "default local backing removed",
+      "status": "PASS",
+      "healthyControl": "PASS",
+      "mutant": "DETECTED",
+      "failure": "Default glass must meet the original contrast requirement without opting in",
+      "mutantSha256": {
+        "source": "b043060269b341234ae2a21bf1fd301e2b2ad63b6d30ba7b83601f9703a8d254"
+      }
+    },
+    {
+      "name": "card binding forces contrast when glass is selected",
+      "status": "PASS",
+      "healthyControl": "PASS",
+      "mutant": "DETECTED",
+      "failure": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'contrast'\n- 'glass'\n",
+      "mutantSha256": {
+        "source": "95e3e05790d4bd5b21b34e62b7b4fc7879c92192c70f81d21337e3356c102bfd"
+      }
+    },
+    {
+      "name": "explicit hash glass omitted from detected preference overlay",
+      "status": "PASS",
+      "healthyControl": "PASS",
+      "mutant": "DETECTED",
+      "failure": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'contrast'\n- 'glass'\n",
+      "mutantSha256": {
+        "configSource": "74c36e286637bbab50542f8a6fb61413a463f5e157dc5bfc743df0a289f8911a"
+      }
+    },
+    {
+      "name": "serializer omits explicitly selected glass default",
+      "status": "PASS",
+      "healthyControl": "PASS",
+      "mutant": "DETECTED",
+      "failure": "Expected values to be strictly equal:\n\nnull !== 'glass'\n",
+      "mutantSha256": {
+        "configSource": "82fbfa8eced048123fb103fbe95ecc9716754d5e39faeaf03b72db28d235a3b9"
+      }
+    },
+    {
+      "name": "pending reset loses ownership of a newer appearance edit",
+      "status": "PASS",
+      "healthyControl": "PASS",
+      "mutant": "DETECTED",
+      "failure": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'glass'\n- 'contrast'\n",
+      "mutantSha256": {
+        "source": "968fc0a2a68bd8e8fdaadc2aa2f0229816f1faffaa253c60d0a80fb79d8b0804"
+      }
+    },
+    {
+      "name": "builder appearance edits do not update the real preview/output",
+      "status": "PASS",
+      "healthyControl": "PASS",
+      "mutant": "DETECTED",
+      "failure": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'glass'\n- 'contrast'\n",
+      "mutantSha256": {
+        "builderSource": "5b09cdb57c36dc20373a3660531ad9d4cab4493edb56d480790b8fabe410208e"
+      }
+    }
+  ]
+}

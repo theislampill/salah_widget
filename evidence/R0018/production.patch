@@ -1,0 +1,502 @@
+diff --git a/DESIGN.md b/DESIGN.md
+index 8e5d8a94..1aaadbfe 100644
+--- a/DESIGN.md
++++ b/DESIGN.md
+@@ -110,6 +110,18 @@ Complete values keep their 14px font, normal whitespace, anywhere wrapping and s
+   with dark text; `.p.now` independently outlines the current prayer. Future rows
+   stay readable glass, elapsed rows are subdued, and Forenoon has no current row.
+   Tomorrow's Fajr row, countdown and next arc marker use the same admitted target.
++- **Default timetable readability:** names and times retain full informational
++  opacity through their ancestors. Ordinary cells place `rgba(9,17,28,.74)` beneath
++  the decorative glass tint; elapsed rows use a quieter tint and border instead
++  of fading the text. NEXT keeps its opaque accent and dark foreground, and CURRENT
++  keeps its separate inset. The optional contrast appearance remains optional.
++  Native Chromium/Firefox pairs with a controlled 7 September 2026 Madinah clock verify
++  intended foreground/background contrast of at least 4.5:1 at noon, sunrise,
++  sunset, night, broken cloud, overcast and local white stress, with Inter/Fraunces
++  loaded and DPR 1/2 coverage. This is bounded timetable evidence, not whole-widget
++  accessibility certification; antialiasing/shadow changed-pixel ratios are only
++  diagnostics. The historical noon capture had no pinned date. Fonts, row geometry,
++  the 325×530 card, header/footer, and the separate embed interfaces are preserved.
+ - The arc (`drawArc`) is **one continuous solar-elevation curve** built from real solar motion (hour angle +
+   declination), NOT from prayer-to-prayer interpolation. Prayer events are *sampled onto* it. The declination is
+   fit so elevation crosses **0° exactly at this date's sunrise/sunset** (the fit may slightly exceed the real
+diff --git a/index.html b/index.html
+index e62cd758..5eb95183 100644
+--- a/index.html
++++ b/index.html
+@@ -412,8 +412,9 @@ body{color:#fff7df;
+ 
+ /* prayer-times grid */
+ .times{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:6px;margin-top:9.6px}
+-/* Liquid glass preserves the faded inactive rows, current inset and upcoming tint. */
+-.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;background:linear-gradient(160deg,#ffffff26,#ffffff0d);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
++/* Names and times stay fully opaque. A local backing protects readable glass;
++   elapsed rows recede through their tint and border, never faded information. */
++.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;color:#f0edf8;opacity:1;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.74);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
+ .p.on{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047));color:#211d15;border-color:var(--accent);box-shadow:var(--glass),inset 3px 0 0 var(--accent)}
+ /* An opaque accent plate gives NEXT a stable identity even over a warm horizon.
+    CURRENT retains its independent outline; future rows remain glass, not past. */
+@@ -422,7 +423,7 @@ body{color:#fff7df;
+ .c[data-appearance="contrast"] .p{opacity:1;color:#f0edf8;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.90)}
+ .c[data-appearance="contrast"] .p.on{color:#211d15;background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047))}
+ .p.now{box-shadow:var(--glass),inset 0 0 0 1.5px color-mix(in srgb,var(--text) 55%,transparent)}
+-.p.past{opacity:.42}
++.p.past{background:linear-gradient(160deg,#ffffff12,#ffffff06),rgba(9,17,28,.74);border-color:#ffffff20}
+ .p b{font-weight:600;font-size:12.5px;line-height:16.7px;letter-spacing:.01em}
+ .tm{font-weight:600;font-size:12.5px;line-height:16.7px}
+ 
+diff --git a/offline.html b/offline.html
+index 80036194..0fab116d 100644
+--- a/offline.html
++++ b/offline.html
+@@ -412,8 +412,9 @@ body{color:#fff7df;
+ 
+ /* prayer-times grid */
+ .times{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:6px;margin-top:9.6px}
+-/* Liquid glass preserves the faded inactive rows, current inset and upcoming tint. */
+-.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;background:linear-gradient(160deg,#ffffff26,#ffffff0d);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
++/* Names and times stay fully opaque. A local backing protects readable glass;
++   elapsed rows recede through their tint and border, never faded information. */
++.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;color:#f0edf8;opacity:1;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.74);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
+ .p.on{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047));color:#211d15;border-color:var(--accent);box-shadow:var(--glass),inset 3px 0 0 var(--accent)}
+ /* An opaque accent plate gives NEXT a stable identity even over a warm horizon.
+    CURRENT retains its independent outline; future rows remain glass, not past. */
+@@ -422,7 +423,7 @@ body{color:#fff7df;
+ .c[data-appearance="contrast"] .p{opacity:1;color:#f0edf8;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.90)}
+ .c[data-appearance="contrast"] .p.on{color:#211d15;background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047))}
+ .p.now{box-shadow:var(--glass),inset 0 0 0 1.5px color-mix(in srgb,var(--text) 55%,transparent)}
+-.p.past{opacity:.42}
++.p.past{background:linear-gradient(160deg,#ffffff12,#ffffff06),rgba(9,17,28,.74);border-color:#ffffff20}
+ .p b{font-weight:600;font-size:12.5px;line-height:16.7px;letter-spacing:.01em}
+ .tm{font-weight:600;font-size:12.5px;line-height:16.7px}
+ 
+diff --git a/src/native/index.html b/src/native/index.html
+index 9a4abc09..2c734667 100644
+--- a/src/native/index.html
++++ b/src/native/index.html
+@@ -412,8 +412,9 @@ body{color:#fff7df;
+ 
+ /* prayer-times grid */
+ .times{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:6px;margin-top:9.6px}
+-/* Liquid glass preserves the faded inactive rows, current inset and upcoming tint. */
+-.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;background:linear-gradient(160deg,#ffffff26,#ffffff0d);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
++/* Names and times stay fully opaque. A local backing protects readable glass;
++   elapsed rows recede through their tint and border, never faded information. */
++.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;color:#f0edf8;opacity:1;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.74);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
+ .p.on{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047));color:#211d15;border-color:var(--accent);box-shadow:var(--glass),inset 3px 0 0 var(--accent)}
+ /* An opaque accent plate gives NEXT a stable identity even over a warm horizon.
+    CURRENT retains its independent outline; future rows remain glass, not past. */
+@@ -422,7 +423,7 @@ body{color:#fff7df;
+ .c[data-appearance="contrast"] .p{opacity:1;color:#f0edf8;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.90)}
+ .c[data-appearance="contrast"] .p.on{color:#211d15;background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047))}
+ .p.now{box-shadow:var(--glass),inset 0 0 0 1.5px color-mix(in srgb,var(--text) 55%,transparent)}
+-.p.past{opacity:.42}
++.p.past{background:linear-gradient(160deg,#ffffff12,#ffffff06),rgba(9,17,28,.74);border-color:#ffffff20}
+ .p b{font-weight:600;font-size:12.5px;line-height:16.7px;letter-spacing:.01em}
+ .tm{font-weight:600;font-size:12.5px;line-height:16.7px}
+ 
+diff --git a/tests/r0018-appearance-browser-fixture.cjs b/tests/r0018-appearance-browser-fixture.cjs
+index 72ace4e4..8ef0a2fe 100644
+--- a/tests/r0018-appearance-browser-fixture.cjs
++++ b/tests/r0018-appearance-browser-fixture.cjs
+@@ -22,15 +22,17 @@ function buildPage(source,s,options={}){
+  if(source.split('<script src="config.js">').length!==2)throw Error('Expected one real config loader');
+  const pre=`<script>(()=>{
+  const spec=${JSON.stringify(s)},NativeDate=Date,wall=NativeDate.parse(spec.clock),data=new Map(),writes=[],requests=[],unexpectedFetch=[];
++ const nativeFetch=window.fetch.bind(window),assetPaths=${JSON.stringify(options.assetPaths||[])};
+  window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:[wall]));}static now(){return wall;}};
+  const fixture=window.__appearanceFixture={spec,storage:'private per-document Map; no owner storage',writes,requests,unexpectedFetch,failSave:${!!options.failSave},failReset:${!!options.failReset}};
+  const storage={getItem:k=>data.get(String(k))??null,setItem:(k,v)=>{if(fixture.failSave&&k==='salah_widget:config:v1'){const e=Error('Controlled refusal');e.name='QuotaExceededError';throw e;}writes.push({operation:'set',key:String(k)});data.set(String(k),String(v));},removeItem:k=>{if(fixture.failReset&&k==='salah_widget:config:v1'){const e=Error('Controlled refusal');e.name='SecurityError';throw e;}writes.push({operation:'remove',key:String(k)});data.delete(String(k));}};
+  Object.defineProperty(window,'localStorage',{value:storage});
+- window.fetch=async input=>{const url=new URL(typeof input==='string'?input:input.url,location.href);requests.push(url.href);
++ window.fetch=async (input,init)=>{const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.href);requests.push(url.href);
++  if(url.origin===location.origin&&assetPaths.includes(url.pathname))return nativeFetch(input,init);
+   if(url.origin==='https://api.aladhan.com'&&/^\\/v1\\/timings\\/(07|08)-09-2026$/.test(url.pathname))return new Response(JSON.stringify({code:200,status:'OK',data:url.pathname.includes('/08-')?spec.tomorrow:spec.today}),{status:200,headers:{'Content-Type':'application/json'}});
+   unexpectedFetch.push(url.href);throw Error('Fixture blocks unrelated provider '+url.href);
+  };
+- fixture.textHidden=false;fixture.setTextHidden=hidden=>{let style=document.getElementById('appearance-fixture-hidden-text');if(!style){style=document.createElement('style');style.id='appearance-fixture-hidden-text';document.head.appendChild(style);}style.textContent=hidden?'.p b,.p .tm{visibility:hidden!important}':'';fixture.textHidden=!!hidden;};
++ fixture.textHidden=false;fixture.setTextHidden=hidden=>{let style=document.getElementById('appearance-fixture-hidden-text');if(hidden){if(!style){style=document.createElement('style');style.id='appearance-fixture-hidden-text';document.head.appendChild(style);}style.textContent='.p b,.p .tm{visibility:hidden!important}';}else{style?.remove();}fixture.textHidden=!!hidden;};
+  })();</script>`;
+  const inspect=`<script>window.__appearanceFixture.snapshot=()=>{
+  const f=window.__appearanceFixture,rect=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};};
+@@ -40,7 +42,15 @@ function buildPage(source,s,options={}){
+ };</script>`;
+  const stress=options.stress?'<style>.times{background:#fff}</style>':'';
+  // Keep every production script body and the real boot/rAF/admission/calendar callers intact.
+- return source.replace('<script src="config.js">',pre+stress+'<script src="config.js">').replace('</body>',inspect+'</body>');
++ let page=source.replace('<script src="config.js">',pre+stress+'<script src="config.js">').replace('</body>',inspect+'</body>');
++ if(options.dateCase==='stale'){
++  if(page.split('\nboot();').length!==2)throw Error('Unique native boot owner required');
++  page=page.replace('\nboot();',`\n// Established controlled stale display, delegated through the real render owner.
++const readabilityNativeRender=render;
++render=function(...args){const previous=_prayerStale;_prayerStale=true;try{return readabilityNativeRender.apply(this,args);}finally{_prayerStale=previous;}};
++\nboot();`);
++ }
++ return page;
+ }
+ function routes(){
+  const out=[];for(const scene of Object.keys(scenes))for(const surface of ['previous-dark','default-glass','high-contrast']){const s=spec(scene,surface==='high-contrast'?'contrast':'default');out.push({name:surface+'-'+scene,spec:s,route:'/'+(surface==='previous-dark'?'previous':'candidate')+'/index.html?scene='+scene+'&appearance='+s.appearance+'&fresh='+surface+'-'+scene+routeHash(s)});}
+diff --git a/tests/r0018-appearance-mutations.cjs b/tests/r0018-appearance-mutations.cjs
+index 88dd58a7..d8d722f8 100644
+--- a/tests/r0018-appearance-mutations.cjs
++++ b/tests/r0018-appearance-mutations.cjs
+@@ -2,13 +2,13 @@
+ // Each isolated source mutant must fail the same actual consumer oracle that the healthy source passes.
+ const assert=require('node:assert/strict');
+ const {read,sha,widget,builder,configSession}=require('./r0018-appearance-fixture.cjs');
+-const {composition}=require('./r0018-timetable-contrast.cjs');
++const {composition,mutateTimetable}=require('./r0018-timetable-contrast.cjs');
+ const source=read('index.html'),config=read('config.js'),builderSource=read('builder.html');
+ const valid={lat:24.47,lon:39.61,tz:'UTC',label:'Madinah',method:'4',school:'0',time:'24',units:'f',datefmt:'YYYY-MM-DD',source:'manual'};
+ const once=(text,before,after)=>{assert.equal(text.split(before).length,2,'Exact single mutation seam');return text.replace(before,after);};
+ const cases=[
+- {name:'opaque backing reintroduced as default',mutant:{source:once(source,'background:linear-gradient(160deg,#ffffff26,#ffffff0d);border:','background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.90);border:')},
+-  oracle:({source})=>{const c=composition(source,'normal');assert.equal(c.opacity,1);assert.ok(c.ratio<4.5,'Owner-selected glass must remain distinct from opt-in contrast');}},
++ {name:'default local backing removed',mutant:{source:mutateTimetable(source,'default-base')},
++  oracle:({source})=>{const c=composition(source,'normal');assert.equal(c.opacity,1);assert.ok(c.ratio>=4.5,'Default glass must meet the original contrast requirement without opting in');}},
+  {name:'card binding forces contrast when glass is selected',mutant:{source:once(source,'card.dataset.appearance=c.appearance==="contrast"?"contrast":"glass"','card.dataset.appearance="contrast"')},
+   oracle:({source,configSource})=>{const w=widget({source,configSource});assert.equal(w.render().rows,6);assert.equal(w.document.querySelector('.c').dataset.appearance,'glass');}},
+  {name:'explicit hash glass omitted from detected preference overlay',mutant:{configSource:once(config,'"datefmt", "appearance", "lp"','"datefmt", "lp"')},
+diff --git a/tests/r0018-default-readability.py b/tests/r0018-default-readability.py
+new file mode 100644
+index 00000000..c927b4f4
+--- /dev/null
++++ b/tests/r0018-default-readability.py
+@@ -0,0 +1,213 @@
++"""Actual HTTP timetable text/background pairs; isolated fixture, no timing claims."""
++from pathlib import Path
++import argparse, datetime, functools, hashlib, http.server, json, math, os, re, subprocess, sys, threading
++from PIL import Image, ImageChops, ImageDraw
++from playwright.sync_api import sync_playwright
++
++ROOT=Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(ROOT/'tools/cp9'))
++from browser_runtime import launch_browser,browser_identity
++from runtime_identity import runtime_identity
++
++def sha(b): return hashlib.sha256(b).hexdigest()
++def write(p,v): p.write_text(json.dumps(v,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
++def lum(rgb):
++    c=[v/255 for v in rgb[:3]]
++    c=[v/12.92 if v<=.04045 else ((v+.055)/1.055)**2.4 for v in c]
++    return sum(x*y for x,y in zip(c,[.2126,.7152,.0722]))
++def ratio(a,b):
++    a,b=lum(a),lum(b);return (max(a,b)+.05)/(min(a,b)+.05)
++
++INSPECT=r'''async () => {
++const base=window.__appearanceFixture.snapshot(),rect=e=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height}},chain=e=>{const a=[];for(;e;e=e.parentElement)a.push({tag:e.tagName,id:e.id,className:typeof e.className==='string'?e.className:'SVG',opacity:+getComputedStyle(e).opacity});return a};
++const boxStyle=s=>({padding:s.padding,gap:s.gap,borderWidth:s.borderWidth,borderRadius:s.borderRadius,fontFamily:s.fontFamily,fontSize:s.fontSize,lineHeight:s.lineHeight,fontWeight:s.fontWeight});
++base.rows=Array.from(document.querySelectorAll('.p')).map(e=>{const s=getComputedStyle(e);return{text:e.textContent,className:e.className,rect:rect(e),boxStyle:boxStyle(s),color:s.color,opacity:s.opacity,background:s.background,filter:s.filter,blend:s.mixBlendMode,backdropFilter:s.backdropFilter,chain:chain(e),texts:Array.from(e.querySelectorAll('b,.tm')).map(t=>{const s=getComputedStyle(t);return{text:t.textContent,rect:rect(t),color:s.color,font:s.font,fontFamily:s.fontFamily,fontWeight:s.fontWeight,opacity:+s.opacity,chain:chain(t)}})}});
++base.geometry={};for(const s of ['.c','.h','.e','.buckle','.wt','.panel','.arc','.foc','.cn','.nt','.bar','.left','.times','.d','#ceDateButton','#ahDateButton','#ce','#ah']){const e=document.querySelector(s);if(e){const cs=getComputedStyle(e);base.geometry[s]={rect:rect(e),fontFamily:cs.fontFamily,fontSize:cs.fontSize,lineHeight:cs.lineHeight,fontWeight:cs.fontWeight,padding:cs.padding,gap:cs.gap,borderWidth:cs.borderWidth,borderRadius:cs.borderRadius}}};
++base.moon=JSON.parse(JSON.stringify(window.SalahMoonRuntime?.state??null));base.sky=window.realSkyState?.()??null;base.cardClasses=document.querySelector('.c').className;
++base.clock=Date.now();base.hash=location.hash;base.cardStyle=document.querySelector('.c').getAttribute('style');
++base.canvases=[];
++for(const e of document.querySelectorAll('.c canvas')){
++ const cs=getComputedStyle(e),ancestors=chain(e),visible=ancestors.every(a=>a.opacity>0)&&cs.display!=='none'&&cs.visibility!=='hidden'&&e.getBoundingClientRect().width>0;
++ // Read native pixels; never replace a canvas, scheduler, renderer or draw call.
++ const bytes=new TextEncoder().encode(e.toDataURL('image/png'));
++ const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');
++ base.canvases.push({id:e.id,className:e.className,width:e.width,height:e.height,rect:rect(e),visible,opacity:cs.opacity,transform:cs.transform,filter:cs.filter,blend:cs.mixBlendMode,sha256:digest});
++}
++base.scene={clock:base.clock,hash:base.hash,cardStyle:base.cardStyle,sky:{status:base.sky?.status,physical:base.sky?.physical,displayed:base.sky?.displayed,native:base.sky?.last?.native,utcMs:base.sky?.last?.utcMs},moon:{current:base.moon?.current,epoch:base.moon?.epoch,generation:base.moon?.generation,acceptedIdentity:base.moon?.accepted?.identity},canvases:base.canvases.filter(c=>c.visible)};
++return base;
++}'''
++
++def renderer_valid(state):
++    sky,moon=state.get('sky') or {},state.get('moon') or {}
++    return (sky.get('status')=='ready' and sky.get('physical') is True and not sky.get('errors')
++            and moon.get('current') is True and moon.get('legacyFallback') is False and not moon.get('errors'))
++
++def difference(a,b):
++    d=ImageChops.difference(a,b)
++    return {'bbox':d.getbbox(),'channelExtrema':d.getextrema()}
++
++def geometry_control(page,baseline,out):
++    """Actual-rule A/B/A control, without calling render or font-fit owners."""
++    original=baseline.read_bytes()
++    assert sha(original)=='d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f','Exact R0018 baseline required'
++    rules={}
++    for selector in ['.p','.p.past']:
++        found=re.findall(r'(?:^|\n)'+re.escape(selector)+r'\{([^}]+)\}',original.decode('utf-8'))
++        assert len(found)==1,'Unique original semantic owner required'
++        rules[selector]=found[0]
++    capture=r'''() => {
++      const box=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}};
++      return {fitKey:_cnFit,focusStyle:document.querySelector('.cn').getAttribute('style'),
++        elements:Array.from(document.querySelectorAll('.c,.h,.e,.buckle,.wt,.panel,.arc,.foc,.cn,.nt,.bar,.left,.times,.d,#ceDateButton,#ahDateButton,#ce,#ah,.p,.p b,.p .tm')).map(e=>{
++          const s=getComputedStyle(e);return {tag:e.tagName,className:e.className,id:e.id,rect:box(e),text:e.matches('.p b,.p .tm,#ce,#ah')?e.textContent:null,fontFamily:s.fontFamily,fontSize:s.fontSize,fontWeight:s.fontWeight,lineHeight:s.lineHeight,padding:s.padding,gap:s.gap,borderWidth:s.borderWidth,borderRadius:s.borderRadius};})};
++    }'''
++    replace=r'''rules => {
++      const sheet=Array.from(document.styleSheets).find(s=>s.ownerNode?.tagName==='STYLE'&&Array.from(s.cssRules).some(r=>r.selectorText==='.p'));
++      if(!sheet)throw Error('Authored inline stylesheet missing');
++      const previous={};for(const [selector,text] of Object.entries(rules)){
++        const matches=Array.from(sheet.cssRules).filter(r=>r.selectorText===selector);
++        if(matches.length!==1)throw Error('Ambiguous semantic CSS owner '+selector);
++        previous[selector]=matches[0].style.cssText;matches[0].style.cssText=text;
++      }return previous;
++    }'''
++    phases=[{'name':'candidate-initial','geometry':page.evaluate(capture)}]
++    page.screenshot(path=str(out/'geometry-candidate-initial.png'))
++    candidate=None
++    try:
++        for name,which in [('baseline-1','baseline'),('candidate-1','candidate'),('baseline-2','baseline'),('candidate-restored','candidate')]:
++            previous=page.evaluate(replace,rules if which=='baseline' else candidate)
++            if candidate is None:candidate=previous
++            page.evaluate('() => new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
++            page.wait_for_function('document.getAnimations().every(a=>a.playState!=="running" || !Number.isFinite(a.effect.getComputedTiming().endTime))',timeout=10000)
++            phases.append({'name':name,'geometry':page.evaluate(capture)})
++            page.screenshot(path=str(out/('geometry-'+name+'.png')))
++    finally:
++        if candidate is not None:page.evaluate(replace,candidate)
++    return {'baselineSha256':sha(original),'baselineRules':rules,'candidateRules':candidate,'phases':phases,'allGeometryExact':all(p['geometry']==phases[0]['geometry'] for p in phases),'scope':'Same native page, fonts, frozen scene and exact original .p/.p.past CSS rules; no direct render, fit, clock or font-state call. No geometry tolerance.'}
++
++def run(args):
++    out=args.output.resolve();out.mkdir(parents=True,exist_ok=False)
++    source=args.workspace.resolve();identity=runtime_identity(source)
++    # Preserve every executed collector/import, not only an unresolvable digest.
++    collector={}
++    for rel in ['tests/r0018-default-readability.py','tests/r0018-appearance-browser-fixture.cjs','tests/r0018-timetable-contrast.cjs','tests/r0018-appearance-fixture.cjs','tests/r0001-browser-fixture.cjs','tools/cp9/browser_runtime.py','tools/cp9/runtime_identity.py']:
++        data=(ROOT/rel).read_bytes();target=out/'collector'/rel;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data);collector[rel]=sha(data)
++    write(out/'collector.json',collector)
++    assets=['/'+p for p in identity['files']]
++    request={'fixture':str(ROOT/'tests/r0018-appearance-browser-fixture.cjs'),'source':str(source/'index.html'),'scene':args.scene,'appearance':args.appearance,'options':{'assetPaths':assets,'stress':args.stress,'mutant':args.mutant,'dateCase':args.date_case}}
++    request_path=out/'fixture-input.json';write(request_path,request)
++    script="const fs=require('node:fs'),r=JSON.parse(fs.readFileSync(process.argv[1],'utf8')),f=require(r.fixture),s=f.spec(r.scene,r.appearance);let hash=f.routeHash(s)+'&school=0';if(r.options.dateCase!=='compact'){for(const p of [s.today,s.tomorrow])p.date.hijri.month.en='Rabīʿ al-awwal';hash+='&datefmt=DD%20MMMM%20YYYY';}process.stdout.write(JSON.stringify({spec:s,hash,html:f.buildPage(fs.readFileSync(r.source,'utf8'),s,r.options)}));"
++    generated=json.loads(subprocess.check_output([args.node,'-e',script,str(request_path)],cwd=ROOT).decode('utf-8'))
++    html=generated.pop('html').encode('utf-8');(out/'fixture.html').write_bytes(html)
++    served=[]
++    class Handler(http.server.SimpleHTTPRequestHandler):
++        def log_message(self,*args): pass
++        def do_GET(self):
++            path=self.path.split('?',1)[0]
++            if path=='/index.html':
++                self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8');self.send_header('Cache-Control','no-store');self.end_headers();self.wfile.write(html);served.append(path);return
++            if path not in assets:
++                self.send_error(404,'Outside pinned runtime allowlist');return
++            served.append(path);super().do_GET()
++    server=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(Handler,directory=str(source)))
++    threading.Thread(target=server.serve_forever,daemon=True).start()
++    errors=[];network=[];font_receipts=[];result={'schema':'r0018-native-readability/1','atUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'stage':args.stage,'sourceRuntime':identity,'fixtureSha256':sha(html),'driverSha256':sha(Path(__file__).read_bytes()),'helperSha256':sha((ROOT/'tests/r0018-appearance-browser-fixture.cjs').read_bytes()),'syntheticPrayerWeather':True,'fixture':generated,'stress':args.stress,'scope':'Actual local HTTP entry with native assets, production source bodies, pre-script fixed Date/private Map and controlled prayer transport. Frozen SIM stills, no motion/timing or actual extension-parent claim.'}
++    try:
++        with sync_playwright() as p:
++            browser=launch_browser(p);result['browser']=browser_identity(browser)
++            result['browser']['executableSha256']=sha(Path(os.environ['SALAH_BROWSER_EXECUTABLE']).read_bytes())
++            context=browser.new_context(viewport={'width':args.width,'height':args.height},device_scale_factor=args.dpr,reduced_motion='reduce',timezone_id='Asia/Riyadh',locale='en-US')
++            if args.font_fixture:
++                font_dir=args.font_fixture.resolve();font_manifest=json.loads((font_dir/'manifest.json').read_text(encoding='utf-8'))
++                fonts={r['url']:r for r in font_manifest['files']}
++                def pinned_font(route):
++                    record=fonts.get(route.request.url)
++                    if record is None:raise AssertionError('Unpinned font resource: '+route.request.url)
++                    data=(font_dir/record['sha256']).read_bytes()
++                    assert sha(data)==record['sha256'] and len(data)==record['bytes'],'Pinned font bytes changed'
++                    route.fulfill(status=record['status'],body=data,content_type=record['contentType'])
++                context.route(re.compile(r'https://fonts\.(googleapis|gstatic)\.com/.*'),pinned_font)
++                result['fontFixture']=font_manifest
++            page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.on('requestfailed',lambda r:network.append({'url':r.url,'failure':r.failure}))
++            def font_finished(request):
++                if not re.match(r'https://fonts\.(googleapis|gstatic)\.com/',request.url):return
++                try:
++                    response=request.response();body=response.body();digest=sha(body)
++                    (out/('font-'+digest)).write_bytes(body)
++                    font_receipts.append({'url':request.url,'status':response.status,'sha256':digest,'bytes':len(body),'contentType':response.header_value('content-type')})
++                except Exception as error:font_receipts.append({'url':request.url,'error':str(error)})
++            context.on('requestfinished',font_finished)
++            try:
++                page.goto(f'http://127.0.0.1:{server.server_port}/index.html?case={args.stage}-{args.scene}'+generated['hash'],wait_until='domcontentloaded')
++                page.wait_for_function('window.__appearanceFixture?.snapshot().ready && document.fonts.status === "loaded"',timeout=45000)
++                page.wait_for_function('Array.from(document.fonts).some(f=>f.family.includes("Inter")&&f.status==="loaded") && Array.from(document.fonts).some(f=>f.family.includes("Fraunces")&&f.status==="loaded")',timeout=45000)
++                page.wait_for_function('window.SalahMoonRuntime?.state.current && window.realSkyState?.().status === "ready"',timeout=120000)
++                # Wait for actual finite CSS transitions, not an elapsed-time
++                # assumption. Frozen simulation leaves native timers/rAF intact.
++                animations='() => document.getAnimations().map(a=>({state:a.playState,type:a.constructor.name,property:a.transitionProperty||null,timing:a.effect.getComputedTiming().endTime}))'
++                result['animationsBeforeSettle']=page.evaluate(animations)
++                page.wait_for_function('document.getAnimations().every(a=>a.playState!=="running" || !Number.isFinite(a.effect.getComputedTiming().endTime))',timeout=10000)
++                result['animationsAfterSettle']=page.evaluate(animations)
++                result['before']=page.evaluate(INSPECT)
++                page.screenshot(path=str(out/'full.png'))
++                page.evaluate('window.__appearanceFixture.setTextHidden(true)')
++                page.evaluate('() => new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
++                result['hidden']=page.evaluate(INSPECT);page.screenshot(path=str(out/'text-hidden.png'))
++                page.evaluate('window.__appearanceFixture.setTextHidden(false)')
++                page.evaluate('() => new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
++                result['restored']=page.evaluate(INSPECT);page.screenshot(path=str(out/'restored.png'))
++                page.evaluate('window.__appearanceFixture.setTextHidden(true)')
++                page.evaluate('() => new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
++                result['hidden2']=page.evaluate(INSPECT);page.screenshot(path=str(out/'text-hidden-2.png'))
++                page.evaluate('window.__appearanceFixture.setTextHidden(false)')
++                page.evaluate('() => new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
++                result['final']=page.evaluate(INSPECT)
++                full=Image.open(out/'full.png').convert('RGB');hidden=Image.open(out/'text-hidden.png').convert('RGB');restored=Image.open(out/'restored.png').convert('RGB');hidden2=Image.open(out/'text-hidden-2.png').convert('RGB')
++                tests=[];text_results=[]
++                for i,row in enumerate(result['before']['rows']):
++                    for k,t in enumerate(row['texts']):
++                        r=t['rect'];box=(math.floor(r['x']*args.dpr),math.floor(r['y']*args.dpr),math.ceil((r['x']+r['width'])*args.dpr),math.ceil((r['y']+r['height'])*args.dpr))
++                        fg=tuple(map(float,re.findall(r'[\d.]+',t['color'])[:3]));a=full.crop(box);b=hidden.crop(box);a2=restored.crop(box);b2=hidden2.crop(box)
++                        for name,im in [('text',a),('background',b),('text-2',a2),('background-2',b2)]:im.save(out/f'{name}-{i}-{k}.png')
++                        pixels=lambda im:list(im.get_flattened_data()) if hasattr(im,'get_flattened_data') else list(im.getdata())
++                        px=pixels(b);minimum=min(ratio(fg,c) for c in px);minimum2=min(ratio(fg,c) for c in pixels(b2))
++                        opacity=math.prod(v['opacity'] for v in t['chain'])
++                        changed=[ratio(x,y) for x,y in zip(pixels(a),px) if max(abs(x[c]-y[c]) for c in range(3))>=8]
++                        changed2=[ratio(x,y) for x,y in zip(pixels(a2),pixels(b2)) if max(abs(x[c]-y[c]) for c in range(3))>=8]
++                        entry={'row':i,'textIndex':k,'text':t['text'],'className':row['className'],'rect':r,'box':box,'foreground':fg,'ancestorOpacity':opacity,'minimumIntendedContrast':min(minimum,minimum2),'pairIntendedContrasts':[minimum,minimum2],'changedPixelCount':len(changed),'secondChangedPixelCount':len(changed2),'maxChangedPixelContrastDiagnostic':max(changed) if changed else None,'secondMaxChangedPixelContrastDiagnostic':max(changed2) if changed2 else None,'visiblePairDifferenceDiagnostic':difference(a,a2),'hiddenPairDifferenceDiagnostic':difference(b,b2)}
++                        text_results.append(entry)
++                        tests.extend([{'name':f'text-{i}-{k}-opacity1','pass':opacity==1},{'name':f'text-{i}-{k}-intended-contrast','pass':minimum>=4.5 and minimum2>=4.5},{'name':f'text-{i}-{k}-visible-pixels','pass':bool(changed) and bool(changed2)}])
++                card=result['before']['card'];box=(round(card['x']*args.dpr),round(card['y']*args.dpr),round((card['x']+card['width'])*args.dpr),round((card['y']+card['height'])*args.dpr))
++                full.crop(box).save(out/'card.png');hidden.crop(box).save(out/'card-text-hidden.png');restored.crop(box).save(out/'card-2.png');hidden2.crop(box).save(out/'card-text-hidden-2.png')
++                pair_difference=ImageChops.difference(full,hidden);mask=ImageDraw.Draw(pair_difference)
++                for t in text_results:
++                    x0,y0,x1,y1=t['box'];mask.rectangle((x0,y0,x1-1,y1-1),fill=(0,0,0))
++                # Shadows may extend outside glyph rectangles; they are deliberately
++                # diagnostics, not intended-colour contrast or a geometry tolerance.
++                result['textHiddenOutsideRectDifferenceDiagnostic']=pair_difference.crop(box).getbbox()
++                result['wholeRestoredDifferenceDiagnostic']=difference(full,restored)
++                result['wholeHiddenDifferenceDiagnostic']=difference(hidden,hidden2)
++                states=[result[k] for k in ['before','hidden','restored','hidden2','final']]
++                equal=lambda key:all(s[key]==states[0][key] for s in states)
++                tests.extend([{'name':'card325x530','pass':card['width']==325 and card['height']==530},{'name':'actual-viewport-dpr','pass':result['before']['viewport']=={'width':args.width,'height':args.height,'dpr':args.dpr}},{'name':'twelve-text-rects','pass':len(text_results)==12},{'name':'same-native-geometry','pass':equal('geometry')},{'name':'same-text-style-font-rectangles','pass':equal('rows') and equal('fonts') and equal('cardClasses')},{'name':'same-clock-native-scene-and-visible-canvas-pixels','pass':equal('scene')},{'name':'native-renderer-valid-through-pairs','pass':all(renderer_valid(s) for s in states)},{'name':'no-blocked-runtime-fetch','pass':all(not s['unexpectedFetch'] for s in states)},{'name':'text-restored','pass':result['final']['textHidden'] is False},{'name':'no-page-errors','pass':not errors}])
++                result.update(texts=text_results,checks=tests,status='PASS_SCOPED' if all(t['pass'] for t in tests) else 'FAIL',failures=[t['name'] for t in tests if not t['pass']])
++                if args.geometry_baseline:
++                    result['geometryControl']=geometry_control(page,args.geometry_baseline,out)
++                    result['checks'].append({'name':'same-page-original-rule-reversal-preserves-geometry','pass':result['geometryControl']['allGeometryExact']})
++            except Exception as e:
++                result.update(status='HARNESS_OR_READINESS_FAILURE',error=str(e))
++                try:result['failureState']=page.evaluate(INSPECT);page.screenshot(path=str(out/'failure.png'))
++                except Exception as inner:result['failureReadError']=str(inner)
++            finally:context.close();browser.close()
++    finally:
++        server.shutdown();server.server_close();result.update(pageErrors=errors,networkFailures=network,fontReceipts=font_receipts,servedPaths=served,runtimeUnchanged=runtime_identity(source)==identity)
++        if 'checks' in result and result.get('status')!='HARNESS_OR_READINESS_FAILURE':
++            result['checks'].append({'name':'runtime-unchanged','pass':result['runtimeUnchanged']})
++            result['failures']=[t['name'] for t in result['checks'] if not t['pass']]
++            result['status']='FAIL' if result['failures'] else 'PASS_SCOPED'
++        write(out/'results.json',result)
++    print(json.dumps({'output':str(out),**{k:result.get(k) for k in ['status','failures','error','pageErrors','networkFailures','runtimeUnchanged']}}),flush=True)
++    return result
++
++if __name__=='__main__':
++    a=argparse.ArgumentParser();a.add_argument('--workspace',type=Path,required=True);a.add_argument('--output',type=Path,required=True);a.add_argument('--stage',choices=['red','green','mutant'],required=True);a.add_argument('--scene',default='noon');a.add_argument('--appearance',default='default',choices=['default','glass','contrast']);a.add_argument('--stress',action='store_true');a.add_argument('--mutant',default='',choices=['','default-past','default-base','default-on']);a.add_argument('--dpr',type=float,default=1);a.add_argument('--width',type=int,default=1100);a.add_argument('--height',type=int,default=900);a.add_argument('--date-case',default='compact',choices=['compact','long','stale']);a.add_argument('--font-fixture',type=Path);a.add_argument('--geometry-baseline',type=Path);a.add_argument('--node',default='node');args=a.parse_args();result=run(args);raise SystemExit(0 if result['status']=='PASS_SCOPED' else 1)
+diff --git a/tests/r0018-timetable-contrast.cjs b/tests/r0018-timetable-contrast.cjs
+index 01c0c8cb..0bc81637 100644
+--- a/tests/r0018-timetable-contrast.cjs
++++ b/tests/r0018-timetable-contrast.cjs
+@@ -4,7 +4,8 @@ const assert = require('node:assert/strict');
+ const fs = require('node:fs');
+ const path = require('node:path');
+ const { execFileSync } = require('node:child_process');
+-const {ROOT,BASE,sha} = require('./r0001-browser-fixture.cjs');
++const {ROOT,sha} = require('./r0001-browser-fixture.cjs');
++const BASE='ed5e7afbd2fcf7a59050817e2a561bcdbfa9043d';
+ function rule(html,selector){
+   const css=html.match(/<style>([\s\S]*?)<\/style>/)[1];
+   const escaped=selector.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+@@ -29,7 +30,7 @@ function composition(html,state,backdrop=[255,255,255],appearance='glass'){
+   const hexStops=Array.from(gradient.matchAll(/#ffffff([\da-f]{2})/gi),m=>parseInt(m[1],16)/255);
+   const accentStops=Array.from(gradient.matchAll(/var\(--accent\) ([\d.]+)%/g),m=>Number(m[1])/100);
+   assert.ok(hexStops.length||accentStops.length,'Recognized actual decorative tint stops');
+-  // White is the component-wise upper bound for both sky and every possible accent.
++  // White-sky and white-accent stress control. Native pairs qualify actual state accents.
+   const tintAlpha=Math.max(...hexStops,...accentStops);
+   rawBackground=over([255,255,255],tintAlpha,rawBackground);
+   const composedBackground=over(rawBackground,opacity,backdrop);
+@@ -38,7 +39,26 @@ function composition(html,state,backdrop=[255,255,255],appearance='glass'){
+     composedBackground,composedText,ratio:contrast(composedText,composedBackground)};
+ }
+ function mutateTimetable(html,kind){
+-  if(kind==='past'){const before='.c[data-appearance="contrast"] .p{opacity:1;';assert.equal(html.split(before).length,2);return html.replace(before,'.c[data-appearance="contrast"] .p{');}
++  if(kind==='default-past'){
++    const before='.p.past{';assert.equal(html.split(before).length,2);
++    return html.replace(before,before+'opacity:.42;');
++  }
++  if(kind==='default-base'){
++    for(const selector of ['.p','.p.past']){
++      const before=rule(html,selector).background;
++      assert.match(before,/,rgba\(9,17,28,\.[0-9]+\)$/);
++      const declaration=selector+'{',start=html.indexOf(declaration),end=html.indexOf('}',start);
++      assert.ok(start>=0&&end>start,'Unique actual cell rule');
++      html=html.slice(0,start)+html.slice(start,end).replace(before,before.replace(/,rgba\(9,17,28,\.[0-9]+\)$/,''))+html.slice(end);
++    }
++    return html;
++  }
++  if(kind==='default-on'){
++    const before=rule(html,'.p.on').color;assert.equal(before,'#211d15');
++    const start=html.indexOf('.p.on{'),end=html.indexOf('}',start);
++    return html.slice(0,start)+html.slice(start,end).replace('color:'+before+';','color:#f0edf8;')+html.slice(end);
++  }
++  if(kind==='past'){const before='.c[data-appearance="contrast"] .p{opacity:1;';assert.equal(html.split(before).length,2);return mutateTimetable(html,'default-past').replace(before,'.c[data-appearance="contrast"] .p{');}
+   assert.equal(kind,'on');const before=rule(html,'.c[data-appearance="contrast"] .p.on').background;
+   if(rule(html,'.c[data-appearance="contrast"] .p.on').color==='#211d15'){
+     // PR42 replaces translucent next-row glass with an opaque accent plate.
+@@ -52,31 +72,39 @@ function mutateTimetable(html,kind){
+   return html.replace(before,before.replace(/,rgba\(9,17,28,\.90\)$/,''));
+ }
+ function run(){
+-const sourcePath=process.argv.slice(2).find(arg=>!arg.startsWith('--'))||path.join(ROOT,'index.html');
++const args=process.argv.slice(2),baselineIndex=args.indexOf('--baseline-file');
++const sourcePath=args[0]&&!args[0].startsWith('--')?args[0]:path.join(ROOT,'index.html');
+ const source=fs.readFileSync(sourcePath,'utf8');
+-const baseline=execFileSync('git',['show',`${BASE}:index.html`],{cwd:ROOT}).toString('utf8');
++const baseline=baselineIndex>=0?fs.readFileSync(args[baselineIndex+1],'utf8'):execFileSync('git',['show',BASE+':index.html'],{cwd:ROOT}).toString('utf8');
++assert.equal(sha(baseline),'d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f','Exact delivered baseline entry');
+ const results=[];
+ function test(name,body){try{const detail=body();results.push({name,status:'PASS',detail});}catch(error){results.push({name,status:'FAIL',error:error.message});}}
+ test('composition calculator positive and negative controls',()=>{assert.equal(contrast([0,0,0],[255,255,255]),21);assert.equal(contrast([255,255,255],[255,255,255]),1);});
+-test('glass retains original non-next state styling',()=>{for(const selector of ['.times','.p','.p.now','.p.past','.p b','.tm'])assert.deepEqual(rule(source,selector),rule(baseline,selector),selector);});
+-test('owner-authorized next emphasis is stronger without relabelling future rows',()=>{
+-  const check=html=>{const r=rule(html,'.p.on');assert.match(r.background,/var\(--accent\) 88%/);assert.equal(r.color,'#211d15');assert.match(r['box-shadow'],/inset 3px 0/);assert.equal(rule(html,'.p.on b')['font-weight'],'700');};
+-  check(source);assert.throws(()=>check(baseline),assert.AssertionError,'Old weak next styling is the negative control');
++test('approved next and current emphasis remains unchanged',()=>{
++  for(const selector of ['.p.on','.p.on b','.p.on b,.p.on .tm','.p.now'])assert.deepEqual(rule(source,selector),rule(baseline,selector),selector);
++  const r=rule(source,'.p.on');assert.match(r.background,/var\(--accent\) 88%/);assert.equal(r.color,'#211d15');assert.match(r['box-shadow'],/inset 3px 0/);assert.equal(rule(source,'.p.on b')['font-weight'],'700');
++});
++for(const appearance of ['glass','contrast'])for(const state of ['normal','past','on','now'])test(appearance+' '+state+' full information opacity and intended-color contrast on white stress',()=>{
++  const c=composition(source,state,[255,255,255],appearance);assert.equal(c.opacity,1,'Information stays at full group opacity');assert.ok(c.ratio>=4.5,state+': '+c.ratio.toFixed(3)+' < 4.5');return c;
++});
++test('elapsed rows are subdued by decoration while text remains unchanged',()=>{
++  const normal=composition(source,'normal'),past=composition(source,'past');
++  assert.deepEqual(past.foreground,normal.foreground);assert.equal(past.opacity,1);assert.ok(past.tintAlpha<normal.tintAlpha);assert.equal(rule(source,'.p.past')['border-color'],'#ffffff20');
++  return{normal,past};
+ });
+-for(const state of ['normal','past','on','now'])test(`${state} retains its original glass state emphasis`,()=>{const c=composition(source,state);assert.equal(c.opacity,state==='past'?.42:1);return c;});
+-for(const state of ['normal','past','on']) test(`${state} opt-in contrast retains intended-color contrast on white stress backdrop`,()=>{const c=composition(source,state,[255,255,255],'contrast');assert.ok(c.ratio>=4.5,`${state}: ${c.ratio.toFixed(3)} < 4.5`);assert.equal(c.opacity,1,'Information stays at full group opacity');return c;});
+-test('glass default has no superseded white-stress 4.5 claim',()=>{const c=composition(source,'normal');assert.ok(c.ratio<4.5,'Control must distinguish glass from contrast');return {...c,claim:'Glass aesthetic selected by owner; prior white-stress gate applies only to contrast'};});
+ test('geometry and typography declarations preserved',()=>{
+   for(const selector of ['.times','.p','.p b','.tm']){
+     const before=rule(baseline,selector),after=rule(source,selector);
+-    for(const key of ['display','justify-content','align-items','grid-template-columns','gap','padding','margin-top','border-radius','border','font-weight','font-size','line-height','letter-spacing']) assert.equal(after[key],before[key],`${selector} ${key}`);
++    for(const key of ['display','justify-content','align-items','grid-template-columns','gap','padding','margin-top','border-radius','border','font-weight','font-size','line-height','letter-spacing']) assert.equal(after[key],before[key],selector+' '+key);
+   }
+ });
+-if(!process.argv.includes('--baseline')){
+-  test('missing contrast opacity override exposes inactive-row attenuation',()=>{const c=composition(mutateTimetable(source,'past'),'past',[255,255,255],'contrast');assert.ok(c.ratio<4.5,`mutant unexpectedly ${c.ratio}`);assert.equal(c.opacity,.42);return c;});
+-  test('contrast next-only presentation mutant loses contrast independently',()=>{const c=composition(mutateTimetable(source,'on'),'on',[255,255,255],'contrast');assert.ok(c.ratio<4.5,`mutant unexpectedly ${c.ratio}`);return c;});
++if(!args.includes('--baseline')){
++  for(const [kind,state] of [['default-past','past'],['default-base','normal'],['default-on','on']])test(kind+' independent loss control reaches contrast oracle',()=>{
++    const c=composition(mutateTimetable(source,kind),state);
++    assert.ok(c.ratio<4.5,'mutant unexpectedly '+c.ratio);if(kind==='default-past')assert.equal(c.opacity,.42);return c;
++  });
+ }
+-return {sourceSha256:sha(source),baselineSha256:sha(baseline),limit:'Authored intended-color composition with white sky/accent bounds, no antialias/shadow/filter conformance claim. Native crops and text-free pixel pairs are required.',results};
++return {sourceSha256:sha(source),baselineSha256:sha(baseline),baselineCommit:BASE,limit:'Authored intended-color composition with white sky/accent stress, no antialias/shadow/filter conformance claim. Native crops and text-free pixel pairs are required.',results};
+ }
+ if(require.main===module){const result=run();console.log(JSON.stringify(result,null,2));process.exitCode=result.results.some(r=>r.status==='FAIL')?1:0;}
+ module.exports={rule,composition,mutateTimetable};
+diff --git a/tests/real-sky/native-pinned-contrast.test.mjs b/tests/real-sky/native-pinned-contrast.test.mjs
+index 2207421c..f575806d 100644
+--- a/tests/real-sky/native-pinned-contrast.test.mjs
++++ b/tests/real-sky/native-pinned-contrast.test.mjs
+@@ -1,8 +1,8 @@
+ import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {createRequire} from 'node:module';
+-// Current supplied snapshot comparison, not the unavailable historical Git audit.
++// Generated consumer must preserve the authored timetable policy and geometry.
+ const require=createRequire(import.meta.url),{rule,composition,mutateTimetable}=require('../../tests/r0018-timetable-contrast.cjs');
+ const current=fs.readFileSync(new URL('../../index.html',import.meta.url),'utf8'),baseline=fs.readFileSync(new URL('../../src/native/index.html',import.meta.url),'utf8');
+-test('timetable CSS and geometry equal the user-supplied 2057503 snapshot',()=>{for(const selector of ['.times','.p','.p.on','.p.now','.p.past','.p b','.tm'])assert.deepEqual(rule(current,selector),rule(baseline,selector),selector);});
+-for(const state of ['normal','past','on'])test(`native opt-in contrast ${state} retains the existing white-backdrop 4.5 bound`,()=>{const c=composition(current,state,[255,255,255],'contrast');assert.ok(c.ratio>=4.5);assert.equal(c.opacity,1);});
+-test('glass comparison preserves the pinned aesthetic without inventing an accessibility claim',()=>{for(const state of ['normal','past','on','now'])assert.deepEqual(composition(current,state),composition(baseline,state));assert.ok(composition(current,'normal').ratio<4.5);});
+-for(const state of ['past','on'])test(`native contrast ${state} attenuation mutation is detected`,()=>assert.ok(composition(mutateTimetable(current,state),state,[255,255,255],'contrast').ratio<4.5));
++test('generated timetable CSS and geometry equal the authored native owner',()=>{for(const selector of ['.times','.p','.p.on','.p.now','.p.past','.p b','.tm'])assert.deepEqual(rule(current,selector),rule(baseline,selector),selector);});
++for(const appearance of ['glass','contrast'])for(const state of ['normal','past','on','now'])test(`native ${appearance} ${state} meets the original white-stress 4.5 criterion`,()=>{const c=composition(current,state,[255,255,255],appearance);assert.ok(c.ratio>=4.5);assert.equal(c.opacity,1);});
++test('default readability composition is generated from the exact authored policy',()=>{for(const state of ['normal','past','on','now'])assert.deepEqual(composition(current,state),composition(baseline,state));});
++for(const [kind,state] of [['default-past','past'],['default-base','normal'],['default-on','on']])test(`native ${kind} loss mutation is detected`,()=>assert.ok(composition(mutateTimetable(current,kind),state,[255,255,255],'glass').ratio<4.5));
