@@ -324,6 +324,13 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   visible render loop offers approximately 30-second opportunities outside an
   advancing sweep; eligibility and timeout release are not immediate retry or
   successful recovery.
+  The deadline continues through JSON body consumption: receiving HTTP 200
+  headers does not restart or remove it. A timed-out refresh cannot renew an
+  accepted record's source or receipt time. If current weather expires, its
+  temperature becomes unavailable; an hourly forecast or recovered radar image
+  cannot replace it. A later eligible current response must pass admission
+  before restoring the weather display. Open-Meteo recovery remains a model
+  estimate, not proof of observed local precipitation.
   The weather cache's six-hour retention window is storage compatibility, not
   live authority. Retained legacy records without valid source metadata remain
   unavailable until a healthy eligible response arrives; failed refreshes cannot

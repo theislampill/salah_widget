@@ -323,6 +323,15 @@ result with `fetch timeout`, `body timeout` or `image timeout` identifies the
 bounded stage. `received` describes wrapper completion, not freshness or provider
 health. Slot release, retry eligibility and a healthy replacement consumer are
 separate facts; the README's Weather retry description gives their timing limits.
+The diagnostic is the latest attempt record, not a history or a provider health
+check. Compare `generation`, `operationId` and `attemptId` when following a
+replacement: a released old attempt must not clear the active successor or
+replace its diagnostic. HTTP 200 headers can still lead to `body timeout`;
+`received` alone does not establish that weather passed admission, that an Image
+sample is usable, or that the rendered consumer recovered. Check the accepted
+record's eligibility and the actual temperature/presentation, or the radar
+frame/sample and `radarAvailable`, separately. Radar recovery still provides
+unitless imagery and cannot authorise rain amounts or lightning.
 For freshness inspection, `qaState().cache.weatherSourceAgeSec` and
 `weatherAgeSec` report source and receipt ages, with `currentEligible`,
 `weatherStale` and `currentUnavailableReason`. `wxTruth.model.sourceValidAt`,
