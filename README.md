@@ -252,6 +252,14 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   with no future allowance. Index time never replaces a missing frame time.
   Valid timestamps do not establish local radar coverage or ground observation;
   imagery remains unitless and cannot authorize precipitation amounts or strikes.
+  The weather icon's existing condition name and hover title append current,
+  nearby, approach and forecast information. Its accessible description exposes
+  the same decision; in local mode it is also associated with the existing
+  settings button. Live local observations, nearby evidence and arrival intervals
+  are unavailable. Supported synthetic present/nearby/approach inputs are labelled
+  SIM in owned previews. Forecast amounts retain their source, units and absolute
+  target-zone interval. Missing probability is unavailable, not zero; the optional
+  synthetic probability fixture requires an exact precipitation event/window.
 - **Weather-reactive color theme** — the palette shifts with the sky: warm gold under a
   clear day, deep indigo on a clear night, muted grey when cloudy, cool steel-blue for
   rain, icy for snow, and charcoal-violet for thunderstorms. Day vs. night is derived
@@ -399,10 +407,12 @@ For an authorized public delivery check, use a separate fresh browser profile or
 
 ## Credits
 
-Prayer time calculations by the [Aladhan API](https://aladhan.com/prayer-times-api), and
-weather by [Open-Meteo](https://open-meteo.com) — both free and key-less. These
+Prayer time calculations by the [Aladhan API](https://aladhan.com/prayer-times-api),
+current-model and hourly forecast weather by [Open-Meteo](https://open-meteo.com),
+and unitless mosaic imagery by [RainViewer](https://www.rainviewer.com). These
 browser requests carry the configured location and request context. Settings
-and caches are stored in the browser when storage is available.
+and caches are stored in the browser when storage is available. Mosaic alpha is
+not a rainfall amount, direct local precipitation or lightning observation.
 Provider retention or handling is not established by this widget-source description.
 
 ## Preserved V1 compatibility URL

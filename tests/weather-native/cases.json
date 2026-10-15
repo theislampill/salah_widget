@@ -1,0 +1,2598 @@
+[
+  {
+    "id": "A-wet-rain",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "sim": true
+    },
+    "preview": true,
+    "watchStrike": false,
+    "nativeChecks": [
+      "cloud-origin"
+    ]
+  },
+  {
+    "id": "A-wet-snow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "snow",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "sim": true
+    },
+    "preview": true,
+    "watchStrike": false,
+    "nativeChecks": [
+      "cloud-origin"
+    ]
+  },
+  {
+    "id": "A-observed-lightning",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "observed"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": true,
+      "sim": true
+    },
+    "preview": true,
+    "watchStrike": true,
+    "nativeChecks": [
+      "cloud-origin"
+    ],
+    "strikeObservationSeconds": 24
+  },
+  {
+    "id": "B-supported-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "wet": false,
+      "strikes": false,
+      "sim": true
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "C-approach",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        },
+        "nearby": true,
+        "trajectory": "qualified-fixture-trajectory"
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "spatial": "nearby-precipitation",
+      "horizon": "approaching",
+      "wet": false,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "C-no-trajectory",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        },
+        "nearby": true,
+        "trajectory": null
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "spatial": "nearby-precipitation",
+      "horizon": "nearby-without-arrival",
+      "wet": false,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "C-wind-unqualified",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        },
+        "nearby": true,
+        "trajectory": "current-wind"
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "spatial": "nearby-precipitation",
+      "horizon": "nearby-without-arrival",
+      "wet": false,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "C-wet-and-approach",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "nearby": true,
+        "trajectory": "qualified-fixture-trajectory"
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "horizon": "approaching",
+      "wet": true,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": [
+      "cloud-origin"
+    ]
+  },
+  {
+    "id": "D-live-rain",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 63,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "model-estimated-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "modelEstimate": true,
+      "temperature": 20
+    },
+    "radar": "absent",
+    "nativeChecks": [
+      "cloud-origin"
+    ]
+  },
+  {
+    "id": "D-live-snow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 73,
+      "temperature_2m": -2,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "model-estimated-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "modelEstimate": true,
+      "temperature": -2
+    },
+    "radar": "absent",
+    "nativeChecks": [
+      "cloud-origin"
+    ]
+  },
+  {
+    "id": "D-live-thunder",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "model-estimated-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "modelEstimate": true,
+      "temperature": 20
+    },
+    "radar": "absent",
+    "nativeChecks": [
+      "cloud-origin"
+    ]
+  },
+  {
+    "id": "D-outside-radar",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "model-estimated-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    },
+    "radar": "outside",
+    "nativeChecks": []
+  },
+  {
+    "id": "E-mosaic-18m",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarAvailable": true,
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    },
+    "radarAgeSec": 1080,
+    "nativeChecks": []
+  },
+  {
+    "id": "E-mosaic-4h",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarAvailable": false,
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    },
+    "radarAgeSec": 14400,
+    "nativeChecks": []
+  },
+  {
+    "id": "E-frame-overflow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarInstalled": false,
+      "imageRequests": 0,
+      "observed": false,
+      "strikes": false
+    },
+    "frameSeconds": "MAX_VALUE",
+    "nativeChecks": []
+  },
+  {
+    "id": "E-index-overflow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarInstalled": false,
+      "imageRequests": 0,
+      "observed": false,
+      "strikes": false
+    },
+    "indexSeconds": "MAX_VALUE",
+    "nativeChecks": []
+  },
+  {
+    "id": "E-frame-absent",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarInstalled": false,
+      "imageRequests": 0,
+      "observed": false,
+      "strikes": false
+    },
+    "omitFrameTime": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "F-fixed-site",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": true,
+      "wet": true,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "fixed-site",
+      "source": "manual",
+      "accuracyM": null,
+      "acquiredAt": null
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "F-device-20m",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": true,
+      "wet": true,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "device-position",
+      "source": "browser-geolocation",
+      "accuracyM": 20,
+      "acquiredOffsetMs": -60000
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "F-device-250m",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": true,
+      "wet": true,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "device-position",
+      "source": "browser-geolocation",
+      "accuracyM": 250,
+      "acquiredOffsetMs": 0
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "F-device-250point01",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "device-position",
+      "source": "browser-geolocation",
+      "accuracyM": 250.01,
+      "acquiredOffsetMs": 0
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "F-expired-fix",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "device-position",
+      "source": "browser-geolocation",
+      "accuracyM": 20,
+      "acquiredOffsetMs": -300001
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "F-coarse-IP",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "coarse-area",
+      "source": "coarse-ip",
+      "accuracyM": null,
+      "acquiredOffsetMs": 0
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "F-legacy",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "unknown",
+      "source": "legacy",
+      "accuracyM": null,
+      "acquiredAt": null
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "F-new-generation",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "nextGeneration": true
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-outside-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "outside"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-outside-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "outside"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-health-unknown-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "health-unknown"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-health-unknown-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "health-unknown"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-nonoperational-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "nonoperational"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-nonoperational-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "nonoperational"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-local-age-null-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "local-age-null"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-local-age-null-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "local-age-null"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-local-age-old-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "local-age-old"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-local-age-old-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "local-age-old"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-ambiguous-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "ambiguous"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-ambiguous-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "ambiguous"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-interpolated-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "interpolated"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "G-interpolated-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "interpolated"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "quantity-null",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": null
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": true,
+      "wet": false,
+      "strikes": false
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "quantity-zero",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "quantity-interval",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0.4
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": false,
+      "wet": true,
+      "strikes": false
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "quantity-negative",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": -1
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": true,
+      "wet": false,
+      "strikes": false
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "quantity-derived-overflow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": "MAX_VALUE"
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": false,
+      "wet": true,
+      "strikes": false
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "synthetic-rate",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "quantity": {
+          "kind": "rate",
+          "value": 1.6,
+          "units": "mm/h",
+          "fromOffset": -900000,
+          "toOffset": 0
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "synthetic-amount",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "quantity": {
+          "kind": "amount",
+          "value": 0.4,
+          "units": "mm",
+          "fromOffset": -900000,
+          "toOffset": 0
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "forecast-none",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "forecast": {
+          "probability": null
+        },
+        "forecastOnly": true
+      }
+    ],
+    "expect": {
+      "current": "unknown",
+      "horizon": "numerical-forecast-only",
+      "wet": false,
+      "strikes": false,
+      "probability": null,
+      "simForecast": true
+    },
+    "preview": true,
+    "currentInvalidTime": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "forecast-0",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "forecast": {
+          "probability": 0
+        },
+        "forecastOnly": true
+      }
+    ],
+    "expect": {
+      "current": "unknown",
+      "horizon": "numerical-forecast-only",
+      "wet": false,
+      "strikes": false,
+      "probability": 0,
+      "simForecast": true
+    },
+    "preview": true,
+    "currentInvalidTime": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "forecast-wet-coexist",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "forecast": {
+          "probability": 0
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "strikes": false,
+      "probability": 0,
+      "simForecast": true
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "forecast-production-hourly",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "unknown",
+      "horizon": "numerical-forecast-only",
+      "wet": false,
+      "strikes": false,
+      "probability": null
+    },
+    "currentInvalidTime": true,
+    "hourlyForecast": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "forecast-live-refusal",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "forecast": {
+          "probability": 0
+        },
+        "expectRefusal": true
+      }
+    ],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "modelEstimate": true
+    },
+    "nativeChecks": []
+  },
+  {
+    "id": "lease-exclusive",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "advance": 59999,
+        "checkpoint": {
+          "wet": true
+        }
+      },
+      {
+        "advance": 1
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "spatial-before-current",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "nearby": true,
+        "spatialAge": 240001,
+        "validFor": 120000
+      },
+      {
+        "advance": 60000
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "spatial": "unavailable",
+      "wet": true,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "rain-end",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "source-outage",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "clearPresent": true
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "UI-motion-no-preference",
+    "group": "R0024",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true
+    },
+    "local": true,
+    "motion": "no-preference",
+    "motionFull": false,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "id": "UI-motion-reduce",
+    "group": "R0024",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true
+    },
+    "local": true,
+    "motion": "reduce",
+    "motionFull": false,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "id": "UI-motion-reduce-full",
+    "group": "R0024",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true
+    },
+    "local": true,
+    "motion": "reduce",
+    "motionFull": true,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "id": "UI-half-Moon-night",
+    "group": "R0024",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true
+    },
+    "night": true,
+    "local": true,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-zero-dbz-dry",
+    "tile": "zero-dbz",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-zero-dbz-zero",
+    "tile": "zero-dbz",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": null
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-zero-dbz-missing",
+    "tile": "zero-dbz",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-saturated-dry",
+    "tile": "saturated",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-saturated-zero",
+    "tile": "saturated",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": null
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-saturated-missing",
+    "tile": "saturated",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-transparent-dry",
+    "tile": "transparent",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-transparent-zero",
+    "tile": "transparent",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": null
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-transparent-missing",
+    "tile": "transparent",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-three-neighbours-dry",
+    "tile": "three-neighbours",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-three-neighbours-zero",
+    "tile": "three-neighbours",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": null
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "alpha-three-neighbours-missing",
+    "tile": "three-neighbours",
+    "nativeChecks": [
+      "alpha"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": "Infinity"
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "quantity-string-infinity",
+    "nativeChecks": [
+      "quantity-null"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": "LITERAL_OVERFLOW"
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "quantity-literal-overflow",
+    "literalOverflow": true,
+    "nativeChecks": [
+      "quantity-null"
+    ]
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 63,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false,
+      "modelEstimate": true
+    },
+    "id": "present-live-refusal-preserves",
+    "nativeSteps": [
+      {
+        "kind": "live-present-refusal"
+      }
+    ],
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": true,
+    "local": false,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "absent",
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "not-observed"
+        }
+      }
+    ],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false,
+      "sim": true
+    },
+    "id": "present-malformed-boundaries",
+    "nativeSteps": [
+      {
+        "kind": "present-refusal-preservation"
+      }
+    ],
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": true,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "absent",
+    "actions": [
+      {
+        "forecast": {
+          "probability": 0
+        },
+        "forecastOnly": true
+      }
+    ],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "forecast-refusal-preserves-and-withdraws",
+    "currentInvalidTime": true,
+    "nativeSteps": [
+      {
+        "kind": "forecast-preservation"
+      }
+    ],
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 63,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "current-source-exclusive-after-inclusive",
+    "modelTimeOffsetMs": -60000,
+    "nativeSteps": [
+      {
+        "kind": "source-boundary"
+      }
+    ],
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 63,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "current-receipt-independent-boundary",
+    "nativeSteps": [
+      {
+        "kind": "receipt-boundary"
+      }
+    ],
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 63,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "F-delayed-A-after-B-lat30-lon0",
+    "staleResponse": true,
+    "nativeSteps": [
+      {
+        "kind": "stale-response"
+      }
+    ],
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "fixed",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "present",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "E-repeated-old-frame-fresh-receipt",
+    "radarAgeSec": 1080,
+    "fixedRadarFrame": true,
+    "nativeSteps": [
+      {
+        "kind": "radar-receipt-not-renewal"
+      }
+    ],
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": true,
+    "local": true,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "absent",
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "observed"
+        },
+        "validFor": 60000
+      }
+    ],
+    "expect": {
+      "wet": true,
+      "strikes": true,
+      "observed": false,
+      "sim": true
+    },
+    "id": "A-observed-lightning-reduce",
+    "motion": "reduce",
+    "motionFull": false,
+    "watchStrike": true,
+    "nativeChecks": [
+      "reduced-flash"
+    ],
+    "strikeObservationSeconds": 24
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": true,
+    "local": true,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "absent",
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "observed"
+        },
+        "validFor": 60000
+      }
+    ],
+    "expect": {
+      "wet": true,
+      "strikes": true,
+      "observed": false,
+      "sim": true
+    },
+    "id": "A-observed-lightning-reduce-full",
+    "motion": "reduce",
+    "motionFull": true,
+    "watchStrike": true,
+    "nativeChecks": [
+      "full-override"
+    ],
+    "strikeObservationSeconds": 24
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": true,
+    "local": false,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "absent",
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "not-observed"
+        },
+        "validFor": 2000
+      }
+    ],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "resume-synthetic-embed",
+    "suspend": {
+      "kind": "tab",
+      "seconds": 3,
+      "lease": "synthetic"
+    },
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": true,
+    "local": true,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "absent",
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "not-observed"
+        },
+        "validFor": 2000
+      }
+    ],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "resume-synthetic-local",
+    "suspend": {
+      "kind": "tab",
+      "seconds": 3,
+      "lease": "synthetic"
+    },
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 63,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "resume-live-source-receipt-outage-recovery",
+    "weatherSequence": true,
+    "nativeSteps": [
+      {
+        "kind": "prepare-live-expiry"
+      }
+    ],
+    "suspend": {
+      "kind": "tab",
+      "seconds": 3,
+      "lease": "current",
+      "recover": true
+    },
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": true,
+    "local": false,
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "radar": "absent",
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "not-observed"
+        },
+        "validFor": 2000
+      }
+    ],
+    "expect": {
+      "wet": false,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "freeze-synthetic-expiry-chromium",
+    "engines": [
+      "chromium"
+    ],
+    "suspend": {
+      "kind": "freeze",
+      "seconds": 3,
+      "lease": "synthetic"
+    },
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "UI-day-embed-no-preference",
+    "night": false,
+    "motion": "no-preference",
+    "motionFull": false,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "UI-day-embed-reduce",
+    "night": false,
+    "motion": "reduce",
+    "motionFull": false,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "UI-day-embed-reduce-full",
+    "night": false,
+    "motion": "reduce",
+    "motionFull": true,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "UI-half-Moon-embed-no-preference",
+    "night": true,
+    "motion": "no-preference",
+    "motionFull": false,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "UI-half-Moon-embed-reduce",
+    "night": true,
+    "motion": "reduce",
+    "motionFull": false,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": false,
+    "local": false,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false
+    },
+    "id": "UI-half-Moon-embed-reduce-full",
+    "night": true,
+    "motion": "reduce",
+    "motionFull": true,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": false,
+    "local": true,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false,
+      "local": true
+    },
+    "id": "UI-half-Moon-local-reduce",
+    "night": true,
+    "motion": "reduce",
+    "motionFull": false,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "group": "R0024",
+    "clock": "real1x",
+    "preview": false,
+    "local": true,
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "radar": "absent",
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "observed": false,
+      "local": true
+    },
+    "id": "UI-half-Moon-local-reduce-full",
+    "night": true,
+    "motion": "reduce",
+    "motionFull": true,
+    "watchMotionSeconds": 15,
+    "nativeChecks": []
+  },
+  {
+    "id": "INFO-local-settings",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true
+    },
+    "local": true,
+    "settingsWorkflow": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "INFO-conflicting",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "conflicting",
+          "type": null,
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "current": "conflicting",
+      "wet": false,
+      "strikes": false,
+      "observed": false,
+      "sim": true
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "INFO-unknown",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "unknown",
+          "type": null,
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "current": "unknown",
+      "wet": false,
+      "strikes": false,
+      "observed": false,
+      "sim": true
+    },
+    "preview": true,
+    "nativeChecks": []
+  },
+  {
+    "id": "INFO-area-no-echo",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        },
+        "noEcho": true
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "wet": false,
+      "strikes": false,
+      "observed": false,
+      "sim": true,
+      "spatial": "observed-area-no-echo",
+      "horizon": "none-supported"
+    },
+    "preview": true,
+    "nativeChecks": []
+  }
+]

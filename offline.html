@@ -231,7 +231,7 @@ body{color:#fff7df;
    the whole card — so drops belong to the clouds overhead. Slants with the live wind via --rain-slant. */
 .wfx .drop{position:absolute;top:19%;width:1.5px;height:14px;border-radius:2px;display:none;will-change:transform;
   background:linear-gradient(#b9dcf500,#b9dcf5cc);animation:fall linear infinite}
-.wfx .flake{position:absolute;top:-6%;border-radius:50%;display:none;background:#eef4ff;box-shadow:0 0 3px #dfeaffaa;will-change:transform;animation:snowfall linear infinite}
+.wfx .flake{position:absolute;top:19%;border-radius:50%;display:none;background:#eef4ff;box-shadow:0 0 3px #dfeaffaa;will-change:transform;animation:snowfall linear infinite}
 .wfx .flash{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;
   background:radial-gradient(115% 60% at 60% 9%,#eaecffe6,#c2b6ff77 26%,#9aa0ff22 44%,transparent 60%)}  /* localized on the upper cloud DECK, not the whole screen */
 .wfx .bolt{position:absolute;inset:0;width:100%;height:100%;opacity:0}
@@ -307,6 +307,7 @@ body{color:#fff7df;
 /* settings affordance: in LOCAL mode the buckle becomes a button; the weather emoji morphs to a
    gear on hover/focus (hover NOT required — tap/Enter/Space also open). Hardcoded embeds never get
    .interactive, so their buckle is the plain decorative weather icon, visually unchanged. */
+.weather-information{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
 .buckle.interactive{cursor:pointer}
 .buckle.interactive .wi{transition:opacity .18s ease}
 .buckle .gear{position:absolute;inset:0;display:grid;place-items:center;z-index:2;font-size:13px;line-height:1;opacity:0;pointer-events:none;color:var(--text);filter:drop-shadow(0 1px 1px rgba(0,0,0,.34));transition:opacity .18s ease}
@@ -3086,6 +3087,7 @@ window.SalahNativeCloudLighting=nativeCloudSolarLighting;window.SalahStartSkyPre
     <span class="buckle"><span class="wi" id="wi"></span></span>
     <span class="wt" id="wt"></span>
   </div>
+  <span class="weather-information" id="weather-information"></span>
 
   <div class="panel">
     <svg class="arc" viewBox="0 0 295 180" preserveAspectRatio="none"></svg>
@@ -4184,13 +4186,86 @@ function weatherDecision(now=Date.now()){
     forecast?Math.min(forecast.validUntil,forecast.retrievedAt+_WX_FORECAST_TTL+1):Infinity);
   _wxDecisionCache={target,current,track:weatherTrack,synthetic,preview,at:now,until,decision}; return decision;
 }
+// Information is downstream of one admitted decision: formatting cannot admit sources or grant effects.
+let _weatherInformationCache=null;
+function weatherInformation(decision,day){
+  const zone=tz, cache=_weatherInformationCache;
+  if(cache&&cache.decision===decision&&cache.day===day&&cache.zone===zone) return cache.value;
+  let formatter=null;
+  try{ formatter=new Intl.DateTimeFormat("en-GB",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}); }catch(e){}
+  const instant=value=>{
+    if(wxNumber(value)==null||!formatter) return null;
+    try{ const parts={};for(const p of formatter.formatToParts(new Date(value))) if(p.type!=="literal")parts[p.type]=p.value;
+      return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}`; }catch(e){ return null; }
+  };
+  const interval=(from,to)=>{const a=instant(from),b=instant(to);return a&&b?`${a} to ${b} ${zone}`:"interval unavailable";};
+  const quantity=q=>{
+    if(!q||wxNumber(q.value,0)==null) return "amount unavailable";
+    const kind={"preceding-interval-amount":"preceding interval amount","preceding-hour-amount":"preceding-hour amount",
+      "interval-amount":"interval amount",amount:"interval amount",rate:"rate","synthetic-preview-amount":"SIM preview amount","interpolated-preview-amount":"forecast preview amount"}[q.kind];
+    if(!kind||!((q.kind==="rate"&&q.units==="mm/h")||(q.kind!=="rate"&&q.units==="mm"))) return "amount unavailable";
+    const span=q.from!=null||q.to!=null?`; ${interval(q.from,q.to)}`:"";
+    const average=wxNumber(q.averageRateMmH,0)!=null?`; ${q.averageRateMmH} mm/h interval average, not instantaneous`:"";
+    return `${kind} ${q.value} ${q.units}${span}${average}`;
+  };
+  const present=decision.present?.evidence,model=decision.model,condition=wxInfo(decision.renderCode,day).label;
+  let currentText;
+  if(decision.lane==="simulation-fixture"){
+    const state={"supported-wet":"supported wet","supported-dry":"supported dry","model-estimated-wet":"model-estimated wet","model-estimated-dry":"model-estimated dry",conflicting:"conflicting",unknown:"unknown"}[decision.current]||"unknown";
+    const modelFallback=!present&&decision.current.startsWith("model-estimated-");
+    currentText=`Current: SIM ${state}${present?.present.type?" "+present.present.type:""}; ${quantity(modelFallback?model?.quantity:present?.present.quantity)}`+
+      (present?`; ${present.provider} — ${present.product}; valid ${interval(present.validFrom,present.validUntil)}; qualified direct operational fixture`:
+        `; present evidence unavailable: ${decision.present?.reason||"source quality unavailable"}`)+
+      (modelFallback?`; Open-Meteo CURRENT model estimate; source valid ${instant(model?.sourceValidAt)||"time unavailable"} ${zone}; ${model?.resolution||"source resolution unavailable"}; ${model?.spatialSupport||"spatial support unavailable"}; direct local observation unavailable`:"")+
+      (decision.disagreement?"; model estimate disagrees":"");
+  }else if(decision.record&&decision.lane==="live"){
+    currentText=`Current: Open-Meteo CURRENT MODEL ESTIMATE — ${condition}; ${quantity(model?.quantity)}; direct local observation unavailable`+
+      `; source valid ${instant(model?.sourceValidAt)||"time unavailable"} ${zone}; ${model?.resolution||"source resolution unavailable"}; ${model?.spatialSupport||"spatial support unavailable"}`+
+      (decision.modelDowngrade?"; quantitative effect decision: "+decision.modelDowngrade:"");
+  }else if(decision.record&&decision.lane==="preview"){
+    currentText=`Current: SIM weather preview — ${condition}; ${quantity(model?.quantity)}; direct local observation unavailable`;
+  }else currentText="Current: unknown — no eligible current condition; direct local observation unavailable";
+  const spatial=decision.spatial||{},distance=spatial.distanceKm;
+  const distanceText=Array.isArray(distance)&&distance.length===2&&wxNumber(distance[0],0)!=null&&wxNumber(distance[1],distance[0])!=null?
+    `${distance[0]}–${distance[1]} km`:"range unavailable";
+  const spatialText=decision.lane!=="simulation-fixture"?"Nearby: unavailable — no qualified surrounding source":
+    spatial.state==="nearby-precipitation"?`Nearby: SIM precipitation ${distanceText}; ${present.provider} — ${present.product}; observed ${instant(spatial.observedAt)||"time unavailable"} ${zone}`:
+    spatial.state==="observed-area-no-echo"?`Nearby: SIM observed area has no echo (${distanceText}); ${present.provider} — ${present.product}; observed ${instant(spatial.observedAt)||"time unavailable"} ${zone}`:
+    "Nearby: unavailable — no qualified surrounding source";
+  const horizon=decision.horizon||{},arrival=horizon.arrival;
+  const horizonText=horizon.state==="approaching"&&decision.lane==="simulation-fixture"&&arrival?.derivedFrom==="qualified-fixture-trajectory"?
+    `Approach: qualified SIM interval ${interval(arrival.from,arrival.to)}; derived from qualified fixture trajectory`:
+    horizon.state==="nearby-without-arrival"?"Approach: nearby precipitation; no supported arrival interval":
+    horizon.state==="numerical-forecast-only"?"Approach: numerical forecast only; no supported arrival interval":
+    horizon.state==="none-supported"&&decision.lane==="simulation-fixture"?"Approach: SIM none supported; no supported arrival interval":
+    "Approach: unavailable; no supported arrival interval";
+  const forecast=decision.forecast;
+  let forecastText="Forecast: unavailable";
+  if(forecast){
+    const event=forecast.probabilityEvent,probability=wxNumber(forecast.probability,0,100);
+    const probabilityText=probability!=null&&event?.event==="precipitation"&&event.from===forecast.validFrom&&event.to===forecast.validUntil?
+      `${probability}% for precipitation; ${interval(event.from,event.to)}; calibration unavailable`:"probability unavailable";
+    const simulated=forecast.scope==="simulation-fixture"?"SIM ":"";
+    forecastText=`Forecast: ${simulated}${forecast.provider||"provider unavailable"} — ${forecast.product||"product unavailable"}; `+
+      `${interval(forecast.validFrom,forecast.validUntil)}; ${quantity(forecast.amount)}; ${probabilityText}; ${forecast.resolution||"native/interpolated provenance unavailable"}`;
+  }
+  const value=Object.freeze({summary:[currentText,spatialText,horizonText,forecastText].join(". "),currentText,spatialText,horizonText,forecastText});
+  _weatherInformationCache={decision,day,zone,value};return value;
+}
+function describeWeatherInformation(element){
+  if(!element) return;
+  const tokens=(element.getAttribute("aria-describedby")||"").split(/\s+/).filter(Boolean);
+  if(!tokens.includes("weather-information")){tokens.push("weather-information");element.setAttribute("aria-describedby",tokens.join(" "));}
+}
+
 let _lastWeatherHeader=null;
 function weatherHeader(decision,day){
   const current=decision.record,description=wxInfo(decision.renderCode,day),available=!!current||decision.present.available;
   const info=!available?{icon:"—",label:"Weather unavailable — no eligible current condition"}:decision.lane==="live"?
     {...description,label:description.label+" — Open-Meteo current model estimate; direct local observation unavailable (unobserved)"+(decision.modelDowngrade?"; quantitative effect decision: "+decision.modelDowngrade:"")}:
     {...description,label:decision.lane==="simulation-fixture"?"SIM "+decision.current+"; "+decision.permissions.reason:"SIM weather preview: "+description.label};
-  return {...info,temperature:current?.temp??null,code:available?decision.renderCode:null,rawCode:current?.code??null,
+  const information=weatherInformation(decision,day);
+  return {...info,label:info.label+"; "+information.summary,information,temperature:current?.temp??null,code:available?decision.renderCode:null,rawCode:current?.code??null,
     generation:decision.target.generation,target:{lat:decision.target.lat,lon:decision.target.lon},
     sourceValidAt:current?.currentValidAt??null,retrievedAt:current?.retrievedAt??null,conditionState:decision.conditionState,observedPresent:decision.observedPresent};
 }
@@ -4199,6 +4274,9 @@ function paintWeatherHeader(value){
   // clears BOTH sinks even while prayer data is pending.
   const wi=$("#wi"),wt=$("#wt");wi.textContent=value.icon;wi.title=value.label;wi.setAttribute("role","img");wi.setAttribute("aria-label",value.label);
   wt.textContent=value.temperature!=null?`${value.temperature}°`:"";
+  const information=$("#weather-information");if(information)information.textContent=value.information?.summary||"";
+  describeWeatherInformation(wi);
+  if(_cfgMode==="local")describeWeatherInformation($(".buckle"));
   _lastWeatherHeader={...value,paintedAt:Date.now()};
 }
 
@@ -5026,13 +5104,13 @@ function paintClouds(t){
   }
   _cloudDirty=false;
 }
-// RAIN ↔ CLOUD coupling: precipitation only falls under columns that actually carry cloud (from the per-column
+// RAIN/SNOW ↔ CLOUD coupling: precipitation only falls under columns that actually carry cloud (from the per-column
 // density profile built in paintClouds), so a streak always traces back to a cloud overhead — not an empty patch
 // of sky. Drizzle keeps its CSS sparsity (nth-child) by clearing the inline display; clear columns are hidden.
 let _rainTiedFx="";
 function tieRainToClouds(){
-  const fx=$(".c")?$(".c").dataset.fx:"", raining=(fx==="rain"||fx==="drizzle"||fx==="thunder");
-  const drops=document.querySelectorAll(".wfx .drop");
+  const fx=$(".c")?$(".c").dataset.fx:"", raining=(fx==="rain"||fx==="drizzle"||fx==="thunder"||fx==="snow");
+  const drops=document.querySelectorAll(".wfx .drop,.wfx .flake");
   if(!raining){ if(_rainTiedFx){ for(const d of drops) d.style.removeProperty("display"); _rainTiedFx=""; } return; }
   _rainTiedFx=fx;
   const W=_colDens?_colDens.length:0; if(!W) return;
