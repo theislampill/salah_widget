@@ -1,0 +1,208 @@
+{
+  "schema": "r0022-l1-proposed-display-contract/v1",
+  "id": "R0022-L1-H1-K003-H020-v1",
+  "status": "PROPOSED_OWNER_DECISION_REQUIRED",
+  "ownerAccepted": false,
+  "baseCommit": "fc8d13338f9274a768580cda5a805492f80c510d",
+  "prototypeRuntimeSha256": "8c3b5dce3de2a52e24d00339d940819861f154113f81488e90e3c667cd105412",
+  "sourceOwners": {
+    "real-sky/native-preview.mjs": {
+      "sha256": "7a5497b43610f85fc1825cee1565a8ff29247d2ecf35e7b5cdeb4175b8fd0a3e",
+      "bytes": 26191
+    },
+    "real-sky/native-host.mjs": {
+      "sha256": "c34de31434878f2df94fb6bda5f2386e8cf9eeb13258da77f30dd46c41a03854",
+      "bytes": 12891
+    },
+    "src/native/index.html": {
+      "sha256": "57eb4a422fb50e388304f87926bcbfb3c1d0a507b5b3656b1f06d1ba29be43a0",
+      "bytes": 366844
+    },
+    "real-sky/native-first-paint.mjs": {
+      "sha256": "40adeee9dbcc8a88ffe2aabd2c2a7cf2aeb2fe5b748e0c795f59ef31af8e23bf",
+      "bytes": 2311
+    }
+  },
+  "recommendation": "Select H1 (specification Hypothesis A, comparison arm B), the lunar-only soft shoulder. Reject H2 (specification Hypothesis B, comparison arm C) because it retains the wash and puts a bright compact patch over lunar detail. Comparison arm A is the current-main baseline.",
+  "units": {
+    "sample": "Existing model moonLuminance: photopic-equivalent cd/m^2; no claim of calibrated local atmospheric photometry.",
+    "rawLunar": "Same physical samples and interpolation grid as native raw sky; sample times ray solid angle divided by V_ZERO_ILLUMINANCE_LUX=2.54e-6 lux. V=0-normalized per-pixel illuminance, not direct surface-brightness RGB.",
+    "exposure": "Original effectiveExposure E from full raw physical/background metering; unchanged. E*Y is dimensionless display energy.",
+    "RGB": "Existing neutral lunar RGB contribution in linear working channels; common scalar preserves chromaticity.",
+    "camera": "Physical camera coordinates az180/elevation45/FOV90; no relocation.",
+    "calendar": "Existing opaque V5 body remains at its independently approved upper-right slot and footprint."
+  },
+  "formula": {
+    "luminance": "Y = .2126*Lr + .7152*Lg + .0722*Lb",
+    "energy": "z = E*Y",
+    "kneeK": 0.003,
+    "headroomH": 0.02,
+    "target": "t(z)=z for z<=K; t(z)=K+H*(z-K)/(H+z-K) otherwise",
+    "mappedRGB": "Ldisplay = Lraw*(t(z)/z) for z>0; zero stays zero",
+    "deepNight": "Display sky = raw sky - Lraw + Ldisplay. Output total = raw total - raw sky + display sky. Raw fields and E are retained separately.",
+    "twilight": "tSun=clamp((sunAltitude+18)/6,0,1); strength=tSun^2*(3-2*tSun). Replace only the old night-source / old-neutral term with raw minus Lraw plus Ldisplay inside the existing display blend. Full lunar shoulder at sun<=-18 deg; zero intervention at sun>=-12 deg. Unchanged mapped solar/day terms and source metering. Exact source hash in sourceOwners.",
+    "previewUnits": "Fast65x106 preview divides all physical component fields including lunar by divisor^2=25 to keep the325x530 reference-pixel flux domain."
+  },
+  "parameterAuthority": "K/H and limits are fixed for this proposed contract; no tuning after favourable output. A changed formula/parameter or materially different complete-scene appearance needs an amended owner decision.",
+  "bounds": {
+    "predeclaration": {
+      "path": "COMPARISON_CONTRACT.md",
+      "sha256": "1643311052f154a6841a1fce6d486ff018af9544322410c8e009776725b3260b",
+      "bytes": 3979
+    },
+    "scope": "Only the canonical clear Orlando comparison:lat28.5383/lon-81.3792,America/New_York,UTCanchor2026-09-25T02:00Z advancing1x,WMO0/cloud0/precip0,temp28C/RH45/visibility20km/wind2. These are not general rain/day acceptance limits.",
+    "coordinates": {
+      "domain": "Page CSS pixels",
+      "cardOriginPageCSS": [
+        8,
+        8
+      ],
+      "cardCSS": [
+        325,
+        530
+      ],
+      "captureContainerCSS": [
+        330,
+        534
+      ],
+      "DPR": "Device ROI coordinates = pageCSS rectangle times actualDPR; unchanged cardCSS footprint. Captured matched pairDPR1, laterDPR2 must use exact mapping."
+    },
+    "ROIStatistic": "Arithmetic mean RGB code over the full specified page rectangle, not physical luminance; cards remain unstripped.",
+    "leftHotspot": {
+      "rect": [
+        9,
+        207,
+        35,
+        245
+      ],
+      "max": 85
+    },
+    "openSky": {
+      "rect": [
+        135,
+        76,
+        190,
+        100
+      ],
+      "max": 80
+    },
+    "lowerWash": {
+      "rect": [
+        40,
+        433,
+        285,
+        452
+      ],
+      "max": 80
+    },
+    "directional": "No direction relocation; strictly increasing mapped lunar energy for finite positive inputs, allowing ordinary floating/encoding ties. Preserve raw angular ordering and raw peak pixel; commonRGB scale. Zero physical lunar input produces zero mapped lunar output.",
+    "nonLunar": "Original raw/E/stellar/diffuse/material input bytes identical; any residual arithmetic difference limited to pre-existing64epsilon decomposition envelope for independently recomputed values. Native matched input and baseline restoration remain exact, not tolerance based."
+  },
+  "sourcePropagation": {
+    "firstPaint": "Unchanged native-first-paint.mjs40adeee9 calls shared renderNativeBackgroundPreview.",
+    "initialPreview": "Same lunar extraction/normalization and presentation owner.",
+    "refined": "native-host accept invokes same nativeAtmosphereFields/nativeSkyPresentation on original accepted request and grid. Original source age, UTC, generation and target fences preserved.",
+    "build": "Only root integration owner uses tools/build_native.py. Generated index/offline/native-sky outputs bound in runtime manifest. No vendor/core or V5 authored edit."
+  },
+  "preservation": {
+    "raw": "Original input/component arrays are not mutated; raw sky is separately referenced by physicalSkyBackgroundLinear and the raw lunar component remains lunarBackgroundLinear. Returned presentation intentionally replaces linear/backgroundLinear/skyBackgroundLinear with display values. Persistent identity of the entire original raster object is not asserted. No deletion or relabeling of physical moonlight.",
+    "calendarGate": "Original native decorative consumers retain physical eligibility contract; astronomical light is not gated by decorative SIM near-new/day flags.",
+    "moonStars": "Opaque V5 material/terrain/Earthshine/footprint, catalogue/diffuse/occlusion owners unchanged.",
+    "weather": "R0024 current model vs observed authority preserved; cloud composition retains its existing one-time transmission owner. No additional cloud transmission in the shoulder.",
+    "solar": "No intervention at/above solar-12 degrees; original solar display numerics retained. Dawn/day/native variants still require selected-source qualification."
+  },
+  "engineeringImplications": {
+    "additionalWork": "One bounded lunar component extraction on the existing atmosphere grid plus display mapping per admitted background/preview; full-raster arrays are retained as in the prototype.",
+    "newControllersNetworkPerFrameReadbacks": "None added by source diff; actual counters and allocation/permanent-owner qualification remain pending.",
+    "cost": "NOT_MEASURED. Original warmed atmosphere/paint/renderMoon and separately added L1 admission/preview cost still mandatory. Conditional owner max(.25ms,10%) median andp95 budget accepted in principle by reviewer, exact adapter remains to qualify before collecting."
+  },
+  "comparison": {
+    "result": {
+      "path": "capture-chromium-dpr1-r4/RESULT.json",
+      "sha256": "dd5dd40e4756546fdcefd3565252a01e9f940bb60e426384cdc6921fa8debcd3",
+      "bytes": 266043
+    },
+    "ordinaryAAndRestored": "Exact full page/card decoded pixel equality;40originaltypedbuffers/sixcommonhashes/20original currentness checks independently verified.",
+    "ROI": {
+      "A": {
+        "left_hotspot": 240.64237516869096,
+        "open_sky": 100.0040404040404,
+        "lower_wash": 87.80042964554242
+      },
+      "B": {
+        "left_hotspot": 58.62112010796221,
+        "open_sky": 51.8780303030303,
+        "lower_wash": 49.95345506623702
+      },
+      "C": {
+        "left_hotspot": 114.35323886639675,
+        "open_sky": 100.0040404040404,
+        "lower_wash": 87.80042964554242
+      }
+    },
+    "originalMoonDirection": "Near left edge in original canonical scene, approximately(3.557,223.536); actual advancing1x per-capture direction bound to rawrequest.",
+    "historicalComparison": "Original frozen owner causal ROI240.8/100.0/138.6 and lunar-removed33.1/27.5/38.5 remain attribution only. Current R0018 row opacity changes lower-ROI visibility. No thresholds changed."
+  },
+  "ordinaryEvidence": [
+    {
+      "name": "ordinary-chromium-dpr1-clear-r1",
+      "result": {
+        "path": "ordinary-chromium-dpr1-clear-r1/results.json",
+        "sha256": "965abbb8e2f582342f6c4457af39fc3e3f57305f5d04d241b04d91573c16d9d6",
+        "bytes": 2358842
+      },
+      "finalImage": {
+        "path": "ordinary-chromium-dpr1-clear-r1/cold-at60s.png",
+        "sha256": "83538a0dd852f3424f948227170b13b75fe51dc69fddcb73b029b2d8ab57564c",
+        "bytes": 118359
+      },
+      "scope": "Unstripped ordinary1x prototype observation; no productTRACE/heldarms/layer removal. Original videos and native trace frames retained; sampled current state and pixels require independent review, not startup or global recording qualification."
+    },
+    {
+      "name": "ordinary-firefox-dpr2-clear-r1",
+      "result": {
+        "path": "ordinary-firefox-dpr2-clear-r1/results.json",
+        "sha256": "2680539157f344e324c4dee92ed737200861a367457e2b7f1efc075a5d94ca13",
+        "bytes": 2338152
+      },
+      "finalImage": {
+        "path": "ordinary-firefox-dpr2-clear-r1/cold-at60s.png",
+        "sha256": "8c8edf9296eebd78ebf120917d68d90d3c5f7c77faeed588b7250f66d7900ed5",
+        "bytes": 394111
+      },
+      "scope": "Unstripped ordinary1x prototype observation; no productTRACE/heldarms/layer removal. Original videos and native trace frames retained; sampled current state and pixels require independent review, not startup or global recording qualification."
+    },
+    {
+      "name": "ordinary-chromium-dpr2-rain-r1",
+      "result": {
+        "path": "ordinary-chromium-dpr2-rain-r1/results.json",
+        "sha256": "eb4ca16a000b66aa2162fe71937567f19ed55e58947b53fe93207f9db3686d41",
+        "bytes": 2358835
+      },
+      "finalImage": {
+        "path": "ordinary-chromium-dpr2-rain-r1/cold-at60s.png",
+        "sha256": "d66f68ce625809a125c150ea32ed8f7f84a72319a758d30a44fd783bbf91d6af",
+        "bytes": 376376
+      },
+      "scope": "Unstripped ordinary1x prototype observation; no productTRACE/heldarms/layer removal. Original videos and native trace frames retained; sampled current state and pixels require independent review, not startup or global recording qualification."
+    }
+  ],
+  "retainedContraryEvidence": [
+    "Chromium r1 and diagnostic2 established a V5 common-input mismatch; diagnostic3 isolated nine changed backing RGB bytes across five pixels. Fixed three-read preparation established exact stability for Chromium r4 without changing material or tolerances; no general observer fix or earlier changed-field diagnosis is claimed.",
+    "Firefox matched comparison r4 failed original currentness before the first arm and held restoration also failed; disposable context closure is containment only. No Firefox same-input pair credit.",
+    "Ordinary first seconds include absent calendar Moon during acquisition. Known PR43 five strict timing failures and unqualified actual extension parent remain failures. Chromium ordinaryclear first11.8seconds overlapped source tests; no latency claim.",
+    "First offline video decode attempt used Playwrightffmpeg without rawvideo muxer; same original video decoded with already-installed fullffmpeg. No recorder change.",
+    "Extra Node-versus-Chromium exact recomputation equality failed; originalrawidentity remained exact. Recomputed mathematical values use the previously declared64epsilon envelope, not changed physical or pixel thresholds."
+  ],
+  "decisionScope": "Owner selection of this bounded display mapping and the actual presented complete-scene appearance. It is not final six-obligation acceptance, merge approval or closure.",
+  "afterApproval": "Continue selected-source implementation/test repairs, all remaining browser/DPR/physical negative/dawn/day/asset recovery/ABA/opacity controls, measured original and L1 cost, immutable whole-scope independent acceptance, focused PR and exacthead/base merge decision. Do not ask routine permissions.",
+  "startupInterface": "Current main already supplies shared preview/firstpaint/refined callers; no need to import PR43 or alter its ownedWIP. Future r0022-l1-full-composition/v1 handoff supplies only exactscope R0021S10 evidence.",
+  "terminalRows": {
+    "R0022-A01": "Original native16slot gains accepted/reusable; current source compatibility independently verified, final selectedsource terminal binding pending.",
+    "R0022-A02": "Original native consumer/material mapping accepted/reusable; actual raw/native composition supplemental proof bound; final selectedsource terminal binding pending.",
+    "R0022-A03": "OPEN_NOT_MEASURED",
+    "R0022-L1-A01": "PROPOSED_CONTRACT_OWNER_SELECTION_PENDING",
+    "R0022-L1-A02": "BOUNDED_COMPARISON_ACCEPTED_ORDINARY_OBSERVATIONS_UNDER_REVIEW; full acceptance set open",
+    "R0022-L1-A03": "OPEN_SELECTED_SOURCE_CURRENTNESS_RECOVERY_MATERIAL_OPACITY_AND_CLOUD_ONCE_CONTROLS_REMAIN"
+  }
+}
