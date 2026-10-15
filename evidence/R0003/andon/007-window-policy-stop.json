@@ -1,0 +1,15 @@
+{
+  "schema": "r0003-andon/v1",
+  "id": "ANDON-007",
+  "OPEN": "The installed Computer Use API ended the current turn during the exact owned Firefox activation/state call because browser URL policy enforcement is unsupported for this Windows browser.",
+  "toolResultVerbatim": "Computer Use has been stopped for this turn because browser URL policy enforcement is not yet supported for the current Windows browser. Stop your work and send a final message noting why Computer Use ended.",
+  "LOAD": "Only owned calibration window was selected from returned sky.list_windows: id2364650, title R0003-capture-e44a9eb12c9943f3b4e94f41abb684c8 — Nightly. Independently bound Win32 HWND2364650/PID60756/executable firefox-1522/firefox.exe. No guessed sky handle and no input to another window.",
+  "attemptedCall": "await sky.activate_window({window:calibrationWindow}); then await sky.get_window_state({window:calibrationWindow,include_screenshot:true,include_text:false}); no successful API result returned.",
+  "USE": "The exact failing internal API stage is unknown. Actual helper readback establishes foreground DID become the owned HWND, so it is incorrect to infer no effect from tool failure. Subsequent GDI custody contains777frames/31.08s. The helper separately FAILed because its first identity heartbeat was0.516s after start, exceeding the declared0.5s maximum; all sampled identities and foreground were correct. This timing failure is a test/instrumentation matter, not a product defect or permission issue.",
+  "RETURN": "No further Computer Use calls or alternative native input after the platform stop. Preserve the full original GDI/Juggler videos, calibration/custody/activation-ready records and the failed timing predicate. Offline review may assess the captured pixels later without granting a continuous PASS. Correct the bounded monitor-start mechanism before any newly admitted trial; do not loosen0.5s to turn this result green.",
+  "DISPOSE": "No current Firefox capture qualification, product mutation, certificate, issue closure or new authority. The platform policy limitation is not repaired by existing owner permission.",
+  "RECONCILE": "Helper completed its bounded trial and independently closed context and browser. PID60756 absent on process readback. No running test browser remains. Same executor/worktree retains the assignment.",
+  "Hansei": "An API failure result does not establish absence of side effects. Check actual owned resources before cleanup or retry; distinguish platform denial from a separate observer-timing failure.",
+  "Kaizen": "Maintain exact returned-window/Win32 association, record the denied API response and observed effect independently, and never bypass the unsupported policy route.",
+  "status": "BLOCKED_PLATFORM_CAPABILITY_CURRENT_TURN"
+}

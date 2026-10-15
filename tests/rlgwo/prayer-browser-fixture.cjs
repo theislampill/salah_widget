@@ -11,7 +11,21 @@ function preload(spec){
   F.resourceTiming=()=>performance.getEntriesByType?.('resource').map(r=>({name:r.name,initiatorType:r.initiatorType,startTime:r.startTime,duration:r.duration,transferSize:r.transferSize,responseStatus:r.responseStatus??null}))||[];
   for(const event of ['load','error']) window.addEventListener?.(event,e=>{const target=e.target;
    if(target&&['IMG','SCRIPT','LINK'].includes(target.tagName))F.assets.push({event,tagName:target.tagName,url:target.currentSrc||target.src||target.href||null,naturalWidth:target.naturalWidth??null,realElapsedMs:performance.now()-started});},true);
-  if(spec.variant==='no-abort') window.AbortController=undefined;
+  // Observe detached native radar Images without replacing their handlers or pixels.
+  // Reflect.construct preserves the native constructor and its native prototype.
+  const nativeImages=[]; F.imageEvents=[];
+  const imageState=im=>({src:im.currentSrc||im.src,complete:im.complete,naturalWidth:im.naturalWidth,naturalHeight:im.naturalHeight,
+    onloadPresent:typeof im.onload==='function',onerrorPresent:typeof im.onerror==='function'});
+  F.imageStates=()=>nativeImages.map(imageState);
+  if(spec.observeImages){
+   const OriginalImage=window.Image;
+   window.Image=new Proxy(OriginalImage,{construct(target,args,newTarget){
+    const im=Reflect.construct(target,args,newTarget); nativeImages.push(im);
+    for(const event of ['load','error'])im.addEventListener(event,()=>F.imageEvents.push({event,...imageState(im),
+      realElapsedMs:performance.now()-started,owner:F.peekSlots?F.peekSlots():null}));
+    return im;
+   }});
+  }
   const log=(type,fields={})=>F.events.push({type,realElapsedMs:performance.now()-started,wallUtcMs:Date.now(),...fields});
   const mode=spec.clockPolicy?.mode||'native';
   let base=mode==='native'?null:NativeDate.parse(spec.clockPolicy.epoch), baseElapsed=started;
@@ -98,15 +112,22 @@ prayerFixture.peekCooldown=()=>prayerCopy(_prayerCooldown);
 const prayerDom=selector=>{const e=document.querySelector(selector);if(!e)return {unavailable:true};const r=e.getBoundingClientRect();return {tagName:String(e.tagName||'unavailable').toLowerCase(),text:e.textContent,html:e.innerHTML,geometry:{x:r.x,y:r.y,width:r.width,height:r.height},font:getComputedStyle(e).fontFamily};};
 const prayerSnapshot=stage=>{
  const state={caseId:prayerFixture.caseId,renderOrdinal:prayerFixture.ordinal,stage,wallUtcMs:Date.now(),realElapsedMs:performance.now()-prayerFixture.started,runtimeGeneration:_runtimeGeneration,
+  config:{lat,lon,label,method,school,units,cacheTz:_cacheTz},
+  ownerSummary:Object.fromEntries(Object.entries(_requestSlots).map(([key,op])=>[key,op?{generation:op.generation,lat:op.lat,lon:op.lon,operationId:op.operationId}:null])),
   timezone:tz,currentDay:today?.date?.gregorian?.date??null,tomorrowDay:tomorrow?.date?.gregorian?.date??null,today:prayerCopy(today),tomorrow:prayerCopy(tomorrow),
   slots:prayerFixture.peekSlots(),cooldown:prayerFixture.peekCooldown(),render:prayerCopy(_lastRender),dateTruth:prayerCopy(_lastDateTruth),weatherHeader:prayerCopy(_lastWeatherHeader),
   weatherDecision:prayerCopy(typeof _wxDecisionCache!=='undefined'&&_wxDecisionCache?_wxDecisionCache.decision:undefined),
   weather:prayerCopy(weather),weatherTrack:prayerCopy(weatherTrack),weatherRadar:prayerCopy(weatherRadar),lastWxAt,lastRadarAt,
   wxRequests:prayerCopy(typeof _wxRequests!=='undefined'?_wxRequests:undefined),dirty:_renderDirty,
-  clock:{TIMESCALE,FOLLOW_WALL_CLOCK,ADVANCING},dom:Object.fromEntries(['.c','.cn','.nt','.left','.times','#ce','#ah','.arc','.buckle','.d','#dateDialog','#dateHijri','#dateReason'].map(s=>[s,prayerDom(s)])),
+  clock:{TIMESCALE,FOLLOW_WALL_CLOCK,ADVANCING},dom:Object.fromEntries(['.c','.cn','.nt','.left','.times','#ce','#ah','.arc','.buckle','.d','#dateDialog','#dateHijri','#dateReason','#wt','#wi'].map(s=>[s,prayerDom(s)])),
   fonts:document.fonts?.status??'unavailable',assets:prayerCopy(prayerFixture.assets),storageLogLength:prayerFixture.storageLog.length,timerLogLength:prayerFixture.timerLog.length,
-  flags:{lastDate,prayerStale:_prayerStale,wxBusy,radarBusy,fetchingTomorrow,siteElev},
+  flags:{lastDate,prayerStale:_prayerStale,wxBusy,radarBusy,fetchingTomorrow,siteElev,currentOwnerLat:_requestSlots.current?.lat??null},
   visibility:{state:document.visibilityState,paused:document.querySelector('.c')?.classList.contains('paused')}};
+ if(stage==='read-only-checkpoint'){
+  state.storage=prayerFixture.storage();state.imageStates=prayerFixture.imageStates();
+  state.elevationCustody=prayerCopy(typeof _cp9SiteElevation!=='undefined'?_cp9SiteElevation:undefined);
+  state.moonConsumed=prayerCopy(_lastMoonPaint);state.cloudMotion=prayerCopy(_cloudMotion);
+ }
  prayerFixture.snapshots.push(state);return state;
 };
 prayerFixture.readSnapshot=()=>prayerSnapshot('read-only-checkpoint');
@@ -117,6 +138,7 @@ if(typeof showError==='function'){const prayerOriginalError=showError;showError=
 function instrument(source,spec){
  let normalized=source.replace(/\r\n/g,'\n');
  const variants={
+  'no-abort':['controller:typeof AbortController!=="undefined"?new AbortController():null','controller:null'],
   'wall-countdown':['leftMin, nowEpoch, nextEpoch,','leftMin:nextMin-nowMin, nowEpoch, nextEpoch,'],
   'sec-only':['if(sec!==_lastSec || _renderDirty)','if(sec!==_lastSec)'],
   'epoch-plus24':['const nextEpoch=nextDay ?','const nextEpoch=tomorrowFlag && nextDay && currentDay ? epochForTzTime(currentDay.y,currentDay.mo,currentDay.d,nextHour,nextMinute,nextZone)+86400000 : nextDay ?'],
@@ -124,7 +146,7 @@ function instrument(source,spec){
   'removed-day-check':['if(day!==requested){','if(false){'],
   'unconditional-finally':['if(!requestEligible(op)) return false;\n  _requestSlots[op.kind]=null; return true;','_requestSlots[op.kind]=null; return true;']
  };
- if(spec.variant&&spec.variant!=='no-abort'){
+ if(spec.variant){
   const edit=variants[spec.variant];if(!edit||normalized.split(edit[0]).length!==2)throw Error('exact variant anchor drift: '+spec.variant);
   normalized=normalized.replace(edit[0],edit[1]);
  }

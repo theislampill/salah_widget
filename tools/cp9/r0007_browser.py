@@ -51,6 +51,10 @@ def validate_cases(packet, root):
     return {"status":"PREPARED_NOT_EXECUTED","caseCount":len(names),"sourceFiles":packet["sourceFiles"]}
 
 def check_expected(trace, expected):
+    def field(value, path):
+        for part in path.split('/'):
+            value=value[int(part)] if isinstance(value,list) else value[part]
+        return value
     rows=trace["snapshots"]
     for item in expected:
         if item.get("reviewOnly"):
@@ -68,23 +72,18 @@ def check_expected(trace, expected):
             raise AssertionError("no actual consumer receipt for "+str(item))
         row=candidates[-1]
         for key, value in item.get("equals",{}).items():
-            actual=row
-            for part in key.split("/"):
-                actual=actual[part]
+            actual=field(row,key)
             if actual != value:
                 raise AssertionError(f"{key}: expected {value!r}, observed {actual!r}")
         for key,value in item.get("contains",{}).items():
-            actual=row
-            for part in key.split("/"):actual=actual[part]
+            actual=field(row,key)
             if value not in actual:raise AssertionError("missing actual consumer text: "+value)
         for key,bounds in item.get("numberRange",{}).items():
-            actual=row
-            for part in key.split("/"):actual=actual[part]
+            actual=field(row,key)
             if isinstance(actual,bool) or not isinstance(actual,(int,float)) or not math.isfinite(actual) or not bounds[0]<=actual<=bounds[1]:
                 raise AssertionError("consumer value outside bounds: "+key)
         for key,pattern in item.get("regex",{}).items():
-            actual=row
-            for part in key.split("/"):actual=actual[part]
+            actual=field(row,key)
             if not isinstance(actual,str) or re.fullmatch(pattern,actual) is None:raise AssertionError("consumer text mismatch: "+key)
         for constraint in item.get("requestCounts",[]):
             requests=trace["requests"]
@@ -116,8 +115,7 @@ def check_expected(trace, expected):
         if item.get("unchangedFrom"):
             reference=[s for s in rows if s.get("checkpoint")==item["unchangedFrom"]["stage"]][-1]
             for key in item["unchangedFrom"]["paths"]:
-                a=row;b=reference
-                for part in key.split("/"):a=a[part];b=b[part]
+                a=field(row,key);b=field(reference,key)
                 if a!=b:raise AssertionError("obsolete effect changed "+key)
         if item.get("noInvalidText"):
             for selector in (".cn",".nt",".left",".times","#ce","#ah",".arc"):
@@ -139,10 +137,12 @@ def main(argv=None):
     p.add_argument("--output",type=Path,required=True)
     p.add_argument("--validate-only",action="store_true")
     p.add_argument("--video-only",action="store_true",help="Avoid screenshot-induced compositor changes; extract stills from retained native video afterward")
+    p.add_argument("--no-video",action="store_true",help="Use browser-native screenshots and observations without starting a screencast")
     p.add_argument("--headed",action="store_true",help="Use the installed engine's headed native compositor for recording qualification")
     p.add_argument("--case-id",action="append")
     p.add_argument("--capacity-lease",type=Path)
     args=p.parse_args(argv)
+    if args.video_only and args.no_video:raise ValueError('video-only and no-video are mutually exclusive')
     root=args.source_root.resolve(); output=args.output.resolve()
     if output.is_relative_to(root):
         raise ValueError("evidence output must be outside source checkout")
@@ -174,10 +174,13 @@ def main(argv=None):
             previous=output/case["cacheSeedsFromCase"]/"trace.json"
             prior=json.loads(previous.read_text(encoding="utf-8"))
             if prior.get("status")!="PASS_ASSERTIONS_PENDING_PIXEL_REVIEW":raise ValueError("winning persistence input did not pass source consumer assertions")
-            case={**case,"cacheSeeds":[s for s in prior["storage"] if s["key"].startswith(("salah:","salahwx:","salah_widget:config:"))],"cacheSeedsFromTraceSha256":digest(previous.read_bytes())}
+            selected_keys=case.get('cacheSeedKeys')
+            case={**case,"cacheSeeds":[s for s in prior["storage"] if s["key"] in selected_keys] if selected_keys is not None else [s for s in prior["storage"] if s["key"].startswith(("salah:","salahwx:","salah_widget:config:"))],"cacheSeedsFromTraceSha256":digest(previous.read_bytes())}
+            if selected_keys is not None and set(selected_keys)!={s['key'] for s in case['cacheSeeds']}:raise ValueError('winning cache seed missing')
         case_output=output/case["caseId"];case_output.mkdir(parents=True,exist_ok=True)
         case_file=case_output/"case-input.json";dump(case_file,case)
         html=subprocess.check_output(["node",str(fixture),str(root/case["entry"]),str(case_file)])
+        (case_output/"observed.html").write_bytes(html)
         dump(case_output/"document-hashes.json",{"source":digest((root/case["entry"]).read_bytes()),"observed":digest(html),"fixture":digest(fixture.read_bytes())})
         class Handler(http.server.SimpleHTTPRequestHandler):
             def do_GET(self):
@@ -198,7 +201,9 @@ def main(argv=None):
                 family,options=runtime.browser_options()
                 if args.headed:options['headless']=False
                 browser=getattr(playwright,family).launch(**options)
-                context=browser.new_context(viewport={"width":370,"height":570},device_scale_factor=1,timezone_id="America/New_York",reduced_motion=case.get("motionPreference","no-preference"),record_video_dir=str(case_output/"video"),record_video_size={"width":370,"height":570})
+                video_options={} if args.no_video else {'record_video_dir':str(case_output/'video'),'record_video_size':{'width':370,'height':570}}
+                context=browser.new_context(viewport={"width":370,"height":570},device_scale_factor=1,timezone_id="America/New_York",reduced_motion=case.get("motionPreference","no-preference"),**video_options)
+                trace['nativeCaptureMode']='browser-screenshots-no-screencast' if args.no_video else 'browser-screenshots-and-screencast'
                 page=context.new_page();errors=[];page.on("pageerror",lambda error:errors.append(str(error)))
                 if case.get('offline'):
                     # The static local origin supplies the installed document/assets.
@@ -253,10 +258,18 @@ def main(argv=None):
                     elif kind=="clock":frame.evaluate("epoch=>window.__prayerFixture.setClock(epoch)",action["epoch"])
                     elif kind=="settings":
                         frame.locator(".buckle").click()
+                        # Let the dialog's existing 30ms initial-focus callback finish
+                        # before sending input. Observe it; never call focus or alter it.
+                        frame.wait_for_function("document.querySelector('.c').classList.contains('settings-open') && document.activeElement?.id==='set-label'",timeout=5000)
                         for name,value in action["fields"].items():
                             element=frame.locator("#set-"+name)
                             if name in ("method","school","units","time"):element.select_option(str(value))
                             else:element.fill(str(value))
+                        form_values={name:frame.locator('#set-'+name).input_value() for name in action['fields']}
+                        trace.setdefault('settingsInputs',[]).append({'requested':action['fields'],'actualBeforeClose':form_values})
+                        assert form_values=={k:str(v) for k,v in action['fields'].items()},'native settings input did not match requested fixture'
+                        if action.get('capture') and not args.video_only:
+                            page.screenshot(path=str(case_output/(action['capture']+'.png')))
                         frame.locator("#setClose").click()
                     elif kind=="iframeVisibility":
                         if not case.get("iframe"):raise ValueError("visibility control requires actual iframe")
@@ -289,15 +302,13 @@ def main(argv=None):
                             after=frame.evaluate("window.__prayerFixture.ordinal")
                             dump(case_output/(action["name"]+"-presentation.json"),{"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"],"capture":"native-video-only" if args.video_only else "native-full-viewport","requestedSelector":action.get("selector",".c"),"requestedBounds":bounds,"viewport":page.viewport_size})
                             if action.get("preservation"):
-                                # Separate warm-preservation checkpoint, never a first-prayer
-                                # observer. The existing lunar diagnostic may admit a pending
-                                # preview; retain the pre/post visible surface to expose that.
+                                # Read only naturally produced lunar/render state. The runtime
+                                # state getter may publish a pending preview, so never call it.
                                 preservation=frame.evaluate("""(()=>{
                                   const photo=document.querySelector('.mphoto'),card=document.querySelector('.c');
                                   const before={href:photo?.getAttribute('href'),classes:card?.className};
-                                  const state=window.SalahMoonRuntime?.state;
                                   return {wallUtcMs:Date.now(),realElapsedMs:performance.now()-window.__prayerFixture.started,
-                                    native:window.SalahMoonHost?.capture(),state,consumed:prayerCopy(_lastMoonPaint),
+                                    native:{sceneIdentity:_skySceneKey,simBase:_simBase,simTz:_simTz,rafT0:_rafT0,timeScale:TIMESCALE,moonSky:prayerCopy(moonSky)},runtimeState:{unavailable:true,reason:'state getter is effectful'},consumed:prayerCopy(_lastMoonPaint),
                                     location:{lat,lon,tz},dpr:devicePixelRatio,
                                     motion:{preference:matchMedia('(prefers-reduced-motion: reduce)').matches,full:MOTIONFULL,reduced:isMotionReduced()},
                                     presentationCss:Object.fromEntries(['--moongrp','--moonfeat','--moonbeam'].map(k=>[k,getComputedStyle(card).getPropertyValue(k)])),
@@ -316,7 +327,7 @@ def main(argv=None):
                     # do not advance the fixture clock or call product rendering.
                     page.wait_for_timeout(1000)
                     trace["nativePresentationTailMs"]=1000
-                export_expression="(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,resourceTiming:f.resourceTiming(),fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight}))}}})()"
+                export_expression="(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,imageEvents:f.imageEvents,imageStates:f.imageStates(),resourceTiming:f.resourceTiming(),fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight}))}}})()"
                 # Fast previews produce thousands of complete render receipts. Seal
                 # the observation cut in fixture-owned storage, then transport every
                 # receipt in bounded JSON batches. One large protocol object/string

@@ -1,0 +1,200 @@
+{
+  "caseId": "R0003-finally-control",
+  "entry": "index.html",
+  "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T16:00:00Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "A",
+      "kind": "prayer",
+      "match": {
+        "method": "4",
+        "school": "0",
+        "latitude": "24.47",
+        "longitude": "39.61"
+      },
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          },
+          "tag": "A"
+        }
+      },
+      "dateFromRequest": true,
+      "hold": true,
+      "phase": "body",
+      "ignoreAbort": true,
+      "times": 1
+    },
+    {
+      "id": "B",
+      "kind": "prayer",
+      "match": {
+        "method": "2",
+        "school": "0",
+        "latitude": "40.71",
+        "longitude": "-74.01"
+      },
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          },
+          "tag": "B"
+        }
+      },
+      "dateFromRequest": true,
+      "hold": true,
+      "phase": "body",
+      "ignoreAbort": true,
+      "times": 1
+    },
+    {
+      "id": "weather-unavailable",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-unavailable",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('A:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "settings",
+      "fields": {
+        "lat": 40.71,
+        "lon": -74.01,
+        "label": "New York",
+        "method": "2",
+        "school": "0",
+        "units": "c"
+      },
+      "capture": "settings-New-York-2-0-c"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('B:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "successor-slot",
+      "readOnly": true
+    },
+    {
+      "type": "release",
+      "id": "A"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "after-old",
+      "readOnly": true
+    },
+    {
+      "type": "release",
+      "id": "B"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='B:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "after-B",
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "successor-slot",
+      "equals": {
+        "flags/currentOwnerLat": 40.71
+      },
+      "noInvalidText": true
+    }
+  ],
+  "observeImages": true,
+  "acceptanceIds": [
+    "R0003-A02"
+  ]
+}

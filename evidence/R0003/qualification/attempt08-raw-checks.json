@@ -1,0 +1,491 @@
+{
+  "schema": "r0003-offline-consumer-checks/v1",
+  "rows": [
+    {
+      "caseId": "R0003-error-recovery",
+      "status": "PASS_RAW_CONSUMER_CHECKS",
+      "checks": [
+        "observed-document",
+        "no-native-error",
+        "no-unmatched-provider",
+        "original-case-assertions",
+        "request-url-owner-attempt-and-final-timer-cleanup"
+      ],
+      "traceSha256": "0cf930268d632d275b8078bddc9c51402dc09f0801b718a91ab8027198e89f91",
+      "caseSha256": "073ebc0669c6027e8c4abadbd717e2e310453550845828892b3fe86676a0a1e2",
+      "observedSha256": "9b32c4df5339fba060ae9fa21ba4bcb68b8e2bf22e3c9208c276cbbe92494f62",
+      "sourceSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "sourceAssociation": {
+        "preloadSha256": "d94e1569ccec2ee3ef136cb5fe27e409d3727fd7e9d33c83448e9d6a1386209f",
+        "renderHookSha256": "fc4578c304192cd5e303cff74e8e5c843f7eb5f58c26f33443e5022909c40435",
+        "originalSourceOutsideHookAndVariantIdentical": true
+      },
+      "capturedOwners": [
+        {
+          "generation": 0,
+          "operationId": 1,
+          "kind": "weather",
+          "requestedDay": null,
+          "lat": 24.47,
+          "lon": 39.61,
+          "method": "4",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:24.47|39.61|UTC|4|0",
+          "weatherCacheKey": "salahwx:24.47|39.61|c"
+        },
+        {
+          "generation": 0,
+          "operationId": 2,
+          "kind": "radar",
+          "requestedDay": null,
+          "lat": 24.47,
+          "lon": 39.61,
+          "method": "4",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:24.47|39.61|UTC|4|0",
+          "weatherCacheKey": "salahwx:24.47|39.61|c"
+        },
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "requestedDay": "07-09-2026",
+          "lat": 24.47,
+          "lon": 39.61,
+          "method": "4",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:24.47|39.61|UTC|4|0",
+          "weatherCacheKey": "salahwx:24.47|39.61|c"
+        },
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "requestedDay": "07-09-2026",
+          "lat": 24.47,
+          "lon": 39.61,
+          "method": "4",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:24.47|39.61|UTC|4|0",
+          "weatherCacheKey": "salahwx:24.47|39.61|c"
+        },
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "requestedDay": "07-09-2026",
+          "lat": 24.47,
+          "lon": 39.61,
+          "method": "4",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:24.47|39.61|UTC|4|0",
+          "weatherCacheKey": "salahwx:24.47|39.61|c"
+        },
+        {
+          "generation": 1,
+          "operationId": 4,
+          "kind": "weather",
+          "requestedDay": null,
+          "lat": 40.71,
+          "lon": -74.01,
+          "method": "2",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:40.71|-74.01|UTC|2|0",
+          "weatherCacheKey": "salahwx:40.71|-74.01|c"
+        },
+        {
+          "generation": 1,
+          "operationId": 5,
+          "kind": "radar",
+          "requestedDay": null,
+          "lat": 40.71,
+          "lon": -74.01,
+          "method": "2",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:40.71|-74.01|UTC|2|0",
+          "weatherCacheKey": "salahwx:40.71|-74.01|c"
+        },
+        {
+          "generation": 1,
+          "operationId": 6,
+          "kind": "current",
+          "requestedDay": "07-09-2026",
+          "lat": 40.71,
+          "lon": -74.01,
+          "method": "2",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:40.71|-74.01|UTC|2|0",
+          "weatherCacheKey": "salahwx:40.71|-74.01|c"
+        },
+        {
+          "generation": 1,
+          "operationId": 7,
+          "kind": "prefetch",
+          "requestedDay": "08-09-2026",
+          "lat": 40.71,
+          "lon": -74.01,
+          "method": "2",
+          "school": "0",
+          "units": "c",
+          "requestZone": "America/New_York",
+          "cacheKey": "salah:40.71|-74.01|UTC|2|0",
+          "weatherCacheKey": "salahwx:40.71|-74.01|c"
+        }
+      ],
+      "firstStillMismatches": [],
+      "visualDisposition": "INDEPENDENT_ORIGINAL_PIXELS_REQUIRED"
+    },
+    {
+      "caseId": "R0003-reload-expired",
+      "status": "PASS_RAW_CONSUMER_CHECKS",
+      "checks": [
+        "observed-document",
+        "no-native-error",
+        "no-unmatched-provider",
+        "original-case-assertions",
+        "request-url-owner-attempt-and-final-timer-cleanup",
+        "winner-only-normal-reload-exact-bytes-no-A-access"
+      ],
+      "traceSha256": "344d4ed49379eeb5c200f490b40078577b56ee758a2f253c13d0fde6954e794b",
+      "caseSha256": "c5d930d2d999c96b4b0d3b3a87ee608055b8414c2703de4d42cac68ead33c4f0",
+      "observedSha256": "b6707f4256ea21550535e13c1cf2fb9dd10d80a4bf34115cbefae68dd8a66b8f",
+      "sourceSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "sourceAssociation": {
+        "preloadSha256": "ac8f2559c70c249b8ef32e0413450687244d3bf914cf90bb7a6a6023cef2c385",
+        "renderHookSha256": "fc4578c304192cd5e303cff74e8e5c843f7eb5f58c26f33443e5022909c40435",
+        "originalSourceOutsideHookAndVariantIdentical": true
+      },
+      "capturedOwners": [
+        {
+          "generation": 0,
+          "operationId": 1,
+          "kind": "weather",
+          "requestedDay": null,
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        },
+        {
+          "generation": 0,
+          "operationId": 2,
+          "kind": "radar",
+          "requestedDay": null,
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        },
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "prefetch",
+          "requestedDay": "08-09-2026",
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        },
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "requestedDay": "07-09-2026",
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        }
+      ],
+      "firstStillMismatches": [],
+      "visualDisposition": "INDEPENDENT_ORIGINAL_PIXELS_REQUIRED"
+    },
+    {
+      "caseId": "R0003-reload-winner",
+      "status": "PASS_RAW_CONSUMER_CHECKS",
+      "checks": [
+        "observed-document",
+        "no-native-error",
+        "no-unmatched-provider",
+        "original-case-assertions",
+        "request-url-owner-attempt-and-final-timer-cleanup",
+        "winner-only-normal-reload-exact-bytes-no-A-access"
+      ],
+      "traceSha256": "4f9739066d4170c76d743aa4f9aff5bb43aa8825be4ec9022576976a7b6eb3b8",
+      "caseSha256": "a597dc553dbf90957c6f911ce6b2a0ae0b2d751f0a012f5a8614560a47169bbc",
+      "observedSha256": "e6840f0b93f7d264d9ef68dad3618644a4f4c9e9850d35584b7229de8e5a7947",
+      "sourceSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "sourceAssociation": {
+        "preloadSha256": "5b60f1046f5afcee335bcb02140b009f32149196767d8bbf66fd874f8a562849",
+        "renderHookSha256": "fc4578c304192cd5e303cff74e8e5c843f7eb5f58c26f33443e5022909c40435",
+        "originalSourceOutsideHookAndVariantIdentical": true
+      },
+      "capturedOwners": [
+        {
+          "generation": 0,
+          "operationId": 1,
+          "kind": "weather",
+          "requestedDay": null,
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        },
+        {
+          "generation": 0,
+          "operationId": 2,
+          "kind": "radar",
+          "requestedDay": null,
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        },
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "prefetch",
+          "requestedDay": "08-09-2026",
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        },
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "requestedDay": "07-09-2026",
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        }
+      ],
+      "firstStillMismatches": [],
+      "visualDisposition": "INDEPENDENT_ORIGINAL_PIXELS_REQUIRED"
+    },
+    {
+      "caseId": "R0003-warm-ashen-below-horizon",
+      "status": "PASS_RAW_CONSUMER_CHECKS",
+      "checks": [
+        "observed-document",
+        "no-native-error",
+        "no-unmatched-provider",
+        "original-case-assertions",
+        "request-url-owner-attempt-and-final-timer-cleanup"
+      ],
+      "traceSha256": "e50975aee438acfdb34b01152154bf43f37021f6003cf4b8572822ab96bbe3b6",
+      "caseSha256": "5920b19dfa585461fff8c22f8302a970837b5b3dfb6543bac1d5d82f968ea2f4",
+      "observedSha256": "47e203d523183b904f9d42eee98ebce9b7a322b679b705fe0bcc0e425effbf10",
+      "sourceSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "sourceAssociation": {
+        "preloadSha256": "6c754a5d0eac8b93624865e335eea1e126dff60e297117f869daec6c4a25b92d",
+        "renderHookSha256": "fc4578c304192cd5e303cff74e8e5c843f7eb5f58c26f33443e5022909c40435",
+        "originalSourceOutsideHookAndVariantIdentical": true
+      },
+      "capturedOwners": [
+        {
+          "generation": 0,
+          "operationId": 1,
+          "kind": "current",
+          "requestedDay": "08-03-2026",
+          "lat": 40.71,
+          "lon": -74.01,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "America/New_York",
+          "cacheKey": "salah:40.71|-74.01|America/New_York|2|0",
+          "weatherCacheKey": "salahwx:40.71|-74.01|f"
+        },
+        {
+          "generation": 0,
+          "operationId": 2,
+          "kind": "prefetch",
+          "requestedDay": "09-03-2026",
+          "lat": 40.71,
+          "lon": -74.01,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "America/New_York",
+          "cacheKey": "salah:40.71|-74.01|America/New_York|2|0",
+          "weatherCacheKey": "salahwx:40.71|-74.01|f"
+        }
+      ],
+      "firstStillMismatches": [],
+      "visualDisposition": "INDEPENDENT_ORIGINAL_PIXELS_REQUIRED"
+    },
+    {
+      "caseId": "R0003-weather-old-body",
+      "status": "PASS_RAW_CONSUMER_CHECKS",
+      "checks": [
+        "observed-document",
+        "no-native-error",
+        "no-unmatched-provider",
+        "original-case-assertions",
+        "request-url-owner-attempt-and-final-timer-cleanup"
+      ],
+      "traceSha256": "91371a356184589427cf5b5496f7e168a3828073098d2f2e142f40563c540e49",
+      "caseSha256": "3402fa46935b266d01b55b658299b8d874dd62851356de5c57383a5992a9e8c7",
+      "observedSha256": "0d730de78272964cf3a4b41487639a0e5925d0776406eed354471c843178d468",
+      "sourceSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+      "sourceAssociation": {
+        "preloadSha256": "134b8b0caa8d1726af69b889191e38a10c0e5b49196b0e2dea1161112d622170",
+        "renderHookSha256": "fc4578c304192cd5e303cff74e8e5c843f7eb5f58c26f33443e5022909c40435",
+        "originalSourceOutsideHookAndVariantIdentical": true
+      },
+      "capturedOwners": [
+        {
+          "generation": 0,
+          "operationId": 1,
+          "kind": "weather",
+          "requestedDay": null,
+          "lat": 24.47,
+          "lon": 39.61,
+          "method": "4",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:24.47|39.61|UTC|4|0",
+          "weatherCacheKey": "salahwx:24.47|39.61|c"
+        },
+        {
+          "generation": 0,
+          "operationId": 2,
+          "kind": "radar",
+          "requestedDay": null,
+          "lat": 24.47,
+          "lon": 39.61,
+          "method": "4",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:24.47|39.61|UTC|4|0",
+          "weatherCacheKey": "salahwx:24.47|39.61|c"
+        },
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "requestedDay": "07-09-2026",
+          "lat": 24.47,
+          "lon": 39.61,
+          "method": "4",
+          "school": "0",
+          "units": "c",
+          "requestZone": "UTC",
+          "cacheKey": "salah:24.47|39.61|UTC|4|0",
+          "weatherCacheKey": "salahwx:24.47|39.61|c"
+        },
+        {
+          "generation": 1,
+          "operationId": 4,
+          "kind": "weather",
+          "requestedDay": null,
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        },
+        {
+          "generation": 1,
+          "operationId": 5,
+          "kind": "radar",
+          "requestedDay": null,
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        },
+        {
+          "generation": 1,
+          "operationId": 6,
+          "kind": "current",
+          "requestedDay": "07-09-2026",
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        },
+        {
+          "generation": 1,
+          "operationId": 7,
+          "kind": "prefetch",
+          "requestedDay": "08-09-2026",
+          "lat": 51.48,
+          "lon": -0.001,
+          "method": "2",
+          "school": "0",
+          "units": "f",
+          "requestZone": "UTC",
+          "cacheKey": "salah:51.48|-0.001|UTC|2|0",
+          "weatherCacheKey": "salahwx:51.48|-0.001|f"
+        }
+      ],
+      "firstStillMismatches": [],
+      "visualDisposition": "INDEPENDENT_ORIGINAL_PIXELS_REQUIRED"
+    }
+  ]
+}

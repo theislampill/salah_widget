@@ -1,0 +1,78 @@
+{
+  "caseId": "R0003-reload-expired",
+  "entry": "index.html",
+  "hash": "#preferLocal=1",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T17:00:00Z"
+  },
+  "cacheSeeds": [
+    {
+      "key": "salah_widget:config:v1",
+      "value": "{\"v\":1,\"lat\":51.48,\"lon\":-0.001,\"tz\":\"UTC\",\"label\":\"London\",\"method\":\"2\",\"school\":\"0\",\"time\":\"24\",\"datefmt\":\"YYYY-MM-DD\",\"units\":\"f\",\"appearance\":\"glass\",\"lp\":0,\"seed\":null,\"source\":\"manual\",\"savedAt\":1788796800000,\"locationEvidence\":{\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null}}"
+    },
+    {
+      "key": "salahwx:51.48|-0.001|f",
+      "value": "{\"w\":{\"code\":2,\"units\":\"f\",\"src\":\"current\",\"admission\":{},\"target\":{\"generation\":1,\"lat\":51.48,\"lon\":-0.001,\"intent\":\"fixed-site\",\"source\":\"manual\",\"accuracyM\":null,\"acquiredAt\":null,\"provider\":null,\"area\":null,\"bounds\":null},\"provider\":\"Open-Meteo\",\"product\":\"current weather model\",\"quantityKind\":\"preceding-interval-amount\",\"precipitationUnit\":\"mm\",\"temp\":68,\"feels\":68,\"rh\":70,\"dew\":64.4,\"wind\":2,\"windDir\":180,\"gust\":4,\"cloud\":50,\"cloudLow\":35,\"cloudMid\":15,\"cloudHigh\":10,\"precip\":0,\"rain\":0,\"showers\":0,\"snow\":0,\"vis\":20000,\"isDay\":1,\"currentTime\":\"2026-09-07T16:00\",\"currentZone\":\"UTC\",\"currentValidAt\":1788796800000,\"currentIntervalSec\":900,\"retrievedAt\":1788796800000},\"ts\":1788796800000}"
+    },
+    {
+      "key": "salah:51.48|-0.001|UTC|2|0",
+      "value": "{\"date\":\"07-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Sunset\":\"18:00\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"07-09-2026\",\"day\":\"07\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"19-02-1448\",\"day\":\"19\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"UTC\"},\"tag\":\"PB\"}}"
+    }
+  ],
+  "responseRules": [
+    {
+      "id": "prayer-offline",
+      "kind": "prayer",
+      "failure": true
+    },
+    {
+      "id": "weather-unavailable",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-unavailable",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "reloaded",
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "reloaded",
+      "equals": {
+        "config/lat": 51.48,
+        "config/lon": -0.001,
+        "config/units": "f",
+        "today/tag": "PB",
+        "dom/#wt/text": "",
+        "weatherHeader/temperature": null
+      },
+      "noInvalidText": true
+    }
+  ],
+  "observeImages": true,
+  "offline": true,
+  "cacheSeedsFromCase": "R0003-weather-old-body",
+  "cacheSeedKeys": [
+    "salah_widget:config:v1",
+    "salah:51.48|-0.001|UTC|2|0",
+    "salahwx:51.48|-0.001|f"
+  ],
+  "acceptanceIds": [
+    "R0003-A06"
+  ],
+  "cacheSeedsFromTraceSha256": "6d9907cb8bfc593152c9e1905f4e113645841caf2df80b300c77043d3410316e"
+}

@@ -1,0 +1,268 @@
+{
+  "caseId": "R0003-radar-manifest",
+  "entry": "index.html",
+  "hash": "#preferLocal=1&lat=0&lon=30&tz=UTC&label=Radar%20A&method=4&school=0&units=c&time=24",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T16:00:00Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "PA",
+      "kind": "prayer",
+      "match": {
+        "method": "4",
+        "school": "0",
+        "latitude": "0",
+        "longitude": "30"
+      },
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          },
+          "tag": "PA"
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "PB",
+      "kind": "prayer",
+      "match": {
+        "method": "2",
+        "school": "0",
+        "latitude": "30",
+        "longitude": "0"
+      },
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          },
+          "tag": "PB"
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "RA",
+      "kind": "radar",
+      "times": 1,
+      "payload": {
+        "host": "__ORIGIN__",
+        "generated": 1788796800,
+        "radar": {
+          "past": [
+            {
+              "path": "/fixture-radar-A",
+              "time": 1788796800
+            }
+          ]
+        }
+      },
+      "hold": true,
+      "phase": "body",
+      "ignoreAbort": true
+    },
+    {
+      "id": "RB",
+      "kind": "radar",
+      "times": 1,
+      "payload": {
+        "host": "__ORIGIN__",
+        "generated": 1788796800,
+        "radar": {
+          "past": [
+            {
+              "path": "/fixture-radar-B",
+              "time": 1788796800
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "weather-unavailable",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-unavailable",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('RA:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "A-radar-held",
+      "readOnly": true
+    },
+    {
+      "type": "settings",
+      "fields": {
+        "lat": 30,
+        "lon": 0,
+        "label": "Radar B",
+        "method": "2",
+        "school": "0",
+        "units": "c"
+      },
+      "capture": "settings-Radar-B-2-0-c"
+    },
+    {
+      "type": "waitImage",
+      "id": "IB"
+    },
+    {
+      "type": "capture",
+      "name": "B-image-held",
+      "readOnly": true
+    },
+    {
+      "type": "release",
+      "id": "RA"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='RA:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "B-after-A",
+      "readOnly": true
+    },
+    {
+      "type": "releaseImage",
+      "id": "IB"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.readSnapshot().weatherRadar?.target.lat===30",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "B-radar",
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "B-after-A",
+      "equals": {},
+      "noInvalidText": true,
+      "unchangedFrom": {
+        "stage": "B-image-held",
+        "paths": [
+          "config",
+          "weatherRadar",
+          "flags/radarBusy",
+          "slots/radar",
+          "storage"
+        ]
+      }
+    },
+    {
+      "stage": "B-radar",
+      "equals": {
+        "weatherRadar/target/lat": 30,
+        "weatherRadar/target/lon": 0,
+        "weatherRadar/precipMm": 0,
+        "weatherRadar/sample/meanAlpha": 0,
+        "flags/radarBusy": false
+      },
+      "noInvalidText": true
+    }
+  ],
+  "observeImages": true,
+  "acceptanceIds": [
+    "R0003-A05"
+  ],
+  "imageRules": [
+    {
+      "id": "IA",
+      "pathContains": "fixture-radar-A",
+      "hold": true,
+      "pngBase64": "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAADIElEQVR4nO3UIQEAIBDAwI9DJtLRFGIgduL81Gbtc4Gm+R0A/GMAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEPYAIvAf8AKfLwEAAAAASUVORK5CYII=",
+      "alpha": 255
+    },
+    {
+      "id": "IB",
+      "pathContains": "fixture-radar-B",
+      "hold": true,
+      "pngBase64": "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAADXUlEQVR4nO3OMQEAIAzAsMlBE+omFRk9yJE/c+4O8Kc8AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0DnAYANEP+TdcQgAAAAAElFTkSuQmCC",
+      "alpha": 0
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "caseId": "R0003-warm-ashen-below-horizon",
+  "entry": "index.html",
+  "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=01%3A30&simMoon=0.01&simWax=1&simMoonAlt=-20&simMoonH=42&simWx=0&simCloud=0",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-03-08T06:30:00.000Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "healthy",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "America/New_York"
+          }
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "document.querySelector('.c').classList.contains('moon-ready')&&document.fonts.status==='loaded'",
+      "timeoutMs": 60000
+    },
+    {
+      "type": "sleep",
+      "ms": 1000
+    },
+    {
+      "type": "capture",
+      "name": "warm-ashen",
+      "selector": ".c",
+      "readOnly": true,
+      "preservation": true
+    },
+    {
+      "type": "sleep",
+      "ms": 1000
+    }
+  ],
+  "expected": [
+    {
+      "stage": "warm-ashen",
+      "equals": {
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    }
+  ],
+  "acceptanceIds": [
+    "R0003-A07"
+  ],
+  "status": "RECIPE_ONLY_RESULTS_ARE_SEPARATE",
+  "reviewRequirements": [
+    "Native warm current terrain; mostly in frame; opaque ashen disc; no stars through; physical moonlight zero; explicit fixed epoch and forced below-horizon phase disclosed."
+  ],
+  "motionPreference": "no-preference",
+  "observeImages": true
+}

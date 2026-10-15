@@ -1,0 +1,14 @@
+{
+  "schema": "r0003-andon-followup/v1",
+  "parent": "ANDON-006",
+  "classification": "browser capture capability; no product defect established",
+  "control": "attempt06-firefox-video-only retained whole-card blank frames55,64,69,77,82 with screenshots disabled. Screenshot calls are not a necessary cause. Native renderer versus Juggler capture source remains unassigned.",
+  "containment": "No further unmodified Juggler retries; no first-presentation or continuous acceptance from healthy DOM, later stills, or narrow functional PASS. Original attempts05/06 retained.",
+  "alternative": "Installed FFmpeg8.1.1 gdigrab supports one HWND. A separate nonce/counter/native-clock calibration must independently qualify complete continuous pixels, exact HWND/PID/executable binding and foreground continuity before any widget use.",
+  "calibration01": "Helper667c61bcc2be88b28f97191029e1e0aaa2eed9775b46d8c7060ad828dfa8edc5 reached unique nonce Firefox HWND3085610 PID41100, viewport370x570 DPR1. Strict foreground guard failed BEFORE GDI recording. Both context and browser closed; PID absent on subsequent readback.",
+  "cause01": "The helper assumed headed launch activates its new window. The observed window was not foreground. This is a setup precondition failure, not a recording result.",
+  "countermeasure01": "Use one bounded documented Playwright Page.bringToFront call after exact identity association, record before/after foreground and retain the unchanged strict guard. Helperc8fb5ba22122cfa36f5bf1b3d9d5ea5367fc0731f0357ce3a41fa840573ebd43 awaits independent admission before trial02.",
+  "Hansei": "A supported headed browser is not automatically an active visible window. Setup identity and foreground are prerequisites, not pixels.",
+  "Kaizen": "Explicit single activation with recorded postcondition; never fall through to recording on identity or foreground loss. No changed production source, browser preferences, clock, rendering or acquisition decisions.",
+  "status": "OPEN"
+}

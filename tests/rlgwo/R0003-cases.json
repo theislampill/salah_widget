@@ -1,0 +1,6953 @@
+{
+  "schema": "remaining-prayer-cases/v1",
+  "issue": 3,
+  "sourceCommit": "06772824a159cd2bc42a1d9f79a3fb22fa46e49d",
+  "specCommit": "21e7a84365fae37a86cae5c7d5e41008c0adc53f",
+  "sourceFiles": {
+    "index.html": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+    "offline.html": "bcb20a7db58720343f8cdc2ea72182fe506f7f798b1c9a907f1e307901497264",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "src/native/index.html": "37fb7477e23d02329eacbf8ff94107fb3ea40a7d62020ef56a245af56e0ade00",
+    "src/native/config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "tools/build_native.py": "25bd8088051936b524d97ebe8fabee1c3ebf0d682e6909c294a45cc01a9a3bb5",
+    "tools/cp9/browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+    "tools/cp9/r0007_browser.py": "62aca6253f50ef4f3c3b7df34cb9648674124b4e2ae344b9086cc101f519f67a",
+    "tests/rlgwo/prayer-browser-fixture.cjs": "c48fd531e96e565832cde1a93703b526d3765ed23c682233717986f9279f66b6",
+    "tools/cp9/r0003_cases.py": "533b13e4ae619c7f0e9a21e97f1e80ff5c9826ca5a98a05c6f1c066fd93c25c5",
+    "tests/r0002-ordinary.json": "40c6412a36a4644ec9db9a5c92ae2e682aa22dfd6bac45be249886cfe7e76282",
+    "tests/rlgwo/R0007-preservation-cases.json": "493c0099770d36f6cfe3c481f48877e800017dabea4b1a4c20a255801405f9ca"
+  },
+  "cases": [
+    {
+      "caseId": "R0003-prayer-late-body",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "firstPredicate": "s.stage==='render-completed'&&s.today?.tag==='B'"
+        },
+        {
+          "type": "capture",
+          "name": "B-before-A",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "A"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "B-before-A",
+          "equals": {
+            "config/lat": 40.71,
+            "config/lon": -74.01,
+            "config/label": "New York",
+            "timezone": "America/New_York",
+            "today/timings/Fajr": "05:00",
+            "today/timings/Asr": "15:30",
+            "dom/.nt/text": "15:30",
+            "flags/prayerStale": false
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-before-A",
+            "paths": [
+              "config",
+              "timezone",
+              "runtimeGeneration",
+              "today",
+              "tomorrow",
+              "flags",
+              "storage",
+              "weather",
+              "weatherTrack",
+              "weatherRadar",
+              "lastWxAt",
+              "dom/.nt/text",
+              "dom/.times/html"
+            ]
+          }
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A01"
+      ]
+    },
+    {
+      "caseId": "R0003-prayer-late-headers",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "headers",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "firstPredicate": "s.stage==='render-completed'&&s.today?.tag==='B'"
+        },
+        {
+          "type": "capture",
+          "name": "B-before-A",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "A"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "B-before-A",
+          "equals": {
+            "config/lat": 40.71,
+            "config/lon": -74.01,
+            "config/label": "New York",
+            "timezone": "America/New_York",
+            "today/timings/Fajr": "05:00",
+            "today/timings/Asr": "15:30",
+            "dom/.nt/text": "15:30",
+            "flags/prayerStale": false
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-before-A",
+            "paths": [
+              "config",
+              "timezone",
+              "runtimeGeneration",
+              "today",
+              "tomorrow",
+              "flags",
+              "storage",
+              "weather",
+              "weatherTrack",
+              "weatherRadar",
+              "lastWxAt",
+              "dom/.nt/text",
+              "dom/.times/html"
+            ]
+          }
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A01"
+      ]
+    },
+    {
+      "caseId": "R0003-prayer-old-rejection",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B-next",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B-next"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('B:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-pending",
+          "readOnly": true
+        },
+        {
+          "type": "reject",
+          "id": "A"
+        },
+        {
+          "type": "capture",
+          "name": "after-rejection",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "B"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-winner",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "after-rejection",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-pending",
+            "paths": [
+              "config",
+              "timezone",
+              "today",
+              "tomorrow",
+              "slots/current",
+              "storage",
+              "flags"
+            ]
+          }
+        },
+        {
+          "stage": "B-winner",
+          "equals": {
+            "config/lat": 40.71,
+            "config/lon": -74.01,
+            "config/label": "New York",
+            "timezone": "America/New_York",
+            "today/timings/Fajr": "05:00",
+            "today/timings/Asr": "15:30",
+            "dom/.nt/text": "15:30",
+            "flags/prayerStale": false
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A01"
+      ]
+    },
+    {
+      "caseId": "R0003-prayer-early-A",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='A')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "A-current",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-winner",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "A-current",
+          "equals": {
+            "today/tag": "A",
+            "today/timings/Asr": "15:49"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "B-winner",
+          "equals": {
+            "config/lat": 40.71,
+            "config/lon": -74.01,
+            "config/label": "New York",
+            "timezone": "America/New_York",
+            "today/timings/Fajr": "05:00",
+            "today/timings/Asr": "15:30",
+            "dom/.nt/text": "15:30",
+            "flags/prayerStale": false
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A01"
+      ]
+    },
+    {
+      "caseId": "R0003-prayer-old-tomorrow",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026"
+        },
+        {
+          "id": "A-next",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A-next"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "day": "08-09-2026"
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true,
+          "day": "07-09-2026"
+        },
+        {
+          "id": "B-next",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B-next"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "day": "08-09-2026"
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A-next:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "A-tomorrow-held",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "firstPredicate": "s.stage==='render-completed'&&s.today?.tag==='B'"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('B-next:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-before-A",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "A-next"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A-next:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "B-next"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.readSnapshot().tomorrow?.tag==='B-next'",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-tomorrow",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "A-tomorrow-held",
+          "equals": {
+            "slots/prefetch/requestedDay": "08-09-2026"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "B-before-A",
+          "equals": {
+            "config/lat": 40.71,
+            "config/lon": -74.01,
+            "config/label": "New York",
+            "timezone": "America/New_York",
+            "today/timings/Fajr": "05:00",
+            "today/timings/Asr": "15:30",
+            "dom/.nt/text": "15:30",
+            "flags/prayerStale": false,
+            "slots/prefetch/requestedDay": "08-09-2026"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-before-A",
+            "paths": [
+              "config",
+              "timezone",
+              "runtimeGeneration",
+              "today",
+              "tomorrow",
+              "flags",
+              "storage",
+              "weather",
+              "weatherTrack",
+              "weatherRadar",
+              "lastWxAt",
+              "dom/.nt/text",
+              "dom/.times/html",
+              "slots/prefetch"
+            ]
+          }
+        },
+        {
+          "stage": "B-tomorrow",
+          "equals": {
+            "tomorrow/tag": "B-next",
+            "tomorrowDay": "08-09-2026",
+            "slots/prefetch": null
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A01"
+      ]
+    },
+    {
+      "caseId": "R0003-prayer-ABA",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A1",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A1"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "A2",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A2"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A1:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "A1-pending",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('B:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-pending",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 24.47,
+            "lon": 39.61,
+            "label": "Madinah",
+            "method": "4",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-Madinah-4-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='A2')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "A2-before-old",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "B"
+        },
+        {
+          "type": "release",
+          "id": "A1"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A1:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "A2-after-old",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "A1-pending",
+          "equals": {
+            "runtimeGeneration": 0
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "B-pending",
+          "equals": {
+            "runtimeGeneration": 1
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "A2-before-old",
+          "equals": {
+            "runtimeGeneration": 2,
+            "today/tag": "A2",
+            "config/lat": 24.47
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "A2-after-old",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "A2-before-old",
+            "paths": [
+              "config",
+              "timezone",
+              "runtimeGeneration",
+              "today",
+              "tomorrow",
+              "flags",
+              "storage",
+              "weather",
+              "weatherTrack",
+              "weatherRadar",
+              "lastWxAt",
+              "dom/.nt/text",
+              "dom/.times/html"
+            ]
+          }
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A02"
+      ]
+    },
+    {
+      "caseId": "R0003-method-school-units",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "M2",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "M2"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "M3",
+          "kind": "prayer",
+          "match": {
+            "method": "3",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "M3"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "S1",
+          "kind": "prayer",
+          "match": {
+            "method": "3",
+            "school": "1",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "S1"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "F",
+          "kind": "prayer",
+          "match": {
+            "method": "3",
+            "school": "1",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "F"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('M2:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "method2",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "3",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-3-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('M3:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "method3",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "3",
+            "school": "1",
+            "units": "c"
+          },
+          "capture": "settings-New-York-3-1-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('S1:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "school1",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "3",
+            "school": "1",
+            "units": "f"
+          },
+          "capture": "settings-New-York-3-1-f"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='F')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "F-before-old",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "S1"
+        },
+        {
+          "type": "release",
+          "id": "M3"
+        },
+        {
+          "type": "release",
+          "id": "M2"
+        },
+        {
+          "type": "release",
+          "id": "A"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "F-after-old",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "method2",
+          "equals": {
+            "config/method": "2",
+            "runtimeGeneration": 1
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "method3",
+          "equals": {
+            "config/method": "3",
+            "runtimeGeneration": 2
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "school1",
+          "equals": {
+            "config/school": "1",
+            "runtimeGeneration": 3
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "F-before-old",
+          "equals": {
+            "runtimeGeneration": 4,
+            "today/tag": "F",
+            "config/units": "f",
+            "config/method": "3",
+            "config/school": "1"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "F-after-old",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "F-before-old",
+            "paths": [
+              "config",
+              "timezone",
+              "runtimeGeneration",
+              "today",
+              "tomorrow",
+              "flags",
+              "storage",
+              "weather",
+              "weatherTrack",
+              "weatherRadar",
+              "lastWxAt",
+              "dom/.nt/text",
+              "dom/.times/html"
+            ]
+          }
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A02"
+      ]
+    },
+    {
+      "caseId": "R0003-no-abort",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "firstPredicate": "s.stage==='render-completed'&&s.today?.tag==='B'"
+        },
+        {
+          "type": "capture",
+          "name": "B-before-A",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "A"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "B-before-A",
+          "equals": {
+            "config/lat": 40.71,
+            "config/lon": -74.01,
+            "config/label": "New York",
+            "timezone": "America/New_York",
+            "today/timings/Fajr": "05:00",
+            "today/timings/Asr": "15:30",
+            "dom/.nt/text": "15:30",
+            "flags/prayerStale": false
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-before-A",
+            "paths": [
+              "config",
+              "timezone",
+              "runtimeGeneration",
+              "today",
+              "tomorrow",
+              "flags",
+              "storage",
+              "weather",
+              "weatherTrack",
+              "weatherRadar",
+              "lastWxAt",
+              "dom/.nt/text",
+              "dom/.times/html"
+            ]
+          }
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A02"
+      ],
+      "variant": "no-abort"
+    },
+    {
+      "caseId": "R0003-unconditional-finally",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B-next",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "B-next"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('B:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "successor-slot",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "A"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "after-old",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "B"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='B:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "after-B",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "successor-slot",
+          "equals": {
+            "flags/currentOwnerLat": 40.71
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "variant": "unconditional-finally",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "R0003-A02"
+      ]
+    },
+    {
+      "caseId": "R0003-finally-control",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B-next",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "B-next"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('B:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "successor-slot",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "A"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "after-old",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "B"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='B:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "after-B",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "successor-slot",
+          "equals": {
+            "flags/currentOwnerLat": 40.71
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A02"
+      ]
+    },
+    {
+      "caseId": "R0003-weather-old-body",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "PA",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PA"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "PB",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "51.48",
+            "longitude": "-0.001"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PB"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "PB-next",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "51.48",
+            "longitude": "-0.001"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PB-next"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "WA",
+          "kind": "weather",
+          "match": {
+            "latitude": "24.47",
+            "longitude": "39.61",
+            "temperature_unit": "celsius"
+          },
+          "payload": {
+            "timezone": "UTC",
+            "elevation": 100,
+            "current": {
+              "time": "2026-09-07T16:00",
+              "interval": 900,
+              "weather_code": 2,
+              "temperature_2m": 20,
+              "apparent_temperature": 20,
+              "relative_humidity_2m": 70,
+              "dew_point_2m": 18,
+              "wind_speed_10m": 2,
+              "wind_direction_10m": 180,
+              "wind_gusts_10m": 4,
+              "cloud_cover": 50,
+              "cloud_cover_low": 35,
+              "cloud_cover_mid": 15,
+              "cloud_cover_high": 10,
+              "precipitation": 0,
+              "rain": 0,
+              "showers": 0,
+              "snowfall": 0,
+              "visibility": 20000,
+              "is_day": 1
+            },
+            "hourly": {
+              "weather_code": [
+                2
+              ],
+              "temperature_2m": [
+                20
+              ],
+              "apparent_temperature": [
+                20
+              ],
+              "relative_humidity_2m": [
+                70
+              ],
+              "dew_point_2m": [
+                18
+              ],
+              "wind_speed_10m": [
+                2
+              ],
+              "wind_direction_10m": [
+                180
+              ],
+              "wind_gusts_10m": [
+                4
+              ],
+              "cloud_cover": [
+                50
+              ],
+              "cloud_cover_low": [
+                35
+              ],
+              "cloud_cover_mid": [
+                15
+              ],
+              "cloud_cover_high": [
+                10
+              ],
+              "precipitation": [
+                0
+              ],
+              "rain": [
+                0
+              ],
+              "showers": [
+                0
+              ],
+              "snowfall": [
+                0
+              ],
+              "visibility": [
+                20000
+              ],
+              "is_day": [
+                1
+              ],
+              "time": [
+                "2026-09-07T16:00"
+              ]
+            },
+            "current_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            },
+            "hourly_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "WB",
+          "kind": "weather",
+          "match": {
+            "latitude": "51.48",
+            "longitude": "-0.001",
+            "temperature_unit": "fahrenheit"
+          },
+          "payload": {
+            "timezone": "UTC",
+            "elevation": 135,
+            "current": {
+              "time": "2026-09-07T16:00",
+              "interval": 900,
+              "weather_code": 2,
+              "temperature_2m": 68,
+              "apparent_temperature": 68,
+              "relative_humidity_2m": 70,
+              "dew_point_2m": 64.4,
+              "wind_speed_10m": 2,
+              "wind_direction_10m": 180,
+              "wind_gusts_10m": 4,
+              "cloud_cover": 50,
+              "cloud_cover_low": 35,
+              "cloud_cover_mid": 15,
+              "cloud_cover_high": 10,
+              "precipitation": 0,
+              "rain": 0,
+              "showers": 0,
+              "snowfall": 0,
+              "visibility": 20000,
+              "is_day": 1
+            },
+            "hourly": {
+              "weather_code": [
+                2
+              ],
+              "temperature_2m": [
+                68
+              ],
+              "apparent_temperature": [
+                68
+              ],
+              "relative_humidity_2m": [
+                70
+              ],
+              "dew_point_2m": [
+                64.4
+              ],
+              "wind_speed_10m": [
+                2
+              ],
+              "wind_direction_10m": [
+                180
+              ],
+              "wind_gusts_10m": [
+                4
+              ],
+              "cloud_cover": [
+                50
+              ],
+              "cloud_cover_low": [
+                35
+              ],
+              "cloud_cover_mid": [
+                15
+              ],
+              "cloud_cover_high": [
+                10
+              ],
+              "precipitation": [
+                0
+              ],
+              "rain": [
+                0
+              ],
+              "showers": [
+                0
+              ],
+              "snowfall": [
+                0
+              ],
+              "visibility": [
+                20000
+              ],
+              "is_day": [
+                1
+              ],
+              "time": [
+                "2026-09-07T16:00"
+              ]
+            },
+            "current_units": {
+              "temperature_2m": "°F",
+              "apparent_temperature": "°F",
+              "dew_point_2m": "°F",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            },
+            "hourly_units": {
+              "temperature_2m": "°F",
+              "apparent_temperature": "°F",
+              "dew_point_2m": "°F",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('WA:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "A-body-held",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 51.48,
+            "lon": -0.001,
+            "label": "London",
+            "method": "2",
+            "school": "0",
+            "units": "f"
+          },
+          "capture": "settings-London-2-0-f"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('WB:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('PB:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-body-held",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "WA"
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "WB"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.readSnapshot().weather?.temp===68",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "PB"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='PB')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "PA"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='PA:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-weather",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-body-held",
+            "paths": [
+              "config",
+              "weather",
+              "weatherTrack",
+              "lastWxAt",
+              "flags",
+              "slots/weather",
+              "storage"
+            ]
+          }
+        },
+        {
+          "stage": "B-weather",
+          "equals": {
+            "weather/temp": 68,
+            "weather/units": "f",
+            "weatherTrack/units": "f",
+            "flags/siteElev": 135,
+            "flags/wxBusy": false,
+            "config/label": "London",
+            "elevationCustody/heightM": 135,
+            "elevationCustody/lat": 51.48,
+            "elevationCustody/lon": -0.001,
+            "dom/#wt/text": "68°",
+            "weatherHeader/temperature": 68
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A03"
+      ]
+    },
+    {
+      "caseId": "R0003-weather-old-reject",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "PA",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PA"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "PB",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "51.48",
+            "longitude": "-0.001"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PB"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "PB-next",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "51.48",
+            "longitude": "-0.001"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PB-next"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "WA",
+          "kind": "weather",
+          "match": {
+            "latitude": "24.47",
+            "longitude": "39.61",
+            "temperature_unit": "celsius"
+          },
+          "payload": {
+            "timezone": "UTC",
+            "elevation": 100,
+            "current": {
+              "time": "2026-09-07T16:00",
+              "interval": 900,
+              "weather_code": 2,
+              "temperature_2m": 20,
+              "apparent_temperature": 20,
+              "relative_humidity_2m": 70,
+              "dew_point_2m": 18,
+              "wind_speed_10m": 2,
+              "wind_direction_10m": 180,
+              "wind_gusts_10m": 4,
+              "cloud_cover": 50,
+              "cloud_cover_low": 35,
+              "cloud_cover_mid": 15,
+              "cloud_cover_high": 10,
+              "precipitation": 0,
+              "rain": 0,
+              "showers": 0,
+              "snowfall": 0,
+              "visibility": 20000,
+              "is_day": 1
+            },
+            "hourly": {
+              "weather_code": [
+                2
+              ],
+              "temperature_2m": [
+                20
+              ],
+              "apparent_temperature": [
+                20
+              ],
+              "relative_humidity_2m": [
+                70
+              ],
+              "dew_point_2m": [
+                18
+              ],
+              "wind_speed_10m": [
+                2
+              ],
+              "wind_direction_10m": [
+                180
+              ],
+              "wind_gusts_10m": [
+                4
+              ],
+              "cloud_cover": [
+                50
+              ],
+              "cloud_cover_low": [
+                35
+              ],
+              "cloud_cover_mid": [
+                15
+              ],
+              "cloud_cover_high": [
+                10
+              ],
+              "precipitation": [
+                0
+              ],
+              "rain": [
+                0
+              ],
+              "showers": [
+                0
+              ],
+              "snowfall": [
+                0
+              ],
+              "visibility": [
+                20000
+              ],
+              "is_day": [
+                1
+              ],
+              "time": [
+                "2026-09-07T16:00"
+              ]
+            },
+            "current_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            },
+            "hourly_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "WB",
+          "kind": "weather",
+          "match": {
+            "latitude": "51.48",
+            "longitude": "-0.001",
+            "temperature_unit": "fahrenheit"
+          },
+          "payload": {
+            "timezone": "UTC",
+            "elevation": 135,
+            "current": {
+              "time": "2026-09-07T16:00",
+              "interval": 900,
+              "weather_code": 2,
+              "temperature_2m": 68,
+              "apparent_temperature": 68,
+              "relative_humidity_2m": 70,
+              "dew_point_2m": 64.4,
+              "wind_speed_10m": 2,
+              "wind_direction_10m": 180,
+              "wind_gusts_10m": 4,
+              "cloud_cover": 50,
+              "cloud_cover_low": 35,
+              "cloud_cover_mid": 15,
+              "cloud_cover_high": 10,
+              "precipitation": 0,
+              "rain": 0,
+              "showers": 0,
+              "snowfall": 0,
+              "visibility": 20000,
+              "is_day": 1
+            },
+            "hourly": {
+              "weather_code": [
+                2
+              ],
+              "temperature_2m": [
+                68
+              ],
+              "apparent_temperature": [
+                68
+              ],
+              "relative_humidity_2m": [
+                70
+              ],
+              "dew_point_2m": [
+                64.4
+              ],
+              "wind_speed_10m": [
+                2
+              ],
+              "wind_direction_10m": [
+                180
+              ],
+              "wind_gusts_10m": [
+                4
+              ],
+              "cloud_cover": [
+                50
+              ],
+              "cloud_cover_low": [
+                35
+              ],
+              "cloud_cover_mid": [
+                15
+              ],
+              "cloud_cover_high": [
+                10
+              ],
+              "precipitation": [
+                0
+              ],
+              "rain": [
+                0
+              ],
+              "showers": [
+                0
+              ],
+              "snowfall": [
+                0
+              ],
+              "visibility": [
+                20000
+              ],
+              "is_day": [
+                1
+              ],
+              "time": [
+                "2026-09-07T16:00"
+              ]
+            },
+            "current_units": {
+              "temperature_2m": "°F",
+              "apparent_temperature": "°F",
+              "dew_point_2m": "°F",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            },
+            "hourly_units": {
+              "temperature_2m": "°F",
+              "apparent_temperature": "°F",
+              "dew_point_2m": "°F",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('WA:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "A-body-held",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 51.48,
+            "lon": -0.001,
+            "label": "London",
+            "method": "2",
+            "school": "0",
+            "units": "f"
+          },
+          "capture": "settings-London-2-0-f"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('WB:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('PB:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-body-held",
+          "readOnly": true
+        },
+        {
+          "type": "reject",
+          "id": "WA"
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "WB"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.readSnapshot().weather?.temp===68",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "PB"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='PB')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "PA"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='PA:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-weather",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-body-held",
+            "paths": [
+              "config",
+              "weather",
+              "weatherTrack",
+              "lastWxAt",
+              "flags",
+              "slots/weather",
+              "storage"
+            ]
+          }
+        },
+        {
+          "stage": "B-weather",
+          "equals": {
+            "weather/temp": 68,
+            "weather/units": "f",
+            "weatherTrack/units": "f",
+            "flags/siteElev": 135,
+            "flags/wxBusy": false,
+            "config/label": "London",
+            "elevationCustody/heightM": 135,
+            "elevationCustody/lat": 51.48,
+            "elevationCustody/lon": -0.001,
+            "dom/#wt/text": "68°",
+            "weatherHeader/temperature": 68
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A03"
+      ]
+    },
+    {
+      "caseId": "R0003-hourly-captured",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=40.71&lon=-74.01&tz=America%2FNew_York&label=New%20York&method=2&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T07:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "P",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "P"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "P-next",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "P-next"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "W",
+          "kind": "weather",
+          "match": {
+            "latitude": "40.71",
+            "longitude": "-74.01",
+            "temperature_unit": "celsius"
+          },
+          "payload": {
+            "timezone": "America/New_York",
+            "elevation": 100,
+            "current": {
+              "time": "2026-03-08T03:30",
+              "interval": 900,
+              "weather_code": 2,
+              "temperature_2m": 20,
+              "apparent_temperature": 20,
+              "relative_humidity_2m": 70,
+              "dew_point_2m": 18,
+              "wind_speed_10m": 2,
+              "wind_direction_10m": 180,
+              "wind_gusts_10m": 4,
+              "cloud_cover": 50,
+              "cloud_cover_low": 35,
+              "cloud_cover_mid": 15,
+              "cloud_cover_high": 10,
+              "precipitation": 0,
+              "rain": 0,
+              "showers": 0,
+              "snowfall": 0,
+              "visibility": 20000,
+              "is_day": 1
+            },
+            "hourly": {
+              "weather_code": [
+                2
+              ],
+              "temperature_2m": [
+                20
+              ],
+              "apparent_temperature": [
+                20
+              ],
+              "relative_humidity_2m": [
+                70
+              ],
+              "dew_point_2m": [
+                18
+              ],
+              "wind_speed_10m": [
+                2
+              ],
+              "wind_direction_10m": [
+                180
+              ],
+              "wind_gusts_10m": [
+                4
+              ],
+              "cloud_cover": [
+                50
+              ],
+              "cloud_cover_low": [
+                35
+              ],
+              "cloud_cover_mid": [
+                15
+              ],
+              "cloud_cover_high": [
+                10
+              ],
+              "precipitation": [
+                0
+              ],
+              "rain": [
+                0
+              ],
+              "showers": [
+                0
+              ],
+              "snowfall": [
+                0
+              ],
+              "visibility": [
+                20000
+              ],
+              "is_day": [
+                1
+              ],
+              "time": [
+                "2026-03-08T03:30"
+              ]
+            },
+            "current_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            },
+            "hourly_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('W:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('P:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "captured-zone",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "P"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='P')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('P-next:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "prayer-zone-discovery",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "W"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='W:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "P-next"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='P-next:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "after-weather",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "captured-zone",
+          "equals": {
+            "slots/weather/requestZone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "prayer-zone-discovery",
+          "equals": {
+            "timezone": "Asia/Riyadh",
+            "runtimeGeneration": 0
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "after-weather",
+          "equals": {
+            "weatherTrack/ep/0": 1772955000000,
+            "weatherTrack/zone": "America/New_York",
+            "weather/currentValidAt": 1772955000000,
+            "weather/currentZone": "America/New_York"
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A04"
+      ]
+    },
+    {
+      "caseId": "R0003-hourly-obsolete",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=40.71&lon=-74.01&tz=America%2FNew_York&label=New%20York&method=2&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T07:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "P",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "P"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "P-next",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "P-next"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "W",
+          "kind": "weather",
+          "match": {
+            "latitude": "40.71",
+            "longitude": "-74.01",
+            "temperature_unit": "celsius"
+          },
+          "payload": {
+            "timezone": "America/New_York",
+            "elevation": 100,
+            "current": {
+              "time": "2026-03-08T03:30",
+              "interval": 900,
+              "weather_code": 2,
+              "temperature_2m": 20,
+              "apparent_temperature": 20,
+              "relative_humidity_2m": 70,
+              "dew_point_2m": 18,
+              "wind_speed_10m": 2,
+              "wind_direction_10m": 180,
+              "wind_gusts_10m": 4,
+              "cloud_cover": 50,
+              "cloud_cover_low": 35,
+              "cloud_cover_mid": 15,
+              "cloud_cover_high": 10,
+              "precipitation": 0,
+              "rain": 0,
+              "showers": 0,
+              "snowfall": 0,
+              "visibility": 20000,
+              "is_day": 1
+            },
+            "hourly": {
+              "weather_code": [
+                2
+              ],
+              "temperature_2m": [
+                20
+              ],
+              "apparent_temperature": [
+                20
+              ],
+              "relative_humidity_2m": [
+                70
+              ],
+              "dew_point_2m": [
+                18
+              ],
+              "wind_speed_10m": [
+                2
+              ],
+              "wind_direction_10m": [
+                180
+              ],
+              "wind_gusts_10m": [
+                4
+              ],
+              "cloud_cover": [
+                50
+              ],
+              "cloud_cover_low": [
+                35
+              ],
+              "cloud_cover_mid": [
+                15
+              ],
+              "cloud_cover_high": [
+                10
+              ],
+              "precipitation": [
+                0
+              ],
+              "rain": [
+                0
+              ],
+              "showers": [
+                0
+              ],
+              "snowfall": [
+                0
+              ],
+              "visibility": [
+                20000
+              ],
+              "is_day": [
+                1
+              ],
+              "time": [
+                "2026-03-08T03:30"
+              ]
+            },
+            "current_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            },
+            "hourly_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "London",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "51.48",
+            "longitude": "-0.001"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "London"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "WB",
+          "kind": "weather",
+          "match": {
+            "latitude": "51.48",
+            "longitude": "-0.001",
+            "temperature_unit": "fahrenheit"
+          },
+          "payload": {
+            "timezone": "America/New_York",
+            "elevation": 100,
+            "current": {
+              "time": "2026-03-08T03:30",
+              "interval": 900,
+              "weather_code": 2,
+              "temperature_2m": 68,
+              "apparent_temperature": 68,
+              "relative_humidity_2m": 70,
+              "dew_point_2m": 64.4,
+              "wind_speed_10m": 2,
+              "wind_direction_10m": 180,
+              "wind_gusts_10m": 4,
+              "cloud_cover": 50,
+              "cloud_cover_low": 35,
+              "cloud_cover_mid": 15,
+              "cloud_cover_high": 10,
+              "precipitation": 0,
+              "rain": 0,
+              "showers": 0,
+              "snowfall": 0,
+              "visibility": 20000,
+              "is_day": 1
+            },
+            "hourly": {
+              "weather_code": [
+                2
+              ],
+              "temperature_2m": [
+                68
+              ],
+              "apparent_temperature": [
+                68
+              ],
+              "relative_humidity_2m": [
+                70
+              ],
+              "dew_point_2m": [
+                64.4
+              ],
+              "wind_speed_10m": [
+                2
+              ],
+              "wind_direction_10m": [
+                180
+              ],
+              "wind_gusts_10m": [
+                4
+              ],
+              "cloud_cover": [
+                50
+              ],
+              "cloud_cover_low": [
+                35
+              ],
+              "cloud_cover_mid": [
+                15
+              ],
+              "cloud_cover_high": [
+                10
+              ],
+              "precipitation": [
+                0
+              ],
+              "rain": [
+                0
+              ],
+              "showers": [
+                0
+              ],
+              "snowfall": [
+                0
+              ],
+              "visibility": [
+                20000
+              ],
+              "is_day": [
+                1
+              ],
+              "time": [
+                "2026-03-08T03:30"
+              ]
+            },
+            "current_units": {
+              "temperature_2m": "°F",
+              "apparent_temperature": "°F",
+              "dew_point_2m": "°F",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            },
+            "hourly_units": {
+              "temperature_2m": "°F",
+              "apparent_temperature": "°F",
+              "dew_point_2m": "°F",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            }
+          },
+          "hold": false,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('W:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('P:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "captured-zone",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "P"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='P')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('P-next:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "prayer-zone-discovery",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 51.48,
+            "lon": -0.001,
+            "label": "London",
+            "method": "2",
+            "school": "0",
+            "units": "f"
+          },
+          "capture": "settings-London-2-0-f"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='London')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "successor-before-W",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "W"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='W:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "P-next"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='P-next:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "after-weather",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "captured-zone",
+          "equals": {
+            "slots/weather/requestZone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "prayer-zone-discovery",
+          "equals": {
+            "timezone": "Asia/Riyadh",
+            "runtimeGeneration": 0
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "after-weather",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "successor-before-W",
+            "paths": [
+              "config",
+              "timezone",
+              "weather",
+              "weatherTrack",
+              "storage",
+              "lastWxAt",
+              "flags"
+            ]
+          }
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A04"
+      ]
+    },
+    {
+      "caseId": "R0003-hourly-contradictory",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=40.71&lon=-74.01&tz=America%2FNew_York&label=New%20York&method=2&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T07:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "P",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "P"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "P-next",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "P-next"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "W",
+          "kind": "weather",
+          "match": {
+            "latitude": "40.71",
+            "longitude": "-74.01",
+            "temperature_unit": "celsius"
+          },
+          "payload": {
+            "timezone": "Asia/Riyadh",
+            "elevation": 100,
+            "current": {
+              "time": "2026-03-08T03:30",
+              "interval": 900,
+              "weather_code": 2,
+              "temperature_2m": 20,
+              "apparent_temperature": 20,
+              "relative_humidity_2m": 70,
+              "dew_point_2m": 18,
+              "wind_speed_10m": 2,
+              "wind_direction_10m": 180,
+              "wind_gusts_10m": 4,
+              "cloud_cover": 50,
+              "cloud_cover_low": 35,
+              "cloud_cover_mid": 15,
+              "cloud_cover_high": 10,
+              "precipitation": 0,
+              "rain": 0,
+              "showers": 0,
+              "snowfall": 0,
+              "visibility": 20000,
+              "is_day": 1
+            },
+            "hourly": {
+              "weather_code": [
+                2
+              ],
+              "temperature_2m": [
+                20
+              ],
+              "apparent_temperature": [
+                20
+              ],
+              "relative_humidity_2m": [
+                70
+              ],
+              "dew_point_2m": [
+                18
+              ],
+              "wind_speed_10m": [
+                2
+              ],
+              "wind_direction_10m": [
+                180
+              ],
+              "wind_gusts_10m": [
+                4
+              ],
+              "cloud_cover": [
+                50
+              ],
+              "cloud_cover_low": [
+                35
+              ],
+              "cloud_cover_mid": [
+                15
+              ],
+              "cloud_cover_high": [
+                10
+              ],
+              "precipitation": [
+                0
+              ],
+              "rain": [
+                0
+              ],
+              "showers": [
+                0
+              ],
+              "snowfall": [
+                0
+              ],
+              "visibility": [
+                20000
+              ],
+              "is_day": [
+                1
+              ],
+              "time": [
+                "2026-03-08T03:30"
+              ]
+            },
+            "current_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            },
+            "hourly_units": {
+              "temperature_2m": "°C",
+              "apparent_temperature": "°C",
+              "dew_point_2m": "°C",
+              "wind_speed_10m": "m/s",
+              "wind_direction_10m": "°",
+              "wind_gusts_10m": "m/s",
+              "precipitation": "mm",
+              "rain": "mm",
+              "showers": "mm",
+              "snowfall": "cm",
+              "visibility": "m",
+              "relative_humidity_2m": "%",
+              "cloud_cover": "%",
+              "cloud_cover_low": "%",
+              "cloud_cover_mid": "%",
+              "cloud_cover_high": "%"
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('W:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('P:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "captured-zone",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "P"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='P')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('P-next:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "prayer-zone-discovery",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "W"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='W:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "release",
+          "id": "P-next"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='P-next:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "after-weather",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "captured-zone",
+          "equals": {
+            "slots/weather/requestZone": "America/New_York"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "prayer-zone-discovery",
+          "equals": {
+            "timezone": "Asia/Riyadh",
+            "runtimeGeneration": 0
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "after-weather",
+          "equals": {
+            "weather": null,
+            "weatherTrack": null,
+            "flags/wxBusy": false
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A04"
+      ]
+    },
+    {
+      "caseId": "R0003-radar-image",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=0&lon=30&tz=UTC&label=Radar%20A&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "PA",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "0",
+            "longitude": "30"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PA"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "PB",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "30",
+            "longitude": "0"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PB"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "RA",
+          "kind": "radar",
+          "times": 1,
+          "payload": {
+            "host": "__ORIGIN__",
+            "generated": 1788796800,
+            "radar": {
+              "past": [
+                {
+                  "path": "/fixture-radar-A",
+                  "time": 1788796800
+                }
+              ]
+            }
+          },
+          "hold": false,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "RB",
+          "kind": "radar",
+          "times": 1,
+          "payload": {
+            "host": "__ORIGIN__",
+            "generated": 1788796800,
+            "radar": {
+              "past": [
+                {
+                  "path": "/fixture-radar-B",
+                  "time": 1788796800
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "waitImage",
+          "id": "IA"
+        },
+        {
+          "type": "capture",
+          "name": "A-radar-held",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 30,
+            "lon": 0,
+            "label": "Radar B",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-Radar-B-2-0-c"
+        },
+        {
+          "type": "waitImage",
+          "id": "IB"
+        },
+        {
+          "type": "capture",
+          "name": "B-image-held",
+          "readOnly": true
+        },
+        {
+          "type": "releaseImage",
+          "id": "IA"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.imageEvents.some(e=>e.event==='load'&&e.src.includes('fixture-radar-A'))",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        },
+        {
+          "type": "releaseImage",
+          "id": "IB"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.readSnapshot().weatherRadar?.target.lat===30",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-radar",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-image-held",
+            "paths": [
+              "config",
+              "weatherRadar",
+              "flags/radarBusy",
+              "slots/radar",
+              "storage"
+            ]
+          }
+        },
+        {
+          "stage": "B-radar",
+          "equals": {
+            "weatherRadar/target/lat": 30,
+            "weatherRadar/target/lon": 0,
+            "weatherRadar/precipMm": 0,
+            "weatherRadar/sample/meanAlpha": 0,
+            "flags/radarBusy": false
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A05"
+      ],
+      "imageRules": [
+        {
+          "id": "IA",
+          "pathContains": "fixture-radar-A",
+          "hold": true,
+          "pngBase64": "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAADIElEQVR4nO3UIQEAIBDAwI9DJtLRFGIgduL81Gbtc4Gm+R0A/GMAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEPYAIvAf8AKfLwEAAAAASUVORK5CYII=",
+          "alpha": 255
+        },
+        {
+          "id": "IB",
+          "pathContains": "fixture-radar-B",
+          "hold": true,
+          "pngBase64": "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAADXUlEQVR4nO3OMQEAIAzAsMlBE+omFRk9yJE/c+4O8Kc8AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0DnAYANEP+TdcQgAAAAAElFTkSuQmCC",
+          "alpha": 0
+        }
+      ]
+    },
+    {
+      "caseId": "R0003-radar-manifest",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=0&lon=30&tz=UTC&label=Radar%20A&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "PA",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "0",
+            "longitude": "30"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PA"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "PB",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "30",
+            "longitude": "0"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "UTC"
+              },
+              "tag": "PB"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "RA",
+          "kind": "radar",
+          "times": 1,
+          "payload": {
+            "host": "__ORIGIN__",
+            "generated": 1788796800,
+            "radar": {
+              "past": [
+                {
+                  "path": "/fixture-radar-A",
+                  "time": 1788796800
+                }
+              ]
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true
+        },
+        {
+          "id": "RB",
+          "kind": "radar",
+          "times": 1,
+          "payload": {
+            "host": "__ORIGIN__",
+            "generated": 1788796800,
+            "radar": {
+              "past": [
+                {
+                  "path": "/fixture-radar-B",
+                  "time": 1788796800
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('RA:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "A-radar-held",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 30,
+            "lon": 0,
+            "label": "Radar B",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-Radar-B-2-0-c"
+        },
+        {
+          "type": "waitImage",
+          "id": "IB"
+        },
+        {
+          "type": "capture",
+          "name": "B-image-held",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "RA"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='RA:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        },
+        {
+          "type": "releaseImage",
+          "id": "IB"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.readSnapshot().weatherRadar?.target.lat===30",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-radar",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-image-held",
+            "paths": [
+              "config",
+              "weatherRadar",
+              "flags/radarBusy",
+              "slots/radar",
+              "storage"
+            ]
+          }
+        },
+        {
+          "stage": "B-radar",
+          "equals": {
+            "weatherRadar/target/lat": 30,
+            "weatherRadar/target/lon": 0,
+            "weatherRadar/precipMm": 0,
+            "weatherRadar/sample/meanAlpha": 0,
+            "flags/radarBusy": false
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A05"
+      ],
+      "imageRules": [
+        {
+          "id": "IA",
+          "pathContains": "fixture-radar-A",
+          "hold": true,
+          "pngBase64": "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAADIElEQVR4nO3UIQEAIBDAwI9DJtLRFGIgduL81Gbtc4Gm+R0A/GMAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEGYAEPYAIvAf8AKfLwEAAAAASUVORK5CYII=",
+          "alpha": 255
+        },
+        {
+          "id": "IB",
+          "pathContains": "fixture-radar-B",
+          "hold": true,
+          "pngBase64": "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAADXUlEQVR4nO3OMQEAIAzAsMlBE+omFRk9yJE/c+4O8Kc8AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0AnDwCdPAB08gDQyQNAJw8AnTwAdPIA0MkDQCcPAJ08AHTyANDJA0DnAYANEP+TdcQgAAAAAElFTkSuQmCC",
+          "alpha": 0
+        }
+      ]
+    },
+    {
+      "caseId": "R0003-reload-winner",
+      "entry": "index.html",
+      "hash": "#preferLocal=1",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "prayer-offline",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "reloaded",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "reloaded",
+          "equals": {
+            "config/lat": 51.48,
+            "config/lon": -0.001,
+            "config/units": "f",
+            "today/tag": "PB",
+            "dom/#wt/text": "68°",
+            "weatherHeader/temperature": 68
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "offline": true,
+      "cacheSeedsFromCase": "R0003-weather-old-body",
+      "cacheSeedKeys": [
+        "salah_widget:config:v1",
+        "salah:51.48|-0.001|UTC|2|0",
+        "salahwx:51.48|-0.001|f"
+      ],
+      "acceptanceIds": [
+        "R0003-A06"
+      ]
+    },
+    {
+      "caseId": "R0003-reload-expired",
+      "entry": "index.html",
+      "hash": "#preferLocal=1",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T17:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "prayer-offline",
+          "kind": "prayer",
+          "failure": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay)",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "reloaded",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "reloaded",
+          "equals": {
+            "config/lat": 51.48,
+            "config/lon": -0.001,
+            "config/units": "f",
+            "today/tag": "PB",
+            "dom/#wt/text": "",
+            "weatherHeader/temperature": null
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "offline": true,
+      "cacheSeedsFromCase": "R0003-weather-old-body",
+      "cacheSeedKeys": [
+        "salah_widget:config:v1",
+        "salah:51.48|-0.001|UTC|2|0",
+        "salahwx:51.48|-0.001|f"
+      ],
+      "acceptanceIds": [
+        "R0003-A06"
+      ]
+    },
+    {
+      "caseId": "R0003-entry-offline",
+      "entry": "offline.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "firstPredicate": "s.stage==='render-completed'&&s.today?.tag==='B'"
+        },
+        {
+          "type": "capture",
+          "name": "B-before-A",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "A"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "B-before-A",
+          "equals": {
+            "config/lat": 40.71,
+            "config/lon": -74.01,
+            "config/label": "New York",
+            "timezone": "America/New_York",
+            "today/timings/Fajr": "05:00",
+            "today/timings/Asr": "15:30",
+            "dom/.nt/text": "15:30",
+            "flags/prayerStale": false
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-before-A",
+            "paths": [
+              "config",
+              "timezone",
+              "runtimeGeneration",
+              "today",
+              "tomorrow",
+              "flags",
+              "storage",
+              "weather",
+              "weatherTrack",
+              "weatherRadar",
+              "lastWxAt",
+              "dom/.nt/text",
+              "dom/.times/html"
+            ]
+          }
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A07"
+      ],
+      "iframe": false
+    },
+    {
+      "caseId": "R0003-entry-iframe",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "A",
+          "kind": "prayer",
+          "match": {
+            "method": "4",
+            "school": "0",
+            "latitude": "24.47",
+            "longitude": "39.61"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "04:46",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:49",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Asia/Riyadh"
+              },
+              "tag": "A"
+            }
+          },
+          "dateFromRequest": true,
+          "hold": true,
+          "phase": "body",
+          "ignoreAbort": true,
+          "times": 1
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "loading",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "first-current",
+          "firstRender": true,
+          "firstPredicate": "s.stage==='render-completed'&&s.today?.tag==='B'"
+        },
+        {
+          "type": "capture",
+          "name": "B-before-A",
+          "readOnly": true
+        },
+        {
+          "type": "release",
+          "id": "A"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "B-after-A",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "B-before-A",
+          "equals": {
+            "config/lat": 40.71,
+            "config/lon": -74.01,
+            "config/label": "New York",
+            "timezone": "America/New_York",
+            "today/timings/Fajr": "05:00",
+            "today/timings/Asr": "15:30",
+            "dom/.nt/text": "15:30",
+            "flags/prayerStale": false
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "B-after-A",
+          "equals": {},
+          "noInvalidText": true,
+          "unchangedFrom": {
+            "stage": "B-before-A",
+            "paths": [
+              "config",
+              "timezone",
+              "runtimeGeneration",
+              "today",
+              "tomorrow",
+              "flags",
+              "storage",
+              "weather",
+              "weatherTrack",
+              "weatherRadar",
+              "lastWxAt",
+              "dom/.nt/text",
+              "dom/.times/html"
+            ]
+          }
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A07"
+      ],
+      "iframe": true
+    },
+    {
+      "caseId": "R0003-error-recovery",
+      "entry": "index.html",
+      "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T16:00:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "PA-error",
+          "kind": "prayer",
+          "match": {
+            "latitude": "24.47"
+          },
+          "failure": true
+        },
+        {
+          "id": "B",
+          "kind": "prayer",
+          "match": {
+            "method": "2",
+            "school": "0",
+            "latitude": "40.71",
+            "longitude": "-74.01"
+          },
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              },
+              "tag": "B"
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-unavailable",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-unavailable",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='error-output')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "error",
+          "readOnly": true
+        },
+        {
+          "type": "settings",
+          "fields": {
+            "lat": 40.71,
+            "lon": -74.01,
+            "label": "New York",
+            "method": "2",
+            "school": "0",
+            "units": "c"
+          },
+          "capture": "settings-New-York-2-0-c"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='B')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "recovered",
+          "readOnly": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "error",
+          "equals": {
+            "today": null
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "recovered",
+          "equals": {
+            "config/lat": 40.71,
+            "config/lon": -74.01,
+            "config/label": "New York",
+            "timezone": "America/New_York",
+            "today/timings/Fajr": "05:00",
+            "today/timings/Asr": "15:30",
+            "dom/.nt/text": "15:30",
+            "flags/prayerStale": false
+          },
+          "noInvalidText": true
+        }
+      ],
+      "observeImages": true,
+      "acceptanceIds": [
+        "R0003-A07"
+      ]
+    },
+    {
+      "caseId": "R0003-shared-preservation-no-preference",
+      "entry": "index.html",
+      "hash": "#lat=21.31&lon=-157.86&label=Honolulu&method=2&school=0&time=24&tz=Pacific%2FHonolulu&simWx=2&simCloud=50",
+      "clockPolicy": {
+        "mode": "native"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Pacific/Honolulu"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay&&s.render)&&document.fonts.status==='loaded'",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-start",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-15s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true,
+          "preservation": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-30s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true,
+          "preservation": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "live-30s",
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "live-30s",
+          "reviewOnly": true,
+          "requirement": "Inspect original 30s video and crops for visible cloud/star motion, opacity, header/footer and reduced/full preference. No hash-motion inference."
+        }
+      ],
+      "acceptanceIds": [
+        "R0003-A07"
+      ],
+      "status": "RECIPE_ONLY_RESULTS_ARE_SEPARATE",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "real native Date/performance/rAF/timers; no simTime/timeScale",
+        "forced broken-cloud input disclosed",
+        "warm opaque lunar disc where actual native night scene supports it; otherwise separately schedule night",
+        "V1 exact file comparison remains a separate source certificate"
+      ],
+      "motionPreference": "no-preference",
+      "observeImages": true
+    },
+    {
+      "caseId": "R0003-shared-preservation-reduce",
+      "entry": "index.html",
+      "hash": "#lat=21.31&lon=-157.86&label=Honolulu&method=2&school=0&time=24&tz=Pacific%2FHonolulu&simWx=2&simCloud=50",
+      "clockPolicy": {
+        "mode": "native"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Pacific/Honolulu"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay&&s.render)&&document.fonts.status==='loaded'",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-start",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-15s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true,
+          "preservation": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-30s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true,
+          "preservation": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "live-30s",
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "live-30s",
+          "reviewOnly": true,
+          "requirement": "Inspect original 30s video and crops for visible cloud/star motion, opacity, header/footer and reduced/full preference. No hash-motion inference."
+        }
+      ],
+      "acceptanceIds": [
+        "R0003-A07"
+      ],
+      "status": "RECIPE_ONLY_RESULTS_ARE_SEPARATE",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "real native Date/performance/rAF/timers; no simTime/timeScale",
+        "forced broken-cloud input disclosed",
+        "warm opaque lunar disc where actual native night scene supports it; otherwise separately schedule night",
+        "V1 exact file comparison remains a separate source certificate"
+      ],
+      "motionPreference": "reduce",
+      "observeImages": true
+    },
+    {
+      "caseId": "R0003-shared-preservation-reduce-full",
+      "entry": "index.html",
+      "hash": "#lat=21.31&lon=-157.86&label=Honolulu&method=2&school=0&time=24&tz=Pacific%2FHonolulu&simWx=2&simCloud=50&motion=full",
+      "clockPolicy": {
+        "mode": "native"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "Pacific/Honolulu"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay&&s.render)&&document.fonts.status==='loaded'",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-start",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-15s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true,
+          "preservation": true
+        },
+        {
+          "type": "sleep",
+          "ms": 15000
+        },
+        {
+          "type": "capture",
+          "name": "live-30s",
+          "firstRender": false,
+          "selector": ".c",
+          "readOnly": true,
+          "preservation": true
+        }
+      ],
+      "expected": [
+        {
+          "stage": "live-30s",
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "live-30s",
+          "reviewOnly": true,
+          "requirement": "Inspect original 30s video and crops for visible cloud/star motion, opacity, header/footer and reduced/full preference. No hash-motion inference."
+        }
+      ],
+      "acceptanceIds": [
+        "R0003-A07"
+      ],
+      "status": "RECIPE_ONLY_RESULTS_ARE_SEPARATE",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "real native Date/performance/rAF/timers; no simTime/timeScale",
+        "forced broken-cloud input disclosed",
+        "warm opaque lunar disc where actual native night scene supports it; otherwise separately schedule night",
+        "V1 exact file comparison remains a separate source certificate"
+      ],
+      "motionPreference": "reduce",
+      "observeImages": true
+    },
+    {
+      "caseId": "R0003-warm-ashen-below-horizon",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=01%3A30&simMoon=0.01&simWax=1&simMoonAlt=-20&simMoonH=42&simWx=0&simCloud=0",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00.000Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "healthy",
+          "kind": "prayer",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-09-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 9,
+                    "en": "September"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "dateFromRequest": true
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "document.querySelector('.c').classList.contains('moon-ready')&&document.fonts.status==='loaded'",
+          "timeoutMs": 60000
+        },
+        {
+          "type": "sleep",
+          "ms": 1000
+        },
+        {
+          "type": "capture",
+          "name": "warm-ashen",
+          "selector": ".c",
+          "readOnly": true,
+          "preservation": true
+        },
+        {
+          "type": "sleep",
+          "ms": 1000
+        }
+      ],
+      "expected": [
+        {
+          "stage": "warm-ashen",
+          "equals": {
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0003-A07"
+      ],
+      "status": "RECIPE_ONLY_RESULTS_ARE_SEPARATE",
+      "reviewRequirements": [
+        "Native warm current terrain; mostly in frame; opaque ashen disc; no stars through; physical moonlight zero; explicit fixed epoch and forced below-horizon phase disclosed."
+      ],
+      "motionPreference": "no-preference",
+      "observeImages": true
+    }
+  ]
+}

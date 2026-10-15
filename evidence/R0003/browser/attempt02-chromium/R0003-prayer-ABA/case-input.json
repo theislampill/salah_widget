@@ -1,0 +1,306 @@
+{
+  "caseId": "R0003-prayer-ABA",
+  "entry": "index.html",
+  "hash": "#preferLocal=1&lat=24.47&lon=39.61&tz=UTC&label=Madinah&method=4&school=0&units=c&time=24",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T16:00:00Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "A1",
+      "kind": "prayer",
+      "match": {
+        "method": "4",
+        "school": "0",
+        "latitude": "24.47",
+        "longitude": "39.61"
+      },
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "04:46",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:49",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Riyadh"
+          },
+          "tag": "A1"
+        }
+      },
+      "dateFromRequest": true,
+      "hold": true,
+      "phase": "body",
+      "ignoreAbort": true,
+      "times": 1
+    },
+    {
+      "id": "B",
+      "kind": "prayer",
+      "match": {
+        "method": "2",
+        "school": "0",
+        "latitude": "40.71",
+        "longitude": "-74.01"
+      },
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "America/New_York"
+          },
+          "tag": "B"
+        }
+      },
+      "dateFromRequest": true,
+      "hold": true,
+      "phase": "body",
+      "ignoreAbort": true,
+      "times": 1
+    },
+    {
+      "id": "A2",
+      "kind": "prayer",
+      "match": {
+        "method": "4",
+        "school": "0",
+        "latitude": "24.47",
+        "longitude": "39.61"
+      },
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "04:46",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:49",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Riyadh"
+          },
+          "tag": "A2"
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "weather-unavailable",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-unavailable",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('A1:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "A1-pending",
+      "readOnly": true
+    },
+    {
+      "type": "settings",
+      "fields": {
+        "lat": 40.71,
+        "lon": -74.01,
+        "label": "New York",
+        "method": "2",
+        "school": "0",
+        "units": "c"
+      },
+      "capture": "settings-New-York-2-0-c"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('B:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "B-pending",
+      "readOnly": true
+    },
+    {
+      "type": "settings",
+      "fields": {
+        "lat": 24.47,
+        "lon": 39.61,
+        "label": "Madinah",
+        "method": "4",
+        "school": "0",
+        "units": "c"
+      },
+      "capture": "settings-Madinah-4-0-c"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.today?.tag==='A2')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "A2-before-old",
+      "readOnly": true
+    },
+    {
+      "type": "release",
+      "id": "B"
+    },
+    {
+      "type": "release",
+      "id": "A1"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='A1:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "A2-after-old",
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "A1-pending",
+      "equals": {
+        "runtimeGeneration": 0
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "B-pending",
+      "equals": {
+        "runtimeGeneration": 1
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "A2-before-old",
+      "equals": {
+        "runtimeGeneration": 2,
+        "today/tag": "A2",
+        "config/lat": 24.47
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "A2-after-old",
+      "equals": {},
+      "noInvalidText": true,
+      "unchangedFrom": {
+        "stage": "A2-before-old",
+        "paths": [
+          "config",
+          "timezone",
+          "runtimeGeneration",
+          "today",
+          "tomorrow",
+          "flags",
+          "storage",
+          "weather",
+          "weatherTrack",
+          "weatherRadar",
+          "lastWxAt",
+          "dom/.nt/text",
+          "dom/.times/html"
+        ]
+      }
+    }
+  ],
+  "observeImages": true,
+  "acceptanceIds": [
+    "R0003-A02"
+  ]
+}
