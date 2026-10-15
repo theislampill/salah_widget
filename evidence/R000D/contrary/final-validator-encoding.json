@@ -1,0 +1,53 @@
+{
+  "schema": "r000d-final-validator-encoding-abnormality/v1",
+  "recordedUtc": "2026-10-15T03:29:46.723049+00:00",
+  "scope": "A supplementary read-only final-artifact comparison; no product/native test or public closure effect",
+  "originalFailedCheck": {
+    "operation": "json.loads(Path.read_text()) without explicit encoding on Windows, followed by unchanged D01-D14 structural equality",
+    "firstFailingAssertion": "assert cert['originalObligationMatrix'][:14]==old['originalObligationMatrix'][:14]",
+    "toolOutputTranscription": "Traceback (most recent call last):\n  File \"<stdin>\", line 3, in <module>\nAssertionError\n",
+    "exitCode": 1,
+    "laterChecksInThatInvocation": "NOT_REACHED",
+    "retention": "Actual tool output transcribed; the original accepted artifact bytes remain unchanged"
+  },
+  "boundedReproduction": {
+    "encoding": "cp1252",
+    "oldD13": "Maintain325\u00d7530/card/header/footer,opaque moon/motion; no stack-changing status overlay.",
+    "newD13": "Maintain325\u00c3\u2014530/card/header/footer,opaque moon/motion; no stack-changing status overlay.",
+    "mismatch": true,
+    "label": "explicit reproduction of default-reader error, not a semantic product mutant"
+  },
+  "executorInitialDiagnosis": {
+    "claim": "Generation encoding suspected; publication temporarily withheld pending byte discriminator",
+    "disposition": "RETRACTED. The generation output was valid UTF-8. The supplementary checker alone misread it."
+  },
+  "independentDiscriminator": {
+    "reviewer": "/root/r000d_review",
+    "at": "2026-10-15T03:28:38.145Z",
+    "finding": "Actual immutable C CLOSE JSON and completed JSON decode identically at D13 U+00D7 with explicit UTF-8; all15 original obligation texts equal."
+  },
+  "correctedUnchangedOracle": {
+    "countermeasure": "Decode both JSON byte streams explicitly as UTF-8. Do not change expected fields or regenerate accepted certificates.",
+    "D01throughD14Unchanged": true,
+    "A01throughA05Unchanged": true,
+    "allPriorProofsLimitsR0003And18NativeBindingsUnchanged": true,
+    "all12ClosureProofBindingsValid": true,
+    "all20PayloadStagedBytesValid": true,
+    "D13Utf8TextEqual": true,
+    "result": "PASS"
+  },
+  "preservedIdentities": {
+    "CLOSE-R000D.json": "0aebbe0ec62ee79b8be9efc6e0e361111e265957275a1c194f18058d08964599",
+    "closure-certificate.json": "5d1668b53dd7ed6075a2f92ad26abbd927b3c48e2aa6a4a645118cd40aa5bb07",
+    "public-delivery-and-issue-readback.json": "dea6fc57da4f2296332cc1c2f026c2a024b3b4013f6b6f11c3b71a1d1fca603d"
+  },
+  "effectBoundaries": {
+    "productChanges": 0,
+    "certificateRegenerations": 0,
+    "additionalNativeRuns": 0,
+    "issueChanges": 0,
+    "publicationOfIncorrectArtifacts": 0
+  },
+  "hansei": "The executor initially attributed an observer mismatch to generation before inspecting explicit decoded bytes. The independent reviewer challenged that inference.",
+  "kaizen": "Use explicit UTF-8 for JSON custody reads and a direct byte/codepoint discriminator before changing accepted artifacts."
+}
