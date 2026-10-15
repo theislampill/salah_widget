@@ -1,0 +1,22 @@
+{
+  "schema": "r000d-evidence-crlf-check/v1",
+  "observedUtc": "2026-10-15T02:44:57.420421+00:00",
+  "initialDisposition": "Default git diff --cached --check rejected raw Windows CRLF JSON evidence; commit was not made, and the subsequent push reported everything up-to-date. No PR or production bytes changed.",
+  "reproduction": "Captured a same-staged-input reproduction of that default check, not a reconstructed original process log. Original tool failure remains in the executor transcript.",
+  "defaultExitCode": 2,
+  "diagnosticCount": 9494,
+  "allAddedDiagnosticLinesEndWithCrLfWithoutTrailingSpaceOrTab": true,
+  "rawReproductionSha256": "74a9f9205fceca90f581ae77ab8ffa491bd318973dfd0e4962fb3a5ee34074d7",
+  "rawReproductionBytes": 1376569,
+  "rawReproductionGzip": "publication/crlf-check-reproduced.txt.gz",
+  "correctedCommand": [
+    "git",
+    "-c",
+    "core.whitespace=cr-at-eol",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "correctedExitCode": 0,
+  "disposition": "Recognize CRLF for evidence whitespace checking only, preserving exact independently reviewed receipt bytes and hashes. No Git configuration or source/test oracle was changed."
+}
