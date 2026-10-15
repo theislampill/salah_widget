@@ -412,8 +412,9 @@ body{color:#fff7df;
 
 /* prayer-times grid */
 .times{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:6px;margin-top:9.6px}
-/* Liquid glass preserves the faded inactive rows, current inset and upcoming tint. */
-.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;background:linear-gradient(160deg,#ffffff26,#ffffff0d);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
+/* Names and times stay fully opaque. A local backing protects readable glass;
+   elapsed rows recede through their tint and border, never faded information. */
+.p{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 9px;border-radius:11px;color:#f0edf8;opacity:1;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.74);border:1px solid #ffffff2e;-webkit-backdrop-filter:blur(7px) saturate(135%);backdrop-filter:blur(7px) saturate(135%);box-shadow:var(--glass);transition:opacity .3s,background .3s}
 .p.on{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047));color:#211d15;border-color:var(--accent);box-shadow:var(--glass),inset 3px 0 0 var(--accent)}
 /* An opaque accent plate gives NEXT a stable identity even over a warm horizon.
    CURRENT retains its independent outline; future rows remain glass, not past. */
@@ -422,7 +423,7 @@ body{color:#fff7df;
 .c[data-appearance="contrast"] .p{opacity:1;color:#f0edf8;background:linear-gradient(160deg,#ffffff26,#ffffff0d),rgba(9,17,28,.90)}
 .c[data-appearance="contrast"] .p.on{color:#211d15;background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 88%,#fff),color-mix(in srgb,var(--accent) 90%,#253047))}
 .p.now{box-shadow:var(--glass),inset 0 0 0 1.5px color-mix(in srgb,var(--text) 55%,transparent)}
-.p.past{opacity:.42}
+.p.past{background:linear-gradient(160deg,#ffffff12,#ffffff06),rgba(9,17,28,.74);border-color:#ffffff20}
 .p b{font-weight:600;font-size:12.5px;line-height:16.7px;letter-spacing:.01em}
 .tm{font-weight:600;font-size:12.5px;line-height:16.7px}
 
