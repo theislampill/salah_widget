@@ -1,0 +1,10 @@
+{
+  "schema": "r0003-cheap-path-repair/v1",
+  "predicate": "Publication readback preflight: working bytes must match accepted commit",
+  "observed": "WinError206: filename or extension too long before any HTTP fetch. A941-path Git argument list exceeded Windows process command-line length.",
+  "expected": "A bounded read-only Git diff check before anonymous URL reads",
+  "originalDriverSha256": "91ac2eba92c21b302ec869d6c91bfca75efd138cc72472f71f2c287d92304ed7",
+  "countermeasure": "Check all tracked working changes with git diff --name-only HEAD instead of expanding941paths. Untracked delivery receipts are separate; original accepted files must be unchanged.",
+  "sourceOrFixtureChange": false,
+  "acceptanceCredit": "None from failed preflight; actual HTTP byte results remain required."
+}
