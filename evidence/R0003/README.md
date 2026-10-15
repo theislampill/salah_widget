@@ -1,16 +1,19 @@
-# R0003 — native ownership qualification and closure evidence
+# R0003 â€” native ownership qualification and closure evidence
 
 Qualified runtime: **06772824a159cd2bc42a1d9f79a3fb22fa46e49d**.
 Production implementation is unchanged. This evidence branch does not deploy
-GitHub Pages. Independent technical review accepts the native qualification;
-publication, certificate and final GitHub state are recorded separately under
-`delivery/`. This index alone does not assert that issue3 is closed.
+GitHub Pages. **Issue3 is independently verified CLOSED, reason completed**, after
+certificate-first publication and intentional closure. Read the
+[posted certificate](https://github.com/theislampill/salah_widget/issues/3#issuecomment-6182373378)
+and [compact final readback](delivery/final-readback.json), including ordered events
+and the Hansei/Kaizen retrospective. Original pending-stage receipts remain in
+immutable earlier commits.
 
 The [immutable specification](https://github.com/theislampill/salah_widget/blob/21e7a84365fae37a86cae5c7d5e41008c0adc53f/docs/rlgwo-execution/20261008/REMAINING_RLGWOs/R0003.md)
 and [accepted audit](https://github.com/theislampill/salah_widget/blob/b879573c298f19189d1f2392108b8b9f3b2cda0b/docs/rlgwo-audit/20261008/workers/A/03-assessment.json)
-remain the authority for original predicates. Historical3.01–3.14 are preserved,
+remain the authority for original predicates. Historical3.01â€“3.14 are preserved,
 including validly superseded3.11; fresh native proof completes3.15. Final3.16
-completion requires the separate ordered delivery/closure readback.
+is satisfied by the independent ordered delivery/closure readback.
 
 ## Read the actual witness
 
@@ -33,20 +36,20 @@ the raw trace. The aggregate receipts are navigation, not substitutes for them.
 
 | Original obligation | Chromium witnesses | Firefox witnesses |
 |---|---|---|
-| A01 prayer A→B and late/early/rejected/old-tomorrow | [01](browser/attempt01-chromium/), [02](browser/attempt02-chromium/) | [05 functional](browser/attempt05-firefox/), [07](browser/attempt07-firefox-screenshots/), [09 first state](browser/attempt09-firefox-first-stills/), [10 entries](browser/attempt10-firefox-entry-stills/) |
+| A01 prayer Aâ†’B and late/early/rejected/old-tomorrow | [01](browser/attempt01-chromium/), [02](browser/attempt02-chromium/) | [05 functional](browser/attempt05-firefox/), [07](browser/attempt07-firefox-screenshots/), [09 first state](browser/attempt09-firefox-first-stills/), [10 entries](browser/attempt10-firefox-entry-stills/) |
 | A02 ABA/preferences/no-abort/unconditional-finally | [02](browser/attempt02-chromium/), [03 healthy control](browser/attempt03-chromium/) | [07](browser/attempt07-firefox-screenshots/) |
 | A03 weather body/rejection/owned persistence | [03](browser/attempt03-chromium/) | [07 rejection](browser/attempt07-firefox-screenshots/), [08 corrected body](browser/attempt08-firefox-screenshots/) |
 | A04 captured New York DST epoch1772955000000, obsolete/contradictory negatives | [03](browser/attempt03-chromium/) | [07](browser/attempt07-firefox-screenshots/) |
 | A05 native radar Image/canvas/zero-coordinate axes | [03](browser/attempt03-chromium/) | [07](browser/attempt07-firefox-screenshots/) |
 | A06 exact winning bytes through normal fresh/expired reload | [03](browser/attempt03-chromium/) | [08](browser/attempt08-firefox-screenshots/) |
-| A07 first/loading/error/recovery/entries/warm opaque Moon | [01–04](browser/attempt04-chromium/) | [08–10](browser/attempt08-firefox-screenshots/) plus each referenced case's original pixels |
+| A07 first/loading/error/recovery/entries/warm opaque Moon | [01â€“04](browser/attempt04-chromium/) | [08â€“10](browser/attempt08-firefox-screenshots/) plus each referenced case's original pixels |
 | A07 separate30s default/reduced/full motion | [Original complete Chromium clips](browser/attempt04-chromium/) with [exact shared-input certificate](qualification/preservation.json) | Shared unchanged-interface predicate; no Firefox-specific motion claim |
 | A08 independent qualification | [Row-specific review](qualification/review.md), source/variant reconstruction and original pixel inspection | Same independent reviewer, distinct native Firefox evidence |
 | A09 public delivery/certificate/closure | [Public source and actual settings consumer](browser/public-chromium01/) | Serialized publication/comment/state readbacks are under `delivery/` |
 
 ## Presentation and recording boundaries
 
-The real path is buckle → latitude/longitude/label/method/school/units → close.
+The real path is buckle â†’ latitude/longitude/label/method/school/units â†’ close.
 There is no Save button and no direct applyConfig substitution. Providers and
 storage are private fixtures; actual request/admission/render consumers execute.
 
@@ -67,7 +70,7 @@ frozen simTime or accelerated frame is used as motion proof.
 Warm Moon claims are limited to the admitted ashen below-horizon control. Opaque
 pixels have no stars through the disc and no below-horizon moonlight. Legitimate
 unavailable/first-presentation states remain visible. No broader CP9 campaign is
-claimed. Test iframe330×534 contains the325×530 card; shipped builder geometry
+claimed. Test iframe330Ã—534 contains the325Ã—530 card; shipped builder geometry
 is unchanged. Frozen V1 is byte-identical to accepted ancestry, with fresh manifest
 and disposable-tamper verification, not an invented new native campaign.
 
