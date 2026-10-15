@@ -1,19 +1,11 @@
-# R0024 — pre-merge qualification
+# R0024 — CLOSED / completed
 
-The bounded information repair is committed at [`57a41486b171ec5c8040a3f8285053bfb273e62a`](https://github.com/theislampill/salah_widget/commit/57a41486b171ec5c8040a3f8285053bfb273e62a), based on R0018 merge `ae24fec477eba0280ea513ad57b3947a4c66dda0`.
+Issue [#36](https://github.com/theislampill/salah_widget/issues/36) was intentionally closed as completed at **2026-10-15 20:33:16 UTC**, after the exact independently accepted [CLOSE-R0024 certificate](https://github.com/theislampill/salah_widget/issues/36#issuecomment-6201665819) was posted while OPEN at 20:31:16 UTC. Independent final readback verified the ordering, completed reason, merge, main, Pages and unchanged served index.
 
-Independent review found no blocking predicate for original rows **2419–2422** within the documented scope. **2425 still requires exact PR/public-evidence review, owner head/base merge approval, delivery and certificate-first completed closure.** This is not CLOSE-R0024 and issue #36 remains open.
+[PR #65](https://github.com/theislampill/salah_widget/pull/65) delivered normal merge `fc8d13338f9274a768580cda5a805492f80c510d`, with the approved base/head as its ordered parents and the exact approved tree. See the [final closure receipt](postmerge/final-receipt.json), [independent final review](postmerge/independent-final-review.json), [closure event receipt](postmerge/issue-closed.json) and [certificate](postmerge/CLOSE-R0024.md).
 
-- [Independent review and limits](qualification/independent-review.json)
-- [All 25 original obligations](qualification/original-obligation-matrix.json)
-- [195 native receipt index](qualification/retained-index.json): 98 Chromium and 97 Firefox, with actual effects, accessible consumers, target/source/quality/expiry controls and original pixels.
-- [Resource bounds and limitations](qualification/resource-summary.json): comparable input independently qualified before measurement; raw 18 range exceedances retained and explicitly dispositioned within finite observed bounds.
-- [Exact committed candidate](qualification/committed-candidate.json) and [source/build checks](qualification/final-source-checks.json): 22 new and 245 affected tests pass; four inherited TODOs remain; canonical outputs match; 164 protected interfaces unchanged.
-- [HTTP and decoded-custody readback](qualification/http-readback.json): raw evidence/source bytes verified at immutable commits; 1,791 archive members and 501 JSON members decoded.
-- [Hansei/Kaizen](qualification/hansei-kaizen.json)
+The accepted evidence retains 267 passing source tests plus four inherited TODOs, 98 Chromium and 97 Firefox native cases, representative delivered consumers, 139 exact HTTP files and 164 unchanged protected interfaces. Historical preapproval/preposting snapshots remain immutable; their pending frontiers are superseded by the later actual effects recorded here. The PR-specific SKIPPED check has no test credit.
 
-Nine original Firefox day/flash WebMs remain unqualified as continuous recordings. They were not converted to PASS. The immutable specification permits crops/clip: independently inspected current day/night pixels, readable native night sequences and actual flash low/peak/low observations establish the scoped preservation predicates. No repaired recorder, generic whole-sky scientific or initial-Moon readiness claim is made. Original Chromium clipped captures, harness failures, RED tests, resource exceedances and obsolete unpublished packaging commits remain recorded.
+The 18 raw resource range exceedances remain failures under their original ranges; the separately accepted disposition covers only its finite observed CPU/heap/network bounds and qualified comparison scope. Nine Firefox recordings remain unqualified continuous videos. Ordinary Firefox terrain remained unavailable through 60.953 seconds with causal/regression attribution unestablished; no mature-scene credit is claimed. The exact original-scope controlled native evidence remains accepted. See the certificate and final receipt for these retained boundaries.
 
-`payload-manifest.json` maps raw original paths into lossless archives and exact immutable source references. `qualification-manifest.json` binds the additional review/custody files. Disposable controlled browser profiles remain local and explicitly excluded; no host-screen capture or personal browser profile was used.
-
-No merge, Pages delivery, certificate posting or issue closure has occurred. The owner retains the single exact-head/base merge decision; conditionally authorized delivery and closure follow only after that decision and successful postmerge readback.
+Reuse the qualified weather decisions, fixture identities and public-byte/certificate-first delivery helpers where source and consumer identities match. The actual repairs were the accessible information sink and bounded cloud-coupled snow origin. No broader observation/arrival service or scientific rendering work was introduced.
