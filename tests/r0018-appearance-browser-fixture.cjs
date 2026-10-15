@@ -22,15 +22,17 @@ function buildPage(source,s,options={}){
  if(source.split('<script src="config.js">').length!==2)throw Error('Expected one real config loader');
  const pre=`<script>(()=>{
  const spec=${JSON.stringify(s)},NativeDate=Date,wall=NativeDate.parse(spec.clock),data=new Map(),writes=[],requests=[],unexpectedFetch=[];
+ const nativeFetch=window.fetch.bind(window),assetPaths=${JSON.stringify(options.assetPaths||[])};
  window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:[wall]));}static now(){return wall;}};
  const fixture=window.__appearanceFixture={spec,storage:'private per-document Map; no owner storage',writes,requests,unexpectedFetch,failSave:${!!options.failSave},failReset:${!!options.failReset}};
  const storage={getItem:k=>data.get(String(k))??null,setItem:(k,v)=>{if(fixture.failSave&&k==='salah_widget:config:v1'){const e=Error('Controlled refusal');e.name='QuotaExceededError';throw e;}writes.push({operation:'set',key:String(k)});data.set(String(k),String(v));},removeItem:k=>{if(fixture.failReset&&k==='salah_widget:config:v1'){const e=Error('Controlled refusal');e.name='SecurityError';throw e;}writes.push({operation:'remove',key:String(k)});data.delete(String(k));}};
  Object.defineProperty(window,'localStorage',{value:storage});
- window.fetch=async input=>{const url=new URL(typeof input==='string'?input:input.url,location.href);requests.push(url.href);
+ window.fetch=async (input,init)=>{const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.href);requests.push(url.href);
+  if(url.origin===location.origin&&assetPaths.includes(url.pathname))return nativeFetch(input,init);
   if(url.origin==='https://api.aladhan.com'&&/^\\/v1\\/timings\\/(07|08)-09-2026$/.test(url.pathname))return new Response(JSON.stringify({code:200,status:'OK',data:url.pathname.includes('/08-')?spec.tomorrow:spec.today}),{status:200,headers:{'Content-Type':'application/json'}});
   unexpectedFetch.push(url.href);throw Error('Fixture blocks unrelated provider '+url.href);
  };
- fixture.textHidden=false;fixture.setTextHidden=hidden=>{let style=document.getElementById('appearance-fixture-hidden-text');if(!style){style=document.createElement('style');style.id='appearance-fixture-hidden-text';document.head.appendChild(style);}style.textContent=hidden?'.p b,.p .tm{visibility:hidden!important}':'';fixture.textHidden=!!hidden;};
+ fixture.textHidden=false;fixture.setTextHidden=hidden=>{let style=document.getElementById('appearance-fixture-hidden-text');if(hidden){if(!style){style=document.createElement('style');style.id='appearance-fixture-hidden-text';document.head.appendChild(style);}style.textContent='.p b,.p .tm{visibility:hidden!important}';}else{style?.remove();}fixture.textHidden=!!hidden;};
  })();</script>`;
  const inspect=`<script>window.__appearanceFixture.snapshot=()=>{
  const f=window.__appearanceFixture,rect=e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};};
@@ -40,7 +42,15 @@ function buildPage(source,s,options={}){
 };</script>`;
  const stress=options.stress?'<style>.times{background:#fff}</style>':'';
  // Keep every production script body and the real boot/rAF/admission/calendar callers intact.
- return source.replace('<script src="config.js">',pre+stress+'<script src="config.js">').replace('</body>',inspect+'</body>');
+ let page=source.replace('<script src="config.js">',pre+stress+'<script src="config.js">').replace('</body>',inspect+'</body>');
+ if(options.dateCase==='stale'){
+  if(page.split('\nboot();').length!==2)throw Error('Unique native boot owner required');
+  page=page.replace('\nboot();',`\n// Established controlled stale display, delegated through the real render owner.
+const readabilityNativeRender=render;
+render=function(...args){const previous=_prayerStale;_prayerStale=true;try{return readabilityNativeRender.apply(this,args);}finally{_prayerStale=previous;}};
+\nboot();`);
+ }
+ return page;
 }
 function routes(){
  const out=[];for(const scene of Object.keys(scenes))for(const surface of ['previous-dark','default-glass','high-contrast']){const s=spec(scene,surface==='high-contrast'?'contrast':'default');out.push({name:surface+'-'+scene,spec:s,route:'/'+(surface==='previous-dark'?'previous':'candidate')+'/index.html?scene='+scene+'&appearance='+s.appearance+'&fresh='+surface+'-'+scene+routeHash(s)});}

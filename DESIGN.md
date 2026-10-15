@@ -110,6 +110,18 @@ Complete values keep their 14px font, normal whitespace, anywhere wrapping and s
   with dark text; `.p.now` independently outlines the current prayer. Future rows
   stay readable glass, elapsed rows are subdued, and Forenoon has no current row.
   Tomorrow's Fajr row, countdown and next arc marker use the same admitted target.
+- **Default timetable readability:** names and times retain full informational
+  opacity through their ancestors. Ordinary cells place `rgba(9,17,28,.74)` beneath
+  the decorative glass tint; elapsed rows use a quieter tint and border instead
+  of fading the text. NEXT keeps its opaque accent and dark foreground, and CURRENT
+  keeps its separate inset. The optional contrast appearance remains optional.
+  Native Chromium/Firefox pairs with a controlled 7 September 2026 Madinah clock verify
+  intended foreground/background contrast of at least 4.5:1 at noon, sunrise,
+  sunset, night, broken cloud, overcast and local white stress, with Inter/Fraunces
+  loaded and DPR 1/2 coverage. This is bounded timetable evidence, not whole-widget
+  accessibility certification; antialiasing/shadow changed-pixel ratios are only
+  diagnostics. The historical noon capture had no pinned date. Fonts, row geometry,
+  the 325×530 card, header/footer, and the separate embed interfaces are preserved.
 - The arc (`drawArc`) is **one continuous solar-elevation curve** built from real solar motion (hour angle +
   declination), NOT from prayer-to-prayer interpolation. Prayer events are *sampled onto* it. The declination is
   fit so elevation crosses **0° exactly at this date's sunrise/sunset** (the fit may slightly exceed the real
