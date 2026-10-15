@@ -1,0 +1,23 @@
+{
+  "schema": "r0024-independent-publication-wording-reconciliation/v1",
+  "reason": "Actual independent reviewer identified overbroad summary wording before publication.",
+  "corrections": [
+    {
+      "file": "resource-summary.json",
+      "oldSha256": "54457f971e25a4853367e73cd85ac266d6dd45e8d7e90c807670ad7d2f39a069",
+      "newSha256": "a0eb74249c38f3c4f95a52c01160f2f0c9ff81a04db323767662f7c3921cb735",
+      "oldText": "Warm full/INFO execution contains zero weather function calls; raw CPU profiles confirm native sky/Moon/compositor work. This diagnoses why warm aggregate deltas cannot be claimed as direct weather execution. Observed full/INFO total page cost is accepted conservatively without subtracting any tare.",
+      "newText": "In the recorded warm windows, the instrumented decision/reconciliation/forecast/formatter functions have zero recorded calls. Native sky/Moon/compositor work appears in the CPU profiles. Neither the counters nor sampled profiles establish universal absence of all weather-related execution. Observed full/INFO total page cost is accepted within the explicit finite bounds without weather-exclusive attribution or subtracting instrumentation tare."
+    },
+    {
+      "file": "hansei-kaizen.json",
+      "oldSha256": "42112e517c1148cd2161ffdcd9925637ee39954c49d2d5adee678e727ae24572",
+      "newSha256": "2b420f3ac9fef2d276934adafee40b9bf01891fab612263a469615054b848300",
+      "oldText": "Qualified scoped decision-tape resource control; do not generalize it to whole renderer cost",
+      "newText": "Qualified scoped decision-tape resource control and observed whole-page arm bounds; no weather-exclusive attribution, whole-process/worker cost or unmeasured-environment guarantee"
+    }
+  ],
+  "immutablePrimaryDispositionUnchanged": "542cc7e3c3b43159fee59ef3ea310de3ffc8eb5e54db2014718b05d413ef76c1",
+  "readmeCorrection": "publish_qualification.py replaces the old pending-local-review summary with current2419-2422 acceptance and remaining2425 gates.",
+  "authority": "Clarified claims only; no test/evidence predicate weakened or source change."
+}

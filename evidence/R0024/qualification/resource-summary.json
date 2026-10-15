@@ -1,0 +1,40 @@
+{
+  "schema": "r0024-resource-summary/v1",
+  "inputReviewSha256": "27b6c550ce5d8ee3ec1ffaedf348d789cfc86a0bac6c02542e08e17705652e43",
+  "measurementSha256": "a40080a4dd02feb0da28ac2c656fcbcb988f10f952d450d44df934bfbea94908",
+  "primaryDispositionSha256": "542cc7e3c3b43159fee59ef3ea310de3ffc8eb5e54db2014718b05d413ef76c1",
+  "status": "ACCEPTED_SCOPED_OBSERVED_COST",
+  "rawStatus": "FAIL_REQUIRES_PRIMARY_DISPOSITION",
+  "bounds": {
+    "warmPageTaskThreadCpuMsPer60s": 20000,
+    "shortPhaseWholePageCpuMs": 350,
+    "information1000CacheHitBatchCpuMs": 3,
+    "postGcPageJSHeapUsedSizeBytes": 10000000,
+    "preGcPageJSHeapUsedSizeBytes": 30000000,
+    "postGcPerWindowPageHeapIncreaseBytes": 1200000
+  },
+  "rationale": [
+    "Both full and INFO arms stay below the stated observed CPU and page-heap envelopes across every required trial/phase. INFO1000 is actually executed, with cache hits and no rebuilding; batch mean increment0.165667ms remains inside0.949ms baseline repeat range.",
+    "Zero added provider requests, bytes or recipients; stable eligibility performs no reconciliation or formatter rebuild. No new periodic controller or per-frame inference is introduced.",
+    "In the recorded warm windows, the instrumented decision/reconciliation/forecast/formatter functions have zero recorded calls. Native sky/Moon/compositor work appears in the CPU profiles. Neither the counters nor sampled profiles establish universal absence of all weather-related execution. Observed full/INFO total page cost is accepted within the explicit finite bounds without weather-exclusive attribution or subtracting instrumentation tare.",
+    "All short-phase CPU, pre/post-GC page JS heap and sampled live allocations remain disclosed below; the small information interface is accepted within these observed bounds without a claim of retaining-owner identity or absence of leaks."
+  ],
+  "claimsRefused": [
+    "Total process or worker CPU/memory",
+    "Weather-exclusive attribution of all arm deltas",
+    "Sampled allocation equals retained memory",
+    "Retaining paths established",
+    "Leak-free or long-term growth safety",
+    "Future-machine performance guarantee",
+    "Render callback under250ms",
+    "Clearing historical failed receipts",
+    "Subtracting instrumentation tare"
+  ],
+  "unavailable": {
+    "workerCpuMs": null,
+    "collectedAllocationBytes": null,
+    "uiCallback250ms": null
+  },
+  "rawExceedancesRetained": 18,
+  "independentReview": "qualification/independent-review.json"
+}

@@ -1,13 +1,19 @@
-# R0024 retained execution evidence
+# R0024 — pre-merge qualification
 
-Candidate source: [`57a41486b171ec5c8040a3f8285053bfb273e62a`](https://github.com/theislampill/salah_widget/commit/57a41486b171ec5c8040a3f8285053bfb273e62a), based on merged R0018 `ae24fec477eba0280ea513ad57b3947a4c66dda0`.
+The bounded information repair is committed at [`57a41486b171ec5c8040a3f8285053bfb273e62a`](https://github.com/theislampill/salah_widget/commit/57a41486b171ec5c8040a3f8285053bfb273e62a), based on R0018 merge `ae24fec477eba0280ea513ad57b3947a4c66dda0`.
 
-This non-deploying branch preserves raw R0024 evidence. It is not a closure certificate, merge approval, or delivery claim. Issue #36 remains open. Independent whole-obligation review is pending; an append-only disposition will identify accepted predicates and remaining gaps.
+Independent review found no blocking predicate for original rows **2419–2422** within the documented scope. **2425 still requires exact PR/public-evidence review, owner head/base merge approval, delivery and certificate-first completed closure.** This is not CLOSE-R0024 and issue #36 remains open.
 
-`payload-manifest.json` maps each original evidence path to a lossless tar.gz archive and SHA-256. It includes failed cases, original recordings, RED/GREEN output, source/runtime/fixture bindings and paired CPU/heap/network observations. Every archive was decoded and compared locally before publication. A separate HTTP readback receipt will verify published bytes and decoded members.
+- [Independent review and limits](qualification/independent-review.json)
+- [All 25 original obligations](qualification/original-obligation-matrix.json)
+- [195 native receipt index](qualification/retained-index.json): 98 Chromium and 97 Firefox, with actual effects, accessible consumers, target/source/quality/expiry controls and original pixels.
+- [Resource bounds and limitations](qualification/resource-summary.json): comparable input independently qualified before measurement; raw 18 range exceedances retained and explicitly dispositioned within finite observed bounds.
+- [Exact committed candidate](qualification/committed-candidate.json) and [source/build checks](qualification/final-source-checks.json): 22 new and 245 affected tests pass; four inherited TODOs remain; canonical outputs match; 164 protected interfaces unchanged.
+- [HTTP and decoded-custody readback](qualification/http-readback.json): raw evidence/source bytes verified at immutable commits; 1,791 archive members and 501 JSON members decoded.
+- [Hansei/Kaizen](qualification/hansei-kaizen.json)
 
-Repeated source/runtime copies are referenced by exact immutable Git commit/path/blob and SHA-256 after byte matching. Disposable browser profile directories remain local and are explicitly inventoried as excluded. No personal browser profile or host-screen capture was used.
+Nine original Firefox day/flash WebMs remain unqualified as continuous recordings. They were not converted to PASS. The immutable specification permits crops/clip: independently inspected current day/night pixels, readable native night sequences and actual flash low/peak/low observations establish the scoped preservation predicates. No repaired recorder, generic whole-sky scientific or initial-Moon readiness claim is made. Original Chromium clipped captures, harness failures, RED tests, resource exceedances and obsolete unpublished packaging commits remain recorded.
 
-Execution checks: Chromium 98/98; Firefox 97/97. These counts alone do not qualify pixels, motion, whole-obligation acceptance or delivery. Failed Firefox recordings remain failed. The resource raw result retains 18 range exceedances; the separate primary disposition and independent review accept only the stated finite observed-cost scope.
+`payload-manifest.json` maps raw original paths into lossless archives and exact immutable source references. `qualification-manifest.json` binds the additional review/custody files. Disposable controlled browser profiles remain local and explicitly excluded; no host-screen capture or personal browser profile was used.
 
-The production PR must use non-closing wording. Merge requires owner approval of its exact independently reviewed head and base. All subsequent delivery/certification/closure actions remain conditional on that approval and complete mandatory evidence.
+No merge, Pages delivery, certificate posting or issue closure has occurred. The owner retains the single exact-head/base merge decision; conditionally authorized delivery and closure follow only after that decision and successful postmerge readback.

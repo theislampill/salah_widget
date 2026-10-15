@@ -1,0 +1,49 @@
+{
+  "schema": "r0024-final-fixture-whitespace-reconciliation/v1",
+  "atUtc": "2026-10-15T18:42:27.471247+00:00",
+  "retainedLocalCommit": "9fc1df04c34e8a27fe3dc6f1909cb2dbd2407f85",
+  "finalHead": "57a41486b171ec5c8040a3f8285053bfb273e62a",
+  "base": "ae24fec477eba0280ea513ad57b3947a4c66dda0",
+  "changes": [
+    {
+      "path": "tests/weather-native/cases.json",
+      "executedSha256": "5b22ecdd6dbd40d61bec9dfaa82bfd7886ad8b69303fe1e00cf87cd24357dd35",
+      "finalSha256": "3558bcfdcae8ebec8960096284140e41ddddda2193084b5034be8f4505c026bc",
+      "oldBytes": 53394,
+      "newBytes": 50796,
+      "onlyChange": "CRLF to LF, one trailing space, or final blank line; no tokens or values changed"
+    },
+    {
+      "path": "tools/qa/run_r0024_native.py",
+      "executedSha256": "b727789ec9dad51da3345c6a1e6997d9d831531c3d398457cc1db20ea67ecb8e",
+      "finalSha256": "9b340a51a83402ff6bf74d019c48584aa21ca14a6d0a20e73471252c269fab3b",
+      "oldBytes": 37867,
+      "newBytes": 37479,
+      "onlyChange": "CRLF to LF, one trailing space, or final blank line; no tokens or values changed"
+    },
+    {
+      "path": "tests/weather-native/description-seed.js",
+      "executedSha256": "2411e20bf1293ea823b944341cb800beda7a3a1b39178dc6849845b4bef43ae5",
+      "finalSha256": "9fadf1a8379f8eadbaed87cb5b56ff00d31156097ae229782b3918cabd8c7533",
+      "oldBytes": 1285,
+      "newBytes": 1284,
+      "onlyChange": "CRLF to LF, one trailing space, or final blank line; no tokens or values changed"
+    },
+    {
+      "path": "tools/qa/info_contract.py",
+      "executedSha256": "2885e91efa59a1ddd9e1cf86e1d5c97a167d4180f3dd42014695f9e1cd845792",
+      "finalSha256": "92ff332b1f6bbb08ced88c132422fdb00780e74246f30adb2492da43f12de4be",
+      "oldBytes": 10790,
+      "newBytes": 10789,
+      "onlyChange": "CRLF to LF, one trailing space, or final blank line; no tokens or values changed"
+    }
+  ],
+  "executedSnapshot": "review/executed-fixtures-input-r15",
+  "originalFailure": "Full base-to-commit check additionally found one trailing space in description-seed.js and one final blank line in info_contract.py; prior staged-only correction had omitted these already-committed files.",
+  "correctiveAction": "Check entire candidate against base before and after amend; exact executed bytes retained; values/AST or exact single trailing space equality verified.",
+  "fullCommitDiffCheckExitCode": 0,
+  "productRuntimeChanged": false,
+  "browserFixtureTokenChanges": false,
+  "frozenResourcePackageChanged": false,
+  "nativeRerun": "Not claimed; same compiled tokens and JSON values independently reconcilable."
+}
