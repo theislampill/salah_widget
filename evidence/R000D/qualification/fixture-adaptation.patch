@@ -1,0 +1,236 @@
+--- prior/tools/qa/run_r000d_transport.py
++++ package/tools/qa/run_r000d_transport.py
+@@ -4,6 +4,7 @@
+ accelerated. Only radar retry cooldown may use the explicitly selected wall offset.
+ """
+ import argparse
++import base64
+ import json
+ import os
+ from pathlib import Path
+@@ -50,6 +51,14 @@
+             and before['lastWxAt']==after['lastWxAt'] and before['weatherWrites']==after['weatherWrites']
+             and before.get('weatherMutations',[])==after.get('weatherMutations',[]))
+ 
++def old_cannot_touch_active(before,after,kind):
++    # Compare the complete captured owner, attempt, failure diagnostic and namespace.
++    keys=['requests','slots']
++    return (all(before[key][kind]==after[key][kind] for key in keys)
++            and before['wxBusy' if kind=='weather' else 'radarBusy']==after['wxBusy' if kind=='weather' else 'radarBusy']
++            and temporal_no_renewal(before,after,kind)
++            and (kind!='weather' or (before['weatherTrack']==after['weatherTrack'] and before['lastWxTry']==after['lastWxTry'])))
++
+ def gap_active_owner(state,operation,generation):
+     s=state['temporal'];slot=s['slots']['weather']
+     return bool(slot and slot['operationId']==operation and slot['generation']==generation and s['wxBusy'])
+@@ -57,6 +66,23 @@
+ def claim_fresh_output(path):
+     # Atomically refuse any existing output directory, even if empty; no prior receipts overwritten.
+     path=Path(path).resolve();path.mkdir(parents=True,exist_ok=False);return path
++
++def preserve_and_close(report,args,server,context,browser):
++    # Save the original observations before teardown can fail. Cleanup errors are
++    # distinct evidence and never replace an earlier case exception or verdict.
++    report['nativeHttpEvents']=server.state();report['httpLedger']=server.ledger
++    report['sourceUnchanged']=N['sha']((args.root/'index.html').read_bytes())==args.expected_index
++    if not report['sourceUnchanged']:report['status']='FAIL_SOURCE_DRIFT'
++    report['teardown']={'status':'PENDING','operations':[]}
++    N['write_json'](args.out/'pre-teardown.json',report)
++    for name,owner in (('context.close',context),('browser.close',browser)):
++        if owner is None:continue
++        try:
++            owner.close();report['teardown']['operations'].append({'operation':name,'status':'RETURNED'})
++        except Exception:
++            report['teardown']['operations'].append({'operation':name,'status':'ERROR','exception':traceback.format_exc()})
++    report['teardown']['status']='ERROR'if any(x['status']=='ERROR'for x in report['teardown']['operations'])else'RETURNED'
++    N['write_json'](args.out/'post-teardown.json',report)
+ 
+ def gap_prayer_rows(state):
+     p=state['preservation'];render=p.get('prayerRender')or{};rows=p.get('prayerRows')or[]
+@@ -101,6 +127,25 @@
+         page.locator(selector).screenshot(path=str(out/(name+'-'+suffix+'.png')))
+     if night:page.locator('.moon').screenshot(path=str(out/(name+'-moon.png')))
+ 
++def observed_motion(page,out,name,read,seconds=30):
++    """Original native PNG checkpoints and raw painted canvas; no scene calls or clock seek."""
++    started=time.monotonic();checkpoints=[]
++    for offset in (0,10,20,seconds):
++        while time.monotonic()-started<offset:page.wait_for_timeout(200)
++        state=read();tag=name+'-motion-'+str(offset)
++        # Readback is bracketed around genuine browser screenshots. This is sampled
++        # Firefox evidence, not a continuous no-blank recording/physical scanout claim.
++        page.locator('.c').screenshot(path=str(out/(tag+'-card.png')))
++        box=page.locator('.c').bounding_box()
++        page.screenshot(path=str(out/(tag+'-sky.png')),clip={'x':box['x']+8,'y':box['y']+42,'width':309,'height':77})
++        canvas=page.locator('.cloudcanvas').evaluate('(c)=>c.toDataURL("image/png")')
++        (out/(tag+'-cloud-canvas.png')).write_bytes(base64.b64decode(canvas.split(',',1)[1]))
++        checkpoints.append({'offset':offset,'elapsedMs':(time.monotonic()-started)*1000,'before':state,'after':read()})
++    return {'scope':'natural 1x native PNG sky/card checkpoints and existing raw cloud canvas; no cloud hash; Chromium continuous context video separately retained',
++      'elapsedMs':(time.monotonic()-started)*1000,'checkpoints':checkpoints,
++      'cloudCanvasDelta':N['pixel_delta'](out/(name+'-motion-0-cloud-canvas.png'),out/(name+'-motion-'+str(seconds)+'-cloud-canvas.png')),
++      'visibleSkyDelta':N['pixel_delta'](out/(name+'-motion-0-sky.png'),out/(name+'-motion-'+str(seconds)+'-sky.png')),'pixelReview':'PENDING'}
++
+ def gap_watch(page,out,name,read,report,deadline=None):
+     # Native monotonic watch; no timer wrapper or accelerated deadline. Pixel disposition stays independent.
+     before=read()
+@@ -115,7 +160,7 @@
+         page.wait_for_timeout(200)
+     after=read()
+     page.locator('.c').screenshot(path=str(out/(name+'-card-after.png')))
+-    return {'scope':'actual real-monotonic fifteen-second card crops and continuous context video; independent sky/cloud pixel review required',
++    return {'scope':'actual real-monotonic fifteen-second card crops; Chromium context video when configured, no continuous Firefox-video claim; independent sky/cloud pixel review required',
+             'realWatchMs':(time.monotonic()-started)*1000,'before':before,'after':after,
+             'motionPixels':N['pixel_delta'](out/(name+'-card-before.png'),out/(name+'-card-after.png')),'motionPixelScope':'whole-card delta; no automatic cloud-motion verdict',
+             'firstTerminal':terminal,'lastBeforeDeadline':before_deadline,'visualReview':'PENDING'}
+@@ -214,6 +259,7 @@
+                 N['wait'](page,'n=>__weatherCases.deadlineGapRead(__weatherCases.identity()).transportRows.some(x=>x.transport.kind==="weather"&&x.transport.number===n&&x.bodyOutcome==="fulfilled")',old_number,timeout=3000)
+             page.wait_for_timeout(200);after_old=read();report['afterOldRelease']=after_old
+             report['checks']['oldCannotReleaseB']=gap_active_owner(after_old,new_slot['operationId'],new_slot['generation'])
++            report['checks']['oldCannotTouchFullSuccessor']=old_cannot_touch_active(active['temporal'],after_old['temporal'],'weather')
+             report['checks']['oldCannotCommitOrPersist']=gap_no_renewal(active,after_old)
+             if gap=='preservation':report['preservationAfterOld']=gap_preservation(after_old,spec)
+             if gap in('ignored-abort','superseded-target'):
+@@ -228,7 +274,7 @@
+             report['checks']['actualHealthyConsumer']=recovered['consumer']['raw']['temp']==20 and recovered['consumer']['modelEligible']is True and recovered['consumer']['qa']['wxTruth']['activePrecip']is True and recovered['consumer']['qa']['wxTruth']['observedPresent']is False and recovered['consumer']['qa']['wxTruth']['activeThunder']is False and recovered['consumer']['lightning']=='off'
+             information=recovered['consumer']['information']
+             report['checks']['modelQualifiedPresentation']=('CURRENT MODEL ESTIMATE'in(information['description']or'') or (
+-                args.expected_index=='ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee'
++                args.expected_index=='d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f'
+                 and information['description']is None and recovered['consumer']['modelEligible']is True
+                 and information['name']==information['title']==information['header']['label']
+                 and 'Open-Meteo current model estimate'in information['title']
+@@ -236,6 +282,7 @@
+             report['checks']['newTargetAdmitted']=recovered['consumer']['raw']['target']['generation']==new_slot['generation'] and recovered['cacheRaw']is not None and recovered['lastWxAt']>active['lastWxAt']
+             gap_capture(page,args.out,'recovered',bool(spec.get('night')))
+             report['recoveredWatch']=gap_watch(page,args.out,'recovered',read,report)
++            if gap=='preservation':report['originalMotionObservation']=observed_motion(page,args.out,'recovered',read)
+             if gap=='preservation':
+                 report['preservationRecovered']=gap_preservation(recovered,spec)
+                 report['checks']['preservationGuards']=all(report['preservationHeld'].values())and all(report['preservationExpired'].values())and all(report['preservationRecovered'].values())and all(report['preservationTerminal'].values())and all(report['preservationAfterOld'].values())
+@@ -248,8 +295,7 @@
+             report['status']='EXECUTED_PENDING_NATIVE_PIXEL_REVIEW'if all(value is True for value in report['checks'].values())else'FAIL_OR_UNVERIFIED'
+         except Exception:report.update(status='FAILED_HARNESS_OR_CONSUMER',exception=traceback.format_exc())
+         finally:
+-            if context:context.close()
+-            browser.close()
++            preserve_and_close(report,args,server,context,browser)
+         report['nativeHttpEvents']=server.state();report['httpLedger']=server.ledger
+         report['writeErrorClassification']='Retain actual abort/broken-pipe events; normal-signal cancellation is not delivered late-body evidence'
+     report['sourceUnchanged']=N['sha']((args.root/'index.html').read_bytes())==args.expected_index
+@@ -317,6 +363,7 @@
+             control_release(server,old);page.wait_for_timeout(200)
+             after_old=read();report['afterOldRelease']=after_old;report['imagesAfterOldRelease']=image_read()
+             report['checks']['oldCannotReleaseB']=after_old['slots'][kind]is not None and after_old['slots'][kind]['operationId']==new_operation and after_old['wxBusy'if kind=='weather'else'radarBusy']
++            report['checks']['oldCannotTouchFullSuccessor']=old_cannot_touch_active(active,after_old,kind)
+             report['checks']['oldCannotCommitOrPersist']=temporal_no_renewal(active,after_old,kind)
+             report['checks']['eligibleRetryWall']=(active['lastWxTry']-first['lastWxTry']>=60000)if kind=='weather'else(active['lastRadarAt']-first['lastRadarAt']>=600000)
+             control_release(server,held)
+@@ -338,8 +385,7 @@
+             report['status']='EXECUTED_PENDING_NATIVE_PIXEL_REVIEW'if all(v is True for v in report['checks'].values())else'FAIL_OR_UNVERIFIED'
+         except Exception:report.update(status='FAILED_HARNESS_OR_CONSUMER',exception=traceback.format_exc())
+         finally:
+-            if context:context.close()
+-            browser.close()
++            preserve_and_close(report,args,server,context,browser)
+         report['nativeHttpEvents']=server.state();report['httpLedger']=server.ledger
+         report['writeErrorClassification']='Retained abort/broken-pipe events require the joined application-timeout/old-owner receipts; errors are not discarded'
+     report['sourceUnchanged']=N['sha']((args.root/'index.html').read_bytes())==args.expected_index
+--- prior/tools/qa/run_weather_native.py
++++ package/tools/qa/run_weather_native.py
+@@ -73,7 +73,7 @@
+     if spec.get('local'):config['local']=1
+     if spec.get('motionFull'):config['motion']='full'
+     if spec.get('night'):config.update(simMoon=0.5,simMoonAlt=20,simMoonH=42)
+-    context=browser.new_context(viewport={'width':390,'height':600},device_scale_factor=1,reduced_motion=spec.get('motion','no-preference'),timezone_id='Asia/Riyadh',**({'record_video_dir':str(out/'video')} if out and spec.get('watchMotionSeconds') else {}))
++    context=browser.new_context(viewport={'width':390,'height':600},device_scale_factor=1,reduced_motion=spec.get('motion','no-preference'),timezone_id='Asia/Riyadh',**({'record_video_dir':str(out/'video')} if out and spec.get('watchMotionSeconds') and browser.browser_type.name=='chromium' else {}))
+     page=context.new_page();errors=[];network=[]
+     page.on('pageerror',lambda error:errors.append(str(error)));page.on('request',lambda request:network.append(request.url))
+     url=server.origin+'/fixture.html?'+urlencode({'case':spec['id'],'attempt':attempt,'run':run,'mode':'healthy','source':index_sha})+'#'+urlencode(config)
+--- prior/tools/qa/weather_native_http.py
++++ package/tools/qa/weather_native_http.py
+@@ -1,5 +1,6 @@
+ """One-run loopback HTTP headers/body/Image holds. No native/browser claim by this module."""
+ import copy
++import base64
+ from datetime import datetime,timezone
+ import json
+ from pathlib import Path
+@@ -62,19 +63,31 @@
+             if kind=='image':body=self.tile;mime='image/png'
+             elif kind=='weather':
+                 local=datetime.fromtimestamp((client+3*3600000)/1000,timezone.utc).isoformat(timespec='minutes')[:16]
+-                current={'time':local,'interval':900,'weather_code':95,'temperature_2m':20,'precipitation':2,'cloud_cover':95,'wind_speed_10m':2,'wind_direction_10m':180}
++                # Original healthy() current/hourly input, with captured Riyadh timestamps/units.
++                current={'time':local,'interval':900,'weather_code':95,'temperature_2m':20,'apparent_temperature':19,
++                         'relative_humidity_2m':90,'dew_point_2m':18,'wind_speed_10m':2,'wind_direction_10m':180,
++                         'wind_gusts_10m':4,'cloud_cover':95,'precipitation':2,'is_day':0 if self.selected.get('night') else 1}
+                 # A04's synthetic first source quarter-hour is already aged.
+                 # It expires naturally while body2 is held. Actual successor
+                 # bodies retain the existing dispatch-clock timestamp producer.
+                 if (number==1 and self.selected['id'] in ('D-preserve-weather-body-night-reduced','D-preserve-weather-body-night-full')
+                     and self.selected['transport'].get('expiryClock')=='real1x-source-TTL-boundary'):
+                     current['time']='2026-09-07T21:30'
+-                body=json.dumps({'timezone':'Asia/Riyadh','elevation':100,'current':current},allow_nan=False).encode();mime='application/json'
++                later=datetime.fromtimestamp((client+4*3600000)/1000,timezone.utc).isoformat(timespec='minutes')[:16]
++                hourly={'time':[local,later],'temperature_2m':[20,19],'weather_code':[95,3],
++                        'wind_direction_10m':[180,180],'precipitation':[2,0]}
++                payload={'timezone':'Asia/Riyadh','elevation':100,'current':current,'hourly':hourly,
++                         'current_units':{'temperature_2m':'°C','precipitation':'mm'},
++                         'hourly_units':{'temperature_2m':'°C','precipitation':'mm'}}
++                # Preserve the original A04 warm-current/no-track input: it permits the
++                # ordinary poll before natural source expiry. Healthy replacements include track.
++                if number==1 and self.selected['transport'].get('gap')=='preservation':payload.pop('hourly')
++                body=json.dumps(payload,allow_nan=False).encode();mime='application/json'
+             else:
+                 second=client//1000
+                 host=self.origin+('/transport-tile/'+self.token+'/'+self.run+'/'+document if self.target_kind()=='image'else'/tile')
+                 body=json.dumps({'generated':second,'host':host,'radar':{'past':[{'time':second,'path':'/v2/radar/'+str(second)}]}},allow_nan=False).encode();mime='application/json'
+-            row['bodyBytes']=len(body);row['bodySha256']=N['sha'](body)
++            row['bodyBytes']=len(body);row['bodySha256']=N['sha'](body);row['bodyBase64']=base64.b64encode(body).decode()
+             stage=self.selected['transport']['stage']
+             headers_hold=held and stage.endswith('-headers')
+             def await_release():
+--- prior/tests/weather-native/widget-fixture.html
++++ package/tests/weather-native/widget-fixture.html
+@@ -126,7 +126,7 @@
+       t.abortPolicy==="ignore-old-weather-signal"&&t.heldNumbers?.length===2&&t.heldNumbers[0]===1&&t.heldNumbers[1]===2&&
+       cfg.get("local")==="1"&&cfg.get("seed")==="1"&&wantLat==="24.47"&&wantLon==="39.61"&&
+       cfg.get("units")==="c"&&cfg.get("tz")==="Asia/Riyadh"&&
+-      report.sourceSha256==="ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee"&&
++      report.sourceSha256==="d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f"&&
+       b?.lat===21.42&&b.lon===39.83&&b.label==="Deadline site B"&&b.units==="c"&&b.tz==="Asia/Riyadh"&&
+       typeof lat==="number"&&lat===b.lat&&typeof lon==="number"&&lon===b.lon&&
+       typeof label==="string"&&label===b.label&&typeof units==="string"&&units===b.units&&typeof tz==="string"&&tz===b.tz&&
+@@ -205,8 +205,8 @@
+     window.__weatherFixtureControl=control;
+   }
+   // Closed exact current07 layout admission; product script bodies are never rewritten.
+-  const CURRENT07_INDEX_SHA="c773af444ed1071f9ba6b62b8e635c8d38b1b7f73de995c781ed23c0d307499a";
+-  const CURRENT07_SCRIPT_ROLES=[{"ordinal":0,"attributes":"src=\"config.js\"","bodySha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","bodyBytes":0},{"ordinal":1,"attributes":"id=\"native-startup-timing-code\"","bodySha256":"12632d46e098cee3f2e21a517616803898a4cff95f5c2da94786332bac4c53aa","bodyBytes":4986},{"ordinal":2,"attributes":"id=\"native-first-paint-code\" data-sha256=\"45c62b44ca0585ca588441f83222bd99e260ec98b4e14cfb478722f542636211\"","bodySha256":"45c62b44ca0585ca588441f83222bd99e260ec98b4e14cfb478722f542636211","bodyBytes":292201},{"ordinal":3,"attributes":"id=\"moon-initial-code\"","bodySha256":"bd17e21301aa07f358eff96aa1c37069b6d351ece4b78c1d7897a0dfdc09d6c5","bodyBytes":819696},{"ordinal":4,"attributes":"","bodySha256":"5855c29ae0496734b791ded1e1f62939d8605d253ab836cea66a5bf122770ab7","bodyBytes":302348},{"ordinal":5,"attributes":"id=\"moon-refinement-code\"","bodySha256":"7c08099b69b6aaaa635c9793415ca0aa59a89909155acbdc40d21693370ff580","bodyBytes":86990},{"ordinal":6,"attributes":"src=\"real-sky/native-sky.js\"","bodySha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","bodyBytes":0}];
++  const CURRENT07_INDEX_SHA="d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f";
++  const CURRENT07_SCRIPT_ROLES=[{"ordinal":0,"attributes":"src=\"config.js\"","bodySha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","bodyBytes":0},{"ordinal":1,"attributes":"id=\"native-first-paint-code\" data-sha256=\"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d\"","bodySha256":"ecd33c0b0b67a3f5e61d7412e9c5a80ecc36af086bb9c33221a2c9eb7157b64d","bodyBytes":191860},{"ordinal":2,"attributes":"","bodySha256":"b87d6f3c8cb949cd996cd8200f130b7c1bf2f2b7894902d27367a511e6c2cced","bodyBytes":294413},{"ordinal":3,"attributes":"src=\"real-sky/native-sky.js\"","bodySha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","bodyBytes":0},{"ordinal":4,"attributes":"","bodySha256":"6942a9a4114b3725b669a8185529ddeed7dcbf601d78e6f3f273fe55c129f505","bodyBytes":66},{"ordinal":5,"attributes":"src=\"moon/moon-host.js\"","bodySha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","bodyBytes":0}];
+   async function admitCurrent07Scripts(scripts,entrySha){
+     if(entrySha!==CURRENT07_INDEX_SHA)throw Error('Current07 entry source identity mismatch');
+     if(scripts.length!==CURRENT07_SCRIPT_ROLES.length)throw Error('Current07 missing/unknown script count');
+@@ -219,8 +219,8 @@
+       if(bytes.length!==expected.bodyBytes||digest!==expected.bodySha256)throw Error('Current07 script body identity '+i);
+       verified.push({ordinal:i,bodySha256:digest,attributes:expected.attributes});
+     }
+-    return {entrySha256:entrySha,mainOrdinal:4,firstPaintSha256:CURRENT07_SCRIPT_ROLES[2].bodySha256,roles:verified,
+-      scope:'Exact current07 source/script admission only; original product bodies and native timers unchanged'};
++    return {entrySha256:entrySha,mainOrdinal:2,firstPaintSha256:CURRENT07_SCRIPT_ROLES[1].bodySha256,roles:verified,
++      scope:'Exact 06772824 source/script admission only; original product bodies and native timers unchanged'};
+   }
+   async function start(){
+     if(!["healthy","reject","hang","bootstrap-error"].includes(mode))throw Error("Unknown fixture mode: "+mode);
+--- prior/tests/weather-native/actions.js
++++ package/tests/weather-native/actions.js
+@@ -164,7 +164,7 @@
+   };
+   window.__weatherCases=Object.freeze({identity:control.identity,read:owner=>report.case.transport?deadlineConsumerRead(owner):nativeRead(owner),
+     temporalRead(owner){assertOwner(owner);return {wall:Date.now(),monotonic:_RAFNOW(),generation:_runtimeGeneration,
+-      weather:copy(weather),radar:copy(weatherRadar),header:copy(_lastWeatherHeader),wxTruth:deadlineTruth(),prayerLoaded:!!today,
++      weather:copy(weather),weatherTrack:copy(weatherTrack),radar:copy(weatherRadar),header:copy(_lastWeatherHeader),wxTruth:deadlineTruth(),prayerLoaded:!!today,
+       // Read-only deadline admission: preserve original clock/cadence/cache bytes.
+       lastWxAt,lastWxTry,lastRadarAt,cacheKey:wxKey(),cacheRaw:localStorage.getItem(wxKey()),storageEvents:copy(report.storageEvents),
+       fixtureIdentity:control.identity(),clockKind:report.clockKind,clockBase:report.clockBase,realEpoch:report.realEpoch,

@@ -1,0 +1,32 @@
+{
+  "status": "FAILED_HARNESS_OR_CONSUMER",
+  "exception": "retained original case failure",
+  "checks": {
+    "original": false
+  },
+  "nativeHttpEvents": [
+    {
+      "request": "preserved"
+    }
+  ],
+  "httpLedger": [
+    {
+      "event": "preserved"
+    }
+  ],
+  "sourceUnchanged": true,
+  "teardown": {
+    "status": "ERROR",
+    "operations": [
+      {
+        "operation": "context.close",
+        "status": "RETURNED"
+      },
+      {
+        "operation": "browser.close",
+        "status": "ERROR",
+        "exception": "Traceback (most recent call last):\n  File \"evidence\\R000D\\package\\tools\\qa\\run_r000d_transport.py\", line 81, in preserve_and_close\n    owner.close();report['teardown']['operations'].append({'operation':name,'status':'RETURNED'})\n    ^^^^^^^^^^^^^\n  File \"<stdin>\", line 11, in close\nRuntimeError: controlled browser failure\n"
+      }
+    ]
+  }
+}

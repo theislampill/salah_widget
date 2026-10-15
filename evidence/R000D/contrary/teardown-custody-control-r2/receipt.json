@@ -1,0 +1,33 @@
+{
+  "driverSha256": "8a315a826c29deb762fe55534b60ef6b1ade5489c489e447f2da3a7ae8dbb647",
+  "scope": "offline fault injection of extracted cleanup helper; not native browser product evidence",
+  "cases": [
+    {
+      "case": "healthy",
+      "calls": [
+        "context",
+        "browser"
+      ],
+      "teardown": "RETURNED",
+      "originalFailurePreserved": true
+    },
+    {
+      "case": "context-error",
+      "calls": [
+        "context",
+        "browser"
+      ],
+      "teardown": "ERROR",
+      "originalFailurePreserved": true
+    },
+    {
+      "case": "browser-error",
+      "calls": [
+        "context",
+        "browser"
+      ],
+      "teardown": "ERROR",
+      "originalFailurePreserved": true
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+diff --git a/index.html b/index.html
+index 195b077d..e62cd758 100644
+--- a/index.html
++++ b/index.html
+@@ -6,7 +6,9 @@
+ <title>Prayer Times</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap">
++<!-- Typography is optional: a slow font service cannot delay accepted sky/UI inputs.
++     The same stylesheet and existing fallback stack apply when it is available. -->
++<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+ <style>
+ *{box-sizing:border-box}
+ html,body{margin:0;background:transparent}
+@@ -3567,6 +3569,9 @@ async function fetchRadar(){
+     if(typeof host==="string"&&Array.isArray(past)&&past.length){
+       const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
+       if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
++      const frameGeneratedAt=fr.time*1000, indexGeneratedAt=j.generated*1000;
++      // Finite seconds can overflow milliseconds or Date's epoch range. Reject before Image dispatch/install.
++      if(!Number.isFinite(new Date(frameGeneratedAt).getTime())||!Number.isFinite(new Date(indexGeneratedAt).getTime())) return;
+       const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;
+       const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+       if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
+@@ -3577,8 +3582,8 @@ async function fetchRadar(){
+       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
+       if(!image.ok||!attemptEligible(op,a)) return;
+       const retrievedAt=Date.now();
+-      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt:fr.time*1000,
+-        indexGeneratedAt:j.generated*1000,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
++      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt,
++        indexGeneratedAt,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
+     }
+   }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
+   finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }
+@@ -5023,11 +5028,39 @@ function applyTheme(M){
+ // sit the text baseline 1/2 M above the horizon, WITHOUT moving the hero time (it stays centred
+ // between horizon and bar). Gated on name/day so it only recomputes when the curve actually changes.
+ let _cnFit="";
++// A nonblocking stylesheet can register its faces after the first fit. check()
++// returns true for an absent family, so it cannot admit or preserve that cache.
++// The set-wide completion event can also wait on a different stalled face.
++// Track actual face states and their own completion, keeping fallback geometry
++// cached between changes and waking even a frozen preview when one face settles.
++const _cnFontLoads=new WeakMap();
++const cnRelevantFont=face=>/^(Fraunces|Inter)$/i.test(face.family.replace(/["']/g,"").trim());
++function cnFontChanged(){ _cnFit=""; _renderDirty=true; }
++function cnFontSignature(){
++  const fonts=document.fonts;
++  if(!fonts?.[Symbol.iterator]) return "";
++  let signature="";
++  for(const face of fonts){
++    if(!cnRelevantFont(face)) continue;
++    signature+=face.family+"|"+face.weight+"|"+face.style+"|"+face.status+";";
++    if(face.status==="loading" && _cnFontLoads.get(face)!==face.loaded){
++      _cnFontLoads.set(face,face.loaded);
++      face.loaded.then(cnFontChanged,cnFontChanged);
++    }
++  }
++  return signature;
++}
++function cnFontsChanged(event){
++  if(event.fontfaces.some(cnRelevantFont)) cnFontChanged();
++}
++document.fonts?.addEventListener("loading",cnFontSignature);
++document.fonts?.addEventListener("loadingdone",cnFontsChanged);
++document.fonts?.addEventListener("loadingerror",cnFontsChanged);
+ function fitCn(M){
+   const cn=$(".cn"), nt=$(".nt"), rail=document.querySelector(".arc .rail"),
+         hz=document.querySelector(".arc .horizon"), bar=$(".bar");
+   if(!cn||!nt||!rail||!hz||!bar) return;
+-  const key=M.currentKey+"|"+Math.round(M.sunrise)+"|"+Math.round(M.sunset);
++  const key=M.currentKey+"|"+Math.round(M.sunrise)+"|"+Math.round(M.sunset)+"|"+cnFontSignature();
+   if(key===_cnFit) return;
+   const Mu=16, gap=Mu/2;
+   const box=el=>{ const r=document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
+@@ -5055,9 +5088,7 @@ function fitCn(M){
+   const mid=()=>{ const b=box(nt); return (b.top+b.bottom)/2; };
+   const curM=parseFloat(getComputedStyle(cn).marginBottom)||0;
+   cn.style.marginBottom=(curM+(tgt-mid())).toFixed(2)+"px";
+-  // only cache once the real display font is measurable — otherwise re-fit next frame so a size
+-  // computed against the fallback font (before Fraunces loads) doesn't get locked in.
+-  try{ if(!document.fonts || document.fonts.check('600 24px "Fraunces"')) _cnFit=key; }catch(e){ _cnFit=key; }
++  _cnFit=key;
+ }
+ 
+ // PROCEDURAL BRANCHING LIGHTNING — a stepped-leader channel from the cloud base downward (sometimes reaching the
+@@ -5750,7 +5781,12 @@ window.SalahNativeSkyHost=Object.freeze({
+   _cp9SiteElevation=Object.freeze({heightM,generation,lat:latitude,lon:longitude});return true;
+  },
+  lunarSurface(){return window.SalahMoonRuntime?.surface()??null;},
+- cloudLighting(){return window.SalahNativeCloudLighting?.(this.capture(false))??null;},
++ cloudLighting(){
++  if(window.SalahNativeCloudLighting==null)return null;
++  const snapshot=this.capture(false);
++  // Manual setup has no accepted observer yet; optional lighting stays unavailable.
++  return snapshot.lat==null||snapshot.lon==null?null:window.SalahNativeCloudLighting(snapshot)??null;
++ },
+  capture(includePresentation=true){
+   const identity=simulationReady()?skySceneIdentity():null;
+   const cw=selectedWeather();
+diff --git a/src/native/index.html b/src/native/index.html
+index 60c22aab..9a4abc09 100644
+--- a/src/native/index.html
++++ b/src/native/index.html
+@@ -6,7 +6,9 @@
+ <title>Prayer Times</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap">
++<!-- Typography is optional: a slow font service cannot delay accepted sky/UI inputs.
++     The same stylesheet and existing fallback stack apply when it is available. -->
++<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+ <style>
+ *{box-sizing:border-box}
+ html,body{margin:0;background:transparent}
+@@ -1441,6 +1443,9 @@ async function fetchRadar(){
+     if(typeof host==="string"&&Array.isArray(past)&&past.length){
+       const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
+       if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
++      const frameGeneratedAt=fr.time*1000, indexGeneratedAt=j.generated*1000;
++      // Finite seconds can overflow milliseconds or Date's epoch range. Reject before Image dispatch/install.
++      if(!Number.isFinite(new Date(frameGeneratedAt).getTime())||!Number.isFinite(new Date(indexGeneratedAt).getTime())) return;
+       const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;
+       const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+       if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
+@@ -1451,8 +1456,8 @@ async function fetchRadar(){
+       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
+       if(!image.ok||!attemptEligible(op,a)) return;
+       const retrievedAt=Date.now();
+-      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt:fr.time*1000,
+-        indexGeneratedAt:j.generated*1000,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
++      weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt,
++        indexGeneratedAt,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
+     }
+   }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
+   finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }
+@@ -2995,11 +3000,39 @@ function applyTheme(M){
+ // sit the text baseline 1/2 M above the horizon, WITHOUT moving the hero time (it stays centred
+ // between horizon and bar). Gated on name/day so it only recomputes when the curve actually changes.
+ let _cnFit="";
++// A nonblocking stylesheet can register its faces after the first fit. check()
++// returns true for an absent family, so it cannot admit or preserve that cache.
++// The set-wide completion event can also wait on a different stalled face.
++// Track actual face states and their own completion, keeping fallback geometry
++// cached between changes and waking even a frozen preview when one face settles.
++const _cnFontLoads=new WeakMap();
++const cnRelevantFont=face=>/^(Fraunces|Inter)$/i.test(face.family.replace(/["']/g,"").trim());
++function cnFontChanged(){ _cnFit=""; _renderDirty=true; }
++function cnFontSignature(){
++  const fonts=document.fonts;
++  if(!fonts?.[Symbol.iterator]) return "";
++  let signature="";
++  for(const face of fonts){
++    if(!cnRelevantFont(face)) continue;
++    signature+=face.family+"|"+face.weight+"|"+face.style+"|"+face.status+";";
++    if(face.status==="loading" && _cnFontLoads.get(face)!==face.loaded){
++      _cnFontLoads.set(face,face.loaded);
++      face.loaded.then(cnFontChanged,cnFontChanged);
++    }
++  }
++  return signature;
++}
++function cnFontsChanged(event){
++  if(event.fontfaces.some(cnRelevantFont)) cnFontChanged();
++}
++document.fonts?.addEventListener("loading",cnFontSignature);
++document.fonts?.addEventListener("loadingdone",cnFontsChanged);
++document.fonts?.addEventListener("loadingerror",cnFontsChanged);
+ function fitCn(M){
+   const cn=$(".cn"), nt=$(".nt"), rail=document.querySelector(".arc .rail"),
+         hz=document.querySelector(".arc .horizon"), bar=$(".bar");
+   if(!cn||!nt||!rail||!hz||!bar) return;
+-  const key=M.currentKey+"|"+Math.round(M.sunrise)+"|"+Math.round(M.sunset);
++  const key=M.currentKey+"|"+Math.round(M.sunrise)+"|"+Math.round(M.sunset)+"|"+cnFontSignature();
+   if(key===_cnFit) return;
+   const Mu=16, gap=Mu/2;
+   const box=el=>{ const r=document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
+@@ -3027,9 +3060,7 @@ function fitCn(M){
+   const mid=()=>{ const b=box(nt); return (b.top+b.bottom)/2; };
+   const curM=parseFloat(getComputedStyle(cn).marginBottom)||0;
+   cn.style.marginBottom=(curM+(tgt-mid())).toFixed(2)+"px";
+-  // only cache once the real display font is measurable — otherwise re-fit next frame so a size
+-  // computed against the fallback font (before Fraunces loads) doesn't get locked in.
+-  try{ if(!document.fonts || document.fonts.check('600 24px "Fraunces"')) _cnFit=key; }catch(e){ _cnFit=key; }
++  _cnFit=key;
+ }
+ 
+ // PROCEDURAL BRANCHING LIGHTNING — a stepped-leader channel from the cloud base downward (sometimes reaching the

@@ -1,0 +1,61 @@
+{
+  "status": "FAILED_HARNESS_OR_CONSUMER",
+  "sourceSha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f",
+  "case": {
+    "id": "D-weather-headers-day",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": false,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "weather-headers",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  "stage": "weather-headers",
+  "retryClock": "real1x",
+  "timeline": [],
+  "checks": {},
+  "visualReview": "PENDING",
+  "browser": {
+    "family": "chromium",
+    "version": "148.0.7778.96",
+    "os": "Windows",
+    "machine": "AMD64",
+    "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+    "chromiumSandboxRequested": true
+  },
+  "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\theis\\.codex\\worktrees\\r000d-close\\salah_widget\\evidence\\R000D\\package\\tools\\qa\\run_r000d_transport.py\", line 291, in main\n    context,page,errors,network,url=N['open_case'](browser,server,spec,args.expected_index,args.run,1,args.out,wait_acquisition=False)\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\r000d-close\\salah_widget\\evidence\\R000D\\package\\tools\\qa\\run_weather_native.py\", line 82, in open_case\n    if page.evaluate(\"()=>__widgetFixture.state\")!='ready':raise AssertionError(page.evaluate(\"()=>__widgetFixture.error\"))\n                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Current source unexpectedly contains external font resource anchors\n",
+  "nativeHttpEvents": [],
+  "httpLedger": [
+    {
+      "path": "/fixture.html",
+      "bytes": 30320,
+      "sha256": "dac84147b38658a6b40fe1c5fafb1d467819a6e1c277547b6d262223da9fd004"
+    },
+    {
+      "path": "/case.json",
+      "bytes": 409,
+      "sha256": "221929e2af78bd2c8f90c61fbe66759317b350c557ce7f79e8357abfbeba52fe"
+    },
+    {
+      "path": "/product/index.html",
+      "bytes": 549445,
+      "sha256": "d4e3f084aea7d264a5c790268a21aa015b5e565e1feb9ad853d953c1c8a7b26f"
+    }
+  ],
+  "writeErrorClassification": "Retained abort/broken-pipe events require the joined application-timeout/old-owner receipts; errors are not discarded",
+  "sourceUnchanged": true
+}

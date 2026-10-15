@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "C:\Users\theis\.codex\worktrees\r000d-close\salah_widget\evidence\R000D\package\tools\qa\run_r000d_transport.py", line 380, in <module>
+    if __name__=='__main__':raise SystemExit(main())
+                                             ^^^^^^
+  File "C:\Users\theis\.codex\worktrees\r000d-close\salah_widget\evidence\R000D\package\tools\qa\run_r000d_transport.py", line 372, in main
+    if context:context.close()
+               ^^^^^^^^^^^^^^^
+  File "C:\Users\theis\.codex\tmp\r000d-runtime-20261014\Lib\site-packages\playwright\sync_api\_generated.py", line 14966, in close
+    return mapping.from_maybe_impl(self._sync(self._impl_obj.close(reason=reason)))
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theis\.codex\tmp\r000d-runtime-20261014\Lib\site-packages\playwright\_impl\_sync_base.py", line 115, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "C:\Users\theis\.codex\tmp\r000d-runtime-20261014\Lib\site-packages\playwright\_impl\_browser_context.py", line 583, in close
+    await self._channel.send("close", None, {"reason": reason})
+  File "C:\Users\theis\.codex\tmp\r000d-runtime-20261014\Lib\site-packages\playwright\_impl\_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theis\.codex\tmp\r000d-runtime-20261014\Lib\site-packages\playwright\_impl\_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.Error: BrowserContext.close: Protocol error (Browser.removeBrowserContext): can't access property "_maybeDontRestoreTabs", this._windows[aWindow.__SSi] is undefined

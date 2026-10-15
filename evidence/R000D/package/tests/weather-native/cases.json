@@ -1,0 +1,2070 @@
+[
+  {
+    "id": "12-null-temp",
+    "group": "R000C",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": null,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "temperature": null,
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    }
+  },
+  {
+    "id": "12-zero-temp",
+    "group": "R000C",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 0,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "temperature": 0,
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    }
+  },
+  {
+    "id": "12-wet",
+    "group": "R000C",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "temperature": 20,
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    }
+  },
+  {
+    "id": "12-absent-temp",
+    "group": "R000C",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "temperature": null,
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    },
+    "omitTemperature": true
+  },
+  {
+    "id": "12-invalid-precip",
+    "group": "R000C",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": "Infinity"
+    },
+    "actions": [],
+    "expect": {
+      "temperature": 20,
+      "wet": false,
+      "observed": false,
+      "strikes": false,
+      "quantityUnavailable": true
+    }
+  },
+  {
+    "id": "12-zero-precip",
+    "group": "R000C",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [],
+    "expect": {
+      "temperature": 20,
+      "wet": false,
+      "observed": false,
+      "strikes": false
+    }
+  },
+  {
+    "id": "A-wet-rain",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "sim": true
+    },
+    "preview": true,
+    "watchStrike": false
+  },
+  {
+    "id": "A-wet-snow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "snow",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "sim": true
+    },
+    "preview": true,
+    "watchStrike": false
+  },
+  {
+    "id": "A-observed-lightning",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "observed"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": true,
+      "sim": true
+    },
+    "preview": true,
+    "watchStrike": true
+  },
+  {
+    "id": "B-supported-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "wet": false,
+      "strikes": false,
+      "sim": true
+    },
+    "preview": true
+  },
+  {
+    "id": "C-approach",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        },
+        "nearby": true,
+        "trajectory": "qualified-fixture-trajectory"
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "spatial": "nearby-precipitation",
+      "horizon": "approaching",
+      "wet": false,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "C-no-trajectory",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        },
+        "nearby": true,
+        "trajectory": null
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "spatial": "nearby-precipitation",
+      "horizon": "nearby-without-arrival",
+      "wet": false,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "C-wind-unqualified",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        },
+        "nearby": true,
+        "trajectory": "current-wind"
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "spatial": "nearby-precipitation",
+      "horizon": "nearby-without-arrival",
+      "wet": false,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "C-wet-and-approach",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 0,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "nearby": true,
+        "trajectory": "qualified-fixture-trajectory"
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "horizon": "approaching",
+      "wet": true,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "D-live-rain",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 63,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "model-estimated-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "modelEstimate": true,
+      "temperature": 20
+    },
+    "radar": "absent"
+  },
+  {
+    "id": "D-live-snow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 73,
+      "temperature_2m": -2,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "model-estimated-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "modelEstimate": true,
+      "temperature": -2
+    },
+    "radar": "absent"
+  },
+  {
+    "id": "D-live-thunder",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "model-estimated-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false,
+      "modelEstimate": true,
+      "temperature": 20
+    },
+    "radar": "absent"
+  },
+  {
+    "id": "D-outside-radar",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "model-estimated-wet",
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    },
+    "radar": "outside"
+  },
+  {
+    "id": "E-mosaic-18m",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarAvailable": true,
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    },
+    "radarAgeSec": 1080
+  },
+  {
+    "id": "E-mosaic-4h",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarAvailable": false,
+      "wet": true,
+      "observed": false,
+      "strikes": false
+    },
+    "radarAgeSec": 14400
+  },
+  {
+    "id": "E-frame-overflow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarInstalled": false,
+      "imageRequests": 0,
+      "observed": false,
+      "strikes": false
+    },
+    "frameSeconds": "MAX_VALUE"
+  },
+  {
+    "id": "E-index-overflow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarInstalled": false,
+      "imageRequests": 0,
+      "observed": false,
+      "strikes": false
+    },
+    "indexSeconds": "MAX_VALUE"
+  },
+  {
+    "id": "E-frame-absent",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "radarInstalled": false,
+      "imageRequests": 0,
+      "observed": false,
+      "strikes": false
+    },
+    "omitFrameTime": true
+  },
+  {
+    "id": "F-fixed-site",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": true,
+      "wet": true,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "fixed-site",
+      "source": "manual",
+      "accuracyM": null,
+      "acquiredAt": null
+    }
+  },
+  {
+    "id": "F-device-20m",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": true,
+      "wet": true,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "device-position",
+      "source": "browser-geolocation",
+      "accuracyM": 20,
+      "acquiredOffsetMs": -60000
+    }
+  },
+  {
+    "id": "F-device-250m",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": true,
+      "wet": true,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "device-position",
+      "source": "browser-geolocation",
+      "accuracyM": 250,
+      "acquiredOffsetMs": 0
+    }
+  },
+  {
+    "id": "F-device-250point01",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "device-position",
+      "source": "browser-geolocation",
+      "accuracyM": 250.01,
+      "acquiredOffsetMs": 0
+    }
+  },
+  {
+    "id": "F-expired-fix",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "device-position",
+      "source": "browser-geolocation",
+      "accuracyM": 20,
+      "acquiredOffsetMs": -300001
+    }
+  },
+  {
+    "id": "F-coarse-IP",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "coarse-area",
+      "source": "coarse-ip",
+      "accuracyM": null,
+      "acquiredOffsetMs": 0
+    }
+  },
+  {
+    "id": "F-legacy",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true,
+    "local": true,
+    "locationEvidence": {
+      "intent": "unknown",
+      "source": "legacy",
+      "accuracyM": null,
+      "acquiredAt": null
+    }
+  },
+  {
+    "id": "F-new-generation",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "nextGeneration": true
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-outside-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "outside"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-outside-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "outside"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-health-unknown-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "health-unknown"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-health-unknown-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "health-unknown"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-nonoperational-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "nonoperational"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-nonoperational-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "nonoperational"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-local-age-null-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "local-age-null"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-local-age-null-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "local-age-null"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-local-age-old-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "local-age-old"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-local-age-old-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "local-age-old"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-ambiguous-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "ambiguous"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-ambiguous-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "ambiguous"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-interpolated-wet",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "interpolated"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "G-interpolated-dry",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "unavailable"
+        },
+        "qualityMutation": "interpolated"
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "quantity-null",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": null
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": true,
+      "wet": false,
+      "strikes": false
+    }
+  },
+  {
+    "id": "quantity-zero",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": false,
+      "wet": false,
+      "strikes": false
+    }
+  },
+  {
+    "id": "quantity-interval",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 0.4
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": false,
+      "wet": true,
+      "strikes": false
+    }
+  },
+  {
+    "id": "quantity-negative",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": -1
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": true,
+      "wet": false,
+      "strikes": false
+    }
+  },
+  {
+    "id": "quantity-derived-overflow",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": "MAX_VALUE"
+    },
+    "actions": [],
+    "expect": {
+      "quantityUnavailable": false,
+      "wet": true,
+      "strikes": false
+    }
+  },
+  {
+    "id": "synthetic-rate",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "quantity": {
+          "kind": "rate",
+          "value": 1.6,
+          "units": "mm/h",
+          "fromOffset": -900000,
+          "toOffset": 0
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "synthetic-amount",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "quantity": {
+          "kind": "amount",
+          "value": 0.4,
+          "units": "mm",
+          "fromOffset": -900000,
+          "toOffset": 0
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "sim": true,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "forecast-none",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "forecast": {
+          "probability": null
+        },
+        "forecastOnly": true
+      }
+    ],
+    "expect": {
+      "current": "unknown",
+      "horizon": "numerical-forecast-only",
+      "wet": false,
+      "strikes": false,
+      "probability": null,
+      "simForecast": true
+    },
+    "preview": true,
+    "currentInvalidTime": true
+  },
+  {
+    "id": "forecast-0",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "forecast": {
+          "probability": 0
+        },
+        "forecastOnly": true
+      }
+    ],
+    "expect": {
+      "current": "unknown",
+      "horizon": "numerical-forecast-only",
+      "wet": false,
+      "strikes": false,
+      "probability": 0,
+      "simForecast": true
+    },
+    "preview": true,
+    "currentInvalidTime": true
+  },
+  {
+    "id": "forecast-wet-coexist",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "forecast": {
+          "probability": 0
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "wet": true,
+      "strikes": false,
+      "probability": 0,
+      "simForecast": true
+    },
+    "preview": true
+  },
+  {
+    "id": "forecast-production-hourly",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "current": "unknown",
+      "horizon": "numerical-forecast-only",
+      "wet": false,
+      "strikes": false,
+      "probability": null
+    },
+    "currentInvalidTime": true,
+    "hourlyForecast": true
+  },
+  {
+    "id": "forecast-live-refusal",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "forecast": {
+          "probability": 0
+        },
+        "expectRefusal": true
+      }
+    ],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "modelEstimate": true
+    }
+  },
+  {
+    "id": "lease-exclusive",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "advance": 59999,
+        "checkpoint": {
+          "wet": true
+        }
+      },
+      {
+        "advance": 1
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "spatial-before-current",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        },
+        "nearby": true,
+        "spatialAge": 240001,
+        "validFor": 120000
+      },
+      {
+        "advance": 60000
+      }
+    ],
+    "expect": {
+      "current": "supported-wet",
+      "spatial": "unavailable",
+      "wet": true,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "rain-end",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "present": {
+          "state": "dry",
+          "type": null,
+          "lightning": "not-observed"
+        }
+      }
+    ],
+    "expect": {
+      "current": "supported-dry",
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "source-outage",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "present": {
+          "state": "wet",
+          "type": "rain",
+          "lightning": "unavailable"
+        }
+      },
+      {
+        "clearPresent": true
+      }
+    ],
+    "expect": {
+      "presentAvailable": false,
+      "wet": false,
+      "strikes": false
+    },
+    "preview": true
+  },
+  {
+    "id": "UI-motion-no-preference",
+    "group": "R0024",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true
+    },
+    "local": true,
+    "motion": "no-preference",
+    "motionFull": false,
+    "watchMotionSeconds": 15
+  },
+  {
+    "id": "UI-motion-reduce",
+    "group": "R0024",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true
+    },
+    "local": true,
+    "motion": "reduce",
+    "motionFull": false,
+    "watchMotionSeconds": 15
+  },
+  {
+    "id": "UI-motion-reduce-full",
+    "group": "R0024",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true
+    },
+    "local": true,
+    "motion": "reduce",
+    "motionFull": true,
+    "watchMotionSeconds": 15
+  },
+  {
+    "id": "UI-half-Moon-night",
+    "group": "R0024",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true
+    },
+    "night": true,
+    "local": true,
+    "watchMotionSeconds": 15
+  },
+  {
+    "id": "UI-settings-persistence",
+    "group": "R0024",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "settingsFailures": true
+      }
+    ],
+    "expect": {
+      "wet": true,
+      "strikes": false,
+      "local": true,
+      "settingsWarning": true
+    },
+    "local": true
+  },
+  {
+    "id": "resource-base",
+    "group": "RESOURCE",
+    "clock": "fixed",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [
+      {
+        "resourcePrecompute": true
+      }
+    ],
+    "expect": {
+      "strikes": false
+    }
+  },
+  {
+    "id": "B-night-no-preference",
+    "group": "R000B",
+    "clock": "real1x",
+    "model": {
+      "time": "2026-09-07T21:30",
+      "interval": 900,
+      "weather_code": 63,
+      "temperature_2m": 24,
+      "precipitation": 2,
+      "cloud_cover": 70
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "motion": "no-preference",
+    "motionFull": false,
+    "weatherSequence": "near-expiry-503-healthy",
+    "watchMotionSeconds": 15
+  },
+  {
+    "id": "B-night-reduce",
+    "group": "R000B",
+    "clock": "real1x",
+    "model": {
+      "time": "2026-09-07T21:30",
+      "interval": 900,
+      "weather_code": 63,
+      "temperature_2m": 24,
+      "precipitation": 2,
+      "cloud_cover": 70
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "motion": "reduce",
+    "motionFull": false,
+    "weatherSequence": "near-expiry-503-healthy",
+    "watchMotionSeconds": 15
+  },
+  {
+    "id": "B-night-reduce-full",
+    "group": "R000B",
+    "clock": "real1x",
+    "model": {
+      "time": "2026-09-07T21:30",
+      "interval": 900,
+      "weather_code": 63,
+      "temperature_2m": 24,
+      "precipitation": 2,
+      "cloud_cover": 70
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "motion": "reduce",
+    "motionFull": true,
+    "weatherSequence": "near-expiry-503-healthy",
+    "watchMotionSeconds": 15
+  },
+  {
+    "id": "D-weather-headers-day",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": false,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "weather-headers",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-weather-headers-night",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "weather-headers",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-weather-body-day",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": false,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "weather-body",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-weather-body-night",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "weather-body",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-manifest-headers-day",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": false,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "manifest-headers",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-manifest-headers-night",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "manifest-headers",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-manifest-body-day",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": false,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "manifest-body",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-manifest-body-night",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "manifest-body",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-image-day",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": false,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "image",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-image-night",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "image",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null
+    }
+  },
+  {
+    "id": "D-ignore-abort-weather-body-day",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": false,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "weather-body",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null,
+      "gap": "ignored-abort",
+      "heldNumbers": [
+        1,
+        2
+      ],
+      "abortPolicy": "ignore-old-weather-signal"
+    }
+  },
+  {
+    "id": "D-superseded-weather-body-day",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": false,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "weather-body",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null,
+      "gap": "superseded-target",
+      "heldNumbers": [
+        1,
+        2
+      ],
+      "abortPolicy": "ignore-old-weather-signal"
+    },
+    "local": true,
+    "profileB": {
+      "lat": 21.42,
+      "lon": 39.83,
+      "label": "Deadline site B",
+      "units": "c",
+      "tz": "Asia/Riyadh"
+    }
+  },
+  {
+    "id": "D-preserve-weather-body-night-reduced",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "weather-body",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null,
+      "gap": "preservation",
+      "heldNumbers": [
+        2,
+        3
+      ],
+      "abortPolicy": "native-signal",
+      "expiryClock": "real1x-source-TTL-boundary"
+    },
+    "motion": "reduce",
+    "motionFull": false
+  },
+  {
+    "id": "D-preserve-weather-body-night-full",
+    "group": "R000D",
+    "clock": "real1x",
+    "model": {
+      "weather_code": 95,
+      "temperature_2m": 20,
+      "precipitation": 2
+    },
+    "actions": [],
+    "expect": {
+      "observed": false,
+      "strikes": false
+    },
+    "night": true,
+    "watchMotionSeconds": 15,
+    "transport": {
+      "stage": "weather-body",
+      "retryClock": "real1x",
+      "run": null,
+      "token": null,
+      "gap": "preservation",
+      "heldNumbers": [
+        2,
+        3
+      ],
+      "abortPolicy": "native-signal",
+      "expiryClock": "real1x-source-TTL-boundary"
+    },
+    "motion": "reduce",
+    "motionFull": true
+  }
+]
