@@ -1,0 +1,45 @@
+{
+  "schema": "r0022-admission-only-cost-readback/v1",
+  "rawSha256": "34e8f5fa89ea49cc3225debe98ff3754d674a8fe05f369d129b73049e85e85ba",
+  "evaluatorSha256": "a12ff85b7536ec6ac67a4dbb5e7f639a48d04d45b77bc79e33eb707579c173c4",
+  "noisePolicySha256": "7ebff50f1d329b04e6f6004909c88faff702579d63dd474fbebdf7732f9142c9",
+  "status": "FAIL_SCOPE",
+  "budgetWithin": false,
+  "baseline": {
+    "calls": 1238,
+    "medianMs": 14.399999976158142,
+    "p95Ms": 17
+  },
+  "candidate": {
+    "calls": 1154,
+    "medianMs": 16.600000023841858,
+    "p95Ms": 19.5
+  },
+  "limits": {
+    "medianMs": 15.839999973773956,
+    "p95Ms": 18.7
+  },
+  "noise": {
+    "name": "nativeAdmission",
+    "baselineMedianMs": 14.399999976158142,
+    "baselineRoundMediansMs": [
+      14.200000017881393,
+      14.199999988079071,
+      14.799999982118607,
+      14.400000005960464
+    ],
+    "driftMs": 0.5999999940395355,
+    "limitMs": 2.8799999952316284,
+    "status": "CONTROLLED"
+  },
+  "blocks": 4,
+  "slots": 16,
+  "candidateRoundMediansMs": [
+    16.19999998807907,
+    16.200000017881393,
+    16.600000023841858,
+    17.799999982118607
+  ],
+  "A03": "INCOMPLETE: five other scopes unmeasured in this artifact; actual input/resource provenance still requires independent review.",
+  "scope": "All retained calls, fixed median/nearest-rank p95 and predeclared noise policy. No filtering or threshold change."
+}
