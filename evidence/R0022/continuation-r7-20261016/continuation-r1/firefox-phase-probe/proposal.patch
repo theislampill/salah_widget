@@ -1,0 +1,102 @@
+--- a/chrome/juggler/content/protocol/PageHandler.js
++++ b/chrome/juggler/content/protocol/PageHandler.js
+@@ -313,10 +313,26 @@
+     return await this._contentPage.send('adoptNode', options);
+   }
+ 
+-  async ['Page.screenshot']({ mimeType, clip, omitDeviceScaleFactor, quality = 80}) {
++  async ['Page.screenshot']({ mimeType, clip, omitDeviceScaleFactor, quality = 80, r0022DelayPhase = 'none'}) {
+     const rect = new DOMRect(clip.x, clip.y, clip.width, clip.height);
+ 
+     const browsingContext = this._pageTarget.linkedBrowser().browsingContext;
++    // R0022 disposable diagnostic only: identical capture/encoding operations.
++    const r0022Clock = browsingContext.topChromeWindow.ownerGlobal.performance;
++    const r0022Observation = {schema:'r0022-screenshot-phases/v1',clock:{owner:'topChromeWindow.ownerGlobal.performance',timeOrigin:r0022Clock.timeOrigin,samples:[],minimumObservedPositiveDeltaMs:null},events:[],overflow:false,delayPhase:r0022DelayPhase};
++    for(let i=0;i<64;i++)r0022Observation.clock.samples.push(r0022Clock.now());
++    const r0022Context = () => {
++      const one = c => ({id:String(c.id),innerWindowId:String(c.currentWindowGlobal?.innerWindowId??''),url:String(c.currentWindowGlobal?.documentURI?.spec??'')});
++      try { return {...one(browsingContext),children:[...browsingContext.children].slice(0,32).map(one),truncated:browsingContext.children.length>32,error:null}; }
++      catch(e) { return {id:'',innerWindowId:'',url:'',children:[],truncated:false,error:String(e)}; }
++    };
++    const r0022Mark = (phase,edge,attempt=0,error=null) => {
++      const context=r0022Context(),at=r0022Clock.now();
++      if(r0022Observation.events.length<128)r0022Observation.events.push({phase,edge,attempt,error,at,context});else r0022Observation.overflow=true;
++    };
++    const r0022Delay = () => new Promise(resolve=>setTimeout(resolve,200));
++    r0022Mark('handler','start');
++
+     // `win.devicePixelRatio` returns a non-overriden value to priveleged code.
+     // See https://bugzilla.mozilla.org/show_bug.cgi?id=1761032
+     // See https://phabricator.services.mozilla.com/D141323
+@@ -332,16 +348,19 @@
+     if (canvasWidth * canvasHeight > MAX_CANVAS_AREA)
+       throw new Error('Cannot take screenshot with more than ' + MAX_CANVAS_AREA + ' pixels');
+ 
+-    let snapshot;
++    let snapshot,r0022Attempt=0;
+     while (!snapshot) {
+       try {
++        r0022Attempt++;r0022Mark('snapshot','start',r0022Attempt);if(r0022DelayPhase==='snapshot')await r0022Delay();
+         //TODO(fission): browsingContext will change in case of cross-group navigation.
+         snapshot = await browsingContext.currentWindowGlobal.drawSnapshot(
+           rect,
+           scale,
+           "rgb(255,255,255)"
+         );
++        r0022Mark('snapshot','end',r0022Attempt);
+       } catch (e) {
++        r0022Mark('snapshot','error',r0022Attempt,String(e));
+         // The currentWindowGlobal.drawSnapshot might throw
+         // NS_ERROR_LOSS_OF_SIGNIFICANT_DATA if called during navigation.
+         // wait a little and re-try.
+@@ -349,13 +368,15 @@
+       }
+     }
+ 
++    r0022Mark('canvas','start');if(r0022DelayPhase==='canvas')await r0022Delay();
+     const win = browsingContext.topChromeWindow.ownerGlobal;
+     const canvas = win.document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
+     canvas.width = canvasWidth;
+     canvas.height = canvasHeight;
+     let ctx = canvas.getContext('2d');
++    r0022Mark('canvas','end');r0022Mark('copy','start');if(r0022DelayPhase==='copy')await r0022Delay();
+     ctx.drawImage(snapshot, 0, 0);
+-    snapshot.close();
++    snapshot.close();r0022Mark('copy','end');
+ 
+     if (mimeType === 'image/jpeg') {
+       if (quality < 0 || quality > 100)
+@@ -364,8 +385,12 @@
+     } else {
+       quality = undefined;
+     }
++    r0022Mark('encode','start');if(r0022DelayPhase==='encode')await r0022Delay();
+     const dataURL = canvas.toDataURL(mimeType, quality);
+-    return { data: dataURL.substring(dataURL.indexOf(',') + 1) };
++    r0022Mark('encode','end');r0022Mark('handler','end');
++    const r0022Times=[...r0022Observation.clock.samples,...r0022Observation.events.map(e=>e.at)];
++    for(let i=1;i<r0022Times.length;i++){const d=r0022Times[i]-r0022Times[i-1];if(d>0&&(r0022Observation.clock.minimumObservedPositiveDeltaMs===null||d<r0022Observation.clock.minimumObservedPositiveDeltaMs))r0022Observation.clock.minimumObservedPositiveDeltaMs=d;}
++    return { data: dataURL.substring(dataURL.indexOf(',') + 1), r0022Observation };
+   }
+ 
+   async ['Page.getContentQuads'](options) {
+--- a/chrome/juggler/content/protocol/Protocol.js
++++ b/chrome/juggler/content/protocol/Protocol.js
+@@ -847,9 +847,17 @@
+         clip: pageTypes.Clip,
+         quality: t.Optional(t.Number),
+         omitDeviceScaleFactor: t.Optional(t.Boolean),
++        r0022DelayPhase: t.Optional(t.Enum(['none','snapshot','canvas','copy','encode'])),
+       },
+       returns: {
+         data: t.String,
++        r0022Observation: {
++          schema:t.String,
++          clock:{owner:t.String,timeOrigin:t.Number,samples:t.Array(t.Number),minimumObservedPositiveDeltaMs:t.Nullable(t.Number)},
++          events:t.Array({phase:t.Enum(['handler','snapshot','canvas','copy','encode']),edge:t.Enum(['start','end','error']),attempt:t.Number,error:t.Nullable(t.String),at:t.Number,
++            context:{id:t.String,innerWindowId:t.String,url:t.String,children:t.Array({id:t.String,innerWindowId:t.String,url:t.String}),truncated:t.Boolean,error:t.Nullable(t.String)}}),
++          overflow:t.Boolean,delayPhase:t.Enum(['none','snapshot','canvas','copy','encode']),
++        },
+       }
+     },
+     'getContentQuads': {
