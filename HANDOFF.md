@@ -3,7 +3,18 @@
 Context for a fresh agent picking up this repo. The durable design/process docs already exist — read those first
 and don't expect this file to repeat them.
 
-## R0022 lunar display candidate
+## R0021 startup integration on delivered R0022
+
+The current branch starts from delivered main
+`f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de` and selectively integrates the PR43
+startup lineage. Read [the current startup execution record](docs/real-sky/R0021_STARTUP_EXECUTION.md)
+before continuing. It binds the frozen integrated-r3 build, one-shot initial
+Moon handoff, reviewed receiver association, deterministic builds and explicit
+open native timing/parent/cost gates. Do not replay the donor import, change V1,
+weaken frame coverage, or treat a draft PR as production approval. The exact
+head/base merge remains an owner decision after qualification.
+
+## Historical R0022 lunar display candidate
 
 The qualified-source base for this candidate is
 `fc8d13338f9274a768580cda5a805492f80c510d`, including delivered R0018 readability

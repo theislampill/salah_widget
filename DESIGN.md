@@ -8,6 +8,13 @@ The native design below predates CP9: synthetic star/glint producers are
 superseded by the admitted catalogue and registered diffuse field. Historical
 motion claims do not qualify the new renderer.
 
+The unmerged R0021 startup candidate evaluates a compact V5 receiver tier and
+real-catalogue anchors for the current native scene while full sources refine.
+It preserves the delivered R0022 H1 mapping and the approved Moon footprint,
+opacity and Earthshine. Its initial tier is not completed terrain refinement;
+strict startup/continuous-frame qualification remains open. See the
+[current execution record](docs/real-sky/R0021_STARTUP_EXECUTION.md).
+
 The deployed renderer includes the supplied V5 terrain Moon on CP9. Native phase,
 prayer and settings ownership is retained; a WebAssembly worker produces a
 terrain preview and then angular refinement. The received PR42 repair withholds the

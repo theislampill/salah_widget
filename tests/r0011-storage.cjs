@@ -10,7 +10,7 @@ function make(extra={}){
     :mutant==="reset-result"?source.replace('if(!r.ok){','if(false){')
     :mutant==="cancel-hint"?source.replace('_setStatus("Enter to search a place · Shift+Enter to keep the typed name."); return;','return;')
     :mutant==="status-overwrite"?source.replace('s.textContent=[message,_setHint.msg].filter(Boolean).join("\\n");','s.textContent=_setHint.msg;')
-    :mutant==="scene-reset"&&source.startsWith("function beginSkyScene(){")?'function beginSkyScene(){}'
+    :mutant==="scene-reset"&&source.startsWith("function beginSkyScene(")?'function beginSkyScene(){}'
     :mutant==="scene-surface"&&source.startsWith("function updateSkySurface(){")?'function updateSkySurface(){}'
     :mutant==="generation-reset"?source.replace('a.expired=true; if(a.cancel) a.cancel();','a.expired=true;')
       .replace('if(a.controller) a.controller.abort();',''):source;
