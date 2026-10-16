@@ -91,7 +91,12 @@ test('current material guard rejects altered Earthshine without relying on old P
   assert.equal(part.split(anchor).length,2,'one accepted native legacy material Earthshine floor');
   const mutated=part.replace(anchor,'const esFloor=0');assert.notEqual(sha(Buffer.from(mutated)),'22e5b5c7abee4f3197a3a8ddfd2b5ebc879f2c9546e5d0cd298253bc98ab1392','Earthshine counterfactual cannot earn material preservation');
 });
-const protectedCurrentMaterial={"moon/src/surface_v5.mjs":"f0d0b4ab0b5478979371c8c9839d53dfb688596dd08773769d7d9c254c02b65f","moon/src/moon-calendar.mjs":"b508ea0a0bbc2a68039ba71bb4be75299cfa57bcb74992be1b1b0a0eddfad953","moon/src/moon-detail.mjs":"3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0","moon/src/moon-precision.mjs":"e0ca3303f1cbdcb87a6d80b73fdbbe132d3c8e9e0becde25435724e8ac72dca1","moon/src/moon_kernel.c":"919bf0b0a17ceb1ce3d3d7e0b5d9958bba3835b96e8558d6b518e7db1137f57f","moon/moon_kernel.wasm":"4fcf7888b55486947189c4a701c75ab25465714036c42fc60980e98ac0bdcbb7","moon/asset-manifest.json":"3d4cb527489acda67082bbc97d984abbb28a11a40f0aec8b4030223fb15e9afa"};
+// The owner-approved single-entry projection cache changes this compositor's
+// source identity. Actual old/new material, atmosphere and cloud composition
+// execute in moon-projection-cache.test.mjs and the bound native comparisons;
+// this inventory and the generated-consumer checks are packaging guards only.
+const protectedCurrentMaterial={"moon/src/surface_v5.mjs":"f0d0b4ab0b5478979371c8c9839d53dfb688596dd08773769d7d9c254c02b65f","moon/src/moon-calendar.mjs":"b508ea0a0bbc2a68039ba71bb4be75299cfa57bcb74992be1b1b0a0eddfad953","moon/src/moon-detail.mjs":"f2596f26f19f946873792a7e121ea472b361021c8cc2b1831faa6cd10fdef07c","moon/src/moon-precision.mjs":"e0ca3303f1cbdcb87a6d80b73fdbbe132d3c8e9e0becde25435724e8ac72dca1","moon/src/moon_kernel.c":"919bf0b0a17ceb1ce3d3d7e0b5d9958bba3835b96e8558d6b518e7db1137f57f","moon/moon_kernel.wasm":"4fcf7888b55486947189c4a701c75ab25465714036c42fc60980e98ac0bdcbb7","moon/asset-manifest.json":"3d4cb527489acda67082bbc97d984abbb28a11a40f0aec8b4030223fb15e9afa"};
+test('frozen pre-cache compositor remains the exact adopted reference',()=>assert.equal(sha(fs.readFileSync(path.join(candidateRoot,'tests/fixtures/moon-detail-pre-cache.mjs'))),'3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0'));
 for(const [file,expected] of Object.entries(protectedCurrentMaterial))test(file+' matches adopted V5 material/profile/opaque source',()=>assert.equal(sha(fs.readFileSync(path.join(candidateRoot,file))),expected,file));
 const moonHost=fs.readFileSync(path.join(candidateRoot,'moon/moon-host.js'),'utf8');
 const moonWorker=fs.readFileSync(path.join(candidateRoot,'moon/moon-worker.js'),'utf8');

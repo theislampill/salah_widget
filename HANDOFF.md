@@ -11,9 +11,12 @@ and R0024 weather information. The owner selected
 `R0022-L1-H1-K003-H020-v1`; preserve its fixed mapping, raw physical fields and
 approved opaque V5 Moon. [LUNAR_DISPLAY.md](docs/real-sky/LUNAR_DISPLAY.md)
 records the bounded owner acceptance and remaining qualification/delivery.
-Only `native-preview.mjs` and `native-host.mjs` change authored display behavior;
-the canonical builder regenerates the three native outputs. The existing
-first-paint caller consumes the shared owner without importing PR43.
+The display mapping belongs to `native-preview.mjs` and `native-host.mjs`.
+The separately owner-approved single-entry cache in `moon/src/moon-detail.mjs`
+reuses material projection while keeping each frame's atmosphere and cloud join
+current. The canonical builder regenerates the native sky and Moon products.
+The existing first-paint caller consumes the shared display owner without
+importing PR43.
 
 PR43 remains a separate draft with retained timing and actual-parent limits.
 R0022 evidence does not close those startup obligations. Final production
