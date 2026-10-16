@@ -1,0 +1,14 @@
+{
+  "status": "RETAINED_TOOLING_WARNING_FOR_INDEPENDENT_REVIEW",
+  "recordedAtUtc": "2026-10-16T17:05:01.134257+00:00",
+  "operation": "R3 exec session75907",
+  "exitCode": 0,
+  "terminalCustody": "Returned tool excerpt was truncated (original2112tokens). Complete stderr was not captured to a file. No warning count or full-log custody is claimed. No replay performed.",
+  "sourcePath": "C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_network.py",
+  "sourceSha256": "c2528eaf76b59e45cc86c03152abfafcf694d3c39f6a4c8a55ce8f0ecb270926",
+  "sourceFinding": "finished() creates on_finished_task waiting for _target_closed_future, then races it with _finished_future under FIRST_COMPLETED. On successful request completion it does not cancel/consume the still-pending on_finished_task. That helper raises Target closed when the owned context closes.",
+  "productEvidence": "All16 known response metadata observations completed with200; all12 script/config/CSS/native-data bodies match. Both scenes have requestFailures[],pageErrors[],observationErrors[], all declared predicates true and successful owned context/browser closure. Complete135file HTTP byte proof remains separate.",
+  "classificationProposal": "Python observer shutdown warning, not evidence of a product request/rendering failure. Actual independent disposition is separate.",
+  "observedWarningSummary": "Task exception was never retrieved; Response.finished.<locals>.on_finished() at playwright/_impl/_network.py:885, line887 raises Error(\"Target closed\").",
+  "provenance": "Executor transcription/summary of available terminal excerpt, not original terminal bytes. Reviewer requested this label correction; full stderr and total count unavailable."
+}
