@@ -97,11 +97,37 @@ targets for every time, weather condition or source channel. Broad positive
 moonlight, weather, dawn/day, currentness, recovery and material preservation
 require their own native observations and original pixels.
 
-The six R0022 final dispositions, warmed cost, remaining ordinary full-scene
-owner acceptance, production merge, public readback and closure are still
-pending in this candidate. PR #43 remains a separate draft with retained timing
+The six R0022 final dispositions, remaining ordinary full-scene owner acceptance,
+production merge, public readback and closure are still pending in this candidate.
+The scoped synchronous cost checks have independent acceptance for Chromium DPR 1
+and Firefox DPR 2. The fixed allowance is the larger of 0.25 ms or 10% of each
+baseline median/p95, after five-second warmups and four paired ABBA rounds.
+Refined admission measures 13.8/15.8 ms against 15.84/18.70 ms limits on Chromium,
+and 22.36/26.88 ms against 38.17/42.416 ms limits on Firefox. All other measured
+scopes pass; Firefox full-preview p95 has only about 0.106 ms margin. Every call,
+slow tail and prior failed acquisition remains retained. These are bounded CPU
+results, not GPU, battery, ordinary motion or recording qualification.
+PR #43 remains a separate draft with retained timing
 and actual-extension-parent limitations. R0022 images do not qualify those
 startup obligations. The qualified `r0022-l1-full-composition/v1` handoff will
 carry only its exact accepted source and scene scope.
 
 Owner-decision evidence: [immutable display packet](https://github.com/theislampill/salah_widget/tree/c44a4d2df44ee9eef59faba9d524f742163e1270/evidence/R0022/owner-display-20261015).
+
+### Bounded Moon projection reuse
+
+The owner-approved R0022 boundary includes `moon/src/moon-detail.mjs` for one
+material-projection cache. The adopted prefix-table identities and complete
+device projection/presentation-up inputs own its key. New atmospheric frames
+still sample current gas, catalogue/diffuse light and exposure/opacity inside
+the actual composition path; clouds and the final currentness fence remain
+live. H1 and the material/terrain/Earthshine calculations are unchanged.
+
+The one retained projection uses 33 bytes per device pixel, including its
+coverage mask shared with the frame join; the additional retained sample array
+uses 32 bytes per pixel. Adoption, clear and disposal invalidate it. Invalid
+adoption fails closed instead of retaining mixed prefix tables. Canonical Moon
+bundles include this source; their byte identities change without a new terrain
+solver or numerical model. Exact source and scoped native cost controls pass;
+affected native preservation and whole-scene acceptance remain required before
+delivery.
