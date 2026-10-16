@@ -12,6 +12,13 @@ optics · precipitation · thermal/material cues · celestial · visual-only UI.
 
 Contract per phenomenon: **family · inputs · gate · shape · NOT-shape · off-conditions · prod/debug · verdict**.
 
+The native calendar-derived lunar optics retain their shared eligibility gate.
+Independent astronomical moonlight does not use decorative SIM phase/day flags
+as a zero gate. The selected R0022 atmospheric display shoulder maps only that
+physical lunar contribution, retaining its raw field and direction; it is not
+a new halo, corona, calibrated radiance model or change to Moon material.
+See [the exact display contract and acceptance scope](docs/real-sky/LUNAR_DISPLAY.md).
+
 ## Diagnostic recipes
 
 Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them.
