@@ -1642,6 +1642,7 @@ function sameNativePresentation(a,b){
 
 
 
+
 // Only rigid pixel geometry is reusable. No UTC, celestial direction, radiance,
 // exposure, weather or admitted frame is cached here. At600x the old display
 // pass retraced thousands of identical camera rays on each publication and
@@ -1713,6 +1714,50 @@ function nativeCloudSolarLighting(snapshot){
  }};
 }
 
+// Owner-accepted R0022-L1-H1-K003-H020-v1 display, not calibrated photometry. The
+// original exposure meters the full raw field. Compress only the independently
+// sampled lunar RGB share in that E*Y energy domain; never move its direction,
+// re-meter the frame or relabel natural/local/solar light as lunar. One RGB scale
+// is identity through K, positive and monotone above it, with a C1 soft knee.
+function lunarDisplayTarget(z){const K=.003,H=.020,excess=z-K;return z<=K?z:K+H*(excess/(H+excess));}
+function lunarDisplayMetadata(E,pixels,nightWeight){const K=.003,H=.020;return {owner:'native lunar atmosphere display',contract:'R0022-L1-H1-K003-H020-v1',policy:'lunar-only E*Y soft shoulder; common RGB scale at original physical direction; existing smooth night blend -18..-12 degrees',kneeEnergy:K,headroomEnergy:H,nightWeight,pixels,physicalExposure:E,scope:'Owner-accepted calendar display bounds, not calibrated radiance; original raw/source, exposure and non-lunar inputs retained'};}
+
+function nativeLunarNightDisplay(raster,nightWeight,composeNight=false){
+ const moon=raster.lunarBackgroundLinear;
+ if(nightWeight<=0||!moon)return null;
+ const source=raster.skyBackgroundLinear??raster.backgroundLinear,E=raster.effectiveExposure,K=.003,H=.020;
+ if(!source||moon.length!==source.length||source.length!==raster.linear?.length||source.length%3||!Number.isFinite(E)||E<=0)throw new RangeError('Lunar display requires matched raw fields and original exposure');
+ if(!moon.some(v=>v!==0))return null;
+ const shown=new Float64Array(moon.length),diffuse=raster.diffuseLinear,solar=raster.solarBackgroundLinear;
+ const sky=composeNight?new Float64Array(source.length):null;
+ const linear=composeNight?(raster.linear===source?sky:new Float64Array(source.length)):null;
+ const background=composeNight?(diffuse?new Float64Array(source.length):sky):null;
+ let pixels=0;
+ for(let i=0;i<moon.length;i+=3){
+  const r=moon[i],g=moon[i+1],b=moon[i+2],sr=source[i],sg=source[i+1],sb=source[i+2];
+  if(!Number.isFinite(r)||!Number.isFinite(g)||!Number.isFinite(b)||r<0||g<0||b<0||!Number.isFinite(sr)||!Number.isFinite(sg)||!Number.isFinite(sb)||r>sr-(solar?.[i]??0)||g>sg-(solar?.[i+1]??0)||b>sb-(solar?.[i+2]??0))throw new RangeError('Invalid lunar share of raw non-solar atmosphere');
+  const Y=.2126*r+.7152*g+.0722*b,z=E*Y;
+  if(!Number.isFinite(z))throw new RangeError('Invalid lunar display energy');
+  const target=lunarDisplayTarget(z),scale=z<=K?1:target/z;
+  // Algebraically K+excess/(1+excess/H); this form avoids division overflow
+  // returning to K at large finite energy. Floating asymptotic ties remain an
+  // ordinary number-precision limit, not a hard clip or an erased lunar field.
+  shown[i]=r*scale;shown[i+1]=g*scale;shown[i+2]=b*scale;
+  // Deep-night assembly consumes the value just computed. This is the same
+  // ordered arithmetic as the separate pass, including distinct star/diffuse
+  // terms; no physical input is overwritten or moved into preparation.
+  if(composeNight){
+   sky[i]=sr-r+shown[i];sky[i+1]=sg-g+shown[i+1];sky[i+2]=sb-b+shown[i+2];
+   if(linear!==sky){linear[i]=raster.linear[i]-sr+sky[i];linear[i+1]=raster.linear[i+1]-sg+sky[i+1];linear[i+2]=raster.linear[i+2]-sb+sky[i+2];}
+   if(background!==sky){background[i]=sky[i]+diffuse[i];background[i+1]=sky[i+1]+diffuse[i+1];background[i+2]=sky[i+2]+diffuse[i+2];}
+  }
+  if(z>K)pixels++;
+ }
+ return pixels?{shown,sky,linear,background,presentation:lunarDisplayMetadata(E,pixels,nightWeight)}:null;
+}
+
+function positiveChannel(array){if(array)for(let i=0;i<array.length;i++)if(array[i]>0)return true;return false;}
+
 /** Atmospheric display only. The numerical radiance, catalogue, worker exposure
  * and lunar material stay intact. Mean full-field metering lets a bright horizon
  * or forward-scattering lobe darken open daytime sky. Meter its median instead;
@@ -1722,10 +1767,15 @@ function nativeCloudSolarLighting(snapshot){
  */
 function nativeSkyPresentation(raster,view,anchor){
  const altitude=raster.physicalState?.sun?.altDeg;
- if(!Number.isFinite(altitude)||(altitude<=-18&&!raster.solarBackgroundLinear?.some(v=>v>0)))return raster;
+ if(!Number.isFinite(altitude))return raster;
  const source=raster.skyBackgroundLinear??raster.backgroundLinear,E=raster.effectiveExposure;
+ const t=Math.min(1,Math.max(0,(altitude+18)/6)),strength=t*t*(3-2*t),deepNight=altitude<=-18&&!positiveChannel(raster.solarBackgroundLinear),lunar=nativeLunarNightDisplay(raster,1-strength,deepNight);
+ if(deepNight){
+  if(!lunar)return raster;
+  return {...raster,linear:lunar.linear,skyBackgroundLinear:lunar.sky,backgroundLinear:lunar.background,physicalSkyBackgroundLinear:source,lunarNightDisplayLinear:lunar.shown,lunarDisplayPresentation:lunar.presentation};
+ }
  if(!source||source.length!==raster.linear.length||!Number.isFinite(E)||E<=0)throw new RangeError('Daylight display requires valid atmospheric field');
- const t=Math.min(1,Math.max(0,(altitude+18)/6)),strength=t*t*(3-2*t),registration=nativeSolarRegistration(raster,view,anchor),w=raster.width,h=raster.height;
+ const registration=nativeSolarRegistration(raster,view,anchor),w=raster.width,h=raster.height;
  // Register only solar aerosol scattering. Moving the whole field would drag
  // the neutral horizon into blue open sky. Rayleigh, night and lunar fields
  // retain their original camera coordinates. This decomposition uses the SAME
@@ -1829,7 +1879,8 @@ function nativeSkyPresentation(raster,view,anchor){
   const Y=.2126*shown[i]+.7152*shown[i+1]+.0722*shown[i+2],scale=Y>0?-Math.expm1(-displayExposure*Y)/Y:0;
   const gamut=Math.max(1,shown[i]*scale,shown[i+1]*scale,shown[i+2]*scale);
   for(let c=0;c<3;c++){
-   const old=-Math.expm1(-E*source[i+c]),mapped=shown[i+c]*scale/gamut;
+   const nightSource=lunar?source[i+c]-raster.lunarBackgroundLinear[i+c]+lunar.shown[i+c]:source[i+c];
+   const old=-Math.expm1(-E*nightSource),mapped=shown[i+c]*scale/gamut;
    let display=old+(mapped-old)*strength;
    if(solarShown&&strength<1){
     // Recover the established natural/local/lunar night background, not the
@@ -1840,15 +1891,44 @@ function nativeSkyPresentation(raster,view,anchor){
     // The resulting change is display-only; stars and lunar material are not
     // included. At strength1 (all accepted daylight/early-twilight) bytes match.
     const neutral=Math.max(0,source[i+c]-raster.solarBackgroundLinear[i+c]);
-    const oldNeutral=-Math.expm1(-E*neutral),mappedNeutral=Math.max(0,shown[i+c]-solarShown[i+c])*scale/gamut;
+    // Change only the existing night branch. Original daytime/solar metering,
+    // colour, registration and shoulder use the unchanged source/shown fields.
+    // Their full mapped term stays exact; the intervention fades with the same
+    // (1-strength) smooth weight, full at <=-18 and absent at >=-12, C1 at both.
+    const nightNeutral=lunar?neutral-raster.lunarBackgroundLinear[i+c]+lunar.shown[i+c]:neutral;
+    const oldNeutral=-Math.expm1(-E*nightNeutral),mappedNeutral=Math.max(0,shown[i+c]-solarShown[i+c])*scale/gamut;
     display=mapped+(oldNeutral-mappedNeutral)*(1-strength);
    }
    sky[i+c]=-Math.log1p(-Math.min(1-1/131072,display))/E;
    linear[i+c]=raster.linear[i+c]-source[i+c]+sky[i+c];
   }
  }
- return {...raster,linear,skyBackgroundLinear:sky,backgroundLinear:Float64Array.from(sky,(v,i)=>v+(raster.diffuseLinear?.[i]??0)),physicalSkyBackgroundLinear:source,
+ return {...raster,linear,skyBackgroundLinear:sky,backgroundLinear:Float64Array.from(sky,(v,i)=>v+(raster.diffuseLinear?.[i]??0)),physicalSkyBackgroundLinear:source,...(lunar?{lunarNightDisplayLinear:lunar.shown,lunarDisplayPresentation:lunar.presentation}:{}),
   displayPresentation:{owner:'native atmospheric display',policy:'perspective surface brightness; civil-twilight9% exposure reference; one-stop solar twilight highlight shoulder and directional chroma; luminance tone map and declared twilight colour adaptation; non-solar deep-night blend -18..-12 degrees',twilightColour:colour??null,twilightChroma:{pixels:chromaPixels,scope:'Solar warm chroma outside physical HG forward excess limited to retained twilight reference at fixed luminance; not calibrated directional spectroscopy'},twilightShoulder:{weight:shoulderWeight,kneeMedianMultiple:Math.SQRT2,asymptoticMedianMultiple:2,pixels:shoulderPixels,scope:'display-only solar highlight range; raw radiance and non-solar contributors preserved'},solarAltitudeDeg:altitude,strength,solidAnglePolicy:projection?'reference flux normalized to central-pixel solid angle for display only':'not a perspective raster',medianLuminance:median,adaptationReferenceCdM2,displayExposure,physicalExposure:E,solarRegistration:{active:!!aureole&&registration.active,presence:registration.presence,physical:registration.source,display:registration.target,scope:'twilight through+10deg remains physical; daytime forward excess blends to decorative light over+10..20deg; raw radiance, horizon, Rayleigh, lunar and catalogue projection unchanged'}}};
+}
+
+/** Lunar component of the already accepted worker atmosphere. Evaluate the
+ * unchanged physical model at the worker's exact nodes, then interpolate its
+ * neutral lunar flux with the same arithmetic. No approximate subtraction,
+ * cached physical values, or second cloud transmission. The other raw fields
+ * remain owned by the worker; this does not rebuild them for display admission.
+ */
+function nativeLunarAtmosphereField(state,atmosphere,view,residualNight,gx=24,gy=40){
+ const mapping=skyProjection(view),width=view.width,height=view.height,sky=createSkyModel(state,atmosphere,{residualNight});
+ const grid=new Float64Array((gx+1)*(gy+1));
+ for(let y=0;y<=gy;y++)for(let x=0;x<=gx;x++){
+  const px=x*width/gx,py=y*height/gy;if(!mapping.above(px,py))continue;
+  const sample=sky.sample(mapping.unproject(px,py)),omega=mapping.solidAngle(px,py)/V_ZERO_ILLUMINANCE_LUX;
+  grid[y*(gx+1)+x]=sample.moonLuminance*omega;
+ }
+ const lunar=new Float64Array(width*height*3);
+ for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+  if(!mapping.above(x+.5,y+.5))continue;
+  const u=(x+.5)/width*gx,v=(y+.5)/height*gy,ix=Math.min(gx-1,Math.floor(u)),iy=Math.min(gy-1,Math.floor(v)),tx=u-ix,ty=v-iy,at=(y*width+x)*3,tl=iy*(gx+1)+ix,bl=tl+gx+1;
+  const value=(grid[tl]*(1-tx)+grid[tl+1]*tx)*(1-ty)+(grid[bl]*(1-tx)+grid[bl+1]*tx)*ty;
+  lunar[at]=value;lunar[at+1]=value;lunar[at+2]=value;
+ }
+ return lunar;
 }
 
 /** Bounded first-paint background, before catalogue/assets/worker readiness.
@@ -1858,18 +1938,32 @@ function nativeSkyPresentation(raster,view,anchor){
  */
 function nativeAtmosphereFields(state,atmosphere,view,residualNight,gx=24,gy=40){
  const mapping=skyProjection(view),width=view.width,height=view.height,sky=createSkyModel(state,atmosphere,{residualNight}),withoutAerosol=state.sun.altDeg>10?createSkyModel(state,{...atmosphere,aerosolAlbedo:0},{residualNight}):null;
- const grid=new Float64Array((gx+1)*(gy+1)*3),ag=new Float64Array(grid.length),sg=new Float64Array(grid.length);
+ const grid=new Float64Array((gx+1)*(gy+1)*3),ag=new Float64Array(grid.length),sg=new Float64Array(grid.length),mg=new Float64Array(grid.length);
+ let neutralGrid=true,solarPresent=false,aerosolPresent=false;
  for(let y=0;y<=gy;y++)for(let x=0;x<=gx;x++){
   const px=x*width/gx,py=y*height/gy;if(!mapping.above(px,py))continue;
   const dir=mapping.unproject(px,py),sample=sky.sample(dir),ray=withoutAerosol?.sample(dir),omega=mapping.solidAngle(px,py)/V_ZERO_ILLUMINANCE_LUX,at=(y*(gx+1)+x)*3;
   const neutral=sample.moonLuminance+sample.naturalLuminance+sample.localLuminance;
-  for(let k=0;k<3;k++){grid[at+k]=sample.rgb[k]*omega;sg[at+k]=Math.max(0,sample.rgb[k]-neutral)*omega;ag[at+k]=ray?Math.max(0,sample.rgb[k]-ray.rgb[k]-(sample.moonLuminance-ray.moonLuminance))*omega:0;}
+  for(let k=0;k<3;k++){grid[at+k]=sample.rgb[k]*omega;sg[at+k]=Math.max(0,sample.rgb[k]-neutral)*omega;ag[at+k]=ray?Math.max(0,sample.rgb[k]-ray.rgb[k]-(sample.moonLuminance-ray.moonLuminance))*omega:0;mg[at+k]=sample.moonLuminance*omega;}
+  neutralGrid&&=grid[at]===grid[at+1]&&grid[at]===grid[at+2];
+  solarPresent||=sg[at]!==0||sg[at+1]!==0||sg[at+2]!==0;
+  aerosolPresent||=ag[at]!==0||ag[at+1]!==0||ag[at+2]!==0;
  }
- const background=new Float64Array(width*height*3),solarAerosolLinear=new Float64Array(background.length),solarBackgroundLinear=new Float64Array(background.length);let mean=0,pixels=0;
+ const background=new Float64Array(width*height*3),solarAerosolLinear=new Float64Array(background.length),solarBackgroundLinear=new Float64Array(background.length),lunarBackgroundLinear=new Float64Array(background.length);let mean=0,pixels=0;
  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
   if(!mapping.above(x+.5,y+.5))continue;
   const u=(x+.5)/width*gx,v=(y+.5)/height*gy,ix=Math.min(gx-1,Math.floor(u)),iy=Math.min(gy-1,Math.floor(v)),tx=u-ix,ty=v-iy,at=(y*width+x)*3,tl=(iy*(gx+1)+ix)*3,bl=tl+(gx+1)*3;
-  for(let k=0;k<3;k++){background[at+k]=(grid[tl+k]*(1-tx)+grid[tl+3+k]*tx)*(1-ty)+(grid[bl+k]*(1-tx)+grid[bl+3+k]*tx)*ty;solarAerosolLinear[at+k]=(ag[tl+k]*(1-tx)+ag[tl+3+k]*tx)*(1-ty)+(ag[bl+k]*(1-tx)+ag[bl+3+k]*tx)*ty;solarBackgroundLinear[at+k]=(sg[tl+k]*(1-tx)+sg[tl+3+k]*tx)*(1-ty)+(sg[bl+k]*(1-tx)+sg[bl+3+k]*tx)*ty;}
+  // Interpolate identical neutral channels once, and leave proven all-zero
+  // component grids at their allocated zero values. These decisions inspect
+  // the actual sampled grid: no phase, altitude, weather or epsilon shortcut.
+  if(neutralGrid){const v=(grid[tl]*(1-tx)+grid[tl+3]*tx)*(1-ty)+(grid[bl]*(1-tx)+grid[bl+3]*tx)*ty;background[at]=v;background[at+1]=v;background[at+2]=v;}
+  else for(let k=0;k<3;k++)background[at+k]=(grid[tl+k]*(1-tx)+grid[tl+3+k]*tx)*(1-ty)+(grid[bl+k]*(1-tx)+grid[bl+3+k]*tx)*ty;
+  if(aerosolPresent)for(let k=0;k<3;k++)solarAerosolLinear[at+k]=(ag[tl+k]*(1-tx)+ag[tl+3+k]*tx)*(1-ty)+(ag[bl+k]*(1-tx)+ag[bl+3+k]*tx)*ty;
+  if(solarPresent)for(let k=0;k<3;k++)solarBackgroundLinear[at+k]=(sg[tl+k]*(1-tx)+sg[tl+3+k]*tx)*(1-ty)+(sg[bl+k]*(1-tx)+sg[bl+3+k]*tx)*ty;
+  // moonLuminance is the accepted neutral proxy and populated all three grid
+  // channels identically above. Preserve the exact interpolation arithmetic.
+  const lunar=(mg[tl]*(1-tx)+mg[tl+3]*tx)*(1-ty)+(mg[bl]*(1-tx)+mg[bl+3]*tx)*ty;
+  lunarBackgroundLinear[at]=lunar;lunarBackgroundLinear[at+1]=lunar;lunarBackgroundLinear[at+2]=lunar;
   mean+=.2126*background[at]+.7152*background[at+1]+.0722*background[at+2];pixels++;
  }
  let twilightDisplay=null;
@@ -1880,7 +1974,7 @@ function nativeAtmosphereFields(state,atmosphere,view,residualNight,gx=24,gy=40)
   const gains=referenceRGB.map((v,k)=>1+weight*(v*zenith.luminance/Math.max(1e-20,zenith.rgb[k])-1));
   twilightDisplay={gains,weight,bv,referenceAltitude,referenceRGB,rawZenithRGB:zenith.rgb,scope:'Display-only Patat2006 total zenith B-V; geographic/angular use approximate. Held -5-degree colour smoothly releases to raw daylight at +10; -15 held to deep-night blend. Not measured local spectrum.'};
  }
- return {background,solarAerosolLinear,solarBackgroundLinear,twilightDisplay,mean:mean/Math.max(1,pixels),solarNodes:sky.solarNodeCount(),grid:[gx,gy]};
+ return {background,solarAerosolLinear,solarBackgroundLinear,lunarBackgroundLinear,twilightDisplay,mean:mean/Math.max(1,pixels),solarNodes:sky.solarNodeCount(),grid:[gx,gy]};
 }
 function renderNativeBackgroundPreview(snapshot){
  const started=performance.now(),job=nativeJob(snapshot,true),state=physicalSkyState(job.observer);
@@ -1891,12 +1985,91 @@ function renderNativeBackgroundPreview(snapshot){
  const view={...job.options.view,width,height},grid=fast?[12,20]:[24,40],fields=nativeAtmosphereFields(state,job.options.atmosphere,view,job.options.diffuse.residualNight,...grid);
  // The reference field represents flux per 325x530 physics pixel, not per
  // larger preview texel. Keep those units when reducing the display raster.
- if(fast)for(const array of [fields.background,fields.solarAerosolLinear,fields.solarBackgroundLinear])for(let i=0;i<array.length;i++)array[i]/=divisor*divisor;
+ if(fast)for(const array of [fields.background,fields.solarAerosolLinear,fields.solarBackgroundLinear,fields.lunarBackgroundLinear])for(let i=0;i<array.length;i++)array[i]/=divisor*divisor;
  if(fast)fields.mean/=divisor*divisor;
  const {background,solarAerosolLinear,mean}=fields,nominalExposure=job.options.nominalExposure,effectiveExposure=nominalExposure/(1+nominalExposure*mean/.5);
  const anchor=snapshot.solarAnchor??{x:20,y:40+176*(1-Math.min(1,Math.max(0,state.sun.altDeg/40)))};
- const raster=nativeSkyPresentation({width,height,linear:background,backgroundLinear:background,skyBackgroundLinear:background,solarAerosolLinear,solarBackgroundLinear:fields.solarBackgroundLinear,twilightDisplay:fields.twilightDisplay,stellarLinear:new Float64Array(background.length),effectiveExposure,nominalExposure,physicalState:state,atmosphere:job.options.atmosphere,meanBackgroundY:mean},view,{...anchor,x:anchor.x/divisor,y:anchor.y/divisor});
+ const raster=nativeSkyPresentation({width,height,linear:background,backgroundLinear:background,skyBackgroundLinear:background,solarAerosolLinear,solarBackgroundLinear:fields.solarBackgroundLinear,lunarBackgroundLinear:fields.lunarBackgroundLinear,twilightDisplay:fields.twilightDisplay,stellarLinear:new Float64Array(background.length),effectiveExposure,nominalExposure,physicalState:state,atmosphere:job.options.atmosphere,meanBackgroundY:mean},view,{...anchor,x:anchor.x/divisor,y:anchor.y/divisor});
  return {utcMs:snapshot.utcMs,native:job.native,job,quality:'physical-background-preview',raster,diagnostics:{grid:fields.grid,raster:[width,height],referencePixels:[325,530],solarNodes:fields.solarNodes,buildMs:performance.now()-started,scope:'atmosphere only; catalogue/diffuse/Moon refinement pending'}};
+}
+
+// Rigid camera geometry only: no sky sample, UTC, radiance, atmosphere or
+// exposure survives a call. Four native-size camera/grid entries bound state.
+const lunarGeometryCache=new Map();
+function lunarGeometry(view,gx,gy){
+ const mapping=skyProjection(view),width=mapping.width,height=mapping.height;
+ const key=JSON.stringify([view.type??'camera',width,height,view.azDeg??180,view.altDeg??35,view.fovYDeg??90,view.rollDeg??0,gx,gy]);
+ const bounded=(view.type??'camera')==='camera'&&width===325&&height===530&&Number.isInteger(gx)&&gx>0&&gx<=68&&Number.isInteger(gy)&&gy>0&&gy<=68;
+ if(!bounded)throw new RangeError('Lunar admission geometry must be a bounded native camera/grid');
+ if(lunarGeometryCache.has(key))return lunarGeometryCache.get(key);
+ const directions=new Array((gx+1)*(gy+1)),vectors=new Array(directions.length),omega=new Float64Array(directions.length),above=new Uint8Array(width*height);
+ const ix=new Uint16Array(width),tx=new Float64Array(width),iy=new Uint32Array(height),ty=new Float64Array(height);
+ for(let y=0;y<=gy;y++)for(let x=0;x<=gx;x++){
+  const px=x*width/gx,py=y*height/gy,i=y*(gx+1)+x;if(!mapping.above(px,py))continue;
+  directions[i]=mapping.unproject(px,py);vectors[i]=horizontalDirection(directions[i]);omega[i]=mapping.solidAngle(px,py)/V_ZERO_ILLUMINANCE_LUX;
+ }
+ for(let x=0;x<width;x++){const u=(x+.5)/width*gx,j=Math.min(gx-1,Math.floor(u));ix[x]=j;tx[x]=u-j;}
+ for(let y=0;y<height;y++){
+  const v=(y+.5)/height*gy,j=Math.min(gy-1,Math.floor(v));iy[y]=j*(gx+1);ty[y]=v-j;
+  for(let x=0;x<width;x++)above[y*width+x]=mapping.above(x+.5,y+.5)?1:0;
+ }
+ const geometry={width,height,gx,gy,directions,vectors,omega,above,ix,tx,iy,ty};
+ if(lunarGeometryCache.size===4)lunarGeometryCache.delete(lunarGeometryCache.keys().next().value);
+ lunarGeometryCache.set(key,geometry);return geometry;
+}
+
+/** Same deep-night physical samples and H1 formula, with expansion and display
+ * assembly in one pass. The lunar proxy is neutral at every original model
+ * node; interpolate it once and explicitly retain all three raw RGB channels.
+ * Camera geometry is reusable. Every physical sample remains current-call work.
+ */
+function nativeLunarNightPresentation(raster,view,residualNight,gx,gy){
+ if(!(raster.physicalState?.sun?.altDeg<-20)||positiveChannel(raster.solarBackgroundLinear))throw new RangeError('Lunar fused admission requires the physical solar-zero domain');
+ const source=raster.skyBackgroundLinear??raster.backgroundLinear,E=raster.effectiveExposure;
+ if(!source||source.length!==325*530*3||source.length!==raster.linear?.length||!Number.isFinite(E)||E<=0)throw new RangeError('Lunar display requires matched raw fields and original exposure');
+ const geometry=lunarGeometry(view,gx,gy),{width,height,directions,vectors,omega,above,ix,tx,iy,ty}=geometry;
+ const model=createSkyModel(raster.physicalState,raster.atmosphere,{residualNight}),grid=new Float64Array(directions.length);
+ // The immutable sky model still validates this current physical state and
+ // normalises its atmosphere. Extract only its lunar term using the SAME
+ // exported core functions and operation order; unused natural/solar RGB and
+ // per-sample metadata do not belong to this component admission.
+ const state=raster.physicalState,a=model.atmosphere,moonVector=horizontalDirection(state.moon);
+ const tauR=rayleighOpticalDepth(550,a),tauA=aerosolOpticalDepth(550,a),totalTau=tauR+tauA+a.greyTau;
+ const lunarScatteringAlbedo=totalTau>0?(tauR+tauA*a.aerosolAlbedo)/totalTau:0,k=1.0857362047581296*totalTau;
+ for(let i=0;i<directions.length;i++)if(directions[i]){
+  const h=directions[i],rho=angularSeparation(vectors[i],moonVector);
+  const moon=moonSkyLuminance({moonAltDeg:state.moon.altDeg,targetAltDeg:h.altDeg,separationDeg:rho,phaseAngleDeg:state.moon.phaseAngleDeg,extinctionMag:k,distanceKm:state.moon.distanceKm??384400,angularRadiusDeg:state.moon.angularRadiusDeg??.25})*lunarScatteringAlbedo;
+  grid[i]=moon*cloudTransmissionFor(h,a,null,state.utcMs)*omega[i];
+ }
+ const moon=new Float64Array(source.length),shown=new Float64Array(source.length),sky=new Float64Array(source.length);
+ const linear=raster.linear===source?sky:new Float64Array(source.length),diffuse=raster.diffuseLinear,background=diffuse?new Float64Array(source.length):sky;
+ let pixels=0;
+ const rawLinear=raster.linear,assembleLinear=linear!==sky,assembleBackground=background!==sky;
+ for(let y=0;y<height;y++){
+  const top=iy[y],lower=top+gx+1,u=ty[y],oneMinusU=1-u;
+  for(let x=0;x<width;x++){
+   const p=y*width+x,i=p*3;
+   let r=0;
+   if(above[p]){
+    const tl=top+ix[x],bl=lower+ix[x],t=tx[x],oneMinusT=1-t;
+    r=(grid[tl]*oneMinusT+grid[tl+1]*t)*oneMinusU+(grid[bl]*oneMinusT+grid[bl+1]*t)*u;
+   }
+   moon[i]=r;moon[i+1]=r;moon[i+2]=r;
+   const sr=source[i],sg=source[i+1],sb=source[i+2];
+   if(!Number.isFinite(r)||r<0||!Number.isFinite(sr)||!Number.isFinite(sg)||!Number.isFinite(sb)||r>sr||r>sg||r>sb)throw new RangeError('Invalid lunar share of raw non-solar atmosphere');
+   const z=E*(.2126*r+.7152*r+.0722*r);
+   if(!Number.isFinite(z))throw new RangeError('Invalid lunar display energy');
+   const scale=z<=.003?1:lunarDisplayTarget(z)/z,s=r*scale;
+   shown[i]=s;shown[i+1]=s;shown[i+2]=s;
+   const vr=sr-r+s,vg=sg-r+s,vb=sb-r+s;
+   sky[i]=vr;sky[i+1]=vg;sky[i+2]=vb;
+   if(assembleLinear){linear[i]=rawLinear[i]-sr+vr;linear[i+1]=rawLinear[i+1]-sg+vg;linear[i+2]=rawLinear[i+2]-sb+vb;}
+   if(assembleBackground){background[i]=vr+diffuse[i];background[i+1]=vg+diffuse[i+1];background[i+2]=vb+diffuse[i+2];}
+   if(z>.003)pixels++;
+  }
+ }
+ if(!pixels)return {...raster,lunarBackgroundLinear:moon};
+ return {...raster,linear,skyBackgroundLinear:sky,backgroundLinear:background,physicalSkyBackgroundLinear:source,lunarBackgroundLinear:moon,lunarNightDisplayLinear:shown,lunarDisplayPresentation:lunarDisplayMetadata(E,pixels,1)};
 }
 
 // real-sky/native-worker-policy.mjs
@@ -2080,6 +2253,56 @@ function startNativeSkyAssets(start,scriptUrl) {
 
 
 
+// Exact acceleration of the existing native encoder. Buckets bound a search
+// among its oracle-derived binary64 transition values; they never approximate
+// an output or interpolate a value. Only immutable table geometry is retained.
+let nativeDisplayEncodeCache=null;
+function encodeNativeDisplay(linear,exposure=12){
+ const bytes=new Uint8ClampedArray(linear.length/3*4);
+ return encodeNativeDisplayInto(linear,exposure,bytes);
+}
+// The destination remains private until composition passes its currentness
+// fence. Encoding a joined prefix and raw tail avoids disposable RGBA copies.
+function encodeNativeDisplayInto(linear,exposure,bytes,offset=0){
+ if(!Number.isFinite(exposure)||exposure<0||exposure>100000)throw new RangeError('Invalid native display exposure');
+ if(linear.length%3)throw new RangeError('RGB buffer required');
+ if(!(bytes instanceof Uint8ClampedArray)||!Number.isSafeInteger(offset)||offset<0||offset%4||offset+linear.length/3*4>bytes.length)throw new RangeError('Invalid native display destination');
+ if(!nativeDisplayEncodeCache){
+  const edges=nativeEncodingThresholds(),bins=8192,scale=bins/edges[255],low=new Uint8Array(bins),high=new Uint16Array(bins);
+  let lo=0,hi=1;
+  for(let b=0;b<bins;b++){
+   while(lo<255&&Math.floor(edges[lo+1]*scale)<b)lo++;
+   hi=Math.max(hi,lo+1);
+   while(hi<256&&Math.floor(edges[hi]*scale)<=b)hi++;
+   low[b]=lo;high[b]=hi;
+  }
+  nativeDisplayEncodeCache={edges,scale,low,high};
+ }
+ const {edges,scale,low,high}=nativeDisplayEncodeCache;
+ // Reuse only an exact oracle interval from this call's preceding pixel.
+ // Exposure, input validity and every sharp transition still reach the same
+ // code search. No physical value or prior frame is retained here.
+ let previousR=0,previousG=0,previousB=0;
+ const code=(y,previous)=>{if(y>=edges[previous]&&(previous===255||y<edges[previous+1]))return previous;if(y>=edges[255])return 255;const b=Math.min(low.length-1,Math.floor(y*scale));let lo=low[b],hi=high[b];while(hi-lo>1){const middle=(lo+hi)>>>1;if(y<edges[middle])hi=middle;else lo=middle;}return lo;};
+ for(let i=0,j=offset;i<linear.length;i+=3,j+=4){
+  const r=linear[i],g=linear[i+1],b=linear[i+2];
+  if(!Number.isFinite(r)||!Number.isFinite(g)||!Number.isFinite(b))throw new RangeError('Nonfinite native frame channel');
+  bytes[j]=previousR=code(exposure*Math.max(0,r),previousR);
+  bytes[j+1]=previousG=g===r?bytes[j]:code(exposure*Math.max(0,g),previousG);
+  bytes[j+2]=previousB=b===r?bytes[j]:b===g?bytes[j+1]:code(exposure*Math.max(0,b),previousB);
+  bytes[j+3]=255;
+ }
+ return bytes;
+}
+
+// Solar obstruction depends on captured alpha only. Existing owned capture
+// arrays provide its exact previous input; no radiance or weather is cached.
+function sameNativeCloudAlpha(a,b){
+ if(!(a instanceof Uint8ClampedArray)||!(b instanceof Uint8ClampedArray)||a.length!==b.length||a.length%4)return false;
+ for(let i=3;i<a.length;i+=4)if(a[i]!==b[i])return false;
+ return true;
+}
+
 /** DOM ownership adapter; native PBR/calendar/weather remain native source code. */
 function startNativeSky(pack,workerSource,physical){
  window.SalahRealSky?.dispose();
@@ -2089,7 +2312,7 @@ function startNativeSky(pack,workerSource,physical){
  const badge=document.createElement('span');badge.className='real-sky-status';badge.setAttribute('role','status');card.append(badge);
  const foreground=physical?new NativeForegroundCapture(canvas):null;
  const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,presentationRejections:0,presentationUtcMs:null,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
- let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,paintedJob=null,previousPresentation=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
+ let client,lifecycle,frame=null,job=null,disposed=false,paintedFrame=null,paintedJob=null,previousPresentation=null,previousSolarMask=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
  function publish(){const preview=window.SalahSkyPreview?.state.status==='ready';badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.availability?.reason==='rate-throughput'?`${preview?'Sky preview · r':'R'}efinement unavailable at ${status.availability.rate}×`:preview?'Sky preview · refining…':status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent. A current preview is distinct from registered diffuse refinement.';canvas.dataset.status=status.status;}
  function clear(reason='invalidated'){
   const preview=window.SalahSkyPreview,previewCurrent=!!preview?.frame?.current?.(),previewOwnsDetail=previewCurrent&&window.SalahMoonDetail?.state?.skyOwner==='atmospheric-preview';
@@ -2099,7 +2322,7 @@ function startNativeSky(pack,workerSource,physical){
   // A withdrawn refinement must not expose an expired preview whose ready flag
   // also hides the independently current SVG Moon until the next native paint.
   if(!previewCurrent)preview?.clear(reason);
-  frame=null;job=null;status.last=null;paintedFrame=null;paintedJob=null;status.presentationUtcMs=null;status.displayed=null;previousPresentation=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;
+  frame=null;job=null;status.last=null;paintedFrame=null;paintedJob=null;status.presentationUtcMs=null;status.displayed=null;previousPresentation=null;previousSolarMask=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;
   // Complete the handoff in this turn; otherwise the compositor can expose the
   // fallback background/raw lunar cutout before native's next paint. The existing
   // preview owner keeps its target, age and publication-headroom checks.
@@ -2133,27 +2356,36 @@ function startNativeSky(pack,workerSource,physical){
     if(sameNativePresentation(previousPresentation,presentation)){
      status.presentationSkips++;lastCompose=performance.now();
      Object.assign(status.last.composition,capture.native,{lastComposeMs:lastCompose-started});
-     card.classList.add('real-sky-composed');canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeFrame);return;
+     card.classList.add('real-sky-composed');canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeDisplay);return;
     }
     const base=nativeCalendarRegion(frame.raster,geometry.mask(),rows);
     const joined=nativeForeground(base,{...capture,atmosphereLinear:(frame.raster.skyBackgroundLinear??frame.raster.backgroundLinear).subarray(0,base.length),exposure:frame.raster.effectiveExposure});
     // Prepare/validate the entire update before touching the visible framebuffer.
     // A failed capture must not expose an uncomposed base (or partial cloud data).
-    const region=new ImageData(encodeNativeFrame(joined.linear,frame.raster.effectiveExposure),325,rows);
-    const solarMask=foreground.prepareSolarMask(capture.cloudRGBA,rows);
-    const full=paintedFrame!==frame?new ImageData(encodeNativeFrame(frame.raster.linear,frame.raster.effectiveExposure),325,530):null;
+    const full=paintedFrame!==frame,bytes=new Uint8ClampedArray(325*(full?530:rows)*4);
+    encodeNativeDisplayInto(joined.linear,frame.raster.effectiveExposure,bytes);
+    const reuseSolarMask=previousSolarMask!==null&&previousPresentation?.rows===rows&&sameNativeCloudAlpha(previousPresentation.cloudRGBA,capture.cloudRGBA);
+    const solarMask=reuseSolarMask?previousSolarMask:foreground.prepareSolarMask(capture.cloudRGBA,rows);
+    if(full){
+     // Preserve validation of the overwritten raw prefix. Encode the untouched
+     // tail directly after the joined region in the private final framebuffer.
+     const raw=frame.raster.linear,start=325*rows*3;
+     if(raw.length!==325*530*3)throw new RangeError('Native frame dimensions');
+     for(let i=0;i<start;i++)if(!Number.isFinite(raw[i]))throw new RangeError('Nonfinite native frame channel');
+     encodeNativeDisplayInto(raw.subarray(start),frame.raster.effectiveExposure,bytes,325*rows*4);
+    }
+    const image=new ImageData(bytes,325,full?530:rows);
     if(!lifecycle.current(job,snapshot())){clear('superseded during composition');return;}
-    if(full)ctx.putImageData(full,0,0);
-    ctx.putImageData(region,0,0);
+    ctx.putImageData(image,0,0);
     card.style.setProperty('--native-sun-cloud-mask',solarMask);
     paintedFrame=frame;paintedJob=job;status.presentationUtcMs=job.observer.utcMs;previousMoonBottom=bottom;
     status.displayed={utcMs:job.observer.utcMs,identity:job.native.identity,exposure:frame.raster.effectiveExposure,presentation:frame.raster.displayPresentation??null,retained:false};
-    previousPresentation=presentation;status.presentationDraws++;
+    previousPresentation=presentation;previousSolarMask=solarMask;status.presentationDraws++;
     status.last.composition={...joined.diagnostics,meanCloudAlpha:joined.diagnostics.meanCloudAlpha*rows/530,...capture.native,updatedRows:rows,totalRows:530};card.classList.add('real-sky-composed');
    }else{
-    const bytes=encodeNativeFrame(nativeCalendarComposite(frame.raster,calendarGeometry().mask()),frame.raster.effectiveExposure);ctx.putImageData(new ImageData(bytes,325,530),0,0);
+    const bytes=encodeNativeDisplay(nativeCalendarComposite(frame.raster,calendarGeometry().mask()),frame.raster.effectiveExposure);ctx.putImageData(new ImageData(bytes,325,530),0,0);
    }
-   canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeFrame);lastCompose=performance.now();
+   canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeDisplay);lastCompose=performance.now();
    if(status.last.composition)status.last.composition.lastComposeMs=lastCompose-started;
   }catch(e){
    // Retention is allowed only under the ORIGINAL visible job's fences and
@@ -2168,13 +2400,24 @@ function startNativeSky(pack,workerSource,physical){
  function accept(result,_id,request){
   const current=snapshot();if(!lifecycle.current(request,current)){status.rejections++;return;}
   if(result.status!=='ready'||!result.raster)throw new Error(result.error??'Native real sky unavailable');
-  if(result.raster.physicalState?.sun?.altDeg>-18){
+  if(Number.isFinite(result.raster.physicalState?.sun?.altDeg)){
    // Twilight's solar-only shoulder needs the SAME spatial nodes as the raw
    // worker background, so removing solar cannot accidentally remove neutral
    // lunar/natural/local light through a differently interpolated decomposition.
+   // The accepted L1 display needs that unchanged-grid lunar share in deep night;
+   // original worker exposure/raw field and every acceptance fence stay intact.
    const step=request.options.backgroundStepCss,grid=result.raster.physicalState.sun.altDeg<-3?[Math.ceil(325/step),Math.ceil(530/step)]:[24,40];
-   const fields=nativeAtmosphereFields(result.raster.physicalState,result.raster.atmosphere,request.options.view,request.options.diffuse.residualNight,...grid);
-   result={...result,raster:nativeSkyPresentation({...result.raster,solarAerosolLinear:fields.solarAerosolLinear,solarBackgroundLinear:fields.solarBackgroundLinear,twilightDisplay:fields.twilightDisplay},request.options.view,host.capture().solarAnchor)};
+   // Below -20 degrees the accepted sky model's solar source is exactly zero.
+   // The worker already supplies the full physical sky; sample only its lunar
+   // share here, at the identical nodes, instead of rebuilding unused full-sky
+   // and zero solar planes. Twilight/day retain the complete decomposition.
+   if(result.raster.physicalState.sun.altDeg<-20){
+    result={...result,raster:nativeLunarNightPresentation(result.raster,request.options.view,request.options.diffuse.residualNight,...grid)};
+   }else{
+    const all=nativeAtmosphereFields(result.raster.physicalState,result.raster.atmosphere,request.options.view,request.options.diffuse.residualNight,...grid);
+    const fields={solarAerosolLinear:all.solarAerosolLinear,solarBackgroundLinear:all.solarBackgroundLinear,lunarBackgroundLinear:all.lunarBackgroundLinear,twilightDisplay:all.twilightDisplay};
+    result={...result,raster:nativeSkyPresentation({...result.raster,...fields},request.options.view,host.capture().solarAnchor)};
+   }
   }
   frame=result;job=request;status.status='ready';status.renders++;status.last={utcMs:result.utcMs,observer:result.observer,native:result.native,catalogue:result.catalogue,sources:result.sources,drawn:result.raster.drawn,detectableSources:result.raster.detectableSources,diffuseAsset:result.diffuseAsset,diffuseState:result.raster.diffuseState??null,physicalState:result.raster.physicalState,exposure:result.raster.effectiveExposure,atmosphere:result.raster.atmosphere,visibilityScope:physical?'CP7 contrast diagnostics are before native cloud foreground; final pixel/operator evidence is separate':'CP7 pre-native-overlay contrast diagnostic',weather:current.weather,view:request.options.view,execution:result.execution,timings:result.timings,warnings:result.raster.modelWarnings};compose();publish();
  }
@@ -2189,7 +2432,7 @@ function startNativeSky(pack,workerSource,physical){
  animationId=requestAnimationFrame(animate);
  const visibility=()=>request(true);document.addEventListener('visibilitychange',visibility);
  const readState=()=>({...structuredClone(status),lifecycle:lifecycle.state});
- window.SalahRealSky={request,compose,invalidate:reason=>lifecycle.invalidate(reason),get state(){return readState();},dispose(){if(disposed)return;lifecycle.dispose();disposed=true;clearInterval(timer);cancelAnimationFrame(animationId);document.removeEventListener('visibilitychange',visibility);client.dispose();if(workerUrl)URL.revokeObjectURL(workerUrl);card.classList.remove('real-sky-composed');card.style.removeProperty('--native-sun-cloud-mask');frame=null;job=null;previousPresentation=null;status.last=null;status.status='disposed';canvas.remove();badge.remove();}};
+ window.SalahRealSky={request,compose,invalidate:reason=>lifecycle.invalidate(reason),get state(){return readState();},dispose(){if(disposed)return;lifecycle.dispose();disposed=true;clearInterval(timer);cancelAnimationFrame(animationId);document.removeEventListener('visibilitychange',visibility);client.dispose();if(workerUrl)URL.revokeObjectURL(workerUrl);card.classList.remove('real-sky-composed');card.style.removeProperty('--native-sun-cloud-mask');frame=null;job=null;previousPresentation=null;previousSolarMask=null;status.last=null;status.status='disposed';canvas.remove();badge.remove();}};
  window.realSkyState=readState;window.realSkyFrame=()=>frame; // Diagnostics, not render authority.
  publish();request(true);
 }

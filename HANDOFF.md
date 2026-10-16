@@ -3,10 +3,26 @@
 Context for a fresh agent picking up this repo. The durable design/process docs already exist — read those first
 and don't expect this file to repeat them.
 
-## Current PR42 repair frontier
+## R0022 lunar display candidate
 
-PR39, PR40 and PR41 are already merged. Main is
-`c1a480c97e9af188cf57704502d818c0584cf265`; the existing repair is PR42,
+The qualified-source base for this candidate is
+`fc8d13338f9274a768580cda5a805492f80c510d`, including delivered R0018 readability
+and R0024 weather information. The owner selected
+`R0022-L1-H1-K003-H020-v1`; preserve its fixed mapping, raw physical fields and
+approved opaque V5 Moon. [LUNAR_DISPLAY.md](docs/real-sky/LUNAR_DISPLAY.md)
+records the bounded owner acceptance and remaining qualification/delivery.
+Only `native-preview.mjs` and `native-host.mjs` change authored display behavior;
+the canonical builder regenerates the three native outputs. The existing
+first-paint caller consumes the shared owner without importing PR43.
+
+PR43 remains a separate draft with retained timing and actual-parent limits.
+R0022 evidence does not close those startup obligations. Final production
+merge requires the owner's exact reviewed head/base approval.
+
+## Historical PR42 repair frontier
+
+At this historical frontier PR39, PR40 and PR41 were merged. Main was
+`c1a480c97e9af188cf57704502d818c0584cf265`; the repair was PR42,
 `codex/hotfix-startup-clouds`. Continue from the H1–H8 register in
 `docs/real-sky/STARTUP_CLOUD_HOTFIX.md`, including rejected startup controls.
 Do not replay donor installation, V5 research or the completed merges. The PR42

@@ -1,7 +1,7 @@
 # salah_widget — DESIGN
 
 A static Islamic prayer-times widget embedded as an iframe (e.g. in TablissNG).
-PR39/40/41 are deployed; PR42 repairs the current root without changing frozen V1. Native authoring
+The CP9/V5 renderer and subsequent native repairs retain frozen V1. Native authoring
 lives in `src/native/`; `python tools/build_native.py` generates the root entries,
 worker and offline expansion. See [current ownership and qualification](docs/real-sky/INTEGRATION.md).
 The native design below predates CP9: synthetic star/glint producers are
@@ -10,8 +10,8 @@ motion claims do not qualify the new renderer.
 
 The deployed renderer includes the supplied V5 terrain Moon on CP9. Native phase,
 prayer and settings ownership is retained; a WebAssembly worker produces a
-terrain preview and then angular refinement. Deployed main still uses the original
-PBR during loading/failure. PR42 withholds that inferior substitution, retains
+terrain preview and then angular refinement. The received PR42 repair withholds the
+earlier PBR loading/failure substitution, retains
 an independently current refined surface during replacement, and can bridge
 with the same full-spatial V5 terrain's explicitly labelled angular preview.
 The preview uses the same material, relief, Earthshine and display mapping;
@@ -51,6 +51,14 @@ must also republish the accepted atmosphere before yielding after native scene
 adoption; ordinary animation still has one final presentation opportunity.
 See the H1–H8 repair record in
 [STARTUP_CLOUD_HOTFIX.md](docs/real-sky/STARTUP_CLOUD_HOTFIX.md).
+
+The selected R0022 lunar display contract applies a lunar-only soft shoulder
+at the original physical direction, with knee 0.003 and shoulder 0.020 in the
+original exposure-times-luminance domain. Raw lunar and atmospheric fields stay
+separate from mapped output. Non-lunar contributions, V5 material/body geometry,
+catalogue, weather transmission and currentness remain independently owned.
+The owner accepted the canonical clear full card; remaining qualification and
+delivery are recorded in [LUNAR_DISPLAY.md](docs/real-sky/LUNAR_DISPLAY.md).
 
 **Companion docs:** [`ARCHITECTURE.md`](ARCHITECTURE.md) — the maintainer's responsibility/data-flow/contract map
 and risk list. [`OPTICS.md`](OPTICS.md) — the per-phenomenon physical-family taxonomy + gating. [`AGENTS.md`](AGENTS.md)

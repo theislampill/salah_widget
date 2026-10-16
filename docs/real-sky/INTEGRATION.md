@@ -1,9 +1,19 @@
-# CP9 integration candidate
+# Native sky integration
 
-This branch integrates the supplied cumulative CP1–CP9 real-sky programme onto
+The selected R0022 lunar display candidate is based on production
+`fc8d13338f9274a768580cda5a805492f80c510d`. Its two authored display owners share
+the fixed H1 lunar shoulder through existing first/preview/refined callers.
+The raw physical fields, catalogue/diffuse inputs, frozen V1 and V5 material
+remain unchanged. No startup draft or numerical vendor/core patch is imported.
+See [LUNAR_DISPLAY.md](LUNAR_DISPLAY.md) for units, exact formula, owner visual
+acceptance and the still-open qualification/delivery boundary.
+
+## Historical CP9 integration candidate
+
+This historical intake integrated the supplied cumulative CP1–CP9 real-sky programme onto
 `main` **fd2972ba64225fe9d6848e92497e6d0ed20ea624** (tree
-`c5382ee6cb32e71992da963f56b00c2eaa091d1c`). It is a Draft PR candidate, not release
-or merge approval. The post-CP9 DAG is the implementation and qualification map.
+`c5382ee6cb32e71992da963f56b00c2eaa091d1c`). The following records describe that
+Draft PR intake and do not confer current release or merge approval.
 
 ## Source reconstruction
 
