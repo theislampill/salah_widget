@@ -1,0 +1,57 @@
+TAP version 13
+# {"case":"fresh-day-without-timetable","sourceHash":"c3adc78255d8ebf15d5917c78c8e8ecf98561bf7e09eef502b10d89b26420fc4","model":null,"pending":false,"solar":{"--sunamt":"","--sunbodyamt":"","--suncore":"","--sunmid":"","--sunprofile":"","--sunlift":"","--sundisc":""}}
+# Subtest: fresh accepted daytime scene publishes its Sun while the timetable is absent
+not ok 1 - fresh accepted daytime scene publishes its Sun while the timetable is absent
+  ---
+  duration_ms: 140.4152
+  type: 'test'
+  location: '<evidence>\\solar-currentness-red.cjs:12:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Sun must be published before current sky is exposed
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (<evidence>\solar-currentness-red.cjs:17:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: accepted night target cannot expose the previous daytime Sun without a timetable
+not ok 2 - accepted night target cannot expose the previous daytime Sun without a timetable
+  ---
+  duration_ms: 85.7773
+  type: 'test'
+  location: '<evidence>\\solar-currentness-red.cjs:21:1'
+  failureType: 'testCodeFailure'
+  error: 'S.physicalLight?.sample is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    paintClouds (index.html:inline:1990:38)
+    commitSkyScene (index.html:inline:1505:3)
+    paint (index.html:inline:2420:3)
+    applyTheme (index.html:inline:2427:5)
+    render (index.html:inline:2577:3)
+    evalmachine.<anonymous>:1:1
+    Script.runInContext (node:vm:149:12)
+    Object.runInContext (node:vm:301:6)
+    Object.run (<candidate>\tests\r001d-harness.cjs:91:22)
+    TestContext.<anonymous> (<evidence>\solar-currentness-red.cjs:22:39)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 303.132

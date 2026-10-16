@@ -1,0 +1,200 @@
+{
+  "schema": "r0021-head-handoff-implementation-review/v1",
+  "reviewer": "/root/r0021_review",
+  "decision": "ACCEPT_BOUNDED_HANDOFF_IMPLEMENTATION_FOR_ROOT_NATIVE_DISCRIMINATOR",
+  "scope": "Independent read-only source, in-memory lifecycle controls and build identity review. This is not native startup, callback-cost, whole-candidate, release or closure acceptance.",
+  "acceptedAndonRecommendationSha256": "a8bd3dc40c674b473c75b54251f8e118893c1a32cba214b043a4b05a187be7a7",
+  "baseCommit": "f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de",
+  "build": "<evidence>/builds/integrated-r2",
+  "bindings": {
+    "sourceAndBuild": {
+      "moon/src/moon-native.mjs": {
+        "source": "547e0febba92e936488341ac16d4fa11bda03ef2e4e317f8affc56421d25b094",
+        "build": "547e0febba92e936488341ac16d4fa11bda03ef2e4e317f8affc56421d25b094"
+      },
+      "moon/tests/host.test.cjs": {
+        "source": "1d7959b61f58a1d5ba15b273a273463ff3c8e0d63993dbd94c8b19082d5a913c",
+        "build": "1d7959b61f58a1d5ba15b273a273463ff3c8e0d63993dbd94c8b19082d5a913c"
+      },
+      "src/native/index.html": {
+        "source": "c3adc78255d8ebf15d5917c78c8e8ecf98561bf7e09eef502b10d89b26420fc4",
+        "build": "c3adc78255d8ebf15d5917c78c8e8ecf98561bf7e09eef502b10d89b26420fc4"
+      },
+      "real-sky/native-first-paint.mjs": {
+        "source": "ea85b1e178ffed43d9083e3a9bb29d1ceeac42c8a678cd0bef3cb57fc91e3674",
+        "build": "ea85b1e178ffed43d9083e3a9bb29d1ceeac42c8a678cd0bef3cb57fc91e3674"
+      },
+      "tools/build_native.py": {
+        "source": "fec7fd8ce7cc167992173b883507706f85911b58e606f65a9d732ace7fe4536e",
+        "build": "fec7fd8ce7cc167992173b883507706f85911b58e606f65a9d732ace7fe4536e"
+      },
+      "tools/build_moon.py": {
+        "source": "fae4dd37691ff283df634a4c98393e6470cc9e3cf0a3ec7e23612a5aa77e6248",
+        "build": "fae4dd37691ff283df634a4c98393e6470cc9e3cf0a3ec7e23612a5aa77e6248"
+      },
+      "moon/initial-source-association.json": {
+        "source": "b6b49f88d88f25d960846bb3ba2905b1a94226d37c883600a91e64027542fcec",
+        "build": "b6b49f88d88f25d960846bb3ba2905b1a94226d37c883600a91e64027542fcec"
+      },
+      "real-sky/native-preview.mjs": {
+        "source": "e4f70bd5935b31ffd56deff017e854b0afcd192f8937090b8140773af61fce0f",
+        "build": "e4f70bd5935b31ffd56deff017e854b0afcd192f8937090b8140773af61fce0f"
+      },
+      "moon/src/surface_v5.mjs": {
+        "source": "f0d0b4ab0b5478979371c8c9839d53dfb688596dd08773769d7d9c254c02b65f",
+        "build": "f0d0b4ab0b5478979371c8c9839d53dfb688596dd08773769d7d9c254c02b65f"
+      },
+      "moon/src/moon-initial.mjs": {
+        "source": "b3393dcf66b62ba3408f26ddd74614906fa78bf4ff89de80223e615cca7820d8",
+        "build": "b3393dcf66b62ba3408f26ddd74614906fa78bf4ff89de80223e615cca7820d8"
+      },
+      "moon/src/moon-initial-compact.mjs": {
+        "source": "7281b9d439361af739c5a57ce5f008e608a118db59802a4c8ba8ecdfdd5473f0",
+        "build": "7281b9d439361af739c5a57ce5f008e608a118db59802a4c8ba8ecdfdd5473f0"
+      },
+      "moon/assets/initial-compact.bin": {
+        "source": "dc131b3858aa20ddc858ccf1058fdcba533ec70d98f5d3bb28d1afc77b307269",
+        "build": "dc131b3858aa20ddc858ccf1058fdcba533ec70d98f5d3bb28d1afc77b307269"
+      },
+      "moon/initial-manifest.json": {
+        "source": "f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5",
+        "build": "f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5"
+      },
+      "moon/initial-compact-manifest.json": {
+        "source": "6984efd68d396a6332ce6629f542be6461952395b0e3c7f2bfcde1702d06c3c6",
+        "build": "6984efd68d396a6332ce6629f542be6461952395b0e3c7f2bfcde1702d06c3c6"
+      }
+    },
+    "artifacts": {
+      "INPUT-SNAPSHOT.json": "704be067acb4fb0bf475eae4f6dd90e25c173e1e6ed47e5bf09ff0bfc50b15ec",
+      "BUILD-LOG.txt": "e9666f318cbd60a06ce04644dc216c93b6d973a1f9d147d9571bbe3c80587870",
+      "moon/BUILD.json": "f8c1803c6b62e419e1eb619be088a9289af2978d94a67a1c207f624a9320a782",
+      "index.html": "40f9e752d74e74997c4650fbae9f176566d1368d8b03cd8aaec775f817ebdaf9",
+      "offline.html": "2a9a1686b7432b6c4a49ef88903932c0e36e44a62a164664233a44bb3657f1d7"
+    },
+    "testReceipts": {
+      "host-full-r1.txt": "dcb87cfa8fa988b5f1a983ba712f896abc7e58c3be85d036b33770f8448d35f6",
+      "head-handoff-r3.txt": "edfb9e42e1bf87a77ca50f991a6f75f57af2f908b143cfe18c8cbaa68cdc58d5",
+      "head-handoff-r4.txt": "b9c5a747f91d7c80e5eca954bccf1c457b98e928c724afd1e01e5c651548b4b8"
+    }
+  },
+  "independentBuildChecks": {
+    "moonSourcePins": 18,
+    "allSourcePinsMatch": true,
+    "generatedNativePreviewAndPhysicalInvalidationPreserved": true,
+    "controlSnippetSha256": "2ca0eedc45844b3d1b4c4671d41e392b1eee608a7816164a9c103af93b017292",
+    "finalIndexSha256": "40f9e752d74e74997c4650fbae9f176566d1368d8b03cd8aaec775f817ebdaf9"
+  },
+  "findings": [
+    {
+      "id": "R0021-REVIEW-HANDOFF-01",
+      "status": "FIXED_AND_INDEPENDENTLY_VERIFIED",
+      "problem": "Before any accepted/pending result, poll's pause/invalid branches left the head ticket eligible because clear was conditional on existing work.",
+      "reproduction": "A paused-to-unpaused round-trip before first acceptance consumed the original head (initialRenders1, headHandofftrue).",
+      "fix": "Unconditionally revokeInitialHead when capture is invalid or paused; keep the existing ordinary clear condition.",
+      "verification": "Both paused and invalid-return controls now use a fresh native initial render and release the old head result."
+    },
+    {
+      "id": "R0021-REVIEW-HANDOFF-02",
+      "status": "INDEPENDENT_JOINED_CONTROL_PASSED_RETAIN_AS_REGRESSION",
+      "problem": "Existing host controls invoked invalidate twice manually; existing boot/celestial controls stubbed beginSkyScene and finishInitialSkyDocument, leaving their real plumbing untested.",
+      "verification": "Reviewer joined actual extracted native lifecycle, celestial publication and boot functions with the existing host fixture. The normal boot reaches epoch2, consumes once and finishes before its first yield. Unresolved location calls coarseDetect exactly once with ticket already revoked at its unresolved await. Invalid initial clock return and default scene invalidation revoke.",
+      "controlSnippet": "<evidence>/independent-review/HANDOFF-SOURCE-CONTROLS.md",
+      "snippetSha256": "2ca0eedc45844b3d1b4c4671d41e392b1eee608a7816164a9c103af93b017292"
+    },
+    {
+      "id": "R0021-REVIEW-HANDOFF-03",
+      "status": "NONBLOCKING_NATIVE_DISCRIMINATOR",
+      "observation": "capture() also returns null when SalahMoonHost is not installed yet. The unconditional null revocation can therefore discard the candidate if the250ms poll runs before body boot, such as with a held parser tail.",
+      "effect": "Safe fallback; no stale publication. It can prevent the intended duplicate-render optimization.",
+      "requiredObservation": "Actual ordinary startup must show one head render and headHandofftrue/no second initial call. If it misses, distinguish normal missing-owner startup from invalid-owner data before altering any gate."
+    }
+  ],
+  "semanticsReviewed": [
+    "Private runtime eligibility only moves true-to-false. Non-initial clear, worker failure, finish and disposal release the retained result; a later initialDocument option cannot reopen it.",
+    "Native _skyInitialDocument is initialized once; only boot and first identity-adoption paths pass it. Default settings/configuration and explicit temporal-control beginSkyScene calls revoke it.",
+    "Unknown-location path finishes before acquisition; invalid simulation paths finish before return; normal boot finishes before first rAF/task yield.",
+    "Original UTC is paired with monotonic capturedAt before expensive head work. preparedAt is retained separately.",
+    "takeInitialHead requires generation0, ordinary1x, unpaused calendar mode, no reference scene, same original scope and DPR/waxing/scene identity, continuous UTC, receiver identity and complete scene profile. It retains original result.scene and checks the actual display phase bound before adoption with a fresh native capture.",
+    "Existing numerical result/detail/adoption path is used. No H1/raw physical/receiver/codec/V5/opacity/geometry code was changed by the handoff.",
+    "Generated beginSkyScene still invalidates native preview and physical host; final build summary now follows Moon join and matches actual final bytes.",
+    "No new listener, provider, polling interval or permanent animation owner was added by the handoff; head result reference is consumed/revoked rather than duplicated."
+  ],
+  "independentControls": {
+    "method": "Node24.14.0, in-memory source extraction and existing mock host. No source/build/browser writes; no performance measurement.",
+    "allPassed": true,
+    "cases": [
+      {
+        "case": "actual known boot before first yield",
+        "value": {
+          "renders": 1,
+          "headHandoff": true,
+          "flag": false,
+          "retained": false,
+          "epoch": 2
+        },
+        "passed": true
+      },
+      {
+        "case": "actual unresolved boot at acquisition await",
+        "value": {
+          "acquisitions": 1,
+          "flag": false,
+          "retained": false,
+          "renders": 1
+        },
+        "passed": true
+      },
+      {
+        "case": "actual invalid initial clock return",
+        "value": {
+          "flag": false,
+          "retained": false
+        },
+        "passed": true
+      },
+      {
+        "case": "actual default scene invalidation",
+        "value": {
+          "renders": 2,
+          "headHandoff": false,
+          "flag": false
+        },
+        "passed": true
+      },
+      {
+        "case": "paused return before first acceptance",
+        "value": {
+          "renders": 2,
+          "headHandoff": false,
+          "retained": false
+        },
+        "passed": true
+      },
+      {
+        "case": "invalid return before first acceptance",
+        "value": {
+          "renders": 2,
+          "headHandoff": false,
+          "retained": false
+        },
+        "passed": true
+      }
+    ]
+  },
+  "validationReceipts": {
+    "targetedBeforeFinalRevocation": "head-handoff-r3.txt:12/12",
+    "targetedAfterFinalRevocation": "head-handoff-r4.txt:14/14",
+    "fullHostPriorToFinalTwoRevocations": "host-full-r1.txt:46/46,27445.7183ms",
+    "timeoutDisposition": "The prior10s cap was below the recorded complete host suite duration; the complete retained log has zero failed/cancelled tests. Do not describe the final changed source as a48-test whole-suite run.",
+    "sevenNarrowCelestialAndFirstPaintTests": "Root reported7/7; source and extraction boundaries inspected, execution not independently rerun here."
+  },
+  "limits": [
+    "Six independent source controls passed; they are not browser or physical pixel tests.",
+    "Root must retain the joined source control and perform the serialized native discriminator on the exact candidate.",
+    "Historical strict startup timing failures, source-frame gaps, actual extension-parent widget integration, and final combined startup/H1/cost qualification remain open.",
+    "Any new acquisition marker requires the separate controlled busy-main-thread fixture and original source coverage at<=80ms. No old gap may be filled or promoted.",
+    "R0018/R0024/R0022 protections, approved H1 R0022-L1-H1-K003-H020-v1, V5/raw fields, Earthshine, opaque Moon, geometry,V1 and Chromium1000/250/80/250ms / Firefox1500/400/80/400ms stay binding."
+  ]
+}
+

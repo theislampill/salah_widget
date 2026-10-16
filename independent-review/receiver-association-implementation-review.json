@@ -1,0 +1,119 @@
+{
+  "schema": "r0021-receiver-association-implementation-review/v1",
+  "reviewer": "/root/r0021_review",
+  "decision": "ACCEPT_CORRECTED_SOURCE_GUARD_AND_R1_COMPACT_BINDING_ONLY",
+  "scope": "Read-only review and in-memory controls. No build, browser, performance measurement, terrain regeneration or V5/CP9 replay performed by reviewer.",
+  "reviewedProposalSha256": "b93b3dda7fe91a4fbd1a07e10381645656b20609c620e68ce0d90744a3dc506e",
+  "associationSha256": "b6b49f88d88f25d960846bb3ba2905b1a94226d37c883600a91e64027542fcec",
+  "initialManifestSha256": "f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5",
+  "finding": {
+    "id": "R0021-REVIEW-GUARD-01",
+    "status": "FIXED_IN_SOURCE_NOT_YET_REBUILT",
+    "before": "R1 validate_initial_sources returned before authenticating the manifest when the loaded source map had no drift. Rebinding hashes or emptying the source map bypassed the exact association.",
+    "discriminator": "Reviewer called the actual validator against virtual in-memory paths. A rewritten loaded manifest plus unknown surface_v5 bytes returned None on R1.",
+    "fix": "Current source pins the exact original manifest bytes before the no-drift return. Tests reload the mutated file rather than retain the pre-mutation parsed pin.",
+    "oldBuilderSha256": "d0daecf4351334dcd0084c5e1101a8922052bea8d22a1de3fc2b5922c1d3d619",
+    "correctedBuilderSha256": "fae4dd37691ff283df634a4c98393e6470cc9e3cf0a3ec7e23612a5aa77e6248"
+  },
+  "independentControls": {
+    "method": "Python311 -I -S -B, actual imported validator, VirtualPath.read_bytes/is_file over in-memory byte maps; no fixture/build filesystem writes",
+    "allPassed": true,
+    "cases": [
+      {
+        "case": "authentic reviewed pair",
+        "result": "b6b49f88d88f25d960846bb3ba2905b1a94226d37c883600a91e64027542fcec",
+        "expectedReject": false,
+        "passed": true
+      },
+      {
+        "case": "empty loaded source map",
+        "error": "Initial receiver source association ancestry",
+        "expectedReject": true,
+        "passed": true
+      },
+      {
+        "case": "refreshed loaded source hashes",
+        "error": "Initial receiver source association ancestry",
+        "expectedReject": true,
+        "passed": true
+      },
+      {
+        "case": "unknown source plus rebound manifest",
+        "error": "Initial receiver source association ancestry",
+        "expectedReject": true,
+        "passed": true
+      },
+      {
+        "case": "tampered moon/src/moon-detail.mjs",
+        "error": "Initial receiver source drift: moon/src/moon-detail.mjs",
+        "expectedReject": true,
+        "passed": true
+      },
+      {
+        "case": "tampered moon/src/moon-engine.mjs",
+        "error": "Initial receiver source drift: moon/src/moon-engine.mjs",
+        "expectedReject": true,
+        "passed": true
+      },
+      {
+        "case": "tampered moon/src/surface_v5.mjs",
+        "error": "Initial receiver source drift: moon/src/surface_v5.mjs",
+        "expectedReject": true,
+        "passed": true
+      },
+      {
+        "case": "missing association",
+        "error": "Initial receiver source association identity",
+        "expectedReject": true,
+        "passed": true
+      },
+      {
+        "case": "modified association",
+        "error": "Initial receiver source association identity",
+        "expectedReject": true,
+        "passed": true
+      }
+    ],
+    "files": {
+      "tools/build_moon.py": "fae4dd37691ff283df634a4c98393e6470cc9e3cf0a3ec7e23612a5aa77e6248",
+      "tests/real-sky/initial_source_association_test.py": "261e3b982579f0ece6e834f257a9cdbfba894b537f8986e5ab5d9cfe51ca48f3",
+      "tests/real-sky/moon_build_guard_test.py": "39249c62fa0acfc84aa493974867c17dad01c446f42078ba571db4dc10315d8a"
+    }
+  },
+  "rootReportedTests": {
+    "association": 7,
+    "transaction": 5,
+    "independentlyRerun": false,
+    "reviewedSource": true,
+    "limit": "Transaction controls mock custody for tiny synthetic payloads. Real association tests use the authentic source and manifest."
+  },
+  "compactBinding": {
+    "build": "<evidence>/builds/integrated-r1",
+    "inputSnapshotSha256": "1e13c9e4750e7047d28f412cdf69cd61bceba498c173a4f731850efd2cf45033",
+    "moonBuildSha256": "ea16403231df2a91a15d75af123922895a870a733422d36b91e608e30c4431fc",
+    "all18MoonBuildSourcePinsMatchSnapshotAndCurrentSourceAtRead": true,
+    "rawReceiverSha256": "0c5e4be7808367211ab3a8fec8a8dcba76f6f9a69ebf5591dc76ed3e188b2444",
+    "compactSha256": "dc131b3858aa20ddc858ccf1058fdcba533ec70d98f5d3bb28d1afc77b307269",
+    "compactManifestSha256": "6984efd68d396a6332ce6629f542be6461952395b0e3c7f2bfcde1702d06c3c6",
+    "decodedSha256": "25755b217ec6da7401740b3d4df06d23c917e4bfc447d5667938b7b960a69331",
+    "embeddedEntries": [
+      "moon/moon-host.js",
+      "index.html",
+      "offline.html"
+    ],
+    "checks": "Each entry has exactly one compact bootstrap. Independently extracted base64 bytes equal generated compact payload; inline encoding JSON equals compact manifest; decoded pin retains original receiver/manifest parents and explicit numerical/browser qualification boundary.",
+    "workerSha256": "760ce0838e62724ef158e74f13a19c9e2acea02b5bd86a492006d2f6e13aa6ce",
+    "hostSha256": "1c3325f96bd8892ba995b7519caae800c04bdaded24023cf7b39dd6fe7f90918",
+    "finalIndexSha256": "fa423394a28d0231d99edc674f7f13921dfd3fe31814cf0c192ec6509b2c0d92",
+    "offlineSha256": "066ef83d4ad2570522615765e521342741890213d539ef2e09f8296355631987",
+    "buildLogDigestCaveat": "db04b7ea4df3f6a8b33c83fa59ada82e547a0200dd040e4af8936806401f8539 is logged at tools/build_native.py:98 before build_moon at109. It is the pre-Moon entry digest, not final runtime identity.",
+    "numericalReuse": "Same compact payload and consumed numerical closure as prior accepted dependency review; retained 40-case maximum RMS2.4105033108487692 / p95 4 / localized maximum68 / coverage mismatch0. No new numerical run."
+  },
+  "remaining": [
+    "Root must rebuild corrected guard with any next startup correction and bind final generated candidate separately.",
+    "Historical strict S1 timing failures and source-frame limitations remain; no S1/S7 acceptance.",
+    "Actual extension-parent widget integration and final combined H1/startup qualification remain open.",
+    "Current R0022 H1, V5, raw fields, Earthshine, opacity, geometry and V1 protections are unchanged by this guard."
+  ]
+}
+

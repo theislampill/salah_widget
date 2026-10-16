@@ -1,0 +1,91 @@
+{
+  "schema": "r0021-cost-budget-review/v1",
+  "recordedAtUtc": "2026-10-16T17:37:13.6910504Z",
+  "reviewer": "/root/r0021_review",
+  "role": "Independent read-only reviewer; no source, browser, performance, delivery or closure authority",
+  "decision": "ADOPT_PRE_MEASUREMENT_WITH_EXPLICIT_PROTOCOL",
+  "decisionScope": "Adopt the canonical proposed callback self-time tolerance and bounded protocol before collecting cost results. This is not a measurement PASS or permission to launch a browser.",
+  "ownerAuthority": "Root assignment reports explicit owner authorization to adopt after independent review. Root remains the sole integrator and resource/effect owner.",
+  "measurementsPerformedByReviewer": false,
+  "measuredResult": "NOT_EXECUTED",
+  "sourceAtIntake": {
+    "worktree": "<candidate>",
+    "branch": "codex/r0021-startup-completion",
+    "head": "f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de",
+    "dirty": false,
+    "remote": "https://github.com/theislampill/salah_widget.git",
+    "donor": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+    "finalCombinedCandidate": "NOT_YET_FROZEN"
+  },
+  "evidence": [
+    {"path": "intake/issue-33.json", "sha256": "b7490f86ff7bb4ee6f4a5c17be0dbfd70ac1bb02b6403edbb9c35926fb462fc6"},
+    {"path": "intake/issue-33-comments.json", "sha256": "953296ab223938e56083310a92f6f96e561fb9f5d34be11f8cedf9a409d9a40a"},
+    {"path": "intake/33-assessment.json", "sha256": "2a13d52f2e8a857c40626f35f0863ccbf2e204d6d42dc67e5ced235bad2e1bc7"},
+    {"path": "intake/R0021-canonical.md", "sha256": "46c60799243e3571f0a6724fa3dd648a64d82a7f341be21138dbf167cea70c32", "decisionLines": [109,120,174,200,202]},
+    {"path": "intake/PR43_REVIEW_REVISION.md", "sha256": "4d2abea73b4dfa29d1bae660be77b1acf058b0f6cdc1cc318adca3c92d36375c"},
+    {"path": "intake/CELESTIAL_STARTUP_RLGWO.md", "sha256": "a399172bc86ebdb3df9bc2d80a6f64901c79b7693cdd20cdc89bf62fff855d2a"},
+    {"path": "intake/CELESTIAL_STARTUP_QUALIFICATION.md", "sha256": "eefa2880fe979163e404ccaaa6f5391e913db254341f52e7a5d446b79b44a3be"},
+    {"path": "<user-home>/.codex/work-products/r0022-execution-20261015/delivery-r1/S10-HANDOFF.json", "sha256": "faad9e056baeb4e125f6b08de96a7aaebe263cb395452377371b2b2f62b192d8"}
+  ],
+  "rationale": "The original issue requires no material native callback regression but supplies no numerical CPU limit. The canonical pre-run proposal is a reasonable narrow operational definition. The absolute floor prevents sub-millisecond timer noise from dominating; the relative term bounds larger callbacks. It is not a GPU, power, battery, universal-device or full CP9 budget.",
+  "baselineBinding": {
+    "canonicalOriginalGateBaseline": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "canonicalBaselineRuntime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "currentProductionBaseline": "f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de",
+    "rule": "Root must bind baseline and final combined startup/H1 candidate manifests before execution. Canonical A01 explicitly names 18ff before versus final integrated source; comparing only f270 establishes incremental current-production cost, not that exact historical comparison. Do not silently relabel either baseline or attribute intervening production changes solely to R0021. Additional comparison is not automatically required; report the exact claim it can support."
+  },
+  "preconditions": [
+    "Root accepts this review and records the adopted rule before the first cost sample; no post-result threshold change.",
+    "Final source and generated runtime are frozen with exact TIMING and delivered R0022-L1-H1-K003-H020-v1 owners joined; any later affected edit invalidates only its affected cost evidence.",
+    "Root leases one quiescent machine/browser run. No parallel expensive solver, browser, video capture, screenshot polling or benchmark. Reviewer has no such lease at this decision.",
+    "Bind actual browser executable/version, machine, power setting, viewport/card/canvas dimensions, DPR, motion mode, fixture bytes, wall-time anchor/rate, observer, configuration, provider/cache policy and admitted rendering state.",
+    "Instrument actual native owners and prove wrapper reachability/ownership before interpreting their timings. Match accepted scene, geometry, currentness, catalogue/material quality tier and pending-work state for steady comparisons."
+  ],
+  "steadyProtocol": {
+    "warmupSeconds": 5,
+    "warmupStart": "After each measured variant reaches the same declared admitted and quiescent state; five seconds after navigation is not sufficient. Warm the actual functions that will be observed.",
+    "rounds": 4,
+    "orderPerRound": ["A", "B", "B", "A"],
+    "A": "pinned baseline",
+    "B": "pinned final combined candidate",
+    "secondsPerMeasuredBlock": 5,
+    "measuredBlocksPerEngine": 16,
+    "measuredSecondsPerEngine": 80,
+    "execution": "Serial blocks. Each A or B observation has its own recorded five-second actual-function warmup after state matching. Keep provider refresh blocked consistently; do not erase or drain native work merely to force matching.",
+    "engines": ["Chromium", "Firefox"],
+    "engineAggregation": "Never pool engines or different scene/DPR/cache tiers.",
+    "toleranceMs": "max(0.25, 0.10 * baselineStatisticMs)",
+    "statistics": ["median", "p95"],
+    "statisticScope": "Each matched native callback owner in steady state, separately. Retain per-block and pooled raw-call statistics; never pool different callback owners to hide a slower owner.",
+    "p95Definition": "Nearest-rank empirical quantile: sorted durations at index ceil(0.95*N)-1. Median is the middle value, or mean of the two middle values for even N.",
+    "passRule": "For both median and p95, candidateStatistic - baselineStatistic must be <= max(0.25ms, 10% of that baseline statistic), with valid matched-state observations, adequate samples, no contrary systematic block regression and all structural inventories satisfied. Preserve every round; no best-round or post-hoc exclusion.",
+    "missingOwnerRule": "Zero/missing baseline samples are not zero cost and cannot earn a numeric PASS. New candidate callbacks require classification as bounded startup work or a separately accounted steady owner. Low callback count insufficient for a meaningful p95 returns INCOMPLETE for that owner."
+  },
+  "startupProtocol": {
+    "separateFromSteady": true,
+    "modes": ["cold", "cache-warm reload", "fresh document/new tab"],
+    "rule": "Keep native startup callbacks and response/presentation intervals separate from warmed steady samples. Retain raw startup callback durations, counts, inclusive/self totals and stage boundaries; do not use a five-second warmup to erase startup work. The 0.25ms/10% steady rule is not a new substitute for the binding startup/presentation budgets.",
+    "bindingPresentationBudgetsMs": {
+      "Chromium": {"navigationToComplete": 1000, "acceptedSceneToComplete": 250, "principalComponentGap": 80, "addedVsMatchedBaselineScene": 250},
+      "Firefox": {"navigationToComplete": 1500, "acceptedSceneToComplete": 400, "principalComponentGap": 80, "addedVsMatchedBaselineScene": 400}
+    },
+    "presentationEvidence": "Uninstrumented correctness/presentation evidence stays separate. Application publication, trace expected-display times, late PNGs, resampled frames and callback completion do not prove first presentation. Preserve uncovered intervals and the historical five strict FAILs."
+  },
+  "instrumentation": {
+    "owners": ["actual native scheduler callback", "render", "applyTheme", "commitSkyScene", "any additional changed startup/steady callback owner found in the final source"],
+    "selfTime": "Measure synchronous native callback execution excluding nested instrumented callback duration; also retain inclusive duration and caller/child relationships. Preserve this, arguments, return value, thrown exceptions, callback registration identity and scheduling semantics. Do not include asynchronous waiting as self-time.",
+    "sampling": "Record every call for the declared window with timestamps, source owner, segment, round/block, duration and exception status. Use the same bounded observation method on both variants, disclose timer resolution and observer overhead, and avoid per-frame getter/screenshot polling or manually invoking surrogate helpers.",
+    "identity": "Bind original function/source locations or hashes and the exact executed registration/call path. Extracted-helper loops and stage-name counters without native ownership are diagnostic only.",
+    "inventory": ["native rAF chain ownership and scheduled/executed/cancelled counts", "bounded bootstrap rAF/task callbacks separately", "pending jobs and workers at start/end", "timers and listeners at start/end", "provider starts/completions/refreshes", "canvas/texture construction and resizing", "typed-array and retained-array sizes/capacities", "per-frame allocation sites and whether introduced", "retained current/obsolete results and generation/target fences", "page/worker exceptions and observer buffer overflow"],
+    "structuralRule": "No new permanent native render controller, new unbounded retention or introduced per-frame allocation. Bounded one-time initial buffers/jobs are declared and accounted, not treated as a new permanent loop. Heap snapshots alone are not proof of allocation absence."
+  },
+  "noiseAndFailureDisposition": {
+    "invalid": "Unequal rendering state, active unmatched terrain work, missing timers/owners, hidden/throttled documents, buffer loss, observer overhead comparable to budget, or an unexplained resource/provider difference yields INCOMPLETE, never PASS.",
+    "noise": "Retain all per-round medians/p95 and same-variant block spread. If spread exceeds the corresponding predeclared tolerance, treat it as noise requiring explanation rather than averaging away the discrepancy.",
+    "repeatLimit": 1,
+    "repeatRule": "One controlled repeat is allowed only after documenting the external cause and restoring matching conditions, with unchanged source, thresholds, fixtures and analysis. Retain the original attempt. Persistent noise or unresolved mismatch returns INCOMPLETE; a valid repeatable budget breach returns FAIL.",
+    "noSearchForPass": true
+  },
+  "openGatesUnchanged": ["Final candidate compatibility/independent source review", "S1 strict timing and source-frame coverage", "S7 actual extension/new-tab parent absent", "Actual callback measurement", "Final startup/H1 complete-scene integration readback", "Owner exact-head delivery and closure decisions"],
+  "nextRootAction": "Record adoption and exact baseline/final-candidate scope, finish selective source integration and freeze the generated manifest, then present the actual instrumentation/state-matching recipe before leasing the one serialized measurement."
+}

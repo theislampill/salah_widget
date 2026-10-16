@@ -1,0 +1,170 @@
+TAP version 13
+# Subtest: native celestial presence follows the accepted physical Sun, not timetable-fitted altitude
+ok 1 - native celestial presence follows the accepted physical Sun, not timetable-fitted altitude
+  ---
+  duration_ms: 134.22
+  type: 'test'
+  ...
+# Subtest: lunar droplet corona needs admitted water cloud or fog, not humidity alone
+ok 2 - lunar droplet corona needs admitted water cloud or fog, not humidity alone
+  ---
+  duration_ms: 71.9629
+  type: 'test'
+  ...
+# Subtest: solar body has one radiometric colour profile, without a brighter independent orange collar
+ok 3 - solar body has one radiometric colour profile, without a brighter independent orange collar
+  ---
+  duration_ms: 66.2351
+  type: 'test'
+  ...
+# Subtest: enlarged solar body does not inflate at the horizon; high Sun and horizon presence stay independent
+ok 4 - enlarged solar body does not inflate at the horizon; high Sun and horizon presence stay independent
+  ---
+  duration_ms: 67.1761
+  type: 'test'
+  ...
+# Subtest: low solar body has a resolved continuous radiance profile instead of a flat central fill
+ok 5 - low solar body has a resolved continuous radiance profile instead of a flat central fill
+  ---
+  duration_ms: 63.5007
+  type: 'test'
+  ...
+# Subtest: clear low-Sun colour recovers with atmospheric beam transmission before noon
+ok 6 - clear low-Sun colour recovers with atmospheric beam transmission before noon
+  ---
+  duration_ms: 65.752
+  type: 'test'
+  ...
+# Subtest: cloud twilight colour follows solar geometry, never the binary timetable day flag
+ok 7 - cloud twilight colour follows solar geometry, never the binary timetable day flag
+  ---
+  duration_ms: 70.3555
+  type: 'test'
+  ...
+# Subtest: predawn clouds retain cool ambient light and low-Sun cloud colour evolves continuously
+ok 8 - predawn clouds retain cool ambient light and low-Sun cloud colour evolves continuously
+  ---
+  duration_ms: 66.1335
+  type: 'test'
+  ...
+# Subtest: second-level boundaries for every event and Sunrise to Forenoon retain independent current/next
+ok 9 - second-level boundaries for every event and Sunrise to Forenoon retain independent current/next
+  ---
+  duration_ms: 106.3548
+  type: 'test'
+  ...
+# Subtest: overnight next row uses tomorrow Fajr, same target as countdown and arc
+ok 10 - overnight next row uses tomorrow Fajr, same target as countdown and arc
+  ---
+  duration_ms: 67.1185
+  type: 'test'
+  ...
+# Subtest: new target withdraws old prayer rows, countdown and weather together before provider settlement
+ok 11 - new target withdraws old prayer rows, countdown and weather together before provider settlement
+  ---
+  duration_ms: 47.1386
+  type: 'test'
+  ...
+# Subtest: yesterday cannot nominate a current next prayer at midnight; eligible tomorrow promotion restores it
+ok 12 - yesterday cannot nominate a current next prayer at midnight; eligible tomorrow promotion restores it
+  ---
+  duration_ms: 77.6671
+  type: 'test'
+  ...
+# Subtest: live current categories keep condition icons and model-supported precipitation without observed strikes
+ok 13 - live current categories keep condition icons and model-supported precipitation without observed strikes
+  ---
+  duration_ms: 609.7941
+  type: 'test'
+  ...
+# Subtest: weather unavailable, expired and wrong target never retains old temperature/icon pair
+ok 14 - weather unavailable, expired and wrong target never retains old temperature/icon pair
+  ---
+  duration_ms: 211.8476
+  type: 'test'
+  ...
+# Subtest: missing or contradictory amounts retain a model condition without inventing rain effects
+ok 15 - missing or contradictory amounts retain a model condition without inventing rain effects
+  ---
+  duration_ms: 206.1986
+  type: 'test'
+  ...
+# Subtest: missing temperature does not discard an eligible model condition or retain an old value
+ok 16 - missing temperature does not discard an eligible model condition or retain an old value
+  ---
+  duration_ms: 63.1572
+  type: 'test'
+  ...
+# Subtest: every supported provider WMO code retains its category in the live condition lane
+ok 17 - every supported provider WMO code retains its category in the live condition lane
+  ---
+  duration_ms: 149.1236
+  type: 'test'
+  ...
+# Subtest: new-generation tomorrow adoption cannot re-admit old-generation current rows
+ok 18 - new-generation tomorrow adoption cannot re-admit old-generation current rows
+  ---
+  duration_ms: 35.4668
+  type: 'test'
+  ...
+# Subtest: native clock controls pause, seek, change rate and return to the live current-weather lane
+ok 19 - native clock controls pause, seek, change rate and return to the live current-weather lane
+  ---
+  duration_ms: 72.4049
+  type: 'test'
+  ...
+# Subtest: pausing an explicit forecast playback retains preview provenance instead of dropping its weather
+ok 20 - pausing an explicit forecast playback retains preview provenance instead of dropping its weather
+  ---
+  duration_ms: 75.3034
+  type: 'test'
+  ...
+# Subtest: hourly thunder model in time-lapse does not invent lightning observations or flashes
+ok 21 - hourly thunder model in time-lapse does not invent lightning observations or flashes
+  ---
+  duration_ms: 70.4286
+  type: 'test'
+  ...
+# Subtest: fresh accepted daytime scene publishes its Sun while the timetable is absent
+ok 22 - fresh accepted daytime scene publishes its Sun while the timetable is absent
+  ---
+  duration_ms: 100.7813
+  type: 'test'
+  ...
+# Subtest: accepted night target cannot expose the previous daytime Sun without a timetable
+ok 23 - accepted night target cannot expose the previous daytime Sun without a timetable
+  ---
+  duration_ms: 76.6179
+  type: 'test'
+  ...
+# Subtest: pending and settled prayer data publish the same solar vector and horizon placement
+not ok 24 - pending and settled prayer data publish the same solar vector and horizon placement
+  ---
+  duration_ms: 70.8973
+  type: 'test'
+  location: '<candidate>\\tests\\real-sky\\native-solar-startup.test.cjs:30:1'
+  failureType: 'testCodeFailure'
+  error: 'S.physicalLight?.sample is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    paintClouds (index.html:inline:1990:38)
+    commitSkyScene (index.html:inline:1505:3)
+    paint (index.html:inline:2440:3)
+    evalmachine.<anonymous>:1:1
+    Script.runInContext (node:vm:149:12)
+    Object.runInContext (node:vm:301:6)
+    Object.run (<candidate>\tests\r001d-harness.cjs:91:22)
+    TestContext.<anonymous> (<candidate>\tests\real-sky\native-solar-startup.test.cjs:41:22)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 23
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2492.8686

@@ -1,0 +1,770 @@
+{
+  "schema": "r0021-cloud-delay-independent-review/v1",
+  "recordedAtUtc": "2026-10-16T20:01:28.292780+00:00",
+  "reviewer": "/root/r0021_review",
+  "decision": "ACCEPT_BOUNDED_DELAY_FAILURE_AND_LIFECYCLE_OBSERVATIONS",
+  "scope": "One Chromium DPR2 generic-iframe partial-cloud/full-sky-delay case and the narrow harness ordering/checkpoint repair. No whole S2/S5/S6, S1, recovery, S7 or final candidate acceptance.",
+  "effects": {
+    "browser": false,
+    "tests": false,
+    "builds": false,
+    "heavyProcessing": false,
+    "processOperations": false,
+    "productWrites": false,
+    "newAgents": false,
+    "externalWrites": false,
+    "writes": "independent-review reports only"
+  },
+  "case": {
+    "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4",
+    "browser": {
+      "family": "chromium",
+      "version": "148.0.7778.96",
+      "os": "Windows",
+      "machine": "AMD64",
+      "executable": "<browser-install>\\chromium-1223\\chrome-win64\\chrome.exe",
+      "chromiumSandboxRequested": true
+    },
+    "entry": "iframe",
+    "dpr": 2.0,
+    "weather": {
+      "code": 2,
+      "cloud": 35,
+      "precipMm": 0
+    },
+    "hold": "sky",
+    "delaySeconds": 20.0,
+    "durationSeconds": 120,
+    "modes": [
+      "cold"
+    ],
+    "runtimeTreeSha256": "61ceff2276153be01c0b2d319ac036691982fe6999be9fac8d6458758f89f565",
+    "runtimeUnchangedReported": true,
+    "executionExitCode": 0,
+    "topLevelErrors": [],
+    "instrumented": false,
+    "layersRequested": false,
+    "recoveryRequested": false,
+    "actualExtensionParent": false
+  },
+  "inputArtifacts": [
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\results.json",
+      "sha256": "7ca9cc03309b581adb05a549fe73e363ba83c6fca39575eac850f8f462a57f61"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\EXECUTION.json",
+      "sha256": "38e305a0afd48b957e5f1dbdd6e4823eb8fb7a44735fdd4a676ba062c4feee56"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\RUN-LOG.txt",
+      "sha256": "aff72262e846d1ced7698805b25ed701cd6bbf174384d05a2f02a2e8fd2ae007"
+    },
+    {
+      "path": "<evidence>\\intake\\native-harness-order-repair-r1.json",
+      "sha256": "900cd7e346239ba8b75bffbbbfc3ee7ff1dc18bd94452682fe92ba55e2377e4f"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r3\\EXECUTION.json",
+      "sha256": "593af357d87a8ebd30fdf99285d7d8fd6b540eda34fa4d075cc43bc634a86287"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r3\\RUN-LOG.txt",
+      "sha256": "f303842bab6aa14f7ec770270c1a86bed880f80aad78876ec4c7ea9cf4e59bdb"
+    },
+    {
+      "path": "<candidate>\\real-sky\\native-assets.mjs",
+      "sha256": "316a0c8c784c88e592568003db3198c4cda33606798368af00232d1b2c6bfaab"
+    },
+    {
+      "path": "<evidence>\\intake\\R0021-canonical.md",
+      "sha256": "46c60799243e3571f0a6724fa3dd648a64d82a7f341be21138dbf167cea70c32"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\video\\page@4b0ef46b59ec792482e96f504992ef07.webm.frames.jsonl",
+      "sha256": "ce14a8cf015b90dbd65895804c0d98d90cdeaa6050cec52a1b3e21b372c4679d"
+    }
+  ],
+  "harnessSnapshotPins": [
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py",
+      "sha256": "d5c18049402a03d370d20b591de2d1d783a57ce4ad01d59fa5dbcab7ffbd2ddf"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py",
+      "sha256": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js",
+      "sha256": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\browser_runtime.py",
+      "sha256": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\runtime_identity.py",
+      "sha256": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r3\\harness-source\\tests\\v1_browser.py",
+      "sha256": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\harness-source\\tools\\cp9\\celestial_startup_check.py",
+      "sha256": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py",
+      "sha256": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\harness-source\\tools\\cp9\\celestial_layer_controls.js",
+      "sha256": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\harness-source\\tools\\cp9\\browser_runtime.py",
+      "sha256": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\harness-source\\tools\\cp9\\runtime_identity.py",
+      "sha256": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\harness-source\\tests\\v1_browser.py",
+      "sha256": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692"
+    }
+  ],
+  "custody": "Both six-file saved harness snapshots match their execution pins. Current main harness matches the r4 snapshot and supplied hash. Results runtime tree agrees with the frozen integrated-r3 identity and reports runtimeUnchanged=true; this review did not rerun the full runtime manifest or a build.",
+  "ordinaryStates": [
+    {
+      "name": "at15s",
+      "childAtMs": 15216.800000011921,
+      "nativeGeneration": 0,
+      "site": [
+        28.5383,
+        -81.3792
+      ],
+      "timeScale": 1,
+      "prayerReady": true,
+      "card": {
+        "x": 0,
+        "y": 0,
+        "width": 325,
+        "height": 530,
+        "visibility": "visible",
+        "opacity": "1"
+      },
+      "moon": {
+        "status": "ready",
+        "current": true,
+        "visibleSource": "refined-terrain",
+        "generation": 0,
+        "epoch": 2,
+        "pending": false
+      },
+      "fullSky": {
+        "checkpoint": "9",
+        "status": "loading",
+        "assets": {
+          "status": "loading",
+          "generation": 1,
+          "error": null
+        },
+        "errors": [],
+        "last": null
+      },
+      "preview": {
+        "status": "ready",
+        "quality": "physical-background-and-bright-catalogue-preview",
+        "catalogue": {
+          "sha256": "da5002f0eda9ad3e0f2cc7c95ab423043feea61e8522239d2930ca1945beef2e",
+          "bootstrapSha256": "cc47013a3221269b4b3c571df860a125be428b00a5f89421757f2017f305524f",
+          "totalRecords": 8921,
+          "previewRecords": 921,
+          "maximumMagnitude": 4.5,
+          "drawn": 102,
+          "belowByteResolution": false,
+          "summedFluxBound": [
+            3.821470490880531,
+            3.190799923804029,
+            2.9911210701924467
+          ],
+          "renderMs": 9.5,
+          "utcMs": 1790301601535.0742,
+          "quality": "bright-catalogue-preview; registered diffuse and fainter catalogue pending",
+          "visibility": "shared apparent background/exposure; no solar threshold; native clouds/calendar once"
+        },
+        "publication": {
+          "utcMs": 1790301616083.0742,
+          "ageMs": 14548,
+          "at": 15156.800000011921
+        }
+      },
+      "prayerRows": [
+        "Fajr06:21",
+        "Sunrise07:26",
+        "Dhuhr13:17",
+        "Asr16:38",
+        "Maghrib19:08",
+        "Isha20:13"
+      ]
+    },
+    {
+      "name": "final",
+      "childAtMs": 120111.40000003576,
+      "nativeGeneration": 0,
+      "site": [
+        28.5383,
+        -81.3792
+      ],
+      "timeScale": 1,
+      "prayerReady": true,
+      "card": {
+        "x": 0,
+        "y": 0,
+        "width": 325,
+        "height": 530,
+        "visibility": "visible",
+        "opacity": "1"
+      },
+      "moon": {
+        "status": "ready",
+        "current": true,
+        "visibleSource": "refined-terrain",
+        "generation": 0,
+        "epoch": 2,
+        "pending": false
+      },
+      "fullSky": {
+        "checkpoint": "9",
+        "status": "unavailable",
+        "assets": {
+          "status": "unavailable",
+          "generation": 1,
+          "error": "Native sky asset timeout"
+        },
+        "errors": [
+          "Native sky asset timeout"
+        ],
+        "last": null
+      },
+      "preview": {
+        "status": "ready",
+        "quality": "physical-background-and-bright-catalogue-preview",
+        "catalogue": {
+          "sha256": "da5002f0eda9ad3e0f2cc7c95ab423043feea61e8522239d2930ca1945beef2e",
+          "bootstrapSha256": "cc47013a3221269b4b3c571df860a125be428b00a5f89421757f2017f305524f",
+          "totalRecords": 8921,
+          "previewRecords": 921,
+          "maximumMagnitude": 4.5,
+          "drawn": 101,
+          "belowByteResolution": false,
+          "summedFluxBound": [
+            3.7251990828974963,
+            3.0821920728815857,
+            2.8692152630567347
+          ],
+          "renderMs": 19.400000035762787,
+          "utcMs": 1790301701980.0742,
+          "quality": "bright-catalogue-preview; registered diffuse and fainter catalogue pending",
+          "visibility": "shared apparent background/exposure; no solar threshold; native clouds/calendar once"
+        },
+        "publication": {
+          "utcMs": 1790301720961.0742,
+          "ageMs": 18981,
+          "at": 120034.40000003576
+        }
+      },
+      "prayerRows": [
+        "Fajr06:21",
+        "Sunrise07:26",
+        "Dhuhr13:17",
+        "Asr16:38",
+        "Maghrib19:08",
+        "Isha20:13"
+      ]
+    }
+  ],
+  "delayAndFailure": {
+    "defaultAssetDeadlineMs": 15000,
+    "source": "<candidate>\\real-sky\\native-assets.mjs",
+    "sourceLines": [
+      5,
+      18,
+      19,
+      21,
+      24,
+      51,
+      55,
+      56,
+      60
+    ],
+    "resourceTiming": {
+      "name": "http://127.0.0.1:58718/salah_widget/real-sky/native-data.js?nativeSkyGeneration=1",
+      "entryType": "resource",
+      "startTime": 915.1000000238419,
+      "duration": 20030.80000001192,
+      "initiatorType": "script",
+      "deliveryType": "",
+      "nextHopProtocol": "http/1.0",
+      "renderBlockingStatus": "non-blocking",
+      "contentType": "text/javascript",
+      "contentEncoding": "",
+      "workerStart": 0,
+      "workerRouterEvaluationStart": 0,
+      "workerCacheLookupStart": 0,
+      "workerMatchedSourceType": "",
+      "workerFinalSourceType": "",
+      "redirectStart": 0,
+      "redirectEnd": 0,
+      "fetchStart": 915.1000000238419,
+      "domainLookupStart": 915.5,
+      "domainLookupEnd": 915.9000000357628,
+      "connectStart": 915.9000000357628,
+      "secureConnectionStart": 0,
+      "connectEnd": 916.4000000357628,
+      "requestStart": 916.4000000357628,
+      "responseStart": 20918.19999998808,
+      "firstInterimResponseStart": 0,
+      "finalResponseHeadersStart": 20918.19999998808,
+      "responseEnd": 20945.900000035763,
+      "transferSize": 9807639,
+      "encodedBodySize": 9807339,
+      "decodedBodySize": 9807339,
+      "responseStatus": 200,
+      "serverTiming": []
+    },
+    "interpretation": "The 20-second held full script exceeds the unchanged acquisition deadline. Its recorded HTTP 200/body completion near 20.946 seconds does not imply admitted ready state: final sky is unavailable with Native sky asset timeout and last=null. Preview remains a bounded bright-catalogue bootstrap; no retry is requested and recovery is null. At the earlier 15.217-second child read, loading is consistent with a deadline measured from the later asset attempt, not from navigation."
+  },
+  "imagesViewed": [
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\cold-00.png",
+      "sha256": "21e2b45e12eb7264a734524b92593ecdf2569a507318711c59233b0632c82133",
+      "observation": "At the recorded 15-second PNG request: textured Moon, visible stars/clouds, six prayer rows and footer are present; badge says Real sky loading. This is an endpoint image, not first-pixel timing."
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\cold-final.png",
+      "sha256": "7de315c6454b1a32c39c01e34bc25837a66d4ff4a8e593fb93ad650ecc4abda0",
+      "observation": "At the later ordinary endpoint: Moon/stars remain present, six prayer rows/footer intact and badge explicitly says Real sky unavailable. Cloud pattern differs from the earlier endpoint; no continuous-motion claim is made."
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\cold-lifecycle-settings-open.png",
+      "sha256": "fbf53d318e2835e65a0b6e32439025bf73026e24ffa76b6623f549287f9ab1a1",
+      "observation": "Settings dialog visibly open with latitude/longitude/name inputs and close control."
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\cold-lifecycle-settings-target-b.png",
+      "sha256": "c283bac4517ab09c3a29a359c178b6a20d8d3f0aae6cdff4ba5205ef846122fb",
+      "observation": "Dialog closed; B settings label, Moon, stars, prayer rows and unavailable badge visible."
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\cold-lifecycle-settings-target-a.png",
+      "sha256": "aabcb6fca37bb49804b893148404632b0e54f31a2dca48f464765c6ddffcafac",
+      "observation": "Dialog closed; CENTRAL FL label restored with Moon/stars/prayer rows and unavailable badge."
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\cold-lifecycle-seek.png",
+      "sha256": "8f252b7c6ce3450ad1ac79171693e70c93ded0ca321d1cfd3df7056c8154d7e3",
+      "observation": "Programmatic seek endpoint retains Moon/stars and usable prayer UI, with the changed countdown."
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\cold-lifecycle-reference-withdrawal.png",
+      "sha256": "e3d7bbd920536416dccf28cb86498d7bbdc940c47a56f68b764a5908a99102bc",
+      "observation": "Moon body absent in the deliberately unsupported reference-profile control; other UI/background remain."
+    },
+    {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\cold-lifecycle-calendar-return.png",
+      "sha256": "fa5d92c604d0b3fb729823f6b4845f9118850e5399fb0b47fe45607e2c43d8e7",
+      "observation": "Moon body returns in calendar mode with matching placement and usable UI."
+    }
+  ],
+  "rawSource": {
+    "metadata": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\video\\page@4b0ef46b59ec792482e96f504992ef07.webm.frames.jsonl",
+    "metadataSha256": "ce14a8cf015b90dbd65895804c0d98d90cdeaa6050cec52a1b3e21b372c4679d",
+    "metadataRows": 11663,
+    "rawFileCount": 11663,
+    "originalsViewed": [
+      {
+        "sequence": 2,
+        "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\video\\page@4b0ef46b59ec792482e96f504992ef07.webm.frames\\000002.jpeg",
+        "sha256": "8a70c8a3e1b53e9c72fbe3858a221688ab0f7cfa35807cc5adb6f0627e60f568",
+        "sourceTimeSeconds": 1792180397.323749,
+        "navigationRelativeMetadataMs": 455.948486328125,
+        "observation": "No widget pixels; exterior background and acquisition timer are visible."
+      },
+      {
+        "sequence": 3,
+        "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\video\\page@4b0ef46b59ec792482e96f504992ef07.webm.frames\\000003.jpeg",
+        "sha256": "9d365e0d458137894951c463d55e76f12d68e7d81f66cfb060a951bcfe8604a9",
+        "sourceTimeSeconds": 1792180397.731816,
+        "navigationRelativeMetadataMs": 864.015625,
+        "observation": "Moon and stars co-visible with a pending/unavailable prayer shell."
+      },
+      {
+        "sequence": 5,
+        "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r4\\video\\page@4b0ef46b59ec792482e96f504992ef07.webm.frames\\000005.jpeg",
+        "sha256": "b797c1270f673ef09e58ff9fcf5ee81dd89877ca99f5e9ca1d7de9c72172a05a",
+        "sourceTimeSeconds": 1792180398.004078,
+        "navigationRelativeMetadataMs": 1136.27734375,
+        "observation": "Moon, stars, clouds and populated prayer/footer UI co-visible."
+      }
+    ],
+    "uncoveredEarlyIntervals": [
+      {
+        "fromSequence": 1,
+        "toSequence": 2,
+        "milliseconds": 359.58099365234375
+      },
+      {
+        "fromSequence": 2,
+        "toSequence": 3,
+        "milliseconds": 408.066987991333
+      },
+      {
+        "fromSequence": 4,
+        "toSequence": 5,
+        "milliseconds": 268.9628601074219
+      }
+    ],
+    "disposition": "No S1 substitution. Original sequence 2 is blank and sequence 3 has celestial content, with a 408.067 ms uncovered source interval; sequence 4 to 5 has another 268.963 ms gap. Those exceed the retained 80 ms coverage budget. No continuous pixels are inferred in gaps, no claim of absence throughout a gap, no trace/DOM/late-PNG repair, and no frame interpolation. Reported navigation-relative values are metadata associations without a new clock-width qualification. The complete 120-second source stream was not visually adjudicated."
+  },
+  "lifecycle": {
+    "helperSha256": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+    "helperStatus": "PASS",
+    "helperFailures": [],
+    "settingsRoute": {
+      "route": ".buckle.interactive -> input events on #set-lat/#set-lon/#set-label -> #setClose click, twice",
+      "aGeneration": 0,
+      "bGeneration": 1,
+      "returnedAGeneration": 2,
+      "storageScope": "Disposable test origin/profile only"
+    },
+    "records": [
+      {
+        "name": "before",
+        "image": "cold-lifecycle-before.png",
+        "generation": 0,
+        "site": [
+          28.5383,
+          -81.3792
+        ],
+        "utcMs": 1790301721156.0742,
+        "timeScale": 1,
+        "moonCurrent": true,
+        "moonGeneration": 0,
+        "epoch": 2,
+        "source": "refined-terrain",
+        "pending": false,
+        "surface": true,
+        "settings": {
+          "open": false,
+          "display": "none",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.011221066326207507,
+        "photo": {
+          "x": 213.04701232910156,
+          "y": 3.0522258281707764,
+          "width": 107.81242370605469,
+          "height": 108.07064819335938
+        }
+      },
+      {
+        "name": "settings-open",
+        "image": "cold-lifecycle-settings-open.png",
+        "generation": 0,
+        "site": [
+          28.5383,
+          -81.3792
+        ],
+        "utcMs": 1790301721328.0742,
+        "timeScale": 1,
+        "moonCurrent": true,
+        "moonGeneration": 0,
+        "epoch": 2,
+        "source": "refined-terrain",
+        "pending": false,
+        "surface": true,
+        "settings": {
+          "open": true,
+          "display": "flex",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.011221066326207507,
+        "photo": {
+          "x": 213.04701232910156,
+          "y": 3.0522258281707764,
+          "width": 107.81242370605469,
+          "height": 108.07064819335938
+        }
+      },
+      {
+        "name": "settings-target-b",
+        "image": "cold-lifecycle-settings-target-b.png",
+        "generation": 1,
+        "site": [
+          40.7128,
+          -74.006
+        ],
+        "utcMs": 1790301721841.0742,
+        "timeScale": 1,
+        "moonCurrent": true,
+        "moonGeneration": 1,
+        "epoch": 4,
+        "source": "initial-v5",
+        "pending": true,
+        "surface": true,
+        "settings": {
+          "open": false,
+          "display": "none",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.041520034819930496,
+        "photo": {
+          "x": 213.1464080810547,
+          "y": 3.351093053817749,
+          "width": 107.81242370605469,
+          "height": 108.07064056396484
+        }
+      },
+      {
+        "name": "settings-target-a",
+        "image": "cold-lifecycle-settings-target-a.png",
+        "generation": 2,
+        "site": [
+          28.5383,
+          -81.3792
+        ],
+        "utcMs": 1790301722289.0742,
+        "timeScale": 1,
+        "moonCurrent": true,
+        "moonGeneration": 2,
+        "epoch": 6,
+        "source": "initial-v5",
+        "pending": true,
+        "surface": true,
+        "settings": {
+          "open": false,
+          "display": "none",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.04159999995839744,
+        "photo": {
+          "x": 213.04701232910156,
+          "y": 3.0522258281707764,
+          "width": 107.81242370605469,
+          "height": 108.07064819335938
+        }
+      },
+      {
+        "name": "a-b-a",
+        "image": "cold-lifecycle-a-b-a.png",
+        "generation": 4,
+        "site": [
+          28.5383,
+          -81.3792
+        ],
+        "utcMs": 1790301722629.0742,
+        "timeScale": 1,
+        "moonCurrent": true,
+        "moonGeneration": 4,
+        "epoch": 9,
+        "source": "initial-v5",
+        "pending": true,
+        "surface": true,
+        "settings": {
+          "open": false,
+          "display": "none",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.04159999995835528,
+        "photo": {
+          "x": 213.04701232910156,
+          "y": 3.0522258281707764,
+          "width": 107.81242370605469,
+          "height": 108.07064819335938
+        }
+      },
+      {
+        "name": "seek",
+        "image": "cold-lifecycle-seek.png",
+        "generation": 4,
+        "site": [
+          28.5383,
+          -81.3792
+        ],
+        "utcMs": 1790303522714.0742,
+        "timeScale": 0,
+        "moonCurrent": true,
+        "moonGeneration": 4,
+        "epoch": 12,
+        "source": "initial-v5",
+        "pending": true,
+        "surface": true,
+        "settings": {
+          "open": false,
+          "display": "none",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.04078363822440101,
+        "photo": {
+          "x": 213.1464080810547,
+          "y": 2.852979898452759,
+          "width": 107.81242370605469,
+          "height": 108.07064056396484
+        }
+      },
+      {
+        "name": "live-return",
+        "image": "cold-lifecycle-live-return.png",
+        "generation": 4,
+        "site": [
+          28.5383,
+          -81.3792
+        ],
+        "utcMs": 1790301723160.0742,
+        "timeScale": 1,
+        "moonCurrent": true,
+        "moonGeneration": 4,
+        "epoch": 15,
+        "source": "initial-v5",
+        "pending": true,
+        "surface": true,
+        "settings": {
+          "open": false,
+          "display": "none",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.04159999995839744,
+        "photo": {
+          "x": 213.04701232910156,
+          "y": 3.0522258281707764,
+          "width": 107.81242370605469,
+          "height": 108.07064819335938
+        }
+      },
+      {
+        "name": "reference-withdrawal",
+        "image": "cold-lifecycle-reference-withdrawal.png",
+        "generation": 4,
+        "site": [
+          28.5383,
+          -81.3792
+        ],
+        "utcMs": 1790301723257.0742,
+        "timeScale": 1,
+        "moonCurrent": false,
+        "moonGeneration": 4,
+        "epoch": 16,
+        "source": "awaiting-terrain",
+        "pending": true,
+        "surface": false,
+        "settings": {
+          "open": false,
+          "display": "none",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.04159999995839744,
+        "photo": {
+          "x": 213.04701232910156,
+          "y": 3.0522258281707764,
+          "width": 107.81242370605469,
+          "height": 108.07064819335938
+        }
+      },
+      {
+        "name": "calendar-return",
+        "image": "cold-lifecycle-calendar-return.png",
+        "generation": 4,
+        "site": [
+          28.5383,
+          -81.3792
+        ],
+        "utcMs": 1790301723503.0742,
+        "timeScale": 1,
+        "moonCurrent": true,
+        "moonGeneration": 4,
+        "epoch": 17,
+        "source": "initial-v5",
+        "pending": true,
+        "surface": true,
+        "settings": {
+          "open": false,
+          "display": "none",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.04159999995839744,
+        "photo": {
+          "x": 213.04701232910156,
+          "y": 3.0522258281707764,
+          "width": 107.81242370605469,
+          "height": 108.07064819335938
+        }
+      },
+      {
+        "name": "final",
+        "image": "cold-lifecycle-final.png",
+        "generation": 4,
+        "site": [
+          28.5383,
+          -81.3792
+        ],
+        "utcMs": 1790301723693.0742,
+        "timeScale": 1,
+        "moonCurrent": true,
+        "moonGeneration": 4,
+        "epoch": 19,
+        "source": "initial-v5",
+        "pending": true,
+        "surface": true,
+        "settings": {
+          "open": false,
+          "display": "none",
+          "role": "dialog"
+        },
+        "phasePositionErrorDevicePixels": 0.04159999995839744,
+        "photo": {
+          "x": 213.04701232910156,
+          "y": 3.0522258281707764,
+          "width": 107.81242370605469,
+          "height": 108.07064819335938
+        }
+      }
+    ],
+    "boundedReadback": "Actual buckle/field/close route produces native generations 0 -> 1 -> 2 and restores target A. B and returned A own current initial-v5 surfaces while terrain is pending. Separate programmatic rapid A-B-A reaches generations 3/4; the captured B immediate read is not current, and returned A owns a current surface. The +30-minute frozen seek and live return revoke epochs; reference withdraws the unsupported initial surface, calendar restores it, and invalid physical reference is rejected. Recorded phase errors remain within .0416 device px. These are specific native checks, not all S6 age/out-of-order/DPR-change cases."
+  },
+  "gateDisposition": {
+    "S2": "Bounded positive evidence: same pinned bright-catalogue bootstrap remains visible at original early/15s/120s endpoints under partial cloud while the full pack is held/timed out. Full catalogue/diffuse handoff is not exercised.",
+    "S5": "Bounded positive failure evidence: explicit timeout/unavailable state, current Moon and bootstrap, usable prayer/settings. Full-pack current retry, body/Image/decoder recovery and eventual full-sky recovery are not exercised.",
+    "S6": "Bounded positive evidence for actual settings A-B-A, separately labelled programmatic rapid target/seek/profile controls, current generations, phase bound and visible withdrawal/calendar return. Dynamic DPR change, every stale-age/out-of-order case and completion of the new terrain after the controls are not claimed.",
+    "S1": "OPEN; substantial original source gaps are retained.",
+    "S7": "Generic iframe only; no extension-parent promotion."
+  },
+  "harnessRepair": {
+    "beforeSha256": "d5c18049402a03d370d20b591de2d1d783a57ce4ad01d59fa5dbcab7ffbd2ddf",
+    "afterSha256": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+    "sourceLines": [
+      304,
+      307,
+      310,
+      313,
+      314,
+      318,
+      324,
+      328,
+      329
+    ],
+    "review": "The exact snapshot diff changes only the later readiness condition to full sky plus refined Moon, checkpoints ordinary results before optional interventions, orders layer attribution before lifecycle revocation, and saves layer/control status. It preserves the same duration bound and product bytes. R4 omits layers, so the corrected attribution branch and forced-failure checkpoint path are source-reviewed but not independently re-executed here. Its final readiness timeout remains honestly unavailable.",
+    "failedR3": {
+      "path": "<evidence>\\native\\chromium-cloud-sky-delay-dpr2-r3",
+      "exitCode": 1,
+      "resultsJsonPresent": false,
+      "exception": "A current full physical frame is required for component attribution",
+      "disposition": "FAILED_RETAINED; original PNG/JPEG/video, execution, log and harness snapshot remain. No unsaved state/timing/lifecycle result is reconstructed."
+    },
+    "causalLimit": "The retained r3 source proves attribution was attempted after lifecycle and after a Moon-only readiness condition. It does not prove that a previously ready full sky was revoked: the held full pack could still be loading/unavailable, and no results.json survived. Describe the repair as prerequisites/order/persistence correction, not a uniquely demonstrated ready-full-sky withdrawal cause."
+  },
+  "remainingBlockingFindingsForThisBoundedAcceptance": [],
+  "nextRootAction": "Retain r4 as the specifically observed S2/S5/S6 subcase, retain failed r3 and all uncovered original intervals, and keep full recovery and S1 unresolved. No new acquisition or product countermeasure follows from this review. The separate cost transport diagnostic is outside this return."
+}

@@ -1,0 +1,98 @@
+{
+  "schema": "r0021-independent-capture-control-review/v1",
+  "reviewer": "/root/r0021_review",
+  "reviewedAtUtc": "2026-10-16T18:11:10Z",
+  "decision": "ACCEPT_FOR_ONE_SCOPED_CHROMIUM_BASELINE_CANDIDATE_ACQUISITION_TRIAL",
+  "authority": "Read-only recommendation to Root, the sole source/build/browser integrator. No reviewer browser run, product edit, effect authority, S1 acceptance or closure.",
+  "scope": "Synthetic busy-main-thread fixture, native recorder custody and optional exterior compositor marker; prospective accepted-scene timestamp interpretation.",
+  "evidenceRoot": "<evidence>",
+  "sourceWorktree": "<candidate>",
+  "sourceBase": "f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de",
+  "artifacts": [
+    {"path": "capture_marker_control.py", "sha256": "48a439e8cf66d07fa13edb4b931dede576b1728125bee8b032d9328bbc5315bd"},
+    {"path": "capture-control-r1/RESULT.json", "sha256": "51bf3e81c7ca2a2f36423c003366f22e3cc57dc58f05fb553523481b65157546"},
+    {"path": "capture-driver/SOURCE_FRAME_RECEIPT.json", "sha256": "146e07fc3b70a2b3b560bb947234339347b4aef30a3090c387b69e7450c79ac4"},
+    {"path": "capture-driver/lib/coreBundle.js", "sha256": "c34d9e9d56fe0a8fb0e9e5eac15be4841a11f222bc0c29a2d17ccc6eece8c9f8"},
+    {"path": "capture-control-r1/main-thread-marker/video/page@c91932ff7cb117fd66465d85cad28eff.webm.frames.jsonl", "sha256": "186d8be3a322a7a45e34c6e21824582b4b03a10cca2b2d7df66d50b28fe3f361"},
+    {"path": "capture-control-r1/compositor-marker/video/page@399139c1fc93724ac4c98300d824c704.webm.frames.jsonl", "sha256": "ff24c10a88f2600c1c70b4b07bf88e1d3551256fae9afb97758cc78a8922800e"}
+  ],
+  "sourceArtifacts": [
+    {"path": "tools/cp9/celestial_startup_check.py", "sha256": "daa66c54e4077dd22e2db02678ea0e132a4e36b08da7beada47ed06f22704225"},
+    {"path": "moon/src/moon-native.mjs", "sha256": "ef70ef1a6365af7bd6a26c8f02ab53a4f6b3003ec936859ecd44616dd920b036"},
+    {"path": "real-sky/native-first-paint.mjs", "sha256": "ea85b1e178ffed43d9083e3a9bb29d1ceeac42c8a678cd0bef3cb57fc91e3674"}
+  ],
+  "environment": {"browserReported": "Chromium 148.0.7778.96", "mode": "headless", "viewport": [390,600], "fixturePanel": [325,530], "busyMs": 480, "entry": "synthetic data URL; no widget"},
+  "independentChecks": {
+    "driverModifiedHashMatchesReceipt": true,
+    "exactRecorderPatchOccurrences": 1,
+    "originalDriverBundleSha256FromReceipt": "f74353fcb8e406756a70a6af0dfc4a5069acd577e35ec9d923ccf36ac009c2f5",
+    "rawCapturePlacement": "writeFrame copies received JPEG/timestamp before _writeFrame computes frameNumber and repeats frames for the encoder. Review used these originals, not WebM resampling.",
+    "allFrameBytesMatchRecordedLengthsAndHaveJpegSignature": true,
+    "sequencesContiguousAndSourceTimesStrictlyIncreasing": true,
+    "receiptTimesNondecreasing": true
+  },
+  "cases": [
+    {
+      "arm": "main-thread-marker",
+      "allRawFrames": 49,
+      "rawFramesDuring480msBusyBlock": 1,
+      "maxSourceGapMsWithinBusyPlus80msEdges": 479.46906089782715,
+      "receiptLagRangeMs": [-0.169921875,1.407958984375],
+      "navigationPayloadSha256": "400e72b05d6669397a2d6fd6f17bd697c00ac351630b731168ced8013499bc28",
+      "physicalFixtureFileSha256": "8b0405d4287924f0f9996a80cc6d7dd74be82708c2ba0bf1321fda448fd75cbe",
+      "pixelObservations": [
+        {"file": "000016.jpeg", "fromBusyMs": 4.4951171875, "sha256": "d57616b85f7ce96a1e1d1aa183b36bc3391b65ef4df3290bcc5077b341964c92", "observation": "Blue panel; external magenta marker."},
+        {"file": "000017.jpeg", "fromBusyMs": 483.964111328125, "sha256": "310903b4e8eaaf0a31483d4d9865a728bfce01e1ea23a51fda6538e64f103243", "observation": "Red panel after busy loop; preceding interval remains uncovered."}
+      ]
+    },
+    {
+      "arm": "compositor-marker",
+      "allRawFrames": 100,
+      "rawFramesDuring480msBusyBlock": 48,
+      "maxSourceGapMsWithinBusyPlus80msEdges": 13.60011100769043,
+      "receiptLagRangeMs": [-0.277099609375,0.89404296875],
+      "navigationPayloadSha256": "026d8f5feeb30421c708885eadc112c4339fa37a596552e73352dfb4759ee482",
+      "physicalFixtureFileSha256": "0c3d2f35138882e5fad631aedf27cba4958bc99e72e961279518e18e70b85d2f",
+      "pixelObservations": [
+        {"file": "000026.jpeg", "fromBusyMs": 3.456298828125, "sha256": "9ab59fa223f0e03bcc1307e0a88efd56f72fea4fda0c4b78b31930cf328549be", "observation": "Blue panel; marker near left."},
+        {"file": "000050.jpeg", "fromBusyMs": 239.5830078125, "sha256": "6bf1f1624781b92b633b55ad96b2550742c24e0e1ad9297cdaa57b482b0ab7e8", "observation": "Blue panel unchanged; marker has advanced."},
+        {"file": "000073.jpeg", "fromBusyMs": 471.569091796875, "sha256": "9b07c5c2a18497b5be271ae90367e62a7a7676b99436f60d732e24ff7f5b48f7", "observation": "Blue panel unchanged; marker farther right."},
+        {"file": "000074.jpeg", "fromBusyMs": 481.5771484375, "sha256": "20528aec14a47f955b4aa4ab9a378e509706023237bc8d5f9828cc552ed82a8a", "observation": "Blue panel still visible just after busy end; marker advances."},
+        {"file": "000075.jpeg", "fromBusyMs": 490.312255859375, "sha256": "7fe7fb6240178b8cfe2db4443acec9858b49c10b7dd1bcd683194b33f4f97754", "observation": "Panel becomes red; marker remains outside panel."}
+      ]
+    }
+  ],
+  "custodyClarifications": [
+    "RESULT.fixtureSha256 hashes the LF navigation payload, not the physical Windows file. Independent AST reconstruction matches each payload hash; read_text normalization equals that exact payload. Each physical fixture has only twelve inserted CR characters (CRLF). Both identities are retained above; no tamper is inferred.",
+    "Date.now receipt values are integer milliseconds while source timestamps are fractional. Small negative observed differences, down to -0.2771ms, do not justify calling each integer receipt a mathematically exact upper bound. Preserve raw values and include at least 1ms receipt quantization when forming strict upper bounds; investigate materially larger clock inconsistencies."
+  ],
+  "optionalProductMarkerReview": {
+    "defaultOff": true,
+    "position": "fixed x0 y590, 12x6 CSS pixels; exterior to the 325x530 card and y566..586 TIMER in the 390x600 capture",
+    "mechanism": "CSS transform animation and will-change; top document only; installed when documentElement appears; no app state getter, renderer change or replacement recorder",
+    "remainingDifference": "Fixture marker was 24x20 at y566, created with a populated body and warmed two rAF callbacks plus240ms before blocking. Product marker is smaller and may not composite before synchronous head/parser work. Fixture transfer is expressly unproved."
+  },
+  "prospectiveTrialConditions": [
+    "Root serial lease, frozen verified baseline/candidate bytes, identical viewport/DPR/provider/clock and optional marker/recorder configuration; no trace, CPU sampling or diagnostic renderer wrappers in ordinary acquisition.",
+    "Inspect original navigation-to-first-scene source coverage, including marker establishment and parser stalls; do not discard the early uncovered interval or infer blankness from missing frames.",
+    "Require measured original-source continuity at the contract resolution around component appearance and initial/preview transitions. If source gaps exceed80ms in a decision-relevant interval, retain INCONCLUSIVE/FAIL rather than replacing timestamps or filling frames.",
+    "Use the actual unstripped widget pixels for first complete scene, Moon/anchor/material/opacity/currentness and H1 preservation. Marker motion is only acquisition evidence, never a celestial presence or presentation timestamp.",
+    "Compare baseline/candidate under the same acquisition load; retain the earlier ordinary no-marker record. This small fixture proves neither zero observer effect nor general performance equivalence.",
+    "Do not transfer this Chromium result to Firefox, an actual extension parent, different entry dimensions or all lifecycle rows. Each requires its own actual source evidence."
+  ],
+  "acceptedSceneOrigin": {
+    "decision": "CONCUR_WITH_EARLIEST_ACTUALLY_ADMITTED_CURRENT_SCENE_ORIGIN",
+    "contract": "intake/R0021-canonical.md line175; accepted-scene-to-complete C<=250ms/F<=400ms, unchanged",
+    "nativeCapturedAtSemantics": "Keep the existing native poll capture field unchanged.",
+    "headOrigin": "When headHandoff=true, retain headCapturedAt from the original head snapshot, paired before expensive head preparation; report native and head absolute origins and derive effective accepted origin from the admitted head. Never improve a result by choosing the later native poll.",
+    "fallBack": "When there is no admitted head handoff, retain ordinary accepted-scene accounting and explicitly account for any earlier exposed scene. A missing/non-finite/unjoined origin is inconclusive rather than permission to choose a convenient timestamp.",
+    "diagnostics": "headRenderMs describes prior render work and renderMs0 describes native reuse; zero native work is not zero total initial renderer cost.",
+    "historicalDisposition": "Do not rewrite earlier receipts or promote diagnostic timing to S1."
+  },
+  "openGates": [
+    "Historical five-of-six strict timing failures and original source gaps remain.",
+    "Candidate ordinary first-scene timing, actual pixels and start coverage remain unreviewed here.",
+    "Firefox, actual extension parent, callback cost and final full acceptance remain separate.",
+    "No budget weakening: Chromium1000/250/80/250ms and Firefox1500/400/80/400ms."
+  ]
+}

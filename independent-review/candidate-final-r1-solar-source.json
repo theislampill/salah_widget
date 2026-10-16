@@ -1,0 +1,84 @@
+{
+  "schema": "r0021-final-solar-source-finding/v1",
+  "reviewer": "/root/r0021_review",
+  "scope": "Static source/consumer review only. No new source control or browser executed. Distinct from the reported rapid Sun strobe.",
+  "sourcePins": {
+    "src/native/index.html": "c3adc78255d8ebf15d5917c78c8e8ecf98561bf7e09eef502b10d89b26420fc4",
+    "index.html": "2b42147824c19334180738eb5530da16118b56181963b126d214becb59174a01",
+    "real-sky/native-host.mjs": "da14d0de3e0ae3ac814bcf810d4c08a8416de6fc8d0e2737b95584257810e57e",
+    "real-sky/native-preview-host.mjs": "77ee91e8922b465d9a92e938a863eb8bff6395712cebc1d77f4b829c186723e8",
+    "real-sky/native-composition.mjs": "c916ae4d0a67dbded21cbbb6bd115369e6ee20a24a8afe0ca5c33b68ab8f4b01",
+    "real-sky/native-lifecycle.mjs": "dbe987b7459508e48be149c4446ad090ac0490f6b49d21bd98aa3b09051e5880",
+    "real-sky/native-sky.css": "298a11d0d91a801de2e8f63b7e4997ff33d7a7423ebd0e4c8a0bbd5710f68f31",
+    "tests/real-sky/native-celestial-startup.test.mjs": "e54e04f13774833cc8fc366f1c91e7412b45fc8221cdcbccfea529b298073fd6"
+  },
+  "generatedNoTimetableBodyMatchesSource": true,
+  "generatedFunctionFirstLine": 5945,
+  "solarRadiometrySameAsBase": true,
+  "solarRadiometrySha256": "16f390ba644346b7b1faec43ac07c7fc380e249cc035d5f733ca1ed323b9ea81",
+  "sections": [
+    {
+      "path": "src/native/index.html",
+      "firstLine": 2147,
+      "lastLine": 2155,
+      "label": "invalidation retains solar inline values",
+      "text": "function beginSkyScene(initialDocument=false){\n  if(!initialDocument)_skyInitialDocument=false;\n  window.SalahMoonRuntime?.invalidate(\"native beginSkyScene\",{initialDocument:initialDocument&&_skyInitialDocument&&_runtimeGeneration===0});\n  const c=$(\".c\"); if(c){ c.classList.add(\"sky-pending\",\"sky-initializing\"); c.classList.remove(\"moon-ready\"); }\n  _skySceneKey=null; _skyCommitted=false; _skyMoonPresence=0; _starsProjected=false;\n  _cloudReady=false; cloudState.covLow=cloudState.covMid=cloudState.covHigh=0;\n  _cloudDirty=true; if(_colDens) _colDens.fill(0);\n  if(_cloudCtx&&_cloudCv) _cloudCtx.clearRect(0,0,_cloudCv.width,_cloudCv.height);\n  updateSkySurface();\n",
+      "sha256": "ca4f0ee8bd60c7cfe39423d71134f3f337c348a2ff4bdfbf34d2d547a63381d7"
+    },
+    {
+      "path": "src/native/index.html",
+      "firstLine": 2717,
+      "lastLine": 2732,
+      "label": "no-timetable publication",
+      "text": "function paintCelestialWithoutTimetable(){\n  const identity=skySceneIdentity(),sun=window.SalahNativeSkyHost?.cloudLighting?.()?.sun;\n  if(identity===null||!Number.isFinite(sun?.altDeg))return;\n  if(identity!==_skySceneKey){beginSkyScene(_skyInitialDocument);_skySceneKey=identity;}\n  const n=nowParts();if(moonGeometryObservation({nowMin:n.h*60+n.mi+n.s/60}).fresh!==true)renderMoon();\n  projectStars(simDate());\n  const a=lunarPresentation(sun.altDeg),c=$(\".c\");\n  c.style.setProperty(\"--moonfeat\",\"1\");c.style.setProperty(\"--moonocc\",\"1\");\n  c.style.setProperty(\"--moongrp\",a.moonShow.toFixed(3));c.style.setProperty(\"--moonbeam\",(0.6*a.moonlight).toFixed(3));\n  _skyMoonPresence=a.moonShow;window.SalahMoonRuntime?.request();updateSkySurface();\n  // Publish the native body and matching real catalogue in this synchronous\n  // turn. No prayer surrogate, sleep, fade or whole-card loading gate.\n  c.classList.remove(\"sky-pending\");\n  // Preserve the existing first-theme transition suppression until paint(A)\n  // installs its complete palette; pending prayer data must not cause a fade.\n}\n",
+      "sha256": "0abf8143d1bb12d3ccd275ae6beed322a16580c47ab2cb5ee183802eb561528f"
+    },
+    {
+      "path": "src/native/index.html",
+      "firstLine": 2990,
+      "lastLine": 3021,
+      "label": "ordinary solar writer",
+      "text": "  { const e=A.solarElevationDeg, noon=clamp(e/40), sunAmt=clamp((e+1.5)/7), sunLow=1-clamp(e/5.5);\n    // NUCLEUS + BODY colour are tone-mapped in atmosphere() (Kasten\u2013Young airmass + Beer\u2013Lambert\n    // + CCT colour response \u2192 ACES); actual cloud alpha obstructs the light group once.\n    // (a defined warm body with atmosphere-dependent colour; painted clouds may obstruct it completely).\n    c.style.setProperty(\"--sunamt\",sunAmt.toFixed(3));                            // PRESENCE only (is the sun up?) \u2014 NOT a brightness mute\n    c.style.setProperty(\"--sunbodyamt\",clamp((e+1.5)/1.5).toFixed(3));              // radiant low-sun body only; zero at the existing -1.5\u00b0 cutoff\n    c.style.setProperty(\"--sunlow\",sunLow.toFixed(3));                            // retained low-elevation diagnostic; no body-size or two-layer handoff authority\n    c.style.setProperty(\"--suncore\",A.sunCoreRGB);                               // tone-mapped NUCLEUS colour (from atmosphere)\n    c.style.setProperty(\"--sunmid\",A.sunMidRGB);                                 // modest limb radiance falloff of the SAME attenuated spectrum\n    if(e<40&&A.sunProfile)c.style.setProperty(\"--sunprofile\",\"radial-gradient(circle closest-side,\"+A.sunProfile.map(p=>p.colour+\" \"+(p.radius*100)+\"%\").join(\",\")+\",transparent 100%)\");\n    else c.style.removeProperty(\"--sunprofile\");                                // byte-identical established high-Sun gradient\n    c.style.setProperty(\"--sundisc\",(1.10-0.24*noon).toFixed(3));                 // enlarged presentation body: horizon presence/clipping must not shrink it into a button; high-Sun footprint unchanged\n    // The low-left nucleus belongs to the visible arc horizon, not the old fixed 216px layout.\n    // Read its existing geometry only below apex; noon placement remains unchanged.\n    let sunHorizonPx=216;\n    if(noon<1){ const hz=$(\".arc .horizon\"), atmo=$(\".atmo\");\n      if(hz&&atmo){ const hr=hz.getBoundingClientRect(), ar=atmo.getBoundingClientRect();\n        if(hr.width>0&&Number.isFinite(hr.top-ar.top))sunHorizonPx=hr.top-ar.top; } }\n    const sunLiftPx=40+(sunHorizonPx-40)*(1-noon), sunX2Px=20;   // on-card core, low at contact \u2192 existing top-left apex\n    c.style.setProperty(\"--sunlift\",sunLiftPx.toFixed(1)+\"px\");\n    c.style.setProperty(\"--sunx2\",sunX2Px.toFixed(1)+\"px\");\n    // VISIBLE-SUN screen coordinate (the corner-sun disc centre). The DISCRETE solar optics (22\u00b0 halo, sundogs,\n    // pillar, sun bloom, crepuscular rays, cloud sun-haze) register HERE \u2014 to the body the eye actually sees \u2014\n    // NOT to the arc-sun azimuth (--sunx/--suny), which sweeps mid-card and left the halo detached center-screen\n    // (an instant FAIL). The diffuse HORIZON scatter band and the anti-solar Belt/anticrepuscular rays stay on the\n    // azimuth (--sunx / --antix), which is physically where they belong. See DESIGN.md \u203a \"Sun layers\".\n    c.style.setProperty(\"--sunvx\",(sunX2Px/325*100).toFixed(1)+\"%\");\n    c.style.setProperty(\"--sunvy\",(sunLiftPx/530*100).toFixed(1)+\"%\");\n    c.style.setProperty(\"--sunray\",((0.10+0.30*clamp(e/30))*A.sunCloudT).toFixed(3));  // rays fade via TRANSMITTANCE (cloud transmittance from atmosphere), not a grey mix\n    c.style.setProperty(\"--sunpulse\",(_REDUCED?1:1+(0.045+0.035*A.heat)*Math.sin(simNow()/1000/23)+0.015*Math.sin(simNow()/1000/6.5)+(1-noon)*0.16).toFixed(4));  // slow coronal breathing + a faint faster ray flicker + broader corona at low sun (all simTime-driven)\n    c.style.setProperty(\"--sunflat\",(1-0.20*clamp((4-e)/8)*clamp((e+3)/4)).toFixed(3));   // atmospheric REFRACTION oblateness (~0.8 at the horizon, 1 above ~5\u00b0)\n  }\n",
+      "sha256": "e7a113b9d6ce0c9f104c550b807af4cde729b6ecb3a1529cca9146693ee34a2a"
+    },
+    {
+      "path": "src/native/index.html",
+      "firstLine": 3202,
+      "lastLine": 3212,
+      "label": "no-model dispatch",
+      "text": "function render(){\n  if(!simulationReady()){ withdrawPrayerPresentation();paintWeatherHeader(weatherHeader(weatherDecision(),false));renderCalendarDates(selectCalendarDisplay(null));return; }\n  setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)\n  syncWeather();                                              // sim/fast-forward: pull weather from the forecast track at simTime\n  const M=model();\n  if(!M){\n    withdrawPrayerPresentation();const d=weatherDecision();paintWeatherHeader(weatherHeader(d,d.record?.isDay!==0));\n    // No accepted scene paint may leave another epoch's particles behind. The\n    // independently admitted header remains usable while the timetable loads.\n    $(\".c\").dataset.fx=d.record?wxClass(d.renderCode):\"unavailable\";$(\".c\").dataset.lightning=\"off\";$(\".c\").dataset.precip=\"off\";$(\".c\").style.setProperty(\"--rain-op\",\"0\");\n    paintCelestialWithoutTimetable();renderCalendarDates(selectCalendarDisplay(null));return;\n",
+      "sha256": "6ca6562d6f5f6c8b0859f10a49cf71b7bc6437ded6919ab193cbb2604f3681e4"
+    }
+  ],
+  "finding": {
+    "id": "R0021-CANDIDATE-01",
+    "severity": "P1",
+    "kind": "source-derived current-scene preservation defect",
+    "location": "src/native/index.html:2729",
+    "trigger": "A valid native scene with no accepted timetable; particularly an existing daylight target followed by a current night target/day/clock transition while prayer data is unavailable.",
+    "chain": [
+      "beginSkyScene adds sky-pending but leaves the previous solar CSS values intact.",
+      "render calls paintCelestialWithoutTimetable and returns before atmosphere/paint when model is absent.",
+      "The helper updates only lunar properties, then removes sky-pending for the whole atmospheric layer.",
+      "The Sun body and corona use retained inline --sunbodyamt/--sunamt; a fresh document instead uses their zero-opacity CSS fallbacks."
+    ],
+    "consequence": "Current lunar/sky publication can expose stale solar presence/colour/geometry, or postpone a warranted fresh daytime Sun until timetable acceptance. This is not proof of rapid steady strobing.",
+    "narrowRequirement": "Publish a current solar presentation from the existing admitted physical Sun/solar owner before exposing those layers, without waiting for timetable/network or adding a second ephemeris. Preserve the R0024 profile/geometry/opacity contract; do not suppress the whole card.",
+    "missingDiscriminator": "Current tests assert Moon readiness and pending removal but do not seed prior solar properties. A future authorized focused source control should seed a bright prior Sun then supply a current below-horizon no-timetable scene, and a fresh daytime no-timetable case, and assert the actual solar sinks before reveal."
+  },
+  "maskHypothesis": {
+    "paths": [
+      "real-sky/native-composition.mjs:71-77",
+      "real-sky/native-host.mjs:119-132",
+      "real-sky/native-preview-host.mjs:52"
+    ],
+    "observation": "Canvas PNG data URLs replace a shared CSS mask without an image-ready acknowledgment; no native evidence yet establishes decode/activation dropout. Full host reuses identical alpha masks; preview returns while full host owns composition.",
+    "status": "UNPROVED_CAUSE_NO_SOURCE_COUNTERMEASURE_ADMITTED"
+  },
+  "effects": {
+    "sourceWrites": false,
+    "testsRun": false,
+    "browsersRun": false,
+    "gitMutation": false
+  }
+}

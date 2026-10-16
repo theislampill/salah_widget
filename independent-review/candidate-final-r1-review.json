@@ -1,0 +1,355 @@
+{
+  "schema": "r0021-final-exact-candidate-review/v1",
+  "reviewer": "/root/r0021_review",
+  "atUtc": "2026-10-16T21:34:55.170930+00:00",
+  "authority": "Same sole Root-authorized independent read-only reviewer. This is not a formal fresh-context audit-assess admission, effect authorization, owner acceptance or closure certificate.",
+  "request": {
+    "path": "CANDIDATE-REVIEW-REQUEST-r1.json",
+    "sha256": "0d3723d1fd6476566b5c8de9ef1f1b0406ba623915c54da0f5a80d3578e0be82",
+    "bytes": 18984
+  },
+  "source": "<candidate>",
+  "base": "f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de",
+  "baseTree": "341ab72c6bcc34f3a6e933d0db7910c270e61cbe",
+  "branch": "codex/r0021-startup-completion",
+  "candidateTree": "8b1faeb52ba1a66e75b02cde4fbb9123165e333a",
+  "runtimeSha256": "61ceff2276153be01c0b2d319ac036691982fe6999be9fac8d6458758f89f565",
+  "indexSha256": "2b42147824c19334180738eb5530da16118b56181963b126d214becb59174a01",
+  "decision": {
+    "review": "CHANGES_REQUESTED_UNQUALIFIED_CANDIDATE",
+    "merge": "DO_NOT_MERGE",
+    "productionReady": false,
+    "closureReady": false,
+    "draftPublication": "CONDITIONALLY_REVIEWABLE_ONLY_AFTER_SOLAR_FINDING_AND_SYMPTOM_RECONCILIATION_AND_SEPARATE_PUBLIC_PROJECTION_REVIEW",
+    "approvalScope": "No external effect approved by this return; Root/owner retain all effects."
+  },
+  "findings": [
+    {
+      "id": "R0021-CANDIDATE-01",
+      "severity": "P1",
+      "status": "OPEN_SOURCE_DEFECT",
+      "title": "Publish current solar state before revealing the no-timetable atmosphere",
+      "file": "src/native/index.html",
+      "lines": [
+        2717,
+        2729
+      ],
+      "related": [
+        {
+          "file": "src/native/index.html",
+          "lines": [
+            2147,
+            2155
+          ]
+        },
+        {
+          "file": "src/native/index.html",
+          "lines": [
+            2990,
+            3020
+          ]
+        },
+        {
+          "file": "src/native/index.html",
+          "lines": [
+            3206,
+            3212
+          ]
+        },
+        {
+          "file": "tests/real-sky/native-celestial-startup.test.mjs",
+          "lines": [
+            15,
+            30
+          ]
+        }
+      ],
+      "evidenceKind": "Source-derived counterexample; not a newly executed browser reproduction.",
+      "problem": "paintCelestialWithoutTimetable removes sky-pending after updating only lunar presentation. beginSkyScene retains the prior solar CSS values. render skips the ordinary solar writer whenever model() is absent. A current night target after a prior day can therefore expose the old Sun while new prayer data is unavailable; a fresh day instead keeps the warranted Sun at zero-opacity CSS fallback until timetable acceptance. The generated index contains exactly this source body at line5945.",
+      "impact": "The candidate weakens original accepted-scene solar presence/geometry coherence at the no-timetable boundary (21-01/21-02/21-05 and S6). Earlier accepted baseline evidence remains valid for its original identity, but cannot qualify this changed path.",
+      "recommendation": "Use the existing admitted physical Sun and shared solar presentation owner to publish current presence, colour and geometry before revealing solar layers. Preserve R0024 radiometry, footprint and registered optics, and keep prayer/network independent. Do not hide the whole card or introduce a second ephemeris.",
+      "nextDiscriminator": "A future authorized focused control should seed bright prior solar values, invoke the actual reset/no-timetable path with a current below-horizon Sun, and check the actual sinks before reveal; pair it with a fresh daytime no-timetable control. Then inspect the affected native transition. No test or new browser was run for this finding.",
+      "notEstablished": "This is not evidence that the omission causes the owner-described rapid steady Sun strobe.",
+      "proof": {
+        "path": "independent-review/candidate-final-r1-solar-source.json",
+        "sha256": "b2c7753c92e6307a7790f9a9babd223f722e55972cbc24c00d41b6bbbd149f51",
+        "bytes": 11302
+      }
+    },
+    {
+      "id": "R0021-CANDIDATE-02",
+      "severity": "P2",
+      "status": "POST_FREEZE_DELIVERY_RECONCILIATION_REQUIRED",
+      "title": "Record the new Sun symptom and source finding before publishing the current draft account",
+      "file": "docs/real-sky/R0021_STARTUP_EXECUTION.md",
+      "lines": [
+        3,
+        8
+      ],
+      "problem": "The sealed docs/frontier predate the owner-reported sunrise/forenoon Sun strobe and this review's no-timetable solar counterexample. Their current limitation list does not include either. The old Firefox blank/truncated originals do not explain a Sun-only symptom, and the existing dawn cases are below-horizon controls, not sunrise coverage.",
+      "recommendation": "Append the exact symptom, source finding, bounded probe disposition and unresolved cause to the delivery ledger, distinguishing source proof from pixel reproduction. Bind any repaired source to a new candidate request and invalidate only affected runtime/native proofs. Do not call the symptom fixed or infer a mask/capture cause from a different failure."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "21-01..21-07,21-08.a,21-09",
+      "disposition": "RETAIN_ORIGINAL_ACCEPTED_EVIDENCE_AT_ITS_IDENTITY_WITH_CHANGED_PATH_EXCEPTION",
+      "evidence": "Original 33-assessment retains accepted geometry, occlusion, current-target, weather and motion controls. R0018/R0024/R0022 owners are preserved. New no-timetable solar publication is not covered and has R0021-CANDIDATE-01. No replay of original V5/CP9 or all prior motion campaigns was performed."
+    },
+    {
+      "id": "21-08.b / R0021-A01",
+      "disposition": "INCOMPLETE",
+      "evidence": "Single admitted Chromium r4 batch,16 slots and all24 scopes remain INCOMPLETE. Independent raw/analyzer recomputation agrees. Elapsed inclusive/exclusive timing is not CPU self-time. Sparse/startup/absent scopes, empirical observer envelope, same-side spread and call-rate differences preclude a budget verdict; unchanged-protocol repetition cannot remove these structural limits. Original Firefox1ms-clock and Chromiumr3 prewarmup failures remain. Known buffers increase32,387,380bytes; nested row workers2→4 are outside main-worker observer coverage; Moon requests4→5Hz are changed call frequency, not a newly added interval or proved regression."
+    },
+    {
+      "id": "R0021-S1",
+      "disposition": "OPEN_STRICT_FAILURES_AND_UNCOVERED_INTERVALS",
+      "evidence": "Historical five-of-six strict timing failures remain. Current ordinary Chromium marker blank→celestial interval296.735ms is uncovered; diagnostic pipeline gap312.402ms and long draw-to-swap do not grant timing credit. Firefox blank/truncated originals and source gaps remain contrary. Earliest actual headAccepted origin is retained, never substituted with later native poll. No threshold widening, trace promotion or late-still repair."
+    },
+    {
+      "id": "R0021-S2",
+      "disposition": "BOUNDED_SOURCE_AND_NAMED_DELAY_SCENES_SUPPORTED",
+      "evidence": "921 same-catalogue bright records use pinned ancestry and unchanged projection/flux/PSF; full-pack delay leaves an independently current bootstrap in named scenes. No global gain, random stars or broad first-frame/continuous proof inferred."
+    },
+    {
+      "id": "R0021-S3",
+      "disposition": "NUMERICAL_AND_ISOLATED_VISUAL_REUSE_SUPPORTED_NATIVE_FIRST_SCENE_OPEN",
+      "evidence": "40 compact rows equal retained comparison; max encodedRGB RMS2.4105033108487692/255,p95abs4,paired coverage mismatch0.80 exact individual PNGs/eight sheets previously reviewed for isolated phase/sense/DPR/shift. This compact result is not the old uncompressed RMS.385564 receipt, final scientific terrain, native first-scene proof or whole H1 composition acceptance."
+    },
+    {
+      "id": "R0021-S4",
+      "disposition": "CONTINUOUS_TRANSITION_GATE_OPEN",
+      "evidence": "Opaque detail/independent direct-light cutout and source-bound phase geometry remain. Sampled native initial/preview/refined stills support only the recorded observations; incomplete source streams and new solar symptom prevent a complete continuous-scene claim. No last still or numerical lunar metric repairs a missed transition."
+    },
+    {
+      "id": "R0021-S5",
+      "disposition": "NAMED_FAILURE_AND_RECOVERY_ONLY",
+      "evidence": "Moon HTTP503/retry and current refined consumption, Chromium full-sky timeout25s retry, and separate20s-held no-retry unavailable-at120s cases are bounded. Firefox10s hold is not timeout recovery. Body/Image/decoder failures are not silently covered. Failed cloudr3 unsafe-prerequisite acquisition is retained; no unsupported claim that full sky was first ready then withdrawn."
+    },
+    {
+      "id": "R0021-S6",
+      "disposition": "MOON_AND_NAMED_LIFECYCLE_SUPPORTED_SOLAR_NO_TIMETABLE_DEFECT_OPEN",
+      "evidence": "One-use head ticket retains original scene/UTC/profile/receiver/phase bound, irrevocably revokes on real invalidation, pause/invalid return, worker failure, completion and disposal. Actual settings A→B→A and explicit seek/profile controls are distinct from source DPR/stale/out-of-order controls. Solar layer currentness is incomplete under R0021-CANDIDATE-01."
+    },
+    {
+      "id": "R0021-S7",
+      "disposition": "BOUNDED_ENTRIES_SUPPORTED_PLATFORM_AND_CONTINUITY_GAPS_OPEN",
+      "evidence": "Prior14 cases18runs and supplemental10cases30runs retain exact environment/source identities. All30 supplemental finals are current/refined;26/30 are only terrain-preview at15s. Across36 entry runs,35 final refined and Firefox clear iframe DPR2 new-tab quality failure remains. Actual Chromium TablissNG1.8.1/UI settings proof is limited to its imported new-tab/settings case; Firefox actual-parent capability remains absent. File meansindex.html, not offline.html; generic330x534 wrapper is not actual extension parent. Card325x530 and protected builder/V1 scope stay separate. Three supplemental Firefox truncation/band records remain contrary."
+    },
+    {
+      "id": "R0021-S8",
+      "disposition": "SOURCE_BUILD_PROTECTED_BYTE_CUSTODY_SUPPORTED_SEMANTIC_QUALIFICATION_SEPARATE",
+      "evidence": "Exact64 staged files match requested tree and current bytes;142 finalruntime hashes agree;21 request evidence pins match; all201 protected base/stage/worktree blobs and SHA256 match. Two retained142-file builds agree. Corrected immutable manifest and two-pair association guard remain exact; unknown drift still rejects. No rebuild or new test campaign performed by this reviewer."
+    },
+    {
+      "id": "R0021-S9",
+      "disposition": "OPEN_UNCOMMITTED_UNPUBLISHED_UNMERGED",
+      "evidence": "HEAD remains f270 and candidate exists only in staged tree8b1fae. This return gives no commit/push/comment/merge/release/closure authority. Honest focused draft/evidence publication may be considered after findings/ledger reconciliation and separate public privacy/reference/projection review. Exact owner merge approval and qualified head/base are still required."
+    },
+    {
+      "id": "R0021-S10",
+      "disposition": "DELIVERED_H1_ACCEPTANCE_RETAINED_INTEGRATED_CONTINUITY_OPEN",
+      "evidence": "R0022 approved H1R0022-L1-H1-K003-H020-v1 and S10 handoff remain accepted at delivered source; native unstripped final samples do not show a reason to revoke that source approval. Component-removal reconstructed fields differ from original consumed fields and remain illustrative, not exact physical preservation proof. First/transition full-composition continuity is unqualified; no new owner visual approval is fabricated."
+    }
+  ],
+  "custody": {
+    "stagedFileCount": 64,
+    "runtimeFileCount": 142,
+    "requestEvidencePins": 21,
+    "protectedFilesIndependentlyChecked": 201,
+    "allMatches": true,
+    "headStillBase": true,
+    "stageEqualsRequestedTree": true,
+    "unstagedTrackedDiff": "none",
+    "stagedDiffCheckExitCode": 0,
+    "finalRecheck": "64 candidate hashes, index entries against requested tree, HEAD and diff --check repeated immediately before report preparation; all unchanged.",
+    "requestEvidence": {
+      "QUALIFICATION-FRONTIER-r2.json": "5f6323e1f2d9e051bfd333437c82ff959f4b4e9903f18b21ccc064c2fe167067",
+      "SOURCE-LEASE.json": "3086feaca26563dc689d67c9254e48f6042fbdc90a723c5e4fd6c5a888f280e7",
+      "NATIVE-REVIEW-REQUEST-r1.json": "38c0e3355711a78af2f7e1c3147905099d664f1cc3228563306e74d9556b4ffc",
+      "NATIVE-REVIEW-REQUEST-r2.json": "0bb4f09d7b407fd14ba8791b68d781a16c8b68e153a1c6b5ae58c0cad8bda309",
+      "intake/R0021-canonical.md": "46c60799243e3571f0a6724fa3dd648a64d82a7f341be21138dbf167cea70c32",
+      "intake/33-assessment.json": "2a13d52f2e8a857c40626f35f0863ccbf2e204d6d42dc67e5ced235bad2e1bc7",
+      "intake/native-regression-r3-repaired.txt": "2930f7b30d53860f144e24cd85ea29b754fa8e7b35b9371571d94d8f00508516",
+      "intake/native-regression-r3.txt": "8726152a6396e63e8c33202b5b90b4ca7a0033a06dbdc3b037733b296a09bbb5",
+      "intake/host-complete-r3.txt": "c44d29a6d2f4ec8cb5f45849dedddd549dce6d28d02e63d09c145f5da0261601",
+      "intake/delivery-runtime-r3.json": "f456b326ae07d013b6a368b75f1c6043d5d8fd83b5b3141e04dee98d711a2e96",
+      "intake/delivery-build-r3-r2.txt": "c3b9e3da804bafae56e3cefb00c6ab6335e8bb3da4ea134b01b7853392f372bf",
+      "preservation-r3/RESULTS.json": "896db762871e080363c292cc8b301b71fdda4db0ec131017c6dfc9fa4469fb7e",
+      "intake/native-harness-order-repair-clarification-r2.json": "645eb0189cc5ddd8fba5f892ad4d26678985e5072d2daf15db39be87de0919d0",
+      "intake/source-whitespace-r1.json": "63fb9b4c41531c566841c83d50a33a1a3af5bcc84036bd7da176e4cba188fdda",
+      "independent-review/cost-measured-r4-review.json": "db362c67296a0023f975528d9d8594484ff6cb8de2b172a741d5958b5bd9190d",
+      "independent-review/cost-measured-r4-verification.json": "b279a1b1a025065102186d940685c2283828b3d92dd5b6e71064ab30422c2b85",
+      "independent-review/native-scenes-r3-review.json": "ac7b00198e348b5ee866ed8868e9c82c31aa4c025bf75f52333defe499f6eb83",
+      "independent-review/native-entries-r3-review.json": "88846d5ad19c9ae2b343e03055a82b89517ae317e3bfcd7e97545d3f55c285cb",
+      "independent-review/compact-visual-r3-review.json": "862097ff892523b0560c5a144c1ff1c36d2950ecc30c02260aaf931ab5d6bcd8",
+      "independent-review/head-handoff-implementation-review.json": "57e9c9db011070206d870efd44ac55cd1c0202beec3ac66aed5d7256207f8414",
+      "independent-review/receiver-association-implementation-review.json": "147f58ad63de339d1cb97789748496971306b704f78d1c7ea35a077b16f6f2a9"
+    },
+    "additionalEvidence": [
+      {
+        "path": "independent-review/candidate-final-r1-custody.json",
+        "sha256": "1370ecdeede7354464b0c23e60909cab5838947f202b30fc40782d9b5c69b35f",
+        "bytes": 48416
+      },
+      {
+        "path": "independent-review/candidate-final-r1-protected.json",
+        "sha256": "e8a74b425941bf3ae4f8d693e21b3006968416897f4bcaef0e6c352cccc69c66",
+        "bytes": 43783
+      },
+      {
+        "path": "independent-review/candidate-final-r1-solar-source.json",
+        "sha256": "b2c7753c92e6307a7790f9a9babd223f722e55972cbc24c00d41b6bbbd149f51",
+        "bytes": 11302
+      },
+      {
+        "path": "solar-flicker-recordings-r1/RESULTS.json",
+        "sha256": "0b6dfea81450a36f8b68ba708246e420377f066fdbba233a1f63f61d2f986b60",
+        "bytes": 40719
+      },
+      {
+        "path": "solar-probe-tools-r1/PREPARATION.json",
+        "sha256": "73e312d29d3ec70a2f02c56a29f14d5e15a9352c34596ea2654a11578a23e817",
+        "bytes": 2393
+      },
+      {
+        "path": "native/chromium-forenoon-cloud-strobe-r1/results.json",
+        "sha256": "378bac27ac2a4899860cdf268f8e412b909a56c42be81ee64068df088b663280",
+        "bytes": 852205
+      },
+      {
+        "path": "native/chromium-forenoon-cloud-strobe-r1/cold-solar-trace.json",
+        "sha256": "277848b263939c5239326b5d3372726f3ec7d4632876a6b75fb5b1ebe138ddad",
+        "bytes": 6711584
+      }
+    ]
+  },
+  "testsReviewed": {
+    "hostComplete": {
+      "path": "intake/host-complete-r3.txt",
+      "pass": 48,
+      "fail": 0,
+      "cancelled": 0,
+      "durationMs": 28998.9048
+    },
+    "regression": {
+      "path": "intake/native-regression-r3-repaired.txt",
+      "tests": 703,
+      "pass": 699,
+      "fail": 0,
+      "cancelled": 0,
+      "todo": 4
+    },
+    "retainedRegressionFailure": {
+      "path": "intake/native-regression-r3.txt",
+      "pass": 694,
+      "fail": 3,
+      "cancelled": 2,
+      "todo": 4
+    },
+    "testChanges": "Read transport-harness changes: explicit two-rAF/posted-task advancement, added no-op finishInitialDocument on old stub, current source signature markers and correct native helper extraction. Assertions/mutant intent remain. Dedicated critical-path tests preserve intermediate provider deferral checks. Four TODOs remain TODOs, not passed qualification.",
+    "testsRunThisFinalReview": false,
+    "reusedHandoffProofDelta": "Current moon-native differs from the reviewed integrated-r2 host only by returning original head capturedAt and exposing headCapturedAt/headRenderMs diagnostic fields. Other reviewed handoff source pins match. Source helper EOF whitespace change does not change behavior."
+  },
+  "solarSymptom": {
+    "authority": "Owner-reported intermittent SUN strobing during sunrise/forenoon, possibly with/without clouds, relayed by Root; no root cause assigned.",
+    "existingRecordingReview": {
+      "triage": {
+        "path": "solar-flicker-recordings-r1/RESULTS.json",
+        "sha256": "0b6dfea81450a36f8b68ba708246e420377f066fdbba233a1f63f61d2f986b60",
+        "bytes": 40719
+      },
+      "originalsViewed": [
+        {
+          "path": "native/chromium-day-dpr1-r3/video/page@a6a7b6392194760018efaa0a85e74e84.webm.frames/000922.jpeg",
+          "sha256": "fc47a00baf81c6cb4319e408ee49741cdc615d33561c24bd4c2a68df6c3eb99e",
+          "bytes": 37685
+        },
+        {
+          "path": "native/chromium-day-dpr1-r3/video/page@a6a7b6392194760018efaa0a85e74e84.webm.frames/000923.jpeg",
+          "sha256": "07a565cd58aba0ffbb094ec37f56783b48e624ef51c2fba6e0db9e88c809860c",
+          "bytes": 37512
+        },
+        {
+          "path": "native/firefox-day-dpr1-r3/video/page@3664d13f4c4fc2a7e4957ce18de18870.webm.frames/000048.jpeg",
+          "sha256": "d2b5fbb8673645cdb52e30470c90a863ddc89727588794ecd84803640328a3c5",
+          "bytes": 41274
+        },
+        {
+          "path": "native/firefox-day-dpr1-r3/video/page@3664d13f4c4fc2a7e4957ce18de18870.webm.frames/000049.jpeg",
+          "sha256": "2b0a6f2bed43338d5f2296e6c28eb0f4860e3e2a6c18b76d67094afb00689587",
+          "bytes": 4427
+        },
+        {
+          "path": "native/firefox-day-dpr1-r3/video/page@3664d13f4c4fc2a7e4957ce18de18870.webm.frames/000050.jpeg",
+          "sha256": "17e8b3f885ba4e491e94d4b18eea570d6b8b7511b4f7e4c3c46827a0d3d30f1c",
+          "bytes": 41170
+        }
+      ],
+      "observation": "Viewed Chromiumday922/923 retain the Sun; Firefoxday48/50 show the scene while49 is blank across widget and exterior timer. This is not a Sun-only reproduction. Numerical clear-Chromium core range and179.865ms source gap are descriptive, not continuous PASS. Existing dawn Sun is below horizon; cloudy/rain records are night, so they do not test cloudy sunrise."
+    },
+    "sourceMechanisms": {
+      "solarRadiometry": "Unchanged from f270; section SHA16f390ba644346b7b1faec43ac07c7fc380e249cc035d5f733ca1ed323b9ea81. Slow sunpulse is not a rapid numeric toggling command.",
+      "publicationOwnership": "Preview stops publishing while real-sky-composed. Ordinary full-sky refresh retains the accepted frame until current replacement. These inspected paths do not establish a competing-owner race.",
+      "maskBoundary": "prepareSolarMask serializes inverse cloud alpha to a PNG URL; full/preview owners set the shared CSS property without image-ready acknowledgment. Browser decode/activation dropout is an unproved hypothesis. Full host reuses unchanged alpha masks; no blanket solar-mask removal is justified."
+    },
+    "singleRootProbe": {
+      "results": {
+        "path": "native/chromium-forenoon-cloud-strobe-r1/results.json",
+        "sha256": "378bac27ac2a4899860cdf268f8e412b909a56c42be81ee64068df088b663280",
+        "bytes": 852205
+      },
+      "trace": {
+        "path": "native/chromium-forenoon-cloud-strobe-r1/cold-solar-trace.json",
+        "sha256": "277848b263939c5239326b5d3372726f3ec7d4632876a6b75fb5b1ebe138ddad",
+        "bytes": 6711584
+      },
+      "scope": "Root-owned completed unchanged-runtime Chromium forenoon35%cloud45s1x probe. First30s ordinary capture; last15s explicitly perturbed diagnostic sampling. Reviewer did not acquire it.",
+      "traceRead": "4,903 diagnostic samples; one class string; Sun/body opacity1 and visibility/transform constant;15 style records vary only slow sunpulse;190 mask records; sky renders7→10 with no errors/rejections.",
+      "dispositionAtThisReturn": "Trace state alone does not prove pixel alternation or mask cause. Original-pixel/mask-alpha interpretation of this new probe has not been independently completed in this candidate-wide return; Root is performing the bounded inspection. No fixed/not-reproduced/continuity verdict is granted from trace state."
+    }
+  },
+  "criticalPathReview": {
+    "supportedRepairAlreadyPresent": "Actual duplicate initial render removed by one-use exact head handoff; current diagnostics retain original accepted origin. Parser/digest/CPU/compositor stages remain distinct.",
+    "concreteRemainingRedundancy": "tools/build_moon.py:108 sends decodeCompactReceivers output directly to createInitialMoon; the decoded approximately4MB receiver is hashed in moon-initial-compact.mjs:64 and again moon-initial.mjs:10. This is duplicate validation work, but no validation-removal patch is approved or quantified here. Any validate-once ownership change must keep complete digest/shape/ancestry protection and requires a new exact candidate.",
+    "notSupported": "Existing cc/viz/GPU evidence does not uniquely isolate a source-owned delayed primitive or establish that a CSS layer/scheduling change restores the250ms budget. Do not suppress layers, change flags, shift accepted origin, or repeat broad captures speculatively.",
+    "steadyPollGuard": "Previously suggested !_skyCommitted guard is rejected: committed does not imply a current Moon after pause/visibility/phase changes. Current restoration behavior stays."
+  },
+  "declinedScopes": [
+    {
+      "scope": "FullS1/S4/wholeS7 and rapid Sun-strobe cause/fix",
+      "reason": "Missing continuous original pixels/remaining contrary captures and an open owner symptom; no new reviewer acquisition authorized."
+    },
+    {
+      "scope": "Callback-budget PASS or regression FAIL, CPU self-time, heap-wide leak claim",
+      "reason": "All24 operational scopes incomplete, observer uncertainty/sparse coverage/state attribution limits and bounded array inventory."
+    },
+    {
+      "scope": "ActualFirefoxextensionparent",
+      "reason": "Capability attempts do not provide the required native acquired surface."
+    },
+    {
+      "scope": "V5terrain/CP9replay or broad original acceptance replay",
+      "reason": "Outside scope; exact reusable numerical/source owners retained and independently bound."
+    },
+    {
+      "scope": "Public projection privacy/reference validation",
+      "reason": "Separate exact bounded packet will be supplied by Root; current local evidence is not permission to publish raw work products."
+    },
+    {
+      "scope": "Commit/push/PR/merge/deploy/issue closure",
+      "reason": "No such effects belong to this reviewer; qualified exact head/base plus owner approval and required independent public readback remain future gates."
+    }
+  ],
+  "effects": {
+    "sourceWrites": false,
+    "generatedWrites": false,
+    "gitIndexOrRefMutation": false,
+    "testsOrBuilds": false,
+    "browserOrPerformanceAcquisition": false,
+    "newAgents": false,
+    "externalWrites": false,
+    "writes": "Only independent-review reports and verification receipts."
+  },
+  "nextAction": "Root reconcile R0021-CANDIDATE-01 and the owner Sun symptom. If source changes, send the exact new affected source/generated/test/docs pins for bounded follow-up and invalidate affected native evidence; retain this immutable review and all failures. Before any honest unqualified draft publication, update the frontier/docs and complete the separately requested privacy/reference/projection review. Do not merge or close."
+}

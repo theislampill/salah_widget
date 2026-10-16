@@ -1,0 +1,1173 @@
+{
+  "schema": "r0021-native-review-request/v1",
+  "status": "OBSERVATIONS_AWAITING_INDEPENDENT_PIXEL_REVIEW",
+  "atUtc": "2026-10-16T20:30:24.271716+00:00",
+  "runtimeSha256": "61ceff2276153be01c0b2d319ac036691982fe6999be9fac8d6458758f89f565",
+  "scope": "Returned unstripped whole scenes, actual initial/preview/refined transitions, native controls/entry behavior. Read original frames/recordings; source-state success alone does not qualify appearance. Synthetic rain is model-estimated-wet, not observed precipitation.",
+  "limitations": "S1 original coverage/timing failures retained; no new ordinary timing-pass claim. Firefox source clock relative and original blanks/truncation remain. Delayed-sky r3 acquisition failed and r4 remains explicit timeout without recovery; separate named retry case does not repair those original records. Generic iframe is not actual extension parent.",
+  "cases": [
+    {
+      "case": "chromium-cloud-sky-retry-dpr2-r3",
+      "entry": "iframe",
+      "scene": "partial",
+      "dpr": 2.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\results.json": "266d96599a11bea724e352d067b87c135cf3761fe78655f12ea6e7f8d6bf1a0c",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\EXECUTION.json": "497b7f5e9b4063419b67f2d8062467959c8d58dec0c9d235906d07d435b3de4f",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\RUN-LOG.txt": "4097e0b138f5cbf341eea5bc47fd5498b945073f529344b8ed54e4347ef6315e",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\cold-00.png": "ca130c5a1a3c7540bac00dbd737b559d3551ac5945896211400007330f4bce9d",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\cold-final.png": "be248f4792527ee5fb5268b3c792aa78cd4c19e2a7e682082c5562ba72ca09e5",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\diagnostic-footer-crop.png": "a4bb6b094a9ecf08449e11a03f804bce30570074fb17c3e4475d13f7e32c337d",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\video\\page@6bcc59c8d7a11e7d630578a4569c85c4.webm": "a9ec3176eea6a4b90e1fe1788e113f84595badf9796198a5f81ba0fa365b7e2b",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\video\\page@6bcc59c8d7a11e7d630578a4569c85c4.webm.frames.jsonl": "87a470b8d9e96ed6e5efe84bc3f901f1dad917b4b4189c40ea87578305aeaddf",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\chromium-cloud-sky-retry-dpr2-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 27390.00000001397,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "loading",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": {
+            "atMs": 25015.00000001397,
+            "retry": {
+              "moon": false,
+              "sky": {
+                "status": "ready",
+                "generation": 2,
+                "error": null
+              }
+            }
+          },
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\chromium-cloud-sky-retry-dpr2-r3\\video\\page@6bcc59c8d7a11e7d630578a4569c85c4.webm"
+        }
+      ]
+    },
+    {
+      "case": "firefox-cloud-sky-delay-dpr2-r3",
+      "entry": "iframe",
+      "scene": "partial",
+      "dpr": 2.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\results.json": "6826decf3fbe43b7d09b5ccea46087608ca34cf276681873ae77bb822da33fe5",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\EXECUTION.json": "cbf7673af20551c17ec786450e7759f8cafc5c3ae9118acbf0ca62907fca3b7d",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\RUN-LOG.txt": "65239fd4f878bcf3b8ed9599aaf7dd748f77b33a5f0d32ce31d71f74282537e6",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-00.png": "736bcfaa59ccad772286108e1b575135b8d5eabf9595d915125a5ab16d7bbbcb",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-full-control.png": "72cd8e827dcaa5dee06d933354bd045a8e31a09d5ed7babb3d900cb844179934",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-no-calendar-moon-and-optics.png": "0618a2c86b961c25b67dfb2d3617bd1827c81eaf5c46a4789051a9e911fa9141",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-no-catalogue.png": "be1114b4a0527bbb59e06b3d37aa8630ce48bfe9e3f45ee2868da6e21d08c9ed",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-no-css-glass.png": "5e7a4119b25d734e2a6564c39a2d95eca4369bd4dc2009c9c08b2aa9fb640762",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-no-native-clouds.png": "611a72844fd8a9c51e03f706f7c0be034afcbc83e71901795229d39314ed707c",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-no-native-solar-overlays.png": "b664d5fb004c5c0571bc9b70ecac497da5ac31618f556b94b491ccdb25ad0c8c",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-no-physical-lunar-field.png": "cf06d403a271d9d9895578257eb201c283d59a65a0836e986fb1ce930d1b47a7",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-no-registered-diffuse.png": "3c1c9f41f37cd926173949a43f01b0e79c428d6ed119da6a697180f315854296",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-no-residual-night-field.png": "0d71a10f841259ca089ec1a06b95a15f9c3a33be6e6a039a15c711acdd290a49",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-diagnostic-recomposition-control.png": "de5cc9a15c87a8a31fd7ca8b76d29b9d5fd8d6530abeea69382d442b5af18f5d",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-final.png": "f6b74714a3a0f94f49d1f58fe116347e7975878e322a34a3cf73c4a8b030fc03",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-a-b-a.png": "5334db78f9945e6b08ff924b37104f1dff42800d67659046dcba754957b757bf",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-before.png": "a5324dc298f91fd33192f81c2161b24824a10d34c1d489c1ee3b40d6790a6bd7",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-calendar-return.png": "d5d8233b3a3add143c6b9154376f9f4c55a607a712fb6fea5e26613128e881ab",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-final.png": "04d8f88c1786ada90e9a906b3834b9413633f39d030dce07878cca1427deeb52",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-live-return.png": "5c20c75de5db99a79995dd181fed00dc511db0dfc203a3a557f2c0d208d18750",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-reference-withdrawal.png": "2c8c0899fc24ceeee17fe852b982dc9a2195531bce0938e6332f06a3d04fbcba",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-seek.png": "e363e16002a87694ae09a066f99680ea0467e2fe81d9e7e2e4d5203f3d0524c5",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-settings-open.png": "1b652f23e41d30fc311b3c1bd8b85130621cda50f497968af600aefb1912adc4",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-settings-target-a.png": "7c71fdc3bd48b43069c7f7674f56f372a2b7ea87ce783cddab3df6355a188745",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-lifecycle-settings-target-b.png": "27e102204eef79d3dda8fc5c8e64c65ddc63846db430bfe6804b4a010b20978f",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\cold-restored-full.png": "62f360421d190a51f0816d33910e33e9a50fb718e7b581375bbe428301d6f805",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\video\\page@9e475b2416fccf8c34d4e1abccdeb27f.webm": "570ff712870d4aa81d7a08ef3e2aa47fd984950764ec318ff0f164a4691544da",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\video\\page@9e475b2416fccf8c34d4e1abccdeb27f.webm.frames.jsonl": "73a8bb2610b0d1cc142a3705c7d890b8b561e1ee08e272da99080875e24fe30d",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\firefox-cloud-sky-delay-dpr2-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 51233.99999999674,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": "PASS",
+          "layerCases": [
+            "full-control",
+            "no-native-solar-overlays",
+            "no-calendar-moon-and-optics",
+            "no-css-glass",
+            "recomposition-control",
+            "no-physical-lunar-field",
+            "no-residual-night-field",
+            "no-catalogue",
+            "no-registered-diffuse",
+            "no-native-clouds"
+          ],
+          "video": "<evidence>\\native\\firefox-cloud-sky-delay-dpr2-r3\\video\\page@9e475b2416fccf8c34d4e1abccdeb27f.webm"
+        }
+      ]
+    },
+    {
+      "case": "chromium-rain-dpr2-r3",
+      "entry": "direct",
+      "scene": "rain",
+      "dpr": 2.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\chromium-rain-dpr2-r3\\results.json": "fd4cb9e84c26123dd169abc7d00a3d5c33d9dc342057004781df361648bf3214",
+        "native\\chromium-rain-dpr2-r3\\EXECUTION.json": "15c3b004643a02b5ea48e542963dfca0aca383b6bf411ecdc8a8fa5fff08b109",
+        "native\\chromium-rain-dpr2-r3\\RUN-LOG.txt": "c95f95295cf89841828bd6f58ac76f43ade663a53ff984ca384d369221c1c3ea",
+        "native\\chromium-rain-dpr2-r3\\cold-00.png": "f5c57a42fca5b766e171bf4d52a0a46151317098ca35dc9f8883e3fc4d41a86f",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-full-control.png": "92fa38e306de698979b015750761ea91aeef29c4d5d442ce52ed0e893d469192",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-no-calendar-moon-and-optics.png": "b9ab8f87cdaf2ea205b616fa75fb99d03bfbf47513cf674d5dc1c30fcdf6bd37",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-no-catalogue.png": "64ea06c8d0c876e3d8388b6e4dd9b2f0518823d6d287f18135aa5fc5e76378c4",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-no-css-glass.png": "148d5e639a83944d87f7904bd78b866c0a6128ab7d9b7ea92d8b74939cc69538",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-no-native-clouds.png": "2d1dc5aedbd45eaddfd1e4323819db61e96165de727f9d0fceab086e9867ff5e",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-no-native-solar-overlays.png": "3ce3e5ff7071ec2bf9fb798748984c08db1a1651eb34d4d805b8306fe121435e",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-no-physical-lunar-field.png": "6a5d63a20dec368a7a7362ef36d685afc0b5b11a6e43f10ee57ec24f292bb658",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-no-registered-diffuse.png": "b84e3f8872427ed4989ea85f3745d19fdb70bad76e63f746f0b792c039e7633b",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-no-residual-night-field.png": "abee850254c957e93a371d374155d99a56aaad5b9560ee08f020516d4f44a3c6",
+        "native\\chromium-rain-dpr2-r3\\cold-diagnostic-recomposition-control.png": "a5e68523f9404b1e5427a842a0ea0baca4237a290b30e2c4fcc41c309e43769b",
+        "native\\chromium-rain-dpr2-r3\\cold-final.png": "9594b28966526a4984df177729e5632aab28d3866631acd1f3d5be983b5be1bc",
+        "native\\chromium-rain-dpr2-r3\\cold-restored-full.png": "735e03759dddddb2c501914435a9e3f343418b7dfee5ca674c3f8b44d52517de",
+        "native\\chromium-rain-dpr2-r3\\video\\page@79d1a4b46313d45c586c61d185d2b2fe.webm": "5fa8781e5f48b14ac747b5796779b736e34ed30ee9dce5414fe6d40488611ead",
+        "native\\chromium-rain-dpr2-r3\\video\\page@79d1a4b46313d45c586c61d185d2b2fe.webm.frames.jsonl": "ae4a425d7d519cc3b8d01a9ee6c54df137bdbf778a559ec91d38af1243af3dc9",
+        "native\\chromium-rain-dpr2-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\chromium-rain-dpr2-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\chromium-rain-dpr2-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\chromium-rain-dpr2-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\chromium-rain-dpr2-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\chromium-rain-dpr2-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 16968.99999998277,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": [
+            "full-control",
+            "no-native-solar-overlays",
+            "no-calendar-moon-and-optics",
+            "no-css-glass",
+            "recomposition-control",
+            "no-physical-lunar-field",
+            "no-residual-night-field",
+            "no-catalogue",
+            "no-registered-diffuse",
+            "no-native-clouds"
+          ],
+          "video": "<evidence>\\native\\chromium-rain-dpr2-r3\\video\\page@79d1a4b46313d45c586c61d185d2b2fe.webm"
+        }
+      ]
+    },
+    {
+      "case": "firefox-rain-dpr2-r3",
+      "entry": "direct",
+      "scene": "rain",
+      "dpr": 2.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\firefox-rain-dpr2-r3\\results.json": "0433ad386d185c589c2d7324925c9ab2c34618724ef332d5f70179f227ae8194",
+        "native\\firefox-rain-dpr2-r3\\EXECUTION.json": "11072c38551bbedb80c487f502000ec291887dfb7344070c65b88d6b883f5ca7",
+        "native\\firefox-rain-dpr2-r3\\RUN-LOG.txt": "d59f12ebb691c799a3bd629f501cd3d60cbb9e924b7d19c3d55ab78daf958090",
+        "native\\firefox-rain-dpr2-r3\\cold-00.png": "89efffe3413e8c11bd1002863a33360df703f1ac7ac474e72a0099cba5b4d15c",
+        "native\\firefox-rain-dpr2-r3\\cold-final.png": "b5179c805da1daacbc702463a5f745e5a4797b865d6658007fd4c4484b221589",
+        "native\\firefox-rain-dpr2-r3\\video\\page@04edd35a3e1f8717c72e034f7d666754.webm": "da931215c969323f29611a0de7c4ae7caca20b0ea9967ff0472c27b03507c113",
+        "native\\firefox-rain-dpr2-r3\\video\\page@04edd35a3e1f8717c72e034f7d666754.webm.frames.jsonl": "29a3cbfb61f24a13bd67b66ce1ac03f33351bb0feceb29e4ccff0e1375f90c3f",
+        "native\\firefox-rain-dpr2-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\firefox-rain-dpr2-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\firefox-rain-dpr2-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\firefox-rain-dpr2-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\firefox-rain-dpr2-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\firefox-rain-dpr2-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 44235.00000004424,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\firefox-rain-dpr2-r3\\video\\page@04edd35a3e1f8717c72e034f7d666754.webm"
+        }
+      ]
+    },
+    {
+      "case": "chromium-moon-negative-dpr1-r3",
+      "entry": "direct",
+      "scene": "moon-negative",
+      "dpr": 1.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\chromium-moon-negative-dpr1-r3\\results.json": "3825687797eb1ba61ff52fc85d1667d1cfda3c6ad9a71681d4a63e2194276c18",
+        "native\\chromium-moon-negative-dpr1-r3\\EXECUTION.json": "0444d79eb18ee2c2d2dd361ebc71543ed0cb2f1f76fe17e8b2a37b7e34b974c5",
+        "native\\chromium-moon-negative-dpr1-r3\\RUN-LOG.txt": "1e7f6a31dfc6f10a9164eb8eae6f86ec73d83c684c6bdf21379454f3609ebe1d",
+        "native\\chromium-moon-negative-dpr1-r3\\cold-00.png": "3367e549d35ee04d3f7f852a8b425de6d684066aede060c0018ba14a58a4676d",
+        "native\\chromium-moon-negative-dpr1-r3\\cold-final.png": "782c9d67f240ca00a0d8e3fcb80300aedf52d2d4001a972fc039a9d19e6d50c0",
+        "native\\chromium-moon-negative-dpr1-r3\\video\\page@61d341446a3280d6e82f8a9a4b263e43.webm": "c4e9e26524d441265c691930f9e2c48e7c2197ae2e1a7e0820a99c1bf8ea88cf",
+        "native\\chromium-moon-negative-dpr1-r3\\video\\page@61d341446a3280d6e82f8a9a4b263e43.webm.frames.jsonl": "907297e0f99cae980490ac93350991ae0a268d49fb2ba70601e96ce1191548c6",
+        "native\\chromium-moon-negative-dpr1-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\chromium-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\chromium-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\chromium-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\chromium-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\chromium-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 15250.0,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\chromium-moon-negative-dpr1-r3\\video\\page@61d341446a3280d6e82f8a9a4b263e43.webm"
+        }
+      ]
+    },
+    {
+      "case": "firefox-moon-negative-dpr1-r3",
+      "entry": "iframe",
+      "scene": "moon-negative",
+      "dpr": 1.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\firefox-moon-negative-dpr1-r3\\results.json": "40b0c040ca053164b3cdc62604cc4238624a5ab82ea419babe3631d8c3d7e3a0",
+        "native\\firefox-moon-negative-dpr1-r3\\EXECUTION.json": "9439f3be4ab847e7032024ba97779feda405c1c9c8f2e26b52d83ec4c7b3f77c",
+        "native\\firefox-moon-negative-dpr1-r3\\RUN-LOG.txt": "8a1a58b5f5aecd45fe26fb31be9e77903b6ada4d5a304d84bdf7beda3397b8b7",
+        "native\\firefox-moon-negative-dpr1-r3\\cold-00.png": "01ee854ea424d95d18174d9d4e34d3595499a5c38645f885f8073b424022ef87",
+        "native\\firefox-moon-negative-dpr1-r3\\cold-final.png": "b1f370db637ded13a5fdb8cf2621e792f2e8c975198fa03f13d3d35a5d110dd2",
+        "native\\firefox-moon-negative-dpr1-r3\\video\\page@2b4b6eb2934c20126156583f619d9457.webm": "989f147a8bc00ad406c75fd2c74252205047bb893b8385a68fcfd7e1dc0e3ee3",
+        "native\\firefox-moon-negative-dpr1-r3\\video\\page@2b4b6eb2934c20126156583f619d9457.webm.frames.jsonl": "e3474d26d218005f6988909840187b6e89dd726eb908bda012a06a1a9da9f1f4",
+        "native\\firefox-moon-negative-dpr1-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\firefox-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\firefox-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\firefox-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\firefox-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\firefox-moon-negative-dpr1-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 41827.99999997951,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\firefox-moon-negative-dpr1-r3\\video\\page@2b4b6eb2934c20126156583f619d9457.webm"
+        }
+      ]
+    },
+    {
+      "case": "chromium-dawn-dpr2-r3",
+      "entry": "iframe",
+      "scene": "dawn",
+      "dpr": 2.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\chromium-dawn-dpr2-r3\\results.json": "cba9d44773e297363880f36cf914d251161caf19121d6c22b93657c1f7072975",
+        "native\\chromium-dawn-dpr2-r3\\EXECUTION.json": "0d36d78843af2d16ceefa1b5811f3d6e4182825ac7236c9d08821d41da30f48b",
+        "native\\chromium-dawn-dpr2-r3\\RUN-LOG.txt": "74198d8e7da2bf2c131cbf8d8a446c67bd53ca686bdd6fa527d58cb2b3cccbbd",
+        "native\\chromium-dawn-dpr2-r3\\cold-00.png": "7ec5d6fc8c2b1fd38bc53bec54be11344f33134263f48e518d666e8e2f205141",
+        "native\\chromium-dawn-dpr2-r3\\cold-final.png": "5945dde95d8093ac8c65b7a1ab3e1f8f8005d33260de83445047cf87f3030afd",
+        "native\\chromium-dawn-dpr2-r3\\video\\page@f392b72094d81778d3dfa0963faa5240.webm": "edb9e22cce9eb75b76462b245140b92c7e8b938c717d9c5066d345dec8bcc3e2",
+        "native\\chromium-dawn-dpr2-r3\\video\\page@f392b72094d81778d3dfa0963faa5240.webm.frames.jsonl": "1ee78a66b31ceec868ad6c41d2aa505ead097f0e0d58e7ea3b4b820ccbf163cb",
+        "native\\chromium-dawn-dpr2-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\chromium-dawn-dpr2-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\chromium-dawn-dpr2-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\chromium-dawn-dpr2-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\chromium-dawn-dpr2-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\chromium-dawn-dpr2-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 15530.999999959022,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\chromium-dawn-dpr2-r3\\video\\page@f392b72094d81778d3dfa0963faa5240.webm"
+        }
+      ]
+    },
+    {
+      "case": "firefox-dawn-dpr2-r3",
+      "entry": "iframe",
+      "scene": "dawn",
+      "dpr": 2.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\firefox-dawn-dpr2-r3\\results.json": "1e957ca542c5bbec79004852af7a9ef6b3322dd19f8f879f16d6965e10a65a1d",
+        "native\\firefox-dawn-dpr2-r3\\EXECUTION.json": "8e8b71f16ac4c033191e169a176d984e0331e53dc755a8e16df699adb2d425a3",
+        "native\\firefox-dawn-dpr2-r3\\RUN-LOG.txt": "1c929db25d4f083cce55ed00b1424ebcc1e2475a7f00d15b9090e29d064941ff",
+        "native\\firefox-dawn-dpr2-r3\\cold-00.png": "472a6676cbcaad8cf971e7dc172cd88f7aabbdec5954b74f563960c053736ec8",
+        "native\\firefox-dawn-dpr2-r3\\cold-final.png": "2e63cdac8d871c6b39f82e03236355cb28e8d3060c918a204605677beffd7b26",
+        "native\\firefox-dawn-dpr2-r3\\video\\page@821a22380402ac4f46856a2c35a2280f.webm": "b53373c364b623dcced9e8165c8a9a0cc9f71a08c3d960d8bbd4b949555ad8fa",
+        "native\\firefox-dawn-dpr2-r3\\video\\page@821a22380402ac4f46856a2c35a2280f.webm.frames.jsonl": "0c6eb64b7cf2f8276699648d11329f7319a66b96fda89eb8d08fcc47a8f8c38f",
+        "native\\firefox-dawn-dpr2-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\firefox-dawn-dpr2-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\firefox-dawn-dpr2-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\firefox-dawn-dpr2-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\firefox-dawn-dpr2-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\firefox-dawn-dpr2-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 38186.99999997625,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\firefox-dawn-dpr2-r3\\video\\page@821a22380402ac4f46856a2c35a2280f.webm"
+        }
+      ]
+    },
+    {
+      "case": "chromium-day-dpr1-r3",
+      "entry": "direct",
+      "scene": "day",
+      "dpr": 1.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\chromium-day-dpr1-r3\\results.json": "b59cff7dab2c4fdbd72e67e6f9804e4142628da80a64bc5cf1a829faeb6300be",
+        "native\\chromium-day-dpr1-r3\\EXECUTION.json": "3420d3f090786bf1863990f75ac60d3527608b3624569221947551b8b4fb918f",
+        "native\\chromium-day-dpr1-r3\\RUN-LOG.txt": "207d070b0d4ac5eaf7117d11bf77fd48134dfcbc4987738b163addb745eb7821",
+        "native\\chromium-day-dpr1-r3\\cold-00.png": "30b5c4be4595017a0abaae0f6a529b1b1ea5af5d1b47724c54b6f4a602cf4e65",
+        "native\\chromium-day-dpr1-r3\\cold-final.png": "680bbb9d5b98b7187f8a5fcba075993bcf52ed34366b7b8ddfe2feb19dbfeca2",
+        "native\\chromium-day-dpr1-r3\\video\\page@a6a7b6392194760018efaa0a85e74e84.webm": "51d2a8d3e5979c84d77387c17a107a01d58b5efd0d4ad1e67c14a797585af1a0",
+        "native\\chromium-day-dpr1-r3\\video\\page@a6a7b6392194760018efaa0a85e74e84.webm.frames.jsonl": "dbabe73c80a1b2164ee164236061fc8c72b281ac326c1bde9637b75ca8b01345",
+        "native\\chromium-day-dpr1-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\chromium-day-dpr1-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\chromium-day-dpr1-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\chromium-day-dpr1-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\chromium-day-dpr1-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\chromium-day-dpr1-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 15202.99999997951,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\chromium-day-dpr1-r3\\video\\page@a6a7b6392194760018efaa0a85e74e84.webm"
+        }
+      ]
+    },
+    {
+      "case": "firefox-day-dpr1-r3",
+      "entry": "direct",
+      "scene": "day",
+      "dpr": 1.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\firefox-day-dpr1-r3\\results.json": "30d0b67f1e77708e11ede1b83347434379483c54637389b52277ba9a4fa5377b",
+        "native\\firefox-day-dpr1-r3\\EXECUTION.json": "98a91e13eca85168be3500604583bbed90dfab51b135f5f1c706519724fde8d0",
+        "native\\firefox-day-dpr1-r3\\RUN-LOG.txt": "181649ee0020c416cfeb1228d933b4072679e3894ae3ff8f4de2e0c82113848a",
+        "native\\firefox-day-dpr1-r3\\cold-00.png": "864230591b02e1cd0bfc25b295a72d96c5bcef169444b0ec4fb2c37bb2100368",
+        "native\\firefox-day-dpr1-r3\\cold-final.png": "acf89386f02f327af14235a07ad796e7bcca39fc27fca0dc4ad01dd12ab1bcdb",
+        "native\\firefox-day-dpr1-r3\\video\\page@3664d13f4c4fc2a7e4957ce18de18870.webm": "a57b12e0f6cd2d53119f1938b455e7ec627b15a64bce378eca898630ba2b495e",
+        "native\\firefox-day-dpr1-r3\\video\\page@3664d13f4c4fc2a7e4957ce18de18870.webm.frames.jsonl": "0f20de4b3f2ddb2e26a6cd1993f1a1c41e25bb319032c8d4b801705dff57d809",
+        "native\\firefox-day-dpr1-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\firefox-day-dpr1-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\firefox-day-dpr1-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\firefox-day-dpr1-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\firefox-day-dpr1-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\firefox-day-dpr1-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 31843.99999998277,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\firefox-day-dpr1-r3\\video\\page@3664d13f4c4fc2a7e4957ce18de18870.webm"
+        }
+      ]
+    },
+    {
+      "case": "chromium-clear-iframe-dpr2-entries-r3",
+      "entry": "iframe",
+      "scene": "clear",
+      "dpr": 2.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\results.json": "fec1752f74d9df8dfb62fe5cef995784f03226120c1957c0b80df8bda39c418c",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\EXECUTION.json": "275b1b273228eb5baf722812d8636a231691c158c22a43bbddb0135caff73266",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\RUN-LOG.txt": "94e58b20b96bb30fc6447851cd59c4c5fb9ae508c582e8b207e1c7034ec3ee7d",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\cold-00.png": "4118b856e4c9f49cfd146efa9a65e0aa866228440c14b5754030f320b7e19539",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\cold-final.png": "c43dabb306f1bac5a6924a57ab99a8bf93b26ca959e53869618b94dfca15d619",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\new-tab-00.png": "4509e77a1033c34d6ac241237ca5bc485500a89046436747a5f091797743e67b",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\new-tab-final.png": "878da6f0eee78f41913c24dfc2c492b78b0099b554c61093cc1b503663de5a13",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\warm-reload-00.png": "d4a3880e1e5638080db41ea6648a0881d10e87decdb74e4a2fe79d00e8fd817b",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\warm-reload-final.png": "dde87b5022460ee5bb5b12c28a6b05e955347b2b1e90091e86e7f21dda68d39f",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\video\\page@1209a8a9672f1aa2e364acbcc957c0af.webm": "90923df15acc2628803dd8013b3ebe463df1989d074379296ed9ee519199fb5c",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\video\\page@ba726c37b78bcb0a3e469c5fcb2201d2.webm": "791532001361b36fe052080b416dd14e7985e6601c63482fb6f5d525405e6162",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\video\\page@1209a8a9672f1aa2e364acbcc957c0af.webm.frames.jsonl": "6490c4843a9526d89edab36abb4ff69f48ddf985f364850308c1be483cb8ba36",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\video\\page@ba726c37b78bcb0a3e469c5fcb2201d2.webm.frames.jsonl": "4c1def221c83ffed8c5aafc1bab7fc44a92ba8cc524620ebd896c69c0d49f463",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\chromium-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 17688.00000002375,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\chromium-clear-iframe-dpr2-entries-r3\\video\\page@1209a8a9672f1aa2e364acbcc957c0af.webm"
+        },
+        {
+          "mode": "warm-reload",
+          "elapsedMs": 16436.99999997625,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\chromium-clear-iframe-dpr2-entries-r3\\video\\page@1209a8a9672f1aa2e364acbcc957c0af.webm"
+        },
+        {
+          "mode": "new-tab",
+          "elapsedMs": 15406.00000001723,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\chromium-clear-iframe-dpr2-entries-r3\\video\\page@ba726c37b78bcb0a3e469c5fcb2201d2.webm"
+        }
+      ]
+    },
+    {
+      "case": "firefox-clear-iframe-dpr2-entries-r3",
+      "entry": "iframe",
+      "scene": "clear",
+      "dpr": 2.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\results.json": "4f6d891f1be16b9cafbe2171d66e487b6f28f5a6ff111d230b9a4f9c028d9328",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\EXECUTION.json": "1e97c25f905a450a5bfa43364a51075c48ab5b8774f6de9a2bbea156d707a4be",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\RUN-LOG.txt": "bf5d5e6f19207ac6609a3193cee0b9ed6f4311456a34d7c9290a7b12c4e0eb9c",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\cold-00.png": "e6756eb3ba40ba0bef5e3aa4c5284760c4616a3867bfed46a488772fdf8a5b49",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\cold-final.png": "cc7566566119c3f5644ec0935dfd9526a8f3c0d693aca6cf8b7d3bc2c4f1ef56",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\new-tab-00.png": "a05657b336e38f08daac3040ea368dfb120b090f8610e97d26e55a8a8bace1bf",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\new-tab-final.png": "28843e2f97e9a6e800977b662ddfccbc5235f9bb834ee54ee15761361beed8b5",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\warm-reload-00.png": "df1b7c949f45083f6abd99fe0e26214364dd186a6c96ec5839892d11ca2c2ed4",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\warm-reload-final.png": "f3679ddd8b262a740d321e3e12c64c6bfc5aefb18df3311f29b44d0cdd1dc389",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\video\\page@662d14f208fd34034daf90027149a4dc.webm": "8a21386c435b56ad4d2a53c6a39c42dc290de7afa899f7ba15f1f64e1cf9e3c2",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\video\\page@b5f565a03c506a33f1d1fb5302244c4b.webm": "1bae753b5ec89d2b184a82059df5301301674db10735823a129a9ae4c63d8592",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\video\\page@662d14f208fd34034daf90027149a4dc.webm.frames.jsonl": "8d11a5176e6aeb2e535e974df9fd6b22cb78c2d6f04099bfefcdcd98448825ab",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\video\\page@b5f565a03c506a33f1d1fb5302244c4b.webm.frames.jsonl": "67f7698141ced85ef918c771304396672687f945a6cf95be9506bf3b97120bd9",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\firefox-clear-iframe-dpr2-entries-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 47483.99999999674,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\firefox-clear-iframe-dpr2-entries-r3\\video\\page@b5f565a03c506a33f1d1fb5302244c4b.webm"
+        },
+        {
+          "mode": "warm-reload",
+          "elapsedMs": 46468.99999998277,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\firefox-clear-iframe-dpr2-entries-r3\\video\\page@b5f565a03c506a33f1d1fb5302244c4b.webm"
+        },
+        {
+          "mode": "new-tab",
+          "elapsedMs": 131467.99999999348,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "refining",
+            "errors": []
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "terrain-preview",
+            "status": "unavailable",
+            "errors": [
+              "Moon refinement did not meet the admitted quality criterion"
+            ],
+            "retryCount": 0
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": null,
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\firefox-clear-iframe-dpr2-entries-r3\\video\\page@662d14f208fd34034daf90027149a4dc.webm"
+        }
+      ]
+    },
+    {
+      "case": "chromium-moon-missing-retry-dpr1-r3",
+      "entry": "direct",
+      "scene": "clear",
+      "dpr": 1.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\chromium-moon-missing-retry-dpr1-r3\\results.json": "64ed0bc2230c5526b4aebb5def24dff50f97f0100b226f852688eb5c799ead43",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\EXECUTION.json": "c064a0a4ddb3d7e294ccd02dc635009e8a45a220b25321cf9281d85a524236fb",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\RUN-LOG.txt": "e83679f37a5f6801f396cb62e8c9ccd23b08b8fcbf5c2ff5f2bb7bcc84f276f3",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\cold-00.png": "0ebda32d6392927e4c8c6a4a27aa2c7e06de676a63ed13136ec846c3f07b4010",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\cold-final.png": "fa20850bdb5dabd1b6b13c942e8c47630d9baaada01bf493ead5af3a28825e03",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\video\\page@bf45ba4da4b009fc823ecc5d8a9bf519.webm": "721a6f76d2b70f6ed2d26bf1ce22fcd88de4a917cb778b355bd779b9717fdd8f",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\video\\page@bf45ba4da4b009fc823ecc5d8a9bf519.webm.frames.jsonl": "1e6a5184ea7c95bea8b4ee8bc0331407e24fc7e81e2a75be98f2b902391fcb15",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\chromium-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 41797.00000002049,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "initial-v5",
+            "status": "unavailable",
+            "errors": [
+              "Moon asset HTTP 503"
+            ]
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [
+              "Moon asset HTTP 503"
+            ],
+            "retryCount": 1
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": {
+            "atMs": 25015.00000001397,
+            "retry": {
+              "moon": true,
+              "sky": {
+                "status": "ready",
+                "generation": 2,
+                "error": null
+              }
+            }
+          },
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\chromium-moon-missing-retry-dpr1-r3\\video\\page@bf45ba4da4b009fc823ecc5d8a9bf519.webm"
+        }
+      ]
+    },
+    {
+      "case": "firefox-moon-missing-retry-dpr1-r3",
+      "entry": "direct",
+      "scene": "clear",
+      "dpr": 1.0,
+      "fixtureRevision": 2,
+      "pins": {
+        "native\\firefox-moon-missing-retry-dpr1-r3\\results.json": "83b7901e119d417f227dd4ff75480e89ad42f0f9cfe02e963032c61cc1503af0",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\EXECUTION.json": "8186422cdd26f8a59fd95887684f498a9a2aeb39a454d212ca43e80a94e6e3a3",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\RUN-LOG.txt": "d627f1af432113cef95120b419a567513acbd669f47a51616a7b76f8104769ee",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\cold-00.png": "4a023e055409ed69b944441738650369ecdeb3e2d3dba46e5d45fb61b65251b9",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\cold-final.png": "6a3fa03be1216329a04a4e99053395d284bb0e35e2c0e2a632e557ac429a1ca1",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\video\\page@2ef071b8992f5912d0736c49fe2f8c7b.webm": "3521022783586b821ce6f6f4861dd0bc0ab369649413e5e832de8ac346773a34",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\video\\page@2ef071b8992f5912d0736c49fe2f8c7b.webm.frames.jsonl": "896c6d1ea257a9108471b68ee4118e4e037f387481d189fe27028e3b37d86ecd",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\harness-source\\tests\\v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\celestial_startup_check.py": "09ad396d008ca0723d9370fd9777cd76cbc40fc8d4c825dce181e64fd3b80472",
+        "native\\firefox-moon-missing-retry-dpr1-r3\\harness-source\\tools\\cp9\\runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af"
+      },
+      "runs": [
+        {
+          "mode": "cold",
+          "elapsedMs": 75219.00000004098,
+          "at15sMoon": {
+            "current": true,
+            "visibleSource": "initial-v5",
+            "status": "unavailable",
+            "errors": [
+              "Moon asset HTTP 503"
+            ]
+          },
+          "finalMoon": {
+            "current": true,
+            "visibleSource": "refined-terrain",
+            "status": "ready",
+            "errors": [
+              "Moon asset HTTP 503"
+            ],
+            "retryCount": 1
+          },
+          "at15sSky": "ready",
+          "finalSky": "ready",
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530,
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "prayerRows": [
+            "Fajr06:21",
+            "Sunrise07:26",
+            "Dhuhr13:17",
+            "Asr16:38",
+            "Maghrib19:08",
+            "Isha20:13"
+          ],
+          "recovery": {
+            "atMs": 25016.00000000326,
+            "retry": {
+              "moon": true,
+              "sky": {
+                "status": "ready",
+                "generation": 2,
+                "error": null
+              }
+            }
+          },
+          "optionalControls": "RETURNED",
+          "lifecycleStatus": null,
+          "layerCases": null,
+          "video": "<evidence>\\native\\firefox-moon-missing-retry-dpr1-r3\\video\\page@2ef071b8992f5912d0736c49fe2f8c7b.webm"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "<candidate>\tools\cp9\celestial_startup_check.py", line 271, in <module>
+    asyncio.run(run(p.parse_args()))
+  File "<python-install>\Python311\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "<python-install>\Python311\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<python-install>\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "<candidate>\tools\cp9\celestial_startup_check.py", line 134, in run
+    report={'schema':'celestial-startup/1','runtime':runtime_identity(a.root),'harnessSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<candidate>\tools\cp9\runtime_identity.py", line 14, in runtime_identity
+    files={p.relative_to(root).as_posix():{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(paths)}
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<candidate>\tools\cp9\runtime_identity.py", line 14, in <dictcomp>
+    files={p.relative_to(root).as_posix():{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(paths)}
+                                                   ^^^^^^^^
+  File "<python-install>\Python311\Lib\pathlib.py", line 1013, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] The system cannot find the file specified: '<evidence>\\builds\\baseline-18ff\\builder.html'

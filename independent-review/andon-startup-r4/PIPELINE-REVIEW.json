@@ -1,0 +1,1553 @@
+{
+  "schema": "r0021.independent-andon-pipeline-review.v1",
+  "reviewer": "/root/r0021_review",
+  "createdAtUtc": "2026-10-16T18:47:56.831772+00:00",
+  "authority": "Audit-ANDON DIRECT_ENTRY recommendation-only. Offline retained-evidence review; no browser, acquisition, source mutation or qualification/acceptance/closure authority.",
+  "decision": "GPU_DRAW_FLUSH_STAGE_LOCALIZED_SOURCE_PRIMITIVE_CAUSE_INCONCLUSIVE_FREEZE_FOR_SEPARATE_COST_AND_PRESERVATION",
+  "identity": {
+    "indexSha256": "2b42147824c19334180738eb5530da16118b56181963b126d214becb59174a01",
+    "runtimeTreeSha256": "61ceff2276153be01c0b2d319ac036691982fe6999be9fac8d6458758f89f565",
+    "inputSnapshot": {
+      "path": "<evidence>\\builds\\integrated-r3\\INPUT-SNAPSHOT.json",
+      "sha256": "b0bfb2e89d036a2d72f0a8748aaf50f3a980e529daa394dbcbc056c16ee44a0f"
+    },
+    "harnessSha256": "d5c18049402a03d370d20b591de2d1d783a57ce4ad01d59fa5dbcab7ffbd2ddf",
+    "sixPreRunHarnessInputSha256": {
+      "tools/cp9/celestial_startup_check.py": "d5c18049402a03d370d20b591de2d1d783a57ce4ad01d59fa5dbcab7ffbd2ddf",
+      "tools/cp9/celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+      "tools/cp9/celestial_layer_controls.js": "5188ccc95a200395ccc70db3400f70aa10eb3c78cee49822b88bf1ef7178e698",
+      "tools/cp9/browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+      "tools/cp9/runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af",
+      "tests/v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692"
+    },
+    "savedInputHashesVerified": true,
+    "harnessUnchangedDuringRun": true,
+    "runtimeUnchanged": true,
+    "errors": []
+  },
+  "failedPredecessor": {
+    "disposition": "r3 failed in optional Browser.getBrowserCommandLine metadata acquisition before the product recording. Preserve the failure; no product-timing evidence from that attempt.",
+    "evidence": [
+      {
+        "path": "<evidence>\\native\\chromium-pipeline-diagnostic-r3\\EXECUTION.json",
+        "sha256": "4212130618960fc2b2b2c793f3c307afdb31d35c49ad3321e28ec82af6faef40"
+      },
+      {
+        "path": "<evidence>\\native\\chromium-pipeline-diagnostic-r3\\RUN-LOG.txt",
+        "sha256": "6092940715a3c8bd3957005ee01991b4d12d93dd274b77d5df98520c94bfbe05"
+      }
+    ]
+  },
+  "environment": {
+    "browser": {
+      "family": "chromium",
+      "version": "148.0.7778.96",
+      "os": "Windows",
+      "machine": "AMD64",
+      "executable": "<browser-install>\\chromium-1223\\chrome-win64\\chrome.exe",
+      "chromiumSandboxRequested": true
+    },
+    "activeRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5070 Ti (0x00002C05) Direct3D11 vs_5_0 ps_5_0, D3D11-32.0.16.1714)",
+    "skiaBackend": "GaneshGL",
+    "featureStatus": {
+      "2d_canvas": "enabled",
+      "direct_rendering_display_compositor": "disabled_off_ok",
+      "gpu_compositing": "enabled",
+      "multiple_raster_threads": "enabled_on",
+      "opengl": "enabled_on",
+      "rasterization": "enabled",
+      "raw_draw": "disabled_off_ok",
+      "skia_graphite": "disabled_off",
+      "trees_in_viz": "disabled_off",
+      "video_decode": "enabled",
+      "video_encode": "enabled",
+      "webgl": "enabled",
+      "webgpu": "enabled",
+      "webnn": "disabled_off"
+    },
+    "processCrashCount": 0,
+    "browserCommandLineQueryUnavailable": "CDPSession.send: Protocol error (Browser.getBrowserCommandLine): Command line not returned because --enable-automation not set.",
+    "systemInfoCommandLineAvailable": true,
+    "systemInfoCommandLineSha256": "f7ed081b84a82190f28cf28bd080a4236bcd97885c16882ce8c2cfcb8ddf4389",
+    "observedFlags": {
+      "headless": true,
+      "PaintHoldingDisabled": true,
+      "enableAutomationPresent": false
+    },
+    "limit": "Hardware-backed ANGLE D3D11 configuration is recorded; this does not diagnose a GPU or driver defect. Separate command-line API failure did not require changed flags."
+  },
+  "capture": {
+    "traceSha256": "332bea0df1e80cab69cf44a47eb8a4de04836bfb2951af0ea2e8350122bafd60",
+    "events": 158477,
+    "categories": {
+      "requested": [
+        "cc",
+        "viz",
+        "gpu",
+        "disabled-by-default-cc.debug",
+        "disabled-by-default-devtools.timeline.frame"
+      ],
+      "selected": [
+        "cc",
+        "viz",
+        "gpu",
+        "disabled-by-default-cc.debug",
+        "disabled-by-default-devtools.timeline.frame"
+      ],
+      "missing": []
+    },
+    "clockBracket": [
+      1792175886156.3972,
+      1792175886159.0876,
+      303105.365173
+    ],
+    "clockBracketWidthMs": 2.6904296875,
+    "stop": {
+      "requestedDurationMs": 2000.0,
+      "stopRequestedUtcMs": 1792175888249.6816,
+      "stopReturnedUtcMs": 1792175898934.3606
+    },
+    "nonzeroEventRangeMs": [
+      -89.333740234375,
+      2026.513427734375
+    ],
+    "flushLimit": "About10.7 seconds elapsed after stop request during trace return/serialization. The retained event stream ends about2026.5 ms after navigation; the flush wait is not a13-second collection window.",
+    "ordinaryTimingCredit": false
+  },
+  "pixels": {
+    "viewed": [
+      "video/page@c010512e6fca6b11acfe68647558be04.webm.frames/000010.jpeg",
+      "video/page@c010512e6fca6b11acfe68647558be04.webm.frames/000011.jpeg",
+      "compositor-review-cold/010.png"
+    ],
+    "observations": "Raw10 is white/blank except exterior markers. Raw11 and compositor010 show Moon/stars and pending prayer UI. These are diagnostic originals, not filled coverage.",
+    "rawBlank10": {
+      "seq": 10,
+      "sourceTimeSeconds": 1792175886.781728,
+      "receiptUtcMs": 1792175886781,
+      "file": "000010.jpeg",
+      "bytes": 3247
+    },
+    "rawCompleteCelestial11": {
+      "seq": 11,
+      "sourceTimeSeconds": 1792175887.09413,
+      "receiptUtcMs": 1792175887095,
+      "file": "000011.jpeg",
+      "bytes": 30894
+    },
+    "rawGapMs": 312.40200996398926,
+    "earliestAcceptedRelativeNavigationMs": 296.97509765625,
+    "acceptedPlus250Ms": 546.97509765625,
+    "screenshot200": {
+      "cat": "disabled-by-default-devtools.screenshot",
+      "name": "Screenshot",
+      "ph": "I",
+      "pid": 5288,
+      "s": "t",
+      "tid": 32752,
+      "ts": 303106301218,
+      "tts": 292428,
+      "args": {
+        "expected_display_time": 303106295154,
+        "frame_sequence": 200,
+        "source_id": 4294967296
+      }
+    },
+    "exactPresentation200": {
+      "args": {
+        "begin_frame_id": {
+          "sequence_number": 200,
+          "source_id": 4294967296
+        },
+        "id": "0ca399b2821df1c4"
+      },
+      "cat": "devtools.timeline",
+      "id2": {
+        "local": "0x32"
+      },
+      "name": "AnimationFrame::Presentation",
+      "ph": "n",
+      "pid": 27396,
+      "tid": 35128,
+      "ts": 303106300911
+    },
+    "presentation200NavigationBracketMs": [
+      869.410400390625,
+      872.100830078125
+    ],
+    "matchBasis": "Exact small frame_sequence200/source_id4294967296. No nearest-ID substitution. The r3 unmatched Screenshot168 remains unmatched in its own record.",
+    "rawReceiptPrecision": "Keep original source and integer receipt fields; an integer receipt can precede fractional source by less than1 ms. No correction or interpolation was applied."
+  },
+  "pipelineReporterAssociations": [
+    {
+      "rendererPid": 27396,
+      "compositorTid": 71028,
+      "localId": "0x76",
+      "frameSource": 4294967296,
+      "frameSequence": 176,
+      "reportedState": "STATE_PRESENTED_ALL",
+      "startTsUs": 303105910735,
+      "endTsUs": 303106296896,
+      "phases": [
+        {
+          "phase": "BeginImplFrameToSendBeginMainFrame",
+          "startTsUs": 303105910803,
+          "endTsUs": 303105910999,
+          "startBracketMs": [
+            479.30224609375,
+            481.99267578125
+          ],
+          "endBracketMs": [
+            479.498291015625,
+            482.188720703125
+          ],
+          "durationMs": 0.196
+        },
+        {
+          "phase": "SendBeginMainFrameToCommit",
+          "startTsUs": 303105910999,
+          "endTsUs": 303105986336,
+          "startBracketMs": [
+            479.498291015625,
+            482.188720703125
+          ],
+          "endBracketMs": [
+            554.83544921875,
+            557.52587890625
+          ],
+          "durationMs": 75.337
+        },
+        {
+          "phase": "Commit",
+          "startTsUs": 303105986336,
+          "endTsUs": 303105986510,
+          "startBracketMs": [
+            554.83544921875,
+            557.52587890625
+          ],
+          "endBracketMs": [
+            555.00927734375,
+            557.69970703125
+          ],
+          "durationMs": 0.174
+        },
+        {
+          "phase": "EndCommitToActivation",
+          "startTsUs": 303105986510,
+          "endTsUs": 303105988913,
+          "startBracketMs": [
+            555.00927734375,
+            557.69970703125
+          ],
+          "endBracketMs": [
+            557.412353515625,
+            560.102783203125
+          ],
+          "durationMs": 2.403
+        },
+        {
+          "phase": "Activation",
+          "startTsUs": 303105988913,
+          "endTsUs": 303105989008,
+          "startBracketMs": [
+            557.412353515625,
+            560.102783203125
+          ],
+          "endBracketMs": [
+            557.50732421875,
+            560.19775390625
+          ],
+          "durationMs": 0.095
+        },
+        {
+          "phase": "EndActivateToSubmitCompositorFrame",
+          "startTsUs": 303105989008,
+          "endTsUs": 303105990969,
+          "startBracketMs": [
+            557.50732421875,
+            560.19775390625
+          ],
+          "endBracketMs": [
+            559.46826171875,
+            562.15869140625
+          ],
+          "durationMs": 1.961
+        },
+        {
+          "phase": "SubmitToReceiveCompositorFrame",
+          "startTsUs": 303105990969,
+          "endTsUs": 303105991278,
+          "startBracketMs": [
+            559.46826171875,
+            562.15869140625
+          ],
+          "endBracketMs": [
+            559.77734375,
+            562.4677734375
+          ],
+          "durationMs": 0.309
+        },
+        {
+          "phase": "ReceiveCompositorFrameToStartDraw",
+          "startTsUs": 303105991278,
+          "endTsUs": 303105994489,
+          "startBracketMs": [
+            559.77734375,
+            562.4677734375
+          ],
+          "endBracketMs": [
+            562.98828125,
+            565.6787109375
+          ],
+          "durationMs": 3.211
+        },
+        {
+          "phase": "StartDrawToSwapStart",
+          "startTsUs": 303105994489,
+          "endTsUs": 303106295573,
+          "startBracketMs": [
+            562.98828125,
+            565.6787109375
+          ],
+          "endBracketMs": [
+            864.072265625,
+            866.7626953125
+          ],
+          "durationMs": 301.084
+        },
+        {
+          "phase": "Swap",
+          "startTsUs": 303106295573,
+          "endTsUs": 303106295583,
+          "startBracketMs": [
+            864.072265625,
+            866.7626953125
+          ],
+          "endBracketMs": [
+            864.082275390625,
+            866.772705078125
+          ],
+          "durationMs": 0.01
+        },
+        {
+          "phase": "SwapEndToPresentationCompositorFrame",
+          "startTsUs": 303106295583,
+          "endTsUs": 303106296896,
+          "startBracketMs": [
+            864.082275390625,
+            866.772705078125
+          ],
+          "endBracketMs": [
+            865.395263671875,
+            868.085693359375
+          ],
+          "durationMs": 1.313
+        },
+        {
+          "phase": "SubmitCompositorFrameToPresentationCompositorFrame",
+          "startTsUs": 303105990969,
+          "endTsUs": 303106296896,
+          "startBracketMs": [
+            559.46826171875,
+            562.15869140625
+          ],
+          "endBracketMs": [
+            865.395263671875,
+            868.085693359375
+          ],
+          "durationMs": 305.927
+        }
+      ]
+    },
+    {
+      "rendererPid": 27396,
+      "compositorTid": 71028,
+      "localId": "0x7a",
+      "frameSource": 4294967296,
+      "frameSequence": 198,
+      "reportedState": "STATE_PRESENTED_ALL",
+      "startTsUs": 303105986805,
+      "endTsUs": 303106300911,
+      "phases": [
+        {
+          "phase": "BeginImplFrameToSendBeginMainFrame",
+          "startTsUs": 303105986888,
+          "endTsUs": 303105986919,
+          "startBracketMs": [
+            555.387451171875,
+            558.077880859375
+          ],
+          "endBracketMs": [
+            555.41845703125,
+            558.10888671875
+          ],
+          "durationMs": 0.031
+        },
+        {
+          "phase": "SendBeginMainFrameToCommit",
+          "startTsUs": 303105986919,
+          "endTsUs": 303105993620,
+          "startBracketMs": [
+            555.41845703125,
+            558.10888671875
+          ],
+          "endBracketMs": [
+            562.119384765625,
+            564.809814453125
+          ],
+          "durationMs": 6.701
+        },
+        {
+          "phase": "Commit",
+          "startTsUs": 303105993620,
+          "endTsUs": 303105993646,
+          "startBracketMs": [
+            562.119384765625,
+            564.809814453125
+          ],
+          "endBracketMs": [
+            562.145263671875,
+            564.835693359375
+          ],
+          "durationMs": 0.026
+        },
+        {
+          "phase": "EndCommitToActivation",
+          "startTsUs": 303105993646,
+          "endTsUs": 303105993751,
+          "startBracketMs": [
+            562.145263671875,
+            564.835693359375
+          ],
+          "endBracketMs": [
+            562.250244140625,
+            564.940673828125
+          ],
+          "durationMs": 0.105
+        },
+        {
+          "phase": "Activation",
+          "startTsUs": 303105993751,
+          "endTsUs": 303105993771,
+          "startBracketMs": [
+            562.250244140625,
+            564.940673828125
+          ],
+          "endBracketMs": [
+            562.270263671875,
+            564.960693359375
+          ],
+          "durationMs": 0.02
+        },
+        {
+          "phase": "EndActivateToSubmitCompositorFrame",
+          "startTsUs": 303105993771,
+          "endTsUs": 303105994771,
+          "startBracketMs": [
+            562.270263671875,
+            564.960693359375
+          ],
+          "endBracketMs": [
+            563.270263671875,
+            565.960693359375
+          ],
+          "durationMs": 1.0
+        },
+        {
+          "phase": "SubmitToReceiveCompositorFrame",
+          "startTsUs": 303105994771,
+          "endTsUs": 303105995384,
+          "startBracketMs": [
+            563.270263671875,
+            565.960693359375
+          ],
+          "endBracketMs": [
+            563.88330078125,
+            566.57373046875
+          ],
+          "durationMs": 0.613
+        },
+        {
+          "phase": "ReceiveCompositorFrameToStartDraw",
+          "startTsUs": 303105995384,
+          "endTsUs": 303106296205,
+          "startBracketMs": [
+            563.88330078125,
+            566.57373046875
+          ],
+          "endBracketMs": [
+            864.704345703125,
+            867.394775390625
+          ],
+          "durationMs": 300.821
+        },
+        {
+          "phase": "StartDrawToSwapStart",
+          "startTsUs": 303106296205,
+          "endTsUs": 303106298440,
+          "startBracketMs": [
+            864.704345703125,
+            867.394775390625
+          ],
+          "endBracketMs": [
+            866.939453125,
+            869.6298828125
+          ],
+          "durationMs": 2.235
+        },
+        {
+          "phase": "Swap",
+          "startTsUs": 303106298440,
+          "endTsUs": 303106298452,
+          "startBracketMs": [
+            866.939453125,
+            869.6298828125
+          ],
+          "endBracketMs": [
+            866.951416015625,
+            869.641845703125
+          ],
+          "durationMs": 0.012
+        },
+        {
+          "phase": "SwapEndToPresentationCompositorFrame",
+          "startTsUs": 303106298452,
+          "endTsUs": 303106300911,
+          "startBracketMs": [
+            866.951416015625,
+            869.641845703125
+          ],
+          "endBracketMs": [
+            869.410400390625,
+            872.100830078125
+          ],
+          "durationMs": 2.459
+        },
+        {
+          "phase": "SubmitCompositorFrameToPresentationCompositorFrame",
+          "startTsUs": 303105994771,
+          "endTsUs": 303106300911,
+          "startBracketMs": [
+            563.270263671875,
+            565.960693359375
+          ],
+          "endBracketMs": [
+            869.410400390625,
+            872.100830078125
+          ],
+          "durationMs": 306.14
+        }
+      ]
+    },
+    {
+      "rendererPid": 27396,
+      "compositorTid": 71028,
+      "localId": "0x4",
+      "frameSource": 4294967296,
+      "frameSequence": 200,
+      "reportedState": "STATE_PRESENTED_ALL",
+      "startTsUs": 303105994354,
+      "endTsUs": 303106300911,
+      "phases": [
+        {
+          "phase": "BeginImplFrameToSendBeginMainFrame",
+          "startTsUs": 303105994407,
+          "endTsUs": 303105994490,
+          "startBracketMs": [
+            562.90625,
+            565.5966796875
+          ],
+          "endBracketMs": [
+            562.9892578125,
+            565.6796875
+          ],
+          "durationMs": 0.083
+        },
+        {
+          "phase": "SendBeginMainFrameToCommit",
+          "startTsUs": 303105994490,
+          "endTsUs": 303105998628,
+          "startBracketMs": [
+            562.9892578125,
+            565.6796875
+          ],
+          "endBracketMs": [
+            567.12744140625,
+            569.81787109375
+          ],
+          "durationMs": 4.138
+        },
+        {
+          "phase": "Commit",
+          "startTsUs": 303105998628,
+          "endTsUs": 303105998665,
+          "startBracketMs": [
+            567.12744140625,
+            569.81787109375
+          ],
+          "endBracketMs": [
+            567.164306640625,
+            569.854736328125
+          ],
+          "durationMs": 0.037
+        },
+        {
+          "phase": "EndCommitToActivation",
+          "startTsUs": 303105998665,
+          "endTsUs": 303105998868,
+          "startBracketMs": [
+            567.164306640625,
+            569.854736328125
+          ],
+          "endBracketMs": [
+            567.367431640625,
+            570.057861328125
+          ],
+          "durationMs": 0.203
+        },
+        {
+          "phase": "Activation",
+          "startTsUs": 303105998868,
+          "endTsUs": 303105998906,
+          "startBracketMs": [
+            567.367431640625,
+            570.057861328125
+          ],
+          "endBracketMs": [
+            567.4052734375,
+            570.095703125
+          ],
+          "durationMs": 0.038
+        },
+        {
+          "phase": "EndActivateToSubmitCompositorFrame",
+          "startTsUs": 303105998906,
+          "endTsUs": 303106297994,
+          "startBracketMs": [
+            567.4052734375,
+            570.095703125
+          ],
+          "endBracketMs": [
+            866.493408203125,
+            869.183837890625
+          ],
+          "durationMs": 299.088
+        },
+        {
+          "phase": "SubmitToReceiveCompositorFrame",
+          "startTsUs": 303106297994,
+          "endTsUs": 303106298317,
+          "startBracketMs": [
+            866.493408203125,
+            869.183837890625
+          ],
+          "endBracketMs": [
+            866.81640625,
+            869.5068359375
+          ],
+          "durationMs": 0.323
+        },
+        {
+          "phase": "ReceiveCompositorFrameToStartDraw",
+          "startTsUs": 303106298317,
+          "endTsUs": 303106298698,
+          "startBracketMs": [
+            866.81640625,
+            869.5068359375
+          ],
+          "endBracketMs": [
+            867.197265625,
+            869.8876953125
+          ],
+          "durationMs": 0.381
+        },
+        {
+          "phase": "StartDrawToSwapStart",
+          "startTsUs": 303106298698,
+          "endTsUs": 303106300808,
+          "startBracketMs": [
+            867.197265625,
+            869.8876953125
+          ],
+          "endBracketMs": [
+            869.307373046875,
+            871.997802734375
+          ],
+          "durationMs": 2.11
+        },
+        {
+          "phase": "Swap",
+          "startTsUs": 303106300808,
+          "endTsUs": 303106300817,
+          "startBracketMs": [
+            869.307373046875,
+            871.997802734375
+          ],
+          "endBracketMs": [
+            869.31640625,
+            872.0068359375
+          ],
+          "durationMs": 0.009
+        },
+        {
+          "phase": "SwapEndToPresentationCompositorFrame",
+          "startTsUs": 303106300817,
+          "endTsUs": 303106300911,
+          "startBracketMs": [
+            869.31640625,
+            872.0068359375
+          ],
+          "endBracketMs": [
+            869.410400390625,
+            872.100830078125
+          ],
+          "durationMs": 0.094
+        },
+        {
+          "phase": "SubmitCompositorFrameToPresentationCompositorFrame",
+          "startTsUs": 303106297994,
+          "endTsUs": 303106300911,
+          "startBracketMs": [
+            866.493408203125,
+            869.183837890625
+          ],
+          "endBracketMs": [
+            869.410400390625,
+            872.100830078125
+          ],
+          "durationMs": 2.917
+        }
+      ]
+    }
+  ],
+  "stageConclusion": "Renderer frame176/local0x76 commits by555.009 ms, activates by557.507 ms and submits by559.468 ms. Its draw starts562.988 ms, swap starts864.072 ms:301.084 ms is recorded in StartDrawToSwapStart. Frame198 queues between receipt and draw for300.821 ms; frame200 waits between activation and submit for299.088 ms. This is downstream backpressure, not an additional Moon initial render.",
+  "layerAttribution": {
+    "snapshotTsUs": 303105990690,
+    "snapshotSourceFrameNumber": 2,
+    "method": "CPU RasterTask contains RasterImplementation::RasterCHROMIUM and a subsequent OrderingBarrier. Small flow IDs connect barrier through compositor GpuChannel::Flush to GPU CommandBuffer::Flush; same GPU handler, exact put_offset and raster command disambiguate same-microsecond branch collisions. Numeric raster_id equality alone is insufficient.",
+    "associations": [
+      {
+        "cpuRasterId": 1,
+        "layerId": 13,
+        "layerName": "Scrolling background of LayoutView #document",
+        "sourceFrameNumber": 2,
+        "cpuPid": 27396,
+        "cpuTid": 24476,
+        "gpuPid": 60120,
+        "gpuTid": 66120,
+        "commandBufferHandler": ".RendererRasterWorker-0x226c0014a800",
+        "putOffset": 75,
+        "flowIds": [
+          2227,
+          2299,
+          2348,
+          2412
+        ],
+        "sameMicrosecondBranchCount": 1,
+        "uniqueAfterOffsetHandlerAndRasterMatch": true,
+        "gpuEndRasterStartLowerMsRounded": 560.733,
+        "gpuEndRasterDurationMs": 41.568,
+        "flowEvidence": [
+          {
+            "id": 2227,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2227,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105986899
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2227,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105986907
+              }
+            ]
+          },
+          {
+            "id": 2299,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2299,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105986907
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2299,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990727
+              }
+            ]
+          },
+          {
+            "id": 2348,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2348,
+                "name": "GpuChannel::Flush",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990727
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2348,
+                "name": "GpuChannel::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303105991753
+              }
+            ]
+          },
+          {
+            "id": 2412,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2412,
+                "name": "CommandBuffer::Flush",
+                "ph": "s",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303105991753
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2412,
+                "name": "CommandBuffer::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106033870
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cpuRasterId": 2,
+        "layerId": 28,
+        "layerName": "LayoutFlexibleBox DIV class='p'",
+        "sourceFrameNumber": 2,
+        "cpuPid": 27396,
+        "cpuTid": 24476,
+        "gpuPid": 60120,
+        "gpuTid": 66120,
+        "commandBufferHandler": ".RendererRasterWorker-0x226c0014a800",
+        "putOffset": 105,
+        "flowIds": [
+          2235,
+          2300,
+          2420,
+          2511
+        ],
+        "sameMicrosecondBranchCount": 2,
+        "uniqueAfterOffsetHandlerAndRasterMatch": true,
+        "gpuEndRasterStartLowerMsRounded": 602.876,
+        "gpuEndRasterDurationMs": 48.729,
+        "flowEvidence": [
+          {
+            "id": 2235,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2235,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987198
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2235,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987207
+              }
+            ]
+          },
+          {
+            "id": 2300,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2300,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987207
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2300,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990728
+              }
+            ]
+          },
+          {
+            "id": 2420,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2420,
+                "name": "GpuChannel::Flush",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990728
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2420,
+                "name": "GpuChannel::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106033955
+              }
+            ]
+          },
+          {
+            "id": 2511,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2511,
+                "name": "CommandBuffer::Flush",
+                "ph": "s",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106033955
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2511,
+                "name": "CommandBuffer::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106083134
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cpuRasterId": 5,
+        "layerId": 35,
+        "layerName": "LayoutGrid (relative positioned) SPAN class='buckle interactive'",
+        "sourceFrameNumber": 2,
+        "cpuPid": 27396,
+        "cpuTid": 24476,
+        "gpuPid": 60120,
+        "gpuTid": 66120,
+        "commandBufferHandler": ".RendererRasterWorker-0x226c0014a800",
+        "putOffset": 191,
+        "flowIds": [
+          2242,
+          2303,
+          2562,
+          2619
+        ],
+        "sameMicrosecondBranchCount": 2,
+        "uniqueAfterOffsetHandlerAndRasterMatch": true,
+        "gpuEndRasterStartLowerMsRounded": 667.505,
+        "gpuEndRasterDurationMs": 23.166,
+        "flowEvidence": [
+          {
+            "id": 2242,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2242,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987286
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2242,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987290
+              }
+            ]
+          },
+          {
+            "id": 2303,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2303,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987290
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2303,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990729
+              }
+            ]
+          },
+          {
+            "id": 2562,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2562,
+                "name": "GpuChannel::Flush",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990729
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2562,
+                "name": "GpuChannel::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106098611
+              }
+            ]
+          },
+          {
+            "id": 2619,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2619,
+                "name": "CommandBuffer::Flush",
+                "ph": "s",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106098611
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2619,
+                "name": "CommandBuffer::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106122192
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cpuRasterId": 8,
+        "layerId": 23,
+        "layerName": "LayoutBlockFlow (positioned, children-inline) DIV id='wxfx' class='wfx'",
+        "sourceFrameNumber": 2,
+        "cpuPid": 27396,
+        "cpuTid": 24476,
+        "gpuPid": 60120,
+        "gpuTid": 66120,
+        "commandBufferHandler": ".RendererRasterWorker-0x226c0014a800",
+        "putOffset": 279,
+        "flowIds": [
+          2247,
+          2306,
+          2653,
+          2657
+        ],
+        "sameMicrosecondBranchCount": 2,
+        "uniqueAfterOffsetHandlerAndRasterMatch": true,
+        "gpuEndRasterStartLowerMsRounded": 692.512,
+        "gpuEndRasterDurationMs": 15.447,
+        "flowEvidence": [
+          {
+            "id": 2247,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2247,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987567
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2247,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987572
+              }
+            ]
+          },
+          {
+            "id": 2306,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2306,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987572
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2306,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990731
+              }
+            ]
+          },
+          {
+            "id": 2653,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2653,
+                "name": "GpuChannel::Flush",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990731
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2653,
+                "name": "GpuChannel::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106123835
+              }
+            ]
+          },
+          {
+            "id": 2657,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2657,
+                "name": "CommandBuffer::Flush",
+                "ph": "s",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106123835
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2657,
+                "name": "CommandBuffer::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106139484
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cpuRasterId": 13,
+        "layerId": 31,
+        "layerName": "LayoutFlexibleBox SPAN id='loc' class='e'",
+        "sourceFrameNumber": 2,
+        "cpuPid": 27396,
+        "cpuTid": 24476,
+        "gpuPid": 60120,
+        "gpuTid": 66120,
+        "commandBufferHandler": ".RendererRasterWorker-0x226c0014a800",
+        "putOffset": 425,
+        "flowIds": [
+          2262,
+          2311,
+          2728,
+          2753
+        ],
+        "sameMicrosecondBranchCount": 2,
+        "uniqueAfterOffsetHandlerAndRasterMatch": true,
+        "gpuEndRasterStartLowerMsRounded": 719.465,
+        "gpuEndRasterDurationMs": 17.075,
+        "flowEvidence": [
+          {
+            "id": 2262,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2262,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987712
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2262,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987963
+              }
+            ]
+          },
+          {
+            "id": 2311,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2311,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105987963
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2311,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990734
+              }
+            ]
+          },
+          {
+            "id": 2728,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2728,
+                "name": "GpuChannel::Flush",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990734
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2728,
+                "name": "GpuChannel::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106150821
+              }
+            ]
+          },
+          {
+            "id": 2753,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2753,
+                "name": "CommandBuffer::Flush",
+                "ph": "s",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106150821
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2753,
+                "name": "CommandBuffer::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106168087
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cpuRasterId": 18,
+        "layerId": 22,
+        "layerName": "LayoutSVGRoot (positioned, block, relayout-boundary) svg class='sky'",
+        "sourceFrameNumber": 2,
+        "cpuPid": 27396,
+        "cpuTid": 24476,
+        "gpuPid": 60120,
+        "gpuTid": 66120,
+        "commandBufferHandler": ".RendererRasterWorker-0x226c0014a800",
+        "putOffset": 577,
+        "flowIds": [
+          2267,
+          2316,
+          2826,
+          2850
+        ],
+        "sameMicrosecondBranchCount": 2,
+        "uniqueAfterOffsetHandlerAndRasterMatch": true,
+        "gpuEndRasterStartLowerMsRounded": 745.061,
+        "gpuEndRasterDurationMs": 56.175,
+        "flowEvidence": [
+          {
+            "id": 2267,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2267,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105988134
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2267,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105988138
+              }
+            ]
+          },
+          {
+            "id": 2316,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2316,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 24476,
+                "ts": 303105988138
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2316,
+                "name": "CommandBuffer::OrderingBarrier",
+                "ph": "f",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990737
+              }
+            ]
+          },
+          {
+            "id": 2826,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2826,
+                "name": "GpuChannel::Flush",
+                "ph": "s",
+                "pid": 27396,
+                "tid": 71028,
+                "ts": 303105990737
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2826,
+                "name": "GpuChannel::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106176113
+              }
+            ]
+          },
+          {
+            "id": 2850,
+            "endpoints": [
+              {
+                "args": {},
+                "cat": "gpu,toplevel.flow",
+                "id": 2850,
+                "name": "CommandBuffer::Flush",
+                "ph": "s",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106176113
+              },
+              {
+                "args": {},
+                "bp": "e",
+                "cat": "gpu,toplevel.flow",
+                "id": 2850,
+                "name": "CommandBuffer::Flush",
+                "ph": "f",
+                "pid": 60120,
+                "tid": 66120,
+                "ts": 303106232770
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "sourceLimits": [
+      "The document-layer association names a composited paint batch, not an individual shadow/background primitive.",
+      "The first .p row, buckle, wxfx, loc and svg.sky batches have long GPU EndRaster intervals. Other rows are much cheaper; one costly first row does not establish a general per-row cost.",
+      "One source-frame2 raster14 association did not resolve under the exact offset/handler/raster rule and is not used.",
+      "FinishPaintRenderPass at805.149\u2013863.849 ms lasts58.700 ms within the downstream interval, but no unique CSS primitive ownership is asserted."
+    ]
+  },
+  "causalLimits": [
+    "Large main_frame_id/display_trace_id/surface_frame_trace_id values have already crossed JS-number transport and cannot serve as lossless unique joins; no such value was used as an association key.",
+    "Some small-flow transitions share one-microsecond timestamps. Those branches require exact offset/context corroboration; temporal adjacency alone is rejected.",
+    "GrShaderCache load/store events and low thread time within long wall-clock flushes are compatible with driver/compiler/GPU waiting, but do not identify a shader, filter, or precise blocking primitive.",
+    "This diagnostic shows a presentation-pipeline delay. It does not transfer numeric timings or qualification credit to ordinary captures."
+  ],
+  "recommendation": {
+    "sourceCountermeasure": "None adopted. Do not remove visual layers, alter CSS/scheduling, move acceptance origin, weaken digest/currentness/opacity/V5/H1 constraints, or infer a GPU-driver remedy from this record.",
+    "nextSmallestStep": "Freeze the exact integrated-r3 source-input snapshot and runtime for separately mandatory cost and preservation work under the previously adopted recipe. This is staging for independent gates, not startup qualification or release readiness.",
+    "costBoundary": "Submit the exact instrumentation recipe and callback ownership map before measurement; retain startup and steady-state separately and all state-mismatch/overhead uncertainty.",
+    "startupDisposition": "OPEN. Retain all historical ordinary FAILs, source gaps and Chromium1000/250/80/250ms and Firefox1500/400/80/400ms budgets. No further startup acquisition or broad tracing is recommended by this return.",
+    "futureChangeCondition": "Only a separately scoped control that isolates a specific primitive with a credible unchanged-visual countermeasure could justify a future source patch. This report grants no such effect.",
+    "recurrencePrevention": [
+      "Keep small exact identities and explicit queue/context binding; reject rounded64-bit identifiers.",
+      "Keep acquisition failure, trace collection, flush, raw pixels, interpretation and owner acceptance distinct.",
+      "Keep all pre-run harness dependency snapshots and post-run drift checks."
+    ]
+  },
+  "evidence": [
+    {
+      "path": "<evidence>\\native\\chromium-pipeline-diagnostic-r4\\results.json",
+      "sha256": "336d26a4a254f79bba69f362f874b19a33ce33b8609bca5a491f44b1bf523ed8"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-pipeline-diagnostic-r4\\EXECUTION.json",
+      "sha256": "f04ddf2d46a88cbc4d47b0a749b96abacb722e90acb07154bbcf0d960ed9a95d"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-pipeline-diagnostic-r4\\cold-filmstrip.json",
+      "sha256": "332bea0df1e80cab69cf44a47eb8a4de04836bfb2951af0ea2e8350122bafd60"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-pipeline-diagnostic-r4\\compositor-review-cold\\010.png",
+      "sha256": "da83f155fba169d77b78dc101bb242a08baea7f05442561dfdcb1c1567e483e5"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-pipeline-diagnostic-r4\\video\\page@c010512e6fca6b11acfe68647558be04.webm.frames.jsonl",
+      "sha256": "9134c7859b68797758f10756abab31dbb6b418bdbaec696659eccb2e25673bfd"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-pipeline-diagnostic-r4\\video\\page@c010512e6fca6b11acfe68647558be04.webm.frames\\000010.jpeg",
+      "sha256": "2835c035246919a6459d591dc5906f7288568389f9c59bfb819a9067325013f2"
+    },
+    {
+      "path": "<evidence>\\native\\chromium-pipeline-diagnostic-r4\\video\\page@c010512e6fca6b11acfe68647558be04.webm.frames\\000011.jpeg",
+      "sha256": "96c32bac7d0b191317424aab168b8dd2659ab61f5ce6021d29816369c9edf957"
+    }
+  ]
+}

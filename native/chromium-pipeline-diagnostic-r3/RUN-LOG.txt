@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "<candidate>\tools\cp9\celestial_startup_check.py", line 345, in <module>
+    asyncio.run(run(p.parse_args()))
+  File "<python-install>\Python311\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "<python-install>\Python311\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<python-install>\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "<candidate>\tools\cp9\celestial_startup_check.py", line 178, in run
+    'commandLine':await browser_cdp.send('Browser.getBrowserCommandLine')}
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<toolchain>\venv\Lib\site-packages\playwright\async_api\_generated.py", line 13712, in send
+    await self._impl_obj.send(method=method, params=mapping.to_impl(params))
+  File "<toolchain>\venv\Lib\site-packages\playwright\_impl\_cdp_session.py", line 32, in send
+    return await self._channel.send("send", None, locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<toolchain>\venv\Lib\site-packages\playwright\_impl\_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<toolchain>\venv\Lib\site-packages\playwright\_impl\_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.Error: CDPSession.send: Protocol error (Browser.getBrowserCommandLine): Command line not returned because --enable-automation not set.

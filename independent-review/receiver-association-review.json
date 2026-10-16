@@ -1,0 +1,108 @@
+{
+  "schema": "r0021-receiver-association-review/v1",
+  "reviewer": "/root/r0021_review",
+  "decision": "ACCEPT_EXACT_PAIR_FOR_RETAINED_RECEIVER_CUSTODY_ONLY",
+  "scope": "Independent read-only source and dependency-closure review. Accepts a proposed narrowly guarded association, not its unreviewed implementation, generated build, browser pixels, performance or whole candidate.",
+  "donorCommit": "50e46b7ecfde9c8bea9c0cf00b6017afaf27aab9",
+  "productionCommit": "f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de",
+  "currentWorktree": "<candidate>",
+  "knownFailure": "builds/integrated-r0/BUILD-LOG.txt retains ValueError: Initial receiver source drift: moon/src/moon-detail.mjs. This is a correct old whole-file pin refusal, not proof that receiver values changed.",
+  "originalManifestMustRemainUnchanged": {
+    "path": "moon/initial-manifest.json",
+    "sha256": "f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5",
+    "receiverSha256": "0c5e4be7808367211ab3a8fec8a8dcba76f6f9a69ebf5591dc76ed3e188b2444",
+    "receiverBytes": 3965156,
+    "parentManifestSha256": "3d4cb527489acda67082bbc97d984abbb28a11a40f0aec8b4030223fb15e9afa",
+    "wasmSha256": "4fcf7888b55486947189c4a701c75ab25465714036c42fc60980e98ac0bdcbb7"
+  },
+  "allowedWholeFilePairs": [
+    {
+      "path": "moon/src/moon-detail.mjs",
+      "originalSha256": "3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0",
+      "currentSha256": "f2596f26f19f946873792a7e121ea472b361021c8cc2b1831faa6cd10fdef07c",
+      "onlyChangedRegion": "startMoonDetail() body, original lines 43-122, current lines 43-138",
+      "unchangedPrefixSha256": "1eefe1e36c1f069bb7cd098e50b86b67fb05ce90f117f249b606553941b2efcc",
+      "unchangedSuffixSha256": "8f91412dbcd17c0b0f6dda919ee89d35c086ce94d53bd3d3b09a16f9b1d389cd",
+      "boundaries": ["function startMoonDetail(){", "function projectSurfaceCodes("],
+      "reason": "Current production adds a one-entry device projection cache and clears it on clear/adopt/dispose, with failed-adoption withdrawal. Receiver generation never invokes this function. Numerical comparison and head composition consume unchanged prefixSurface/integral/boxSurface/sampleField/joinLunarPixel functions outside it."
+    },
+    {
+      "path": "moon/src/moon-engine.mjs",
+      "originalSha256": "337e6a6980d0c54de436e768d0e007cb6d5e37a3fd98bbae46780e0ab1d0ea1c",
+      "currentSha256": "05ec2e8b0eef0e5bc6b3c6556eb2f901b126c717f469b3c609a49b4edeaa8a32",
+      "onlyChangedRegion": "MoonEngine.render() method, original lines 75-122, current lines 75-130",
+      "unchangedPrefixSha256": "8fe97bd7a04be79591c2090767617f39180ea6a11360e4ca0dcfec004ffecc6a",
+      "unchangedSuffixSha256": "0fc5d8ec7d53a9193325663dc0e7cbfbd83e87df77e1c966b6657fe657840e0d",
+      "boundaries": [" async render(", "final class closing brace"],
+      "reason": "Current production confines worker computation to its rowOwner and joins fields before display. Receiver derivation calls MoonEngine.create and canonicalScene, then WASM begin_scene/camera_rows/get_pixels/probe_trace directly. It never invokes render. All module setup, geometry helpers, decoding/digest and create code precede the changed method and remain byte-identical."
+    }
+  ],
+  "dependencyClosure": {
+    "generator": "moon/tools/build_initial.cjs",
+    "generatorSha256": "223ec83f40cd7aaa2f6fa029b3687f6752baed9b96b790d98a99e962dc06c0b8",
+    "executedJs": ["MoonEngine.create", "canonicalScene", "digestBytes", "decodeAsset", "assetDigest/sha256 helpers"],
+    "executedNative": ["WebAssembly.instantiate of the pinned kernel", "kernel_version", "alloc_buffer", "init_assets", "begin_scene", "camera_rows", "get_pixels", "get_counters", "probe_trace"],
+    "noChangedFunctionInvoked": true,
+    "wholeUnchangedInputs": {
+      "moon/src/asset-digest.mjs": "41a02370ec87de6e028d34b7ec2ecf947c8c37bee11d3047bc903b06f15c0620",
+      "moon/src/surface_v5.mjs": "f0d0b4ab0b5478979371c8c9839d53dfb688596dd08773769d7d9c254c02b65f",
+      "moon/src/moon-calendar.mjs": "b508ea0a0bbc2a68039ba71bb4be75299cfa57bcb74992be1b1b0a0eddfad953",
+      "moon/src/moon_kernel.c": "919bf0b0a17ceb1ce3d3d7e0b5d9958bba3835b96e8558d6b518e7db1137f57f"
+    },
+    "conclusion": "Exact recorded derivative can be associated with these current source files without re-running terrain generation. This does not assert whole-file identity or requalify the changed production renderer."
+  },
+  "requiredGuardBehavior": [
+    "Retain the original initial-manifest.json byte-for-byte and require its exact SHA-256 before using any association.",
+    "Admit only the two reviewed path/original/current whole-file hash triples. Do not accept arbitrary files whose extracted sections happen to compare equal.",
+    "Bind and validate the reviewed association's exact schema/content or digest; missing, malformed, changed, extra-path or unknown-pair associations cannot bypass source drift.",
+    "Continue checking every other original source pin, full asset/manifest/kernel parent pin and receiver bytes/hash before generation.",
+    "Keep the existing strict failure when an unreviewed source changes. Do not remove the source loop or replace expected pins with the observed files.",
+    "Report association use distinctly in build metadata so the original derivation and later source-custody association remain separate."
+  ],
+  "cheapestRequiredDiscriminators": [
+    "Exact association passes on a disposable copy with these whole-file hashes.",
+    "Mutating either associated source by one byte fails, even if the mutation is outside a consumed section.",
+    "Mutating an unassociated source, initial manifest, parent identity, receiver bytes or association fails before any accepted Moon output.",
+    "A missing/extra/unknown association entry cannot turn unknown drift green.",
+    "Generated compact payload/manifest, decoded receiver hash and source closure rebind to the accepted retained compact evidence. No terrain derivation replay is needed for this decision."
+  ],
+  "numericalReuse": {
+    "decision": "DEPENDENCY_EQUIVALENT_SAMPLED_NUMERICAL_REUSE_ONLY",
+    "receiptAtDonor": "docs/real-sky/pr43-review-evidence/compact-initial/oct5-colour5-horizon8-depth8-comparison.json",
+    "receiptSha256": "7609bd410def4cd18dd4d69557f5b36af53703b5bff1723371932b115a333b99",
+    "retainedStatus": "NUMERICAL_PASS_VISUAL_AND_ENTRY_UNQUALIFIED",
+    "driver": "<prior-evidence>/salah-rlgwo-execution-20261009/workers/install/pr43-r1-design/compare_candidate.cjs",
+    "driverSha256": "f79df322738987d45f0b93242e2d19cee4d14be0ffaa87eb3d0d0f09169deee3",
+    "compactManifestSha256": "6984efd68d396a6332ce6629f542be6461952395b0e3c7f2bfcde1702d06c3c6",
+    "encodedSha256": "dc131b3858aa20ddc858ccf1058fdcba533ec70d98f5d3bb28d1afc77b307269",
+    "decodedSha256": "25755b217ec6da7401740b3d4df06d23c917e4bfc447d5667938b7b960a69331",
+    "initialConsumerSha256": "b3393dcf66b62ba3408f26ddd74614906fa78bf4ff89de80223e615cca7820d8",
+    "decoderSha256": "7281b9d439361af739c5a57ce5f008e608a118db59802a4c8ba8ecdfdd5473f0",
+    "compactGeneratorSha256": "0d4d571f228e1fd3ccc23484e56eda21954e911cd599490bd7434a5e4ebf9255",
+    "decoderEquivalenceReceiptSha256": "b7c58e93804c3a39381f4dfe8f8e95a3eec0ee6643162896c9d9dac09e145024",
+    "comparisons": 40,
+    "referenceFilePins": 30,
+    "maxInteriorRmsCode": 2.4105033108487692,
+    "maxP95Code": 4,
+    "maxLocalizedCodeDifference": 68,
+    "coverageMismatches": 0,
+    "bounds": {"rmsCode": 4, "p95Code": 12, "silhouetteDevicePixels": 0.5},
+    "reason": "The exact original comparison driver loads five consumer units and invokes createInitialMoon, prefixSurface, boxSurface and encodeSrgb. Four units remain whole-file identical; moon-detail's consumed helpers remain exact while its uncalled startMoonDetail body differs. The compact payload, decoder, initial renderer, V5 operator and calendar operator match retained evidence. The engine is not loaded by this comparison driver.",
+    "limits": "The earlier uncompressed receiver max RMS .385564 is not the compact candidate's result. Compact fields are quantized, not a lossless transport of the original receiver. This association does not rerun the forty comparisons, certify every phase or native pixels, accept transitions/full composition, or close S1/S3/S10. Retained reference hashes are read from the accepted receipt, not a fresh terrain run."
+  },
+  "h1Preservation": {
+    "contract": "R0022-L1-H1-K003-H020-v1",
+    "source": "real-sky/native-preview.mjs",
+    "currentSha256": "e4f70bd5935b31ffd56deff017e854b0afcd192f8937090b8140773af61fce0f",
+    "donorSha256": "c3f52ebc40b710f33ef24d14360cc81a09e7c8de8eec1d6d046dd4ec874ccc8e",
+    "finding": "Do not replace current native-preview with donor. Current source is unchanged from production; renderNativeBackgroundPreview invokes nativeSkyPresentation before head encoding/catalogue join. The new head Moon samples that already displayed sky; shared native encoding remains unchanged. The full production H1 owner and raw physical fields remain separate.",
+    "nextDiscriminator": "At the final generated candidate, prove head/initial/preview/refined callers consume this exact H1 owner and retain raw physical fields/exposure. Reuse the delivered H1 evidence only within its handoff boundaries, then inspect affected startup full scenes; source path inspection is not pixel acceptance."
+  },
+  "otherCompatibilityLimits": [
+    "Preserve current moon-detail, moon-engine, moon-pool, moon-worker and H1/native admission owners rather than donor replacement; parent reports selective integration and this review observed protected files unchanged from production.",
+    "Current R0018 worker withdrawal/retry behavior and R0024 weather/prayer/native semantics must survive any overlapping startup edits. Existing tests are evidence only at their exact candidate hashes.",
+    "New initial publication must retain generation, target, epoch, profile/reference, DPR, seek and .0416 device-pixel phase fences. Root's merged moon-native retains production withdrawal and uses matches(record,capture()) before initial adoption; actual negative controls remain part of final candidate review.",
+    "S1 five historical strict FAILs, source-frame limitations and absent actual extension parent remain open; no amount of build or sampled numerical equivalence replaces them."
+  ],
+  "nextRootAction": "Implement only the exact guarded association, keep the refused r0 build receipt, run the bounded guard controls, and rebuild deterministically in disposable copies. Return exact association/build/test hashes for final independent candidate review."
+}
