@@ -26,7 +26,7 @@ const configBindings = slice('function bindConfig(c)', 'if(window.SalahConfig)')
 const persistenceSource = source.includes('function _publishPersistence(')
   ? slice('let _persistOutcome=null', '// A dialog session') : '';
 // Accepted SKY gates run unchanged. Catalog/canvas producers remain outside these CLOCK source tests.
-const skySources = source.includes('function beginSkyScene()') ? {
+const skySources = source.includes('function beginSkyScene(') ? {
   astronomy: slice('const _RAD=', '// ---- moon phase'),
   stars: slice('let _starEls=[]', 'function buildStars()'),
   moonSurface: slice('let _mAlb=null', '(function loadMoonMaps()'),

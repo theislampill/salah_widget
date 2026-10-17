@@ -3,6 +3,7 @@
 from pathlib import Path
 import re,json,shutil,hashlib
 from native_core_horizon import correct_horizon
+from native_star_bootstrap import star_bootstrap
 R=Path(__file__).resolve().parents[1]; S=R/'vendor/real-sky'; W=R; N=W/'real-sky'
 physical=(N/'checkpoint.json').exists() and json.loads((N/'checkpoint.json').read_text(encoding='utf-8'))['physical']
 # Same dependency ordering as the retained CP7.5 build, plus bounded native interfaces.
@@ -24,7 +25,7 @@ def concat(paths):
   if re.search(r'^\s*(?:import |export )',s,re.M):raise RuntimeError('Unbundled import/export '+str(p))
   out.append('// '+str(p.relative_to(R)).replace('\\','/')+'\n'+s)
  return '\n'.join(out)
-base=concat([N/'core'/p for p in core]+[N/'native-contract.mjs',N/'native-engine.mjs'])
+base=concat([N/'core'/p for p in core]+[N/'native-contract.mjs',N/'native-preview.mjs',N/'native-engine.mjs'])
 worker=base+'''\nlet nativeWorkerEngine=null;
 self.onmessage=async e=>{const m=e.data;try{if(m.kind==='boot'){nativeWorkerEngine=new NativeSkyEngine(m.pack);self.postMessage({kind:'ready'});}else if(m.kind==='render'){const result=await nativeWorkerEngine.render(m.job);self.postMessage({kind:'result',id:m.id,result},rasterTransferables(result));}}catch(e){self.postMessage({kind:'error',id:m.id,error:String(e.message??e)});}};
 self.addEventListener('unhandledrejection',e=>{self.postMessage({kind:'fatal',error:String(e.reason)});});
@@ -32,12 +33,13 @@ self.addEventListener('unhandledrejection',e=>{self.postMessage({kind:'fatal',er
 (N/'native-worker.js').write_text(worker,encoding='utf-8',newline='\n')
 extra=['core/src/reference-worker-client.mjs','core/src/latest-render-queue.mjs','native-encoding.mjs','native-cloud-transfer.mjs']
 if (N/'native-composition.mjs').exists():extra.append('native-composition.mjs')
-extra.extend(['native-preview.mjs','native-worker-policy.mjs','native-lifecycle.mjs','native-assets.mjs','native-host.mjs'])
+extra.extend(['native-worker-policy.mjs','native-lifecycle.mjs','native-assets.mjs','native-host.mjs'])
 boot='''
 startNativeSkyAssets(pack=>startNativeSky(pack,WORKER_SOURCE,PHYSICAL_MODE),document.currentScript?.src);
 '''.replace('WORKER_SOURCE',json.dumps(worker)).replace('PHYSICAL_MODE',str(bool(physical)).lower())
 (N/'native-sky.js').write_text('(function(){"use strict";\n'+base+'\n'+concat([N/p for p in extra])+boot+'\n})();\n',encoding='utf-8',newline='\n')
-preview='(function(){"use strict";\n'+base+'\n'+concat([N/p for p in ['native-encoding.mjs','native-cloud-transfer.mjs','native-composition.mjs','native-preview.mjs','native-star-preview.mjs','native-preview-host.mjs','native-first-paint.mjs']])+'\nwindow.SalahNativeCloudLighting=nativeCloudSolarLighting;window.SalahStartSkyPreview=startNativeSkyPreview;prepareNativeFirstPaint();\n})();\n'
+bootstrap_text,bootstrap_pin=star_bootstrap(S)
+preview='(function(){"use strict";\n'+base+'\n'+concat([N/p for p in ['native-encoding.mjs','native-cloud-transfer.mjs','native-composition.mjs','native-star-preview.mjs','native-preview-host.mjs','native-first-paint.mjs']])+'\nwindow.SalahStarBootstrap=NativeStarPreview.fromBootstrap('+json.dumps(bootstrap_text)+','+json.dumps(bootstrap_pin,separators=(',',':'))+');\nwindow.SalahNativeCloudLighting=nativeCloudSolarLighting;window.SalahStartSkyPreview=startNativeSkyPreview;window.SalahPrepareFirstPaint=prepareNativeFirstPaint;\n})();\n'
 pack={'catalogueText':(S/'data/bright-stars.json').read_text(encoding='utf-8'),'manifestText':(S/'data/registered-starlight/runtime-manifest.json').read_text(encoding='utf-8'),'assetTexts':{'128':(S/'data/registered-starlight/V-nside128.json').read_text(encoding='utf-8')} if physical else {}}
 (N/'native-data.js').write_text('window.__SALAH_REAL_SKY_PACK__='+json.dumps(pack,ensure_ascii=True,separators=(',',':'))+';\n',encoding='utf-8',newline='\n')
 # Source is pinned and retained locally. Only this explicit block replacement and hooks change index.
@@ -65,9 +67,8 @@ s=original[:start]+replacement+original[end:]
 elevation_line='    if(track&&attemptEligible(op,a)) weatherTrack=track;'
 assert s.count(elevation_line)==1
 s=s.replace(elevation_line,elevation_line+"\n    // CP9 elevation custody: notify only after this operation's eligible native weather adoption.\n    if((current||track)&&elevation!=null&&attemptEligible(op,a)&&selectedWeather()) window.SalahNativeSkyHost?.acceptedElevation(elevation,op.generation,captured.lat,captured.lon);",1)
-s=s.replace('function beginSkyScene(){','function beginSkyScene(){\n  window.SalahSkyPreview?.clear("native beginSkyScene");\n  window.SalahRealSky?.invalidate("native beginSkyScene");',1)
+s=s.replace('function beginSkyScene(initialDocument=false){','function beginSkyScene(initialDocument=false){\n  window.SalahSkyPreview?.clear("native beginSkyScene");\n  window.SalahRealSky?.invalidate("native beginSkyScene");',1)
 s=s.replace('  commitSkyScene(A);\n}','  commitSkyScene(A);\n  window.SalahNativeSkyHost?.notify();\n}',1)
-s=s.replace('  beginSkyScene();\n  if(!simulationReady()) return;','  beginSkyScene();\n  window.SalahStartSkyPreview?.();\n  if(!simulationReady()) return;',1)
 s=s.replace('\nboot();','\n'+(N/'native-host-hooks.js').read_text(encoding='utf-8')+'\nboot();',1)
 # The shared resolver and bounded atmosphere must run before static card markup
 # can paint. No visibility gate: the first card already has its accepted sky.
@@ -94,7 +95,6 @@ if physical:css+='''/* Painter remains live for transfer and rain; bounded displ
 .c.real-sky-composed .wfx .fog,.c.real-sky-composed .wfx .veil,.c.real-sky-composed .wfx .sunhaze,.c.real-sky-composed>.grain,.c.real-sky-composed>.climate{display:none!important}
 '''
 (N/'native-sky.css').write_text(css,encoding='utf-8',newline='\n')
-print(json.dumps({'physical':bool(physical),'nativeBundleBytes':(N/'native-sky.js').stat().st_size,'dataBundleBytes':(N/'native-data.js').stat().st_size,'indexSha256':hashlib.sha256((W/'index.html').read_bytes()).hexdigest()},indent=2))
 
 # Exact same native app expanded into one file, not the CP7 reference viewer.
 def inline_js(text):return text.replace('</script','<\\/script')
@@ -106,3 +106,4 @@ standalone=standalone.replace('<script src="real-sky/native-sky.js"></script>','
 # Moon MB1: authored Moon sources/assets; deterministic generated entries.
 from build_moon import build_moon
 build_moon(R)
+print(json.dumps({'physical':bool(physical),'nativeBundleBytes':(N/'native-sky.js').stat().st_size,'dataBundleBytes':(N/'native-data.js').stat().st_size,'indexSha256':hashlib.sha256((W/'index.html').read_bytes()).hexdigest(),'stage':'complete-native-and-moon'},indent=2))

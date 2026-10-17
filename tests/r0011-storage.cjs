@@ -10,7 +10,7 @@ function make(extra={}){
     :mutant==="reset-result"?source.replace('if(!r.ok){','if(false){')
     :mutant==="cancel-hint"?source.replace('_setStatus("Enter to search a place · Shift+Enter to keep the typed name."); return;','return;')
     :mutant==="status-overwrite"?source.replace('s.textContent=[message,_setHint.msg].filter(Boolean).join("\\n");','s.textContent=_setHint.msg;')
-    :mutant==="scene-reset"&&source.startsWith("function beginSkyScene(){")?'function beginSkyScene(){}'
+    :mutant==="scene-reset"&&source.startsWith("function beginSkyScene(")?'function beginSkyScene(){}'
     :mutant==="scene-surface"&&source.startsWith("function updateSkySurface(){")?'function updateSkySurface(){}'
     :mutant==="generation-reset"?source.replace('a.expired=true; if(a.cancel) a.cancel();','a.expired=true;')
       .replace('if(a.controller) a.controller.abort();',''):source;
@@ -105,7 +105,8 @@ test("actual boot and apply execute scene reset and surface gates with faithful 
   };
   dirtyScene();const boot=f.boot();clearedScene();assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);f.calls.prayer[0].resolve();await boot;
   f.run('fixtureTerrain={};_skySceneKey="second-old";_skyMoonPresence=1;updateSkySurface()');dirtyScene();
-  f.sandbox.sceneNext={...f.config(),appearance:"contrast"};const apply=f.run('applyConfig(sceneNext,{save:false})');clearedScene();
+  // A scene-affecting preference still resets; appearance alone preserves it.
+  f.sandbox.sceneNext={...f.config(),units:"c",appearance:"contrast"};const apply=f.run('applyConfig(sceneNext,{save:false})');clearedScene();
   assert.equal(f.card.dataset.appearance,"contrast");assert.equal(f.card.getAttribute("data-appearance"),"contrast");assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);f.calls.prayer[1].resolve();await apply;
 });
 test("actual apply invalidates owned request attempts before deferred provider work",async()=>{

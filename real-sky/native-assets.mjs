@@ -61,8 +61,17 @@ export function startNativeSkyAssets(start,scriptUrl) {
   });
  };
  loader=new NativeAssetLoader({load,start:pack=>{window.SalahSkyPreview?.admitCatalogue(pack);start(pack);},onState:state,onReset:reset});
- const pagehide=()=>loader.suspend(),pageshow=event=>{if(event.persisted)loader.resume();};
+ let firstFrame=null;
+ const cancelFirstFrame=()=>{if(firstFrame!==null)cancelAnimationFrame(firstFrame);firstFrame=null;};
+ const pagehide=()=>{cancelFirstFrame();loader.suspend();},pageshow=event=>{if(event.persisted)loader.resume();};
  window.addEventListener('pagehide',pagehide);window.addEventListener('pageshow',pageshow);
- window.SalahRealSkyAssets={retry:()=>loader.retry(),dispose:()=>{window.removeEventListener('pagehide',pagehide);window.removeEventListener('pageshow',pageshow);loader.dispose();},get state(){return loader.state;}};
- loader.retry();return loader;
+ window.SalahRealSkyAssets={retry:()=>{cancelFirstFrame();return loader.retry();},dispose:()=>{cancelFirstFrame();window.removeEventListener('pagehide',pagehide);window.removeEventListener('pageshow',pageshow);loader.dispose();},get state(){return loader.state;}};
+ // A callback runs BEFORE paint. Yield through that paint opportunity before
+ // parsing/admitting the optional full pack can occupy the main thread. This
+ // never gates the widget or delays the independently complete initial scene.
+ // No wall-clock sleep or ready polling; explicit retry/lifecycle can revoke it.
+ if(window.SalahStarBootstrap&&window.SalahMoonInitial){
+  firstFrame=requestAnimationFrame(()=>{firstFrame=requestAnimationFrame(()=>{firstFrame=null;loader.retry();});});
+ }else loader.retry();
+ return loader;
 }

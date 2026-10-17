@@ -21,6 +21,12 @@ fallback or second cloud owner is admitted. Sky failure leaves prayer usable.
 
 ## Three artifacts, one config contract
 
+The R0021 candidate adds a source-pinned current-scene bootstrap and a one-shot
+head-to-native Moon handoff. The normal native clock, target/generation fences,
+opaque detail join and later full worker remain the owners. The handoff retains
+the original accepted timestamp and expires before asynchronous bootstrap yields
+or ordinary invalidation. See [source behavior and qualification limits](docs/real-sky/R0021_STARTUP_EXECUTION.md).
+
 - **`index.html`** — the runtime widget (self-contained CSS + JS + atmospheric renderer; reads `location.hash`).
 - **`builder.html`** — the embed-code generator (portable **and** self-configuring snippets).
 - **`config.js`** — `window.SalahConfig`, the **shared** `WidgetConfig` module (parse / validate / normalize /

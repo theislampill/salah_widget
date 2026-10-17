@@ -1,0 +1,25 @@
+{
+  "schema": "moon-initial-source-association/1",
+  "initialManifestSha256": "f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5",
+  "independentReviewSha256": "c6deef40f12d210cc4c39143c9d0ae15031f7455411288c3ab82cac36b0d52f5",
+  "scope": "Retained receiver custody only. Original derivation and compact numerical approximation are unchanged; current rendering, timing and full composition require separate qualification.",
+  "pairs": [
+    {
+      "path": "moon/src/moon-detail.mjs",
+      "originalSha256": "3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0",
+      "currentSha256": "c5f336a5f42e3774866d66215e2944b2cde7afad05db801868980121fa70a8b8",
+      "reason": "Only startMoonDetail changes: existing projection cache plus current-preview staging before its ready CSS class. Receiver derivation does not call it; prefixSurface, boxSurface, sampleField and all helpers outside startMoonDetail retain original bytes."
+    },
+    {
+      "path": "moon/src/moon-engine.mjs",
+      "originalSha256": "337e6a6980d0c54de436e768d0e007cb6d5e37a3fd98bbae46780e0ab1d0ea1c",
+      "currentSha256": "05ec2e8b0eef0e5bc6b3c6556eb2f901b126c717f469b3c609a49b4edeaa8a32",
+      "reason": "Only MoonEngine.render changes. Receiver derivation invokes unchanged create and canonicalScene, then the pinned WASM directly; it never invokes render."
+    }
+  ],
+  "predecessorAssociationSha256": "b6b49f88d88f25d960846bb3ba2905b1a94226d37c883600a91e64027542fcec",
+  "predecessorIndependentReviewSha256": "b93b3dda7fe91a4fbd1a07e10381645656b20609c620e68ce0d90744a3dc506e",
+  "baselineProductionCommit": "f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de",
+  "candidateBaseCommit": "50b8757c795d27df8537de3e1547389828915fa8",
+  "independentReviewScope": "Independent source custody and actual-compositor currentness controls only; no native timing, visual qualification or release authority."
+}

@@ -39,6 +39,12 @@ function composition(html,state,backdrop=[255,255,255],appearance='glass'){
     composedBackground,composedText,ratio:contrast(composedText,composedBackground)};
 }
 function mutateTimetable(html,kind){
+  if(kind==='contrast-base'){
+    const selector='.c[data-appearance="contrast"] .p',before=rule(html,selector).background;
+    assert.match(before,/,rgba\(9,17,28,\.90\)$/);
+    const start=html.indexOf(selector+'{'),end=html.indexOf('}',start);
+    return html.slice(0,start)+html.slice(start,end).replace(before,before.replace(/,rgba\(9,17,28,\.90\)$/,''))+html.slice(end);
+  }
   if(kind==='default-past'){
     const before='.p.past{';assert.equal(html.split(before).length,2);
     return html.replace(before,before+'opacity:.42;');
@@ -84,12 +90,17 @@ test('approved next and current emphasis remains unchanged',()=>{
   for(const selector of ['.p.on','.p.on b','.p.on b,.p.on .tm','.p.now'])assert.deepEqual(rule(source,selector),rule(baseline,selector),selector);
   const r=rule(source,'.p.on');assert.match(r.background,/var\(--accent\) 88%/);assert.equal(r.color,'#211d15');assert.match(r['box-shadow'],/inset 3px 0/);assert.equal(rule(source,'.p.on b')['font-weight'],'700');
 });
-for(const appearance of ['glass','contrast'])for(const state of ['normal','past','on','now'])test(appearance+' '+state+' full information opacity and intended-color contrast on white stress',()=>{
+// Owner decision 2026-10-16 restores historical default glass. The strict
+// readability contract continues in High Contrast; do not certify it for glass.
+for(const appearance of ['contrast'])for(const state of ['normal','past','on','now'])test(appearance+' '+state+' full information opacity and intended-color contrast on white stress',()=>{
   const c=composition(source,state,[255,255,255],appearance);assert.equal(c.opacity,1,'Information stays at full group opacity');assert.ok(c.ratio>=4.5,state+': '+c.ratio.toFixed(3)+' < 4.5');return c;
 });
-test('elapsed rows are subdued by decoration while text remains unchanged',()=>{
+test('Liquid Glass restores the historical translucent tint and elapsed-row fade',()=>{
   const normal=composition(source,'normal'),past=composition(source,'past');
-  assert.deepEqual(past.foreground,normal.foreground);assert.equal(past.opacity,1);assert.ok(past.tintAlpha<normal.tintAlpha);assert.equal(rule(source,'.p.past')['border-color'],'#ffffff20');
+  assert.equal(normal.baseAlpha,0);assert.equal(normal.opacity,1);assert.equal(past.baseAlpha,0);assert.equal(past.opacity,.42);
+  assert.equal(rule(source,'.p').background,'linear-gradient(160deg,#ffffff26,#ffffff0d)');
+  assert.equal(rule(source,'.p')['backdrop-filter'],'blur(7px) saturate(135%)');
+  assert.deepEqual(rule(source,'.p.past'),{opacity:'.42'});
   return{normal,past};
 });
 test('geometry and typography declarations preserved',()=>{
@@ -99,9 +110,9 @@ test('geometry and typography declarations preserved',()=>{
   }
 });
 if(!args.includes('--baseline')){
-  for(const [kind,state] of [['default-past','past'],['default-base','normal'],['default-on','on']])test(kind+' independent loss control reaches contrast oracle',()=>{
-    const c=composition(mutateTimetable(source,kind),state);
-    assert.ok(c.ratio<4.5,'mutant unexpectedly '+c.ratio);if(kind==='default-past')assert.equal(c.opacity,.42);return c;
+  for(const [kind,state] of [['past','past'],['contrast-base','normal'],['on','on']])test(kind+' independent loss control reaches High Contrast oracle',()=>{
+    const c=composition(mutateTimetable(source,kind),state,[255,255,255],'contrast');
+    assert.ok(c.ratio<4.5,'mutant unexpectedly '+c.ratio);if(kind==='past')assert.equal(c.opacity,.42);return c;
   });
 }
 return {sourceSha256:sha(source),baselineSha256:sha(baseline),baselineCommit:BASE,limit:'Authored intended-color composition with white sky/accent stress, no antialias/shadow/filter conformance claim. Native crops and text-free pixel pairs are required.',results};
