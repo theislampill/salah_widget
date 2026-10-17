@@ -39,6 +39,7 @@ test('preview waits for its mask and rejects readiness after owner transfer, cle
  for(const action of ['clear','dispose','refined']){
   const h=host({timeScale:1,deferMask:true});
   if(action==='refined')h.classes.add('real-sky-composed');else h.s.window.SalahSkyPreview[action]('test');
+  if(action==='dispose')assert.equal(h.headRemovals,1,'Disposal must retire any still-owned initial CSS scene and its layer withdrawal');
   await h.finishMask();assert.equal(h.draws.length,0,action);
  }
 });

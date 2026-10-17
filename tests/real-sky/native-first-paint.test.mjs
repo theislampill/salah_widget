@@ -20,9 +20,18 @@ test('head presentation accepts only a resolved site and native ordinary wall ti
   admitted={lat:28.5383,lon:-81.3792,tz:'America/New_York',units:'c'};prepareNativeFirstPaint();
   assert.equal(window.SalahFirstPaint.snapshot.utcMs,Date.now());assert.equal(window.SalahFirstPaint.value.utcMs,Date.now());
   assert.equal(window.SalahFirstPaint.snapshot.sceneIdentity,'28.5383|-81.3792|America/New_York|wall');assert.equal(window.SalahFirstPaint.value.quality,'physical-background-preview');
-  assert.match(styles[0].textContent,/background-image:url/);assert.doesNotMatch(styles[0].textContent,/visibility|opacity|display\s*:/);
+  assert.match(styles[0].textContent,/background-image:url/);assert.doesNotMatch(styles[0].textContent,/opacity|display\s*:/);
+  // The head already contains the opaque V5 Moon and physical H1 atmosphere.
+  // A native paint can reveal the SVG before asynchronous preview publication.
+  // Only its four replaced layers may be withdrawn, for this style's lifetime.
+  const hidden=[...styles[0].textContent.matchAll(/([^{}]+)\{visibility:hidden!important\}/g)].flatMap(m=>m[1].split(',').map(x=>x.trim())).sort();
+  assert.deepEqual(hidden,['.c .sky .mbeam','.c .sky .mglow','.c .sky .moccluder','.c .sky .mphoto'],'Initial scene must not double-compose legacy Moon surface, backing or diffuse light');
+  assert.doesNotMatch(styles[0].textContent.split('}')[0],/visibility/,'The card and its celestial scene remain visible');
   assert.match(styles[0].textContent,/--moongrp:0\.000/);
   location.hash='#local=1&simTime=11:00';prepareNativeFirstPaint();assert.equal(styles.length,1,'Explicit temporal owner is not replaced with wall UTC');
+  location.hash='#local=1';window.SalahMoonHead.compose=()=>{throw Error('controlled initial surface failure');};prepareNativeFirstPaint();
+  assert.equal(styles.length,1,'A failed head preparation cannot install a legacy-layer withdrawal');
+  assert.match(window.SalahFirstPaint.error,/controlled initial surface failure/);
  }finally{Date.now=now;for(const [k,v] of Object.entries(restore))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });
 

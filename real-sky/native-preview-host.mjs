@@ -146,6 +146,6 @@ export function startNativeSkyPreview(){
    // new displayed catalogue. Avoid rebuilding a current sky before first paint.
    if(catalogue!==next){catalogue=next;catalogueRevision++;}
   }catch(error){if(!disposed&&revision===catalogueRequest)status.catalogueError=String(error.message??error);}
- },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;solarPublication.dispose();catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
+ },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;solarPublication.dispose();retireFirstPaint();catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
  update();raf=requestAnimationFrame(tick);
 }

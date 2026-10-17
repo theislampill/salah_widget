@@ -7,6 +7,40 @@ matrix, Firefox's actual extension parent and original callback-cost evidence
 remain open. The original accepted R0021 interfaces are retained; this record
 does not reopen V1 or the V5 research programme.
 
+## Resumed startup-layer correction (2026-10-17)
+
+The earlier bright initial atmosphere and dark lunar edge were a separate
+rendered-content defect. While preview-mask decode was pending, native boot
+could reveal legacy SVG layers over the already composed H1/V5 initial scene.
+A held-initial native control removed the broad bright lobe by withdrawing
+`.mbeam`; withdrawing all four layers replaced by the initial composition also
+removed the edge. Restoring the original styles restored the original pixels
+exactly. Removing `.moccluder` alone did not remove the edge; that contrary
+control does not support assigning the edge uniquely to that primitive.
+
+The initial style now withdraws the same four legacy descendants as the
+preview/refined owners. Its existing invalidation and publication lifetime
+still governs the withdrawal; disposal also retires that style. The card,
+native geometry, active lunar optics, H1 fields and V5 material are unchanged.
+The source regression checks successful/failed preparation and disposal during
+pending mask decode. The affected 29 tests pass.
+
+Independent source review and eight selected intact native originals across
+Chromium and Firefox support this correction. Chromium's 329.782-ms interval
+before its first intact frame remains uncovered. Firefox's whole-frame blank
+is retained, and its intact successor does not repair that evidence gap. Neither
+this correction nor its native samples certify S1 timing, callback cost or
+complete visual continuity. The bound immutable build is integrated-r14,
+index SHA256 `70f27c9337fc02969f3fda86e75941a9a4ae165358e8e9684d11a26a6ef5a673`.
+The source and native review records are in
+[the correction evidence manifest](evidence/r0021-initial-layer-20261017/MANIFEST.json).
+
+S1 investigation continues. A diagnostic Skia/ANGLE trace identifies substantial
+shader compilation in the first delayed raster work. Disabling filters on the
+four already withdrawn descendants did not resolve that delay and is not an
+adopted correction. Further causal experiments stay outside the production
+candidate until their mechanism, appearance and timing are verified.
+
 ## Source behavior
 
 The initial scene uses the pinned real-catalogue bright-star subset and a

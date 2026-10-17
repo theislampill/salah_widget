@@ -38,7 +38,12 @@ export function prepareNativeFirstPaint(){
    local.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(moon.rgba,local.width,local.height),0,0);moonUrl=local.toDataURL();
   }
   const style=document.createElement('style');style.id='native-first-paint';
-  style.textContent=window.SalahMoonHead.backgroundRule(cv.toDataURL(),moonUrl,moon);document.head.append(style);
+  // The admitted head already owns the Moon surface, opaque backing and H1
+  // diffuse light. Native boot can reveal its SVG while the preview mask is
+  // decoding; drawing those replaced layers again causes a bright beam/edge
+  // flash. Scope the same withdrawal as preview/refined to this style's lease.
+  style.textContent=window.SalahMoonHead.backgroundRule(cv.toDataURL(),moonUrl,moon)+
+   '.c .sky .mphoto,.c .sky .moccluder,.c .sky .mbeam,.c .sky .mglow{visibility:hidden!important}';document.head.append(style);
   window.SalahFirstPaint={value:p,snapshot,moon,capturedAt,preparedAt:performance.now()};
  }catch(e){window.SalahFirstPaint={error:String(e.message??e)};}
 }
