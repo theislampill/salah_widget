@@ -35,3 +35,21 @@ test('prepared initial sampling is byte exact to the approved box filter, includ
   assert.deepEqual(actual,expected,`size ${size}, extent ${extent}`);
  }
 });
+
+test('initial render lends its exact two prefix tables once without retaining them in the result',()=>{
+ const seed=api.createInitialMoon(bytes,pin);
+ for(const fraction of [.01,.5,.98]){
+  const scene=api.canonicalScene({fraction,waxing:true,size:540,outSize:108,diameter:103.68});
+  let calls=0,main,calendar;
+  const result=seed.render(scene,(a,b)=>{calls++;main=a;calendar=b;});
+  assert.equal(calls,1,'A synchronous consumer must receive the tables already used for this render');
+  assert.deepEqual(main,api.prefixSurface({size:result.surfaceSize,linear:result.surfaceLinear,coverage:result.surfaceCoverage}));
+  assert.deepEqual(calendar,api.prefixSurface({size:result.surfaceSize,linear:result.calendarLinear,coverage:result.surfaceCoverage}));
+  assert.deepEqual(result.rgba,api.initialReceiverCodes(main,scene,scene.outSize));
+  assert.deepEqual(result.calendarRgba,api.initialReceiverCodes(calendar,scene,scene.outSize));
+  assert.ok(!Object.values(result).includes(main)&&!Object.values(result).includes(calendar),'Tables cannot extend the retained initial result');
+ }
+ let calls=0;
+ assert.throws(()=>seed.render({...api.canonicalScene({fraction:.5,waxing:true,size:540,outSize:108,diameter:103.68}),sun:[NaN,0,0]},()=>calls++),/phase/);
+ assert.equal(calls,0,'Rejected current input lends nothing');
+});

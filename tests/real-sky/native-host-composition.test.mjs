@@ -10,7 +10,15 @@ import {nativeForeground,nativeCalendarRegion,nativeForegroundRows,sameNativePre
 // Only browser capture and framebuffer transport are replaced by owned arrays.
 const source=fs.readFileSync(new URL('../../real-sky/native-host.mjs',import.meta.url),'utf8');
 const compose=source.slice(source.indexOf(' function compose(){'),source.indexOf('\n function accept('));
-function fixture(rows,{invalidAt=null,expire=false,maskError=false}={}){
+test('new worker acceptance cannot extend the original displayed job while its replacement mask is pending',()=>{
+ const animate=source.split('\n').find(line=>line.startsWith(' function animate('));
+ const state={utcMs:31000,paused:false,reducedMotion:false},clears=[];
+ const s={disposed:false,frame:{},job:{utcMs:28000},paintedJob:{utcMs:0},lastCompose:0,solarPublication:{pending:{}},snapshot:()=>state,
+  lifecycle:{current:(job,current)=>Math.abs(current.utcMs-job.utcMs)<=30000},clear(reason){clears.push(reason);s.frame=null;},failure(e){throw e;},requestAnimationFrame:()=>1};
+ vm.createContext(s);vm.runInContext(compose+'\n'+animate+'\nanimate(31000)',s);
+ assert.equal(clears.length,1,'the 31000 ms displayed job must be withdrawn despite a 3000 ms accepted successor');
+});
+function fixture(rows,{invalidAt=null,expire=false,maskError=false,deferMask=false}={}){
  const width=325,height=530,n=width*height*3,sky=new Float64Array(n),stars=new Float64Array(n),diffuse=new Float64Array(n),linear=new Float64Array(n);
  for(let i=0;i<n;i++){sky[i]=.0001+(i%103)/10000;stars[i]=i%79===0?.02:0;diffuse[i]=(i%7)/100000;linear[i]=sky[i]+stars[i]+diffuse[i];}
  const raster={width,height,linear,skyBackgroundLinear:sky,stellarLinear:stars,diffusePhysicalLinear:diffuse,effectiveExposure:24};
@@ -23,18 +31,19 @@ function fixture(rows,{invalidAt=null,expire=false,maskError=false}={}){
  const capture={cloudRGBA,moonRGBA,native:{}},base=nativeCalendarRegion(raster,mask,rows),joined=nativeForeground(base,{...capture,atmosphereLinear:sky.subarray(0,base.length),exposure:24});
  const expected=new Uint8ClampedArray(width*height*4);
  if(invalidAt===null){expected.set(encodeNativeFrame(linear,24));expected.set(encodeNativeFrame(joined.linear,24));}
- const pixels=new Uint8ClampedArray(expected.length).fill(29),draws=[],encoded=[],destinations=[],errors=[],maskCalls=[];let checks=0;
- const s={frame:{raster},disposed:false,job:{observer:{utcMs:1},native:{identity:'accepted'}},paintedFrame:null,paintedJob:null,previousPresentation:null,previousSolarMask:null,previousMoonBottom:0,lastCompose:0,
+ const pixels=new Uint8ClampedArray(expected.length).fill(29),draws=[],encoded=[],destinations=[],errors=[],maskCalls=[],pendingMasks=[];let checks=0;
+ const s={frame:{raster},disposed:false,job:{observer:{utcMs:1},native:{identity:'accepted'}},pendingJob:null,paintedFrame:null,paintedJob:null,previousPresentation:null,previousSolarMask:null,previousMoonBottom:0,lastCompose:0,
   snapshot:()=>({}),lifecycle:{current:()=>!expire||++checks===1},clear:reason=>errors.push(reason),failure:e=>errors.push(String(e)),performance:{now:()=>1},window:{},
   foreground:{bottom:()=>rows-2,capture:()=>({...capture,cloudRGBA:cloudRGBA.slice(),moonRGBA:moonRGBA.slice()}),prepareSolarMask(rgba,count){maskCalls.push({rgba:rgba.slice(),rows:count,bytes:nativeSolarTransmission(rgba)});if(maskError)throw Error('invalid solar mask');return 'mask-'+maskCalls.length;}},calendarGeometry:()=>({key:'geometry',mask:()=>mask}),
   nativeForeground,nativeCalendarRegion,nativeForegroundRows,sameNativePresentation,sameNativeCloudAlpha,
+  solarPublication:{pending:null,publish(mask,commit){if(deferMask){this.pending=commit;pendingMasks.push(commit);}else commit();},cancel(){this.pending=null;}},
   encodeNativeDisplay(a,E){encoded.push(a.length);return encodeNativeDisplay(a,E);},
   encodeNativeDisplayInto(a,E,b,offset){encoded.push(a.length);destinations.push({bytes:b,offset:offset??0,length:a.length});return encodeNativeDisplayInto(a,E,b,offset);},
   ImageData:class{constructor(data,w,h){assert.equal(data.length,w*h*4);this.data=data;this.width=w;this.height=h;}},Uint8ClampedArray,
   ctx:{putImageData(image,x,y){draws.push([image.width,image.height,x,y]);pixels.set(image.data,y*width*4);}},
   card:{style:{setProperty(){}},classList:{add(){}}},canvas:{style:{}},status:{last:{},presentationDraws:0,presentationSkips:0}};
  vm.createContext(s);vm.runInContext(compose+'\ncompose();',s);
- return {s,pixels,expected,encoded,destinations,draws,errors,capture,maskCalls,rerun(){vm.runInContext('compose();',s);}};
+ return {s,pixels,expected,encoded,destinations,draws,errors,capture,maskCalls,finishMask(){s.solarPublication.pending=null;return pendingMasks.shift()();},rerun(){vm.runInContext('compose();',s);}};
 }
 for(const rows of [183,284,530])test('refined host encodes each final pixel once and preserves composed bytes: '+rows,()=>{
  const h=fixture(rows);assert.deepEqual(h.errors,[]);assert.deepEqual(h.pixels,h.expected);
@@ -66,6 +75,20 @@ test('new accepted frame with exact cloud alpha reuses only published solar mask
 });
 test('failed publication leaves solar reuse state unpublished',()=>{
  const h=fixture(183,{expire:true});assert.equal(h.maskCalls.length,1);assert.equal(h.s.previousSolarMask,null);assert.equal(h.s.previousPresentation,null);assert.equal(h.draws.length,0);
+});
+test('refined publication keeps matching immutable foreground private until mask readiness',()=>{
+ const h=fixture(183,{deferMask:true});assert.equal(h.draws.length,0);h.capture.cloudRGBA.fill(255);
+ h.finishMask();assert.deepEqual(h.pixels,h.expected,'decode completion cannot recapture a different cloud frame');assert.equal(h.draws.length,1);
+});
+test('late mask readiness cannot publish over a newer accepted frame, changed target or disposal',()=>{
+ for(const changed of ['frame','job','expired','disposed']){
+  const h=fixture(183,{deferMask:true});
+  if(changed==='frame')h.s.frame={...h.s.frame};
+  if(changed==='job')h.s.job={...h.s.job};
+  if(changed==='expired')h.s.lifecycle.current=()=>false;
+  if(changed==='disposed')h.s.disposed=true;
+  h.finishMask();assert.equal(h.draws.length,0,changed);assert(h.pixels.every(v=>v===29));
+ }
 });
 test('solar mask comparator validates types, lengths and every alpha boundary',()=>{
  const a=new Uint8ClampedArray(325*183*4),b=a.slice();assert(sameNativeCloudAlpha(a,b));

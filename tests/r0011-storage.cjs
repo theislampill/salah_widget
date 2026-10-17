@@ -105,7 +105,8 @@ test("actual boot and apply execute scene reset and surface gates with faithful 
   };
   dirtyScene();const boot=f.boot();clearedScene();assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);f.calls.prayer[0].resolve();await boot;
   f.run('fixtureTerrain={};_skySceneKey="second-old";_skyMoonPresence=1;updateSkySurface()');dirtyScene();
-  f.sandbox.sceneNext={...f.config(),appearance:"contrast"};const apply=f.run('applyConfig(sceneNext,{save:false})');clearedScene();
+  // A scene-affecting preference still resets; appearance alone preserves it.
+  f.sandbox.sceneNext={...f.config(),units:"c",appearance:"contrast"};const apply=f.run('applyConfig(sceneNext,{save:false})');clearedScene();
   assert.equal(f.card.dataset.appearance,"contrast");assert.equal(f.card.getAttribute("data-appearance"),"contrast");assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);f.calls.prayer[1].resolve();await apply;
 });
 test("actual apply invalidates owned request attempts before deferred provider work",async()=>{

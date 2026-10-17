@@ -29,9 +29,8 @@ function composeNativeHeadMoon(preview,snapshot,sim,owner,support){
  if(!support.initial)throw Error('Head Moon qualified initial unavailable');
  const g=nativeHeadMoonGeometry(moon,snapshot.dpr),capture={...snapshot,fraction:moon.frac,waxing:moon.waxing,up:moon.up,phaseDiameter:g.phaseDiameter,maximumPhaseDiameter:g.maximumPhaseDiameter,
   phaseQuantum:support.phaseQuantum(g.phaseDiameter),physicalFraction:support.canonicalFraction(moon.frac,g.phaseDiameter)};
- const scene=owner.scene(capture,support.profile),result=support.initial.render(scene);
- const table=support.prefixSurface({size:result.surfaceSize,linear:result.surfaceLinear,coverage:result.surfaceCoverage});
- const calendar=support.prefixSurface({size:result.surfaceSize,linear:result.calendarLinear,coverage:result.surfaceCoverage});
+ let table,calendar;
+ const scene=owner.scene(capture,support.profile),result=support.initial.render(scene,(surface,token)=>{table=surface;calendar=token;});
  const r=preview.raster,E=r.effectiveExposure,sky=r.skyBackgroundLinear??r.backgroundLinear,stars=r.stellarLinear,diffuse=r.diffusePhysicalLinear;
  const W=g.width,H=g.height,linear=new Float64Array(W*H*3),covered=new Uint8Array(W*H);
  const ss=result.surfaceSize/(.96*result.surfaceExtent),ox=result.surfaceSize/2-.5*ss,oy=ox;

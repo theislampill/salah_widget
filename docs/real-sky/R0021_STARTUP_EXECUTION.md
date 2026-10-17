@@ -40,9 +40,83 @@ produces root entries and bundles. Never edit generated entries as a repair.
 The delivered H1 mapping, V5 kernel/profile/full assets, approved body footprint,
 opaque composition and frozen V1 are preserved.
 
+## Owner-directed continuation (2026-10-16)
+
+PR67 remains draft and issue33 remains open. The subsequent cloud-dependent
+Sun observation and Liquid Glass regression are separate defects. The owner
+explicitly restored historical glass as the default, with strict full-opacity
+4.5:1 timetable readability reserved for High Contrast. Glass deliberately
+restores the original translucent gradient, blur and faded past rows.
+Appearance-only settings changes now persist and change the applied mode
+without invalidating weather, changing scene generation or rebinding a
+provider-adopted timezone. The real buckle/fields/close route, both directions
+and reload were exercised in Chromium and Firefox.
+
+Firefox source frames reproduced the cloud-dependent Sun disappearance at
+constant geometry. Publishing a changed CSS mask before its anonymous-CORS
+image resource was decoded was the supported mechanism. The correction
+publishes the decoded mask with its matching foreground atomically and
+retains all target, age and late-result rejection fences. Ordinary decode
+without matching anonymous-CORS acquisition did not remove the failure;
+that contrary evidence is retained. Real provider available -> expired ->
+HTTP503 -> recovered controls distinguish a dash/no temperature from an
+actual meteorological clearing. Their bounded Sun-region tests observed no
+new alternation, but damaged capture frames and a negative ROI detector do
+not establish complete continuous visual qualification.
+
+Two additional source corrections address original closure blockers. The
+unchanged H1 lunar-only display pass now runs in the existing sky worker;
+UI acceptance rejects an unprepared deep-night result. Actual-worker
+byte-equivalence, transfer and solar-boundary controls preserve the fields,
+exposure, grid and output. This is not callback-cost certification. A
+separate first-preview defect was reproduced: lunar composition required
+the preview-ready class before that class was published, then the preview
+hid the SVG fallback. The detail compositor now accepts a current staged
+preview, preserving entry and pre-upload currentness rejection. Its staged
+pixels match settled pixels exactly in the independent source control.
+
+Final preservation build: index SHA256
+`9da78eea92e49e205ac2ba5bea8059536da2226c3cabac981462652b1359b45f`.
+The canonical r13 suite has 728 passing tests, zero failures and four existing
+TODOs. Checkout runtime matches r13 except the LF-normalized source association
+and generated custody metadata; seven association controls and six solar
+oracle controls pass. The sealed records are in
+[evidence/r0021-continuation-20261016](evidence/r0021-continuation-20261016/MANIFEST.json).
+
+The corrected staged-Moon source passes independent entry/pre-upload
+currentness and output-equivalence controls. Selected Chromium and Firefox
+native r23 samples retain the Moon. Chromium's initial brighter atmosphere
+and dark lunar edge, and Firefox's near-white source frames, remain contrary
+visual evidence. No complete S1 or continuity PASS is claimed.
+
+Firefox Marionette now imports the actual signed TablissNG extension preset
+and a subsequent real new tab attaches the widget at325x530, with a325x530
+card and applied glass mode. The earlier immediate new tab preceded TablissNG's
+1000ms batched persistence. The later run still ends FAILED: its frame screenshot
+raises cross-origin pageXOffset SecurityError, sandbox reads do not expose app
+state, and its top-level screenshot omits several rows. Supported parent access
+is demonstrated; timing, continuous pixels and currentness remain unqualified.
+No claim that this route is impossible is made.
+
+The original receiver manifest remains unchanged. The exact successor
+source association retains its predecessor and binds the independent
+staged-compositor control; the separate association review is SHA256
+`1ed0bfe7201d7e2da8744ac6887b3e3c7e2f5490b6f5d92996698fa2ca49dcb0`.
+The failed r12 build remains evidence that unknown source drift was rejected.
+The prior full-suite failures also remain: r10's obsolete generated-entry
+extractor and r11's old unprepared worker fixture were repaired at their
+source boundaries, preserving their behavioral assertions.
+
+The broad owner-observed irregular fluorescent-bulb symptom remains **not
+independently reproduced; potentially addressed by the verified
+solar-currentness correction**. The later cloud-mask defect has its own
+positive reproduction and bounded correction. Neither statement waives S1,
+callback cost, complete native continuity, actual-parent qualification or
+independent final review. No merge or closure is authorized by this record.
+
 ## Evidence and limits
 
-The final integrated-r5 build includes the bounded solar-publication repair
+The previously published integrated-r5 build includes the bounded solar-publication repair
 described below. Its index SHA-256 is
 `916a79b5cc18916309d36c85174293b87cb4549209d01ff2c4268534399d585b`
 and runtime SHA-256 is

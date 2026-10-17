@@ -32,7 +32,7 @@ function createInitialMoon(bytes,pin){
  if(at!==bytes.length||record!==pin.records)throw new Error('Initial Moon record count');
  const rule=[];for(let j=0;j<2;j++)for(let i=0;i<8;i++){const t=(1+(j?1:-1)/Math.sqrt(3))/2,a=(i+.5*(j%2))*2*Math.PI/8;rule.push([t,Math.cos(a),Math.sin(a),1/16]);}
  const disk=(nu,mu)=>.85*2*nu/(nu+mu)+.15*nu;
- return Object.freeze({identity:Object.freeze({...pin}),render(scene){
+ return Object.freeze({identity:Object.freeze({...pin}),render(scene,consumeTables){
   // No substitution for a rotated/physical reference camera or another profile.
   if(scene.mode!=='calendar-canonical'||scene.profile?.mode!=='calendar'||JSON.stringify(scene.basis)!=='[0,1,0,0,0,1,1,0,0]'||scene.distance!==384400||scene.extent!==1.08||scene.tilt!==0||scene.earth?.join(',')!=='384400,0,0')throw new Error('Initial Moon unsupported scene');
   const profile=admitProfile(scene.profile),s=scene.sun;
@@ -57,9 +57,14 @@ function createInitialMoon(bytes,pin){
   const size=scene.outSize,table=prefixSurface({size:N,linear,coverage}),rgba=initialReceiverCodes(table,scene,size);
   const result={kind:'initial',rgba,width:size,height:size,scene:{...scene,size:N},surfaceLinear:linear,surfaceCoverage:coverage,surfaceSize:N,surfaceExtent:scene.extent,
    physicalIdentity:pin.sha256+'|'+JSON.stringify([scene.sun,scene.profile]),profileIdentity:JSON.stringify(profile),diagnostics:{kernel:'v5-receiver-initial/1',quality:{status:'initial-v5',solarSamples:16,earth:'Lambert sphere integral; finite angular spread pending',scope:'current canonical display; off-plane terrain and full convergence pending'},totalMs:performance.now()-started,receiverIdentity:pin.sha256}};
-  const calendarLinear=calendarProxy(material,coverage,linear);
-  result.calendarLinear=calendarLinear;result.calendarRgba=initialReceiverCodes(prefixSurface({size:N,linear:calendarLinear,coverage}),scene,size);
-  result.diagnostics.totalMs=performance.now()-started;return result;
+  const calendarLinear=calendarProxy(material,coverage,linear),calendarTable=prefixSurface({size:N,linear:calendarLinear,coverage});
+  result.calendarLinear=calendarLinear;result.calendarRgba=initialReceiverCodes(calendarTable,scene,size);
+  result.diagnostics.totalMs=performance.now()-started;
+  // The head immediately samples these same fields at device resolution. Lend
+  // this call's tables synchronously; neither the renderer nor its retained
+  // result keeps a second cache or extends their lifetime across a scene.
+  if(consumeTables)consumeTables(table,calendarTable);
+  return result;
  }});
 }
 

@@ -30,7 +30,7 @@ function instance(source){
  const instrumented=source.replace('function boxSurface(p,x0,y0,x1,y1){','function boxSurface(p,x0,y0,x1,y1){__count();');assert.notEqual(instrumented,source);
  const api=vm.runInNewContext(instrumented+'\nstartMoonDetail();',context);const adopt=v=>{s.adopted=v;api.adopt(v);};
  const compose=f=>{const before=s.calls,p=s.publishes.length;api.compose(f,encodeNativeDisplay);return {samples:s.calls-before,publishes:s.publishes.length-p,visible:api.state.visible,hash:s.publishes.length?sha(s.publishes.at(-1).bytes):null,pixels:s.publishes.at(-1)?.w*s.publishes.at(-1)?.h};};
- return {s,api,adopt,compose};
+ return {s,api,adopt,compose,classes};
 }
 assert.equal(sha(original),'3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0');
 const candidate=fs.readFileSync(root+'/moon/src/moon-detail.mjs','utf8');
@@ -65,4 +65,14 @@ const bytes=b.s.publishes.at(-1).bytes,alphas=[];for(let i=3;i<bytes.length;i+=4
 // Bad adoption must fail closed without allowing a mixed old/new prefix cache.
 const bad=surface();bad.calendarLinear[0]=NaN;assert.throws(()=>b.adopt(bad));assert.equal(b.api.state.visible,false);assert.equal(b.api.available,false);b.compose(frame());assert.equal(b.api.state.visible,false);
 b.adopt(surface());b.compose(frame());b.api.dispose();assert.equal(b.api.available,false);const disposed=b.compose(frame());assert.equal(disposed.publishes,0);assert.equal(disposed.visible,false);
+// A preview stages its lunar detail before setting the final ready class.
+// The original compositor refused that first composition, then the preview
+// hid the SVG Moon: the next presentation opportunity exposed an empty slot.
+const stagedOld=instance(original),staged=instance(candidate);
+for(const owner of [stagedOld,staged]){owner.adopt(surface());owner.classes.delete('real-sky-composed');owner.classes.delete('real-sky-preview-ready');}
+const stagedFrame={...frame(),preview:true};
+assert.equal(stagedOld.compose(stagedFrame).publishes,0,'historical negative control reproduces the missing first detail');
+assert.equal(staged.compose(stagedFrame).publishes,1,'current preview must prepare opaque lunar pixels before final visibility publication');
+assert.equal(staged.api.state.visible,true);
+stagedFrame.current=()=>false;assert.equal(staged.compose(stagedFrame).publishes,0);assert.equal(staged.api.state.visible,false,'stale staged preview still withdraws');
 console.log(JSON.stringify({status:'PASS_SOURCE_CONTROLS_ONLY',originalSha256:sha(original),candidateSha256:sha(candidate),records,retentionBytesPerPixel:33,maximumObservedPixels:Math.max(...records.map(r=>r.next.pixels||0)),limitations:'DOM/canvas transport fixture. No native V5 visual, temporal, cost or product acceptance.'},null,2));

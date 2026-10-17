@@ -66,7 +66,10 @@ function startMoonDetail(){
  function available(){try{return !disposed&&!!context&&!!cx&&!!geometry();}catch{return false;}}
  function compose(frame,encode){
   if(disposed||!frame||!window.SalahMoonRuntime?.surface()||!context||!cx){clear();return;}
-  const g=geometry();if(!g||!(g.card.classList.contains('real-sky-composed')||frame.preview&&g.card.classList.contains('real-sky-preview-ready'))){clear();return;}
+  // The preview stages this opaque lunar join before publishing its ready
+  // class. Its current frame is the authority here; requiring that later
+  // class creates an empty Moon slot when the preview hides the SVG fallback.
+  const g=geometry();if(!g||!(g.card.classList.contains('real-sky-composed')||frame.preview&&frame.current())){clear();return;}
   const began=performance.now(),r=frame.raster;
   const base=document.querySelector(frame.preview?'.real-sky-preview':'.real-sky-canvas');
   // Native lunar optics precede the original opaque SVG photo. Preserve that

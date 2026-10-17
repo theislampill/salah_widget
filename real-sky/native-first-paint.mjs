@@ -24,7 +24,10 @@ export function prepareNativeFirstPaint(){
   let bytes=encodeNativeFrame(p.raster.linear,p.raster.effectiveExposure);
   const catalogue=window.SalahStarBootstrap;
   if(catalogue){const stars=catalogue.render(p.job,p.raster.physicalState,{background:bytes,exposure:p.raster.effectiveExposure});p=joinNativeStarPreview(p,bytes,stars);bytes=p.rgba;}
-  cv.getContext('2d').putImageData(new ImageData(bytes,325,530),0,0);
+  // These two one-use canvases immediately export CPU-generated pixels to PNG.
+  // Keep their backing stores on the CPU instead of uploading and synchronously
+  // reading the same pixels back through the GPU before the first document paint.
+  cv.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(bytes,325,530),0,0);
   // Match the native SIM owner's four lunar parameter names; temporal previews
   // still belong wholly to its existing clock and are excluded above.
   const sim={moon:params.get('simMoon'),wax:params.get('simWax'),moonAlt:params.get('simMoonAlt'),moonH:params.get('simMoonH')};
@@ -32,7 +35,7 @@ export function prepareNativeFirstPaint(){
   let moonUrl='';
   if(moon.visible){
    const local=document.createElement('canvas');local.width=moon.geometry.width;local.height=moon.geometry.height;
-   local.getContext('2d').putImageData(new ImageData(moon.rgba,local.width,local.height),0,0);moonUrl=local.toDataURL();
+   local.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(moon.rgba,local.width,local.height),0,0);moonUrl=local.toDataURL();
   }
   const style=document.createElement('style');style.id='native-first-paint';
   style.textContent=window.SalahMoonHead.backgroundRule(cv.toDataURL(),moonUrl,moon);document.head.append(style);

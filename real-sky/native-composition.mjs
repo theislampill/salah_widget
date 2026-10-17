@@ -22,6 +22,45 @@ export function nativeSolarTransmission(cloudRGBA){
  for(let i=0;i<mask.length;i+=4){mask[i]=mask[i+1]=mask[i+2]=255;mask[i+3]=255-cloudRGBA[i+3];}
  return mask;
 }
+/** A CSS mask is loaded with anonymous CORS semantics. Decode the same resource
+ * mode before replacing it: a fresh undecoded mask can suppress the entire Sun
+ * in Firefox, including pixels outside cloud support. The caller commits its
+ * matching foreground in this callback, after rechecking its original owner.
+ * One active decode bounds work; the next render opportunity samples latest
+ * inputs. At most two decoded resources are retained: the displayed mask and
+ * the last completed decode. Exact bytes may be reused by a fresh scene, but
+ * resource readiness grants no job/currentness authority. Cancellation fences
+ * callbacks; disposal also releases the decoded resource cache.
+ */
+export class NativeSolarMaskPublication{
+ constructor(imageFactory=()=>new Image()){this.imageFactory=imageFactory;this.revision=0;this.pending=null;this.displayed=null;this.decoded=null;this.disposed=false;}
+ publish(mask,commit,onError){
+  if(this.disposed||this.pending)return false;
+  const revision=++this.revision;
+  const finish=candidate=>{
+   if(this.disposed||revision!==this.revision)return;
+   this.pending=null;
+   this.decoded=candidate;
+   try{if(commit(mask)!==false&&revision===this.revision)this.displayed=candidate;}
+   catch(error){onError(error);}
+  };
+  if(this.displayed?.mask===mask){finish(this.displayed);return true;}
+  if(this.decoded?.mask===mask){finish(this.decoded);return true;}
+  const image=this.imageFactory(),candidate={mask,image};
+  this.pending=candidate;
+  try{
+   image.crossOrigin='anonymous';
+   image.src=JSON.parse(mask.slice(4,-1));
+   image.decode().then(()=>finish(candidate),error=>{
+    if(this.disposed||revision!==this.revision)return;
+    this.pending=null;onError(error);
+   });
+  }catch(error){this.pending=null;onError(error);}
+  return true;
+ }
+ cancel(){this.revision++;if(this.pending)this.pending.image.src='';this.pending=null;this.displayed=null;}
+ dispose(){this.cancel();this.decoded=null;this.disposed=true;}
+}
 export function nativeForeground(base,{cloudRGBA=null,moonRGBA=null,atmosphereLinear=null,exposure}={}){
  if(!base||base.length%3)throw new RangeError('Native linear RGB input required');
  const pixels=base.length/3;for(const a of [cloudRGBA,moonRGBA])if(a)validateNativeRGBA(a,pixels);

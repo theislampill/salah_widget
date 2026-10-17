@@ -125,18 +125,18 @@ Complete values keep their 14px font, normal whitespace, anywhere wrapping and s
   with dark text; `.p.now` independently outlines the current prayer. Future rows
   stay readable glass, elapsed rows are subdued, and Forenoon has no current row.
   Tomorrow's Fajr row, countdown and next arc marker use the same admitted target.
-- **Default timetable readability:** names and times retain full informational
-  opacity through their ancestors. Ordinary cells place `rgba(9,17,28,.74)` beneath
-  the decorative glass tint; elapsed rows use a quieter tint and border instead
-  of fading the text. NEXT keeps its opaque accent and dark foreground, and CURRENT
-  keeps its separate inset. The optional contrast appearance remains optional.
-  Native Chromium/Firefox pairs with a controlled 7 September 2026 Madinah clock verify
-  intended foreground/background contrast of at least 4.5:1 at noon, sunrise,
-  sunset, night, broken cloud, overcast and local white stress, with Inter/Fraunces
-  loaded and DPR 1/2 coverage. This is bounded timetable evidence, not whole-widget
-  accessibility certification; antialiasing/shadow changed-pixel ratios are only
-  diagnostics. The historical noon capture had no pinned date. Fonts, row geometry,
-  the 325×530 card, header/footer, and the separate embed interfaces are preserved.
+- **Timetable appearances:** the owner's 16 October 2026 decision restores the
+  historical Liquid Glass default: translucent white tint, 7px backdrop blur with
+  135% saturation, and elapsed rows at `.42` group opacity. High Contrast retains
+  full text opacity and its `rgba(9,17,28,.90)` backing, with the strict 4.5:1
+  intended-color contrast requirement. NEXT keeps its opaque accent and dark text;
+  CURRENT keeps its separate inset. The earlier R0018 default `.74` backing and
+  full-opacity policy is superseded specifically for Liquid Glass; its historical
+  default-mode contrast evidence does not certify the restored glass styling.
+  Glass contrast depends on the sky behind it and is not certified to that floor.
+  An appearance-only settings change binds and persists the row style without
+  replacing the weather, prayer, scene or request generation. Fonts, row geometry,
+  the 325×530 card, header/footer and physical sky remain unchanged.
 - The arc (`drawArc`) is **one continuous solar-elevation curve** built from real solar motion (hour angle +
   declination), NOT from prayer-to-prayer interpolation. Prayer events are *sampled onto* it. The declination is
   fit so elevation crosses **0° exactly at this date's sunrise/sunset** (the fit may slightly exceed the real

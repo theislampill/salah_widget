@@ -25,7 +25,7 @@ def concat(paths):
   if re.search(r'^\s*(?:import |export )',s,re.M):raise RuntimeError('Unbundled import/export '+str(p))
   out.append('// '+str(p.relative_to(R)).replace('\\','/')+'\n'+s)
  return '\n'.join(out)
-base=concat([N/'core'/p for p in core]+[N/'native-contract.mjs',N/'native-engine.mjs'])
+base=concat([N/'core'/p for p in core]+[N/'native-contract.mjs',N/'native-preview.mjs',N/'native-engine.mjs'])
 worker=base+'''\nlet nativeWorkerEngine=null;
 self.onmessage=async e=>{const m=e.data;try{if(m.kind==='boot'){nativeWorkerEngine=new NativeSkyEngine(m.pack);self.postMessage({kind:'ready'});}else if(m.kind==='render'){const result=await nativeWorkerEngine.render(m.job);self.postMessage({kind:'result',id:m.id,result},rasterTransferables(result));}}catch(e){self.postMessage({kind:'error',id:m.id,error:String(e.message??e)});}};
 self.addEventListener('unhandledrejection',e=>{self.postMessage({kind:'fatal',error:String(e.reason)});});
@@ -33,13 +33,13 @@ self.addEventListener('unhandledrejection',e=>{self.postMessage({kind:'fatal',er
 (N/'native-worker.js').write_text(worker,encoding='utf-8',newline='\n')
 extra=['core/src/reference-worker-client.mjs','core/src/latest-render-queue.mjs','native-encoding.mjs','native-cloud-transfer.mjs']
 if (N/'native-composition.mjs').exists():extra.append('native-composition.mjs')
-extra.extend(['native-preview.mjs','native-worker-policy.mjs','native-lifecycle.mjs','native-assets.mjs','native-host.mjs'])
+extra.extend(['native-worker-policy.mjs','native-lifecycle.mjs','native-assets.mjs','native-host.mjs'])
 boot='''
 startNativeSkyAssets(pack=>startNativeSky(pack,WORKER_SOURCE,PHYSICAL_MODE),document.currentScript?.src);
 '''.replace('WORKER_SOURCE',json.dumps(worker)).replace('PHYSICAL_MODE',str(bool(physical)).lower())
 (N/'native-sky.js').write_text('(function(){"use strict";\n'+base+'\n'+concat([N/p for p in extra])+boot+'\n})();\n',encoding='utf-8',newline='\n')
 bootstrap_text,bootstrap_pin=star_bootstrap(S)
-preview='(function(){"use strict";\n'+base+'\n'+concat([N/p for p in ['native-encoding.mjs','native-cloud-transfer.mjs','native-composition.mjs','native-preview.mjs','native-star-preview.mjs','native-preview-host.mjs','native-first-paint.mjs']])+'\nwindow.SalahStarBootstrap=NativeStarPreview.fromBootstrap('+json.dumps(bootstrap_text)+','+json.dumps(bootstrap_pin,separators=(',',':'))+');\nwindow.SalahNativeCloudLighting=nativeCloudSolarLighting;window.SalahStartSkyPreview=startNativeSkyPreview;window.SalahPrepareFirstPaint=prepareNativeFirstPaint;\n})();\n'
+preview='(function(){"use strict";\n'+base+'\n'+concat([N/p for p in ['native-encoding.mjs','native-cloud-transfer.mjs','native-composition.mjs','native-star-preview.mjs','native-preview-host.mjs','native-first-paint.mjs']])+'\nwindow.SalahStarBootstrap=NativeStarPreview.fromBootstrap('+json.dumps(bootstrap_text)+','+json.dumps(bootstrap_pin,separators=(',',':'))+');\nwindow.SalahNativeCloudLighting=nativeCloudSolarLighting;window.SalahStartSkyPreview=startNativeSkyPreview;window.SalahPrepareFirstPaint=prepareNativeFirstPaint;\n})();\n'
 pack={'catalogueText':(S/'data/bright-stars.json').read_text(encoding='utf-8'),'manifestText':(S/'data/registered-starlight/runtime-manifest.json').read_text(encoding='utf-8'),'assetTexts':{'128':(S/'data/registered-starlight/V-nside128.json').read_text(encoding='utf-8')} if physical else {}}
 (N/'native-data.js').write_text('window.__SALAH_REAL_SKY_PACK__='+json.dumps(pack,ensure_ascii=True,separators=(',',':'))+';\n',encoding='utf-8',newline='\n')
 # Source is pinned and retained locally. Only this explicit block replacement and hooks change index.

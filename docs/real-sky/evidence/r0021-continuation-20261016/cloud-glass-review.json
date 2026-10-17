@@ -1,0 +1,452 @@
+{
+  "schema": "r0021-cloud-glass-candidate-review/v1",
+  "createdAtUtc": "2026-10-16T23:47:19.378239+00:00",
+  "reviewer": "/root/r0021_review",
+  "authority": "Same sole independent read-only reviewer. Root retains source, native/performance, publication, merge and closure authority.",
+  "decision": "BOUNDED_R10_SOURCE_CORRECTIONS_ACCEPTABLE_FOR_CONTINUED_R0021_ENGINEERING; NATIVE_EVIDENCE_PARTIAL; NO_QUALIFICATION_OR_MERGE",
+  "binding": {
+    "head": "50b8757c795d27df8537de3e1547389828915fa8",
+    "r9IndexSha256": "ef1f1e5d1e6ffa9573f14fdfafa3520813182f5afcf03ea0dfed5894c4be6061",
+    "r9RuntimeSha256": "9fd57e5f13b5ce91f398c9b02c023d4612b8d3532f6adf6a30d95789da972113",
+    "r10IndexSha256": "308e3f0d817e61ed89815585c13c31a9d5ea992a97f5cd4c15317d54bc756688",
+    "r10PreviewSha256": "1a2a963d85e961e089466351f25c349d8842243593e381dae348c267fb664693",
+    "r10RuntimeReportedByRootAcquisition": "0d8281b3bc034b545046535025b1663913dbfb09b129c96dc297908a3fcaaa04",
+    "r10RuntimeLimit": "No complete142-file runtime rehash performed in this bounded review; source pins and index independently checked."
+  },
+  "findings": [
+    {
+      "id": "R8-F1",
+      "severity": "P1",
+      "status": "CLOSED_IN_R9_SOURCE",
+      "file": "real-sky/native-preview-host.mjs",
+      "lines": [
+        63,
+        75,
+        78,
+        100
+      ],
+      "finding": "Preview checks publication headroom before framebuffer writes and again before retiring first paint. Same decoded bytes can satisfy a fresh retry synchronously; changed bytes wait while a separately current prior preview remains.",
+      "control": {
+        "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\R8-CLOSURE-CONTROLS.json",
+        "sha256": "2471c5890ab375987d5736c3d7ce63d10e90bd27b478fcb199b81aee56aa23b0",
+        "bytes": 1765
+      }
+    },
+    {
+      "id": "R8-F2",
+      "severity": "P1",
+      "status": "CLOSED_IN_R9_SOURCE",
+      "file": "real-sky/native-host.mjs",
+      "lines": [
+        111,
+        112,
+        205
+      ],
+      "finding": "Actual painted job and pending job are fenced independently of a newer accepted job. The retained late-decode lifecycle counterexample now withdraws the expired framebuffer.",
+      "control": {
+        "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\R8-CLOSURE-CONTROLS.json",
+        "sha256": "2471c5890ab375987d5736c3d7ce63d10e90bd27b478fcb199b81aee56aa23b0",
+        "bytes": 1765
+      }
+    },
+    {
+      "id": "R8-F3",
+      "severity": "P1",
+      "status": "CLOSED_IN_R9_SOURCE",
+      "file": "src/native/index.html",
+      "lines": [
+        3484,
+        3488,
+        3753
+      ],
+      "finding": "Appearance-only branch persists configuration/style without rebinding the live provider-adopted timezone or scene. Seed is retained through the actual form. Unequal-zone source control preserves Asia/Riyadh in both directions.",
+      "control": {
+        "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\R8-CLOSURE-CONTROLS.json",
+        "sha256": "2471c5890ab375987d5736c3d7ce63d10e90bd27b478fcb199b81aee56aa23b0",
+        "bytes": 1765
+      }
+    },
+    {
+      "id": "R9-F1",
+      "severity": "P1",
+      "status": "OPEN_IN_FROZEN_R9_CLOSED_IN_R10_SOURCE",
+      "file": "real-sky/native-preview-host.mjs",
+      "lines": [
+        84,
+        89,
+        90,
+        101
+      ],
+      "finding": "R9 pending-decode return can retain an expired initial CSS head. R10 checks the original firstPaint job before that return, preserving current heads and withdrawing expired or changed-generation heads.",
+      "red": {
+        "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\INITIAL-HEAD-EXPIRY-CONTROL.json",
+        "sha256": "52103a7a75a137535dbcf750fcfa0b6904ff45689973351f0b50276a8449ef94",
+        "bytes": 953
+      },
+      "green": {
+        "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\INITIAL-HEAD-EXPIRY-SUCCESSOR-CONTROL.json",
+        "sha256": "d04c7da9bc2479ef96cf45f90608b77a9a633cb0861dcc76efb243a34ab87695",
+        "bytes": 1392
+      },
+      "limit": "R14/r16 native recordings are r9, not native proof of this r10-specific branch."
+    },
+    {
+      "id": "R14-E1",
+      "severity": "P2",
+      "status": "DISCLOSURE_REQUIRED_ROOT_ACCEPTED",
+      "file": "tools/cp9/solar_continuity.py",
+      "lines": [
+        6,
+        81,
+        88,
+        89
+      ],
+      "finding": "Reference-channel spread is only a colour screen, not damaged-ROI detection. r16 original002889 intersects both ROIs with a blank band yet passes roiReadable. Retain original counters but label their scope accurately; no negative-result continuity or whole-frame credit.",
+      "rootResponse": "Root accepted the counterexample and planned wording/count-label correction; no retuning or acquisition is needed."
+    },
+    {
+      "id": "R14-E2",
+      "severity": "P2",
+      "status": "UNQUALIFIED_EVIDENCE_RETAINED",
+      "file": "external harness appearance_backdrop.py",
+      "lines": [
+        8
+      ],
+      "finding": "R16 unscoped Isha selector measures a roughly10px SVG marker, not the timetable cell. The filtered/unfiltered observations cannot qualify native blur. Do not infer Firefox capture cause from this or a historical bug report."
+    }
+  ],
+  "remainingDemonstratedProductDefectInReviewedR10Fixes": null,
+  "maskResourceReview": {
+    "requestMode": "anonymous before src; matching exact CSS-mask resource",
+    "publication": "Private matched foreground and decoded mask committed only after original owner checks; late/cancelled/disposed callbacks cannot publish.",
+    "retention": "At most two successfully decoded resource references plus one logical pending decode per publication owner; failed decodes do not populate cache. Cache bytes grant no scene/currentness authority.",
+    "disposalLimit": "Publication cache clears on disposal. Existing host closures/last frames were not subjected to a heap-wide retention or leak qualification."
+  },
+  "appearancePolicy": {
+    "authority": "Owner expressly restored historical Liquid Glass; this supersedes R0018 default backing/full-opacity requirement for that mode only.",
+    "glass": "Default remains glass; translucent gradient,7px blur135% saturation,elapsed row opacity.42. No4.5:1 claim for Glass.",
+    "highContrast": "Strict4.5 intended-colour source policy and opacity1 retained; actual UI PNGs visibly distinct, not whole-widget accessibility certification.",
+    "stateEvidence": "R14 Chrome/Firefox actual settings and reload records preserve mode; r16 four actual UI switches preserve generation and stored-weather identity.",
+    "firefoxR14Limit": "No video due omitted --video flag; existing obsolete capability explanation in raw report cannot grant or deny browser capability."
+  },
+  "nativeEvidence": {
+    "r16": {
+      "cloudAdmission": 35,
+      "states": [
+        {
+          "name": "available-glass",
+          "at": 30319,
+          "appearance": "glass",
+          "applied": "glass",
+          "generation": 0,
+          "weather": {
+            "currentValidAt": 1790376000000,
+            "retrievedAt": 1790376858192.7166,
+            "code": 2
+          },
+          "file": "cold-weather-available-glass.png",
+          "nativeWeather": {
+            "src": "current",
+            "temp": 28,
+            "rh": 45,
+            "vis": 20000,
+            "cloud": 35,
+            "code": 2,
+            "wind": 2
+          },
+          "skyStatus": "ready",
+          "skyErrors": [],
+          "headerCondition": "cloud",
+          "headerTemperature": 28
+        },
+        {
+          "name": "available-contrast",
+          "at": 31449,
+          "appearance": "contrast",
+          "applied": "contrast",
+          "generation": 0,
+          "weather": {
+            "currentValidAt": 1790376000000,
+            "retrievedAt": 1790376858192.7166,
+            "code": 2
+          },
+          "file": "cold-weather-available-contrast.png",
+          "nativeWeather": {
+            "src": "current",
+            "temp": 28,
+            "rh": 45,
+            "vis": 20000,
+            "cloud": 35,
+            "code": 2,
+            "wind": 2
+          },
+          "skyStatus": "ready",
+          "skyErrors": [],
+          "headerCondition": "cloud",
+          "headerTemperature": 28
+        },
+        {
+          "name": "unavailable-contrast",
+          "at": 42715,
+          "appearance": "contrast",
+          "applied": "contrast",
+          "generation": 0,
+          "weather": {
+            "currentValidAt": 1790376000000,
+            "retrievedAt": 1790376858192.7166,
+            "code": 2
+          },
+          "file": "cold-weather-unavailable-contrast.png",
+          "nativeWeather": null,
+          "skyStatus": "pending",
+          "skyErrors": [],
+          "headerCondition": null,
+          "headerTemperature": null
+        },
+        {
+          "name": "unavailable-glass",
+          "at": 43499,
+          "appearance": "glass",
+          "applied": "glass",
+          "generation": 0,
+          "weather": {
+            "currentValidAt": 1790376000000,
+            "retrievedAt": 1790376858192.7166,
+            "code": 2
+          },
+          "file": "cold-weather-unavailable-glass.png",
+          "nativeWeather": null,
+          "skyStatus": "pending",
+          "skyErrors": [],
+          "headerCondition": null,
+          "headerTemperature": null
+        },
+        {
+          "name": "recovered-glass",
+          "at": 150682,
+          "appearance": "glass",
+          "applied": "glass",
+          "generation": 0,
+          "weather": {
+            "currentValidAt": 1790376960000,
+            "retrievedAt": 1790377007472.7166,
+            "code": 2
+          },
+          "file": "cold-weather-recovered-glass.png",
+          "nativeWeather": {
+            "src": "current",
+            "temp": 28,
+            "rh": 45,
+            "vis": 20000,
+            "cloud": 35,
+            "code": 2,
+            "wind": 2
+          },
+          "skyStatus": "pending",
+          "skyErrors": [],
+          "headerCondition": "cloud",
+          "headerTemperature": 28
+        },
+        {
+          "name": "recovered-contrast",
+          "at": 151859,
+          "appearance": "contrast",
+          "applied": "contrast",
+          "generation": 0,
+          "weather": {
+            "currentValidAt": 1790376960000,
+            "retrievedAt": 1790377007472.7166,
+            "code": 2
+          },
+          "file": "cold-weather-recovered-contrast.png",
+          "nativeWeather": {
+            "src": "current",
+            "temp": 28,
+            "rh": 45,
+            "vis": 20000,
+            "cloud": 35,
+            "code": 2,
+            "wind": 2
+          },
+          "skyStatus": "ready",
+          "skyErrors": [],
+          "headerCondition": "cloud",
+          "headerTemperature": 28
+        },
+        {
+          "name": "settled-glass",
+          "at": 157576,
+          "appearance": "glass",
+          "applied": "glass",
+          "generation": 0,
+          "weather": {
+            "currentValidAt": 1790376960000,
+            "retrievedAt": 1790377007472.7166,
+            "code": 2
+          },
+          "file": "cold-weather-settled-glass.png",
+          "nativeWeather": {
+            "src": "current",
+            "temp": 28,
+            "rh": 45,
+            "vis": 20000,
+            "cloud": 35,
+            "code": 2,
+            "wind": 2
+          },
+          "skyStatus": "ready",
+          "skyErrors": [],
+          "headerCondition": "cloud",
+          "headerTemperature": 28
+        }
+      ],
+      "switches": [
+        {
+          "beforeAt": 30555,
+          "afterAt": 30894,
+          "from": "glass",
+          "to": "contrast",
+          "generationEqual": true,
+          "weatherEqual": true,
+          "selectedOnOpen": "glass"
+        },
+        {
+          "beforeAt": 42873,
+          "afterAt": 43078,
+          "from": "contrast",
+          "to": "glass",
+          "generationEqual": true,
+          "weatherEqual": true,
+          "selectedOnOpen": "contrast"
+        },
+        {
+          "beforeAt": 150864,
+          "afterAt": 151281,
+          "from": "glass",
+          "to": "contrast",
+          "generationEqual": true,
+          "weatherEqual": true,
+          "selectedOnOpen": "glass"
+        },
+        {
+          "beforeAt": 152159,
+          "afterAt": 152453,
+          "from": "contrast",
+          "to": "glass",
+          "generationEqual": true,
+          "weatherEqual": true,
+          "selectedOnOpen": "contrast"
+        }
+      ],
+      "windows": [
+        {
+          "window": "ordinary",
+          "startSeconds": 4,
+          "endSeconds": 28,
+          "clock": "source elapsed; no navigation or presentation clock join",
+          "frames": 572,
+          "colourScreenAdmittedSamples": 274,
+          "colourScreenAdmittedTriplets": 212,
+          "colourScreenRejectedSamples": 298,
+          "alternations": 0,
+          "result": "NO_ALTERNATION_OBSERVED",
+          "allOriginalRoiSamplesRecomputedEqual": true,
+          "reviewerReceipt": {
+            "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\REPLAY-FF-r16-ordinary.json",
+            "sha256": "d7cdcfa150440959a2f0054597d6803f97564563e788dd91ed8395f85f6b22b1",
+            "bytes": 166122
+          },
+          "rootReceipt": {
+            "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\native\\firefox-weather-transition-r16\\SOLAR-ORDINARY-r17.json",
+            "sha256": "d7cdcfa150440959a2f0054597d6803f97564563e788dd91ed8395f85f6b22b1",
+            "bytes": 166122
+          }
+        },
+        {
+          "window": "unavailable",
+          "startSeconds": 46,
+          "endSeconds": 145,
+          "clock": "source elapsed; no navigation or presentation clock join",
+          "frames": 2414,
+          "colourScreenAdmittedSamples": 1473,
+          "colourScreenAdmittedTriplets": 1244,
+          "colourScreenRejectedSamples": 941,
+          "alternations": 0,
+          "result": "NO_ALTERNATION_OBSERVED",
+          "allOriginalRoiSamplesRecomputedEqual": true,
+          "reviewerReceipt": {
+            "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\REPLAY-FF-r16-unavailable.json",
+            "sha256": "521a147ee9a708ffed0aee19e7b640c9730ffaaefa8e96c920ff436089e890db",
+            "bytes": 715912
+          },
+          "rootReceipt": {
+            "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\native\\firefox-weather-transition-r16\\SOLAR-UNAVAILABLE-r17.json",
+            "sha256": "521a147ee9a708ffed0aee19e7b640c9730ffaaefa8e96c920ff436089e890db",
+            "bytes": 715912
+          }
+        },
+        {
+          "window": "recovered",
+          "startSeconds": 156,
+          "endSeconds": 159,
+          "clock": "source elapsed; no navigation or presentation clock join",
+          "frames": 70,
+          "colourScreenAdmittedSamples": 29,
+          "colourScreenAdmittedTriplets": 20,
+          "colourScreenRejectedSamples": 41,
+          "alternations": 0,
+          "result": "NO_ALTERNATION_OBSERVED",
+          "allOriginalRoiSamplesRecomputedEqual": true,
+          "reviewerReceipt": {
+            "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\REPLAY-FF-r16-recovered.json",
+            "sha256": "1106f42652bbc7062839de3bd304f6444d60713f3e4ccbeb92124354e19ca98e",
+            "bytes": 21281
+          },
+          "rootReceipt": {
+            "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\native\\firefox-weather-transition-r16\\SOLAR-RECOVERED-r17.json",
+            "sha256": "1106f42652bbc7062839de3bd304f6444d60713f3e4ccbeb92124354e19ca98e",
+            "bytes": 21281
+          }
+        }
+      ],
+      "pixels": "Inspected Sun remains in available, unavailable and recovered original stills/selected source pairs. Weather becomes unavailable via native expiry and later returns through the provider retry. Initial unavailable-contrast still retains a cloud patch; subsequent unavailable-glass/steady originals show its removal. No instantaneous-withdrawal or continuous-recovery claim.",
+      "contraryOriginals": [
+        "000090 whole-frame blank including exterior marker",
+        "000511 lower/right card truncation",
+        "002889 horizontal blank band crossing ROIs",
+        "003793 horizontal blank band",
+        "Chrome r14 original001112 lower/right truncation"
+      ]
+    },
+    "r14": "Actual appearance UI/state and selected PNGs accepted within scope; Firefox continuous source recording absent.",
+    "baseline": "Prior genuine Firefox r9 Sun-only alternation remains retained. This return supports the anonymous-decode atomic publication correction within sampled r9-candidate evidence; no universal absence claim."
+  },
+  "testBoundary": {
+    "fullR10Receipt": "725PASS,1FAIL,4TODO of730; retained unchanged. Sole failed test file reports recorder expected1 inline script but generated entry has3.",
+    "repair": "Later appearance-mutations test reads actual authored src/native/index.html; all6 healthy/mutant consumer pairs in separate receipt PASS/DETECTED. Generated CSS policy remains separately checked by native-pinned-contrast.",
+    "verdict": "Appropriate boundary repair; not a retroactive whole-suite PASS or native test.",
+    "testPin": {
+      "path": "C:\\Users\\theis\\.codex\\worktrees\\r0021-execution\\salah_widget\\tests\\r0018-appearance-mutations.cjs",
+      "sha256": "63fa22950c4f744dce09744f14b16c094a422577f425467fc702b486ca0fc1ec",
+      "bytes": 4717
+    }
+  },
+  "unsupportedScopes": [
+    "S1 timing,80ms continuous principal-content coverage and accepted-to-visible budgets",
+    "Original callback21-08.b cost qualification or transfer of earlier r3 cost evidence",
+    "Whole-frame completeness or continuous no-flicker certification",
+    "Firefox blur execution or attribution of damaged captures to a specific browser bug",
+    "Full H1/V5/physics requalification, actual-parent completion, exact final candidate-wide publication or merge/closure"
+  ],
+  "verification": {
+    "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\VERIFICATION.json",
+    "sha256": "f4eb1d33c12faa87756e605cd664b74ca741c6e58f469199b85a6d182ed703dd",
+    "bytes": 37409
+  },
+  "nextAction": "Root may retain these bounded source fixes and evidence for the next exact candidate. Correct the detector disclosure, preserve every failed/partial record, and continue principal R0021 qualification under unchanged budgets. No new Sun-only acquisition is required by this return.",
+  "reportMarkdown": {
+    "path": "C:\\Users\\theis\\.codex\\work-products\\r0021-execution-20261016\\independent-review\\cloud-glass-candidate-r14\\CLOUD-GLASS-CANDIDATE-REVIEW.md",
+    "sha256": "b80f4395abd29cf78323dac9587a03099ce5dd0b6e00c0353bea68a1d265061e",
+    "bytes": 6327
+  }
+}
