@@ -9,18 +9,18 @@ import {NativeForegroundCapture,NativeSolarMaskPublication} from '../../real-sky
 const source=fs.readFileSync(new URL('../../real-sky/native-preview-host.mjs',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replace('export function startNativeSkyPreview','function startNativeSkyPreview');
 const refinedSource=fs.readFileSync(new URL('../../real-sky/native-host.mjs',import.meta.url),'utf8');
 const refinedClear=refinedSource.slice(refinedSource.indexOf(' function clear('),refinedSource.indexOf(' // Identity/age fences'));
-function host({foregroundMs=25,skyMs=30,timeScale=600,parseMs=0,starMs=0,detailMs=0,throwDetail=false,bootstrap=false,forbidRasterReadback=false,rasterSize=[325,530],deferMask=false,clearClouds=false,initialHead=null}={}){
- let now=0,raf=null,cancelled=0,starRenders=0,headRemovals=0;const classes=new Set(),draws=[],pendingMasks=[],rgba=new Uint8ClampedArray(325*530*4);for(let i=3;i<rgba.length;i+=4)rgba[i]=255;
+function host({foregroundMs=25,skyMs=30,timeScale=600,parseMs=0,starMs=0,detailMs=0,throwDetail=false,throwForeground=false,bootstrap=false,forbidRasterReadback=false,rasterSize=[325,530],deferMask=false,clearClouds=false,initialHead=null}={}){
+ let now=0,raf=null,cancelled=0,starRenders=0,headRemovals=0,maskRevision=0;const classes=new Set(),draws=[],pendingMasks=[],canvases=[],visiblePixels=new Uint8ClampedArray(325*530*4),rgba=new Uint8ClampedArray(325*530*4);for(let i=3;i<rgba.length;i+=4)rgba[i]=255;
  // Real publication owner; only the browser Image decode transport is controlled.
- class MaskPublication extends NativeSolarMaskPublication{constructor(){super(()=>({decode(){return deferMask?new Promise(resolve=>pendingMasks.push(resolve)):{then(resolve){resolve();}};} }));}}
- const ctx={putImageData(){draws.push(now);},drawImage(){},getImageData:()=>{if(forbidRasterReadback)throw Error('Unnecessary full-size GPU round trip');return {data:rgba};}};
- const canvas=()=>({style:{},setAttribute(){},getContext:()=>ctx,remove(){}});
+ class MaskPublication extends NativeSolarMaskPublication{constructor(){super(()=>({decode(){return deferMask?new Promise((resolve,reject)=>pendingMasks.push(Object.assign(resolve,{reject}))):{then(resolve){resolve();}};} }));}}
+ const ctx={putImageData(image){draws.push(now);visiblePixels.set(image.data);},drawImage(){},getImageData:()=>{if(forbidRasterReadback)throw Error('Unnecessary full-size GPU round trip');return {data:rgba};}};
+ const canvas=()=>{const c={style:{},setAttribute(){},getContext:()=>ctx,remove(){}};canvases.push(c);return c;};
  const card={prepend(){},style:{setProperty(){},removeProperty(){}},classList:{contains:x=>classes.has(x),add:x=>classes.add(x),remove:x=>classes.delete(x)}};
  const s={window:{},document:{querySelector:q=>q==='.c'?card:q==='#native-first-paint'?{remove(){headRemovals++;}}:null,createElement:canvas},Uint8ClampedArray,Float64Array,structuredClone,performance:{now:()=>now},requestAnimationFrame:fn=>(raf=fn,1),cancelAnimationFrame(){cancelled++;},ImageData:class{constructor(data,w,h){this.data=data;this.width=w;this.height=h;}},
   nativeResultCurrent:(j,c)=>j.generation===c.generation&&Math.abs(c.utcMs-j.utcMs)<=30000,
-  NativeForegroundCapture:class{bottom(){return 0;}capture(){now+=foregroundMs;return {cloudRGBA:new Uint8ClampedArray(rgba.length),moonRGBA:new Uint8ClampedArray(rgba.length),native:{}};}prepareSolarMask(clouds,rows){return clearClouds?NativeForegroundCapture.prototype.prepareSolarMask.call(this,clouds,rows):'url("data:image/png;base64,fixture")';}},
+  NativeForegroundCapture:class{bottom(){return 0;}capture(){now+=foregroundMs;if(typeof throwForeground==='function'?throwForeground():throwForeground)throw Error('controlled foreground failure');return {cloudRGBA:new Uint8ClampedArray(rgba.length),moonRGBA:new Uint8ClampedArray(rgba.length),native:{}};}prepareSolarMask(clouds,rows){return clearClouds?NativeForegroundCapture.prototype.prepareSolarMask.call(this,clouds,rows):'url("data:image/png;base64,fixture'+maskRevision+'")';}},
   NativeSolarMaskPublication:MaskPublication,
-  nativeForegroundRows:()=>530,nativeCloudDisplayFrame:x=>x,encodeNativeFrame:()=>rgba,
+  nativeForegroundRows:()=>530,nativeCloudDisplayFrame:x=>x,encodeNativeFrame:()=>{const bytes=rgba.slice();bytes[0]=Math.round(now)%256;return bytes;},
   NativeStarPreview:class{static async create(pack){if(pack.wait)await pack.wait;return new this(pack);}constructor(pack){now+=parseMs;if(pack.invalid)throw new Error('Invalid catalogue');this.identity={sha256:pack.sha256};}render(){now+=starMs;starRenders++;return {diagnostics:this.identity};}},
   joinNativeStarPreview:(next,bytes,stars)=>({...next,rgba:bytes,raster:{...next.raster,starPreview:stars.diagnostics}}),nativeStarPreviewRegion:()=>rgba,
   renderNativeBackgroundPreview(c){now+=Array.isArray(skyMs)?skyMs.shift()??30:skyMs;return {job:{utcMs:c.utcMs,generation:c.generation},utcMs:c.utcMs,quality:'test',raster:{linear:new Float64Array(3),width:rasterSize[0],height:rasterSize[1],physicalState:{sun:{altDeg:30}}}};}};
@@ -29,12 +29,44 @@ function host({foregroundMs=25,skyMs=30,timeScale=600,parseMs=0,starMs=0,detailM
  if(bootstrap)s.window.SalahStarBootstrap=new s.NativeStarPreview({sha256:'same-parent',bootstrapSha256:'seed'});
  if(initialHead)s.window.SalahFirstPaint=initialHead;
  vm.createContext(s);vm.runInContext(source+'\nstartNativeSkyPreview();',s);
- return {s,classes,draws,async finishMask(actual=now){now=actual;pendingMasks.shift()();for(let i=0;i<4;i++)await Promise.resolve();},get pendingCount(){return pendingMasks.length;},get headRemovals(){return headRemovals;},get now(){return now;},get starRenders(){return starRenders;},get cancelled(){return cancelled;},get state(){return s.window.SalahSkyPreview.state;},tick(t,actual){now=actual;raf(t);},present(t,actual){now=actual;s.window.SalahSkyPreview.present(t);},withdraw(actual){
+ return {s,classes,draws,visiblePixels,changeMask(){maskRevision++;},get visible(){return canvases[0].style.visibility==='visible'&&classes.has('real-sky-preview-ready');},async finishMask(actual=now){now=actual;pendingMasks.shift()();for(let i=0;i<4;i++)await Promise.resolve();},async rejectMask(actual=now){now=actual;pendingMasks.shift().reject(Error('controlled decode failure'));for(let i=0;i<4;i++)await Promise.resolve();},get pendingCount(){return pendingMasks.length;},get headRemovals(){return headRemovals;},get now(){return now;},get starRenders(){return starRenders;},get cancelled(){return cancelled;},get state(){return s.window.SalahSkyPreview.state;},tick(t,actual){now=actual;raf(t);},present(t,actual){now=actual;s.window.SalahSkyPreview.present(t);},withdraw(actual){
   now=actual;
   Object.assign(s,{card,frame:{},job:{},status:{},paintedFrame:{},paintedJob:{},previousPresentation:{},previousMoonBottom:0,ctx:{clearRect(){}},canvas:canvas(),publish(){},solarPublication:{cancel(){}}});
   vm.runInContext(refinedClear+'\nclear("accepted weather changed");',s);
  }};
 }
+
+function initialHead(){return {value:{job:{generation:1,utcMs:0},utcMs:0,quality:'initial',rgba:new Uint8ClampedArray(325*530*4),raster:{width:325,height:530,physicalState:{sun:{altDeg:30}}}}};}
+
+test('failed changed-mask decode cannot retain a preview after the owner pauses',async()=>{
+ const h=host({foregroundMs:0,skyMs:1,timeScale:1,deferMask:true});await h.finishMask();
+ assert.equal(h.visible,true);h.changeMask();h.present(200,200);assert.equal(h.pendingCount,1);
+ const capture=h.s.window.SalahNativeSkyHost.capture;
+ h.s.window.SalahNativeSkyHost.capture=()=>({...capture(),paused:true});await h.rejectMask(210);
+ assert.equal(h.visible,false);assert.equal(h.state.retained,false);assert.equal(h.state.status,'pending');
+});
+
+test('failed preview mask decode retains a current initial head and later publishes a complete retry',async()=>{
+ const first=initialHead(),h=host({foregroundMs:0,skyMs:1,timeScale:1,deferMask:true,initialHead:first});
+ await h.rejectMask(100);
+ assert.equal(h.headRemovals,0,'decode failure cannot withdraw independently current initial pixels');
+ assert.equal(h.s.window.SalahFirstPaint,first);assert.equal(h.draws.length,0);
+ assert.equal(h.state.retained,true);assert.match(h.state.reason,/decode failure/);
+ h.present(101,101);await h.finishMask(110);
+ assert.equal(h.state.status,'ready');assert.equal(h.headRemovals,1);assert(h.draws.length>0);
+});
+
+test('failed preview preparation retains only a current unpaused initial head',()=>{
+ for(const invalidation of ['expiry','generation','paused']){
+  let fail=true;const first=initialHead(),h=host({foregroundMs:0,timeScale:1,throwForeground:()=>fail,initialHead:first});
+  assert.equal(h.headRemovals,0,'preparation failure must retain the original head');
+  assert.equal(h.s.window.SalahFirstPaint,first);assert.equal(h.draws.length,0);
+  const capture=h.s.window.SalahNativeSkyHost.capture;
+  if(invalidation!=='expiry')h.s.window.SalahNativeSkyHost.capture=()=>({...capture(),...(invalidation==='paused'?{paused:true}:{generation:2})});
+  h.present(31001,invalidation==='expiry'?31001:100);
+  assert.equal(h.s.window.SalahFirstPaint,null,invalidation+' must still withdraw');
+ }
+});
 test('preview waits for its mask and rejects readiness after owner transfer, clear and disposal',async()=>{
  const ready=host({timeScale:1,deferMask:true});assert.equal(ready.draws.length,0);await ready.finishMask();assert.equal(ready.state.status,'ready');assert(ready.draws.length>0);
  for(const action of ['clear','dispose','refined']){
@@ -109,12 +141,24 @@ test('a throwing detail compositor cannot bypass publication headroom through re
  assert.ok((h.now+.2)*600-h.state.utcMs<=30000);assert.equal(h.state.deadlineRetries,1);
 });
 
-test('a failed detail readback retains a sky only while its original owner has publication headroom',()=>{
+test('failed first detail composition cannot claim a ready retained preview that was never visible',()=>{
  const h=host({foregroundMs:0,skyMs:30,detailMs:1,throwDetail:true,timeScale:600});
- assert.equal(h.state.status,'ready');assert.equal(h.state.retained,true);
- assert.equal(h.state.utcMs,0);assert.equal(h.state.deadlineRetries,0);
- assert.equal(h.state.publication.ageMs,h.now*600-h.state.utcMs,'retention receipt names the pixels still visible');
- assert.ok((h.now+5)*600-h.state.utcMs<=30000);
+ assert.equal(h.state.status,'pending');assert.equal(h.state.retained,false);
+ assert.equal(h.visible,false);assert.equal(h.draws.length,0);assert.equal(h.state.deadlineRetries,0);
+});
+
+test('failed replacement detail preserves the displayed preview pixels and identity until a complete retry',()=>{
+ const h=host({foregroundMs:0,skyMs:1,timeScale:1,throwDetail:[false,true,false]});
+ const original=h.visiblePixels.slice(),utc=h.state.utcMs,draws=h.draws.length,frame=h.s.window.SalahSkyPreview.frame;
+ assert.equal(h.visible,true);
+ h.present(21000,21000);
+ assert.equal(h.visible,true);assert.equal(h.state.retained,true);assert.equal(h.state.utcMs,utc);
+ assert.equal(h.s.window.SalahSkyPreview.frame,frame);assert.equal(h.draws.length,draws);
+ assert.deepEqual(h.visiblePixels,original,'failed candidate must not overwrite the retained background');
+ assert.equal(h.state.publication.ageMs,h.now-utc);
+ h.present(21100,21100);
+ assert.equal(h.visible,true);assert.equal(h.state.retained,false);assert.equal(h.state.utcMs,21100);
+ assert.notDeepEqual(h.visiblePixels,original);
 });
 test('a delayed rAF timestamp never skips the accepted-clock expiry check',()=>{
  const h=host({foregroundMs:0,skyMs:30});const original=h.state.utcMs;

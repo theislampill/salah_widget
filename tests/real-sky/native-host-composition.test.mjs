@@ -19,7 +19,7 @@ test('new worker acceptance cannot extend the original displayed job while its r
  vm.createContext(s);vm.runInContext(compose+'\n'+animate+'\nanimate(31000)',s);
  assert.equal(clears.length,1,'the 31000 ms displayed job must be withdrawn despite a 3000 ms accepted successor');
 });
-function fixture(rows,{invalidAt=null,expire=false,maskError=false,deferMask=false,publication=null}={}){
+function fixture(rows,{invalidAt=null,expire=false,maskError=false,deferMask=false,publication=null,detail=null}={}){
  const width=325,height=530,n=width*height*3,sky=new Float64Array(n),stars=new Float64Array(n),diffuse=new Float64Array(n),linear=new Float64Array(n);
  for(let i=0;i<n;i++){sky[i]=.0001+(i%103)/10000;stars[i]=i%79===0?.02:0;diffuse[i]=(i%7)/100000;linear[i]=sky[i]+stars[i]+diffuse[i];}
  const raster={width,height,linear,skyBackgroundLinear:sky,stellarLinear:stars,diffusePhysicalLinear:diffuse,effectiveExposure:24};
@@ -32,9 +32,9 @@ function fixture(rows,{invalidAt=null,expire=false,maskError=false,deferMask=fal
  const capture={cloudRGBA,moonRGBA,native:{}},base=nativeCalendarRegion(raster,mask,rows),joined=nativeForeground(base,{...capture,atmosphereLinear:sky.subarray(0,base.length),exposure:24});
  const expected=new Uint8ClampedArray(width*height*4);
  if(invalidAt===null){expected.set(encodeNativeFrame(linear,24));expected.set(encodeNativeFrame(joined.linear,24));}
- const pixels=new Uint8ClampedArray(expected.length).fill(29),draws=[],encoded=[],destinations=[],errors=[],maskCalls=[],pendingMasks=[];let checks=0;
+ const pixels=new Uint8ClampedArray(expected.length).fill(29),draws=[],encoded=[],destinations=[],errors=[],maskCalls=[],pendingMasks=[],classes=new Set();let checks=0;
  const s={frame:{raster},disposed:false,job:{observer:{utcMs:1},native:{identity:'accepted'}},pendingJob:null,paintedFrame:null,paintedJob:null,previousPresentation:null,previousSolarMask:null,previousMoonBottom:0,lastCompose:0,
-  snapshot:()=>({}),lifecycle:{current:()=>!expire||++checks===1},clear:reason=>errors.push(reason),failure:e=>errors.push(String(e)),performance:{now:()=>1},window:{},
+  snapshot:()=>({}),lifecycle:{current:()=>!expire||++checks===1},clear:reason=>errors.push(reason),failure:e=>errors.push(String(e)),performance:{now:()=>1},window:detail?{SalahMoonDetail:detail}:{},
   foreground:{bottom:()=>rows-2,capture:()=>({...capture,cloudRGBA:cloudRGBA.slice(),moonRGBA:moonRGBA.slice()}),prepareSolarMask(rgba,count){maskCalls.push({rgba:rgba.slice(),rows:count,bytes:nativeSolarTransmission(rgba)});if(maskError)throw Error('invalid solar mask');return publication?'url("data:image/png;base64,mask-'+maskCalls.length+'")':'mask-'+maskCalls.length;}},calendarGeometry:()=>({key:'geometry',mask:()=>mask}),
   nativeForeground,nativeCalendarRegion,nativeForegroundRows,sameNativePresentation,sameNativeCloudAlpha,
   solarPublication:publication??{pending:null,publish(mask,commit){if(deferMask){this.pending=commit;pendingMasks.push(commit);}else commit();},cancel(){this.pending=null;}},
@@ -42,10 +42,31 @@ function fixture(rows,{invalidAt=null,expire=false,maskError=false,deferMask=fal
   encodeNativeDisplayInto(a,E,b,offset){encoded.push(a.length);destinations.push({bytes:b,offset:offset??0,length:a.length});return encodeNativeDisplayInto(a,E,b,offset);},
   ImageData:class{constructor(data,w,h){assert.equal(data.length,w*h*4);this.data=data;this.width=w;this.height=h;}},Uint8ClampedArray,
   ctx:{putImageData(image,x,y){draws.push([image.width,image.height,x,y]);pixels.set(image.data,y*width*4);}},
-  card:{style:{setProperty(){}},classList:{add(){}}},canvas:{style:{}},status:{last:{},presentationDraws:0,presentationSkips:0}};
+  card:{style:{setProperty(){}},classList:{add(x){classes.add(x);},remove(x){classes.delete(x);},contains:x=>classes.has(x)}},canvas:{style:{}},status:{last:{},presentationDraws:0,presentationSkips:0}};
  vm.createContext(s);vm.runInContext(compose+'\ncompose();',s);
- return {s,pixels,expected,encoded,destinations,draws,errors,capture,maskCalls,finishMask(){s.solarPublication.pending=null;return pendingMasks.shift()();},rerun(){vm.runInContext('compose();',s);}};
+ return {s,classes,pixels,expected,encoded,destinations,draws,errors,capture,maskCalls,finishMask(){s.solarPublication.pending=null;return pendingMasks.shift()();},rerun(){vm.runInContext('compose();',s);}};
 }
+test('failed first refined detail cannot publish its background or withdraw the preview class',()=>{
+ const h=fixture(183,{detail:{compose(){throw Error('controlled detail readback');}}});
+ assert.equal(h.draws.length,0);assert.equal(h.s.paintedJob,null);assert(h.pixels.every(v=>v===29));
+ assert.equal(h.classes.has('real-sky-composed'),false);assert.match(h.errors[0],/detail readback/);
+});
+test('failed replacement detail retains the original complete refined pixels and identity',()=>{
+ const h=fixture(183),original=h.pixels.slice(),job=h.s.paintedJob,frame=h.s.paintedFrame;
+ h.s.window.SalahMoonDetail={compose(){throw Error('controlled replacement detail');}};
+ h.s.frame={...frame};h.s.job={observer:{utcMs:2},native:{identity:'accepted'}};h.capture.cloudRGBA[3]=200;
+ h.rerun();assert.equal(h.draws.length,1);assert.deepEqual(h.pixels,original);
+ assert.equal(h.s.paintedJob,job);assert.equal(h.s.paintedFrame,frame);assert.equal(h.s.status.displayed.utcMs,1);
+ assert.equal(h.s.status.displayed.retained,true);assert.equal(h.classes.has('real-sky-composed'),true);
+ h.s.window.SalahMoonDetail={compose(){}};h.rerun();assert.equal(h.draws.length,2);
+ assert.equal(h.s.status.displayed.utcMs,2);assert.notDeepEqual(h.pixels,original);
+});
+test('refined detail cannot spend the original accepted-job fence before background commit',()=>{
+ const h=fixture(183),draws=h.draws.length;
+ h.s.frame={...h.s.frame};h.s.job={observer:{utcMs:2},native:{identity:'accepted'}};
+ h.s.window.SalahMoonDetail={compose(){h.s.lifecycle.current=()=>false;}};
+ h.rerun();assert.equal(h.draws.length,draws);assert.match(h.errors.at(-1),/detail/);
+});
 for(const rows of [183,284,530])test('refined host encodes each final pixel once and preserves composed bytes: '+rows,()=>{
  const h=fixture(rows);assert.deepEqual(h.errors,[]);assert.deepEqual(h.pixels,h.expected);
  assert.equal(h.encoded.reduce((a,b)=>a+b,0),325*530*3,'overwritten raw prefix must not be encoded twice');
@@ -103,6 +124,27 @@ test('actual host clear withdraws the mask cache along with the previous present
  const clear=source.slice(source.indexOf(' function clear('),source.indexOf(' // Identity/age fences'));
  vm.runInContext(clear+"\nclear('source-control');",s);
  assert.equal(s.previousSolarMask,null);assert.equal(s.previousPresentation,null);assert.equal(s.frame,null);assert.equal(s.job,null);
+});
+
+test('worker failure retains original current pixels while a stale preview and changed mask await replacement',()=>{
+ const h=fixture(183),s=h.s,original=h.pixels.slice(),displayed=s.paintedJob;
+ let current=true,withdrawals=0,previewUpdates=0;
+ s.status.errors=[];s.lifecycle.current=job=>current&&job===displayed;
+ s.card.classList.contains=()=>true;s.card.classList.remove=()=>{};s.card.style.removeProperty=()=>{};
+ s.ctx.clearRect=()=>{withdrawals++;h.pixels.fill(0);};s.publish=()=>{};
+ s.window.SalahSkyPreview={frame:{current:()=>false},clear(){},update(){previewUpdates++;}};
+ const clear=source.slice(source.indexOf(' function clear('),source.indexOf(' // Identity/age fences'));
+ const failure=source.slice(source.indexOf(' function failure('),source.indexOf('\n client=new ReferenceRenderClient'));
+ vm.runInContext(clear+'\n'+failure,s);
+ s.pendingJob={observer:{utcMs:2},native:{identity:'accepted'}};s.solarPublication.pending={};
+ vm.runInContext("failure(new Error('controlled replacement worker failure'));",s);
+ assert.equal(withdrawals,0,'a failed worker cannot expose a stale preview or a pending decode');
+ assert.deepEqual(h.pixels,original);assert.equal(s.paintedJob,displayed);assert.equal(s.job,displayed);
+ assert.equal(s.pendingJob,null);assert.equal(s.status.status,'unavailable');assert.match(s.status.errors.at(-1),/worker failure/);
+ assert.equal(previewUpdates,0);
+ current=false;
+ vm.runInContext("failure(new Error('expired replacement worker failure'));",s);
+ assert.equal(withdrawals,1,'retention cannot extend currentness');assert.equal(s.paintedJob,null);assert.equal(previewUpdates,1);
 });
 test('ignoring the final alpha difference is killed by the same exact mask discriminator',()=>{
  const fragment=source.slice(source.indexOf('export function sameNativeCloudAlpha'),source.indexOf('/** DOM ownership adapter'));

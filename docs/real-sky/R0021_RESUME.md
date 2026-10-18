@@ -1,6 +1,6 @@
 # R0021 / issue 33: continuation from PR 67
 
-Current continuation: [terminal execution and approved TA1–TA3](R0021_TERMINAL_EXECUTION.md). The archived six-file correction is now applied with exact runtime identity. Historical sections below retain their original checkpoint status. Native/final qualification remains in progress; production merge is not approved.
+Current continuation: [terminal results and exact remaining predicates](R0021_TERMINAL_RESULTS.md), under [approved TA1–TA3](R0021_TERMINAL_EXECUTION.md). The archived correction is published, followed by independently reviewed retention repairs and four native comparisons; runtime `f3e7ff1be9d77b224caaf988791b7616c187b6c4a768a34192826a5dbdd5992c`. The named Firefox quality rejection remains a product blocker. Historical sections below retain their original checkpoint status. Final qualification and production merge remain unapproved.
 
 ## Pro recovery checkpoint — 2026-10-18
 

@@ -2380,7 +2380,7 @@ function startNativeSky(pack,workerSource,physical){
  const badge=document.createElement('span');badge.className='real-sky-status';badge.setAttribute('role','status');card.append(badge);
  const foreground=physical?new NativeForegroundCapture(canvas):null;
  const solarPublication=physical?new NativeSolarMaskPublication():null;
- const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'withdraw optional sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,presentationRejections:0,presentationUtcMs:null,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
+ const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'retain only a current displayed sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,presentationRejections:0,presentationUtcMs:null,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
  let client,lifecycle,frame=null,job=null,pendingJob=null,disposed=false,paintedFrame=null,paintedJob=null,previousPresentation=null,previousSolarMask=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
  function publish(){const preview=window.SalahSkyPreview?.state.status==='ready';badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.availability?.reason==='rate-throughput'?`${preview?'Sky preview · r':'R'}efinement unavailable at ${status.availability.rate}×`:preview?'Sky preview · refining…':status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent. A current preview is distinct from registered diffuse refinement.';canvas.dataset.status=status.status;}
  function clear(reason='invalidated'){
@@ -2466,12 +2466,19 @@ function startNativeSky(pack,workerSource,physical){
      // Never join old clouds to a newer mutable frame, or publish after a clear.
      if(disposed||frame!==acceptedFrame||job!==acceptedJob)return false;
      if(!lifecycle.current(acceptedJob,snapshot())){clear('superseded during mask decode');return false;}
+      // The detail owner needs the refined class for geometry, but its fallible
+      // readback must finish before replacing the displayed background/identity.
+      // Restore the previous owner in this same turn if the candidate fails.
+      const wasComposed=card.classList.contains('real-sky-composed');card.classList.add('real-sky-composed');
+      try{window.SalahMoonDetail?.compose(acceptedFrame,encodeNativeDisplay);}
+      catch(error){if(!wasComposed)card.classList.remove('real-sky-composed');throw error;}
+      if(!lifecycle.current(acceptedJob,snapshot())){clear('superseded during detail composition');return false;}
      ctx.putImageData(image,0,0);card.style.setProperty('--native-sun-cloud-mask',solarMask);
      paintedFrame=acceptedFrame;paintedJob=acceptedJob;status.presentationUtcMs=acceptedJob.observer.utcMs;previousMoonBottom=bottom;
      status.displayed={utcMs:acceptedJob.observer.utcMs,identity:acceptedJob.native.identity,exposure:acceptedFrame.raster.effectiveExposure,presentation:acceptedFrame.raster.displayPresentation??null,retained:false};
      previousPresentation=presentation;previousSolarMask=solarMask;status.presentationDraws++;
      status.last.composition={...joined.diagnostics,meanCloudAlpha:joined.diagnostics.meanCloudAlpha*rows/530,...capture.native,updatedRows:rows,totalRows:530};card.classList.add('real-sky-composed');
-     canvas.style.visibility='visible';window.SalahMoonDetail?.compose(acceptedFrame,encodeNativeDisplay);lastCompose=performance.now();
+      canvas.style.visibility='visible';lastCompose=performance.now();
      status.last.composition.lastComposeMs=lastCompose-started;return true;
     },failed);
     return;
@@ -2506,7 +2513,17 @@ function startNativeSky(pack,workerSource,physical){
   }
   frame=result;job=request;status.status='ready';status.renders++;status.last={utcMs:result.utcMs,observer:result.observer,native:result.native,catalogue:result.catalogue,sources:result.sources,drawn:result.raster.drawn,detectableSources:result.raster.detectableSources,diffuseAsset:result.diffuseAsset,diffuseState:result.raster.diffuseState??null,physicalState:result.raster.physicalState,exposure:result.raster.effectiveExposure,atmosphere:result.raster.atmosphere,visibilityScope:physical?'CP7 contrast diagnostics are before native cloud foreground; final pixel/operator evidence is separate':'CP7 pre-native-overlay contrast diagnostic',weather:current.weather,view:request.options.view,execution:result.execution,timings:result.timings,warnings:result.raster.modelWarnings};compose();publish();
  }
- function failure(e){if(disposed)return;clear('render failure');status.status='unavailable';const message=String(e?.message??e);if(status.errors.at(-1)!==message)status.errors.push(message);status.errors=status.errors.slice(-12);publish();}
+ function failure(e){
+  if(disposed)return;const message=String(e?.message??e);
+  // A replacement failure does not revoke the independently current displayed
+  // job. Keep its matching pixels/mask while normal currentness fences and the
+  // existing request loop govern withdrawal and recovery.
+  if(paintedJob&&lifecycle.current(paintedJob)){
+   solarPublication?.cancel();pendingJob=null;frame=paintedFrame;job=paintedJob;
+   if(status.displayed)status.displayed={...status.displayed,retained:true,reason:message};
+  }else clear('render failure');
+  status.status='unavailable';if(status.errors.at(-1)!==message)status.errors.push(message);status.errors=status.errors.slice(-12);publish();
+ }
  client=new ReferenceRenderClient(pack,{workerFactory:()=>{workerUrl=URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'}));return new Worker(workerUrl);},fallbackFactory:requireNativeWorker,timeoutMs:15000});
  lifecycle=new NativeSkyLifecycle({capture:snapshot,physical,execute:request=>client.run(request),onResult:accept,onInvalidate:clear,onError:failure,onAvailability:value=>{status.availability=value;if(value.status==='unavailable'&&!frame){status.status='unavailable';status.reason=value.reason;publish();}}});
  const request=(force=false)=>lifecycle.request(force);

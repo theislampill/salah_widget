@@ -1,0 +1,63 @@
+{
+  "schema": "r0021-bounded-independent-review/v1",
+  "observedAtUtc": "2026-10-18T16:25:03.640956+00:00",
+  "decision": "NEEDS_REVISION_BEFORE_NATIVE_ACQUISITION",
+  "scope": "Read-only preflight of four controlled native functional cases; source acceptance r2 retained. No tests or native acquisition performed. No formal lifecycle/currentness/epoch authority.",
+  "inputs": {
+    "check_retention_r109.py": "2df3ee8c647435cd9aeac8668d73521e37847d2742418b13248b4384292f4e40",
+    "atomic-retention-r109-build.json": "098d2f357494074646166821dc6c274d59acdb27415ab836383f4b28f853034c"
+  },
+  "buildReceiptRuntime": "f3e7ff1be9d77b224caaf988791b7616c187b6c4a768a34192826a5dbdd5992c",
+  "supported": [
+    "Actual ReferenceRenderClient sends kind render/id/job; modified view.width=0 reaches the production worker invalid-view error path, rather than a fabricated host error.",
+    "Foreground and detail faults target the changed owners; before/after assertions are falsifiers, not timing or physical-continuity qualification.",
+    "The build receipt binds the previously accepted r2 source hashes and reports two equal 142-file builds; this preflight did not independently rehash all runtime files."
+  ],
+  "findings": [
+    {
+      "id": "R109-HOLD-DEADLINE",
+      "severity": "P2",
+      "lines": [
+        64,
+        82
+      ],
+      "finding": "The held native-data request spans asynchronous waits and screenshots while the actual native asset deadline is 15000 ms. A slow case can test an induced asset timeout instead of the requested worker error.",
+      "required": "Record held-request entry/release timing; release or fail the fixture before the unchanged native deadline, then assert full assets ready before the worker fault. Do not extend product timeout."
+    },
+    {
+      "id": "R109-CLEANUP",
+      "severity": "P1",
+      "lines": [
+        97,
+        107
+      ],
+      "finding": "A rejected context.close skips browser/server cleanup and runtime readback. The outer finally nevertheless removes the resource lock; unbounded close/evaluate paths also lack an enclosing finite acquisition bound.",
+      "required": "Independent bounded cleanup attempts and preserved outcomes; verify owned browser containment before releasing a clean lease. Gate successful return on cleanup. Use a finite outer case/run guard for existing unbounded awaits."
+    },
+    {
+      "id": "R109-RUNTIME-GATE",
+      "severity": "P2",
+      "lines": [
+        46,
+        101,
+        107
+      ],
+      "finding": "Runtime identity is observed but not compared to the declared r27/r28 roots before launch; runtimeUnchanged is recorded without gating success.",
+      "required": "Assert both expected runtime roots before effects and reject successful comparison if the post identity differs."
+    },
+    {
+      "id": "R109-WORKER-ERROR-JOIN",
+      "severity": "P2",
+      "lines": [
+        84,
+        86
+      ],
+      "finding": "The error wait accepts any growth in sky.errors, while the injected request identity is separately recorded.",
+      "required": "Assert the production invalid-width error attributable to the injected request; preserve unrelated error events rather than satisfying this falsifier with them."
+    }
+  ],
+  "limits": [
+    "No S1, callback-cost, continuous pixels, whole visual, or production readiness credit.",
+    "No new agent, browser, test/build, source/Git mutation, or external effect."
+  ]
+}

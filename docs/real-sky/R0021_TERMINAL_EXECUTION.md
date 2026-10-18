@@ -1,5 +1,7 @@
 # R0021 terminal execution — 2026-10-18
 
+Latest: [verified retention repairs, bounded Firefox result and inclusive callback findings](R0021_TERMINAL_RESULTS.md). The ledger below retains the admitted starting frontier; the linked results give the current dispositions and exact successor runtime.
+
 Implements #33 on PR #67, `codex/r0021-startup-completion`. Production merge is not approved. The owner approved TA1, both parts of TA2, and TA3 conditional on executor agreement; the executor agrees with the exact clauses. [Decision and limits](evidence/r0021-terminal-20261018/OWNER_DECISIONS.json), [governing wording](evidence/r0021-terminal-20261018/APPROVED_TA_CLAUSES.md). These prospective changes do not relabel historical failures.
 
 The six-file Pro correction is applied over documentation head `e6a741aaf4c84bd9ef95a8701c1b5cb19a10f323`. All 142 runtime entries match archive `2df6a75474f3b0fce2ba72cbf94a7640569bcf2f`, runtime `d82bcbd724cee5c0eae3d42c6fdb543150b00541ee73079fb26656bdf41542af`; all 12 qualification files are unchanged. [Transfer verification](evidence/r0021-terminal-20261018/ARCHIVE_TRANSFER.json). The 95 affected assertions and two deterministic builds transfer by exact identity, not new execution. Base remains `f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de`; performance baseline remains `18ff14860ff41c084b1db5f396bb62aa9c22b1be`.
