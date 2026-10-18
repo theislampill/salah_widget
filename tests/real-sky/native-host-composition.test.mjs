@@ -4,7 +4,8 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {encodeNativeFrame} from '../../real-sky/native-encoding.mjs';
 import {encodeNativeDisplay,encodeNativeDisplayInto,sameNativeCloudAlpha} from '../../real-sky/native-host.mjs';
-import {nativeForeground,nativeCalendarRegion,nativeForegroundRows,sameNativePresentation,nativeSolarTransmission} from '../../real-sky/native-composition.mjs';
+import {nativeForeground,nativeCalendarRegion,nativeForegroundRows,sameNativePresentation,nativeSolarTransmission,NativeSolarMaskPublication} from '../../real-sky/native-composition.mjs';
+import {NativeSkyLifecycle} from '../../real-sky/native-lifecycle.mjs';
 
 // Execute the authored host's actual composition body, with real pixel operators.
 // Only browser capture and framebuffer transport are replaced by owned arrays.
@@ -18,7 +19,7 @@ test('new worker acceptance cannot extend the original displayed job while its r
  vm.createContext(s);vm.runInContext(compose+'\n'+animate+'\nanimate(31000)',s);
  assert.equal(clears.length,1,'the 31000 ms displayed job must be withdrawn despite a 3000 ms accepted successor');
 });
-function fixture(rows,{invalidAt=null,expire=false,maskError=false,deferMask=false}={}){
+function fixture(rows,{invalidAt=null,expire=false,maskError=false,deferMask=false,publication=null}={}){
  const width=325,height=530,n=width*height*3,sky=new Float64Array(n),stars=new Float64Array(n),diffuse=new Float64Array(n),linear=new Float64Array(n);
  for(let i=0;i<n;i++){sky[i]=.0001+(i%103)/10000;stars[i]=i%79===0?.02:0;diffuse[i]=(i%7)/100000;linear[i]=sky[i]+stars[i]+diffuse[i];}
  const raster={width,height,linear,skyBackgroundLinear:sky,stellarLinear:stars,diffusePhysicalLinear:diffuse,effectiveExposure:24};
@@ -34,9 +35,9 @@ function fixture(rows,{invalidAt=null,expire=false,maskError=false,deferMask=fal
  const pixels=new Uint8ClampedArray(expected.length).fill(29),draws=[],encoded=[],destinations=[],errors=[],maskCalls=[],pendingMasks=[];let checks=0;
  const s={frame:{raster},disposed:false,job:{observer:{utcMs:1},native:{identity:'accepted'}},pendingJob:null,paintedFrame:null,paintedJob:null,previousPresentation:null,previousSolarMask:null,previousMoonBottom:0,lastCompose:0,
   snapshot:()=>({}),lifecycle:{current:()=>!expire||++checks===1},clear:reason=>errors.push(reason),failure:e=>errors.push(String(e)),performance:{now:()=>1},window:{},
-  foreground:{bottom:()=>rows-2,capture:()=>({...capture,cloudRGBA:cloudRGBA.slice(),moonRGBA:moonRGBA.slice()}),prepareSolarMask(rgba,count){maskCalls.push({rgba:rgba.slice(),rows:count,bytes:nativeSolarTransmission(rgba)});if(maskError)throw Error('invalid solar mask');return 'mask-'+maskCalls.length;}},calendarGeometry:()=>({key:'geometry',mask:()=>mask}),
+  foreground:{bottom:()=>rows-2,capture:()=>({...capture,cloudRGBA:cloudRGBA.slice(),moonRGBA:moonRGBA.slice()}),prepareSolarMask(rgba,count){maskCalls.push({rgba:rgba.slice(),rows:count,bytes:nativeSolarTransmission(rgba)});if(maskError)throw Error('invalid solar mask');return publication?'url("data:image/png;base64,mask-'+maskCalls.length+'")':'mask-'+maskCalls.length;}},calendarGeometry:()=>({key:'geometry',mask:()=>mask}),
   nativeForeground,nativeCalendarRegion,nativeForegroundRows,sameNativePresentation,sameNativeCloudAlpha,
-  solarPublication:{pending:null,publish(mask,commit){if(deferMask){this.pending=commit;pendingMasks.push(commit);}else commit();},cancel(){this.pending=null;}},
+  solarPublication:publication??{pending:null,publish(mask,commit){if(deferMask){this.pending=commit;pendingMasks.push(commit);}else commit();},cancel(){this.pending=null;}},
   encodeNativeDisplay(a,E){encoded.push(a.length);return encodeNativeDisplay(a,E);},
   encodeNativeDisplayInto(a,E,b,offset){encoded.push(a.length);destinations.push({bytes:b,offset:offset??0,length:a.length});return encodeNativeDisplayInto(a,E,b,offset);},
   ImageData:class{constructor(data,w,h){assert.equal(data.length,w*h*4);this.data=data;this.width=w;this.height=h;}},Uint8ClampedArray,
@@ -110,4 +111,46 @@ test('ignoring the final alpha difference is killed by the same exact mask discr
  const c={Uint8ClampedArray};vm.createContext(c);vm.runInContext(mutant,c);
  const a=new Uint8ClampedArray(325*183*4),b=a.slice();b[b.length-1]=1;
  assert(!sameNativeCloudAlpha(a,b));assert.throws(()=>assert.equal(c.sameNativeCloudAlpha(a,b),false),assert.AssertionError);
+});
+
+for(const terminal of ['clear','dispose'])test('real refined publication retains coherent pixels and releases owned masks on '+terminal,async()=>{
+ const images=[];
+ class Image {constructor(){images.push(this);}decode(){return new Promise((resolve,reject)=>{this.resolve=resolve;this.reject=reject;});}}
+ const publication=new NativeSolarMaskPublication(()=>new Image()),h=fixture(183,{publication}),s=h.s;
+ const flush=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
+ const roots=()=>new Set([publication.displayed,publication.decoded,publication.pending].filter(Boolean));
+ assert.equal(h.draws.length,0);assert.equal(roots().size,1);
+ images[0].resolve();await flush();const displayed=publication.displayed,original=h.pixels.slice();
+ assert.equal(h.draws.length,1);assert.deepEqual(h.pixels,h.expected);assert.equal(roots().size,1);
+
+ h.capture.cloudRGBA[3]++;s.frame={...s.frame};h.rerun();
+ s.frame={...s.frame}; // The decoded B resource cannot authorize this new frame.
+ images[1].resolve();await flush();
+ assert.equal(publication.displayed,displayed);assert.notEqual(publication.decoded,displayed);
+ assert.equal(roots().size,2);assert.equal(h.draws.length,1);assert.deepEqual(h.pixels,original);
+ h.capture.cloudRGBA[3]++;h.rerun();assert.equal(roots().size,3);assert.equal(h.draws.length,1);
+ const pending=publication.pending;assert.equal(pending.image,images[2]);
+
+ s.card.classList.contains=()=>true;s.card.classList.remove=()=>{};s.card.style.removeProperty=()=>{};
+ s.ctx.clearRect=()=>{};s.publish=()=>{};
+ const clear=source.slice(source.indexOf(' function clear('),source.indexOf(' // Identity/age fences'));
+ vm.runInContext(clear,s);
+ if(terminal==='dispose'){
+  // Execute the actual host disposal through its real lifecycle invalidation;
+  // replacing that chain with only publication.dispose would miss owned jobs.
+  s.lifecycle=new NativeSkyLifecycle({capture:()=>({}),execute:async()=>{},onInvalidate:reason=>s.clear(reason)});
+  Object.assign(s,{request(){},timer:1,animationId:2,clearInterval(){},cancelAnimationFrame(){},document:{removeEventListener(){}},visibility(){},client:{dispose(){}},workerUrl:null,badge:{remove(){}}});
+  s.canvas.remove=()=>{};
+  const exported=source.split('\n').find(line=>line.startsWith(' window.SalahRealSky='));
+  assert(exported);vm.runInContext(exported+'\nwindow.SalahRealSky.dispose();',s);
+  assert.equal(s.lifecycle.state.disposed,true);assert.equal(publication.disposed,true);assert.equal(roots().size,0);
+ }else{
+  vm.runInContext("clear('controlled target withdrawal');",s);assert.equal(roots().size,1,'Only the completed decoded cache remains after cancellation');
+ }
+ assert.equal(pending.image.src,'');assert.equal(publication.pending,null);assert.equal(publication.displayed,null);
+ for(const field of ['pendingJob','paintedFrame','paintedJob','frame','job','previousPresentation','previousSolarMask'])assert.equal(s[field],null,field);
+ images[2].resolve();await flush();assert.equal(h.draws.length,1,'Late completion cannot restore the withdrawn Sun or framebuffer');
+ assert.deepEqual(h.errors,[]);
+ // These assertions cover direct owner roots. They do not certify native
+ // decoder/Promise/GC lifetime or the browser's whole heap.
 });

@@ -2,15 +2,15 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),crypto=require('node:crypto');
 const src=process.env.SALAH_MOON_SOURCE_DIR||path.join(__dirname,'../src');
 function rig({inline=false,diameter=104,initial=false,deferWorker=false,lateSource=false}={}){
- let clock=0,id=0;const jobs=new Map(),frames=new Map(),workers=[],nodes=new Map(),events=new Map();let published=0,fallbacks=0,initialRenders=0;
+ let clock=0,id=0;const jobs=new Map(),frames=new Map(),workers=[],nodes=new Map(),events=new Map();let published=0,fallbacks=0,initialRenders=0,captures=0,layoutReads=0;
  const state={utcMs:1000,generation:0,sceneIdentity:'A',fraction:.5,waxing:false,up:1,dpr:1,timeScale:0,paused:false};
  for(let i=0;i<2;i++)nodes.set('moon-embedded-'+i,{textContent:'AAAA',remove(){nodes.delete('moon-embedded-'+i)}});
  const detail={available:false,adopt(s){for(const a of [s.linear,s.calendarLinear,s.coverage])for(const v of a)if(!Number.isFinite(v))throw Error('nonfinite worker result');this.available=true},clear(){this.available=false},dispose(){}};
  class Worker{constructor(){this.sent=[];this.terminated=false;workers.push(this)}postMessage(m){if(this.terminated)throw Error('worker closed');this.sent.push(m)}terminate(){this.terminated=true}emit(m){this.onmessage?.({data:m})}}
  class U extends URL{};U.createObjectURL=()=> 'blob:mock/'+(++id);U.revokeObjectURL=()=>{};
- const w={__SALAH_MOON_OFFLINE__:true,__SALAH_MOON_EMBEDDED__:true,SalahMoonHost:{capture:()=>({...state,maximumPresentationRatio:1.13/(1.11+.02*state.up)}),publish:()=>published++,fallback:()=>fallbacks++},SalahRealSky:{compose(){}}};
+ const w={__SALAH_MOON_OFFLINE__:true,__SALAH_MOON_EMBEDDED__:true,SalahMoonHost:{capture:()=>{captures++;return {...state,maximumPresentationRatio:1.13/(1.11+.02*state.up)}},publish:()=>published++,fallback:()=>fallbacks++},SalahRealSky:{compose(){}}};
  if(initial)w.SalahMoonInitial={identity:{sha256:'fixture-receiver'},render(scene){initialRenders++;const size=2,out=scene.outSize;return {kind:'initial',scene:{...scene,size},width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:size,surfaceExtent:scene.extent,surfaceLinear:new Float32Array(size*size*3),calendarLinear:new Float32Array(size*size*3),surfaceCoverage:new Float32Array(size*size),physicalIdentity:'initial:'+state.generation,profileIdentity:'profile',diagnostics:{receiverIdentity:'fixture-receiver',quality:{status:'initial-v5'}}};}};
- const doc={currentScript:{src:inline?'':'https://test/moon/moon-host.js'},baseURI:inline?'about:blank':'https://test/',hidden:false,querySelector:()=>({getBoundingClientRect:()=>({width:diameter,height:diameter})}),getElementById:k=>nodes.get(k),createElement:()=>({width:0,height:0,style:{},getContext:()=>({putImageData(){}}),remove(){}}),head:{append(){}},addEventListener:(n,f)=>events.set(n,f),removeEventListener:n=>events.delete(n)};
+ const doc={currentScript:{src:inline?'':'https://test/moon/moon-host.js'},baseURI:inline?'about:blank':'https://test/',hidden:false,querySelector:()=>({getBoundingClientRect:()=>{layoutReads++;return {width:diameter,height:diameter}}}),getElementById:k=>nodes.get(k),createElement:()=>({width:0,height:0,style:{},getContext:()=>({putImageData(){}}),remove(){}}),head:{append(){}},addEventListener:(n,f)=>events.set(n,f),removeEventListener:n=>events.delete(n)};
  const digest=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
  const c=vm.createContext({window:w,document:doc,URL:U,Blob,Worker,TextEncoder,assetDigest:digest,performance:{now:()=>clock},structuredClone,Uint8ClampedArray,Float32Array,ImageData:class{constructor(d,w,h){this.data=d;this.width=w;this.height=h}},startMoonDetail:()=>detail,blendCalendarBytes:a=>a,setTimeout:(f,ms)=>{const n=++id;jobs.set(n,{f,ms});return n},clearTimeout:n=>jobs.delete(n),setInterval:()=>++id,clearInterval:()=>{},MOON_DEFAULT_PROFILE:{profile_id:'calendar-neutral-v5-01',mode:'calendar'},MOON_WORKER_SOURCE:lateSource?null:'',MOON_WORKER_PIN:{bytes:10,sha256:digest('testworker')},MOON_OFFLINE_CHUNKS:[{name:'dem',index:0,last:true},{name:'colour',index:0,last:true}]});
  c.requestAnimationFrame=f=>{const n=++id;frames.set(n,f);return n;};c.cancelAnimationFrame=n=>frames.delete(n);
@@ -26,7 +26,7 @@ function rig({inline=false,diameter=104,initial=false,deferWorker=false,lateSour
   vm.runInContext('headCapture.phaseQuantum=phaseQuantum(headCapture.phaseDiameter);headCapture.physicalFraction=canonicalFraction(headCapture.fraction,headCapture.phaseDiameter);window.SalahFirstPaint={capturedAt:performance.now(),snapshot:headCapture,moon:{visible:true,capture:headCapture,result:window.SalahMoonInitial.render(nativeCalendarMoonScene(headCapture,MOON_DEFAULT_PROFILE))}};',c);
   return w.SalahFirstPaint.moon.result;
  };
- return {w,workers,state,detail,nodes,events,jobs,flush,frame,request,response,head,doc,resize:value=>diameter=value,get initialRenders(){return initialRenders},get published(){return published},get fallbacks(){return fallbacks},advance:t=>clock+=t};
+ return {w,workers,state,detail,nodes,events,jobs,flush,frame,request,response,head,doc,resize:value=>diameter=value,get initialRenders(){return initialRenders},get published(){return published},get fallbacks(){return fallbacks},get captures(){return captures},get layoutReads(){return layoutReads},advance:t=>clock+=t};
 }
 
 test('initial document hands off the original head result once through its two startup invalidations',()=>{
@@ -255,5 +255,57 @@ test('crescent half gibbous and near-full 1x sequences complete at both senses a
    if(sec-since>=169){r.workers[0].emit(r.response());complete=r.w.SalahMoonRuntime.state.status==='ready';break;}
   }
   assert.ok(complete,`${fraction} / ${waxing} / ${dpr} starved`);
+ }
+});
+
+test('steady refined requests validate once without duplicate native or layout reads',()=>{
+ const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ const request=r.request(),published=r.published;
+ for(let i=0;i<5;i++){
+  r.advance(1000);r.state.utcMs+=1000;const captures=r.captures,layoutReads=r.layoutReads;
+  assert.equal(r.w.SalahMoonRuntime.request(),true);
+  assert.equal(r.captures-captures,1,'validate current authority once per steady request');
+  assert.equal(r.layoutReads-layoutReads,1,'validate the actual display footprint once');
+  assert.equal(r.request(),request,'steady requests must not enqueue redundant terrain jobs');
+ }
+ assert.equal(r.published,published,'unchanged texture must not be republished');
+});
+
+test('steady refined request still synchronously publishes the changed horizon envelope',()=>{
+ const r=rig();r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ const request=r.request(),published=r.published,captures=r.captures;r.state.up=.5;
+ assert.equal(r.w.SalahMoonRuntime.request(),true);
+ assert.equal(r.published,published+1,'request callers need the current horizon-blended texture');
+ assert.equal(r.captures-captures,2,'publication requires a fresh authority decision');assert.equal(r.request(),request);
+});
+
+test('changed texture publication cannot acknowledge a clock-invalidated refined surface',()=>{
+ const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ let publishedSurface='not-called';
+ // The real native publish hook calls updateSkySurface, which reads surface().
+ // A discontinuity during upload must be rejected by both that read and request.
+ r.w.SalahMoonHost.publish=()=>{r.state.utcMs+=5000;publishedSurface=r.w.SalahMoonRuntime.surface();};
+ r.state.up=.5;
+ assert.equal(r.w.SalahMoonRuntime.request(),false);
+ assert.equal(publishedSurface,null);
+});
+
+test('steady request cannot acknowledge stale refined authority or an expired display footprint',()=>{
+ for(const change of ['generation','scene','waxing','dpr','seek','paused','invalid','footprint']){
+  const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+  if(change==='generation')r.state.generation++;
+  if(change==='scene')r.state.sceneIdentity='B';
+  if(change==='waxing')r.state.waxing=!r.state.waxing;
+  if(change==='dpr')r.state.dpr=2;
+  if(change==='seek')r.state.utcMs+=5000;
+  if(change==='paused')r.state.paused=true;
+  if(change==='invalid')r.state.utcMs=NaN;
+  if(change==='footprint'){
+   const alpha=Math.acos(2*r.request().scene.fraction-1);
+   r.state.fraction=(1+Math.cos(alpha+.0005))/2;r.resize(208);
+  }
+  const fallbacks=r.fallbacks;
+  assert.equal(r.w.SalahMoonRuntime.request(),false,change);
+  assert.ok(r.fallbacks>fallbacks,change+' must withdraw synchronously');
  }
 });

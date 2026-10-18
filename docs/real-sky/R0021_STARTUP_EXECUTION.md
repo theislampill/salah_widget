@@ -9,6 +9,61 @@ it does not complete the whole parent matrix. The accepted R0021 interfaces rema
 this record
 does not reopen V1 or the V5 research programme.
 
+## Settled Moon request cost correction (2026-10-17)
+
+The settled refined Moon request now reads current authority and native geometry
+once, instead of invoking another poll and repeating the capture during every
+native paint. Startup, pending work, refresh and invalidation still use the full
+polling path. The existing 250 ms poll, phase/footprint limits, clock-discontinuity
+check and scene/generation/DPR guards remain. Texture publication still takes a
+fresh post-publication reading because the host can invalidate the scene during
+that call; an independent review counterexample exposed and corrected an earlier
+version that returned success unconditionally after publication.
+
+The final r20 build passes 52 Moon host controls and six actual-head handoff
+cases. The latter fixture now supplies its missing lunar-optics sink; the same
+fixture failure was reproduced on unchanged r17 before repair, and this stub
+does not qualify optical pixels. The canonical suite retains 819 passes, zero
+failures and four TODOs. Builder/entry guards and frozen V1 verification pass.
+The r20 index SHA256 is
+`31dc055ab24269575f21c87c23592595cbddfc0aa4138d12f39e8b1561b081d0`.
+
+The fresh Chromium r76 comparison completed all four ABBA rounds with unchanged
+runtime/input hashes and verified cleanup. Under the admitted native-marker
+method, `moon.poll` passes the original median/p95 bounds in both the first five
+and full fifteen seconds, with the same 4 Hz rate on both sides. Thirteen of 24
+combined scopes pass; eleven remain incomplete. Parent painting/rendering show
+lower pooled observed costs, but retained variability prevents complete
+certification. The earlier r70b poll failure is preserved. Sparse/startup-only
+work, positive-cloud asynchronous work and the resource inventory still require
+their separate evidence; this result is not whole callback-cost acceptance.
+
+The startup harness also has an explicit, version-guarded option restoring only
+Chromium's default RenderDocument feature, which the installed capture driver
+disabled. Its independent causal control removed the demonstrated new-tab
+throttling delay. The r69 original frame gaps remain uncovered; the option and
+improved receipt bounds do not establish the 80 ms principal-content requirement
+or complete continuous visual qualification. No product layer is hidden and no
+timing limit is relaxed.
+
+The first Firefox r76 baseline reached refined terrain and completed its
+observation window, but the observer exhausted its 120,000-record capacity.
+The invalid raw prefix and emergency native profile are retained; the batch
+stopped before another slot and released its owned resources. This supplies no
+Firefox callback-cost verdict. A separately reviewed finite-capacity successor
+retains every startup record and the original timing/comparison limits.
+
+Two additional source controls join the actual solar-mask publisher to refined
+composition and the actual lifecycle clear/dispose path. They retain displayed
+A while decoded B is rejected, bound the three direct candidate roots with C
+pending, and reject C's late completion after withdrawal. All 15 composition
+controls pass. These checks establish direct ownership and publication behavior,
+not native decoder, pending Promise, garbage-collector or whole-heap lifetime.
+
+The [bounded source, test and cost projection](evidence/r0021-moon-request-20261018/MANIFEST.json)
+retains the contrary results and exact private-evidence hashes. It is preservation
+on the existing draft PR, not a release certificate.
+
 ## Actual Firefox extension-parent endpoints (2026-10-17)
 
 The supported isolated Marionette route now reaches the current refined widget

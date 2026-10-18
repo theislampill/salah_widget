@@ -30,10 +30,10 @@ function setup(){
   nowParts:()=>({h:2,mi:0,s:0}),moonGeometryObservation:()=>({fresh:true}),
   renderMoon(){},projectStars(){},simDate:()=>new Date(),
   lunarPresentation:()=>({moonShow:1,moonlight:1}),simulationReady:()=>true,
-  // Solar sinks are outside this Moon handoff fixture; full inline-runtime
-  // solar startup controls exercise their real shared owner separately.
+  // Optical sinks are outside this Moon handoff fixture; full inline-runtime
+  // startup controls exercise their real shared owners separately.
   weatherDecision:()=>({record:null,renderCode:0}),wxDrivers:()=>({heat:0}),wxClass:()=>"clear",isMotionReduced:()=>false,
-  nativeSolarPresentation:()=>({}),paintSolarPresentation(){},
+  nativeSolarPresentation:()=>({}),paintSolarPresentation(){},paintLunarOptic(){},
   buildSceneOnce(){},startWeather(){},enableSettingsAffordance(){},
   openSettings(){},startRenderLoop(){}
  });

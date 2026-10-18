@@ -747,10 +747,10 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
  const phaseDrift=(record,s)=>record?.scene?.mode==='calendar-canonical'?s.phaseDiameter/2*(Math.acos(2*s.fraction-1)-Math.acos(2*record.scene.fraction-1))*(s.waxing?-1:1):0;
  const phaseError=(record,s)=>Math.abs(phaseDrift(record,s));
  function syncTexture(s){
-  if(!accepted||!upperBytes||!s)return;const up=profileMode==='reference'?1:Math.max(0,Math.min(1,s.up));
+  if(!accepted||!upperBytes||!s)return false;const up=profileMode==='reference'?1:Math.max(0,Math.min(1,s.up));
   // This backing surface is immediately read by the native material sampler
   // and PNG publication. Keep its identical bytes in CPU-backed storage.
-  if(textureUp===up)return;textureUp=up;const rgba=blendCalendarBytes(upperBytes,calendarBytes,up);canvas.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(rgba,canvas.width,canvas.height),0,0);window.SalahMoonHost?.publish(canvas);
+  if(textureUp===up)return false;textureUp=up;const rgba=blendCalendarBytes(upperBytes,calendarBytes,up);canvas.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(rgba,canvas.width,canvas.height),0,0);window.SalahMoonHost?.publish(canvas);return true;
  }
  const clockDiscontinuous=(s,now=performance.now())=>!!clock&&Math.abs((s.utcMs-clock.utcMs)-(now-clock.now)*clock.rate)>1000;
  // Check at publication/read time as well as polling: a seek cannot slip an
@@ -949,7 +949,20 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
    if(!worker&&startFrame===null)startFrame=requestAnimationFrame(()=>{startFrame=requestAnimationFrame(start);});
    return true;
   },
-  request(){poll();return presentation(capture());},
+  request(){
+   // A settled refined surface needs one fresh authority/footprint read, not
+   // another poll followed by a duplicate capture on every native paint.
+   // All startup, pending, refresh and invalidation paths retain full polling.
+   if(status.status==='ready'&&status.visibleSource==='refined-terrain'&&!pending){
+    const s=capture();
+    if(matches(accepted,s)&&phaseDrift(accepted,s)<PHASE_POSITION_BUDGET/4){
+     // Publishing calls the native host back; preserve the original read-time
+     // decision after that work, including a clock jump during texture upload.
+     return syncTexture(s)?presentation(capture()):true;
+    }
+   }
+   poll();return presentation(capture());
+  },
   surface(){const s=capture();if(!presentation(s))return null;syncTexture(s);return canvas;},
   get presentationUp(){return profileMode==='reference'?1:Math.max(0,Math.min(1,capture()?.up??1));},
   get detailEnabled(){return presentation(capture())&&!!window.SalahMoonDetail?.available;},

@@ -12,6 +12,7 @@ from playwright.async_api import async_playwright
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from browser_runtime import launch_browser, browser_identity, browser_options
 from runtime_identity import runtime_identity
+from chromium_startup_defaults import restore_options, verify_launch
 
 # This clock is outside the card (and outside the iframe). It reads no app state.
 # This marker is an external rAF clock, not a presentation timestamp: it can
@@ -66,6 +67,8 @@ FINAL = r"""()=>{
 }"""
 
 async def run(a):
+ if a.restore_render_document and (os.environ.get('SALAH_BROWSER','chromium')!='chromium' or not a.persistent_profile):
+  raise ValueError('Reviewed RenderDocument restoration requires isolated persistent Chromium')
  if a.render_pipeline_trace and not a.cdp_filmstrip:raise ValueError('Render-pipeline diagnostic requires --cdp-filmstrip')
  if not math.isfinite(a.filmstrip_seconds) or not 0<a.filmstrip_seconds<=5:raise ValueError('Compositor diagnostic must be bounded to (0,5] seconds')
  if a.entry=='extension':
@@ -168,6 +171,7 @@ async def run(a):
   context_options=dict(viewport=viewport,device_scale_factor=a.dpr,timezone_id='America/New_York',locale='en-US',reduced_motion='no-preference',**recording)
   if a.persistent_profile:
    family,options=browser_options()
+   if a.restore_render_document:options=restore_options(options)
    if a.entry=='extension':
     options['channel']='chromium'
     options['args']=[*options.get('args',[]),f'--disable-extensions-except={a.extension_dir.resolve()}',f'--load-extension={a.extension_dir.resolve()}']
@@ -175,6 +179,15 @@ async def run(a):
   else:
    browser=await launch_browser(pw);ctx=await browser.new_context(**context_options)
   report['browser']=browser_identity(browser);report['persistentIsolatedProfile']=a.persistent_profile
+  if a.restore_render_document:
+   launch_cdp=await browser.new_browser_cdp_session()
+   try:
+    try:
+     info=await launch_cdp.send('SystemInfo.getInfo')
+     report['renderDocumentRestoration']=verify_launch(browser.version,info['commandLine'])
+    finally:await launch_cdp.detach()
+   except Exception:
+    await ctx.close();await browser.close();raise
   report['captureTrace']=a.capture_trace
   if a.render_pipeline_trace:
    browser_cdp=await browser.new_browser_cdp_session()
@@ -346,6 +359,7 @@ if __name__=='__main__':
  p.add_argument('--viewport',nargs=2,type=int,metavar=('WIDTH','HEIGHT'),help='Explicit isolated browser viewport for entry/UI qualification; default capture dimensions are unchanged')
  p.add_argument('--modes',default='cold,warm-reload,new-tab');p.add_argument('--hold',choices=['sky','moon','all']);p.add_argument('--delay',type=float,default=20);p.add_argument('--missing',action='store_true')
  p.add_argument('--persistent-profile',action='store_true',help='Disposable disk-cache profile under this evidence output; never an owner profile')
+ p.add_argument('--restore-render-document',action='store_true',help='Restore the independently reviewed Chromium148 default; exact version/effective-feature guards, no S1 credit by itself')
  p.add_argument('--driver-cli',type=Path);p.add_argument('--driver-node',type=Path);p.add_argument('--video',action='store_true')
  p.add_argument('--video-only',action='store_true',help='No PNG requests in the first 15 seconds; native video only, then normal diagnostic snapshot')
  p.add_argument('--compositor-marker',action='store_true',help='Exterior acquisition marker; native source coverage still requires per-run review')
