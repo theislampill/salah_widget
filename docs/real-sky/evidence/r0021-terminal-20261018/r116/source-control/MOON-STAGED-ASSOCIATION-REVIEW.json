@@ -1,0 +1,55 @@
+{
+  "schema": "r0021-staged-moon-receiver-association-review/v1",
+  "reviewer": "/root/r0021_review",
+  "observedAt": "2026-10-17T00:01:54.631305+00:00",
+  "head": "50b8757c795d27df8537de3e1547389828915fa8",
+  "decision": "ACCEPT_EXACT_SUCCESSOR_PAIR_FOR_RETAINED_RECEIVER_CUSTODY_ONLY",
+  "scope": "Independent read-only source/consumer review with six bounded actual-compositor fixture controls; no source, Git, build, browser or terrain-generation mutation. Proposed association update remains Root-owned and requires generated readback.",
+  "sourcePins": {
+    "moon/src/moon-detail.mjs": "c5f336a5f42e3774866d66215e2944b2cde7afad05db801868980121fa70a8b8",
+    "moon/src/moon-engine.mjs": "05ec2e8b0eef0e5bc6b3c6556eb2f901b126c717f469b3c609a49b4edeaa8a32",
+    "moon/src/surface_v5.mjs": "f0d0b4ab0b5478979371c8c9839d53dfb688596dd08773769d7d9c254c02b65f",
+    "moon/tools/build_initial.cjs": "223ec83f40cd7aaa2f6fa029b3687f6752baed9b96b790d98a99e962dc06c0b8",
+    "moon/initial-manifest.json": "f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5",
+    "moon/initial-source-association.json": "b6b49f88d88f25d960846bb3ba2905b1a94226d37c883600a91e64027542fcec",
+    "moon/assets/initial-receivers.bin": "0c5e4be7808367211ab3a8fec8a8dcba76f6f9a69ebf5591dc76ed3e188b2444",
+    "moon/asset-manifest.json": "3d4cb527489acda67082bbc97d984abbb28a11a40f0aec8b4030223fb15e9afa",
+    "moon/moon_kernel.wasm": "4fcf7888b55486947189c4a701c75ab25465714036c42fc60980e98ac0bdcbb7",
+    "tests/real-sky/moon-projection-cache.test.mjs": "f5229193ff8e2bbe09ae2e345a70b6d9e385eb9fa5e77f9718d62bbef51ec9d4",
+    "real-sky/native-preview-host.mjs": "1a2a963d85e961e089466351f25c349d8842243593e381dae348c267fb664693",
+    "real-sky/native-composition.mjs": "11d65a5b0399a99d306de7641c38bc766aaceba7e66e5bdfb71601a20324abe2"
+  },
+  "evidencePins": {
+    "independent-review/receiver-association-review.json": "b93b3dda7fe91a4fbd1a07e10381645656b20609c620e68ce0d90744a3dc506e",
+    "independent-review/receiver-association-implementation-review.json": "147f58ad63de339d1cb97789748496971306b704f78d1c7ea35a077b16f6f2a9",
+    "intake/moon-staged-preview-red-r22.txt": "020d68004ef1fb3e12343e2820ad5c7ee8663406d9bb8707dbe20f1111280332",
+    "intake/moon-staged-preview-green-r22.txt": "cb8bf240a0a74b32557f148f2a06fa86a6a46c293b0393a63cb5a27339c5a3c5",
+    "independent-review/worker-lunar-r20/MOON-STAGED-CONTROL.json": "c6deef40f12d210cc4c39143c9d0ae15031f7455411288c3ab82cac36b0d52f5",
+    "independent-review/worker-lunar-r20/moon-staged-r22-control.mjs": "7a72fde85337a8a755900505d89832e2237c2d5c03e3577ad032184ef3ea1f0c"
+  },
+  "pair": {
+    "path": "moon/src/moon-detail.mjs",
+    "originalSha256": "3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0",
+    "previousCurrentSha256": "f2596f26f19f946873792a7e121ea472b361021c8cc2b1831faa6cd10fdef07c",
+    "currentSha256": "c5f336a5f42e3774866d66215e2944b2cde7afad05db801868980121fa70a8b8",
+    "prefixSha256": "1eefe1e36c1f069bb7cd098e50b86b67fb05ce90f117f249b606553941b2efcc",
+    "suffixSha256": "8f91412dbcd17c0b0f6dda919ee89d35c086ce94d53bd3d3b09a16f9b1d389cd",
+    "unchangedBoundaries": [
+      "before function startMoonDetail(){",
+      "from function projectSurfaceCodes("
+    ]
+  },
+  "derivation": "Whole byte prefix and suffix match both donor and the prior admitted production pair. prefixSurface/integral/boxSurface/sampleField/joinLunarPixel and projectSurfaceCodes are unchanged. build_initial invokes unchanged MoonEngine.create/canonicalScene and the pinned WASM directly; it never calls startMoonDetail. The exact engine association remains 337e6a6980d0c54de436e768d0e007cb6d5e37a3fd98bbae46780e0ab1d0ea1c -> 05ec2e8b0eef0e5bc6b3c6556eb2f901b126c717f469b3c609a49b4edeaa8a32. No receiver derivation rerun is indicated.",
+  "finding": {
+    "id": "R0021-MOON-STAGED-PREVIEW-01",
+    "severity": "P1",
+    "status": "SOURCE_CORRECTION_SUPPORTED_NATIVE_REPLAY_PENDING",
+    "location": "moon/src/moon-detail.mjs:72; real-sky/native-preview-host.mjs:73-78",
+    "mechanism": "Preview composes lunar detail before publishing real-sky-preview-ready. The previous detail gate refused and cleared that first staged join; preview then hid the SVG fallback and retired the baked head. NativeForegroundCapture deliberately excludes the lunar fallback when detail is enabled. This is a concrete missing-Moon publication mechanism; the exact r19 recording correlation remains Root-owned evidence.",
+    "correction": "Use the actual preview frame.current() authority instead of the future ready class; retain the final currentness check before lunar upload. The preview host retains its prewrite and final publication-headroom checks and only then publishes its ready class.",
+    "independentControls": "Old donor and exact r11 each publish zero for the valid staged preview; successor publishes once before either ready class. Successor staged/settled output hashes equal. Rejection at entry or pre-upload publishes zero and hides detail. All six controls passed; no visual/timing qualification inferred.",
+    "remainingLimits": "The test transports DOM/canvas in a fixture; actual publication/continuity and S1 remain to be checked against native originals. No claim that every Moon gap or the complete r19 gap has this sole cause."
+  },
+  "requiredGuard": "Keep initial-manifest.json f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5 unchanged. Extend only the exact reviewed detail triple, retain engine pair and every asset/kernel/source check, pin the new association digest and retain the intentional r12 source-drift failure. Missing/unknown/tampered pairs must still fail. This finding does not waive the manifest or allow arbitrary future source changes.",
+  "qualification": "No S1/S3/S7, cost, currentness lifecycle, merge, deployment or closure credit. Original 80ms/250ms predicates and all contrary captures remain."
+}
