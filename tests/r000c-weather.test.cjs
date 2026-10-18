@@ -27,6 +27,7 @@ function region(start, end, input = source) {
   return input.slice(a, b);
 }
 const runtime = [
+  region('let _renderDirty=', '\n'),
   region('const MOTIONFULL =', '// ---- helpers'),
   region('// ---- SINGLE TEMPORAL SOURCE OF TRUTH', '// ---- prayer-times data:'),
   ...(requestOwnerSource ? [region('function cacheKey(){', '// Read only the selected legacy main-format envelope.', requestOwnerSource)] : []),
@@ -193,6 +194,20 @@ test('control: actual fresh acquisition, model gate, atmosphere and chip are rea
   // H5 owner policy: retain the current model condition, not a direct observation.
   assert.equal(view.a.cls,'thunder'); assert.equal(f.nodes.get('#wt').textContent,'20°');
   assert.equal(view.qa.wxTruth.finalDataFx,'thunder'); assert.equal(view.qa.wxTruth.activeThunder,false);
+});
+
+test('accepted weather publication invalidates an already painted frozen or startup scene', async () => {
+  const f=fixture();
+  assert.equal(vm.runInContext('_renderDirty',f.context),false);
+  await f.fetchWeather();
+  assert.equal(f.read().weather.temp,20);assert.ok(f.read().weatherTrack);assert.equal(f.read().siteElev,100);
+  assert.equal(vm.runInContext('_renderDirty',f.context),true,'the next native frame must consume the published weather');
+});
+
+test('rejected weather publication does not invalidate the painted scene', async () => {
+  const f=fixture({payload:{error:true}});await f.fetchWeather();
+  assert.equal(f.read().weather,null);assert.equal(f.read().weatherTrack,null);assert.equal(f.read().siteElev,0);
+  assert.equal(vm.runInContext('_renderDirty',f.context),false);
 });
 
 for (const [name, input, want] of [['null', null, null], ['missing', undefined, null], ['zero', 0, 0], ['negative', -12.5, -12]]) {

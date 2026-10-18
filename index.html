@@ -4611,11 +4611,11 @@ function beginPrayerRequest(kind,day){
   else { _rolloverBusy=true; _rolloverNextTry=elapsed+_ROLLOVER_RETRY_MS; }
   return op;
 }
-function finishPrayerRequest(op){
+function finishPrayerRequest(op,alreadyRendered=false){
   if(!finishRequest(op)) return;
   if(op.kind==="prefetch") fetchingTomorrow=false;
   else _rolloverBusy=false;
-  _renderDirty=true;
+  if(!alreadyRendered) _renderDirty=true;
 }
 function prefetchPrayerDay(){
   const current=prayerCivilDay(), day=prayerNextDay(current);
@@ -4823,13 +4823,15 @@ async function fetchWeather(){
     const ctx={...captured,retrievedAt:Date.now()}, current=wxUnitsMatch(j.current_units,ctx)?admitWeatherRecord(j.current,ctx):null;
     const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);
     if(!attemptEligible(op,a)) return;                     // includes delayed-timer absolute expiry after normalization
-    if((current||track)&&elevation!=null) siteElev=elevation;
+    // Publication must wake the native consumer even at a frozen clock or
+    // between the loader's completed paint and its first animation callback.
+    if((current||track)&&elevation!=null){ siteElev=elevation; _renderDirty=true; }
     if(current&&attemptEligible(op,a)&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
-      weather=current;
+      weather=current; _renderDirty=true;
       if(weatherEligibility(current,ctx.retrievedAt).eligible) lastWxAt=ctx.retrievedAt;
       try{ if(attemptEligible(op,a)) localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}
     }
-    if(track&&attemptEligible(op,a)) weatherTrack=track;
+    if(track&&attemptEligible(op,a)){ weatherTrack=track; _renderDirty=true; }
     // CP9 elevation custody: notify only after this operation's eligible native weather adoption.
     if((current||track)&&elevation!=null&&attemptEligible(op,a)&&selectedWeather()) window.SalahNativeSkyHost?.acceptedElevation(elevation,op.generation,captured.lat,captured.lon);
   }catch(e){}
@@ -6765,6 +6767,7 @@ function startWeather(deferNetwork=false){
 async function loadPrayerData(){
   if(!simulationReady() || lat==null || lon==null) return;
   const op=beginPrayerRequest("current",prayerCivilDay()); if(!op) return;
+  let alreadyRendered=false;
   try{
     const cached=readPrayerCache(op.cacheKey);
     if(cached && requestEligible(op)){
@@ -6794,12 +6797,12 @@ async function loadPrayerData(){
       day=prayerCivilDay(); _prayerCooldown.current.day=day;
     }
     if(adoptPrayerBundle(data,requested,op) && !_loopStarted){
-      render(); window.SalahSkyPreview?.update(); _renderDirty=false;
+      render(); window.SalahSkyPreview?.update(); _renderDirty=false; alreadyRendered=true;
     }
     else if(!today && requestEligible(op)) showError("Could not load prayer times");
   }catch(e){
     if(requestEligible(op) && !today) showError("Could not load prayer times");
-  }finally{ finishPrayerRequest(op); }
+  }finally{ finishPrayerRequest(op,alreadyRendered); }
 }
 // Invalid explicit boot postpones these builders; the first valid configuration must still initialize
 // their catalogs/overlay exactly once. Reconfiguration reprojects existing stars and retains weather DOM.
@@ -6952,7 +6955,12 @@ function startRenderLoop(){
   if(_loopStarted) return; _loopStarted=true;
   const cEl=document.querySelector(".c");
   if(MOTIONFULL && cEl) cEl.classList.add("motionfull");    // CSS reduced-motion rules are scoped to .c:not(.motionfull)
-  let _raf=null, _onScreen=true, _lastSec=-1, _lastWx=0, _lastCloud=0;
+  // The loader may have painted this accepted second before handing us the
+  // clock. Preserve that completed work; dirty state and clock changes still
+  // repaint on the first frame, including frozen previews and late results.
+  const paintedSecond=_lastRender?.generation===_runtimeGeneration && Number.isFinite(_lastRender.acceptedUtcMs)
+    ? Math.floor(_lastRender.acceptedUtcMs/1000) : -1;
+  let _raf=null, _onScreen=true, _lastSec=paintedSecond, _lastWx=0, _lastCloud=0;
   const visible=()=>_onScreen && document.visibilityState!=="hidden";
   // —— MOTION TELEMETRY (&debugMotion=1): prove the sky is actually alive in normal real-time ——
   let _rafN=0,_cloudN=0,_tickAcc=_RAFNOW(),_rafPS=0,_cloudPS=0;   // loop rate counters (consumed only by the debugMotion overlay, which now lives at module scope)
@@ -6982,7 +6990,7 @@ function startRenderLoop(){
   document.addEventListener("visibilitychange",setVis);
   if("IntersectionObserver" in window && cEl)
     new IntersectionObserver(es=>{ _onScreen=es[0].isIntersecting; setVis(); },{threshold:0}).observe(cEl);
-  if(ADVANCING){ const sc=document.querySelector(".simclock"); if(sc) sc.style.display="block"; }
+  if(ADVANCING){ const sc=document.querySelector(".simclock"); if(sc) sc.style.display="block"; updateSimClock(nowParts()); }
   setVis();
 }
 

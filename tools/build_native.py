@@ -64,7 +64,7 @@ function buildStars(){
 start=original.index('// PROJECTED STARFIELD:');end=original.index('// Accepted target/explicit anchor',start)
 s=original[:start]+replacement+original[end:]
 # Narrow additive handoff after native weather admission, guarded by original operation eligibility.
-elevation_line='    if(track&&attemptEligible(op,a)) weatherTrack=track;'
+elevation_line='    if(track&&attemptEligible(op,a)){ weatherTrack=track; _renderDirty=true; }'
 assert s.count(elevation_line)==1
 s=s.replace(elevation_line,elevation_line+"\n    // CP9 elevation custody: notify only after this operation's eligible native weather adoption.\n    if((current||track)&&elevation!=null&&attemptEligible(op,a)&&selectedWeather()) window.SalahNativeSkyHost?.acceptedElevation(elevation,op.generation,captured.lat,captured.lon);",1)
 s=s.replace('function beginSkyScene(initialDocument=false){','function beginSkyScene(initialDocument=false){\n  window.SalahSkyPreview?.clear("native beginSkyScene");\n  window.SalahRealSky?.invalidate("native beginSkyScene");',1)
