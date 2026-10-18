@@ -9,6 +9,40 @@ it does not complete the whole parent matrix. The accepted R0021 interfaces rema
 this record
 does not reopen V1 or the V5 research programme.
 
+For the current actionable checkpoint, commands, retained negative experiments
+and authority boundary, start with [R0021_RESUME.md](R0021_RESUME.md).
+
+## Startup handoff and digest correction (2026-10-18)
+
+The loader's completed accepted-second paint is now reused by the animation
+loop, while late data, dirty state, generation changes and clock corrections
+still repaint. Accepted weather publication explicitly invalidates its native
+consumer. At a frozen scene time, both Chromium and Firefox reproduced the
+previous stale unavailable header and displayed the cloud icon/81-degree
+fixture after correction. Actual settings events retained the accepted weather
+across appearance changes. [Original endpoints and affected controls](evidence/r0021-startup-handoff-20261018/MANIFEST.json)
+have bounded functional scope; they do not prove settled contrast, backdrop
+integration or continuous transitions.
+
+The portable SHA-256 helper now accesses its eight state words directly instead
+of creating per-block iterator/temporary-array work. Its arithmetic, input limit
+and every asset-identity check remain. The immutable receiver derivation manifest
+and physical assets are retained; the existing exact source-association guard
+admits the reviewed substitution and still rejects unknown drift. Independent
+vectors, padding boundaries, nonzero-offset views, actual compressed terrain and
+receiver assets, and the 64 MiB boundary agree with OpenSSL. The affected Moon
+and generated-native suites pass 137 tests, with 16 Python custody/build/entry
+controls and frozen V1 verification.
+
+The ordinary r101 Chromium recording reaches the first Moon/star source frame
+at a 350.540 ms receipt upper bound from navigation, versus 498.239 ms in r96.
+These are separate single observations, not a repeatability or causal speedup
+certificate. Source gaps of 115.097 and 161.865 ms remain in r101; r96's 81.852
+and 192.085 ms gaps are retained. S1's 80 ms coverage requirement, callback cost,
+continuous visual checks and final review remain open. Firefox r76 capacity and
+r81 maintenance-interference acquisitions remain INCOMPLETE. This preservation
+does not authorize merge, deployment or issue closure.
+
 ## Settled Moon request cost correction (2026-10-17)
 
 The settled refined Moon request now reads current authority and native geometry

@@ -1,6 +1,6 @@
 /* SMH1 physical receiver transport. No ephemeris, phase image,
  * independent clock, terrain, worker, or V5 display mapping is present here.
- * assetDigest is the unchanged reviewed Moon digest implementation.
+ * assetDigest retains the reviewed SHA-256 identity contract.
  */
 function decodeCompactReceivers(bytes,encoding){
  if(!(bytes instanceof Uint8Array)||bytes.length!==encoding.bytes||bytes.length>600000||assetDigest(bytes)!==encoding.sha256)throw Error('Compact receiver identity');

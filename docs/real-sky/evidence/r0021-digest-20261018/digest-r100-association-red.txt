@@ -1,0 +1,20 @@
+..E....
+======================================================================
+ERROR: test_exact_reviewed_pair_is_admitted (__main__.InitialSourceAssociation.test_exact_reviewed_pair_is_admitted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "CHECKOUT\tests\real-sky\initial_source_association_test.py", line 35, in test_exact_reviewed_pair_is_admitted
+    self.assertEqual(self.validate(), builder.INITIAL_SOURCE_ASSOCIATION_SHA256)
+                     ^^^^^^^^^^^^^^^
+  File "CHECKOUT\tests\real-sky\initial_source_association_test.py", line 31, in validate
+    return builder.validate_initial_sources(self.root,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "CHECKOUT\tools\build_moon.py", line 41, in validate_initial_sources
+    if allowed.get(path)!=pair:raise ValueError('Initial receiver source drift: '+path)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Initial receiver source drift: moon/src/asset-digest.mjs
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.305s
+
+FAILED (errors=1)

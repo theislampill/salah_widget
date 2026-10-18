@@ -20,11 +20,11 @@ function assetDigest(bytes){
  for(let offset=0;offset<padded.length;offset+=64){
   for(let i=0;i<16;i++)w[i]=dv.getUint32(offset+i*4);
   for(let i=16;i<64;i++){const x=w[i-15],y=w[i-2];w[i]=(w[i-16]+(shRotate(x,7)^shRotate(x,18)^(x>>>3))+w[i-7]+(shRotate(y,17)^shRotate(y,19)^(y>>>10)))>>>0;}
-  let [a,b,c,d,e,f,g,z]=h;
+  let a=h[0],b=h[1],c=h[2],d=h[3],e=h[4],f=h[5],g=h[6],z=h[7];
   for(let i=0;i<64;i++){const t1=(z+(shRotate(e,6)^shRotate(e,11)^shRotate(e,25))+((e&f)^(~e&g))+shK[i]+w[i])>>>0,t2=((shRotate(a,2)^shRotate(a,13)^shRotate(a,22))+((a&b)^(a&c)^(b&c)))>>>0;
    z=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;
   }
-  const v=[a,b,c,d,e,f,g,z];for(let i=0;i<8;i++)h[i]=(h[i]+v[i])>>>0;
+  h[0]=(h[0]+a)>>>0;h[1]=(h[1]+b)>>>0;h[2]=(h[2]+c)>>>0;h[3]=(h[3]+d)>>>0;h[4]=(h[4]+e)>>>0;h[5]=(h[5]+f)>>>0;h[6]=(h[6]+g)>>>0;h[7]=(h[7]+z)>>>0;
  }
  return Array.from(h,x=>x.toString(16).padStart(8,'0')).join('');
 }

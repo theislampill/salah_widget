@@ -35,7 +35,7 @@ class InitialSourceAssociation(unittest.TestCase):
         self.assertEqual(self.validate(), builder.INITIAL_SOURCE_ASSOCIATION_SHA256)
 
     def test_each_associated_file_rejects_even_an_unused_comment(self):
-        for name in ['moon-detail.mjs', 'moon-engine.mjs']:
+        for name in ['moon-detail.mjs', 'moon-engine.mjs', 'asset-digest.mjs']:
             with self.subTest(name=name):
                 path = self.root / 'moon/src' / name
                 before = path.read_bytes()

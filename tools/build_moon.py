@@ -13,7 +13,7 @@ HOST_UNITS=['asset-digest.mjs','surface_v5.mjs','moon-detail.mjs','moon-calendar
 PROFILE={'schema':'lunar-presentation/5','profile_id':'calendar-neutral-v5-01','mode':'calendar','exposure':2.9195482731525044,'lift':0.003,'knee':5.388411226362526e-6,'colour_basis':'linear-sRGB','gamut':'luminance-preserving-neutral-axis'}
 CHUNK_BYTES=786432  # independently padded base64 chunks, 1 MiB script text
 INITIAL_MANIFEST_SHA256='f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5'
-INITIAL_SOURCE_ASSOCIATION_SHA256='835835639f6b061caa627176371d361a52ba86d3182eb93a9ff805d85805f9f3'
+INITIAL_SOURCE_ASSOCIATION_SHA256='48ca605daaefdc836adfb4a7da6b85114a4a0d9d144f5b4e056a7857b1cfd00f'
 
 def sha(data):return hashlib.sha256(data).hexdigest()
 def write(path,text):
@@ -22,7 +22,7 @@ def inline(text):return text.replace('</script','<\\/script')
 
 def validate_initial_sources(root,initial_pin):
  # Keep derivation provenance immutable. This exact later association permits
- # two reviewed source files, never arbitrary edits outside used helpers.
+ # the exact reviewed source pairs, never arbitrary edits outside used helpers.
  if sha((root/'moon/initial-manifest.json').read_bytes())!=INITIAL_MANIFEST_SHA256:
   raise ValueError('Initial receiver source association ancestry')
  drift={}
