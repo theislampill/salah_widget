@@ -53,3 +53,30 @@ for(const lunar of [false,true])test('pending celestial scene withdraws old clou
   h.run('beginRuntimeGeneration();lat=40;lon=-74;tz="America/New_York";resetForNewLocation()');acceptedSun(h,lunar?40:-20);h.run('render()');
   for(const key of optics)assert.equal(+h.select('.c').style.getPropertyValue(key),0,'old cloud/geometry permission survived: '+key);
 });
+
+test('zero lunar optics stop painting only after their existing opacity fade, and reappear through inherited visibility',()=>{
+ const h=create();acceptedSun(h,-20);
+ const nodes=['mhalo','mcorona','mparhelia'].map(name=>h.select('.'+name));
+ const computed=h.ctx.getComputedStyle;let opacity='0',reads=0;
+ h.ctx.getComputedStyle=el=>nodes.includes(el)?(reads++,{opacity}):computed(el);
+ const paint=on=>h.run(`paint({...atmosphere(model()),lunarHalo:${on?0.4:0},lunarCorona:${on?0.3:0},moonParhelia:${on?0.2:0}})`);
+ paint(false);assert.equal(reads,0,'an already inactive optic needs no computed-style read');
+ paint(true);
+ for(const node of nodes)assert.equal(node.style.getPropertyValue('visibility'),'inherit','respect pending/hidden native ancestors');
+ assert.deepEqual(['--mhalo','--mcorona','--mparhelia'].map(k=>h.select('.c').style.getPropertyValue(k)),['0.600','0.345','0.170']);
+ opacity='.2';paint(false);
+ for(const node of nodes)assert.equal(node.style.getPropertyValue('visibility'),'inherit','do not truncate a visible fade');
+ paint(true);for(const node of nodes)assert.equal(node.style.getPropertyValue('visibility'),'inherit','unfinished fade can reverse without withdrawal');
+ for(const invalid of ['',undefined,'NaN','Infinity']){
+  opacity=invalid;paint(false);
+  for(const node of nodes)assert.equal(node.style.getPropertyValue('visibility'),'inherit','an invalid opacity read cannot certify a completed fade');
+ }
+ opacity='0';paint(false);
+ for(const node of nodes)assert.equal(node.style.getPropertyValue('visibility'),'','completed zero-opacity effect returns to CSS withdrawal');
+ const after=reads;paint(false);assert.equal(reads,after,'no recurring style read after withdrawal');
+ h.run('paint({...atmosphere(model()),lunarHalo:.00001,lunarCorona:.00001,moonParhelia:.00001})');
+ for(const node of nodes)assert.equal(node.style.getPropertyValue('visibility'),'','rounded-to-zero sink remains inactive');
+ paint(true);for(const node of nodes)assert.equal(node.style.getPropertyValue('visibility'),'inherit');
+ h.run('today=null;tomorrow=null;paintCelestialWithoutTimetable()');
+ for(const node of nodes)assert.equal(node.style.getPropertyValue('visibility'),'','pending scene uses the same zero-opacity withdrawal');
+});

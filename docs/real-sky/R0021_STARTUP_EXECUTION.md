@@ -43,6 +43,40 @@ candidate until their mechanism, appearance and timing are verified.
 
 ## Source behavior
 
+### Inactive lunar optical work (2026-10-17)
+
+Cold-start diagnostics showed SVG filter work even when the lunar halo, corona
+and paraselenae had zero opacity. These three optional layers now default to
+hidden. Their existing writer restores inherited visibility for a positive
+serialized opacity and withdraws it only after computed opacity is finite and
+exactly zero. Their geometry, blur, blend mode, physical condition gates and
+opacity transitions are unchanged. No timer or render loop is added; a paused
+clock can defer the optimization until the next native paint.
+
+Independent review supports the source and bounded rendered preservation:
+25 matched states in each browser, including positive optics, partial fades,
+reversal, reentry and ancestor visibility guards, have byte-identical PNG pairs.
+These are held-scene component controls, not continuous or ordinary-startup
+qualification. The first control's changing parent visibility and a later
+incomplete Firefox acquisition are retained as contrary evidence. See the
+[optical correction evidence](evidence/r0021-lunar-optics-20261017/MANIFEST.json).
+
+The wider canonical regression run passes 815 tests with zero failures and four
+retained TODOs across 63 files. Two fixture repairs retain their assertions:
+the isolated celestial rig no longer returns the card for nonexistent optical
+nodes; the withdrawal fixture now supplies the actual solar-publication owner
+and asserts its cancellation. Nine withdrawal failures also reproduced against
+the previous build; the original failing logs remain retained.
+
+The current runtime equals immutable integrated-r15, index SHA256
+`98e4b3f1c3ecdb89ae1ceb33463fc02dad3b47cc32482aa5c2a456886e6b11a5`.
+Its ordinary Chromium diagnostic still has a 304-ms uncovered interval before
+the first complete celestial frame. Lower shader-program count is not S1 or
+callback-cost certification. S1, callback cost, continuous presentation and the
+full Firefox extension-parent qualification remain open. Hiding an inactive
+lightning primitive did not remove the remaining shader workload and was not
+adopted.
+
 The initial scene uses the pinned real-catalogue bright-star subset and a
 deterministic compact V5 receiver representation. It evaluates the current
 native calendar phase through the approved material, Earthshine and display

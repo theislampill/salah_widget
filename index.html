@@ -190,9 +190,9 @@ body{color:#fff7df;
 .mfeatures{opacity:var(--moonfeat,1);transition:opacity .9s}
 /* 22° ice halo (refraction ring) and water-droplet corona (diffraction aureole) — two DISTINCT optical elements,
    each gated by cloud type / humidity in paint(); never both prominent at once. */
-.mhalo{fill:url(#mhalog);mix-blend-mode:screen;filter:blur(2.5px);opacity:var(--mhalo,0);transition:opacity 1.8s}
-.mparhelia{mix-blend-mode:screen;filter:blur(1.6px);opacity:var(--mparhelia,0);transition:opacity 1.8s}   /* lunar moondogs */
-.mcorona{fill:url(#mcoronag);mix-blend-mode:screen;filter:blur(3px);opacity:var(--mcorona,0);transition:opacity 1.4s}
+.mhalo{fill:url(#mhalog);mix-blend-mode:screen;filter:blur(2.5px);opacity:var(--mhalo,0);visibility:hidden;transition:opacity 1.8s}
+.mparhelia{mix-blend-mode:screen;filter:blur(1.6px);opacity:var(--mparhelia,0);visibility:hidden;transition:opacity 1.8s}   /* lunar moondogs */
+.mcorona{fill:url(#mcoronag);mix-blend-mode:screen;filter:blur(3px);opacity:var(--mcorona,0);visibility:hidden;transition:opacity 1.4s}
 .mglow{fill:url(#mglowg);filter:blur(2px);mix-blend-mode:screen;opacity:calc(var(--mgo,0) * var(--mrad,1))}   /* physical atmospheric glow: fail closed before paint; breathing via --mrad */
 
 /* weather effects: animated overlay, behind the foreground (z-index 1) */
@@ -6109,6 +6109,19 @@ function nativeLunarPresentation(moon,solarElevation,surfaceFailed){
   return {mFrac,moonUp,darkness,phaseVis,moonObject,moonLightEligible,moonLightReason,moonLocalWash,moonGlow,moonlight,moonStrength:moonlight,moonShow,moonPresence:moonShow};
 }
 function lunarPresentation(solarElevation){ return nativeLunarPresentation(moonSky,solarElevation,_pbrFailed); }
+function paintLunarOptic(c,key,opacity){
+  c.style.setProperty(key,opacity);
+  const el=$("."+key.slice(2));if(!el)return;
+  const inherited=el.style.getPropertyValue("visibility")==="inherit";
+  // Opacity-zero SVG filters can still incur raster/shader work. Withdraw only
+  // after the unchanged fade reaches zero; the ordinary paint revisits it.
+  // Inherit (never force visible) so native pending/geometry guards still win.
+  if(+opacity>0){if(!inherited)el.style.setProperty("visibility","inherit");}
+  else if(inherited){
+    const currentOpacity=Number.parseFloat(getComputedStyle(el).opacity);
+    if(Number.isFinite(currentOpacity)&&currentOpacity===0)el.style.removeProperty("visibility");
+  }
+}
 function paintCelestialWithoutTimetable(){
   const identity=skySceneIdentity(),sun=window.SalahNativeSkyHost?.cloudLighting?.()?.sun;
   if(identity===null||!Number.isFinite(sun?.altDeg))return;
@@ -6122,7 +6135,8 @@ function paintCelestialWithoutTimetable(){
   // Optional cloud optics need the current complete atmosphere's condition
   // gates. Until that state is admitted, withdraw every prior-scene optical
   // permission; the current physical bodies remain independently available.
-  for(const key of ["--sunhalo","--sundogs","--sunpillar","--mhalo","--mcorona","--mparhelia"])c.style.setProperty(key,"0");
+  for(const key of ["--sunhalo","--sundogs","--sunpillar"])c.style.setProperty(key,"0");
+  for(const key of ["--mhalo","--mcorona","--mparhelia"])paintLunarOptic(c,key,"0");
   c.style.setProperty("--moonfeat","1");c.style.setProperty("--moonocc","1");
   c.style.setProperty("--moongrp",a.moonShow.toFixed(3));c.style.setProperty("--moonbeam",(0.6*a.moonlight).toFixed(3));
   _skyMoonPresence=a.moonShow;window.SalahMoonRuntime?.request();updateSkySurface();
@@ -6391,12 +6405,12 @@ function paint(A){
   c.style.setProperty("--sunpillar",(0.8*A.sunPillar).toFixed(3));    // sun pillar (cold + low sun)
   c.style.setProperty("--pillarcol",A.pillarCol);
   c.style.setProperty("--anticrep",(0.8*A.antiCrep).toFixed(3));      // anticrepuscular rays (faint, opposite the sun)
-  c.style.setProperty("--mparhelia",(0.85*A.moonParhelia).toFixed(3)); // lunar paraselenae / moondogs (cirrus + bright moon)
+  paintLunarOptic(c,"--mparhelia",(0.85*A.moonParhelia).toFixed(3)); // lunar paraselenae / moondogs (cirrus + bright moon)
   c.dataset.fx=A.weatherDecision.conditionState==="unavailable"?"unavailable":A.cls;
   c.dataset.precip=A.weatherDecision.visualPermissions.rain||A.weatherDecision.visualPermissions.snow?"on":"off";
   c.dataset.lightning=A.weatherDecision.visualPermissions.lightning?"on":"off";
-  c.style.setProperty("--mhalo",Math.min(0.85,1.5*A.lunarHalo).toFixed(3));     // 22° ice halo ring — only with thin cirrus (boosted so the ring reads through the cloud)
-  c.style.setProperty("--mcorona",Math.min(0.9,1.15*A.lunarCorona).toFixed(3)); // droplet corona aureole — requires thin water cloud or fog, not humidity alone
+  paintLunarOptic(c,"--mhalo",Math.min(0.85,1.5*A.lunarHalo).toFixed(3));     // 22° ice halo ring — only with thin cirrus (boosted so the ring reads through the cloud)
+  paintLunarOptic(c,"--mcorona",Math.min(0.9,1.15*A.lunarCorona).toFixed(3)); // droplet corona aureole — requires thin water cloud or fog, not humidity alone
   // (cloud morphology is no longer rewritten per class — the low/mid/high LAYERS carry the morphology; the
   //  turbulence filters are static, and only the per-layer coverage opacities + drift transforms change.)
   paintWeatherHeader(A.info);

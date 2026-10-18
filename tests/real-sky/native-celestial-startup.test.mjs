@@ -8,9 +8,9 @@ function rig(){
  const properties={},classes=new Set(['sky-pending','sky-initializing']),events=[];
  const c={style:{setProperty:(k,v)=>properties[k]=v},classList:{remove:(...names)=>names.forEach(n=>classes.delete(n))}};
  const s={_skySceneKey:null,_skyInitialDocument:true,_skyMoonPresence:0,_pbrFailed:false,moonSky:{frac:.5,alt:20},clamp:x=>Math.max(0,Math.min(1,x)),identity:'A',solar:-20,
-  skySceneIdentity:()=>s.identity,beginSkyScene(){events.push('epoch');},nowParts:()=>({h:21,mi:0,s:0}),moonGeometryObservation:()=>({fresh:true}),renderMoon(){events.push('geometry');},projectStars(){events.push('stars');},simDate:()=>new Date('2026-09-25T02:00Z'),$:()=>c,updateSkySurface(){events.push('surface');},
-  // This isolated lunar control has no solar DOM. The full inline-runtime
-  // native-solar-startup controls cover the shared solar writer and inputs.
+  skySceneIdentity:()=>s.identity,beginSkyScene(){events.push('epoch');},nowParts:()=>({h:21,mi:0,s:0}),moonGeometryObservation:()=>({fresh:true}),renderMoon(){events.push('geometry');},projectStars(){events.push('stars');},simDate:()=>new Date('2026-09-25T02:00Z'),$:selector=>selector==='.c'?c:null,updateSkySurface(){events.push('surface');},
+  // This isolated lunar control has no solar or optional-optics DOM. The full
+  // inline-runtime native-solar-startup controls cover those writers and inputs.
   weatherDecision:()=>({record:null,renderCode:0}),wxDrivers:()=>({heat:0}),wxClass:()=>"clear",isMotionReduced:()=>false,
   nativeSolarPresentation:()=>({}),paintSolarPresentation(){},
   window:{SalahNativeSkyHost:{cloudLighting:()=>({sun:{altDeg:s.solar}})},SalahMoonRuntime:{request(){events.push('initial');}}}};
