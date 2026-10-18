@@ -61,11 +61,21 @@ def build_moon(root):
  entries={name:(root/name).read_text(encoding='utf-8') for name in ['index.html','offline.html']}
  boundary='\nboot();'
  native_end=boundary+'\n</script>'
+ native_start='<script>\n"use strict";\n// ---- config:'
+ entry_sections={}
  for name,text in entries.items():
   if any(marker in text for marker in ['<script src="moon/moon-host.js"></script>','window.__SALAH_MOON_INLINE__=true','window.__SALAH_MOON_EMBEDDED__=true','id="moon-embedded-0"']):
    raise ValueError('Run tools/build_native.py, not build_moon directly on already-built entries')
   if text.count(boundary)!=1:raise ValueError('Expected native boot boundary in '+name)
   if text.count(native_end)!=1 or text.count('</head>')!=1:raise ValueError('Expected independent native script and head in '+name)
+  if text.count(native_start)!=1:raise ValueError('Expected native script boundary in '+name)
+  if text.count('<body>')!=1 or text.count('</body>')!=1:raise ValueError('Expected body boundary in '+name)
+  start=text.index(native_start);end=text.index(native_end)+len(native_end)
+  if not text.index('</head>')<text.index('<body>')<start<end<=text.index('</body>'):
+   raise ValueError('Expected ordered native script boundary in '+name)
+  # Preflight BOTH entries before any generated write, including an offline-only
+  # malformed boundary. Later insertion is concatenation of these exact slices.
+  entry_sections[name]=(text[:start],text[start:end],text[end:])
  native_owner=native_lunar_owner(root)
  manifest=json.loads((moon/'asset-manifest.json').read_text(encoding='utf-8'))
  packed={}
@@ -121,15 +131,15 @@ window.SalahPrepareFirstPaint?.();
  write(moon/'moon-host.js',host+refinement)
  (moon/'assets/initial-compact.bin').write_bytes(compact)
  write(moon/'initial-compact-manifest.json',json.dumps(encoding,indent=2)+'\n')
- # The small current receiver owner precedes card markup. Native declarations
- # and boot keep their own closing script tag; the independent full refinement
- # source follows it. A held HTML tail cannot hold settings/prayer execution or
- # add the first Moon later. No new request, hidden card or loader is involved.
+ # The current receiver owner follows the parsed neutral card and preview owner,
+ # immediately before native declarations/boot. Keep the full producer order;
+ # the independent refinement source still follows boot. A held refinement tail
+ # cannot hold settings/prayer execution. No new request or deferred call.
  refinement_tag='\n<script id="moon-refinement-code">'+inline(refinement)+'</script>\n'
- for name,text in entries.items():
+ for name,(prefix,native,tail) in entry_sections.items():
   flags='window.__SALAH_MOON_INLINE__=true;if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;' if name=='index.html' else 'window.__SALAH_MOON_INLINE__=true;window.__SALAH_MOON_OFFLINE__=true;window.__SALAH_MOON_EMBEDDED__=true;'
   initial_tag='\n<script id="moon-initial-code">'+flags+'\n'+inline(host)+'</script>\n'
-  text=text.replace('</head>',initial_tag+'</head>',1).replace(native_end,native_end+refinement_tag,1)
+  text=prefix+initial_tag+native+refinement_tag+tail
   if name=='offline.html':text=text.replace('</body>','\n'.join(tags)+'\n</body>',1)
   write(root/name,text)
  sources={str(p.relative_to(root)).replace('\\','/'):sha(p.read_bytes()) for p in sorted({moon/'src'/n for n in WORKER_UNITS+HOST_UNITS+['moon-native.mjs','moon_kernel.c']})}

@@ -12,7 +12,8 @@ SOURCE=Path(__file__).resolve().parents[2]/'tools/build_moon.py'
 sys.path.insert(0,str(SOURCE.parent))
 SPEC=importlib.util.spec_from_file_location('moon_builder',SOURCE)
 builder=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(builder)
-PLAIN='<!doctype html><html><head></head><body><script>\nboot();\n</script></body></html>'
+NATIVE_START='<script>\n"use strict";\n// ---- config:'
+PLAIN='<!doctype html><html><head></head><body><div class="c sky-pending"></div>'+NATIVE_START+'\nboot();\n</script></body></html>'
 sha=lambda b:hashlib.sha256(b).hexdigest()
 
 def fixture():
@@ -73,6 +74,25 @@ class MoonBuildGuard(unittest.TestCase):
   with self.assertRaisesRegex(ValueError,'boot boundary'):
    builder.build_moon(root)
   self.assertEqual(inventory(root),before)
+ def test_initial_owner_follows_neutral_markup_and_precedes_native_boot(self):
+  root=fixture();builder.build_moon(root)
+  for name in ['index.html','offline.html']:
+   text=(root/name).read_text()
+   self.assertLess(text.index('<div class="c sky-pending">'),text.index('id="moon-initial-code"'))
+   self.assertLess(text.index('id="moon-initial-code"'),text.index(NATIVE_START))
+   self.assertLess(text.index('\nboot();\n</script>'),text.index('id="moon-refinement-code"'))
+ def test_invalid_offline_native_start_is_rejected_before_any_write(self):
+  for change in [lambda text:text.replace(NATIVE_START,'<script>'),lambda text:text.replace(NATIVE_START,NATIVE_START+NATIVE_START)]:
+   with self.subTest(change=change):
+    root=fixture();(root/'offline.html').write_text(change(PLAIN));before=inventory(root)
+    with self.assertRaisesRegex(ValueError,'native script boundary'):builder.build_moon(root)
+    self.assertEqual(inventory(root),before)
+ def test_invalid_offline_body_is_rejected_before_any_write(self):
+  for body in ['', '</body></body>']:
+   with self.subTest(body=body):
+    root=fixture();(root/'offline.html').write_text(PLAIN.replace('</body>',body));before=inventory(root)
+    with self.assertRaisesRegex(ValueError,'body boundary'):builder.build_moon(root)
+    self.assertEqual(inventory(root),before)
  def test_receiver_asset_and_wasm_drift_are_rejected_before_any_write(self):
   for relative in ['moon/assets/initial-receivers.bin','moon/assets/data.bin','moon/moon_kernel.wasm']:
    with self.subTest(path=relative):

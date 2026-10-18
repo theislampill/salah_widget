@@ -2,8 +2,8 @@ import {renderNativeBackgroundPreview} from './native-preview.mjs';
 import {encodeNativeFrame} from './native-encoding.mjs';
 import {joinNativeStarPreview} from './native-star-preview.mjs';
 
-/** Run in the head, before the card's HTML can be painted. This is a bounded
- * coherent atmosphere/catalogue/Moon scene: no hidden card, timer, asset
+/** Run synchronously before native boot, after the neutral card markup. This is
+ * a coherent atmosphere/catalogue/Moon scene: no hidden card, timer, asset
  * request, provider wait or independent clock. The shared configuration resolver
  * admits the site and Date.now is the native ordinary wall-clock input. Explicit
  * temporal previews are left to the existing native temporal owner. */

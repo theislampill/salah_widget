@@ -2013,6 +2013,9 @@ class NativeSolarMaskPublication{
   };
   if(this.displayed?.mask===mask){finish(this.displayed);return true;}
   if(this.decoded?.mask===mask){finish(this.decoded);return true;}
+  // An opaque generated gradient has no resource to decode. Retain a mask
+  // (and its compositing group), and still run the caller's currentness guard.
+  if(mask==='linear-gradient(#fff,#fff)'){finish({mask,image:null});return true;}
   const image=this.imageFactory(),candidate={mask,image};
   this.pending=candidate;
   try{
@@ -2076,6 +2079,12 @@ class NativeForegroundCapture{
  }
  prepareSolarMask(cloudRGBA,rows){
   validateNativeRGBA(cloudRGBA,325*rows,'solar cloud');
+  // Exactly zero painted coverage is full transmission at every pixel, also
+  // below these rows. A CSS gradient preserves mask grouping without an async
+  // PNG decode gap during initial/current scene replacement. No epsilon: even
+  // one alpha code uses the original cloud mask and anonymous decode path.
+  let clear=true;for(let i=3;i<cloudRGBA.length;i+=4)if(cloudRGBA[i]!==0){clear=false;break;}
+  if(clear)return 'linear-gradient(#fff,#fff)';
   // This mask is exported on every changed foreground. CPU storage avoids a
   // synchronous GPU readback before first paint; its coverage is unchanged.
   if(!this.solar){this.solar=document.createElement('canvas');this.solar.width=325;this.solar.height=530;this.sx=this.solar.getContext('2d',{willReadFrequently:true});}

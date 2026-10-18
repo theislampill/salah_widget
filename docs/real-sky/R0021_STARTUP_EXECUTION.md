@@ -7,6 +7,50 @@ matrix, Firefox's actual extension parent and original callback-cost evidence
 remain open. The original accepted R0021 interfaces are retained; this record
 does not reopen V1 or the V5 research programme.
 
+## Parser placement and clear-mask publication (2026-10-17)
+
+The configuration, initial sky, initial Moon and native boot scripts now run in
+their original relative order after the neutral card/settings markup. This
+allows layout/raster work to begin before the heavy initial producers. It adds
+no timer or readiness shortcut. The Moon builder validates both entry boundaries
+before writing generated output; missing or duplicate boundaries fail closed.
+This placement improves some observed startups but does not guarantee a paint.
+
+A later Firefox source recording exposed a dark-disc intermediate frame at a
+cached-weather transition. Instrumentation independently found a 66 ms interval
+between stale initial-style retirement and replacement mask publication; that
+instrumented recording did not reproduce the identical dark-disc pixels. The
+clear mask previously required an asynchronous PNG decode even though every
+cloud alpha byte was exactly zero. It now uses an opaque white CSS gradient,
+published synchronously through the existing revision/currentness/commit guards.
+Any nonzero alpha, including 1/255, retains the anonymous PNG decode path. The
+gradient retains a nonempty mask and the solar compositing group.
+
+The new joined host regression checks replacement in the same turn; publication
+tests retain cancellation, stale completion, rejection and disposal controls.
+At two held daytime Sun positions in each browser, white PNG and gradient masks
+produce byte-identical images; blocked-mask positive controls visibly remove
+the Sun. Independent review supports only this bounded correction. Selected
+ordinary Firefox originals contain the complete Moon and catalogue without the
+dark-disc intermediate, but later whole-frame blanks remain in all three modes.
+
+The final r17 source suite has 823 tests: 819 pass, zero fail and four retained
+TODOs, across 63 recorded files. Eight builder guards and the two-entry ordering
+test also pass. Regeneration matches the immutable tested r17 entries; frozen
+V1 verification passes. Index SHA256 is
+`aa084fcf3f4294e2ccc353a34ff1c259bf78592e7cd9334f41ae7bce8e1c23c6`.
+See the [review, tests and original pixel samples](evidence/r0021-parser-solar-mask-20261017/MANIFEST.json).
+
+S1 remains failed/unqualified. Chromium r52 new-tab first-complete receipt bounds
+are 1115.852 ms from navigation and 837.300 ms after original scene acceptance;
+both exceed the 1000/250 ms limits. Its 1012.459 ms source interval is retained.
+Cold and reload receipt bounds are respectively 703.132/226.900 ms and
+510.235/194.800 ms, but these do not repair new-tab failure, cold capture gaps,
+or the initial 161 by 248 source frame. No image was resized or dropped for
+qualification. These corrections do not certify callback cost or continuous
+presentation, and do not establish the explanation of the owner's intermittent
+Sun observation. The next work remains original R0021 qualification.
+
 ## Resumed startup-layer correction (2026-10-17)
 
 The earlier bright initial atmosphere and dark lunar edge were a separate

@@ -70,10 +70,13 @@ s=s.replace(elevation_line,elevation_line+"\n    // CP9 elevation custody: notif
 s=s.replace('function beginSkyScene(initialDocument=false){','function beginSkyScene(initialDocument=false){\n  window.SalahSkyPreview?.clear("native beginSkyScene");\n  window.SalahRealSky?.invalidate("native beginSkyScene");',1)
 s=s.replace('  commitSkyScene(A);\n}','  commitSkyScene(A);\n  window.SalahNativeSkyHost?.notify();\n}',1)
 s=s.replace('\nboot();','\n'+(N/'native-host-hooks.js').read_text(encoding='utf-8')+'\nboot();',1)
-# The shared resolver and bounded atmosphere must run before static card markup
-# can paint. No visibility gate: the first card already has its accepted sky.
-s=s.replace('<script src="config.js"></script>','',1)
-s=s.replace('</head>','<link rel="stylesheet" href="real-sky/native-sky.css">\n<script src="config.js"></script>\n<script id="native-first-paint-code" data-sha256="'+hashlib.sha256(preview.encode()).hexdigest()+'">'+preview+'</script>\n</head>',1)
+# Keep the complete initial-producer group after the native neutral markup,
+# before boot. Parsing that markup can overlap its raster work with the bounded
+# synchronous preparation; no timer, readiness gate or new clock is introduced.
+config_tag='<script src="config.js"></script>'
+if s.count(config_tag)!=1:raise ValueError('Expected native config script boundary')
+s=s.replace('</head>','<link rel="stylesheet" href="real-sky/native-sky.css">\n</head>',1)
+s=s.replace(config_tag,config_tag+'\n<script id="native-first-paint-code" data-sha256="'+hashlib.sha256(preview.encode()).hexdigest()+'">'+preview+'</script>',1)
 s=s.replace('</body>','<script src="real-sky/native-sky.js"></script>\n</body>',1)
 (W/'index.html').write_text(s,encoding='utf-8',newline='\n')
 css='''.real-sky-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}.real-sky-status{position:absolute;bottom:3px;left:0;width:100%;text-align:center;font:8px sans-serif;color:#aaa;z-index:3;pointer-events:none}.milkyway,.stars,.starglints{display:none!important}

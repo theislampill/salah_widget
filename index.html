@@ -468,8 +468,202 @@ body{color:#fff7df;
 .foc .nt,.left,.tm,.d,.wt{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 </style>
 <link rel="stylesheet" href="real-sky/native-sky.css">
+</head>
+<body>
+<div class="c sky-pending sky-initializing">
+  <div class="simclock" aria-hidden="true"></div>
+  <div class="dbglayers" aria-hidden="true"></div>
+  <div class="dbgmoon" aria-hidden="true"></div>
+  <div class="dbgmotion" aria-hidden="true"></div>
+  <div class="atmo" aria-hidden="true"><div class="airglow"></div><div class="aurora"></div><div class="scatter"></div><div class="belt"></div><div class="anticrep"></div><div class="sunpillar"></div><div class="sunhalo"></div><div class="sundogs"></div><div class="sun"></div><div class="sun-cloud-mask"><div class="suncorner"><div class="rays"></div><div class="corona"></div><div class="disc"></div></div><div class="sunbody"><div class="disc"></div></div></div></div>
+  <svg class="sky" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <radialGradient id="mg" cx="40%" cy="34%" r="72%">
+        <stop offset="0%" stop-color="#27334f"/><stop offset="65%" stop-color="#18223e"/><stop offset="100%" stop-color="#0e1630"/>
+      </radialGradient>
+      <radialGradient id="mwglow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#cdd6ef" stop-opacity=".22"/><stop offset="55%" stop-color="#b9c4e6" stop-opacity=".07"/><stop offset="100%" stop-color="#b9c4e6" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="mglowg" cx="50%" cy="50%" r="50%">   <!-- moon atmospheric glow: soft falloff (no plateau/ring), already faint where it meets the disc edge -->
+        <stop offset="0%" stop-color="#dfe6f2" stop-opacity=".40"/><stop offset="40%" stop-color="#cfe0f2" stop-opacity=".18"/>
+        <stop offset="72%" stop-color="#bcd0ee" stop-opacity=".045"/><stop offset="100%" stop-color="#bcd0ee" stop-opacity="0"/>
+      </radialGradient>
+      <!-- 22° ICE-crystal HALO (refraction through cirrus): a discrete RING at a fixed radius with a DARK inner
+           gap, a sharp REDDISH inner edge and a fuzzy BLUISH outer edge (colour order opposite a rainbow). -->
+      <radialGradient id="mhalog" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"  stop-color="#ffcaa6" stop-opacity="0"/>
+        <stop offset="55%" stop-color="#ffcaa6" stop-opacity="0"/>
+        <stop offset="62%" stop-color="#ffb892" stop-opacity=".85"/>
+        <stop offset="68%" stop-color="#fff2e2" stop-opacity=".48"/>
+        <stop offset="75%" stop-color="#bcd2ff" stop-opacity=".5"/>
+        <stop offset="86%" stop-color="#bcd2ff" stop-opacity="0"/>
+      </radialGradient>
+      <!-- water-droplet CORONA (diffraction through thin altostratus/fog): a small near-white aureole fringed
+           yellow/red, then pastel rings bluish-inner → green → yellow → red-outer, HUGGING the disc. -->
+      <radialGradient id="mparhg" cx="50%" cy="50%" r="50%">   <!-- moondog spot: warm-white near the moon → cool/transparent outward -->
+        <stop offset="0%" stop-color="#fff6e6" stop-opacity=".85"/><stop offset="38%" stop-color="#ffe0c2" stop-opacity=".42"/>
+        <stop offset="70%" stop-color="#dfe6ff" stop-opacity=".2"/><stop offset="100%" stop-color="#dfe6ff" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="mcoronag" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"  stop-color="#fffdf5" stop-opacity=".8"/>
+        <stop offset="30%" stop-color="#fff2d6" stop-opacity=".55"/>
+        <stop offset="42%" stop-color="#ffd6ac" stop-opacity=".4"/>
+        <stop offset="53%" stop-color="#bcd4ff" stop-opacity=".34"/>
+        <stop offset="63%" stop-color="#c6f0c0" stop-opacity=".26"/>
+        <stop offset="73%" stop-color="#fff0bc" stop-opacity=".24"/>
+        <stop offset="84%" stop-color="#ffc4a4" stop-opacity=".2"/>
+        <stop offset="100%" stop-color="#ffc4a4" stop-opacity="0"/>
+      </radialGradient>
+      <mask id="stellar-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="325" height="530" style="mask-type:luminance">
+        <rect width="325" height="530" fill="white"/>
+        <g class="moon-mask-geometry" transform="translate(250 64) scale(0.62)"><circle class="moon-mask-disc" r="46.08" fill="black"/></g>
+      </mask>
+    </defs>
+    <g class="stellar-background" mask="url(#stellar-cutout)">
+      <g class="milkyway"></g>
+      <g class="stars"></g>
+      <g class="starglints"></g>
+    </g>
+    <g class="moon" transform="translate(250 64) scale(0.62)">
+      <circle class="mbeam" r="135"/>                 <!-- moonlight cast on the sky (only a real, above-horizon moon) -->
+      <circle class="mhalo" r="120"/>                 <!-- 22° ICE-crystal halo ring (cirrus); shown only with thin high cloud -->
+      <g class="mparhelia"><circle cx="-118" cy="0" r="20" fill="url(#mparhg)"/><circle cx="118" cy="0" r="20" fill="url(#mparhg)"/></g>  <!-- lunar PARASELENAE (moondogs): lateral spots at the 22° radius; rare, bright moon + cirrus -->
+      <circle class="mcorona" r="84"/>                <!-- water-droplet diffraction CORONA aureole (altostratus/fog/humidity) -->
+      <circle class="moccluder" r="45"/>              <!-- opaque star-occluder. The canvas disc only fills ~r46.4 of the 96px image (120→96 slice), so this MUST be < that or its dark fill PEEKS past the bright disc as a contrast ring. r45 stays fully hidden behind the opaque disc. -->
+      <g class="mfeatures">                            <!-- everything that dissolves at dawn/dusk lives here -->
+        <circle class="mglow" r="58"/>                                  <!-- SUBTLE atmospheric glow (radial gradient) BEHIND the opaque disc — not a stroke on the limb, not the dominant element -->
+        <image class="mphoto" href="" x="-48" y="-48" width="96" height="96" preserveAspectRatio="xMidYMid slice"/>
+      </g>
+    </g>
+  </svg>
+
+  <div class="wfx" id="wxfx" aria-hidden="true">
+    <!-- CLOUD DECKS: soft puff clusters with noise-driven lifecycle on a small canvas (see CLOUD ENGINE).
+         Bounded wind travel and morphology keep each accepted population continuous.
+         The buffer is tiny (144×232); CSS upscales + blurs it, which also hides any pixel structure. -->
+    <canvas class="cloudcanvas" width="144" height="232" aria-hidden="true"></canvas>
+    <div class="veil"></div>
+    <div class="sunhaze"></div>
+    <div class="godray" aria-hidden="true"></div>
+    <svg class="bolt" viewBox="0 0 325 530" preserveAspectRatio="none"><path d="M214 4 L201 60 L220 56 L198 150"/></svg>
+    <div class="flash"></div>
+  </div>
+  <svg class="grain" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
+    <filter id="grainf" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="5" stitchTiles="stitch" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 0 1"/>
+    </filter>
+    <rect width="325" height="530" filter="url(#grainf)"/>
+  </svg>
+
+  <div class="climate" aria-hidden="true"><div class="tintw"></div><div class="tintc"></div><div class="frost"></div><div class="heatwave"></div></div>
+  <div class="scrim" aria-hidden="true"></div>
+  <div class="h">
+    <span class="e" id="loc"></span>
+    <span class="buckle"><span class="wi" id="wi"></span></span>
+    <span class="wt" id="wt"></span>
+  </div>
+  <span class="weather-information" id="weather-information"></span>
+
+  <div class="panel">
+    <svg class="arc" viewBox="0 0 295 180" preserveAspectRatio="none"></svg>
+    <div class="foc"><div class="cn">—</div><div class="nt">—</div></div>
+    <div class="bar"><i></i></div>
+    <div class="left">Loading…</div>
+  </div>
+
+  <div class="times"></div>
+
+  <div class="d">
+    <button type="button" class="date-trigger" id="ceDateButton" aria-haspopup="dialog" aria-controls="dateDialog" aria-label="Show complete Gregorian date"><span class="ce date-value" id="ce"></span></button>
+    <button type="button" class="date-trigger" id="ahDateButton" aria-haspopup="dialog" aria-controls="dateDialog" aria-label="Show complete Hijri date"><span class="ah date-value" id="ah"></span></button>
+  </div>
+  <dialog class="date-dialog" id="dateDialog" aria-labelledby="dateHeading">
+    <header><h2 id="dateHeading">Calendar dates</h2><button type="button" id="dateClose" autofocus>Close</button></header>
+    <dl>
+      <dt>Gregorian</dt><dd id="dateGregorian"></dd>
+      <dt>Hijri</dt><dd id="dateHijri"></dd>
+      <dt id="datePreviewLabel">Begins at sunset</dt><dd id="datePreview"></dd>
+    </dl>
+    <p id="dateReason" aria-live="polite"></p>
+  </dialog>
+
+  <div class="set-live-status" id="settings-persistence-status" role="status" aria-live="polite"></div>
+  <!-- in-widget settings (local mode only; populated/wired lazily in JS). Overlays the prayer
+       display inside the same card — never enlarges the iframe, never clips header/footer. -->
+  <div class="settings" id="settings" role="dialog" aria-modal="true" aria-label="Widget settings">
+    <div class="set-hd"><span>Settings</span>
+      <div class="set-hd-btns">
+        <button type="button" class="set-icon" id="set-reset" aria-label="Reset settings" title="Reset — clear saved settings and re-detect your area">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </button>
+        <button type="button" class="set-x" id="setClose" aria-label="Close settings">×</button>
+      </div>
+    </div>
+    <div class="set-body">
+      <label class="set-l" for="set-label">Location name</label>
+      <div class="set-locrow">
+        <input class="set-i" id="set-label" type="text" placeholder="place to search, or a custom name" autocomplete="off">
+        <select class="set-i set-units" id="set-units" aria-label="Temperature units" title="Temperature units (auto from your area)"><option value="f">°F</option><option value="c">°C</option></select>
+        <button type="button" class="set-pin" id="set-pin" aria-label="Use browser location" title="Estimated from your IP. Click to request browser location.">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 2C7.6 2 4 5.6 4 10c0 5.2 7.1 11.6 7.5 11.9a.75.75 0 0 0 1 0C12.9 21.6 20 15.2 20 10 20 5.6 16.4 2 12 2ZM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+        </button>
+      </div>
+      <div class="set-row3">
+        <div><label class="set-l" for="set-lat">Latitude</label><input class="set-i" id="set-lat" inputmode="decimal" autocomplete="off"></div>
+        <div style="text-align:center"><label class="set-l" for="set-lon">Longitude</label><input class="set-i" id="set-lon" inputmode="decimal" autocomplete="off"></div>
+        <div style="text-align:right"><label class="set-l" for="set-time">Time format</label><select class="set-i" id="set-time"><option value="24">24-hour</option><option value="12">12-hour</option></select></div>
+      </div>
+      <div class="set-row2" style="grid-template-columns:1.35fr 1fr">
+        <div><label class="set-l" for="set-method">Calculation method</label><select class="set-i" id="set-method">
+          <option value="2">ISNA — N. America</option>
+          <option value="3">Muslim World League</option>
+          <option value="1">Univ. of Islamic Sciences, Karachi</option>
+          <option value="4">Umm al-Qura, Makkah</option>
+          <option value="5">Egyptian General Authority</option>
+          <option value="0">Shia Ithna-Ashari</option>
+          <option value="7">Univ. of Tehran</option>
+          <option value="8">Gulf Region</option>
+          <option value="9">Kuwait</option>
+          <option value="10">Qatar</option>
+          <option value="11">Singapore (MUIS)</option>
+          <option value="12">UOIF — France</option>
+          <option value="13">Diyanet — Turkey</option>
+          <option value="14">Russia (SAMR)</option>
+          <option value="15">Moonsighting Committee</option>
+          <option value="16">Dubai</option>
+        </select></div>
+        <div style="text-align:right"><label class="set-l" for="set-school">Mithl(ayn)</label><select class="set-i" id="set-school"><option value="0">Mithl</option><option value="1">Mithlayn (Hanafi)</option></select></div>
+      </div>
+      <div class="set-row2">
+        <div style="text-align:right"><label class="set-l" for="set-datefmt-preset">Date format</label><select class="set-i" id="set-datefmt-preset">
+          <option value="YYYY-MM-DD">2026-06-14</option>
+          <option value="MM/DD/YYYY">06/14/2026</option>
+          <option value="DD/MM/YYYY">14/06/2026</option>
+          <option value="DD MMMM YYYY">14 June 2026</option>
+          <option value="__custom__">Custom…</option>
+        </select></div>
+        <div><label class="set-l" aria-hidden="true">&nbsp;</label><input class="set-i" id="set-datefmt" placeholder="YYYY-MM-DD" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Date format code"></div>
+      </div>
+      <div><label class="set-l" for="set-appearance">Timetable appearance</label><select class="set-i" id="set-appearance"><option value="glass">Liquid glass (default)</option><option value="contrast">High contrast</option></select></div>
+      <div class="set-status" id="set-status" role="status" aria-live="polite">Enter to search a place · Shift+Enter to keep the typed name.</div>
+    </div>
+    <div class="set-footer">
+      <a class="set-link" href="https://github.com/theislampill" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.3v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+      </a>
+      <a class="set-link" href="https://x.com/theIslampill" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" title="X (Twitter)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/></svg>
+      </a>
+      <a class="set-link heart" href="https://buymeacoffee.com/theislampill" target="_blank" rel="noopener noreferrer" aria-label="Support — buy me a coffee" title="Buy me a coffee">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
 <script src="config.js"></script>
-<script id="native-first-paint-code" data-sha256="188be74f88c2a9617fb989966bae5ea75575c0b3eec509f5c118298f83655c7a">(function(){"use strict";
+<script id="native-first-paint-code" data-sha256="24688230ce24c60ed8850076fc247c5ecaad75a0690366709baf273225058c06">(function(){"use strict";
 // real-sky/core/src/time-scales.mjs
 /** Time policy: USNO TAI-UTC table, IERS Bulletin C72 (2026-07-06), NASA historical DeltaT.
  * See docs/CHECKPOINT_4.md. Numeric POSIX milliseconds cannot represent a leap-second label.
@@ -2396,6 +2590,9 @@ class NativeSolarMaskPublication{
   };
   if(this.displayed?.mask===mask){finish(this.displayed);return true;}
   if(this.decoded?.mask===mask){finish(this.decoded);return true;}
+  // An opaque generated gradient has no resource to decode. Retain a mask
+  // (and its compositing group), and still run the caller's currentness guard.
+  if(mask==='linear-gradient(#fff,#fff)'){finish({mask,image:null});return true;}
   const image=this.imageFactory(),candidate={mask,image};
   this.pending=candidate;
   try{
@@ -2459,6 +2656,12 @@ class NativeForegroundCapture{
  }
  prepareSolarMask(cloudRGBA,rows){
   validateNativeRGBA(cloudRGBA,325*rows,'solar cloud');
+  // Exactly zero painted coverage is full transmission at every pixel, also
+  // below these rows. A CSS gradient preserves mask grouping without an async
+  // PNG decode gap during initial/current scene replacement. No epsilon: even
+  // one alpha code uses the original cloud mask and anonymous decode path.
+  let clear=true;for(let i=3;i<cloudRGBA.length;i+=4)if(cloudRGBA[i]!==0){clear=false;break;}
+  if(clear)return 'linear-gradient(#fff,#fff)';
   // This mask is exported on every changed foreground. CPU storage avoids a
   // synchronous GPU readback before first paint; its coverage is unchanged.
   if(!this.solar){this.solar=document.createElement('canvas');this.solar.width=325;this.solar.height=530;this.sx=this.solar.getContext('2d',{willReadFrequently:true});}
@@ -2840,8 +3043,8 @@ function startNativeSkyPreview(){
 
 
 
-/** Run in the head, before the card's HTML can be painted. This is a bounded
- * coherent atmosphere/catalogue/Moon scene: no hidden card, timer, asset
+/** Run synchronously before native boot, after the neutral card markup. This is
+ * a coherent atmosphere/catalogue/Moon scene: no hidden card, timer, asset
  * request, provider wait or independent clock. The shared configuration resolver
  * admits the site and Date.now is the native ordinary wall-clock input. Explicit
  * temporal previews are left to the existing native temporal owner. */
@@ -3872,201 +4075,6 @@ window.SalahPrepareFirstPaint?.();
 
 })();
 </script>
-</head>
-<body>
-<div class="c sky-pending sky-initializing">
-  <div class="simclock" aria-hidden="true"></div>
-  <div class="dbglayers" aria-hidden="true"></div>
-  <div class="dbgmoon" aria-hidden="true"></div>
-  <div class="dbgmotion" aria-hidden="true"></div>
-  <div class="atmo" aria-hidden="true"><div class="airglow"></div><div class="aurora"></div><div class="scatter"></div><div class="belt"></div><div class="anticrep"></div><div class="sunpillar"></div><div class="sunhalo"></div><div class="sundogs"></div><div class="sun"></div><div class="sun-cloud-mask"><div class="suncorner"><div class="rays"></div><div class="corona"></div><div class="disc"></div></div><div class="sunbody"><div class="disc"></div></div></div></div>
-  <svg class="sky" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
-    <defs>
-      <radialGradient id="mg" cx="40%" cy="34%" r="72%">
-        <stop offset="0%" stop-color="#27334f"/><stop offset="65%" stop-color="#18223e"/><stop offset="100%" stop-color="#0e1630"/>
-      </radialGradient>
-      <radialGradient id="mwglow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#cdd6ef" stop-opacity=".22"/><stop offset="55%" stop-color="#b9c4e6" stop-opacity=".07"/><stop offset="100%" stop-color="#b9c4e6" stop-opacity="0"/>
-      </radialGradient>
-      <radialGradient id="mglowg" cx="50%" cy="50%" r="50%">   <!-- moon atmospheric glow: soft falloff (no plateau/ring), already faint where it meets the disc edge -->
-        <stop offset="0%" stop-color="#dfe6f2" stop-opacity=".40"/><stop offset="40%" stop-color="#cfe0f2" stop-opacity=".18"/>
-        <stop offset="72%" stop-color="#bcd0ee" stop-opacity=".045"/><stop offset="100%" stop-color="#bcd0ee" stop-opacity="0"/>
-      </radialGradient>
-      <!-- 22° ICE-crystal HALO (refraction through cirrus): a discrete RING at a fixed radius with a DARK inner
-           gap, a sharp REDDISH inner edge and a fuzzy BLUISH outer edge (colour order opposite a rainbow). -->
-      <radialGradient id="mhalog" cx="50%" cy="50%" r="50%">
-        <stop offset="0%"  stop-color="#ffcaa6" stop-opacity="0"/>
-        <stop offset="55%" stop-color="#ffcaa6" stop-opacity="0"/>
-        <stop offset="62%" stop-color="#ffb892" stop-opacity=".85"/>
-        <stop offset="68%" stop-color="#fff2e2" stop-opacity=".48"/>
-        <stop offset="75%" stop-color="#bcd2ff" stop-opacity=".5"/>
-        <stop offset="86%" stop-color="#bcd2ff" stop-opacity="0"/>
-      </radialGradient>
-      <!-- water-droplet CORONA (diffraction through thin altostratus/fog): a small near-white aureole fringed
-           yellow/red, then pastel rings bluish-inner → green → yellow → red-outer, HUGGING the disc. -->
-      <radialGradient id="mparhg" cx="50%" cy="50%" r="50%">   <!-- moondog spot: warm-white near the moon → cool/transparent outward -->
-        <stop offset="0%" stop-color="#fff6e6" stop-opacity=".85"/><stop offset="38%" stop-color="#ffe0c2" stop-opacity=".42"/>
-        <stop offset="70%" stop-color="#dfe6ff" stop-opacity=".2"/><stop offset="100%" stop-color="#dfe6ff" stop-opacity="0"/>
-      </radialGradient>
-      <radialGradient id="mcoronag" cx="50%" cy="50%" r="50%">
-        <stop offset="0%"  stop-color="#fffdf5" stop-opacity=".8"/>
-        <stop offset="30%" stop-color="#fff2d6" stop-opacity=".55"/>
-        <stop offset="42%" stop-color="#ffd6ac" stop-opacity=".4"/>
-        <stop offset="53%" stop-color="#bcd4ff" stop-opacity=".34"/>
-        <stop offset="63%" stop-color="#c6f0c0" stop-opacity=".26"/>
-        <stop offset="73%" stop-color="#fff0bc" stop-opacity=".24"/>
-        <stop offset="84%" stop-color="#ffc4a4" stop-opacity=".2"/>
-        <stop offset="100%" stop-color="#ffc4a4" stop-opacity="0"/>
-      </radialGradient>
-      <mask id="stellar-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="325" height="530" style="mask-type:luminance">
-        <rect width="325" height="530" fill="white"/>
-        <g class="moon-mask-geometry" transform="translate(250 64) scale(0.62)"><circle class="moon-mask-disc" r="46.08" fill="black"/></g>
-      </mask>
-    </defs>
-    <g class="stellar-background" mask="url(#stellar-cutout)">
-      <g class="milkyway"></g>
-      <g class="stars"></g>
-      <g class="starglints"></g>
-    </g>
-    <g class="moon" transform="translate(250 64) scale(0.62)">
-      <circle class="mbeam" r="135"/>                 <!-- moonlight cast on the sky (only a real, above-horizon moon) -->
-      <circle class="mhalo" r="120"/>                 <!-- 22° ICE-crystal halo ring (cirrus); shown only with thin high cloud -->
-      <g class="mparhelia"><circle cx="-118" cy="0" r="20" fill="url(#mparhg)"/><circle cx="118" cy="0" r="20" fill="url(#mparhg)"/></g>  <!-- lunar PARASELENAE (moondogs): lateral spots at the 22° radius; rare, bright moon + cirrus -->
-      <circle class="mcorona" r="84"/>                <!-- water-droplet diffraction CORONA aureole (altostratus/fog/humidity) -->
-      <circle class="moccluder" r="45"/>              <!-- opaque star-occluder. The canvas disc only fills ~r46.4 of the 96px image (120→96 slice), so this MUST be < that or its dark fill PEEKS past the bright disc as a contrast ring. r45 stays fully hidden behind the opaque disc. -->
-      <g class="mfeatures">                            <!-- everything that dissolves at dawn/dusk lives here -->
-        <circle class="mglow" r="58"/>                                  <!-- SUBTLE atmospheric glow (radial gradient) BEHIND the opaque disc — not a stroke on the limb, not the dominant element -->
-        <image class="mphoto" href="" x="-48" y="-48" width="96" height="96" preserveAspectRatio="xMidYMid slice"/>
-      </g>
-    </g>
-  </svg>
-
-  <div class="wfx" id="wxfx" aria-hidden="true">
-    <!-- CLOUD DECKS: soft puff clusters with noise-driven lifecycle on a small canvas (see CLOUD ENGINE).
-         Bounded wind travel and morphology keep each accepted population continuous.
-         The buffer is tiny (144×232); CSS upscales + blurs it, which also hides any pixel structure. -->
-    <canvas class="cloudcanvas" width="144" height="232" aria-hidden="true"></canvas>
-    <div class="veil"></div>
-    <div class="sunhaze"></div>
-    <div class="godray" aria-hidden="true"></div>
-    <svg class="bolt" viewBox="0 0 325 530" preserveAspectRatio="none"><path d="M214 4 L201 60 L220 56 L198 150"/></svg>
-    <div class="flash"></div>
-  </div>
-  <svg class="grain" viewBox="0 0 325 530" preserveAspectRatio="none" aria-hidden="true">
-    <filter id="grainf" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="5" stitchTiles="stitch" result="n"/>
-      <feColorMatrix in="n" type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 0 1"/>
-    </filter>
-    <rect width="325" height="530" filter="url(#grainf)"/>
-  </svg>
-
-  <div class="climate" aria-hidden="true"><div class="tintw"></div><div class="tintc"></div><div class="frost"></div><div class="heatwave"></div></div>
-  <div class="scrim" aria-hidden="true"></div>
-  <div class="h">
-    <span class="e" id="loc"></span>
-    <span class="buckle"><span class="wi" id="wi"></span></span>
-    <span class="wt" id="wt"></span>
-  </div>
-  <span class="weather-information" id="weather-information"></span>
-
-  <div class="panel">
-    <svg class="arc" viewBox="0 0 295 180" preserveAspectRatio="none"></svg>
-    <div class="foc"><div class="cn">—</div><div class="nt">—</div></div>
-    <div class="bar"><i></i></div>
-    <div class="left">Loading…</div>
-  </div>
-
-  <div class="times"></div>
-
-  <div class="d">
-    <button type="button" class="date-trigger" id="ceDateButton" aria-haspopup="dialog" aria-controls="dateDialog" aria-label="Show complete Gregorian date"><span class="ce date-value" id="ce"></span></button>
-    <button type="button" class="date-trigger" id="ahDateButton" aria-haspopup="dialog" aria-controls="dateDialog" aria-label="Show complete Hijri date"><span class="ah date-value" id="ah"></span></button>
-  </div>
-  <dialog class="date-dialog" id="dateDialog" aria-labelledby="dateHeading">
-    <header><h2 id="dateHeading">Calendar dates</h2><button type="button" id="dateClose" autofocus>Close</button></header>
-    <dl>
-      <dt>Gregorian</dt><dd id="dateGregorian"></dd>
-      <dt>Hijri</dt><dd id="dateHijri"></dd>
-      <dt id="datePreviewLabel">Begins at sunset</dt><dd id="datePreview"></dd>
-    </dl>
-    <p id="dateReason" aria-live="polite"></p>
-  </dialog>
-
-  <div class="set-live-status" id="settings-persistence-status" role="status" aria-live="polite"></div>
-  <!-- in-widget settings (local mode only; populated/wired lazily in JS). Overlays the prayer
-       display inside the same card — never enlarges the iframe, never clips header/footer. -->
-  <div class="settings" id="settings" role="dialog" aria-modal="true" aria-label="Widget settings">
-    <div class="set-hd"><span>Settings</span>
-      <div class="set-hd-btns">
-        <button type="button" class="set-icon" id="set-reset" aria-label="Reset settings" title="Reset — clear saved settings and re-detect your area">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-        </button>
-        <button type="button" class="set-x" id="setClose" aria-label="Close settings">×</button>
-      </div>
-    </div>
-    <div class="set-body">
-      <label class="set-l" for="set-label">Location name</label>
-      <div class="set-locrow">
-        <input class="set-i" id="set-label" type="text" placeholder="place to search, or a custom name" autocomplete="off">
-        <select class="set-i set-units" id="set-units" aria-label="Temperature units" title="Temperature units (auto from your area)"><option value="f">°F</option><option value="c">°C</option></select>
-        <button type="button" class="set-pin" id="set-pin" aria-label="Use browser location" title="Estimated from your IP. Click to request browser location.">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 2C7.6 2 4 5.6 4 10c0 5.2 7.1 11.6 7.5 11.9a.75.75 0 0 0 1 0C12.9 21.6 20 15.2 20 10 20 5.6 16.4 2 12 2ZM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
-        </button>
-      </div>
-      <div class="set-row3">
-        <div><label class="set-l" for="set-lat">Latitude</label><input class="set-i" id="set-lat" inputmode="decimal" autocomplete="off"></div>
-        <div style="text-align:center"><label class="set-l" for="set-lon">Longitude</label><input class="set-i" id="set-lon" inputmode="decimal" autocomplete="off"></div>
-        <div style="text-align:right"><label class="set-l" for="set-time">Time format</label><select class="set-i" id="set-time"><option value="24">24-hour</option><option value="12">12-hour</option></select></div>
-      </div>
-      <div class="set-row2" style="grid-template-columns:1.35fr 1fr">
-        <div><label class="set-l" for="set-method">Calculation method</label><select class="set-i" id="set-method">
-          <option value="2">ISNA — N. America</option>
-          <option value="3">Muslim World League</option>
-          <option value="1">Univ. of Islamic Sciences, Karachi</option>
-          <option value="4">Umm al-Qura, Makkah</option>
-          <option value="5">Egyptian General Authority</option>
-          <option value="0">Shia Ithna-Ashari</option>
-          <option value="7">Univ. of Tehran</option>
-          <option value="8">Gulf Region</option>
-          <option value="9">Kuwait</option>
-          <option value="10">Qatar</option>
-          <option value="11">Singapore (MUIS)</option>
-          <option value="12">UOIF — France</option>
-          <option value="13">Diyanet — Turkey</option>
-          <option value="14">Russia (SAMR)</option>
-          <option value="15">Moonsighting Committee</option>
-          <option value="16">Dubai</option>
-        </select></div>
-        <div style="text-align:right"><label class="set-l" for="set-school">Mithl(ayn)</label><select class="set-i" id="set-school"><option value="0">Mithl</option><option value="1">Mithlayn (Hanafi)</option></select></div>
-      </div>
-      <div class="set-row2">
-        <div style="text-align:right"><label class="set-l" for="set-datefmt-preset">Date format</label><select class="set-i" id="set-datefmt-preset">
-          <option value="YYYY-MM-DD">2026-06-14</option>
-          <option value="MM/DD/YYYY">06/14/2026</option>
-          <option value="DD/MM/YYYY">14/06/2026</option>
-          <option value="DD MMMM YYYY">14 June 2026</option>
-          <option value="__custom__">Custom…</option>
-        </select></div>
-        <div><label class="set-l" aria-hidden="true">&nbsp;</label><input class="set-i" id="set-datefmt" placeholder="YYYY-MM-DD" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Date format code"></div>
-      </div>
-      <div><label class="set-l" for="set-appearance">Timetable appearance</label><select class="set-i" id="set-appearance"><option value="glass">Liquid glass (default)</option><option value="contrast">High contrast</option></select></div>
-      <div class="set-status" id="set-status" role="status" aria-live="polite">Enter to search a place · Shift+Enter to keep the typed name.</div>
-    </div>
-    <div class="set-footer">
-      <a class="set-link" href="https://github.com/theislampill" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.3v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
-      </a>
-      <a class="set-link" href="https://x.com/theIslampill" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" title="X (Twitter)">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/></svg>
-      </a>
-      <a class="set-link heart" href="https://buymeacoffee.com/theislampill" target="_blank" rel="noopener noreferrer" aria-label="Support — buy me a coffee" title="Buy me a coffee">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-      </a>
-    </div>
-  </div>
-</div>
-
-
 <script>
 "use strict";
 // ---- config: resolved from the shared module (config.js / window.SalahConfig) ----

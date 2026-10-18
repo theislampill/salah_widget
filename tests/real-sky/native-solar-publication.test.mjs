@@ -34,3 +34,39 @@ test('decoded bytes can be reused after a rejected scene, but failed and cancell
  h.publish('b');assert.equal(h.images.length,3);h.publication.cancel();h.images[2].reject(Error('obsolete'));await h.flush();assert.equal(h.errors.length,1);
  h.publish('b');assert.equal(h.images.length,4);h.publication.dispose();assert.equal(h.publication.decoded,null);
 });
+
+test('exactly transparent captured clouds need no encoded solar mask; one alpha code still does',()=>{
+ const restore={document:globalThis.document,ImageData:globalThis.ImageData};let canvases=0,encoded=null;
+ const ctx={clearRect(){},fillRect(){},putImageData(image){encoded=image.data;}};
+ try{
+  globalThis.document={createElement(){canvases++;return {getContext:()=>ctx,toDataURL:()=> 'data:image/png;base64,positive'};}};
+  globalThis.ImageData=class{constructor(data){this.data=data;}};
+  const pixels=new Uint8ClampedArray(325*4);for(let i=0;i<pixels.length;i+=4)pixels[i]=255;
+  const capture={};
+  assert.equal(owner.NativeForegroundCapture.prototype.prepareSolarMask.call(capture,pixels,1),'linear-gradient(#fff,#fff)');
+  assert.equal(canvases,0,'Fully transmitted Sun needs neither PNG nor browser decode');
+  pixels[pixels.length-1]=1;
+  assert.equal(owner.NativeForegroundCapture.prototype.prepareSolarMask.call(capture,pixels,1),'url("data:image/png;base64,positive")');
+  assert.equal(canvases,1);assert.equal(encoded.at(-1),254,'Even one alpha code retains the original mask transfer');
+  assert.throws(()=>owner.NativeForegroundCapture.prototype.prepareSolarMask.call(capture,pixels,2),/dimensions/);
+ }finally{for(const [key,value]of Object.entries(restore))if(value===undefined)delete globalThis[key];else globalThis[key]=value;}
+});
+
+test('full transmission publishes synchronously through the same commit guard',()=>{
+ const h=fixture();let commits=0;
+ assert.equal(h.publication.publish('linear-gradient(#fff,#fff)',()=>{commits++;return false;},e=>h.errors.push(String(e))),true);
+ assert.equal(commits,1);assert.equal(h.images.length,0);assert.equal(h.publication.pending,null);assert.equal(h.publication.displayed,null);
+ h.publication.publish('linear-gradient(#fff,#fff)',()=>{commits++;},e=>h.errors.push(String(e)));
+ assert.equal(commits,2);assert.equal(h.publication.displayed.mask,'linear-gradient(#fff,#fff)');assert.deepEqual(h.errors,[]);
+});
+
+test('clear/cloud/clear transition retains decode and cancellation fences',async()=>{
+ const h=fixture(),clear=()=>h.publication.publish('linear-gradient(#fff,#fff)',mask=>h.commits.push(mask),e=>h.errors.push(String(e)));
+ clear();h.publish('cloud');assert.equal(clear(),false,'An active cloudy decode still owns the pending slot');
+ assert.deepEqual(h.commits,['linear-gradient(#fff,#fff)']);assert.equal(h.images[0].modeAtLoad,'anonymous');
+ h.publication.cancel();clear();h.images[0].resolve();await h.flush();
+ assert.deepEqual(h.commits,['linear-gradient(#fff,#fff)','linear-gradient(#fff,#fff)'],'Cancelled cloudy result cannot overwrite fresh clear inputs');
+ h.publish('cloud');h.images[1].resolve();await h.flush();clear();
+ assert.deepEqual(h.commits,['linear-gradient(#fff,#fff)','linear-gradient(#fff,#fff)','url("data:image/png;base64,cloud")','linear-gradient(#fff,#fff)']);
+ assert.equal(h.publication.pending,null);h.publication.dispose();clear();assert.equal(h.commits.length,4);
+});
