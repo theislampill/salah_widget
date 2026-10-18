@@ -3,9 +3,43 @@
 This candidate joins the scoped PR43 startup work to delivered main
 `f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de`. It remains unmerged and unqualified
 for release. Strict first-scene timing and frame coverage, the full final-entry
-matrix, Firefox's actual extension parent and original callback-cost evidence
-remain open. The original accepted R0021 interfaces are retained; this record
+matrix and original callback-cost evidence remain open. The bounded actual
+Firefox extension-parent/current-refined endpoint now has independent evidence;
+it does not complete the whole parent matrix. The accepted R0021 interfaces remain;
+this record
 does not reopen V1 or the V5 research programme.
+
+## Actual Firefox extension-parent endpoints (2026-10-17)
+
+The supported isolated Marionette route now reaches the current refined widget
+inside installed, signed TablissNG 1.8.1 on Firefox 150.0.2. The real parent UI
+imports the preset with only its widget URL changed, then opens a native new tab.
+Local mode resolves the target through its existing coarse-IP policy; the
+coordinates written in the URL are not claimed as the accepted test target.
+
+Four original full-parent images show the intact 325x530 card, six prayer rows,
+header, footer and refined Moon/star scene. Native settings events select Glass,
+High Contrast and Glass again; reload retains Glass. Glass past-row opacity is
+0.42, versus 1 in High Contrast. Target, timezone, generation and weather are
+unchanged across the two mode switches. All four adjacent states show current,
+ready refined-terrain Moon with no pending job and ready sky.
+
+The installed Firefox compositor readback includes the content omitted by its
+default snapshot method in the earlier bounded A/B/A control. It remains visibly
+softer; this evidence makes no sharpness or contrast-ratio claim. Weather is
+unavailable during switching, then current clear weather appears after reload.
+That recovery is not evidence that switching changed weather, and does not prove
+active-weather continuity. No frame or timing credit is inferred between these
+endpoints. Earlier capture defects, S1 failures and missing continuous checks
+remain open. Independent review accepts only this actual-parent/current-refined
+endpoint predicate; a Playwright attachment limitation is no longer a reason to
+declare the actual Firefox parent inaccessible.
+
+The [original images, bounded state projection and independent review](evidence/r0021-firefox-parent-20261017/MANIFEST.json)
+bind to immutable r17, source head
+`7fd98e31d5cd6df9c7193e054048314947675384`. Provider payloads, profiles and resolved
+coarse coordinates remain outside this public projection. The original images
+retain the deliberately supplied CENTRAL FL label, date/time and weather readout.
 
 ## Parser placement and clear-mask publication (2026-10-17)
 
