@@ -1,5 +1,7 @@
 # R0021 / issue 33: continuation from PR 67
 
+Current continuation: [terminal execution and approved TA1–TA3](R0021_TERMINAL_EXECUTION.md). The archived six-file correction is now applied with exact runtime identity. Historical sections below retain their original checkpoint status. Native/final qualification remains in progress; production merge is not approved.
+
 ## Pro recovery checkpoint — 2026-10-18
 
 The [independent Pro recovery report](R0021_PRO_RECOVERY.md) supplements the retained r26 account below. A supported geometry-only Moon correction is now implemented and locally committed at `2df6a75474f3b0fce2ba72cbf94a7640569bcf2f`: **95 affected tests pass, two canonical builds are deterministic, and separate source/build review found no blocking defect**. Its complete [verified archive and application guide](evidence/r0021-pro-recovery-20261018/BUNDLE.md) and [qualification records](evidence/r0021-empty-surface-20261018/QUALIFICATION.json) are preserved with this checkpoint.

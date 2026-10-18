@@ -4238,8 +4238,11 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
  let initialHeadEligible=true;
  const status={status:'loading',backend:'metric-terrain-wasm-mb1',renders:0,rejected:0,cancelled:0,errors:[],legacyFallback:false,quality:'pending',visibleSource:'awaiting-terrain',initialError:window.SalahMoonInitialError??null};
  const profile=()=>profileMode==='reference'?{...MOON_DEFAULT_PROFILE,profile_id:'unboosted-v5-01',mode:'reference',lift:0}:{...MOON_DEFAULT_PROFILE};
- function capture(){
+ function capture(withGeometry=true){
   const h=window.SalahMoonHost;if(!h)return null;let s;try{s=h.capture();}catch{return null;}
+  // Native observation can initialize the explicit clock. Preserve it even
+  // when an empty surface query has no candidate needing geometric validation.
+  if(!withGeometry)return null;
   if(!s||typeof s.sceneIdentity!=='string'||!Number.isSafeInteger(s.generation)||s.generation<0||!Number.isFinite(s.utcMs)||!Number.isFinite(s.fraction)||s.fraction<0||s.fraction>1||typeof s.waxing!=='boolean'||!Number.isFinite(s.up)||!Number.isFinite(s.dpr))return null;
   // The image rectangle encloses the lunar disc. Round up, so subpixel layout
   // noise cannot understate the bound; translation never changes this identity.
@@ -4472,7 +4475,7 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
    }
    poll();return presentation(capture());
   },
-  surface(){const s=capture();if(!presentation(s))return null;syncTexture(s);return canvas;},
+  surface(){const s=capture(!!(accepted||waitingPreview));if(!presentation(s))return null;syncTexture(s);return canvas;},
   get presentationUp(){return profileMode==='reference'?1:Math.max(0,Math.min(1,capture()?.up??1));},
   get detailEnabled(){return presentation(capture())&&!!window.SalahMoonDetail?.available;},
   invalidate(reason='native invalidation',options){clear(reason,options?.initialDocument===true);},

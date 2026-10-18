@@ -29,6 +29,52 @@ function rig({inline=false,diameter=104,initial=false,deferWorker=false,lateSour
  return {w,workers,state,detail,nodes,events,jobs,flush,frame,request,response,head,doc,resize:value=>diameter=value,get initialRenders(){return initialRenders},get published(){return published},get fallbacks(){return fallbacks},get captures(){return captures},get layoutReads(){return layoutReads},advance:t=>clock+=t};
 }
 
+test('an empty surface read preserves native capture without measuring lunar layout',()=>{
+ const r=rig(),captures=r.captures,layoutReads=r.layoutReads;
+ assert.equal(r.w.SalahMoonRuntime.surface(),null);
+ assert.equal(r.captures,captures+1,'preserve native clock observation even without a surface candidate');
+ assert.equal(r.layoutReads,layoutReads,'empty readiness must not force lunar layout');
+});
+
+test('fallback re-entry skips empty layout and preserves the one-use initial head',()=>{
+ const r=rig({initial:true,deferWorker:true}),original=r.head();
+ let fallbackReads=0;
+ r.w.SalahMoonHost.fallback=()=>{
+  fallbackReads++;
+  assert.equal(r.w.SalahMoonRuntime.surface(),null);
+ };
+ const captures=r.captures,layoutReads=r.layoutReads;
+ r.w.SalahMoonRuntime.invalidate('native beginSkyScene',{initialDocument:true});
+ r.w.SalahMoonRuntime.invalidate('native beginSkyScene',{initialDocument:true});
+ assert.equal(fallbackReads,2);
+ assert.equal(r.captures,captures+2,'both fallback reads retain their native clock observation');
+ assert.equal(r.layoutReads,layoutReads);
+ assert.equal(r.w.SalahMoonRuntime.request(),true);
+ assert.equal(r.initialRenders,1,'the head remains available and is not rendered twice');
+ assert.deepEqual(r.w.SalahMoonRuntime.state.accepted.scene,structuredClone(original.scene));
+ assert.equal(r.w.SalahFirstPaint.moon.result,null);
+});
+
+test('surface may adopt a deferred preview without an accepted predecessor and rejects a stale one',()=>{
+ for(const stale of [false,true]){
+  const r=rig();r.workers[0].emit({kind:'ready'});
+  const preview=r.response('preview'),capture=r.w.SalahMoonHost.capture;
+  let reads=0;
+  r.w.SalahMoonHost.capture=()=>{
+   const s=capture();
+   return ++reads===2?{...s,paused:true}:s;
+  };
+  r.workers[0].emit(preview);
+  r.w.SalahMoonHost.capture=capture;
+  assert.equal(reads,2,'admission succeeds while immediate presentation is deferred');
+  assert.equal(r.published,0);
+  if(stale){r.state.generation++;r.state.sceneIdentity='B';}
+  const surface=r.w.SalahMoonRuntime.surface();
+  if(stale){assert.equal(surface,null);assert.equal(r.published,0);}
+  else{assert.ok(surface);assert.equal(r.published,1);assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'terrain-preview');}
+ }
+});
+
 test('initial document hands off the original head result once through its two startup invalidations',()=>{
  const r=rig({initial:true,deferWorker:true}),original=r.head();
  r.w.SalahMoonRuntime.invalidate('native beginSkyScene',{initialDocument:true});
