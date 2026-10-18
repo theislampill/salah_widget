@@ -1,5 +1,15 @@
 # R0021 / issue 33: continuation from PR 67
 
+## Pro recovery checkpoint — 2026-10-18
+
+The [independent Pro recovery report](R0021_PRO_RECOVERY.md) supplements the retained r26 account below. A supported geometry-only Moon correction is now implemented and locally committed at `2df6a75474f3b0fce2ba72cbf94a7640569bcf2f`: **95 affected tests pass, two canonical builds are deterministic, and separate source/build review found no blocking defect**. Its complete [verified archive and application guide](evidence/r0021-pro-recovery-20261018/BUNDLE.md) and [qualification records](evidence/r0021-empty-surface-20261018/QUALIFICATION.json) are preserved with this checkpoint.
+
+**The remote runnable files remain r26.** The local Git client lacks authentication; the connector's 64 MiB IPC limit cannot carry the 81.7 MB generated offline entry. The archive's qualified runtime is `d82bcbd724cee5c0eae3d42c6fdb543150b00541ee73079fb26656bdf41542af`; it must be applied and pushed from an authenticated Git environment before being described as the branch's runtime. Preserve this documentation checkpoint when doing so.
+
+The original 80 ms S1 gate remains unqualified. The two r105 source gaps are observation gaps, not demonstrated celestial withdrawal. The named Firefox refinement rejection, applicable callback/native/continuous-scene gaps and exact-head/base production approval remain open. No exception or merge authority is granted. The historical “no next product patch supported” position is superseded only by the completed bounded correction; no further speculative product change is justified.
+
+The original continuation record follows unchanged.
+
 **Not merge-ready.** Continue the existing implementation; do not restart the
 renderer programme or open a replacement PR. The owner requires independent
 qualification, then explicit approval of the exact PR/head/base before production
