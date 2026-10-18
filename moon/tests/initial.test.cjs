@@ -26,7 +26,9 @@ test('prepared initial sampling is byte exact to the approved box filter, includ
  const N=37,linear=new Float32Array(N*N*3),coverage=new Float32Array(N*N);
  for(let i=0;i<N*N;i++){const a=i%13===0?0:i%7===0?.4:1;coverage[i]=a;for(let k=0;k<3;k++)linear[3*i+k]=a*((i*(k+3)%31)/31);}
  const table=api.prefixSurface({size:N,linear,coverage});
- for(const size of [108,300])for(const extent of [.8,1.08]){
+ // Tiny/odd outputs and both clipped and interior boxes exercise row edges;
+ // the independent approved box operator remains the pixel oracle.
+ for(const size of [1,2,17,108,300])for(const extent of [.8,1.08,2]){
   const scene={diameter:size*.96,extent},actual=api.initialReceiverCodes(table,scene,size),scale=N/(scene.diameter*extent),origin=N/2-size*scale/2,expected=new Uint8ClampedArray(size*size*4);
   for(let y=0;y<size;y++)for(let x=0;x<size;x++){
    const c=api.boxSurface(table,origin+x*scale,origin+y*scale,origin+(x+1)*scale,origin+(y+1)*scale),a=c[3],i=4*(y*size+x);

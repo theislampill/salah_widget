@@ -473,12 +473,22 @@ function initialReceiverCodes(table,scene,size){
   return d[4*(iy*stride+ix)+k]*(1-fx)*(1-fy)+d[4*(iy*stride+ix+1)+k]*fx*(1-fy)+d[4*((iy+1)*stride+ix)+k]*(1-fx)*fy+d[4*((iy+1)*stride+ix+1)+k]*fx*fy;
  };
  const rgba=new Uint8ClampedArray(size*size*4),c=new Float64Array(4);
- for(let y=0;y<size;y++)for(let x=0;x<size;x++){
-  const x0=axis[x],x1=axis[x+1],y0=axis[y],y1=axis[y+1],area=(x1.original-x0.original)*(y1.original-y0.original);
-  if(!Number.isFinite(area)||area<=0)throw new RangeError('Initial surface box');
-  for(let k=0;k<4;k++)c[k]=Math.max(0,(integralAt(x1,y1,k)-integralAt(x0,y1,k)-integralAt(x1,y0,k)+integralAt(x0,y0,k))/area);
-  if(c[3]>1+1e-8)throw new Error('Initial area coverage');const a=Math.min(1,c[3]),i=4*(y*size+x);
-  for(let k=0;k<3;k++)rgba[i+k]=Math.floor(255*encodeSrgb(a?c[k]/a:0)+.5);rgba[i+3]=Math.floor(255*a+.5);
+ // Adjacent boxes share their integral corners. Keep only the two rows used
+ // now, with the same binary64 corner arithmetic and subtraction order.
+ // This temporary O(size) storage is not retained by the initial renderer.
+ let upper=new Float64Array((size+1)*4),lower=new Float64Array((size+1)*4);
+ const fillRow=(row,y)=>{for(let x=0;x<=size;x++)for(let k=0;k<4;k++)row[4*x+k]=integralAt(axis[x],axis[y],k);};
+ fillRow(upper,0);
+ for(let y=0;y<size;y++){
+  fillRow(lower,y+1);
+  for(let x=0;x<size;x++){
+   const x0=axis[x],x1=axis[x+1],y0=axis[y],y1=axis[y+1],area=(x1.original-x0.original)*(y1.original-y0.original);
+   if(!Number.isFinite(area)||area<=0)throw new RangeError('Initial surface box');
+   for(let k=0;k<4;k++)c[k]=Math.max(0,(lower[4*(x+1)+k]-lower[4*x+k]-upper[4*(x+1)+k]+upper[4*x+k])/area);
+   if(c[3]>1+1e-8)throw new Error('Initial area coverage');const a=Math.min(1,c[3]),i=4*(y*size+x);
+   for(let k=0;k<3;k++)rgba[i+k]=Math.floor(255*encodeSrgb(a?c[k]/a:0)+.5);rgba[i+3]=Math.floor(255*a+.5);
+  }
+  const previous=upper;upper=lower;lower=previous;
  }return rgba;
 }
 

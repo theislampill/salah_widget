@@ -1,0 +1,116 @@
+{
+  "schema": "r0021-reviewed-initial-row-reuse/1",
+  "status": "BOUNDED_SOURCE_CORRECTION; NOT_MERGE_READY",
+  "build": "integrated-r21",
+  "indexSha256": "75c89be69e7f2bdc3747443d92e047e4e0b683febd49e6e6d22f9c581c3a9464",
+  "runtimeTreeSha256": "ab1980a395473ccb2dd97c6bb3bf01797d268138e4f26ef643cbe041ac2a4840",
+  "source": {
+    "moon/src/moon-initial.mjs": "e2f3bf09136daece56e1f27eacf2dc40af8571aef2b559bb90399a15a7b0d38a",
+    "moon/tests/initial.test.cjs": "ee4eb75f956916e96b57a083efe92d68f418b74ed8bf6c8a694592f030783311"
+  },
+  "generated": [
+    {
+      "path": "index.html",
+      "beforeSha256": "31dc055ab24269575f21c87c23592595cbddfc0aa4138d12f39e8b1561b081d0",
+      "afterSha256": "75c89be69e7f2bdc3747443d92e047e4e0b683febd49e6e6d22f9c581c3a9464"
+    },
+    {
+      "path": "offline.html",
+      "beforeSha256": "9b0157df1ec37710242521b40cb92c3bcc8e553c46da00da15b62e2931f419bb",
+      "afterSha256": "0a7ecb49bccbf76b5442fffb7876404ab795b942b75f4b8cd046edb755f7558f"
+    },
+    {
+      "path": "moon/moon-host.js",
+      "beforeSha256": "97161eae0b3d3fd419ba28ddab63be0785d7177cc426a335ae70d467d3f5461d",
+      "afterSha256": "fac57f8dc41289edbd69bf737ba235e3f62c5890a9c09f9b245f74fcd91da90f"
+    },
+    {
+      "path": "moon/BUILD.json",
+      "beforeSha256": "62c8202a594918c63787941d3ef91d3d66a99495178690465074835446e9b396",
+      "afterSha256": "22d567793820e3e89f60f1510a948a4f31f64285bfce3ce548092bbe893fd60b"
+    }
+  ],
+  "change": "Reuse two Float64 rows of integral-table corner samples. Preserve interpolation, clipping, pixel subtraction order, validation, encoding and rounding. No scene/currentness/physical owner change.",
+  "memory": "19,264 temporary bytes per 300px sampling call; 38,528 allocated across main/calendar calls before GC. No retained cache or GC-lifetime claim.",
+  "regression": {
+    "controlsSha256": "689f50db941a597c8e23cac6f75c770ba22a1515473413c78298781aafcec535",
+    "arbitraryCoverageOracleCases": 30,
+    "returnedArrayComparisons": "Four waxing scenes compare rgba, calendarRgba, surfaceLinear, surfaceCoverage and calendarLinear byte-for-byte. No separately recorded pre-V5 physical field.",
+    "testsReceiptSha256": "109debd7997373896c20ead5f263f379bc2d315617e36733ceb6062c138fe106",
+    "affectedNodePass": 72,
+    "guards": [
+      "frozen-v1",
+      "build-guard",
+      "entry-order"
+    ],
+    "fullSuite": "Prior r20 819 PASS / 4 TODO is retained history. Only the 72 affected controls and three guards were rerun for r21."
+  },
+  "independentReviews": {
+    "initial-row-reuse-r84-review.json": "2fac6afa520f75c558e8456cfb0ca3d58c0cc2f7d4f11463a8005b1ed62b8093",
+    "initial-rows-r85-r86-review.json": "b7c86eb3b58e3f2926de257bbb982cd6ef448c7e064a2a2b0f9aa1d107300d4b"
+  },
+  "nativePair": [
+    {
+      "label": "control",
+      "resultSha256": "8e5584659113395251d04b3d320a4724df4aaf7a1b247baa0a3121b49f827597",
+      "annotationsSha256": "a218c40769ced5ecacb29be8a5b24e0390ab2ba60f2c8bc82f855fb5dfcd6f7c",
+      "firstReviewedFrame": "000023.jpeg",
+      "firstReviewedFrameSha256": "0ae04aa3e676303628fd92843e7486b74edfd3716c9875bdb8b6210befc9fb17",
+      "receiptUpperFromNavigationMs": 424.111328125,
+      "receiptUpperAfterAcceptedMs": 164.599853515625,
+      "sourceGapsOver80Ms": [
+        {
+          "from": "000030.jpeg",
+          "to": "000031.jpeg",
+          "sourceGapMs": 109.62390899658203
+        },
+        {
+          "from": "000033.jpeg",
+          "to": "000034.jpeg",
+          "sourceGapMs": 172.90091514587402
+        }
+      ],
+      "observedElapsedMs": 15172.000000005937
+    },
+    {
+      "label": "candidate",
+      "resultSha256": "71172fb6e07c9ba4522c7404bb75e877be7eeaccf7b38473b17e8ed238f81c29",
+      "annotationsSha256": "3d961dee718fb0a183687615c8a6924f9def18df46f724783c7160b183b552c5",
+      "firstReviewedFrame": "000023.jpeg",
+      "firstReviewedFrameSha256": "b25d91f496a4ae8da301fd382d3caff2b1421ffbe449b1aa071e92f28d574a97",
+      "receiptUpperFromNavigationMs": 430.69140625,
+      "receiptUpperAfterAcceptedMs": 162.800048828125,
+      "sourceGapsOver80Ms": [
+        {
+          "from": "000028.jpeg",
+          "to": "000029.jpeg",
+          "sourceGapMs": 116.10698699951172
+        },
+        {
+          "from": "000033.jpeg",
+          "to": "000034.jpeg",
+          "sourceGapMs": 176.80096626281738
+        }
+      ],
+      "observedElapsedMs": 15203.000000001339
+    }
+  ],
+  "nativeLimit": "Sampled original Moon/catalogue frames are visually consistent. One ordinary cold pair does not establish repeatable timing improvement. Source gaps above 80ms remain; receipt bounds and heuristics do not certify missing presentation. No separate owned-cleanup receipt.",
+  "unqualified": [
+    "S1 including original 80ms coverage/continuity bound",
+    "Whole callback-cost acceptance including sparse/noisy Chromium owners and Firefox acquisition limitations",
+    "Continuous visual qualification",
+    "Final candidate independent qualification and owner exact-head/base merge approval",
+    "Production delivery, independent closure certificate and issue closure"
+  ],
+  "excludedPrivateWork": "Neutral timetable rows and arc-suppression diagnostics are not adopted into this source/build. They confer no product or S1 acceptance.",
+  "firefoxCost": "r76 recorder capacity and r81 owned Git-maintenance interference remain INCOMPLETE, not demonstrated widget performance failures. No full retry is planned under the latest owner instrumentation bound.",
+  "custody": {
+    "publishedEvidenceMembers": [
+      "QUALIFICATION.json"
+    ],
+    "localOnlyNonmembers": "The referenced independent review receipts, source-control results, test receipts/logs, native results/annotations, recordings and original JPEG frames are retained locally. They are not members of this published evidence directory and these references do not make them publicly retrievable.",
+    "digestLimit": "Digests identify retained bytes; they do not establish public availability or broaden the qualification scope.",
+    "repositoryMembers": "Source and generated paths identify files in the repository; MANIFEST.json inventories the published evidence payload."
+  }
+}

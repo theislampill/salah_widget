@@ -609,6 +609,29 @@ investigation could use the browser/version, exact URL or extension, startup
 versus settled state, and a 10-20-second whole-card recording. A phone recording
 of the same event would help if the screen capture appears steady.
 
+## Initial Moon integral-row reuse (2026-10-18)
+
+The r21 source reuses two Float64 rows of integral-table corner samples instead
+of recomputing each shared corner for adjacent output pixels. Subtraction order,
+clipping, encoding and rounding are unchanged. Thirty arbitrary-coverage oracle
+cases and four returned-array scene comparisons are exact; 72 affected tests,
+frozen V1, build identity and entry-order guards pass. This allocates 19,264
+temporary bytes per 300px call, with no retained cache. Independent source and
+sampled native-pixel reviews support this bounded correction.
+
+The ordinary Chromium r85 control/candidate pair retains first coherent receipt
+bounds of 424.111/430.691 ms from navigation and 164.600/162.800 ms from accepted
+capture. Head rendering reports 60/55 ms, but one pair establishes no repeatable
+native timing improvement. The candidate retains 116.107 and 176.801 ms source
+gaps. S1, whole callback-cost and continuous visual acceptance remain incomplete.
+The private neutral-row and arc diagnostics are excluded from this candidate.
+See the [bound source and evidence projection](evidence/r0021-initial-row-reuse-20261018/QUALIFICATION.json).
+
+Firefox cost r76 (recorder capacity) and r81 (owned Git-maintenance interference)
+remain INCOMPLETE, not demonstrated widget performance failures. Following the
+owner's instrumentation bound, no full Firefox cost retry is planned. All Git
+effects and their descendants are serialized outside native/performance work.
+
 ## Remaining delivery boundary
 
 Record every remaining S1-S10 predicate and the incomplete callback comparison
