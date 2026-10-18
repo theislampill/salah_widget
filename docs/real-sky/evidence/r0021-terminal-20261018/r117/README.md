@@ -24,6 +24,12 @@ The baseline's first observed celestial frame11 has a bright Sun-like wash in th
 
 This is contrary baseline evidence, not a new candidate defect. There is no authorised automatic repeat or new recorder work arising from this result. The final review r2 supersedes [r1](../reviews/first-boundary-r117-result-review-r1.json) only to round one narrative blind-span value consistently; both are retained.
 
+## Subsequent source-clock adjudication
+
+The [independent addendum](../reviews/first-boundary-r117-source-clock-addendum-r1.json) narrows the candidate's initial blind-interval uncertainty. The original head capture, synchronous render duration and navigation clock offset give a conservative source publication lower bound of **293.049756 ms** (`229.8 + 52 + 11.249756`). The first native receipt upper bound is **273.749756 ms**, 19.3 ms earlier. Exact generated ordering keeps the card neutral and celestial layers hidden until after that synchronous render, before native boot.
+
+This excludes source-owned celestial exposure in the candidate's initial blind interval. The interval remains **UNOBSERVED**: no pixels, compositor bridge or hardware continuity were reconstructed. The prior native review and all original records remain unchanged. Together with observed neutral originals 1–14 and coherent original 15, this narrows one candidate boundary; matched-baseline added latency, later acquisition gaps and final joint TA1 qualification remain unresolved. It is not an automatic S1 PASS or permission for another capture.
+
 ## Reproduction and custody
 
 [EXECUTION.json](EXECUTION.json), both `results.json` files, original videos/sidecars, all2007 baseline and1453 candidate JPEGs in numbered ZIPs, final PNGs, selected direct originals, the unchanged detector's candidate annotations and the offline summary are published. The ZIPs contain ascending800-frame chunks (baseline three, candidate two); SUMMARY supplies every original frame hash. No duplicate padding or interpolation is counted. [PUBLICATION.json](../PUBLICATION.json) binds original and projected bytes. Only declared host-path roles and JSON serialization differ in textual projections.
