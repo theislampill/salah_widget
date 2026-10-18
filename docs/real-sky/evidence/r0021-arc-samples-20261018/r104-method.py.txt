@@ -1,0 +1,40 @@
+"""Bounded native SVG cache-equivalence check; no widget timing or whole-visual qualification."""
+from pathlib import Path
+import asyncio,datetime,hashlib,json,os,sys
+from PIL import Image,ImageChops
+from playwright.async_api import async_playwright
+O=Path(__file__).resolve().parent;R=Path(r'CHECKOUT')
+sys.path.insert(0,str(R/'tools/cp9'));from browser_runtime import browser_options,browser_identity
+out=O/'native/arc-samples-r104';assert not out.exists();out.mkdir()
+pagefile=O/'intake/arc-samples-r104.html';sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+record={'scope':__doc__,'scriptSha256':sha(Path(__file__)),'couponSha256':sha(pagefile),'cases':[],'errors':[]}
+async def run():
+ async with async_playwright() as pw:
+  for family,exe in [('chromium',r'HOST_USER\AppData\Local\ms-playwright\chromium-1223\chrome-win64\chrome.exe'),('firefox',r'HOST_USER\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe')]:
+   os.environ['SALAH_BROWSER']=family;os.environ['SALAH_BROWSER_EXECUTABLE']=exe
+   _,options=browser_options();browser=await getattr(pw,family).launch(**options)
+   try:
+    ctx=await browser.new_context(viewport={'width':730,'height':360},device_scale_factor=1)
+    page=await ctx.new_page();page.on('pageerror',lambda e:record['errors'].append(str(e)))
+    await page.goto(pagefile.as_uri());identity=browser_identity(browser)
+    for stage in range(6):
+     states=await page.evaluate('(n)=>step(n)',stage)
+     await page.evaluate('()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
+     dest=out/f'{family}-{stage}.png';await page.screenshot(path=str(dest))
+     im=Image.open(dest).convert('RGB');diff=ImageChops.difference(im.crop((0,0,325,360)),im.crop((380,0,705,360)))
+     item={'browser':identity,'stage':stage,'states':states,'file':dest.name,'sha256':sha(dest),'pixelIdentical':diff.getbbox() is None,'channelMax':[x[1] for x in diff.getextrema()]}
+     record['cases'].append(item)
+     assert states[0]['result']==states[1]['result'] and states[0]['d']==states[1]['d'],item
+     assert states[0]['queries']==201*(stage+1) and states[1]['queries']==[201,201,201,201,402,603][stage],item
+     assert states[0]['matrices']==states[1]['matrices']==stage+1,item
+     print(json.dumps({'browser':family,'stage':stage,'queries':[s['queries'] for s in states],'pixelIdentical':item['pixelIdentical'],'channelMax':item['channelMax']}),flush=True)
+    await ctx.close()
+   finally:await browser.close()
+lock=O/'native-resource.lock'
+with lock.open('x') as f:f.write('arc-samples-r104')
+record['startedAtUtc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+try:asyncio.run(run());record['status']='RETURNED_COMPONENT_EQUIVALENCE_OBSERVATIONS'
+except BaseException as e:record['errors'].append(repr(e));record['status']='INCOMPLETE';raise
+finally:
+ record['returnedAtUtc']=datetime.datetime.now(datetime.timezone.utc).isoformat();(out/'RESULT.json').write_bytes((json.dumps(record,indent=2)+'\n').encode())
+ assert lock.read_text()=='arc-samples-r104';lock.unlink()

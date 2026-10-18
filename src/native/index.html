@@ -3187,8 +3187,17 @@ function fitCn(M){
   const horizonY=hz.getBoundingClientRect().top;
   // No DOM/style mutation occurs while sampling this path. Snapshot its one
   // transform instead of forcing 201 identical layout queries during startup.
-  const svg=rail.ownerSVGElement, L=rail.getTotalLength(), railMatrix=rail.getScreenCTM(), pts=[];
-  for(let i=0;i<=200;i++){ const p=rail.getPointAtLength(L*i/200); const s=svg.createSVGPoint(); s.x=p.x; s.y=p.y; pts.push(s.matrixTransform(railMatrix)); }
+  const svg=rail.ownerSVGElement, railMatrix=rail.getScreenCTM(), d=rail.getAttribute("d"), pts=[];
+  // Font arrival changes text metrics, not the authored rail. Retain only one
+  // exact d string and its local samples; each fit still uses the live matrix.
+  const cacheable=typeof d==="string" && d.trim().length>0;
+  let samples=cacheable && fitCn._arcSamples?.d===d ? fitCn._arcSamples.points : null;
+  if(!samples){
+    const L=rail.getTotalLength(); samples=[];
+    for(let i=0;i<=200;i++){ const p=rail.getPointAtLength(L*i/200); samples.push({x:p.x,y:p.y}); }
+    fitCn._arcSamples=cacheable ? {d,points:samples} : null;
+  }
+  for(const p of samples){ const s=svg.createSVGPoint(); s.x=p.x; s.y=p.y; pts.push(s.matrixTransform(railMatrix)); }
   const halfAt=ty=>{ let l=-1e9,r=1e9; for(let i=1;i<pts.length;i++){ const a=pts[i-1],b=pts[i]; if((a.y-ty)*(b.y-ty)<=0&&a.y!==b.y){ const t=(ty-a.y)/(b.y-a.y), x=a.x+(b.x-a.x)*t; if(x<cx) l=Math.max(l,x); else r=Math.min(r,x); } } return Math.min(cx-l, r-cx); };
   let font=30;                                                  // letters' cap-top y depends on font, arc width on that y → damped fixed-point
   for(let i=0;i<12;i++){

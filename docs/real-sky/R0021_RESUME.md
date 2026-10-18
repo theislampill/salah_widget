@@ -12,10 +12,10 @@ merge. Issue 33 remains open. Source tests and selected pixels do not complete S
   `codex/r0021-startup-completion`; the PR body records the exact pushed checkpoint
   HEAD. Use that immutable SHA, not a stale SHA copied from an earlier report.
 - Production/base: `f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de` on `main`.
-- This digest correction's source parent: `e883c7d88f92f3724a36243eb83e890a0f250ecf`.
-- Tested runtime r25: `2629ff148f236a941040ef88958f114e4a0e1562a4b3fb99499970c52a33b7c5`;
-  generated index: `93731942888a25c7cdab3956d43d95c5d30313ab7f91e62ac649bee51ee382a1`.
-  [Full runtime identity](evidence/r0021-digest-20261018/runtime.json).
+- This arc-sampling correction's source parent: `b0eb7fb826d31d35a4ac6ed692acefa13c805cea`.
+- Tested runtime r26: `7bf73d6b7fc3cc5ae0c6aa3e2276c8a84b5624175fa1c446f85e35bef69334f9`;
+  generated index: `3028b9659f04bb5ae8324040299c1d97699d0f6d0a5126d653d2d92334b7ff57`.
+  [Full runtime identity](evidence/r0021-arc-samples-20261018/runtime.json).
 - Edit `src/native/index.html`, `moon/src/`, `sky/` or the corresponding semantic
   owner. Regenerate with `python -B tools/build_native.py`. Root index/offline and
   Moon bundles are generated outputs. Do not hand-edit them.
@@ -40,6 +40,7 @@ This handoff is a navigation aid, not a replacement acceptance contract.
 | Initial Moon shared integral corners reused in two Float64 rows | [Exact numerical controls](evidence/r0021-initial-row-reuse-20261018/QUALIFICATION.json). Temporary allocation bounded, not a whole-heap or GC certificate. |
 | Loader-completed paint reused; late accepted weather/track/elevation explicitly dirties scene; advancing sim-clock initialized separately | [331 passes / 4 TODOs and actual frozen-weather before/after endpoints](evidence/r0021-startup-handoff-20261018/MANIFEST.json). Chromium/Firefox both reproduced and repaired the stale unavailable header. Actual buckle/select/close route preserves accepted weather. |
 | Portable SHA-256 direct state-word access avoids per-block temporary arrays/iteration | [Current source, tests, original recording and independent reviews](evidence/r0021-digest-20261018/MANIFEST.json). All hash arithmetic, bounds and asset checks remain; exact source-association guard rejects unknown drift. 137 affected Node passes, 16 Python controls, frozen V1 verified. |
+| Exact prayer-arc samples reused for font refits | [27 affected passes, native component controls and ordinary comparison](evidence/r0021-arc-samples-20261018/MANIFEST.json). One exact nonempty path and 201 numeric local points; each fit uses fresh font metrics and screen transform. All 12 same-position Chromium/Firefox pairs are byte-identical. Retained as bounded work reduction, not an S1 repair or demonstrated native speedup. |
 
 The last full canonical suite was **819 PASS, zero FAIL, four TODOs** on r20;
 later changes have their affected suites above. Do not describe 819 as a fresh
@@ -68,6 +69,26 @@ frame 26 has arc/timetable but still says **Countdown unavailable**. Source and
 receipt timestamps are not hardware presentation evidence. Do not restart the
 budget at a later native capture, interpolate gaps, or use eventual readiness
 to pass the original first-scene/continuous requirement.
+
+The latest ordinary r105 observation on r26 first shows Moon/catalogue in frame16,
+at receipt upper bounds **369.893 ms from navigation /162.700 ms after earliest
+accepted head capture**. Its gaps are **120.217 ms (23→24)** and **178.081 ms
+(26→27)**. Selected originals preserve Moon/stars; frame27 adds arc/timetable/
+weather while Countdown remains unavailable. This has **not improved S1** on the
+available evidence. At this overnight time, `model()` correctly withholds the
+countdown until tomorrow's Fajr record is accepted; the successor was requested.
+No additional countdown defect or speculative correction is claimed.
+
+[The new evidence bundle](evidence/r0021-arc-samples-20261018/QUALIFICATION.json)
+contains the r103 CPU profile, all original r104/r104b component images and their
+exact HTML fixtures, original RED and final affected tests, three independent
+reviews, full r105 video/sidecar and all1470original JPEGs. The first2200ms ZIP is
+separate from three remaining-frame ZIPs; member manifests bind every frame.
+The earlier side-by-side r104 mismatches remain visible in its original ZIP.
+r104b removes the position difference and changes visibility only between
+screenshots; it does not refit between paired captures. No tolerance was added.
+No owned Git/native work ran alongside r105; unrelated host Python jobs existed.
+This is not an exclusive-host performance certificate.
 
 The public digest bundle includes the full r101 video and timestamp sidecar,
 all original JPEGs through navigation+2200ms in a ZIP, six directly viewable
@@ -125,6 +146,7 @@ is no extra indefinite owner-flicker gate.
 | Driver disabled Chromium RenderDocument default | A controlled restoration removed demonstrated new-tab throttling. Existing guarded `--restore-render-document` option is retained; not S1 credit. |
 | Duplicate startup render / asynchronous weather while frozen | Source reproduction and actual Chromium/Firefox functional correction retained in r95/r97. |
 | SHA per-block iterator/array overhead | Output-equivalent correction retained. Warm Node microbenchmark was 57.375→14.010ms on receiver bytes; not browser timing/callback proof. r101 ordinary comparison is above. |
+| Current r103 CPU discriminator / repeated exact arc queries | One current diagnostic profile sampled `fitCn`64.784ms self/67.934ms inclusive;39of41 position ticks fell on the 201-query loop. The r26 cache reduces repeated native queries with exact component pixels. r105 still misses continuity; reject the claim that this alone repairs S1. Do not repeat this profile or the position-control campaign without a new reason. |
 | Repeated initial corner integrals | r21 exact output correction retained; one native pair did not establish repeatable timing benefit. |
 | r87 late UI/GPU flush | About128.563ms wall but9.583ms CPU thread time; source gap181.519ms. GPU contribution plausible, unique owner not established. |
 | Hidden arc r90 / all four arc filters removed r92 | Some late GPU work reduced, but wrong/missing approved pixels and remaining gaps (r92 103.883ms). Diagnostic only, not product fixes. |
@@ -134,12 +156,15 @@ is no extra indefinite owner-flicker gate.
 
 ## Next concrete actions
 
-1. Inspect the current r101 originals and current source. A single existing
-   Chromium `--cpu-profile` run could discriminate remaining CPU cost at UI
-   publication. The old r2 profile is stale. `fitCn` still makes 201
-   `getPointAtLength` queries, but r101 has **not** attributed either gap to it.
-   Do not change native arc sampling/shape or font geometry on that assumption.
-2. Only if a current causal lead supports a correction: make the smallest
+1. Start from r26, the current r103 profile and r105 original frames; the planned
+   current CPU discriminator and exact-arc optimisation are completed. Review the
+   remaining `prepareNativeFirstPaint`/`capture`/`compose` work against the retained
+   late UI/GPU-flush evidence. The profile's window is relative to profiler start,
+   not navigation, and does not attribute the entire gap to those functions.
+   Establish a source-level redundant-work or publication-order case before a
+   further patch. Do not alter approved arc/filter/physics output or fabricate a
+   cause from a long source-frame interval. No next product patch is yet supported.
+2. Only if that existing evidence supports a specific correction: make the smallest
    reversible owner change, exercise affected positive/boundary controls and
    use one comparable ordinary native recording. Independently review the exact
    candidate. Reject a negative experiment promptly; preserve failed evidence.
@@ -169,6 +194,7 @@ Commands below are run from the checkout; use an absolute Python executable for
 
 ```powershell
 $env:SALAH_TEST_PYTHON = (Get-Command python).Source
+node --test tests/real-sky/native-prayer-arc-samples.test.cjs tests/real-sky/native-startup-critical-path.test.mjs tests/real-sky/native-first-paint.test.mjs tests/real-sky/native-startup-handoff.test.cjs tests/real-sky/native-preservation.test.mjs
 node --test moon/tests/asset-digest.test.cjs moon/tests/compact-codec.test.cjs moon/tests/initial.test.cjs moon/tests/kernel.test.cjs moon/tests/host.test.cjs moon/tests/pool.test.cjs moon/tests/native-lunar-factors.test.cjs
 python -I -S -B tests/real-sky/initial_source_association_test.py
 python -I -S -B tests/real-sky/moon_build_guard_test.py
@@ -191,7 +217,8 @@ $env:SALAH_CAPTURE_NATIVE_FRAMES = '1'
 python -I -B tools/cp9/celestial_startup_check.py --root $candidate --out $out --driver-cli "$driver/cli.js" --driver-node $node --video-only --compositor-marker --modes cold --duration 20 --entry direct --persistent-profile --restore-render-document
 ```
 
-Adding `--cpu-profile` makes a diagnostic acquisition, not ordinary timing or
+The current r103 `--cpu-profile` acquisition is already published; do not repeat
+it simply to resume. Adding that flag makes a diagnostic acquisition, not ordinary timing or
 visual qualification. Do not run it concurrently with Git, builds, tests or
 another browser. Preserve errors and sidecars; inspect originals before judging
 the result. Existing tests/harness/fixtures are in GitHub: continuation does not

@@ -1,0 +1,178 @@
+{
+  "schema": "r0021-arc-samples-public-evidence/1",
+  "status": "REVIEWED_BOUNDED_WORK_REDUCTION; S1_AND_WHOLE_COST_INCOMPLETE; NOT_MERGE_READY",
+  "sourceParentCommit": "b0eb7fb826d31d35a4ac6ed692acefa13c805cea",
+  "runtimeTreeSha256": "7bf73d6b7fc3cc5ae0c6aa3e2276c8a84b5624175fa1c446f85e35bef69334f9",
+  "sourceFiles": {
+    "src/native/index.html": "6054f1eb3e7f04aa5975707345810b64fc824bc99e17ce3798369a959a123fad",
+    "tests/real-sky/native-prayer-arc-samples.test.cjs": "797620dbd62c49e81b3c724def2e215219b74bd45621213ac669cd7bd197b51d",
+    "tests/real-sky/native-startup-critical-path.test.mjs": "9d25cf91cd63f53c4828112f5dfb74e3931a7f46135e2a0cf5eecc186571f450",
+    "index.html": "3028b9659f04bb5ae8324040299c1d97699d0f6d0a5126d653d2d92334b7ff57",
+    "offline.html": "a3f92094d516367d6ec226487fea61b4a91410009e4b017a407431391cb9c74a",
+    "moon/BUILD.json": "064164d4e04b0c389c083d2cd5c6587ba66ac18247c7c5c3993049bbe6c287ec"
+  },
+  "correction": "Retain one exact nonempty SVG path and 201 numeric local samples. Font fits still read fresh metrics and screen matrix. Changed, empty or failed paths do not admit stale/partial samples. Native arc shape and physics unchanged.",
+  "tests": {
+    "affectedPass": 27,
+    "affectedFail": 0,
+    "originalRed": {
+      "pass": 1,
+      "fail": 2
+    },
+    "newRegressionTests": 4
+  },
+  "component": {
+    "cases": 12,
+    "samePositionByteIdenticalPairs": 12,
+    "baselineCumulativePathQueries": [
+      201,
+      402,
+      603,
+      804,
+      1005,
+      1206
+    ],
+    "candidateCumulativePathQueries": [
+      201,
+      201,
+      201,
+      201,
+      402,
+      603
+    ],
+    "retainedContrary": "r104 side-by-side pixels differed in six cases along the unchanged arc. Original images/results retained; r104b changes only panel position and visibility capture, not fit/path code. No unique raster-cause claim."
+  },
+  "native": {
+    "r105FirstMoonStarsFrame": 16,
+    "receiptUpperNavigationMs": 369.89306640625,
+    "receiptUpperAcceptedMs": 162.699951171875,
+    "sourceGapsMs": [
+      120.21708488464355,
+      178.08127403259277
+    ],
+    "r101SourceGapsMs": [
+      115.0970458984375,
+      161.8649959564209
+    ],
+    "verdict": "No demonstrated native speedup or S1 repair. Single observations, not repeatability or regression certification. Selected pixels preserve Moon/stars; frame27 still has Countdown unavailable.",
+    "environmentLimit": "No owned Git/native job ran concurrently. Unrelated host Python jobs existed and were left untouched; no exclusive-host timing claim."
+  },
+  "countdownTriage": "After Isha, model() correctly leaves leftMin nonfinite until the accepted next civil-day Fajr record exists. r105 requested that successor. No new defect or correction is claimed from that interim label.",
+  "cpuScope": "r103 profile is diagnostic only. First2000ms are relative to profiler start, not navigation/presentation. fitCn sampled64.784ms self/67.934ms inclusive;39of41 position ticks landed on the201-path-query loop. This supports removing repeated queries, not attribution of all gaps.",
+  "reviews": [
+    "arc-samples-r104-review.json",
+    "arc-samples-r104b-review.json",
+    "arc-samples-r105-review.json"
+  ],
+  "limits": [
+    "Original80ms S1 bound unchanged; source/receipt timestamps are not hardware presentation.",
+    "Whole callback cost and continuous visual matrix remain INCOMPLETE.",
+    "Firefox r76 capacity/r81 interference are INCOMPLETE, not demonstrated widget failures; no new cost campaign.",
+    "No production merge approval or independent closure certificate."
+  ],
+  "publication": {
+    "prefixFrames": 170,
+    "prefixLimit": "First2200ms ZIP contains170originals with source timestamp <=navigation+2200ms. Three remaining-originals ZIPs contain every other original JPEG. All1470original frames, full video and timestamp sidecar are public.",
+    "projections": {
+      "source-and-tests.json": {
+        "originalSha256": "590e0bcdfd36a2ece0eb4accb4fb94adec1fcb1064ad3631f4cee4a7ca3879c4",
+        "publishedSha256": "30e9a5788f845748e1981cb1af01f8dc285feb211da2125a710cebaaec91bf45",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "arc-samples-r104-review.json": {
+        "originalSha256": "c7665c19c290e82950b4223f45dcc4c980a47b3ac765e6002c717689cc06887e",
+        "publishedSha256": "0097c668689fd0b6802bf0a1af24012fb3220483b687365be9f4e306e7b87878",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "arc-samples-r104b-review.json": {
+        "originalSha256": "4d14e251aecd13cb507ed8182a263ffcdedb1c15c97834f5bedd839a37467c96",
+        "publishedSha256": "4d14e251aecd13cb507ed8182a263ffcdedb1c15c97834f5bedd839a37467c96",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "arc-samples-r105-review.json": {
+        "originalSha256": "7515d328acd99b73c3f8681ac96c6fe0196bf3945ebd063b0f1b9471f2199ef6",
+        "publishedSha256": "7515d328acd99b73c3f8681ac96c6fe0196bf3945ebd063b0f1b9471f2199ef6",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "arc-samples-r104-red.txt": {
+        "originalSha256": "cdc10a35c37af207c2ddfc4c497e06bf2df74c3935824d18781602753c0be155",
+        "publishedSha256": "d60a22b54e179e2033194536fe1a0e319f9f472db2a299354928476eada8af83",
+        "transform": "UTF-8/LF with host-path aliases; trailing spaces removed from four otherwise blank lines. Original private failure log unchanged; numeric/error text unchanged."
+      },
+      "arc-samples-r104-affected.txt": {
+        "originalSha256": "8007bf85ed1ce4cac11cf19b4a666adb2ff449572c440d51a8043848c8f91489",
+        "publishedSha256": "779f5c968f5b6f0c59a1b3b9dd59827b823ac3280c168c09abb6ea766c7ac75b",
+        "transform": "UTF-8/LF with host-path aliases; not a runnable host configuration."
+      },
+      "arc-samples-r104-build.txt": {
+        "originalSha256": "19894747ed8710f38246dcd308fe2fcf69c518bd16247d6caa06343d619586dc",
+        "publishedSha256": "6124dc020bee2f55d4b4e0cf80c30efaf7c35134a1306e6b864a71c8312c7c5b",
+        "transform": "UTF-8/LF with host-path aliases; not a runnable host configuration."
+      },
+      "r104-result.json": {
+        "originalSha256": "9b5cfc769ec64d48f0e1f4204314d194640fe8c0b3b46a1e04ad4810987f0aae",
+        "publishedSha256": "640b29e3ea6948f63cf72c5c8e0822dc64a649c5c7b5748781938b0a8ca7c35b",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "r104-method.py.txt": {
+        "originalSha256": "4c0a32754d45bab5acb19b0af270e0e72d4804922d93400a37d8616014aa9a57",
+        "publishedSha256": "570568344a7f0fe1d61a0d83f6d4e4b532e62c64c928c71dc9a36410b0e1389e",
+        "transform": "UTF-8/LF with host-path aliases; not a runnable host configuration."
+      },
+      "r104b-result.json": {
+        "originalSha256": "f8b55949f9f93b44203e89de8c13e86e9b14ff09048c3b79482acb790e11e9e5",
+        "publishedSha256": "9e67de8db47f7ed7daa17fb90fc2cdb40c1834f0e67fb8c7ba1013fa94d9be4d",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "r104b-method.py.txt": {
+        "originalSha256": "83c77cb1241d610cff5da1cf1820074172676e89d9829bc2657d940791fef704",
+        "publishedSha256": "db3426e95db5231fdf727809a47fa7c10354bd300f2cb2885e7ecbabf055e6a3",
+        "transform": "UTF-8/LF with host-path aliases; not a runnable host configuration."
+      },
+      "r103-cpu-profile.json": {
+        "originalSha256": "99c4843d32ba8ac4f93e2d0d08e4b34de2791e11ff8c0f3b454a183879455672",
+        "publishedSha256": "b454ca43447883a73eb5888f0333648d0068105da57d5caab855ec0ee6f835aa",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "r103-cpu-summary.json": {
+        "originalSha256": "1919c5b859e8fcd00f10f3cd4cb33a6c3142d0c28806c21055a18b56bac75b2f",
+        "publishedSha256": "1919c5b859e8fcd00f10f3cd4cb33a6c3142d0c28806c21055a18b56bac75b2f",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "r103-execution.json": {
+        "originalSha256": "27357138fd7d513da93d89768d1395ea66adfe3bda4fd4381079cf8679e50351",
+        "publishedSha256": "e319ff31cccae1b958c3485c5356546d830c8942029eca98c19d3f62f71644df",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "r105-results.json": {
+        "originalSha256": "e0f5ad9f0f972a300e54109f8e24927932ddb32dc22be75b92ed55a3a56f37f6",
+        "publishedSha256": "612a1e60d7f12b53a5d1cb778c654d157118f7c08706b929db07ccd919f4ef88",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "r105-execution.json": {
+        "originalSha256": "2eacd6922578f9d3c4b7d6508f618994c331e85620f2c9d08387b22e2b9c5913",
+        "publishedSha256": "a3add5b1ad3656c3034cfe28486c92ed1cd739addaeab2b00e5e7b51e8f7c87b",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      },
+      "r105-annotations.json": {
+        "originalSha256": "ae668f98efaf3cdaa2041f643010736cc1320671bc3dcb8091755e325421da25",
+        "publishedSha256": "243dede06db6e91f6aaaf998d9541393feb298d1af326763340ca55e0048098c",
+        "transform": "Host-path aliases and JSON formatting only; numeric observations unchanged."
+      }
+    },
+    "referenceResolution": {
+      "rule": "Only MANIFEST members are in this bundle. Original SHA values are provenance, not public availability. Repository source/runtime at this checkpoint is separately available.",
+      "aliases": {
+        "EVIDENCE": "Private work-product root; not downloadable.",
+        "CHECKOUT": "Repository checkout; use relative source paths at PR head.",
+        "HOST_USER": "Redacted user directory; not published.",
+        "TOOLCHAIN": "Redacted installed toolchain; not published."
+      },
+      "mapping": "r103-* contains the profile/summary/execution projection. r104/r104b-result.json maps private RESULT.json; corresponding originals.zip contains every component PNG; component.html is exact fixture bytes. r105-results/execution/annotations.json map the named native files; r105.webm and source-frames.jsonl are exact bytes; selected frames use r105-NNNNNN.jpeg. The prefix ZIP plus remaining-originals ZIPs covers all1470source JPEGs; per-member manifests bind each original. Original r104 packet is projected as source-and-tests.json. Method texts are provenance with aliases, not runnable without configuring host paths.",
+      "unpublished": "Browser profiles, executable/toolchain trees, private builds, raw r103 video, and other aliased private references are not public."
+    },
+    "privacy": "Only isolated controlled fixtures; no personal browser/profile/provider data. Host paths aliased in text/JSON; originals unaltered.",
+    "allOriginalFrames": 1470
+  },
+  "authority": "Existing draft PR67 preservation only. Exact-head/base owner approval, public delivery verification and independent certificate-first closure remain required."
+}

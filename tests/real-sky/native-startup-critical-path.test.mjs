@@ -10,7 +10,7 @@ test('prayer-name fitting snapshots one unchanged arc transform per fit',()=>{
  let matrixReads=0,pointReads=0;
  const styles={fontSize:'30px',top:'100px',marginBottom:'0px',fontFamily:'serif'},cn={style:{...styles},textContent:'Isha'},nt={};
  const matrix={a:1,b:0,c:0,d:1,e:8,f:8};
- const rail={getTotalLength:()=>200,getPointAtLength:length=>{pointReads++;return {x:20+length*1.4,y:200-100*Math.sin(length*Math.PI/200)};},getScreenCTM(){matrixReads++;return matrix;},ownerSVGElement:{createSVGPoint:()=>({matrixTransform(m){return {x:this.x*m.a+m.e,y:this.y*m.d+m.f};}})}};
+ const rail={getAttribute:()=>"test-rail",getTotalLength:()=>200,getPointAtLength:length=>{pointReads++;return {x:20+length*1.4,y:200-100*Math.sin(length*Math.PI/200)};},getScreenCTM(){matrixReads++;return matrix;},ownerSVGElement:{createSVGPoint:()=>({matrixTransform(m){return {x:this.x*m.a+m.e,y:this.y*m.d+m.f};}})}};
  const elements={'.cn':cn,'.nt':nt,'.arc .rail':rail,'.arc .horizon':{getBoundingClientRect:()=>({top:200})},'.bar':{getBoundingClientRect:()=>({top:260})}};
  const run=code=>{
   cn.style={...styles};matrixReads=0;pointReads=0;
@@ -47,7 +47,7 @@ test('optional remote font CSS cannot block the native bootstrap',()=>{
 test('cached fallback fitting responds once to relevant native font completion',()=>{
  const code=source.slice(source.indexOf('let _cnFit="";'),source.indexOf('// PROCEDURAL BRANCHING LIGHTNING'));
  let measurements=0;const listeners=new Map(),cn={style:{top:'100px',marginBottom:'0px',fontFamily:'Fraunces'},textContent:'Forenoon'},nt={};
- const rail={getTotalLength:()=>200,getPointAtLength:l=>({x:20+l*1.4,y:200-100*Math.sin(l*Math.PI/200)}),getScreenCTM:()=>({}),ownerSVGElement:{createSVGPoint:()=>({matrixTransform(){return {x:this.x,y:this.y};}})}};
+ const rail={getAttribute:()=>"test-rail",getTotalLength:()=>200,getPointAtLength:l=>({x:20+l*1.4,y:200-100*Math.sin(l*Math.PI/200)}),getScreenCTM:()=>({}),ownerSVGElement:{createSVGPoint:()=>({matrixTransform(){return {x:this.x,y:this.y};}})}};
  const elements={'.cn':cn,'.nt':nt,'.arc .rail':rail,'.arc .horizon':{getBoundingClientRect:()=>({top:200})},'.bar':{getBoundingClientRect:()=>({top:260})}};
  // Native check() may report true before an absent family is registered. The
  // browser regression covers the real CSS/font transport; this checks caching.
@@ -71,7 +71,7 @@ test('individual font arrival refits before the other family settles',async()=>{
  const faces=[{family:'Fraunces',status:'loading',loaded:new Promise(r=>releaseFraunces=r)},
   {family:'Inter',status:'loading',loaded:new Promise((_,r)=>rejectInter=r)}];
  const cn={style:{top:'100px',marginBottom:'0px',fontFamily:'Fraunces'},textContent:'Forenoon'},nt={};
- const rail={getTotalLength:()=>200,getPointAtLength:l=>({x:20+l*1.4,y:200-100*Math.sin(l*Math.PI/200)}),getScreenCTM:()=>({}),ownerSVGElement:{createSVGPoint:()=>({matrixTransform(){return {x:this.x,y:this.y};}})}};
+ const rail={getAttribute:()=>"test-rail",getTotalLength:()=>200,getPointAtLength:l=>({x:20+l*1.4,y:200-100*Math.sin(l*Math.PI/200)}),getScreenCTM:()=>({}),ownerSVGElement:{createSVGPoint:()=>({matrixTransform(){return {x:this.x,y:this.y};}})}};
  const elements={'.cn':cn,'.nt':nt,'.arc .rail':rail,'.arc .horizon':{getBoundingClientRect:()=>({top:200})},'.bar':{getBoundingClientRect:()=>({top:260})}};
  const fonts={status:'loading',check:()=>true,[Symbol.iterator]:()=>faces[Symbol.iterator](),addEventListener:(name,fn)=>listeners.set(name,fn)};
  const scope={_renderDirty:false,Math,isFinite,parseFloat,$:s=>elements[s],getComputedStyle:e=>e.style,

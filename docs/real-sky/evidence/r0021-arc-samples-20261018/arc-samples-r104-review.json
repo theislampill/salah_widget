@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "scope": "Independent bounded r104 source/control and prospective component-method review; no execution or qualification authority",
+  "observedAtUtc": "2026-10-18T06:46:17.774050+00:00",
+  "packet": {
+    "path": "EVIDENCE\\intake\\arc-samples-r104.json",
+    "sha256": "590e0bcdfd36a2ece0eb4accb4fb94adec1fcb1064ad3631f4cee4a7ca3879c4"
+  },
+  "baseCommit": "b0eb7fb826d31d35a4ac6ed692acefa13c805cea",
+  "sourceAndGeneratedPins": {
+    "src/native/index.html": "6054f1eb3e7f04aa5975707345810b64fc824bc99e17ce3798369a959a123fad",
+    "tests/real-sky/native-prayer-arc-samples.test.cjs": "797620dbd62c49e81b3c724def2e215219b74bd45621213ac669cd7bd197b51d",
+    "tests/real-sky/native-startup-critical-path.test.mjs": "9d25cf91cd63f53c4828112f5dfb74e3931a7f46135e2a0cf5eecc186571f450",
+    "index.html": "3028b9659f04bb5ae8324040299c1d97699d0f6d0a5126d653d2d92334b7ff57",
+    "offline.html": "a3f92094d516367d6ec226487fea61b4a91410009e4b017a407431391cb9c74a",
+    "moon/BUILD.json": "064164d4e04b0c389c083d2cd5c6587ba66ac18247c7c5c3993049bbe6c287ec"
+  },
+  "methodPins": {
+    "prepare_arc_samples_r104.cjs": "d11c685f94cf53623fc75ebe4ee872696f4c581f34ee137b73fa67e6e30bb767",
+    "check_arc_samples_r104.py": "4c0a32754d45bab5acb19b0af270e0e72d4804922d93400a37d8616014aa9a57",
+    "intake/arc-samples-r104.html": "1436255039af7d49c8c1ff28ce2404f1ec333c9c707d94981762289186e20f93"
+  },
+  "runtime": {
+    "treeSha256": "7bf73d6b7fc3cc5ae0c6aa3e2276c8a84b5624175fa1c446f85e35bef69334f9",
+    "fileCount": 142,
+    "changedManifestEntriesFromR25": [
+      "index.html",
+      "moon/BUILD.json",
+      "offline.html"
+    ],
+    "verificationLimit": "Recomputed manifest identity and checked six frozen/live file pins; did not rehash all unchanged runtime assets."
+  },
+  "reviewedControls": {
+    "affectedLogSha256": "8007bf85ed1ce4cac11cf19b4a666adb2ff449572c440d51a8043848c8f91489",
+    "reportedPass": 27,
+    "reportedFail": 0,
+    "redLogSha256": "cdc10a35c37af207c2ddfc4c497e06bf2df74c3935824d18781602753c0be155",
+    "baselineFailures": 2,
+    "reviewerReranTests": false
+  },
+  "checks": [
+    "Exact old/new fitCn source strings embedded in the frozen coupon match r25 and r104.",
+    "Only production source hunk replaces repeated path sampling with one last-entry exact nonempty-d cache. drawArc and all other source bytes unchanged.",
+    "Cache retains one d string and 201 plain numeric x/y points, no DOM node, matrix or typography object; replacement/failed sampling does not publish a partial entry. No new timer or controller.",
+    "Every executed fit continues to obtain the current screen matrix and transform all 201 points before unchanged font/layout logic.",
+    "Four actual-source controls cover font metrics, same-d node replacement and nonuniform/sheared matrix, A-B-A/absent/whitespace paths, and interrupted sampling. Three existing rail doubles only gained getAttribute.",
+    "Coupon uses the real browser SVG path API, original drawArc output and its distinct +1-second moving-knot output, six stages per browser, exact styles/d/query/matrix checks and paired original screenshots."
+  ],
+  "findings": [
+    {
+      "id": "R104-COMPONENT-RESULT-GUARD",
+      "severity": "observation",
+      "file": "check_arc_samples_r104.py",
+      "detail": "The runner records pixelIdentical but does not assert it; its returned status is observation completion, not equality. ROOT must inspect all twelve pixelIdentical results and original pairs before the next capture."
+    }
+  ],
+  "decision": {
+    "source": "SUPPORTED_BOUNDED_SOURCE_CORRECTION",
+    "component": "SUPPORTED_ONE_EXACT_SERIAL_CHROMIUM_FIREFOX_12_CASE_CONTROL",
+    "ordinaryR105": "Supported only after all twelve paired pixel comparisons are identical, existing geometry/style/query/matrix assertions pass, no errors remain, and originals are reviewed. Use unchanged ordinary r101 method and this exact immutable candidate. Stop for any mismatch; no automatic retry.",
+    "merge": "NOT_AUTHORIZED"
+  },
+  "limits": [
+    "No native component result existed at review cutoff. No browser/test/profile run performed by reviewer.",
+    "The cache deliberately misses when the moving knot changes d; sampled CPU self time does not establish the achieved startup improvement.",
+    "The native coupon is a component control using generic fonts, not full widget/font transport, continuous pixels, hardware presentation or callback-cost qualification.",
+    "Original S1 source gaps, earliest-acceptance budgets, historical cost failures/incompleteness and Firefox limits remain. No full-suite or whole-head PASS inferred.",
+    "Formal canonical currentness, epoch and native lifecycle remain unverified."
+  ]
+}

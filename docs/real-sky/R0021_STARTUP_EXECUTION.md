@@ -12,6 +12,27 @@ does not reopen V1 or the V5 research programme.
 For the current actionable checkpoint, commands, retained negative experiments
 and authority boundary, start with [R0021_RESUME.md](R0021_RESUME.md).
 
+## Exact arc samples and bounded startup comparison (2026-10-18)
+
+The current r103 CPU discriminator located repeated native SVG queries in
+`fitCn`. r26 retains one exact nonempty path and its 201 numeric local samples;
+font refits still obtain fresh metrics and the live screen matrix. The affected
+27 tests pass, including path replacement, invalid paths, failed sampling and
+matrix/font changes. Actual Chromium/Firefox component controls reduced six-fit
+cumulative queries from1206 to603. All12 same-position pairs are byte-identical.
+The original six side-by-side r104 mismatches remain in the published evidence;
+no pixel tolerance or unique raster-cause claim was introduced.
+
+Independent review supports this bounded work reduction, **not an S1 repair**.
+The single ordinary r105 startup has first Moon/catalogue receipt bounds
+369.893ms from navigation and162.700ms after original head acceptance, with
+source gaps120.217/178.081ms. These do not improve the available S1 observations.
+Selected originals retain Moon/stars. The overnight countdown awaits the accepted
+next-day Fajr record; no unsupported countdown correction is made. The original
+80ms bound, whole callback cost and continuous visual obligations remain open.
+The [source/profile, controls, original images/video and reviews](evidence/r0021-arc-samples-20261018/MANIFEST.json)
+are a continuation checkpoint on PR67, not production qualification.
+
 ## Startup handoff and digest correction (2026-10-18)
 
 The loader's completed accepted-second paint is now reused by the animation
