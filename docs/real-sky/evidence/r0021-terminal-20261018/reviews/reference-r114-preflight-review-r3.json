@@ -1,0 +1,27 @@
+{
+  "schema": "r0021-reference-cli-supplement-v1",
+  "atUtc": "2026-10-18T17:24:18.093085+00:00",
+  "decision": "SUPPORTED_CLI_CORRECTED_CONDITIONAL_COMPILE_AND_SINGLE_REFERENCE",
+  "priorReviewSha256": "4f7ff6cf195893fb0b2fc90d2df97ef1e4edacf239e838c5fbc5db6e9eb55689",
+  "planSha256": "850f1b2d72fce4f26708810602948cdb63def441a2a93ad8502f60519c9fb796",
+  "wrapperSha256": "edb52a5fed8b7ff65367196da23cc561f6d7a0143862f0b23bbe2227446f1cee",
+  "harnessSha256": "3dcc434f96ac589b87aaf4ba4d5eca56f0fba0e6bf5806c1e63fd311c994a201",
+  "retainedFailure": {
+    "executionSha256": "c30067f8afa1122f162e9fd1c4314a8215be662294ebd071124892535d6e870e",
+    "compileLogSha256": "02b19012bf2a78128d83cdefb86a5fbe54685116307b0faa5d6de187645bbb57",
+    "status": "INCOMPLETE",
+    "cause": "zig cc rejected --export-all; no diagnostic WASM or numerical output existed.",
+    "compileExitCode": 1,
+    "numericalAttempt": false,
+    "lockReleased": true
+  },
+  "verifiedDelta": "Wrapper exact byte equivalence after only plan name/hash and compile/numerical/receipt output paths changed. Plan retains all source identities and stop controls; command switches to build-exe with freestanding no-entry/export/import/memory options, preserved C -O2/-fno-fast-math/-ffp-contract=off/-fno-builtin and isolated output/cache.",
+  "primaryDocumentation": "https://ziglang.org/documentation/0.14.0/#WebAssembly",
+  "scope": "Same approved one64x256 diagnostic reference remains unconsumed. One corrected compile attempt, then only on success the unchanged prefix-guarded reference. No product/source/rule or gate change; no automatic retry/additional variant.",
+  "limits": [
+    "Actual compilation/API success is conditional, not inferred from documentation. Prefix identity checks still stop before reference on numeric divergence.",
+    "Prior owned-cleanup correction,120s compile/600s numerical host deadlines and240s cooperative bound remain exact.",
+    "No compiler or numerical execution by reviewer; no native/performance/accuracy/implementation/merge credit."
+  ],
+  "blockingFindings": []
+}

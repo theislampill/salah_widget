@@ -461,7 +461,10 @@ class MoonEngine{
  * terrain/finite-light solution is evaluated at every admitted receiver; this
  * selects angular quadrature effort, not geography, material or source energy.
  */
-function sourceRule(n){const pairs={64:[4,16],256:[8,32],1024:[16,64],4096:[32,128],8192:[64,128]};if(!pairs[n])throw new RangeError('source rule');return pairs[n];}
+// Spend the terminal increment on azimuth: the retained DPR2 scene needs it.
+// A separate fixed-angular reference bounds that scene's radial uncertainty;
+// this remains an empirical refinement rule, not an absolute error certificate.
+function sourceRule(n){const pairs={64:[4,16],256:[8,32],1024:[16,64],4096:[32,128],8192:[32,256]};if(!pairs[n])throw new RangeError('source rule');return pairs[n];}
 function qualityMask(before,after,{first=false,threshold=.125}={}){
  const a=before.receiverCodes,b=after.receiverCodes,m=after.ambiguous;
  if(!Number.isFinite(threshold)||threshold<=0||!a||!b||a.length!==b.length||b.length%3||m?.length!==b.length/3)throw new RangeError('quality input');
