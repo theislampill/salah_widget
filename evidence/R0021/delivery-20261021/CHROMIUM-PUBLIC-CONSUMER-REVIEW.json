@@ -1,0 +1,206 @@
+{
+  "schema": "r0021-independent-delivery-consumer-result/v1",
+  "status": "CHROMIUM_PUBLIC_ENDPOINTS_SUPPORTED_WITH_RETAINED_HARNESS_FAILURE",
+  "reviewer": "existing independent R0021 reviewer",
+  "reviewedAtUtc": "2026-10-21T20:44:38.096682+00:00",
+  "merge": "f71fef6ccf7e4efcb57b5a26688d2360461a3253",
+  "runtimeSha256": "1b6586d8921a99780b2cefff95821ad90bf39571ef074ccffe4234ec8aa7f02b",
+  "rawRecords": {
+    "summary": {
+      "path": "delivery/native/summary.json",
+      "sha256": "5e657a5638041e501ca0f417778bbef541c9574f61598ef477683ca66334b2c7"
+    },
+    "cell": {
+      "path": "delivery/native/chromium-public-cloud/result.json",
+      "sha256": "7b2c8d4aeb8d867510af7b8c9fd67489a9df3dc2d9a572d1d75956eb34360666"
+    },
+    "log": {
+      "path": "delivery/native-run.log",
+      "sha256": "87f052fdbd26437cc711f0c3e93bf17cbf7d4a0c496e11d4de8f26aef903743e"
+    },
+    "method": {
+      "path": "delivery/CONSUMER-METHOD-REVIEW.json",
+      "sha256": "bd387960aed5e89df46cb8f4cfd6a5d9b9a12ffeeb00d9805963a5a1e91739e6"
+    }
+  },
+  "rawStatusPreserved": "FAILED_RETAINED",
+  "endpoints": {
+    "glass-default": {
+      "mode": "glass",
+      "card": {
+        "width": 325,
+        "height": 530
+      },
+      "rowCount": 6,
+      "qualityMaximum": 0.28037452697753906,
+      "gate": 0.5,
+      "unsettled": 0,
+      "heuristicRemaining": 66,
+      "rowOpacities": [
+        "0.42",
+        "0.42",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "weatherHeader": {
+        "icon": "\u26c5",
+        "temperature": "28\u00b0"
+      }
+    },
+    "contrast-return": {
+      "mode": "contrast",
+      "card": {
+        "width": 325,
+        "height": 530
+      },
+      "rowCount": 6,
+      "qualityMaximum": 0.28037452697753906,
+      "gate": 0.5,
+      "unsettled": 0,
+      "heuristicRemaining": 66,
+      "rowOpacities": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "weatherHeader": {
+        "icon": "\u26c5",
+        "temperature": "28\u00b0"
+      }
+    },
+    "glass-return": {
+      "mode": "glass",
+      "card": {
+        "width": 325,
+        "height": 530
+      },
+      "rowCount": 6,
+      "qualityMaximum": 0.28037452697753906,
+      "gate": 0.5,
+      "unsettled": 0,
+      "heuristicRemaining": 66,
+      "rowOpacities": [
+        "0.42",
+        "0.42",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "weatherHeader": {
+        "icon": "\u26c5",
+        "temperature": "28\u00b0"
+      }
+    },
+    "glass-reload": {
+      "mode": "glass",
+      "card": {
+        "width": 325,
+        "height": 530
+      },
+      "rowCount": 6,
+      "qualityMaximum": 0.2780914306640625,
+      "gate": 0.5,
+      "unsettled": 0,
+      "heuristicRemaining": 68,
+      "rowOpacities": [
+        "0.42",
+        "0.42",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "weatherHeader": {
+        "icon": "\u26c5",
+        "temperature": "28\u00b0"
+      }
+    }
+  },
+  "originalImagesInspected": [
+    {
+      "path": "contrast-return.png",
+      "sha256": "fc493c14b8181a26e9230fc9ad023a80d6c7e3faa23a9344fd14aba6fe85ad84",
+      "bytes": 143262
+    },
+    {
+      "path": "glass-default.png",
+      "sha256": "cf616a70565d9d1349ee4b1e558a5d2c8e115b9ab043d309003faa08e872b4b8",
+      "bytes": 152836
+    },
+    {
+      "path": "glass-reload.png",
+      "sha256": "d2b4591e69b8b2b37a3fd167ad17b878f49572efec82d8c6af48953e15103b69",
+      "bytes": 152873
+    },
+    {
+      "path": "glass-return.png",
+      "sha256": "2e6d9231d3391929a58bf16a7b96119ba4cd55ffbbfa5adef9fcbd01a53e65e8",
+      "bytes": 152977
+    }
+  ],
+  "visualFinding": "All four unmodified whole-card PNGs independently inspected. Forenoon/cloud scene, complete325x530 card, header/weather, arc, six prayer rows and footer are coherent in these sampled endpoints. Contrast visibly makes rows opaque/darker; glass return and reload restore the glass treatment. This daytime sample makes no night-Moon opacity or motion claim.",
+  "networkFinding": {
+    "exactActualBodyRows": 10,
+    "completedStatus200MetadataRows": 14,
+    "pageErrors": [],
+    "requestFailures": [],
+    "observationErrors": [],
+    "actualBodyPathSet": [
+      "config.js",
+      "index.html",
+      "real-sky/native-data.js",
+      "real-sky/native-sky.css",
+      "real-sky/native-sky.js"
+    ],
+    "externalScriptSources": [
+      "config.js",
+      "real-sky/native-sky.js"
+    ]
+  },
+  "inlineHostCustody": {
+    "source": "tools/build_moon.py",
+    "sourceSha256": "d83f27dbadecd2ac5e8b5eb478baeea0fcae4efbd2d366efdd071139ac6f2765",
+    "sourceLines": [
+      21,
+      129,
+      130,
+      131,
+      138,
+      140,
+      141,
+      142
+    ],
+    "indexSha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298",
+    "hostSha256": "7c0f0b67ba02fdadc4a4da23a70c0dfa464ba4304b9f722652dbb0092a316ef4",
+    "initialTagContentSha256": "837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14",
+    "refinementTagContentSha256": "d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4",
+    "exactJoinVerified": "Remove declared entry flags from initial tag, concatenate initial+refinement tag content, equals builder-escaped complete moon-host.js. No external moon-host script is declared.",
+    "conclusion": "Successful actual index-body identity includes the native Moon host; a separate moon-host HTTP request is not required by this entry."
+  },
+  "retainedFailure": {
+    "error": {
+      "atUtc": "2026-10-21T20:41:14.993278+00:00",
+      "error": "AssertionError()"
+    },
+    "classification": "The required HTTP body-set assertion expected an embedded host to load externally. The captured independent body/metadata and endpoint checks satisfy their actual source-owned requirements; original wrapper and group status are not rewritten.",
+    "shutdownWarnings": "Original log retains fourteen Python Response.finished on_finished Target-closed task warnings; these are harness-side warnings, not recorded page errors. They do not imply silent whole-harness success.",
+    "firstReadBoundIssue": "A reviewer read-only source display attempted beyond final builder line after reading relevant lines; no product/test/native operation occurred."
+  },
+  "cleanup": {
+    "normalContextBrowserDriverCloseRecorded": true,
+    "inputPinsAndServedRuntimeUnchanged": true,
+    "leaseAbsentNow": true
+  },
+  "limits": [
+    "Four endpoint originals only, no continuous-playback, motion, timing, S1, cost or new actual-parent claim.",
+    "Only first Chromium public cell ran; remaining three are unexecuted at this review.",
+    "No product source change or acceptance exception is needed for the invalid extra HTTP-host requirement."
+  ],
+  "nextAction": "Preserve this first cell and its raw failed wrapper. Correct only external required-body expectation and execute the original remaining three consumers once after exact successor method review."
+}
