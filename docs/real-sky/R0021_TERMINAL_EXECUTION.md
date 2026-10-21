@@ -1,5 +1,7 @@
 # R0021 terminal execution — 2026-10-18
 
+**21 October r120-r122 checkpoint:** [24 absolute initial celestial bounds](evidence/r0021-terminal-20261021/r120/README.md) and [two-engine delayed-body recovery](evidence/r0021-terminal-20261021/r121/README.md) are independently reviewed. [r122 retains a real file-transport cleanup defect](evidence/r0021-terminal-20261021/r122/README.md); Firefox decoder was not launched after that stop. Event/resource and affected visual/actual-parent rows remain open. Runtime remains `3e18b2fa83d0cbfce0a4360d789f7927aef5c064f963e8c18acb430507995821`; source checkpoint `2c92538f578186483cb310c6a2a4167b29f3bd04`. Not merge-ready. Earlier notices below retain their historical scope.
+
 **21 October continuation:** [current finite ledger](R0021_POST_QUOTA_LEDGER.md) supersedes the next-action and approval status below. TA4/TA5 are approved prospectively. The [r119 source/build correction](evidence/r0021-terminal-20261021/r119/README.md) is independently reviewed; native timing, event/resource, delayed-body/decoder and missing visual/parent rows remain open. Runtime is `3e18b2fa83d0cbfce0a4360d789f7927aef5c064f963e8c18acb430507995821`. No production merge approval or whole-issue PASS. Historical records below retain their original dispositions.
 
 Latest: [verified retention repairs, bounded Firefox result and inclusive callback findings](R0021_TERMINAL_RESULTS.md). The ledger below retains the admitted starting frontier; the linked results give the current dispositions and exact successor runtime.
