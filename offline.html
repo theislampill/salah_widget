@@ -4260,7 +4260,7 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
  const base=window.__SALAH_MOON_EMBEDDED__?(document.baseURI||'about:blank'):new URL(window.__SALAH_MOON_INLINE__?'moon/':'.',script?.src||document.baseURI).href;
  const canvas=document.createElement('canvas');canvas.width=300;canvas.height=300;
  let worker=null,url=null,disposed=false,ready=false,pending=null,accepted=null,serial=0,epoch=0,retryCount=0,clock=null,referenceScene=null,profileMode='calendar';
- let timer=null,deadline=null,startFrame=null,lastError=null,chunkScript=null,upperBytes=null,calendarBytes=null,textureUp=null,waitingPreview=null;
+ let timer=null,deadline=null,startFrame=null,lastError=null,stopOffline=null,upperBytes=null,calendarBytes=null,textureUp=null,waitingPreview=null;
  let initialHeadEligible=true;
  const status={status:'loading',backend:'metric-terrain-wasm-mb1',renders:0,rejected:0,cancelled:0,errors:[],legacyFallback:false,quality:'pending',visibleSource:'awaiting-terrain',initialError:window.SalahMoonInitialError??null};
  const profile=()=>profileMode==='reference'?{...MOON_DEFAULT_PROFILE,profile_id:'unboosted-v5-01',mode:'reference',lift:0}:{...MOON_DEFAULT_PROFILE};
@@ -4302,8 +4302,8 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
   epoch++;serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;try{worker?.postMessage({kind:'cancel'});}catch{/* A crashed worker cannot veto withdrawal. */}status.cancelled++;fallback(reason);
  }
  function closeWorker(){
+  stopOffline?.();stopOffline=null;
   ready=false;worker?.terminate();worker=null;if(url)URL.revokeObjectURL(url);url=null;
-  if(chunkScript){chunkScript.remove();chunkScript=null;}delete window.SalahMoonAssetChunk;
  }
  function failed(error){
   if(disposed)return;const message=String(error?.message??error);
@@ -4392,29 +4392,40 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
   clearTimeout(deadline);deadline=setTimeout(()=>{if(pending?.id===id)failed(new Error('Moon worker refinement deadline exceeded'));},240000);
  }
  function offlineTransport(w){
-  let at=0,seen=-1;
-  window.SalahMoonAssetChunk=(name,index,data,last)=>{
+  let at=0,seen=-1,chunkScript=null,nextTimer=null;
+  const releaseScript=()=>{
+   if(!chunkScript)return;
+   chunkScript.onload=null;chunkScript.onerror=null;delete chunkScript.SalahMoonAssetChunk;
+   chunkScript.remove();chunkScript=null;
+  };
+  const accept=(name,index,data,last)=>{
    if(worker!==w||disposed)return;const expected=MOON_OFFLINE_CHUNKS[at];
-   if(!expected||name!==expected.name||index!==expected.index||last!==expected.last||typeof data!=='string'){failed(new Error('Offline Moon transport identity'));return;}
+   if(seen===at||!expected||name!==expected.name||index!==expected.index||last!==expected.last||typeof data!=='string'){failed(new Error('Offline Moon transport identity'));return;}
    seen=at;w.postMessage({kind:'asset-chunk',name,index,data,last});
   };
+  const schedule=()=>{nextTimer=setTimeout(()=>{nextTimer=null;next();},0);};
   const next=()=>{
    if(worker!==w||disposed)return;
-   if(chunkScript){chunkScript.remove();chunkScript=null;}
-   if(at>=MOON_OFFLINE_CHUNKS.length)return;
+   document.removeEventListener('DOMContentLoaded',next);
+   if(at>=MOON_OFFLINE_CHUNKS.length){stopOffline=null;return;}
    const spec=MOON_OFFLINE_CHUNKS[at];
    if(window.__SALAH_MOON_EMBEDDED__){
     const node=document.getElementById('moon-embedded-'+at);
     if(!node){failed(new Error('Embedded Moon payload missing'));return;}
-    window.SalahMoonAssetChunk(spec.name,spec.index,node.textContent.trim(),spec.last);
+    accept(spec.name,spec.index,node.textContent.trim(),spec.last);
     // Retain inert source payloads: a terminal worker failure must be retryable.
     // They already belong to the self-contained document, not an additional copy.
-    at++;setTimeout(next,0);return;
+    if(worker===w&&!disposed){at++;schedule();}return;
    }
    const el=document.createElement('script');chunkScript=el;
-   el.src=new URL(spec.path,base).href;el.async=true;el.onerror=()=>failed(new Error('Offline Moon asset script unavailable'));
-   el.onload=()=>{if(worker!==w)return;if(seen!==at){failed(new Error('Offline Moon script omitted its payload'));return;}at++;setTimeout(next,0);};document.head.append(el);
+   // A removed asynchronous script can still execute. Its payload belongs to
+   // this exact script and worker, never a global callback replaced by retry.
+   el.SalahMoonAssetChunk=(...args)=>{if(worker===w&&!disposed&&chunkScript===el&&document.currentScript===el)accept(...args);};
+   el.src=new URL(spec.path,base).href;el.async=true;
+   el.onerror=()=>{if(worker===w&&!disposed&&chunkScript===el)failed(new Error('Offline Moon asset script unavailable'));};
+   el.onload=()=>{if(worker!==w||disposed||chunkScript!==el)return;if(seen!==at){failed(new Error('Offline Moon script omitted its payload'));return;}releaseScript();at++;schedule();};document.head.append(el);
   };
+  stopOffline=()=>{clearTimeout(nextTimer);nextTimer=null;document.removeEventListener('DOMContentLoaded',next);releaseScript();};
   if(window.__SALAH_MOON_EMBEDDED__&&document.readyState==='loading')document.addEventListener('DOMContentLoaded',next,{once:true});else next();
  }
  function start(){

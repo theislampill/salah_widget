@@ -112,7 +112,7 @@ def build_moon(root):
   for i,offset in enumerate(range(0,len(data),CHUNK_BYTES)):
    code=base64.b64encode(data[offset:offset+CHUNK_BYTES]).decode('ascii');last=offset+CHUNK_BYTES>=len(data);part=f'file-data/{key}-{i:03}.js'
    chunks.append({'name':path,'index':i,'path':part,'last':last})
-   write(moon/part, 'window.SalahMoonAssetChunk('+','.join([json.dumps(path),str(i),json.dumps(code),str(last).lower()])+');\n')
+   write(moon/part, 'document.currentScript?.SalahMoonAssetChunk?.('+','.join([json.dumps(path),str(i),json.dumps(code),str(last).lower()])+');\n')
    tags.append(f'<script type="application/octet-stream" id="moon-embedded-{counter}">'+code+'</script>');counter+=1
  cloud=(root/'real-sky/native-cloud-transfer.mjs').read_text(encoding='utf-8').replace('export ','')
  initial_boot='\ntry{const text=atob('+json.dumps(base64.b64encode(compact).decode('ascii'))+'),packed=new Uint8Array(text.length);for(let i=0;i<text.length;i++)packed[i]=text.charCodeAt(i);const bytes=decodeCompactReceivers(packed,'+json.dumps(encoding,separators=(',',':'))+');window.SalahMoonInitial=createInitialMoon(bytes,'+json.dumps(decoded_pin,separators=(',',':'))+');}catch(error){window.SalahMoonInitialError=String(error.message??error);}\n'
