@@ -32,33 +32,36 @@ export function nativeSolarTransmission(cloudRGBA){
  * resource readiness grants no job/currentness authority. Cancellation fences
  * callbacks; disposal also releases the decoded resource cache.
  */
+const nativeClearSolarMask=Object.freeze({mask:'linear-gradient(#fff,#fff)',image:null});
 export class NativeSolarMaskPublication{
  constructor(imageFactory=()=>new Image()){this.imageFactory=imageFactory;this.revision=0;this.pending=null;this.displayed=null;this.decoded=null;this.disposed=false;}
- publish(mask,commit,onError){
+ finish(candidate,revision,commit,onError,context){
+  if(this.disposed||revision!==this.revision)return;
+  this.pending=null;
+  this.decoded=candidate;
+  try{if(commit(candidate.mask,context)!==false&&revision===this.revision)this.displayed=candidate;}
+  catch(error){onError(error,context);}
+ }
+ publish(mask,commit,onError,context){
   if(this.disposed||this.pending)return false;
   const revision=++this.revision;
-  const finish=candidate=>{
-   if(this.disposed||revision!==this.revision)return;
-   this.pending=null;
-   this.decoded=candidate;
-   try{if(commit(mask)!==false&&revision===this.revision)this.displayed=candidate;}
-   catch(error){onError(error);}
-  };
-  if(this.displayed?.mask===mask){finish(this.displayed);return true;}
-  if(this.decoded?.mask===mask){finish(this.decoded);return true;}
+  if(this.displayed?.mask===mask){this.finish(this.displayed,revision,commit,onError,context);return true;}
+  if(this.decoded?.mask===mask){this.finish(this.decoded,revision,commit,onError,context);return true;}
   // An opaque generated gradient has no resource to decode. Retain a mask
   // (and its compositing group), and still run the caller's currentness guard.
-  if(mask==='linear-gradient(#fff,#fff)'){finish({mask,image:null});return true;}
+  if(mask===nativeClearSolarMask.mask){this.finish(nativeClearSolarMask,revision,commit,onError,context);return true;}
   const image=this.imageFactory(),candidate={mask,image};
   this.pending=candidate;
   try{
    image.crossOrigin='anonymous';
    image.src=JSON.parse(mask.slice(4,-1));
-   image.decode().then(()=>finish(candidate),error=>{
+   // Only a genuinely changed resource owns asynchronous callbacks. Cached and
+   // clear masks use stable owner handlers with their original capture context.
+   image.decode().then(()=>this.finish(candidate,revision,commit,onError,context),error=>{
     if(this.disposed||revision!==this.revision)return;
-    this.pending=null;onError(error);
+    this.pending=null;onError(error,context);
    });
-  }catch(error){this.pending=null;onError(error);}
+  }catch(error){this.pending=null;onError(error,context);}
   return true;
  }
  cancel(){this.revision++;if(this.pending)this.pending.image.src='';this.pending=null;this.displayed=null;}

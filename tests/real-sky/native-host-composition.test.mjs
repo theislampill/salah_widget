@@ -10,7 +10,7 @@ import {NativeSkyLifecycle} from '../../real-sky/native-lifecycle.mjs';
 // Execute the authored host's actual composition body, with real pixel operators.
 // Only browser capture and framebuffer transport are replaced by owned arrays.
 const source=fs.readFileSync(new URL('../../real-sky/native-host.mjs',import.meta.url),'utf8');
-const compose=source.slice(source.indexOf(' function compose(){'),source.indexOf('\n function accept('));
+const compose=source.slice(source.indexOf(' function compositionFailed('),source.indexOf('\n function accept('));
 test('new worker acceptance cannot extend the original displayed job while its replacement mask is pending',()=>{
  const animate=source.split('\n').find(line=>line.startsWith(' function animate('));
  const state={utcMs:31000,paused:false,reducedMotion:false},clears=[];
@@ -37,7 +37,7 @@ function fixture(rows,{invalidAt=null,expire=false,maskError=false,deferMask=fal
   snapshot:()=>({}),lifecycle:{current:()=>!expire||++checks===1},clear:reason=>errors.push(reason),failure:e=>errors.push(String(e)),performance:{now:()=>1},window:detail?{SalahMoonDetail:detail}:{},
   foreground:{bottom:()=>rows-2,capture:()=>({...capture,cloudRGBA:cloudRGBA.slice(),moonRGBA:moonRGBA.slice()}),prepareSolarMask(rgba,count){maskCalls.push({rgba:rgba.slice(),rows:count,bytes:nativeSolarTransmission(rgba)});if(maskError)throw Error('invalid solar mask');return publication?'url("data:image/png;base64,mask-'+maskCalls.length+'")':'mask-'+maskCalls.length;}},calendarGeometry:()=>({key:'geometry',mask:()=>mask}),
   nativeForeground,nativeCalendarRegion,nativeForegroundRows,sameNativePresentation,sameNativeCloudAlpha,
-  solarPublication:publication??{pending:null,publish(mask,commit){if(deferMask){this.pending=commit;pendingMasks.push(commit);}else commit();},cancel(){this.pending=null;}},
+  solarPublication:publication??{pending:null,publish(mask,commit,onError,context){const complete=()=>commit(mask,context);if(deferMask){this.pending=complete;pendingMasks.push(complete);}else complete();},cancel(){this.pending=null;}},
   encodeNativeDisplay(a,E){encoded.push(a.length);return encodeNativeDisplay(a,E);},
   encodeNativeDisplayInto(a,E,b,offset){encoded.push(a.length);destinations.push({bytes:b,offset:offset??0,length:a.length});return encodeNativeDisplayInto(a,E,b,offset);},
   ImageData:class{constructor(data,w,h){assert.equal(data.length,w*h*4);this.data=data;this.width=w;this.height=h;}},Uint8ClampedArray,

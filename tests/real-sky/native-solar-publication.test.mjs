@@ -14,6 +14,34 @@ function fixture(){
  const flush=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
  return {publication,images,commits,errors,publish,flush};
 }
+test('stable publication callbacks receive their original context across decode, cached reuse, failure and cancellation',async()=>{
+ const h=fixture(),seen=[],failed=[],a={id:'a'},b={id:'b'},c={id:'c'},d={id:'d'};
+ const commit=(mask,context)=>{seen.push(context);if(context===c)throw Error('context failure');};
+ const error=(e,context)=>failed.push([e.message,context]);
+ h.publication.publish('url("data:image/png;base64,a")',commit,error,a);
+ h.images[0].resolve();await h.flush();assert.deepEqual(seen,[a]);
+ h.publication.publish('url("data:image/png;base64,a")',commit,error,b);
+ assert.deepEqual(seen,[a,b]);assert.equal(h.images.length,1);
+ h.publication.publish('linear-gradient(#fff,#fff)',commit,error,c);
+ assert.deepEqual(failed,[['context failure',c]]);
+ h.publication.publish('url("data:image/png;base64,d")',commit,error,d);
+ h.publication.cancel();h.images[1].resolve();await h.flush();assert.deepEqual(seen,[a,b,c]);
+});
+for(const throws of [false,true])test('reentrant replacement owns its displayed resource after old commit '+(throws?'throws':'returns'),async()=>{
+ const h=fixture(),a={id:'old'},b={id:'new'},errors=[];
+ h.publication.publish('url("data:image/png;base64,a")',(_mask,context)=>{
+  assert.equal(context,a);h.publication.cancel();
+  h.publication.publish('linear-gradient(#fff,#fff)',(_next,nextContext)=>assert.equal(nextContext,b),assert.fail,b);
+  if(throws)throw Error('old commit failed');
+ },(error,context)=>errors.push([error.message,context]),a);
+ h.images[0].resolve();await h.flush();
+ assert.equal(h.publication.displayed.mask,'linear-gradient(#fff,#fff)');
+ assert.equal(h.publication.pending,null);
+ assert.deepEqual(errors,throws?[['old commit failed',a]]:[]);
+ for(const resource of [h.publication.displayed,h.publication.decoded]){
+  assert.deepEqual(Object.keys(resource).sort(),['image','mask'],'decode cache must not retain publication contexts');
+ }
+});
 test('changing solar mask cannot expose an undecoded frame; CSS anonymous request mode is required',async()=>{
  const h=fixture();h.publish('a');assert.deepEqual(h.commits,[]);assert.equal(h.images[0].modeAtLoad,'anonymous');
  assert(h.publication.pending);h.images[0].resolve();await h.flush();assert.equal(h.commits.length,1);assert(!h.publication.pending);

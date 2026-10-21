@@ -1,5 +1,7 @@
 # R0021 terminal execution — 2026-10-18
 
+**21 October continuation:** [current finite ledger](R0021_POST_QUOTA_LEDGER.md) supersedes the next-action and approval status below. TA4/TA5 are approved prospectively. The [r119 source/build correction](evidence/r0021-terminal-20261021/r119/README.md) is independently reviewed; native timing, event/resource, delayed-body/decoder and missing visual/parent rows remain open. Runtime is `3e18b2fa83d0cbfce0a4360d789f7927aef5c064f963e8c18acb430507995821`. No production merge approval or whole-issue PASS. Historical records below retain their original dispositions.
+
 Latest: [verified retention repairs, bounded Firefox result and inclusive callback findings](R0021_TERMINAL_RESULTS.md). The ledger below retains the admitted starting frontier; the linked results give the current dispositions and exact successor runtime.
 
 Implements #33 on PR #67, `codex/r0021-startup-completion`. Production merge is not approved. The owner approved TA1, both parts of TA2, and TA3 conditional on executor agreement; the executor agrees with the exact clauses. [Decision and limits](evidence/r0021-terminal-20261018/OWNER_DECISIONS.json), [governing wording](evidence/r0021-terminal-20261018/APPROVED_TA_CLAUSES.md). These prospective changes do not relabel historical failures.

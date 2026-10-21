@@ -28,14 +28,15 @@ export function encodeNativeDisplayInto(linear,exposure,bytes,offset=0){
    while(hi<256&&Math.floor(edges[hi]*scale)<=b)hi++;
    low[b]=lo;high[b]=hi;
   }
-  nativeDisplayEncodeCache={edges,scale,low,high};
+  // This helper belongs to the immutable table, not each foreground repaint.
+  const code=(y,previous)=>{if(y>=edges[previous]&&(previous===255||y<edges[previous+1]))return previous;if(y>=edges[255])return 255;const b=Math.min(low.length-1,Math.floor(y*scale));let lo=low[b],hi=high[b];while(hi-lo>1){const middle=(lo+hi)>>>1;if(y<edges[middle])hi=middle;else lo=middle;}return lo;};
+  nativeDisplayEncodeCache={edges,scale,low,high,code};
  }
- const {edges,scale,low,high}=nativeDisplayEncodeCache;
+ const {code}=nativeDisplayEncodeCache;
  // Reuse only an exact oracle interval from this call's preceding pixel.
  // Exposure, input validity and every sharp transition still reach the same
  // code search. No physical value or prior frame is retained here.
  let previousR=0,previousG=0,previousB=0;
- const code=(y,previous)=>{if(y>=edges[previous]&&(previous===255||y<edges[previous+1]))return previous;if(y>=edges[255])return 255;const b=Math.min(low.length-1,Math.floor(y*scale));let lo=low[b],hi=high[b];while(hi-lo>1){const middle=(lo+hi)>>>1;if(y<edges[middle])hi=middle;else lo=middle;}return lo;};
  for(let i=0,j=offset;i<linear.length;i+=3,j+=4){
   const r=linear[i],g=linear[i+1],b=linear[i+2];
   if(!Number.isFinite(r)||!Number.isFinite(g)||!Number.isFinite(b))throw new RangeError('Nonfinite native frame channel');
@@ -95,10 +96,7 @@ export function startNativeSky(pack,workerSource,physical){
   const rect={left:r.left,top:r.top,width:r.width,height:r.height*rows/530};
   return {key:JSON.stringify([rows,rect,a,b,c,d,e,f,radius]),mask:()=>nativeDiscMask(325,rows,rect,m,radius)};
  }
- function compose(){
-  if(!frame||disposed)return;
-  const acceptedFrame=frame,acceptedJob=job;
-  const failed=e=>{
+ function compositionFailed(e,acceptedFrame,acceptedJob){
    if(disposed||frame!==acceptedFrame||job!==acceptedJob)return;
    // Retention remains bounded by the ORIGINAL displayed job, not this failed
    // preparation. A target/clock/visibility change must still withdraw it.
@@ -106,7 +104,34 @@ export function startNativeSky(pack,workerSource,physical){
     status.presentationRejections++;status.lastPresentationError=String(e?.message??e);if(status.displayed)status.displayed={...status.displayed,retained:true,reason:status.lastPresentationError};lastCompose=performance.now();return;
    }
    failure(e);
-  };
+ }
+ function rejectComposition(error,capture){compositionFailed(error,capture.acceptedFrame,capture.acceptedJob);}
+ function publishComposition(solarMask,capture){
+  const {acceptedFrame,acceptedJob,image,bottom,rows,presentation,joined,started}=capture;
+     if(pendingJob===acceptedJob)pendingJob=null;
+     // Decode completion owns only these captured bytes and this accepted job.
+     // Never join old clouds to a newer mutable frame, or publish after a clear.
+     if(disposed||frame!==acceptedFrame||job!==acceptedJob)return false;
+     if(!lifecycle.current(acceptedJob,snapshot())){clear('superseded during mask decode');return false;}
+      // The detail owner needs the refined class for geometry, but its fallible
+      // readback must finish before replacing the displayed background/identity.
+      // Restore the previous owner in this same turn if the candidate fails.
+      const wasComposed=card.classList.contains('real-sky-composed');card.classList.add('real-sky-composed');
+      try{window.SalahMoonDetail?.compose(acceptedFrame,encodeNativeDisplay);}
+      catch(error){if(!wasComposed)card.classList.remove('real-sky-composed');throw error;}
+      if(!lifecycle.current(acceptedJob,snapshot())){clear('superseded during detail composition');return false;}
+     ctx.putImageData(image,0,0);card.style.setProperty('--native-sun-cloud-mask',solarMask);
+     paintedFrame=acceptedFrame;paintedJob=acceptedJob;status.presentationUtcMs=acceptedJob.observer.utcMs;previousMoonBottom=bottom;
+     status.displayed={utcMs:acceptedJob.observer.utcMs,identity:acceptedJob.native.identity,exposure:acceptedFrame.raster.effectiveExposure,presentation:acceptedFrame.raster.displayPresentation??null,retained:false};
+     previousPresentation=presentation;previousSolarMask=solarMask;status.presentationDraws++;
+     status.last.composition={...joined.diagnostics,meanCloudAlpha:joined.diagnostics.meanCloudAlpha*rows/530,...capture.native,updatedRows:rows,totalRows:530};card.classList.add('real-sky-composed');
+      canvas.style.visibility='visible';lastCompose=performance.now();
+     status.last.composition.lastComposeMs=lastCompose-started;return true;
+ }
+ function compose(){
+  if(!frame||disposed)return;
+  const acceptedFrame=frame,acceptedJob=job;
+
   try{
    const current=snapshot();if(!lifecycle.current(job,current)){clear('host target changed or expired');return;}
    if(paintedJob&&!lifecycle.current(paintedJob,current)){clear('displayed sky target changed or expired');return;}
@@ -144,34 +169,19 @@ export function startNativeSky(pack,workerSource,physical){
     }
     const image=new ImageData(bytes,325,full?530:rows);
     pendingJob=acceptedJob;
-    solarPublication.publish(solarMask,()=>{
-     if(pendingJob===acceptedJob)pendingJob=null;
-     // Decode completion owns only these captured bytes and this accepted job.
-     // Never join old clouds to a newer mutable frame, or publish after a clear.
-     if(disposed||frame!==acceptedFrame||job!==acceptedJob)return false;
-     if(!lifecycle.current(acceptedJob,snapshot())){clear('superseded during mask decode');return false;}
-      // The detail owner needs the refined class for geometry, but its fallible
-      // readback must finish before replacing the displayed background/identity.
-      // Restore the previous owner in this same turn if the candidate fails.
-      const wasComposed=card.classList.contains('real-sky-composed');card.classList.add('real-sky-composed');
-      try{window.SalahMoonDetail?.compose(acceptedFrame,encodeNativeDisplay);}
-      catch(error){if(!wasComposed)card.classList.remove('real-sky-composed');throw error;}
-      if(!lifecycle.current(acceptedJob,snapshot())){clear('superseded during detail composition');return false;}
-     ctx.putImageData(image,0,0);card.style.setProperty('--native-sun-cloud-mask',solarMask);
-     paintedFrame=acceptedFrame;paintedJob=acceptedJob;status.presentationUtcMs=acceptedJob.observer.utcMs;previousMoonBottom=bottom;
-     status.displayed={utcMs:acceptedJob.observer.utcMs,identity:acceptedJob.native.identity,exposure:acceptedFrame.raster.effectiveExposure,presentation:acceptedFrame.raster.displayPresentation??null,retained:false};
-     previousPresentation=presentation;previousSolarMask=solarMask;status.presentationDraws++;
-     status.last.composition={...joined.diagnostics,meanCloudAlpha:joined.diagnostics.meanCloudAlpha*rows/530,...capture.native,updatedRows:rows,totalRows:530};card.classList.add('real-sky-composed');
-      canvas.style.visibility='visible';lastCompose=performance.now();
-     status.last.composition.lastComposeMs=lastCompose-started;return true;
-    },failed);
+    // Reuse this already-owned capture record, not a new callback or record on
+    // every cached-mask repaint. It never enters previousPresentation.
+    capture.acceptedFrame=acceptedFrame;capture.acceptedJob=acceptedJob;
+    capture.image=image;capture.bottom=bottom;capture.rows=rows;
+    capture.presentation=presentation;capture.joined=joined;capture.started=started;
+    solarPublication.publish(solarMask,publishComposition,rejectComposition,capture);
     return;
    }else{
     const bytes=encodeNativeDisplay(nativeCalendarComposite(frame.raster,calendarGeometry().mask()),frame.raster.effectiveExposure);ctx.putImageData(new ImageData(bytes,325,530),0,0);
    }
    canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeDisplay);lastCompose=performance.now();
    if(status.last.composition)status.last.composition.lastComposeMs=lastCompose-started;
-  }catch(e){failed(e);}
+  }catch(e){compositionFailed(e,acceptedFrame,acceptedJob);}
  }
 
  function accept(result,_id,request){
