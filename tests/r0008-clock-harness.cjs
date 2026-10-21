@@ -26,8 +26,10 @@ const configBindings = slice('function bindConfig(c)', 'if(window.SalahConfig)')
 const persistenceSource = source.includes('function _publishPersistence(')
   ? slice('let _persistOutcome=null', '// A dialog session') : '';
 // Accepted SKY gates run unchanged. Catalog/canvas producers remain outside these CLOCK source tests.
-const skySources = source.includes('function beginSkyScene()') ? {
-  astronomy: slice('const _RAD=', '// ---- moon phase'),
+const skySources = source.includes('function beginSkyScene(') ? {
+  // The generated first-paint script also contains these astronomy helpers.
+  // Bind this region to the native owner instead of spanning two script tags.
+  astronomy: slice('// ---- accurate Moon position', '// ---- moon phase'),
   stars: slice('let _starEls=[]', 'function buildStars()'),
   moonSurface: slice('let _mAlb=null', '(function loadMoonMaps()'),
   moonGeometry: slice('let moonSky=', '// Raw backing-canvas'),
@@ -171,7 +173,7 @@ function loadRender(r, block = renderSource) {
     projectStars() {}, setLocLabel() {}, syncWeather() {}, renderMoon() {},
     // Weather admission/paint has independent complete-runtime coverage.
     weatherDecision: () => ({record:null}), weatherHeader: () => ({}), paintWeatherHeader() {},
-    fitCn() {}, drawArc: () => '<svg>fixture arc dependency</svg>', applyTheme() {},
+    fitCn() {}, drawArc: () => '<svg>fixture arc dependency</svg>', applyTheme() {}, paintCelestialWithoutTimetable() {},
     moonNow: () => ({phase: 0.5}), phaseEmoji: () => '◐', console});
   if(!skySources)Object.assign(r.context,{moonSky:{},_starsProjected:true,projectStars(){}});
   r.run(block);
@@ -183,7 +185,7 @@ function loadLifecycle(r, block = lifecycle, {autoTimings=true} = {}) {
   const calls={stars:0,weatherBuild:0,moon:0,weatherStart:0,cloud:0,requests:[],raf:0};
   calls.requests.push(...r.prayerTransport.requests.map(request=>request.day));
   r.prayerTransport.onRequest=request=>calls.requests.push(request.day);
-  const pending=new Map(); let rafId=0;
+  const pending=new Map(), tasks=[]; let rafId=0;
   Object.assign(r.context, {QA:false, MOTIONFULL:false, DEBUGMOTION:false,
     _needsDetect:false, _cfgMode:'hardcoded',
     _loopStarted:false, lastDate:null, _prayerStale:false, _rolloverBusy:false,
@@ -192,11 +194,22 @@ function loadLifecycle(r, block = lifecycle, {autoTimings=true} = {}) {
     renderMoon(){calls.moon++;}, startWeather(){calls.weatherStart++;},
     fetchWeather(){}, fetchRadar(){}, isMotionReduced:()=>false,
     paintClouds(){calls.cloud++;}, tieRainToClouds(){},
+    MessageChannel:class{constructor(){this.port1={close(){}};this.port2={close(){},postMessage:()=>tasks.push(()=>this.port1.onmessage())};}},
     requestAnimationFrame(callback){const id=++rafId; pending.set(id,callback); calls.raf++; return id;},
     cancelAnimationFrame(id){pending.delete(id);}, console});
   r.run(block);
   const frame=()=>{const [id,callback]=pending.entries().next().value || []; assert(callback,'An actual loop callback must be scheduled'); pending.delete(id); callback();};
-  return {...r,calls,pending,frame};
+  // Drive the actual boot's two rendering opportunities and posted task. These
+  // logical scheduler controls do not assert browser presentation or timing.
+  const paintBoot=async()=>{
+    for(let i=0;i<2;i++){
+      const batch=[...pending];pending.clear();for(const [,callback]of batch)callback();
+      await r.prayerTransport.settle();
+    }
+    while(tasks.length){tasks.shift()();await r.prayerTransport.settle();}
+  };
+  const boot=async()=>{const promise=r.run('boot()');await paintBoot();await promise;};
+  return {...r,calls,pending,frame,paintBoot,boot};
 }
 
 function loadSettingsAffordance(r) {

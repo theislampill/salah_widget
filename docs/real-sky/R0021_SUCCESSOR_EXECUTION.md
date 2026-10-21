@@ -1,0 +1,21 @@
+# R0021 — authorised successor execution, 2026-10-21
+
+The owner's successor commission prospectively extends the exhausted terminal correction/acquisition limits for the finite r122–r126 frontier. Historical failures and stopping decisions remain unchanged. This is the existing executor, source worktree, read-only reviewer, branch `codex/r0021-startup-completion` and PR #67. Production merge still requires the owner's approval of the exact final head and base.
+
+| Obligation | Current disposition |
+|---|---|
+| r122 file-script cleanup race | **Repaired; independently qualified at affected scope** by [r127](evidence/r0021-terminal-20261021/r127/README.md). Exact-script and worker identity reject late chunks across cleanup/retry. |
+| r123 actual callbacks/worker cost | **Owner disposition approved for the exact candidate, 2026-10-21.** The disclosed one-time feature cost is explicitly accepted; named actual-event, worker-CPU and positive-mask cost/rate gaps remain **UNVERIFIED — OWNER-APPROVED EVIDENCE EXCEPTION**. This is the new [performance decision receipt](evidence/r0021-terminal-20261021/OWNER_PERFORMANCE_DISPOSITION.json), not an inferred extension of TA2/TA5 or quantitative PASS. |
+| r124 Chromium refined resource owner | **Bounded resource/currentness sequence independently supported** by [r128](evidence/r0021-terminal-20261021/r128/README.md). The original null observer failure remains measurement evidence. Applicable cost remains part of r123; accepted preview and Firefox resource results are not repeated. |
+| r125 actual extension parents | **Admitted-weather/mode/reload endpoint sequences independently supported** in both engines by [r129](evidence/r0021-terminal-20261021/r129/README.md). Exact imported iframe persists; distinct modes and unchanged weather/currentness are observed. Firefox framebuffer softness is retained. |
+| r126 affected visual/temporal observations | **Bounded original observations returned** in [r130](evidence/r0021-terminal-20261021/r130/README.md); gaps and obstructed regions remain unobserved. [r131](evidence/r0021-terminal-20261021/r131/README.md) finds present opaque lunar content blending into the bright twilight, with no new source defect demonstrated. These contribute to joint TA1 reconciliation, not uninterrupted-display PASS. |
+
+TA1–TA5 retain their exact approved scope. r119, r120, r121 and other previously accepted source/functional/scientific evidence transfer only through their unchanged dependencies. TA4 does not make whole S1 PASS. The owner-observed solar strobe remains not independently reproduced; no unobserved strobe is certified fixed.
+
+Current runtime after r127: `1b6586d8921a99780b2cefff95821ad90bf39571ef074ccffe4234ec8aa7f02b`. Preservation parent: `4afeeb30d0415dbd6008e84d3fb80248e8ddef95`; production comparison base: `f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de`; callback baseline: `18ff14860ff41c084b1db5f396bb62aa9c22b1be`.
+
+The final relevant source regression and its separate test-adapter correction are retained in [r132](evidence/r0021-terminal-20261021/r132/README.md). The [independent terminal matrix](evidence/r0021-terminal-20261021/reviews/terminal-matrix-r132-review-r1.json) supports **QUALIFIED UNDER REVISED S1 EVIDENCE CONTRACT** for the joint application-retention and observed-stage scope, with TA4's exceptions and every unobserved interval retained. This is not uninterrupted physical-display proof.
+
+The owner approved the exact [performance proposal](R0021_SUCCESSOR_DECISION.md) bound to checkpoint `08f9cdf70541ebcd69acc97864d894d8e96aeb85`, base `f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de` and the unchanged runtime above. The proposal and historical reviews remain immutable records of their then-unapproved state. The new receipt adopts the four named dispositions prospectively; it does not convert retained failures or missing measurements to PASS. See the [merge decision packet](R0021_MERGE_DECISION.md) and its separate independent acceptance addendum for final qualification and identity binding.
+
+Production merge, deployment verification, independent `CLOSE-R0021`, certificate-first issue comment and intentional completed closure remain pending. Performance acceptance is not merge approval.

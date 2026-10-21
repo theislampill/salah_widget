@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: native encoder exactly matches all 255 quantization boundaries and adjacent doubles
+ok 1 - native encoder exactly matches all 255 quantization boundaries and adjacent doubles
+  ---
+  duration_ms: 4.3238
+  type: 'test'
+  ...
+# Subtest: native encoder matches the oracle across exposures, negative channels, saturation and random doubles
+ok 2 - native encoder matches the oracle across exposures, negative channels, saturation and random doubles
+  ---
+  duration_ms: 40.3292
+  type: 'test'
+  ...
+# Subtest: native encoder keeps boundary equality after rounded exposure multiplication
+ok 3 - native encoder keeps boundary equality after rounded exposure multiplication
+  ---
+  duration_ms: 3.4245
+  type: 'test'
+  ...
+# Subtest: native encoder retains invalid-buffer/channel/exposure rejection
+ok 4 - native encoder retains invalid-buffer/channel/exposure rejection
+  ---
+  duration_ms: 0.3409
+  type: 'test'
+  ...
+# Subtest: host encoding preserves every oracle transition and surrounding binary64 values
+ok 5 - host encoding preserves every oracle transition and surrounding binary64 values
+  ---
+  duration_ms: 18.8606
+  type: 'test'
+  ...
+# Subtest: host buckets retain exact codes on both sides of every search boundary
+ok 6 - host buckets retain exact codes on both sides of every search boundary
+  ---
+  duration_ms: 7.0471
+  type: 'test'
+  ...
+# Subtest: host encoder rejects each invalid channel and exposure before publication
+ok 7 - host encoder rejects each invalid channel and exposure before publication
+  ---
+  duration_ms: 0.4055
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 113.4416

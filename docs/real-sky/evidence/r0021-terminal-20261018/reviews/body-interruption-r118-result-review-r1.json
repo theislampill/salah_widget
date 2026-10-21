@@ -1,0 +1,163 @@
+{
+  "schema": "r0021-body-interruption-result-review/v1",
+  "reviewer": "/root/r0021_review",
+  "observedThroughUtc": "2026-10-18T18:24:49.814279+00:00",
+  "decision": "SUPPORTED_SCOPED_BODY_INTERRUPTION_CURRENT_RETENTION_AND_EXPLICIT_RETRY_RECOVERY_IN_CHROMIUM_AND_FIREFOX",
+  "inputs": {
+    "resultSha256": "5294abb735335c7ee9bd373430b02b61d755166117fb5723d51c48b08e7b777f",
+    "executionSha256": "25a34c0808db219110446e07cc468c4d90caa652c6673b9477e613b08a10d848",
+    "derivationSha256": "005b18c339e8148c42b8db1e87ccb64adbd53f117afb06d2314bae754ad3d92f",
+    "preflightReviewSha256": "18d0059da537d6188560fb859af87d57bb673232af35b5bf68441b3404c829e2",
+    "runtimeTreeSha256": "70bb508176c976167d783a5c7c7bd09ab20d02f69669dce5d36af5c634b1c55e"
+  },
+  "cases": {
+    "chromium": {
+      "rawResultsSha256": "e2e35aedd557c8ed5399b0ee47f1d892d604cc0f6805981c2ddf7c1622a103a3",
+      "version": "148.0.7778.96",
+      "event": {
+        "kind": "controlled-response-body-interruption",
+        "url": "/salah_widget/moon/assets/dem.bin.gz",
+        "httpStatus": 200,
+        "declaredBytes": 20137935,
+        "sentBytes": 4096,
+        "absolute": 1792347638066.5977
+      },
+      "twoDemRequestsAndOneFault": true,
+      "failed": {
+        "atPageMs": 15038.70000000298,
+        "status": "unavailable",
+        "current": true,
+        "visibleSource": "initial-v5",
+        "workerAlive": false,
+        "pending": false,
+        "generation": 0,
+        "epoch": 2,
+        "errors": [
+          "network error"
+        ]
+      },
+      "recovery": {
+        "atMs": 15125.0,
+        "retry": {
+          "moon": true,
+          "sky": {
+            "status": "ready",
+            "generation": 2,
+            "error": null
+          }
+        }
+      },
+      "final": {
+        "atPageMs": 30374.5,
+        "status": "ready",
+        "current": true,
+        "visibleSource": "refined-terrain",
+        "workerAlive": true,
+        "pending": false,
+        "generation": 0,
+        "epoch": 2,
+        "retryCount": 1,
+        "rejected": 0,
+        "qualityStatus": "empirical-adaptive",
+        "projectedMaximumCode": 0.07798004150390625,
+        "projectedGate": 0.5,
+        "unsettled": 0,
+        "receiverHeuristicRemaining": 4,
+        "historicalErrorRetained": [
+          "network error"
+        ]
+      },
+      "originalImagesViewed": {
+        "cold-00.png": "2537473260a3ed86e12ea930d0060ab14d935a7983c444ea17a3d3f064e8966b",
+        "cold-final.png": "7b09d7a1d4c1d16fbd2ff598fccbf21397aabb6528a9316d789364a90932a0d7"
+      },
+      "visualFinding": "Both whole-card originals show a defined opaque-looking textured Moon, catalogue stars outside the disc, intact header, six prayer rows and footer. No sampled Moon loss, black-cutout replacement or incomplete whole-card composition observed. Endpoint pixels do not prove intervening continuity or general all-phase opacity.",
+      "capture": "Native video plus two PNG endpoints; video not independently watched in this bounded review."
+    },
+    "firefox": {
+      "rawResultsSha256": "b792dc24f74f1664af24a532bec967a5c0664dc3b30b542bbbfc170e9b46c5f5",
+      "version": "150.0.2",
+      "event": {
+        "kind": "controlled-response-body-interruption",
+        "url": "/salah_widget/moon/assets/dem.bin.gz",
+        "httpStatus": 200,
+        "declaredBytes": 20137935,
+        "sentBytes": 4096,
+        "absolute": 1792347671648.3438
+      },
+      "twoDemRequestsAndOneFault": true,
+      "failed": {
+        "atPageMs": 14993,
+        "status": "unavailable",
+        "current": true,
+        "visibleSource": "initial-v5",
+        "workerAlive": false,
+        "pending": false,
+        "generation": 0,
+        "epoch": 2,
+        "errors": [
+          "Moon asset truncated"
+        ]
+      },
+      "recovery": {
+        "atMs": 15172.000000005937,
+        "retry": {
+          "moon": true,
+          "sky": {
+            "status": "ready",
+            "generation": 2,
+            "error": null
+          }
+        }
+      },
+      "final": {
+        "atPageMs": 61190,
+        "status": "ready",
+        "current": true,
+        "visibleSource": "refined-terrain",
+        "workerAlive": true,
+        "pending": false,
+        "generation": 0,
+        "epoch": 2,
+        "retryCount": 1,
+        "rejected": 0,
+        "qualityStatus": "empirical-adaptive",
+        "projectedMaximumCode": 0.08678436279296875,
+        "projectedGate": 0.5,
+        "unsettled": 0,
+        "receiverHeuristicRemaining": 6,
+        "historicalErrorRetained": [
+          "Moon asset truncated"
+        ]
+      },
+      "originalImagesViewed": {
+        "cold-00.png": "0bf78e8cefe98b42d3a908cf4a7ea2387d7753f3bb69381237db37291179cf7b",
+        "cold-final.png": "f1a26460b8330e3ae52a10412950dab75bffb3c0de58b443d3f374e2f7756edb"
+      },
+      "visualFinding": "Both whole-card originals show a defined opaque-looking textured Moon, catalogue stars outside the disc, intact header, six prayer rows and footer. No sampled Moon loss, black-cutout replacement or incomplete whole-card composition observed. Endpoint pixels do not prove intervening continuity or general all-phase opacity.",
+      "capture": "Two PNG endpoints only; no video or continuous presentation claim."
+    }
+  },
+  "checks": {
+    "rawChainAndSummaryJoined": true,
+    "fourOriginalPngHashesMatchedAndViewed": true,
+    "sevenHarnessPinsMatched": true,
+    "runtimeUnchangedRecordedForBothCasesAndWrapper": true,
+    "bothNormalExitsAndLeaseReleaseRecorded": true,
+    "lockAbsentAtReadback": true
+  },
+  "assessment": [
+    "This supplies the named actual HTTP200 interrupted astronomical response-body failure/current retained initial scene/explicit retry/current admitted final chain in both engines. It is distinct from HTTP status or invalid-width validation controls.",
+    "Firefox error uniquely matches the production read byte-count guard; Chromium generic network error supports body transport/consumer failure without proving the precise fetch/read/cancel statement.",
+    "No current product abnormality demonstrated in these four sampled endpoints. Historical native errors remain visible in final state; browser-level errors are separately empty.",
+    "Correct Firefox projectedMaximumCode is0.08678436279296875; Chromium0.07798004150390625. These are local quality gates, not callback or startup performance results."
+  ],
+  "blockingFindings": [],
+  "limits": [
+    "No binary decompression/decoder, delayed-body timeout, automatic retry, real settings UI retry, late stale-result or wholeS5/S6 claim.",
+    "No continuous retention/presentation, S1, callback cost, actual-parent backdrop integration or broad all-scene quality/opacity qualification.",
+    "Cleanup evidence is normal returned subprocesses/recorded close path and current absent lease; ROOT reported exact-profile CIM empty. This review does not fabricate formal native lifecycle/currentness/epoch receipts.",
+    "Application current=true and accepted identities are actual source-owned endpoint observations, separate from formal canonical currentness."
+  ],
+  "nextAction": "Preserve this bounded functional result and original four endpoints with failure/retry distinctions. No rerun of this completed control. Remaining decoder/delayed-body and other original obligations retain separate dispositions."
+}

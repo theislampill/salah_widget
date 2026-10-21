@@ -3,12 +3,15 @@
 const assert=require('node:assert/strict');
 const {read,sha,widget,builder,configSession}=require('./r0018-appearance-fixture.cjs');
 const {composition,mutateTimetable}=require('./r0018-timetable-contrast.cjs');
-const source=read('index.html'),config=read('config.js'),builderSource=read('builder.html');
+// Mutate the semantic settings/CSS owner. Generated native entries also contain
+// independent Moon bootstrap scripts that this recording DOM does not execute;
+// native-pinned-contrast separately checks the generated appearance policy.
+const source=read('src/native/index.html'),config=read('config.js'),builderSource=read('builder.html');
 const valid={lat:24.47,lon:39.61,tz:'UTC',label:'Madinah',method:'4',school:'0',time:'24',units:'f',datefmt:'YYYY-MM-DD',source:'manual'};
 const once=(text,before,after)=>{assert.equal(text.split(before).length,2,'Exact single mutation seam');return text.replace(before,after);};
 const cases=[
- {name:'default local backing removed',mutant:{source:mutateTimetable(source,'default-base')},
-  oracle:({source})=>{const c=composition(source,'normal');assert.equal(c.opacity,1);assert.ok(c.ratio>=4.5,'Default glass must meet the original contrast requirement without opting in');}},
+ {name:'High Contrast local backing removed',mutant:{source:mutateTimetable(source,'contrast-base')},
+  oracle:({source})=>{const c=composition(source,'normal',[255,255,255],'contrast');assert.equal(c.opacity,1);assert.ok(c.ratio>=4.5,'High Contrast retains the strict readability contract');}},
  {name:'card binding forces contrast when glass is selected',mutant:{source:once(source,'card.dataset.appearance=c.appearance==="contrast"?"contrast":"glass"','card.dataset.appearance="contrast"')},
   oracle:({source,configSource})=>{const w=widget({source,configSource});assert.equal(w.render().rows,6);assert.equal(w.document.querySelector('.c').dataset.appearance,'glass');}},
  {name:'explicit hash glass omitted from detected preference overlay',mutant:{configSource:once(config,'"datefmt", "appearance", "lp"','"datefmt", "lp"')},

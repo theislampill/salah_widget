@@ -1,0 +1,45 @@
+node:fs:2414
+    return binding.writeFileUtf8(
+                   ^
+
+Error: UNKNOWN: unknown error, open '${WORK_ROOT}\native\visual-parent-r125-r126\firefox-clear-exact\video\page@135802371e863b7fc23599b00380cf11.webm.frames.jsonl'
+    at Object.writeFileSync (node:fs:2414:20)
+    at Object.appendFileSync (node:fs:2496:6)
+    at FfmpegVideoRecorder.writeFrame (${WORK_ROOT}\capture-driver\lib\coreBundle.js:35715:14)
+    at Object.onFrame (${WORK_ROOT}\capture-driver\lib\coreBundle.js:35637:51)
+    at Screencast.onScreencastFrame (${WORK_ROOT}\capture-driver\lib\coreBundle.js:19564:34)
+    at FFPage._onScreencastFrame (${WORK_ROOT}\capture-driver\lib\coreBundle.js:43709:31)
+    at FFSession.emit (node:events:509:28)
+    at ${WORK_ROOT}\capture-driver\lib\coreBundle.js:42794:45 {
+  errno: -4094,
+  code: 'UNKNOWN',
+  syscall: 'open',
+  path: '${WORK_ROOT}\\native\\visual-parent-r125-r126\\firefox-clear-exact\\video\\page@135802371e863b7fc23599b00380cf11.webm.frames.jsonl'
+}
+
+Node.js v24.15.0
+Traceback (most recent call last):
+  File "${WORK_ROOT}\visual-tools-r126-exact\tools\cp9\celestial_startup_check.py", line 394, in <module>
+    asyncio.run(run(p.parse_args()))
+  File "${STDLIB_PYTHON}\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "${STDLIB_PYTHON}\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "${STDLIB_PYTHON}\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "${WORK_ROOT}\visual-tools-r126-exact\tools\cp9\celestial_startup_check.py", line 321, in run
+    await page.screenshot(path=str(a.out/file),timeout=30000)
+  File "${QA_TOOLCHAIN}\venv\Lib\site-packages\playwright\async_api\_generated.py", line 9788, in screenshot
+    await self._impl_obj.screenshot(
+  File "${QA_TOOLCHAIN}\venv\Lib\site-packages\playwright\_impl\_page.py", line 814, in screenshot
+    encoded_binary = await self._channel.send(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "${QA_TOOLCHAIN}\venv\Lib\site-packages\playwright\_impl\_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "${QA_TOOLCHAIN}\venv\Lib\site-packages\playwright\_impl\_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+Exception: Page.screenshot: Connection closed while reading from the driver

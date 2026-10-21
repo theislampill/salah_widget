@@ -1,0 +1,252 @@
+{
+  "schema": "r0021-empty-surface-qualification/v1",
+  "sourceParent": "feddf007e537a38972056d7d56243321884ab41f",
+  "parentTree": "850e9386aa3d8997c6ca777586e7859229158750",
+  "base": "f270792f39ef8bf4cabffbe6746ac0ea0dd9d3de",
+  "status": "SOURCE_REGRESSION_AND_BUILD_PASS_NATIVE_ACCEPTANCE_OPEN",
+  "hypothesis": {
+    "owner": "moon/src/moon-native.mjs capture() and surface()",
+    "observedWork": "surface() validates and measures the lunar rectangle even when both accepted and waitingPreview are absent; clear/fallback re-enters this path in actual native startup",
+    "correction": "preserve native host capture and existing exception handling; skip only discarded metadata/geometry work when surface() has no candidate; all other callers and candidate-present paths keep full capture",
+    "profileEvidence": "Retained r103 nodes 105 and 118 attribute 9.236 + 4.571 = 13.807 ms of weighted samples to this route; no wall-time saving or cause of S1 gaps is inferred",
+    "falsifiers": [
+      "Skipped native clock observation or initialization",
+      "Lost initial-head or deferred-preview adoption",
+      "Skipped accepted/currentness/phase/DPR/seek fence",
+      "Changed protected scientific/material/geometry source or non-generated runtime asset",
+      "Affected test or deterministic build failure"
+    ]
+  },
+  "environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "node": "v24.19.0",
+    "nativeBrowserAcquisition": false,
+    "windowsReferenceQualification": false,
+    "SALAH_MOON_SOURCE_DIR": "unset; host fixture resolves ../src relative to this candidate moon/tests/host.test.cjs",
+    "commandWorkingDirectory": "candidate repository root",
+    "bindingNote": "The source-override check was recorded after the completed run; no command in this execution set the variable. The same new fixture reproduced RED on parent source and GREEN only after this candidate source change."
+  },
+  "tests": {
+    "baseline": {
+      "command": "node --test moon/tests/host.test.cjs",
+      "exitCode": 0,
+      "reportedUnits": "one test file; no fabricated internal test count",
+      "log": "baseline-host.txt"
+    },
+    "targetedCommand": "node --test --test-isolation=none --test-reporter=tap --test-name-pattern='an empty surface read|fallback re-entry|surface may adopt' moon/tests/host.test.cjs",
+    "red": {
+      "exitCode": 1,
+      "tests": 3,
+      "pass": 1,
+      "fail": 2,
+      "reason": "original source performs one and two unnecessary lunar layout reads while native capture preservation assertions pass",
+      "log": "red.tap"
+    },
+    "green": {
+      "exitCode": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "log": "green.tap"
+    },
+    "affected": {
+      "command": "node --test --test-isolation=none --test-reporter=tap moon/tests/host.test.cjs tests/real-sky/native-moon-admission.test.mjs tests/real-sky/native-host-composition.test.mjs tests/real-sky/native-preview-host.test.mjs",
+      "exitCode": 0,
+      "tests": 95,
+      "pass": 95,
+      "fail": 0,
+      "skipped": 0,
+      "todo": 0,
+      "log": "affected.tap"
+    },
+    "runnerNote": "Process-isolated reporter exposed only a file-level result. The supported no-isolation flag produced named assertion receipts; no product instrumentation or benchmark protocol was changed."
+  },
+  "build": {
+    "command": "python -B tools/build_native.py",
+    "runs": 2,
+    "exitCodes": [
+      0,
+      0
+    ],
+    "runtimeInventoriesByteIdentical": true,
+    "runtimeInventorySha256": "b1ae2447caad9ac07b81409efb89e73219ca410d72096f415950c789bdc4f513",
+    "runtimeSha256": "d82bcbd724cee5c0eae3d42c6fdb543150b00541ee73079fb26656bdf41542af",
+    "runtimeEntries": 142,
+    "generatedRuntimeChanges": [
+      {
+        "path": "index.html",
+        "before": {
+          "bytes": 1583118,
+          "sha256": "3028b9659f04bb5ae8324040299c1d97699d0f6d0a5126d653d2d92334b7ff57"
+        },
+        "after": {
+          "bytes": 1583351,
+          "sha256": "83ac60da746661338435bf7431f0839fac13edd0d4cbc255f48d4baf4e7e0712"
+        }
+      },
+      {
+        "path": "moon/BUILD.json",
+        "before": {
+          "bytes": 4146,
+          "sha256": "064164d4e04b0c389c083d2cd5c6587ba66ac18247c7c5c3993049bbe6c287ec"
+        },
+        "after": {
+          "bytes": 4146,
+          "sha256": "eb2baf365374b5b638ff6d49b00f3f597b8cd62cd71e2b5ec3e124d4b7b80d1b"
+        }
+      },
+      {
+        "path": "moon/moon-host.js",
+        "before": {
+          "bytes": 909692,
+          "sha256": "091d4415100469665e663d3430dd48129753cad01366d8ee5e5a2de47e02e914"
+        },
+        "after": {
+          "bytes": 909925,
+          "sha256": "8f45fdaa0cc291e58d24012fe7e6e717754482a5e62f7d3327755cc57eae1170"
+        }
+      },
+      {
+        "path": "offline.html",
+        "before": {
+          "bytes": 81692847,
+          "sha256": "a3f92094d516367d6ec226487fea61b4a91410009e4b017a407431391cb9c74a"
+        },
+        "after": {
+          "bytes": 81693080,
+          "sha256": "d61477d7dbbc22db55260286409e5bc1e145a7eca211357d16fe6bdc3af22237"
+        }
+      }
+    ],
+    "unchangedRuntimeEntries": 138,
+    "v1": {
+      "command": "python -B tools/verify_v1.py",
+      "exitCode": 0,
+      "result": "PASS: frozen V1 payload and anchored manifest"
+    },
+    "diffCheck": {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "note": "The initial staged check found only whitespace-only indented TAP lines; those were normalized as declared, without changing assertion content. Final staged check required before commit."
+    }
+  },
+  "sources": {
+    "moon/src/moon-native.mjs": {
+      "bytes": 22840,
+      "sha256": "24f9e1d438483cd8150fbd683a56852a044d3bb66e3b58f0623f4c4238285d07",
+      "gitBlob": "369fe055c5e3cd7bd273fbf085e5b98d6a5d7a94"
+    },
+    "moon/tests/host.test.cjs": {
+      "bytes": 31386,
+      "sha256": "cfb3417cbb5fd0d8480a3f1a2df69791d77078b337d6a32ed6fd32e7c9f15f6e",
+      "gitBlob": "39edbdd0eb978e1d31d5dc7f109ef78b7f4dc57a"
+    },
+    "tools/build_native.py": {
+      "bytes": 10764,
+      "sha256": "a0635c58da3d47b421fc4f703361a1b10b6017f67f6cca352db1fc6b0f1c9366",
+      "gitBlob": "420ea04fd30055ab163afda7d87b04415772132a"
+    },
+    "tools/build_moon.py": {
+      "bytes": 12429,
+      "sha256": "e6dffda0c1d6bfba288128d46d1f9effb5bc60b7270531d9bd006091a0de7284",
+      "gitBlob": "47ba3496d2d65841815cc127f44a0409ef26afa5"
+    },
+    "src/native/index.html": {
+      "bytes": 373988,
+      "sha256": "6054f1eb3e7f04aa5975707345810b64fc824bc99e17ce3798369a959a123fad",
+      "gitBlob": "f610f647cc6c920e0dd528c95c86099f7394e662"
+    },
+    "real-sky/native-host-hooks.js": {
+      "bytes": 5596,
+      "sha256": "007529ccb3a3ba73e14fd739e9fbaa9b2030e66e56ca6b2c997ffaa578b6d6eb",
+      "gitBlob": "9eea67762be9fc659ac6b30be34100b13b60beee"
+    },
+    "real-sky/native-encoding.mjs": {
+      "bytes": 1624,
+      "sha256": "48ecb0b15bb40ea1fcb7259ba65b7bf59ddc7ad4a4d1b02188760994e70b6710",
+      "gitBlob": "d2b6dfb04d56daafe8b12995e01414f31e5edcbe"
+    },
+    "moon/initial-manifest.json": {
+      "bytes": 2142,
+      "sha256": "f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5",
+      "gitBlob": "a35412d12e98c498b4df6d5cdcd5d1d897c4842c"
+    },
+    "moon/initial-source-association.json": {
+      "bytes": 2609,
+      "sha256": "48ca605daaefdc836adfb4a7da6b85114a4a0d9d144f5b4e056a7857b1cfd00f",
+      "gitBlob": "f4c7eb3d2fa54b2a1391fe81b69c29bbc31a251d"
+    }
+  },
+  "retainedProposalHistory": {
+    "originalDirectGuard": {
+      "path": "rejected-direct-capture-guard.patch",
+      "sha256": "5fd1d806854b807c38c4f038c83701ed05e60c9be6b2824eef23096fb18f33ab",
+      "appliedToProduct": false,
+      "disposition": "REJECTED_BEFORE_PRODUCT_IMPLEMENTATION: actual host capture can lazily initialize/re-anchor the native explicit clock; preserve that observation",
+      "testOnlyObservation": "initial-proposal-red.tap (2 expected failures, deferred-preview control passes)"
+    },
+    "patchPackaging": {
+      "initialPlainGitApplyCheck": "failed because the first proposal had zero context; no product changes",
+      "normalContextPatchCheck": "passed after context regeneration; prospective source/test bytes were unchanged by formatting"
+    },
+    "refinedHypothesis": "preserve native capture while omitting only discarded geometry; final RED/GREEN recorded separately"
+  },
+  "normalisation": [
+    {
+      "file": "baseline-host.txt",
+      "rawSha256": "aa9c06f120063d3ecc90babb46bfd20a911753f128a55033203c7a8206e553b3",
+      "publishedSha256": "aa9c06f120063d3ecc90babb46bfd20a911753f128a55033203c7a8206e553b3",
+      "normalisation": "none"
+    },
+    {
+      "file": "initial-proposal-red.tap",
+      "rawSha256": "a9040f18161c8230de39637fa6ebbdf1ea496be8fe955ebb34df1b831477ca93",
+      "publishedSha256": "82a7238a967b38a40bd9b703132dd004a7339d6985e112f1a00608927d3cc754",
+      "normalisation": "literal checkout prefix replaced by <repository>; whitespace-only TAP lines made empty; every assertion, value, failure and duration retained"
+    },
+    {
+      "file": "red.tap",
+      "rawSha256": "3ece8683e43f27838d755eeed21e55c855a288ed763497655d911b746a58034a",
+      "publishedSha256": "3ebe5045149d368aa2eb9ef5091f08c5b815adbaa2f6c322c7310d3eb8390358",
+      "normalisation": "literal checkout prefix replaced by <repository>; whitespace-only TAP lines made empty; every assertion, value, failure and duration retained"
+    },
+    {
+      "file": "green.tap",
+      "rawSha256": "123a5ecb2536ae4eb1c348234f65fbdf3ec418728435015ffa2804098549fb1c",
+      "publishedSha256": "123a5ecb2536ae4eb1c348234f65fbdf3ec418728435015ffa2804098549fb1c",
+      "normalisation": "none"
+    },
+    {
+      "file": "build-1.json",
+      "rawSha256": "40dc73e2c2f2ac5741abaab05f63cc1537e6ad0b056b6725d3a80e0d52b30634",
+      "publishedSha256": "40dc73e2c2f2ac5741abaab05f63cc1537e6ad0b056b6725d3a80e0d52b30634",
+      "normalisation": "none"
+    },
+    {
+      "file": "build-2.json",
+      "rawSha256": "40dc73e2c2f2ac5741abaab05f63cc1537e6ad0b056b6725d3a80e0d52b30634",
+      "publishedSha256": "40dc73e2c2f2ac5741abaab05f63cc1537e6ad0b056b6725d3a80e0d52b30634",
+      "normalisation": "none"
+    },
+    {
+      "file": "v1.txt",
+      "rawSha256": "98ab0148dc1403f1ea2c1a8897e676a437640e78c0a9e5dc166bb33314dda789",
+      "publishedSha256": "98ab0148dc1403f1ea2c1a8897e676a437640e78c0a9e5dc166bb33314dda789",
+      "normalisation": "none"
+    },
+    {
+      "file": "affected.tap",
+      "rawSha256": "cd778ae236cd9518612d36d91d6ab034fe6871576adf086dfdcd4de27a210be8",
+      "publishedSha256": "cd778ae236cd9518612d36d91d6ab034fe6871576adf086dfdcd4de27a210be8",
+      "normalisation": "none"
+    }
+  ],
+  "limits": [
+    "No new native frame acquisition or pixel comparison",
+    "No measured S1 latency/continuity improvement",
+    "No global callback-cost PASS or Firefox exception",
+    "No merge, deployment, production approval or closure certificate"
+  ]
+}

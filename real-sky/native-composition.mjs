@@ -22,6 +22,51 @@ export function nativeSolarTransmission(cloudRGBA){
  for(let i=0;i<mask.length;i+=4){mask[i]=mask[i+1]=mask[i+2]=255;mask[i+3]=255-cloudRGBA[i+3];}
  return mask;
 }
+/** A CSS mask is loaded with anonymous CORS semantics. Decode the same resource
+ * mode before replacing it: a fresh undecoded mask can suppress the entire Sun
+ * in Firefox, including pixels outside cloud support. The caller commits its
+ * matching foreground in this callback, after rechecking its original owner.
+ * One active decode bounds work; the next render opportunity samples latest
+ * inputs. At most two decoded resources are retained: the displayed mask and
+ * the last completed decode. Exact bytes may be reused by a fresh scene, but
+ * resource readiness grants no job/currentness authority. Cancellation fences
+ * callbacks; disposal also releases the decoded resource cache.
+ */
+const nativeClearSolarMask=Object.freeze({mask:'linear-gradient(#fff,#fff)',image:null});
+export class NativeSolarMaskPublication{
+ constructor(imageFactory=()=>new Image()){this.imageFactory=imageFactory;this.revision=0;this.pending=null;this.displayed=null;this.decoded=null;this.disposed=false;}
+ finish(candidate,revision,commit,onError,context){
+  if(this.disposed||revision!==this.revision)return;
+  this.pending=null;
+  this.decoded=candidate;
+  try{if(commit(candidate.mask,context)!==false&&revision===this.revision)this.displayed=candidate;}
+  catch(error){onError(error,context);}
+ }
+ publish(mask,commit,onError,context){
+  if(this.disposed||this.pending)return false;
+  const revision=++this.revision;
+  if(this.displayed?.mask===mask){this.finish(this.displayed,revision,commit,onError,context);return true;}
+  if(this.decoded?.mask===mask){this.finish(this.decoded,revision,commit,onError,context);return true;}
+  // An opaque generated gradient has no resource to decode. Retain a mask
+  // (and its compositing group), and still run the caller's currentness guard.
+  if(mask===nativeClearSolarMask.mask){this.finish(nativeClearSolarMask,revision,commit,onError,context);return true;}
+  const image=this.imageFactory(),candidate={mask,image};
+  this.pending=candidate;
+  try{
+   image.crossOrigin='anonymous';
+   image.src=JSON.parse(mask.slice(4,-1));
+   // Only a genuinely changed resource owns asynchronous callbacks. Cached and
+   // clear masks use stable owner handlers with their original capture context.
+   image.decode().then(()=>this.finish(candidate,revision,commit,onError,context),error=>{
+    if(this.disposed||revision!==this.revision)return;
+    this.pending=null;onError(error,context);
+   });
+  }catch(error){this.pending=null;onError(error,context);}
+  return true;
+ }
+ cancel(){this.revision++;if(this.pending)this.pending.image.src='';this.pending=null;this.displayed=null;}
+ dispose(){this.cancel();this.decoded=null;this.disposed=true;}
+}
 export function nativeForeground(base,{cloudRGBA=null,moonRGBA=null,atmosphereLinear=null,exposure}={}){
  if(!base||base.length%3)throw new RangeError('Native linear RGB input required');
  const pixels=base.length/3;for(const a of [cloudRGBA,moonRGBA])if(a)validateNativeRGBA(a,pixels);
@@ -70,7 +115,15 @@ export class NativeForegroundCapture{
  }
  prepareSolarMask(cloudRGBA,rows){
   validateNativeRGBA(cloudRGBA,325*rows,'solar cloud');
-  if(!this.solar){this.solar=document.createElement('canvas');this.solar.width=325;this.solar.height=530;this.sx=this.solar.getContext('2d');}
+  // Exactly zero painted coverage is full transmission at every pixel, also
+  // below these rows. A CSS gradient preserves mask grouping without an async
+  // PNG decode gap during initial/current scene replacement. No epsilon: even
+  // one alpha code uses the original cloud mask and anonymous decode path.
+  let clear=true;for(let i=3;i<cloudRGBA.length;i+=4)if(cloudRGBA[i]!==0){clear=false;break;}
+  if(clear)return 'linear-gradient(#fff,#fff)';
+  // This mask is exported on every changed foreground. CPU storage avoids a
+  // synchronous GPU readback before first paint; its coverage is unchanged.
+  if(!this.solar){this.solar=document.createElement('canvas');this.solar.width=325;this.solar.height=530;this.sx=this.solar.getContext('2d',{willReadFrequently:true});}
   const mask=nativeSolarTransmission(cloudRGBA);this.sx.clearRect(0,0,325,530);this.sx.fillStyle='#fff';this.sx.fillRect(0,rows,325,530-rows);this.sx.putImageData(new ImageData(mask,325,rows),0,0);
   return 'url("'+this.solar.toDataURL()+'")';
  }

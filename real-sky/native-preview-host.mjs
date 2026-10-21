@@ -1,6 +1,6 @@
 import {nativeResultCurrent,nativeDiscMask} from './native-contract.mjs';
 import {renderNativeBackgroundPreview} from './native-preview.mjs';
-import {NativeForegroundCapture,nativeForegroundRows} from './native-composition.mjs';
+import {NativeForegroundCapture,NativeSolarMaskPublication,nativeForegroundRows} from './native-composition.mjs';
 import {encodeNativeFrame} from './native-encoding.mjs';
 import {nativeCloudDisplayFrame} from './native-cloud-transfer.mjs';
 import {NativeStarPreview,joinNativeStarPreview,nativeStarPreviewRegion} from './native-star-preview.mjs';
@@ -12,8 +12,9 @@ export function startNativeSkyPreview(){
  if(!card||!host)return;
  const canvas=document.createElement('canvas');canvas.className='real-sky-preview';canvas.width=325;canvas.height=530;canvas.setAttribute('aria-hidden','true');card.prepend(canvas);
  const ctx=canvas.getContext('2d',{alpha:false}),foreground=new NativeForegroundCapture(canvas);
+ const solarPublication=new NativeSolarMaskPublication();
  const background=document.createElement('canvas'),back=background.getContext('2d');background.width=325;background.height=530;
- let value=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0;
+ let value=null,pendingValue=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=window.SalahStarBootstrap??null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0,catalogueRequest=0;
  // The retained final-rAF observer measured up to3.3ms after publication.
  // Reserve5ms of wall time inside (never beyond) the30 accepted-second fence.
  // This is admission headroom, not a guarantee under arbitrary OS stalls.
@@ -25,8 +26,15 @@ export function startNativeSkyPreview(){
   if(status.deadlineMisses.length>8)status.deadlineMisses.shift();return false;
  }
  function retain(reason,s){status.retained=true;status.reason=reason;status.publication={utcMs:s.utcMs,ageMs:Math.abs(s.utcMs-value.utcMs),at:performance.now(),retained:true};}
+ function retainFirstPaint(reason,s){
+  const first=window.SalahFirstPaint?.value;
+  if(!first||s.paused||!publishable(first,s))return false;
+  // A failed replacement has not acquired the displayed initial scene. Keep
+  // its original pixels and identity until a complete current preview commits.
+  status.retained=true;status.reason=reason;status.publication={utcMs:s.utcMs,ageMs:Math.abs(s.utcMs-first.utcMs),at:performance.now(),retained:true,source:'initial-head'};return true;
+ }
  function retireFirstPaint(){document.querySelector('#native-first-paint')?.remove();window.SalahFirstPaint=null;}
- function clear(reason){if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
+ function clear(reason){solarPublication.cancel();pendingValue=null;if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
  function prepareForeground(){
   const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom),capture=foreground.capture(rows);
   let mask=null;
@@ -36,52 +44,84 @@ export function startNativeSkyPreview(){
   }
   return {bottom,rows,capture,mask,solarMask:foreground.prepareSolarMask(capture.cloudRGBA,rows)};
  }
- function paint(next=value,pixels=null,prepared=null){
+ function retryPreview(retried){if(!retried){status.deadlineRetries++;update(true);}else clear(status.deadlineMisses.at(-1)?.reason??'preview deadline');return false;}
+ function paintFailed(e,next,retried){
+   if(disposed||card.classList.contains('real-sky-composed'))return;
+   const reason=String(e.message??e);
+    if(value){const retained=host.capture(false);if(!retained.paused&&publishable(value,retained))retain(reason,retained);else{missed(value,'preview exception lacks currentness headroom: '+reason,retained);clear(reason);retryPreview(retried);}}
+    else{
+     const retained=host.capture(false);
+     if(!retainFirstPaint(reason,retained)){
+      clear(reason);
+      if(!retained.paused&&!publishable(next,retained)){missed(next,'preview exception lacks currentness headroom: '+reason,retained);retryPreview(retried);}
+     }
+    }
+ }
+ function rejectPreview(error,prepared){paintFailed(error,prepared.next,prepared.retried);}
+ function publishPreview(solarMask,prepared){
+  const {next,pixels,base,image,revision,retried,bottom,rows,capture}=prepared;
+    if(pendingValue===next)pendingValue=null;
+    if(disposed||card.classList.contains('real-sky-composed')||catalogueRevision!==revision)return false;
+    const accepted=host.capture(false);
+    if(accepted.paused||!publishable(next,accepted)){
+     missed(next,'preview superseded during mask decode',accepted);return retryPreview(retried);
+    }
+     // Finish the fallible lunar join before replacing the displayed background
+     // or its identity. A failed candidate must not be called a retained frame.
+     const nextFrame=pixels||!previewFrame?{preview:true,raster:next.raster,current:()=>nativeResultCurrent(next.job,host.capture(false))}:previewFrame;
+     window.SalahMoonDetail?.compose(nextFrame,encodeNativeFrame);
+    const published=host.capture(false);
+     if(published.paused||!publishable(next,published)){
+     missed(next,'preview final publication lacks currentness headroom',published);clear('preview final publication expired');return retryPreview(retried);
+    }
+     // The decoded mask, immutable foreground and completed detail commit in
+     // one turn. Until here the previous background and ownership stay intact.
+     if(pixels)ctx.putImageData(pixels,0,0);
+     ctx.putImageData(image,0,0);card.style.setProperty('--native-sun-cloud-mask',solarMask);
+     previousMoonBottom=bottom;previewFrame=nextFrame;value=next;baseBytes=base;if(pixels)paintedCatalogueRevision=revision;
+     Object.assign(status,{status:'ready',quality:next.quality,retained:false,utcMs:next.utcMs,native:next.native,solarAltitudeDeg:next.raster.physicalState.sun.altDeg,display:next.raster.displayPresentation,diagnostics:next.diagnostics,catalogue:next.raster.starPreview??null,reason:null});
+    canvas.style.visibility='visible';retireFirstPaint();card.classList.add('real-sky-preview-ready');
+    status.publication={utcMs:published.utcMs,ageMs:published.utcMs-next.utcMs,at:performance.now()};
+    status.composition={...capture.native,updatedRows:rows,atmosphere:'foreground path retained',cloudApplications:1};status.draws++;lastPaint=performance.now();return true;
+ }
+ function paint(next=value,pixels=null,prepared=null,retried=false){
   if(!next||disposed)return;
   const current=host.capture(false);if(current.paused||!nativeResultCurrent(next.job,current))return missed(next,'preview target changed, hidden or expired',current);
+  const revision=catalogueRevision;
+
   try{
-   const {bottom,rows,capture,mask,solarMask}=prepared??prepareForeground(),base=pixels?pixels.data:baseBytes;
+   prepared=prepared??prepareForeground();
+   const {bottom,rows,capture,mask,solarMask}=prepared,base=pixels?pixels.data:baseBytes;
    let region=base.subarray(0,325*rows*4);
    if(next.raster.starPreview)region=nativeStarPreviewRegion(next,mask,rows);
    const bytes=nativeCloudDisplayFrame(region,capture.cloudRGBA,capture.moonRGBA);
    if(!nativeResultCurrent(next.job,host.capture(false)))return missed(next,'preview superseded during cloud composition');
-   // Prepare both buffers before publication: invalid foreground cannot expose
-   // a half-composed new background. Retain only the old, still-current image.
-   if(pixels)ctx.putImageData(pixels,0,0);
-   ctx.putImageData(new ImageData(bytes,325,rows),0,0);
-   card.style.setProperty('--native-sun-cloud-mask',solarMask);
-   previousMoonBottom=bottom;if(pixels||!previewFrame)previewFrame={preview:true,raster:next.raster,current:()=>nativeResultCurrent(next.job,host.capture(false))};
-   value=next;baseBytes=base;if(pixels)paintedCatalogueRevision=catalogueRevision;
-   Object.assign(status,{status:'ready',quality:next.quality,retained:false,utcMs:next.utcMs,native:next.native,solarAltitudeDeg:next.raster.physicalState.sun.altDeg,display:next.raster.displayPresentation,diagnostics:next.diagnostics,catalogue:next.raster.starPreview??null,reason:null});
-   canvas.style.visibility='visible';retireFirstPaint();card.classList.add('real-sky-preview-ready');window.SalahMoonDetail?.compose(previewFrame,encodeNativeFrame);
-   // Device-resolution detail work and final canvas publication also consume
-   // real time. Check the ORIGINAL job again before this JS turn can present.
-   // A late join must not leave an expired base visible until the next rAF.
-   const published=host.capture(false);
-   if(!publishable(next,published))return missed(next,'preview final publication lacks currentness headroom',published);
-   status.publication={utcMs:published.utcMs,ageMs:published.utcMs-next.utcMs,at:performance.now()};
-   status.composition={...capture.native,updatedRows:rows,atmosphere:'foreground path retained',cloudApplications:1};status.draws++;lastPaint=performance.now();
-  }catch(e){
-   // Readback may itself consume the remaining age budget. Retain only the
-   // ORIGINAL displayed target while it still qualifies after that failure.
-   const reason=String(e.message??e);
-   if(value){const retained=host.capture(false);if(publishable(value,retained))retain(reason,retained);else return missed(value,'preview exception lacks currentness headroom: '+reason,retained);}
-   else clear(reason);
-  }
+   const image=new ImageData(bytes,325,rows);
+   pendingValue=next;
+   // The existing foreground record owns immutable publication inputs. Stable
+   // handlers avoid new functions when the decoded mask is reused.
+   prepared.next=next;prepared.pixels=pixels;prepared.base=base;prepared.image=image;
+   prepared.revision=revision;prepared.retried=retried;
+   solarPublication.publish(solarMask,publishPreview,rejectPreview,prepared);
+  }catch(e){paintFailed(e,next,retried);}
  }
  function update(retried=false){
   if(disposed)return;
   const s=host.capture(false);
+  // Initial CSS pixels are a separate displayed owner while decode is pending.
+  // Validate their original job as well as the candidate and current preview.
+  const first=window.SalahFirstPaint?.value;
+  if(first&&!nativeResultCurrent(first.job,s))retireFirstPaint();
   if(!s.sceneIdentity||s.lat==null||s.lon==null||s.paused){clear('accepted target unavailable or hidden');card.classList.add('real-sky-awaiting-input');return;}
   card.classList.remove('real-sky-awaiting-input');
-  if(card.classList.contains('real-sky-composed'))return;
-  // A transient layout/readback stall must not expose an intermediate blank
-  // frame. Retry once in this SAME synchronous presentation turn, with a fresh
-  // complete native snapshot and its real UTC. Never relabel the old result.
-  // If the second attempt also fails, the existing fail-closed policy applies.
-  const retry=()=>{if(!retried){status.deadlineRetries++;update(true);}else clear(status.deadlineMisses.at(-1)?.reason??'preview deadline');};
+  if(card.classList.contains('real-sky-composed')){solarPublication.cancel();return;}
+  // Retry once with a fresh snapshot and real UTC, never relabel an old result.
+  // An unchanged decoded mask supports same-turn recovery. A changed mask must
+  // finish decoding; only an independently current old frame may remain meanwhile.
   try{
    if(value&&!nativeResultCurrent(value.job,s))clear('preview target changed or expired');
+   if(pendingValue&&!publishable(pendingValue,s)){solarPublication.cancel();pendingValue=null;}
+   if(solarPublication.pending)return;
    // Fast playback needs room for calculation AND the next compositor turn
    // inside the unchanged 30 accepted-second fence. Do not wait until 20s old.
    if(!value||catalogueRevision!==paintedCatalogueRevision||!nativeResultCurrent(value.job,s)||Math.abs(s.utcMs-value.utcMs)>(Math.abs(s.timeScale??1)>10?10000:20000)){
@@ -92,16 +132,22 @@ export function startNativeSkyPreview(){
     const prepared=prepareForeground(),anchor=host.capture().solarAnchor,fresh=host.capture(false);
     const first=window.SalahFirstPaint?.value;
     let next=first&&nativeResultCurrent(first.job,fresh)?first:renderNativeBackgroundPreview({...fresh,solarAnchor:anchor});
-    if(!nativeResultCurrent(next.job,host.capture(false))){missed(next,'preview superseded before publication');retry();return;}
-    const image=new ImageData(encodeNativeFrame(next.raster.linear,next.raster.effectiveExposure),next.raster.width,next.raster.height);
-    const tile=document.createElement('canvas');tile.width=image.width;tile.height=image.height;tile.getContext('2d').putImageData(image,0,0);
-    back.drawImage(tile,0,0,325,530);let pixels=back.getImageData(0,0,325,530);
-    if(catalogue){const stars=catalogue.render(next.job,next.raster.physicalState,{background:pixels.data,exposure:next.raster.effectiveExposure});next=joinNativeStarPreview(next,pixels.data,stars);pixels=new ImageData(next.rgba,325,530);}
-    if(!nativeResultCurrent(next.job,host.capture(false))){missed(next,'preview superseded during display preparation');retry();return;}
-    if(paint(next,pixels,prepared)===false)retry();return;
+    if(!nativeResultCurrent(next.job,host.capture(false))){missed(next,'preview superseded before publication');retryPreview(retried);return;}
+    const image=new ImageData(next.rgba??encodeNativeFrame(next.raster.linear,next.raster.effectiveExposure),next.raster.width,next.raster.height);
+    // The ordinary raster is already at the card footprint. Preserve its
+    // encoded bytes directly; a canvas upload/readback adds no information.
+    // Accelerated-clock rasters still use the existing resampling path.
+    let pixels=image;
+    if(image.width!==325||image.height!==530){
+     const tile=document.createElement('canvas');tile.width=image.width;tile.height=image.height;tile.getContext('2d').putImageData(image,0,0);
+     back.drawImage(tile,0,0,325,530);pixels=back.getImageData(0,0,325,530);
+    }
+    if(catalogue&&!next.raster.starPreview){const stars=catalogue.render(next.job,next.raster.physicalState,{background:pixels.data,exposure:next.raster.effectiveExposure});next=joinNativeStarPreview(next,pixels.data,stars);pixels=new ImageData(next.rgba,325,530);}
+    if(!nativeResultCurrent(next.job,host.capture(false))){missed(next,'preview superseded during display preparation');retryPreview(retried);return;}
+    if(paint(next,pixels,prepared,retried)===false)retryPreview(retried);return;
    }
-   if(paint()===false)retry();
-  }catch(e){const reason=String(e.message??e);if(value){const retained=host.capture(false);if(publishable(value,retained))retain(reason,retained);else{missed(value,'preview preparation exception lacks currentness headroom: '+reason,retained);retry();}}else clear(reason);}
+   if(paint(value,null,null,retried)===false)retryPreview(retried);
+   }catch(e){const reason=String(e.message??e);if(value){const retained=host.capture(false);if(!retained.paused&&publishable(value,retained))retain(reason,retained);else{missed(value,'preview preparation exception lacks currentness headroom: '+reason,retained);retryPreview(retried);}}else if(!retainFirstPaint(reason,host.capture(false)))clear(reason);}
  }
  function present(now){if(disposed)return;const s=host.capture(false);if(!card.classList.contains('real-sky-composed')&&(catalogueRevision!==paintedCatalogueRevision||Math.abs(s.timeScale??1)>10||!value||!nativeResultCurrent(value.job,s)||now-lastPaint>100))update();}
  function tick(now){if(disposed||nativeDriven)return;present(now);raf=requestAnimationFrame(tick);}
@@ -115,12 +161,14 @@ export function startNativeSkyPreview(){
   // startup task. Keep the ORIGINAL current atmosphere until the next native
   // paint atomically replaces it; that paint rechecks target/epoch/30s age.
   // Clearing the preview here both stalled controls and caused a needless gap.
-  catalogue=null;const revision=++catalogueRevision;status.catalogueError=null;
+   const revision=++catalogueRequest;status.catalogueError=null;
   try{
-   const next=pack?await NativeStarPreview.create(pack):null;
-   if(disposed||revision!==catalogueRevision)return;
-   catalogue=next;catalogueRevision++;
-  }catch(error){if(!disposed&&revision===catalogueRevision)status.catalogueError=String(error.message??error);}
- },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
+   const next=pack?await NativeStarPreview.create(pack):window.SalahStarBootstrap??null;
+   if(disposed||revision!==catalogueRequest)return;
+   // Asset reset revokes pending admission, but the same bootstrap is not a
+   // new displayed catalogue. Avoid rebuilding a current sky before first paint.
+   if(catalogue!==next){catalogue=next;catalogueRevision++;}
+  }catch(error){if(!disposed&&revision===catalogueRequest)status.catalogueError=String(error.message??error);}
+ },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;solarPublication.dispose();retireFirstPaint();catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
  update();raf=requestAnimationFrame(tick);
 }

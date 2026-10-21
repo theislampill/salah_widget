@@ -1,0 +1,212 @@
+{
+  "schema": "r0021-independent-bounded-result-review/v1",
+  "atUtc": "2026-10-21T13:47:37.506903+00:00",
+  "status": "SUPPORTED_DELAYED_HTTP_BODY_FAILURE_RETENTION_EXPLICIT_RETRY_ENDPOINTS",
+  "runtime": "3e18b2fa83d0cbfce0a4360d789f7927aef5c064f963e8c18acb430507995821",
+  "executionSha256": "6fd4291046a2510c7a9b763bfccd7a91a73c91f5dbc98cd32c8e7963d444f29c",
+  "preflightReviewSha256": "bdb8c9b838245e7729a42d4fa5fb7cab89a671d8d84a25c592958ed7b7440b3e",
+  "sourcePins": {
+    "moon\\src\\moon-native.mjs": "24f9e1d438483cd8150fbd683a56852a044d3bb66e3b58f0623f4c4238285d07",
+    "moon\\src\\moon-worker.mjs": "9c2264c12e2e7d40736bbcafaaeb686eaa3a51083b715c9b785b52cbba818204"
+  },
+  "harnessSha256": "a4c9ec5070034d364b87e92c0b0dad746978c52575b60028b050a02a21c10764",
+  "sourceReferences": [
+    "moon/src/moon-worker.mjs:5-9 real fetch-body read",
+    "moon/src/moon-native.mjs:53-67 failure stops worker and retains only originally current accepted surface",
+    "moon/src/moon-native.mjs:217 original 120000ms startup deadline",
+    "harness:137-146 actual original prefix/body hold;223 source timer/worker observer;335-371 actual failure, settings, one retry"
+  ],
+  "cases": [
+    {
+      "engine": "chromium",
+      "version": "148.0.7778.96",
+      "resultSha256": "d796cedeadd954a49a8e818e84e479f344fb0257ee7b28a1ff164422193ff0be",
+      "timer": {
+        "delay": 120000,
+        "before": 606.8000000119209,
+        "timeOrigin": 1792589630443,
+        "stack": "Error\n    at window.setTimeout (<anonymous>:8:95)\n    at start (http://127.0.0.1:55903/salah_widget/:4066:36)",
+        "id": 6,
+        "after": 607.2000000029802,
+        "firedAt": 120608.30000001192,
+        "clearedAt": 120608.40000000596
+      },
+      "primaryWorker": {
+        "id": 1,
+        "createdAt": 606.7000000029802,
+        "terminatedAt": 120608.5
+      },
+      "body": {
+        "kind": "controlled-open-body",
+        "url": "/salah_widget/moon/assets/dem.bin.gz",
+        "httpStatus": 200,
+        "declaredBytes": 20137935,
+        "sentBytes": 4096,
+        "prefixSha256": "9dabdbd119f10e40fbd5ac9e7ac01f19f61f73d93218359467b2d79a94f45d2e",
+        "openedAbsolute": 1792589631063.9595,
+        "releasedAbsolute": 1792589751639.0525
+      },
+      "failedAt": 120888.10000000894,
+      "afterSettingsAt": 121141.10000000894,
+      "failureErrors": [
+        "Moon asset startup deadline exceeded"
+      ],
+      "retainedSource": "current initial-v5",
+      "settingsRoute": "ACTUAL_BUCKLE_OPEN_CLOSE",
+      "retry": {
+        "atMs": 121218.00000000803,
+        "retry": {
+          "moon": true,
+          "sky": {
+            "status": "ready",
+            "generation": 2,
+            "error": null
+          }
+        }
+      },
+      "finalAt": 134384,
+      "totalElapsedMs": 134500.0,
+      "final": {
+        "status": "ready",
+        "current": true,
+        "visibleSource": "refined-terrain",
+        "pending": false,
+        "quality": {
+          "status": "empirical-adaptive",
+          "projectedMaximumCode": 0.4399383068084717,
+          "projectedGate": 0.5,
+          "unsettled": 0,
+          "receiverHeuristicRemaining": 64
+        },
+        "acceptedIdentity": "5092ef8ee6e1c893e7bef23e2d9ca957b5b8048a757c7600de71b239ff804b40",
+        "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+        "card": {
+          "x": 0,
+          "y": 0,
+          "width": 325,
+          "height": 530,
+          "visibility": "visible",
+          "opacity": "1"
+        },
+        "rows": [
+          "Fajr06:21",
+          "Sunrise07:26",
+          "Dhuhr13:17",
+          "Asr16:38",
+          "Maghrib19:08",
+          "Isha20:13"
+        ]
+      },
+      "originalPNGs": {
+        "cold-00.png": "24b710291a8413e429dddb9015fccd904c4808a6f7a671618a099f44399968e7",
+        "cold-failed-before-recovery.png": "3872a406e33aca7d99335e76b86ec8dfe8da40c46af98c8bd5fe36085533de07",
+        "cold-failed-settings.png": "2c5a99acd6b424b2ae22622bbca1cf41906d9b383d690bcef5f09bf8061bd587",
+        "cold-final.png": "3339f4398e7f43d2ea21aa9effa8c8ce982589e32da9e1c6eac0153f3ab8075e"
+      }
+    },
+    {
+      "engine": "firefox",
+      "version": "150.0.2",
+      "resultSha256": "0b6c9140e1f347d72b9644e2e2dfb29d4b3d4870bca1d7755af00d9f312fe244",
+      "timer": {
+        "delay": 120000,
+        "before": 566,
+        "timeOrigin": 1792589768495,
+        "stack": "window.setTimeout@debugger eval code:8:95\nstart@http://127.0.0.1:63266/salah_widget/#local=1&motion=full:4066:36\nFrameRequestCallback*installWorkerSource/startFrame<@http://127.0.0.1:63266/salah_widget/#local=1&motion=full:4085:83\nFrameRequestCallback*installWorkerSource@http://127.0.0.1:63266/salah_widget/#local=1&motion=full:4085:45\n@http://127.0.0.1:63266/salah_widget/#local=1&motion=full:7381:59\n",
+        "id": 5,
+        "after": 566,
+        "firedAt": 120567,
+        "clearedAt": 120567
+      },
+      "primaryWorker": {
+        "id": 1,
+        "createdAt": 566,
+        "terminatedAt": 120567
+      },
+      "body": {
+        "kind": "controlled-open-body",
+        "url": "/salah_widget/moon/assets/dem.bin.gz",
+        "httpStatus": 200,
+        "declaredBytes": 20137935,
+        "sentBytes": 4096,
+        "prefixSha256": "9dabdbd119f10e40fbd5ac9e7ac01f19f61f73d93218359467b2d79a94f45d2e",
+        "openedAbsolute": 1792589769171.8025,
+        "releasedAbsolute": 1792589890541.4436
+      },
+      "failedAt": 121634,
+      "afterSettingsAt": 121899,
+      "failureErrors": [
+        "Moon asset startup deadline exceeded"
+      ],
+      "retainedSource": "current initial-v5",
+      "settingsRoute": "ACTUAL_BUCKLE_OPEN_CLOSE",
+      "retry": {
+        "atMs": 122077.99999999406,
+        "retry": {
+          "moon": true,
+          "sky": {
+            "status": "ready",
+            "generation": 2,
+            "error": null
+          }
+        }
+      },
+      "finalAt": 161678,
+      "totalElapsedMs": 161858.99999999674,
+      "final": {
+        "status": "ready",
+        "current": true,
+        "visibleSource": "refined-terrain",
+        "pending": false,
+        "quality": {
+          "status": "empirical-adaptive",
+          "projectedMaximumCode": 0.4399383068084717,
+          "projectedGate": 0.5,
+          "unsettled": 0,
+          "receiverHeuristicRemaining": 64
+        },
+        "acceptedIdentity": "0a27711ef3d9f5e59ead0122e431936dd33d53b3f1a24c80daccc3b27e92e574",
+        "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+        "card": {
+          "x": 0,
+          "y": 0,
+          "width": 325,
+          "height": 530,
+          "visibility": "visible",
+          "opacity": "1"
+        },
+        "rows": [
+          "Fajr06:21",
+          "Sunrise07:26",
+          "Dhuhr13:17",
+          "Asr16:38",
+          "Maghrib19:08",
+          "Isha20:13"
+        ]
+      },
+      "originalPNGs": {
+        "cold-00.png": "129308f0dbedd7a266cd6e3d336d53b5bfe4acb40ca8b224031ada3f00950b81",
+        "cold-failed-before-recovery.png": "4bce436014620937ca5a25c3f173fb5e2cfeb45643dedeceaa3d14afb87a2726",
+        "cold-failed-settings.png": "f19ce74e253155116c4ce666d141abd72b8d5b11c1704ca45b3f51be23feb572",
+        "cold-final.png": "927117c0a04a42ec996d5afe9a16d03b2695287deb6cacba666f7ccc44e5d05d"
+      }
+    }
+  ],
+  "pixels": "Independently viewed all eight original whole-card PNGs. Initial and failure/final endpoints show opaque textured Moon/catalogue, six readable rows and footer, no selected endpoint material or scale substitution. Actual settings overlays open; afterSettings state and final pixels show return. Firefox settings screenshot retains visible underlying card during overlay; no settled-transition equivalence claimed.",
+  "cleanup": {
+    "executionNormalExitBoth": true,
+    "runtimeUnchanged": true,
+    "harnessUnchanged": true,
+    "leaseReleasedRecorded": true,
+    "lockAbsentAtReview": true,
+    "ownedProfileProcessCheck": "Bounded CIM query for chrome/firefox/python/node commands containing the exact r121/r122 output roots returned no matches; not a formal lifecycle receipt."
+  },
+  "limits": [
+    "Functional endpoints only; no continuous pixel watch, S1, timing-cost or hardware-presentation qualification.",
+    "Real delayed HTTP body/startup deadline plus explicit retry; not decoder, automatic retry, missing HTTP status or compressed-data corruption coverage.",
+    "Original 240000ms refinement timer and empirical .5 gate remain unchanged; 64 receiver heuristics remain in each final.",
+    "Browser identities differ and accepted physical identity hashes differ; no claim of identical cross-engine astronomical inputs.",
+    "All source/currentness/scientific and unrelated gates remain scoped to their existing evidence; no merge or release authority."
+  ],
+  "nextAction": "Retain r121 as bounded supported evidence; independently classify r122 unexpected pageerror. No repeated native acquisition is implied."
+}

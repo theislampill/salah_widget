@@ -23,11 +23,11 @@ function assetDigest(bytes){
  for(let offset=0;offset<padded.length;offset+=64){
   for(let i=0;i<16;i++)w[i]=dv.getUint32(offset+i*4);
   for(let i=16;i<64;i++){const x=w[i-15],y=w[i-2];w[i]=(w[i-16]+(shRotate(x,7)^shRotate(x,18)^(x>>>3))+w[i-7]+(shRotate(y,17)^shRotate(y,19)^(y>>>10)))>>>0;}
-  let [a,b,c,d,e,f,g,z]=h;
+  let a=h[0],b=h[1],c=h[2],d=h[3],e=h[4],f=h[5],g=h[6],z=h[7];
   for(let i=0;i<64;i++){const t1=(z+(shRotate(e,6)^shRotate(e,11)^shRotate(e,25))+((e&f)^(~e&g))+shK[i]+w[i])>>>0,t2=((shRotate(a,2)^shRotate(a,13)^shRotate(a,22))+((a&b)^(a&c)^(b&c)))>>>0;
    z=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;
   }
-  const v=[a,b,c,d,e,f,g,z];for(let i=0;i<8;i++)h[i]=(h[i]+v[i])>>>0;
+  h[0]=(h[0]+a)>>>0;h[1]=(h[1]+b)>>>0;h[2]=(h[2]+c)>>>0;h[3]=(h[3]+d)>>>0;h[4]=(h[4]+e)>>>0;h[5]=(h[5]+f)>>>0;h[6]=(h[6]+g)>>>0;h[7]=(h[7]+z)>>>0;
  }
  return Array.from(h,x=>x.toString(16).padStart(8,'0')).join('');
 }
@@ -199,7 +199,10 @@ function startMoonDetail(){
  function available(){try{return !disposed&&!!context&&!!cx&&!!geometry();}catch{return false;}}
  function compose(frame,encode){
   if(disposed||!frame||!window.SalahMoonRuntime?.surface()||!context||!cx){clear();return;}
-  const g=geometry();if(!g||!(g.card.classList.contains('real-sky-composed')||frame.preview&&g.card.classList.contains('real-sky-preview-ready'))){clear();return;}
+  // The preview stages this opaque lunar join before publishing its ready
+  // class. Its current frame is the authority here; requiring that later
+  // class creates an empty Moon slot when the preview hides the SVG fallback.
+  const g=geometry();if(!g||!(g.card.classList.contains('real-sky-composed')||frame.preview&&frame.current())){clear();return;}
   const began=performance.now(),r=frame.raster;
   const base=document.querySelector(frame.preview?'.real-sky-preview':'.real-sky-canvas');
   // Native lunar optics precede the original opaque SVG photo. Preserve that
@@ -458,7 +461,10 @@ class MoonEngine{
  * terrain/finite-light solution is evaluated at every admitted receiver; this
  * selects angular quadrature effort, not geography, material or source energy.
  */
-function sourceRule(n){const pairs={64:[4,16],256:[8,32],1024:[16,64],4096:[32,128],8192:[64,128]};if(!pairs[n])throw new RangeError('source rule');return pairs[n];}
+// Spend the terminal increment on azimuth: the retained DPR2 scene needs it.
+// A separate fixed-angular reference bounds that scene's radial uncertainty;
+// this remains an empirical refinement rule, not an absolute error certificate.
+function sourceRule(n){const pairs={64:[4,16],256:[8,32],1024:[16,64],4096:[32,128],8192:[32,256]};if(!pairs[n])throw new RangeError('source rule');return pairs[n];}
 function qualityMask(before,after,{first=false,threshold=.125}={}){
  const a=before.receiverCodes,b=after.receiverCodes,m=after.ambiguous;
  if(!Number.isFinite(threshold)||threshold<=0||!a||!b||a.length!==b.length||b.length%3||m?.length!==b.length/3)throw new RangeError('quality input');

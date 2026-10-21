@@ -1,0 +1,126 @@
+{
+  "schema": "r0021-bounded-moon-quality-result-review/1",
+  "decision": "ACCEPT_NEW_JOB_NUMERICAL_WITNESS_ONLY",
+  "resultSha256": "41a6385f6becc5cdd13b49f9d609f2d06ef6f3ea4f664fc49c66c3798d99ed99",
+  "executionSha256": "96fbdad291d6caca7802bdc0f860334353309b4db6cd986e8e85d9d428bf76b4",
+  "oldContraryResultSha256": "4f6d891f1be16b9cafbe2171d66e487b6f28f5a6ff111d230b9a4f9c028d9328",
+  "sourceRuntime": {
+    "build": "integrated-r17",
+    "treeSha256": "3192e0449c78dece56e71aacc98eaffa899483675055564e32497a2d3152f58c",
+    "indexSha256": "aa084fcf3f4294e2ccc353a34ff1c259bf78592e7cd9334f41ae7bce8e1c23c6",
+    "runtimeUnchangedReported": true,
+    "harnessUnchangedReported": true,
+    "executionExitCode": 0
+  },
+  "join": {
+    "rows": 6,
+    "sendAttempts": 1,
+    "worker": 1,
+    "id": 3,
+    "identity": {
+      "id": 3,
+      "key": "[0,\"28.5383|-81.3792|America/New_York|wall\",0.9682813391541965,true,2,\"calendar\",null,217]",
+      "epoch": 2
+    },
+    "previewAndResultIdentitySceneSentEqual": true,
+    "overflow": false,
+    "observerErrors": [],
+    "pageErrors": []
+  },
+  "result": {
+    "physicalIdentity": "1c416abcb348d3e6917375b12078ad327a070b48ef7a5433f093f40638bf8ee5",
+    "profileIdentity": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+    "fraction": 0.9683310690869191,
+    "quality": {
+      "status": "empirical-adaptive",
+      "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+      "thresholdCode": 0.125,
+      "unsettled": 0,
+      "receiverHeuristicRemaining": 15,
+      "projectedMaximumCode": 0.2557229995727539,
+      "projectedGate": 0.5,
+      "lastMaximumCode": 0.44492340087890625,
+      "history": [
+        {
+          "samples": 64,
+          "receivers": 291600,
+          "milliseconds": 5611
+        },
+        {
+          "samples": 256,
+          "receivers": 291600,
+          "milliseconds": 7790
+        },
+        {
+          "samples": 1024,
+          "receivers": 1668,
+          "milliseconds": 18112
+        },
+        {
+          "samples": 4096,
+          "receivers": 202,
+          "milliseconds": 7923
+        },
+        {
+          "samples": 8192,
+          "receivers": 74,
+          "milliseconds": 5138
+        }
+      ],
+      "totalMs": 44630,
+      "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+    },
+    "finalStatus": "ready",
+    "visibleSource": "refined-terrain",
+    "current": true
+  },
+  "sceneDifference": {
+    "fraction": {
+      "oldAcceptedPreview": 0.9683302416798423,
+      "newActualSent": 0.9683310690869191
+    },
+    "sun": {
+      "oldAcceptedPreview": [
+        0.9366604833596847,
+        0.3502386884860122,
+        0
+      ],
+      "newActualSent": [
+        0.9366621381738381,
+        0.3502342629035798,
+        0
+      ]
+    },
+    "requestedNativeFraction": {
+      "oldAcceptedPreview": 0.9682630647265152,
+      "newActualSent": 0.9682638929819377
+    }
+  },
+  "fractionDelta": 8.274070768532482e-07,
+  "sourcePins": {
+    "moon-worker.mjs": {
+      "integrated-r3": "9c2264c12e2e7d40736bbcafaaeb686eaa3a51083b715c9b785b52cbba818204",
+      "integrated-r17": "9c2264c12e2e7d40736bbcafaaeb686eaa3a51083b715c9b785b52cbba818204"
+    },
+    "moon-quality.mjs": {
+      "integrated-r3": "724916035b92df8b02dc2e798dd74f5515249ef9bc09a6effc1d844357a8477c",
+      "integrated-r17": "724916035b92df8b02dc2e798dd74f5515249ef9bc09a6effc1d844357a8477c"
+    },
+    "moon-pool.mjs": {
+      "integrated-r3": "e905d5bfc1ab4893cb7774b85203628081deb231f05284c5cef20b14fd1484bd",
+      "integrated-r17": "e905d5bfc1ab4893cb7774b85203628081deb231f05284c5cef20b14fd1484bd"
+    },
+    "moon-engine.mjs": {
+      "integrated-r3": "05ec2e8b0eef0e5bc6b3c6556eb2f901b126c717f469b3c609a49b4edeaa8a32",
+      "integrated-r17": "05ec2e8b0eef0e5bc6b3c6556eb2f901b126c717f469b3c609a49b4edeaa8a32"
+    }
+  },
+  "interpretation": "This actual new job reached8192 samples and met the unchanged projected<=.5 alternative (.2557229995727539), despite15 receiver-heuristic remnants. The final host reports current refined-terrain. This is not all-error convergence, old-job reproduction, visual inspection or continuous presentation credit.",
+  "nextDiscriminator": {
+    "supportedInPrinciple": "One isolated fixed-input adaptive render of the exact retained old accepted-preview scene can distinguish a deterministic quality-limit behavior of that candidate input from the approximate-clock r71 success. It remains a candidate-input experiment because the original rejected request identity/scene was not retained.",
+    "interfaceConstraint": "Production moon-worker.mjs:27 strips receiverCodes/ambiguous/qualityImages, and:30 does not pass any job diagnostic field into adaptiveRender. Merely setting message diagnostic:true cannot retain fields.",
+    "minimumPreparation": "Pin a diagnostic-only wrapper/export around unchanged adaptiveRender and the actual4-row MoonPool/global join/filter path, exact WASM/assets/profile/scene/540receiver/300output/rules through8192. Retain the last comparison pair of projected fields and receiver codes plus selected masks/counts so the reported maximum can be recomputed. No threshold or physical-algorithm change; finite stop and owned cleanup.",
+    "limits": "No exact acquisition packet has been reviewed for that wrapper. No new probe is admitted by this result review. A different-job success cannot erase the old r3 failure, and no repeated approximate phase search is justified."
+  },
+  "reviewLimits": "Read-only JSON/source inspection only; no image, trace, worker execution or native acquisition by reviewer. ROOT-reported empty cleanup is not independently minted as a formal lifecycle receipt. Original S1, cost, continuous and historical Firefox quality obligations remain."
+}

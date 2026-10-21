@@ -1,0 +1,9 @@
+# Native evidence path roles
+
+Host aliases identify provenance only; they are not runnable public paths. `${WORK_ROOT}` is the isolated evidence/build root; `${REPO_ROOT}` is the isolated PR worktree; `${BROWSER_CACHE}` is the existing test-browser executable cache; `${TOOL_CACHE}` is the existing Node/tool package cache; `${STDLIB_PYTHON}` is the standard-library Python installation; `${QA_TOOLCHAIN}` is the existing Python/Node QA toolchain root. No private browser profile is published.
+
+Independent successor reviews also use `${OUTPUT}` as a provenance alias for the same `${WORK_ROOT}`. It does not identify a separate root or add a launch-path role.
+
+Use the repository-native source/test commands and the public manifest mappings. A projected original/local-only locator is not a promise that an external executor has that local file. The scripts retain the actual method and its source identity; they require deliberate path rebinding, not blind execution.
+
+The r123-r126 packet also uses `${SYSTEM_ROOT}` for system executable locations in the owned-process cleanup ledger. Native profiler `metadata.command_line` is withheld because it contains a disposable browser-profile path; all event/timing records remain. Original hashes bind the untouched local inputs, and stored hashes bind their public projections. Source-frame JPEGs and videos are byte-exact. The failed Chromium parent sequence publishes a selected original-frame archive plus a complete source-hash inventory and full original video/sidecar, rather than duplicating every no-widget frame in Git.

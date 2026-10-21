@@ -1,0 +1,15 @@
+Support the exact r15 inactive-lunar-optic correction for continued engineering. No actionable source defect was found. This is not S1, callback-cost, continuous-motion, actual-parent or merge qualification.
+
+Binding: HEAD `ffbb6e239a770e03beae1d76a6e0189d2134898e`, HEAD tree `4e79c90192960c82fb6e21036f7f93d6efddaf3d`, and only the two named source/test changes. Source SHA `a1aca8d5a2e6a6609d6e49d82fcece891634435473436536f2993c307e017f34` and test SHA `f41b8ab1610a98b8e9c70351b295510599cf96d249f0b84f4c42ad81af55e0c8` equal their immutable r15 copies. Generated index SHA `98e4b3f1c3ecdb89ae1ceb33463fc02dad3b47cc32482aa5c2a456886e6b11a5`.
+
+At source lines 193–195 and 2804–2816, the three optional lunar optics default hidden. Their existing opacity values, blur filters, geometry, blend modes and transitions are unchanged. The shared writer sets `inherit` for the serialized positive sink and retires it only after a finite computed opacity of exactly zero. Invalid/empty values cannot certify a completed fade. Ordinary and pending writers both use this helper. The retained genuine RED and six-test GREEN cover the important source boundaries; I did not rerun tests.
+
+Chromium r35 and Firefox r36 each supply 25 coherent baseline/candidate states. I independently compared all 50 PNG pairs: every pair is byte-identical. I viewed 12 originals covering zero, positive halo/corona/paraselene, partial halo exit and Firefox ancestor guards. Positive effects visibly render, the partial exit is weaker, and the guarded optional optics disappear. The existing head Moon remains in the guard pictures; this does not bypass the optional SVG optic guard.
+
+The corrected harness freezes owned native scheduling after current initial geometry, then samples the actual native opacity transitions at matched times. r36 fixes the Firefox setup race by waiting for commit and current `.moon-ready`, and retains cleanup failures separately. Screenshot guards passed; the records store pre-state and an after-screenshot marker, so I do not claim independent reconstruction of the complete after-state. These held-Date/provider/owner controls do not establish ordinary flow, physical eligibility or continuous presentation.
+
+The original r34 class-withdrawal confound stays excluded. The partial r35 Firefox attempt stays incomplete, including the reported geometry/cleanup failure; only its completed Chromium pair is admitted. r36 supplies the separate completed Firefox pair.
+
+Residual limits: no extra scheduler is added, so a stopped clock or inactive render loop can defer pruning after opacity reaches zero until the next paint. The conditional computed-style read has unmeasured callback cost. No S1 or performance benefit is certified here; the root-reported r37 diagnostic is outside this review. ROOT may retain this narrow correction while continuing the original qualification gates.
+
+Exact input, result and selected-original hashes are in the companion JSON, SHA `0f2bf6c986c2781de2115cb2c4720599714a61dbe081e86d4f218c53a2d73352`.

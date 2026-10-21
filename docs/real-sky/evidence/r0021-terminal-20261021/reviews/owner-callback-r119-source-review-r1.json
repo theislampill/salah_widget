@@ -1,0 +1,85 @@
+{
+  "schema": "r0021-independent-source-review/v1",
+  "atUtc": "2026-10-21T13:01:23.146949+00:00",
+  "disposition": "SUPPORTED_BOUNDED_SOURCE_CORRECTION_AND_BUILD_TRANSFER",
+  "parent": "b03f246159a3f32cf0f77bfb4565a3268e5d2d87",
+  "scope": "Exact r119 authored owner/context extraction, affected-test receipts, two canonical inventory comparison, finite ledger and prospective owner clauses. No native, tests, numerical acquisition or Git effects performed by reviewer.",
+  "pins": {
+    "real-sky/native-composition.mjs": "2bbf63a755258bca8fd54f1b164457ee65c9c07a7e7ff9f4b85d2cbef6001a59",
+    "real-sky/native-host.mjs": "bc869547ac1ba78502e5546b6ca224340347ab95d18d6c6380013b6e5278359f",
+    "real-sky/native-preview-host.mjs": "04df3eb1a418c1c06065756b22b1fc6545d2d4ad1c4fdfc644de15b5dec7c2e3",
+    "tests/real-sky/native-solar-publication.test.mjs": "c36416bae3e60dda39406f2f99804353a14660435388a0e64eb19b234d982e24",
+    "tests/real-sky/native-host-composition.test.mjs": "8288fc8ab8e74097117c7388ece64bcb2b0aa1a9d509f7a1e6e292854b2695c5",
+    "docs/real-sky/R0021_POST_QUOTA_LEDGER.md": "ead584df513e0b484073d7bb56df0e3e05740929e13722ef9cd217caa0a55727",
+    "docs/real-sky/evidence/r0021-terminal-20261021/OWNER_DECISIONS.json": "9e837e163c5c7b7f98e856f63aa81afeaf9d0e655d3dc3c6423eb8a6fe7060cc",
+    "docs/real-sky/evidence/r0021-terminal-20261021/APPROVED_TA4_TA5.txt": "285f2eedecfa36cc911162bcca946ac1bb94c283ad5c48fd2f6761c84c21422f"
+  },
+  "build": {
+    "receipt": "${WORK_ROOT}\\intake\\owner-callback-r119-build.json",
+    "sha256": "aa155ec48238e12f342f44d35d29374ca33fabad31aa94df86a3c745cd6173bf",
+    "firstInventorySha256": "0ad448d1483e482fc248a70fad2cc11b43a42677dbdb875981dd725f4c7f23db",
+    "secondInventorySha256": "0ad448d1483e482fc248a70fad2cc11b43a42677dbdb875981dd725f4c7f23db",
+    "runtime": "3e18b2fa83d0cbfce0a4360d789f7927aef5c064f963e8c18acb430507995821",
+    "files": 142,
+    "unchangedAgainstAcceptedR29": 136,
+    "changed": {
+      "index.html": {
+        "bytes": 1585694,
+        "sha256": "f1bacf4d562ea59225a43f1f651128d7be189229754c8367672f1f521dea7a9f"
+      },
+      "offline.html": {
+        "bytes": 81697728,
+        "sha256": "0c732cdb080da86f2704e532de982c312fe887fabb094b28c755b766f1eb8fcc"
+      },
+      "real-sky/native-composition.mjs": {
+        "bytes": 13195,
+        "sha256": "2bbf63a755258bca8fd54f1b164457ee65c9c07a7e7ff9f4b85d2cbef6001a59"
+      },
+      "real-sky/native-host.mjs": {
+        "bytes": 20198,
+        "sha256": "bc869547ac1ba78502e5546b6ca224340347ab95d18d6c6380013b6e5278359f"
+      },
+      "real-sky/native-preview-host.mjs": {
+        "bytes": 14296,
+        "sha256": "04df3eb1a418c1c06065756b22b1fc6545d2d4ad1c4fdfc644de15b5dec7c2e3"
+      },
+      "real-sky/native-sky.js": {
+        "bytes": 394836,
+        "sha256": "3e1b8db02c3762fb3d552e8c0c0f3b6f38b6a9e161ebe75288b88af0c0920fb6"
+      }
+    },
+    "verification": "Inventories equal; same 142 names; exact six expected changes; all six current/frozen physical file hashes equal inventory; four protected current/frozen hashes match receipt. Unchanged entries inherit accepted r29 identities; not a fresh whole-runtime or native certification."
+  },
+  "testReceipts": {
+    "source-r119-baseline.txt": "f06956a55377535e2c229b7bbf3cc76188953bbc1b9aebe466090773ca4a7dbf",
+    "source-r119-red.txt": "913945ea0d584c276fadab396d398d7d19edd0da81cd38f2173917b0761fb354",
+    "source-r119-tests-final.txt": "1d5f8879f44a1066493a7728c63919812caa59fa6ffba15c5d7cadac8457f887",
+    "source-r119-encoding-tests.txt": "79fe594699141ac45250c8077c36a2bcfe92e9fb9aa9447b01a800a6e939a3ce"
+  },
+  "observedTests": {
+    "before": 74,
+    "contextRegression": "1 FAIL/6 PASS before implementation, retained",
+    "after": 77,
+    "exactEncoder": 7,
+    "reviewerExecution": "None; read retained ROOT results and test deltas."
+  },
+  "findings": [],
+  "reasoning": [
+    "Prototype finish removes the per-call finish closure from cached/clear publication. Shared frozen clear-resource record adds no per-call candidate. Genuine decode callbacks remain only after uncached positive-mask preparation.",
+    "Refined and preview owner helpers are stable. Each fresh existing capture/prepare record carries its own original references; callbacks destructure those before fallible/reentrant work. No global mutable context was added. Comparison/resource records do not retain the enriched context.",
+    "Original synchronous catch covers preparation and composition failures before publication exists. Original frame/job and paused/headroom/catalogue/currentness fences, detail-before-background order, bounded retry, cancellation/disposal and commit=false behavior remain.",
+    "Encoding code search moved byte-identically into one-time immutable-table initialization. Previous channel state remains per encoding call, all arithmetic/guards unchanged.",
+    "New tests retain original contexts across async and cached publication, thrown commit and cancelled decode. Reentrant A cancel/B commit/A return-or-throw preserves B resource identity and A error context; decoded/displayed records remain mask/image only. Existing behavior assertions were not removed; composition fixture now includes actual new helper declarations and forwards context.",
+    "Exact TA4/TA5 published clause text is contiguous in the hash-bound approved attachment. Receipt and finite ledger preserve prospective application, absolute S1 limits, actual-event/resource obligations, historical adverse evidence and separate merge authority."
+  ],
+  "remainingDependencies": [
+    "Bind the final finite native/event/resource observations to runtime 3e18b2fa83d0cbfce0a4360d789f7927aef5c064f963e8c18acb430507995821. Source correction is not quantitative callback or actual Image.decode settlement qualification.",
+    "Per-instance one-pending/two-decoded fields do not establish whole browser/GPU heap bounds; native stale-context settlement and CSS displayed roots remain in the approved finite resource group.",
+    "The separate 24-cell locator review supplies historical source paths, not automatic current-runtime absolute timing transfer.",
+    "No whole S1/TA3/TA5/issue readiness, canonical currentness, epoch, native lifecycle or merge approval is granted."
+  ],
+  "priorLocatorReview": {
+    "path": "${WORK_ROOT}\\independent-review\\post-quota-source-allocation-review-20261021-r1.json",
+    "sha256": "6dee086ea8762de7a875ce2dba473ee2c99de7b943522e7d0cf84aea0091fd16"
+  }
+}

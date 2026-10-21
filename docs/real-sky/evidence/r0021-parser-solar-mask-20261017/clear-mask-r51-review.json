@@ -1,0 +1,442 @@
+{
+  "schema": "r0021-bounded-independent-review/1",
+  "createdAtUtc": "2026-10-18T01:02:40.329883+00:00",
+  "review": "integrated-r17 exact-zero solar mask and parser-entry hardening",
+  "authority": "Same sole reviewer; source read-only. No browser, build, test suite, process control, new agent or external effect performed. Writes confined to independent-review.",
+  "worktree": "<r0021-source>",
+  "head": "f6f4672bc0309ec509684209143f8adf6fd791de",
+  "branch": "codex/r0021-startup-completion",
+  "dirtyScope": "Seven tracked modifications and one untracked entry-order test, listed in sourcePins; no commit of this candidate.",
+  "candidate": {
+    "directory": "builds/integrated-r17",
+    "indexSha256": "aa084fcf3f4294e2ccc353a34ff1c259bf78592e7cd9334f41ae7bce8e1c23c6",
+    "offlineSha256": "2898a2af1e957f7de028db99157ee41a260948df3a9558c5acda9f05f04932b5",
+    "runtimeTreeSha256ReportedByFirefoxRun": "3192e0449c78dece56e71aacc98eaffa899483675055564e32497a2d3152f58c"
+  },
+  "decision": "SUPPORT_BOUNDED_CORRECTION_ONLY",
+  "blockingFindings": [],
+  "sourceFindings": [
+    {
+      "file": "real-sky/native-composition.mjs",
+      "lines": [
+        113,
+        125
+      ],
+      "finding": "All alpha bytes must equal zero after existing shape validation. Opaque white gradient equals original full-transmission mask, including below captured rows. Any nonzero alpha, including 1/255, retains unchanged PNG transfer and anonymous decode. No weather threshold or opacity policy change."
+    },
+    {
+      "file": "real-sky/native-composition.mjs",
+      "lines": [
+        35,
+        65
+      ],
+      "finding": "Exact gradient literal completes synchronously through the existing finish/commit path. Disposal, pending exclusion, revision, currentness in callers, rejection and cache bounds remain. No Image is allocated for the gradient; it never occupies pending, so cancel cannot dereference its null image. Cached resource readiness grants no scene authority."
+    },
+    {
+      "file": "tests/real-sky/native_entry_order_test.py",
+      "lines": [
+        19,
+        46
+      ],
+      "finding": "New unique-selector counts and config-to-preview adjacency close the prior r48 nonblocking test gap. Independently checked both r17 generated entries: exactly one config/preview/Moon/native/refinement group, contiguous in original relative order, after card/settings markup, with matching preview content digest."
+    }
+  ],
+  "checks": {
+    "sourceSnapshotMatches": true,
+    "generatedEntriesChecked": [
+      "index.html",
+      "offline.html"
+    ],
+    "r16ToR17ScriptBodyChanges": {
+      "index.html": [
+        1
+      ],
+      "offline.html": [
+        1,
+        6
+      ]
+    },
+    "scriptDeltaExplanation": "Preview bundle and offline embedded full native bundle consume the changed composition owner; all other script bodies unchanged. Prior r48 two-entry Moon preflight review reused because those builder/test pins are unchanged. No claim that the entire native builder is a filesystem transaction.",
+    "rootTestReceipts": "Gradient RED: 25 pass / 4 fail of 29; GREEN: 56 pass / 0 fail. Reviewer read controls and receipts, did not rerun them.",
+    "joinedTestLimit": "Actual preview host and actual mask prepare/publisher are exercised; its fixture identity predicate is generation/age, not a complete real cached-weather identity oracle."
+  },
+  "heldPixelControls": [
+    {
+      "browser": "chromium",
+      "version": "148.0.7778.96",
+      "stamp": "2026-09-25T12:00:00Z",
+      "whiteGradientByteIdentical": true,
+      "otherRecordedStateEqual": true,
+      "reportedBlockedDifferentPixels": 119680,
+      "heldNativeScheduling": {
+        "timeouts": 0,
+        "intervals": 1,
+        "frames": 1
+      },
+      "images": [
+        {
+          "kind": "white",
+          "path": "native/solar-gradient-r51/chromium-12-white.png",
+          "sha256": "0665e450310d46bd2444f58b05938e48a82f6ab6d0711b38c507569ace6e9bb4"
+        },
+        {
+          "kind": "gradient",
+          "path": "native/solar-gradient-r51/chromium-12-gradient.png",
+          "sha256": "0665e450310d46bd2444f58b05938e48a82f6ab6d0711b38c507569ace6e9bb4"
+        },
+        {
+          "kind": "blocked",
+          "path": "native/solar-gradient-r51/chromium-12-blocked.png",
+          "sha256": "3a9491cac34cb1446a1030cdf57f7d5a288454dbd1c501fe93406575d88289fd"
+        }
+      ]
+    },
+    {
+      "browser": "chromium",
+      "version": "148.0.7778.96",
+      "stamp": "2026-09-25T13:00:00Z",
+      "whiteGradientByteIdentical": true,
+      "otherRecordedStateEqual": true,
+      "reportedBlockedDifferentPixels": 108536,
+      "heldNativeScheduling": {
+        "timeouts": 0,
+        "intervals": 1,
+        "frames": 1
+      },
+      "images": [
+        {
+          "kind": "white",
+          "path": "native/solar-gradient-r51/chromium-13-white.png",
+          "sha256": "4249c016d08b14218f055202d94c66d3f507bc2da6ef9abbd2bf43536765137b"
+        },
+        {
+          "kind": "gradient",
+          "path": "native/solar-gradient-r51/chromium-13-gradient.png",
+          "sha256": "4249c016d08b14218f055202d94c66d3f507bc2da6ef9abbd2bf43536765137b"
+        },
+        {
+          "kind": "blocked",
+          "path": "native/solar-gradient-r51/chromium-13-blocked.png",
+          "sha256": "a20885d49667735fbd87ec79a7dc093d9d8104349c109b3dcbe690aad694fcd5"
+        }
+      ]
+    },
+    {
+      "browser": "firefox",
+      "version": "150.0.2",
+      "stamp": "2026-09-25T12:00:00Z",
+      "whiteGradientByteIdentical": true,
+      "otherRecordedStateEqual": true,
+      "reportedBlockedDifferentPixels": 119317,
+      "heldNativeScheduling": {
+        "timeouts": 3,
+        "intervals": 1,
+        "frames": 0
+      },
+      "images": [
+        {
+          "kind": "white",
+          "path": "native/solar-gradient-r51/firefox-12-white.png",
+          "sha256": "d752ebfbc68517f984c49f0d759f9e9829fc32df9f1bb535dea3c91fd1e06b2c"
+        },
+        {
+          "kind": "gradient",
+          "path": "native/solar-gradient-r51/firefox-12-gradient.png",
+          "sha256": "d752ebfbc68517f984c49f0d759f9e9829fc32df9f1bb535dea3c91fd1e06b2c"
+        },
+        {
+          "kind": "blocked",
+          "path": "native/solar-gradient-r51/firefox-12-blocked.png",
+          "sha256": "7ba12a25f19b4724fd4243ba88766f9c14eaeaa184c02dfa799140cd281131a1"
+        }
+      ]
+    },
+    {
+      "browser": "firefox",
+      "version": "150.0.2",
+      "stamp": "2026-09-25T13:00:00Z",
+      "whiteGradientByteIdentical": true,
+      "otherRecordedStateEqual": true,
+      "reportedBlockedDifferentPixels": 106694,
+      "heldNativeScheduling": {
+        "timeouts": 3,
+        "intervals": 1,
+        "frames": 0
+      },
+      "images": [
+        {
+          "kind": "white",
+          "path": "native/solar-gradient-r51/firefox-13-white.png",
+          "sha256": "98e4d8d6677ed45d0b4ae3f29c7418127990f05afc4e5cc791a0191c869087fa"
+        },
+        {
+          "kind": "gradient",
+          "path": "native/solar-gradient-r51/firefox-13-gradient.png",
+          "sha256": "98e4d8d6677ed45d0b4ae3f29c7418127990f05afc4e5cc791a0191c869087fa"
+        },
+        {
+          "kind": "blocked",
+          "path": "native/solar-gradient-r51/firefox-13-blocked.png",
+          "sha256": "21b5b044cedc88e73b5900be0ce670d9e802c023cdc6c1894ad066c2c1892f5a"
+        }
+      ]
+    }
+  ],
+  "visuallyViewedHeldOriginals": [
+    "chromium-12-white.png",
+    "chromium-12-gradient.png",
+    "chromium-12-blocked.png",
+    "firefox-13-white.png",
+    "firefox-13-gradient.png",
+    "firefox-13-blocked.png"
+  ],
+  "heldPixelScope": "Actual r17 DOM/CSS, DPR1 at two fixed solar epochs per engine. Owned native timers/rAF held and CSS animations paused. White image anonymously decoded before setting. Recorded non-mask properties equal across variants; pre/post screenshot equality asserted by acquisition. Sun visibly present with white/gradient and absent under blocked control in viewed triplets. This is component equivalence, not ordinary startup, motion or broad cloud qualification.",
+  "firefoxOrdinary": [
+    {
+      "mode": "cold",
+      "originalDirectory": "native/firefox-clear-mask-r50/video/page@7504da3e8c364f8cca2fc17a68934779.webm.frames",
+      "sourceSidecarSha256": "fe3059286f2e541ff1b2d6b28bc25fdb6aab6ef5187161c63a440b20659f51c5",
+      "viewedOriginals": [
+        {
+          "seq": 17,
+          "file": "000017.jpeg",
+          "sourceTimeSeconds": 2.0782197,
+          "receiptUtcMs": 1792284628947,
+          "sha256": "83b8f4a580d9c72fe0daf7aae6781482df6c4cdd41f5401a7fef62879b19bb96"
+        },
+        {
+          "seq": 18,
+          "file": "000018.jpeg",
+          "sourceTimeSeconds": 2.118984,
+          "receiptUtcMs": 1792284628989,
+          "sha256": "2b0a6f2bed43338d5f2296e6c28eb0f4860e3e2a6c18b76d67094afb00689587"
+        },
+        {
+          "seq": 19,
+          "file": "000019.jpeg",
+          "sourceTimeSeconds": 2.1603434,
+          "receiptUtcMs": 1792284629027,
+          "sha256": "f3cb60ada6fbdce53ca39cbd9120a2a4b2b5aa6e8881b583717aa6e564e98423"
+        },
+        {
+          "seq": 24,
+          "file": "000024.jpeg",
+          "sourceTimeSeconds": 2.3649679,
+          "receiptUtcMs": 1792284629232,
+          "sha256": "2b0a6f2bed43338d5f2296e6c28eb0f4860e3e2a6c18b76d67094afb00689587"
+        }
+      ],
+      "visuallyFirstCompleteAmongSelected": 19,
+      "earliestAcceptedFromNavigationMs": 433.9912109375,
+      "firstCompleteReceiptUpperFromNavigationMs": 728.9912109375,
+      "receiptUpperAfterEarliestAcceptanceMs": 295.0,
+      "clockLimit": "Receipt upper bound with 1 ms quantization allowance; not exact capture wall time or presentation time. No acceptance-origin reset.",
+      "sourceGapsOver80First3Seconds": [
+        {
+          "from": "000003.jpeg",
+          "to": "000004.jpeg",
+          "sourceGapMs": 81.39739999999995
+        },
+        {
+          "from": "000048.jpeg",
+          "to": "000049.jpeg",
+          "sourceGapMs": 121.65820000000016
+        },
+        {
+          "from": "000050.jpeg",
+          "to": "000051.jpeg",
+          "sourceGapMs": 121.21709999999996
+        }
+      ],
+      "exactByteVerifiedPostFirstBlankSequences": [
+        24,
+        34,
+        39,
+        42,
+        51
+      ]
+    },
+    {
+      "mode": "warm-reload",
+      "originalDirectory": "native/firefox-clear-mask-r50/video/page@7504da3e8c364f8cca2fc17a68934779.webm.frames",
+      "sourceSidecarSha256": "fe3059286f2e541ff1b2d6b28bc25fdb6aab6ef5187161c63a440b20659f51c5",
+      "viewedOriginals": [
+        {
+          "seq": 522,
+          "file": "000522.jpeg",
+          "sourceTimeSeconds": 22.8949043,
+          "receiptUtcMs": 1792284649761,
+          "sha256": "fbb1e1da3be6c5a0e05f10352e792b1e7d765dc854b295abfe71758fa0be8bb7"
+        },
+        {
+          "seq": 523,
+          "file": "000523.jpeg",
+          "sourceTimeSeconds": 22.9356395,
+          "receiptUtcMs": 1792284649802,
+          "sha256": "191c44794b64612e5c7930ed96e2c0afa7da38e0c487e57eda04075a91ad23dd"
+        },
+        {
+          "seq": 524,
+          "file": "000524.jpeg",
+          "sourceTimeSeconds": 22.9764894,
+          "receiptUtcMs": 1792284649843,
+          "sha256": "2dd416c51e39946ffb4d34046c10b0bc1a5d356c229f334f54fc78014d06331f"
+        }
+      ],
+      "visuallyFirstCompleteAmongSelected": 524,
+      "earliestAcceptedFromNavigationMs": 376.455078125,
+      "firstCompleteReceiptUpperFromNavigationMs": 683.455078125,
+      "receiptUpperAfterEarliestAcceptanceMs": 307.0,
+      "clockLimit": "Receipt upper bound with 1 ms quantization allowance; not exact capture wall time or presentation time. No acceptance-origin reset.",
+      "sourceGapsOver80First3Seconds": [],
+      "exactByteVerifiedPostFirstBlankSequences": [
+        537,
+        550,
+        563
+      ]
+    },
+    {
+      "mode": "new-tab",
+      "originalDirectory": "native/firefox-clear-mask-r50/video/page@7b1749c6a2854c11816abeddc35d38bd.webm.frames",
+      "sourceSidecarSha256": "1ec7aefcf3b88647d5a019ac51a64206433ae5b1557b93c13563fed6710d81fa",
+      "viewedOriginals": [
+        {
+          "seq": 17,
+          "file": "000017.jpeg",
+          "sourceTimeSeconds": 43.9978968,
+          "receiptUtcMs": 1792284670866,
+          "sha256": "e822b56381fc452c852e457f3e74a276793db913a70fa4a17c6fcc6f20f0475f"
+        },
+        {
+          "seq": 18,
+          "file": "000018.jpeg",
+          "sourceTimeSeconds": 44.0390105,
+          "receiptUtcMs": 1792284670906,
+          "sha256": "6f4a51b678c81f4c46eb706978de40b1913925dc9132814c637b804e09f38742"
+        }
+      ],
+      "visuallyFirstCompleteAmongSelected": 18,
+      "earliestAcceptedFromNavigationMs": 286.089599609375,
+      "firstCompleteReceiptUpperFromNavigationMs": 621.089599609375,
+      "receiptUpperAfterEarliestAcceptanceMs": 335.0,
+      "clockLimit": "Receipt upper bound with 1 ms quantization allowance; not exact capture wall time or presentation time. No acceptance-origin reset.",
+      "sourceGapsOver80First3Seconds": [],
+      "exactByteVerifiedPostFirstBlankSequences": [
+        33,
+        49,
+        62
+      ]
+    }
+  ],
+  "viewedBlankSha256": "2b0a6f2bed43338d5f2296e6c28eb0f4860e3e2a6c18b76d67094afb00689587",
+  "causalBoundary": "Read r49 warm trace: initial prepared 500 ms; cached-clear-weather identity mismatch and retirement 552 ms; mask start 594 ms; current publication 618 ms. This supports a removable asynchronous clear-mask interval. The r48 dark-disc/wash was not reproduced verbatim in r49; r50 selected originals do not establish unique attribution or erase r48.",
+  "residualLimits": [
+    "All modes retain whole-frame blank originals, including exterior marker; no cause assigned. Warm/new-tab absence of >80 ms metadata gaps does not establish continuous original pixels.",
+    "Cold source gaps 81.3974, 121.6582 and 121.2171 ms remain. No S1 pass, presentation join, continuous watch or readiness claim.",
+    "Retain r43/r44 new-tab failures, r48 contrary dark-disc/wash and all original failed acquisitions. Diagnostic foreground/task controls do not retrofit ordinary qualification.",
+    "Positive-cloud decode/currentness remains asynchronous and unchanged. This correction proves no general stale-head retention or relaxed job age.",
+    "Callback budgets, H1/V5/geometry/opaque-Moon protection, actual-parent and continuous gates remain unchanged and open as previously recorded. No formal cost improvement/PASS is transferred to r17.",
+    "Chromium ordinary r52 was in ROOT acquisition scope and is not reviewed or credited here. No formal native lifecycle/currentness/epoch receipt is minted."
+  ],
+  "next": "ROOT may consume this as support for the bounded partial correction and retain pending ordinary evidence separately; production merge/closure remains unsupported.",
+  "sourcePins": [
+    {
+      "path": "real-sky/native-composition.mjs",
+      "sha256": "9ede8025893161a34babda57a4710ad32a82179c0f0bd0e4af069343e09e85f1",
+      "matchesSnapshotPinAndCopy": true
+    },
+    {
+      "path": "real-sky/native-first-paint.mjs",
+      "sha256": "a75ffceb5d8268c633722a67b852c9bd0427ad389d99100e4ba62597cef52452",
+      "matchesSnapshotPinAndCopy": true
+    },
+    {
+      "path": "tests/real-sky/moon_build_guard_test.py",
+      "sha256": "c1a55820b225509606215e7357bd6cb0f733371dfae368a9bed09fc63c878e48",
+      "matchesSnapshotPinAndCopy": true
+    },
+    {
+      "path": "tests/real-sky/native-preview-host.test.mjs",
+      "sha256": "4f4f36f8fed7fc41e4c019229de2bf1a1ad85161dcbe74ec30899cff7ab4e521",
+      "matchesSnapshotPinAndCopy": true
+    },
+    {
+      "path": "tests/real-sky/native-solar-publication.test.mjs",
+      "sha256": "4fe1b19b146b4fd8f80c39d8ff289a25ed9f7c8fbee1b265ef69956647c2889a",
+      "matchesSnapshotPinAndCopy": true
+    },
+    {
+      "path": "tools/build_moon.py",
+      "sha256": "80598ddcbbd0ebdba02984b6860d93f08966ab7bdcdafe9e384185b6470ea5f7",
+      "matchesSnapshotPinAndCopy": true
+    },
+    {
+      "path": "tools/build_native.py",
+      "sha256": "0ce66e363c692fc3485e09dfd6ec71dd6dd3e85753c4935290f94b3bbad5ba6a",
+      "matchesSnapshotPinAndCopy": true
+    },
+    {
+      "path": "tests/real-sky/native_entry_order_test.py",
+      "sha256": "117c6fe39aa532033c8af1a09df5d872042730fe7ad84bba71a6180aaabf0f74",
+      "matchesSnapshotPinAndCopy": true
+    }
+  ],
+  "evidencePins": [
+    {
+      "path": "builds/integrated-r17/INPUT-SNAPSHOT.json",
+      "sha256": "00e4e7dd001b4c454a275c33a1e781730b3c2b994b4023b202a0472457063a26"
+    },
+    {
+      "path": "builds/integrated-r17/BUILD-LOG.txt",
+      "sha256": "22f5fab5ad944ee17573eeead7d0299445e5b0cea445d74baed886e95c0ac849"
+    },
+    {
+      "path": "intake/clear-mask-gradient-red-r50b.txt",
+      "sha256": "4f5e399da359672a3be19689c5b7d254a058be411f959616295e8f506cc6e32f"
+    },
+    {
+      "path": "intake/clear-mask-green-r50.txt",
+      "sha256": "69321c910c45116977ddea928e503493ea5f2e8401dd144fc84083043350a579"
+    },
+    {
+      "path": "solar_gradient_controls_r51.py",
+      "sha256": "2cc0f9d4869de9c98f08b3cd3e10de97e6e087827fe9583fb096808e921e05b8"
+    },
+    {
+      "path": "lunar_optic_controls_r36.py",
+      "sha256": "f9e7a42272969cb7828d48ba44daf46cfbe62cb035a5ff8462e54b12df93b711"
+    },
+    {
+      "path": "native/solar-gradient-r51/RESULT.json",
+      "sha256": "27eaf014ff6abdc2a7d9399a8e39880c7e3b82814f6b42e8f74b4bf1f0a26fa7"
+    },
+    {
+      "path": "native/firefox-clear-mask-r50/results.json",
+      "sha256": "b65048473ae9f0471db02831cd9327e9e074f78d62feb848e79a5c85923b6863"
+    },
+    {
+      "path": "native/firefox-clear-mask-r50/EXECUTION.json",
+      "sha256": "fbe9710455546b0f066e35060228f03eca2dd6527c2462ed0aa134f30996fe3d"
+    },
+    {
+      "path": "native/firefox-clear-mask-r50/source-annotations-r50.json",
+      "sha256": "8896e56b7d8486371b1e377096c3cd20c4d1d165f2f243a8bc638b447baacb24"
+    },
+    {
+      "path": "native/firefox-parser-publication-r49/results.json",
+      "sha256": "3e4fb132e0225d1f0ee66bd7576c489f0e410b063ad27398d79ff27aa6f75474"
+    },
+    {
+      "path": "native/firefox-parser-publication-r49/EXECUTION.json",
+      "sha256": "24eeae87d2aeeee7a4f827c4beb4651e029553f75b102536f2f9542ff473c333"
+    },
+    {
+      "path": "independent-review/parser-source-r48-review.json",
+      "sha256": "dd05ac19210827350b94e344db5b40694d3919891608cc14e4e4c4eabeac45df"
+    },
+    {
+      "path": "independent-review/parser-newtab-r46-review.json",
+      "sha256": "4aea1f71ee8e0c7c004e9de43c59a58809046fc5b0acb0da155745cf6bd8e74c"
+    }
+  ]
+}

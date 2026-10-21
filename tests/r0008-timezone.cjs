@@ -106,7 +106,7 @@ test('legacy valid hour/minute parsing and frozen/accelerated explicit modes sur
 
 test('actual boot rejects an invalid scene before stars/moon/day acquisition', async () => {
   const c=loadLifecycle(loadRender(modelRealm({query:'simTime=02:30',zone:'America/New_York',wall:Date.parse('2026-03-08T12:00Z')})));
-  await c.run('boot()');
+  await c.boot();
   assert.equal(c.calls.stars,0); assert.equal(c.calls.moon,0); assert.equal(c.calls.requests.length,0);
   assert.equal(c.dom.querySelector('.nt').textContent,'—');
   assert.equal(c.dom.querySelector('.left').textContent,'Simulation time unavailable');
@@ -170,7 +170,7 @@ test('bypassing simulation validity is caught by the actual boot caller', async 
   const boot=c.run('boot()'); assert(c.calls.stars>0);
   // A deliberately unguarded NaN scene has no civil request day. Cancel its real loader through
   // the accepted ownership boundary rather than letting invalid transport retries hold this mutant.
-  c.run('beginRuntimeGeneration()'); await boot;
+  c.run('beginRuntimeGeneration()'); await c.paintBoot(); await boot;
   assert.notEqual(c.dom.querySelector('.left').textContent,'Simulation time unavailable');
   console.log(`MUTANT invalid-scene-bypass ${sha256(block)} rejected by boot boundary`);
 });
@@ -179,7 +179,7 @@ for(const mode of ['local','preferLocal']) for(const zone of ['UTC','America/New
   test(`${mode} ${zone} boot keeps actual settings button reachable before scene validity`, async () => {
     const c=loadSettingsAffordance(loadLifecycle(loadRender(modelRealm({query:'simTime=02:30',zone,wall:Date.parse('2026-03-08T12:00Z')}))));
     c.context._cfgMode=mode;
-    await c.run('boot()');
+    await c.boot();
     const buckle=c.dom.querySelector('.buckle');
     assert.equal(buckle.getAttribute('role'),'button'); assert.equal(buckle.getAttribute('tabindex'),'0');
     assert.equal(buckle.getAttribute('aria-label'),'Widget settings');
@@ -191,7 +191,7 @@ for(const mode of ['local','preferLocal']) for(const zone of ['UTC','America/New
 
 test('initial invalid boot then valid config initializes scene builders once across further recoveries', async () => {
   const c=loadLifecycle(loadRender(modelRealm({query:'simTime=02:30',zone:'America/New_York',wall:Date.parse('2026-03-08T12:00Z')})));
-  await c.run('boot()'); assert.equal(c.calls.stars,0); assert.equal(c.calls.weatherBuild,0);
+  await c.boot(); assert.equal(c.calls.stars,0); assert.equal(c.calls.weatherBuild,0);
   await c.run('applyConfig({lat:24,lon:39,tz:"UTC"})'); c.frame();
   assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
   assert.equal(c.run('Number.isFinite(simNow())'),true); assert.equal(c.dom.querySelector('.nt').textContent,'05:00');
@@ -203,10 +203,10 @@ test('initial invalid boot then valid config initializes scene builders once acr
 
 test('valid boot and subsequent config reuse builders; bare embeds keep existing settings behavior', async () => {
   const c=loadSettingsAffordance(loadLifecycle(loadRender(modelRealm({query:'simTime=02:30',zone:'UTC',wall:Date.parse('2026-03-08T12:00Z')}))));
-  c.context._cfgMode='bare'; await c.run('boot()');
+  c.context._cfgMode='bare'; await c.boot();
   assert.equal(c.dom.querySelector('.buckle').getAttribute('role'),null);
   assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
-  await c.run('applyConfig({lat:24,lon:39,tz:"UTC"})'); c.frame(); await c.run('boot()');
+  await c.run('applyConfig({lat:24,lon:39,tz:"UTC"})'); c.frame(); await c.boot();
   assert.equal(c.calls.stars,1); assert.equal(c.calls.weatherBuild,1);
 });
 
