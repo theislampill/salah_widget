@@ -5,13 +5,13 @@ const repo=path.resolve(__dirname,'../..');
 const sourceFile=path.join(repo,'src/native/index.html');
 const hostFile=path.join(repo,'moon/tests/host.test.cjs');
 const html=fs.readFileSync(sourceFile,'utf8'),host=fs.readFileSync(hostFile,'utf8');
-const fixtureEnd=host.indexOf("test('initial document");
+const fixtureEnd=host.indexOf('\ntest(');
 assert.ok(fixtureEnd>0,'host fixture boundary');
-const returnPrefix='return {w,workers,state,detail,nodes,events,jobs,flush,frame,request,response,head,doc,';
+const returnPrefix='return {w,workers,';
 const fixture=host.slice(0,fixtureEnd);
 assert.equal(fixture.split(returnPrefix).length,2,'one fixture return boundary');
 const rig=Function('require','__dirname',
- fixture.replace(returnPrefix,'return {context:c,w,workers,state,detail,nodes,events,jobs,flush,frame,request,response,head,doc,')+'\nreturn rig;'
+ fixture.replace(returnPrefix,'return {context:c,w,workers,')+'\nreturn rig;'
 )(require,path.join(repo,'moon/tests'));
 function section(start,end){
  const a=html.indexOf(start),b=html.indexOf(end,a+start.length);
