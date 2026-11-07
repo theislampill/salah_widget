@@ -24,7 +24,7 @@ const FIRST_PHASE_PLAN=Object.freeze(['chromium','firefox'].flatMap(engine=>[['h
 if(fs.existsSync(OUT)&&fs.readdirSync(OUT).length)throw Error('Refusing nonempty output directory; choose a fresh path to preserve all previous attempts');
 fs.mkdirSync(OUT,{recursive:true});
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-function write(file,obj){fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,JSON.stringify(obj,null,2)+'\n');}
+function write(file,obj){if(obj===result&&result.cases.some(r=>r.bidiTrace?.writeErrors?.length)){result.status='COLLECTOR_TRACE_FAILURE';process.exitCode=1;}fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,JSON.stringify(obj,null,2)+'\n');}
 function record(file,obj){fs.appendFileSync(file,JSON.stringify(obj)+'\n');}
 function git(...a){return execFileSync('git',a,{cwd:ROOT,encoding:'utf8',windowsHide:true}).trim();}
 function fail(message){throw Error(message);}
@@ -98,18 +98,45 @@ async function request(base,method,route,body,timeout=15000,cleanup=false){
  const text=await r.text();let j;try{j=JSON.parse(text);}catch{throw Error('Driver returned non-JSON HTTP '+r.status+': '+text.slice(0,300));}
  if(!r.ok||j.value?.error)throw Error('WebDriver '+route+': '+(j.value?.error||r.status)+' '+(j.value?.message||''));return j.value;
 }
+const bidiByConnection=new Map();
 class BiDi{
- constructor(url,file,onEvent){this.seq=0;this.pending=new Map();this.file=file;this.onEvent=onEvent;
+ constructor(url,file,onEvent,identity={}){this.seq=0;this.pending=new Map();this.file=file;this.onEvent=onEvent;
+  this.connectionId=crypto.randomUUID();this.traceSeq=0;this.eventSeq=0;this.commands=new Map();this.traceFile=path.join(path.dirname(file),'bidi-trace.jsonl');this.traceErrors=identity.traceErrors||[];this.onTraceError=identity.onTraceError;
+  this.identity={runId:identity.runId??null,case:identity.caseName??null,engine:identity.engine??null,connectionId:this.connectionId};
   const u=new URL(url);if(u.protocol!=='ws:'||!['127.0.0.1','localhost','[::1]'].includes(u.hostname))fail('Non-loopback BiDi endpoint');
-  this.ws=new WebSocket(url);this.opened=new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('BiDi connection deadline')),15000);this.ws.addEventListener('open',()=>{clearTimeout(timer);resolve();},{once:true});this.ws.addEventListener('error',()=>{clearTimeout(timer);reject(Error('BiDi connection failed'));},{once:true});});
-  this.ws.addEventListener('message',e=>{let v;try{v=JSON.parse(e.data);}catch{return;}
-   if(v.id){const p=this.pending.get(v.id);if(!p)return;clearTimeout(p.timer);this.pending.delete(v.id);v.type==='error'?p.reject(Error('BiDi '+v.error+': '+v.message)):p.resolve(v.result);}
-   else if(v.method){Promise.resolve(this.onEvent(v)).catch(err=>record(this.file,{collectorEventError:String(err),method:v.method}));}
+  this.trace('connection-created');
+  this.ws=new WebSocket(url);this.opened=new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.trace('connection-deadline');reject(Error('BiDi connection deadline'));},15000);this.ws.addEventListener('open',()=>{clearTimeout(timer);this.trace('connection-open');resolve();},{once:true});this.ws.addEventListener('error',()=>{clearTimeout(timer);this.trace('connection-error');reject(Error('BiDi connection failed'));},{once:true});});
+  this.ws.addEventListener('message',e=>{let v;try{v=JSON.parse(e.data);}catch(err){this.trace('unparsed-message',{error:String(err),utf8Bytes:Buffer.byteLength(String(e.data)),sha256:sha(String(e.data))});return;}
+   if(v.id){const p=this.pending.get(v.id),command=p?.command||this.commands.get(v.id)||null;
+    this.trace('command-response',{wireId:v.id,command,association:p?'pending':command?'late-or-duplicate':'unmatched',priorTerminal:command?.terminal??null,protocol:this.responseEvidence(v,command?.method)});
+    if(!p)return;clearTimeout(p.timer);this.pending.delete(v.id);command.terminal=v.type==='error'?'error':'success';
+    this.trace('command-settled',{wireId:v.id,command,terminal:command.terminal});v.type==='error'?p.reject(Error('BiDi '+v.error+': '+v.message)):p.resolve(v.result);}
+   else if(v.method){const trace=this.eventEvidence(v);this.trace('event-observed',trace);Promise.resolve(this.onEvent(v,trace)).catch(err=>{record(this.file,{collectorEventError:String(err),method:v.method});this.trace('event-handler-error',{...trace,error:String(err)});});}
   });
-  this.ws.addEventListener('close',()=>{for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(Error('BiDi closed'));}this.pending.clear();});
+  this.ws.addEventListener('close',e=>{this.trace('connection-closed',{code:e.code??null,reason:e.reason??null,wasClean:e.wasClean??null});for(const p of this.pending.values()){clearTimeout(p.timer);p.command.terminal='closed';this.trace('command-close-rejection',{wireId:p.command.wireId,command:p.command,terminal:'closed'});p.reject(Error('BiDi closed'));}this.pending.clear();this.trace('connection-pending-cleared');});
  }
- async call(method,params={},cleanup=false,timeout=15000){await this.opened;const id=++this.seq;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);reject(Error('BiDi command deadline: '+method));},cleanup?timeout:operationTimeout(timeout));this.pending.set(id,{resolve,reject,timer});this.ws.send(JSON.stringify({id,method,params}));});}
- close(){this.ws.close();}
+ trace(kind,detail={}){const entry={schema:'r0017-bidi-trace/v1',...this.identity,traceSequence:++this.traceSeq,kind,utc:new Date().toISOString(),monotonicMs:performance.now(),monotonicClock:'Node performance.now, process-local milliseconds',pendingCount:this.pending.size,...detail};try{record(this.traceFile,entry);}catch(e){const failure={...this.identity,traceSequence:entry.traceSequence,kind,utc:entry.utc,monotonicMs:entry.monotonicMs,error:String(e)};this.traceErrors.push(failure);if(this.onTraceError)this.onTraceError(failure);}return entry;}
+ eventEvidence(v){const p=v.params||{},q=p.request||{},requestId=q.request??null,redirectCount=p.redirectCount??null;return {eventReceiptId:this.connectionId+':event:'+(++this.eventSeq),method:v.method,context:p.context??null,navigation:p.navigation??null,requestId,redirectCount,requestKey:requestId===null?null:JSON.stringify([this.connectionId,requestId,redirectCount]),url:urlEvidence(q.url??null),remoteTimestamp:p.timestamp??null,remoteClock:'BiDi event timestamp, not the local monotonic clock',isBlocked:p.isBlocked??false,terminal:v.method==='network.responseCompleted'?'response-completed':v.method==='network.fetchError'?'fetch-error':null};}
+ responseEvidence(v,method){
+  // Retain complete network command results and every structured protocol error.
+  // Large evaluation/screenshot successes already have their own case artifacts.
+  if(v.type==='error'||!method||method.startsWith('network.'))return {representation:'raw-protocol-envelope',value:v};
+  const serialized=JSON.stringify(v);return {representation:'protocol-envelope-digest',type:v.type??null,id:v.id,utf8Bytes:Buffer.byteLength(serialized),sha256:sha(serialized),realm:v.result?.realm??null,navigation:v.result?.navigation??null,url:urlEvidence(v.result?.url??null)};
+ }
+ boundary(stage,detail={}){return this.trace('collector-boundary',{stage,...detail,pending:[...this.pending.values()].map(p=>p.command)});}
+ async call(method,params={},cleanup=false,timeout=15000,originEvent=null){await this.opened;const id=++this.seq;
+  const command={commandReceiptId:this.connectionId+':command:'+id,wireId:id,method,requestId:params.request??originEvent?.requestId??null,context:params.context??params.target?.context??originEvent?.context??null,navigation:originEvent?.navigation??null,eventReceiptId:originEvent?.eventReceiptId??null,requestKey:originEvent?.requestKey??null,redirectCount:originEvent?.redirectCount??null,url:urlEvidence(params.url??originEvent?.url??null),allowDecision:originEvent?.allowDecision??null,cleanup,requestedTimeoutMs:timeout,issuedUtc:new Date().toISOString(),issuedMonotonicMs:performance.now(),terminal:null};this.commands.set(id,command);
+  return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);command.terminal='deadline';this.trace('command-deadline',{wireId:id,command,terminal:'deadline'});reject(Error('BiDi command deadline: '+method));},cleanup?timeout:operationTimeout(timeout));this.pending.set(id,{resolve,reject,timer,command});this.trace('command-issued',{wireId:id,command});try{this.ws.send(JSON.stringify({id,method,params}));}catch(e){this.trace('command-send-error',{wireId:id,command,error:String(e)});throw e;}});}
+ close(){this.boundary('close-requested');this.ws.close();}
+}
+function bidiBoundary(row,stage,detail={}){const bidi=bidiByConnection.get(row.bidiTrace?.connectionId);if(bidi)bidi.boundary(stage,{status:row.status??null,primaryOutcome:row.primaryOutcome??null,checks:row.checks??null,interceptErrorCount:row.network?.interceptErrors?.length??null,...detail});}
+function markBidiTraceFailure(row,dir,failure){
+ // A new trace-write failure must not replace a command's original settlement,
+ // but it is an explicit collector failure, including after checks or cleanup.
+ row.traceFailureObservedOutcome=row.traceFailureObservedOutcome||{status:row.status,error:row.error??null,stage:row.stage??null};row.checks.bidiTraceIntact=false;
+ if(row.status!=='CLEANUP_FAILED')row.status='COLLECTOR_TRACE_ERROR';
+ result.engineSetupBlocks[row.engine]={kind:'engine-observation',case:row.name,receipt:row.name+'/result.json',reason:'BiDi correlation trace could not be preserved'};result.status='COLLECTOR_TRACE_FAILURE';process.exitCode=1;
+ try{write(path.join(dir,'result.json'),row);write(path.join(OUT,'summary.json'),result);}catch(e){row.bidiTrace.receiptWriteErrors=row.bidiTrace.receiptWriteErrors||[];row.bidiTrace.receiptWriteErrors.push({utc:new Date().toISOString(),traceSequence:failure.traceSequence,error:String(e)});console.error('R0017 BiDi trace and failure-receipt write failure: '+String(e));}
 }
 async function evaluateInPage(session,script,cleanup=false){
  const value=await session.bidi.call('script.evaluate',{expression:'JSON.stringify((()=>{'+script+'\n})())',target:{context:session.context},awaitPromise:false,resultOwnership:'none'},cleanup,10000);
@@ -161,7 +188,7 @@ const SNAPSHOT=`return (()=>{const copy=x=>x==null?null:JSON.parse(JSON.stringif
 const PROGRESS=`return (()=>{const fr=document.querySelector('#w'),w=fr?.contentWindow;let child=null;try{if(w){const r=fr.getBoundingClientRect();child={attempt:w.__widgetFixture?.attempt,documentId:w.__widgetFixture?.documentId,sourceSha256:w.__widgetFixture?.sourceSha256,hash:w.__widgetFixture?.hash,state:w.__widgetFixture?.state,error:w.__widgetFixture?.error,preference:w.matchMedia('(prefers-reduced-motion: reduce)').matches,dpr:w.devicePixelRatio,visible:r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight,width:r.width,height:r.height,photoBytes:(w.document.querySelector('.mphoto')?.getAttribute('href')||'').length};}}catch(e){}return {done:!!window.__smoke,status:window.__smoke?.status??null,summary:document.querySelector('#sum')?.textContent??null,cases:typeof cases!=='undefined'?cases.map(x=>({name:x.name,state:x.state,assertions:x.assertions})):null,child};})();`;
 const ORDINARY_READY=`return (()=>{const f=window.__widgetFixture,q=typeof qaState==='function'?qaState():null;return !!(f&&f.state==='ready'&&q?.cache?.prayerLoaded&&q.render.currentKey&&q.render.nextKey&&f.ledger.some(x=>x.url.includes('/v1/timings/08-09-2026')&&x.jsonReads>0));})();`;
 function urlEvidence(value){if(typeof value==='string'&&value.startsWith('data:'))return {scheme:'data',metadata:value.slice(0,value.indexOf(',')<0?80:value.indexOf(',')),utf8Bytes:Buffer.byteLength(value),sha256:sha(value)};return value;}
-function networkRecord(v){const p=v.params||{},q=p.request||{},r=p.response||{};return {utc:new Date().toISOString(),method:v.method,context:p.context??null,navigation:p.navigation??null,timestamp:p.timestamp??null,isBlocked:p.isBlocked??false,request:{id:q.request,url:urlEvidence(q.url),method:q.method,timings:q.timings},response:{url:urlEvidence(r.url),status:r.status,statusText:r.statusText,mimeType:r.mimeType,fromCache:r.fromCache,bytesReceived:r.bytesReceived},errorText:p.errorText??null};}
+function networkRecord(v,trace){const p=v.params||{},q=p.request||{},r=p.response||{};return {utc:new Date().toISOString(),method:v.method,context:p.context??null,navigation:p.navigation??null,timestamp:p.timestamp??null,isBlocked:p.isBlocked??false,request:{id:q.request,url:urlEvidence(q.url),method:q.method,timings:q.timings},response:{url:urlEvidence(r.url),status:r.status,statusText:r.statusText,mimeType:r.mimeType,fromCache:r.fromCache,bytesReceived:r.bytesReceived},errorText:p.errorText??null,...(trace?{trace}:{})};}
 async function screenshot(session,file,element){try{
  const params={context:session.context,origin:'viewport',format:{type:'image/png'}};
  if(element){const r=await session.eval('return (()=>{const e=document.querySelector('+JSON.stringify(element)+');if(!e)throw Error("Screenshot target missing");const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};})();');
@@ -201,6 +228,7 @@ async function terminateUnregisteredDriver(child){
  return r;
 }
 async function closeOwnedSession(session,row,base){
+ bidiBoundary(row,'cleanup-start');
  if(row.cleanup)return row.cleanup;
  const c=row.cleanup={startedUtc:new Date().toISOString(),verifiedExited:false,ok:false,queries:[],kills:[],errors:[],profileRoot:session.profile};
  const known=[...(session.ownedProcesses||[])],observedIdentities=[],roots=[session.child?.pid,row.browserPid].filter(n=>Number.isInteger(n)&&n>0);
@@ -237,7 +265,7 @@ async function closeOwnedSession(session,row,base){
   c.ok=(c.noProcessStarted||c.verifiedExited===true)&&(!session.profile||c.profileCleanup?.absent===true);
  }catch(e){c.errors.push({stage:'cleanup',error:String(e.stack||e)});c.ok=false;}
  c.finishedUtc=new Date().toISOString();if(!c.ok)result.stopLaunches={kind:'cleanup-unverified',case:row.name,receipt:row.name+'/result.json',reason:'No further browser launch after uncertain owned-process/profile cleanup'};
- return c;
+ bidiBoundary(row,'cleanup-finished',{cleanup:{ok:c.ok,verifiedExited:c.verifiedExited,scopeKnown:c.scopeKnown,finishedUtc:c.finishedUtc}});return c;
 }
 function notAttempted(p,reason,reference){
  if(result.cases.some(r=>r.name===p.name))return;
@@ -274,15 +302,18 @@ async function startSession(engine,preference,viewport,dpr,row,dir,origin){
  if(!value.capabilities.webSocketUrl)fail('Installed driver did not provide required BiDi endpoint');
  session.wd=(method,route,body)=>request(base,method,'/session/'+session.id+route,body);
  const np=path.join(dir,'network.jsonl'),cp=path.join(dir,'console.jsonl');row.network={allowed:0,allowedEmbedded:0,blocked:0,interceptErrors:[],blockedURLs:[]};
- session.bidi=new BiDi(value.capabilities.webSocketUrl,path.join(dir,'protocol-errors.jsonl'),async v=>{
-  if(v.method==='log.entryAdded'){record(cp,{utc:new Date().toISOString(),...v.params});return;}
-  if(v.method.startsWith('network.')){record(np,networkRecord(v));const p=v.params,q=p.request;
+ row.bidiTrace={schema:'r0017-bidi-trace/v1',file:'bidi-trace.jsonl',writeErrors:[]};
+ session.bidi=new BiDi(value.capabilities.webSocketUrl,path.join(dir,'protocol-errors.jsonl'),async(v,trace)=>{
+  if(v.method==='log.entryAdded'){record(cp,{utc:new Date().toISOString(),...v.params,trace});return;}
+  if(v.method.startsWith('network.')){record(np,networkRecord(v,trace));const p=v.params,q=p.request;
    if(v.method==='network.beforeRequestSent'&&p.isBlocked){let allowed=false;try{const u=new URL(q.url),o=new URL(origin);allowed=u.protocol==='blob:'?u.origin===o.origin:u.protocol==='data:'?/^data:image\/(?:png|jpe?g|gif|webp|svg\+xml)(?:[;,])/i.test(q.url):u.origin===o.origin&&u.pathname.startsWith(o.pathname);}catch{}
-    try{if(allowed){row.network.allowed++;if(/^(blob|data):/.test(q.url))row.network.allowedEmbedded++;await session.bidi.call('network.continueRequest',{request:q.request});}else{row.network.blocked++;row.network.blockedURLs.push(urlEvidence(q.url));await session.bidi.call('network.failRequest',{request:q.request});}}
-    catch(e){row.network.interceptErrors.push(String(e));}
+    const originEvent={...trace,allowDecision:allowed?'allow':'block'};
+    try{if(allowed){row.network.allowed++;if(/^(blob|data):/.test(q.url))row.network.allowedEmbedded++;await session.bidi.call('network.continueRequest',{request:q.request},false,15000,originEvent);}else{row.network.blocked++;row.network.blockedURLs.push(urlEvidence(q.url));await session.bidi.call('network.failRequest',{request:q.request},false,15000,originEvent);}}
+    catch(e){row.network.interceptErrors.push(String(e));session.bidi.trace('interception-error-recorded',{...originEvent,error:String(e),interceptErrorIndex:row.network.interceptErrors.length-1});}
    }
-  }else record(path.join(dir,'lifecycle.jsonl'),v);
- });
+  }else record(path.join(dir,'lifecycle.jsonl'),{...v,trace});
+ },{runId,caseName:row.name,engine,traceErrors:row.bidiTrace.writeErrors,onTraceError:failure=>markBidiTraceFailure(row,dir,failure)});
+ Object.assign(row.bidiTrace,session.bidi.identity);bidiByConnection.set(session.bidi.connectionId,session.bidi);
  await session.bidi.opened;
  await session.bidi.call('session.subscribe',{events:['log.entryAdded','network.beforeRequestSent','network.responseCompleted','network.fetchError','browsingContext.contextCreated','browsingContext.contextDestroyed']});
  await session.bidi.call('network.addIntercept',{phases:['beforeRequestSent']});
@@ -322,6 +353,7 @@ function checkCommon(row,s,viewport,dpr,seed){const c=row.checks;
  c.noRealOriginGetterUse=!!s.storage&&Array.isArray(s.storage.entries)&&!s.storage.entries.some(x=>x.event==='real-origin-storage-get');
  c.networkInterceptionsClean=row.network?.interceptErrors.length===0;
  c.noUnexpectedNetwork=row.network?.blockedURLs.every(u=>/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(u)||u==='https://theislampill.github.io/favicon.ico');
+ c.bidiTraceIntact=!!row.bidiTrace&&row.bidiTrace.writeErrors.length===0;bidiBoundary(row,'common-checks');
 }
 async function collect(engine,mode,preference,storage,ordinary,origin){
  const name=[engine,ordinary?'public-ordinary':mode,preference,storage].join('-'),dir=path.join(OUT,name);fs.mkdirSync(dir,{recursive:true});
