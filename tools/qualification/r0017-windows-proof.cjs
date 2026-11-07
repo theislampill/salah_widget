@@ -28,7 +28,12 @@ function write(file,obj){fs.mkdirSync(path.dirname(file),{recursive:true});fs.wr
 function record(file,obj){fs.appendFileSync(file,JSON.stringify(obj)+'\n');}
 function git(...a){return execFileSync('git',a,{cwd:ROOT,encoding:'utf8',windowsHide:true}).trim();}
 function fail(message){throw Error(message);}
-function same(a,b){return JSON.stringify(a)===JSON.stringify(b);}
+function same(a,b){
+ if(a===b)return true;
+ if(Array.isArray(a)||Array.isArray(b))return Array.isArray(a)&&Array.isArray(b)&&a.length===b.length&&a.every((v,i)=>same(v,b[i]));
+ if(!a||!b||typeof a!=='object'||typeof b!=='object')return false;
+ const keys=Object.keys(a);return keys.length===Object.keys(b).length&&keys.every(k=>Object.hasOwn(b,k)&&same(a[k],b[k]));
+}
 const safeEnv=Object.fromEntries(['ImageOS','ImageVersion','RUNNER_OS','RUNNER_ARCH','GITHUB_RUN_ID','GITHUB_RUN_ATTEMPT','GITHUB_SHA','GITHUB_REF','GITHUB_REPOSITORY'].map(k=>[k,process.env[k]??null]));
 const result={schema:'r0017-windows-first-phase/v1',qualification:'PARTIAL',status:'STARTED',runId,
  startedUtc:new Date().toISOString(),host:{platform:process.platform,release:os.release(),version:os.version(),arch:os.arch(),cpus:os.cpus().length,node:process.version,runner:safeEnv},
@@ -103,9 +108,24 @@ class BiDi{
   });
   this.ws.addEventListener('close',()=>{for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(Error('BiDi closed'));}this.pending.clear();});
  }
- async call(method,params={}){await this.opened;const id=++this.seq;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);reject(Error('BiDi command deadline: '+method));},operationTimeout(15000));this.pending.set(id,{resolve,reject,timer});this.ws.send(JSON.stringify({id,method,params}));});}
+ async call(method,params={},cleanup=false,timeout=15000){await this.opened;const id=++this.seq;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);reject(Error('BiDi command deadline: '+method));},cleanup?timeout:operationTimeout(timeout));this.pending.set(id,{resolve,reject,timer});this.ws.send(JSON.stringify({id,method,params}));});}
  close(){this.ws.close();}
 }
+async function evaluateInPage(session,script,cleanup=false){
+ const value=await session.bidi.call('script.evaluate',{expression:'JSON.stringify((()=>{'+script+'\n})())',target:{context:session.context},awaitPromise:false,resultOwnership:'none'},cleanup,10000);
+ if(value?.type!=='success')throw Error('Page realm evaluation failed: '+(value?.exceptionDetails?.text||JSON.stringify(value)));
+ if(typeof value.realm!=='string')throw Error('Page realm identity missing');
+ if(!session.row.observationProtocol.realms.includes(value.realm))session.row.observationProtocol.realms.push(value.realm);
+ if(value.result?.type==='undefined')return undefined;
+ if(value.result?.type!=='string'||typeof value.result.value!=='string')throw Error('Page realm did not return the declared JSON string');
+ return JSON.parse(value.result.value);
+}
+async function navigateInPage(session,url){
+ const value=await session.bidi.call('browsingContext.navigate',{context:session.context,url,wait:'interactive'},false,30000);
+ if(value?.url!==url||typeof value.navigation!=='string')throw Error('Navigation did not establish the requested document: '+JSON.stringify(value));
+ return value;
+}
+function observedWithin(value,observedAt,deadline){return value===true&&Number.isFinite(observedAt)&&Number.isFinite(deadline)&&observedAt<deadline;}
 function preload(seed,origin,ordinary){
  return `()=>{if(location.origin!==${JSON.stringify(new URL(origin).origin)})return;
  const isTop=window===window.top, docKey=crypto.randomUUID(), real=window.localStorage;
@@ -137,14 +157,17 @@ const SNAPSHOT=`return (()=>{const copy=x=>x==null?null:JSON.parse(JSON.stringif
  card:box(document.querySelector('.c')),footer:box(document.querySelector('.c > .d')),countdown:document.querySelector('.panel .left')?.textContent??null,
  selectorCounts:{card:document.querySelectorAll('.c').length,footer:document.querySelectorAll('.c > .d').length,countdown:document.querySelectorAll('.panel .left').length,gregorianButton:document.querySelectorAll('#ceDateButton').length,hijriButton:document.querySelectorAll('#ahDateButton').length},
  children:child,resourceTimings:performance.getEntriesByType('resource').map(x=>({name:x.name,initiatorType:x.initiatorType,duration:x.duration,transferSize:x.transferSize})),
- observerAbsent:!window.__SalahSkyObserver,clockNow:Date.now(),documentMode:window.__widgetFixture?.documentMode??null};})();`;
+ observerAbsent:!window.__SalahSkyObserver,clockNow:window.Date.now(),documentMode:window.__widgetFixture?.documentMode??null};})();`;
 const PROGRESS=`return (()=>{const fr=document.querySelector('#w'),w=fr?.contentWindow;let child=null;try{if(w){const r=fr.getBoundingClientRect();child={attempt:w.__widgetFixture?.attempt,documentId:w.__widgetFixture?.documentId,sourceSha256:w.__widgetFixture?.sourceSha256,hash:w.__widgetFixture?.hash,state:w.__widgetFixture?.state,error:w.__widgetFixture?.error,preference:w.matchMedia('(prefers-reduced-motion: reduce)').matches,dpr:w.devicePixelRatio,visible:r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight,width:r.width,height:r.height,photoBytes:(w.document.querySelector('.mphoto')?.getAttribute('href')||'').length};}}catch(e){}return {done:!!window.__smoke,status:window.__smoke?.status??null,summary:document.querySelector('#sum')?.textContent??null,cases:typeof cases!=='undefined'?cases.map(x=>({name:x.name,state:x.state,assertions:x.assertions})):null,child};})();`;
 const ORDINARY_READY=`return (()=>{const f=window.__widgetFixture,q=typeof qaState==='function'?qaState():null;return !!(f&&f.state==='ready'&&q?.cache?.prayerLoaded&&q.render.currentKey&&q.render.nextKey&&f.ledger.some(x=>x.url.includes('/v1/timings/08-09-2026')&&x.jsonReads>0));})();`;
 function urlEvidence(value){if(typeof value==='string'&&value.startsWith('data:'))return {scheme:'data',metadata:value.slice(0,value.indexOf(',')<0?80:value.indexOf(',')),utf8Bytes:Buffer.byteLength(value),sha256:sha(value)};return value;}
 function networkRecord(v){const p=v.params||{},q=p.request||{},r=p.response||{};return {utc:new Date().toISOString(),method:v.method,context:p.context??null,navigation:p.navigation??null,timestamp:p.timestamp??null,isBlocked:p.isBlocked??false,request:{id:q.request,url:urlEvidence(q.url),method:q.method,timings:q.timings},response:{url:urlEvidence(r.url),status:r.status,statusText:r.statusText,mimeType:r.mimeType,fromCache:r.fromCache,bytesReceived:r.bytesReceived},errorText:p.errorText??null};}
 async function screenshot(session,file,element){try{
- let b;if(element){const e=await session.wd('POST','/element',{using:'css selector',value:element});const id=e['element-6066-11e4-a52e-4f735466cecf'];b=await session.wd('GET','/element/'+id+'/screenshot');}
- else b=await session.wd('GET','/screenshot');fs.writeFileSync(file,Buffer.from(b,'base64'));return {file:path.basename(file),sha256:sha(fs.readFileSync(file)),kind:element?'element':'viewport'};
+ const params={context:session.context,origin:'viewport',format:{type:'image/png'}};
+ if(element){const r=await session.eval('return (()=>{const e=document.querySelector('+JSON.stringify(element)+');if(!e)throw Error("Screenshot target missing");const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};})();');
+  if(!r||!['x','y','width','height'].every(k=>Number.isFinite(r[k]))||r.width<=0||r.height<=0)throw Error('Invalid screenshot target rectangle');params.clip={type:'box',...r};}
+ const value=await session.bidi.call('browsingContext.captureScreenshot',params);if(typeof value.data!=='string'||!value.data)throw Error('Screenshot bytes missing');
+ fs.writeFileSync(file,Buffer.from(value.data,'base64'));return {file:path.basename(file),sha256:sha(fs.readFileSync(file)),kind:element?'element':'viewport',protocol:'BiDi',clip:params.clip??null};
  }catch(e){return {file:path.basename(file),error:String(e)};}}
 // Capture only descendants of the exact owned PIDs; creation times prevent killing reused PIDs.
 function processTree(pids){
@@ -202,7 +225,7 @@ async function startSession(engine,preference,viewport,dpr,row,dir,origin){
  const driverArgs=engine==='chromium'?['--port='+port,'--allowed-ips=127.0.0.1']:['--host','127.0.0.1','--port',String(port),'--log','info','--profile-root',profile];
  const child=spawn(installed.driver,driverArgs,{windowsHide:true,stdio:['ignore',fs.openSync(path.join(dir,'driver.stdout.log'),'a'),fs.openSync(path.join(dir,'driver.stderr.log'),'a')]});
  row.driverPid=child.pid;row.driverArguments=driverArgs;let launchError=null;child.on('error',e=>{launchError=e;});
- const session={child,profile,bidi:null,id:null,sessionCreateAttempted:false,ownedProcesses:[],async close(){return closeOwnedSession(this,row,base);}};
+ const session={child,profile,row,bidi:null,id:null,sessionCreateAttempted:false,ownedProcesses:[],async close(){return closeOwnedSession(this,row,base);}};
  try{
  const initialTree=processTree([child.pid]);row.driverProcess=initialTree.find(p=>p.ProcessId===child.pid);if(!row.driverProcess)fail('Owned driver process identity unavailable');session.ownedProcesses=[row.driverProcess];extendOwned(session.ownedProcesses,initialTree);
  const until=Date.now()+20000;let ready=false;while(Date.now()<until){if(launchError)throw launchError;if(child.exitCode!==null)fail('Driver exited '+child.exitCode);try{const s=await request(base,'GET','/status',undefined,1000);if(s.ready){ready=true;break;}}catch{}await delay(100);}if(!ready)fail('Driver did not become ready');
@@ -238,7 +261,9 @@ async function startSession(engine,preference,viewport,dpr,row,dir,origin){
  row.preference={requested:preference,mechanism:engine==='chromium'?'ChromeDriver CDP Emulation.setEmulatedMedia':'Firefox ui.prefersReducedMotion profile preference',osAccessibilitySettingChanged:false};
  if(engine==='chromium')await session.wd('POST','/goog/cdp/execute',{cmd:'Emulation.setEmulatedMedia',params:{features:[{name:'prefers-reduced-motion',value:preference}]}});
  await session.wd('POST','/timeouts',{script:10000,pageLoad:30000,implicit:0});
- session.eval=(script,cleanup=false)=>request(base,'POST','/session/'+session.id+'/execute/sync',{script,args:[]},15000,cleanup);
+ row.observationProtocol={navigation:'BiDi interactive',evaluation:'BiDi default page realm, no sandbox, explicit JSON value',screenshots:'BiDi',realms:[]};
+ session.eval=(script,cleanup=false)=>evaluateInPage(session,script,cleanup);
+ session.navigate=url=>navigateInPage(session,url);
  return session;
  }catch(e){await session.close();throw e;}
 }
@@ -281,14 +306,14 @@ async function collect(engine,mode,preference,storage,ordinary,origin){
  row.url=ordinary?new URL('?mode=healthy&run='+encodeURIComponent(runId)+'&attempt=1#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&tz=Asia/Riyadh&qa=1',origin).href:new URL('tests/smoke.html?fixture='+encodeURIComponent(mode),origin).href;
  if(remainingBudgetMs()<150000){const e=Error('Insufficient collector budget for unchanged observation limit and final capture');e.code='R0017_BUDGET_EXHAUSTED';throw e;}
  row.stage='navigation';row.executionStarted=true;
- await session.wd('POST','/url',{url:row.url});row.stage='observation';
+ const navigationStarted=performance.now();row.navigation=await session.navigate(row.url);row.stage='observation';
  if(ordinary){
-  const until=Date.now()+8000;let ready=false;while(Date.now()<until){if(await session.eval(ORDINARY_READY)){ready=true;break;}await delay(150);}row.ordinaryReadyWithinOriginal8000ms=ready;
+  const until=navigationStarted+8000;let ready=false;while(performance.now()<until){const observed=await session.eval(ORDINARY_READY),observedAt=performance.now();if(observedWithin(observed,observedAt,until)){ready=true;break;}await delay(150);}row.ordinaryReadyWithinOriginal8000ms=ready;
  }else{
-  const until=Date.now()+120000,captured=new Set();let done=false,last='';
-  while(Date.now()<until){const p=await session.eval(PROGRESS);const key=JSON.stringify(p);if(key!==last){record(path.join(dir,'progress.jsonl'),{elapsedMs:Date.now()-started,...p});last=key;}
+  const until=navigationStarted+120000,captured=new Set();let done=false,last='';
+  while(performance.now()<until){const p=await session.eval(PROGRESS),observedAt=performance.now();if(!p||typeof p!=='object'||typeof p.done!=='boolean')throw Error('Invalid page progress observation');const key=JSON.stringify(p);if(key!==last){record(path.join(dir,'progress.jsonl'),{elapsedMs:Date.now()-started,...p});last=key;}
    const f=p.child;if(f?.visible&&f.width===325&&f.height===530&&f.photoBytes>50&&!captured.has(f.attempt)){captured.add(f.attempt);row.screenshots.push({...await screenshot(session,path.join(dir,'stage-'+String(f.attempt).padStart(2,'0')+'.png')),evidence:f,elapsedMs:Date.now()-started});}
-   if(p.done){done=true;break;}await delay(150);
+   if(observedWithin(p.done,observedAt,until)){done=true;break;}await delay(150);
   }row.terminalWithinCollector120000ms=done;
  }
  const s=await session.eval(SNAPSHOT);row.snapshot=s;row.smoke=s.smoke;write(path.join(dir,'smoke.json'),s.smoke);
@@ -320,7 +345,7 @@ async function collect(engine,mode,preference,storage,ordinary,origin){
  row.status=Object.values(row.checks).every(x=>x===true)?'PHASE_CHECKS_PASSED':'PHASE_CHECKS_FAILED';
  }catch(e){row.setupFailure=row.stage==='setup';row.status=e.code==='R0017_BUDGET_EXHAUSTED'?'COLLECTOR_BUDGET_EXHAUSTED':row.setupFailure?'CAPABILITY_OR_SETUP_ERROR':'COLLECTOR_OR_ATTEMPT_ERROR';row.error=String(e.stack||e);
   if(e.code==='R0017_BUDGET_EXHAUSTED')result.stopLaunches={kind:'orchestration-budget',case:name,receipt:name+'/result.json',reason:row.error};
-  else if(row.setupFailure){result.engineSetupBlocks[engine]={kind:'engine-setup',case:name,receipt:name+'/result.json',reason:row.error};if(!row.installed)result.inventory[engine]={status:'UNAVAILABLE',error:row.error,receipt:name+'/result.json'};}
+  else{result.engineSetupBlocks[engine]={kind:row.setupFailure?'engine-setup':'engine-observation',case:name,receipt:name+'/result.json',reason:row.error};if(!row.installed)result.inventory[engine]={status:'UNAVAILABLE',error:row.error,receipt:name+'/result.json'};}
  }finally{
   // Full __smoke is retained for every outcome. Null is explicit if finalization never happened.
   row.primaryOutcome={status:row.status,error:row.error??null,stage:row.stage};
