@@ -4,7 +4,7 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),Module=require('node:module');
 const basePath=path.join(__dirname,'r0017-windows-proof.cjs');
 const base=fs.readFileSync(basePath,'utf8');
-const expectedBase='2c50ad57e258516e9e5d158a576abe3fa6c6f840a837fa8fae49c8b0ec345ec2';
+const expectedBase='dfbd7c58c63afb716499694e1f6da239c16fb64ace070663e893e7fafbe7e517';
 const actualBase=crypto.createHash('sha256').update(base).digest('hex');
 if(actualBase!==expectedBase)throw Error('Cleanup probe base differs from its independently reviewed binding');
 const entry='main().catch(e=>{';

@@ -101,6 +101,7 @@ async function request(base,method,route,body,timeout=15000,cleanup=false){
 const bidiByConnection=new Map();
 class BiDi{
  constructor(url,file,onEvent,identity={}){this.seq=0;this.pending=new Map();this.file=file;this.onEvent=onEvent;
+  this.eventHandlers=new Map();this.eventHandlerErrors=[];this.joinWaiters=new Set();this.socketClosed=false;this.closeRequested=false;this.closeError=null;this.settledAtMonotonicMs=null;
   this.connectionId=crypto.randomUUID();this.traceSeq=0;this.eventSeq=0;this.commands=new Map();this.traceFile=path.join(path.dirname(file),'bidi-trace.jsonl');this.traceErrors=identity.traceErrors||[];this.onTraceError=identity.onTraceError;
   this.identity={runId:identity.runId??null,case:identity.caseName??null,engine:identity.engine??null,connectionId:this.connectionId};
   const u=new URL(url);if(u.protocol!=='ws:'||!['127.0.0.1','localhost','[::1]'].includes(u.hostname))fail('Non-loopback BiDi endpoint');
@@ -110,10 +111,16 @@ class BiDi{
    if(v.id){const p=this.pending.get(v.id),command=p?.command||this.commands.get(v.id)||null;
     this.trace('command-response',{wireId:v.id,command,association:p?'pending':command?'late-or-duplicate':'unmatched',priorTerminal:command?.terminal??null,protocol:this.responseEvidence(v,command?.method)});
     if(!p)return;clearTimeout(p.timer);this.pending.delete(v.id);command.terminal=v.type==='error'?'error':'success';
-    this.trace('command-settled',{wireId:v.id,command,terminal:command.terminal});v.type==='error'?p.reject(Error('BiDi '+v.error+': '+v.message)):p.resolve(v.result);}
-   else if(v.method){const trace=this.eventEvidence(v);this.trace('event-observed',trace);Promise.resolve(this.onEvent(v,trace)).catch(err=>{record(this.file,{collectorEventError:String(err),method:v.method});this.trace('event-handler-error',{...trace,error:String(err)});});}
+    this.trace('command-settled',{wireId:v.id,command,terminal:command.terminal});v.type==='error'?p.reject(Error('BiDi '+v.error+': '+v.message)):p.resolve(v.result);this.notifyJoin();}
+   else if(v.method){const trace=this.eventEvidence(v);this.trace('event-observed',trace);
+    // Own the callback before invoking it: a pending command is not the whole
+    // event handler, whose catch/continuation can still change the case row.
+    const handler={trace,promise:null};this.eventHandlers.set(trace.eventReceiptId,handler);this.settledAtMonotonicMs=null;
+    let work;try{work=this.onEvent(v,trace);}catch(e){work=Promise.reject(e);}
+    handler.promise=Promise.resolve(work).catch(err=>{const failure={...trace,error:String(err)};this.eventHandlerErrors.push(failure);try{record(this.file,{collectorEventError:String(err),method:v.method});}catch(e){failure.errorLogWriteError=String(e);}this.trace('event-handler-error',failure);}).finally(()=>{this.eventHandlers.delete(trace.eventReceiptId);this.notifyJoin();});}
+
   });
-  this.ws.addEventListener('close',e=>{this.trace('connection-closed',{code:e.code??null,reason:e.reason??null,wasClean:e.wasClean??null});for(const p of this.pending.values()){clearTimeout(p.timer);p.command.terminal='closed';this.trace('command-close-rejection',{wireId:p.command.wireId,command:p.command,terminal:'closed'});p.reject(Error('BiDi closed'));}this.pending.clear();this.trace('connection-pending-cleared');});
+  this.ws.addEventListener('close',e=>{this.socketClosed=true;this.trace('connection-closed',{code:e.code??null,reason:e.reason??null,wasClean:e.wasClean??null});for(const p of this.pending.values()){clearTimeout(p.timer);p.command.terminal='closed';this.trace('command-close-rejection',{wireId:p.command.wireId,command:p.command,terminal:'closed'});p.reject(Error('BiDi closed'));}this.pending.clear();this.trace('connection-pending-cleared');this.notifyJoin();});
  }
  trace(kind,detail={}){const entry={schema:'r0017-bidi-trace/v1',...this.identity,traceSequence:++this.traceSeq,kind,utc:new Date().toISOString(),monotonicMs:performance.now(),monotonicClock:'Node performance.now, process-local milliseconds',pendingCount:this.pending.size,...detail};try{record(this.traceFile,entry);}catch(e){const failure={...this.identity,traceSequence:entry.traceSequence,kind,utc:entry.utc,monotonicMs:entry.monotonicMs,error:String(e)};this.traceErrors.push(failure);if(this.onTraceError)this.onTraceError(failure);}return entry;}
  eventEvidence(v){const p=v.params||{},q=p.request||{},requestId=q.request??null,redirectCount=p.redirectCount??null;return {eventReceiptId:this.connectionId+':event:'+(++this.eventSeq),method:v.method,context:p.context??null,navigation:p.navigation??null,requestId,redirectCount,requestKey:requestId===null?null:JSON.stringify([this.connectionId,requestId,redirectCount]),url:urlEvidence(q.url??null),remoteTimestamp:p.timestamp??null,remoteClock:'BiDi event timestamp, not the local monotonic clock',isBlocked:p.isBlocked??false,terminal:v.method==='network.responseCompleted'?'response-completed':v.method==='network.fetchError'?'fetch-error':null};}
@@ -126,8 +133,27 @@ class BiDi{
  boundary(stage,detail={}){return this.trace('collector-boundary',{stage,...detail,pending:[...this.pending.values()].map(p=>p.command)});}
  async call(method,params={},cleanup=false,timeout=15000,originEvent=null){await this.opened;const id=++this.seq;
   const command={commandReceiptId:this.connectionId+':command:'+id,wireId:id,method,requestId:params.request??originEvent?.requestId??null,context:params.context??params.target?.context??originEvent?.context??null,navigation:originEvent?.navigation??null,eventReceiptId:originEvent?.eventReceiptId??null,requestKey:originEvent?.requestKey??null,redirectCount:originEvent?.redirectCount??null,url:urlEvidence(params.url??originEvent?.url??null),allowDecision:originEvent?.allowDecision??null,cleanup,requestedTimeoutMs:timeout,issuedUtc:new Date().toISOString(),issuedMonotonicMs:performance.now(),terminal:null};this.commands.set(id,command);
-  return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);command.terminal='deadline';this.trace('command-deadline',{wireId:id,command,terminal:'deadline'});reject(Error('BiDi command deadline: '+method));},cleanup?timeout:operationTimeout(timeout));this.pending.set(id,{resolve,reject,timer,command});this.trace('command-issued',{wireId:id,command});try{this.ws.send(JSON.stringify({id,method,params}));}catch(e){this.trace('command-send-error',{wireId:id,command,error:String(e)});throw e;}});}
- close(){this.boundary('close-requested');this.ws.close();}
+  return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);command.terminal='deadline';this.trace('command-deadline',{wireId:id,command,terminal:'deadline'});reject(Error('BiDi command deadline: '+method));this.notifyJoin();},cleanup?timeout:operationTimeout(timeout));this.pending.set(id,{resolve,reject,timer,command});this.settledAtMonotonicMs=null;this.trace('command-issued',{wireId:id,command});try{this.ws.send(JSON.stringify({id,method,params}));}catch(e){clearTimeout(timer);this.pending.delete(id);command.terminal='send-error';this.trace('command-send-error',{wireId:id,command,error:String(e)});reject(e);this.notifyJoin();}});}
+ notifyJoin(){
+  if(this.socketClosed&&this.pending.size===0&&this.eventHandlers.size===0){if(this.settledAtMonotonicMs===null)this.settledAtMonotonicMs=performance.now();}
+  else this.settledAtMonotonicMs=null;
+  for(const check of this.joinWaiters)check();
+ }
+ close(){if(this.closeRequested)return;this.closeRequested=true;this.boundary('close-requested');try{this.ws.close();}catch(e){this.closeError=String(e);throw e;}}
+ async joinClose(deadline){
+  // The caller supplies the existing process-exit-verification deadline. This
+  // join never opens another cleanup window or extends a command deadline.
+  const started=performance.now(),startedUtc=new Date().toISOString();
+  try{this.close();}catch(e){this.closeError=String(e);}
+  await new Promise(resolve=>{let timer=null;const check=()=>{
+   if((this.socketClosed&&this.pending.size===0&&this.eventHandlers.size===0)||performance.now()>=deadline){clearTimeout(timer);this.joinWaiters.delete(check);resolve();}
+   // Node timers may fire slightly before their requested monotonic deadline.
+   else if(timer===null)timer=setTimeout(()=>{timer=null;check();},Math.max(1,deadline-performance.now()));
+  };this.joinWaiters.add(check);check();});
+  const finalization={schema:'r0017-protocol-finalization/v1',startedUtc,finishedUtc:new Date().toISOString(),deadlineMonotonicMs:deadline,elapsedMs:performance.now()-started,budget:'shared with the existing 5000ms owned-process exit-verification window',socketClosed:this.socketClosed,pendingCommandCount:this.pending.size,pendingEventHandlerCount:this.eventHandlers.size,pendingCommands:[...this.pending.values()].map(p=>({...p.command})),pendingEventHandlers:[...this.eventHandlers.values()].map(h=>h.trace),eventHandlerErrors:[...this.eventHandlerErrors],closeError:this.closeError,settledAtMonotonicMs:this.settledAtMonotonicMs,settledWithinDeadline:Number.isFinite(this.settledAtMonotonicMs)&&this.settledAtMonotonicMs<=deadline};
+  finalization.ok=finalization.settledWithinDeadline&&finalization.socketClosed&&finalization.pendingCommandCount===0&&finalization.pendingEventHandlerCount===0&&finalization.eventHandlerErrors.length===0&&finalization.closeError===null;
+  finalization.status=finalization.ok?'SETTLED':'PROTOCOL_FINALIZATION_FAILED';this.boundary('protocol-finalization',finalization);return finalization;
+ }
 }
 function bidiBoundary(row,stage,detail={}){const bidi=bidiByConnection.get(row.bidiTrace?.connectionId);if(bidi)bidi.boundary(stage,{status:row.status??null,primaryOutcome:row.primaryOutcome??null,checks:row.checks??null,interceptErrorCount:row.network?.interceptErrors?.length??null,...detail});}
 function markBidiTraceFailure(row,dir,failure){
@@ -136,6 +162,12 @@ function markBidiTraceFailure(row,dir,failure){
  row.traceFailureObservedOutcome=row.traceFailureObservedOutcome||{status:row.status,error:row.error??null,stage:row.stage??null};row.checks.bidiTraceIntact=false;
  if(row.status!=='CLEANUP_FAILED')row.status='COLLECTOR_TRACE_ERROR';
  result.engineSetupBlocks[row.engine]={kind:'engine-observation',case:row.name,receipt:row.name+'/result.json',reason:'BiDi correlation trace could not be preserved'};result.status='COLLECTOR_TRACE_FAILURE';process.exitCode=1;
+ const published=result.cases.find(r=>r.name===row.name);
+ if(published!==row&&published&&Object.isFrozen(published)){
+  // An incomplete join already sealed a failed row. Preserve late raw evidence,
+  // but never rewrite that receipt from the callback's still-mutable owner.
+  try{record(path.join(dir,'protocol-errors.jsonl'),{collectorLateTraceWriteError:failure});}catch(e){console.error('R0017 late trace failure receipt write failure: '+String(e));}return;
+ }
  try{write(path.join(dir,'result.json'),row);write(path.join(OUT,'summary.json'),result);}catch(e){row.bidiTrace.receiptWriteErrors=row.bidiTrace.receiptWriteErrors||[];row.bidiTrace.receiptWriteErrors.push({utc:new Date().toISOString(),traceSequence:failure.traceSequence,error:String(e)});console.error('R0017 BiDi trace and failure-receipt write failure: '+String(e));}
 }
 async function evaluateInPage(session,script,cleanup=false){
@@ -232,7 +264,7 @@ async function closeOwnedSession(session,row,base){
  if(row.cleanup)return row.cleanup;
  const c=row.cleanup={startedUtc:new Date().toISOString(),verifiedExited:false,ok:false,queries:[],kills:[],errors:[],profileRoot:session.profile};
  const known=[...(session.ownedProcesses||[])],observedIdentities=[],roots=[session.child?.pid,row.browserPid].filter(n=>Number.isInteger(n)&&n>0);
- c.noProcessStarted=roots.length===0&&!session.sessionCreateAttempted;
+ c.noProcessStarted=roots.length===0&&!session.sessionCreateAttempted;let exitDeadline=null;
  const query=stage=>{try{const observed=processTree([...roots,...known.map(p=>p.ProcessId),...observedIdentities.map(p=>p.ProcessId)]);for(const p of observed)if(!observedIdentities.some(k=>sameProcess(k,p)))observedIdentities.push(p);c.queries.push({stage,observed});return observed;}catch(e){c.errors.push({stage,error:String(e)});return null;}};
  try{
   const before=query('before-delete');if(before)extendOwned(known,before);
@@ -253,7 +285,7 @@ async function closeOwnedSession(session,row,base){
   // Never terminate a PID merely because a former owned process once used it.
   const killable=afterDelete?afterDelete.filter(p=>known.some(k=>sameProcess(k,p))):[];
   if(killable.length){const args=killable.flatMap(p=>['/PID',String(p.ProcessId)]).concat(['/F']);try{const output=execFileSync('taskkill',args,{encoding:'utf8',windowsHide:true,timeout:10000});c.kills.push({args,status:'SUCCEEDED',output});}catch(e){c.kills.push({args,status:'FAILED',exitCode:e.status??null,error:String(e),stdout:String(e.stdout||''),stderr:String(e.stderr||'')});}}
-  let afterKill=query('after-kill');const exitDeadline=performance.now()+5000;while(afterKill&&afterKill.some(p=>known.some(k=>sameProcess(k,p)))&&performance.now()<exitDeadline){await delay(100);afterKill=query('exit-verification');}c.ownedProcesses=known;c.remaining=afterKill?afterKill.filter(p=>known.some(k=>sameProcess(k,p))):null;
+  let afterKill=query('after-kill');exitDeadline=performance.now()+5000;while(afterKill&&afterKill.some(p=>known.some(k=>sameProcess(k,p)))&&performance.now()<exitDeadline){await delay(100);afterKill=query('exit-verification');}c.ownedProcesses=known;c.remaining=afterKill?afterKill.filter(p=>known.some(k=>sameProcess(k,p))):null;
   const browserKnown=!session.sessionCreateAttempted||(Number.isInteger(row.browserPid)&&known.some(p=>p.ProcessId===row.browserPid));
   const driverKnown=c.directDriverTermination?c.directDriverTermination.exitObserved===true&&c.directDriverTermination.exitWithinBound===true:
    !roots.length||known.some(p=>p.ProcessId===session.child?.pid)||(!session.sessionCreateAttempted&&before?.every(p=>p.ProcessId!==session.child?.pid));
@@ -264,6 +296,12 @@ async function closeOwnedSession(session,row,base){
   else c.profileCleanup={status:'RETAINED',reason:'Owned process exit not established'};
   c.ok=(c.noProcessStarted||c.verifiedExited===true)&&(!session.profile||c.profileCleanup?.absent===true);
  }catch(e){c.errors.push({stage:'cleanup',error:String(e.stack||e)});c.ok=false;}
+ if(session.bidi){
+  const deadline=exitDeadline??performance.now();
+  try{row.protocolFinalization=await session.bidi.joinClose(deadline);}
+  catch(e){row.protocolFinalization={schema:'r0017-protocol-finalization/v1',ok:false,status:'PROTOCOL_FINALIZATION_FAILED',error:String(e.stack||e),deadlineMonotonicMs:deadline,socketClosed:session.bidi.socketClosed===true,pendingCommandCount:session.bidi.pending.size,pendingEventHandlerCount:session.bidi.eventHandlers.size,settledAtMonotonicMs:session.bidi.settledAtMonotonicMs,settledWithinDeadline:false};}
+  if(!row.protocolFinalization.ok)result.stopLaunches={kind:'protocol-finalization-unverified',case:row.name,receipt:row.name+'/result.json',reason:'Owned BiDi socket, commands, or event handlers did not finalize within the existing cleanup budget'};
+ }
  c.finishedUtc=new Date().toISOString();if(!c.ok)result.stopLaunches={kind:'cleanup-unverified',case:row.name,receipt:row.name+'/result.json',reason:'No further browser launch after uncertain owned-process/profile cleanup'};
  bidiBoundary(row,'cleanup-finished',{cleanup:{ok:c.ok,verifiedExited:c.verifiedExited,scopeKnown:c.scopeKnown,finishedUtc:c.finishedUtc}});return c;
 }
@@ -419,7 +457,24 @@ async function collect(engine,mode,preference,storage,ordinary,origin){
   }
   if(!row.cleanup?.ok){result.stopLaunches={kind:'cleanup-unverified',case:name,receipt:name+'/result.json',reason:'Owned cleanup was not established'};row.status='CLEANUP_FAILED';}
   else row.checks.ownedCleanupSatisfied=true;
-  row.finishedUtc=new Date().toISOString();row.elapsedMs=Date.now()-started;write(path.join(dir,'result.json'),row);write(path.join(OUT,'summary.json'),result);
+  // The close event and every owned handler must finish before the strict
+  // mutable network/trace evidence is evaluated for the final receipt.
+  bidiBoundary(row,'case-final-cut');
+  if(row.bidiTrace){
+   row.checks.networkInterceptionsClean=Array.isArray(row.network?.interceptErrors)&&row.network.interceptErrors.length===0;
+   row.checks.noUnexpectedNetwork=Array.isArray(row.network?.blockedURLs)&&row.network.blockedURLs.every(u=>/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(u)||u==='https://theislampill.github.io/favicon.ico');
+   row.checks.protocolFinalizationComplete=row.protocolFinalization?.ok===true;
+   row.checks.bidiTraceIntact=Array.isArray(row.bidiTrace.writeErrors)&&row.bidiTrace.writeErrors.length===0;
+   if(!row.checks.protocolFinalizationComplete&&row.status!=='CLEANUP_FAILED')row.status='PROTOCOL_FINALIZATION_FAILED';
+   if(!row.checks.bidiTraceIntact&&row.status!=='CLEANUP_FAILED')row.status='COLLECTOR_TRACE_ERROR';
+   if(row.status==='PHASE_CHECKS_PASSED'&&!Object.values(row.checks).every(x=>x===true))row.status='PHASE_CHECKS_FAILED';
+  }
+  row.finishedUtc=new Date().toISOString();row.elapsedMs=Date.now()-started;
+  // Detach the published cut from live callback owners. A bounded failure may
+  // still have callbacks later; their raw logs cannot mutate either receipt.
+  const frozen=JSON.parse(JSON.stringify(row));const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};freeze(frozen);
+  const index=result.cases.indexOf(row);if(index<0)throw Error('Final case is not registered');result.cases[index]=frozen;
+  write(path.join(dir,'result.json'),frozen);write(path.join(OUT,'summary.json'),result);
  }
  console.log(name+': '+row.status);return row.status==='PHASE_CHECKS_PASSED';
 }

@@ -278,7 +278,8 @@ function exactNarrowAccounting(p,smoke,declared,log,phase='final'){
 }
 function pulseConsumer(x){
  if(!x||typeof x.pulseRaw!=='string'||x.pulseRaw.trim()===''||!Number.isFinite(x.pulse)||x.pulse<=0||Number(x.pulseRaw)!==x.pulse||x.pulse<PULSE_RANGE.minimum||x.pulse>PULSE_RANGE.maximum)return false;
- if(x.qa?.sim!=='2026-09-07 12:30'||!Number.isFinite(x.qa.sunEl)||x.qa.sunEl<40)return false;
+ // qaState.sim projects partsInTz().dateStr (DD-MM-YYYY), including this pinned noon.
+ if(x.qa?.sim!=='07-09-2026 12:30'||!Number.isFinite(x.qa.sunEl)||x.qa.sunEl<40)return false;
  const expected=['.suncorner .corona','.suncorner .rays'];
  return Array.isArray(x.transforms)&&x.transforms.length===2&&x.transforms.every((t,i)=>t.selector===expected[i]&&t.count===1&&typeof t.raw==='string'&&t.raw.trim()!==''&&t.raw!=='none'&&t.error===null&&t.matrix?.is2D===true&&['m11','m12','m21','m22'].every(k=>typeof t.matrix[k]==='number'&&Number.isFinite(t.matrix[k]))&&Math.abs(t.matrix.m11-x.pulse)<=0.000001&&Math.abs(t.matrix.m22-x.pulse)<=0.000001&&Math.abs(t.matrix.m12)<=0.000001&&Math.abs(t.matrix.m21)<=0.000001);
 }
@@ -450,7 +451,26 @@ async function finishOwnedCase(api,row,session,dir,started,withControl){
 
  if(row.cleanup?.ok!==true||!exitEstablished||row.cleanup.scopeKnown!==true){api.result.stopLaunches={kind:'cleanup-unverified',case:row.name,receipt:row.name+'/result.json',reason:'No further native launch after uncertain owned process/profile cleanup'};row.status='CLEANUP_FAILED';}
  else row.checks.ownedCleanupSafetyEstablished=true;
- row.finishedUtc=new Date().toISOString();row.elapsedMs=Date.now()-started;api.write(path.join(dir,'result.json'),row);api.write(path.join(api.OUT,'summary.json'),api.result);
+ // Finalize against the last owned callback, not the earlier common-check cut.
+ if(session?.bidi)session.bidi.boundary('case-final-cut');
+ if(row.bidiTrace){
+  row.checks.networkInterceptionsClean=Array.isArray(row.network?.interceptErrors)&&row.network.interceptErrors.length===0;
+  row.checks.noUnexpectedNetwork=Array.isArray(row.network?.blockedURLs)&&row.network.blockedURLs.every(u=>/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(u)||u==='https://theislampill.github.io/favicon.ico');
+  row.checks.protocolFinalizationComplete=row.protocolFinalization?.ok===true;
+  row.checks.bidiTraceIntact=Array.isArray(row.bidiTrace.writeErrors)&&row.bidiTrace.writeErrors.length===0;
+  if(!row.checks.protocolFinalizationComplete&&row.status!=='CLEANUP_FAILED')row.status='PROTOCOL_FINALIZATION_FAILED';
+  if(!row.checks.bidiTraceIntact&&row.status!=='CLEANUP_FAILED')row.status='COLLECTOR_TRACE_ERROR';
+  if(!Object.values(row.checks).every(x=>x===true)){
+   if(row.status==='CONTROL_ORACLES_PASSED_NOT_CLOSURE')row.status='CONTROL_ORACLE_FAILURE';
+   else if(row.status==='PUBLIC_HEALTHY_PASSED_NOT_CLOSURE')row.status='PUBLIC_HEALTHY_FAILURE';
+   else if(row.status.startsWith('DIAGNOSTIC_CAPTURED_'))row.status='DIAGNOSTIC_CAPTURE_OR_ACCOUNTING_FAILURE';
+  }
+ }
+ row.finishedUtc=new Date().toISOString();row.elapsedMs=Date.now()-started;
+ // Keep late callbacks on their mutable owner; result and summary use one cut.
+ const frozen=JSON.parse(JSON.stringify(row));const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};freeze(frozen);
+ const index=api.result.cases.indexOf(row);if(index<0)throw Error('Final case is not registered');api.result.cases[index]=frozen;
+ api.write(path.join(dir,'result.json'),frozen);api.write(path.join(api.OUT,'summary.json'),api.result);
 }
 function plannedRows(groups){
  const perEngine=[];
@@ -465,6 +485,17 @@ function plannedRows(groups){
  rows.push(...['chromium','firefox'].flatMap(engine=>perEngine.map(p=>({...p,engine,name:engine+'-'+p.id,schema:'r0017-native-controls/v3'}))));
  if(groups.includes('public'))for(const engine of ['chromium','firefox'])for(const preference of ['no-preference','reduce'])rows.push({name:engine+'-public-healthy-'+preference,engine,preference,mode:'healthy',storage:'absent',group:'public',schema:'r0017-public-native-proof/v3'});
  return Object.freeze(rows.map(p=>Object.freeze(p)));
+}
+function selectPopulation(groups,cases){
+ const available=plannedRows(groups);
+ if(cases===undefined)return {planned:available,requestedCaseNames:null,notSelected:[]};
+ if(typeof cases!=='string')throw Error('Explicit --cases must be a comma-separated list of exact case names');
+ const requested=cases.split(',');
+ if(requested.some(n=>!n||n!==n.trim())||new Set(requested).size!==requested.length||requested.some(n=>!available.some(p=>p.name===n)))throw Error('Explicit --cases must name unique cases within the selected groups, with no empty or unknown entries');
+ // Preserve canonical execution order. Omitted cases are explicitly unselected,
+ // never fabricated NOT_ATTEMPTED results or implicit qualification credit.
+ const selected=new Set(requested);
+ return {planned:Object.freeze(available.filter(p=>selected.has(p.name))),requestedCaseNames:requested,notSelected:available.filter(p=>!selected.has(p.name)).map(p=>p.name)};
 }
 async function collectProbe(api,srv,p,engine,declared){
  const name=engine+'-'+p.id,planned={name,engine,id:p.id,group:p.group,kind:p.kind,storage:p.storage,preference:p.preference,schema:'r0017-native-controls/v3'};
@@ -601,28 +632,29 @@ async function observedPublicReadback(api){
 async function run(api,options={}){
  const groups=(options.groups||'current,public,calendar-diagnostics').split(',').filter(Boolean),allowed=['current','public','calendar-diagnostics','optional-recorder','optional-config-storage'];
  if(!groups.length||new Set(groups).size!==groups.length||groups.some(x=>!allowed.includes(x)))throw Error('Use a unique explicit selection from '+allowed.join(','));
- const planned=plannedRows(groups);
- api.result.schema='r0017-windows-phase2/v2';api.result.qualification='PARTIAL';api.result.status='STARTED';api.result.scope='Separate finite second phase; exact narrow accounting, actual public engine × preference, native no-preference consumers and two original Firefox calendar diagnostics; pure-control replay is opt-in';api.result.groups=groups;api.result.history=HISTORY;api.result.plannedCases=planned;api.result.plannedCount=planned.length;
- api.result.documentPlan={nativeSessions:planned.length,topLevelNavigations:planned.length+(groups.includes('public')?2:0),additionalPublicBaselineDocuments:groups.includes('public')?2:0,calendarPrerequisiteDocuments:groups.includes('calendar-diagnostics')?2:0,calendarTargetDocuments:groups.includes('calendar-diagnostics')?2:0,ordering:'Two Firefox diagnostics first, then current/explicit optional groups by engine, then public contexts; no retries',scope:'Counts describe planned stages, not actual execution; public full-smoke fixture attempts are recorded from the original instrument'};
+ const population=selectPopulation(groups,options.cases),planned=population.planned,publicRows=planned.filter(p=>p.group==='public');
+ const baselineDocuments=publicRows.filter(p=>p.preference==='no-preference').length,calendarDocuments=planned.filter(p=>p.kind==='calendar-diagnostic').length;
+ api.result.schema='r0017-windows-phase2/v2';api.result.qualification='PARTIAL';api.result.status='STARTED';api.result.scope='Explicit finite second-phase population; only plannedCases are commissioned in this execution. Narrow controls, public consumers and original calendar diagnostics retain their own evidence limits; no unselected-case credit';api.result.groups=groups;api.result.selection={requestedCaseNames:population.requestedCaseNames,notSelected:population.notSelected};api.result.history=HISTORY;api.result.plannedCases=planned;api.result.plannedCount=planned.length;
+ api.result.documentPlan={nativeSessions:planned.length,topLevelNavigations:planned.length+baselineDocuments,additionalPublicBaselineDocuments:baselineDocuments,calendarPrerequisiteDocuments:calendarDocuments,calendarTargetDocuments:calendarDocuments,ordering:'Selected Firefox diagnostics first, then selected current/optional groups by engine, then selected public contexts; no retries',scope:'Counts describe only selected planned stages, not actual execution; public full-smoke fixture attempts are recorded from the original instrument'};
  api.result.pending=['Retain first native run 42388898271 and corrected base run 42390915224 as separate actual outcomes; no assumed PASS','Assess the two original Firefox calendar diagnostics without assigning a cause to the older Linux result','Independent admission of historical pure subproof transfer from exact raw receipts and dependency lineage','Reconcile all first-phase outcomes and every retained failure; no rerun-until-green credit','Complete final served-source/documentation/currentness map and independent pixel/contract review','Original eight exceptions/four TODOs and all limitations individually retained','Root-owned evidence publication and conditional closure; this collector has no such authority'];
  api.write(path.join(api.OUT,'summary.json'),api.result);let server;let ok=true;
  try{
   for(const name of ['remainingBudgetMs','operationTimeout','launchBlock','notAttempted'])if(typeof api[name]!=='function')throw Error('Revised owned-cleanup/budget interface missing: '+name);
   if(process.platform!=='win32'||typeof WebSocket!=='function')throw Error('Native Windows with built-in WebSocket is required');api.identify();
-  const catalog=prepare(api),selected=catalog.plans.filter(p=>groups.includes(p.group));
+  const catalog=prepare(api),selected=catalog.plans.map(p=>({...p,engines:p.engines.filter(engine=>planned.some(row=>row.name===engine+'-'+p.id))})).filter(p=>p.engines.length);
   if(planned.filter(p=>p.group!=='public').length!==selected.reduce((n,p)=>n+p.engines.length,0))throw Error('Immutable phase-2 plan cardinality mismatch');
   api.result.plan=selected.map(p=>({id:p.id,kind:p.kind,group:p.group,engines:p.engines,mode:p.mode??null,diagnosticSource:p.diagnosticSource??null,diagnosticLimitations:p.diagnosticLimitations??null,storage:p.storage,preference:p.preference,viewport:p.viewport,dpr:p.dpr,expectedIndexSha256:p.expectedIndexSha256,expectedWrapperSha256:p.expectedWrapperSha256,scriptSha256:api.sha(p.script),mutations:p.mutations,offlineAdmission:p.offlineAdmission}));
-  api.write(path.join(api.OUT,'phase2-plan.json'),{history:HISTORY,heldSmokeSha256:catalog.heldSha256,sourceSpans:catalog.sourceSpans,groups,plans:api.result.plan,publicContexts:planned.filter(p=>p.group==='public')});
+  api.write(path.join(api.OUT,'phase2-plan.json'),{history:HISTORY,heldSmokeSha256:catalog.heldSha256,sourceSpans:catalog.sourceSpans,groups,selection:api.result.selection,plans:api.result.plan,publicContexts:publicRows});
   for(const p of selected){const folder=path.join(api.OUT,'variants',p.id);fs.mkdirSync(folder,{recursive:true});for(const [rel,bytes]of Object.entries(p.overrides)){const file=path.join(folder,rel);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,bytes);}}
   if(selected.length){server=await variantServer(api);
    // Capture the two actual outstanding Firefox failures before the broader finite controls.
    for(const p of selected.filter(p=>p.kind==='calendar-diagnostic'))if(!await collectProbe(api,server,p,'firefox',catalog.declared))ok=false;
    for(const engine of ['chromium','firefox'])for(const p of selected.filter(p=>p.kind!=='calendar-diagnostic'&&p.engines.includes(engine)))if(!await collectProbe(api,server,p,engine,catalog.declared))ok=false;
   }
-  if(groups.includes('public')){
+  if(publicRows.length){
    let publicBound=!api.result.stopLaunches;
    if(publicBound)try{api.result.publicReadback=await api.publicReadback();}catch(e){publicBound=false;ok=false;api.result.publicReadbackError=String(e.stack||e);if(e.code==='R0017_BUDGET_EXHAUSTED')api.result.stopLaunches={kind:'orchestration-budget',reason:String(e),receipt:'summary.json#publicReadbackError'};}
-   if(publicBound){for(const engine of ['chromium','firefox'])for(const preference of ['no-preference','reduce'])if(!await collectPublic(api,engine,preference,catalog.declared))ok=false;
+   if(publicBound){for(const p of publicRows)if(!await collectPublic(api,p.engine,p.preference,catalog.declared))ok=false;
     if(!api.result.stopLaunches){api.result.publicObservedReadback=await observedPublicReadback(api);if(!api.result.publicObservedReadback.passed)ok=false;}else{ok=false;api.result.publicObservedReadback={status:'NOT_ATTEMPTED',reference:api.result.stopLaunches};}
    }else{ok=false;api.result.publicContextsNotRun={reason:api.result.stopLaunches?.reason||'Public source identity not established',reference:api.result.stopLaunches||api.result.publicReadbackError,planned:planned.filter(p=>p.group==='public').map(p=>p.name)};for(const p of planned.filter(p=>p.group==='public'))api.notAttempted(p,api.result.publicContextsNotRun.reason,api.result.publicContextsNotRun.reference);}
   }
