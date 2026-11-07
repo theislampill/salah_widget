@@ -5,6 +5,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 const {execFileSync} = require("node:child_process");
+const {nativeInlineRuntime,SetupError}=require("./native-inline-runtime.cjs");
 const root = path.resolve(__dirname, "..");
 function readSource(file, ref) {
   return ref ? execFileSync("git", ["show", `${ref}:${file}`], {cwd:root, encoding:"utf8"})
@@ -15,10 +16,13 @@ function deferred() {
   const promise = new Promise((yes,no)=>{ resolve=yes; reject=no; });
   return {promise,resolve,reject};
 }
-async function drain() { for(let i=0;i<10;i++) await Promise.resolve(); }
+// A bounded number of host turns also delivers the fixture-owned frame/task
+// boundary used by current boot. No native presentation or elapsed-time claim.
+async function drain() { for(let i=0;i<10;i++) await new Promise(resolve=>setImmediate(resolve)); }
 function environment() {
   const elements = new Map(), timers = new Map(), storage = new Map();
-  let time=0, timerId=0;
+  let time=0, timerId=0,frameId=0;
+  const frames=new Map();
   const document = {activeElement:null};
   class Element {
     get value() { return this._value; }
@@ -74,6 +78,17 @@ function environment() {
   const sandbox={console, URL, URLSearchParams, Intl, Date, document, localStorage,
     location:{href:"https://example.test/widget/builder.html"},
     navigator:{language:"en-US",platform:"Win32",userAgent:"controlled"},
+    requestAnimationFrame:callback=>{const id=++frameId;frames.set(id,setImmediate(()=>{frames.delete(id);callback(time);}));return id;},
+    cancelAnimationFrame:id=>{const handle=frames.get(id);if(handle!==undefined)clearImmediate(handle);frames.delete(id);},
+    MessageChannel:class {
+      constructor(){
+        let receiverClosed=false,senderClosed=false;
+        this.port1={onmessage:null,close(){receiverClosed=true;}};
+        this.port2={close(){senderClosed=true;},postMessage:data=>{
+          if(!senderClosed)setImmediate(()=>{if(!receiverClosed)this.port1.onmessage?.({data});});
+        }};
+      }
+    },
     setTimeout:(callback,ms=0)=>{const id=++timerId; timers.set(id,{callback,at:time+ms}); return id;},
     clearTimeout:id=>timers.delete(id)};
   sandbox.window=sandbox;
@@ -134,9 +149,10 @@ function fixture(kind,options={}) {
       run('CONFIG=fixtureCfg; lat=CONFIG.lat; lon=CONFIG.lon; label=CONFIG.label; method=CONFIG.method; school=CONFIG.school; fmt24=CONFIG.time!=="12"; units=CONFIG.units; datefmtStr=CONFIG.datefmt;');
       if(opts.save)sandbox.SalahConfig.saveLocal(cfg);
     };
-    const start=sources.page.indexOf("let _setWired="), end=sources.page.lastIndexOf("\nboot();");
-    if(start<0||end<start)throw new Error("settings source boundaries changed");
-    let script=sources.page.slice(start,end);
+    const runtime=nativeInlineRuntime(sources.page);
+    const start=runtime.indexOf("let _setWired="), end=runtime.lastIndexOf("\nboot();");
+    if(start<0||end<start)throw new SetupError("settings source boundaries changed");
+    let script=runtime.slice(start,end);
     if(options.mutate)script=options.mutate(script);
     run(script);
     run("_enableSettingsAffordance()"); env.buckle.dispatch("click");
