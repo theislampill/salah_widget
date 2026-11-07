@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/r0017-windows-qualification.yml
       - tools/qualification/r0017-windows-proof.cjs
+      - tools/qualification/r0017-driver-cleanup-probe.cjs
 
 permissions:
   contents: read
@@ -58,8 +59,19 @@ jobs:
             vendor
             docs/state-contracts
 
+      - name: Verify native pre-session driver cleanup after a controlled inventory failure
+        id: driver_cleanup_probe
+        timeout-minutes: 2
+        shell: pwsh
+        run: |
+          node qualification/tools/qualification/r0017-driver-cleanup-probe.cjs --root candidate --out cleanup-probe-artifacts --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b
+          exit $LASTEXITCODE
+
       - name: Collect the first native Windows phase serially
         id: native_collection
+        # Preserve a separate artifact-upload window even if a live OS handle
+        # prevents Node from exiting after the bounded collector has finished.
+        timeout-minutes: 17
         shell: pwsh
         run: |
           node qualification/tools/qualification/r0017-windows-proof.cjs --root candidate --out artifacts --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b
@@ -72,6 +84,7 @@ jobs:
           R0017_CLOCK_OUTCOME: ${{ steps.qualification_clock.outcome }}
           R0017_COLLECTOR_CHECKOUT_OUTCOME: ${{ steps.collector_checkout.outcome }}
           R0017_PAYLOAD_CHECKOUT_OUTCOME: ${{ steps.payload_checkout.outcome }}
+          R0017_DRIVER_CLEANUP_PROBE_OUTCOME: ${{ steps.driver_cleanup_probe.outcome }}
           R0017_COLLECTION_OUTCOME: ${{ steps.native_collection.outcome }}
         run: |
           $r0017Output = Join-Path $env:GITHUB_WORKSPACE 'artifacts'
@@ -93,6 +106,7 @@ jobs:
               clock = $env:R0017_CLOCK_OUTCOME
               collectorCheckout = $env:R0017_COLLECTOR_CHECKOUT_OUTCOME
               payloadCheckout = $env:R0017_PAYLOAD_CHECKOUT_OUTCOME
+              driverCleanupProbe = $env:R0017_DRIVER_CLEANUP_PROBE_OUTCOME
               collection = $env:R0017_COLLECTION_OUTCOME
             }
           }
@@ -110,6 +124,8 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4; same pin as existing repository workflow
         with:
           name: r0017-windows-${{ github.run_id }}-${{ github.run_attempt }}
-          path: artifacts/
+          path: |
+            artifacts/
+            cleanup-probe-artifacts/
           if-no-files-found: error
           retention-days: 14

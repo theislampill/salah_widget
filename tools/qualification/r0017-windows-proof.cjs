@@ -181,6 +181,25 @@ function processBirth(value){const m=/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\
 function extendOwned(known,observed){
  let added=true;while(added){added=false;for(const p of observed){if(known.some(k=>sameProcess(k,p)))continue;const parent=observed.find(q=>q.ProcessId===p.ParentProcessId);if(parent&&known.some(k=>sameProcess(k,parent))&&processBirth(p.CreationDate)!==null&&processBirth(parent.CreationDate)!==null&&processBirth(p.CreationDate)>=processBirth(parent.CreationDate)){known.push(p);added=true;}}}return known;
 }
+async function terminateUnregisteredDriver(child){
+ // Windows ChildProcess.kill uses the retained libuv process HANDLE, not a
+ // newly looked-up PID. Only the pre-session caller below may use this path.
+ const r={method:'Windows ChildProcess.kill on the original spawned handle',pid:child.pid,node:process.versions.node,uv:process.versions.uv,
+  signal:'SIGTERM',killRequested:false,killReturned:null,exitObserved:false,exitWithinBound:false,exitCode:null,signalCode:null,exitEvidence:null};
+ const started=performance.now(),deadline=started+5000;
+ const terminal=(code,signal)=>Number.isInteger(code)||(typeof signal==='string'&&signal.length>0);
+ const observe=(code,signal,evidence)=>{if(!r.exitObserved&&terminal(code,signal)){const at=performance.now();r.exitObserved=true;r.exitWithinBound=at<=deadline;r.exitElapsedMs=at-started;r.exitCode=code??null;r.signalCode=signal??null;r.exitEvidence=evidence;}};
+ const onExit=(code,signal)=>observe(code,signal,'ChildProcess exit event');
+ try{
+  observe(child.exitCode,child.signalCode,'ChildProcess terminal fields already observed');
+  if(!r.exitObserved){
+   child.once('exit',onExit);r.killRequested=true;
+   try{r.killReturned=child.kill('SIGTERM');}catch(e){r.error=String(e);}
+   while(!r.exitObserved&&performance.now()<deadline){await delay(100);observe(child.exitCode,child.signalCode,'ChildProcess terminal fields after termination request');}
+  }
+ }finally{child.removeListener('exit',onExit);}
+ return r;
+}
 async function closeOwnedSession(session,row,base){
  if(row.cleanup)return row.cleanup;
  const c=row.cleanup={startedUtc:new Date().toISOString(),verifiedExited:false,ok:false,queries:[],kills:[],errors:[],profileRoot:session.profile};
@@ -189,6 +208,16 @@ async function closeOwnedSession(session,row,base){
  const query=stage=>{try{const observed=processTree([...roots,...known.map(p=>p.ProcessId),...observedIdentities.map(p=>p.ProcessId)]);for(const p of observed)if(!observedIdentities.some(k=>sameProcess(k,p)))observedIdentities.push(p);c.queries.push({stage,observed});return observed;}catch(e){c.errors.push({stage,error:String(e)});return null;}};
  try{
   const before=query('before-delete');if(before)extendOwned(known,before);
+  const child=session.child;
+  // A failed FIRST inventory can leave a real spawned driver without a CIM
+  // identity. Terminate only our original Windows child handle, before any
+  // WebDriver session request; never adopt an unknown PID/name as owned.
+  if(session.sessionCreateAttempted===false&&session.id==null&&row.browserPid==null&&
+    Number.isInteger(child?.pid)&&child.pid>0&&row.driverPid===child.pid&&
+    !known.some(p=>p.ProcessId===child.pid)&&typeof child.kill==='function'&&typeof child.once==='function'&&typeof child.removeListener==='function'&&
+    typeof process!=='undefined'&&process.platform==='win32'){
+   c.directDriverTermination=await terminateUnregisteredDriver(child);
+  }
   if(session.id){try{await request(base,'DELETE','/session/'+session.id,undefined,10000,true);c.deleteSession={status:'SUCCEEDED'};}catch(e){c.deleteSession={status:'FAILED',error:String(e)};}}
   else c.deleteSession={status:'NOT_AVAILABLE',reason:'No session id was returned'};
   if(session.bidi)try{session.bidi.close();}catch(e){c.errors.push({stage:'bidi-close',error:String(e)});}
@@ -198,7 +227,8 @@ async function closeOwnedSession(session,row,base){
   if(killable.length){const args=killable.flatMap(p=>['/PID',String(p.ProcessId)]).concat(['/F']);try{const output=execFileSync('taskkill',args,{encoding:'utf8',windowsHide:true,timeout:10000});c.kills.push({args,status:'SUCCEEDED',output});}catch(e){c.kills.push({args,status:'FAILED',exitCode:e.status??null,error:String(e),stdout:String(e.stdout||''),stderr:String(e.stderr||'')});}}
   let afterKill=query('after-kill');const exitDeadline=performance.now()+5000;while(afterKill&&afterKill.some(p=>known.some(k=>sameProcess(k,p)))&&performance.now()<exitDeadline){await delay(100);afterKill=query('exit-verification');}c.ownedProcesses=known;c.remaining=afterKill?afterKill.filter(p=>known.some(k=>sameProcess(k,p))):null;
   const browserKnown=!session.sessionCreateAttempted||(Number.isInteger(row.browserPid)&&known.some(p=>p.ProcessId===row.browserPid));
-  const driverKnown=!roots.length||known.some(p=>p.ProcessId===session.child?.pid)||(!session.sessionCreateAttempted&&before?.every(p=>p.ProcessId!==session.child?.pid));
+  const driverKnown=c.directDriverTermination?c.directDriverTermination.exitObserved===true&&c.directDriverTermination.exitWithinBound===true:
+   !roots.length||known.some(p=>p.ProcessId===session.child?.pid)||(!session.sessionCreateAttempted&&before?.every(p=>p.ProcessId!==session.child?.pid));
   c.scopeKnown=browserKnown&&driverKnown;
   c.unresolvedObserved=afterKill?afterKill.filter(p=>!known.some(k=>sameProcess(k,p))&&!known.some(k=>k.ProcessId===p.ProcessId&&k.CreationDate!==p.CreationDate)):null;
   c.verifiedExited=c.noProcessStarted?null:!!before&&!!afterDelete&&!!afterKill&&c.scopeKnown&&c.remaining.length===0&&c.unresolvedObserved.length===0;
