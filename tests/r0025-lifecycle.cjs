@@ -83,7 +83,7 @@ test('clear scene paints no puffs or density while its hidden decks keep evolvin
 });
 test('rain columns follow actual visible copies without granting particle permission',()=>{
   const h=fixture();assert.equal(h.run('ADVANCING'),false);h.run('cloudState.covLow=cloudState.covMid=cloudState.covHigh=1');const s=h.paint(),max=Math.max(...s.columns);assert.ok(max>=2);
-  const drops=Array.from({length:20},(_,i)=>({style:{left:(i*5+2)+'%',removeProperty(k){delete this[k];}}}));h.ctx.document.querySelectorAll=selector=>selector==='.wfx .drop'?drops:[];
+  const drops=Array.from({length:20},(_,i)=>({style:{left:(i*5+2)+'%',removeProperty(k){delete this[k];}}}));h.ctx.document.querySelectorAll=selector=>selector==='.wfx .drop,.wfx .flake'?drops:[];
   h.select('.c').dataset.fx='rain';h.run('tieRainToClouds()');for(const d of drops){const col=Math.min(143,Math.floor(parseFloat(d.style.left)/100*144));assert.equal(d.style.display,s.columns[col]/max>.16?'':'none');}
   h.select('.c').dataset.fx='clear';h.run('tieRainToClouds()');assert.ok(drops.every(d=>d.style.display===undefined));
   h.run('weather.currentValidAt-=900001;render()');assert.equal(h.run('selectedWeather()'),null);assert.ok(!['rain','thunder','snow','drizzle'].includes(h.select('.c').dataset.fx));

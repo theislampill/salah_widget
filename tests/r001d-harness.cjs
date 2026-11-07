@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const crypto = require('node:crypto');
 const path = require('node:path');
+const {nativeInlineRuntime,SetupError}=require('./native-inline-runtime.cjs');
 const root = path.resolve(__dirname, '..');
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 
@@ -51,13 +52,12 @@ function prayerForDate(dateStr) {
 
 function load({sourcePath=path.join(root,'index.html'), source, debugMoon=false, extraHash='', hash, prayerMode='healthy', prayerFailures=0}={}) {
   const html=source||fs.readFileSync(sourcePath,'utf8');
-  const inline=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(m=>m[1]).find(s=>s.includes('function renderMoon()'));
-  if(!inline)throw new Error('actual inline runtime not found');
+  const inline=nativeInlineRuntime(html);
   // Hold only the final entrypoint so pre-first-render and ordered fixtures are possible.
   const runtime=inline.replace(/\nboot\(\);\s*$/, '\n');
-  if(runtime===inline)throw new Error('boot interception did not match actual entrypoint');
-  const elements=new Map(), storage=new Map(), warnings=[], rafs=[], timers=new Map(), requests=[], timerEvents=[],images=[];
-  const clock={now:0,wall:Date.parse('2026-09-08T19:00:00Z')}; let timerId=0,failures=prayerFailures;
+  if(runtime===inline)throw new SetupError('boot interception did not match actual entrypoint');
+  const elements=new Map(), storage=new Map(), warnings=[], rafs=[], frameOwners=new Map(), tasks=[], timers=new Map(), requests=[], timerEvents=[],images=[];
+  const clock={now:0,wall:Date.parse('2026-09-08T19:00:00Z')}; let timerId=0,frameId=0,failures=prayerFailures;
   class FixtureDate extends Date {
     constructor(...args){super(...(args.length?args:[clock.wall]));}
     static now(){return clock.wall;}
@@ -74,7 +74,20 @@ function load({sourcePath=path.join(root,'index.html'), source, debugMoon=false,
       createRange(){let el;return {selectNodeContents(e){el=e;},getBoundingClientRect(){return el.getBoundingClientRect();}};},
       fonts:{ready:Promise.resolve(),addEventListener(){},check(){return true;} }},
     getComputedStyle(el){return {getPropertyValue:k=>el.style.getPropertyValue(k),opacity:el.style.opacity||'1',fontFamily:'sans-serif',animationName:'tw'};},
-    requestAnimationFrame(fn){rafs.push(fn);return rafs.length;},cancelAnimationFrame(){},
+    requestAnimationFrame(fn){
+      const id=++frameId,owned=()=>{if(!frameOwners.delete(id))return;fn(clock.now);};
+      frameOwners.set(id,owned);rafs.push(owned);return id;
+    },
+    cancelAnimationFrame(id){const owned=frameOwners.get(id),i=rafs.indexOf(owned);frameOwners.delete(id);if(i>=0)rafs.splice(i,1);},
+    MessageChannel:class {
+      constructor(){
+        let receiverClosed=false,senderClosed=false;
+        this.port1={onmessage:null,close(){receiverClosed=true;}};
+        this.port2={close(){senderClosed=true;},postMessage:data=>{
+          if(!senderClosed)tasks.push(()=>{if(!receiverClosed)this.port1.onmessage?.({data});});
+        }};
+      }
+    },
     setTimeout(fn,delay=0,...args){const id=++timerId;timers.set(id,{at:clock.now+Math.max(0,+delay||0),fn,args});return id;},
     clearTimeout(id){timers.delete(id);}, AbortController,
     fetch:async url=>{if(!String(url).includes('aladhan.com'))throw new Error('fixture denies network '+url);
@@ -103,20 +116,23 @@ function load({sourcePath=path.join(root,'index.html'), source, debugMoon=false,
     const delta=Math.max(0,timer.at-clock.now);clock.now+=delta;clock.wall+=delta;
     timerEvents.push({id,at:clock.now});timer.fn(...timer.args);return true;
   }
-  // Every await has a finite host turn budget. A Promise without a live callback
-  // cannot silently terminate Node with exit 0. Only this VM's owned timers run.
+  function advanceFrame(){const callback=rafs.shift();if(!callback)return false;callback();return true;}
+  function advanceTask(){const callback=tasks.shift();if(!callback)return false;callback();return true;}
+  // Every await has a finite host turn budget. Ready message/frame callbacks run
+  // before jumping to a future timer; the actual two-frame/task boot boundary is
+  // retained. Controlled frame delivery advances no claimed browser/wall time.
   async function complete(operation,{turns=64,driveTimers=true}={}){
     let settled=false,rejected=false,result,error;
     Promise.resolve(operation).then(v=>{settled=true;result=v;},e=>{settled=true;rejected=true;error=e;});
     for(let i=0;i<turns&&!settled;i++){
       await new Promise(resolve=>setImmediate(resolve));
-      if(!settled&&driveTimers)advanceTimer();
+      if(!settled&&!advanceTask()&&!advanceFrame()&&driveTimers)advanceTimer();
     }
     if(!settled)throw new Error('INCOMPLETE: fixture operation did not settle within '+turns+' owned turns');
     if(rejected)throw error;return result;
   }
   async function drain(turns=4){for(let i=0;i<turns;i++){await new Promise(resolve=>setImmediate(resolve));advanceTimer();}}
-  return {run,ctx,elements,select,warnings,rafs,clock,storage,timers,requests,timerEvents,images,advanceTimer,complete,drain,
+  return {run,ctx,elements,select,warnings,rafs,tasks,clock,storage,timers,requests,timerEvents,images,advanceTimer,advanceFrame,advanceTask,complete,drain,
     sourceHash:sha(Buffer.from(html)),runtimeHash:sha(Buffer.from(runtime)),sourcePath};
 }
 

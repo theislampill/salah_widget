@@ -1,0 +1,276 @@
+SOURCE b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298 TEMPORAL af4952d8dce86c811467e8b7fc4b83406d574dc1b2dda169cbdead9595085a9b
+MUTANT anchor-only 2b9f481871ab6a83f8fac9c176ba246a9f8b18744439b35410fa30fd3f5cb149 / broad-default f3156d8755e25bed6059a04ad2ab206b5e02cafa0849502cea55cfb1d282917f / increasing-only d8825712b21c4578f05c0df08fcc90b4fd08250352f1e7dba48a6542f4a3f229 rejected
+TAP version 13
+# Subtest: ordinary simNow and nowParts follow wall step 0
+ok 1 - ordinary simNow and nowParts follow wall step 0
+  ---
+  duration_ms: 21.183777
+  type: 'test'
+  ...
+# Subtest: ordinary simNow and nowParts follow wall step 3600000
+ok 2 - ordinary simNow and nowParts follow wall step 3600000
+  ---
+  duration_ms: 2.503465
+  type: 'test'
+  ...
+# Subtest: ordinary simNow and nowParts follow wall step -3600000
+ok 3 - ordinary simNow and nowParts follow wall step -3600000
+  ---
+  duration_ms: 3.474772
+  type: 'test'
+  ...
+# Subtest: ordinary simNow and nowParts follow wall step 7200000
+ok 4 - ordinary simNow and nowParts follow wall step 7200000
+  ---
+  duration_ms: 3.439874
+  type: 'test'
+  ...
+# Subtest: ordinary simNow and nowParts follow wall step -7200000
+ok 5 - ordinary simNow and nowParts follow wall step -7200000
+  ---
+  duration_ms: 2.080209
+  type: 'test'
+  ...
+# Subtest: actual loop renders forward and backward prayer-boundary corrections
+ok 6 - actual loop renders forward and backward prayer-boundary corrections
+  ---
+  duration_ms: 76.459749
+  type: 'test'
+  ...
+# Subtest: actual hidden/resumed loop reads the current wall once without missed-second replay
+ok 7 - actual hidden/resumed loop reads the current wall once without missed-second replay
+  ---
+  duration_ms: 69.255838
+  type: 'test'
+  ...
+# Subtest: anchor-only, broad-default and increasing-only loop mutants fail their independent controls
+ok 8 - anchor-only, broad-default and increasing-only loop mutants fail their independent controls
+  ---
+  duration_ms: 89.68546
+  type: 'test'
+  ...
+# Subtest: timeScale=1 retains anchor/rate after wall step 3600000
+ok 9 - timeScale=1 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 2.54776
+  type: 'test'
+  ...
+# Subtest: timeScale=60 retains anchor/rate after wall step 3600000
+ok 10 - timeScale=60 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 1.606808
+  type: 'test'
+  ...
+# Subtest: timeScale=0 retains anchor/rate after wall step 3600000
+ok 11 - timeScale=0 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 3.641571
+  type: 'test'
+  ...
+# Subtest: timeScale= retains anchor/rate after wall step 3600000
+ok 12 - timeScale= retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 4.398105
+  type: 'test'
+  ...
+# Subtest: timeScale=invalid retains anchor/rate after wall step 3600000
+ok 13 - timeScale=invalid retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 1.43595
+  type: 'test'
+  ...
+# Subtest: timeScale=-5 retains anchor/rate after wall step 3600000
+ok 14 - timeScale=-5 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 1.290674
+  type: 'test'
+  ...
+# Subtest: simTime=03:30 retains anchor/rate after wall step 3600000
+ok 15 - simTime=03:30 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 62.885245
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=1 retains anchor/rate after wall step 3600000
+ok 16 - simTime=03:30&timeScale=1 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 70.49496
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=60 retains anchor/rate after wall step 3600000
+ok 17 - simTime=03:30&timeScale=60 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 51.252115
+  type: 'test'
+  ...
+# Subtest: timeScale=1 retains anchor/rate after wall step -3600000
+ok 18 - timeScale=1 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 2.310734
+  type: 'test'
+  ...
+# Subtest: timeScale=60 retains anchor/rate after wall step -3600000
+ok 19 - timeScale=60 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 2.656879
+  type: 'test'
+  ...
+# Subtest: timeScale=0 retains anchor/rate after wall step -3600000
+ok 20 - timeScale=0 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 1.181991
+  type: 'test'
+  ...
+# Subtest: timeScale= retains anchor/rate after wall step -3600000
+ok 21 - timeScale= retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 1.296466
+  type: 'test'
+  ...
+# Subtest: timeScale=invalid retains anchor/rate after wall step -3600000
+ok 22 - timeScale=invalid retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 1.715101
+  type: 'test'
+  ...
+# Subtest: timeScale=-5 retains anchor/rate after wall step -3600000
+ok 23 - timeScale=-5 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 1.275449
+  type: 'test'
+  ...
+# Subtest: simTime=03:30 retains anchor/rate after wall step -3600000
+ok 24 - simTime=03:30 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 50.101209
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=1 retains anchor/rate after wall step -3600000
+ok 25 - simTime=03:30&timeScale=1 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 62.854307
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=60 retains anchor/rate after wall step -3600000
+ok 26 - simTime=03:30&timeScale=60 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 59.68905
+  type: 'test'
+  ...
+# Subtest: timeScale=1 retains anchor/rate after wall step 7200000
+ok 27 - timeScale=1 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 2.65463
+  type: 'test'
+  ...
+# Subtest: timeScale=60 retains anchor/rate after wall step 7200000
+ok 28 - timeScale=60 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 3.309283
+  type: 'test'
+  ...
+# Subtest: timeScale=0 retains anchor/rate after wall step 7200000
+ok 29 - timeScale=0 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 5.529136
+  type: 'test'
+  ...
+# Subtest: timeScale= retains anchor/rate after wall step 7200000
+ok 30 - timeScale= retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 1.432827
+  type: 'test'
+  ...
+# Subtest: timeScale=invalid retains anchor/rate after wall step 7200000
+ok 31 - timeScale=invalid retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 3.433389
+  type: 'test'
+  ...
+# Subtest: timeScale=-5 retains anchor/rate after wall step 7200000
+ok 32 - timeScale=-5 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 1.640723
+  type: 'test'
+  ...
+# Subtest: simTime=03:30 retains anchor/rate after wall step 7200000
+ok 33 - simTime=03:30 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 57.412519
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=1 retains anchor/rate after wall step 7200000
+ok 34 - simTime=03:30&timeScale=1 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 48.126465
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=60 retains anchor/rate after wall step 7200000
+ok 35 - simTime=03:30&timeScale=60 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 53.560303
+  type: 'test'
+  ...
+# Subtest: timeScale=1 retains anchor/rate after wall step -7200000
+ok 36 - timeScale=1 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 1.228042
+  type: 'test'
+  ...
+# Subtest: timeScale=60 retains anchor/rate after wall step -7200000
+ok 37 - timeScale=60 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 1.943042
+  type: 'test'
+  ...
+# Subtest: timeScale=0 retains anchor/rate after wall step -7200000
+ok 38 - timeScale=0 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 1.504322
+  type: 'test'
+  ...
+# Subtest: timeScale= retains anchor/rate after wall step -7200000
+ok 39 - timeScale= retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 0.903937
+  type: 'test'
+  ...
+# Subtest: timeScale=invalid retains anchor/rate after wall step -7200000
+ok 40 - timeScale=invalid retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 3.392912
+  type: 'test'
+  ...
+# Subtest: timeScale=-5 retains anchor/rate after wall step -7200000
+ok 41 - timeScale=-5 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 3.046656
+  type: 'test'
+  ...
+# Subtest: simTime=03:30 retains anchor/rate after wall step -7200000
+ok 42 - simTime=03:30 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 44.766952
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=1 retains anchor/rate after wall step -7200000
+ok 43 - simTime=03:30&timeScale=1 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 56.144376
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=60 retains anchor/rate after wall step -7200000
+ok 44 - simTime=03:30&timeScale=60 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 51.377863
+  type: 'test'
+  ...
+1..44
+# tests 44
+# suites 0
+# pass 44
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1014.271652

@@ -29,6 +29,7 @@ for(const method of ["2","4"])for(const units of ["f","c"])test(`fresh runtime f
       if(mode==="local")await w.resolveCall("coarse",0,{ok:true,provider:"GeoJS",cfg:{lat:24.47,lon:39.61,label:"Madinah",method:"4",units:"c",appearance:appearance==="glass"?"contrast":"glass",source:"coarse-ip"}});
       else assert.equal(w.calls.coarse.length,0);
       assert.deepEqual([w.config().method,w.config().units,w.config().appearance],[method,units,appearance]);assert.equal(w.json("units"),units);assert.equal(w.card.dataset.appearance,appearance);assert.equal(w.card.getAttribute("data-appearance"),appearance);
+      await drain(); // Deliver the actual boot-owned two frames and message task.
       w.calls.prayer[0].resolve();await boot;
     }
   }
@@ -42,7 +43,7 @@ test("generic local API stays automatic and ignores unsupported explicit names",
 test("saved viewer preferences win local and preferLocal on both reloads",async()=>{
   const f=make(),h=f.run("hash()"),seed={lat:51.5,lon:-.12,label:"London",method:"3",units:"c",appearance:"contrast",source:"manual"};
   for(const hash of ["#"+h,"#preferLocal=1&lat=24.47&lon=39.61&method=2&units=f&appearance=glass"])for(let reload=0;reload<2;reload++){
-    const w=widget({ref,hash,seed,open:false}),boot=w.boot();assert.equal(w.calls.coarse.length,0);assert.deepEqual([w.config().label,w.config().method,w.config().units,w.config().appearance],["London","3","c","contrast"]);assert.equal(w.card.dataset.appearance,"contrast");w.calls.prayer[0].resolve();await boot;
+    const w=widget({ref,hash,seed,open:false}),boot=w.boot();assert.equal(w.calls.coarse.length,0);assert.deepEqual([w.config().label,w.config().method,w.config().units,w.config().appearance],["London","3","c","contrast"]);assert.equal(w.card.dataset.appearance,"contrast");await drain();w.calls.prayer[0].resolve();await boot;
   }
 });
 test("portable literal encoding and zero coordinates remain compatible",()=>{
@@ -57,6 +58,6 @@ test("local explanatory prose identifies explicit preferences and saved priority
 test("absent config module retains actual legacy fixed-coordinate boot",async()=>{
   const w=widget({ref,hash:"#lat=0&lon=0&label=Zero&method=2&units=f",moduleMissing:true,open:false}),boot=w.boot();
   assert.deepEqual([w.config().lat,w.config().lon,w.config().label,w.config().method,w.config().units],[0,0,"Zero","2","f"]);
-  assert.equal(w.calls.coarse.length,0);w.calls.prayer[0].resolve();await boot;
+  assert.equal(w.calls.coarse.length,0);await drain();w.calls.prayer[0].resolve();await boot;
 });
 (async()=>{let failed=0;for(const c of cases){try{await c.body();console.log("PASS",c.name);}catch(e){failed++;console.error("FAIL",c.name,"\n",e.stack);}}console.log(JSON.stringify({cases:cases.length,passed:cases.length-failed,failed,ref:ref||"working-tree",mutant:mutant||null,native:"NOT_RUN"}));process.exitCode=failed?1:0;})();

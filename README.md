@@ -398,9 +398,28 @@ The denominator is **30 named required callbacks**, with **141 expected assertio
 
 Readiness binds the unique run, attempt, document, exact scene hash and fetched `index.html` SHA-256. It also requires actual current-day `Response.json()` consumption, the matching weather bridge and prayer/render state. An earlier iframe, matching hash alone or stale response is insufficient. Save the final summary, `window.__smoke`, every attempt's fixture/request/JSON/error ledger, browser/version and file hashes before opening the next mode. The fixture's source digest identifies the fetched index; record config, wrapper and other runtime identities separately.
 
-The wrapper keeps product script bodies unchanged and rejects unknown script/digest/resource anchors. Its current anchors reject the inline Moon startup/refinement layout (`moon-initial-code` / `moon-refinement-code`) with **Unreviewed widget script anchors**; that entry needs a separately reviewed wrapper adaptation before this instrument can qualify it. Retain the failure rather than bypassing the guard. The fixture removes the three known external font links and its policy blocks fonts and external connections. Controlled time, synthetic providers and suppressed fonts cannot certify appearance, readability, normal-live **M0** motion, public deployment or every platform. The smoke page's scope notice and separate native/delivery gates still apply.
+The wrapper keeps product script bodies unchanged. It and the Node adapters use [one source contract](tests/native-script-contract.js) to identify the native owner, bind the reviewed first-paint and Moon startup/refinement prerequisites, enforce their order, and reject missing, duplicated, altered or unknown scripts. Record the shared contract's digest alongside index, config and wrapper identity. The focused transport checks exercise pre-parser installation of private storage, controlled time and provider interception; they do not establish a new browser/pixel qualification. The fixture removes the three known external font links and its policy blocks fonts and external connections. Controlled time, synthetic providers and suppressed fonts cannot certify appearance, readability, normal-live **M0** motion, public deployment or every platform. The smoke page's scope notice and separate native/delivery gates still apply.
 
 For an authorized public delivery check, use a separate fresh browser profile or isolated test context with no owner settings. Open the delivered HTTPS `tests/smoke.html` under the site's base URL, with each of the same four `?fixture=` modes. Bind the served README, index, config and wrapper hashes to the exact approved release; a loopback run does not supply public delivery evidence.
+
+### Source regression receipts
+
+Use a **new output directory for each invocation**, preferably outside the checkout. The runner refuses an existing directory so a repaired run cannot overwrite a failed attempt. Python 3.11 or later and Node are required; no third-party Python package is needed.
+
+```sh
+python tools/cp9/run_native_regressions.py --output /tmp/salah-r0017-run-001 \
+  --select native-runner-contract r0017-contract r0017-transport
+```
+
+Omit `--select` only when commissioning the joined source-contract population. The default preserves the former 28 command identities and adds `native-runner-contract`; the `*.test.cjs` filenames are frozen before setup. The evaluator controls use fake child processes/clocks and temporary CLI fixtures. They do not recursively launch the inherited suite or a renderer campaign. `--timeout` is a finite positive per-command bound in **seconds** (default 180).
+
+`results.json` schema `salah-native-regressions/2` retains command names, argv, `exitCode`, `seconds`, `counts`, logs and aggregate `status`. It adds the immutable planned population, source/runner/tool/invocation identity, separate setup/execution/output dispositions and one terminal record per selected command. Duration is measured from a dedicated monotonic origin; JSON offsets and TAP's own `duration_ms` do not alter it. Counts describe observed assertions and are never a substitute for execution proof.
+
+The CLI exits **0** only for semantic **PASS**, **1** for **FAIL/INCOMPLETE**, and **2** for invalid invocation/output setup. A real failed exit cannot become PASS from successful-looking output. Missing exact historical objects, malformed output, timeouts, launch errors and unexecuted observations remain explicit. A setup exception can coexist with an actual assertion failure. TODOs and the five retained synthetic-star exclusions remain outside passing counts and carry their unresolved observations; partial current replacement tests do not silently discharge them. Check `caseExclusions` and every command, even when an unrelated failure dominates aggregate status.
+
+Terminal fixture results permit independent later commands. Timeout, launch failure or cancellation stops later launches while retaining their incomplete records. A catchable classification interruption preserves the already observed child exit. Forced process death or failed receipt storage can leave a `RUNNING` receipt; it is incomplete evidence and must never be promoted to PASS. Re-run into a new directory after recovery.
+
+The [R0017 source-linked contract map](docs/state-contracts/R0017.md) records transitions, current callers, historical locators, adapter controls, per-owner scope, residuals and rollback. A source-test receipt does not certify native pixels, live providers, performance, installers, deployment or whole-issue closure. The prior 30/30-callback smoke acceptance remains a separately bound historical result.
 
 
 ---

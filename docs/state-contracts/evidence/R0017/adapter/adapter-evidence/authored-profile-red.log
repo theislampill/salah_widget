@@ -1,0 +1,116 @@
+TAP version 13
+# Subtest: native fixture admits the exact Moon transport initializer
+ok 1 - native fixture admits the exact Moon transport initializer
+  ---
+  duration_ms: 2.994257
+  type: 'test'
+  ...
+# Subtest: native fixture refuses an unknown inline script or altered Moon initializer
+ok 2 - native fixture refuses an unknown inline script or altered Moon initializer
+  ---
+  duration_ms: 0.632207
+  type: 'test'
+  ...
+# Subtest: native fixture refuses duplicate Moon initializers and duplicate boot owners
+ok 3 - native fixture refuses duplicate Moon initializers and duplicate boot owners
+  ---
+  duration_ms: 0.284889
+  type: 'test'
+  ...
+# Subtest: first-paint owner is separately identified; unknown, altered and duplicate bodies stay rejected
+ok 4 - first-paint owner is separately identified; unknown, altered and duplicate bodies stay rejected
+  ---
+  duration_ms: 0.600192
+  type: 'test'
+  ...
+# Subtest: current delivered script layout reaches actual config and model declarations
+ok 5 - current delivered script layout reaches actual config and model declarations
+  ---
+  duration_ms: 107.323479
+  type: 'test'
+  ...
+# Subtest: the exact current authored source retains its separate input identity
+not ok 6 - the exact current authored source retains its separate input identity
+  ---
+  duration_ms: 4.324288
+  type: 'test'
+  location: '/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/r0017-adapters.test.cjs:31:1'
+  failureType: 'testCodeFailure'
+  error: 'SETUP_INCOMPLETE: Unreviewed widget script anchors'
+  code: 'SETUP_INCOMPLETE'
+  name: 'SetupError'
+  stack: |-
+    requireSetup (/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/native-script-contract.js:11:64)
+    Object.admitScripts (/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/native-script-contract.js:74:5)
+    nativeInlineRuntime (/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/native-inline-runtime.cjs:12:19)
+    TestContext.<anonymous> (/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/r0017-adapters.test.cjs:36:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: stripping the delivered page to config and native cannot impersonate authored source
+ok 7 - stripping the delivered page to config and native cannot impersonate authored source
+  ---
+  duration_ms: 12.977841
+  type: 'test'
+  ...
+# Subtest: missing, duplicate and wrong native owner are setup failures
+ok 8 - missing, duplicate and wrong native owner are setup failures
+  ---
+  duration_ms: 48.277509
+  type: 'test'
+  ...
+# Subtest: current Moon prerequisites reject missing, duplicated, moved and altered source
+ok 9 - current Moon prerequisites reject missing, duplicated, moved and altered source
+  ---
+  duration_ms: 90.097803
+  type: 'test'
+  ...
+# Subtest: an unknown script cannot hide behind valid named prerequisites
+ok 10 - an unknown script cannot hide behind valid named prerequisites
+  ---
+  duration_ms: 12.610167
+  type: 'test'
+  ...
+# Subtest: simultaneously missing current prerequisites cannot downgrade the document profile
+ok 11 - simultaneously missing current prerequisites cannot downgrade the document profile
+  ---
+  duration_ms: 19.336716
+  type: 'test'
+  ...
+# Subtest: boot subset binds the first-document declaration and retirement from actual source
+ok 12 - boot subset binds the first-document declaration and retirement from actual source
+  ---
+  duration_ms: 61.596198
+  type: 'test'
+  ...
+# Subtest: missing or ambiguous first-document declaration is explicitly incomplete setup
+ok 13 - missing or ambiguous first-document declaration is explicitly incomplete setup
+  ---
+  duration_ms: 36.428405
+  type: 'test'
+  ...
+# Subtest: whole-runtime boot settles after its owned frames and message task
+ok 14 - whole-runtime boot settles after its owned frames and message task
+  ---
+  duration_ms: 96.059472
+  type: 'test'
+  ...
+# Subtest: subset boot preserves the paint opportunity before actual prayer launch
+ok 15 - subset boot preserves the paint opportunity before actual prayer launch
+  ---
+  duration_ms: 21.095443
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 14
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 639.488546

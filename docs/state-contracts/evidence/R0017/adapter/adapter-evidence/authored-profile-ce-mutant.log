@@ -1,0 +1,54 @@
+MUTANT_INPUT {"field":"ce","setupAdmitted":true,"sourceSha256":"cc9bd14ffc6bb516938fb8521b25f50edcc095922b6ee0213252d30c77cce185","runtimeSha256":"b23f540f405f9aee8333a6f63c8f1c44c90086ad4c85f9f7c93694336f7b3812","productFileWritten":false}
+{
+  "sourceSha256": "cc9bd14ffc6bb516938fb8521b25f50edcc095922b6ee0213252d30c77cce185",
+  "configSha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+  "fixtureClock": "2026-09-07T09:30:00.000Z",
+  "environment": "Node VM + recording DOM; actual config/model/render; art callbacks suspended; browser not implied",
+  "results": [
+    {
+      "name": "ordinary actual renderer positive",
+      "status": "PASS"
+    },
+    {
+      "name": "hash format reaches both sinks inert",
+      "status": "FAIL",
+      "error": "ce must not receive a raw injected node"
+    },
+    {
+      "name": "saved format reaches both sinks inert",
+      "status": "FAIL",
+      "error": "ce must not receive a raw injected node"
+    },
+    {
+      "name": "provider months reach both sinks inert",
+      "status": "FAIL",
+      "error": "ce must not receive a raw injected node"
+    },
+    {
+      "name": "admitted preview day reaches its own sink inert",
+      "status": "PASS"
+    },
+    {
+      "name": "after Maghrib selects tomorrow AH without preview",
+      "status": "FAIL",
+      "error": "ce must not receive a raw injected node"
+    },
+    {
+      "name": "ordinary held-out tokens stay plain text",
+      "status": "PASS"
+    },
+    {
+      "name": "Arabic quotes ampersand angle literals encode exactly once",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ `التاريخ \"' & < > 2026<span class=\"er\">CE</span>`\n- 'التاريخ &quot;&#39; &amp; &lt; &gt; 2026<span class=\"er\">CE</span>'\n"
+    },
+    {
+      "name": "stale markup remains trusted alongside inert text",
+      "status": "PASS"
+    },
+    {
+      "name": "missing dates expose explicit successor unavailable output",
+      "status": "PASS"
+    }
+  ]
+}

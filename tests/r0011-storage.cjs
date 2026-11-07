@@ -93,7 +93,7 @@ test("actual boot and apply execute scene reset and surface gates with faithful 
   photo.setAttribute("href","fixture-owned-pixels");
   // A decoded legacy map no longer owns visible Moon readiness. This storage
   // fixture supplies the already accepted terrain boundary, not rendered pixels.
-  f.run('var fixtureTerrain={};window.SalahMoonRuntime={surface:()=>fixtureTerrain,invalidate(){fixtureTerrain=null;}};');
+  f.run('var fixtureTerrain={},fixtureRetireCalls=0;window.SalahMoonRuntime={surface:()=>fixtureTerrain,invalidate(){fixtureTerrain=null;},finishInitialDocument(){fixtureRetireCalls++;}};');
   f.run('_pbrReady=true;_skySceneKey="old";_skyMoonPresence=1;updateSkySurface()');
   assert.equal(f.card.classList.contains("moon-ready"),true);assert.equal(mask.classList.contains("mask-on"),true);
   f.sandbox.sceneClearCalls=[];
@@ -103,7 +103,8 @@ test("actual boot and apply execute scene reset and surface gates with faithful 
     assert.deepEqual(f.json('Array.from(_colDens)'),[0,0]);assert.deepEqual(f.json('sceneClearCalls.at(-1)'),[0,0,7,9]);
     assert.equal(f.card.classList.contains("sky-pending"),true);assert.equal(f.card.classList.contains("sky-initializing"),true);assert.equal(f.card.classList.contains("moon-ready"),false);assert.equal(mask.classList.contains("mask-on"),false);
   };
-  dirtyScene();const boot=f.boot();clearedScene();assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);f.calls.prayer[0].resolve();await boot;
+  dirtyScene();const boot=f.boot();clearedScene();assert.deepEqual([f.calls.stars,f.calls.buildWeather],[1,1]);await drain();f.calls.prayer[0].resolve();await boot;
+  assert.equal(f.run('fixtureRetireCalls'),1,'actual boot retires the initial Moon handoff');
   f.run('fixtureTerrain={};_skySceneKey="second-old";_skyMoonPresence=1;updateSkySurface()');dirtyScene();
   // A scene-affecting preference still resets; appearance alone preserves it.
   f.sandbox.sceneNext={...f.config(),units:"c",appearance:"contrast"};const apply=f.run('applyConfig(sceneNext,{save:false})');clearedScene();

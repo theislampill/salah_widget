@@ -1,0 +1,77 @@
+test_public_cli_matches_semantic_result_and_preserves_old_receipt (test_native_regression_runner.RunnerCliTests.test_public_cli_matches_semantic_result_and_preserves_old_receipt) ... ok
+test_available_exact_history_allows_actual_child (test_native_regression_runner.RunnerLifecycleTests.test_available_exact_history_allows_actual_child) ... ok
+test_cancellation_preserves_denominator (test_native_regression_runner.RunnerLifecycleTests.test_cancellation_preserves_denominator) ... ok
+test_complete_line_summary_is_admitted_but_mismatched_counts_are_not (test_native_regression_runner.RunnerLifecycleTests.test_complete_line_summary_is_admitted_but_mismatched_counts_are_not) ... ok
+test_conflicting_case_states_are_not_success (test_native_regression_runner.RunnerLifecycleTests.test_conflicting_case_states_are_not_success) ... FAIL
+test_empty_unknown_malformed_and_truncated_output_is_incomplete (test_native_regression_runner.RunnerLifecycleTests.test_empty_unknown_malformed_and_truncated_output_is_incomplete) ... ok
+test_every_selected_command_has_exactly_one_terminal (test_native_regression_runner.RunnerLifecycleTests.test_every_selected_command_has_exactly_one_terminal) ... ok
+test_excluded_command_stays_in_disposition_denominator (test_native_regression_runner.RunnerLifecycleTests.test_excluded_command_stays_in_disposition_denominator) ... ok
+test_json_rejects_duplicate_cases_and_inconsistent_terminal_denominator (test_native_regression_runner.RunnerLifecycleTests.test_json_rejects_duplicate_cases_and_inconsistent_terminal_denominator) ... ok
+test_launch_failure_has_one_terminal_record_and_cause (test_native_regression_runner.RunnerLifecycleTests.test_launch_failure_has_one_terminal_record_and_cause) ... ok
+test_leading_json_one_second (test_native_regression_runner.RunnerLifecycleTests.test_leading_json_one_second) ... ok
+test_missing_history_is_incomplete_without_current_substitution (test_native_regression_runner.RunnerLifecycleTests.test_missing_history_is_incomplete_without_current_substitution) ... ok
+test_nonzero_exit_cannot_be_overridden_by_success_output (test_native_regression_runner.RunnerLifecycleTests.test_nonzero_exit_cannot_be_overridden_by_success_output) ... ok
+test_outer_incomplete_status_cannot_hide_observed_assertion_failure (test_native_regression_runner.RunnerLifecycleTests.test_outer_incomplete_status_cannot_hide_observed_assertion_failure) ... FAIL
+test_prefixed_json_one_second (test_native_regression_runner.RunnerLifecycleTests.test_prefixed_json_one_second) ... ok
+test_setup_exception_stack_is_incomplete_at_actual_import_boundary (test_native_regression_runner.RunnerLifecycleTests.test_setup_exception_stack_is_incomplete_at_actual_import_boundary) ... FAIL
+test_setup_marker_cannot_be_a_product_assertion_pass (test_native_regression_runner.RunnerLifecycleTests.test_setup_marker_cannot_be_a_product_assertion_pass) ... ok
+test_tap_failure_cannot_be_erased_by_success_totals (test_native_regression_runner.RunnerLifecycleTests.test_tap_failure_cannot_be_erased_by_success_totals) ... FAIL
+test_tap_positive_preserves_duration_and_counts (test_native_regression_runner.RunnerLifecycleTests.test_tap_positive_preserves_duration_and_counts) ... ok
+test_timeout_retains_partial_log_elapsed_and_missing_completion (test_native_regression_runner.RunnerLifecycleTests.test_timeout_retains_partial_log_elapsed_and_missing_completion) ... ok
+test_todo_is_visible_and_not_added_to_pass_count (test_native_regression_runner.RunnerLifecycleTests.test_todo_is_visible_and_not_added_to_pass_count) ... ok
+test_truncated_outer_object_cannot_admit_nested_success_object (test_native_regression_runner.RunnerLifecycleTests.test_truncated_outer_object_cannot_admit_nested_success_object) ... FAIL
+test_zero_exit_does_not_erase_observed_assertion_failure (test_native_regression_runner.RunnerLifecycleTests.test_zero_exit_does_not_erase_observed_assertion_failure) ... ok
+
+======================================================================
+FAIL: test_conflicting_case_states_are_not_success (test_native_regression_runner.RunnerLifecycleTests.test_conflicting_case_states_are_not_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 128, in test_conflicting_case_states_are_not_success
+    self.assertNotEqual(result["status"], "PASS")
+AssertionError: 'PASS' == 'PASS'
+
+======================================================================
+FAIL: test_outer_incomplete_status_cannot_hide_observed_assertion_failure (test_native_regression_runner.RunnerLifecycleTests.test_outer_incomplete_status_cannot_hide_observed_assertion_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 120, in test_outer_incomplete_status_cannot_hide_observed_assertion_failure
+    self.assertEqual(result["status"], "FAIL")
+AssertionError: 'INCOMPLETE' != 'FAIL'
+- INCOMPLETE
++ FAIL
+
+
+======================================================================
+FAIL: test_setup_exception_stack_is_incomplete_at_actual_import_boundary (test_native_regression_runner.RunnerLifecycleTests.test_setup_exception_stack_is_incomplete_at_actual_import_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 136, in test_setup_exception_stack_is_incomplete_at_actual_import_boundary
+    self.assertEqual(result["status"], "INCOMPLETE")
+AssertionError: 'FAIL' != 'INCOMPLETE'
+- FAIL
++ INCOMPLETE
+
+
+======================================================================
+FAIL: test_tap_failure_cannot_be_erased_by_success_totals (test_native_regression_runner.RunnerLifecycleTests.test_tap_failure_cannot_be_erased_by_success_totals)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 132, in test_tap_failure_cannot_be_erased_by_success_totals
+    self.assertNotEqual(result["status"], "PASS")
+AssertionError: 'PASS' == 'PASS'
+
+======================================================================
+FAIL: test_truncated_outer_object_cannot_admit_nested_success_object (test_native_regression_runner.RunnerLifecycleTests.test_truncated_outer_object_cannot_admit_nested_success_object)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 124, in test_truncated_outer_object_cannot_admit_nested_success_object
+    self.assertEqual(result["status"], "INCOMPLETE")
+AssertionError: 'PASS' != 'INCOMPLETE'
+- PASS
++ INCOMPLETE
+
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.592s
+
+FAILED (failures=5)

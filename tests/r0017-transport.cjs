@@ -4,7 +4,7 @@
 const fs=require("node:fs"),path=require("node:path"),vm=require("node:vm"),assert=require("node:assert/strict"),crypto=require("node:crypto");
 const root=path.resolve(process.argv[2]||path.join(__dirname,".."));
 const index=fs.readFileSync(path.join(root,"index.html")),wrapper=fs.readFileSync(path.join(root,"tests/widget-fixture.html"),"utf8");
-const script=[...wrapper.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)][0][1];
+const scriptContract=fs.readFileSync(path.join(root,"tests/native-script-contract.js"),"utf8");
 const todayURL="https://api.aladhan.com/v1/timings/07-09-2026?latitude=24.47&longitude=39.61&method=4&school=0";
 const tomorrowURL="https://api.aladhan.com/v1/timings/08-09-2026?latitude=24.47&longitude=39.61&method=4&school=0";
 // A mutation control must change one known anchor, never pass on unchanged bytes.
@@ -24,12 +24,22 @@ const legacyHostCount=sourceText.split('src="moon/moon-host.js"').length-1;
 // product bodies remain unchanged; it never executes a legacy Moon runtime.
 const legacyFlag='<script>if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;</script>';
 const legacyHost='<script src="moon/moon-host.js"></script>';
+// The legacy structural control substitutes transport shells only; retaining
+// both split and legacy transports would be a genuinely invalid mixed owner.
+let legacyBase=sourceText;
+for(const id of ['moon-initial-code','moon-refinement-code']){
+  const matching=actualScripts.filter(s=>s[1].trim()==='id="'+id+'"');
+  assert.ok(matching.length<=1,'ambiguous actual '+id);
+  if(matching.length)legacyBase=replaceOnce(legacyBase,matching[0][0],'','legacy '+id+' removal');
+}
 const legacySource=legacyHostCount===0
-  ?replaceOnce(sourceText,'</body>',legacyFlag+legacyHost+'</body>','legacy structural fixture')
+  ?replaceOnce(legacyBase,'</body>',legacyFlag+legacyHost+'</body>','legacy structural fixture')
   :sourceText;
 const sourceProfiles={actual:{scriptCount:actualScripts.length,firstPaint:!!firstPaint,legacyHostCount},
   legacyMoon:{input:legacyHostCount===0?"source-derived structural fixture":"actual source",
-    sourceSha256:crypto.createHash("sha256").update(legacySource).digest("hex"),runtimeQualified:false}};
+    sourceSha256:crypto.createHash("sha256").update(legacySource).digest("hex"),runtimeQualified:false,
+    parentCommit:'f71fef6ccf7e4efcb57b5a26688d2360461a3253',parentSha256:'b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298',
+    transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.'}};
 async function setup(mode="healthy",options={}){
   let sourceCalls=0,realStorageCalls=0;const errorEl={};
   const source=options.source??index;
@@ -44,7 +54,12 @@ async function setup(mode="healthy",options={}){
   Object.defineProperty(ctx,"localStorage",{configurable:true,get(){realStorageCalls++;throw Error("Real storage access forbidden");}});
   // Expose completion of the existing wrapper IIFE, changing no transport logic.
   const activeWrapper=options.wrapper??wrapper;
-  const activeScript=[...activeWrapper.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)][0][1];
+  const declaredScripts=[...activeWrapper.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+  if(!options.missingContract&&declaredScripts[0]?.[1].trim()==='src="native-script-contract.js"')
+    vm.runInContext(scriptContract,ctx,{filename:'actual native-script-contract.js'});
+  const wrapperScripts=declaredScripts.filter(s=>s[2].trim());
+  assert.equal(wrapperScripts.length,1,'one actual wrapper inline owner');
+  const activeScript=wrapperScripts[0][2];
   const exposed=activeScript.replace("start().catch(failure);","window.__fixturePolicy=policy;return start().catch(failure);");
   assert.notEqual(exposed,activeScript,"wrapper completion anchor missing");
   await vm.runInContext(exposed,ctx,{filename:"actual widget-fixture script (parser deliberately stopped)"});
@@ -140,6 +155,18 @@ async function main(){
   await check("source fetch rejection fails before hook installation",async()=>{
     const h=await setup("healthy",{rejectSource:true});assert.match(h.report.error,/Controlled source fetch rejection/);assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
   });
+  await check("missing script contract is setup incomplete before source or storage access",async()=>{
+    for(const options of [{missingContract:true},{wrapper:replaceOnce(wrapper,'<script src="native-script-contract.js"></script>','','missing contract declaration')}]){
+      const h=await setup('healthy',options);
+      assert.match(h.report.error,/^SETUP_INCOMPLETE: .*script contract/);
+      assert.equal(h.sourceCalls,0);assert.equal(h.realStorageCalls,0);assert.equal(h.report.storageIsolated,false);
+    }
+  });
+  await check("wrong widget document is setup incomplete before hook installation",async()=>{
+    const changed=replaceOnce(sourceText,'<title>Prayer Times</title>','<title>Wrong document</title>','document owner');
+    const h=await setup('healthy',{source:changed});assert.match(h.report.error,/^SETUP_INCOMPLETE: .*document anchors/);
+    assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
+  });
   await check("changed script anchor fails before hook installation",async()=>{
     const changed=replaceOnce(sourceText,'<script src="config.js"></script>','<script src="other.js"></script>','config script');
     const h=await setup("healthy",{source:changed});assert.match(h.report.error,/Unreviewed widget script anchors/);assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
@@ -152,11 +179,40 @@ async function main(){
     const h=await setup('healthy',{source:changed});assert.match(h.report.error,/First-paint source identity mismatch/);
     assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
   });
+  for(const id of ['moon-initial-code','moon-refinement-code']){
+    const entry=actualScripts.find(s=>s[1].trim()==='id="'+id+'"');
+    assert.ok(entry,'actual split prerequisite '+id);
+    for(const [kind,replacement] of [['missing',''],['duplicate',entry[0]+entry[0]],
+      ['changed',entry[0].replace(entry[2],entry[2]+'\n// changed prerequisite\n')]]){
+      await check(id+' '+kind+' is setup incomplete before hook installation',async()=>{
+        const h=await setup('healthy',{source:replaceOnce(sourceText,entry[0],replacement,id+' '+kind)});
+        assert.match(h.report.error,/^SETUP_INCOMPLETE: /);assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
+      });
+    }
+  }
+  for(const ids of [['moon-initial-code','moon-refinement-code'],['native-first-paint-code','moon-initial-code','moon-refinement-code']]){
+    await check('removing '+ids.join(' + ')+' cannot downgrade current source to a retained profile',async()=>{
+      let changed=sourceText;
+      for(const id of ids){const entry=actualScripts.find(s=>s[1].includes('id="'+id+'"'));assert.ok(entry);changed=replaceOnce(changed,entry[0],'',id+' removal');}
+      const h=await setup('healthy',{source:changed});assert.match(h.report.error,/^SETUP_INCOMPLETE: /);
+      assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
+    });
+  }
+  await check('wrong script cannot replace the actual product owner behind valid prerequisites',async()=>{
+    const native=actualScripts.filter(s=>!s[1].trim()&&s[2].includes('async function boot(){'));
+    assert.equal(native.length,1);
+    const changed=replaceOnce(sourceText,native[0][0],'<script>function boot(){}\nboot();</script>','wrong native owner');
+    const h=await setup('healthy',{source:changed});assert.match(h.report.error,/^SETUP_INCOMPLETE: .*native owner/);
+    assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
+  });
   await check("legacy Moon structural branch admits its exact positive source before parser stop",async()=>{
     assert.equal(legacySource.split('src="moon/moon-host.js"').length-1,1,"legacy host is absent or ambiguous");
+    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'f6650909f7d2defc2edffa25c7510b4ae476fc3208d4a9625090107ff77de1de','retained structural input must be explicitly rebound on source change');
     const h=await setup('healthy',{source:legacySource});assert.match(h.report.error,/Controlled parser stop/);
     assert.equal(h.report.storageIsolated,true);assert.equal(h.realStorageCalls,0);
     assert.equal(h.report.sourceSha256,sourceProfiles.legacyMoon.sourceSha256);
+    assert.equal(h.report.scriptProfile,'retained-legacy-moon-structural-control');
+    assert.equal(h.report.scriptProvenance.kind,'structural-control');
   });
   for(const [name,before,after] of [
     ["offline flag",legacyFlag,legacyFlag.replace('true;','false;')],
@@ -172,7 +228,7 @@ async function main(){
     assert.equal(h.report.storageIsolated,false);assert.equal(h.realStorageCalls,0);
   });
   console.log(JSON.stringify({kind:"source-bound wrapper transport/hooks; controlled parser stop, no widget/native qualification",root,
-    indexSha256:crypto.createHash("sha256").update(index).digest("hex"),wrapperSha256:crypto.createHash("sha256").update(wrapper).digest("hex"),sourceProfiles,results},null,2));
+    indexSha256:crypto.createHash("sha256").update(index).digest("hex"),wrapperSha256:crypto.createHash("sha256").update(wrapper).digest("hex"),scriptContractSha256:crypto.createHash("sha256").update(scriptContract).digest("hex"),sourceProfiles,results},null,2));
   if(results.some(r=>r.result==="FAIL"))process.exitCode=1;
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});

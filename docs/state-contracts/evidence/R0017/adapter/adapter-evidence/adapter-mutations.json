@@ -1,0 +1,146 @@
+{
+  "scope": "actual consumer negatives in disposable test copies or in-memory product input; no repository product files changed",
+  "protectedSourceBindings": {
+    "index.html": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "builder.html": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "src/native/index.html": "6054f1eb3e7f04aa5975707345810b64fc824bc99e17ce3798369a959a123fad"
+  },
+  "protectedSourceUnchangedAfter": true,
+  "mutants": [
+    {
+      "name": "product-ce-guard",
+      "command": [
+        "node",
+        "/workspace/scratch/7a8daf93afaa/adapter-evidence/mutant-sources/product-guard-probe.cjs",
+        "/workspace/scratch/7a8daf93afaa/r0017-explicit-work",
+        "ce"
+      ],
+      "exitCode": 1,
+      "elapsedSeconds": 0.7349589439982083,
+      "detected": true,
+      "input": {
+        "field": "ce",
+        "setupAdmitted": true,
+        "sourceSha256": "cc9bd14ffc6bb516938fb8521b25f50edcc095922b6ee0213252d30c77cce185",
+        "runtimeSha256": "b23f540f405f9aee8333a6f63c8f1c44c90086ad4c85f9f7c93694336f7b3812",
+        "productFileWritten": false
+      },
+      "failedAssertions": [
+        "hash format reaches both sinks inert",
+        "saved format reaches both sinks inert",
+        "provider months reach both sinks inert",
+        "after Maghrib selects tomorrow AH without preview",
+        "Arabic quotes ampersand angle literals encode exactly once"
+      ],
+      "passCases": 5,
+      "failCases": 5,
+      "log": "product-ce-guard.log"
+    },
+    {
+      "name": "product-ah-guard",
+      "command": [
+        "node",
+        "/workspace/scratch/7a8daf93afaa/adapter-evidence/mutant-sources/product-guard-probe.cjs",
+        "/workspace/scratch/7a8daf93afaa/r0017-explicit-work",
+        "ah"
+      ],
+      "exitCode": 1,
+      "elapsedSeconds": 0.7356757019952056,
+      "detected": true,
+      "input": {
+        "field": "ah",
+        "setupAdmitted": true,
+        "sourceSha256": "9c4e3ecdab03f10a7766429288a9bfaac0bfb86d25431bfb43f940927e9264bd",
+        "runtimeSha256": "bbc12eb92e16414d9e0b3d324ac5e812c5740b8fb89d4218cdb271a6bb7ce02b",
+        "productFileWritten": false
+      },
+      "failedAssertions": [
+        "hash format reaches both sinks inert",
+        "saved format reaches both sinks inert",
+        "provider months reach both sinks inert",
+        "after Maghrib selects tomorrow AH without preview",
+        "stale markup remains trusted alongside inert text"
+      ],
+      "passCases": 5,
+      "failCases": 5,
+      "log": "product-ah-guard.log"
+    },
+    {
+      "name": "product-preview-guard",
+      "command": [
+        "node",
+        "/workspace/scratch/7a8daf93afaa/adapter-evidence/mutant-sources/product-guard-probe.cjs",
+        "/workspace/scratch/7a8daf93afaa/r0017-explicit-work",
+        "preview"
+      ],
+      "exitCode": 1,
+      "elapsedSeconds": 0.7458225699956529,
+      "detected": true,
+      "input": {
+        "field": "preview",
+        "setupAdmitted": true,
+        "sourceSha256": "2d2df7f3cdf986882ea4bf7001e3c3cf84bb411585094c8532acb3a2235eaa56",
+        "runtimeSha256": "b80432a424a1ce716ab2e60e78c3d0967e6403394f463c7ef96575eb3eb08aa1",
+        "productFileWritten": false
+      },
+      "failedAssertions": [
+        "admitted preview day reaches its own sink inert"
+      ],
+      "passCases": 9,
+      "failCases": 1,
+      "log": "product-preview-guard.log"
+    },
+    {
+      "name": "wrong-script-selection",
+      "command": [
+        "node",
+        "tests/r0001-date-sinks.cjs"
+      ],
+      "cwd": "disposable copy; source symlinks read-only in use",
+      "exitCode": 1,
+      "elapsedSeconds": 0.24354580500221346,
+      "detected": true,
+      "owner": "tests/native-inline-runtime.cjs",
+      "before": "return contract.admitScripts(source,scripts,digests,sourceSha256).native.body;",
+      "after": "contract.admitScripts(source,scripts,digests,sourceSha256); return scripts.find(script=>script.attributes.trim()==='id=\"moon-refinement-code\"').body;",
+      "mutatedSourceSha256": "a577ec38925b5b916b99d31ea4d4cdb13f21805a8063a12c6f088a7a45f5ab13",
+      "mutatedSource": "/workspace/scratch/7a8daf93afaa/adapter-evidence/mutant-sources/wrong-script-selection-native-inline-runtime.cjs",
+      "log": "wrong-script-selection.log"
+    },
+    {
+      "name": "restore-nondriving-frames",
+      "command": [
+        "node",
+        "tests/r001d-lifecycle.cjs"
+      ],
+      "cwd": "disposable copy; source symlinks read-only in use",
+      "exitCode": 1,
+      "elapsedSeconds": 1.196830023000075,
+      "detected": true,
+      "owner": "tests/r001d-harness.cjs",
+      "before": "if(!settled&&!advanceTask()&&!advanceFrame()&&driveTimers)advanceTimer();",
+      "after": "if(!settled&&driveTimers)advanceTimer();",
+      "mutatedSourceSha256": "fc53d8d7f660eb78f20456ed6caef06ad55b8f7a8dc3427e071847d85b242104",
+      "mutatedSource": "/workspace/scratch/7a8daf93afaa/adapter-evidence/mutant-sources/restore-nondriving-frames-r001d-harness.cjs",
+      "log": "restore-nondriving-frames.log"
+    },
+    {
+      "name": "restore-rain-selector",
+      "command": [
+        "node",
+        "tests/r0025-lifecycle.cjs"
+      ],
+      "cwd": "disposable copy; source symlinks read-only in use",
+      "exitCode": 1,
+      "elapsedSeconds": 2.04113644699828,
+      "detected": true,
+      "owner": "tests/r0025-lifecycle.cjs",
+      "before": "selector==='.wfx .drop,.wfx .flake'?drops:[]",
+      "after": "selector==='.wfx .drop'?drops:[]",
+      "mutatedSourceSha256": "c7c8a700424ba5b142f3653d4727495a3e344575628510b596e41865f4c60cc5",
+      "mutatedSource": "/workspace/scratch/7a8daf93afaa/adapter-evidence/mutant-sources/restore-rain-selector-r0025-lifecycle.cjs",
+      "log": "restore-rain-selector.log"
+    }
+  ]
+}
