@@ -1,0 +1,3 @@
+# Publication progression
+
+The first source tree object 2be0d220cd192892ae464c8cbf77d29831e1d58f was created before the final parser review; it was never committed or assigned to the candidate branch. Two independently reproduced parser findings were repaired before branch publication. The published code commit is 7214a2c82bfa5d3df091956938506afd13c7b69f with tree150bccebaf8e915af0f47403bd9aace8111fd756 and parentf71fef6ccf7e4efcb57b5a26688d2360461a3253. This remains the original R0017 scope; workflow/protected paths are unchanged. The evidence-only descendant and final readbacks are identified in the PR and issue comment.

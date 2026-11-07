@@ -1,0 +1,43 @@
+test_actual_diagnostic_json_lines_precede_the_complete_count_summary (__main__.RunnerLifecycleTests.test_actual_diagnostic_json_lines_precede_the_complete_count_summary) ... 
+  test_actual_diagnostic_json_lines_precede_the_complete_count_summary (__main__.RunnerLifecycleTests.test_actual_diagnostic_json_lines_precede_the_complete_count_summary) (diagnostic={'realElapsedMs': 41.3, 'instrument': 'Node event-loop/deferred-body; browser stream NOT_RUN'}) ... FAIL
+  test_actual_diagnostic_json_lines_precede_the_complete_count_summary (__main__.RunnerLifecycleTests.test_actual_diagnostic_json_lines_precede_the_complete_count_summary) (diagnostic={'consumer': 'fd2972ba64225fe9d6848e92497e6d0ed20ea624', 'storedSource': 'manual', 'storedOrigin': 'browser-geolocation', 'title': 'Manual location', 'bytesUnchanged': True, 'native': 'NOT_RUN'}) ... FAIL
+test_earlier_failed_or_broken_envelope_is_not_diagnostic_prefix (__main__.RunnerLifecycleTests.test_earlier_failed_or_broken_envelope_is_not_diagnostic_prefix) ... ok
+test_tap_setup_exception_is_distinct_from_product_assertion_failure (__main__.RunnerLifecycleTests.test_tap_setup_exception_is_distinct_from_product_assertion_failure) ... FAIL
+
+======================================================================
+FAIL: test_actual_diagnostic_json_lines_precede_the_complete_count_summary (__main__.RunnerLifecycleTests.test_actual_diagnostic_json_lines_precede_the_complete_count_summary) (diagnostic={'realElapsedMs': 41.3, 'instrument': 'Node event-loop/deferred-body; browser stream NOT_RUN'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 113, in test_actual_diagnostic_json_lines_precede_the_complete_count_summary
+    self.assertEqual(result["status"], "PASS")
+AssertionError: 'INCOMPLETE' != 'PASS'
+- INCOMPLETE
++ PASS
+
+
+======================================================================
+FAIL: test_actual_diagnostic_json_lines_precede_the_complete_count_summary (__main__.RunnerLifecycleTests.test_actual_diagnostic_json_lines_precede_the_complete_count_summary) (diagnostic={'consumer': 'fd2972ba64225fe9d6848e92497e6d0ed20ea624', 'storedSource': 'manual', 'storedOrigin': 'browser-geolocation', 'title': 'Manual location', 'bytesUnchanged': True, 'native': 'NOT_RUN'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 113, in test_actual_diagnostic_json_lines_precede_the_complete_count_summary
+    self.assertEqual(result["status"], "PASS")
+AssertionError: 'INCOMPLETE' != 'PASS'
+- INCOMPLETE
++ PASS
+
+
+======================================================================
+FAIL: test_tap_setup_exception_is_distinct_from_product_assertion_failure (__main__.RunnerLifecycleTests.test_tap_setup_exception_is_distinct_from_product_assertion_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 224, in test_tap_setup_exception_is_distinct_from_product_assertion_failure
+    self.assertEqual(result["status"], "INCOMPLETE")
+AssertionError: 'FAIL' != 'INCOMPLETE'
+- FAIL
++ INCOMPLETE
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.018s
+
+FAILED (failures=3)

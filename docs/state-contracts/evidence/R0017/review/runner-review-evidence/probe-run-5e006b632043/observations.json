@@ -1,0 +1,305 @@
+{
+  "runnerSnapshot": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/inputs/tools/cp9/run_native_regressions.py",
+  "runnerSha256": "4aa993b98ae364a633d71eccd44a6eecaf7f9dd22c456760ea977797f7614daa",
+  "probeDirectory": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043",
+  "observations": [
+    {
+      "probe": "healthy-json-control",
+      "input": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/healthy-json-control.txt",
+      "observed": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 1,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      }
+    },
+    {
+      "probe": "healthy-tap-control",
+      "input": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/healthy-tap-control.txt",
+      "observed": {
+        "format": "tap",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "reason": "complete TAP terminal",
+        "exclusions": []
+      }
+    },
+    {
+      "probe": "duplicate-json-results-hides-fail",
+      "input": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/duplicate-json-results-hides-fail.txt",
+      "observed": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 1,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      }
+    },
+    {
+      "probe": "conflicting-summary-aliases",
+      "input": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/conflicting-summary-aliases.txt",
+      "observed": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 1,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      }
+    },
+    {
+      "probe": "zero-tap-plan-positive-totals",
+      "input": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/zero-tap-plan-positive-totals.txt",
+      "observed": {
+        "format": "tap",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "reason": "complete TAP terminal",
+        "exclusions": []
+      }
+    },
+    {
+      "probe": "tap-skip-counted-as-pass",
+      "input": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/tap-skip-counted-as-pass.txt",
+      "observed": {
+        "format": "tap",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "reason": "complete TAP terminal",
+        "exclusions": [
+          "ok 1 - real case # SKIP historical input absent"
+        ]
+      }
+    },
+    {
+      "probe": "healthy-run-control",
+      "receipt": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/healthy-run-control/receipt",
+      "input": "{\"results\":[{\"name\":\"real case\",\"status\":\"PASS\"}]}",
+      "inputLength": 50,
+      "returnedStatus": "PASS",
+      "childCalls": [
+        [
+          "controlled-child",
+          "first"
+        ],
+        [
+          "controlled-child",
+          "later"
+        ]
+      ],
+      "receiptExists": true,
+      "savedStatus": "PASS",
+      "plannedNames": [
+        "first",
+        "later"
+      ],
+      "recordedNames": [
+        "first",
+        "later"
+      ],
+      "commandStatuses": [
+        "PASS",
+        "PASS"
+      ],
+      "terminalCounts": [
+        1,
+        1
+      ],
+      "sourceUnchanged": true,
+      "identityError": null,
+      "logs": {
+        "later.log": "{\"results\":[{\"name\":\"real case\",\"status\":\"PASS\"}]}",
+        "first.log": "{\"results\":[{\"name\":\"real case\",\"status\":\"PASS\"}]}"
+      }
+    },
+    {
+      "probe": "deep-json-drops-terminals",
+      "receipt": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/deep-json-drops-terminals/receipt",
+      "input": "{\"padding\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[",
+      "inputLength": 2462,
+      "returnedStatus": "PASS",
+      "childCalls": [
+        [
+          "controlled-child",
+          "first"
+        ],
+        [
+          "controlled-child",
+          "later"
+        ]
+      ],
+      "receiptExists": true,
+      "savedStatus": "PASS",
+      "plannedNames": [
+        "first",
+        "later"
+      ],
+      "recordedNames": [
+        "first",
+        "later"
+      ],
+      "commandStatuses": [
+        "PASS",
+        "PASS"
+      ],
+      "terminalCounts": [
+        1,
+        1
+      ],
+      "sourceUnchanged": true,
+      "identityError": null,
+      "logs": {
+        "later.log": "{\"padding\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[",
+        "first.log": "{\"padding\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[["
+      }
+    },
+    {
+      "probe": "interrupt-during-classification",
+      "receipt": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/interrupt-during-classification/receipt",
+      "input": "{\"results\":[{\"name\":\"real case\",\"status\":\"PASS\"}]}",
+      "inputLength": 50,
+      "exception": "KeyboardInterrupt",
+      "error": "",
+      "childCalls": [
+        [
+          "controlled-child",
+          "first"
+        ]
+      ],
+      "receiptExists": true,
+      "savedStatus": "RUNNING",
+      "plannedNames": [
+        "first",
+        "later"
+      ],
+      "recordedNames": [],
+      "commandStatuses": [],
+      "terminalCounts": [],
+      "sourceUnchanged": null,
+      "identityError": null,
+      "logs": {
+        "first.log": "{\"results\":[{\"name\":\"real case\",\"status\":\"PASS\"}]}"
+      }
+    },
+    {
+      "probe": "source-change-overwrites-aggregate-fail",
+      "receipt": "/workspace/scratch/7a8daf93afaa/runner-review-evidence/probe-run-5e006b632043/source-change-overwrites-aggregate-fail/receipt",
+      "input": "{\"results\":[{\"name\":\"real case\",\"status\":\"FAIL\"}]}",
+      "inputLength": 50,
+      "returnedStatus": "INCOMPLETE",
+      "childCalls": [
+        [
+          "controlled-child",
+          "first"
+        ],
+        [
+          "controlled-child",
+          "later"
+        ]
+      ],
+      "receiptExists": true,
+      "savedStatus": "INCOMPLETE",
+      "plannedNames": [
+        "first",
+        "later"
+      ],
+      "recordedNames": [
+        "first",
+        "later"
+      ],
+      "commandStatuses": [
+        "FAIL",
+        "FAIL"
+      ],
+      "terminalCounts": [
+        1,
+        1
+      ],
+      "sourceUnchanged": false,
+      "identityError": "source identity changed or was unavailable during invocation",
+      "logs": {
+        "later.log": "{\"results\":[{\"name\":\"real case\",\"status\":\"FAIL\"}]}",
+        "first.log": "{\"results\":[{\"name\":\"real case\",\"status\":\"FAIL\"}]}"
+      }
+    },
+    {
+      "probe": "mixed-history-command-preflight",
+      "name": "r0021-reveal",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0021-reveal.cjs",
+        "--cp8-snapshot-only"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0021-reveal.cjs",
+            "available": true,
+            "sha256": "c66a0b967fd2de957c656f33ad32d9b84099ed7e3ce7f4c0841ac780918f76ca"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [
+          {
+            "locator": "47c0fa0c6e32618f22b43b6a18717908b0de5f5e:index.html",
+            "available": true,
+            "blob": "9851aada8d04019ed47fd727f22d49c87ebd9fab",
+            "reason": null
+          }
+        ],
+        "reason": null
+      },
+      "observed": {
+        "status": "NOT_PROBED",
+        "reason": "exact history is currently available; no suite launched"
+      }
+    }
+  ]
+}

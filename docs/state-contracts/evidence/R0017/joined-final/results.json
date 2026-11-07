@@ -1,0 +1,2515 @@
+{
+  "schema": "salah-native-regressions/2",
+  "status": "FAIL",
+  "commands": [
+    {
+      "name": "native-runner-contract",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_native_regression_runner.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "seconds": 2.279662468994502,
+      "counts": {
+        "tests": 40
+      },
+      "log": "native-runner-contract.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/test_native_regression_runner.py",
+            "available": true,
+            "sha256": "8f7b2f5ad21f71eb6af739e2461435ec6647da1cd50b24a8e5d8fda10a980128"
+          },
+          {
+            "path": "tools/cp9/run_native_regressions.py",
+            "available": true,
+            "sha256": "88a3b3e8672a2f79a2cbdf455e1389ec141a3d2ddbc800a2eeff00a91b2217a3"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "unittest",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "tests": 40
+        },
+        "reason": "complete unittest terminal",
+        "exclusions": []
+      },
+      "reason": "complete unittest terminal"
+    },
+    {
+      "name": "native-test-glob",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-concurrency=1",
+        "tests/hotfix-prayer-weather.test.cjs",
+        "tests/moon-fixture-anchors.test.cjs",
+        "tests/native-appearance-currentness.test.cjs",
+        "tests/r0002-admission.test.cjs",
+        "tests/r0003-ownership.test.cjs",
+        "tests/r0004-boot-day.test.cjs",
+        "tests/r0004-currentness-controls.test.cjs",
+        "tests/r0005-adoption.test.cjs",
+        "tests/r0005-day-return.test.cjs",
+        "tests/r0006-recovery.test.cjs",
+        "tests/r000a-markers.test.cjs",
+        "tests/r000b-remaining.test.cjs",
+        "tests/r000c-weather.test.cjs",
+        "tests/r000d-weather.test.cjs",
+        "tests/r0017-adapters.test.cjs",
+        "tests/r0018-prayer-row-status.test.cjs",
+        "tests/r0024-cloud-expiry.test.cjs",
+        "tests/r0024-information.test.cjs",
+        "tests/r0024-particle-origin.test.cjs",
+        "tests/r0024-response-zone.test.cjs",
+        "tests/r0024-weather.test.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 36.417350962001365,
+      "counts": {
+        "tests": 549,
+        "pass": 545,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 4
+      },
+      "log": "native-test-glob.log",
+      "explicitExclusions": [
+        "ok 381 - R0003 join: obsolete acquisition cannot install/persist or clear successor attempt # TODO",
+        "ok 382 - R000D join: unresolving JSON and image bodies settle within accepted deadline # TODO",
+        "ok 383 - R0024 join: fresh current model eligibility remains positive while final live strong-particle permission is withheld # TODO",
+        "ok 384 - native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence # TODO"
+      ],
+      "caseExclusions": [
+        {
+          "name": "R0003 join: obsolete acquisition cannot install/persist or clear successor attempt",
+          "scope": "native-test-glob",
+          "status": "INCOMPLETE",
+          "reason": "retained unexecuted observation",
+          "residual": "retained TODO: obsolete acquisition join is not implemented by this evaluator repair",
+          "reference": "docs/state-contracts/R0017.md#r0003",
+          "reported": "ok 381 - R0003 join: obsolete acquisition cannot install/persist or clear successor attempt # TODO"
+        },
+        {
+          "name": "R000D join: unresolving JSON and image bodies settle within accepted deadline",
+          "scope": "native-test-glob",
+          "status": "INCOMPLETE",
+          "reason": "retained unexecuted observation",
+          "residual": "retained TODO: body deadline join remains unexecuted",
+          "reference": "docs/state-contracts/R0017.md#r000d",
+          "reported": "ok 382 - R000D join: unresolving JSON and image bodies settle within accepted deadline # TODO"
+        },
+        {
+          "name": "R0024 join: fresh current model eligibility remains positive while final live strong-particle permission is withheld",
+          "scope": "native-test-glob",
+          "status": "INCOMPLETE",
+          "reason": "retained unexecuted observation",
+          "residual": "retained TODO: model eligibility and particle-permission join remains unexecuted",
+          "reference": "docs/state-contracts/R0017.md#r0024",
+          "reported": "ok 383 - R0024 join: fresh current model eligibility remains positive while final live strong-particle permission is withheld # TODO"
+        },
+        {
+          "name": "native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence",
+          "scope": "native-test-glob",
+          "status": "INCOMPLETE",
+          "reason": "retained unexecuted observation",
+          "residual": "retained TODO: browser/pixel observations require their own qualified native run",
+          "reference": "docs/state-contracts/R0017.md#r0017-native",
+          "reported": "ok 384 - native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence # TODO"
+        }
+      ],
+      "status": "INCOMPLETE",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/hotfix-prayer-weather.test.cjs",
+            "available": true,
+            "sha256": "1b96aa5ec5ed88c5386eccaeabd38ea07a50f91461da412247b4ddd3e21f07d1"
+          },
+          {
+            "path": "tests/moon-fixture-anchors.test.cjs",
+            "available": true,
+            "sha256": "79456cf5582d2c0d1133c0bf412a8b95991c1d2564fac5a441222a9d30eaa964"
+          },
+          {
+            "path": "tests/native-appearance-currentness.test.cjs",
+            "available": true,
+            "sha256": "36758cc7c3fb7c14523042669539ee884c3a75f7e986920bfd12876e5504f6a9"
+          },
+          {
+            "path": "tests/r0002-admission.test.cjs",
+            "available": true,
+            "sha256": "47f0d9ff7f9382e80308a53741a463ce8a465f13f71dc84995f534b98da6abe3"
+          },
+          {
+            "path": "tests/r0003-ownership.test.cjs",
+            "available": true,
+            "sha256": "ebd7984160246c08ac748b7b6467b28150a1492bf531c48968b8f6933894bfd4"
+          },
+          {
+            "path": "tests/r0004-boot-day.test.cjs",
+            "available": true,
+            "sha256": "92f4342c939c25f37f9af260f6cbfd356b660af23489adf5b08481a7e60a2c8b"
+          },
+          {
+            "path": "tests/r0004-currentness-controls.test.cjs",
+            "available": true,
+            "sha256": "20c4ebe2e13e78a45d3ee015af07e767095ebd50afc6f20cb5f8120ef3e47a56"
+          },
+          {
+            "path": "tests/r0005-adoption.test.cjs",
+            "available": true,
+            "sha256": "b773a31b6b98e6a6ff1e023ac1068f5395a5d3367e0a5fb972706a47159bdd12"
+          },
+          {
+            "path": "tests/r0005-day-return.test.cjs",
+            "available": true,
+            "sha256": "ca9a47a1f249e7638e573f5e3681c353eb623a50cf3763dfc7279b59245055f2"
+          },
+          {
+            "path": "tests/r0006-recovery.test.cjs",
+            "available": true,
+            "sha256": "46e863b386bbfe2d0c983cc9a9425271a89211e457080cbc0613ae855512fc4e"
+          },
+          {
+            "path": "tests/r000a-markers.test.cjs",
+            "available": true,
+            "sha256": "dcfa146688ff1d17b8803dc784928ed9546a4bf93bd09b77540b1479a5a741f2"
+          },
+          {
+            "path": "tests/r000b-remaining.test.cjs",
+            "available": true,
+            "sha256": "88a9c2d15b12a6a251abf72efb49db5cb77b77bc2731d86f10c04de8b49c8e2c"
+          },
+          {
+            "path": "tests/r000c-weather.test.cjs",
+            "available": true,
+            "sha256": "c471747554f742aebb69161c40c20822881b25b953a99263cdab5d3e401fbd36"
+          },
+          {
+            "path": "tests/r000d-weather.test.cjs",
+            "available": true,
+            "sha256": "f2222d2f4842b61659c3a0df5eaee166a3deb89588b94bb3a29d8bac25f1b406"
+          },
+          {
+            "path": "tests/r0017-adapters.test.cjs",
+            "available": true,
+            "sha256": "ca4be8789b0beb127a2e3d226dd952face79ae8412f13d8b927f9236c9faaef8"
+          },
+          {
+            "path": "tests/r0018-prayer-row-status.test.cjs",
+            "available": true,
+            "sha256": "11988b7147e7f1fe87dd9c22cc12012c4b86aca996a24c9bff0e00b0afb912c4"
+          },
+          {
+            "path": "tests/r0024-cloud-expiry.test.cjs",
+            "available": true,
+            "sha256": "e9d39d625793bf4ea79684a165a1d0cfa92d2507cdcfb6aa77ac2c6d3218a4f7"
+          },
+          {
+            "path": "tests/r0024-information.test.cjs",
+            "available": true,
+            "sha256": "edac86fdc344b53a11e899be82d6cf5d1efe422c1ecdd0869eff7342e0bbb016"
+          },
+          {
+            "path": "tests/r0024-particle-origin.test.cjs",
+            "available": true,
+            "sha256": "33de2c9abfdfde90608620e62cf03fb32bb48eee59e5d78299109bbcdf356e24"
+          },
+          {
+            "path": "tests/r0024-response-zone.test.cjs",
+            "available": true,
+            "sha256": "a73d936c49de0ceaacf7434d199f2d92c5fcdc4c1e0dd2035f9b6345e2904555"
+          },
+          {
+            "path": "tests/r0024-weather.test.cjs",
+            "available": true,
+            "sha256": "a535b962b55061fa593b680f6d17736e5f8f2ec9dcfe0da3f828e7419ccdec08"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "tap",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "tests": 549,
+          "pass": 545,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 4
+        },
+        "reason": "complete TAP terminal",
+        "exclusions": [
+          "ok 381 - R0003 join: obsolete acquisition cannot install/persist or clear successor attempt # TODO",
+          "ok 382 - R000D join: unresolving JSON and image bodies settle within accepted deadline # TODO",
+          "ok 383 - R0024 join: fresh current model eligibility remains positive while final live strong-particle permission is withheld # TODO",
+          "ok 384 - native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence # TODO"
+        ]
+      },
+      "reason": "selected observations remain unexecuted; see caseExclusions"
+    },
+    {
+      "name": "r0001-date-sinks",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0001-date-sinks.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 2.1738321369994082,
+      "counts": {
+        "passCases": 13,
+        "failCases": 0
+      },
+      "log": "r0001-date-sinks.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0001-date-sinks.cjs",
+            "available": true,
+            "sha256": "69a764ec0126941a46bf92c0a30467e3f8c01d5371464dd9d95f15c5340a2e64"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 13,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      },
+      "reason": "complete named result array"
+    },
+    {
+      "name": "r0007-countdown",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0007-countdown.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 5.74947363800311,
+      "counts": {
+        "tests": 23,
+        "pass": 23,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "r0007-countdown.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0007-countdown.cjs",
+            "available": true,
+            "sha256": "b6b76f8803c96fbe8d71395085b4ed75609674a3221d44f2919b9e6d76c435e3"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "tap",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "tests": 23,
+          "pass": 23,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "reason": "complete TAP terminal",
+        "exclusions": []
+      },
+      "reason": "complete TAP terminal"
+    },
+    {
+      "name": "r0008-timezone",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0008-timezone.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 3.336561151998467,
+      "counts": {
+        "tests": 37,
+        "pass": 37,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "r0008-timezone.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0008-timezone.cjs",
+            "available": true,
+            "sha256": "5e5e56ba480c1471927ec42ef4feb71a5b14acf4edc350422d07a6f56420349d"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "tap",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "tests": 37,
+          "pass": 37,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "reason": "complete TAP terminal",
+        "exclusions": []
+      },
+      "reason": "complete TAP terminal"
+    },
+    {
+      "name": "r0009-date-selection",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0009-date-selection.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 2.2986785139946733,
+      "counts": {
+        "passCases": 22,
+        "failCases": 0
+      },
+      "log": "r0009-date-selection.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0009-date-selection.cjs",
+            "available": true,
+            "sha256": "37d3d1d3ddee84314586035643302ad5b104e563359608af1266cc7b0668e16e"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 22,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      },
+      "reason": "complete named result array"
+    },
+    {
+      "name": "r000f-intent",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r000f-intent.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.36507434499799274,
+      "counts": {
+        "passLines": 21,
+        "failLines": 0
+      },
+      "log": "r000f-intent.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r000f-intent.cjs",
+            "available": true,
+            "sha256": "ac0924ca5344c41c2dd3cd126265fbb1416b1f64331499b2bbc9ff3fe2438bc0"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 21,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r000f-reset",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r000f-reset.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.26562526499765227,
+      "counts": {
+        "passLines": 9,
+        "failLines": 0
+      },
+      "log": "r000f-reset.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r000f-reset.cjs",
+            "available": true,
+            "sha256": "cc758ef59a7391e0276eac13e52a00b1d2ab0e8d87dd6a8b314981fb107b593c"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 9,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r0010-preferences",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0010-preferences.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.0674640189972706,
+      "counts": {
+        "passLines": 9,
+        "failLines": 0
+      },
+      "log": "r0010-preferences.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0010-preferences.cjs",
+            "available": true,
+            "sha256": "5345a1037c3442188f4f1ad977c0f7daab1f6dd33fda9147aa6d6f7601df091c"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 9,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r0011-storage",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0011-storage.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.5664216120057972,
+      "counts": {
+        "passLines": 18,
+        "failLines": 0
+      },
+      "log": "r0011-storage.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0011-storage.cjs",
+            "available": true,
+            "sha256": "9c09b1a3a1420a3571b3ade8b3fff5bf0cd0b8d5a043ec6230a0aeccdd018f1d"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 18,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r0012-clipboard",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0012-clipboard.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.16451272000267636,
+      "counts": {
+        "passLines": 11,
+        "failLines": 0
+      },
+      "log": "r0012-clipboard.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0012-clipboard.cjs",
+            "available": true,
+            "sha256": "e141b31ea2c14d8c8eeccbc87821d4b34f5df51060b795c557254cc359776d15"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 11,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r0012-effects",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0012-effects.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.11465318800037494,
+      "counts": {
+        "passLines": 3,
+        "failLines": 0
+      },
+      "log": "r0012-effects.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0012-effects.cjs",
+            "available": true,
+            "sha256": "b8de4b709b5568b4d38bdc800754b7014f8010ceb8f1432b25dbfb3f717040e4"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 3,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r0017-cloud-visibility",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0017-cloud-visibility.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.2146856539984583,
+      "counts": {
+        "passCases": 39,
+        "failCases": 0
+      },
+      "log": "r0017-cloud-visibility.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0017-cloud-visibility.cjs",
+            "available": true,
+            "sha256": "b37fa7ef2e8ab11389b910b8f17b62b4adaa258ac7ec6121df6d55c3fc873df4"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 39,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      },
+      "reason": "complete named result array"
+    },
+    {
+      "name": "r0017-contract",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0017-contract.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.1646718299962231,
+      "counts": {
+        "passCases": 35,
+        "failCases": 0
+      },
+      "log": "r0017-contract.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0017-contract.cjs",
+            "available": true,
+            "sha256": "99bb97328b77c8aa7019989bc50e102ec1e13da6a0fd9f12396c7003d8f71dd3"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 35,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      },
+      "reason": "complete named result array"
+    },
+    {
+      "name": "r0017-transport",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0017-transport.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.7172733299958054,
+      "counts": {
+        "passCases": 32,
+        "failCases": 0
+      },
+      "log": "r0017-transport.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0017-transport.cjs",
+            "available": true,
+            "sha256": "48676a026db9c336229575e4dfcec121f8b6802b469eede53024f8e90db08f98"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 32,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      },
+      "reason": "complete named result array"
+    },
+    {
+      "name": "r0017-weather",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0017-weather.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 6.543893042995478,
+      "counts": {
+        "passCases": 6,
+        "failCases": 0
+      },
+      "log": "r0017-weather.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0017-weather.cjs",
+            "available": true,
+            "sha256": "cc69d9c23c4de3d7fc8dcf8e5734f7cccd02097c3a9267980ea7258cae8e26a3"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 6,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      },
+      "reason": "complete named result array"
+    },
+    {
+      "name": "r0018-appearance",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0018-appearance.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.0187681810057256,
+      "counts": {
+        "passCases": 17,
+        "failCases": 0
+      },
+      "log": "r0018-appearance.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0018-appearance.cjs",
+            "available": true,
+            "sha256": "6c565d3c93ec793e2ef86ee63422bbac5a18de6f4443252d4fd0de4cb4563f94"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 17,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      },
+      "reason": "complete named result array"
+    },
+    {
+      "name": "r0018-timetable-contrast",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0018-timetable-contrast.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.16423615399980918,
+      "counts": {
+        "passCases": 11,
+        "failCases": 0
+      },
+      "log": "r0018-timetable-contrast.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0018-timetable-contrast.cjs",
+            "available": true,
+            "sha256": "6d25bbafd0d7755e91a19113ab062a5ed8a56bd182a40346e7fbb8860855fdb0"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [
+          {
+            "locator": "ed5e7afbd2fcf7a59050817e2a561bcdbfa9043d:index.html",
+            "available": true,
+            "blob": "e62cd75847e6d0db50ae3cd64b2f20bd158050f3",
+            "reason": null
+          }
+        ],
+        "reason": null
+      },
+      "output": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 11,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      },
+      "reason": "complete named result array"
+    },
+    {
+      "name": "r0019-date-disclosure",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0019-date-disclosure.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.7181041250005364,
+      "counts": {
+        "passCases": 16,
+        "failCases": 0
+      },
+      "log": "r0019-date-disclosure.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0019-date-disclosure.cjs",
+            "available": true,
+            "sha256": "c859dc81a8bb6101e45e88bdec29eeef6fe46d3bc050ffa4239e762ef0a8d701"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-results",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passCases": 16,
+          "failCases": 0
+        },
+        "reason": "complete named result array",
+        "exclusions": []
+      },
+      "reason": "complete named result array"
+    },
+    {
+      "name": "r001a-radio",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r001a-radio.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.1648136389994761,
+      "counts": {
+        "passLines": 8,
+        "failLines": 0
+      },
+      "log": "r001a-radio.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r001a-radio.cjs",
+            "available": true,
+            "sha256": "54c1d5fc51d51dbd35e3d61799a9de1df578ab18cb21ac234d4d35c5f31493c1"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 8,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r001d-lifecycle",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r001d-lifecycle.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.3704304179991595,
+      "counts": {
+        "passLines": 11,
+        "failLines": 0
+      },
+      "log": "r001d-lifecycle.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r001d-lifecycle.cjs",
+            "available": true,
+            "sha256": "5a751be6e5be97429f47345ada66f1442a7c3db8d71f2cd298a04fd922dd8f38"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 11,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r001f-deadline",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r001f-deadline.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.2695812640013173,
+      "counts": {
+        "passLines": 13,
+        "failLines": 0
+      },
+      "log": "r001f-deadline.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r001f-deadline.cjs",
+            "available": true,
+            "sha256": "c7462e9c01b5a2b9c1e12628a3c0832d18ac4da4d2c79cbe3485ebec7470d57c"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 13,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r0020-clock",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0020-clock.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.1692058720000205,
+      "counts": {
+        "tests": 44,
+        "pass": 44,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "r0020-clock.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0020-clock.cjs",
+            "available": true,
+            "sha256": "058b81d644114c884da6b5f3f914cf3f7370776fc50e6806a984c4168556ff90"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "tap",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "tests": 44,
+          "pass": 44,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "reason": "complete TAP terminal",
+        "exclusions": []
+      },
+      "reason": "complete TAP terminal"
+    },
+    {
+      "name": "r0021-reveal",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0021-reveal.cjs",
+        "--cp8-snapshot-only"
+      ],
+      "exitCode": 1,
+      "seconds": 2.978420521998487,
+      "counts": {
+        "passLines": 14,
+        "failLines": 1
+      },
+      "log": "r0021-reveal.log",
+      "explicitExclusions": [
+        "SKIP_EXPLICIT ordinary held star positions remain stable across a healthy render \u2014 removed synthetic-array producer; actual catalogue sink lifecycle tested separately",
+        "SKIP_EXPLICIT first accepted target cannot retain the unresolved-coordinate projection \u2014 removed synthetic-array producer; actual first accepted catalogue tested separately",
+        "SKIP_EXPLICIT same-day explicit preview anchor correction reprojects accepted stars \u2014 removed synthetic-array producer; actual catalogue seeks tested separately"
+      ],
+      "caseExclusions": [
+        {
+          "name": "ordinary held star positions remain stable across a healthy render",
+          "scope": "r0021-reveal",
+          "status": "INCOMPLETE",
+          "reason": "retained unexecuted observation",
+          "residual": "actual ordinary host publication with accepted catalogue geometry",
+          "reference": "docs/state-contracts/R0017.md#r17-star-01",
+          "reported": "SKIP_EXPLICIT ordinary held star positions remain stable across a healthy render \u2014 removed synthetic-array producer; actual catalogue sink lifecycle tested separately"
+        },
+        {
+          "name": "first accepted target cannot retain the unresolved-coordinate projection",
+          "scope": "r0021-reveal",
+          "status": "INCOMPLETE",
+          "reason": "retained unexecuted observation",
+          "residual": "unavailable-to-first-valid target through real catalogue publication",
+          "reference": "docs/state-contracts/R0017.md#r17-star-02",
+          "reported": "SKIP_EXPLICIT first accepted target cannot retain the unresolved-coordinate projection \u2014 removed synthetic-array producer; actual first accepted catalogue tested separately"
+        },
+        {
+          "name": "same-day explicit preview anchor correction reprojects accepted stars",
+          "scope": "r0021-reveal",
+          "status": "INCOMPLETE",
+          "reason": "retained unexecuted observation",
+          "residual": "explicit host anchor seek and stale-completion rejection with real catalogue output",
+          "reference": "docs/state-contracts/R0017.md#r17-star-03",
+          "reported": "SKIP_EXPLICIT same-day explicit preview anchor correction reprojects accepted stars \u2014 removed synthetic-array producer; actual catalogue seeks tested separately"
+        }
+      ],
+      "status": "FAIL",
+      "execution": {
+        "state": "exited",
+        "returnCode": 1
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0021-reveal.cjs",
+            "available": true,
+            "sha256": "c66a0b967fd2de957c656f33ad32d9b84099ed7e3ce7f4c0841ac780918f76ca"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [
+          {
+            "locator": "47c0fa0c6e32618f22b43b6a18717908b0de5f5e:index.html",
+            "available": true,
+            "blob": "9851aada8d04019ed47fd727f22d49c87ebd9fab",
+            "reason": null
+          }
+        ],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "FAIL",
+        "executionProven": true,
+        "counts": {
+          "passLines": 14,
+          "failLines": 1
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": [
+          "SKIP_EXPLICIT ordinary held star positions remain stable across a healthy render \u2014 removed synthetic-array producer; actual catalogue sink lifecycle tested separately",
+          "SKIP_EXPLICIT first accepted target cannot retain the unresolved-coordinate projection \u2014 removed synthetic-array producer; actual first accepted catalogue tested separately",
+          "SKIP_EXPLICIT same-day explicit preview anchor correction reprojects accepted stars \u2014 removed synthetic-array producer; actual catalogue seeks tested separately"
+        ]
+      },
+      "reason": "nonzero child exit"
+    },
+    {
+      "name": "r0022-baseline-balance",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-baseline-balance.cjs"
+      ],
+      "exitCode": null,
+      "seconds": 0.0,
+      "counts": {},
+      "log": "r0022-baseline-balance.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "INCOMPLETE",
+      "execution": {
+        "state": "not-started",
+        "returnCode": null
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "INCOMPLETE",
+        "files": [
+          {
+            "path": "tests/r0022-baseline-balance.cjs",
+            "available": true,
+            "sha256": "6ddc11e8291b77e5532688ddec6a296b1ec3840dad8c0817d9779d3ddd847e79"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [
+          {
+            "locator": "fd2972ba64225fe9d6848e92497e6d0ed20ea624:index.html",
+            "available": true,
+            "blob": "796d08e38e8398bc290df74015e22fb1e1d3e69e",
+            "reason": null
+          },
+          {
+            "locator": "8b83df029966c203a503ab217d121c48b8ee6e8a:index.html",
+            "available": false,
+            "blob": null,
+            "reason": "exact Git object/path unavailable"
+          },
+          {
+            "locator": "18ff14860ff41c084b1db5f396bb62aa9c22b1be:index.html",
+            "available": true,
+            "blob": "195b077d114ef24a56e88a7f3fe5f12f5587297e",
+            "reason": null
+          }
+        ],
+        "reason": "required source/test or exact historical input unavailable"
+      },
+      "reason": "required source/test or exact historical input unavailable",
+      "output": {
+        "format": "not-run",
+        "status": "INCOMPLETE",
+        "executionProven": false,
+        "counts": {},
+        "reason": "required source/test or exact historical input unavailable",
+        "exclusions": []
+      }
+    },
+    {
+      "name": "r0022-lunar-consumers",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-lunar-consumers.cjs",
+        "--cp8-snapshot-only"
+      ],
+      "exitCode": 0,
+      "seconds": 4.178667232001317,
+      "counts": {
+        "passLines": 24,
+        "failLines": 0
+      },
+      "log": "r0022-lunar-consumers.log",
+      "explicitExclusions": [
+        "SKIP_SUPERSEDED glints release wash with held star projection \u2014 real catalogue/physical compositor replaces synthetic arrays; see CP8 tests",
+        "SKIP_SUPERSEDED ordinary render refreshes star appearance while held projection stays fixed \u2014 real catalogue/physical compositor replaces synthetic arrays; see CP8 tests"
+      ],
+      "caseExclusions": [
+        {
+          "name": "glints release wash with held star projection",
+          "scope": "r0022-lunar-consumers",
+          "status": "INCOMPLETE",
+          "reason": "retained unexecuted observation",
+          "residual": "physical lunar background reaches stellar contrast without stale wash",
+          "reference": "docs/state-contracts/R0017.md#r17-star-04",
+          "reported": "SKIP_SUPERSEDED glints release wash with held star projection \u2014 real catalogue/physical compositor replaces synthetic arrays; see CP8 tests"
+        },
+        {
+          "name": "ordinary render refreshes star appearance while held projection stays fixed",
+          "scope": "r0022-lunar-consumers",
+          "status": "INCOMPLETE",
+          "reason": "retained unexecuted observation",
+          "residual": "ordinary host propagates physical lunar-light changes into current stellar appearance",
+          "reference": "docs/state-contracts/R0017.md#r17-star-05",
+          "reported": "SKIP_SUPERSEDED ordinary render refreshes star appearance while held projection stays fixed \u2014 real catalogue/physical compositor replaces synthetic arrays; see CP8 tests"
+        }
+      ],
+      "status": "INCOMPLETE",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0022-lunar-consumers.cjs",
+            "available": true,
+            "sha256": "eafa452f29e6b047d6b9eadefd5f18dc9acedf0340b0af55d5c386d0d5f971cd"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 24,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": [
+          "SKIP_SUPERSEDED glints release wash with held star projection \u2014 real catalogue/physical compositor replaces synthetic arrays; see CP8 tests",
+          "SKIP_SUPERSEDED ordinary render refreshes star appearance while held projection stays fixed \u2014 real catalogue/physical compositor replaces synthetic arrays; see CP8 tests"
+        ]
+      },
+      "reason": "selected observations remain unexecuted; see caseExclusions"
+    },
+    {
+      "name": "r0023-metadata",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0023-metadata.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.4192371259996435,
+      "counts": {
+        "passLines": 31,
+        "failLines": 0
+      },
+      "log": "r0023-metadata.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0023-metadata.cjs",
+            "available": true,
+            "sha256": "34bc3a071dbebf807ef8503396fa6279b39f7d3a2121b3fa8fc35653f41a0ce8"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [
+          {
+            "locator": "fd2972ba64225fe9d6848e92497e6d0ed20ea624:index.html",
+            "available": true,
+            "blob": "796d08e38e8398bc290df74015e22fb1e1d3e69e",
+            "reason": null
+          },
+          {
+            "locator": "fd2972ba64225fe9d6848e92497e6d0ed20ea624:config.js",
+            "available": true,
+            "blob": "e82ca4b10a990f1741bdfac1f91caf31a48fe295",
+            "reason": null
+          }
+        ],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 31,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r0025-continuity",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0025-continuity.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.669301155001449,
+      "counts": {
+        "passLines": 9,
+        "failLines": 0
+      },
+      "log": "r0025-continuity.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0025-continuity.cjs",
+            "available": true,
+            "sha256": "e56c858e55980220ec267380b411a1f655be382c80adc3bd8941da16d39fd258"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 9,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    },
+    {
+      "name": "r0025-lifecycle",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0025-lifecycle.cjs"
+      ],
+      "exitCode": 0,
+      "seconds": 2.120774369999708,
+      "counts": {
+        "passLines": 16,
+        "failLines": 0
+      },
+      "log": "r0025-lifecycle.log",
+      "explicitExclusions": [],
+      "caseExclusions": [],
+      "status": "PASS",
+      "execution": {
+        "state": "exited",
+        "returnCode": 0
+      },
+      "lifecycle": [
+        "selected",
+        "setup-checked",
+        "running",
+        "exited",
+        "output-classified",
+        "terminal"
+      ],
+      "setup": {
+        "status": "READY",
+        "files": [
+          {
+            "path": "tests/r0025-lifecycle.cjs",
+            "available": true,
+            "sha256": "b7744212576e8a6ff671d7443f79b93f0046a0a05273bd1d89df43019f317cc2"
+          },
+          {
+            "path": "index.html",
+            "available": true,
+            "sha256": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298"
+          },
+          {
+            "path": "config.js",
+            "available": true,
+            "sha256": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+          }
+        ],
+        "history": [],
+        "reason": null
+      },
+      "output": {
+        "format": "json-summary",
+        "status": "PASS",
+        "executionProven": true,
+        "counts": {
+          "passLines": 16,
+          "failLines": 0
+        },
+        "reason": "complete case lines and matching JSON terminal",
+        "exclusions": []
+      },
+      "reason": "complete case lines and matching JSON terminal"
+    }
+  ],
+  "plannedCommands": [
+    {
+      "name": "native-runner-contract",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_native_regression_runner.py",
+        "-v"
+      ]
+    },
+    {
+      "name": "native-test-glob",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-concurrency=1",
+        "tests/hotfix-prayer-weather.test.cjs",
+        "tests/moon-fixture-anchors.test.cjs",
+        "tests/native-appearance-currentness.test.cjs",
+        "tests/r0002-admission.test.cjs",
+        "tests/r0003-ownership.test.cjs",
+        "tests/r0004-boot-day.test.cjs",
+        "tests/r0004-currentness-controls.test.cjs",
+        "tests/r0005-adoption.test.cjs",
+        "tests/r0005-day-return.test.cjs",
+        "tests/r0006-recovery.test.cjs",
+        "tests/r000a-markers.test.cjs",
+        "tests/r000b-remaining.test.cjs",
+        "tests/r000c-weather.test.cjs",
+        "tests/r000d-weather.test.cjs",
+        "tests/r0017-adapters.test.cjs",
+        "tests/r0018-prayer-row-status.test.cjs",
+        "tests/r0024-cloud-expiry.test.cjs",
+        "tests/r0024-information.test.cjs",
+        "tests/r0024-particle-origin.test.cjs",
+        "tests/r0024-response-zone.test.cjs",
+        "tests/r0024-weather.test.cjs"
+      ]
+    },
+    {
+      "name": "r0001-date-sinks",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0001-date-sinks.cjs"
+      ]
+    },
+    {
+      "name": "r0007-countdown",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0007-countdown.cjs"
+      ]
+    },
+    {
+      "name": "r0008-timezone",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0008-timezone.cjs"
+      ]
+    },
+    {
+      "name": "r0009-date-selection",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0009-date-selection.cjs"
+      ]
+    },
+    {
+      "name": "r000f-intent",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r000f-intent.cjs"
+      ]
+    },
+    {
+      "name": "r000f-reset",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r000f-reset.cjs"
+      ]
+    },
+    {
+      "name": "r0010-preferences",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0010-preferences.cjs"
+      ]
+    },
+    {
+      "name": "r0011-storage",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0011-storage.cjs"
+      ]
+    },
+    {
+      "name": "r0012-clipboard",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0012-clipboard.cjs"
+      ]
+    },
+    {
+      "name": "r0012-effects",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0012-effects.cjs"
+      ]
+    },
+    {
+      "name": "r0017-cloud-visibility",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0017-cloud-visibility.cjs"
+      ]
+    },
+    {
+      "name": "r0017-contract",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0017-contract.cjs"
+      ]
+    },
+    {
+      "name": "r0017-transport",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0017-transport.cjs"
+      ]
+    },
+    {
+      "name": "r0017-weather",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0017-weather.cjs"
+      ]
+    },
+    {
+      "name": "r0018-appearance",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0018-appearance.cjs"
+      ]
+    },
+    {
+      "name": "r0018-timetable-contrast",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0018-timetable-contrast.cjs"
+      ]
+    },
+    {
+      "name": "r0019-date-disclosure",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0019-date-disclosure.cjs"
+      ]
+    },
+    {
+      "name": "r001a-radio",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r001a-radio.cjs"
+      ]
+    },
+    {
+      "name": "r001d-lifecycle",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r001d-lifecycle.cjs"
+      ]
+    },
+    {
+      "name": "r001f-deadline",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r001f-deadline.cjs"
+      ]
+    },
+    {
+      "name": "r0020-clock",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0020-clock.cjs"
+      ]
+    },
+    {
+      "name": "r0021-reveal",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0021-reveal.cjs",
+        "--cp8-snapshot-only"
+      ]
+    },
+    {
+      "name": "r0022-baseline-balance",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-baseline-balance.cjs"
+      ]
+    },
+    {
+      "name": "r0022-lunar-consumers",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-lunar-consumers.cjs",
+        "--cp8-snapshot-only"
+      ]
+    },
+    {
+      "name": "r0023-metadata",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0023-metadata.cjs"
+      ]
+    },
+    {
+      "name": "r0025-continuity",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0025-continuity.cjs"
+      ]
+    },
+    {
+      "name": "r0025-lifecycle",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0025-lifecycle.cjs"
+      ]
+    }
+  ],
+  "identity": {
+    "invocation": "98be06f8-6c2e-4288-94ba-308897cdd40b",
+    "startedAt": "2026-11-07T04:05:53.044595+00:00",
+    "source": {
+      "head": "f71fef6ccf7e4efcb57b5a26688d2360461a3253",
+      "tree": "79aedcac840d624b5ea423922314f0832dc3f750",
+      "available": true,
+      "kind": "git-tree-with-working-overlay",
+      "workingChanges": [
+        {
+          "path": "README.md",
+          "available": true,
+          "sha256": "f0b221e8315613a9d0f8af1a394846616c614a462078cd1280bd9c87642c20e2"
+        },
+        {
+          "path": "docs/state-contracts/R0017.md",
+          "available": true,
+          "sha256": "7db2b959e2f0693f3ca2d3c29a1506e99214fe882424fb2e38d5bea4c69d722d"
+        },
+        {
+          "path": "tests/native-inline-runtime.cjs",
+          "available": true,
+          "sha256": "f73ee21f6e745f0e4a60ea8732caaefa5e2e367be1048affba5abed81258c5db"
+        },
+        {
+          "path": "tests/native-script-contract.js",
+          "available": true,
+          "sha256": "adde2470bba5f276ddae71f0c5a2fad9485854604bbd733c87723583e04b578a"
+        },
+        {
+          "path": "tests/r000f-fixture.cjs",
+          "available": true,
+          "sha256": "740e9f3476466c978aa4bc12491bd71a3a3f3010f4b5a5a40360fa1f30d66aa2"
+        },
+        {
+          "path": "tests/r0010-preferences.cjs",
+          "available": true,
+          "sha256": "5345a1037c3442188f4f1ad977c0f7daab1f6dd33fda9147aa6d6f7601df091c"
+        },
+        {
+          "path": "tests/r0011-fixture.cjs",
+          "available": true,
+          "sha256": "bcb1d8f4bff8ea97746253768c70b9fb756bc2258c94713c80cbb29a26d692fd"
+        },
+        {
+          "path": "tests/r0011-storage.cjs",
+          "available": true,
+          "sha256": "9c09b1a3a1420a3571b3ade8b3fff5bf0cd0b8d5a043ec6230a0aeccdd018f1d"
+        },
+        {
+          "path": "tests/r0017-adapters.test.cjs",
+          "available": true,
+          "sha256": "ca4be8789b0beb127a2e3d226dd952face79ae8412f13d8b927f9236c9faaef8"
+        },
+        {
+          "path": "tests/r0017-transport.cjs",
+          "available": true,
+          "sha256": "48676a026db9c336229575e4dfcec121f8b6802b469eede53024f8e90db08f98"
+        },
+        {
+          "path": "tests/r001d-harness.cjs",
+          "available": true,
+          "sha256": "7c83c45ed757bdf7e5ae72cf0992a2aeeedbef65bf407e1a88b929deef44cf32"
+        },
+        {
+          "path": "tests/r0025-lifecycle.cjs",
+          "available": true,
+          "sha256": "b7744212576e8a6ff671d7443f79b93f0046a0a05273bd1d89df43019f317cc2"
+        },
+        {
+          "path": "tests/test_native_regression_runner.py",
+          "available": true,
+          "sha256": "8f7b2f5ad21f71eb6af739e2461435ec6647da1cd50b24a8e5d8fda10a980128"
+        },
+        {
+          "path": "tests/widget-fixture.html",
+          "available": true,
+          "sha256": "2975111135aac3197dda912de7d06c2452e42d22e304736b82cf3c686a975ac6"
+        },
+        {
+          "path": "tools/cp9/run_native_regressions.py",
+          "available": true,
+          "sha256": "88a3b3e8672a2f79a2cbdf455e1389ec141a3d2ddbc800a2eeff00a91b2217a3"
+        }
+      ]
+    },
+    "runnerSha256": "88a3b3e8672a2f79a2cbdf455e1389ec141a3d2ddbc800a2eeff00a91b2217a3",
+    "host": {
+      "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+      "python": "3.12.14",
+      "pythonExecutable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "node": "v24.22.1"
+    }
+  },
+  "continuationPolicy": "continue after terminal fixture results; stop later launches after timeout, launch failure or cancellation",
+  "notRunHistorical": {},
+  "scope": "Only explicitly selected source-contract commands. Counts are descriptive; exclusions are not passes. No native pixels, live provider, platform, performance or delivery certification.",
+  "sourceUnchanged": true
+}

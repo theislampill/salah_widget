@@ -1,0 +1,26 @@
+test_setup_and_behavior_failure_keep_both_dispositions (__main__.RunnerLifecycleTests.test_setup_and_behavior_failure_keep_both_dispositions) ... FAIL
+test_actual_qualification_caller_preserves_runner_exit_and_receipt (__main__.RunnerCliTests.test_actual_qualification_caller_preserves_runner_exit_and_receipt) ... FAIL
+
+======================================================================
+FAIL: test_setup_and_behavior_failure_keep_both_dispositions (__main__.RunnerLifecycleTests.test_setup_and_behavior_failure_keep_both_dispositions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 202, in test_setup_and_behavior_failure_keep_both_dispositions
+    self.assertEqual(result["commands"][0]["setup"]["status"], "INCOMPLETE")
+AssertionError: 'READY' != 'INCOMPLETE'
+- READY
++ INCOMPLETE
+
+
+======================================================================
+FAIL: test_actual_qualification_caller_preserves_runner_exit_and_receipt (__main__.RunnerCliTests.test_actual_qualification_caller_preserves_runner_exit_and_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/7a8daf93afaa/r0017-explicit-work/tests/test_native_regression_runner.py", line 353, in test_actual_qualification_caller_preserves_runner_exit_and_receipt
+    self.assertEqual(rows[0]["exitCode"], expected)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.222s
+
+FAILED (failures=2)
