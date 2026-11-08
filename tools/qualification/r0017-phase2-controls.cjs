@@ -108,8 +108,11 @@ loadUntil=function(...parameters){
 };
 
 const CALENDAR_DIAGNOSTICS=Object.freeze([
- {id:'diagnostic-calendar-newmoon',mode:'newmoon',caseName:'new/below-horizon moon: opaque calendar disc, NO moonlight',hash:'lat=24.47&lon=39.61&label=Madinah&method=4&simTime=01:00&simWx=0&simMoon=0.01&simWax=1&simMoonAlt=-20'},
- {id:'diagnostic-calendar-waning',mode:'waning',caseName:'waning moon orientation',hash:'lat=24.47&lon=39.61&label=Madinah&method=4&simTime=02:00&simWx=0&simMoon=0.3&simWax=0&simMoonAlt=55&simMoonH=0'}
+ {id:'diagnostic-calendar-newmoon',group:'calendar-diagnostics',engines:['firefox'],mode:'newmoon',caseName:'new/below-horizon moon: opaque calendar disc, NO moonlight',hash:'lat=24.47&lon=39.61&label=Madinah&method=4&simTime=01:00&simWx=0&simMoon=0.01&simWax=1&simMoonAlt=-20'},
+ {id:'diagnostic-calendar-waning',group:'calendar-diagnostics',engines:['firefox'],mode:'waning',caseName:'waning moon orientation',hash:'lat=24.47&lon=39.61&label=Madinah&method=4&simTime=02:00&simWx=0&simMoon=0.3&simWax=0&simMoonAlt=55&simMoonH=0'},
+ // NONDEFAULT C13: one current Chromium discriminator, not a historical-cause replay.
+ {id:'diagnostic-calendar-waning-c12',group:'waning-diagnostic',engines:['chromium'],mode:'waning',caseName:'waning moon orientation',hash:'lat=24.47&lon=39.61&label=Madinah&method=4&simTime=02:00&simWx=0&simMoon=0.3&simWax=0&simMoonAlt=55&simMoonH=0',
+  history:{diagnosticOf:{runId:'42426595933',fixtureAttempt:22,caseName:'chromium-public-healthy-no-preference'},recipeSha256:CALENDAR_DIAGNOSTIC_RECIPE_SHA256,scope:'C12 Chromium/no-preference waning readiness failure. Success is nonreproduction only with zero healthy credit; full 30/141 smoke remains pending. No historical Linux-cause assignment or automatic repeat.'}}
 ]);
 function prepare(api){
  const smoke=fs.readFileSync(path.join(api.ROOT,'tests/smoke.html'),'utf8'),wrapper=fs.readFileSync(path.join(api.ROOT,'tests/widget-fixture.html'),'utf8'),index=fs.readFileSync(path.join(api.ROOT,'index.html'),'utf8');
@@ -150,7 +153,7 @@ finalize();return {before,after:(${READ})(fr.contentWindow),observations,control
   const ready=mode==='matching-tomorrow'?'w.qaState().cache.tomorrowLoaded':"w.__widgetFixture.ledger.filter(r=>r.url.includes('/v1/timings/08-09-2026')&&r.jsonReads>0).length>=3";
   p.script=`const controlStarted=performance.now();const t=await loadUntil(${JSON.stringify(HASH)},8000,w=>prayerReady(w)&&${ready});if(!t.w)throw Object.assign(Error('Tomorrow control did not reach actual response consumer: '+JSON.stringify(t)),{code:'R0017_NATIVE_PRECONDITION'});return {consumer:(${READ})(t.w),controlElapsedMs:performance.now()-controlStarted};`;
  }
- // Two finite Firefox diagnostics from the first native run; not healthy claims.
+ // Original calendar callbacks for two retained Firefox diagnostics and one nondefault C12 Chromium diagnostic; no healthy claims.
  const newMoonCall=between(smoke,'  await calendarScene(base+"&simTime=01:00&simWx=0&simMoon=0.01&simWax=1&simMoonAlt=-20",','  await scene(base+"&simTime=01:00&simWx=0&simMoon=0.6&simWax=1&simMoonAlt=40&simMoonH=8",');
  const waningCall=between(smoke,'  await calendarScene(base+"&simTime=02:00&simWx=0&simMoon=0.3&simWax=0&simMoonAlt=55&simMoonH=0",','  head("explicit motion preferences (no assumption about restored OS preference)");');
  const moonDecoder=between(smoke,'  const moonReady=w=>','  await calendarScene(base+"&simTime=02:00&simWx=0&simMoon=0.3&simWax=1&simMoonAlt=55&simMoonH=0",');
@@ -158,7 +161,7 @@ finalize();return {before,after:(${READ})(fr.contentWindow),observations,control
  if(!smoke.includes('const initial=await '+prerequisiteCall+';'))throw Error('Original calendar prerequisite anchor changed');
  for(const d of CALENDAR_DIAGNOSTICS){
   const call=d.mode==='newmoon'?newMoonCall:waningCall,recipe=calendarDiagnosticRecipe({hash:d.hash,sourceSha256:api.sha(index)});
-  const p=plan(d.id,'calendar-diagnostics',{...d,kind:'calendar-diagnostic',engines:['firefox'],preference:'no-preference',history:{firstNativeRun:'42388898271',recipeSha256:CALENDAR_DIAGNOSTIC_RECIPE_SHA256,scope:'Two original missing Firefox calendar callbacks; no original Linux-cause assignment'},
+  const p=plan(d.id,d.group,{...d,kind:'calendar-diagnostic',preference:'no-preference',history:d.history??{firstNativeRun:'42388898271',recipeSha256:CALENDAR_DIAGNOSTIC_RECIPE_SHA256,scope:'Two original missing Firefox calendar callbacks; no original Linux-cause assignment'},
    diagnosticSource:{targetCallSha256:api.sha(call),decoderSha256:d.mode==='waning'?api.sha(moonDecoder):null,prerequisiteCallSha256:api.sha(prerequisiteCall),additionalReadRecipeSha256:CALENDAR_DIAGNOSTIC_RECIPE_SHA256},diagnosticLimitations:recipe.limitations});
   p.script=`const controlStarted=performance.now(),entryLoadUntil=loadUntil;const prerequisiteResult=await ${prerequisiteCall};
 const prerequisite={accepted:!!prerequisiteResult.w,expectedSourceSha,originalAttempt:attempts[0],originalResult:{error:prerequisiteResult.error??null,reason:prerequisiteResult.reason??null,hasWindow:!!prerequisiteResult.w}};
@@ -195,7 +198,7 @@ finalize();return {...${recipe.resultExpression},prerequisite,targetAttempted:tr
   if(p.kind==='motion'&&p.mode.startsWith('ignore-')&&p.offlineAdmission.profile!=='split-moon')throw Error('Semantic mutant would not reach current admitted native body: '+p.id);
   if(p.kind==='transport'&&p.mode.startsWith('source-')&&!p.offlineAdmission.error)throw Error('Source mutant unexpectedly admitted offline: '+p.id);
  }
- return {plans,declared,heldSha256:api.sha(held),history:HISTORY,sourceSpans:{media:api.sha(media),motion:api.sha(motion),config:api.sha(config),newMoonCall:api.sha(newMoonCall),waningCall:api.sha(waningCall),moonDecoder:api.sha(moonDecoder),prerequisiteCall:api.sha(prerequisiteCall)},groups:['current','public','calendar-diagnostics','optional-recorder','optional-config-storage']};
+ return {plans,declared,heldSha256:api.sha(held),history:HISTORY,sourceSpans:{media:api.sha(media),motion:api.sha(motion),config:api.sha(config),newMoonCall:api.sha(newMoonCall),waningCall:api.sha(waningCall),moonDecoder:api.sha(moonDecoder),prerequisiteCall:api.sha(prerequisiteCall)},groups:['current','public','calendar-diagnostics','waning-diagnostic','optional-recorder','optional-config-storage']};
 }
 
 function sameValue(a,b){return JSON.stringify(a)===JSON.stringify(b);}
@@ -327,6 +330,7 @@ function oracle(p,v,row,declared){
 function diagnosticOracle(p,v,row,declared){
  const d=v?.data||{},s=row.smoke,r=s?.required,lines=assertionRows(row.snapshot?.assertionLog),list=s?.fixture?.attempts||[],target=r?.cases?.find(x=>x.name===p.caseName),c=row.checks;
  const attempted=d.targetAttempted===true,prerequisite=list[0],last=list.at(-1),want=p.hash+'&tz=Asia/Riyadh&qa=1';
+ const genealogy=p.history?.diagnosticOf?{diagnosticOf:clone(p.history.diagnosticOf),recipeOriginFirstNativeRun:'42388898271'}:{firstNativeRun:p.history?.firstNativeRun??'42388898271'};
  row.diagnosticTargetState=attempted?(target?.state||'unknown'):'not_executed';
  row.diagnosticProductOutcome={wholeInstrument:s?.status??null,targetState:row.diagnosticTargetState,qualification:'PARTIAL',reason:target?.reason??d.prerequisite?.originalResult?.reason??null,
   scope:'One original target callback after one original admission prerequisite; all other required callbacks stay pending. No full healthy claim; no cause assigned to the older Linux result.'};
@@ -373,8 +377,8 @@ function diagnosticOracle(p,v,row,declared){
   c.oneUntouchedTarget=d.observerCalls===1&&list.length===2&&Array.isArray(d.originalAttempts)&&d.originalAttempts.length===2&&last.hash===want;
   c.originalCalendarTraceRetained=trace?.schema==='r0017-calendar-stage/v1'&&trace.attempt===2&&trace.hash===want&&trace.budgetMs===8000&&trace.styleRestored===true;
   c.failureOnlyBoundaryRead=Array.isArray(reads)&&(last.result==='ready'?reads.length===0:reads.length===1&&reads[0].phase==='after-original-loadUntil-resolved-before-scene-continuation'&&reads[0].observedCall===1&&reads[0].input?.hash===p.hash&&reads[0].input.boundMs===8000&&reads[0].expectedHash===want&&reads[0].sourceSha256===p.expectedIndexSha256&&reads[0].ownerAccepted===true&&reads[0].ownerStillExact===true&&reads[0].documentId===last.fixture.documentId&&reads[0].originalAttemptResult===last.result&&reads[0].originalResult?.reason===last.reason&&!reads[0].captureError);
-  row.calendarDiagnostic={originalCalendarView:trace??null,additionalBoundaryReads:reads??null,source:p.diagnosticSource,limitations:p.diagnosticLimitations,firstNativeRun:'42388898271'};
- }else row.calendarDiagnostic={target:'NOT_EXECUTED',reason:'The genuine original source-admission prerequisite failed; no target navigation or retry was performed',prerequisite:d.prerequisite??null,firstNativeRun:'42388898271'};
+  row.calendarDiagnostic={originalCalendarView:trace??null,additionalBoundaryReads:reads??null,source:p.diagnosticSource,limitations:p.diagnosticLimitations,...genealogy};
+ }else row.calendarDiagnostic={target:'NOT_EXECUTED',reason:'The genuine original source-admission prerequisite failed; no target navigation or retry was performed',prerequisite:d.prerequisite??null,...genealogy};
 }
 
 async function variantServer(api){
@@ -481,7 +485,7 @@ function plannedRows(groups){
  }
  for(const [group,kind] of [['optional-recorder','recorder'],['optional-config-storage','config-storage']])if(groups.includes(group))for(const storage of ['valid','malformed','absent'])for(const outcome of ['success','failure','exception','timeout'])perEngine.push({id:kind+'-'+storage+'-'+outcome,kind,group,outcome,storage,preference:'reduce'});
  const rows=[];
- if(groups.includes('calendar-diagnostics'))for(const d of CALENDAR_DIAGNOSTICS)rows.push({...d,engine:'firefox',name:'firefox-'+d.id,kind:'calendar-diagnostic',group:'calendar-diagnostics',storage:'valid',preference:'no-preference',schema:'r0017-native-controls/v3'});
+ for(const d of CALENDAR_DIAGNOSTICS)if(groups.includes(d.group))for(const engine of d.engines)rows.push({...d,engine,name:engine+'-'+d.id,kind:'calendar-diagnostic',storage:'valid',preference:'no-preference',schema:'r0017-native-controls/v3'});
  rows.push(...['chromium','firefox'].flatMap(engine=>perEngine.map(p=>({...p,engine,name:engine+'-'+p.id,schema:'r0017-native-controls/v3'}))));
  if(groups.includes('public'))for(const engine of ['chromium','firefox'])for(const preference of ['no-preference','reduce'])rows.push({name:engine+'-public-healthy-'+preference,engine,preference,mode:'healthy',storage:'absent',group:'public',schema:'r0017-public-native-proof/v3'});
  return Object.freeze(rows.map(p=>Object.freeze(p)));
@@ -630,12 +634,12 @@ async function observedPublicReadback(api){
  api.write(path.join(api.OUT,'public-observed-dependencies.json'),receipt);return receipt;
 }
 async function run(api,options={}){
- const groups=(options.groups||'current,public,calendar-diagnostics').split(',').filter(Boolean),allowed=['current','public','calendar-diagnostics','optional-recorder','optional-config-storage'];
+ const groups=(options.groups||'current,public,calendar-diagnostics').split(',').filter(Boolean),allowed=['current','public','calendar-diagnostics','waning-diagnostic','optional-recorder','optional-config-storage'];
  if(!groups.length||new Set(groups).size!==groups.length||groups.some(x=>!allowed.includes(x)))throw Error('Use a unique explicit selection from '+allowed.join(','));
  const population=selectPopulation(groups,options.cases),planned=population.planned,publicRows=planned.filter(p=>p.group==='public');
  const baselineDocuments=publicRows.filter(p=>p.preference==='no-preference').length,calendarDocuments=planned.filter(p=>p.kind==='calendar-diagnostic').length;
  api.result.schema='r0017-windows-phase2/v2';api.result.qualification='PARTIAL';api.result.status='STARTED';api.result.scope='Explicit finite second-phase population; only plannedCases are commissioned in this execution. Narrow controls, public consumers and original calendar diagnostics retain their own evidence limits; no unselected-case credit';api.result.groups=groups;api.result.selection={requestedCaseNames:population.requestedCaseNames,notSelected:population.notSelected};api.result.history=HISTORY;api.result.plannedCases=planned;api.result.plannedCount=planned.length;
- api.result.documentPlan={nativeSessions:planned.length,topLevelNavigations:planned.length+baselineDocuments,additionalPublicBaselineDocuments:baselineDocuments,calendarPrerequisiteDocuments:calendarDocuments,calendarTargetDocuments:calendarDocuments,ordering:'Selected Firefox diagnostics first, then selected current/optional groups by engine, then selected public contexts; no retries',scope:'Counts describe only selected planned stages, not actual execution; public full-smoke fixture attempts are recorded from the original instrument'};
+ api.result.documentPlan={nativeSessions:planned.length,topLevelNavigations:planned.length+baselineDocuments,additionalPublicBaselineDocuments:baselineDocuments,calendarPrerequisiteDocuments:calendarDocuments,calendarTargetDocuments:calendarDocuments,ordering:'Selected calendar diagnostics by declared engine first, then selected current/optional groups by engine, then selected public contexts; no retries',scope:'Counts describe only selected planned stages, not actual execution; public full-smoke fixture attempts are recorded from the original instrument'};
  api.result.pending=['Retain first native run 42388898271 and corrected base run 42390915224 as separate actual outcomes; no assumed PASS','Assess the two original Firefox calendar diagnostics without assigning a cause to the older Linux result','Independent admission of historical pure subproof transfer from exact raw receipts and dependency lineage','Reconcile all first-phase outcomes and every retained failure; no rerun-until-green credit','Complete final served-source/documentation/currentness map and independent pixel/contract review','Original eight exceptions/four TODOs and all limitations individually retained','Root-owned evidence publication and conditional closure; this collector has no such authority'];
  api.write(path.join(api.OUT,'summary.json'),api.result);let server;let ok=true;
  try{
@@ -643,12 +647,12 @@ async function run(api,options={}){
   if(process.platform!=='win32'||typeof WebSocket!=='function')throw Error('Native Windows with built-in WebSocket is required');api.identify();
   const catalog=prepare(api),selected=catalog.plans.map(p=>({...p,engines:p.engines.filter(engine=>planned.some(row=>row.name===engine+'-'+p.id))})).filter(p=>p.engines.length);
   if(planned.filter(p=>p.group!=='public').length!==selected.reduce((n,p)=>n+p.engines.length,0))throw Error('Immutable phase-2 plan cardinality mismatch');
-  api.result.plan=selected.map(p=>({id:p.id,kind:p.kind,group:p.group,engines:p.engines,mode:p.mode??null,diagnosticSource:p.diagnosticSource??null,diagnosticLimitations:p.diagnosticLimitations??null,storage:p.storage,preference:p.preference,viewport:p.viewport,dpr:p.dpr,expectedIndexSha256:p.expectedIndexSha256,expectedWrapperSha256:p.expectedWrapperSha256,scriptSha256:api.sha(p.script),mutations:p.mutations,offlineAdmission:p.offlineAdmission}));
+  api.result.plan=selected.map(p=>({id:p.id,kind:p.kind,group:p.group,engines:p.engines,history:p.history,mode:p.mode??null,diagnosticSource:p.diagnosticSource??null,diagnosticLimitations:p.diagnosticLimitations??null,storage:p.storage,preference:p.preference,viewport:p.viewport,dpr:p.dpr,expectedIndexSha256:p.expectedIndexSha256,expectedWrapperSha256:p.expectedWrapperSha256,scriptSha256:api.sha(p.script),mutations:p.mutations,offlineAdmission:p.offlineAdmission}));
   api.write(path.join(api.OUT,'phase2-plan.json'),{history:HISTORY,heldSmokeSha256:catalog.heldSha256,sourceSpans:catalog.sourceSpans,groups,selection:api.result.selection,plans:api.result.plan,publicContexts:publicRows});
   for(const p of selected){const folder=path.join(api.OUT,'variants',p.id);fs.mkdirSync(folder,{recursive:true});for(const [rel,bytes]of Object.entries(p.overrides)){const file=path.join(folder,rel);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,bytes);}}
   if(selected.length){server=await variantServer(api);
-   // Capture the two actual outstanding Firefox failures before the broader finite controls.
-   for(const p of selected.filter(p=>p.kind==='calendar-diagnostic'))if(!await collectProbe(api,server,p,'firefox',catalog.declared))ok=false;
+   // Capture selected original calendar diagnostics with each plan's declared engine; no retries.
+   for(const p of selected.filter(p=>p.kind==='calendar-diagnostic'))for(const engine of p.engines)if(!await collectProbe(api,server,p,engine,catalog.declared))ok=false;
    for(const engine of ['chromium','firefox'])for(const p of selected.filter(p=>p.kind!=='calendar-diagnostic'&&p.engines.includes(engine)))if(!await collectProbe(api,server,p,engine,catalog.declared))ok=false;
   }
   if(publicRows.length){

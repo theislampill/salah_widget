@@ -59,12 +59,12 @@ jobs:
             vendor
             docs/state-contracts
 
-      - name: Collect the two remaining Chromium preference contexts serially
+      - name: Collect one bounded C13 Chromium waning diagnostic
         id: native_collection
         timeout-minutes: 17
         shell: pwsh
         run: |
-          node qualification/tools/qualification/r0017-windows-phase2.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha dfbd7c58c63afb716499694e1f6da239c16fb64ace070663e893e7fafbe7e517 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --groups public --cases chromium-public-healthy-no-preference,chromium-public-healthy-reduce
+          node qualification/tools/qualification/r0017-windows-phase2.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha dfbd7c58c63afb716499694e1f6da239c16fb64ace070663e893e7fafbe7e517 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --groups waning-diagnostic --cases chromium-diagnostic-calendar-waning-c12
           exit $LASTEXITCODE
 
       - name: Preserve workflow setup outcomes on every result
@@ -82,9 +82,18 @@ jobs:
           $r0017Receipt = [ordered]@{
             schema = 'r0017-workflow-outcomes/v1'
             phase = '2'
-            plannedCases = @('chromium-public-healthy-no-preference', 'chromium-public-healthy-reduce')
-            plannedNativeSessions = 2
-            plannedTopLevelDocuments = 3
+            plannedCases = @('chromium-diagnostic-calendar-waning-c12')
+            plannedNativeSessions = 1
+            plannedTopLevelDocuments = 1
+            plannedCalendarPrerequisiteDocuments = 1
+            plannedCalendarTargetDocuments = 1
+            diagnosticOfRunId = '42426595933'
+            diagnosticOfFixtureAttempt = 22
+            diagnosticOfCase = 'chromium-public-healthy-no-preference'
+            diagnosticSuccessMeaning = 'NONREPRODUCTION_ONLY'
+            healthyCredit = 0
+            fullOriginalSmoke = 'PENDING_30_CASES_141_ASSERTIONS'
+            automaticRepeat = $false
             baseCollectorSha256 = 'dfbd7c58c63afb716499694e1f6da239c16fb64ace070663e893e7fafbe7e517'
             qualification = 'PARTIAL'
             recordedUtc = [DateTimeOffset]::UtcNow.ToString('o')
