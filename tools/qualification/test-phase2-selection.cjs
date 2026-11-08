@@ -8,7 +8,7 @@ const waningCase='chromium-diagnostic-calendar-waning-c12';
 const requested=['chromium-matching-tomorrow','chromium-public-healthy-no-preference','chromium-public-healthy-reduce','firefox-public-healthy-reduce'];
 const results=[];
 async function check(name,fn){try{results.push({name,passed:true,detail:await fn()??null});}catch(e){results.push({name,passed:false,error:String(e.stack||e)});}}
-async function execute(options){
+async function execute(options,passiveOptions){
  const out=fs.mkdtempSync(path.join(os.tmpdir(),'r0017-selection-')),launches=[],writes=new Map(),localProcess={platform:'win32',exitCode:0};let identified=0;
  const module={exports:{}};
  const context={require,module,exports:module.exports,Buffer,URL,URLSearchParams,performance,console,process:localProcess,WebSocket:function(){},__filename:file,__dirname};
@@ -17,9 +17,11 @@ async function execute(options){
  collectPublic=async(api,engine,preference)=>{api.testLaunch({name:engine+'-public-healthy-'+preference,group:'public'});return true;};
  observedPublicReadback=async()=>({passed:true,simulated:true});`,context,{filename:file});
  const api={ROOT:root,OUT:out,EXPECTED:'eebba178172f96b3ffe5ab3845bc0fffd57c6e1b',result:{cases:[]},sha:b=>crypto.createHash('sha256').update(b).digest('hex'),
+  startSession:()=>{throw Error('Native session forbidden in selection control');},
   write:(p,v)=>writes.set(path.relative(out,p),JSON.parse(JSON.stringify(v))),identify:()=>{identified++;},remainingBudgetMs:()=>960000,operationTimeout:n=>n,launchBlock:()=>null,publicReadback:async()=>({simulated:true}),
   notAttempted:(p,reason)=>api.result.cases.push({...p,status:'NOT_ATTEMPTED',reason}),
   testLaunch:p=>{launches.push(JSON.parse(JSON.stringify(p)));api.result.cases.push({name:p.name,status:'SIMULATED_BOUNDARY_ONLY'});}};
+ if(passiveOptions)require('./r0017-windows-passive.cjs').configure(api,passiveOptions);
  try{await module.exports.run(api,options);return {result:JSON.parse(JSON.stringify(api.result)),launches,identified,exitCode:localProcess.exitCode,plan:writes.get('phase2-plan.json')};}
  catch(error){error.identified=identified;error.launches=launches;throw error;}
  finally{fs.rmSync(out,{recursive:true,force:true});}
@@ -92,15 +94,34 @@ function diagnosticReceipt(id,attempted){
  });
  await check('C13 case is refused by the actual default groups',()=>rejected({cases:waningCase}));
  await check('C13 case is refused by the legacy diagnostic group',()=>rejected({groups:'calendar-diagnostics',cases:waningCase}));
- await check('workflow actual arguments select only C13 and agree with its outcome receipt',async()=>{
-  const workflow=fs.readFileSync(path.join(root,'.github/workflows/r0017-windows-phase2.yml'),'utf8');
-  const commands=workflow.split('\n').filter(line=>line.trim().startsWith('node qualification/tools/qualification/r0017-windows-phase2.cjs '));assert.equal(commands.length,1);
-  const tokens=commands[0].trim().split(/\s+/),arg=flag=>{assert.equal(tokens.filter(t=>t===flag).length,1);return tokens[tokens.indexOf(flag)+1];};
-  assert.equal(arg('--groups'),'waning-diagnostic');assert.equal(arg('--cases'),waningCase);assert.equal(arg('--base-sha'),'dfbd7c58c63afb716499694e1f6da239c16fb64ace070663e893e7fafbe7e517');
-  const x=await execute({groups:arg('--groups'),cases:arg('--cases')});
-  assert.deepEqual(x.launches.map(r=>r.name),[waningCase]);
-  const receiptCases=workflow.match(/^\s+plannedCases = @\(([^\n]+)\)$/m);assert(receiptCases);assert.equal(receiptCases[1],"'"+waningCase+"'");
-  for(const [field,count] of [['plannedNativeSessions',x.result.documentPlan.nativeSessions],['plannedTopLevelDocuments',x.result.documentPlan.topLevelNavigations],['plannedCalendarPrerequisiteDocuments',x.result.documentPlan.calendarPrerequisiteDocuments],['plannedCalendarTargetDocuments',x.result.documentPlan.calendarTargetDocuments]])assert.equal(Number(workflow.match(new RegExp('^\\s+'+field+' = (\\d+)$','m'))?.[1]),count,field);
+ await check('C14 workflow explicit passive caller selects only two public contexts and three meaningful documents',async()=>{
+  const workflow=fs.readFileSync(path.join(root,'.github/workflows/r0017-windows-phase2.yml'),'utf8'),entry=require('./r0017-windows-passive.cjs');
+  const commands=workflow.split('\n').filter(line=>line.trim().startsWith('node qualification/tools/qualification/'));assert.equal(commands.length,1);
+  const tokens=commands[0].trim().split(/\s+/);assert.equal(tokens[1],'qualification/tools/qualification/r0017-windows-passive.cjs');
+  const args=entry.parse(tokens.slice(2)),cases=['chromium-public-healthy-no-preference','chromium-public-healthy-reduce'];
+  assert.equal(args['network-observation'],'passive');assert.equal(args.groups,'public');assert.equal(args.cases,cases.join(','));
+  const baseHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'r0017-windows-proof.cjs'))).digest('hex');
+  assert.equal(args['base-sha'],baseHash);assert.equal(entry.BOUND_BASE_SHA,baseHash);
+  const x=await execute({groups:args.groups,cases:args.cases},args);
+  assert.deepEqual(x.launches.map(r=>r.name),cases);assert.equal(x.plan.plans.length,0);assert.equal(x.plan.publicContexts.length,2);
+  assert.equal(x.result.schema,'r0017-windows-passive/v1');assert.equal(x.result.networkObservation.method,'passive-bidi/v1');assert.equal(x.result.qualification,'PARTIAL');
+  assert.equal(x.result.documentPlan.nativeSessions,2);assert.equal(x.result.documentPlan.topLevelNavigations,3);assert.equal(x.result.documentPlan.additionalPublicBaselineDocuments,1);assert.equal(x.result.documentPlan.initializationDocuments,2);
+  const receiptCases=workflow.match(/^\s+plannedCases = @\(([^\n]+)\)$/m);assert(receiptCases);assert.equal(receiptCases[1],cases.map(s=>"'"+s+"'").join(', '));
+  for(const [field,count] of [['plannedNativeSessions',2],['plannedTopLevelDocuments',3],['plannedInitializationDocuments',2],['plannedCalendarPrerequisiteDocuments',0],['plannedCalendarTargetDocuments',0]])assert.equal(Number(workflow.match(new RegExp('^\\s+'+field+' = (\\d+)$','m'))?.[1]),count,field);
+  assert(workflow.includes("networkObservation = 'passive-bidi/v1'"));assert(workflow.includes("interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'"));
+  assert(workflow.includes('timeout-minutes: 20')&&workflow.includes('timeout-minutes: 17')&&workflow.includes('AddMinutes(16)'));
+  return {nativeExecutions:0,simulatedLaunches:x.launches,documentPlan:x.result.documentPlan};
+ });
+ await check('C14 actual orchestration refuses expanded population before source setup or launch',async()=>{
+  const args={groups:'public',cases:'chromium-public-healthy-no-preference,chromium-public-healthy-reduce','network-observation':'passive'};
+  let observed;try{await execute({groups:'current,public',cases:args.cases},args);}catch(e){observed=e;}
+  assert(observed);assert.equal(observed.identified,0);assert.deepEqual(observed.launches,[]);return String(observed.message);
+ });
+ await check('all exact base consumers remain bound to the actual revised source',()=>{
+  const baseHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'r0017-windows-proof.cjs'))).digest('hex');
+  for(const [file,key] of [['r0017-windows-phase2.cjs','REVIEWED_BASE_SHA'],['r0017-driver-cleanup-probe.cjs','expectedBase']]){
+   const text=fs.readFileSync(path.join(__dirname,file),'utf8');assert.equal(text.match(new RegExp("const "+key+"='([a-f0-9]{64})'"))?.[1],baseHash,file);
+  }
  });
  await check('duplicate case is refused before source setup or launch',()=>rejected({groups:'current,public',cases:requested[0]+','+requested[0]}));
  await check('unknown case is refused before source setup or launch',()=>rejected({groups:'current,public',cases:'chromium-not-a-case'}));

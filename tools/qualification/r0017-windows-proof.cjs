@@ -229,10 +229,10 @@ async function screenshot(session,file,element){try{
  fs.writeFileSync(file,Buffer.from(value.data,'base64'));return {file:path.basename(file),sha256:sha(fs.readFileSync(file)),kind:element?'element':'viewport',protocol:'BiDi',clip:params.clip??null};
  }catch(e){return {file:path.basename(file),error:String(e)};}}
 // Capture only descendants of the exact owned PIDs; creation times prevent killing reused PIDs.
-function processTree(pids){
+function processTree(pids,inventoryHost){
  const ids=[...new Set(pids.filter(n=>Number.isInteger(n)&&n>0))];if(!ids.length)return [];
  const script="$ErrorActionPreference='Stop'; $all=@(Get-CimInstance Win32_Process); $ids=[System.Collections.Generic.HashSet[uint32]]::new(); @("+ids.join(',')+") | ForEach-Object { [void]$ids.Add([uint32]$_) }; do { $changed=$false; foreach($p in $all){if($ids.Contains([uint32]$p.ParentProcessId) -and $ids.Add([uint32]$p.ProcessId)){$changed=$true}} } while($changed); $rows=@($all | Where-Object {$ids.Contains([uint32]$_.ProcessId)} | ForEach-Object { [pscustomobject]@{ProcessId=[int]$_.ProcessId;ParentProcessId=[int]$_.ParentProcessId;Name=$_.Name;ExecutablePath=$_.ExecutablePath;CreationDate=$_.CreationDate.ToUniversalTime().ToString('o')} }); ConvertTo-Json -InputObject $rows -Compress";
- const rows=JSON.parse(execFileSync('powershell.exe',['-NoLogo','-NoProfile','-NonInteractive','-Command',script],{encoding:'utf8',windowsHide:true,timeout:5000}));
+ const rows=JSON.parse(execFileSync(inventoryHost?inventoryHost.executablePath:'powershell.exe',['-NoLogo','-NoProfile','-NonInteractive','-Command',script],{encoding:'utf8',windowsHide:true,timeout:5000}));
  if(!Array.isArray(rows)||rows.some(p=>!Number.isInteger(p.ProcessId)||typeof p.CreationDate!=='string'))fail('Invalid owned-process query');return rows;
 }
 function sameProcess(a,b){return a.ProcessId===b.ProcessId&&a.CreationDate===b.CreationDate;}
@@ -263,9 +263,10 @@ async function closeOwnedSession(session,row,base){
  bidiBoundary(row,'cleanup-start');
  if(row.cleanup)return row.cleanup;
  const c=row.cleanup={startedUtc:new Date().toISOString(),verifiedExited:false,ok:false,queries:[],kills:[],errors:[],profileRoot:session.profile};
+ if(session.inventoryHost)c.inventoryHost=session.inventoryHost;
  const known=[...(session.ownedProcesses||[])],observedIdentities=[],roots=[session.child?.pid,row.browserPid].filter(n=>Number.isInteger(n)&&n>0);
  c.noProcessStarted=roots.length===0&&!session.sessionCreateAttempted;let exitDeadline=null;
- const query=stage=>{try{const observed=processTree([...roots,...known.map(p=>p.ProcessId),...observedIdentities.map(p=>p.ProcessId)]);for(const p of observed)if(!observedIdentities.some(k=>sameProcess(k,p)))observedIdentities.push(p);c.queries.push({stage,observed});return observed;}catch(e){c.errors.push({stage,error:String(e)});return null;}};
+ const query=stage=>{try{const observed=processTree([...roots,...known.map(p=>p.ProcessId),...observedIdentities.map(p=>p.ProcessId)],session.inventoryHost);for(const p of observed)if(!observedIdentities.some(k=>sameProcess(k,p)))observedIdentities.push(p);c.queries.push({stage,observed});return observed;}catch(e){c.errors.push({stage,error:String(e)});return null;}};
  try{
   const before=query('before-delete');if(before)extendOwned(known,before);
   const child=session.child;
@@ -315,21 +316,26 @@ function launchBlock(p){
  if(result.engineSetupBlocks[p.engine])return result.engineSetupBlocks[p.engine];
  if(remainingBudgetMs()<180000){result.stopLaunches={kind:'orchestration-budget',reason:'Less than the predeclared 180-second launch reserve remains',receipt:'summary.json#budget'};return result.stopLaunches;}return null;
 }
-async function startSession(engine,preference,viewport,dpr,row,dir,origin){
+async function startSession(engine,preference,viewport,dpr,row,dir,origin,networkObservation='enforced'){
+ if(!['enforced','passive'].includes(networkObservation))throw Error('Unknown network observation strategy');
+ const passive=networkObservation==='passive'?require('./r0017-passive-network.cjs'):null;
+ if(passive)passive.assertSession(engine,preference,viewport,dpr,row,origin);
+ const inventoryHost=passive?passive.admitInventoryHost(row,fs,sha):null;
  const installed=locate(engine);row.installed=installed;result.inventory[engine]={status:'AVAILABLE',...installed};const port=await freePort(),base='http://127.0.0.1:'+port;
  const profile=fs.mkdtempSync(path.join(process.env.RUNNER_TEMP||os.tmpdir(),'r0017-'+engine+'-'));row.profileRoot=profile;
  const driverArgs=engine==='chromium'?['--port='+port,'--allowed-ips=127.0.0.1']:['--host','127.0.0.1','--port',String(port),'--log','info','--profile-root',profile];
  const child=spawn(installed.driver,driverArgs,{windowsHide:true,stdio:['ignore',fs.openSync(path.join(dir,'driver.stdout.log'),'a'),fs.openSync(path.join(dir,'driver.stderr.log'),'a')]});
  row.driverPid=child.pid;row.driverArguments=driverArgs;let launchError=null;child.on('error',e=>{launchError=e;});
  const session={child,profile,row,bidi:null,id:null,sessionCreateAttempted:false,ownedProcesses:[],async close(){return closeOwnedSession(this,row,base);}};
+ if(inventoryHost)Object.defineProperty(session,'inventoryHost',{value:inventoryHost,enumerable:true});
  try{
- const initialTree=processTree([child.pid]);row.driverProcess=initialTree.find(p=>p.ProcessId===child.pid);if(!row.driverProcess)fail('Owned driver process identity unavailable');session.ownedProcesses=[row.driverProcess];extendOwned(session.ownedProcesses,initialTree);
+ const initialTree=processTree([child.pid],session.inventoryHost);row.driverProcess=initialTree.find(p=>p.ProcessId===child.pid);if(!row.driverProcess)fail('Owned driver process identity unavailable');session.ownedProcesses=[row.driverProcess];extendOwned(session.ownedProcesses,initialTree);
  const until=Date.now()+20000;let ready=false;while(Date.now()<until){if(launchError)throw launchError;if(child.exitCode!==null)fail('Driver exited '+child.exitCode);try{const s=await request(base,'GET','/status',undefined,1000);if(s.ready){ready=true;break;}}catch{}await delay(100);}if(!ready)fail('Driver did not become ready');
  const options=engine==='chromium'?{'goog:chromeOptions':{binary:installed.binary,args:['--headless=new','--user-data-dir='+profile,'--no-first-run','--no-default-browser-check']}}:{'moz:firefoxOptions':{binary:installed.binary,args:['-headless'],prefs:{'ui.prefersReducedMotion':preference==='reduce'?1:0,'layout.css.devPixelsPerPx':String(dpr)}}};
  session.sessionCreateAttempted=true;
  const value=await request(base,'POST','/session',{capabilities:{alwaysMatch:{browserName:engine==='chromium'?'chrome':'firefox',platformName:'windows',webSocketUrl:true,acceptInsecureCerts:false,pageLoadStrategy:'none',...options}}},45000);
  session.id=value.sessionId;row.capabilities=value.capabilities;row.browserPid=value.capabilities['goog:processID']||value.capabilities['moz:processID']||null;
- const currentOwned=processTree([child.pid,row.browserPid]);
+ const currentOwned=processTree([child.pid,row.browserPid],session.inventoryHost);
  if(!currentOwned.some(p=>sameProcess(p,row.driverProcess)))fail('Owned driver identity disappeared or changed during session creation');
  extendOwned(session.ownedProcesses,currentOwned);
  row.nativeProcess=currentOwned.find(p=>p.ProcessId===row.browserPid&&session.ownedProcesses.some(k=>sameProcess(k,p)))??null;
@@ -339,9 +345,12 @@ async function startSession(engine,preference,viewport,dpr,row,dir,origin){
  if(!session.id||!/windows/i.test(value.capabilities.platformName||''))fail('Missing actual Windows session capability');
  if(!value.capabilities.webSocketUrl)fail('Installed driver did not provide required BiDi endpoint');
  session.wd=(method,route,body)=>request(base,method,'/session/'+session.id+route,body);
- const np=path.join(dir,'network.jsonl'),cp=path.join(dir,'console.jsonl');row.network={allowed:0,allowedEmbedded:0,blocked:0,interceptErrors:[],blockedURLs:[]};
+ const np=path.join(dir,'network.jsonl'),cp=path.join(dir,'console.jsonl');
+ const observer=passive?passive.create({row,dir,origin,record,networkRecord,urlEvidence}):null;
+ if(!observer)row.network={allowed:0,allowedEmbedded:0,blocked:0,interceptErrors:[],blockedURLs:[]};
  row.bidiTrace={schema:'r0017-bidi-trace/v1',file:'bidi-trace.jsonl',writeErrors:[]};
  session.bidi=new BiDi(value.capabilities.webSocketUrl,path.join(dir,'protocol-errors.jsonl'),async(v,trace)=>{
+  if(observer){observer.event(v,trace);return;}
   if(v.method==='log.entryAdded'){record(cp,{utc:new Date().toISOString(),...v.params,trace});return;}
   if(v.method.startsWith('network.')){record(np,networkRecord(v,trace));const p=v.params,q=p.request;
    if(v.method==='network.beforeRequestSent'&&p.isBlocked){let allowed=false;try{const u=new URL(q.url),o=new URL(origin);allowed=u.protocol==='blob:'?u.origin===o.origin:u.protocol==='data:'?/^data:image\/(?:png|jpe?g|gif|webp|svg\+xml)(?:[;,])/i.test(q.url):u.origin===o.origin&&u.pathname.startsWith(o.pathname);}catch{}
@@ -351,10 +360,14 @@ async function startSession(engine,preference,viewport,dpr,row,dir,origin){
    }
   }else record(path.join(dir,'lifecycle.jsonl'),{...v,trace});
  },{runId,caseName:row.name,engine,traceErrors:row.bidiTrace.writeErrors,onTraceError:failure=>markBidiTraceFailure(row,dir,failure)});
+ if(observer)observer.attach(session.bidi);
  Object.assign(row.bidiTrace,session.bidi.identity);bidiByConnection.set(session.bidi.connectionId,session.bidi);
  await session.bidi.opened;
+ if(observer)await observer.subscribe();
+ else{
  await session.bidi.call('session.subscribe',{events:['log.entryAdded','network.beforeRequestSent','network.responseCompleted','network.fetchError','browsingContext.contextCreated','browsingContext.contextDestroyed']});
  await session.bidi.call('network.addIntercept',{phases:['beforeRequestSent']});
+ }
  const tree=await session.bidi.call('browsingContext.getTree',{});session.context=tree.contexts[0]?.context;if(!session.context)fail('No top browsing context');
  await session.bidi.call('browsingContext.setViewport',{context:session.context,viewport,devicePixelRatio:dpr});
  row.preference={requested:preference,mechanism:engine==='chromium'?'ChromeDriver CDP Emulation.setEmulatedMedia':'Firefox ui.prefersReducedMotion profile preference',osAccessibilitySettingChanged:false};
@@ -389,8 +402,11 @@ function checkCommon(row,s,viewport,dpr,seed){const c=row.checks;
  c.storageSeedInstalled=!!s.storage&&same(s.storage.before,seed);
  c.rawOriginBytesPreserved=!!s.storage&&same(s.storage.after,seed);
  c.noRealOriginGetterUse=!!s.storage&&Array.isArray(s.storage.entries)&&!s.storage.entries.some(x=>x.event==='real-origin-storage-get');
+ if(row.network?.method==='passive-bidi/v1')Object.assign(c,require('./r0017-passive-network.cjs').checks(row));
+ else{
  c.networkInterceptionsClean=row.network?.interceptErrors.length===0;
  c.noUnexpectedNetwork=row.network?.blockedURLs.every(u=>/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(u)||u==='https://theislampill.github.io/favicon.ico');
+ }
  c.bidiTraceIntact=!!row.bidiTrace&&row.bidiTrace.writeErrors.length===0;bidiBoundary(row,'common-checks');
 }
 async function collect(engine,mode,preference,storage,ordinary,origin){

@@ -1,4 +1,4 @@
-name: R0017 native Windows phase 2
+name: R0017 C14 passive Windows qualification
 
 on:
   push:
@@ -8,6 +8,9 @@ on:
       - .github/workflows/r0017-windows-phase2.yml
       - tools/qualification/r0017-windows-phase2.cjs
       - tools/qualification/r0017-phase2-controls.cjs
+      - tools/qualification/r0017-windows-passive.cjs
+      - tools/qualification/r0017-passive-network.cjs
+      - tools/qualification/r0017-windows-proof.cjs
 
 permissions:
   contents: read
@@ -59,12 +62,12 @@ jobs:
             vendor
             docs/state-contracts
 
-      - name: Collect one bounded C13 Chromium waning diagnostic
+      - name: Collect the bounded C14 Chromium public passive population
         id: native_collection
         timeout-minutes: 17
         shell: pwsh
         run: |
-          node qualification/tools/qualification/r0017-windows-phase2.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha dfbd7c58c63afb716499694e1f6da239c16fb64ace070663e893e7fafbe7e517 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --groups waning-diagnostic --cases chromium-diagnostic-calendar-waning-c12
+          node qualification/tools/qualification/r0017-windows-passive.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha c095924a71b4358677ff0d2bdf8630b9fdb11cd5d14969ac789ae4f17ac9d755 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --network-observation passive --groups public --cases chromium-public-healthy-no-preference,chromium-public-healthy-reduce
           exit $LASTEXITCODE
 
       - name: Preserve workflow setup outcomes on every result
@@ -80,21 +83,22 @@ jobs:
           New-Item -ItemType Directory -Path $r0017Output -Force | Out-Null
           $r0017Summary = Join-Path $r0017Output 'summary.json'
           $r0017Receipt = [ordered]@{
-            schema = 'r0017-workflow-outcomes/v1'
-            phase = '2'
-            plannedCases = @('chromium-diagnostic-calendar-waning-c12')
-            plannedNativeSessions = 1
-            plannedTopLevelDocuments = 1
-            plannedCalendarPrerequisiteDocuments = 1
-            plannedCalendarTargetDocuments = 1
-            diagnosticOfRunId = '42426595933'
-            diagnosticOfFixtureAttempt = 22
-            diagnosticOfCase = 'chromium-public-healthy-no-preference'
-            diagnosticSuccessMeaning = 'NONREPRODUCTION_ONLY'
+            schema = 'r0017-workflow-passive-outcomes/v1'
+            phase = 'C14'
+            networkObservation = 'passive-bidi/v1'
+            interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'
+            plannedCases = @('chromium-public-healthy-no-preference', 'chromium-public-healthy-reduce')
+            plannedNativeSessions = 2
+            plannedTopLevelDocuments = 3
+            plannedInitializationDocuments = 2
+            initializationScope = 'Driver-created blank contexts, separate from meaningful public documents'
+            plannedCalendarPrerequisiteDocuments = 0
+            plannedCalendarTargetDocuments = 0
+            historicalActiveRecords = 'UNCHANGED; no C12 gate change or upstream-fix claim'
             healthyCredit = 0
-            fullOriginalSmoke = 'PENDING_30_CASES_141_ASSERTIONS'
+            fullOriginalSmoke = 'DECLARED_30_CASES_141_ASSERTIONS_EACH_CONTEXT; inspect actual collector outcomes'
             automaticRepeat = $false
-            baseCollectorSha256 = 'dfbd7c58c63afb716499694e1f6da239c16fb64ace070663e893e7fafbe7e517'
+            baseCollectorSha256 = 'c095924a71b4358677ff0d2bdf8630b9fdb11cd5d14969ac789ae4f17ac9d755'
             qualification = 'PARTIAL'
             recordedUtc = [DateTimeOffset]::UtcNow.ToString('o')
             runId = $env:GITHUB_RUN_ID
