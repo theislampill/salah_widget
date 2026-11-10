@@ -7,7 +7,7 @@ const passive=require('./r0017-passive-network.cjs');
 const BOUND_BASE_SHA='c095924a71b4358677ff0d2bdf8630b9fdb11cd5d14969ac789ae4f17ac9d755';
 const hash=value=>crypto.createHash('sha256').update(value).digest('hex');
 function parse(tokens){
- const allowed=new Set(['network-observation','groups','cases','base-file','base-sha','root','out','payload-sha']),args={};
+ const allowed=new Set(['network-observation','groups','cases','base-file','base-sha','root','out','payload-sha','security-provenance']),args={};
  if(tokens.length%2)throw Error('Arguments must be explicit --name VALUE pairs');
  for(let i=0;i<tokens.length;i+=2){const key=tokens[i].startsWith('--')?tokens[i].slice(2):null;if(!allowed.has(key)||Object.hasOwn(args,key)||!tokens[i+1]||tokens[i+1].startsWith('--'))throw Error('Unknown, duplicate or missing passive argument: '+tokens[i]);args[key]=tokens[i+1];}
  passive.assertSelection(args);
@@ -18,7 +18,14 @@ function configure(api,options){
  passive.assertSelection(options);
  if(api.networkObservation!==undefined||typeof api.startSession!=='function')throw Error('Passive caller requires one unconfigured native session interface');
  const start=api.startSession;api.networkObservation=passive.METHOD;
- api.startSession=(...args)=>{if(args.length!==7)throw Error('Passive session caller signature changed');return start(...args,'passive');};
+ api.startSession=(...args)=>{
+  if(args.length!==7)throw Error('Passive session caller signature changed');
+  if(options['security-provenance']==='csp'){
+   if(Object.hasOwn(args[4],'securityProvenanceRequest'))throw Error('Security provenance request already owned');
+   Object.defineProperty(args[4],'securityProvenanceRequest',{enumerable:true,value:Object.freeze({schema:'r0017-security-provenance-request/v1',mode:'csp'})});
+  }
+  return start(...args,'passive');
+ };
  return api;
 }
 async function main(){

@@ -9,6 +9,7 @@ const CASES=Object.freeze(['chromium-public-healthy-no-preference','chromium-pub
 // only. Raw session/target envelopes use the existing lifecycle capture path;
 // they never synthesize a missing BiDi terminal or supply acceptance credit.
 const CDP_EVENTS=Object.freeze(['Network.requestWillBeSent','Network.responseReceived','Network.loadingFinished','Network.loadingFailed','Target.attachedToTarget','Target.detachedFromTarget','Target.targetCreated','Target.targetDestroyed','Target.targetCrashed'].map(event=>'goog:cdp.'+event));
+const SECURITY_EVENTS=Object.freeze(['Log.entryAdded','Audits.issueAdded','Page.frameNavigated','Page.frameDetached','Page.documentOpened','Runtime.executionContextCreated','Runtime.executionContextDestroyed','Runtime.executionContextsCleared'].map(event=>'goog:cdp.'+event));
 const EVENTS=Object.freeze(['log.entryAdded','network.beforeRequestSent','network.responseStarted','network.responseCompleted','network.fetchError','network.authRequired','browsingContext.contextCreated','browsingContext.contextDestroyed','browsingContext.navigationStarted','browsingContext.domContentLoaded','browsingContext.load','script.realmCreated','script.realmDestroyed',...CDP_EVENTS]);
 const copy=value=>JSON.parse(JSON.stringify(value));
 const INVENTORY_PATH='C:\\Program Files\\PowerShell\\7\\pwsh.exe',INVENTORY_SHA='2a6769a3330dc1084d0154bfde7d164ab750ca7f700f313f9d417c1be78b2233';
@@ -23,6 +24,7 @@ function admitInventoryHost(row,fs,sha){
  catch(e){host.runtimeReadback.status='REFUSED';host.runtimeReadback.error=String(e);freeze(host);throw Error('Passive inventory host admission refused: '+String(e));}
 }
 function assertSelection(options){
+ if(options?.['security-provenance']!==undefined&&options['security-provenance']!=='csp')throw Error('Security provenance requires the explicit csp diagnostic mode');
  if(options?.['network-observation']!=='passive'||options.groups!=='public'||options.cases!==CASES.join(','))throw Error('C14 passive observation requires the explicit public group and exactly the two commissioned Chromium cases in order');
 }
 function assertSession(engine,preference,viewport,dpr,row,origin){
@@ -43,15 +45,23 @@ function requestProblems(state){
 }
 function create({row,dir,origin,record,networkRecord,urlEvidence}){
  if(row.network!==undefined)throw Error('Passive network owner already exists');
- const state=row.network={schema:SCHEMA,method:METHOD,identity:null,subscription:{events:[...EVENTS],scope:'global session subscription; no contexts filter',issued:null,acknowledged:null},requests:[],lifecycle:[],connectionEvents:[],navigations:[],policyViolations:[],httpErrors:[],fetchErrors:[],consoleErrors:[],protocolErrors:[],captureErrors:[],commandRefusals:[],observationErrors:[],finalBoundary:null,lateReceipts:[],
+ const securityRequested=row.securityProvenanceRequest!==undefined;
+ if(securityRequested&&(row.securityProvenanceRequest?.schema!=='r0017-security-provenance-request/v1'||row.securityProvenanceRequest.mode!=='csp'))throw Error('Invalid case-local security provenance request');
+ const events=securityRequested?[...EVENTS,...SECURITY_EVENTS]:[...EVENTS];
+ const state=row.network={schema:SCHEMA,method:METHOD,identity:null,subscription:{events:[...events],scope:'global session subscription; no contexts filter',issued:null,acknowledged:null},requests:[],lifecycle:[],connectionEvents:[],navigations:[],policyViolations:[],httpErrors:[],fetchErrors:[],consoleErrors:[],protocolErrors:[],captureErrors:[],commandRefusals:[],observationErrors:[],finalBoundary:null,lateReceipts:[],
   diagnosticProvenance:{schema:'r0017-cdp-provenance/v1',purpose:'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT',transport:'EXISTING_BIDI_CONNECTION_ONLY',events:[...CDP_EVENTS],support:'INSPECT_ACTUAL_SUBSCRIPTION_AND_RAW_RECEIPTS',joining:'UNCLASSIFIED_RAW_EVENTS_NO_TERMINAL_SYNTHESIS'},
   interception:{requested:false,verdict:'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'},coverage:{source:'Installed driver BiDi event stream only',requests:'Only emitted request identities are accounted; absence is not proof of no background traffic',workers:'Raw emitted realm type/owners only; null context or missing owner is not reassigned to a page or worker',redirects:'Connection + request ID + reported redirect count; a new hop never fabricates a prior hop completion',timestamps:'BiDi source timestamp and Node process-local monotonic receipt milliseconds are separate clocks',normalFavicon:'Exact origin-root favicon URL is allowed as a location; its HTTP/fetch errors still fail',finalCut:'After the existing owned callback/socket join, without extending its 5000 ms deadline'}};
  const byKey=new Map(); // Index only: its values are the same objects in state.requests.
- let bidi=null;
+ const security=securityRequested?(state.securityProvenance={schema:'r0017-security-provenance/v1',mode:'csp',purpose:'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT',status:'PENDING',events:[...SECURITY_EVENTS],context:null,session:null,commands:[],coverage:'Log and Audits enabled only on resolved owned top-target session; Page and Runtime rely on existing mapper enablement. Global subscription is not global domain enablement.',attribution:'Raw sessions, source timestamps and receipt order only. Enable may replay stored events; data scheme and temporal proximity do not establish a request join. Absence is not proof of no violation.'}):null;
+ let bidi=null,securityCommand=null;
  function error(kind,detail){state.observationErrors.push({kind,...copy(detail)});}
  function capture(file,value){try{record(path.join(dir,file),value);}catch(e){state.captureErrors.push({file,error:String(e),eventReceiptId:value.trace?.eventReceiptId??null});throw e;}}
  function onTrace(entry){
   const e=copy(entry);
+  if(securityCommand&&e.command?.method===securityCommand.method){
+   if(e.kind==='command-issued')securityCommand.issued=e;
+   if(e.kind==='command-response'&&e.command.commandReceiptId===securityCommand.issued?.command?.commandReceiptId)securityCommand.response=e;
+  }
   if(state.finalBoundary&&!(e.kind==='collector-boundary'&&e.stage==='case-final-cut'))state.lateReceipts.push({kind:e.kind,traceSequence:e.traceSequence,eventReceiptId:e.eventReceiptId??null});
   if(e.kind.startsWith('connection-'))state.connectionEvents.push(e);
   if(e.kind==='command-issued'&&e.command.method==='session.subscribe')state.subscription.issued=e;
@@ -71,19 +81,49 @@ function create({row,dir,origin,record,networkRecord,urlEvidence}){
   if(bidi)throw Error('Passive connection already attached');bidi=owner;state.identity=copy(owner.identity);
   const trace=owner.trace.bind(owner);owner.trace=(kind,detail)=>{const receipt=trace(kind,detail);try{onTrace(receipt);}catch(e){state.captureErrors.push({file:'passive-ledger',error:String(e),traceSequence:receipt.traceSequence});}return receipt;};
   const call=owner.call.bind(owner);owner.call=async(method,params={},...args)=>{
+   if(method.startsWith('goog:cdp.')&&(!securityCommand||method!==securityCommand.method||JSON.stringify(params)!==JSON.stringify(securityCommand.params)))return refuse(method,'only the bounded owned-session diagnostic setup may issue CDP commands');
    if(method.startsWith('network.')||method==='session.unsubscribe')return refuse(method,'network mutation or subscription withdrawal is forbidden in this method');
    if(method==='browsingContext.navigate'){
+    if(security&&(security.status!=='ENABLED_BEFORE_MEANINGFUL_NAVIGATION'||params.context!==security.context))return refuse(method,'security diagnostic is not enabled for this owned top context');
     if(!state.subscription.acknowledged||state.finalBoundary||owner.closeRequested||owner.socketClosed)return refuse(method,'observation is not subscribed and live');
     const index=state.navigations.length,wrapper=row.plannedTopLevelDocuments===2&&index===0,expectedPath=wrapper?'tests/widget-fixture.html':'tests/smoke.html';let url;try{url=new URL(params.url);}catch{return refuse(method,'invalid navigation URL');}
     if(index>=row.plannedTopLevelDocuments||url.origin!==new URL(origin).origin||url.pathname!==new URL(expectedPath,origin).pathname||(wrapper?url.searchParams.get('mode')!=='healthy':url.searchParams.get('fixture')!=='healthy'))return refuse(method,'uncommissioned top-level document');
    }
-   return call(method,params,...args);
+   const result=await call(method,params,...args);
+   if(security?.status==='ENABLED_BEFORE_MEANINGFUL_NAVIGATION'&&method==='browsingContext.getTree'&&(result?.contexts?.length!==1||result.contexts[0]?.context!==security.context))return refuse(method,'owned top context changed after diagnostic setup');
+   return result;
   };
  }
  async function subscribe(){
   if(!bidi||state.subscription.issued||state.finalBoundary)throw Error('Passive subscription is single-use on its owned connection');
-  await bidi.call('session.subscribe',{events:[...EVENTS]});
+  await bidi.call('session.subscribe',{events:[...events]});
   if(!state.subscription.acknowledged)throw Error('Passive subscription has no correlated success receipt');
+  if(security)await enableSecurity();
+ }
+ async function diagnosticCall(method,params){
+  const command={method,params:copy(params),status:'PENDING',issued:null,response:null,result:null};security.commands.push(command);securityCommand=command;
+  try{
+   capture('security-setup.jsonl',{stage:'requested',method,params:copy(params),connectionId:state.identity.connectionId});
+   const result=await bidi.call(method,params);
+   if(!command.issued||command.response?.association!=='pending'||command.response.protocol.type!=='success')throw Error('Security setup command lacks a correlated success receipt');
+   command.result=copy(result);command.status='SUCCEEDED';capture('security-setup.jsonl',{stage:'succeeded',...copy(command)});return result;
+  }catch(e){command.status='FAILED';command.error=String(e);throw e;}
+  finally{securityCommand=null;}
+ }
+ async function enableSecurity(){
+  try{
+   const tree=await diagnosticCall('browsingContext.getTree',{});
+   if(!Array.isArray(tree?.contexts)||tree.contexts.length!==1||typeof tree.contexts[0]?.context!=='string'||!tree.contexts[0].context)throw Error('Security diagnostic requires exactly one owned top context');
+   security.context=tree.contexts[0].context;
+   const owned=await diagnosticCall('goog:cdp.getSession',{context:security.context});
+   if(typeof owned?.session!=='string'||!owned.session)throw Error('Security diagnostic has no owned CDP session');
+   security.session=owned.session;
+   for(const method of ['Log.enable','Audits.enable']){
+    const result=await diagnosticCall('goog:cdp.sendCommand',{method,params:{},session:security.session});
+    if(result?.session!==security.session||!result.result||typeof result.result!=='object'||Array.isArray(result.result))throw Error('Security diagnostic response is not bound to the owned CDP session');
+   }
+   security.status='ENABLED_BEFORE_MEANINGFUL_NAVIGATION';
+  }catch(e){security.status='FAILED';security.error=String(e);error('SECURITY_DIAGNOSTIC_SETUP_FAILED',{error:String(e)});throw e;}
  }
  function event(v,trace){
   const p=v.params||{},receipt={...copy(trace),connectionId:state.identity?.connectionId??null};

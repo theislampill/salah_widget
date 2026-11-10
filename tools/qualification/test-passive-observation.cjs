@@ -45,7 +45,13 @@ async function harness(name,options={}){
   message(value){this.emit('message',{data:JSON.stringify(value)});}
   send(encoded){if(this.readyState!==1)throw Error('simulated socket closed');const c=JSON.parse(encoded);this.sent.push(c);let result={};
    if(c.method==='session.subscribe'&&(options.subscriptionFailure||options.cdpSubscriptionFailure&&c.params.events.some(e=>e.startsWith('goog:cdp.')))){queueMicrotask(()=>this.message({id:c.id,type:'error',error:'invalid argument',message:'simulated unsupported lifecycle event'}));return;}
-   if(c.method==='browsingContext.getTree')result={contexts:[{context:'simulated-top'}]};
+   if(c.method==='browsingContext.getTree')result={contexts:options.ambiguousTop?[{context:'simulated-top'},{context:'unexpected-top'}]:[{context:'simulated-top'}]};
+   if(c.method==='goog:cdp.getSession')result=options.missingCdpSession?{}:{session:'simulated-owned-cdp'};
+   if(c.method==='goog:cdp.sendCommand'){
+    if(options.securityCommandFailure===c.params.method){queueMicrotask(()=>this.message({id:c.id,type:'error',error:'unknown command',message:'simulated unsupported '+c.params.method}));return;}
+    result={result:{},session:options.wrongCdpSession?'unexpected-cdp':c.params.session};
+    if(options.securityReplay){const method=c.params.method==='Log.enable'?'Log.entryAdded':'Audits.issueAdded',params=method==='Log.entryAdded'?{entry:{source:'security',level:'error',text:'SIMULATED CSP diagnostic replay',timestamp:1794089691000}}:{issue:{code:'ContentSecurityPolicyIssue',details:{contentSecurityPolicyIssueDetails:{blockedURL:'data',violatedDirective:'img-src',isReportOnly:false,contentSecurityPolicyViolationType:'kURLViolation'}}}};queueMicrotask(()=>this.message({method:'goog:cdp.'+method,params:{session:c.params.session,event:method,params}}));}
+   }
    if(c.method==='browsingContext.navigate'){currentURL=c.params.url;const navigation='nav-'+(++navCount);result={url:currentURL,navigation};queueMicrotask(()=>{if(options.omitNetworkEvents)return;event('network.beforeRequestSent','document-'+navCount,currentURL,{context:'simulated-top',navigation});if(!options.pendingNavigation)event('network.responseCompleted','document-'+navCount,currentURL,{context:'simulated-top',navigation,response:{url:currentURL,status:200,statusText:'OK'}});});}
    if(c.method==='script.evaluate'){let value=c.params.expression.includes('const ready=!!f&&')?baseline():c.params.expression.includes('progress:(()=>')?{progress:{done:true,child:null},snapshot:snapshot()}:snapshot();result={type:'success',realm:'simulated-realm',result:{type:'string',value:JSON.stringify(value)}};}
    if(c.method==='browsingContext.captureScreenshot')result={data:Buffer.from('simulated screenshot; not native evidence').toString('base64')};
@@ -70,9 +76,9 @@ async function harness(name,options={}){
  const pc={require:boundaryRequire,module:{exports:{}},Buffer,URL,URLSearchParams,AbortSignal,fetch:fetchBoundary,performance:localClock,process:proc,WebSocket:Socket,console};vm.runInNewContext(phase+'\nmodule.exports.testConsumers={finishOwnedCase,collectPublic,observedPublicReadback};',pc,{filename:phaseFile});
  const consumers=pc.module.exports.testConsumers;
  function event(method,id,url=PUBLIC+'index.html',extra={}){session.bidi.ws.message({method,params:{context:null,navigation:null,timestamp:1794089691000,redirectCount:0,isBlocked:false,request:{request:id,url,method:'GET'},...extra}});}
- async function start(mode='passive',engine='chromium',origin=PUBLIC){const row={schema:'r0017-passive-simulation/v1',name:'simulated-case',engine,status:'PUBLIC_HEALTHY_PASSED_NOT_CLOSURE',stage:'observation',plannedTopLevelDocuments:1,checks:{},screenshots:[{sha256:'simulated'}]};const dir=path.join(out,row.name);fs.mkdirSync(dir,{recursive:true});api.result.cases.push(row);await api.startSession(engine,'reduce',{width:1100,height:900},1,row,dir,origin,...(mode==='default'?[]:[mode]));return {row,dir};}
+ async function start(mode='passive',engine='chromium',origin=PUBLIC){const row={schema:'r0017-passive-simulation/v1',name:'simulated-case',engine,status:'PUBLIC_HEALTHY_PASSED_NOT_CLOSURE',stage:'observation',plannedTopLevelDocuments:1,checks:{},screenshots:[{sha256:'simulated'}]};const dir=path.join(out,row.name);fs.mkdirSync(dir,{recursive:true});api.result.cases.push(row);if(options.securityProvenance){require(entryFile).configure(api,{groups:'public',cases:selected.join(','),'network-observation':'passive','security-provenance':options.securityProvenance});await api.startSession(engine,'reduce',{width:1100,height:900},1,row,dir,origin);}else await api.startSession(engine,'reduce',{width:1100,height:900},1,row,dir,origin,...(mode==='default'?[]:[mode]));return {row,dir};}
  async function finish(row,dir){await consumers.finishOwnedCase(api,row,session,dir,Date.now(),false);const cut=api.result.cases.find(x=>x.name===row.name);return {row:copy(cut),stored:JSON.parse(fs.readFileSync(path.join(dir,'result.json'))),summary:JSON.parse(fs.readFileSync(path.join(out,'summary.json'))).cases.find(x=>x.name===row.name),frozen:Object.isFrozen(cut)&&Object.isFrozen(cut.network)};}
- async function publicCase(pref='reduce'){const entry=require(entryFile);if(api.networkObservation===undefined)entry.configure(api,{groups:'public',cases:selected.join(','),'network-observation':'passive'});await consumers.collectPublic(api,'chromium',pref,declared);const row=api.result.cases.at(-1);return {row:copy(row),stored:JSON.parse(fs.readFileSync(path.join(out,row.name,'result.json'))),summary:JSON.parse(fs.readFileSync(path.join(out,'summary.json'))).cases.at(-1),frozen:Object.isFrozen(row)};}
+ async function publicCase(pref='reduce'){const entry=require(entryFile);if(api.networkObservation===undefined)entry.configure(api,{groups:'public',cases:selected.join(','),'network-observation':'passive',...(options.securityProvenance?{'security-provenance':options.securityProvenance}:{})});await consumers.collectPublic(api,'chromium',pref,declared);const row=api.result.cases.at(-1);return {row:copy(row),stored:JSON.parse(fs.readFileSync(path.join(out,row.name,'result.json'))),summary:JSON.parse(fs.readFileSync(path.join(out,'summary.json'))).cases.at(-1),frozen:Object.isFrozen(row)};}
  async function dispose(){for(const s of sockets)s.release();await delay(10);for(const id of timers)clearTimeout(id);timers.clear();if(!evidence)fs.rmSync(home,{recursive:true,force:true});}
  return {api,start,finish,publicCase,readback:()=>consumers.observedPublicReadback(api),fetches,event,snapshot,delay,dispose,get session(){return session;},get inventoryCalls(){return inventoryCalls;},get spawnCount(){return spawnCount;},get sent(){return sockets.flatMap(x=>x.sent);},get exitCode(){return proc.exitCode;},home};
 }
@@ -203,6 +209,57 @@ function complete(h,id,url,extra){h.event('network.responseCompleted',id,url,{re
   const x=await h.finish(row,dir);equalCuts(x);failed(x);assert.equal(x.row.checks.passiveRequestsAccounted,true);
   assert.equal(x.row.network.fetchErrors[0].errorText,'net::ERR_ABORTED');assert.equal(x.row.checks.passiveObservationClean,false);
   return {fetchErrorRetained:true,consumerStatus:x.row.status};
+ });
+
+ // C16: opt-in security diagnostic. Real entry/session/consumer/finalizer,
+ // mocked OS/socket boundaries; added telemetry never supplies acceptance.
+ await check('c16-explicit-option-is-exact-and-default-remains-unselected',async()=>{
+  const entry=require(entryFile),args=['--network-observation','passive','--groups','public','--cases',selected.join(','),'--base-file',baseFile,'--base-sha',hash(base),'--root',root,'--out','simulation'];
+  assert.equal(entry.parse([...args,'--security-provenance','csp'])['security-provenance'],'csp');
+  assert.equal(entry.parse(args)['security-provenance'],undefined);
+  for(const value of ['all','off','CSP','network'])assert.throws(()=>entry.parse([...args,'--security-provenance',value]));
+  return {mode:'csp',default:'unselected'};
+ });
+ await check('c16-actual-consumer-enables-only-two-domains-on-owned-session-before-navigation-and-retains-early-replay',async make=>{
+  const h=await make({securityProvenance:'csp',securityReplay:true}),x=await h.publicCase('no-preference');equalCuts(x);
+  const s=x.row.network.securityProvenance;assert.equal(s.status,'ENABLED_BEFORE_MEANINGFUL_NAVIGATION');assert.equal(s.context,'simulated-top');assert.equal(s.session,'simulated-owned-cdp');assert.equal(s.purpose,'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT');
+  const cdp=h.sent.filter(c=>c.method.startsWith('goog:cdp.'));assert.deepEqual(cdp.map(c=>[c.method,c.params]),[['goog:cdp.getSession',{context:'simulated-top'}],['goog:cdp.sendCommand',{method:'Log.enable',params:{},session:'simulated-owned-cdp'}],['goog:cdp.sendCommand',{method:'Audits.enable',params:{},session:'simulated-owned-cdp'}]]);
+  const sub=h.sent.findIndex(c=>c.method==='session.subscribe'),firstCdp=h.sent.findIndex(c=>c.method.startsWith('goog:cdp.')),lastCdp=h.sent.findLastIndex(c=>c.method.startsWith('goog:cdp.')),nav=h.sent.findIndex(c=>c.method==='browsingContext.navigate');assert(sub<firstCdp&&lastCdp<nav);
+  assert.deepEqual(s.commands.map(c=>c.method),['browsingContext.getTree','goog:cdp.getSession','goog:cdp.sendCommand','goog:cdp.sendCommand']);assert(s.commands.every(c=>c.status==='SUCCEEDED'&&c.issued?.command?.commandReceiptId===c.response?.command?.commandReceiptId&&c.response?.association==='pending'));
+  const events=h.sent[sub].params.events;for(const e of ['Log.entryAdded','Audits.issueAdded','Page.frameNavigated','Page.frameDetached','Page.documentOpened','Runtime.executionContextCreated','Runtime.executionContextDestroyed','Runtime.executionContextsCleared'])assert(events.includes('goog:cdp.'+e));
+  const raw=x.row.network.lifecycle.filter(e=>['goog:cdp.Log.entryAdded','goog:cdp.Audits.issueAdded'].includes(e.method));assert.equal(raw.length,2);assert(raw.every(e=>e.params.session==='simulated-owned-cdp'));assert.equal(raw[1].params.params.issue.details.contentSecurityPolicyIssueDetails.violatedDirective,'img-src');
+  const traces=fs.readFileSync(path.join(h.home,'receipts',x.row.name,'bidi-trace.jsonl'),'utf8').trim().split('\n').map(v=>JSON.parse(v));
+  for(let i=0;i<2;i++){const receipt=traces.find(e=>e.kind==='event-observed'&&e.eventReceiptId===raw[i].trace.eventReceiptId);assert(receipt);assert(receipt.traceSequence<s.commands[i+2].response.traceSequence);}
+  const stored=fs.readFileSync(path.join(h.home,'receipts',x.row.name,'lifecycle.jsonl'),'utf8').trim().split('\n').map(v=>JSON.parse(v));for(const e of raw)assert(stored.some(v=>v.trace.eventReceiptId===e.trace.eventReceiptId));
+  assert.equal(h.sent.filter(c=>c.method.startsWith('network.')).length,0);assert.equal(x.row.checks.fullOriginalHealthy,true);assert.equal(x.row.nativeExecutions,0);
+  return {domains:['Log','Audits'],sameOwnedConnection:true,earlyReplayRetained:2,nativeExecutions:0};
+ });
+ for(const fault of [
+  {name:'missing-session',missingCdpSession:true},
+  {name:'ambiguous-top-context',ambiguousTop:true},
+  {name:'wrong-response-session',wrongCdpSession:true},
+  {name:'log-enable-unsupported',securityCommandFailure:'Log.enable'},
+  {name:'audits-enable-unsupported',securityCommandFailure:'Audits.enable'}
+ ])await check('c16-security-setup-refuses-'+fault.name+'-with-owned-cleanup',async make=>{
+  const h=await make({securityProvenance:'csp',...fault}),x=await h.publicCase('no-preference');failed(x);equalCuts(x);
+  assert.equal(x.row.network.securityProvenance.status,'FAILED');assert.equal(x.row.cleanup.ok,true);assert.equal(x.row.protocolFinalization.ok,true);assert.equal(h.sent.filter(c=>c.method==='browsingContext.navigate').length,0);
+  assert.equal(h.sent.filter(c=>c.method.startsWith('network.')).length,0);const next=await h.publicCase('reduce');assert.equal(next.row.status,'NOT_ATTEMPTED');assert.equal(h.spawnCount,1);
+  return {fault:fault.name,cleanup:x.row.cleanup.status,next:next.row.status,simulatedAcquisitions:1};
+ });
+ await check('c16-unapproved-cdp-commands-are-refused-before-wire',async make=>{
+  const h=await make({securityProvenance:'csp'}),{row,dir}=await h.start();await h.session.navigate(PUBLIC+'tests/smoke.html?fixture=healthy');
+  for(const params of [{method:'Network.enable',params:{},session:'simulated-owned-cdp'},{method:'Log.enable',params:{},session:'another-session'}])await assert.rejects(h.session.bidi.call('goog:cdp.sendCommand',params),/refused|diagnostic/i);
+  const x=await h.finish(row,dir);equalCuts(x);failed(x);assert.equal(h.sent.filter(c=>c.method==='goog:cdp.sendCommand').length,2);assert.equal(x.row.network.commandRefusals.length,2);
+  return {unapprovedWireCommands:0,refusals:2};
+ });
+ await check('c16-csp-diagnostic-does-not-excuse-fetch-error-or-invent-terminal',async make=>{
+  const h=await make({securityProvenance:'csp',securityReplay:true}),{row,dir}=await h.start();await h.session.navigate(PUBLIC+'tests/smoke.html?fixture=healthy');before(h,'failed-image','data:image/png;base64,YQ==');h.event('network.fetchError','failed-image','data:image/png;base64,YQ==',{errorText:''});before(h,'still-pending');
+  const x=await h.finish(row,dir);equalCuts(x);failed(x);assert.equal(x.row.network.fetchErrors.length,1);assert.equal(x.row.checks.passiveObservationClean,false);assert.equal(x.row.checks.passiveRequestsAccounted,false);assert.equal(x.row.network.requests.find(r=>r.requestId==='still-pending').terminalEvents.length,0);
+  return {rawFetchErrors:1,rawPending:1,acceptanceRelaxation:false};
+ });
+ await check('c16-security-capture-failure-is-retained-and-blocks-next-acquisition',async make=>{
+  const h=await make({securityProvenance:'csp',captureFailureFile:'lifecycle.jsonl',onClose:({socket,armCaptureFailure})=>{armCaptureFailure();socket.message({method:'goog:cdp.Log.entryAdded',params:{session:'simulated-owned-cdp',event:'Log.entryAdded',params:{entry:{source:'security',level:'error',text:'SIMULATED late CSP',timestamp:1794089691000}}}});}}),first=await h.publicCase('no-preference');equalCuts(first);failed(first);assert(first.row.network.captureErrors.some(e=>e.file==='lifecycle.jsonl'));assert.equal(first.row.checks.passiveObservationIntegrity,false);
+  const next=await h.publicCase('reduce');assert.equal(next.row.status,'NOT_ATTEMPTED');assert.equal(h.spawnCount,1);return {captureFailureRetained:true,next:next.row.status};
  });
  const report={schema:'r0017-passive-observation-controls/v1',nativeExecutions:0,simulationOnly:true,baseSha256:hash(base),phase2Sha256:hash(phase),entrySha256:fs.existsSync(entryFile)?hash(fs.readFileSync(entryFile)):null,methodSha256:fs.existsSync(methodFile)?hash(fs.readFileSync(methodFile)):null,testSha256:hash(fs.readFileSync(__filename)),passed:results.filter(x=>x.passed).length,failed:results.filter(x=>!x.passed).length,results};console.log(JSON.stringify(report,null,2));process.exitCode=report.failed?1:0;
 })().catch(e=>{console.error(e);process.exitCode=1;});

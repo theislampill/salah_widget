@@ -1,4 +1,4 @@
-name: R0017 C15 passive provenance diagnostic
+name: R0017 C16 browser security diagnostic
 
 on:
   push:
@@ -62,12 +62,12 @@ jobs:
             vendor
             docs/state-contracts
 
-      - name: Capture C15 provenance for the bounded Chromium public population
+      - name: Capture C16 security provenance for the bounded Chromium public population
         id: native_collection
         timeout-minutes: 17
         shell: pwsh
         run: |
-          node qualification/tools/qualification/r0017-windows-passive.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha c095924a71b4358677ff0d2bdf8630b9fdb11cd5d14969ac789ae4f17ac9d755 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --network-observation passive --groups public --cases chromium-public-healthy-no-preference,chromium-public-healthy-reduce
+          node qualification/tools/qualification/r0017-windows-passive.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha c095924a71b4358677ff0d2bdf8630b9fdb11cd5d14969ac789ae4f17ac9d755 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --network-observation passive --security-provenance csp --groups public --cases chromium-public-healthy-no-preference,chromium-public-healthy-reduce
           exit $LASTEXITCODE
 
       - name: Preserve workflow setup outcomes on every result
@@ -84,9 +84,10 @@ jobs:
           $r0017Summary = Join-Path $r0017Output 'summary.json'
           $r0017Receipt = [ordered]@{
             schema = 'r0017-workflow-passive-outcomes/v1'
-            phase = 'C15'
+            phase = 'C16'
             purpose = 'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT_FROM_SUPPLEMENTARY_EVENTS'
-            evidenceQuestion = 'Can raw CDP request/session/target receipts uniquely explain the retained BiDi terminal gaps?'
+            evidenceQuestion = 'Which browser security directive and frame lifetime accompany the retained canceled:false CSP failure?'
+            securityProvenance = 'csp; existing owned top-target session; Log and Audits only'
             networkObservation = 'passive-bidi/v1'
             interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'
             plannedCases = @('chromium-public-healthy-no-preference', 'chromium-public-healthy-reduce')
