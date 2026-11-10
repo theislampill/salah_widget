@@ -42,6 +42,9 @@ def plan_request(request, recipe):
     elif profile == "firefox-affected":
         engines, video_only = ["firefox"], True
         requested = FIREFOX_FAILED_HEALTHY + MUTANTS
+    elif profile == "firefox-reordered-timing":
+        engines, video_only = ["firefox"], True
+        requested = ["NE07-reordered24"]
     elif profile == "chromium-recovery":
         engines, video_only = ["chromium"], False
         requested = BARRIERS

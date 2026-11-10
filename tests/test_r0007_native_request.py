@@ -41,6 +41,13 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(set(selected) - set(SELECTOR.FIREFOX_FAILED_HEALTHY + SELECTOR.MUTANTS),
                          {"NE07-reordered24", "NE07-recovery12", "NE07-fold", "NE07-dst-recovery24"})
 
+    def test_timing_diagnostic_is_only_the_failed_healthy_cell(self):
+        plan = SELECTOR.plan_request(request("firefox-reordered-timing"), RECIPE)
+        self.assertEqual(plan["engines"], ["firefox"])
+        self.assertEqual(plan["selectedCaseIds"], ["NE07-reordered24"])
+        self.assertEqual(plan["plannedCells"], 1)
+        self.assertTrue(plan["videoOnly"])
+
     def test_chromium_recaptures_all_five_barriers(self):
         plan = SELECTOR.plan_request(request("chromium-recovery"), RECIPE)
         self.assertEqual(plan["engines"], ["chromium"])

@@ -55,6 +55,26 @@ def wait_async_observation(frame, action, trace, index):
             if failure is None:raise
         finally:state.dispose()
 
+def observe_operation(trace, action_index, operation, callback):
+    """Time an existing host operation without changing its result or exception.
+
+    This adds no page call, retry, sleep, deadline or acceptance decision. Host
+    monotonic timestamps are not native performance/video clock associations.
+    """
+    row={"actionIndex":action_index,"operation":operation,"clock":"host-monotonic-ns",
+         "started":time.monotonic_ns(),"returned":False}
+    trace.setdefault("operationTimings",[]).append(row)
+    try:
+        result=callback()
+        row["returned"]=True
+        return result
+    except BaseException as error:
+        row["errorType"]=type(error).__name__
+        raise
+    finally:
+        row["finished"]=time.monotonic_ns()
+        row["elapsedNs"]=row["finished"]-row["started"]
+
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -306,11 +326,11 @@ def main(argv=None):
                 consumer=None
                 failure_stage="navigation"
                 if case.get("iframe"):
-                    page.goto(f"http://127.0.0.1:{server.server_port}/__iframe.html",wait_until="domcontentloaded")
+                    observe_operation(trace,None,"navigation",lambda:page.goto(f"http://127.0.0.1:{server.server_port}/__iframe.html",wait_until="domcontentloaded"))
                     consumer=page.frame_locator("#actual-consumer")
                     frame=next(f for f in page.frames if f!=page.main_frame)
                 else:
-                    page.goto(f"http://127.0.0.1:{server.server_port}/{case['entry']}?case={quote(case['caseId'])}"+case["hash"],wait_until="domcontentloaded")
+                    observe_operation(trace,None,"navigation",lambda:page.goto(f"http://127.0.0.1:{server.server_port}/{case['entry']}?case={quote(case['caseId'])}"+case["hash"],wait_until="domcontentloaded"))
                     frame=page.main_frame
                 failure_stage="case-actions"
                 for action_index,action in enumerate(case["orderedActions"]):
@@ -327,10 +347,10 @@ def main(argv=None):
                         image_receipts.append({"stage":"native-image-release","url":route.request.url,"rule":target["id"],"alpha":target["alpha"],"at":time.monotonic()})
                     elif kind=="wait":
                         if args.issue==7 and action.get("awaitResult") is True:
-                            wait_async_observation(frame,action,trace,action_index)
-                        else:frame.wait_for_function(action["predicate"],timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf"))
+                            observe_operation(trace,action_index,"wait.async",lambda:wait_async_observation(frame,action,trace,action_index))
+                        else:observe_operation(trace,action_index,"wait",lambda:frame.wait_for_function(action["predicate"],timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf")))
                     elif kind=="sleep":time.sleep(action["ms"]/1000)
-                    elif kind=="release" or kind=="reject":frame.evaluate("([type,id,n])=>window.__prayerFixture[type](id,n)",[kind,action["id"],action.get("occurrence",1)])
+                    elif kind=="release" or kind=="reject":observe_operation(trace,action_index,kind,lambda:frame.evaluate("([type,id,n])=>window.__prayerFixture[type](id,n)",[kind,action["id"],action.get("occurrence",1)]))
                     elif kind=="setRule":frame.evaluate("([id,patch])=>window.__prayerFixture.setRule(id,patch)",[action["id"],action["patch"]])
                     elif kind=="clock":frame.evaluate("epoch=>window.__prayerFixture.setClock(epoch)",action["epoch"])
                     elif kind=="settings":
@@ -356,22 +376,22 @@ def main(argv=None):
                         if action.get('firstRender'):
                             predicate=action.get('firstPredicate')
                             if not predicate:raise ValueError('first-render assertion requires an explicit observation predicate')
-                            row=frame.evaluate("window.__prayerFixture.snapshots.find(s=>"+predicate+")")
-                        else:row=frame.evaluate("window.__prayerFixture.readSnapshot()" if kind=="checkpoint" or action.get('readOnly') else "window.__prayerFixture.snapshots.filter(s=>s.stage!=='read-only-checkpoint').at(-1)")
+                            row=observe_operation(trace,action_index,"capture.first-receipt",lambda:frame.evaluate("window.__prayerFixture.snapshots.find(s=>"+predicate+")"))
+                        else:row=observe_operation(trace,action_index,"capture.receipt",lambda:frame.evaluate("window.__prayerFixture.readSnapshot()" if kind=="checkpoint" or action.get('readOnly') else "window.__prayerFixture.snapshots.filter(s=>s.stage!=='read-only-checkpoint').at(-1)"))
                         if not row:raise AssertionError("no completed original render")
                         row["checkpoint"]=action["name"];trace["snapshots"].append(row)
                         if kind=="capture":
-                            before=frame.evaluate("window.__prayerFixture.ordinal")
+                            before=observe_operation(trace,action_index,"capture.before-ordinal",lambda:frame.evaluate("window.__prayerFixture.ordinal"))
                             # Even page.screenshot(clip=...) changes recorded compositor
                             # dimensions in these engines. Keep the native viewport intact;
                             # retain the requested bounds for optional offline image crops.
-                            bounds=frame.locator(action.get("selector",".c")).bounding_box()
+                            bounds=observe_operation(trace,action_index,"capture.bounds",lambda:frame.locator(action.get("selector",".c")).bounding_box())
                             if not args.video_only:
-                                page.screenshot(path=str(case_output/(action["name"]+".png")))
-                            after=frame.evaluate("window.__prayerFixture.ordinal")
-                            dump(case_output/(action["name"]+"-presentation.json"),{"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"],"capture":"native-video-only" if args.video_only else "native-full-viewport","requestedSelector":action.get("selector",".c"),"requestedBounds":bounds,"viewport":page.viewport_size,
+                                observe_operation(trace,action_index,"capture.screenshot",lambda:page.screenshot(path=str(case_output/(action["name"]+".png"))))
+                            after=observe_operation(trace,action_index,"capture.after-ordinal",lambda:frame.evaluate("window.__prayerFixture.ordinal"))
+                            observe_operation(trace,action_index,"capture.presentation-write",lambda:dump(case_output/(action["name"]+"-presentation.json"),{"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"],"capture":"native-video-only" if args.video_only else "native-full-viewport","requestedSelector":action.get("selector",".c"),"requestedBounds":bounds,"viewport":page.viewport_size,
                                 "firstRenderRequested":bool(action.get("firstRender")),"firstPredicate":action.get("firstPredicate"),
-                                "selectionKind":"first-matching-render" if action.get("firstRender") else "read-only-checkpoint" if action.get("readOnly") else "latest-render"})
+                                "selectionKind":"first-matching-render" if action.get("firstRender") else "read-only-checkpoint" if action.get("readOnly") else "latest-render"}))
                             if action.get("preservation"):
                                 # Separate warm-preservation checkpoint, never a first-prayer
                                 # observer. The existing lunar diagnostic may admit a pending
@@ -399,7 +419,7 @@ def main(argv=None):
                     # do not advance the fixture clock or call product rendering.
                     page.wait_for_timeout(1000)
                     trace["nativePresentationTailMs"]=1000
-                export_expression="(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,resourceTiming:f.resourceTiming(),fontSettlement:window.__r0007FontSettlement?.read()??null,fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight}))}}})()"
+                export_expression="(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,resourceTiming:f.resourceTiming(),fontSettlement:window.__r0007FontSettlement?.read()??null,fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight,display:f.display}))}}})()"
                 # Fast previews produce thousands of complete render receipts. Seal
                 # the observation cut in fixture-owned storage, then transport every
                 # receipt in bounded JSON batches. One large protocol object/string
@@ -421,7 +441,7 @@ def main(argv=None):
             trace["failure"]=repr(error)
             trace["failureStage"]=failure_stage
             try:
-                trace["rawOnFailure"]=frame.evaluate("(()=>{const f=window.__prayerFixture;return {events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,unexpected:f.unexpected,fontSettlement:window.__r0007FontSettlement?.read()}})()")
+                trace["rawOnFailure"]=frame.evaluate("(()=>{const f=window.__prayerFixture;return {events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,unexpected:f.unexpected,fontSettlement:window.__r0007FontSettlement?.read(),fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight,display:f.display}))}}})()")
                 if not args.video_only:
                     page.screenshot(path=str(case_output/"failure.png"))
             except Exception as capture_error:trace["failureCapture"]=repr(capture_error)
