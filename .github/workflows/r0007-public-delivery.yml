@@ -1,0 +1,95 @@
+name: R0007 affected public delivery consumers
+
+on:
+  push:
+    branches: [pro/r0007-explicit-next-event-state-20261106]
+    paths: [docs/state-contracts/evidence/R0007/delivery/request.json]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0007-public-delivery-verification
+  cancel-in-progress: false
+
+jobs:
+  verify-delivery:
+    if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/pro/r0007-explicit-next-event-state-20261106'
+    runs-on: windows-2022
+    timeout-minutes: 35
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/r0007-delivery-browsers
+      SALAH_BROWSER_EXECUTABLE: ''
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Require explicit approval, merge and successful Pages readback
+        shell: pwsh
+        run: |
+          $r0007Evidence = Join-Path $env:RUNNER_TEMP 'r0007-public-delivery'
+          New-Item -ItemType Directory -Path $r0007Evidence -Force | Out-Null
+          "R0007_DELIVERY_EVIDENCE=$r0007Evidence" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $PSNativeCommandUseErrorActionPreference = $false
+          python tools/qualification/r0007_public_consumer.py --request docs/state-contracts/evidence/R0007/delivery/request.json --cases tools/qualification/r0007_public_cases.json --font-observer tools/cp9/r0007_font_observer.js --validate-only *> (Join-Path $r0007Evidence 'request-gate.log')
+          $r0007Exit = $LASTEXITCODE
+          [ordered]@{ stage = 'request-gate'; exitCode = $r0007Exit; requestCommit = $env:GITHUB_SHA } | ConvertTo-Json | Set-Content (Join-Path $r0007Evidence 'request-gate.json')
+          if ($r0007Exit -ne 0) { exit $r0007Exit }
+          $r0007Request = Get-Content -Raw docs/state-contracts/evidence/R0007/delivery/request.json | ConvertFrom-Json
+          # Full immutable ancestry is required for the approved head/base and
+          # exact ordered two-parent merge. Never replace this with depth=1.
+          $r0007Shallow = (git rev-parse --is-shallow-repository).Trim()
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($r0007Shallow -eq 'true') {
+            git fetch --no-tags --filter=blob:none --unshallow origin main *> (Join-Path $r0007Evidence 'fetch-main.log')
+          } else {
+            git fetch --no-tags --filter=blob:none origin main *> (Join-Path $r0007Evidence 'fetch-main.log')
+          }
+          $r0007FetchExit = $LASTEXITCODE
+          $r0007Main = $null
+          if ($r0007FetchExit -eq 0) { $r0007Main = (git rev-parse FETCH_HEAD).Trim() }
+          [ordered]@{ stage = 'fresh-main'; exitCode = $r0007FetchExit; observedMain = $r0007Main; expectedMain = $r0007Request.merge.mainSha } | ConvertTo-Json | Set-Content (Join-Path $r0007Evidence 'fresh-main.json')
+          if ($r0007FetchExit -ne 0) { exit $r0007FetchExit }
+          if ($r0007Main -ne $r0007Request.merge.mainSha) { throw 'Main moved: reconcile the request before acquiring public acceptance.' }
+      - name: Install private native dependencies after the gate
+        shell: pwsh
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $false
+          function Invoke-R0007DeliverySetup($r0007Executable, $r0007Arguments, $r0007Name) {
+            $r0007Started = [DateTimeOffset]::UtcNow.ToString('o')
+            & $r0007Executable @r0007Arguments *> (Join-Path $env:R0007_DELIVERY_EVIDENCE "$r0007Name.log")
+            $r0007Exit = $LASTEXITCODE
+            [ordered]@{ stage = $r0007Name; executable = $r0007Executable; arguments = $r0007Arguments; startedUtc = $r0007Started; finishedUtc = [DateTimeOffset]::UtcNow.ToString('o'); exitCode = $r0007Exit } | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $env:R0007_DELIVERY_EVIDENCE "$r0007Name-producer.json")
+            if ($r0007Exit -ne 0) { exit $r0007Exit }
+          }
+          $r0007Venv = Join-Path $env:RUNNER_TEMP 'r0007-delivery-venv'
+          Invoke-R0007DeliverySetup 'python' @('-m', 'venv', $r0007Venv) 'venv'
+          $r0007Python = Join-Path $r0007Venv 'Scripts/python.exe'
+          Invoke-R0007DeliverySetup $r0007Python @('-m', 'pip', 'install', 'playwright==1.62.0') 'playwright-package'
+          Invoke-R0007DeliverySetup $r0007Python @('-m', 'playwright', 'install', 'chromium', 'firefox') 'playwright-browsers'
+          "R0007_DELIVERY_PYTHON=$r0007Python" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Observe both engines through original public HTML
+        timeout-minutes: 25
+        shell: pwsh
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $false
+          $r0007Started = [DateTimeOffset]::UtcNow.ToString('o')
+          $r0007Output = Join-Path $env:R0007_DELIVERY_EVIDENCE 'acquisition'
+          & $env:R0007_DELIVERY_PYTHON tools/qualification/r0007_public_consumer.py --request docs/state-contracts/evidence/R0007/delivery/request.json --cases tools/qualification/r0007_public_cases.json --font-observer tools/cp9/r0007_font_observer.js --repository-root $env:GITHUB_WORKSPACE --require-fetch-head --output $r0007Output --engine chromium --engine firefox --headed *> (Join-Path $env:R0007_DELIVERY_EVIDENCE 'producer.log')
+          $r0007Exit = $LASTEXITCODE
+          [ordered]@{ schema = 'r0007-public-delivery-producer/v1'; startedUtc = $r0007Started; finishedUtc = [DateTimeOffset]::UtcNow.ToString('o'); exitCode = $r0007Exit; requestCommit = $env:GITHUB_SHA; qualification = 'PARTIAL_INDEPENDENT_PIXELS_REQUIRED' } | ConvertTo-Json | Set-Content (Join-Path $env:R0007_DELIVERY_EVIDENCE 'producer.json')
+          Get-Content (Join-Path $env:R0007_DELIVERY_EVIDENCE 'producer.log') -Tail 15
+          exit $r0007Exit
+      - name: Retain public hashes, original traces, screenshots and videos
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0007-public-delivery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/r0007-public-delivery/
+          if-no-files-found: error
+          retention-days: 14
