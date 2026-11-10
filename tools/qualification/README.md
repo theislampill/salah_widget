@@ -274,3 +274,73 @@ source, storage, original30/141, error, readiness and cleanup predicates. It pre
 the original two-preference obligation across both records and does not replay or
 qualify the failed no-preference context. No automatic repeat, product change,
 CSP relaxation, whole-contract acceptance or final merge approval is implied.
+
+### Received C18 reduced context and C19 cleanliness remedies
+
+[Run 42788740478](https://github.com/theislampill/salah_widget/actions/runs/42788740478),
+attempt 1 at `bbec6f4ff95e753a15fe46ad9d5437bc9eb2a72d`, actually supplied the
+remaining reduced-motion observation. Artifact13751646424, ZIP SHA256
+`e21b40200aff2d0a399f36eed538302420d70f030fa1bae8c1f3995bdc062e95`,
+retains30/30 callbacks,141 assertions,379 requests,314 completions,one observed
+request error,64 unknown outcomes and46 supported cross-session joins.
+Source/accounting, required consumers, finalization and cleanup passed their
+recorded gates; passive cleanliness failed. The original run remains **failed**.
+Its favicon HTTP404 and pagehide/CSP PNG failure are not erased by the completed
+smoke or by a later source correction. The historical no-preference result above
+also remains failed. Existing262 accounting/source controls are retained.
+
+C19 supplies a real test-owned SVG at `tests/r0017-smoke-icon.svg` and declares it
+in both `tests/smoke.html` and `tests/widget-fixture.html`. The wrapper also adds
+the declaration to its replacement document, resolving it against the existing
+root URL. The smoke scripts/body and every other wrapper byte, including CSP,
+storage/clock/fetch ingress and readiness semantics, remain unchanged. A declared
+resource must actually be selected and retrieved; source markup alone is not
+favicon acceptance.
+
+The bounded icon consumer proof uses the existing sandbox-requesting
+`tools/cp9/browser_runtime.py` helper and ordinary HTTP serving of the actual
+candidate checkout. It observes the direct wrapper under no-preference and the
+top-level smoke under reduce in fresh contexts, retaining the original8000ms and
+120000ms readiness boundaries. Positive icon evidence must match the intended
+top-level document, frame and loader, have HTTP200 SVG and an observed successful
+terminal. Every observed icon failure, late origin-root fallback, relevant error
+log and unsuccessful owned cleanup prevents its component success. A separate
+HTTP byte digest is mandatory; any available browser response-body digest is
+labeled separately. `Image.decode()` and nontransparent pixels establish image
+decoding only, not browser-chrome display. The first failed observation stops the
+next navigation. Raw events, all unrelated errors, screenshots and cleanup are
+retained. This component proof does not replace C18, grant clean-native acceptance
+or extend historical Firefox evidence.
+
+The first local C19 attempt failed in browser startup because its host denied a
+required singleton socket, before any case/navigation. It supplied no product or
+icon observation. Its conservative `CLEANUP_UNVERIFIED` result and actual process
+exit/temporary-directory cleanup records are preserved. The Windows invocation
+uses the same reviewed predicates and the installed Chrome executable; it does
+not disable sandboxing or CSP. The workflow records the actual pushed commit/tree,
+binary identity, dependency version and setup/collection outcomes. Its source
+binding is the retained precommit integration receipt, not a substitute for the
+current checked-out commit. A future native result must be received and reviewed
+before any further attempt or acceptance conclusion.
+
+The PNG failure has a separate lifecycle owner. The exact
+[R0021 receiving packet](https://github.com/theislampill/salah_widget/issues/33#issuecomment-6768062051)
+contains the causal trace, two-file retirement-intent correction, full focused
+regression and a product patch adapted to received R000B head
+`68e51aa6d56060e7431ee1f0d62101b67763abfa`. Independent source review observed the
+baseline's three expected failures,7/7 corrected retirement controls and46/46
+affected existing controls. The patch is **not integrated by R0017**; receiving
+ownership, successor behavioral proof, generated delivery and native enforced-CSP
+qualification remain outstanding. Neither the source PASS nor the posted handoff
+disposes of the original failure. The owner-authorized R0017→R0007→R000B order is
+unchanged.
+
+The [owner's F03 consequence decision](https://github.com/theislampill/salah_widget/issues/23#issuecomment-6767588013)
+accepts only the disclosed historical effects/limitations. The mandatory old
+pre-effect criterion remains UNSATISFIED; no current technical requirement or
+future merge is waived. F04 formal lifecycle certification remains withheld.
+Original R0017 section8 distinguishes that formal status from application/issue
+acceptance. All123 criteria, a qualified remedy or independently accepted contract-scoped
+disposition, exact-candidate review,
+owner merge approval and subsequent delivery/closure readbacks still govern the
+whole-RLGWO outcome. Issue23 remains open.
