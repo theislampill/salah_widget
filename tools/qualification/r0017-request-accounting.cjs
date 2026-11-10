@@ -63,6 +63,7 @@ function defaultPolicy(raw){
   return {allowed:false,classification:u.origin===o.origin?'outside-public-prefix':'off-origin-or-provider'};
  }catch{return {allowed:false,classification:'invalid-url'};}
 }
+function bootstrapShape(p){const u=p?.request?.url;return p?.type==='Script'&&p.request?.method==='GET'&&p.loaderId===''&&typeof u==='string'&&u.startsWith('blob:'+new URL(PUBLIC).origin+'/')&&p.documentURL===u;}
 function processEnd(row){
  const c=row.cleanup,p=row.protocolFinalization,owned=c?.ownedProcesses;
  const valid=x=>Number.isInteger(x?.ProcessId)&&x.ProcessId>0&&nonempty(x.Name)&&nonempty(x.ExecutablePath)&&nonempty(x.CreationDate)&&Number.isFinite(Date.parse(x.CreationDate));
@@ -138,7 +139,15 @@ function reconcile(row,policy=defaultPolicy){
   if(!item.valid){orphans.push({method:e.method,reference,raw:copy(p??null),invalidIdentity:true});continue;}
   let candidates=bySessionId.get(JSON.stringify([session,p?.requestId]))||[],join=null;
   if(candidates.length===0){const a=(childAttachments.get(session)||[]).filter(a=>a.p.targetInfo.targetId===p?.requestId&&a.index<item.index);
-   if(a.length===1&&(targetAttachments.get(JSON.stringify([a[0].session,p.requestId]))||[]).length===1){candidates=bySessionId.get(JSON.stringify([a[0].session,p.requestId]))||[];if(candidates.length===1&&candidates[0].index<a[0].index)join={kind:'EXACT_BOOTSTRAP_PARENT_TARGET_CHILD',attachment:a[0].reference,parentSession:a[0].session,childSession:session,targetId:p.requestId};else candidates=[];}
+   if(a.length===1&&(targetAttachments.get(JSON.stringify([a[0].session,p.requestId]))||[]).length===1){
+    candidates=bySessionId.get(JSON.stringify([a[0].session,p.requestId]))||[];
+    if(candidates.length===1&&candidates[0].index<a[0].index){const parent=candidates[0],target=a[0].p.targetInfo;
+     // IDs and order select the candidate. The supported bootstrap metadata
+     // must corroborate it; a contradictory target cannot donate an outcome.
+     if(bootstrapShape(parent.p)&&target.type==='worker'&&target.url===parent.p.request.url&&nonempty(parent.p.frameId)&&target.parentFrameId===parent.p.frameId)join={kind:'EXACT_BOOTSTRAP_PARENT_TARGET_CHILD',attachment:a[0].reference,parentSession:a[0].session,childSession:session,targetId:p.requestId};
+     else{issue('INCOHERENT_CROSS_SESSION_BOOTSTRAP',{reference,start:parent.reference,attachment:a[0].reference});candidates=[];}
+    }else candidates=[];
+   }
   }
   if(!nonempty(p?.requestId)||candidates.length!==1){orphans.push({method:e.method,reference,raw:copy(p??null)});issue('ORPHAN_OR_AMBIGUOUS_CDP_EVENT',{method:e.method,reference});continue;}
   const target=candidates[0];if(target.index>=item.index)issue('CDP_EVENT_PRECEDES_START',{reference,start:target.reference});
@@ -244,8 +253,8 @@ function reconcile(row,policy=defaultPolicy){
   return {consumer:c.key,fixturePointer:c.pointer,documentId:c.fixture.documentId,sourceSha256:c.fixture.sourceSha256,frameId:f.id,loaderId:f.loaderId,documentRequest:documents[0].reference,frameNavigation:frame.reference,documentOpened:opened[0].reference,windowRuntime:runtimes[0].reference,windowRealm:{id:realmId,created:realms[0].reference},fixtureURL:p.initiator.url};
  }
  function bootstrap(start,visited=new Set()){
-  if(!start?.valid||visited.has(start))return null;visited.add(start);const p=start.p,u=p.request?.url;
-  if(p.type!=='Script'||p.request?.method!=='GET'||p.loaderId!==''||typeof u!=='string'||!u.startsWith('blob:'+new URL(PUBLIC).origin+'/')||p.documentURL!==u)return null;
+  if(!start?.valid||visited.has(start))return null;visited.add(start);const p=start.p;
+  if(!bootstrapShape(p))return null;
   const document=documentFor(start);if(!document)return null;
   if(start.session===rootSession)return {kind:'PINNED_WINDOW_BLOB_PRODUCER_SET',exactProducer:null,possibleProducers:['moon-refinement','native-sky'],document,bootstrap:start.reference};
   const a=childAttachments.get(start.session)||[];if(a.length!==1||a[0].p.targetInfo.type!=='worker')return null;

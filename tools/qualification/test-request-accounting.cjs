@@ -29,7 +29,7 @@ function make(){
  function bidi(id,u,terminal='network.responseCompleted',extra={}){const key=JSON.stringify(['connection-c18',id,0]),b={method:'network.beforeRequestSent',request:{id,url:u,method:'GET'},response:{},context:null,navigation:null,redirectCount:0,trace:trace()},r={key,connectionId:'connection-c18',requestId:id,redirectCount:0,url:u,context:null,navigation:null,policy:{allowed:true,classification:'allowed-public-prefix'},beforeEvents:[b],responseEvents:[],terminalEvents:[]};
   if(terminal)r.terminalEvents.push({...copy(b),method:terminal,response:{url:u,status:200},errorText:terminal==='network.fetchError'?'actual error':null,trace:trace()});Object.assign(r,extra);row.network.requests.push(r);row.network.observedNetworkEvents.push(...r.beforeEvents,...r.responseEvents,...r.terminalEvents);return r;}
  function start(id,u,session='ROOT',extra={}){return event('Network.requestWillBeSent',{requestId:id,request:{url:u,method:'GET'},documentURL:u,loaderId:'',frameId:'FRAME',type:'Script',initiator:{type:'other',url},...extra},session);}
- function attach(id,child,u,parent='ROOT'){return event('Target.attachedToTarget',{sessionId:child,targetInfo:{targetId:id,type:'worker',url:u},waitingForDebugger:false},parent);}
+ function attach(id,child,u,parent='ROOT'){return event('Target.attachedToTarget',{sessionId:child,targetInfo:{targetId:id,type:'worker',url:u,parentFrameId:'FRAME'},waitingForDebugger:false},parent);}
  function end(id,session='ROOT',kind='Network.loadingFinished'){return event(kind,{requestId:id,...(kind==='Network.loadingFailed'?{errorText:'net::ERR_FAILED',canceled:false}:{encodedDataLength:12})},session);}
  start('DOC1',url,'ROOT',{type:'Document',loaderId:'DOC1'});end('DOC1');
  event('Page.frameNavigated',{frame:{id:'FRAME',parentId:'TOP',loaderId:'DOC1',url:url.split('#')[0],urlFragment:'#'+f.hash}});
@@ -54,6 +54,23 @@ for(const method of ['network.beforeRequestSent','network.authRequired','network
 check('missing v2 raw event capture cannot be silently replaced by grouped records',()=>{const h=make();delete h.row.network.observedNetworkEvents;const r=reconcile(h);assert.equal(r.allObservedRecordsReconciled,false);});
 check('complete BiDi plus CDP union preserves completion error and unknown separately',()=>{const h=make();h.start('done',PUBLIC+'config.js');h.end('done');h.bidi('done',PUBLIC+'config.js');h.start('bad',PUBLIC+'failed.js','ROOT',{type:'Other'});h.end('bad','ROOT','Network.loadingFailed');h.bidi('bad',PUBLIC+'failed.js','network.fetchError');h.start('blob1','blob:https://theislampill.github.io/worker1');h.bidi('blob1','blob:https://theislampill.github.io/worker1',null);const before=JSON.stringify(h.row.network),r=reconcile(h);assert.equal(r.records.length,4);assert.deepEqual(r.records.slice(1).map(x=>x.outcome),['observed-completion','observed-error','unobserved']);assert.equal(r.allNetworkOutcomesObserved,false);assert.equal(r.allObservedRecordsReconciled,true);assert.equal(r.materialUnknowns.length,0);assert(r.observedErrors.length>0);assert.equal(JSON.stringify(h.row.network),before);});
 check('one exact bootstrap attachment admits cross-session terminal without URL joining',()=>{const h=make(),u='blob:https://theislampill.github.io/shared';h.start('worker1',u);h.attach('worker1','CHILD',u);h.end('worker1','CHILD');const r=reconcile(h);assert.equal(r.records.length,2);assert.equal(r.records[1].outcome,'observed-completion');assert.equal(r.counts.crossSessionCompletions,1);assert.equal(r.allObservedRecordsReconciled,true);});
+// Each mutation changes one supported relationship from the retained native
+// bootstrap shape. Matching request/target/session IDs alone cannot donate a terminal.
+for(const fault of ['conflicting-target-url','missing-target-url','wrong-target-type','nonblob-script','wrong-parent-frame','non-script-start','non-get-start','nonempty-loader','document-url-mismatch'])check('cross-session '+fault+' retains the terminal as an orphan and the request as unknown',()=>{
+ const h=make(),u='blob:https://theislampill.github.io/shared',start=h.start('worker1',u),attachment=h.attach('worker1','CHILD',u),p=start.params.params,t=attachment.params.params.targetInfo;
+ if(fault==='conflicting-target-url')t.url=PUBLIC+'tests/widget-fixture.html';
+ if(fault==='missing-target-url')delete t.url;
+ if(fault==='wrong-target-type')t.type='iframe';
+ if(fault==='nonblob-script'){p.request.url=PUBLIC+'config.js';p.documentURL=p.request.url;t.url=p.request.url;}
+ if(fault==='wrong-parent-frame')t.parentFrameId='ALIEN';
+ if(fault==='non-script-start')p.type='Fetch';
+ if(fault==='non-get-start')p.request.method='POST';
+ if(fault==='nonempty-loader')p.loaderId='DOC1';
+ if(fault==='document-url-mismatch')p.documentURL=h.url;
+ const terminal=h.end('worker1','CHILD'),r=reconcile(h),record=r.records.find(x=>x.requestId==='worker1');
+ assert.equal(record.outcome,'unobserved');assert.equal(record.terminals.length,0);assert.equal(r.records.length,2);assert.equal(r.counts.crossSessionCompletions,0);assert.equal(r.allObservedRecordsReconciled,false);assert.equal(r.sourceClaimsBound,false);
+ assert(r.orphans.some(x=>x.reference?.eventReceiptId===terminal.trace.eventReceiptId&&JSON.stringify(x.raw)===JSON.stringify(terminal.params.params)));assert(r.captureProblems.length>0);
+});
 check('document identity joins only the explicitly reported CDP fragment to the full BiDi URL',()=>{const h=make(),start=h.row.network.lifecycle.find(e=>e.method==='goog:cdp.Network.requestWillBeSent');start.params.params.request={url:h.url.split('#')[0],urlFragment:'#'+h.f.hash,method:'GET'};h.bidi('DOC1',h.url);const r=reconcile(h);assert.equal(r.records.length,1);assert.equal(r.counts.completed,1);assert.equal(r.allObservedRecordsReconciled,true);start.params.params.request.urlFragment='#alien';const bad=reconcile(h);assert.equal(bad.allObservedRecordsReconciled,false);assert.equal(bad.records.length,2);});
 check('four identical worker URLs remain four identities',()=>{const h=make(),u='blob:https://theislampill.github.io/shared';for(let i=1;i<=4;i++){h.start('w'+i,u);h.attach('w'+i,'C'+i,u);h.end('w'+i,'C'+i);}const r=reconcile(h);assert.equal(r.records.length,5);assert.equal(r.counts.completed,5);assert.equal(new Set(r.records.map(x=>x.key)).size,5);});
 for(const kind of ['wrong-session','wrong-connection','duplicate-attachment','duplicate-terminal','orphan-response','orphan-terminal','duplicate-start','redirect'])check(kind+' is retained and cannot donate a successful identity',()=>{
