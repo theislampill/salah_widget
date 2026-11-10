@@ -9,6 +9,52 @@ import subprocess, sys, threading, time, base64, re, math
 from pathlib import Path
 from urllib.parse import quote, urlsplit
 
+# Playwright1.62 polls the immediate predicate value; a Promise is truthy even
+# when it later resolves false. Keep its native polling/deadline, but expose only
+# a boolean after the R0007 async observer has actually fulfilled truthfully.
+ASYNC_WAIT_STATE = "({pending:false,accepted:false,cancelled:false,error:null,attempts:0,falseResults:0,startedAt:performance.now(),acceptedAt:null})"
+ASYNC_WAIT_POLL = """({state,source}) => {
+  if(state.cancelled)return false;
+  if(state.error!==null)throw new Error(state.error);
+  if(state.accepted)return true;
+  if(!state.pending){
+    state.pending=true;state.attempts++;
+    Promise.resolve().then(()=>state.cancelled?false:(0,eval)('('+source+')')()).then(value=>{
+      if(state.cancelled)return;
+      state.pending=false;
+      if(value){state.accepted=true;state.acceptedAt=performance.now();}
+      else state.falseResults++;
+    },error=>{
+      if(!state.cancelled){state.pending=false;state.error=String(error);}
+    });
+  }
+  return false;
+}"""
+
+def wait_async_observation(frame, action, trace, index):
+    state=frame.evaluate_handle(ASYNC_WAIT_STATE)
+    receipt={"actionIndex":index,"predicateSha256":digest(action["predicate"].encode()),"status":"FAILED"}
+    trace.setdefault("asyncWaitReceipts",[]).append(receipt)
+    failure=None
+    try:
+        result=frame.wait_for_function(ASYNC_WAIT_POLL,arg={"state":state,"source":action["predicate"]},
+            timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf"))
+        try:
+            if result.json_value() is not True:raise AssertionError("async observer did not fulfill true")
+        finally:result.dispose()
+        receipt["status"]="AWAITED_TRUE"
+    except Exception as error:
+        failure=error
+        raise
+    finally:
+        try:
+            receipt.update(state.evaluate("s=>{s.cancelled=true;return {...s,finishedAt:performance.now()};}"))
+        except Exception as error:
+            receipt["cleanupFailure"]=repr(error)
+            receipt["status"]="FAILED"
+            if failure is None:raise
+        finally:state.dispose()
+
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -65,6 +111,10 @@ def validate_cases(packet, root):
                 raise ValueError("unsupported action: "+action["type"])
             if action.get('firstRender') and not action.get('firstPredicate'):
                 raise ValueError('first-render capture requires an exact observation predicate')
+            if action.get("awaitResult") and (packet["issue"]!=7 or action["type"]!="wait"):
+                raise ValueError("awaitResult is confined to R0007 wait observations")
+            if packet["issue"]==7 and action["type"]=="wait" and action["predicate"].lstrip().startswith("async ") and action.get("awaitResult") is not True:
+                raise ValueError("R0007 async predicate requires awaited truthy polling")
         if "simTime=23%3A30" in case["hash"]:
             if "timeScale" in case["hash"] or case["clockPolicy"]["mode"] != "fixed":
                 raise ValueError("frozen overnight must omit timeScale and fix pre-boot epoch")
@@ -263,7 +313,7 @@ def main(argv=None):
                     page.goto(f"http://127.0.0.1:{server.server_port}/{case['entry']}?case={quote(case['caseId'])}"+case["hash"],wait_until="domcontentloaded")
                     frame=page.main_frame
                 failure_stage="case-actions"
-                for action in case["orderedActions"]:
+                for action_index,action in enumerate(case["orderedActions"]):
                     trace["actions"].append(action)
                     kind=action["type"]
                     if kind=="waitImage":
@@ -275,7 +325,10 @@ def main(argv=None):
                         route,target=image_pending.pop(action["id"])
                         route.fulfill(status=200,body=base64.b64decode(target["pngBase64"]),headers={"Content-Type":"image/png","Access-Control-Allow-Origin":"*"})
                         image_receipts.append({"stage":"native-image-release","url":route.request.url,"rule":target["id"],"alpha":target["alpha"],"at":time.monotonic()})
-                    elif kind=="wait":frame.wait_for_function(action["predicate"],timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf"))
+                    elif kind=="wait":
+                        if args.issue==7 and action.get("awaitResult") is True:
+                            wait_async_observation(frame,action,trace,action_index)
+                        else:frame.wait_for_function(action["predicate"],timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf"))
                     elif kind=="sleep":time.sleep(action["ms"]/1000)
                     elif kind=="release" or kind=="reject":frame.evaluate("([type,id,n])=>window.__prayerFixture[type](id,n)",[kind,action["id"],action.get("occurrence",1)])
                     elif kind=="setRule":frame.evaluate("([id,patch])=>window.__prayerFixture.setRule(id,patch)",[action["id"],action["patch"]])

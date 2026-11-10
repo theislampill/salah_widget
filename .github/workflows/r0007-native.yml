@@ -72,13 +72,9 @@ jobs:
         run: |
           $r0007Started = [DateTimeOffset]::UtcNow.ToString('o')
           $PSNativeCommandUseErrorActionPreference = $false
-          # This is a new browser environment. Include the small preserved
-          # motion/Moon subset instead of assuming historical pixel equivalence.
-          $r0007Recipe = Get-Content -LiteralPath 'tests/rlgwo/R0007-next-event-recipes.json' -Raw | ConvertFrom-Json
-          $r0007CaseIds = @($r0007Recipe.execution.defaultCaseIds) + @($r0007Recipe.execution.conditionalPreservationCaseIds)
-          $r0007CaseArguments = @()
-          foreach ($r0007CaseId in $r0007CaseIds) { $r0007CaseArguments += @('--case-id', $r0007CaseId) }
-          & $env:R0007_PYTHON tools/qualification/r0007_native.py --source-root $env:GITHUB_WORKSPACE --evidence-root $env:R0007_EVIDENCE --engine chromium --engine firefox --include-mutants --headed @r0007CaseArguments *> (Join-Path $env:R0007_EVIDENCE 'launcher.log')
+          # A finite committed profile selects only the required observations.
+          # Invalid requests fail before launch; absent requests retain full62.
+          & $env:R0007_PYTHON tools/qualification/r0007_native_request.py --source-root $env:GITHUB_WORKSPACE --evidence-root $env:R0007_EVIDENCE *> (Join-Path $env:R0007_EVIDENCE 'launcher.log')
           $r0007Exit = $LASTEXITCODE
           [ordered]@{ schema = 'r0007-launcher-producer/v1'; qualification = 'PARTIAL'; startedUtc = $r0007Started; finishedUtc = [DateTimeOffset]::UtcNow.ToString('o'); exitCode = $r0007Exit; candidate = $env:GITHUB_SHA } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $env:R0007_EVIDENCE 'launcher-producer.json') -Encoding utf8
           Get-Content -LiteralPath (Join-Path $env:R0007_EVIDENCE 'launcher.log') -Tail 25

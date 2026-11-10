@@ -4,6 +4,22 @@
   'use strict';
   const fonts=document.fonts,nativeSetTimeout=window.setTimeout.bind(window);
   const done=new WeakSet(),failed=new WeakSet(),known=new Map(),events=[],lifecycleErrors=[];
+  const stylesheetTerminals=new WeakMap(),stylesheetEvents=[];
+  const stylesheetSelector='link[rel="stylesheet"][href^="https://fonts.googleapis.com/css2?"]';
+  for(const type of ['load','error'])document.addEventListener(type,event=>{
+    const link=event.target;
+    // Element load stops at Document; Window capture cannot observe it. Bind
+    // only a native terminal for the actual authored link, never a URL proxy.
+    if(!event.isTrusted||link!==document.querySelector(stylesheetSelector)||link?.tagName!=='LINK')return;
+    const receipt=Object.freeze({event:type,tagName:'LINK',url:link.href,isTrusted:true,
+      at:performance.now(),mediaAtDispatch:link.media,observer:'document-capture'});
+    stylesheetTerminals.set(link,receipt);stylesheetEvents.push(receipt);
+  },true);
+  function stylesheetTerminal(link){
+    const receipt=link&&stylesheetTerminals.get(link);
+    return receipt&&link.isConnected&&link.ownerDocument===document&&
+      link===document.querySelector(stylesheetSelector)&&receipt.url===link.href?receipt:null;
+  }
   let nextId=0,pendingDeferred=0;
   const relevant=face=>/^(Fraunces|Inter)$/i.test(String(face.family||'').replace(/["']/g,'').trim());
   const metadata=face=>({family:face.family,weight:face.weight,style:face.style,status:face.status});
@@ -46,9 +62,9 @@
       events.push({kind:'deferred-receipt',type,at:performance.now(),faces:faces.map(face=>({id:identify(face).id,...metadata(face)}))});
     },0);
   });
-  window.__r0007FontSettlement=Object.freeze({settled,read:()=>{
+  window.__r0007FontSettlement=Object.freeze({settled,stylesheetTerminal,read:()=>{
     const isSettled=settled();
     return {scope:'STATIC_AUTHORED_FONT_STARTUP_ONLY',status:fonts.status,settled:isSettled,pendingDeferred,
-      lifecycleErrors:lifecycleErrors.slice(),faces:scan().map(face=>({id:identify(face).id,...metadata(face),loadingdoneReceipt:done.has(face),loadingerrorReceipt:failed.has(face)})),events:events.slice()};
+      lifecycleErrors:lifecycleErrors.slice(),faces:scan().map(face=>({id:identify(face).id,...metadata(face),loadingdoneReceipt:done.has(face),loadingerrorReceipt:failed.has(face)})),events:events.slice(),stylesheetEvents:stylesheetEvents.slice()};
   }});
 })();

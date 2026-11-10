@@ -21,20 +21,30 @@ const setFontChanged=authored.match(/function cnFontsChanged\(event\)\{[\s\S]*?\
 const observerPath=path.join(__dirname,'../tools/cp9/r0007_font_observer.js');
 const href='https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap';
 
-function scene({event='load',media='all',dirty=false,status='loaded',url=href,tagName='LINK',linkPresent=true,layoutStartsLoad=false,faces=[]}={}){
+function scene({event='load',media='all',dirty=false,status='loaded',url=href,tagName='LINK',linkPresent=true,layoutStartsLoad=false,faces=[],trusted=true,differentTarget=false}={}){
   let settle;const fontPromise=new Promise(resolve=>{settle=resolve;});
   const state={dirty,status,readyReads:0,layoutReads:0,layoutStartsLoad,faces},listeners=new Map(),tasks=[];
   const fonts={get status(){return state.status;},get ready(){state.readyReads++;return state.status==='loading'?fontPromise:Promise.resolve(fonts);},*[Symbol.iterator](){yield* state.faces;},
     addEventListener(type,listener){if(!listeners.has(type))listeners.set(type,[]);listeners.get(type).push(listener);}};
-  const nativeSetTimeout=fn=>tasks.push(fn);
-  const context=vm.createContext({performance:{now:()=>state.layoutReads},setTimeout:nativeSetTimeout,document:{fonts,querySelector:()=>linkPresent?{href,media}:null},window:{setTimeout:nativeSetTimeout,__prayerFixture:{
-    assets:event?[{event,tagName,url}]:[],
+  const nativeSetTimeout=fn=>tasks.push(fn),documentListeners=new Map();
+  const link={href,media,tagName:'LINK',isConnected:true,relList:{contains:value=>value==='stylesheet'}};
+  const document={fonts,querySelector:()=>linkPresent?link:null,addEventListener(type,listener,capture){
+    assert.equal(capture,true,'observer must use document capture');
+    if(!documentListeners.has(type))documentListeners.set(type,[]);documentListeners.get(type).push(listener);
+  }};
+  link.ownerDocument=document;
+  const context=vm.createContext({performance:{now:()=>state.layoutReads},setTimeout:nativeSetTimeout,document,window:{setTimeout:nativeSetTimeout,__prayerFixture:{
+    // DOM's Document parent rule excludes Window for element load. Error is
+    // not excluded. This test double does not claim a native event occurred.
+    assets:event&&event!=='load'?[{event,tagName,url}]:[],
     readSnapshot(){state.layoutReads++;if(state.layoutStartsLoad){state.layoutStartsLoad=false;state.status='loading';}return {dirty:state.dirty};}
   }},_cnFit:'old',_renderDirty:dirty});
   // Old-candidate RED has no observer file. No substitute observer is supplied.
   if(fs.existsSync(observerPath))vm.runInContext(fs.readFileSync(observerPath,'utf8'),context);
+  const target=differentTarget||url!==href||tagName!=='LINK'?{...link,href:url,tagName}:link;
+  if(event)for(const listener of documentListeners.get(event)||[])listener({type:event,target,isTrusted:trusted});
   vm.runInContext('const cnRelevantFont=face=>/^(Fraunces|Inter)$/i.test(face.family.replace(/["\x27]/g,"").trim());'+fontChanged+'\n'+setFontChanged+";document.fonts.addEventListener('loadingdone',cnFontsChanged);document.fonts.addEventListener('loadingerror',cnFontsChanged);",context);
-  return {state,context,settle(){state.status='loaded';settle(fonts);},
+  return {state,context,link,settle(){state.status='loaded';settle(fonts);},
     fontChanged(){vm.runInContext('cnFontChanged();',context);state.dirty=context._renderDirty;},
     fire(type,eventFaces=state.faces){for(const listener of listeners.get(type)||[])listener({type,fontfaces:eventFaces});state.dirty=context._renderDirty;},
     flushObservers(){while(tasks.length)tasks.shift()();},clearDirty(){state.dirty=false;context._renderDirty=false;}};
@@ -51,6 +61,14 @@ test('an unrelated LINK receipt and preconnect completion cannot supply styleshe
 }));
 test('a loaded stylesheet must have its actual media activation applied',()=>each(async p=>{
   assert.equal(await evaluate(p.source,scene({media:'print'})),false,p.id);
+}));
+test('synthetic and same-URL wrong-element terminals cannot release the authored link',()=>each(async p=>{
+  for(const overrides of [{trusted:false},{differentTarget:true}])
+    assert.equal(await evaluate(p.source,scene(overrides)),false,p.id+JSON.stringify(overrides));
+}));
+test('a terminal receipt cannot follow its element to another stylesheet URL',()=>each(async p=>{
+  const s=scene();s.link.href='https://fonts.googleapis.com/css2?family=Other';
+  assert.equal(await evaluate(p.source,s),false,p.id);
 }));
 test('terminal stylesheet failure permits settled fallback with no registered font faces',()=>each(async p=>{
   assert.equal(await evaluate(p.source,scene({event:'error',media:'print'})),true,p.id);
