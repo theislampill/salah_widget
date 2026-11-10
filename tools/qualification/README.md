@@ -1,8 +1,8 @@
 # R0017 corrective Windows qualification
 
-These collectors define bounded native qualification phases and a separate C14 passive observation route with C15 diagnostic provenance capture for issue #23. Their application payload is pinned to merge `eebba178172f96b3ffe5ab3845bc0fffd57c6e1b`. They use installed Windows Chromium/ChromeDriver and Firefox/GeckoDriver through WebDriver and BiDi, with Node built-ins. They install no browser or framework.
+The C1–C18 collectors define bounded native qualification phases and a separate passive observation route for issue #23. Their application payload is pinned to merge `eebba178172f96b3ffe5ab3845bc0fffd57c6e1b`. They use installed Windows Chromium/ChromeDriver and Firefox/GeckoDriver through WebDriver and BiDi, with Node built-ins, and install no browser or framework. The separate C19 icon consumer observation below uses installed Chrome with Playwright 1.62.0 in a job-owned environment; it downloads no browser and does not replace the C18 collector.
 
-**Every result remains `qualification: PARTIAL`. A zero browser-collector exit means that phase's declared checks passed, not whole-RLGWO acceptance or issue closure.** The separate driver-only fault probe can pass without executing any browser or product case. Historical subproof admission, reconciliation of every retained failure and independent acceptance remain separate from a collector verdict and are listed in `summary.json`.
+**Every C1–C18 collector result remains `qualification: PARTIAL`. A zero browser-collector exit means that phase's declared checks passed, not whole-RLGWO acceptance or issue closure.** The separate driver-only fault probe can pass without executing any browser or product case. Historical subproof admission, reconciliation of every retained failure and independent acceptance remain separate from a collector verdict and are listed in `summary.json`.
 
 ## Source-linked contract map
 
@@ -345,8 +345,67 @@ CSP, automatic-request/error predicates and cleanup. It changes no application o
 fixture source and enables no CSP bypass. Source-only controls of the exact
 installed poller reproduce the original deferred-eval failure and pass all seven
 corrected cases, including delayed readiness and persistent unready states. The
-actual corrected native outcome must be received and independently reviewed before
-any further attempt or acceptance conclusion.
+actual corrected native outcome is retained separately below; the failed first
+Windows result and its missing observations remain unchanged.
+
+### C19 actual icon consumers at the corrected source
+
+[Run 42832477062](https://github.com/theislampill/salah_widget/actions/runs/42832477062),
+attempt 1, executed the corrected observer at
+`39334eb830c4f991f7749e10705615dc955457d6`, tree
+`32a9e71b27bd8c3c13bcc120ddea549f52f89b34`. Artifact `13771044218` is
+7,101,008 bytes with ZIP SHA256
+`353d3dea2c8584a0ae46e3843f0ad04eea1ff0f14e879feaab1968d3eedc631f`.
+Its literal result is `ICON_COMPONENTS_OBSERVED`; this is the bounded icon
+component verdict, not an error-free C18 run or whole-contract acceptance.
+Independent native receiving report SHA256
+`40f052c461c9c45916cf7bc43870c74c6754cb72a19233c2664916a6d0b57d88`
+binds the ZIP, exact source, raw events, body artifacts, both PNGs and cleanup.
+
+| Actual consumer | Preference and readiness | Automatic request and result |
+| --- | --- | --- |
+| Direct wrapper, including its replacement document | no-preference; 2,297 ms within the original 8,000 ms bound | `1880.7`, intended top-level frame/loader/document; HTTP 200 SVG and successful terminal |
+| Top-level smoke | reduce; 53,907 ms within the original 120,000 ms bound | `2744.10`, intended top-level frame/loader/document; HTTP 200 SVG and successful terminal |
+
+Both automatically selected browser response bodies are exactly 270 bytes with
+SHA256 `2461c918707f0487683d1d8922cc4988b6fd43678d2519db5a318806a7300478`.
+Both mandatory, separately labeled HTTP readbacks independently return the same
+bytes and SVG media type. Each separate native image decoder records 32×32
+pixels with 1,000 nonzero-alpha pixels. Decoder requests revalidated cached
+content: the server records HTTP 304 while CDP presents effective HTTP 200. The
+decode result is not a claim of a second fresh 270-byte network transfer or of
+browser-chrome/tab-icon appearance. No origin-root `/favicon.ico` fallback or
+icon-related failure is present in the retained observation. No request is hidden
+or converted from 404 to success; the historical favicon 404s remain in their
+original artifacts.
+
+The actual smoke again executed all 30 required callbacks and 141 assertions,
+with zero failed, skipped or missing required cases. Both retained page PNGs were
+visually inspected. The wrapper image shows the rendered controlled widget; the
+smoke image shows its PASS banner and assertion list. These views do not establish
+live motion, general visual/scientific acceptance or tab-icon appearance.
+
+All other observations are retained. The wrapper has two unmatched blob-script
+starts; the smoke has 49. Their terminal outcomes remain UNKNOWN. The smoke has
+one canceled child-frame script request (`2744.14`, `net::ERR_ABORTED`) and one
+CSP-blocked child-frame image (`2744.228`, `canceled:false`). Two matching security
+logs and two console errors diagnose that one image; they are not two failed
+images. The image's actual initiator includes the outgoing attempt-15 pagehide,
+disposal and preview publication path after the next attempt-16 Document request.
+This narrow observer records no Runtime realm-destruction stream, so it cannot
+reproduce the older collector's stronger exact-realm lifetime proof. The server
+stderr also retains 31 socket-write exceptions, 20 Windows 10053 and 11 Windows
+10054, without request/timestamp association; their individual causes are not
+proved. None of those records is erased, labeled successful or used to claim
+clean-native acceptance.
+
+Observer readbacks record both contexts closed, browser disconnected and the
+server thread stopped. The separate OS readback records all four returned startup
+process IDs and the exact browser profile absent. This is the actual declared
+owned containment boundary; it is not a complete census of later browser
+descendants, the driver, or every product heap object. Native receiving and the
+finite acceptance assessment bind these actual limitations before any composite
+claim is admitted.
 
 The PNG failure has a separate lifecycle owner. The exact
 [R0021 receiving packet](https://github.com/theislampill/salah_widget/issues/33#issuecomment-6768062051)
@@ -354,11 +413,79 @@ contains the causal trace, two-file retirement-intent correction, full focused
 regression and a product patch adapted to received R000B head
 `68e51aa6d56060e7431ee1f0d62101b67763abfa`. Independent source review observed the
 baseline's three expected failures,7/7 corrected retirement controls and46/46
-affected existing controls. The patch is **not integrated by R0017**; receiving
-ownership, successor behavioral proof, generated delivery and native enforced-CSP
-qualification remain outstanding. Neither the source PASS nor the posted handoff
+affected existing controls. The patch is **not integrated by R0017**; receiving-owner
+integration, successor behavioral proof, generated delivery and native enforced-CSP
+qualification remain outstanding for that product-repair claim. Neither the source PASS nor the posted handoff
 disposes of the original failure. The owner-authorized R0017→R0007→R000B order is
 unchanged.
+
+### Exact CSP acceptance consequence
+
+The independent C19 contract assessment is **COMPETENT_NONBLOCKING_AT_EXACT_SCOPE**
+for reduced request `8040.220` and, on its own narrower evidence, no-preference
+request `3116.314`. Report SHA256
+`da90bba832a59bfdb177c912ba03cf401836a46244af423f5436101cf225bd18`
+and input-manifest SHA256
+`85f5703895df5b9fbe5b33d52d78fc2f45e7db8e463bbc3ed25db40b7878a390`
+bind the exact original contract, source and retained native records.
+
+For `8040.220`, the original serial smoke callback completed its four CASE-20
+assertions before the observed next-document navigation. The failing image then
+originated in outgoing attempt15's actual pagehide/disposal/publication path.
+The exact old realm was destroyed before the successor realm was created;
+attempt/source/document guards and separately retained current consumers prevent
+that retired publication from satisfying the next scene. For `3116.314`, a
+separate CASE-25 completion, next-navigation and exact old/new-realm boundary
+establishes the narrower required-consumer consequence. Its initiator is `other`;
+its precise product cause and the proposed patch's effect are not established.
+
+Original issue23 expressly rejects a blanket classification of every network
+failure as a product regression, while requiring the actual source, callbacks,
+current consumers, enforced policy, error capture and cleanup. FULL section5
+requires the real producer/consumer prerequisite to be established. These finite
+observations therefore do not require all R0021/R000B repair or a receiving-owner
+ACK before otherwise qualified R0017 acceptance. The exact product finding and
+source proposal remain on their already published owner route.
+
+Both original Windows results remain failed; `passiveObservationClean` remains
+false. The 63 and 64 UNKNOWN outcomes remain UNKNOWN. The first result's original
+source/integrity failure remains and uses only the separately reviewed C18 source
+reanalysis for its bounded admission. No image success, benign cancellation,
+universal preview safety, absence of a teardown flash, native product-patch fix,
+clean replay, or blanket CSP exception is claimed. A different active-scene error,
+required decode failure, missing identity or unverified cleanup requires its own
+affected assessment. The changed favicon consumer proof, final exact review, approved merge and
+actual delivery/closure retain their own separate evidence obligations.
+
+### Finite consequence of the corrected icon supplement
+
+The separate new-invocation assessment is
+`PASS_BOUNDED_ICON_SUPPLEMENT_WITH_RETAINED_GAPS`, report SHA256
+`90611ac924806552e4dc8d6d82a45777be6a7599be9a81efd1fd970f3b0bd156`.
+It admits the actual favicon proof as a supplement to the unchanged C18 required
+consumers in both preference contexts and the historical exact CSP dispositions.
+It does not treat this icon observation as a new complete C18 envelope.
+
+Request `2744.14` is an optional outgoing asset acquisition after the preceding
+required prayer/JSON callbacks; the separately admitted next weather consumer
+completes. Its exact cancellation initiator remains unknown. Request `2744.228`
+is independently mapped to outgoing pagehide publication after CASE-20, while a
+distinct successor document actually supplies its current rendered-moon consumer.
+Source ownership and publication/currentness guards support that finite boundary;
+no historical Runtime destruction observation is transferred to this invocation.
+Neither failed request supplies either successful top-level SVG response or decode.
+
+The 31 unattributed server exceptions and 51 UNKNOWN blob starts remain limits on
+broader claims. The actual icon bodies, successful terminals and native decoding
+supply affirmative evidence for the changed resource despite those retained
+limits. The assessment finds no unmet mandatory favicon or required-consumer
+obligation at this scope. It permits the complete O04/G02/17-03/A01 evidence set
+to be reconciled; it does not mark any original collector failure as PASS.
+Fresh whole-native cleanliness, complete request/realm/worker accounting,
+universal server health and a complete later-process census remain unqualified.
+No further native run or other-owner renderer integration is required merely to
+resolve this supplemental favicon question. Final exact whole-contract review
+and actual approved integration/public delivery retain their separate gates.
 
 The [owner's F03 consequence decision](https://github.com/theislampill/salah_widget/issues/23#issuecomment-6767588013)
 accepts only the disclosed historical effects/limitations. The mandatory old
@@ -367,5 +494,6 @@ future merge is waived. F04 formal lifecycle certification remains withheld.
 Original R0017 section8 distinguishes that formal status from application/issue
 acceptance. All123 criteria, a qualified remedy or independently accepted contract-scoped
 disposition, exact-candidate review,
-owner merge approval and subsequent delivery/closure readbacks still govern the
-whole-RLGWO outcome. Issue23 remains open.
+owner merge approval and subsequent delivery/closure readbacks govern the
+whole-RLGWO outcome. The current issue ledger and eventual read-back certificate
+record that outcome; this source document does not certify it.
