@@ -5,7 +5,11 @@ const path=require('node:path');
 const METHOD='passive-bidi/v1',SCHEMA='r0017-passive-network/v1';
 const PUBLIC='https://theislampill.github.io/salah_widget/';
 const CASES=Object.freeze(['chromium-public-healthy-no-preference','chromium-public-healthy-reduce']);
-const EVENTS=Object.freeze(['log.entryAdded','network.beforeRequestSent','network.responseStarted','network.responseCompleted','network.fetchError','network.authRequired','browsingContext.contextCreated','browsingContext.contextDestroyed','browsingContext.navigationStarted','browsingContext.domContentLoaded','browsingContext.load','script.realmCreated','script.realmDestroyed']);
+// C15: documented BiDi+ event forwarding on this same connection, for diagnosis
+// only. Raw session/target envelopes use the existing lifecycle capture path;
+// they never synthesize a missing BiDi terminal or supply acceptance credit.
+const CDP_EVENTS=Object.freeze(['Network.requestWillBeSent','Network.responseReceived','Network.loadingFinished','Network.loadingFailed','Target.attachedToTarget','Target.detachedFromTarget','Target.targetCreated','Target.targetDestroyed','Target.targetCrashed'].map(event=>'goog:cdp.'+event));
+const EVENTS=Object.freeze(['log.entryAdded','network.beforeRequestSent','network.responseStarted','network.responseCompleted','network.fetchError','network.authRequired','browsingContext.contextCreated','browsingContext.contextDestroyed','browsingContext.navigationStarted','browsingContext.domContentLoaded','browsingContext.load','script.realmCreated','script.realmDestroyed',...CDP_EVENTS]);
 const copy=value=>JSON.parse(JSON.stringify(value));
 const INVENTORY_PATH='C:\\Program Files\\PowerShell\\7\\pwsh.exe',INVENTORY_SHA='2a6769a3330dc1084d0154bfde7d164ab750ca7f700f313f9d417c1be78b2233';
 function freeze(value){if(value&&typeof value==='object'&&!Object.isFrozen(value)){for(const item of Object.values(value))freeze(item);Object.freeze(value);}return value;}
@@ -40,6 +44,7 @@ function requestProblems(state){
 function create({row,dir,origin,record,networkRecord,urlEvidence}){
  if(row.network!==undefined)throw Error('Passive network owner already exists');
  const state=row.network={schema:SCHEMA,method:METHOD,identity:null,subscription:{events:[...EVENTS],scope:'global session subscription; no contexts filter',issued:null,acknowledged:null},requests:[],lifecycle:[],connectionEvents:[],navigations:[],policyViolations:[],httpErrors:[],fetchErrors:[],consoleErrors:[],protocolErrors:[],captureErrors:[],commandRefusals:[],observationErrors:[],finalBoundary:null,lateReceipts:[],
+  diagnosticProvenance:{schema:'r0017-cdp-provenance/v1',purpose:'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT',transport:'EXISTING_BIDI_CONNECTION_ONLY',events:[...CDP_EVENTS],support:'INSPECT_ACTUAL_SUBSCRIPTION_AND_RAW_RECEIPTS',joining:'UNCLASSIFIED_RAW_EVENTS_NO_TERMINAL_SYNTHESIS'},
   interception:{requested:false,verdict:'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'},coverage:{source:'Installed driver BiDi event stream only',requests:'Only emitted request identities are accounted; absence is not proof of no background traffic',workers:'Raw emitted realm type/owners only; null context or missing owner is not reassigned to a page or worker',redirects:'Connection + request ID + reported redirect count; a new hop never fabricates a prior hop completion',timestamps:'BiDi source timestamp and Node process-local monotonic receipt milliseconds are separate clocks',normalFavicon:'Exact origin-root favicon URL is allowed as a location; its HTTP/fetch errors still fail',finalCut:'After the existing owned callback/socket join, without extending its 5000 ms deadline'}};
  const byKey=new Map(); // Index only: its values are the same objects in state.requests.
  let bidi=null;
@@ -88,6 +93,7 @@ function create({row,dir,origin,record,networkRecord,urlEvidence}){
   }
   if(!v.method.startsWith('network.')){const item={method:v.method,params:copy(p),trace:receipt};state.lifecycle.push(item);capture('lifecycle.jsonl',item);return;}
   const item={...networkRecord(v,receipt),redirectCount:p.redirectCount??null};
+  item.initiator=copy(p.initiator??null);item.request.destination=copy(p.request?.destination??null);
   if(!state.subscription.acknowledged)error('EVENT_BEFORE_SUBSCRIPTION_ACK',receipt);
   if(p.isBlocked===true)error('BLOCKED_REQUEST_OBSERVED_NO_CONTINUATION',receipt);
   if(v.method==='network.authRequired')error('AUTHENTICATION_REQUIRED_NO_RESPONSE',receipt);

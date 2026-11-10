@@ -44,7 +44,7 @@ async function harness(name,options={}){
   emit(type,event){for(const x of [...(this.listeners.get(type)||[])]){if(x.once)this.listeners.set(type,this.listeners.get(type).filter(y=>y!==x));x.fn(event);}}
   message(value){this.emit('message',{data:JSON.stringify(value)});}
   send(encoded){if(this.readyState!==1)throw Error('simulated socket closed');const c=JSON.parse(encoded);this.sent.push(c);let result={};
-   if(c.method==='session.subscribe'&&options.subscriptionFailure){queueMicrotask(()=>this.message({id:c.id,type:'error',error:'invalid argument',message:'simulated unsupported lifecycle event'}));return;}
+   if(c.method==='session.subscribe'&&(options.subscriptionFailure||options.cdpSubscriptionFailure&&c.params.events.some(e=>e.startsWith('goog:cdp.')))){queueMicrotask(()=>this.message({id:c.id,type:'error',error:'invalid argument',message:'simulated unsupported lifecycle event'}));return;}
    if(c.method==='browsingContext.getTree')result={contexts:[{context:'simulated-top'}]};
    if(c.method==='browsingContext.navigate'){currentURL=c.params.url;const navigation='nav-'+(++navCount);result={url:currentURL,navigation};queueMicrotask(()=>{if(options.omitNetworkEvents)return;event('network.beforeRequestSent','document-'+navCount,currentURL,{context:'simulated-top',navigation});if(!options.pendingNavigation)event('network.responseCompleted','document-'+navCount,currentURL,{context:'simulated-top',navigation,response:{url:currentURL,status:200,statusText:'OK'}});});}
    if(c.method==='script.evaluate'){let value=c.params.expression.includes('const ready=!!f&&')?baseline():c.params.expression.includes('progress:(()=>')?{progress:{done:true,child:null},snapshot:snapshot()}:snapshot();result={type:'success',realm:'simulated-realm',result:{type:'string',value:JSON.stringify(value)}};}
@@ -54,7 +54,7 @@ async function harness(name,options={}){
   close(){this.readyState=2;if(options.onClose)options.onClose({event,socket:this,session,armCaptureFailure:()=>{failCapture=true;}});if(!options.neverClose)later(()=>this.release(),300);}
   release(){if(this.readyState===3)return;this.readyState=3;this.emit('close',{code:1000,reason:'simulated owned teardown',wasClean:true});}
  }
- const fsBoundary={...fs,readFileSync(file,...args){if(file===CORE_PATH){if(options.missingCore)throw Error('simulated installed Core file missing');return options.mismatchedCore?Buffer.from('SIMULATION ONLY: wrong Core identity'):coreBytes;}return fs.readFileSync(file,...args);},appendFileSync(file,...args){if(failCapture&&String(file).endsWith('network.jsonl')){failCapture=false;throw Error('simulated network capture disk error');}return fs.appendFileSync(file,...args);}};
+ const fsBoundary={...fs,readFileSync(file,...args){if(file===CORE_PATH){if(options.missingCore)throw Error('simulated installed Core file missing');return options.mismatchedCore?Buffer.from('SIMULATION ONLY: wrong Core identity'):coreBytes;}return fs.readFileSync(file,...args);},appendFileSync(file,...args){if(failCapture&&String(file).endsWith(options.captureFailureFile||'network.jsonl')){failCapture=false;throw Error('simulated network capture disk error');}return fs.appendFileSync(file,...args);}};
  const proc={platform:'win32',argv:['node',baseFile,'--root',root,'--out',out],env:{RUNNER_TEMP:home},versions:process.versions,version:process.version,exitCode:0};
  // Only the simulated Core fixture gets the S0 digest. Other source hashes use real crypto.
  const cryptoBoundary={...crypto,createHash(algorithm,...args){const h=crypto.createHash(algorithm,...args);let core=false;return {update(value,...rest){core=value===coreBytes;h.update(value,...rest);return this;},digest(encoding){return core&&algorithm==='sha256'&&encoding==='hex'?CORE_SHA:h.digest(encoding);}};}};
@@ -126,5 +126,83 @@ function complete(h,id,url,extra){h.event('network.responseCompleted',id,url,{re
   {name:'original-product-assertion',missingCase:true}
  ];
  for(const fault of ordinaryCases)await check('passive-trustworthy-verdict-allows-next-actual-consumer-'+fault.name,async make=>{const h=await make(fault),first=await h.publicCase('no-preference');equalCuts(first);failed(first);assert.equal(first.row.protocolFinalization.ok,true);assert.equal(first.row.cleanup.ok,true);assert.equal(first.row.checks.passiveObservationIntegrity,true);assert.equal(first.row.passiveObservationContinuation.decision,'NO_OBSERVATION_INTEGRITY_BLOCK');assert.equal(h.api.result.engineSetupBlocks.chromium,undefined);assert.equal(h.api.launchBlock({engine:'chromium'}),null);const second=await h.publicCase('reduce');equalCuts(second);assert.notEqual(second.row.status,'NOT_ATTEMPTED');assert.equal(h.spawnCount,2);assert.equal(h.sent.filter(c=>c.method==='browsingContext.navigate').length,3);return {fault:fault.name,firstStatus:first.row.status,secondStatus:second.row.status,simulatedNativeAcquisitions:h.spawnCount};});
+ // C15 captures provenance on the real owned callback. It supplies no substitute
+ // terminals and does not turn a diagnostic mock into native acceptance.
+ const diagnosticEvents=['Network.requestWillBeSent','Network.responseReceived','Network.loadingFinished','Network.loadingFailed','Target.attachedToTarget','Target.detachedFromTarget','Target.targetCreated','Target.targetDestroyed','Target.targetCrashed'].map(e=>'goog:cdp.'+e);
+ await check('c15-actual-session-subscribes-to-finite-diagnostics-before-navigation',async make=>{
+  const h=await make(),{row,dir}=await h.start();
+  await h.session.navigate(PUBLIC+'tests/smoke.html?fixture=healthy');
+  const subscription=h.sent.find(c=>c.method==='session.subscribe');
+  assert.deepEqual(subscription.params.events.filter(e=>e.startsWith('goog:cdp.')),diagnosticEvents);
+  assert.equal(h.sent.filter(c=>c.method==='session.subscribe').length,1);
+  assert(h.sent.indexOf(subscription)<h.sent.findIndex(c=>c.method==='browsingContext.navigate'));
+  assert.equal(h.sent.filter(c=>c.method.startsWith('network.')||c.method.startsWith('goog:cdp.')).length,0);
+  const x=await h.finish(row,dir);equalCuts(x);
+  assert.equal(x.row.network.diagnosticProvenance.purpose,'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT');
+  assert.equal(x.row.network.diagnosticProvenance.transport,'EXISTING_BIDI_CONNECTION_ONLY');
+  assert.deepEqual(x.row.network.diagnosticProvenance.events,diagnosticEvents);
+  return {diagnosticSubscriptions:diagnosticEvents.length,newConnections:0,networkOrCdpWireCommands:0};
+ });
+ await check('c15-emitted-bidi-initiator-and-destination-survive-actual-callback-and-cut',async make=>{
+  const h=await make(),{row,dir}=await h.start();await h.session.navigate(PUBLIC+'tests/smoke.html?fixture=healthy');
+  const url=PUBLIC+'moon/assets/dem.bin.gz',initiator={type:'script',stackTrace:{callFrames:[{url:PUBLIC+'moon/moon-worker.mjs',functionName:'read',lineNumber:7,columnNumber:2}]}};
+  before(h,'provenance',url,{initiator,request:{request:'provenance',url,method:'GET',destination:'empty'}});complete(h,'provenance',url);
+  const x=await h.finish(row,dir);equalCuts(x);
+  const r=x.row.network.requests.find(r=>r.requestId==='provenance');
+  assert.deepEqual(r.beforeEvents[0].initiator,initiator);assert.equal(r.beforeEvents[0].request.destination,'empty');
+  assert.equal(r.terminalEvents[0].initiator,null);assert.equal(r.terminalEvents[0].request.destination,null);
+  assert.equal(r.context,null);assert.equal(r.navigation,null);
+  const recorded=fs.readFileSync(path.join(dir,'network.jsonl'),'utf8').trim().split('\n').map(s=>JSON.parse(s)).find(e=>e.request.id==='provenance');
+  assert.deepEqual(recorded,r.beforeEvents[0]);
+  return {emittedInitiatorRetained:true,absentFieldsRemainNull:true,ownerInvented:false};
+ });
+ await check('c15-raw-session-request-target-envelopes-never-replace-missing-bidi-terminal',async make=>{
+  const h=await make(),{row,dir}=await h.start();await h.session.navigate(PUBLIC+'tests/smoke.html?fixture=healthy');before(h,'same-id');
+  const rows=[
+   ['Network.requestWillBeSent',{session:'worker-a',event:'Network.requestWillBeSent',params:{requestId:'same-id',request:{url:PUBLIC+'index.html'},loaderId:'loader-a'}}],
+   ['Network.requestWillBeSent',{session:'worker-b',event:'Network.requestWillBeSent',params:{requestId:'same-id',request:{url:PUBLIC+'index.html'},loaderId:'loader-b'}}],
+   ['Network.loadingFinished',{session:'worker-b',event:'Network.loadingFinished',params:{requestId:'same-id',timestamp:2,encodedDataLength:123}}],
+   ['Network.loadingFailed',{session:'worker-a',event:'Network.loadingFailed',params:{requestId:'same-id',timestamp:3,errorText:'net::ERR_ABORTED',canceled:true}}],
+   ['Target.attachedToTarget',{session:'parent',event:'Target.attachedToTarget',params:{sessionId:'worker-a',targetInfo:{targetId:'target-a',type:'worker'},waitingForDebugger:false}}],
+   ['Target.detachedFromTarget',{session:'parent',event:'Target.detachedFromTarget',params:{sessionId:'worker-a',targetId:'target-a'}}],
+   ['Target.targetDestroyed',{session:'parent',event:'Target.targetDestroyed',params:{targetId:'target-a'}}],
+   ['Target.targetCrashed',{session:'parent',event:'Target.targetCrashed',params:{targetId:'target-b',status:'crashed',errorCode:1}}]
+  ];
+  for(const [event,params]of rows)h.session.bidi.ws.message({method:'goog:cdp.'+event,params});
+  const x=await h.finish(row,dir);equalCuts(x);failed(x);
+  const captured=x.row.network.lifecycle.filter(e=>e.method.startsWith('goog:cdp.'));
+  assert.deepEqual(captured.map(e=>[e.method.slice('goog:cdp.'.length),e.params]),rows);
+  assert(captured.every(e=>e.trace.connectionId===x.row.network.identity.connectionId&&typeof e.trace.eventReceiptId==='string'));
+  assert.equal(x.row.network.requests.find(r=>r.requestId==='same-id').terminalEvents.length,0);
+  assert.equal(x.row.network.finalBoundary.pendingRequests.length,1);assert.equal(x.row.checks.passiveRequestsAccounted,false);
+  const recorded=fs.readFileSync(path.join(dir,'lifecycle.jsonl'),'utf8').trim().split('\n').map(s=>JSON.parse(s));
+  assert.deepEqual(recorded,captured);
+  return {rawEnvelopes:rows.length,sameIdSessions:2,syntheticTerminals:0,consumerStatus:x.row.status};
+ });
+ await check('c15-unsupported-extension-refuses-setup-without-fallback-or-navigation',async make=>{
+  const h=await make({cdpSubscriptionFailure:true});await assert.rejects(h.start(),/unsupported lifecycle/);
+  assert.equal(h.spawnCount,1);assert.equal(h.sent.filter(c=>c.method==='session.subscribe').length,1);
+  assert.equal(h.sent.filter(c=>c.method==='browsingContext.navigate'||c.method.startsWith('network.')||c.method.startsWith('goog:cdp.')).length,0);
+  const row=h.api.result.cases[0];assert.equal(row.cleanup.ok,true);assert.equal(row.protocolFinalization.ok,true);
+  assert(row.network.protocolErrors.some(e=>e.protocol?.value?.error==='invalid argument'));
+  return {setupRefused:true,cleanup:row.cleanup.ok,fallback:false,navigations:0};
+ });
+ await check('c15-diagnostic-capture-error-fails-actual-consumer-and-blocks-next-acquisition',async make=>{
+  const h=await make({captureFailureFile:'lifecycle.jsonl',onClose:({socket,armCaptureFailure})=>{armCaptureFailure();socket.message({method:'goog:cdp.Network.loadingFinished',params:{session:'worker-a',event:'Network.loadingFinished',params:{requestId:'diagnostic-only',timestamp:1}}});}});
+  const first=await h.publicCase('no-preference');equalCuts(first);failed(first);
+  assert.equal(first.row.cleanup.ok,true);assert.equal(first.row.checks.passiveObservationIntegrity,false);
+  assert(first.row.network.captureErrors.some(e=>e.file==='lifecycle.jsonl'));
+  assert.equal(first.row.network.lifecycle.filter(e=>e.method==='goog:cdp.Network.loadingFinished').length,1);
+  const second=await h.publicCase('reduce');assert.equal(second.row.status,'NOT_ATTEMPTED');assert.equal(h.spawnCount,1);
+  return {captureFailureRetained:true,secondStatus:second.row.status,simulatedAcquisitions:h.spawnCount};
+ });
+ await check('c15-diagnostic-success-cannot-erase-observed-fetch-error',async make=>{
+  const h=await make(),{row,dir}=await h.start();await h.session.navigate(PUBLIC+'tests/smoke.html?fixture=healthy');before(h,'failed');
+  h.event('network.fetchError','failed',PUBLIC+'index.html',{errorText:'net::ERR_ABORTED'});
+  h.session.bidi.ws.message({method:'goog:cdp.Network.loadingFinished',params:{session:'worker-a',event:'Network.loadingFinished',params:{requestId:'failed',timestamp:1}}});
+  const x=await h.finish(row,dir);equalCuts(x);failed(x);assert.equal(x.row.checks.passiveRequestsAccounted,true);
+  assert.equal(x.row.network.fetchErrors[0].errorText,'net::ERR_ABORTED');assert.equal(x.row.checks.passiveObservationClean,false);
+  return {fetchErrorRetained:true,consumerStatus:x.row.status};
+ });
  const report={schema:'r0017-passive-observation-controls/v1',nativeExecutions:0,simulationOnly:true,baseSha256:hash(base),phase2Sha256:hash(phase),entrySha256:fs.existsSync(entryFile)?hash(fs.readFileSync(entryFile)):null,methodSha256:fs.existsSync(methodFile)?hash(fs.readFileSync(methodFile)):null,testSha256:hash(fs.readFileSync(__filename)),passed:results.filter(x=>x.passed).length,failed:results.filter(x=>!x.passed).length,results};console.log(JSON.stringify(report,null,2));process.exitCode=report.failed?1:0;
 })().catch(e=>{console.error(e);process.exitCode=1;});

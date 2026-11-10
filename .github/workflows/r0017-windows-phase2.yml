@@ -1,4 +1,4 @@
-name: R0017 C14 passive Windows qualification
+name: R0017 C15 passive provenance diagnostic
 
 on:
   push:
@@ -62,7 +62,7 @@ jobs:
             vendor
             docs/state-contracts
 
-      - name: Collect the bounded C14 Chromium public passive population
+      - name: Capture C15 provenance for the bounded Chromium public population
         id: native_collection
         timeout-minutes: 17
         shell: pwsh
@@ -84,7 +84,9 @@ jobs:
           $r0017Summary = Join-Path $r0017Output 'summary.json'
           $r0017Receipt = [ordered]@{
             schema = 'r0017-workflow-passive-outcomes/v1'
-            phase = 'C14'
+            phase = 'C15'
+            purpose = 'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT_FROM_SUPPLEMENTARY_EVENTS'
+            evidenceQuestion = 'Can raw CDP request/session/target receipts uniquely explain the retained BiDi terminal gaps?'
             networkObservation = 'passive-bidi/v1'
             interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'
             plannedCases = @('chromium-public-healthy-no-preference', 'chromium-public-healthy-reduce')
