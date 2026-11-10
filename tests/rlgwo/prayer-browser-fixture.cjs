@@ -117,6 +117,11 @@ if(typeof showError==='function'){const prayerOriginalError=showError;showError=
 function instrument(source,spec){
  let normalized=source.replace(/\r\n/g,'\n');
  const variants={
+  // Diagnostic only: keep the existing fallback lists and ordinary font ingress.
+  'font-fallback':[
+    ['--font-body:"Inter",','--font-body:'],
+    ['--font-display:"Fraunces",','--font-display:']
+  ],
   'wall-countdown':['leftMin, nowEpoch, nextEpoch,','leftMin:nextMin-nowMin, nowEpoch, nextEpoch,'],
   'sec-only':['if(sec!==_lastSec || _renderDirty)','if(sec!==_lastSec)'],
   'epoch-plus24':['const epoch=epochForTzTime(day.y,day.mo,day.d,Math.floor(minute/60),minute%60,zone);','const epoch=record===tomorrow ? epochForTzTime(prayerDayFields(today).y,prayerDayFields(today).mo,prayerDayFields(today).d,Math.floor(minute/60),minute%60,zone)+86400000 : epochForTzTime(day.y,day.mo,day.d,Math.floor(minute/60),minute%60,zone);'],

@@ -17,6 +17,37 @@ def request(profile):
 
 
 class SelectionTests(unittest.TestCase):
+    def test_font_use_diagnostic_is_a_constant_two_case_recipe(self):
+        base = copy.deepcopy(next(c for c in RECIPE["cases"] if c["caseId"] == "NE07-fall24"))
+        fallback = {**base, "caseId": "NE07-font-fallback-fall24", "variant": "font-fallback"}
+        diagnostic = {**RECIPE, "cases": [base, fallback]}
+        plan = SELECTOR.plan_request(request("firefox-font-use"), diagnostic)
+        self.assertEqual(plan["engines"], ["firefox"])
+        self.assertEqual(plan["selectedCaseIds"], ["NE07-fall24", "NE07-font-fallback-fall24"])
+        self.assertEqual(plan["plannedCells"], 2)
+        self.assertEqual(plan["arguments"], [
+            "--engine", "firefox", "--headed", "--video-only",
+            "--recipe", "tests/rlgwo/R0007-font-use-recipes.json",
+            "--case-id", "NE07-fall24", "--case-id", "NE07-font-fallback-fall24"])
+        self.assertNotIn("--case-timeout-seconds", plan["arguments"])
+        with self.assertRaises(ValueError):
+            SELECTOR.plan_request({**request("firefox-font-use"), "recipe": "untrusted.json"}, diagnostic)
+
+    def test_font_use_recipe_preserves_every_original_case_input_and_oracle(self):
+        diagnostic = json.loads((ROOT / "tests/rlgwo/R0007-font-use-recipes.json").read_text())
+        base = next(c for c in RECIPE["cases"] if c["caseId"] == "NE07-fall24")
+        self.assertEqual(diagnostic["cases"], [base, {
+            **base, "caseId": "NE07-font-fallback-fall24", "variant": "font-fallback"}])
+        self.assertEqual(diagnostic["execution"]["defaultCaseIds"],
+                         ["NE07-fall24", "NE07-font-fallback-fall24"])
+        self.assertEqual(diagnostic["execution"]["mutationCaseIds"], [])
+        self.assertEqual(diagnostic["execution"]["conditionalPreservationCaseIds"], [])
+        self.assertEqual(diagnostic["diagnosticOnly"], True)
+        self.assertEqual(diagnostic["sourceCommit"], "UNBOUND")
+        self.assertEqual(diagnostic["sourceFiles"]["index.html"], "UNBOUND")
+        self.assertIn("tests/rlgwo/R0007-next-event-recipes.json",
+                      diagnostic["bindingInstructions"]["sourcePaths"])
+
     def test_full_contains_the_original_population_and_two_sec_only_cells(self):
         plan = SELECTOR.plan_request(request("full"), RECIPE)
         self.assertEqual(plan["plannedCells"], 64)

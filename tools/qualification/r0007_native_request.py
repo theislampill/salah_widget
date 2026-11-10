@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import r0007_native as native
 
 REQUEST = "tests/rlgwo/R0007-native-request.json"
+FONT_USE_RECIPE = "tests/rlgwo/R0007-font-use-recipes.json"
 BARRIERS = ["NE07-recovery24", "NE07-recovery12", "NE07-dst-recovery24",
             "NE07-dst-recovery12", "NE07-mut-remove-next-dirty"]
 FIREFOX_FAILED_HEALTHY = ["NE07-ordinary24", "NE07-recovery24", "NE07-equal-polar",
@@ -49,6 +50,9 @@ def plan_request(request, recipe):
         engines, video_only = ["firefox"], True
         requested = ["NE07-mut-hardcoded-fajr", "NE07-mut-name-order",
                      "NE07-mut-lost-date", "NE07-mut-independent-label"]
+    elif profile == "firefox-font-use":
+        engines, video_only = ["firefox"], True
+        requested = ["NE07-fall24", "NE07-font-fallback-fall24"]
     elif profile == "chromium-recovery":
         engines, video_only = ["chromium"], False
         requested = BARRIERS
@@ -65,6 +69,8 @@ def plan_request(request, recipe):
     arguments = [value for engine in engines for value in ("--engine", engine)] + ["--headed"]
     if video_only:
         arguments.append("--video-only")
+    if profile == "firefox-font-use":
+        arguments += ["--recipe", FONT_USE_RECIPE]
     arguments += [value for case_id in case_ids for value in ("--case-id", case_id)]
     return {"profile": profile, "engines": engines, "videoOnly": video_only,
             "requestedCaseIds": requested, "selectedCaseIds": case_ids,
@@ -100,7 +106,9 @@ def main(argv=None):
             request = {"schema": "r0007-native-request/v1", "profile": "full", "requestId": "legacy-no-request",
                        "reason": "Preserve the existing full selection when no request is committed."}
             receipt["requestSha256"] = None
-        recipe = json.loads((root / native.DEFAULT_RECIPE).read_text(encoding="utf-8"))
+        recipe_path = (FONT_USE_RECIPE if isinstance(request, dict) and request.get("profile") == "firefox-font-use"
+                       else native.DEFAULT_RECIPE)
+        recipe = json.loads((root / recipe_path).read_text(encoding="utf-8"))
         selection = plan_request(request, recipe)
         receipt.update(identity=identity, request=request, selection=selection,
                        selectorSha256=native.sha(Path(__file__)), status="PLANNED")
