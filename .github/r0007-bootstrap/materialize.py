@@ -17,6 +17,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.request
 
@@ -77,27 +78,92 @@ def command(root, argv, evidence, label, env):
         raise RuntimeError(label + " did not exit0; inspect retained producer record")
 
 
+def http_error_details(error, _token, _content):
+    # Only fixed classifications and byte metadata may enter the receipt. Never
+    # copy response text: substring scrubbing cannot exclude partial source echoes.
+    status_classes = {400: "BAD_REQUEST", 401: "AUTHENTICATION_REQUIRED", 403: "FORBIDDEN",
+                      404: "NOT_FOUND", 409: "CONFLICT", 413: "REQUEST_TOO_LARGE",
+                      422: "VALIDATION_FAILED", 429: "RATE_LIMITED"}
+    status_class = status_classes.get(error.code, "HTTP_ERROR")
+    if 300 <= error.code < 400:
+        status_class = "REDIRECT_REFUSED"
+    elif 500 <= error.code < 600:
+        status_class = "SERVER_ERROR"
+    details = {"statusClass": status_class}
+    limit = 65536
+    try:
+        raw = error.read(limit + 1)
+    except Exception:
+        details["bodyReadStatus"] = "FAILED"
+        return details
+    details.update(bodyReadStatus="READ", bodyBytesRead=len(raw), bodyTruncated=len(raw) > limit,
+                   bodyPrefixSha256=digest(raw[:limit]))
+    if len(raw) > limit:
+        details["bodyFormat"] = "TRUNCATED"
+        return details
+    try:
+        payload = json.loads(raw)
+    except (ValueError, UnicodeDecodeError, RecursionError):
+        details["bodyFormat"] = "UNPARSEABLE"
+        return details
+    if not isinstance(payload, dict):
+        details["bodyFormat"] = "JSON_NON_OBJECT"
+        return details
+    details["bodyFormat"] = "JSON_OBJECT"
+    errors = payload.get("errors")
+    if isinstance(errors, list):
+        code_classes = {"missing": "API_CODE_MISSING", "missing_field": "API_CODE_MISSING_FIELD",
+                        "invalid": "API_CODE_INVALID", "already_exists": "API_CODE_ALREADY_EXISTS",
+                        "unprocessable": "API_CODE_UNPROCESSABLE", "too_large": "API_CODE_TOO_LARGE",
+                        "custom": "API_CODE_CUSTOM"}
+        classes = set()
+        for item in errors[:20]:
+            code = item.get("code") if isinstance(item, dict) else None
+            classes.add(code_classes.get(code, "UNRECOGNIZED_ERROR_CODE") if isinstance(code, str)
+                        else "UNRECOGNIZED_ERROR_CODE")
+        details.update(errorClasses=sorted(classes), errorsExamined=min(len(errors), 20),
+                       errorsTruncated=len(errors) > 20)
+    return details
+
+
 def upload_blob(content, token, expected, evidence, ordinal):
     record = {"path": expected["path"], "expectedBlobSha": expected["blobSha"], "bytes": len(content),
-              "startedUtc": now(), "status": "UPLOAD_STARTED", "refUpdated": False}
+              "startedUtc": now(), "status": "UPLOAD_PREPARING", "refUpdated": False}
     receipt = evidence / (f"upload-{ordinal:03d}.json")
     dump(receipt, record)
-    body = json.dumps({"content": base64.b64encode(content).decode("ascii"), "encoding": "base64"}).encode("utf-8")
-    request = urllib.request.Request("https://api.github.com/repos/" + REPOSITORY + "/git/blobs", data=body, method="POST",
-                                     headers={"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json",
-                                              "Content-Type": "application/json", "X-GitHub-Api-Version": "2022-11-28",
-                                              "User-Agent": "r0007-owned-materialization"})
     try:
+        local_blob = hashlib.sha1()
+        local_blob.update(b"blob " + str(len(content)).encode("ascii") + b"\0")
+        local_blob.update(content)
+        record["localBlobSha"] = local_blob.hexdigest()
+        if len(content) != expected["bytes"] or digest(content) != expected["sha256"] or record["localBlobSha"] != expected["blobSha"]:
+            raise ValueError("upload input differs from manifest identity")
+        try:
+            text = content.decode("utf-8", errors="strict")
+        except UnicodeDecodeError:
+            text, encoding = base64.b64encode(content).decode("ascii"), "base64"
+        else:
+            if text.encode("utf-8", errors="strict") != content:
+                raise ValueError("UTF-8 content round-trip changed bytes")
+            encoding = "utf-8"
+        body = json.dumps({"content": text, "encoding": encoding}, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        record.update(encoding=encoding, requestBytes=len(body), requestSha256=digest(body), status="UPLOAD_STARTED")
+        dump(receipt, record)
+        request = urllib.request.Request("https://api.github.com/repos/" + REPOSITORY + "/git/blobs", data=body, method="POST",
+                                         headers={"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json",
+                                                  "Content-Type": "application/json", "X-GitHub-Api-Version": "2022-11-28",
+                                                  "User-Agent": "r0007-owned-materialization"})
         # No retry or alternate endpoint after an uncertain transport result.
         with urllib.request.build_opener(NoRedirect()).open(request, timeout=180) as response:
-            result = json.loads(response.read())
             record["httpStatus"] = response.status
+            result = json.loads(response.read())
         record["observedBlobSha"] = result.get("sha")
         if result.get("sha") != expected["blobSha"]:
             raise ValueError("uploaded blob identity mismatch")
         record["status"] = "VERIFIED_BLOB_STORED_NO_REF_UPDATE"
     except urllib.error.HTTPError as error:
-        record.update(status="HTTP_ERROR_STOPPED", httpStatus=error.code)
+        record.update(status="HTTP_ERROR_STOPPED", httpStatus=error.code,
+                      httpError=http_error_details(error, token, content))
         raise RuntimeError("GitHub blob upload refused with HTTP " + str(error.code)) from None
     except Exception as error:
         record.update(status="UPLOAD_UNVERIFIED_STOPPED", failure=type(error).__name__)
@@ -136,7 +202,7 @@ def main(argv=None):
             raise ValueError("workflow's manifest digest is absent or mismatched")
         if manifest.get("schema") != "r0007-materialization-input/v1" or manifest.get("repository") != REPOSITORY or manifest.get("branch") != BRANCH:
             raise ValueError("manifest scope mismatch")
-        for key in ("baseCommit", "baseTree", "targetCommit", "targetTree"):
+        for key in ("baseCommit", "baseTree", "targetCommit", "targetTree", "expectedSeedParent"):
             if not re.fullmatch(r"[0-9a-f]{40}", manifest.get(key, "")):
                 raise ValueError("invalid immutable " + key)
         if digest(Path(__file__).read_bytes()) != manifest["materializerSha256"]:
@@ -152,7 +218,8 @@ def main(argv=None):
             after = change["after"]
             if after is not None and (after["mode"] not in {"100644", "100755"} or not re.fullmatch(r"[0-9a-f]{40}", after["blobSha"]) or not re.fullmatch(r"[0-9a-f]{64}", after["sha256"])):
                 raise ValueError("unsupported candidate entry")
-        summary.update(baseCommit=manifest["baseCommit"], expectedTargetCommit=manifest["targetCommit"], expectedTargetTree=manifest["targetTree"],
+        summary.update(baseCommit=manifest["baseCommit"], expectedSeedParent=manifest["expectedSeedParent"],
+                       expectedTargetCommit=manifest["targetCommit"], expectedTargetTree=manifest["targetTree"],
                        manifestSha256=digest(raw), changedPaths=paths, dryRun=args.dry_run, runId=os.environ.get("GITHUB_RUN_ID"),
                        runAttempt=os.environ.get("GITHUB_RUN_ATTEMPT"), branch=BRANCH)
         dump(run / "summary.json", summary)
@@ -160,11 +227,19 @@ def main(argv=None):
         summary["seedCommit"] = head
         if git(root, "rev-parse", manifest["baseCommit"] + "^{tree}").strip() != manifest["baseTree"]:
             raise ValueError("base tree mismatch")
+        expected_parent = manifest["expectedSeedParent"]
+        if git(root, "cat-file", "-t", expected_parent).strip() != "commit":
+            raise ValueError("declared seed parent is not an immutable commit")
+        if expected_parent != manifest["baseCommit"]:
+            previous_parents = git(root, "show", "-s", "--format=%P", expected_parent).split()
+            previous_delta = set(filter(None, git(root, "diff", "--no-renames", "--name-only", "-z", manifest["baseCommit"], expected_parent).split("\0")))
+            if previous_parents != [manifest["baseCommit"]] or previous_delta != SEED_FILES:
+                raise ValueError("declared seed parent is not exact base plus four bootstrap files")
         if head != manifest["baseCommit"]:
             parents = git(root, "show", "-s", "--format=%P", "HEAD").split()
             seed_delta = set(filter(None, git(root, "diff", "--no-renames", "--name-only", "-z", manifest["baseCommit"], "HEAD").split("\0")))
-            if parents != [manifest["baseCommit"]] or seed_delta != SEED_FILES:
-                raise ValueError("seed is not exact base plus the four reviewed bootstrap files")
+            if parents != [expected_parent] or seed_delta != SEED_FILES:
+                raise ValueError("seed parent or cumulative four-file bootstrap delta differs from manifest")
         elif args.upload_blobs:
             raise ValueError("upload requires an actual seed commit; base checkout is dry-only")
         dirty = git(root, "diff", "--name-only").strip() or git(root, "diff", "--cached", "--name-only").strip()
@@ -218,6 +293,10 @@ def main(argv=None):
                     candidates.append(entry)
             # Prove large-blob API transport first, without moving any ref.
             for ordinal, entry in enumerate(sorted(candidates, key=lambda e: (-e["bytes"], e["path"])), 1):
+                # GitHub recommends at least one second between mutative requests.
+                # Prior upload has returned; a failure still stops without retry.
+                if ordinal > 1:
+                    time.sleep(1.0)
                 content = git(root, "cat-file", "blob", entry["blobSha"], binary=True)
                 summary["uploads"].append(upload_blob(content, token, entry, run, ordinal))
                 dump(run / "summary.json", summary)

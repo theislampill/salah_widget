@@ -26,13 +26,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.sha }}
-          fetch-depth: 2
+          fetch-depth: 3
           persist-credentials: false
       - name: Verify payload, rebuild, verify exact tree, upload non-workflow blobs
         timeout-minutes: 20
         env:
           R0007_UPLOAD_TOKEN: ${{ github.token }}
-          R0007_EXPECTED_MANIFEST_SHA256: 2b806bfbc43340e9d240fb6e23f67a64dadf71d99abafc9dc3daff2daf61b3a6
+          R0007_EXPECTED_MANIFEST_SHA256: 78596ea53af7931a7a77f296b0acf5c7c1eca7f0923b9c102fca47c09ed1bfca
         run: |
           mkdir -p "$RUNNER_TEMP/r0007-materialization"
           set +e
