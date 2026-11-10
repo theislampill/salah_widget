@@ -21,7 +21,6 @@ jobs:
       GIT_CONFIG_COUNT: '1'
       GIT_CONFIG_KEY_0: core.autocrlf
       GIT_CONFIG_VALUE_0: 'false'
-      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/r0007-delivery-browsers
       SALAH_BROWSER_EXECUTABLE: ''
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -58,6 +57,8 @@ jobs:
           if ($r0007Main -ne $r0007Request.merge.mainSha) { throw 'Main moved: reconcile the request before acquiring public acceptance.' }
       - name: Install private native dependencies after the gate
         shell: pwsh
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/r0007-delivery-browsers
         run: |
           $PSNativeCommandUseErrorActionPreference = $false
           function Invoke-R0007DeliverySetup($r0007Executable, $r0007Arguments, $r0007Name) {
@@ -76,6 +77,8 @@ jobs:
       - name: Observe both engines through original public HTML
         timeout-minutes: 25
         shell: pwsh
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/r0007-delivery-browsers
         run: |
           $PSNativeCommandUseErrorActionPreference = $false
           $r0007Started = [DateTimeOffset]::UtcNow.ToString('o')
