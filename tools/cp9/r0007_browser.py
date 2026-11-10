@@ -459,7 +459,9 @@ def _main(argv,error_boundary):
                             measure(action_index,"wait.async",lambda:wait_font_ingress_observation(frame,action,trace,action_index,ingress_module)
                                     if ingress_active else wait_async_observation(frame,action,trace,action_index))
                         else:measure(action_index,"wait",lambda:frame.wait_for_function(action["predicate"],timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf")))
-                    elif kind=="sleep":time.sleep(action["ms"]/1000)
+                    elif kind=="sleep":
+                        if ingress_active:measure(action_index,"sleep",lambda:time.sleep(action["ms"]/1000))
+                        else:time.sleep(action["ms"]/1000)
                     elif kind=="release" or kind=="reject":measure(action_index,kind,lambda:frame.evaluate("([type,id,n])=>window.__prayerFixture[type](id,n)",[kind,action["id"],action.get("occurrence",1)]))
                     elif kind=="setRule":frame.evaluate("([id,patch])=>window.__prayerFixture.setRule(id,patch)",[action["id"],action["patch"]])
                     elif kind=="clock":frame.evaluate("epoch=>window.__prayerFixture.setClock(epoch)",action["epoch"])

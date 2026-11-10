@@ -35,6 +35,10 @@ The receipt copies below preserve original bytes, including historical local cus
 | FUSE_REVIEW | [fuse_review.md](successor-receipts/fuse_review.md) | `4fcbae5160327f156b11169ec6a2b5471f1c999703b9870241eee602dbc05aa8` |
 | F6_REPORT_V1 | [f6_report_v1.md](successor-receipts/f6_report_v1.md) | `7fda6008c598034c547c21cb3741fc8a3102f08f894e6a01b62448d42245d265` |
 | F6_CORRECTION | [f6_correction.json](successor-receipts/f6_correction.json) | `caa821610fd7c47751a0a02396172a64ff04a048727e20bd72594df47a7cfb24` |
+| FINGS | [font_ingress_source_receiving.md](successor-receipts/font_ingress_source_receiving.md) | `241dd6f60e8a2e6347bf92b3ff933773a2f2e6833ec14b04e80648e36a194b0b` |
+| FINGS_JSON | [font_ingress_source_receiving.json](successor-receipts/font_ingress_source_receiving.json) | `419ca73934d61dfe6c1ef24144d801cec5eebe4d605270ed11c752b7f7021b86` |
+| FINGP | [font_ingress_presentation.md](successor-receipts/font_ingress_presentation.md) | `bbabb65f26b0120401b88f12f37fc7e7af9a163639dc33e3da2e3de0226b4616` |
+| FINGP_JSON | [font_ingress_presentation.json](successor-receipts/font_ingress_presentation.json) | `dc2833147c66d26705b1941de5a5ec5656a545a2f2c40c52a5573eb3e1effd66` |
 
 ## Original native acquisitions
 
@@ -50,10 +54,11 @@ Workflow status alone grants no application acceptance. Every original failure/s
 | [42892303913](https://github.com/theislampill/salah_widget/actions/runs/42892303913) | F2: HealthyNY270 and exactsec-only negative;1 retained partial interval | `cc27ea224225ca9ed2f386d76a545781c91a57992f6f86ed4952a8d05f7c0a54` |
 | [42893839473](https://github.com/theislampill/salah_widget/actions/runs/42893839473) | F6: 2 healthy+4 intended negatives with freshcompanions;4 retained partial intervals/11frames | `a2310e03b0f4f75260ae2a17c7cf01ca323821735d73fc17565a4733272f730d` |
 | [42898554321](https://github.com/theislampill/salah_widget/actions/runs/42898554321) | FUSE: 2-case diagnostic:source succeeds, neither video recurs; INCONCLUSIVE | `59ab89acf24f5f8c8b16da6a7af914ec9a0ccc8781a83d407050734f936945db` |
+| [42920631317](https://github.com/theislampill/salah_widget/actions/runs/42920631317) | Controlled ingress, attempt 1/job 130194259457/artifact 13811167788: FAILURE; baseline source/custody received and one text-loss interval; fallback fails before intervention; pair UNREALIZED | `50e90fb8196e73d9a9af5ac5bc68ba9f95df032c524980e73a4fdb0aa028e5e5` |
 
 ## Current preservation and limits
 
-The complete original candidate tree7ae85a97703d68d6284301927b57c4565ece5f7b was published before Windows qualification. Subsequent bounded instrumentation and finite profile changes preserve product source/root/offline and original selection semantics. FUSE exact review and receiving bind its two optional-family replacements to disposable documents only. This publication adds text evidence/currentness; it does not alter runtime, recipes, request profiles or workflows.
+The complete original candidate tree7ae85a97703d68d6284301927b57c4565ece5f7b was published before Windows qualification. Subsequent bounded instrumentation and finite profile changes preserve product source/root/offline and original selection semantics. FUSE exact review and receiving bind its two optional-family replacements to disposable documents only. These documentation changes add text evidence/currentness; they do not alter runtime, recipes, request profiles or workflows. Separate harness/request changes in a combined candidate require their own exact review and publication bindings.
 
 The current retained source review supports288 actual affected assertions. Native proof composes original generated root/offline/iframe observations, both-engine principal/recovery/mutation/preservation cohorts and fresh companions where originals failed. It is not a new full64-cell run. Normal and reduced-motion evidence stays at the eight received preservation cells and unchanged protected owners; no whole-sky, all-scene or scientific result is inferred.
 
@@ -61,4 +66,33 @@ F6 final correction: set-level loaded plus24 listed faces means3 loaded/21 unloa
 
 The diagnostic/FF20 later full pixel-report bytes and specified original local sidecars remain unavailable after predecessor workspace loss. Exact recovered Markdown, literal/context records and reconstructed sidecars retain their distinct status; original native archives survive. Do not relabel reconstructed material as original. The full checkpointversion9 (365971278B, SHA393e8393e2eb6daa8218973ec5a7c0a81df9fa4b81cca45efac0f6d53b01ec58) preserves3462 verified payload members, report histories and this recovery boundary; it is not proof of public delivery.
 
-Open technical obligation:23 recorded readability intervals with causal owner unassigned. FUSE is inconclusive. Open terminal obligations: accepted preceding R0017 integration, exact final independent review, exact owner merge approval, actual merge/main/tree, configured public delivery/consumer readback, truthful certificate and deliberate completed closure. Issue7 remainsOPEN.
+Open technical obligation: **24 recorded readability intervals**, comprising the historical 23 plus one controlled-ingress baseline interval, with causal owner unassigned. FUSE is inconclusive; controlled ingress is UNREALIZED. These are intervals, not 24 distinct defects. Open terminal obligations: accepted preceding R0017 integration, exact final independent review, exact owner merge approval, actual merge/main/tree, configured public delivery/consumer readback, truthful certificate and deliberate completed closure. Issue7 remainsOPEN.
+
+
+## Controlled font-ingress receiving — 2026-11-10
+
+The latest **acquired diagnostic source** is commit `4bac6a4781fce62f08ab550a20fe5234d3ebb746`, tree `a5e51a591200296e3e73b9ecedbd8c0539e07ee5`, parent `c373cbdc706cf3b27ab8c45dbde02a998bd1fbd4`. Run `42920631317`, attempt `1`, job `130194259457`, artifact `13811167788` returned **FAILURE**. Its original `r0007-windows-native-42920631317-1.zip` is **3,111,326 bytes**, SHA256 `50e90fb8196e73d9a9af5ac5bc68ba9f95df032c524980e73a4fdb0aa028e5e5`; the [owner's preserved original archive](https://chatgpt.com/library?file_id=libfile_de51825a0eec8191967643938548ff3f&account_id=personal) is separate from public-delivery acceptance.
+
+FINGS/FINGS_JSON preserve the complete final source receipt: all 40 archive members and 150 source bindings match; baseline original actions, assertions and native CSS/font custody complete. Fallback fails at original action 3 after its 10-second body deadline fires, before CSS application, font intervention or populated prayer output. Both native cleanup receipts are established. The unresolved 7.640-second host region does not establish a sleep, scheduler or Gecko cause. No paired CSS equality or populated fallback comparison exists.
+
+FINGP/FINGP_JSON preserve the complete final pixel receipt: all **1,025 encoded frames / 257 exact RGB states** are covered. Baseline frame 337 (13.480 s) is readable, frames 338–346 (13.520–13.840 s) lose or partially lose populated text, and frame 347 (13.880 s) restores it. Fallback never shows a populated prayer state. This is **one new recorded interval**, making 24 open with the historical 23. The nine encoded slots span `[13.520, 13.880)` only on the native WebM timeline; no page/host/video clock alignment or physical first-paint claim is established. Pair status is **UNREALIZED**, with no font cause, Gecko fault, product repair or native acceptance.
+
+These four report files are original byte-exact copies. Their sandbox and absolute local paths retain historical custody scope; no underlying video, derived frame set or sidecar is added by this documentation portion, and those local paths are not claimed to resolve from GitHub. Earlier 27 receipt files and all historical proof remain unchanged. A measurement-only successor is prepared for exact review; this receiving cut credits no successor publication or native execution.
+
+The previously saved **checkpoint version 12** is **375,283,599 bytes**, SHA256 `89f93bea175495c20fe9c53c51bebe6759a991a0b39383260f0f9e58e197cc36`. At this cut, the later final source/pixel reports and this frontier still require the next checkpoint save; they are not claimed to be inside version 12. The version 9 entry above remains a historical checkpoint identity.
+
+Root G16 records main `eebba178172f96b3ffe5ab3845bc0fffd57c6e1b`, preceding PR71 OPEN/non-draft/unmerged at `38e67bb96889528c70fd27647604818d50781b7d`, PR73 OPEN/draft/unmerged and no exact owner merge approval. Merge order remains **R0017 corrective → R0007 → R000B**. This index supplies evidence custody and limits, not readiness, a completion certificate or a closing effect.
+
+
+## Sleep-observation countermeasure receiving — 2026-11-10T23:34Z
+
+After the 23:24 receiving cut above, the independent bounded source review received the three-file sleep-observation packet as PASS. Its manifest SHA256 is `09d151f36eeaef26c5dc1806288ced740657fe09b1e4766e5fc47860050adbc1`. The selected diagnostic wraps the existing 250 ms host sleep with the existing timing helper; it changes no scheduling primitive, page call, seven-action recipe, product deadline, font service or no-mode behavior. Six timing/dispatch and 52 existing ingress controls passed independently; the original driver produced two expected assertion failures with zero setup errors. A separate probe exercised both complete seven-action recipes and exact absent-mode parity. These are pure source controls, not native timing or application acceptance.
+
+Request `r0007-font-ingress-20261110-02` selects one finite continuation of the same two serial headed, video-only Firefox cases. Its purpose is to observe the previously missing sleep span and, if the original prerequisites succeed, complete the existing font comparison. A successful later release would not explain the original host delay. The exact combined publication, fresh native evidence, source/CSS/custody receiving and complete pixel review remain separate effects; this pre-acquisition receipt claims none of their future outcomes.
+
+| Supporting receipt | SHA256 |
+|---|---|
+| [ingress_release_andon.md](successor-receipts/ingress_release_andon.md) | `b8804ae9c09c4f31093a00ea23dc7ee923e51ab9558fb6fcc40aceb5b602988c` |
+| [ingress_release_andon.json](successor-receipts/ingress_release_andon.json) | `9bc5ecde719bfc5907e96fca38b105037b32fc37c86b5b8af9b0ed2e949cea2e` |
+| [sleep_observation_exact_review.md](successor-receipts/sleep_observation_exact_review.md) | `5bfcaea454ec7b4b5f47ab8845a62c46e1b913ce200abb9dbaa944c89fb9b10c` |
+| [sleep_observation_exact_review.json](successor-receipts/sleep_observation_exact_review.json) | `5bfa6e6b916977e80615c8ac94fd7aedb98eb30c4a55b021d196a329f626aa24` |
