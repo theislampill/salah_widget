@@ -1,0 +1,211 @@
+{
+  "schema": "r0021-digest-public-evidence/1",
+  "status": "REVIEWED_SOURCE_CORRECTION; S1_AND_WHOLE_COST_INCOMPLETE; NOT_MERGE_READY",
+  "sourceParentCommit": "e883c7d88f92f3724a36243eb83e890a0f250ecf",
+  "runtimeTreeSha256": "2629ff148f236a941040ef88958f114e4a0e1562a4b3fb99499970c52a33b7c5",
+  "indexSha256": "93731942888a25c7cdab3956d43d95c5d30313ab7f91e62ac649bee51ee382a1",
+  "authoredSha256": {
+    "moon/src/asset-digest.mjs": "5b2f1e7934a46df8db03c809749d535b1d3edddacf43781235834c6939fbb82b",
+    "moon/src/moon-initial-compact.mjs": "cfb1b568709dc03625c67d475de4aad7d5ce4770ed626c857a55d303fc60754c",
+    "moon/initial-source-association.json": "48ca605daaefdc836adfb4a7da6b85114a4a0d9d144f5b4e056a7857b1cfd00f",
+    "tools/build_moon.py": "e6dffda0c1d6bfba288128d46d1f9effb5bc60b7270531d9bd006091a0de7284",
+    "tests/real-sky/initial_source_association_test.py": "5f3e6251a2707b7fe7561aac5b2260ec51d5d16f63b1cb88e1a8c79e1a5b2507",
+    "moon/tests/asset-digest.test.cjs": "7e68728328d1b46945b531edaaae43e7f3c5c5ef279f773300b3045398abbff5"
+  },
+  "tests": {
+    "unchangedBaselineDigest": 6,
+    "affectedNode": 112,
+    "generatedNativeNode": 25,
+    "association": 7,
+    "buildGuard": 8,
+    "entryOrder": 1,
+    "frozenV1": "PASS"
+  },
+  "independentReviews": [
+    "digest-r98-source-review.json",
+    "digest-r100-review.json",
+    "digest-r101-review.json"
+  ],
+  "sourceCorrection": "Two direct-word SHA-256 accesses replace per-block iterator and temporary-array work. Same arithmetic, input bound and all identity checks. Original receiver manifest and physical assets unchanged.",
+  "nativeObservation": {
+    "kind": "Source timestamps and quantized receipt upper bounds, not hardware presentation timestamps. Earliest head acceptance preserved; later native capture not substituted.",
+    "navigationAbsoluteMs": 1792304078898.4597,
+    "timeOriginMs": 1792304078905.8,
+    "headCapturedAtMs": 193.39999999850988,
+    "laterNativeCapturedAtMs": 364.6000000014901,
+    "headRenderMs": 49.70000000298023,
+    "headHandoffReported": true,
+    "earliestAcceptedFromNavigationMs": 200.740234375,
+    "frame15ReceiptUpperFromNavigationMs": 350.540283203125,
+    "frame15ReceiptUpperAfterEarliestAcceptedMs": 149.800048828125,
+    "frame14To15SourceGapMs": 8.363962173461914,
+    "initialSourceReceiptUpperFromNavigationMs": 225.540283203125,
+    "retainedGapsOver80Ms": [
+      {
+        "from": 21,
+        "to": 22,
+        "sourceGapMs": 115.0970458984375
+      },
+      {
+        "from": 25,
+        "to": 26,
+        "sourceGapMs": 161.8649959564209
+      }
+    ]
+  },
+  "comparison": {
+    "r96Frame25ReceiptUpperFromNavigationMs": 498.23876953125,
+    "r96ReceiptUpperAfterEarliestAcceptedMs": 181.39990234375,
+    "interpretation": "Two single observations with unchanged acquisition options. Neither repeatability nor causal total/startup speedup is established."
+  },
+  "limits": [
+    "Selected originals show no new visible digest-related regression, but do not constitute a full visual matrix or watch.",
+    "First-coherent classification remains a heuristic supported at selected frame 15, not exhaustive review of every earlier frame.",
+    "115.097 ms and 161.865 ms source gaps remain uncovered; no interpolation, absence inference, capture-cause attribution or continuity pass.",
+    "No S1 pass, callback-cost completion/transfer, Firefox waiver, merge or closure credit.",
+    "This capture does not isolate fitCn, SVG path sampling, row construction or GPU work as the cause of either gap."
+  ],
+  "publication": {
+    "video": "r101.webm",
+    "videoSha256": "d627fae4d201014b1aa2831cea459f527764487cc62f420cef73aa433f5db46a",
+    "sourceSidecar": "r101-source-frames.jsonl",
+    "sourceSidecarSha256": "1bd77d566656f7f071b80dd2e65edab30c8ab781a31826815d110b69a47e411f",
+    "originalPrefix": "r101-first-2200ms.zip",
+    "prefixFrames": 173,
+    "prefixLimit": "All originals with source timestamp <= navigation +2200ms. Full recording and full source timestamp sidecar are published. Original JPEGs after that bound are not published here.",
+    "privacy": "Only isolated controlled fixture surfaces; no personal profile or provider payload. Public JSON/log projections replace host paths. Original hashes distinguish source bytes from projections.",
+    "projections": {
+      "digest-r98-source-review.json": {
+        "originalSha256": "e17ea5d85f7246c39b9a213b87addf4d3e74a369ca994150e10ba485f4764f38",
+        "publishedSha256": "e17ea5d85f7246c39b9a213b87addf4d3e74a369ca994150e10ba485f4764f38",
+        "transform": "Absolute host paths replaced by CHECKOUT, EVIDENCE, HOST_USER or TOOLCHAIN; JSON reserialized. Numeric results unchanged."
+      },
+      "digest-r100-review.json": {
+        "originalSha256": "ac880ae89b959077b200a0042c140164bfc00dc99b5942863cab79d1ef33ed94",
+        "publishedSha256": "749310409018e203b404c47fcc17547981798dd62e342bbc0e095ed62f905908",
+        "transform": "Absolute host paths replaced by CHECKOUT, EVIDENCE, HOST_USER or TOOLCHAIN; JSON reserialized. Numeric results unchanged."
+      },
+      "digest-r101-review.json": {
+        "originalSha256": "9ddda242b9bb70606b24075f468642738b4dfc7c19e50e24cb7171e42f04b511",
+        "publishedSha256": "669fce097f6fddf31f44e4a8150eb971617891c043fb322767c76d2edaf6af4e",
+        "transform": "Absolute host paths replaced by CHECKOUT, EVIDENCE, HOST_USER or TOOLCHAIN; JSON reserialized. Numeric results unchanged."
+      },
+      "digest-r100-build.txt": {
+        "originalSha256": "8f54c7ac121c561a98f9ede321fb4563c54cd3040bda8f90dd42d7d20e198a86",
+        "publishedSha256": "d6c31b4e7c5d9c8ae8702419d4d27892a95997426f1520c51fb99da92459921e",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "digest-r100-association-red.txt": {
+        "originalSha256": "7b082fa64d8b9dbf0c86b7466b573710f9bd93f3020201d9615c097e4fd478fd",
+        "publishedSha256": "830149a7fa28f1f71d851abace5e46a4321a9bcc2d266bbb00f73685f492297c",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "digest-r100-baseline.txt": {
+        "originalSha256": "61f4fb419a094df2c8427dad29f3aa472531e39f3c6d1ddfb351a54b22b28e4d",
+        "publishedSha256": "8b2013ab6972519a56bed49404055db398a40cc58c89bf96f17ae65f559ccfc4",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "digest-r100-affected-tests.txt": {
+        "originalSha256": "2da9a95b066fb1cd39c370631bfacd6642483b656e343dc968c5915fbc2a41d8",
+        "publishedSha256": "6a6228517bedb3abda2833bc2a10522653803ae41ef06e53fffc9b637cb1e98b",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "digest-r100-native-controls.txt": {
+        "originalSha256": "3fb1f48a09246ed11195e69e9cf7c2cc7fd008fbecfab5d0cd2485bfdab74cbc",
+        "publishedSha256": "171bf688c9b93b34489b2dbda97e133a12c933e83c1fef796bcfe270c0ef9d0f",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "digest-r100-association.txt": {
+        "originalSha256": "38ab5d4edd930c047d15d3f3fef227b9edb9511a80effc290d90615dca41a459",
+        "publishedSha256": "30e09e9b8776e8be899a54aebcfe17d6465abd2d84bc5348d0fc7c5e94553e38",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "digest-r100-build-guards.txt": {
+        "originalSha256": "f40c14f29302216eac38b33170467449d36dede49ef0ee986396c2fee0d4aa1a",
+        "publishedSha256": "7b58bcc6b450c590e345ac7ab111ef52710ab1f4dd5ed23b5e25fa5711d96d08",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "digest-r100-entry-order.txt": {
+        "originalSha256": "b88ecf4da1fef11d10965032ada489921774e63b06126b91f5b4caa90849c792",
+        "publishedSha256": "0312034ab64ce3a717b9d2fc709cd6a25f8047238c1a25b48cb84200de449e18",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "digest-r100-build-corrected.txt": {
+        "originalSha256": "f713811079f1e7ed6a760116becd08265ac465477e5191011eb47af08222244e",
+        "publishedSha256": "3647dbeec187a139be042e08f2859cf4a7fccdf89b2b705d3edb7ae4a4469b27",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "digest-r100-frozen-build.txt": {
+        "originalSha256": "f713811079f1e7ed6a760116becd08265ac465477e5191011eb47af08222244e",
+        "publishedSha256": "3647dbeec187a139be042e08f2859cf4a7fccdf89b2b705d3edb7ae4a4469b27",
+        "transform": "UTF-8 LF projection with the same host-path aliases; original failure logs retained."
+      },
+      "r101-results.json": {
+        "originalSha256": "1b08b778a87f5dd41140f598d88456798dd26064c89309156fd3be41edf617bb",
+        "publishedSha256": "cadd4e72b0741364a7162d640834332ec8559149221461ec6d25c55c2e926208",
+        "transform": "Absolute host paths replaced by CHECKOUT, EVIDENCE, HOST_USER or TOOLCHAIN; JSON reserialized. Numeric results unchanged."
+      },
+      "r101-execution.json": {
+        "originalSha256": "7b558fdb976a2abd673cdd7196c2a54b2cfceda8a60f94b49d1a7385a2f69f0e",
+        "publishedSha256": "fd93c27ccbdea7615111bd814ebcbb1fee7078f7e4dfd5007a63b3ae9ce365ea",
+        "transform": "Absolute host paths replaced by CHECKOUT, EVIDENCE, HOST_USER or TOOLCHAIN; JSON reserialized. Numeric results unchanged."
+      },
+      "r101-annotations.json": {
+        "originalSha256": "1321c8d5a26f95155ce670872ba1ebb0cc3722ff3b80f2839d5330cf418af305",
+        "publishedSha256": "9ca2d4b1c6e8717abbc29685af12a314062dfd098057fcf52e3fbb142a8a50be",
+        "transform": "Absolute host paths replaced by CHECKOUT, EVIDENCE, HOST_USER or TOOLCHAIN; JSON reserialized. Numeric results unchanged."
+      },
+      "r96-annotations.json": {
+        "originalSha256": "5aefefde7e5902b216f0577f32ef7b3319f4738e3ebbf1aca8dff2db29cd9e3e",
+        "publishedSha256": "479bead36d7c5d1cec84a093aa45047126efa66654c4f9b3da85e5878f614f0b",
+        "transform": "Absolute host paths replaced by CHECKOUT, EVIDENCE, HOST_USER or TOOLCHAIN; JSON reserialized. Numeric results unchanged."
+      },
+      "cost-budget.json": {
+        "originalSha256": "e89ce4962935b766d232bdd9c0e98d1d0ea7d8e01af8d658ddaeff06495b5a2d",
+        "publishedSha256": "698910e790436f19f877cae94a94cbccb164c9650cb7c590c76366ebc96b7756",
+        "transform": "Absolute host paths replaced by CHECKOUT, EVIDENCE, HOST_USER or TOOLCHAIN; JSON reserialized. Numeric results unchanged."
+      },
+      "capture-driver-receipt.json": {
+        "originalSha256": "146e07fc3b70a2b3b560bb947234339347b4aef30a3090c387b69e7450c79ac4",
+        "publishedSha256": "fa223b0c1b948662dc8ec04f0f2d3fec07d408dfb91cf5c9ab1128e8f46f04db",
+        "transform": "Absolute host paths replaced by CHECKOUT, EVIDENCE, HOST_USER or TOOLCHAIN; JSON reserialized. Numeric results unchanged."
+      }
+    },
+    "referenceResolution": {
+      "aliases": {
+        "EVIDENCE": "Private work-product root, not a public location or downloadable resource.",
+        "CHECKOUT": "Source checkout; repository-relative files can be resolved at the PR checkpoint.",
+        "HOST_USER": "Redacted host user directory, not published.",
+        "TOOLCHAIN": "Redacted installed toolchain directory, not published."
+      },
+      "publicMappings": {
+        "EVIDENCE/native/chromium-digest-r101/results.json": "r101-results.json (path-aliased projection)",
+        "EVIDENCE/native/chromium-digest-r101/EXECUTION.json": "r101-execution.json (path-aliased projection)",
+        "EVIDENCE/native/chromium-digest-r101/source-annotations-r52.json": "r101-annotations.json (path-aliased projection)",
+        "EVIDENCE/native/chromium-startup-handoff-r96/source-annotations-r52.json": "r96-annotations.json (path-aliased projection)",
+        "EVIDENCE/native/chromium-digest-r101/video/page@ce2a01fd608b26ee68f06f8c67fc6baf.webm": "r101.webm (exact bytes)",
+        "EVIDENCE/native/chromium-digest-r101/video/page@ce2a01fd608b26ee68f06f8c67fc6baf.webm.frames.jsonl": "r101-source-frames.jsonl (exact bytes)",
+        "EVIDENCE/independent-review/digest-r98-source-review.json": "digest-r98-source-review.json (path-aliased projection)",
+        "EVIDENCE/independent-review/digest-r100-review.json": "digest-r100-review.json (path-aliased projection)",
+        "EVIDENCE/independent-review/digest-r101-review.json": "digest-r101-review.json (path-aliased projection)",
+        "EVIDENCE/cost-budget-decision.json": "cost-budget.json (JSON projection)",
+        "EVIDENCE/capture-driver/SOURCE_FRAME_RECEIPT.json": "capture-driver-receipt.json (path-aliased projection)"
+      },
+      "originalImages": "r101 frame numbers14,15,21,22,25,26 map to r101-NNNNNN.jpeg. Every original through navigation+2200ms is in r101-first-2200ms.zip, with per-member hashes. Other r101 raw JPEG references are unavailable here.",
+      "unpublishedReferences": [
+        "Original r100/r98 intake packets (source-and-tests.json is a projection, not identical bytes).",
+        "r101 RUN-LOG.txt; r96 raw results/video/original JPEGs.",
+        "cost-budget-review.json and other review/source packets identified only by hashes.",
+        "Private build/toolchain trees, executable files, browser profiles and temporary unittest directories.",
+        "Private r98 microbenchmark script/input packet; its independently reviewed scope and custody limits are in digest-r98-source-review.json."
+      ],
+      "rule": "Only explicit MANIFEST members are published in this bundle. Aliased references and original hashes provide provenance, not public availability. Repository-relative source/runtime paths are separately available in this PR."
+    }
+  },
+  "retainedFailures": [
+    "r100 first build refused unassociated source drift; association test failed before exact reviewed admission. Both logs published.",
+    "r96 gaps81.852/192.085ms and r101 gaps115.097/161.865ms are retained; source/receipt timestamps are not hardware presentation.",
+    "Firefox cost r76 capacity and r81 maintenance interference remain INCOMPLETE, not widget failures."
+  ],
+  "authority": "Preservation on existing draft PR67 only; owner exact-head/base approval, production verification and independent certificate-first closure still required."
+}

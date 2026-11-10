@@ -1,0 +1,75 @@
+{
+  "caseId": "R0004-cache-current",
+  "entry": "index.html",
+  "hash": "#lat=35.68&lon=139.69&label=Tokyo&method=2&school=0&time=24",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T22:00:00Z"
+  },
+  "cacheSeeds": [
+    {
+      "key": "salah:35.68|139.69|America/New_York|2|0",
+      "value": "{\"date\":\"08-09-2026\",\"data\":{\"timings\":{\"Fajr\":\"05:00\",\"Sunrise\":\"06:00\",\"Dhuhr\":\"12:00\",\"Asr\":\"15:30\",\"Maghrib\":\"18:00\",\"Isha\":\"19:30\"},\"date\":{\"gregorian\":{\"date\":\"08-09-2026\",\"day\":\"08\",\"month\":{\"number\":9,\"en\":\"September\"},\"year\":\"2026\"},\"hijri\":{\"date\":\"20-02-1448\",\"day\":\"20\",\"month\":{\"number\":2,\"en\":\"Safar\"},\"year\":\"1448\"}},\"meta\":{\"timezone\":\"Asia/Tokyo\"}}}"
+    }
+  ],
+  "responseRules": [
+    {
+      "id": "offline",
+      "kind": "prayer",
+      "failure": true
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='08-09-2026'&&s.render&&!s.flags.prayerStale)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "first-current",
+      "selector": ".c",
+      "readOnly": false,
+      "firstRender": true,
+      "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.peekSlots().current===null",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "sleep",
+      "ms": 900
+    },
+    {
+      "type": "capture",
+      "name": "offline-settled",
+      "selector": ".c",
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "offline-settled",
+      "equals": {
+        "currentDay": "08-09-2026",
+        "timezone": "Asia/Tokyo",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    }
+  ],
+  "offline": true
+}

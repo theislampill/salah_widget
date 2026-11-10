@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "scope": "Bounded r105 ordinary native observation and arc-cache retention recommendation",
+  "observedAtUtc": "2026-10-18T06:54:36.149052+00:00",
+  "pins": {
+    "result": "e0f5ad9f0f972a300e54109f8e24927932ddb32dc22be75b92ed55a3a56f37f6",
+    "annotations": "ae668f98efaf3cdaa2041f643010736cc1320671bc3dcb8091755e325421da25",
+    "execution": "2eacd6922578f9d3c4b7d6508f618994c331e85620f2c9d08387b22e2b9c5913",
+    "sourceSidecar": "2de6e911b1c5c7abfded3ac15835306863dc82335e2960f8b72ca3f144a63dbe",
+    "sourcePacket": "590e0bcdfd36a2ece0eb4accb4fb94adec1fcb1064ad3631f4cee4a7ca3879c4",
+    "sourceReview": "c7665c19c290e82950b4223f45dcc4c980a47b3ac765e6002c717689cc06887e",
+    "samePositionReview": "4d14e251aecd13cb507ed8182a263ffcdedb1c15c97834f5bedd839a37467c96",
+    "runtime": "7bf73d6b7fc3cc5ae0c6aa3e2276c8a84b5624175fa1c446f85e35bef69334f9"
+  },
+  "execution": {
+    "exitCode": 0,
+    "errors": [],
+    "runtimeUnchanged": true,
+    "harnessUnchangedDuringRun": true,
+    "sevenHarnessPinsEqualR101": true,
+    "cpuProfile": false,
+    "cdpFilmstrip": false,
+    "lockAbsentAtRead": true,
+    "cleanupLimit": "Terminal close-path evidence and absent lock; reviewer did not perform a process inventory or assert formal lifecycle."
+  },
+  "originalsViewed": [
+    {
+      "seq": 16,
+      "sourceTimeSeconds": 1792306332.559437,
+      "receiptUtcMs": 1792306332560,
+      "file": "000016.jpeg",
+      "bytes": 17709,
+      "sha256": "f89af16516a74279e94603a59e4250dd1b934faa006bf4a7c62971b3a8608d0a"
+    },
+    {
+      "seq": 23,
+      "sourceTimeSeconds": 1792306332.633587,
+      "receiptUtcMs": 1792306332634,
+      "file": "000023.jpeg",
+      "bytes": 17728,
+      "sha256": "4d4944f38972dafc218637f6e4a01eecfe4419ff1174cdb6ed20682c1a3b6391"
+    },
+    {
+      "seq": 24,
+      "sourceTimeSeconds": 1792306332.753804,
+      "receiptUtcMs": 1792306332755,
+      "file": "000024.jpeg",
+      "bytes": 30756,
+      "sha256": "b77bc265ec495b4cde373d1cea4baaa1040efa9d73fea8936b7b676368d75b89"
+    },
+    {
+      "seq": 26,
+      "sourceTimeSeconds": 1792306332.7735238,
+      "receiptUtcMs": 1792306332774,
+      "file": "000026.jpeg",
+      "bytes": 31294,
+      "sha256": "d932780f18aa799a998c43dfca68ac2d273c101591c875ff1e8507b271392c8f"
+    },
+    {
+      "seq": 27,
+      "sourceTimeSeconds": 1792306332.951605,
+      "receiptUtcMs": 1792306332953,
+      "file": "000027.jpeg",
+      "bytes": 37893,
+      "sha256": "fe3149d02c4ec79233de8abdc8e594659368b4a2690d81a8e9afc1800ac93b43"
+    }
+  ],
+  "visualFinding": "Moon and catalogue are visibly present in each of the five selected originals. 16/23 retain Loading; 24/26 show unavailable prayer rows; 27 shows the arc, named times, weather and dates with Countdown unavailable and Real sky loading. These samples do not establish continuity between originals.",
+  "timing": {
+    "navigationAbsolute": 1792306332191.107,
+    "timeOrigin": 1792306332200.3,
+    "headCapturedAt": 198,
+    "earliestAcceptedFromNavigationMs": 207.193115234375,
+    "firstCoherentObservedSeq": 16,
+    "receiptUpperFromNavigationMs": 369.89306640625,
+    "receiptUpperAfterEarliestAcceptedMs": 162.699951171875,
+    "initialReceiptUpperFromNavigationMs": 237.89306640625,
+    "sourceGaps": [
+      {
+        "from": 23,
+        "to": 24,
+        "sourceGapMs": 120.21708488464355
+      },
+      {
+        "from": 26,
+        "to": 27,
+        "sourceGapMs": 178.08127403259277
+      }
+    ],
+    "limit": "Receipt upper bounds and raw source gaps are not exact presentation times or proof of what displayed during an uncovered interval. Native capture389ms/publish400.5ms do not replace original head acceptance198ms."
+  },
+  "comparison": {
+    "r101FirstCoherentReceiptUpperNavMs": 350.540283203125,
+    "r101ReceiptUpperAfterAcceptedMs": 149.800048828125,
+    "r101GapsMs": [
+      115.0970458984375,
+      161.8649959564209
+    ],
+    "finding": "No native startup benefit demonstrated. One observation per candidate, shared-host conditions and incomplete source coverage do not establish repeatability, causal speedup or a regression magnitude."
+  },
+  "retentionDecision": "SUPPORT_RETAINING_BOUNDED_ARC_SAMPLE_CACHE_WITHOUT_S1_OR_NATIVE_SPEEDUP_CLAIM",
+  "reason": "The exact same-d cache removes repeated real SVG sampling in the demonstrated component workload (1206 to603 queries across six stages), retains only one numeric point set and path string, and preserves live matrix transforms, fitting and exact same-position pixels. No source or sampled native defect requiring rollback was found. The single non-improving ordinary observation does not negate that bounded work reduction.",
+  "limits": [
+    "No total startup or steady callback-cost qualification; new retained points/path are bounded source-owned state, not proof about whole heap or GC.",
+    "S1 remains OPEN: both >80ms source gaps and initial uncovered acquisition persist. No hidden-pixel filling or shifted acceptance origin.",
+    "Original r104 six mismatching side-by-side cases remain retained; r104b equality does not establish a unique raster cause.",
+    "Countdown publication is a separately investigated lead; this review assigns no cause.",
+    "No new browser, test, profile or Git effects by reviewer. No merge/readiness/continuous/whole-visual credit; formal currentness, epoch and native lifecycle unverified."
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "caseId": "shared-preservation-reduce-full",
+  "entry": "index.html",
+  "hash": "#lat=21.31&lon=-157.86&label=Honolulu&method=2&school=0&time=24&tz=Pacific%2FHonolulu&simWx=2&simCloud=50&motion=full",
+  "clockPolicy": {
+    "mode": "native"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "healthy",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Pacific/Honolulu"
+          }
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay&&s.render)&&document.fonts.status==='loaded'",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "live-start",
+      "firstRender": false,
+      "selector": ".c",
+      "readOnly": true
+    },
+    {
+      "type": "sleep",
+      "ms": 15000
+    },
+    {
+      "type": "capture",
+      "name": "live-15s",
+      "firstRender": false,
+      "selector": ".c",
+      "readOnly": true,
+      "preservation": true
+    },
+    {
+      "type": "sleep",
+      "ms": 15000
+    },
+    {
+      "type": "capture",
+      "name": "live-30s",
+      "firstRender": false,
+      "selector": ".c",
+      "readOnly": true,
+      "preservation": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "live-30s",
+      "equals": {
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "live-30s",
+      "reviewOnly": true,
+      "requirement": "Inspect original 30s video and crops for visible cloud/star motion, opacity, header/footer and reduced/full preference. No hash-motion inference."
+    }
+  ],
+  "acceptanceIds": [
+    "R0007-A02",
+    "R0007-A07"
+  ],
+  "status": "RECIPE_ONLY_RESULTS_ARE_SEPARATE",
+  "reviewRequirements": [
+    "original first-frame crop",
+    "325x530 card/header/footer readable",
+    "exact source/input/environment binding",
+    "real native Date/performance/rAF/timers; no simTime/timeScale",
+    "forced broken-cloud input disclosed",
+    "warm opaque lunar disc where actual native night scene supports it; otherwise separately schedule night",
+    "V1 exact file comparison remains a separate source certificate"
+  ],
+  "motionPreference": "reduce"
+}

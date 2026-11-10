@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/r0021_review",
+  "createdAtUtc": "2026-10-18T05:59:40.018072+00:00",
+  "scope": "Private r98 two-substitution SHA-256 implementation review, separate from preceding post-compaction cognitive return.",
+  "disposition": "SUPPORTED_NARROW_IMPLEMENTATION_CANDIDATE_PENDING_AFFECTED_CONTROLS_AND_BUILD",
+  "pins": {
+    "sourceSha256": "41a02370ec87de6e028d34b7ec2ecf947c8c37bee11d3047bc903b06f15c0620",
+    "candidateSha256": "5b2f1e7934a46df8db03c809749d535b1d3edddacf43781235834c6939fbb82b",
+    "packetSha256": "51b5d4427913374e7b68933859c6baffe94f29b32c5ebb5ed089d8446afd50a7",
+    "comparisonScriptSha256": "6a98ea516f39709445a1951858b32dacdb1675a6ea661a4ea41a1591615883c8"
+  },
+  "exactBytes": {
+    "twoUniqueAsciiReplacements": true,
+    "allOtherBytesEqual": true
+  },
+  "findings": [],
+  "reasoning": [
+    "The eight initial compression words are internal Uint32Array elements; direct accesses select the same values before the rounds.",
+    "Feed-forward writes retain order 0 through 7 and the same unsigned coercion; each h[i]+word sum is below 2^33 and exactly representable before >>>0. No later update depends on an earlier updated index.",
+    "Input type and 64 MiB cap, padding, endian reads, bit-length encoding, message schedule, compression rounds and lowercase output are unchanged.",
+    "The explicit per-block temporary v array and state destructuring are removed. No new worker, timer, state owner, retained buffer or asynchronous boundary is introduced. Actual engine allocation/GC savings are not measured by source inspection.",
+    "Digest is used by startup/decoded/worker/engine identity consumers. Their validation must remain intact, and generated custody pins must follow the normal build; this review does not admit any bypass."
+  ],
+  "existingEvidence": {
+    "oracleLengthCount": 18,
+    "oracleLengths": [
+      0,
+      1,
+      3,
+      55,
+      56,
+      63,
+      64,
+      65,
+      119,
+      120,
+      127,
+      128,
+      129,
+      4095,
+      4096,
+      4097,
+      549170,
+      3965156
+    ],
+    "timedCallCount": 16,
+    "meanNodeWarmMsA": 57.37536250000001,
+    "meanNodeWarmMsB": 14.009525000000018,
+    "reportedScope": "Private SHA-256 word-access discriminator. OpenSSL output oracle; Node-only elapsed timings after warm validation, not browser/callback certification.",
+    "interpretation": "Original and candidate output asserted against Node crypto for synthetic boundary lengths, then an actual initial-receivers asset in alternating ABBA/BAAB calls. Not a native browser or original callback-cost result.",
+    "custodyLimits": [
+      "Packet does not record Node/executable identity or an explicit timed-input digest.",
+      "Comparison script is independently hash-bound here, but this review did not rerun it.",
+      "Warm synthetic validation precedes timing; no first-call browser timing or allocation/GC attribution follows."
+    ]
+  },
+  "nextControls": [
+    "Keep original behavior as a passing reference for an output-identical optimization; do not fabricate a functional RED.",
+    "Add independent SHA-output boundary, nonzero-offset subarray, actual asset and input-type/cap controls as ROOT already proposed. Preserve input immutability and existing corrupt-asset rejection.",
+    "Regenerate affected delivery and identity pins through guarded builders, then obtain bounded native evidence only under ROOT lease if the candidate is selected."
+  ],
+  "limits": [
+    "No test, benchmark, browser, source edit, Git effect or new agent was run by this reviewer.",
+    "No S1/callback-cost improvement, physical-renderer qualification, merge or readiness credit.",
+    "Original S1 gaps, callback incompleteness and historical Firefox quality rejection remain open. Owner limit against another prolonged Firefox cost campaign remains operative."
+  ]
+}

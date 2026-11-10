@@ -1,0 +1,333 @@
+{
+  "caseId": "R0004-ingress-null-timings",
+  "entry": "index.html",
+  "hash": "#lat=35.68&lon=139.69&label=Tokyo&method=2&school=0&time=24",
+  "clockPolicy": {
+    "mode": "fixed",
+    "epoch": "2026-09-07T22:00:00Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "bad",
+      "kind": "prayer",
+      "times": 1,
+      "day": "07-09-2026",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": null,
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Tokyo"
+          }
+        }
+      },
+      "dateFromRequest": false,
+      "hold": true,
+      "phase": "body"
+    },
+    {
+      "id": "bootstrap",
+      "kind": "prayer",
+      "day": "07-09-2026",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Tokyo"
+          }
+        }
+      },
+      "dateFromRequest": true,
+      "hold": true,
+      "phase": "body"
+    },
+    {
+      "id": "corrected",
+      "kind": "prayer",
+      "day": "08-09-2026",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "20-02-1448",
+              "day": "20",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Tokyo"
+          }
+        }
+      },
+      "dateFromRequest": true,
+      "hold": true,
+      "phase": "body"
+    },
+    {
+      "id": "prefetch",
+      "kind": "prayer",
+      "day": "09-09-2026",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "09-09-2026",
+              "day": "09",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "21-02-1448",
+              "day": "21",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "Asia/Tokyo"
+          }
+        }
+      },
+      "dateFromRequest": true,
+      "hold": true,
+      "phase": "body"
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('bad:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "invalid-held",
+      "selector": ".c",
+      "readOnly": true
+    },
+    {
+      "type": "sleep",
+      "ms": 900
+    },
+    {
+      "type": "release",
+      "id": "bad"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('bootstrap:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "invalid-rejected",
+      "selector": ".c",
+      "readOnly": true
+    },
+    {
+      "type": "sleep",
+      "ms": 900
+    },
+    {
+      "type": "release",
+      "id": "bootstrap"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('corrected:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "zone-known",
+      "selector": ".c",
+      "readOnly": true
+    },
+    {
+      "type": "sleep",
+      "ms": 900
+    },
+    {
+      "type": "release",
+      "id": "corrected"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='08-09-2026'&&s.render&&!s.flags.prayerStale)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "first-current",
+      "selector": ".c",
+      "readOnly": false,
+      "firstRender": true,
+      "firstPredicate": "s.stage==='render-completed'&&s.currentDay&&s.render"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.pending().includes('prefetch:1')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "release",
+      "id": "prefetch"
+    },
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.tomorrowDay==='09-09-2026')",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "settled",
+      "selector": ".c",
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "invalid-rejected",
+      "equals": {
+        "currentDay": null,
+        "timezone": "America/New_York",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "zone-known",
+      "equals": {
+        "currentDay": null,
+        "timezone": "Asia/Tokyo",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "first-current",
+      "equals": {
+        "currentDay": "08-09-2026",
+        "timezone": "Asia/Tokyo",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    },
+    {
+      "stage": "settled",
+      "equals": {
+        "currentDay": "08-09-2026",
+        "timezone": "Asia/Tokyo",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true
+    },
+    {
+      "noCurrentDay": "07-09-2026"
+    }
+  ]
+}

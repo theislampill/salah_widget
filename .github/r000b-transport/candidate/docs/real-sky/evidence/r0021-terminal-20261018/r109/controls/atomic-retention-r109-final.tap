@@ -1,0 +1,454 @@
+TAP version 13
+# Subtest: new worker acceptance cannot extend the original displayed job while its replacement mask is pending
+ok 1 - new worker acceptance cannot extend the original displayed job while its replacement mask is pending
+  ---
+  duration_ms: 1.4525
+  type: 'test'
+  ...
+# Subtest: failed first refined detail cannot publish its background or withdraw the preview class
+ok 2 - failed first refined detail cannot publish its background or withdraw the preview class
+  ---
+  duration_ms: 75.3403
+  type: 'test'
+  ...
+# Subtest: failed replacement detail retains the original complete refined pixels and identity
+ok 3 - failed replacement detail retains the original complete refined pixels and identity
+  ---
+  duration_ms: 99.0597
+  type: 'test'
+  ...
+# Subtest: refined detail cannot spend the original accepted-job fence before background commit
+ok 4 - refined detail cannot spend the original accepted-job fence before background commit
+  ---
+  duration_ms: 82.6568
+  type: 'test'
+  ...
+# Subtest: refined host encodes each final pixel once and preserves composed bytes: 183
+ok 5 - refined host encodes each final pixel once and preserves composed bytes: 183
+  ---
+  duration_ms: 63.4653
+  type: 'test'
+  ...
+# Subtest: refined host encodes each final pixel once and preserves composed bytes: 284
+ok 6 - refined host encodes each final pixel once and preserves composed bytes: 284
+  ---
+  duration_ms: 57.8531
+  type: 'test'
+  ...
+# Subtest: refined host encodes each final pixel once and preserves composed bytes: 530
+ok 7 - refined host encodes each final pixel once and preserves composed bytes: 530
+  ---
+  duration_ms: 103.8284
+  type: 'test'
+  ...
+# Subtest: refined host never publishes an expired or failed prepared update
+ok 8 - refined host never publishes an expired or failed prepared update
+  ---
+  duration_ms: 76.6302
+  type: 'test'
+  ...
+# Subtest: skipped raw prefix and encoded tail retain nonfinite rejection
+ok 9 - skipped raw prefix and encoded tail retain nonfinite rejection
+  ---
+  duration_ms: 48.9684
+  type: 'test'
+  ...
+# Subtest: new accepted frame with exact cloud alpha reuses only published solar mask
+ok 10 - new accepted frame with exact cloud alpha reuses only published solar mask
+  ---
+  duration_ms: 164.8758
+  type: 'test'
+  ...
+# Subtest: failed publication leaves solar reuse state unpublished
+ok 11 - failed publication leaves solar reuse state unpublished
+  ---
+  duration_ms: 46.3322
+  type: 'test'
+  ...
+# Subtest: refined publication keeps matching immutable foreground private until mask readiness
+ok 12 - refined publication keeps matching immutable foreground private until mask readiness
+  ---
+  duration_ms: 47.7765
+  type: 'test'
+  ...
+# Subtest: late mask readiness cannot publish over a newer accepted frame, changed target or disposal
+ok 13 - late mask readiness cannot publish over a newer accepted frame, changed target or disposal
+  ---
+  duration_ms: 168.7314
+  type: 'test'
+  ...
+# Subtest: solar mask comparator validates types, lengths and every alpha boundary
+ok 14 - solar mask comparator validates types, lengths and every alpha boundary
+  ---
+  duration_ms: 0.4259
+  type: 'test'
+  ...
+# Subtest: actual host clear withdraws the mask cache along with the previous presentation
+ok 15 - actual host clear withdraws the mask cache along with the previous presentation
+  ---
+  duration_ms: 53.1494
+  type: 'test'
+  ...
+# Subtest: worker failure retains original current pixels while a stale preview and changed mask await replacement
+ok 16 - worker failure retains original current pixels while a stale preview and changed mask await replacement
+  ---
+  duration_ms: 45.4836
+  type: 'test'
+  ...
+# Subtest: ignoring the final alpha difference is killed by the same exact mask discriminator
+ok 17 - ignoring the final alpha difference is killed by the same exact mask discriminator
+  ---
+  duration_ms: 3.4927
+  type: 'test'
+  ...
+# Subtest: real refined publication retains coherent pixels and releases owned masks on clear
+ok 18 - real refined publication retains coherent pixels and releases owned masks on clear
+  ---
+  duration_ms: 98.8925
+  type: 'test'
+  ...
+# Subtest: real refined publication retains coherent pixels and releases owned masks on dispose
+ok 19 - real refined publication retains coherent pixels and releases owned masks on dispose
+  ---
+  duration_ms: 94.9347
+  type: 'test'
+  ...
+# Subtest: an unchanged scene cannot admit a frame two minutes out of date
+ok 20 - an unchanged scene cannot admit a frame two minutes out of date
+  ---
+  duration_ms: 1.3288
+  type: 'test'
+  ...
+# Subtest: ordinary short worker latency remains eligible
+ok 21 - ordinary short worker latency remains eligible
+  ---
+  duration_ms: 0.1201
+  type: 'test'
+  ...
+# Subtest: frozen preview result at the exact accepted time is eligible
+ok 22 - frozen preview result at the exact accepted time is eligible
+  ---
+  duration_ms: 0.0833
+  type: 'test'
+  ...
+# Subtest: initial request renders once and retains captured input
+ok 23 - initial request renders once and retains captured input
+  ---
+  duration_ms: 0.9043
+  type: 'test'
+  ...
+# Subtest: A→B obsolete successful completion cannot paint A
+ok 24 - A→B obsolete successful completion cannot paint A
+  ---
+  duration_ms: 0.2722
+  type: 'test'
+  ...
+# Subtest: A→B→A coalesces to newest A generation without painting first A
+ok 25 - A→B→A coalesces to newest A generation without painting first A
+  ---
+  duration_ms: 0.6734
+  type: 'test'
+  ...
+# Subtest: obsolete rejection cannot report error over newer target
+ok 26 - obsolete rejection cannot report error over newer target
+  ---
+  duration_ms: 0.588
+  type: 'test'
+  ...
+# Subtest: explicit invalidation fences a pending completion even when identity is reused
+ok 27 - explicit invalidation fences a pending completion even when identity is reused
+  ---
+  duration_ms: 0.3459
+  type: 'test'
+  ...
+# Subtest: wall-clock forward discontinuity fences late completion with same scene identity
+ok 28 - wall-clock forward discontinuity fences late completion with same scene identity
+  ---
+  duration_ms: 0.3713
+  type: 'test'
+  ...
+# Subtest: wall-clock backward discontinuity is caught even without a timer poll
+ok 29 - wall-clock backward discontinuity is caught even without a timer poll
+  ---
+  duration_ms: 0.5669
+  type: 'test'
+  ...
+# Subtest: short explicit seek changing native anchor also fences
+ok 30 - short explicit seek changing native anchor also fences
+  ---
+  duration_ms: 0.3238
+  type: 'test'
+  ...
+# Subtest: normal wall time and monotonic time advancement does not repeatedly supersede slow job
+ok 31 - normal wall time and monotonic time advancement does not repeatedly supersede slow job
+  ---
+  duration_ms: 0.2124
+  type: 'test'
+  ...
+# Subtest: invalid input clears and cannot retain old diagnostic authority
+ok 32 - invalid input clears and cannot retain old diagnostic authority
+  ---
+  duration_ms: 0.2719
+  type: 'test'
+  ...
+# Subtest: hidden state refuses forced work and obsolete completions
+ok 33 - hidden state refuses forced work and obsolete completions
+  ---
+  duration_ms: 0.1475
+  type: 'test'
+  ...
+# Subtest: reduced motion invalidates but does not freeze accepted astronomical time
+ok 34 - reduced motion invalidates but does not freeze accepted astronomical time
+  ---
+  duration_ms: 0.1316
+  type: 'test'
+  ...
+# Subtest: timezone-only update invalidates even with unchanged coordinates
+ok 35 - timezone-only update invalidates even with unchanged coordinates
+  ---
+  duration_ms: 0.1153
+  type: 'test'
+  ...
+# Subtest: expired accepted frame clears before a refresh
+ok 36 - expired accepted frame clears before a refresh
+  ---
+  duration_ms: 0.418
+  type: 'test'
+  ...
+# Subtest: dispose fences all callbacks and never restarts
+ok 37 - dispose fences all callbacks and never restarts
+  ---
+  duration_ms: 0.1082
+  type: 'test'
+  ...
+# Subtest: native config and builder preserved byte for byte
+ok 38 - native config and builder preserved byte for byte
+  ---
+  duration_ms: 18.602
+  type: 'test'
+  ...
+# Subtest: native PBR maps, phase, Earthshine, material and calendar renderer unchanged
+ok 39 - native PBR maps, phase, Earthshine, material and calendar renderer unchanged
+  ---
+  duration_ms: 1.733
+  type: 'test'
+  ...
+# Subtest: native weather admission/cloud painting and atmosphere derivation unchanged
+ok 40 - native weather admission/cloud painting and atmosphere derivation unchanged
+  ---
+  duration_ms: 0.5885
+  type: 'test'
+  ...
+# Subtest: native prayer fetching, accepted clock and settings source unchanged
+ok 41 - native prayer fetching, accepted clock and settings source unchanged
+  ---
+  duration_ms: 0.3945
+  type: 'test'
+  ...
+# Subtest: failed changed-mask decode cannot retain a preview after the owner pauses
+ok 42 - failed changed-mask decode cannot retain a preview after the owner pauses
+  ---
+  duration_ms: 5.1562
+  type: 'test'
+  ...
+# Subtest: failed preview mask decode retains a current initial head and later publishes a complete retry
+ok 43 - failed preview mask decode retains a current initial head and later publishes a complete retry
+  ---
+  duration_ms: 1.6652
+  type: 'test'
+  ...
+# Subtest: failed preview preparation retains only a current unpaused initial head
+ok 44 - failed preview preparation retains only a current unpaused initial head
+  ---
+  duration_ms: 2.5471
+  type: 'test'
+  ...
+# Subtest: preview waits for its mask and rejects readiness after owner transfer, clear and disposal
+ok 45 - preview waits for its mask and rejects readiness after owner transfer, clear and disposal
+  ---
+  duration_ms: 5.6127
+  type: 'test'
+  ...
+# Subtest: near-expiry preview cannot remove first paint and wait for a second decode after writing
+ok 46 - near-expiry preview cannot remove first paint and wait for a second decode after writing
+  ---
+  duration_ms: 2.1034
+  type: 'test'
+  ...
+# Subtest: an unresolved preview decode cannot block the owner after its prepared job expires
+ok 47 - an unresolved preview decode cannot block the owner after its prepared job expires
+  ---
+  duration_ms: 1.7042
+  type: 'test'
+  ...
+# Subtest: a pending mask may retain only a current initial head, never its expired CSS background
+ok 48 - a pending mask may retain only a current initial head, never its expired CSS background
+  ---
+  duration_ms: 2.5444
+  type: 'test'
+  ...
+# Subtest: revoked initial pixels are replaced in the same turn when captured clouds are exactly clear
+ok 49 - revoked initial pixels are replaced in the same turn when captured clouds are exactly clear
+  ---
+  duration_ms: 2.3539
+  type: 'test'
+  ...
+# Subtest: foreground preparation cannot consume the new astronomical calculation age budget
+ok 50 - foreground preparation cannot consume the new astronomical calculation age budget
+  ---
+  duration_ms: 1.6782
+  type: 'test'
+  ...
+# Subtest: already native-size pixels need no canvas round trip; smaller fast-clock raster still resamples
+ok 51 - already native-size pixels need no canvas round trip; smaller fast-clock raster still resamples
+  ---
+  duration_ms: 6.9628
+  type: 'test'
+  ...
+# Subtest: a near-expiry preview cannot be published without consumer callback headroom
+ok 52 - a near-expiry preview cannot be published without consumer callback headroom
+  ---
+  duration_ms: 3.1158
+  type: 'test'
+  ...
+# Subtest: deadline recovery is bounded and cannot turn a persistently slow calculation into a current frame
+ok 53 - deadline recovery is bounded and cannot turn a persistently slow calculation into a current frame
+  ---
+  duration_ms: 1.2916
+  type: 'test'
+  ...
+# Subtest: a throwing detail compositor cannot bypass publication headroom through retained-frame recovery
+ok 54 - a throwing detail compositor cannot bypass publication headroom through retained-frame recovery
+  ---
+  duration_ms: 1.5927
+  type: 'test'
+  ...
+# Subtest: failed first detail composition cannot claim a ready retained preview that was never visible
+ok 55 - failed first detail composition cannot claim a ready retained preview that was never visible
+  ---
+  duration_ms: 1.4013
+  type: 'test'
+  ...
+# Subtest: failed replacement detail preserves the displayed preview pixels and identity until a complete retry
+ok 56 - failed replacement detail preserves the displayed preview pixels and identity until a complete retry
+  ---
+  duration_ms: 2.7633
+  type: 'test'
+  ...
+# Subtest: a delayed rAF timestamp never skips the accepted-clock expiry check
+ok 57 - a delayed rAF timestamp never skips the accepted-clock expiry check
+  ---
+  duration_ms: 2.2728
+  type: 'test'
+  ...
+# Subtest: native presentation handoff stops the duplicate loop and timestamps after native painting
+ok 58 - native presentation handoff stops the duplicate loop and timestamps after native painting
+  ---
+  duration_ms: 1.7275
+  type: 'test'
+  ...
+# Subtest: catalogue admission preserves the current atmosphere and defers first stellar paint to a separate native turn
+ok 59 - catalogue admission preserves the current atmosphere and defers first stellar paint to a separate native turn
+  ---
+  duration_ms: 2.6601
+  type: 'test'
+  ...
+# Subtest: invalid catalogue cannot become the displayed identity or defer currentness validation
+ok 60 - invalid catalogue cannot become the displayed identity or defer currentness validation
+  ---
+  duration_ms: 2.3322
+  type: 'test'
+  ...
+# Subtest: late catalogue hash completion cannot resurrect a revoked asset admission
+ok 61 - late catalogue hash completion cannot resurrect a revoked asset admission
+  ---
+  duration_ms: 1.8302
+  type: 'test'
+  ...
+# Subtest: ordinary presentation republishes a fresh preview after weather withdrawal
+ok 62 - ordinary presentation republishes a fresh preview after weather withdrawal
+  ---
+  duration_ms: 4.1615
+  type: 'test'
+  ...
+# Subtest: refined withdrawal publishes the replacement preview in the same turn without waiting for native paint
+ok 63 - refined withdrawal publishes the replacement preview in the same turn without waiting for native paint
+  ---
+  duration_ms: 3.8318
+  type: 'test'
+  ...
+# Subtest: same-turn withdrawal cannot fabricate a preview when accepted input is absent
+ok 64 - same-turn withdrawal cannot fabricate a preview when accepted input is absent
+  ---
+  duration_ms: 2.9686
+  type: 'test'
+  ...
+# Subtest: a still-current preview recomposes lunar detail before withdrawal returns without relabelling its UTC
+ok 65 - a still-current preview recomposes lunar detail before withdrawal returns without relabelling its UTC
+  ---
+  duration_ms: 3.0058
+  type: 'test'
+  ...
+# Subtest: withdrawal preserves already-current preview-owned detail and pixels
+ok 66 - withdrawal preserves already-current preview-owned detail and pixels
+  ---
+  duration_ms: 3.3306
+  type: 'test'
+  ...
+# Subtest: first frame and full-pack reset/failure retain the independent same-catalogue bootstrap
+ok 67 - first frame and full-pack reset/failure retain the independent same-catalogue bootstrap
+  ---
+  duration_ms: 4.1453
+  type: 'test'
+  ...
+# Subtest: resetting an unchanged bootstrap cancels admission without rebuilding its sky
+ok 68 - resetting an unchanged bootstrap cancels admission without rebuilding its sky
+  ---
+  duration_ms: 1.6529
+  type: 'test'
+  ...
+# Subtest: changing solar mask cannot expose an undecoded frame; CSS anonymous request mode is required
+ok 69 - changing solar mask cannot expose an undecoded frame; CSS anonymous request mode is required
+  ---
+  duration_ms: 1.4312
+  type: 'test'
+  ...
+# Subtest: one pending decode bounds work; cancellation fences late A after B and disposal
+ok 70 - one pending decode bounds work; cancellation fences late A after B and disposal
+  ---
+  duration_ms: 0.489
+  type: 'test'
+  ...
+# Subtest: decoded bytes can be reused after a rejected scene, but failed and cancelled decodes never enter the cache
+ok 71 - decoded bytes can be reused after a rejected scene, but failed and cancelled decodes never enter the cache
+  ---
+  duration_ms: 0.3286
+  type: 'test'
+  ...
+# Subtest: exactly transparent captured clouds need no encoded solar mask; one alpha code still does
+ok 72 - exactly transparent captured clouds need no encoded solar mask; one alpha code still does
+  ---
+  duration_ms: 0.9635
+  type: 'test'
+  ...
+# Subtest: full transmission publishes synchronously through the same commit guard
+ok 73 - full transmission publishes synchronously through the same commit guard
+  ---
+  duration_ms: 0.2534
+  type: 'test'
+  ...
+# Subtest: clear/cloud/clear transition retains decode and cancellation fences
+ok 74 - clear/cloud/clear transition retains decode and cancellation fences
+  ---
+  duration_ms: 0.2798
+  type: 'test'
+  ...
+1..74
+# tests 74
+# suites 0
+# pass 74
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1428.9356

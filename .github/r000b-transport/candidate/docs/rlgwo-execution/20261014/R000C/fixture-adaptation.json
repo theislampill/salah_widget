@@ -1,0 +1,116 @@
+{
+  "originalSha256": "1153f9f3a85b3eaffc0de68eeebc26f82c1c812989a6abcc01db91091de6ddc4",
+  "fixtureSha256": "917c651c95184eab56e72701a73a2338d3cf1e3131f38af40c4bcd77203de26f",
+  "changes": [
+    {
+      "purpose": "R000C identity",
+      "before": "<title>R0017 isolated widget fixture</title>",
+      "after": "<title>R000C isolated weather consumer</title>"
+    },
+    {
+      "purpose": "Declared September 7 Riyadh day and night inputs",
+      "before": "const fixed=NativeDate.parse(\"2026-09-07T09:30:00.000Z\"),rootURL=",
+      "after": "const fixed=NativeDate.parse(query.get(\"night\")===\"1\"?\"2026-09-07T18:30:00.000Z\":\"2026-09-07T09:30:00.000Z\"),rootURL="
+    },
+    {
+      "purpose": "Native 1x elapsed clock for night recovery; timers and rAF unchanged",
+      "before": "let clockNow=fixed;",
+      "after": "let clockNow=fixed; const started=performance.now(),moving=query.get(\"night\")===\"1\";\n  const wall=()=>moving?fixed+performance.now()-started:clockNow;\n  const recovery=()=>moving&&performance.now()-started>=35000;"
+    },
+    {
+      "purpose": "Six day cases plus night recovery",
+      "before": "[\"12-null-temp\",\"12-zero-temp\",\"12-invalid-precip\",\"12-wet\",\"14-dry\",\"14-wet\",\"30-equator\",\"30-meridian\",\"30-origin\"]",
+      "after": "[\"12-null-temp\",\"12-absent-temp\",\"12-zero-temp\",\"12-invalid-precip\",\"12-zero-precip\",\"12-wet\",\"12-night-recovery\"]"
+    },
+    {
+      "purpose": "Disclose clock policy",
+      "before": "storageIsolated:false,clockFixed:false,clockNow:fixed,",
+      "after": "clockPolicy:moving?\"advancing-1x\":\"fixed\",started,storageIsolated:false,clockFixed:false,clockNow:fixed,"
+    },
+    {
+      "purpose": "Current input follows isolated clock",
+      "before": "new NativeDate(clockNow+3*3600000)",
+      "after": "new NativeDate(wall()+3*3600000)"
+    },
+    {
+      "purpose": "Independent amount classes",
+      "before": "return {time,interval:900,weather_code:95,",
+      "after": "const invalid=caseId===\"12-invalid-precip\"||(caseId===\"12-night-recovery\"&&!recovery()),dry=caseId===\"12-zero-precip\";\n    const value={time,interval:900,weather_code:95,"
+    },
+    {
+      "purpose": "Night current is_day input",
+      "before": "visibility:20000,is_day:1,",
+      "after": "visibility:20000,is_day:moving?0:1,"
+    },
+    {
+      "purpose": "Malformed and genuine zero amount",
+      "before": "precipitation:caseId===\"12-invalid-precip\"?\"Infinity\":caseId===\"14-dry\"?0:2,",
+      "after": "precipitation:invalid?\"Infinity\":dry?0:2,"
+    },
+    {
+      "purpose": "Consistent admitted auxiliary rain amount",
+      "before": "rain:caseId===\"12-invalid-precip\"?null:caseId===\"14-dry\"?0:2,",
+      "after": "rain:invalid?null:dry?0:2,"
+    },
+    {
+      "purpose": "Absent is a deleted property, distinct from null",
+      "before": "...(caseId===\"12-null-temp\"?{temperature_2m:null}:caseId===\"12-zero-temp\"?{temperature_2m:0}:{})};",
+      "after": "...(caseId===\"12-null-temp\"?{temperature_2m:null}:caseId===\"12-zero-temp\"?{temperature_2m:0}:{})};\n    if(caseId===\"12-absent-temp\")delete value.temperature_2m;\n    return value;"
+    },
+    {
+      "purpose": "Retain native Response.json actual parsed body and settlement",
+      "before": "row.jsonReads++;row.result=\"json-consumed\";return nativeJson();",
+      "after": "row.jsonReads++;row.result=\"json-consumed\";return nativeJson().then(value=>{row.parsedBody=value;row.jsonSettled=true;row.elapsedMs=performance.now()-started;return value;});"
+    },
+    {
+      "purpose": "Actual request time",
+      "before": "url:u.href,jsonReads:0,result:\"requested\",",
+      "after": "url:u.href,jsonReads:0,elapsedMs:performance.now()-started,result:\"requested\","
+    },
+    {
+      "purpose": "Radar timestamps use the declared wall",
+      "before": "Math.floor(clockNow/1000)",
+      "after": "Math.floor(wall()/1000)"
+    },
+    {
+      "purpose": "Remove unused state-installation and clock/generation helpers; read-only bridge",
+      "before": "      installModel(owner,current){control.assertOwned(owner);\n        const record=admitWeatherRecord(current,{lat,lon,units,zone:tz,retrievedAt:Date.now(),target:currentWeatherTarget()});\n        weather=record;render();const result={ok:record!==null,state:snapshot()};log(\"model-admission\",current,result);return result;},\n      admitSynthetic(owner,raw){control.assertOwned(owner);const result=admitWeatherFixture(raw,currentWeatherTarget(),Date.now());\n        log(\"synthetic-admission-read\",raw,result);return copy(result);},\n      installSynthetic(owner,raw){control.assertOwned(owner);\n        if(SIM.wx==null&&!ADVANCING){log(\"synthetic-refused-live\",raw,{ok:false,reason:\"ordinary live lane\"});throw Error(\"Synthetic installation refused in ordinary live lane\");}\n        const result=admitWeatherFixture(raw,currentWeatherTarget(),Date.now());weatherSynthetic=result;render();\n        const state=snapshot();log(\"synthetic-admission\",raw,{admission:result,state});return {admission:copy(result),state};},\n      advanceClock(owner,ms){control.advance(owner,ms);render();const state=snapshot();log(\"clock-consumer\",null,state);return state;},\n      nextGeneration(owner){control.assertOwned(owner);beginRuntimeGeneration();render();const state=snapshot();log(\"target-generation\",null,state);return state;}",
+      "after": ""
+    },
+    {
+      "purpose": "Retain track, clock, preferences and row observations",
+      "before": "      raw:copy(weather),radar:copy(weatherRadar),wxBusy,radarBusy,",
+      "after": "      raw:copy(weather),track:copy(weatherTrack),radar:copy(weatherRadar),wxBusy,radarBusy,wallUtcMs:Date.now(),elapsedMs:performance.now()-report.started,\n      motion:{reduced:matchMedia(\"(prefers-reduced-motion: reduce)\").matches,full:new URLSearchParams(location.hash.slice(1)).get(\"motion\")===\"full\"},\n      rows:[...document.querySelectorAll(\".p\")].map(e=>({text:e.textContent,top:e.getBoundingClientRect().top,bottom:e.getBoundingClientRect().bottom})),"
+    },
+    {
+      "purpose": "Only Date clock is controlled; native performance and scheduling remain active",
+      "before": "super(...(args.length?args:[clockNow]));}static now(){return clockNow;}",
+      "after": "super(...(args.length?args:[wall()]));}static now(){return wall();}"
+    },
+    {
+      "purpose": "Remove advance clock API",
+      "before": "window.__fixtureClock=Object.freeze({identity,assertOwned,advance(owner,ms){assertOwned(owner);\n      if(!Number.isSafeInteger(ms)||ms<0||ms>900001)throw Error(\"Fixture clock advance must be an integer in 0..900001 ms\");\n      clockNow+=ms;report.clockNow=clockNow;report.weatherEvents.push({action:\"clock-advance\",ms,at:clockNow});}});",
+      "after": "window.__fixtureClock=Object.freeze({identity,assertOwned});"
+    },
+    {
+      "purpose": "Verify fixed or native 1x clock isolation honestly",
+      "before": "report.clockFixed=window.Date===FixtureDate&&Date.now()===clockNow&&+new Date()===clockNow;",
+      "after": "report.clockIsolated=window.Date===FixtureDate&&Math.abs(Date.now()-wall())<10;\n      report.clockFixed=!moving&&report.clockIsolated&&Date.now()===clockNow;"
+    },
+    {
+      "purpose": "Require declared isolation",
+      "before": "!report.storageIsolated||!report.clockFixed||!report.fetchIntercepted",
+      "after": "!report.storageIsolated||!report.clockIsolated||!report.fetchIntercepted"
+    },
+    {
+      "purpose": "Identify read-only bridge",
+      "before": "hook.id=\"r0017-weather-test-bridge\"",
+      "after": "hook.id=\"r000c-weather-read-only-bridge\""
+    }
+  ],
+  "observerLimit": {
+    "weather": "Controlled fetch plus native Response.json; bridge exposes identity and consumer-read only, with no state-installation helper.",
+    "moon": "consumer-read invokes existing qaState(); lunar surface/state reads can adopt a pending preview. Actual observed Moon pixels remain required; no unassisted first-Moon readiness or intrinsically side-effect-free lunar observation claim.",
+    "source": "src/native/index.html qaState moonTruth; moon/src/moon-native.mjs surface/state accessors"
+  }
+}

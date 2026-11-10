@@ -1,0 +1,8 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {PhysicalSkyBridge} from '../integration/physical-sky-bridge.mjs';
+const cat={schema:'salah-real-sky/catalogue/1',id:'fixture',stars:[{hip:91262,raDeg:279.2347,decDeg:38.7837,vmag:.03,bv:-.001,epochJyear:2000}]};
+const o={utcMs:Date.parse('2026-01-15T02:00Z'),latDeg:28.54,lonDeg:-81.38},cfg={view:{type:'camera',width:24,height:32,azDeg:180,altDeg:55,fovYDeg:60}};
+test('CP6 bridge uses a single height input for stellar and sky observer',()=>{const b=new PhysicalSkyBridge(cat),x=b.render(o,{...cfg,atmosphere:{elevationM:2800}});assert.equal(x.status,'ready');assert.equal(x.raster.atmosphere.elevationM,2800);assert.equal(x.observer.heightM,2800);});
+test('CP6 bridge rejects contradictory explicit elevations and clears previous raster',()=>{const b=new PhysicalSkyBridge(cat);assert.equal(b.render(o,cfg).status,'ready');const bad=b.render({...o,heightM:2800},{...cfg,atmosphere:{elevationM:0}});assert.equal(bad.status,'unavailable');assert.equal(bad.raster,null);});
+test('CP6 bridge respects accepted clock changes and reports unavailable catalogue',()=>{const b=new PhysicalSkyBridge(cat),x=b.render(o,cfg),y=b.render({...o,utcMs:o.utcMs+1000},cfg);assert.equal(y.utcMs-x.utcMs,1000);assert.notEqual(x.raster.physicalState.sun.altDeg,y.raster.physicalState.sun.altDeg);b.controller.clear();assert.equal(b.render(o,cfg).status,'unavailable');});
+test('CP6 bridge preserves estimated-pressure provenance across normalisation',()=>{const x=new PhysicalSkyBridge(cat).render(o,{...cfg,atmosphere:{elevationM:2800}});assert.equal(x.raster.atmosphere.pressureSource,'standard-atmosphere-estimate');});

@@ -1,0 +1,56 @@
+✔ actual foreground capture withdraws expired cloud state before reading raster when render and painter have not run (156.710969ms)
+✔ captured authority is serializable and final-currentness read rejects expiry without repairing cloud state (91.04728ms)
+✔ refined rejects an old cloud capture and publishes clear successor at next opportunity (227.03507ms)
+✔ refined rejects an old cloud capture and publishes clear successor at decode completion (178.356537ms)
+✔ preview rejects an old cloud capture and publishes clear successor at next opportunity (145.813523ms)
+✔ preview rejects an old cloud capture and publishes clear successor at decode completion (103.632173ms)
+✔ refined checks cloud authority again after detail composition (135.254035ms)
+✔ preview checks cloud authority again after detail composition (144.361269ms)
+✔ pending solar context is bounded and released without adding owner references to decoded cache (0.468783ms)
+✔ same-byte refined reuse still checks consumed cloud authority after detail (107.875231ms)
+✖ native failure handoff revokes the raw cloud raster before removing refined ownership (362.415349ms)
+✔ refined failed detail cannot retain revoked displayed cloud coverage (197.106445ms)
+✔ preview failed detail cannot retain revoked displayed cloud coverage (151.75752ms)
+✔ authored test ingress retains exact runtime bytes and rejects malformed, missing or duplicate owners (18.208507ms)
+✔ withdrawn painter opportunities do not republish unchanged weather DOM sinks (150.482755ms)
+✔ explicit preview lane keeps eligible supported clouds beyond live TTL: &simWx=3&simCloud=95 (88.856915ms)
+✔ explicit preview lane keeps eligible supported clouds beyond live TTL: &timeScale=2 (94.310181ms)
+✔ obsolete weather settlement cannot install or clear a published successor after A-to-B-to-A (121.038914ms)
+✔ actual units reconfiguration revokes the old exact-record target through generation ownership (90.688656ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 18
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2154.724644
+
+✖ failing tests:
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:105:1
+✖ native failure handoff revokes the raw cloud raster before removing refined ownership (362.415349ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   0.92,
+  +   0.9,
+  +   0.6
+  -   0,
+  -   0,
+  -   0
+    ]
+  
+      at withdrawn (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-fixture.cjs:74:34)
+      at boundary.freshnessRoom (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:108:111)
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:46:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 0.92, 0.9, 0.6 ],
+    expected: [ 0, 0, 0 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

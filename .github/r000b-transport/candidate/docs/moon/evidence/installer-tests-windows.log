@@ -1,0 +1,256 @@
+.FFF....F.FF..FF.FF.                                                     [100%]
+================================== FAILURES ===================================
+____________________________ test_check_no_writes _____________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_check_no_writes0/repo'), WindowsPath('...': 'de9a79a062e60525bf37b94ec5d33eebe9194b75', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+>   def test_check_no_writes(case):r,_,_=case;before=tree(r);v=run(case);assert v['status']=='READY';assert before==tree(r)
+                                                               ^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:94: in install
+    pkg=pkg.resolve();m=read_contract(pkg)
+                        ^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:64: in read_contract
+    safe_key(key)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+s = 'tools\\build.py'
+
+    def safe_key(s):
+>    if not isinstance(s,str) or not s or '\\' in s or ':' in s or s.startswith('/') or '\x00' in s:raise ValueError('unsafe path '+repr(s))
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    ValueError: unsafe path 'tools\\build.py'
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:16: ValueError
+_________________ test_apply_exact_postimages_preserves_other _________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_apply_exact_postimages_pr0/repo'), Win...': 'de9a79a062e60525bf37b94ec5d33eebe9194b75', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+>   def test_apply_exact_postimages_preserves_other(case):r,p,m=case;v=run(case,'apply');assert v['status']=='APPLIED';assert (r/'output.txt').read_text()=='after\n';assert (r/'other.txt').read_text()=='untouched\n';assert (r/'moon/new.dat').read_text()=='data';assert git(r,'rev-parse','HEAD')==m['pin']
+                                                                       ^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:94: in install
+    pkg=pkg.resolve();m=read_contract(pkg)
+                        ^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:64: in read_contract
+    safe_key(key)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+s = 'tools\\build.py'
+
+    def safe_key(s):
+>    if not isinstance(s,str) or not s or '\\' in s or ':' in s or s.startswith('/') or '\x00' in s:raise ValueError('unsafe path '+repr(s))
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    ValueError: unsafe path 'tools\\build.py'
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:16: ValueError
+_______________________________ test_idempotent _______________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_idempotent0/repo'), WindowsPath('C:/Us...': 'de9a79a062e60525bf37b94ec5d33eebe9194b75', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+>   def test_idempotent(case):run(case,'apply');r,_,_=case;before=tree(r);v=run(case,'apply');assert v['status']=='ALREADY_APPLIED';assert tree(r)==before
+                              ^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:94: in install
+    pkg=pkg.resolve();m=read_contract(pkg)
+                        ^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:64: in read_contract
+    safe_key(key)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+s = 'tools\\build.py'
+
+    def safe_key(s):
+>    if not isinstance(s,str) or not s or '\\' in s or ':' in s or s.startswith('/') or '\x00' in s:raise ValueError('unsafe path '+repr(s))
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    ValueError: unsafe path 'tools\\build.py'
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:16: ValueError
+_____________________ test_preserves_unrelated_untracked ______________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_preserves_unrelated_untra0/repo'), Win...': 'a9c572271b82dd94401eb039a2c4b3b9bc56a470', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+>   def test_preserves_unrelated_untracked(case):r,_,_=case;(r/'notes.txt').write_text('mine');run(case,'apply');assert (r/'notes.txt').read_text()=='mine'
+                                                                                               ^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:94: in install
+    pkg=pkg.resolve();m=read_contract(pkg)
+                        ^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:64: in read_contract
+    safe_key(key)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+s = 'tools\\build.py'
+
+    def safe_key(s):
+>    if not isinstance(s,str) or not s or '\\' in s or ':' in s or s.startswith('/') or '\x00' in s:raise ValueError('unsafe path '+repr(s))
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    ValueError: unsafe path 'tools\\build.py'
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:16: ValueError
+____________________________ test_payload_symlink _____________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_payload_symlink0/repo'), WindowsPath('...': 'a9c572271b82dd94401eb039a2c4b3b9bc56a470', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+tmp_path = WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_payload_symlink0')
+
+>   def test_payload_symlink(case,tmp_path):r,p,_=case;x=p/'payload/moon/new.dat';x.unlink();x.symlink_to(r/'other.txt');pytest.raises(ValueError,run,case,'apply')
+                                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:36: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_payload_symlink0/package/payload/moon/new.dat')
+target = WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_payload_symlink0/repo/other.txt')
+target_is_directory = False
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] A required privilege is not held by the client: 'C:\\Users\\theis\\AppData\\Local\\Temp\\pytest-of-theis\\pytest-803\\test_payload_symlink0\\repo\\other.txt' -> 'C:\\Users\\theis\\AppData\\Local\\Temp\\pytest-of-theis\\pytest-803\\test_payload_symlink0\\package\\payload\\moon\\new.dat'
+
+C:\Users\theis\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+______________________________ test_repo_symlink ______________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_repo_symlink0/repo'), WindowsPath('C:/...': 'a9c572271b82dd94401eb039a2c4b3b9bc56a470', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+tmp_path = WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_repo_symlink0')
+
+>   def test_repo_symlink(case,tmp_path):r,p,_=case;(r/'moon').symlink_to(tmp_path);pytest.raises(ValueError,run,case,'apply')
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_repo_symlink0/repo/moon')
+target = WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_repo_symlink0')
+target_is_directory = False
+
+    def symlink_to(self, target, target_is_directory=False):
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        if not hasattr(os, "symlink"):
+            raise NotImplementedError("os.symlink() not available on this system")
+>       os.symlink(target, self, target_is_directory)
+E       OSError: [WinError 1314] A required privilege is not held by the client: 'C:\\Users\\theis\\AppData\\Local\\Temp\\pytest-of-theis\\pytest-803\\test_repo_symlink0' -> 'C:\\Users\\theis\\AppData\\Local\\Temp\\pytest-of-theis\\pytest-803\\test_repo_symlink0\\repo\\moon'
+
+C:\Users\theis\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: OSError
+_____________________________ test_casefold_alias _____________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_casefold_alias0/repo'), WindowsPath('C...': '0c76f76a150f99c58474f8b3e22c641178ed389a', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+>   def test_casefold_alias(case):r,p,m=case;m['payload']['Moon/NEW.dat']=m['payload']['moon/new.dat'];(p/'INSTALL.json').write_text(json.dumps(m));pytest.raises(ValueError,run,case,'apply')
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'moon/new.dat'
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:40: KeyError
+____________________ test_build_failure_no_receiver_writes ____________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_build_failure_no_receiver0/repo'), Win...': '0c76f76a150f99c58474f8b3e22c641178ed389a', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+>   def test_build_failure_no_receiver_writes(case):r,p,m=case;(p/'payload/tools').mkdir();q=p/'payload/tools/build.py';q.write_text('raise RuntimeError("test failure")\n');m['payload']['tools/build.py']=sha(q);(p/'INSTALL.json').write_text(json.dumps(m));before=tree(r);pytest.raises(RuntimeError,run,case,'apply');assert tree(r)==before
+                                                                                                                                                                                                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:94: in install
+    pkg=pkg.resolve();m=read_contract(pkg)
+                        ^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:64: in read_contract
+    safe_key(key)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+s = 'tools\\build.py'
+
+    def safe_key(s):
+>    if not isinstance(s,str) or not s or '\\' in s or ':' in s or s.startswith('/') or '\x00' in s:raise ValueError('unsafe path '+repr(s))
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    ValueError: unsafe path 'tools\\build.py'
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:16: ValueError
+_________________________ test_late_edit_is_retained __________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_late_edit_is_retained0/repo'), Windows...': '2ea506ba1501b42f1a835063f3f023d9fd5bf569', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+    def test_late_edit_is_retained(case):
+     r,p,m=case
+     def late(stage): (r/'src/input.txt').write_text('changed while staging')
+>    pytest.raises(ValueError,run,case,'apply',before_publish=late);assert (r/'src/input.txt').read_text()=='changed while staging';assert not (r/'moon/new.dat').exists()
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    AssertionError: assert 'before\n' == 'changed while staging'
+E      
+E      - changed while staging
+E      + before
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:46: AssertionError
+_________________________ test_partial_write_rollback _________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-803/test_partial_write_rollback0/repo'), Window...': '2ea506ba1501b42f1a835063f3f023d9fd5bf569', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+    def test_partial_write_rollback(case):
+     r,p,m=case;before=tree(r)
+     def fail(n,path):
+      if n==2:raise OSError('controlled write failure')
+>    pytest.raises(OSError,run,case,'apply',after_write=fail);assert tree(r)==before
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:94: in install
+    pkg=pkg.resolve();m=read_contract(pkg)
+                        ^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:64: in read_contract
+    safe_key(key)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+s = 'tools\\build.py'
+
+    def safe_key(s):
+>    if not isinstance(s,str) or not s or '\\' in s or ':' in s or s.startswith('/') or '\x00' in s:raise ValueError('unsafe path '+repr(s))
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    ValueError: unsafe path 'tools\\build.py'
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\install.py:16: ValueError
+=========================== short test summary info ===========================
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_check_no_writes
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_apply_exact_postimages_preserves_other
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_idempotent
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_preserves_unrelated_untracked
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_payload_symlink
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_repo_symlink
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_casefold_alias
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_build_failure_no_receiver_writes
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_late_edit_is_retained
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\Salah_Moon_CP9_Integration\tests\test_installer.py::test_partial_write_rollback
+10 failed, 10 passed in 4.63s

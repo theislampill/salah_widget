@@ -1,0 +1,45 @@
+{
+  "schema": "r0021-independent-source-review/2",
+  "observationCutoffUtc": "2026-10-18T16:20:33.516945+00:00",
+  "head": "179539c617aef6f4e2ffe27a9d741c156ffe0e68",
+  "decision": "SUPPORTED FOR THE BOUNDED r109 SOURCE REPAIR",
+  "predecessorReview": {
+    "file": "atomic-retention-r109-review-r1.json",
+    "sha256": "d0f1fffdaec14272b7b232f42b86b795407b00ba4fd5a1ba38ab0f53c8e805d4"
+  },
+  "sourcePins": {
+    "real-sky/native-preview-host.mjs": "fc68190bdbbd93bb1bd919f5621062245fd4a34d8cd3db609b7702e0826dd60a",
+    "real-sky/native-host.mjs": "1d90ed66774ff86aa647c9fce1a3fc1147eb1ea8f029c5f5d6d3bd45b1fa3ef1",
+    "tests/real-sky/native-preview-host.test.mjs": "6f5151d5075448589c97c8c93f9f74736ffc6b286ea359f93fa7a4e113923fdd",
+    "tests/real-sky/native-host-composition.test.mjs": "a9a6fe3530148ecb157e4c1a55a0a3fbf93acd944557a64d9dd2acf4bb98d54a"
+  },
+  "deltaProof": "Reversing exactly two !retained.paused&& guards and removing one added leading space on each affected line restores prior preview source SHA f11a99cf355694756921bb3733bdc0cdb7025aa489eb52212bc861eb77cfc5a1. Refined source and corresponding test are byte unchanged from r1.",
+  "findingDisposition": {
+    "id": "PREVIEW-PAUSED-FAILURE-RETENTION",
+    "status": "RESOLVED IN REVIEWED SOURCE",
+    "evidence": "Both existing-value exception branches reject paused snapshots. The added actual NativeSolarMaskPublication control establishes visible A, changes the mask URL, verifies one pending decode, pauses, and rejects that decode; visible=false, retained=false and pending are required. This tests a new decode rather than cached synchronous reuse."
+  },
+  "controls": {
+    "receipts": {
+      "intake/paused-retention-r109-red.tap": "c4df2f09c826818cb131dfbca2502b6d4f0d6044dc9c2cd872416b0173068e05",
+      "intake/atomic-retention-r109-final.tap": "9aeea653b0ac885dce01dac744b598ddd8d45cff2dd4de7e420cc915152b0132"
+    },
+    "red": "1 failure / 27 tests: old source left the preview visible after paused changed-mask rejection. Original retained.",
+    "green": "74 passed / 0 failed / 0 skipped / 0 TODO in the retained final TAP. No reviewer rerun."
+  },
+  "acceptedScope": [
+    "Current-head retention after failed preparation/decode remains bound to original scene/UTC, headroom and pause.",
+    "An unpublished first preview is not reported as retained ready.",
+    "Preview B detail completes before replacing displayed background/mask/value; failure preserves actually displayed A.",
+    "Refined B detail completes before replacing base/painted identity, restores the prior class on throw and rechecks its original job.",
+    "Worker failure retains only independently current paintedFrame/paintedJob. Existing invalidation/expiry/pause still withdraw."
+  ],
+  "blockingSourceFindings": [],
+  "limits": [
+    "Source/control support only; no arbitrary browser API atomicity or uninterrupted physical display claim.",
+    "No broader composition API, material/quality/sample/accepted-clock/controller change required or approved.",
+    "Exact generated builds, frozen candidate and applicable native observations remain separate pending bindings. No S1, callback-cost, refinement-quality, whole-scene visual or merge PASS follows.",
+    "Prior reviews, TA1 map and historical failures remain immutable; named source findings close prospectively only."
+  ],
+  "authority": "Read-only recommendation. No tests/builds/native/browser/Git/source mutations or external effects performed by reviewer."
+}

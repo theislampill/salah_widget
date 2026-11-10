@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/r0021_review",
+  "createdAtUtc": "2026-10-18T06:15:20.495047+00:00",
+  "scope": "Exact r100 digest/source association and affected evidence; prospective one-run r101 ordinary Chromium method. No broad readiness assessment.",
+  "disposition": "SUPPORTED_EXACT_SOURCE_ASSOCIATION_AND_ONE_BOUNDED_ORDINARY_CAPTURE",
+  "packetSha256": "8c5af6eeb140248bc77f1c23f573a0a0f6f87cf37ca74b3c2ff130720af6accb",
+  "baseCommit": "e883c7d88f92f3724a36243eb83e890a0f250ecf",
+  "build": "EVIDENCE\\builds\\integrated-r25-digest",
+  "runtimeTreeSha256": "2629ff148f236a941040ef88958f114e4a0e1562a4b3fb99499970c52a33b7c5",
+  "indexSha256": "93731942888a25c7cdab3956d43d95c5d30313ab7f91e62ac649bee51ee382a1",
+  "authoredSha256": {
+    "moon/src/asset-digest.mjs": "5b2f1e7934a46df8db03c809749d535b1d3edddacf43781235834c6939fbb82b",
+    "moon/src/moon-initial-compact.mjs": "cfb1b568709dc03625c67d475de4aad7d5ce4770ed626c857a55d303fc60754c",
+    "moon/initial-source-association.json": "48ca605daaefdc836adfb4a7da6b85114a4a0d9d144f5b4e056a7857b1cfd00f",
+    "tools/build_moon.py": "e6dffda0c1d6bfba288128d46d1f9effb5bc60b7270531d9bd006091a0de7284",
+    "tests/real-sky/initial_source_association_test.py": "5f3e6251a2707b7fe7561aac5b2260ec51d5d16f63b1cb88e1a8c79e1a5b2507",
+    "moon/tests/asset-digest.test.cjs": "7e68728328d1b46945b531edaaae43e7f3c5c5ef279f773300b3045398abbff5"
+  },
+  "changedRuntimePaths": [
+    "index.html",
+    "moon/BUILD.json",
+    "moon/initial-source-association.json",
+    "moon/moon-host.js",
+    "moon/moon-worker.js",
+    "offline.html"
+  ],
+  "sourceReviewSha256": "e17ea5d85f7246c39b9a213b87addf4d3e74a369ca994150e10ba485f4764f38",
+  "verification": {
+    "allSixAuthoredPinsMatchWorktreeAndFrozenBuild": true,
+    "allSixChangedRuntimeBodiesMatchWorktreeAndFrozenBuild": true,
+    "runtimeManifestRecordCount": 142,
+    "runtimeManifestTreeRecomputed": true,
+    "changedRecordSetExactlySixComparedWithR24": true,
+    "unchangedAssetBodyChecks": [
+      "moon/assets/initial-receivers.bin",
+      "moon/assets/initial-compact.bin",
+      "moon/moon_kernel.wasm",
+      "moon/asset-manifest.json",
+      "moon/initial-compact-manifest.json"
+    ],
+    "bodyCoverageLimit": "No independent full 142-body rehash. Six changed bodies and the named protected assets/manifests were hashed; remaining runtime manifest records were compared with retained r24.",
+    "compactCodecChange": "Exact comment-only replacement independently reversed to the committed predecessor bytes."
+  },
+  "association": {
+    "sha256": "48ca605daaefdc836adfb4a7da6b85114a4a0d9d144f5b4e056a7857b1cfd00f",
+    "predecessorAssociationSha256": "835835639f6b061caa627176371d361a52ba86d3182eb93a9ff805d85805f9f3",
+    "originalManifestSha256": "f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd67a3705f5",
+    "originalManifestByteIdentical": true,
+    "previousTwoPairsExact": true,
+    "newPair": {
+      "path": "moon/src/asset-digest.mjs",
+      "originalSha256": "41a02370ec87de6e028d34b7ec2ecf947c8c37bee11d3047bc903b06f15c0620",
+      "currentSha256": "5b2f1e7934a46df8db03c809749d535b1d3edddacf43781235834c6939fbb82b"
+    },
+    "dependencyReason": "build_initial invokes MoonEngine.create and canonicalScene before pinned WASM receiver operations. assetDigest is reached only through identity validation; its two reviewed substitutions preserve the hash result. No receiver geometry/material/visibility computation or source calls were changed.",
+    "guardReason": "Original manifest remains unconditionally pinned; exact association content hash, original/current pair comparison and unknown-source rejection remain. New comment-drift negative control covers asset-digest too.",
+    "scopeLimit": "Custody association, not fresh numerical derivation or native visual/timing approval."
+  },
+  "controls": {
+    "logSha256": {
+      "digest-r100-build.txt": "8f54c7ac121c561a98f9ede321fb4563c54cd3040bda8f90dd42d7d20e198a86",
+      "digest-r100-association-red.txt": "7b082fa64d8b9dbf0c86b7466b573710f9bd93f3020201d9615c097e4fd478fd",
+      "digest-r100-baseline.txt": "61f4fb419a094df2c8427dad29f3aa472531e39f3c6d1ddfb351a54b22b28e4d",
+      "digest-r100-affected-tests.txt": "2da9a95b066fb1cd39c370631bfacd6642483b656e343dc968c5915fbc2a41d8",
+      "digest-r100-native-controls.txt": "3fb1f48a09246ed11195e69e9cf7c2cc7fd008fbecfab5d0cd2485bfdab74cbc",
+      "digest-r100-association.txt": "38ab5d4edd930c047d15d3f3fef227b9edb9511a80effc290d90615dca41a459",
+      "digest-r100-build-guards.txt": "f40c14f29302216eac38b33170467449d36dede49ef0ee986396c2fee0d4aa1a",
+      "digest-r100-entry-order.txt": "b88ecf4da1fef11d10965032ada489921774e63b06126b91f5b4caa90849c792",
+      "digest-r100-build-corrected.txt": "f713811079f1e7ed6a760116becd08265ac465477e5191011eb47af08222244e",
+      "digest-r100-frozen-build.txt": "f713811079f1e7ed6a760116becd08265ac465477e5191011eb47af08222244e"
+    },
+    "sourceReviewed": "Six digest controls cover published SHA vectors, padding/multiple-block boundaries, nonzero-offset views and caller immutability, actual receiver/compact/compressed terrain assets, exact 64 MiB boundary, invalid types and oversize rejection.",
+    "retainedReportedResults": {
+      "baselineDigest": {
+        "pass": 6,
+        "fail": 0
+      },
+      "affectedNode": {
+        "pass": 112,
+        "fail": 0
+      },
+      "generatedNativeNode": {
+        "pass": 25,
+        "fail": 0
+      },
+      "association": {
+        "pass": 7
+      },
+      "buildGuards": {
+        "pass": 8
+      },
+      "entryOrder": {
+        "pass": 1
+      }
+    },
+    "v1Limit": "Packet/ROOT report V1 PASS; no additional V1 run performed by reviewer.",
+    "retainedFailures": [
+      "Initial builder rejected unassociated asset-digest drift.",
+      "Association suite initially rejected the same unadmitted pair.",
+      "Freeze wrapper omitted the intentional association JSON from expected changed paths; built output was finalized read-only without replay."
+    ],
+    "testTimingLimit": "112-test suite preceded only the compact-codec comment edit. Final native/Python guards followed final source bytes. No tests rerun by reviewer."
+  },
+  "captureMethodSupport": {
+    "count": 1,
+    "engine": "Chromium 148.0.7778.96",
+    "owner": "ROOT only, sole native lease",
+    "root": "EVIDENCE\\builds\\integrated-r25-digest",
+    "method": "Reuse r96 execution with only root/output substitution: --video-only --compositor-marker --modes cold --duration 20 --entry direct --persistent-profile --restore-render-document. Preserve existing actual observation-duration semantics.",
+    "referenceExecutionSha256": "30c1548ac4b4fce76e568025b2a8bd95511619dd2c844d5362ce1659b6dd5071",
+    "runNativeSha256": "8406653ed23b1f12e5b8e6a46d22e5ba0f0f2035e53420f9e0b6245814bb21c2",
+    "harnessInputSha256": {
+      "tools/cp9/celestial_startup_check.py": "0f2bdaac354c58ee0c7808988e0f074431c35d55bbcce35a3c539346d678d100",
+      "tools/cp9/chromium_startup_defaults.py": "db02da45beaaebb6876df8813ac27ea32b6ea9b68b86b2a5e9d989f6e490c46f",
+      "tools/cp9/celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+      "tools/cp9/celestial_layer_controls.js": "a590e5a0573932bebb5cf77bc7a9bcca7d4059eb2b189671e3a34d8c8503281e",
+      "tools/cp9/browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+      "tools/cp9/runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af",
+      "tests/v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692"
+    },
+    "allSevenHarnessInputsVerifiedUnchanged": true,
+    "conditions": [
+      "Use the same driver/browser path and existing exact restored-RenderDocument checks.",
+      "No trace, CPU profiler, cost batch, Git or other heavy/native work alongside acquisition.",
+      "Preserve original source pixels, timestamps, all uncovered intervals, errors and runtime/harness before/after identity.",
+      "No automatic retry or qualification from improved metrics. Actual visual review remains required."
+    ]
+  },
+  "blockingFindings": [],
+  "retainedLimits": [
+    "Warm Node r98 discriminator is not browser/callback/S1 savings.",
+    "r96 original 81.852/192.085 ms gaps and all earlier contrary evidence remain.",
+    "Original timing/80 ms, callback-cost, continuous native/quality and final owner merge gates unchanged.",
+    "No further prolonged Firefox cost campaign is authorized.",
+    "No source/index/ref/remote/browser/tests/agent effects by reviewer; only bounded reads and review outputs."
+  ]
+}

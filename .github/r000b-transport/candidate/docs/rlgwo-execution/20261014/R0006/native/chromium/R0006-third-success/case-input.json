@@ -1,0 +1,130 @@
+{
+  "caseId": "R0006-third-success",
+  "entry": "index.html",
+  "hash": "#lat=24.47&lon=39.61&label=Madinah&method=4&school=0&time=24&tz=UTC",
+  "clockPolicy": {
+    "mode": "advancing",
+    "epoch": "2026-09-07T12:00:00Z"
+  },
+  "cacheSeeds": [],
+  "responseRules": [
+    {
+      "id": "failed",
+      "kind": "prayer",
+      "day": "07-09-2026",
+      "times": 2,
+      "failure": true
+    },
+    {
+      "id": "healthy",
+      "kind": "prayer",
+      "payload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "September"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "dateFromRequest": true
+    },
+    {
+      "id": "weather-offline",
+      "kind": "weather",
+      "failure": true
+    },
+    {
+      "id": "radar-offline",
+      "kind": "radar",
+      "failure": true
+    }
+  ],
+  "orderedActions": [
+    {
+      "type": "wait",
+      "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&!s.render.unavailable&&!s.flags.prayerStale)",
+      "timeoutMs": 15000
+    },
+    {
+      "type": "capture",
+      "name": "first-current",
+      "selector": ".c",
+      "readOnly": false,
+      "firstRender": true,
+      "firstPredicate": "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&!s.render.unavailable&&!s.flags.prayerStale"
+    },
+    {
+      "type": "sleep",
+      "ms": 2200
+    },
+    {
+      "type": "capture",
+      "name": "settled",
+      "selector": ".c",
+      "readOnly": true
+    }
+  ],
+  "expected": [
+    {
+      "stage": "settled",
+      "equals": {
+        "currentDay": "07-09-2026",
+        "timezone": "UTC",
+        "dom/.c/geometry/width": 325,
+        "dom/.c/geometry/height": 530
+      },
+      "noInvalidText": true,
+      "requestCounts": [
+        {
+          "kind": "prayer",
+          "day": "07-09-2026",
+          "exact": 3
+        },
+        {
+          "kind": "prayer",
+          "day": "08-09-2026",
+          "exact": 1
+        }
+      ]
+    }
+  ],
+  "reviewRequirements": [
+    "Original loading/unavailable/first recovered native pixels, not eventual DOM alone",
+    "All six rows, 325x530 card, arc, next output, header and date footer",
+    "Operation/attempt/prefetch separation and native elapsed deadlines",
+    "Retain every failed capture and original trace"
+  ],
+  "acceptanceIds": [
+    "R0006-A04"
+  ]
+}

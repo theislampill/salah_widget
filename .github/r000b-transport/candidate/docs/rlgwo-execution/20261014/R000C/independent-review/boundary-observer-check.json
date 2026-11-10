@@ -1,0 +1,13 @@
+{
+  "schema": "r000c-independent-observer-delta/v1",
+  "previousDriverSha256": "c93c45cbde57704ee8a5f87ebd1b51d66dd0d33b0e232068b481a1ed7bcfc6d8",
+  "successorDriverSha256": "ed610a2ce09ebdfce661b563338d0cf31f89162676b9f03de40544f59e350737",
+  "successorPacketSha256": "4bbe653b82edff0512a2dcd047aac069b6c96a535e5cb773224b973098acff77",
+  "wrapperSha256": "917c651c95184eab56e72701a73a2338d3cf1e3131f38af40c4bcd77203de26f",
+  "originalVersionPreserved": true,
+  "checkAndReadyAstUnchanged": true,
+  "casePacketOnlyDriverPinChanged": true,
+  "allSourcePinsMatch": true,
+  "passiveRecoveryExpression": "() => {\n    const b=window.__smokeWeather;\n    window.__fixtureClock.assertOwned(b.identity());\n    const particles=[...document.querySelectorAll('.drop,.flake')].filter(e=>{\n        const s=getComputedStyle(e);\n        return s.display!=='none'&&s.visibility==='visible'&&+s.opacity>.03;\n    }).length;\n    return weather?.precip===2&&document.querySelector('.c').dataset.precip==='on'&&particles>0;\n}",
+  "review": "One unchanged Firefox night-default pilot justified; no native result, causal claim, visual PASS or authorization gate is granted by this source review. Full diagnostic predicates are unchanged at watch boundaries; within-watch full diagnostic cadence is removed and explicitly disclosed."
+}

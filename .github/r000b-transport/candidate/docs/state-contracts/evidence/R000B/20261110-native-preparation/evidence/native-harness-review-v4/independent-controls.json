@@ -1,0 +1,199 @@
+{
+  "noExceptionCredit": true,
+  "probes": [
+    {
+      "detail": {
+        "sourceDerivedProjectionKeys": [
+          "generation",
+          "lat",
+          "lon"
+        ],
+        "sourceDerivedRichKeys": [
+          "generation",
+          "lat",
+          "lon",
+          "intent",
+          "source",
+          "accuracyM",
+          "acquiredAt",
+          "provider",
+          "area",
+          "bounds"
+        ]
+      },
+      "expected": {
+        "newFullSample": true,
+        "newRecord": true,
+        "oldFullSample": false,
+        "oldRecord": false
+      },
+      "id": "C1-HR1-old-fails-new-selects",
+      "matched": true,
+      "observed": {
+        "newFullSample": true,
+        "newRecord": true,
+        "oldFullSample": false,
+        "oldRecord": false
+      }
+    },
+    {
+      "detail": {
+        "conservatism": "The entire one-millisecond integer receipt interval must finish strictly before the native deadline; a valid receipt in the final millisecond can therefore be refused.",
+        "deadlineMarginFromReceiptUpperMs": 9988.625,
+        "deadlinePerformanceMs": 193700.9375,
+        "intervalUpperExclusive": true,
+        "jsonPerformanceMs": 183706.4375,
+        "requestPerformanceMs": 183701.3125,
+        "retrievalPerformanceInterval": [
+          183711.3125,
+          183712.3125
+        ]
+      },
+      "expected": {
+        "fullEvidenceOk": true,
+        "newMatched": true,
+        "oldMatched": false
+      },
+      "id": "C2-HR2-old-fails-new-matches",
+      "matched": true,
+      "observed": {
+        "fullEvidenceOk": true,
+        "newMatched": true,
+        "oldMatched": false
+      }
+    },
+    {
+      "detail": {
+        "origin": 777.1875
+      },
+      "expected": true,
+      "id": "C3-reduced-source-shaped-positive",
+      "matched": true,
+      "observed": true
+    },
+    {
+      "detail": {
+        "origin": 777.1875
+      },
+      "expected": true,
+      "id": "C3-full-source-shaped-positive",
+      "matched": true,
+      "observed": true
+    },
+    {
+      "detail": {
+        "deadlineElapsedMs": 189999.625,
+        "jsonElapsedMs": 180005.125,
+        "receiptElapsedMs": 189998
+      },
+      "expected": true,
+      "id": "C4-whole-interval-safe",
+      "matched": true,
+      "observed": true
+    },
+    {
+      "detail": {
+        "deadlineElapsedMs": 189999.625,
+        "jsonElapsedMs": 180005.125,
+        "receiptElapsedMs": 189999
+      },
+      "expected": false,
+      "id": "C4-fractional-deadline-straddle",
+      "matched": true,
+      "observed": false
+    },
+    {
+      "detail": {
+        "deadlineElapsedMs": 190000,
+        "jsonElapsedMs": 180005.125,
+        "receiptElapsedMs": 189999
+      },
+      "expected": false,
+      "id": "C4-exact-upper-contact",
+      "matched": true,
+      "observed": false
+    },
+    {
+      "detail": {
+        "deadlineElapsedMs": 190000,
+        "jsonElapsedMs": 180005.125,
+        "receiptElapsedMs": 190000
+      },
+      "expected": false,
+      "id": "C4-receipt-at-deadline",
+      "matched": true,
+      "observed": false
+    },
+    {
+      "detail": {
+        "deadlineElapsedMs": 190000,
+        "jsonElapsedMs": 190000,
+        "receiptElapsedMs": 190000
+      },
+      "expected": false,
+      "id": "C4-body-at-deadline",
+      "matched": true,
+      "observed": false
+    },
+    {
+      "detail": {
+        "deadlineElapsedMs": 190000,
+        "jsonElapsedMs": 190000.25,
+        "receiptElapsedMs": 190001
+      },
+      "expected": false,
+      "id": "C4-body-after-deadline",
+      "matched": true,
+      "observed": false
+    },
+    {
+      "detail": null,
+      "expected": {
+        "newMatched": false,
+        "oldMatched": true
+      },
+      "id": "C5-epoch-deadline-old-accepts-new-rejects",
+      "matched": true,
+      "observed": {
+        "newMatched": false,
+        "oldMatched": true
+      }
+    },
+    {
+      "detail": null,
+      "expected": false,
+      "id": "C6-missing-origin",
+      "matched": true,
+      "observed": false
+    },
+    {
+      "detail": null,
+      "expected": false,
+      "id": "C6-wrong-origin",
+      "matched": true,
+      "observed": false
+    },
+    {
+      "detail": null,
+      "expected": false,
+      "id": "C6-wrong-motion-origin",
+      "matched": true,
+      "observed": false
+    },
+    {
+      "detail": null,
+      "expected": false,
+      "id": "C6-raw-provenance-drift",
+      "matched": true,
+      "observed": false
+    },
+    {
+      "detail": null,
+      "expected": false,
+      "id": "C6-projected-identity-drift",
+      "matched": true,
+      "observed": false
+    }
+  ],
+  "scope": "Pure data through actual AST-extracted frozen predicates; no product/native execution."
+}

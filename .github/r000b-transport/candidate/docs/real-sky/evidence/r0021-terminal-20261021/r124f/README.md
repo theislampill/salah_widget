@@ -1,0 +1,7 @@
+# Firefox resource result: both publication instances
+
+This was the first and only Firefox resource run. It used the already-reviewed observer and guarded the acquisition-only null-state access before launch. It did not use a Firefox profiler or repeat a failed Firefox resource case.
+
+Both preview and refined publication instances completed three changed/cancel/recovery cycles, including real invalid-PNG decode rejection, stale reaction settlement, valid recovery and cached reuse, followed by terminal disposal. All **491 native decode calls settled**; the longest observed settlement was 101 ms. Maximum observed owned pending/retained decoded counts were **1/1**, within the per-instance **1/2** limits. Final JavaScript and CSS resource roots were cleared. The final Moon was current/refined at projected change 0.28037452697753906 <=0.5, with no unsettled receivers. [Independent result and limits](../reviews/resources-r124f-result-review-r1.json).
+
+This qualifies the finite Firefox lifecycle sequence, not callback CPU, uninterrupted pixels, garbage collection or GPU allocation. It does not qualify the missing Chromium refined-owner sequence. The known historical backing-buffer increase of 32,387,380 bytes remains disclosed; no total-byte ceiling was invented. The 17 ordinary rule arrays have known logical lengths (one length-16 outer array and sixteen length-4 children), while engine allocation capacity remains unobserved. Logical elements are not physical heap bytes.

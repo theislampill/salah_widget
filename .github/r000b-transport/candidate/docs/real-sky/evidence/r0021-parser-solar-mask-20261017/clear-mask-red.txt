@@ -1,0 +1,271 @@
+TAP version 13
+# Subtest: preview waits for its mask and rejects readiness after owner transfer, clear and disposal
+ok 1 - preview waits for its mask and rejects readiness after owner transfer, clear and disposal
+  ---
+  duration_ms: 7.011
+  type: 'test'
+  ...
+# Subtest: near-expiry preview cannot remove first paint and wait for a second decode after writing
+ok 2 - near-expiry preview cannot remove first paint and wait for a second decode after writing
+  ---
+  duration_ms: 1.1903
+  type: 'test'
+  ...
+# Subtest: an unresolved preview decode cannot block the owner after its prepared job expires
+ok 3 - an unresolved preview decode cannot block the owner after its prepared job expires
+  ---
+  duration_ms: 1.0029
+  type: 'test'
+  ...
+# Subtest: a pending mask may retain only a current initial head, never its expired CSS background
+ok 4 - a pending mask may retain only a current initial head, never its expired CSS background
+  ---
+  duration_ms: 1.0901
+  type: 'test'
+  ...
+# Subtest: revoked initial pixels are replaced in the same turn when captured clouds are exactly clear
+not ok 5 - revoked initial pixels are replaced in the same turn when captured clouds are exactly clear
+  ---
+  duration_ms: 2.1091
+  type: 'test'
+  location: '<r0021-source>\\tests\\real-sky\\native-preview-host.test.mjs:72:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    A fully transmitted mask must not open an asynchronous legacy-layer gap
+    
+    'pending' !== 'ready'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'ready'
+  actual: 'pending'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///<r0021-source>/tests/real-sky/native-preview-host.test.mjs:76:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: foreground preparation cannot consume the new astronomical calculation age budget
+ok 6 - foreground preparation cannot consume the new astronomical calculation age budget
+  ---
+  duration_ms: 0.8831
+  type: 'test'
+  ...
+# Subtest: already native-size pixels need no canvas round trip; smaller fast-clock raster still resamples
+ok 7 - already native-size pixels need no canvas round trip; smaller fast-clock raster still resamples
+  ---
+  duration_ms: 2.2508
+  type: 'test'
+  ...
+# Subtest: a near-expiry preview cannot be published without consumer callback headroom
+ok 8 - a near-expiry preview cannot be published without consumer callback headroom
+  ---
+  duration_ms: 1.0732
+  type: 'test'
+  ...
+# Subtest: deadline recovery is bounded and cannot turn a persistently slow calculation into a current frame
+ok 9 - deadline recovery is bounded and cannot turn a persistently slow calculation into a current frame
+  ---
+  duration_ms: 1.3427
+  type: 'test'
+  ...
+# Subtest: a throwing detail compositor cannot bypass publication headroom through retained-frame recovery
+ok 10 - a throwing detail compositor cannot bypass publication headroom through retained-frame recovery
+  ---
+  duration_ms: 1.2364
+  type: 'test'
+  ...
+# Subtest: a failed detail readback retains a sky only while its original owner has publication headroom
+ok 11 - a failed detail readback retains a sky only while its original owner has publication headroom
+  ---
+  duration_ms: 0.942
+  type: 'test'
+  ...
+# Subtest: a delayed rAF timestamp never skips the accepted-clock expiry check
+ok 12 - a delayed rAF timestamp never skips the accepted-clock expiry check
+  ---
+  duration_ms: 1.8424
+  type: 'test'
+  ...
+# Subtest: native presentation handoff stops the duplicate loop and timestamps after native painting
+ok 13 - native presentation handoff stops the duplicate loop and timestamps after native painting
+  ---
+  duration_ms: 1.2783
+  type: 'test'
+  ...
+# Subtest: catalogue admission preserves the current atmosphere and defers first stellar paint to a separate native turn
+ok 14 - catalogue admission preserves the current atmosphere and defers first stellar paint to a separate native turn
+  ---
+  duration_ms: 3.2563
+  type: 'test'
+  ...
+# Subtest: invalid catalogue cannot become the displayed identity or defer currentness validation
+ok 15 - invalid catalogue cannot become the displayed identity or defer currentness validation
+  ---
+  duration_ms: 3.8981
+  type: 'test'
+  ...
+# Subtest: late catalogue hash completion cannot resurrect a revoked asset admission
+ok 16 - late catalogue hash completion cannot resurrect a revoked asset admission
+  ---
+  duration_ms: 3.0596
+  type: 'test'
+  ...
+# Subtest: ordinary presentation republishes a fresh preview after weather withdrawal
+ok 17 - ordinary presentation republishes a fresh preview after weather withdrawal
+  ---
+  duration_ms: 1.9985
+  type: 'test'
+  ...
+# Subtest: refined withdrawal publishes the replacement preview in the same turn without waiting for native paint
+ok 18 - refined withdrawal publishes the replacement preview in the same turn without waiting for native paint
+  ---
+  duration_ms: 2.9205
+  type: 'test'
+  ...
+# Subtest: same-turn withdrawal cannot fabricate a preview when accepted input is absent
+ok 19 - same-turn withdrawal cannot fabricate a preview when accepted input is absent
+  ---
+  duration_ms: 2.5561
+  type: 'test'
+  ...
+# Subtest: a still-current preview recomposes lunar detail before withdrawal returns without relabelling its UTC
+ok 20 - a still-current preview recomposes lunar detail before withdrawal returns without relabelling its UTC
+  ---
+  duration_ms: 2.702
+  type: 'test'
+  ...
+# Subtest: withdrawal preserves already-current preview-owned detail and pixels
+ok 21 - withdrawal preserves already-current preview-owned detail and pixels
+  ---
+  duration_ms: 2.7856
+  type: 'test'
+  ...
+# Subtest: first frame and full-pack reset/failure retain the independent same-catalogue bootstrap
+ok 22 - first frame and full-pack reset/failure retain the independent same-catalogue bootstrap
+  ---
+  duration_ms: 4.0283
+  type: 'test'
+  ...
+# Subtest: resetting an unchanged bootstrap cancels admission without rebuilding its sky
+ok 23 - resetting an unchanged bootstrap cancels admission without rebuilding its sky
+  ---
+  duration_ms: 1.1969
+  type: 'test'
+  ...
+# Subtest: changing solar mask cannot expose an undecoded frame; CSS anonymous request mode is required
+ok 24 - changing solar mask cannot expose an undecoded frame; CSS anonymous request mode is required
+  ---
+  duration_ms: 1.5061
+  type: 'test'
+  ...
+# Subtest: one pending decode bounds work; cancellation fences late A after B and disposal
+ok 25 - one pending decode bounds work; cancellation fences late A after B and disposal
+  ---
+  duration_ms: 0.2577
+  type: 'test'
+  ...
+# Subtest: decoded bytes can be reused after a rejected scene, but failed and cancelled decodes never enter the cache
+ok 26 - decoded bytes can be reused after a rejected scene, but failed and cancelled decodes never enter the cache
+  ---
+  duration_ms: 0.2945
+  type: 'test'
+  ...
+# Subtest: exactly transparent captured clouds need no encoded solar mask; one alpha code still does
+not ok 27 - exactly transparent captured clouds need no encoded solar mask; one alpha code still does
+  ---
+  duration_ms: 0.8443
+  type: 'test'
+  location: '<r0021-source>\\tests\\real-sky\\native-solar-publication.test.mjs:38:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'url("data:image/png;base64,positive")'
+    - 'linear-gradient(#fff,#fff)'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'linear-gradient(#fff,#fff)'
+  actual: 'url("data:image/png;base64,positive")'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///<r0021-source>/tests/real-sky/native-solar-publication.test.mjs:46:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: full transmission publishes synchronously through the same commit guard
+not ok 28 - full transmission publishes synchronously through the same commit guard
+  ---
+  duration_ms: 0.2097
+  type: 'test'
+  location: '<r0021-source>\\tests\\real-sky\\native-solar-publication.test.mjs:55:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///<r0021-source>/tests/real-sky/native-solar-publication.test.mjs:58:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: clear/cloud/clear transition retains decode and cancellation fences
+not ok 29 - clear/cloud/clear transition retains decode and cancellation fences
+  ---
+  duration_ms: 0.3825
+  type: 'test'
+  location: '<r0021-source>\\tests\\real-sky\\native-solar-publication.test.mjs:63:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   'linear-gradient(#fff,#fff)'
+    - ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'linear-gradient(#fff,#fff)'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///<r0021-source>/tests/real-sky/native-solar-publication.test.mjs:66:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 25
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 123.2313

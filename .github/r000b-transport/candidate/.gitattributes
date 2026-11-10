@@ -1,0 +1,39 @@
+# The shell installer must stay LF so `curl … | bash` works for end users
+# (a CRLF shebang/script breaks bash). PowerShell tolerates either.
+*.sh text eol=lf
+# CP9 source hashes and deterministic generation bind exact UTF-8/LF bytes.
+src/native/** -text
+real-sky/** -text
+vendor/real-sky/** -text
+docs/real-sky/archive/** -text
+# Raw qualification receipts are hash-bound; never convert their line endings.
+docs/real-sky/evidence/** -text
+# Final Windows qualification receipts preserve their original CRLF bytes.
+docs/real-sky/evidence/startup-cloud-20261007/final-v49/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/real-sky/evidence/startup-cloud-20261007/historical-before-v49/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Preserve the exact Windows terminal receipts; CRLF is a line ending.
+docs/real-sky/evidence/r0021-terminal-20261018/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Retain native test diagnostics and the original decoder's EOF verbatim.
+docs/real-sky/evidence/r0021-terminal-20261018/r109/controls/*.tap -whitespace
+# Preserve the expected Node assertion's two indented blank diff lines.
+docs/real-sky/evidence/r0021-terminal-20261018/r115/controls/moon-rule-r115-red.tap -whitespace
+docs/real-sky/evidence/r0021-terminal-20261018/r110/historical-analysis/native_profile_v5.py -whitespace
+# The one-substitution experiment retains the authored Moon source's final blank line.
+docs/real-sky/evidence/r0021-terminal-20261018/r112/experimental-moon-quality.mjs whitespace=-blank-at-eof,cr-at-eol
+# The supplied Moon assets, sources and generated chunks are hash-bound too.
+moon/** -text
+docs/moon/evidence/** -text
+# Receiving receipts retain Windows CRLF bytes; CR is a line ending, not whitespace damage.
+docs/moon/evidence/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Raw test output includes intentional indented blank lines and DOM text spacing.
+docs/moon/evidence/**/*.log -whitespace
+docs/moon/evidence/**/rendered.txt -whitespace
+docs/moon/CANDIDATE_RUNTIME_IDENTITY.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/moon/donor/** -text
+# Unified patch context and sealed donor EOFs must survive byte-for-byte.
+docs/moon/receiving/*.patch -text -whitespace
+moon/src/** whitespace=-blank-at-eof
+index.html text eol=lf
+offline.html text eol=lf
+config.js text eol=lf
+builder.html text eol=lf

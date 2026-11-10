@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "C",
+  "reviewedAtUtc": "2026-10-08T12:40:26Z",
+  "role": "Independent read-only lifecycle/currentness/browser reviewer for existing draftPR42",
+  "overallDisposition": "PARTIAL_NOT_RELEASE_ACCEPTANCE",
+  "target": {
+    "worktree": "workspace",
+    "branch": "codex/hotfix-startup-clouds",
+    "head": "d42f31e6fbc55b735ab06d6189462aba182e5fed",
+    "intendedBaseMain": "c1a480c97e9af188cf57704502d818c0584cf265",
+    "originMainLocallyVerified": true,
+    "runtimeTreeSha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+    "indexSha256": "c9579ac9aa9d158cc4ad0ce4288781f3ff3db40afdc4820510203e6e64c80a7a",
+    "currentMaterialFilesMatched": [
+      "index.html",
+      "moon/moon-host.js",
+      "moon/moon-worker.js",
+      "real-sky/native-sky.js"
+    ],
+    "currentEntireRuntimeRehashByReviewer": false
+  },
+  "authority": {
+    "sourceReadOnly": true,
+    "browserCampaignsStarted": 0,
+    "solverOrUnitCampaignsStarted": 0,
+    "childrenSpawned": 0,
+    "sourceWrites": 0,
+    "outputDirectory": "local:h8/review-v45/C",
+    "implementationAndPublicationOwner": "primary"
+  },
+  "confirmedRendererDefects": [],
+  "confirmedHarnessDefects": [
+    {
+      "id": "C-H1",
+      "priority": "P2",
+      "summary": "Caught visibility observer errors and missing observation coverage do not currently fail continuity qualification.",
+      "disposition": "PRIMARY_FIX_AND_OFFLINE_REVALIDATION",
+      "currentRetainedRunsActuallyShowObserverError": false,
+      "capturedHarnessSha256": "91692d667ff780b32860de752e0eacf2cc8f0518e440aebe1921564e63660870"
+    }
+  ],
+  "documentedLimitations": [
+    "Cold acquisition may present no Moon before the first terrain preview.",
+    "Two540px row WASM memories total326631424 bytes; whole-browser peak memory is separate.",
+    "DOM ownership is observed per-rAF; retained unchanged-state records are approximately1s; PNG pixels are sampled approximately1s then2s.",
+    "Controlled visibility events do not certify actual background throttling orBFCache.",
+    "High-rate fresh full-terrain throughput and final joined traversal remain distinct current-runtime obligations."
+  ],
+  "offlineValidatorProposal": {
+    "inputs": [
+      "results.json",
+      "telemetry.json",
+      "frames.jsonl",
+      "referenced PNGs"
+    ],
+    "ownershipGapCeilingMs": 1500,
+    "ownershipEdgeToleranceMs": 1500,
+    "fullDurationSpanAllowanceMs": 2500,
+    "measuredMaximumOwnershipGapMs": 1126,
+    "measuredMaximumScreenshotGapMs": 2178,
+    "measuredStateToCaptureDelayRangeMs": [
+      50.4,
+      452
+    ],
+    "negativeControls": [
+      "inject telemetry.error",
+      "delete middle ownership records to form>1500ms gap",
+      "truncate final ownership tail beyond1500ms",
+      "truncate full-duration PNG sample span beyond2500ms allowance"
+    ],
+    "claim": "Offline observation integrity and referenced pixel-sample custody; never uncaptured-pixel or OS-lifecycle proof."
+  },
+  "scenarios": [
+    {
+      "scenario": "Cold and HTTP-cache-warm daytime startup: Chromium clear/partial/heavy",
+      "invariant": "An accepted daylight target must present useful sky without the rejected dark shell; prayer hydration may be pending.",
+      "expected": "Captured initial and ongoing presented frames meet the predeclared daylight gate, with genuine warm local runtime cache.",
+      "observed": "Exact V45 receipts pass for clear/partial/heavy. Clear first observed widget: cold381ms/warm586ms; captured first cold paint shows useful daylight while prayer data are pending. Warm clear first paint includes hydrated prayers. Warm local resources have transferSize0 with nonzero encodedBodySize. No claim that all first paints hydrate prayers.",
+      "evidence": [
+        "local:h8/joined-v45-chromium-startup-clear/results.json",
+        "local:h8/joined-v45-chromium-startup-clear/cold-first-visible.png",
+        "local:h8/joined-v45-chromium-startup-clear/warm-first-visible.png",
+        "local:h8/joined-v45-chromium-startup-partial/results.json",
+        "local:h8/joined-v45-chromium-startup-heavy/results.json"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_CHROMIUM_CAPTURED_STARTUP"
+    },
+    {
+      "scenario": "Cold and HTTP-cache-warm night startup: both engines",
+      "invariant": "Cold acquisition absence is disclosed; once current terrain appears it must not be needlessly withdrawn; preview is never called refined.",
+      "expected": "Actual local HTTP cache is retained; both cold/warm entries reach terrain preview and empirical-adaptive refinement without a subsequent surface gap.",
+      "observed": "Both exact V45 runs pass; local warm cache hits4 Chromium/5 Firefox and admitted fixture weather are recorded. Firefox cold8000ms image still has no Moon; this is acquisition absence, not continuity proof. Lunar sampler begins after initial startup qualification, so firstObservedSurfaceMs17.55–19.67s Chromium/18.82–18.91s Firefox is a sampling time, not actual first publication. All retained lunar sample series reach refinement and report0 postfirst surface gaps.",
+      "evidence": [
+        "local:h8/joined-v45-chromium-startup-warm-moon/results.json",
+        "local:h8/joined-v45-firefox-startup-warm-moon/results.json",
+        "local:h8/joined-v45-firefox-startup-warm-moon/cold-8000.png"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_WITH_DOCUMENTED_COLD_LATENCY"
+    },
+    {
+      "scenario": "Native-phase near-half advancing1x, FirefoxDPR3,660s",
+      "invariant": "Preserve independently current terrain through replacement while completing final refinement inside the unchanged geometry bound.",
+      "expected": "No postfirst surface/layer gap; actual worker final returns; phase drift<=0.0416devicepx; terrain-preview quality remains explicit.",
+      "observed": "660.109s/361 screenshots; first sampled surface22.296s, first refined178.437s,3 actual result returns.658 ownership records have no observer error or visible-without-current record.0 captured withdrawals/0 recorded visible-layer gaps. Original frame0023 and frame0154 show terrain at initial preview and244.859s refresh. Comparison montage also shows presence at482.125s. Raw receipts remain pre-PNG state with actual capturedAt timestamps, not same-instant pixel/identity certification.",
+      "evidence": [
+        "local:h8/joined-v45-firefox-continuous-near-half-dpr3/results.json",
+        "local:h8/joined-v45-firefox-continuous-near-half-dpr3/telemetry.json",
+        "local:h8/joined-v45-firefox-continuous-near-half-dpr3/frames.jsonl",
+        "local:h8/joined-v45-firefox-continuous-near-half-dpr3/frame-0023.png",
+        "local:h8/joined-v45-firefox-continuous-near-half-dpr3/frame-0154.png",
+        "local:h8/continuity-v45-proof/before-after.png",
+        "local:h8/continuity-v45-proof/timeline.png"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_ORDINARY1X_CURRENTNESS"
+    },
+    {
+      "scenario": "V43 negative near-half control, FirefoxDPR3,660s",
+      "invariant": "The continuity harness must expose the known expiry failure and absence of final refinement.",
+      "expected": "The prior implementation fails at its original geometric frontier, rather than being excused as browser throughput.",
+      "observed": "V43 tree208c1793e32275e08ae050c0b6fecc84854d65ceb864f33a72614660f9af120b:0 finals, withdrawals around240/480s. Before/after PNG visibly loses Moon at244.64/481.78s while V45 retains it. This supports a discriminating regression control, not pixel-identical UTC.",
+      "evidence": [
+        "local:h8/joined-v43-firefox-continuous-near-half-dpr3/results.json",
+        "local:h8/continuity-v45-proof/before-after.png"
+      ],
+      "runtime": "208c1793e32275e08ae050c0b6fecc84854d65ceb864f33a72614660f9af120b",
+      "reviewer": "C",
+      "disposition": "EXPECTED_FAIL_RETAINED_ADVERSE_CONTROL"
+    },
+    {
+      "scenario": "Ordinary1x clear→cloud→rain→clear plus below/above presentation and failure/retry",
+      "invariant": "Current weather, horizon display blend, and worker failure must not grant a new scene or withdraw a qualifying old surface.",
+      "expected": "Provider records actually consumed; no postfirst surface/layer gap; calendar mode has zero physical moonlight; retry completes a fresh final.",
+      "observed": "Chromium216.765s/141 screenshots and Firefox432.360s/248 screenshots each2 actual final returns and0 gaps. Firefox weather accepted partial210.797s,rain271.219s with25 visible rain particles,clear331.578s. Below218.860s/above239.0s/failure259.141s/retry275.235s immediate receipts retain surface. Original frame0142 shows opaque dim calendar disc; frame0169 shows terrain with active rain after retry. No observed-local-precipitation claim.",
+      "evidence": [
+        "local:h8/joined-v45-chromium-continuous-above-transitions/results.json",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/results.json",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/telemetry.json",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/frame-0142.png",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/frame-0169.png"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_CONSUMED_WEATHER_AND_RECOVERY"
+    },
+    {
+      "scenario": "Direct below-horizon calendar, ordinary1xDPR3,660s: both engines",
+      "invariant": "A dim opaque calendar disc remains present with zero physical moonlight; recurring currentness must not remain permanently preview-only.",
+      "expected": "No postfirst withdrawal and recurring actual final refinement at the original phase bound.",
+      "observed": "Chromium660.156s/361 screenshots,Firefox660.297s/362 screenshots;4 actual worker result returns each. First sampled surface5.062/18.235s, first refined24.312/95.844s. Telemetry observer error absent and no visible-without-current record; reported0 surface/layer gaps. Per-screenshot JSON and telemetry were inspected; this reviewer did not visually inspect every calendar PNG.",
+      "evidence": [
+        "local:h8/joined-v45-chromium-continuous-calendar-dpr3/results.json",
+        "local:h8/joined-v45-firefox-continuous-calendar-dpr3/results.json",
+        "local:h8/joined-v45-chromium-continuous-calendar-dpr3/telemetry.json",
+        "local:h8/joined-v45-firefox-continuous-calendar-dpr3/telemetry.json"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_RECEIPTS_PIXEL_REVIEW_BOUNDED"
+    },
+    {
+      "scenario": "Actual file-offline entry and locally owned nested Blob workers",
+      "invariant": "Nested worker boot must respect opaque file-origin ownership and preserve full terrain and responsiveness.",
+      "expected": "Local parent-owned Blob source construction; both real file entries reach full terrain without security relaxation.",
+      "observed": "Source boot passes built source; pool creates/revokes its own Blob. Exact V45 actual-entry receipts: preview7.218/22.0s, final38.093/149.328s Chromium/Firefox;55-component-test receipt retained by primary, not rerun by reviewer. Cold delay remains material. V45 construction negative is narrow and directly rejects reuse of blob:null ancestor identity.",
+      "evidence": [
+        "local:h8/joined-v45-chromium-moon-offline/results.json",
+        "local:h8/joined-v45-firefox-moon-offline/results.json",
+        "workspace/moon/src/moon-native.mjs:179",
+        "workspace/moon/src/moon-pool.mjs:29",
+        "workspace/moon/tests/pool.test.cjs:61"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_ACTUAL_FILE_ENTRY"
+    },
+    {
+      "scenario": "Lunar A→B→A stale result and matching malformed replacement",
+      "invariant": "An old epoch cannot resurrect under repeated target identity; failure retention must stay scoped to the original qualifying surface.",
+      "expected": "Reject injected old result after accepted configuration generations change; malformed matching replacement closes worker while retaining only current surface; profile change revokes retention.",
+      "observed": "Both offline receiving receipts pass. Controls use a small actual solver after a full native solve, then inject a retained stale reply at the receiving boundary. They are protocol evidence, not full540px A→B→A throughput. Source serial/id/epoch/scope and read-time clock guards agree with these controls.",
+      "evidence": [
+        "local:h8/joined-v45-chromium-moon-offline/results.json",
+        "local:h8/joined-v45-firefox-moon-offline/results.json",
+        "workspace/tools/cp9/moon_receiving_check.py:164",
+        "workspace/moon/src/moon-native.mjs:38",
+        "workspace/moon/src/moon-native.mjs:148"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_PROTOCOL_NOT_FULL_SIZE_TRANSITION_LATENCY"
+    },
+    {
+      "scenario": "Explicit forward/backward seeks and hidden/show event control",
+      "invariant": "Obsolete sky/lunar work cannot be admitted following a seek, generation change, or pause epoch.",
+      "expected": "Old state withdrawn and only current accepted scene/UTC may paint after the event.",
+      "observed": "Chromium native lifecycle all-group receipt:19 cases/386 assertions, including target repeats,seeks,wall-clock corrections,hidden completion and visible resume. Actual renderer canvas sinks inspected by harness. Document.hidden/visibilityState are explicitly overridden; snapshot hidden/visible events are controlled, not a real browser background lifecycle. Moon host tests also exercise seek and hide fences; reviewer did not run them.",
+      "evidence": [
+        "local:h8/joined-v45-chromium-native-lifecycle/results.json",
+        "workspace/tools/cp9/native_lifecycle_check.py:33",
+        "workspace/tools/cp9/native_lifecycle_check.py:221",
+        "workspace/moon/tests/host.test.cjs:107",
+        "workspace/moon/tests/host.test.cjs:141"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_EVENT_FENCES_REAL_BROWSER_LIFECYCLE_OPEN"
+    },
+    {
+      "scenario": "Control responsiveness during actual native and offline refinement",
+      "invariant": "Date/settings/prayer UI must remain functional while workers refine.",
+      "expected": "Both controls open during refinement; measured responsiveness remains within the declared bounded environment.",
+      "observed": "Root/V1 runs each16 actions,8 during refining; max heartbeat53.6ms Chromium/159ms Firefox; max scheduled action delay16.6/0ms. Offline runs each16 actions; heartbeat66.4/70ms and action delay8/2ms against250ms budget. These are instrumented functional actions, not a human pointer/accessibility-panel certification.",
+      "evidence": [
+        "local:h8/joined-v45-chromium-normal-root-v1/results.json",
+        "local:h8/joined-v45-firefox-normal-root-v1/results.json",
+        "local:h8/joined-v45-chromium-moon-offline/results.json",
+        "local:h8/joined-v45-firefox-moon-offline/results.json"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_RESPONSIVENESS"
+    },
+    {
+      "scenario": "Current root and frozenV1 ownership/isolation",
+      "invariant": "Root repair must not mutate frozen V1 bytes, dependencies, settings storage, or footer geometry.",
+      "expected": "V1 uses its own config/storage, reload preserves V1 settings without root changes, both cards325×530 with visible footer.",
+      "observed": "Both exact V45 combined-entry receipts pass independent config/storage/reload assertions. V1 requests list only v1/config.js, not root config.js. Source guidance preserves V1. Reviewer inspected Firefox root-iframe.png and v1-iframe.png: respective lunar behavior, header and footer remain present. Recorded four V1 artifact hashes exist; full V1 manifest certification is a separate primary gate.",
+      "evidence": [
+        "local:h8/joined-v45-chromium-normal-root-v1/results.json",
+        "local:h8/joined-v45-firefox-normal-root-v1/results.json",
+        "local:h8/joined-v45-firefox-normal-root-v1/root-iframe.png",
+        "local:h8/joined-v45-firefox-normal-root-v1/v1-iframe.png",
+        "workspace/tools/cp9/combined_entry_check.py:110"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "PASS_SCOPED_ENTRY_STORAGE_PIXELS"
+    },
+    {
+      "scenario": "Continuity observer failure and observation coverage",
+      "invariant": "A stopped/failing observer must never produce a green continuous-visibility claim.",
+      "expected": "Fail on telemetry.error, missing/truncated coverage, invalid timestamps, or an excessive ownership-record gap; distinguish DOM observation from actual PNG pixels.",
+      "observed": "Confirmed old harness catches exceptions atline70 and stores telemetry.error but lines110–114 do not gate it or the observation span. Current five retained V45 runs have no observer error, max persisted gap1015.5–1126ms, tail to last PNG−531.7 to990ms. Primary reports reproducing this latent false green and is adding an offline gate/negative controls. Reviewer supplied finite1500ms DOM-ownership cadence and2500ms full-duration capture-span tolerances; no new browser campaign is needed merely because the gate changes.",
+      "evidence": [
+        "local:h8/joined-v45-firefox-continuous-near-half-dpr3/harness.py:70",
+        "local:h8/joined-v45-firefox-continuous-near-half-dpr3/harness.py:110",
+        "local:h8/joined-v45-firefox-continuous-near-half-dpr3/telemetry.json",
+        "local:h8/joined-v45-firefox-continuous-near-half-dpr3/frames.jsonl"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "CONFIRMED_HARNESS_DEFECT_PRIMARY_FIX_AND_OFFLINE_REVALIDATION"
+    },
+    {
+      "scenario": "Real browser/OS background lifecycle,BFCache and full final joined/traversal coverage",
+      "invariant": "Protocol controls and earlier runtimes cannot automatically close N003 or qualify changed runtime through every environment.",
+      "expected": "Current exact runtime evidence for the claimed environment and traversal; no retrospective promotion of V38 or injected visibility events.",
+      "observed": "Real OS/browser hidden throttling,BFCache,page lifecycle ownership remain unclaimed/open. At2026-10-08T12:40:26Z the final joined ledger had23 returned jobs and Chromium rain-abc running; continuity12 and offline2 returned. Remaining final browser/traversal work belongs to the primary serial queue. Historical V38 high-rate traversals are scoped reuse, not a latest-runtime releasePASS.",
+      "evidence": [
+        "local:h8/joined-v45-joined-queue.json",
+        "local:h8/joined-v45-continuity-queue.json",
+        "local:h8/joined-v45-offline-queue.json",
+        "workspace/docs/real-sky/STARTUP_CLOUD_HOTFIX.md",
+        "local:h8/joined-v45-chromium-native-lifecycle/results.json"
+      ],
+      "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "C",
+      "disposition": "OPEN_NOT_RELEASE_ACCEPTANCE"
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "schema": "r0021.independent.parser-source-review.v1",
+  "reviewer": "/root/r0021_review",
+  "createdAtUtc": "2026-10-18T00:46:53.169225+00:00",
+  "scope": "Exact integrated-r16 source/order/transaction review, extended by ROOT to selected original Firefox r48 frames. Read-only; no browser or product mutation.",
+  "head": "f6f4672bc0309ec509684209143f8adf6fd791de",
+  "candidate": {
+    "path": "<r0021-evidence>\\builds\\integrated-r16",
+    "indexSha256": "9006482cbd2ac1863028e74ca9816553151805222d6f84a88934bf50d9e3ccc3",
+    "offlineSha256": "174d30c91bd4dcd350c29d88b97d259d77f60f191f883e905ec1d0489beb8a0b",
+    "sourceSha256": {
+      "tools/build_native.py": "0ce66e363c692fc3485e09dfd6ec71dd6dd3e85753c4935290f94b3bbad5ba6a",
+      "tools/build_moon.py": "80598ddcbbd0ebdba02984b6860d93f08966ab7bdcdafe9e384185b6470ea5f7",
+      "real-sky/native-first-paint.mjs": "a75ffceb5d8268c633722a67b852c9bd0427ad389d99100e4ba62597cef52452",
+      "tests/real-sky/moon_build_guard_test.py": "c1a55820b225509606215e7357bd6cb0f733371dfae368a9bed09fc63c878e48",
+      "tests/real-sky/native_entry_order_test.py": "7a5d33c050fac5b693f79d8a1462b6b8dfec14c0817b2bbdc6eff5eee029b8c6",
+      "real-sky/native-preview-host.mjs": "b01899c88cc048c82dd04af18d0fa616ff4337485cbdaaf700e0a49bc5fa0de9",
+      "real-sky/native-contract.mjs": "91e6f44fbffa5f9d49ce49afd610dba0acd1341b894a2af461adb39be8398d1b",
+      "real-sky/native-composition.mjs": "11d65a5b0399a99d306de7641c38bc766aaceba7e66e5bdfb71601a20324abe2",
+      "moon/src/moon-first-paint.mjs": "5963c87e95c5ec790c7474ca165e63e3ceacccdd1a46e6a5090e0f17dedfbc7d"
+    },
+    "fiveRequestedAuthoredPathsMatchedLiveAtRead": true
+  },
+  "decision": "Parser-order implementation and prior P2 boundary fix supported as unqualified source work; first-publication behavior remains unresolved after contrary Firefox originals. No production or S1 readiness.",
+  "verifiedSource": {
+    "preflight": "build_moon.py lines61-78 validates and stores both entry slices before its first generated write at108. Missing/duplicate boot/native/body boundaries, including offline-only errors, cannot reach that write. end<=bodyend correctly allows native closing script immediately before body close.",
+    "atomicityLimit": "This closes the new Moon relocation boundary-failure defect. It is not a claim that the entire build_native pipeline or arbitrary I/O failure is an all-or-nothing filesystem transaction.",
+    "bodyComparison": {
+      "r15IndexSha256": "98e4b3f1c3ecdb89ae1ceb33463fc02dad3b47cc32482aa5c2a456886e6b11a5",
+      "r15OfflineSha256": "9722a804ddb5344ce62fc16620c3a0f9f960e0a66c6339751b03ab138e7fb179",
+      "indexScripts": 6,
+      "offlineScripts": 75,
+      "result": "All script bodies and their relative order are byte-identical to r15 except the exact first-paint documentation comment replacement (+5 body bytes) and its data-sha256. No executable producer/body change.",
+      "previewBodyBefore": "188be74f88c2a9617fb989966bae5ea75575c0b3eec509f5c118298f83655c7a",
+      "previewBodyAfter": "1fdb9a0bd9566012a98a1cb5772b046ad12466f75fb427bdde053b0f1e2bb6da"
+    },
+    "neutralUI": "Card and settings markup precede config/preview/Moon/native scripts in both forms. No timer, new readiness origin, whole-card hide or new producer is added. Markup existence does not mean event handlers are usable before native initialization, and cached/inline parsing offers no guaranteed paint opportunity."
+  },
+  "controls": {
+    "independentExecution": "8 synthetic Moon transaction tests PASS in0.478s; generated-entry test PASS for both r16 entries in0.837s. All fixtures/logs written only inside independent-review/parser-order-r48-controls.",
+    "limit": "Synthetic transaction tests intentionally mock receiver codec/native owner/source custody; their pass is not numerical or source-lineage qualification. Actual pins and unchanged relevant owners were separately read. Prior RED/failed-r47 retained."
+  },
+  "findings": [
+    {
+      "id": "R48-P2-CLOSED",
+      "severity": "P2",
+      "status": "CLOSED_FOR_NAMED_BOUNDARY",
+      "file": "tools/build_moon.py",
+      "line": 61,
+      "detail": "Both entries preflight before Moon outputs; invalid offline entry cannot follow a partially changed index."
+    },
+    {
+      "id": "R48-P3-ENTRY-TEST",
+      "severity": "P3",
+      "status": "NONBLOCKING_TEST_HARDENING",
+      "file": "tests/real-sky/native_entry_order_test.py",
+      "line": 19,
+      "detail": "next() selects the first matching marker but does not reject later duplicate preview/Moon/refinement scripts. Config-before-preview is checked, not adjacency. The exact r16 outputs independently have one original sequence; recommend explicit cardinality and config adjacency controls."
+    },
+    {
+      "id": "R48-FIRST-PUBLICATION",
+      "severity": "P1",
+      "status": "CONTRARY_PIXELS_AND_REACHABLE_SOURCE_PATH;_NATIVE_CAUSAL_JOIN_PENDING",
+      "file": "real-sky/native-preview-host.mjs",
+      "line": 90,
+      "detail": "An initial job failing currentness immediately retires its CSS background and its four legacy-layer withdrawal rules before the replacement solar-mask decode completes. The replacement canvas stays hidden and preview-ready absent until lines58-78 commit. nativeIdentity includes weather/elevation; the head always captured weather:null, while a cached native weather record can be accepted at boot. This supplies a concrete competing-publication path for the intact dark-disc/broad-wash source frame, but the r48 run has no event log proving that was the actual path.",
+      "relatedOwners": [
+        "real-sky/native-contract.mjs:8",
+        "real-sky/native-composition.mjs:37",
+        "real-sky/native-first-paint.mjs:44",
+        "src/native/index.html:3572"
+      ],
+      "constraint": "Do not keep a stale head, relax nativeResultCurrent, hide the whole card or delay/reset acceptance to repair this. Do not call the original an acquisition artifact without evidence."
+    }
+  ],
+  "firefoxOriginals": {
+    "resultSha256": "76b1d158eb5cd12085268cab46a259aa82861ca6d2504bbcd5ec0126f066e2aa",
+    "version": "150.0.2",
+    "harnessSha256": "de17a8ca0a61422eca7df8232f4b048ee798ea78bab8ac3f3ff51f5d39034fe9",
+    "runtimeUnchanged": true,
+    "reportedErrors": [],
+    "mode": "warm-reload",
+    "navigationUtcMs": 1792283995299.9517,
+    "timeOriginUtcMs": 1792283995320,
+    "headCapturedAtMs": 340,
+    "earliestAcceptedFromNavigationMs": 360.04834,
+    "viewed": {
+      "523": "neutral Loading card",
+      "524": "neutral Loading card",
+      "525": "intact card and native pending rows; opaque dark blue Moon disc and broad bright wash, no visible textured Moon/catalogue",
+      "526": "intact card with textured Moon/catalogue and same pending rows"
+    },
+    "sourceRelativeSeconds": [
+      23.0465561,
+      23.0874448,
+      23.1281893,
+      23.1692546
+    ],
+    "receiptUtcMs": [
+      1792283995835,
+      1792283995876,
+      1792283995917,
+      1792283995958
+    ],
+    "gap525to526Ms": 41.0653,
+    "limits": [
+      "These are source capture times, not exact monitor presentation. Receipt clocks do not become exact source wall clocks.",
+      "The41.0653ms sample spacing does not establish a greater-than80ms failure or the exact duration of the unwanted state. It also does not repair the observed wrong first composition.",
+      "HeadHandoff=true at later diagnostics concerns the Moon owner; it does not prove the initial background job remained current against cached native weather.",
+      "Cold/new-tab and continuous watches were not independently reclassified in this bounded review."
+    ]
+  },
+  "nextDiscriminator": "ROOT proposed one disposable r16 diagnostic with bounded inert event records from existing locals: initial currentness mismatch and retirement reason/time, pending mask request, and accepted framebuffer publication. No layout/style reads or pre15s getter polling; exact original video and unchanged clock origins. This can distinguish retirement-before-replacement from still-installed CSS image decode or acquisition behavior. A joined delayed-mask source control should preserve mandatory stale-head withdrawal while exposing the replacement ownership gap.",
+  "remainingGates": "All original timing failures,80ms/source continuity, callback-cost, actual-parent and preserved H1/V5/opacity/geometry/V1 requirements remain. No causal diagnosis here grants full S1 or merge credit.",
+  "evidenceSha256": {
+    "intake/parser-build-guard-green-r47b.txt": "d13966046c18f7d1985cb926df412f8712a5a0b9a7721a5142310ff1b5a9f6ff",
+    "intake/parser-entry-green-r47.txt": "8d50cad76f26a3e4677946dbd4d75ba4438a6981498309f4d78f5c984469f4ad",
+    "intake/parser-build-guard-green-r47.txt": "793b4b0427593ee093dfbbeb8d9dd3fc8b2fe4ec85916383f7a12925a405bbef",
+    "independent-review/parser-order-r48-controls/moon_build_guard_test.py.txt": "07c2787ec686389b6304543506bd72d33d76ba1e8770ff04638cec9be678a3c0",
+    "independent-review/parser-order-r48-controls/native_entry_order_test.py.txt": "af99742f99d16bf9e02c44ab4035499f76eea79dcddcb25ba8a8063e91fbc4c4",
+    "native/firefox-parser-ordinary-r48/EXECUTION.json": "6ec04b8a25930f22436d2c17d30c993a93ffc7a1b3b8b0ac1b0a6a62b9f1027d",
+    "native/firefox-parser-ordinary-r48/results.json": "76b1d158eb5cd12085268cab46a259aa82861ca6d2504bbcd5ec0126f066e2aa",
+    "native/firefox-parser-ordinary-r48/video/page@b907924573dcf5e21366edb430f08159.webm.frames.jsonl": "b9e3cd8c49760247ee1356da43c2cbb659dc72c46cb5a4fa801d97565e38fbae",
+    "native/firefox-parser-ordinary-r48/video/page@b907924573dcf5e21366edb430f08159.webm.frames/000523.jpeg": "b8d7ca707931ac4e863e58aaec59d3e9da572303c3f5af28586479d2c8709404",
+    "native/firefox-parser-ordinary-r48/video/page@b907924573dcf5e21366edb430f08159.webm.frames/000524.jpeg": "c7d3ad2515d8542c0c6b9b54fbb4745efb48f3997104285ea5f1e0cdd23296c1",
+    "native/firefox-parser-ordinary-r48/video/page@b907924573dcf5e21366edb430f08159.webm.frames/000525.jpeg": "12c6b18a1807caa2cd86fcf9195a3be51a4381eed55a5ead37fec3d299c00d3a",
+    "native/firefox-parser-ordinary-r48/video/page@b907924573dcf5e21366edb430f08159.webm.frames/000526.jpeg": "19a6226e0a202a933be6787b9aaf7e12ca918c69c8d0dbca28ea30ccf7c2647a"
+  }
+}

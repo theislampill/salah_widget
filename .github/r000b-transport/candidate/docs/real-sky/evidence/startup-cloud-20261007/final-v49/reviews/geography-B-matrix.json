@@ -1,0 +1,1532 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "B",
+  "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+  "status": "SCOPED_SCALAR_COMPLETE_BROWSER_SUPPLEMENT_PENDING",
+  "counts": {
+    "scalarCases": 33,
+    "failed": 0,
+    "targetBoundAnchors": 30,
+    "actualConsumerCities": 6
+  },
+  "claimLimits": [
+    "No browser or pixel qualification by this reviewer.",
+    "No live or observed weather established by synthetic fixture data.",
+    "No new defined polar prayer policy.",
+    "Provider coordinate contradiction is a synthetic integrity gap, not an established normal-provider defect."
+  ],
+  "scenarios": [
+    {
+      "scenario": "request/config/prayer identity central-florida",
+      "invariant": "Request latitude/longitude/zone and prayer method/day remain tied to configured target; weather is model data, never an observation.",
+      "expected": "Exact request coordinates/zone; eligible current model; synthetic prayer bundle uses its own target civil day/method.",
+      "observed": {
+        "weatherRequest": "https://api.open-meteo.com/v1/forecast?latitude=28.5383&longitude=-81.3792&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=America%2FNew_York",
+        "weather": {
+          "currentEligible": true,
+          "code": 2,
+          "sourceEpoch": 1791460800000,
+          "sourceZone": "America/New_York",
+          "target": {
+            "generation": 0,
+            "lat": 28.5383,
+            "lon": -81.3792,
+            "intent": "unknown",
+            "source": "unknown",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "header": {
+            "cond": "cloud",
+            "icon": "⛅",
+            "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+            "temperature": 20,
+            "code": 2,
+            "rawCode": 2,
+            "generation": 0,
+            "target": {
+              "lat": 28.5383,
+              "lon": -81.3792
+            },
+            "sourceValidAt": 1791460800000,
+            "retrievedAt": 1791460800000,
+            "conditionState": "model-estimated-cloud",
+            "observedPresent": false,
+            "paintedAt": 1791460800000
+          },
+          "condition": "model-estimated-cloud",
+          "observedPresent": false,
+          "activePrecip": false,
+          "activeThunder": false,
+          "temp": 20,
+          "trackAdmitted": true,
+          "requestStatus": {
+            "generation": 0,
+            "operationId": 1,
+            "attemptId": 1,
+            "state": "received",
+            "reason": null
+          }
+        },
+        "prayerRequest": "https://api.aladhan.com/v1/timings/08-10-2026?latitude=28.5383&longitude=-81.3792&method=2&school=0",
+        "prayerDate": "08-10-2026",
+        "prayerZone": "America/New_York",
+        "prayerGeneration": 1,
+        "limits": "Synthetic generic prayer clocks qualify ingress/identity only, not actual local prayer times or high-latitude policy."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "request/config/prayer identity phoenix",
+      "invariant": "Request latitude/longitude/zone and prayer method/day remain tied to configured target; weather is model data, never an observation.",
+      "expected": "Exact request coordinates/zone; eligible current model; synthetic prayer bundle uses its own target civil day/method.",
+      "observed": {
+        "weatherRequest": "https://api.open-meteo.com/v1/forecast?latitude=33.4484&longitude=-112.074&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=America%2FPhoenix",
+        "weather": {
+          "currentEligible": true,
+          "code": 2,
+          "sourceEpoch": 1791460800000,
+          "sourceZone": "America/Phoenix",
+          "target": {
+            "generation": 0,
+            "lat": 33.4484,
+            "lon": -112.074,
+            "intent": "unknown",
+            "source": "unknown",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "header": {
+            "cond": "cloud",
+            "icon": "⛅",
+            "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+            "temperature": 20,
+            "code": 2,
+            "rawCode": 2,
+            "generation": 0,
+            "target": {
+              "lat": 33.4484,
+              "lon": -112.074
+            },
+            "sourceValidAt": 1791460800000,
+            "retrievedAt": 1791460800000,
+            "conditionState": "model-estimated-cloud",
+            "observedPresent": false,
+            "paintedAt": 1791460800000
+          },
+          "condition": "model-estimated-cloud",
+          "observedPresent": false,
+          "activePrecip": false,
+          "activeThunder": false,
+          "temp": 20,
+          "trackAdmitted": true,
+          "requestStatus": {
+            "generation": 0,
+            "operationId": 1,
+            "attemptId": 1,
+            "state": "received",
+            "reason": null
+          }
+        },
+        "prayerRequest": "https://api.aladhan.com/v1/timings/08-10-2026?latitude=33.4484&longitude=-112.074&method=2&school=0",
+        "prayerDate": "08-10-2026",
+        "prayerZone": "America/Phoenix",
+        "prayerGeneration": 1,
+        "limits": "Synthetic generic prayer clocks qualify ingress/identity only, not actual local prayer times or high-latitude policy."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "request/config/prayer identity berlin",
+      "invariant": "Request latitude/longitude/zone and prayer method/day remain tied to configured target; weather is model data, never an observation.",
+      "expected": "Exact request coordinates/zone; eligible current model; synthetic prayer bundle uses its own target civil day/method.",
+      "observed": {
+        "weatherRequest": "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.405&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=Europe%2FBerlin",
+        "weather": {
+          "currentEligible": true,
+          "code": 2,
+          "sourceEpoch": 1791460800000,
+          "sourceZone": "Europe/Berlin",
+          "target": {
+            "generation": 0,
+            "lat": 52.52,
+            "lon": 13.405,
+            "intent": "unknown",
+            "source": "unknown",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "header": {
+            "cond": "cloud",
+            "icon": "⛅",
+            "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+            "temperature": 20,
+            "code": 2,
+            "rawCode": 2,
+            "generation": 0,
+            "target": {
+              "lat": 52.52,
+              "lon": 13.405
+            },
+            "sourceValidAt": 1791460800000,
+            "retrievedAt": 1791460800000,
+            "conditionState": "model-estimated-cloud",
+            "observedPresent": false,
+            "paintedAt": 1791460800000
+          },
+          "condition": "model-estimated-cloud",
+          "observedPresent": false,
+          "activePrecip": false,
+          "activeThunder": false,
+          "temp": 20,
+          "trackAdmitted": true,
+          "requestStatus": {
+            "generation": 0,
+            "operationId": 1,
+            "attemptId": 1,
+            "state": "received",
+            "reason": null
+          }
+        },
+        "prayerRequest": "https://api.aladhan.com/v1/timings/08-10-2026?latitude=52.52&longitude=13.405&method=3&school=0",
+        "prayerDate": "08-10-2026",
+        "prayerZone": "Europe/Berlin",
+        "prayerGeneration": 1,
+        "limits": "Synthetic generic prayer clocks qualify ingress/identity only, not actual local prayer times or high-latitude policy."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "request/config/prayer identity makkah",
+      "invariant": "Request latitude/longitude/zone and prayer method/day remain tied to configured target; weather is model data, never an observation.",
+      "expected": "Exact request coordinates/zone; eligible current model; synthetic prayer bundle uses its own target civil day/method.",
+      "observed": {
+        "weatherRequest": "https://api.open-meteo.com/v1/forecast?latitude=21.4225&longitude=39.8262&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=Asia%2FRiyadh",
+        "weather": {
+          "currentEligible": true,
+          "code": 2,
+          "sourceEpoch": 1791460800000,
+          "sourceZone": "Asia/Riyadh",
+          "target": {
+            "generation": 0,
+            "lat": 21.4225,
+            "lon": 39.8262,
+            "intent": "unknown",
+            "source": "unknown",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "header": {
+            "cond": "cloud",
+            "icon": "⛅",
+            "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+            "temperature": 20,
+            "code": 2,
+            "rawCode": 2,
+            "generation": 0,
+            "target": {
+              "lat": 21.4225,
+              "lon": 39.8262
+            },
+            "sourceValidAt": 1791460800000,
+            "retrievedAt": 1791460800000,
+            "conditionState": "model-estimated-cloud",
+            "observedPresent": false,
+            "paintedAt": 1791460800000
+          },
+          "condition": "model-estimated-cloud",
+          "observedPresent": false,
+          "activePrecip": false,
+          "activeThunder": false,
+          "temp": 20,
+          "trackAdmitted": true,
+          "requestStatus": {
+            "generation": 0,
+            "operationId": 1,
+            "attemptId": 1,
+            "state": "received",
+            "reason": null
+          }
+        },
+        "prayerRequest": "https://api.aladhan.com/v1/timings/08-10-2026?latitude=21.4225&longitude=39.8262&method=4&school=0",
+        "prayerDate": "08-10-2026",
+        "prayerZone": "Asia/Riyadh",
+        "prayerGeneration": 1,
+        "limits": "Synthetic generic prayer clocks qualify ingress/identity only, not actual local prayer times or high-latitude policy."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "request/config/prayer identity tromso",
+      "invariant": "Request latitude/longitude/zone and prayer method/day remain tied to configured target; weather is model data, never an observation.",
+      "expected": "Exact request coordinates/zone; eligible current model; synthetic prayer bundle uses its own target civil day/method.",
+      "observed": {
+        "weatherRequest": "https://api.open-meteo.com/v1/forecast?latitude=69.6492&longitude=18.9553&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=Europe%2FOslo",
+        "weather": {
+          "currentEligible": true,
+          "code": 2,
+          "sourceEpoch": 1791460800000,
+          "sourceZone": "Europe/Oslo",
+          "target": {
+            "generation": 0,
+            "lat": 69.6492,
+            "lon": 18.9553,
+            "intent": "unknown",
+            "source": "unknown",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "header": {
+            "cond": "cloud",
+            "icon": "⛅",
+            "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+            "temperature": 20,
+            "code": 2,
+            "rawCode": 2,
+            "generation": 0,
+            "target": {
+              "lat": 69.6492,
+              "lon": 18.9553
+            },
+            "sourceValidAt": 1791460800000,
+            "retrievedAt": 1791460800000,
+            "conditionState": "model-estimated-cloud",
+            "observedPresent": false,
+            "paintedAt": 1791460800000
+          },
+          "condition": "model-estimated-cloud",
+          "observedPresent": false,
+          "activePrecip": false,
+          "activeThunder": false,
+          "temp": 20,
+          "trackAdmitted": true,
+          "requestStatus": {
+            "generation": 0,
+            "operationId": 1,
+            "attemptId": 1,
+            "state": "received",
+            "reason": null
+          }
+        },
+        "prayerRequest": "https://api.aladhan.com/v1/timings/08-10-2026?latitude=69.6492&longitude=18.9553&method=3&school=0",
+        "prayerDate": "08-10-2026",
+        "prayerZone": "Europe/Oslo",
+        "prayerGeneration": 1,
+        "limits": "Synthetic generic prayer clocks qualify ingress/identity only, not actual local prayer times or high-latitude policy."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "request/config/prayer identity sydney",
+      "invariant": "Request latitude/longitude/zone and prayer method/day remain tied to configured target; weather is model data, never an observation.",
+      "expected": "Exact request coordinates/zone; eligible current model; synthetic prayer bundle uses its own target civil day/method.",
+      "observed": {
+        "weatherRequest": "https://api.open-meteo.com/v1/forecast?latitude=-33.8688&longitude=151.2093&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=Australia%2FSydney",
+        "weather": {
+          "currentEligible": true,
+          "code": 2,
+          "sourceEpoch": 1791460800000,
+          "sourceZone": "Australia/Sydney",
+          "target": {
+            "generation": 0,
+            "lat": -33.8688,
+            "lon": 151.2093,
+            "intent": "unknown",
+            "source": "unknown",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "header": {
+            "cond": "cloud",
+            "icon": "⛅",
+            "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+            "temperature": 20,
+            "code": 2,
+            "rawCode": 2,
+            "generation": 0,
+            "target": {
+              "lat": -33.8688,
+              "lon": 151.2093
+            },
+            "sourceValidAt": 1791460800000,
+            "retrievedAt": 1791460800000,
+            "conditionState": "model-estimated-cloud",
+            "observedPresent": false,
+            "paintedAt": 1791460800000
+          },
+          "condition": "model-estimated-cloud",
+          "observedPresent": false,
+          "activePrecip": false,
+          "activeThunder": false,
+          "temp": 20,
+          "trackAdmitted": true,
+          "requestStatus": {
+            "generation": 0,
+            "operationId": 1,
+            "attemptId": 1,
+            "state": "received",
+            "reason": null
+          }
+        },
+        "prayerRequest": "https://api.aladhan.com/v1/timings/08-10-2026?latitude=-33.8688&longitude=151.2093&method=3&school=0",
+        "prayerDate": "08-10-2026",
+        "prayerZone": "Australia/Sydney",
+        "prayerGeneration": 1,
+        "limits": "Synthetic generic prayer clocks qualify ingress/identity only, not actual local prayer times or high-latitude policy."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "winter/summer offset central-florida",
+      "invariant": "Captured IANA zone determines UTC, not host timezone or a fixed EDT offset.",
+      "expected": "2026 Jan/Jul local noon maps to explicit UTC controls.",
+      "observed": {
+        "zone": "America/New_York",
+        "january": "2026-01-15T17:00:00.000Z",
+        "july": "2026-07-15T16:00:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "winter/summer offset phoenix",
+      "invariant": "Captured IANA zone determines UTC, not host timezone or a fixed EDT offset.",
+      "expected": "2026 Jan/Jul local noon maps to explicit UTC controls.",
+      "observed": {
+        "zone": "America/Phoenix",
+        "january": "2026-01-15T19:00:00.000Z",
+        "july": "2026-07-15T19:00:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "winter/summer offset berlin",
+      "invariant": "Captured IANA zone determines UTC, not host timezone or a fixed EDT offset.",
+      "expected": "2026 Jan/Jul local noon maps to explicit UTC controls.",
+      "observed": {
+        "zone": "Europe/Berlin",
+        "january": "2026-01-15T11:00:00.000Z",
+        "july": "2026-07-15T10:00:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "winter/summer offset makkah",
+      "invariant": "Captured IANA zone determines UTC, not host timezone or a fixed EDT offset.",
+      "expected": "2026 Jan/Jul local noon maps to explicit UTC controls.",
+      "observed": {
+        "zone": "Asia/Riyadh",
+        "january": "2026-01-15T09:00:00.000Z",
+        "july": "2026-07-15T09:00:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "winter/summer offset tromso",
+      "invariant": "Captured IANA zone determines UTC, not host timezone or a fixed EDT offset.",
+      "expected": "2026 Jan/Jul local noon maps to explicit UTC controls.",
+      "observed": {
+        "zone": "Europe/Oslo",
+        "january": "2026-01-15T11:00:00.000Z",
+        "july": "2026-07-15T10:00:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "winter/summer offset sydney",
+      "invariant": "Captured IANA zone determines UTC, not host timezone or a fixed EDT offset.",
+      "expected": "2026 Jan/Jul local noon maps to explicit UTC controls.",
+      "observed": {
+        "zone": "Australia/Sydney",
+        "january": "2026-01-15T01:00:00.000Z",
+        "july": "2026-07-15T02:00:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "DST gap/fold central-florida",
+      "invariant": "An unresolved civil time cannot authorize a source epoch or a countdown.",
+      "expected": "Gap/fold => NaN; valid neighboring time => explicit UTC.",
+      "observed": {
+        "zone": "America/New_York",
+        "gap": [
+          2026,
+          3,
+          8,
+          2,
+          30
+        ],
+        "fold": [
+          2026,
+          11,
+          1,
+          1,
+          30
+        ],
+        "gapResult": "unavailable",
+        "foldResult": "unavailable",
+        "valid": [
+          2026,
+          3,
+          8,
+          3,
+          30
+        ],
+        "validResult": "2026-03-08T07:30:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "DST gap/fold berlin",
+      "invariant": "An unresolved civil time cannot authorize a source epoch or a countdown.",
+      "expected": "Gap/fold => NaN; valid neighboring time => explicit UTC.",
+      "observed": {
+        "zone": "Europe/Berlin",
+        "gap": [
+          2026,
+          3,
+          29,
+          2,
+          30
+        ],
+        "fold": [
+          2026,
+          10,
+          25,
+          2,
+          30
+        ],
+        "gapResult": "unavailable",
+        "foldResult": "unavailable",
+        "valid": [
+          2026,
+          3,
+          29,
+          3,
+          30
+        ],
+        "validResult": "2026-03-29T01:30:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "DST gap/fold tromso",
+      "invariant": "An unresolved civil time cannot authorize a source epoch or a countdown.",
+      "expected": "Gap/fold => NaN; valid neighboring time => explicit UTC.",
+      "observed": {
+        "zone": "Europe/Oslo",
+        "gap": [
+          2026,
+          3,
+          29,
+          2,
+          30
+        ],
+        "fold": [
+          2026,
+          10,
+          25,
+          2,
+          30
+        ],
+        "gapResult": "unavailable",
+        "foldResult": "unavailable",
+        "valid": [
+          2026,
+          3,
+          29,
+          3,
+          30
+        ],
+        "validResult": "2026-03-29T01:30:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "DST gap/fold sydney",
+      "invariant": "An unresolved civil time cannot authorize a source epoch or a countdown.",
+      "expected": "Gap/fold => NaN; valid neighboring time => explicit UTC.",
+      "observed": {
+        "zone": "Australia/Sydney",
+        "gap": [
+          2026,
+          10,
+          4,
+          2,
+          30
+        ],
+        "fold": [
+          2026,
+          4,
+          5,
+          2,
+          30
+        ],
+        "gapResult": "unavailable",
+        "foldResult": "unavailable",
+        "valid": [
+          2026,
+          10,
+          4,
+          3,
+          30
+        ],
+        "validResult": "2026-10-03T16:30:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "no-DST gap-date control phoenix",
+      "invariant": "Locations without these DST transitions retain unambiguous local clocks.",
+      "expected": "2026-03-08 02:30 maps to a single UTC instant.",
+      "observed": {
+        "zone": "America/Phoenix",
+        "utc": "2026-03-08T09:30:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "no-DST gap-date control makkah",
+      "invariant": "Locations without these DST transitions retain unambiguous local clocks.",
+      "expected": "2026-03-08 02:30 maps to a single UTC instant.",
+      "observed": {
+        "zone": "Asia/Riyadh",
+        "utc": "2026-03-07T23:30:00.000Z"
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "provider timezone contradiction",
+      "invariant": "Contradictory response timezone cannot relabel captured request wall times.",
+      "expected": "Current, hourly track and elevation remain unadmitted; explicit unavailable reason.",
+      "observed": {
+        "currentEligible": false,
+        "code": null,
+        "sourceEpoch": null,
+        "sourceZone": null,
+        "target": null,
+        "header": {
+          "icon": "—",
+          "label": "Weather unavailable — no eligible current condition",
+          "temperature": null,
+          "code": null,
+          "rawCode": null,
+          "generation": 0,
+          "target": {
+            "lat": 52.52,
+            "lon": 13.405
+          },
+          "sourceValidAt": null,
+          "retrievedAt": null,
+          "conditionState": "unavailable",
+          "observedPresent": false,
+          "paintedAt": 1791460800000
+        },
+        "condition": "unavailable",
+        "observedPresent": false,
+        "activePrecip": false,
+        "activeThunder": false,
+        "temp": null,
+        "trackAdmitted": false,
+        "requestStatus": {
+          "generation": 0,
+          "operationId": 1,
+          "attemptId": 1,
+          "state": "unavailable",
+          "reason": "response timezone unavailable or contradicts captured request"
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "provider coordinate contradiction characterization",
+      "invariant": "Request ownership and supplied provider coordinate metadata are distinct claims.",
+      "expected": "Characterize actual response handling; require captured target to remain unchanged.",
+      "observed": {
+        "requested": {
+          "lat": 52.52,
+          "lon": 13.405,
+          "zone": "Europe/Berlin"
+        },
+        "supplied": {
+          "lat": 21.4225,
+          "lon": 39.8262,
+          "zone": "Europe/Berlin"
+        },
+        "accepted": {
+          "currentEligible": true,
+          "code": 2,
+          "sourceEpoch": 1791460800000,
+          "sourceZone": "Europe/Berlin",
+          "target": {
+            "generation": 0,
+            "lat": 52.52,
+            "lon": 13.405,
+            "intent": "unknown",
+            "source": "unknown",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "header": {
+            "cond": "cloud",
+            "icon": "⛅",
+            "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+            "temperature": 20,
+            "code": 2,
+            "rawCode": 2,
+            "generation": 0,
+            "target": {
+              "lat": 52.52,
+              "lon": 13.405
+            },
+            "sourceValidAt": 1791460800000,
+            "retrievedAt": 1791460800000,
+            "conditionState": "model-estimated-cloud",
+            "observedPresent": false,
+            "paintedAt": 1791460800000
+          },
+          "condition": "model-estimated-cloud",
+          "observedPresent": false,
+          "activePrecip": false,
+          "activeThunder": false,
+          "temp": 20,
+          "trackAdmitted": true,
+          "requestStatus": {
+            "generation": 0,
+            "operationId": 1,
+            "attemptId": 1,
+            "state": "received",
+            "reason": null
+          }
+        },
+        "limit": "Top-level response coordinates are ignored; synthetic protocol contradiction demonstrated. No live mismatch, grid-distance rejection contract or user-visible normal-path defect is established."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "DEMONSTRATED_RESPONSE_INTEGRITY_GAP_NOT_LIVE_DEFECT"
+    },
+    {
+      "scenario": "supplied offset contradiction characterization",
+      "invariant": "The requested IANA zone owns wall-time conversion even if an offset field contradicts it.",
+      "expected": "Exact captured-zone epoch; no fixed provider offset conversion.",
+      "observed": {
+        "ignoredOffset": -18000,
+        "ianaOffset": 7200,
+        "accepted": {
+          "currentEligible": true,
+          "code": 2,
+          "sourceEpoch": 1791460800000,
+          "sourceZone": "Europe/Berlin",
+          "target": {
+            "generation": 0,
+            "lat": 52.52,
+            "lon": 13.405,
+            "intent": "unknown",
+            "source": "unknown",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "header": {
+            "cond": "cloud",
+            "icon": "⛅",
+            "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+            "temperature": 20,
+            "code": 2,
+            "rawCode": 2,
+            "generation": 0,
+            "target": {
+              "lat": 52.52,
+              "lon": 13.405
+            },
+            "sourceValidAt": 1791460800000,
+            "retrievedAt": 1791460800000,
+            "conditionState": "model-estimated-cloud",
+            "observedPresent": false,
+            "paintedAt": 1791460800000
+          },
+          "condition": "model-estimated-cloud",
+          "observedPresent": false,
+          "activePrecip": false,
+          "activeThunder": false,
+          "temp": 20,
+          "trackAdmitted": true,
+          "requestStatus": {
+            "generation": 0,
+            "operationId": 1,
+            "attemptId": 1,
+            "state": "received",
+            "reason": null
+          }
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_IANA_OWNER"
+    },
+    {
+      "scenario": "partial wet amount",
+      "invariant": "Independently admitted fields never promote missing amount, stale source or unknown code to effects.",
+      "expected": "Eligibility/temp/precip exactly match the named boundary.",
+      "observed": {
+        "currentEligible": true,
+        "code": 63,
+        "sourceEpoch": 1791460800000,
+        "sourceZone": "Europe/Berlin",
+        "target": {
+          "generation": 0,
+          "lat": 52.52,
+          "lon": 13.405,
+          "intent": "unknown",
+          "source": "unknown",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null
+        },
+        "header": {
+          "cond": "rain",
+          "icon": "🌧️",
+          "label": "Rain — Open-Meteo current model estimate; direct local observation unavailable (unobserved); quantitative effect decision: rain model code but interval precip unavailable → overcast",
+          "temperature": 20,
+          "code": 63,
+          "rawCode": 63,
+          "generation": 0,
+          "target": {
+            "lat": 52.52,
+            "lon": 13.405
+          },
+          "sourceValidAt": 1791460800000,
+          "retrievedAt": 1791460800000,
+          "conditionState": "model-estimated-rain",
+          "observedPresent": false,
+          "paintedAt": 1791460800000
+        },
+        "condition": "model-estimated-rain",
+        "observedPresent": false,
+        "activePrecip": false,
+        "activeThunder": false,
+        "temp": 20,
+        "trackAdmitted": true,
+        "requestStatus": {
+          "generation": 0,
+          "operationId": 1,
+          "attemptId": 1,
+          "state": "received",
+          "reason": null
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "partial temperature",
+      "invariant": "Independently admitted fields never promote missing amount, stale source or unknown code to effects.",
+      "expected": "Eligibility/temp/precip exactly match the named boundary.",
+      "observed": {
+        "currentEligible": true,
+        "code": 63,
+        "sourceEpoch": 1791460800000,
+        "sourceZone": "Europe/Berlin",
+        "target": {
+          "generation": 0,
+          "lat": 52.52,
+          "lon": 13.405,
+          "intent": "unknown",
+          "source": "unknown",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null
+        },
+        "header": {
+          "cond": "rain",
+          "icon": "🌧️",
+          "label": "Rain — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+          "temperature": null,
+          "code": 63,
+          "rawCode": 63,
+          "generation": 0,
+          "target": {
+            "lat": 52.52,
+            "lon": 13.405
+          },
+          "sourceValidAt": 1791460800000,
+          "retrievedAt": 1791460800000,
+          "conditionState": "model-estimated-rain",
+          "observedPresent": false,
+          "paintedAt": 1791460800000
+        },
+        "condition": "model-estimated-rain",
+        "observedPresent": false,
+        "activePrecip": true,
+        "activeThunder": false,
+        "temp": null,
+        "trackAdmitted": true,
+        "requestStatus": {
+          "generation": 0,
+          "operationId": 1,
+          "attemptId": 1,
+          "state": "received",
+          "reason": null
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "stale source",
+      "invariant": "Independently admitted fields never promote missing amount, stale source or unknown code to effects.",
+      "expected": "Eligibility/temp/precip exactly match the named boundary.",
+      "observed": {
+        "currentEligible": false,
+        "code": 2,
+        "sourceEpoch": 1791459840000,
+        "sourceZone": "Europe/Berlin",
+        "target": {
+          "generation": 0,
+          "lat": 52.52,
+          "lon": 13.405,
+          "intent": "unknown",
+          "source": "unknown",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null
+        },
+        "header": {
+          "icon": "—",
+          "label": "Weather unavailable — no eligible current condition",
+          "temperature": null,
+          "code": null,
+          "rawCode": null,
+          "generation": 0,
+          "target": {
+            "lat": 52.52,
+            "lon": 13.405
+          },
+          "sourceValidAt": null,
+          "retrievedAt": null,
+          "conditionState": "unavailable",
+          "observedPresent": false,
+          "paintedAt": 1791460800000
+        },
+        "condition": "unavailable",
+        "observedPresent": false,
+        "activePrecip": false,
+        "activeThunder": false,
+        "temp": null,
+        "trackAdmitted": true,
+        "requestStatus": {
+          "generation": 0,
+          "operationId": 1,
+          "attemptId": 1,
+          "state": "received",
+          "reason": null
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "future source",
+      "invariant": "Independently admitted fields never promote missing amount, stale source or unknown code to effects.",
+      "expected": "Eligibility/temp/precip exactly match the named boundary.",
+      "observed": {
+        "currentEligible": false,
+        "code": 2,
+        "sourceEpoch": 1791460860000,
+        "sourceZone": "Europe/Berlin",
+        "target": {
+          "generation": 0,
+          "lat": 52.52,
+          "lon": 13.405,
+          "intent": "unknown",
+          "source": "unknown",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null
+        },
+        "header": {
+          "icon": "—",
+          "label": "Weather unavailable — no eligible current condition",
+          "temperature": null,
+          "code": null,
+          "rawCode": null,
+          "generation": 0,
+          "target": {
+            "lat": 52.52,
+            "lon": 13.405
+          },
+          "sourceValidAt": null,
+          "retrievedAt": null,
+          "conditionState": "unavailable",
+          "observedPresent": false,
+          "paintedAt": 1791460800000
+        },
+        "condition": "unavailable",
+        "observedPresent": false,
+        "activePrecip": false,
+        "activeThunder": false,
+        "temp": null,
+        "trackAdmitted": true,
+        "requestStatus": {
+          "generation": 0,
+          "operationId": 1,
+          "attemptId": 1,
+          "state": "received",
+          "reason": null
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "inclusive 15min source",
+      "invariant": "Independently admitted fields never promote missing amount, stale source or unknown code to effects.",
+      "expected": "Eligibility/temp/precip exactly match the named boundary.",
+      "observed": {
+        "currentEligible": true,
+        "code": 2,
+        "sourceEpoch": 1791459900000,
+        "sourceZone": "Europe/Berlin",
+        "target": {
+          "generation": 0,
+          "lat": 52.52,
+          "lon": 13.405,
+          "intent": "unknown",
+          "source": "unknown",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null
+        },
+        "header": {
+          "cond": "cloud",
+          "icon": "⛅",
+          "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+          "temperature": 20,
+          "code": 2,
+          "rawCode": 2,
+          "generation": 0,
+          "target": {
+            "lat": 52.52,
+            "lon": 13.405
+          },
+          "sourceValidAt": 1791459900000,
+          "retrievedAt": 1791460800000,
+          "conditionState": "model-estimated-cloud",
+          "observedPresent": false,
+          "paintedAt": 1791460800000
+        },
+        "condition": "model-estimated-cloud",
+        "observedPresent": false,
+        "activePrecip": false,
+        "activeThunder": false,
+        "temp": 20,
+        "trackAdmitted": true,
+        "requestStatus": {
+          "generation": 0,
+          "operationId": 1,
+          "attemptId": 1,
+          "state": "received",
+          "reason": null
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "unknown WMO",
+      "invariant": "Independently admitted fields never promote missing amount, stale source or unknown code to effects.",
+      "expected": "Eligibility/temp/precip exactly match the named boundary.",
+      "observed": {
+        "currentEligible": false,
+        "code": null,
+        "sourceEpoch": null,
+        "sourceZone": null,
+        "target": null,
+        "header": {
+          "icon": "—",
+          "label": "Weather unavailable — no eligible current condition",
+          "temperature": null,
+          "code": null,
+          "rawCode": null,
+          "generation": 0,
+          "target": {
+            "lat": 52.52,
+            "lon": 13.405
+          },
+          "sourceValidAt": null,
+          "retrievedAt": null,
+          "conditionState": "unavailable",
+          "observedPresent": false,
+          "paintedAt": 1791460800000
+        },
+        "condition": "unavailable",
+        "observedPresent": false,
+        "activePrecip": false,
+        "activeThunder": false,
+        "temp": null,
+        "trackAdmitted": true,
+        "requestStatus": {
+          "generation": 0,
+          "operationId": 1,
+          "attemptId": 1,
+          "state": "received",
+          "reason": null
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "partial hourly preserves valid current",
+      "invariant": "Malformed hourly track cannot invalidate an independently eligible current record or promote a forecast.",
+      "expected": "Valid current and temperature retained; track rejected.",
+      "observed": {
+        "currentEligible": true,
+        "code": 2,
+        "sourceEpoch": 1791460800000,
+        "sourceZone": "Europe/Berlin",
+        "target": {
+          "generation": 0,
+          "lat": 52.52,
+          "lon": 13.405,
+          "intent": "unknown",
+          "source": "unknown",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null
+        },
+        "header": {
+          "cond": "cloud",
+          "icon": "⛅",
+          "label": "Partly cloudy — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+          "temperature": 20,
+          "code": 2,
+          "rawCode": 2,
+          "generation": 0,
+          "target": {
+            "lat": 52.52,
+            "lon": 13.405
+          },
+          "sourceValidAt": 1791460800000,
+          "retrievedAt": 1791460800000,
+          "conditionState": "model-estimated-cloud",
+          "observedPresent": false,
+          "paintedAt": 1791460800000
+        },
+        "condition": "model-estimated-cloud",
+        "observedPresent": false,
+        "activePrecip": false,
+        "activeThunder": false,
+        "temp": 20,
+        "trackAdmitted": false,
+        "requestStatus": {
+          "generation": 0,
+          "operationId": 1,
+          "attemptId": 1,
+          "state": "received",
+          "reason": null
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "fresh current clear vs wet hourly",
+      "invariant": "Ordinary realtime uses eligible current, not hourly forecast.",
+      "expected": "Clear current remains clear and precipitation off despite wet hourly.",
+      "observed": {
+        "currentEligible": true,
+        "code": 0,
+        "sourceEpoch": 1791460800000,
+        "sourceZone": "Europe/Berlin",
+        "target": {
+          "generation": 0,
+          "lat": 52.52,
+          "lon": 13.405,
+          "intent": "unknown",
+          "source": "unknown",
+          "accuracyM": null,
+          "acquiredAt": null,
+          "provider": null,
+          "area": null,
+          "bounds": null
+        },
+        "header": {
+          "cond": "clear",
+          "icon": "☀️",
+          "label": "Clear — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+          "temperature": 20,
+          "code": 0,
+          "rawCode": 0,
+          "generation": 0,
+          "target": {
+            "lat": 52.52,
+            "lon": 13.405
+          },
+          "sourceValidAt": 1791460800000,
+          "retrievedAt": 1791460800000,
+          "conditionState": "model-estimated-clear",
+          "observedPresent": false,
+          "paintedAt": 1791460800000
+        },
+        "condition": "model-estimated-clear",
+        "observedPresent": false,
+        "activePrecip": false,
+        "activeThunder": false,
+        "temp": 20,
+        "trackAdmitted": true,
+        "requestStatus": {
+          "generation": 0,
+          "operationId": 1,
+          "attemptId": 1,
+          "state": "received",
+          "reason": null
+        }
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "weather A->B->A late completions",
+      "invariant": "Old A and B requests cannot mutate current A2, its cache or its zone after a generation boundary.",
+      "expected": "A2 owns generation2; old bodies cannot replace code/temp/cache.",
+      "observed": {
+        "heldRequests": [
+          "https://api.open-meteo.com/v1/forecast?latitude=28.5383&longitude=-81.3792&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=America%2FNew_York",
+          "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.405&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=Europe%2FBerlin",
+          "https://api.open-meteo.com/v1/forecast?latitude=28.5383&longitude=-81.3792&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day&forecast_days=3&temperature_unit=celsius&wind_speed_unit=ms&timezone=America%2FNew_York"
+        ],
+        "current": {
+          "currentEligible": true,
+          "code": 63,
+          "sourceEpoch": 1791460800000,
+          "sourceZone": "America/New_York",
+          "target": {
+            "generation": 2,
+            "lat": 28.5383,
+            "lon": -81.3792,
+            "intent": "unknown",
+            "source": "unknown",
+            "accuracyM": null,
+            "acquiredAt": null,
+            "provider": null,
+            "area": null,
+            "bounds": null
+          },
+          "header": {
+            "cond": "rain",
+            "icon": "🌧️",
+            "label": "Rain — Open-Meteo current model estimate; direct local observation unavailable (unobserved)",
+            "temperature": 24,
+            "code": 63,
+            "rawCode": 63,
+            "generation": 2,
+            "target": {
+              "lat": 28.5383,
+              "lon": -81.3792
+            },
+            "sourceValidAt": 1791460800000,
+            "retrievedAt": 1791460800000,
+            "conditionState": "model-estimated-rain",
+            "observedPresent": false,
+            "paintedAt": 1791460800000
+          },
+          "condition": "model-estimated-rain",
+          "observedPresent": false,
+          "activePrecip": true,
+          "activeThunder": false,
+          "temp": 24,
+          "trackAdmitted": true,
+          "requestStatus": {
+            "generation": 2,
+            "operationId": 3,
+            "attemptId": 3,
+            "state": "received",
+            "reason": null
+          }
+        },
+        "staleBodiesRejected": true,
+        "cacheUnchanged": true,
+        "driver": "Production generation owner plus explicit fixture reset; UI applyConfig separately checked by prayer consumer."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "actual applyConfig prayer A->B->A",
+      "invariant": "Returning to the same coordinate pair is a fresh generation; old prayer/body/cache ownership never returns.",
+      "expected": "A2 exact day/zone/method remains; no late mutation.",
+      "observed": {
+        "current": {
+          "today": {
+            "timings": {
+              "Fajr": "05:00",
+              "Sunrise": "06:00",
+              "Dhuhr": "12:00",
+              "Asr": "15:30",
+              "Sunset": "18:00",
+              "Maghrib": "18:00",
+              "Isha": "19:30"
+            },
+            "date": {
+              "gregorian": {
+                "date": "08-10-2026",
+                "day": "08",
+                "month": {
+                  "number": 10,
+                  "en": "September"
+                },
+                "year": "2026"
+              },
+              "hijri": {
+                "date": "19-02-1448",
+                "day": "19",
+                "month": {
+                  "number": 2,
+                  "en": "Safar"
+                },
+                "year": "1448"
+              }
+            },
+            "meta": {
+              "timezone": "America/New_York"
+            },
+            "tag": "A2"
+          },
+          "tomorrow": null,
+          "tz": "America/New_York",
+          "lat": 28.5383,
+          "lon": -81.3792,
+          "method": "2",
+          "school": "0",
+          "lastDate": "08-10-2026",
+          "fetchingTomorrow": true,
+          "_prayerStale": false,
+          "_loopStarted": true
+        },
+        "generation": 3,
+        "staleBodyCacheWrites": 0,
+        "requests": [
+          "https://api.aladhan.com/v1/timings/08-10-2026?latitude=28.5383&longitude=-81.3792&method=2&school=0",
+          "https://api.aladhan.com/v1/timings/08-10-2026?latitude=52.52&longitude=13.405&method=3&school=0",
+          "https://api.aladhan.com/v1/timings/08-10-2026?latitude=28.5383&longitude=-81.3792&method=2&school=0",
+          "https://api.aladhan.com/v1/timings/09-10-2026?latitude=28.5383&longitude=-81.3792&method=2&school=0"
+        ]
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "prayer provider zone settles hint",
+      "invariant": "Prayer provider metadata deliberately resolves config timezone hint; weather has a separate zone-admission policy.",
+      "expected": "Captured request coords/method unchanged; current provider zone may replace hint.",
+      "observed": {
+        "resolvedZone": "America/New_York",
+        "request": "https://api.aladhan.com/v1/timings/08-10-2026?latitude=52.52&longitude=13.405&method=3&school=0",
+        "claimLimit": "Configured tz is documented as a hint. This synthetic contradictory provider result does not establish actual geographic prayer correctness."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "CHARACTERIZATION_INTENTIONAL_PROVIDER_ZONE_AUTHORITY"
+    },
+    {
+      "scenario": "undefined Tromso polar policy remains unavailable",
+      "invariant": "Missing polar prayer events must not turn into fabricated local times or a policy inferred from sunrise geometry.",
+      "expected": "Malformed/missing event clocks rejected; current rows/countdown unavailable.",
+      "observed": {
+        "admission": {
+          "ok": false,
+          "reason": "clock:Fajr"
+        },
+        "countdown": "Prayer times unavailable",
+        "allSixRowsUnavailable": true,
+        "limit": "No high-latitude adjustment policy is implemented or certified by this scalar probe; valid captured provider policy requires its own explicit fixture."
+      },
+      "evidence": "local:h8\\geo-v48\\B\\probe-results.json",
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic source-consumer",
+      "disposition": "PASS_SCALAR_SYNTHETIC"
+    },
+    {
+      "scenario": "A-bound 30-anchor weather fixture supplement",
+      "invariant": "Correct city coordinates/zone, exact prayer anchor binding, explicit quantities/units and at least±36h hourly coverage.",
+      "expected": "Thirty anchors plus six actual consumer controls pass; no target relabelling.",
+      "observed": {
+        "caseCount": 30,
+        "consumerCities": 6,
+        "eachHourlyCount": 74,
+        "sourceStable": true,
+        "fixtureSha256": "8c904f4dce309ce520e095530ddad50858483bf563544466ae0c7f20350a8f19"
+      },
+      "evidence": [
+        "local:h8\\geo-v48\\B\\scenario-weather-fixtures.json",
+        "local:h8\\geo-v48\\B\\scenario-weather-verification.json"
+      ],
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "synthetic weather with acquired historical prayer-anchor inputs",
+      "disposition": "PASS_SCALAR_BROWSER_PENDING"
+    },
+    {
+      "scenario": "Existing Entry geographic route",
+      "invariant": "Fixture inputs for another observer must not reuse Florida weather/prayer times.",
+      "expected": "Provider data remains target/day/zone/method bound.",
+      "observed": "Existing weather payload fixes Florida coordinates/timezone/EDT; prayer branch relabels date/zone/coords and replaces clocks with Florida defaults.",
+      "evidence": [
+        "workspace/tools/cp9/hotfix_stress_check.py:108",
+        "workspace/tools/cp9/hotfix_stress_check.py:153"
+      ],
+      "runtime": "4b5d152c13ce3bbc18d1062c1bf03b89c91743df8cd5b6ab5b952e1ffed3b267",
+      "reviewer": "B",
+      "mode": "live source inspection",
+      "disposition": "CONFIRMED_HARNESS_DEFECT_PRIMARY_OWNS_REPAIR"
+    }
+  ]
+}

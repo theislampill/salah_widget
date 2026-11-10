@@ -1,0 +1,6 @@
+()=>{const owner=__weatherCases.identity();__weatherFixtureControl.assertOwned(owner);
+ const local=__widgetFixture.case?.local===true;if(local&&!document.getElementById('settings-persistence-status'))throw Error('Existing persistence status sink absent');
+ const make=(id,text)=>{if(document.getElementById(id))throw Error('Description sentinel collision');const e=document.createElement('span');e.id=id;e.textContent=text;e.className='weather-information';document.body.append(e);};
+ make('info-existing-icon-help','Existing weather icon help.');make('info-existing-settings-help','Existing settings action help.');
+ const before={};for(const [selector,token]of [['#wi','info-existing-icon-help'],['.buckle','info-existing-settings-help']]){const e=document.querySelector(selector),tokens=(e.getAttribute('aria-describedby')||'').split(/\s+/).filter(Boolean);before[selector]=tokens.slice();for(const t of [token,...(selector==='.buckle'&&local?['settings-persistence-status']:[])])if(!tokens.includes(t))tokens.push(t);e.setAttribute('aria-describedby',tokens.join(' '));}
+ return {owner,local,before,seededPersistenceStatusToken:local,icon:document.querySelector('#wi').getAttribute('aria-describedby'),button:document.querySelector('.buckle').getAttribute('aria-describedby')};}

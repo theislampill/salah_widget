@@ -1,0 +1,7 @@
+# r121 — delayed body, actual deadline, one retry
+
+Both engines received HTTP200 with the original 20,137,935-byte DEM Content-Length and original4096-byte prefix. The server kept the body open beyond the actual source-installed120000ms startup timer. Before restoration, the host reported `Moon asset startup deadline exceeded`, terminated the failed worker, cleared pending work and retained independently current initial-v5 content. Actual `.buckle` / `#setClose` controls opened and returned to the prayer UI.
+
+One explicit retry per engine restored original assets and reached current `refined-terrain`, `empirical-adaptive`, projectedMaximumCode **0.4399383068084717 <=0.5**, zero unsettled. Both retain64 receiver heuristics; this is not a claim of independent dense-reference scientific accuracy. The product120000/240000ms deadlines were unchanged. Overall observed case durations were134500ms Chromium and161859ms Firefox, inside the predeclared540s envelope.
+
+[Independent review](../reviews/delayed-body-r121-result-review-r1.json) binds the actual timers, worker identities, server release, source guards and all eight original endpoint PNGs. Failed/settings/final endpoints are coherent. This is bounded functional recovery evidence, not uninterrupted display, S1 timing, callback-cost or exact cross-engine scene-identity evidence. It is distinct from the previously qualified interrupted-body r118 case.

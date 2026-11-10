@@ -1,0 +1,779 @@
+TAP version 13
+# {"warmLoop":{"frames":100,"elapsed":1600,"intl":105,"admission":0,"paints":1,"requests":0,"stale":false}}
+# Subtest: R0005 completed prefetch promotes at midnight while network is offline
+ok 1 - R0005 completed prefetch promotes at midnight while network is offline
+  ---
+  duration_ms: 151.6756
+  type: 'test'
+  ...
+# Subtest: R0005 positive normal next-day prefetch remains tomorrow before midnight
+ok 2 - R0005 positive normal next-day prefetch remains tomorrow before midnight
+  ---
+  duration_ms: 28.8826
+  type: 'test'
+  ...
+# Subtest: R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day
+ok 3 - R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day
+  ---
+  duration_ms: 8.4963
+  type: 'test'
+  ...
+# Subtest: R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF
+ok 4 - R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF
+  ---
+  duration_ms: 51.8548
+  type: 'test'
+  ...
+# Subtest: R0005 held-out warm 100-frame control avoids repeated admission/Intl construction
+ok 5 - R0005 held-out warm 100-frame control avoids repeated admission/Intl construction
+  ---
+  duration_ms: 45.8611
+  type: 'test'
+  ...
+# Subtest: R0005 late next-day prefetch rescues current when midnight acquisition exhausts
+ok 6 - R0005 late next-day prefetch rescues current when midnight acquisition exhausts
+  ---
+  duration_ms: 31.9066
+  type: 'test'
+  ...
+# Subtest: R0005 payload neither current nor successor is discarded after further day movement
+ok 7 - R0005 payload neither current nor successor is discarded after further day movement
+  ---
+  duration_ms: 29.1771
+  type: 'test'
+  ...
+# Subtest: R0005 backward correction reclassifies and acquires the actual earlier civil day
+ok 8 - R0005 backward correction reclassifies and acquires the actual earlier civil day
+  ---
+  duration_ms: 48.2223
+  type: 'test'
+  ...
+# Subtest: R0005 hidden next-day completion marks dirty and paints once on frozen visible resume
+ok 9 - R0005 hidden next-day completion marks dirty and paints once on frozen visible resume
+  ---
+  duration_ms: 29.7742
+  type: 'test'
+  ...
+# Subtest: R0005 usable next-day record suppresses redundant work; promotion allows one new successor
+ok 10 - R0005 usable next-day record suppresses redundant work; promotion allows one new successor
+  ---
+  duration_ms: 58.5693
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC
+ok 11 - R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC
+  ---
+  duration_ms: 29.0535
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC
+ok 12 - R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC
+  ---
+  duration_ms: 28.0194
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York
+ok 13 - R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York
+  ---
+  duration_ms: 31.7399
+  type: 'test'
+  ...
+# Subtest: R0005 mutant removing promotion is killed by offline completed prefetch
+ok 14 - R0005 mutant removing promotion is killed by offline completed prefetch
+  ---
+  duration_ms: 34.8053
+  type: 'test'
+  ...
+# Subtest: R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate
+ok 15 - R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate
+  ---
+  duration_ms: 11.7323
+  type: 'test'
+  ...
+# Subtest: R0005 mutant removing dirty consumer is killed by frozen async visible resume
+ok 16 - R0005 mutant removing dirty consumer is killed by frozen async visible resume
+  ---
+  duration_ms: 33.7928
+  type: 'test'
+  ...
+# {"dayReturnSourceSha256":"7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de","evidence":"source-bound only; native repair verification remains separate"}
+# {"removedRetirementSha256":"d4fba9f2bdd81f930c95ef10888137c2966f3520d467d8caaf53890acdebe5b4","killedBy":"actual reverse acquisition in both formats"}
+# {"nullRetirementSha256":"d938d8eab9719e6e6e6a96f2b1537eaa6c008df601f0298b7c6d97633ad9b76f","killedBy":"actual pending current loader after late prefetch promotion"}
+# Subtest: R0005/R0020 accepted forward day permits prompt return and painted270m in 24h
+ok 17 - R0005/R0020 accepted forward day permits prompt return and painted270m in 24h
+  ---
+  duration_ms: 61.5225
+  type: 'test'
+  ...
+# Subtest: R0005/R0020 accepted forward day permits prompt return and painted270m in 12h
+ok 18 - R0005/R0020 accepted forward day permits prompt return and painted270m in 12h
+  ---
+  duration_ms: 42.5305
+  type: 'test'
+  ...
+# Subtest: R0006 failed same-day attempts retain60s cooldown through repeated frames
+ok 19 - R0006 failed same-day attempts retain60s cooldown through repeated frames
+  ---
+  duration_ms: 47.4777
+  type: 'test'
+  ...
+# Subtest: R0005/R0006 late prefetch promotion preserves owning current loader and finally
+ok 20 - R0005/R0006 late prefetch promotion preserves owning current loader and finally
+  ---
+  duration_ms: 38.249
+  type: 'test'
+  ...
+# Subtest: R0005 remove-retirement mutant recreates the prompt reverse-day failure
+ok 21 - R0005 remove-retirement mutant recreates the prompt reverse-day failure
+  ---
+  duration_ms: 79.7567
+  type: 'test'
+  ...
+# Subtest: R0006 null-retirement mutant loses the actual owning loader's corrected-day request
+ok 22 - R0006 null-retirement mutant loses the actual owning loader's corrected-day request
+  ---
+  duration_ms: 39.7417
+  type: 'test'
+  ...
+# SOURCE 7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de MODEL 9f59c67e1a1d462ca3d0e6843a306e07e102b5833af4101421fb8fee757dad2e RENDER ed1016cfa5f5b1e39b037c667c53ec42787ea90649a6df592b21bf42db530b02
+# MUTANT wall-minutes bb6f6d2950e4dac073db8cfe3a0121bf19b05ea8bbc426042d6be4c54db32329 / elapsed-24h 0c5a27baa3941689f5b0c85d390888f247ac54a49b480ce51f6d53ccba0be573 rejected
+# MUTANT sec-only 2bb93c127a5d39eaad40af3d0bf469d654d98b1d4c6d8280785f15ec38e08849 rejected by actual late-prefetch consumer
+# Subtest: spring reaches actual model and countdown assignments
+ok 23 - spring reaches actual model and countdown assignments
+  ---
+  duration_ms: 47.178
+  type: 'test'
+  ...
+# Subtest: fall first 01:30 reaches actual model and countdown assignments
+ok 24 - fall first 01:30 reaches actual model and countdown assignments
+  ---
+  duration_ms: 26.7807
+  type: 'test'
+  ...
+# Subtest: ordinary control reaches actual model and countdown assignments
+ok 25 - ordinary control reaches actual model and countdown assignments
+  ---
+  duration_ms: 25.916
+  type: 'test'
+  ...
+# Subtest: fall 00:30 additional control reaches actual model and countdown assignments
+ok 26 - fall 00:30 additional control reaches actual model and countdown assignments
+  ---
+  duration_ms: 25.423
+  type: 'test'
+  ...
+# Subtest: fall second 01:30 reaches actual model and countdown assignments
+ok 27 - fall second 01:30 reaches actual model and countdown assignments
+  ---
+  duration_ms: 24.9139
+  type: 'test'
+  ...
+# Subtest: fractional offset control reaches actual model and countdown assignments
+ok 28 - fractional offset control reaches actual model and countdown assignments
+  ---
+  duration_ms: 23.6924
+  type: 'test'
+  ...
+# Subtest: overnight uses the actual next-day date across spring; missing/wrong-day data stays unavailable then recovers
+ok 29 - overnight uses the actual next-day date across spring; missing/wrong-day data stays unavailable then recovers
+  ---
+  duration_ms: 26.4828
+  type: 'test'
+  ...
+# Subtest: gap endpoint is withheld by actual render
+ok 30 - gap endpoint is withheld by actual render
+  ---
+  duration_ms: 25.3204
+  type: 'test'
+  ...
+# Subtest: fold endpoint is withheld by actual render
+ok 31 - fold endpoint is withheld by actual render
+  ---
+  duration_ms: 27.2647
+  type: 'test'
+  ...
+# Subtest: exact boundary selects the following event and ordinary wall progress is retained
+ok 32 - exact boundary selects the following event and ordinary wall progress is retained
+  ---
+  duration_ms: 25.9798
+  type: 'test'
+  ...
+# Subtest: year boundary resolves next-day Fajr without adding 24 elapsed hours
+ok 33 - year boundary resolves next-day Fajr without adding 24 elapsed hours
+  ---
+  duration_ms: 24.2306
+  type: 'test'
+  ...
+# Subtest: leap boundary resolves next-day Fajr without adding 24 elapsed hours
+ok 34 - leap boundary resolves next-day Fajr without adding 24 elapsed hours
+  ---
+  duration_ms: 25.2551
+  type: 'test'
+  ...
+# Subtest: finite model defense precedes normalization {"Fajr":"--:--"}
+ok 35 - finite model defense precedes normalization {"Fajr":"--:--"}
+  ---
+  duration_ms: 4.5108
+  type: 'test'
+  ...
+# Subtest: finite model defense precedes normalization {"Sunset":"Infinity:00"}
+ok 36 - finite model defense precedes normalization {"Sunset":"Infinity:00"}
+  ---
+  duration_ms: 4.6217
+  type: 'test'
+  ...
+# Subtest: finite model defense precedes normalization {"Sunset":"1e300:00"}
+ok 37 - finite model defense precedes normalization {"Sunset":"1e300:00"}
+  ---
+  duration_ms: 4.2828
+  type: 'test'
+  ...
+# Subtest: ordinary baseline control reaches real render without tomorrow
+ok 38 - ordinary baseline control reaches real render without tomorrow
+  ---
+  duration_ms: 24.9323
+  type: 'test'
+  ...
+# Subtest: actual repeated model consumer reuses the same day profile
+ok 39 - actual repeated model consumer reuses the same day profile
+  ---
+  duration_ms: 30.21
+  type: 'test'
+  ...
+# Subtest: invalid explicit model exits before nonfinite wall projection
+ok 40 - invalid explicit model exits before nonfinite wall projection
+  ---
+  duration_ms: 22.3326
+  type: 'test'
+  ...
+# Subtest: wall-minute subtraction and today-plus-24h mutants are caught while ordinary control survives
+ok 41 - wall-minute subtraction and today-plus-24h mutants are caught while ordinary control survives
+  ---
+  duration_ms: 87.4627
+  type: 'test'
+  ...
+# Subtest: finite equal/reordered polar records remain usable
+ok 42 - finite equal/reordered polar records remain usable
+  ---
+  duration_ms: 43.2475
+  type: 'test'
+  ...
+# Subtest: actual held prefetch restores the frozen overnight countdown on the dirty visible frame
+ok 43 - actual held prefetch restores the frozen overnight countdown on the dirty visible frame
+  ---
+  duration_ms: 51.3537
+  type: 'test'
+  ...
+# Subtest: sec-only loop mutant cannot paint a late countdown in a frozen scene
+ok 44 - sec-only loop mutant cannot paint a late countdown in a frozen scene
+  ---
+  duration_ms: 48.4206
+  type: 'test'
+  ...
+# Subtest: actual config generation cancels a held old-zone prefetch before the recovered countdown
+ok 45 - actual config generation cancels a held old-zone prefetch before the recovered countdown
+  ---
+  duration_ms: 64.5895
+  type: 'test'
+  ...
+# SOURCE 7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de TEMPORAL 298d6047e02dd1c3edc52a38352b0d6dd62fd8d395693d481cc14b4af4688764
+# MUTANT single-offset 07b03f0fa875c820f00d7df6872c0ee107f291a63613a25fc9172e05370fc4fe rejected spring oracle; ordinary control retained
+# MUTANT first-fold c98a08a46f56b9fd0fcfeb8d79359c60a93e331bbbe8838fe14a4bbae5d2a38c / ignored-zone 43c5658e0f072150cab849baa3367aff5c52503b0e64ccdb4b64b23b9c672a92 rejected
+# MUTANT invalid-scene-bypass a67fedc9d65920e086125bb92b716d60623461a4592d4d7b4de25dab474b2b9d rejected by boot boundary
+# Subtest: CLOCK DOM begins with actual SKY markup while successful prayer rendering cannot qualify excluded producers
+ok 46 - CLOCK DOM begins with actual SKY markup while successful prayer rendering cannot qualify excluded producers
+  ---
+  duration_ms: 42.8802
+  type: 'test'
+  ...
+# Subtest: actual SKY reset clears stale gates before CLOCK boot and retains the unavailable surface
+ok 47 - actual SKY reset clears stale gates before CLOCK boot and retains the unavailable surface
+  ---
+  duration_ms: 6.8673
+  type: 'test'
+  ...
+# Subtest: valid spring post-transition 03:30
+ok 48 - valid spring post-transition 03:30
+  ---
+  duration_ms: 20.3273
+  type: 'test'
+  ...
+# Subtest: pre-transition positive control
+ok 49 - pre-transition positive control
+  ---
+  duration_ms: 0.2882
+  type: 'test'
+  ...
+# Subtest: ordinary positive control
+ok 50 - ordinary positive control
+  ---
+  duration_ms: 19.8279
+  type: 'test'
+  ...
+# Subtest: post-fold valid control
+ok 51 - post-fold valid control
+  ---
+  duration_ms: 18.89
+  type: 'test'
+  ...
+# Subtest: fractional offset and previous UTC date
+ok 52 - fractional offset and previous UTC date
+  ---
+  duration_ms: 18.3787
+  type: 'test'
+  ...
+# Subtest: leap day
+ok 53 - leap day
+  ---
+  duration_ms: 18.0619
+  type: 'test'
+  ...
+# Subtest: year one does not become 1901
+ok 54 - year one does not become 1901
+  ---
+  duration_ms: 19.0064
+  type: 'test'
+  ...
+# Subtest: year 99 does not become 1999
+ok 55 - year 99 does not become 1999
+  ---
+  duration_ms: 19.1919
+  type: 'test'
+  ...
+# Subtest: spring gap fails closed
+ok 56 - spring gap fails closed
+  ---
+  duration_ms: 18.5344
+  type: 'test'
+  ...
+# Subtest: fall fold fails closed
+ok 57 - fall fold fails closed
+  ---
+  duration_ms: 18.2982
+  type: 'test'
+  ...
+# Subtest: invalid Gregorian date fails closed
+ok 58 - invalid Gregorian date fails closed
+  ---
+  duration_ms: 0.2646
+  type: 'test'
+  ...
+# Subtest: invalid IANA zone fails closed
+ok 59 - invalid IANA zone fails closed
+  ---
+  duration_ms: 0.2969
+  type: 'test'
+  ...
+# Subtest: nonfinite year fails closed
+ok 60 - nonfinite year fails closed
+  ---
+  duration_ms: 0.4289
+  type: 'test'
+  ...
+# Subtest: fractional fields fails closed
+ok 61 - fractional fields fails closed
+  ---
+  duration_ms: 0.2662
+  type: 'test'
+  ...
+# Subtest: hour 24 fails closed
+ok 62 - hour 24 fails closed
+  ---
+  duration_ms: 0.2441
+  type: 'test'
+  ...
+# Subtest: minute 60 fails closed
+ok 63 - minute 60 fails closed
+  ---
+  duration_ms: 0.26
+  type: 'test'
+  ...
+# Subtest: nonpositive year fails closed
+ok 64 - nonpositive year fails closed
+  ---
+  duration_ms: 0.2348
+  type: 'test'
+  ...
+# Subtest: synthetic 30-second offset rejects and caches the unsupported profile
+ok 65 - synthetic 30-second offset rejects and caches the unsupported profile
+  ---
+  duration_ms: 1.4381
+  type: 'test'
+  ...
+# Subtest: synthetic >24-hour offset rejects and caches the unsupported profile
+ok 66 - synthetic >24-hour offset rejects and caches the unsupported profile
+  ---
+  duration_ms: 1.021
+  type: 'test'
+  ...
+# Subtest: same-day callers reuse the bounded exhaustive profile and fifth day evicts
+ok 67 - same-day callers reuse the bounded exhaustive profile and fifth day evicts
+  ---
+  duration_ms: 116.6625
+  type: 'test'
+  ...
+# Subtest: invalid explicit simulation rejects its anchor; changing to a valid zone recovers
+ok 68 - invalid explicit simulation rejects its anchor; changing to a valid zone recovers
+  ---
+  duration_ms: 40.5965
+  type: 'test'
+  ...
+# Subtest: legacy valid hour/minute parsing and frozen/accelerated explicit modes survive
+ok 69 - legacy valid hour/minute parsing and frozen/accelerated explicit modes survive
+  ---
+  duration_ms: 44.0074
+  type: 'test'
+  ...
+# Subtest: actual boot rejects an invalid scene before stars/moon/day acquisition
+ok 70 - actual boot rejects an invalid scene before stars/moon/day acquisition
+  ---
+  duration_ms: 24.6887
+  type: 'test'
+  ...
+# Subtest: actual render/apply/loop invalidate a prior scene and restore valid configuration visibility
+ok 71 - actual render/apply/loop invalidate a prior scene and restore valid configuration visibility
+  ---
+  duration_ms: 51.6708
+  type: 'test'
+  ...
+# Subtest: all actual inline widget scripts parse
+ok 72 - all actual inline widget scripts parse
+  ---
+  duration_ms: 5.4349
+  type: 'test'
+  ...
+# Subtest: single-offset mutant preserves ordinary control and fails the exact spring oracle
+ok 73 - single-offset mutant preserves ordinary control and fails the exact spring oracle
+  ---
+  duration_ms: 1.8044
+  type: 'test'
+  ...
+# Subtest: first-fold-candidate and ignored-explicit-zone mutants are discriminated
+ok 74 - first-fold-candidate and ignored-explicit-zone mutants are discriminated
+  ---
+  duration_ms: 44.4095
+  type: 'test'
+  ...
+# Subtest: bypassing simulation validity is caught by the actual boot caller
+ok 75 - bypassing simulation validity is caught by the actual boot caller
+  ---
+  duration_ms: 24.9388
+  type: 'test'
+  ...
+# Subtest: local UTC boot keeps actual settings button reachable before scene validity
+ok 76 - local UTC boot keeps actual settings button reachable before scene validity
+  ---
+  duration_ms: 26.3234
+  type: 'test'
+  ...
+# Subtest: local America/New_York boot keeps actual settings button reachable before scene validity
+ok 77 - local America/New_York boot keeps actual settings button reachable before scene validity
+  ---
+  duration_ms: 25.0905
+  type: 'test'
+  ...
+# Subtest: preferLocal UTC boot keeps actual settings button reachable before scene validity
+ok 78 - preferLocal UTC boot keeps actual settings button reachable before scene validity
+  ---
+  duration_ms: 25.793
+  type: 'test'
+  ...
+# Subtest: preferLocal America/New_York boot keeps actual settings button reachable before scene validity
+ok 79 - preferLocal America/New_York boot keeps actual settings button reachable before scene validity
+  ---
+  duration_ms: 23.4868
+  type: 'test'
+  ...
+# Subtest: initial invalid boot then valid config initializes scene builders once across further recoveries
+ok 80 - initial invalid boot then valid config initializes scene builders once across further recoveries
+  ---
+  duration_ms: 46.5944
+  type: 'test'
+  ...
+# Subtest: valid boot and subsequent config reuse builders; bare embeds keep existing settings behavior
+ok 81 - valid boot and subsequent config reuse builders; bare embeds keep existing settings behavior
+  ---
+  duration_ms: 26.8687
+  type: 'test'
+  ...
+# Subtest: actual failed save discloses session-only state before acquisition and a successful retry clears it
+ok 82 - actual failed save discloses session-only state before acquisition and a successful retry clears it
+  ---
+  duration_ms: 31.8078
+  type: 'test'
+  ...
+# SOURCE 7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de TEMPORAL 298d6047e02dd1c3edc52a38352b0d6dd62fd8d395693d481cc14b4af4688764
+# MUTANT anchor-only ba032392455b2c20533481e393d43e61ba9c8f5dae75ea202926a3562b8d4a10 / broad-default 7004c5fc2a7e4103c8cba5cc16a8397f3b52351a4550a0fdf2d54f9e0dd2de96 / increasing-only 1efb3c1d8f0a4ceea2f4eee28e6392fcb3cf5cf2b1ee23f51e714c7385bc94d8 rejected
+# Subtest: ordinary simNow and nowParts follow wall step 0
+ok 83 - ordinary simNow and nowParts follow wall step 0
+  ---
+  duration_ms: 12.2636
+  type: 'test'
+  ...
+# Subtest: ordinary simNow and nowParts follow wall step 3600000
+ok 84 - ordinary simNow and nowParts follow wall step 3600000
+  ---
+  duration_ms: 1.716
+  type: 'test'
+  ...
+# Subtest: ordinary simNow and nowParts follow wall step -3600000
+ok 85 - ordinary simNow and nowParts follow wall step -3600000
+  ---
+  duration_ms: 1.4169
+  type: 'test'
+  ...
+# Subtest: ordinary simNow and nowParts follow wall step 7200000
+ok 86 - ordinary simNow and nowParts follow wall step 7200000
+  ---
+  duration_ms: 1.6551
+  type: 'test'
+  ...
+# Subtest: ordinary simNow and nowParts follow wall step -7200000
+ok 87 - ordinary simNow and nowParts follow wall step -7200000
+  ---
+  duration_ms: 1.7053
+  type: 'test'
+  ...
+# Subtest: actual loop renders forward and backward prayer-boundary corrections
+ok 88 - actual loop renders forward and backward prayer-boundary corrections
+  ---
+  duration_ms: 32.0849
+  type: 'test'
+  ...
+# Subtest: actual hidden/resumed loop reads the current wall once without missed-second replay
+ok 89 - actual hidden/resumed loop reads the current wall once without missed-second replay
+  ---
+  duration_ms: 27.0716
+  type: 'test'
+  ...
+# Subtest: anchor-only, broad-default and increasing-only loop mutants fail their independent controls
+ok 90 - anchor-only, broad-default and increasing-only loop mutants fail their independent controls
+  ---
+  duration_ms: 28.4169
+  type: 'test'
+  ...
+# Subtest: timeScale=1 retains anchor/rate after wall step 3600000
+ok 91 - timeScale=1 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 1.1949
+  type: 'test'
+  ...
+# Subtest: timeScale=60 retains anchor/rate after wall step 3600000
+ok 92 - timeScale=60 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 1.0663
+  type: 'test'
+  ...
+# Subtest: timeScale=0 retains anchor/rate after wall step 3600000
+ok 93 - timeScale=0 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 0.8713
+  type: 'test'
+  ...
+# Subtest: timeScale= retains anchor/rate after wall step 3600000
+ok 94 - timeScale= retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 1.0859
+  type: 'test'
+  ...
+# Subtest: timeScale=invalid retains anchor/rate after wall step 3600000
+ok 95 - timeScale=invalid retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 0.7632
+  type: 'test'
+  ...
+# Subtest: timeScale=-5 retains anchor/rate after wall step 3600000
+ok 96 - timeScale=-5 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 0.8591
+  type: 'test'
+  ...
+# Subtest: simTime=03:30 retains anchor/rate after wall step 3600000
+ok 97 - simTime=03:30 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 21.2659
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=1 retains anchor/rate after wall step 3600000
+ok 98 - simTime=03:30&timeScale=1 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 21.9201
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=60 retains anchor/rate after wall step 3600000
+ok 99 - simTime=03:30&timeScale=60 retains anchor/rate after wall step 3600000
+  ---
+  duration_ms: 19.8982
+  type: 'test'
+  ...
+# Subtest: timeScale=1 retains anchor/rate after wall step -3600000
+ok 100 - timeScale=1 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 1.015
+  type: 'test'
+  ...
+# Subtest: timeScale=60 retains anchor/rate after wall step -3600000
+ok 101 - timeScale=60 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 0.9933
+  type: 'test'
+  ...
+# Subtest: timeScale=0 retains anchor/rate after wall step -3600000
+ok 102 - timeScale=0 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 1.1846
+  type: 'test'
+  ...
+# Subtest: timeScale= retains anchor/rate after wall step -3600000
+ok 103 - timeScale= retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 1.0367
+  type: 'test'
+  ...
+# Subtest: timeScale=invalid retains anchor/rate after wall step -3600000
+ok 104 - timeScale=invalid retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 0.9968
+  type: 'test'
+  ...
+# Subtest: timeScale=-5 retains anchor/rate after wall step -3600000
+ok 105 - timeScale=-5 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 1.1409
+  type: 'test'
+  ...
+# Subtest: simTime=03:30 retains anchor/rate after wall step -3600000
+ok 106 - simTime=03:30 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 20.6633
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=1 retains anchor/rate after wall step -3600000
+ok 107 - simTime=03:30&timeScale=1 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 20.2884
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=60 retains anchor/rate after wall step -3600000
+ok 108 - simTime=03:30&timeScale=60 retains anchor/rate after wall step -3600000
+  ---
+  duration_ms: 21.1298
+  type: 'test'
+  ...
+# Subtest: timeScale=1 retains anchor/rate after wall step 7200000
+ok 109 - timeScale=1 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 0.9956
+  type: 'test'
+  ...
+# Subtest: timeScale=60 retains anchor/rate after wall step 7200000
+ok 110 - timeScale=60 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 1.0208
+  type: 'test'
+  ...
+# Subtest: timeScale=0 retains anchor/rate after wall step 7200000
+ok 111 - timeScale=0 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 1.5932
+  type: 'test'
+  ...
+# Subtest: timeScale= retains anchor/rate after wall step 7200000
+ok 112 - timeScale= retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 1.0972
+  type: 'test'
+  ...
+# Subtest: timeScale=invalid retains anchor/rate after wall step 7200000
+ok 113 - timeScale=invalid retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 1.1191
+  type: 'test'
+  ...
+# Subtest: timeScale=-5 retains anchor/rate after wall step 7200000
+ok 114 - timeScale=-5 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 1.9794
+  type: 'test'
+  ...
+# Subtest: simTime=03:30 retains anchor/rate after wall step 7200000
+ok 115 - simTime=03:30 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 20.0806
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=1 retains anchor/rate after wall step 7200000
+ok 116 - simTime=03:30&timeScale=1 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 19.9695
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=60 retains anchor/rate after wall step 7200000
+ok 117 - simTime=03:30&timeScale=60 retains anchor/rate after wall step 7200000
+  ---
+  duration_ms: 21.6098
+  type: 'test'
+  ...
+# Subtest: timeScale=1 retains anchor/rate after wall step -7200000
+ok 118 - timeScale=1 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 1.052
+  type: 'test'
+  ...
+# Subtest: timeScale=60 retains anchor/rate after wall step -7200000
+ok 119 - timeScale=60 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 1.085
+  type: 'test'
+  ...
+# Subtest: timeScale=0 retains anchor/rate after wall step -7200000
+ok 120 - timeScale=0 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 1.1094
+  type: 'test'
+  ...
+# Subtest: timeScale= retains anchor/rate after wall step -7200000
+ok 121 - timeScale= retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 0.9404
+  type: 'test'
+  ...
+# Subtest: timeScale=invalid retains anchor/rate after wall step -7200000
+ok 122 - timeScale=invalid retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 1.1714
+  type: 'test'
+  ...
+# Subtest: timeScale=-5 retains anchor/rate after wall step -7200000
+ok 123 - timeScale=-5 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 0.9491
+  type: 'test'
+  ...
+# Subtest: simTime=03:30 retains anchor/rate after wall step -7200000
+ok 124 - simTime=03:30 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 20.4581
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=1 retains anchor/rate after wall step -7200000
+ok 125 - simTime=03:30&timeScale=1 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 20.1787
+  type: 'test'
+  ...
+# Subtest: simTime=03:30&timeScale=60 retains anchor/rate after wall step -7200000
+ok 126 - simTime=03:30&timeScale=60 retains anchor/rate after wall step -7200000
+  ---
+  duration_ms: 20.5848
+  type: 'test'
+  ...
+1..126
+# tests 126
+# suites 0
+# pass 126
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3239.0347

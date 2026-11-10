@@ -1,0 +1,34 @@
+{
+  "schema": "r0021-diagnostic-build-plan/v1",
+  "sourceHead": "9df79b98d8dda7a0286b1b287dc03d1b4d760bdb",
+  "originalKernelSha256": "919bf0b0a17ceb1ce3d3d7e0b5d9958bba3835b96e8558d6b518e7db1137f57f",
+  "originalEngineSha256": "05ec2e8b0eef0e5bc6b3c6556eb2f901b126c717f469b3c609a49b4edeaa8a32",
+  "diagnosticKernelSha256": "ab5c08f7ccf9bc191744fb65ff12a2b3a301deb0f15757114be0245210ca1718",
+  "diagnosticEngineSha256": "5fcf2784c1c58377c6623ad5cf3af7460d0474dd966acde7ce35c2b83431a37b",
+  "changes": [
+    "Six finite-source arrays8192->16384",
+    "C and isolated JS sample-product guard8192->16384"
+  ],
+  "unchanged": "Quality owner, material, geometry, assets, product files and shipped WASM",
+  "command": [
+    "${WORK_ROOT}\\reference-tools-r114\\zig-x86_64-windows-0.14.1\\zig.exe",
+    "cc",
+    "-target",
+    "wasm32-freestanding",
+    "-O2",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-fno-builtin",
+    "-nostdlib",
+    "-Wl,--no-entry",
+    "-Wl,--export-all",
+    "-Wl,--allow-undefined",
+    "-Wl,--initial-memory=4194304",
+    "-Wl,--max-memory=536870912",
+    "${WORK_ROOT}\\reference-tools-r114\\build\\moon_kernel_reference.c",
+    "-o",
+    "${WORK_ROOT}\\reference-tools-r114\\build\\moon_kernel_reference.wasm"
+  ],
+  "compileTimeoutSeconds": 120,
+  "control": "Fail closed before reference if any64/256/1024/4096 receiver/coverage/projection hash or final input mask differs from r112."
+}

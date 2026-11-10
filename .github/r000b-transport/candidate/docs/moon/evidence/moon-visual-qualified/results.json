@@ -1,0 +1,2283 @@
+{
+  "status": "PASS_SCOPED",
+  "runtimeTreeSha256": "13fb06bc273dfed97ba49a1e3353c1e0062312e956b97b596294e0fe997ae58b",
+  "harnessSha256": "cdb543a111d593959ebe7db11c2095ee39a9265f541437391123afea22815fb9",
+  "referenceCustodySha256": "f5d20c3ecd771f18a70c10805498dc7596569355b275f84bec00438568f47ba2",
+  "phases": [
+    {
+      "name": "wax_012",
+      "requestedFraction": 0.12,
+      "refinedSeconds": 54.53099999999995,
+      "state": {
+        "moon": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 2,
+          "rejected": 0,
+          "cancelled": 0,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "progress": {
+            "stage": "lighting",
+            "row": 508,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.5,
+            "lightingMs": 5223,
+            "totalMs": 5300.700000000186,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 3054,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 384286,
+            "blockerWitnesses": 511000,
+            "memoryBytes": 163315712,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 69,
+              "projectedMaximumCode": 0.28824615478515625,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 1.1320762634277344,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 5507.100000000559
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 10221
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 2183,
+                  "milliseconds": 30591.799999999814
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 223,
+                  "milliseconds": 5300.700000000186
+                }
+              ],
+              "totalMs": 53339.89999999944,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.12003556665450266,
+          "epoch": 0,
+          "pending": false,
+          "accepted": {
+            "identity": "d93dedc6e55cac1f76421738138ba2e884ae01a44d5976ec37fe984827cfce03",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                -0.7599288666909947,
+                0.6500062442544229,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.12003556665450266,
+              "waxing": true,
+              "tilt": 0,
+              "requestedNativeFraction": 0.12,
+              "phaseQuantumRadians": 0.0004,
+              "geometryConvention": "canonical .0004-radian Sun-angle buckets; native UTC unchanged"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.12,
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "native below-horizon display token .020\u00d7material; not physical irradiance"
+        },
+        "detail": {
+          "renders": 2,
+          "skips": 187,
+          "totalMs": 25.09999999962747,
+          "maxMs": 29.5,
+          "dpr": 2,
+          "pixels": 47961,
+          "mode": "local-device-resolution; inherited physics grid unchanged",
+          "visible": true
+        },
+        "sky": {
+          "status": "ready",
+          "errors": [],
+          "composition": {
+            "cloudApplications": 1,
+            "meanCloudAlpha": 0,
+            "maxCloudAlpha": 0,
+            "moonPixels": 8671,
+            "cloudTransmissionOwner": "1 - native painted alpha after native blur and vertical mask",
+            "order": "gas-transported sky \u2192 calendar direct-light cutout \u2192 native PBR material \u2192 native cloud screen \u2192 one shared encode",
+            "cloudColour": "display-referred native painter; inverse shared tone map; not measured cloud radiance",
+            "exposureOwner": "CP7 sky+diffuse meter before calendar/foreground; native foreground excluded",
+            "saturation": "native code 255 uses 1 - 1/131072 in inverse tone map",
+            "moonSurface": "native-300px-backing-canvas",
+            "moonAlpha": 1,
+            "cloudBuffer": {
+              "width": 144,
+              "height": 232
+            },
+            "maskStops": [
+              0,
+              0.03,
+              0.24,
+              0.34,
+              1
+            ],
+            "cloudSource": "hidden",
+            "updatedRows": 183,
+            "totalRows": 530,
+            "lastComposeMs": 38.89999999944121
+          }
+        },
+        "host": {
+          "utcMs": 1788813000000,
+          "generation": 0,
+          "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:92.5:0",
+          "fraction": 0.12,
+          "waxing": true,
+          "up": 1,
+          "dpr": 2,
+          "timeScale": 0,
+          "paused": false
+        },
+        "rows": 6,
+        "qa": {
+          "phaseFraction": 0.12,
+          "waxing": true,
+          "moonAltitudeDeg": 20,
+          "moonSkyFresh": true,
+          "lastConsumed": {
+            "status": "completed",
+            "stage": "paint",
+            "fresh": true,
+            "observation": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "expected": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "phaseFraction": 0.12,
+              "altitudeDeg": 20,
+              "light": {
+                "eligibility": 1,
+                "eligible": true,
+                "reason": "eligible",
+                "illumination": 0.428,
+                "beam": 0.2568,
+                "cloudLight": 0.428,
+                "localStarWash": 0.13799999999999998,
+                "localGlow": 0.033456,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              }
+            }
+          },
+          "currentGeometry": {
+            "fresh": true,
+            "produced": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "expected": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "phaseFraction": 0.12,
+            "altitudeDeg": 20,
+            "light": {
+              "eligibility": 1,
+              "eligible": true,
+              "reason": "eligible",
+              "illumination": 0.428,
+              "beam": 0.2568,
+              "cloudLight": 0.428,
+              "localStarWash": 0.13799999999999998,
+              "localGlow": 0.033456,
+              "halo": 0,
+              "corona": 0,
+              "paraselenae": 0
+            }
+          },
+          "lunarLight": {
+            "eligibility": 1,
+            "eligible": true,
+            "reason": "eligible",
+            "illumination": 0.428,
+            "beam": 0.2568,
+            "cloudLight": 0.428,
+            "localStarWash": 0.13799999999999998,
+            "localGlow": 0.033456,
+            "halo": 0,
+            "corona": 0,
+            "paraselenae": 0
+          },
+          "surface": {
+            "status": "pbr",
+            "pbrReady": true,
+            "fallbackReady": false,
+            "texture": "decoded-albedo-and-normals"
+          },
+          "physicalMoonVisible": true,
+          "calendarMoonVisible": true,
+          "displayMode": "physical",
+          "moonSkyOpacity": 1,
+          "moonCalendarOpacity": 1,
+          "moonFeatureOpacity": 1,
+          "moonlightOpacity": 0.257,
+          "earthshine": "PBR earthshine (es curve in renderMoonPBR) \u2014 ashen, never black",
+          "reason": null
+        },
+        "geometry": {
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530
+          },
+          "footerBottom": 520.34375
+        }
+      },
+      "sourceProof": {
+        "workerKind": "result",
+        "workerKernel": "metric-radial-terrain-wasm-mb1",
+        "workerPhysicalIdentity": "d93dedc6e55cac1f76421738138ba2e884ae01a44d5976ec37fe984827cfce03",
+        "workerProfileIdentity": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+        "acceptedMatchesWorker": true,
+        "publishedCanvasSha256": "15da385ad7dc913f3718255bc27c848d1b0960cb9a09e128b76460053fe80235",
+        "workerRgbaSha256": "2dc24d633ce435aeecf79f417bd0b500193ab4149ec4615f296dfe96621e0978",
+        "workerCanvasRoundtripSha256": "15da385ad7dc913f3718255bc27c848d1b0960cb9a09e128b76460053fe80235",
+        "opaqueDifferences": 0,
+        "edgeDifferences": 1719,
+        "alphaDifferences": 0,
+        "maxPremultipliedDifference": 0.9764705882352941,
+        "legacyCanvasSha256": "f926a49e8168cd4c3943cd7c9a62f752db25b52e0812086035a08ee6ba46d098",
+        "linearSurfaceSha256": "83eafbe40203e44dd1964a0f10e293990d0052d4a27a397ab2f4fe6fbdc45923",
+        "photoUsesPublishedTerrain": true,
+        "hostUsesPublishedTerrain": true,
+        "detailAdoptedFinalWorkerArrays": true,
+        "detailEnabled": true,
+        "nodes": {
+          ".mphoto": {
+            "visibility": "hidden",
+            "display": "inline",
+            "opacity": "1",
+            "zIndex": "auto",
+            "rect": {
+              "x": 213.94146728515625,
+              "y": 4.148077011108398,
+              "width": 107.81243896484375,
+              "height": 108.07064056396484,
+              "top": 4.148077011108398,
+              "right": 321.75390625,
+              "bottom": 112.21871757507324,
+              "left": 213.94146728515625
+            }
+          },
+          ".moccluder": {
+            "visibility": "hidden",
+            "display": "inline",
+            "opacity": "1",
+            "zIndex": "auto",
+            "rect": {
+              "x": 217.31060791015625,
+              "y": 7.525284767150879,
+              "width": 101.07415771484375,
+              "height": 101.31622314453125,
+              "top": 7.525284767150879,
+              "right": 318.384765625,
+              "bottom": 108.84150791168213,
+              "left": 217.31060791015625
+            }
+          },
+          ".moon-detail-canvas": {
+            "visibility": "visible",
+            "display": "block",
+            "opacity": "1",
+            "zIndex": "0",
+            "rect": {
+              "x": 214,
+              "y": 4.5,
+              "width": 109.5,
+              "height": 109.5,
+              "top": 4.5,
+              "right": 323.5,
+              "bottom": 114,
+              "left": 214
+            }
+          }
+        },
+        "nativeForegroundMoonPixels": 8671,
+        "size": 540,
+        "extent": 1.08,
+        "quality": {
+          "status": "empirical-adaptive",
+          "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+          "thresholdCode": 0.125,
+          "unsettled": 0,
+          "receiverHeuristicRemaining": 69,
+          "projectedMaximumCode": 0.28824615478515625,
+          "projectedGate": 0.5,
+          "lastMaximumCode": 1.1320762634277344,
+          "history": [
+            {
+              "samples": 64,
+              "receivers": 291600,
+              "milliseconds": 5507.100000000559
+            },
+            {
+              "samples": 256,
+              "receivers": 291600,
+              "milliseconds": 10221
+            },
+            {
+              "samples": 1024,
+              "receivers": 2183,
+              "milliseconds": 30591.799999999814
+            },
+            {
+              "samples": 4096,
+              "receivers": 223,
+              "milliseconds": 5300.700000000186
+            }
+          ],
+          "totalMs": 53339.89999999944,
+          "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+        },
+        "state": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 2,
+          "rejected": 0,
+          "cancelled": 0,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "progress": {
+            "stage": "lighting",
+            "row": 508,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.5,
+            "lightingMs": 5223,
+            "totalMs": 5300.700000000186,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 3054,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 384286,
+            "blockerWitnesses": 511000,
+            "memoryBytes": 163315712,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 69,
+              "projectedMaximumCode": 0.28824615478515625,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 1.1320762634277344,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 5507.100000000559
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 10221
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 2183,
+                  "milliseconds": 30591.799999999814
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 223,
+                  "milliseconds": 5300.700000000186
+                }
+              ],
+              "totalMs": 53339.89999999944,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.12003556665450266,
+          "epoch": 0,
+          "pending": false,
+          "accepted": {
+            "identity": "d93dedc6e55cac1f76421738138ba2e884ae01a44d5976ec37fe984827cfce03",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                -0.7599288666909947,
+                0.6500062442544229,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.12003556665450266,
+              "waxing": true,
+              "tilt": 0,
+              "requestedNativeFraction": 0.12,
+              "phaseQuantumRadians": 0.0004,
+              "geometryConvention": "canonical .0004-radian Sun-angle buckets; native UTC unchanged"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.12,
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "native below-horizon display token .020\u00d7material; not physical irradiance"
+        }
+      },
+      "legacyPoisonControl": {
+        "changedPixels": 0,
+        "maximumCode": 0,
+        "rmsCode": 0.0,
+        "meanAbsoluteCode": 0.0
+      },
+      "detailHiddenControl": {
+        "changedPixels": 27787,
+        "maximumCode": 160,
+        "rmsCode": 14.184063824676576,
+        "meanAbsoluteCode": 3.618438403052493
+      },
+      "restoreControl": {
+        "changedPixels": 0,
+        "maximumCode": 0,
+        "rmsCode": 0.0,
+        "meanAbsoluteCode": 0.0
+      },
+      "reference": "outputs/wax_012_q4096/v5/D208.png",
+      "referenceComparison": {
+        "changedPixels": 480,
+        "maximumCode": 1,
+        "rmsCode": 0.05766370505489945,
+        "meanAbsoluteCode": 0.0033251028806584363
+      },
+      "detailHiddenScope": "Negative control exposes the CP9 raster of the SAME accepted terrain, not legacy PBR. Its changed pixels distinguish the visible DPR refinement.",
+      "referenceScope": "Independent linear area integration of actual WASM surface at reference D208 footprint on black. Phase-angle buckets/adaptive angular rules differ; errors recorded, not a new dense-reference certificate.",
+      "captures": {
+        "wax_012-crop.png": "7a88e0cdb7faa663dbe1ca3a3385ab47ddcee9d996bc9c5a3430cd1b0913d9b6",
+        "wax_012-diagnostic-detail-hidden.png": "03fd5ae8584f4e246333294c8e07e9f265ac3e5dd4309671677810e9106b6b5a",
+        "wax_012-diagnostic-legacy-poison.png": "7a88e0cdb7faa663dbe1ca3a3385ab47ddcee9d996bc9c5a3430cd1b0913d9b6",
+        "wax_012-legacy.png": "01e13308c719e7957722495505d81ae6529aa4418193756e3f4bdcd3fbf9b733",
+        "wax_012-restored.png": "7a88e0cdb7faa663dbe1ca3a3385ab47ddcee9d996bc9c5a3430cd1b0913d9b6",
+        "wax_012-surface.png": "13f634b29b58d819993de9bab75c4cc23d8c65e8d7d20ad6c4424b4c3155d160",
+        "wax_012-widget.png": "914bfee593200cdcb9d93e4f3079f28016efef19bd013e78efa1af43e7f00713",
+        "wax_012-worker-D208.png": "6b5701324bfc7a4621eba05dcb5eabbd38b1ea34abd2c5f220da956d020e092a"
+      },
+      "passed": true
+    },
+    {
+      "name": "wax_050",
+      "requestedFraction": 0.5,
+      "refinedSeconds": 60.375,
+      "state": {
+        "moon": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 4,
+          "rejected": 0,
+          "cancelled": 1,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "progress": {
+            "stage": "lighting",
+            "row": 520,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.400000000372529,
+            "lightingMs": 7285.899999999441,
+            "totalMs": 7342.5,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 5150,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 640035,
+            "blockerWitnesses": 894694,
+            "memoryBytes": 163315712,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 107,
+              "projectedMaximumCode": 0.3288421630859375,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 0.8221588134765625,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 4455
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 11823.799999999814
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 3058,
+                  "milliseconds": 34945.200000000186
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 406,
+                  "milliseconds": 7342.5
+                }
+              ],
+              "totalMs": 60262.40000000037,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.49999816339744835,
+          "reason": "native lunar target changed",
+          "epoch": 1,
+          "pending": false,
+          "accepted": {
+            "identity": "8a24764f08397092901591059a847c125728dbaa3895e169cc3637ce6edac793",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                -3.673205103346574e-06,
+                0.9999999999932537,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.49999816339744835,
+              "waxing": true,
+              "tilt": 0,
+              "requestedNativeFraction": 0.5,
+              "phaseQuantumRadians": 0.0004,
+              "geometryConvention": "canonical .0004-radian Sun-angle buckets; native UTC unchanged"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.5,
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "native below-horizon display token .020\u00d7material; not physical irradiance"
+        },
+        "detail": {
+          "renders": 4,
+          "skips": 408,
+          "totalMs": 22.5,
+          "maxMs": 29.5,
+          "dpr": 2,
+          "pixels": 47961,
+          "mode": "local-device-resolution; inherited physics grid unchanged",
+          "visible": true
+        },
+        "sky": {
+          "status": "ready",
+          "errors": [],
+          "composition": {
+            "cloudApplications": 1,
+            "meanCloudAlpha": 0,
+            "maxCloudAlpha": 0,
+            "moonPixels": 8671,
+            "cloudTransmissionOwner": "1 - native painted alpha after native blur and vertical mask",
+            "order": "gas-transported sky \u2192 calendar direct-light cutout \u2192 native PBR material \u2192 native cloud screen \u2192 one shared encode",
+            "cloudColour": "display-referred native painter; inverse shared tone map; not measured cloud radiance",
+            "exposureOwner": "CP7 sky+diffuse meter before calendar/foreground; native foreground excluded",
+            "saturation": "native code 255 uses 1 - 1/131072 in inverse tone map",
+            "moonSurface": "native-300px-backing-canvas",
+            "moonAlpha": 1,
+            "cloudBuffer": {
+              "width": 144,
+              "height": 232
+            },
+            "maskStops": [
+              0,
+              0.03,
+              0.24,
+              0.34,
+              1
+            ],
+            "cloudSource": "hidden",
+            "updatedRows": 183,
+            "totalRows": 530,
+            "lastComposeMs": 26.59999999962747
+          }
+        },
+        "host": {
+          "utcMs": 1788813000000,
+          "generation": 0,
+          "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:92.5:0",
+          "fraction": 0.5,
+          "waxing": true,
+          "up": 1,
+          "dpr": 2,
+          "timeScale": 0,
+          "paused": false
+        },
+        "rows": 6,
+        "qa": {
+          "phaseFraction": 0.5,
+          "waxing": true,
+          "moonAltitudeDeg": 20,
+          "moonSkyFresh": true,
+          "lastConsumed": {
+            "status": "completed",
+            "stage": "paint",
+            "fresh": true,
+            "observation": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "expected": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "phaseFraction": 0.5,
+              "altitudeDeg": 20,
+              "light": {
+                "eligibility": 1,
+                "eligible": true,
+                "reason": "eligible",
+                "illumination": 0.675,
+                "beam": 0.405,
+                "cloudLight": 0.675,
+                "localStarWash": 0.575,
+                "localGlow": 0.09,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              }
+            }
+          },
+          "currentGeometry": {
+            "fresh": true,
+            "produced": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "expected": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "phaseFraction": 0.5,
+            "altitudeDeg": 20,
+            "light": {
+              "eligibility": 1,
+              "eligible": true,
+              "reason": "eligible",
+              "illumination": 0.675,
+              "beam": 0.405,
+              "cloudLight": 0.675,
+              "localStarWash": 0.575,
+              "localGlow": 0.09,
+              "halo": 0,
+              "corona": 0,
+              "paraselenae": 0
+            }
+          },
+          "lunarLight": {
+            "eligibility": 1,
+            "eligible": true,
+            "reason": "eligible",
+            "illumination": 0.675,
+            "beam": 0.405,
+            "cloudLight": 0.675,
+            "localStarWash": 0.575,
+            "localGlow": 0.09,
+            "halo": 0,
+            "corona": 0,
+            "paraselenae": 0
+          },
+          "surface": {
+            "status": "pbr",
+            "pbrReady": true,
+            "fallbackReady": false,
+            "texture": "decoded-albedo-and-normals"
+          },
+          "physicalMoonVisible": true,
+          "calendarMoonVisible": true,
+          "displayMode": "physical",
+          "moonSkyOpacity": 1,
+          "moonCalendarOpacity": 1,
+          "moonFeatureOpacity": 1,
+          "moonlightOpacity": 0.405,
+          "earthshine": "PBR earthshine (es curve in renderMoonPBR) \u2014 ashen, never black",
+          "reason": null
+        },
+        "geometry": {
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530
+          },
+          "footerBottom": 520.34375
+        }
+      },
+      "sourceProof": {
+        "workerKind": "result",
+        "workerKernel": "metric-radial-terrain-wasm-mb1",
+        "workerPhysicalIdentity": "8a24764f08397092901591059a847c125728dbaa3895e169cc3637ce6edac793",
+        "workerProfileIdentity": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+        "acceptedMatchesWorker": true,
+        "publishedCanvasSha256": "615bd9255beca21a6db06457f10d89b3de605b36c7ef02fc6764034aa2ab69b8",
+        "workerRgbaSha256": "9e2593be389898ab6277789eea4a85c8863135958dbb183f2d28803b98d4dd56",
+        "workerCanvasRoundtripSha256": "335004169809439ae0c88b77df73b185f8568b19f2a80040465bb97a75038652",
+        "opaqueDifferences": 0,
+        "edgeDifferences": 1719,
+        "alphaDifferences": 0,
+        "maxPremultipliedDifference": 0.9921568627450981,
+        "legacyCanvasSha256": "0b9789ad0a8edcecf18871c608c494f70c313f1b212f1c5e12c7fa1bb3e4a5f7",
+        "linearSurfaceSha256": "dbc611bfca8beaded3952d06e2e4797a13fe258d96dcd6628f2df15348a2e050",
+        "photoUsesPublishedTerrain": true,
+        "hostUsesPublishedTerrain": true,
+        "detailAdoptedFinalWorkerArrays": true,
+        "detailEnabled": true,
+        "nodes": {
+          ".mphoto": {
+            "visibility": "hidden",
+            "display": "inline",
+            "opacity": "1",
+            "zIndex": "auto",
+            "rect": {
+              "x": 213.94146728515625,
+              "y": 4.148077011108398,
+              "width": 107.81243896484375,
+              "height": 108.07064056396484,
+              "top": 4.148077011108398,
+              "right": 321.75390625,
+              "bottom": 112.21871757507324,
+              "left": 213.94146728515625
+            }
+          },
+          ".moccluder": {
+            "visibility": "hidden",
+            "display": "inline",
+            "opacity": "1",
+            "zIndex": "auto",
+            "rect": {
+              "x": 217.31060791015625,
+              "y": 7.525284767150879,
+              "width": 101.07415771484375,
+              "height": 101.31622314453125,
+              "top": 7.525284767150879,
+              "right": 318.384765625,
+              "bottom": 108.84150791168213,
+              "left": 217.31060791015625
+            }
+          },
+          ".moon-detail-canvas": {
+            "visibility": "visible",
+            "display": "block",
+            "opacity": "1",
+            "zIndex": "0",
+            "rect": {
+              "x": 214,
+              "y": 4.5,
+              "width": 109.5,
+              "height": 109.5,
+              "top": 4.5,
+              "right": 323.5,
+              "bottom": 114,
+              "left": 214
+            }
+          }
+        },
+        "nativeForegroundMoonPixels": 8671,
+        "size": 540,
+        "extent": 1.08,
+        "quality": {
+          "status": "empirical-adaptive",
+          "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+          "thresholdCode": 0.125,
+          "unsettled": 0,
+          "receiverHeuristicRemaining": 107,
+          "projectedMaximumCode": 0.3288421630859375,
+          "projectedGate": 0.5,
+          "lastMaximumCode": 0.8221588134765625,
+          "history": [
+            {
+              "samples": 64,
+              "receivers": 291600,
+              "milliseconds": 4455
+            },
+            {
+              "samples": 256,
+              "receivers": 291600,
+              "milliseconds": 11823.799999999814
+            },
+            {
+              "samples": 1024,
+              "receivers": 3058,
+              "milliseconds": 34945.200000000186
+            },
+            {
+              "samples": 4096,
+              "receivers": 406,
+              "milliseconds": 7342.5
+            }
+          ],
+          "totalMs": 60262.40000000037,
+          "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+        },
+        "state": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 4,
+          "rejected": 0,
+          "cancelled": 1,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "progress": {
+            "stage": "lighting",
+            "row": 520,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.400000000372529,
+            "lightingMs": 7285.899999999441,
+            "totalMs": 7342.5,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 5150,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 640035,
+            "blockerWitnesses": 894694,
+            "memoryBytes": 163315712,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 107,
+              "projectedMaximumCode": 0.3288421630859375,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 0.8221588134765625,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 4455
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 11823.799999999814
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 3058,
+                  "milliseconds": 34945.200000000186
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 406,
+                  "milliseconds": 7342.5
+                }
+              ],
+              "totalMs": 60262.40000000037,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.49999816339744835,
+          "reason": "native lunar target changed",
+          "epoch": 1,
+          "pending": false,
+          "accepted": {
+            "identity": "8a24764f08397092901591059a847c125728dbaa3895e169cc3637ce6edac793",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                -3.673205103346574e-06,
+                0.9999999999932537,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.49999816339744835,
+              "waxing": true,
+              "tilt": 0,
+              "requestedNativeFraction": 0.5,
+              "phaseQuantumRadians": 0.0004,
+              "geometryConvention": "canonical .0004-radian Sun-angle buckets; native UTC unchanged"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.5,
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "native below-horizon display token .020\u00d7material; not physical irradiance"
+        }
+      },
+      "legacyPoisonControl": {
+        "changedPixels": 0,
+        "maximumCode": 0,
+        "rmsCode": 0.0,
+        "meanAbsoluteCode": 0.0
+      },
+      "detailHiddenControl": {
+        "changedPixels": 31348,
+        "maximumCode": 169,
+        "rmsCode": 14.98404378163076,
+        "meanAbsoluteCode": 5.076726145386191
+      },
+      "restoreControl": {
+        "changedPixels": 0,
+        "maximumCode": 0,
+        "rmsCode": 0.0,
+        "meanAbsoluteCode": 0.0
+      },
+      "reference": "outputs/wax_050_q4096/v5/D208.png",
+      "referenceComparison": {
+        "changedPixels": 191,
+        "maximumCode": 1,
+        "rmsCode": 0.035462842084698736,
+        "meanAbsoluteCode": 0.0012576131687242799
+      },
+      "detailHiddenScope": "Negative control exposes the CP9 raster of the SAME accepted terrain, not legacy PBR. Its changed pixels distinguish the visible DPR refinement.",
+      "referenceScope": "Independent linear area integration of actual WASM surface at reference D208 footprint on black. Phase-angle buckets/adaptive angular rules differ; errors recorded, not a new dense-reference certificate.",
+      "captures": {
+        "wax_050-crop.png": "1cf1ee27e8c5c299919f0dfde67d83c53acf09e57b17bc7c150f1e2ec0f27916",
+        "wax_050-diagnostic-detail-hidden.png": "1f6bc4e1685cd5c013a543e4a6bc7a39708fc692ae8672cfb99bb21bf3b7ace3",
+        "wax_050-diagnostic-legacy-poison.png": "1cf1ee27e8c5c299919f0dfde67d83c53acf09e57b17bc7c150f1e2ec0f27916",
+        "wax_050-legacy.png": "fb2bb2ad3a3c1fcd10525353932528199aab721707e3ced17cb7e56aea27a84e",
+        "wax_050-restored.png": "1cf1ee27e8c5c299919f0dfde67d83c53acf09e57b17bc7c150f1e2ec0f27916",
+        "wax_050-surface.png": "1e75a872919b939cfc4049ab194a60aaa39005dab698121cfbca2a0ee87ed0d9",
+        "wax_050-widget.png": "54c19835989a114354a3cab33a5ba25170cb5fbe64f06de4aeb538a3ab7f3e4d",
+        "wax_050-worker-D208.png": "bc843f823cdc39ef4eb767b73777b375b6fb45ba72c50aa8b98019f761f7437d"
+      },
+      "passed": true
+    },
+    {
+      "name": "wax_075",
+      "requestedFraction": 0.75,
+      "refinedSeconds": 43.6869999999999,
+      "state": {
+        "moon": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 6,
+          "rejected": 0,
+          "cancelled": 2,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "progress": {
+            "stage": "lighting",
+            "row": 520,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.7000000001862645,
+            "lightingMs": 6546.5,
+            "totalMs": 6606.299999999814,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 3321,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 438325,
+            "blockerWitnesses": 582154,
+            "memoryBytes": 163315712,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 78,
+              "projectedMaximumCode": 0.40355491638183594,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 1.2631869316101074,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 3662.7999999998137
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 8615.199999999255
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 2635,
+                  "milliseconds": 22997
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 298,
+                  "milliseconds": 6606.299999999814
+                }
+              ],
+              "totalMs": 43534.40000000037,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.7499989396362727,
+          "reason": "native lunar target changed",
+          "epoch": 2,
+          "pending": false,
+          "accepted": {
+            "identity": "327b4d34a154ac0a1a7b27a164faed7f82046826ca4d55d2d43617a3e9b57fd9",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                0.4999978792725455,
+                0.8660266281835433,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.7499989396362727,
+              "waxing": true,
+              "tilt": 0,
+              "requestedNativeFraction": 0.75,
+              "phaseQuantumRadians": 0.0004,
+              "geometryConvention": "canonical .0004-radian Sun-angle buckets; native UTC unchanged"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.75,
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "native below-horizon display token .020\u00d7material; not physical irradiance"
+        },
+        "detail": {
+          "renders": 6,
+          "skips": 566,
+          "totalMs": 17.90000000037253,
+          "maxMs": 29.5,
+          "dpr": 2,
+          "pixels": 47961,
+          "mode": "local-device-resolution; inherited physics grid unchanged",
+          "visible": true
+        },
+        "sky": {
+          "status": "ready",
+          "errors": [],
+          "composition": {
+            "cloudApplications": 1,
+            "meanCloudAlpha": 0,
+            "maxCloudAlpha": 0,
+            "moonPixels": 8786,
+            "cloudTransmissionOwner": "1 - native painted alpha after native blur and vertical mask",
+            "order": "gas-transported sky \u2192 calendar direct-light cutout \u2192 native PBR material \u2192 native cloud screen \u2192 one shared encode",
+            "cloudColour": "display-referred native painter; inverse shared tone map; not measured cloud radiance",
+            "exposureOwner": "CP7 sky+diffuse meter before calendar/foreground; native foreground excluded",
+            "saturation": "native code 255 uses 1 - 1/131072 in inverse tone map",
+            "moonSurface": "native-300px-backing-canvas",
+            "moonAlpha": 1,
+            "cloudBuffer": {
+              "width": 144,
+              "height": 232
+            },
+            "maskStops": [
+              0,
+              0.03,
+              0.24,
+              0.34,
+              1
+            ],
+            "cloudSource": "hidden",
+            "updatedRows": 183,
+            "totalRows": 530,
+            "lastComposeMs": 22.5
+          }
+        },
+        "host": {
+          "utcMs": 1788813000000,
+          "generation": 0,
+          "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:92.5:0",
+          "fraction": 0.75,
+          "waxing": true,
+          "up": 1,
+          "dpr": 2,
+          "timeScale": 0,
+          "paused": false
+        },
+        "rows": 6,
+        "qa": {
+          "phaseFraction": 0.75,
+          "waxing": true,
+          "moonAltitudeDeg": 20,
+          "moonSkyFresh": true,
+          "lastConsumed": {
+            "status": "completed",
+            "stage": "paint",
+            "fresh": true,
+            "observation": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "expected": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "phaseFraction": 0.75,
+              "altitudeDeg": 20,
+              "light": {
+                "eligibility": 1,
+                "eligible": true,
+                "reason": "eligible",
+                "illumination": 0.8375,
+                "beam": 0.5025,
+                "cloudLight": 0.8375,
+                "localStarWash": 0.8624999999999999,
+                "localGlow": 0.165,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              }
+            }
+          },
+          "currentGeometry": {
+            "fresh": true,
+            "produced": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "expected": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "phaseFraction": 0.75,
+            "altitudeDeg": 20,
+            "light": {
+              "eligibility": 1,
+              "eligible": true,
+              "reason": "eligible",
+              "illumination": 0.8375,
+              "beam": 0.5025,
+              "cloudLight": 0.8375,
+              "localStarWash": 0.8624999999999999,
+              "localGlow": 0.165,
+              "halo": 0,
+              "corona": 0,
+              "paraselenae": 0
+            }
+          },
+          "lunarLight": {
+            "eligibility": 1,
+            "eligible": true,
+            "reason": "eligible",
+            "illumination": 0.8375,
+            "beam": 0.5025,
+            "cloudLight": 0.8375,
+            "localStarWash": 0.8624999999999999,
+            "localGlow": 0.165,
+            "halo": 0,
+            "corona": 0,
+            "paraselenae": 0
+          },
+          "surface": {
+            "status": "pbr",
+            "pbrReady": true,
+            "fallbackReady": false,
+            "texture": "decoded-albedo-and-normals"
+          },
+          "physicalMoonVisible": true,
+          "calendarMoonVisible": true,
+          "displayMode": "physical",
+          "moonSkyOpacity": 1,
+          "moonCalendarOpacity": 1,
+          "moonFeatureOpacity": 1,
+          "moonlightOpacity": 0.502,
+          "earthshine": "PBR earthshine (es curve in renderMoonPBR) \u2014 ashen, never black",
+          "reason": null
+        },
+        "geometry": {
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530
+          },
+          "footerBottom": 520.34375
+        }
+      },
+      "sourceProof": {
+        "workerKind": "result",
+        "workerKernel": "metric-radial-terrain-wasm-mb1",
+        "workerPhysicalIdentity": "327b4d34a154ac0a1a7b27a164faed7f82046826ca4d55d2d43617a3e9b57fd9",
+        "workerProfileIdentity": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+        "acceptedMatchesWorker": true,
+        "publishedCanvasSha256": "791a27222fc6435f6c5d28d86940bded2e6bf9af9e8e836ec1cf32a1618c4bd8",
+        "workerRgbaSha256": "58defe252227bc2258e4b289e0b921876c67a29f9a0bf2df25633687ce279990",
+        "workerCanvasRoundtripSha256": "9fca67b5db60d33f5e59c634d657aa5435ee5980aa52b4727734dcb9314ba07a",
+        "opaqueDifferences": 0,
+        "edgeDifferences": 1745,
+        "alphaDifferences": 0,
+        "maxPremultipliedDifference": 0.9921568627450981,
+        "legacyCanvasSha256": "6fea4d529c51b6a1f145ec434fb7105678281feaf34e0bbe28d50e92837d0c43",
+        "linearSurfaceSha256": "c6d90b8feb7e35f79f7615dee96695d8152fa65e53195b7cae1f02d32ab8d722",
+        "photoUsesPublishedTerrain": true,
+        "hostUsesPublishedTerrain": true,
+        "detailAdoptedFinalWorkerArrays": true,
+        "detailEnabled": true,
+        "nodes": {
+          ".mphoto": {
+            "visibility": "hidden",
+            "display": "inline",
+            "opacity": "1",
+            "zIndex": "auto",
+            "rect": {
+              "x": 213.94146728515625,
+              "y": 4.148077011108398,
+              "width": 107.81243896484375,
+              "height": 108.07064056396484,
+              "top": 4.148077011108398,
+              "right": 321.75390625,
+              "bottom": 112.21871757507324,
+              "left": 213.94146728515625
+            }
+          },
+          ".moccluder": {
+            "visibility": "hidden",
+            "display": "inline",
+            "opacity": "1",
+            "zIndex": "auto",
+            "rect": {
+              "x": 217.31060791015625,
+              "y": 7.525284767150879,
+              "width": 101.07415771484375,
+              "height": 101.31622314453125,
+              "top": 7.525284767150879,
+              "right": 318.384765625,
+              "bottom": 108.84150791168213,
+              "left": 217.31060791015625
+            }
+          },
+          ".moon-detail-canvas": {
+            "visibility": "visible",
+            "display": "block",
+            "opacity": "1",
+            "zIndex": "0",
+            "rect": {
+              "x": 214,
+              "y": 4.5,
+              "width": 109.5,
+              "height": 109.5,
+              "top": 4.5,
+              "right": 323.5,
+              "bottom": 114,
+              "left": 214
+            }
+          }
+        },
+        "nativeForegroundMoonPixels": 8786,
+        "size": 540,
+        "extent": 1.08,
+        "quality": {
+          "status": "empirical-adaptive",
+          "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+          "thresholdCode": 0.125,
+          "unsettled": 0,
+          "receiverHeuristicRemaining": 78,
+          "projectedMaximumCode": 0.40355491638183594,
+          "projectedGate": 0.5,
+          "lastMaximumCode": 1.2631869316101074,
+          "history": [
+            {
+              "samples": 64,
+              "receivers": 291600,
+              "milliseconds": 3662.7999999998137
+            },
+            {
+              "samples": 256,
+              "receivers": 291600,
+              "milliseconds": 8615.199999999255
+            },
+            {
+              "samples": 1024,
+              "receivers": 2635,
+              "milliseconds": 22997
+            },
+            {
+              "samples": 4096,
+              "receivers": 298,
+              "milliseconds": 6606.299999999814
+            }
+          ],
+          "totalMs": 43534.40000000037,
+          "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+        },
+        "state": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 6,
+          "rejected": 0,
+          "cancelled": 2,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "progress": {
+            "stage": "lighting",
+            "row": 520,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.7000000001862645,
+            "lightingMs": 6546.5,
+            "totalMs": 6606.299999999814,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 3321,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 438325,
+            "blockerWitnesses": 582154,
+            "memoryBytes": 163315712,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 78,
+              "projectedMaximumCode": 0.40355491638183594,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 1.2631869316101074,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 3662.7999999998137
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 8615.199999999255
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 2635,
+                  "milliseconds": 22997
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 298,
+                  "milliseconds": 6606.299999999814
+                }
+              ],
+              "totalMs": 43534.40000000037,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.7499989396362727,
+          "reason": "native lunar target changed",
+          "epoch": 2,
+          "pending": false,
+          "accepted": {
+            "identity": "327b4d34a154ac0a1a7b27a164faed7f82046826ca4d55d2d43617a3e9b57fd9",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                0.4999978792725455,
+                0.8660266281835433,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.7499989396362727,
+              "waxing": true,
+              "tilt": 0,
+              "requestedNativeFraction": 0.75,
+              "phaseQuantumRadians": 0.0004,
+              "geometryConvention": "canonical .0004-radian Sun-angle buckets; native UTC unchanged"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.75,
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "native below-horizon display token .020\u00d7material; not physical irradiance"
+        }
+      },
+      "legacyPoisonControl": {
+        "changedPixels": 0,
+        "maximumCode": 0,
+        "rmsCode": 0.0,
+        "meanAbsoluteCode": 0.0
+      },
+      "detailHiddenControl": {
+        "changedPixels": 32227,
+        "maximumCode": 169,
+        "rmsCode": 15.609421111584112,
+        "meanAbsoluteCode": 5.977807704177538
+      },
+      "restoreControl": {
+        "changedPixels": 0,
+        "maximumCode": 0,
+        "rmsCode": 0.0,
+        "meanAbsoluteCode": 0.0
+      },
+      "reference": "outputs/wax_075_q4096/v5/D208.png",
+      "referenceComparison": {
+        "changedPixels": 39,
+        "maximumCode": 1,
+        "rmsCode": 0.016024672335395507,
+        "meanAbsoluteCode": 0.0002567901234567901
+      },
+      "detailHiddenScope": "Negative control exposes the CP9 raster of the SAME accepted terrain, not legacy PBR. Its changed pixels distinguish the visible DPR refinement.",
+      "referenceScope": "Independent linear area integration of actual WASM surface at reference D208 footprint on black. Phase-angle buckets/adaptive angular rules differ; errors recorded, not a new dense-reference certificate.",
+      "captures": {
+        "wax_075-crop.png": "7a12af9d6a9a6b66107fc547ff6588818f57e41518283e0e643183a2a3e7ea79",
+        "wax_075-diagnostic-detail-hidden.png": "344d1cf1400a11cf28734feccd5930350ab3e341ec1752576b86da9b00cac42c",
+        "wax_075-diagnostic-legacy-poison.png": "7a12af9d6a9a6b66107fc547ff6588818f57e41518283e0e643183a2a3e7ea79",
+        "wax_075-legacy.png": "da4685c227b490c6627379a28ab9712e6a1e5f48b833097416bf183ba0a74787",
+        "wax_075-restored.png": "7a12af9d6a9a6b66107fc547ff6588818f57e41518283e0e643183a2a3e7ea79",
+        "wax_075-surface.png": "4c7b55508a1eddab800f27521733778b09068d9c3cb62683479d53deff71c38e",
+        "wax_075-widget.png": "bb6284ac58a20f3e825e3bcaf0d464458b4aeeb1fd921b0c4b3a005a275d2177",
+        "wax_075-worker-D208.png": "01d79275a41adc0087c174877ea452b9b56c083f1efe8c40de1f2946a97ea72a"
+      },
+      "passed": true
+    },
+    {
+      "name": "wax_099",
+      "requestedFraction": 0.99,
+      "refinedSeconds": 19.686999999999898,
+      "state": {
+        "moon": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 8,
+          "rejected": 0,
+          "cancelled": 3,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "progress": {
+            "stage": "lighting",
+            "row": 517,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.6000000005587935,
+            "lightingMs": 3485.2999999998137,
+            "totalMs": 3544.4000000003725,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 1310,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 271150,
+            "blockerWitnesses": 299232,
+            "memoryBytes": 163315712,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 64,
+              "projectedMaximumCode": 0.30934906005859375,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 2.1825122833251953,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 2587.399999999441
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 4341.299999999814
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 1193,
+                  "milliseconds": 7417.799999999814
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 142,
+                  "milliseconds": 3544.4000000003725
+                }
+              ],
+              "totalMs": 19550.900000000373,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.9899935158528588,
+          "reason": "native lunar target changed",
+          "epoch": 3,
+          "pending": false,
+          "accepted": {
+            "identity": "4663be008416bf5a45df4a781739f351e502bd7eca29e9b0c9d161674cd55ec8",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                0.9799870317057175,
+                0.19906134152219748,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.9899935158528588,
+              "waxing": true,
+              "tilt": 0,
+              "requestedNativeFraction": 0.99,
+              "phaseQuantumRadians": 0.0004,
+              "geometryConvention": "canonical .0004-radian Sun-angle buckets; native UTC unchanged"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.99,
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "native below-horizon display token .020\u00d7material; not physical irradiance"
+        },
+        "detail": {
+          "renders": 8,
+          "skips": 634,
+          "totalMs": 17,
+          "maxMs": 29.5,
+          "dpr": 2,
+          "pixels": 47961,
+          "mode": "local-device-resolution; inherited physics grid unchanged",
+          "visible": true
+        },
+        "sky": {
+          "status": "ready",
+          "errors": [],
+          "composition": {
+            "cloudApplications": 1,
+            "meanCloudAlpha": 0,
+            "maxCloudAlpha": 0,
+            "moonPixels": 8786,
+            "cloudTransmissionOwner": "1 - native painted alpha after native blur and vertical mask",
+            "order": "gas-transported sky \u2192 calendar direct-light cutout \u2192 native PBR material \u2192 native cloud screen \u2192 one shared encode",
+            "cloudColour": "display-referred native painter; inverse shared tone map; not measured cloud radiance",
+            "exposureOwner": "CP7 sky+diffuse meter before calendar/foreground; native foreground excluded",
+            "saturation": "native code 255 uses 1 - 1/131072 in inverse tone map",
+            "moonSurface": "native-300px-backing-canvas",
+            "moonAlpha": 1,
+            "cloudBuffer": {
+              "width": 144,
+              "height": 232
+            },
+            "maskStops": [
+              0,
+              0.03,
+              0.24,
+              0.34,
+              1
+            ],
+            "cloudSource": "hidden",
+            "updatedRows": 183,
+            "totalRows": 530,
+            "lastComposeMs": 21.5
+          }
+        },
+        "host": {
+          "utcMs": 1788813000000,
+          "generation": 0,
+          "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:92.5:0",
+          "fraction": 0.99,
+          "waxing": true,
+          "up": 1,
+          "dpr": 2,
+          "timeScale": 0,
+          "paused": false
+        },
+        "rows": 6,
+        "qa": {
+          "phaseFraction": 0.99,
+          "waxing": true,
+          "moonAltitudeDeg": 20,
+          "moonSkyFresh": true,
+          "lastConsumed": {
+            "status": "completed",
+            "stage": "paint",
+            "fresh": true,
+            "observation": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "expected": {
+                "epochMinute": 29813550,
+                "minute": 1410,
+                "context": "24.47|39.61|Asia/Riyadh"
+              },
+              "phaseFraction": 0.99,
+              "altitudeDeg": 20,
+              "light": {
+                "eligibility": 1,
+                "eligible": true,
+                "reason": "eligible",
+                "illumination": 0.9934999999999999,
+                "beam": 0.5961,
+                "cloudLight": 0.9934999999999999,
+                "localStarWash": 1,
+                "localGlow": 0.265224,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              }
+            }
+          },
+          "currentGeometry": {
+            "fresh": true,
+            "produced": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "expected": {
+              "epochMinute": 29813550,
+              "minute": 1410,
+              "context": "24.47|39.61|Asia/Riyadh"
+            },
+            "phaseFraction": 0.99,
+            "altitudeDeg": 20,
+            "light": {
+              "eligibility": 1,
+              "eligible": true,
+              "reason": "eligible",
+              "illumination": 0.9934999999999999,
+              "beam": 0.5961,
+              "cloudLight": 0.9934999999999999,
+              "localStarWash": 1,
+              "localGlow": 0.265224,
+              "halo": 0,
+              "corona": 0,
+              "paraselenae": 0
+            }
+          },
+          "lunarLight": {
+            "eligibility": 1,
+            "eligible": true,
+            "reason": "eligible",
+            "illumination": 0.9934999999999999,
+            "beam": 0.5961,
+            "cloudLight": 0.9934999999999999,
+            "localStarWash": 1,
+            "localGlow": 0.265224,
+            "halo": 0,
+            "corona": 0,
+            "paraselenae": 0
+          },
+          "surface": {
+            "status": "pbr",
+            "pbrReady": true,
+            "fallbackReady": false,
+            "texture": "decoded-albedo-and-normals"
+          },
+          "physicalMoonVisible": true,
+          "calendarMoonVisible": true,
+          "displayMode": "physical",
+          "moonSkyOpacity": 1,
+          "moonCalendarOpacity": 1,
+          "moonFeatureOpacity": 1,
+          "moonlightOpacity": 0.596,
+          "earthshine": "PBR earthshine (es curve in renderMoonPBR) \u2014 ashen, never black",
+          "reason": null
+        },
+        "geometry": {
+          "card": {
+            "x": 0,
+            "y": 0,
+            "width": 325,
+            "height": 530
+          },
+          "footerBottom": 520.34375
+        }
+      },
+      "sourceProof": {
+        "workerKind": "result",
+        "workerKernel": "metric-radial-terrain-wasm-mb1",
+        "workerPhysicalIdentity": "4663be008416bf5a45df4a781739f351e502bd7eca29e9b0c9d161674cd55ec8",
+        "workerProfileIdentity": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+        "acceptedMatchesWorker": true,
+        "publishedCanvasSha256": "0b93d71d286362482ee296ce4094cb9c708f760b03c8f84280ca23cf3756f72f",
+        "workerRgbaSha256": "30a50df515aea817e5a6765023e46213f98a3aeb5260620243c9c728c1372f70",
+        "workerCanvasRoundtripSha256": "e3ba3caaea614a71142fe7c1cdfe71a0bcd397e23b7cbb11b8028fb008d11a9f",
+        "opaqueDifferences": 0,
+        "edgeDifferences": 1018,
+        "alphaDifferences": 0,
+        "maxPremultipliedDifference": 0.9921568627450981,
+        "legacyCanvasSha256": "00daa9d51f4501200d48c9a34015567beb25e2c48c119e9368a344bd1d33dc05",
+        "linearSurfaceSha256": "aa387d47d9cfbb4b86ee7db19ed918096c494429189c6edff3eae0c1bf8491af",
+        "photoUsesPublishedTerrain": true,
+        "hostUsesPublishedTerrain": true,
+        "detailAdoptedFinalWorkerArrays": true,
+        "detailEnabled": true,
+        "nodes": {
+          ".mphoto": {
+            "visibility": "hidden",
+            "display": "inline",
+            "opacity": "1",
+            "zIndex": "auto",
+            "rect": {
+              "x": 213.94146728515625,
+              "y": 4.148077011108398,
+              "width": 107.81243896484375,
+              "height": 108.07064056396484,
+              "top": 4.148077011108398,
+              "right": 321.75390625,
+              "bottom": 112.21871757507324,
+              "left": 213.94146728515625
+            }
+          },
+          ".moccluder": {
+            "visibility": "hidden",
+            "display": "inline",
+            "opacity": "1",
+            "zIndex": "auto",
+            "rect": {
+              "x": 217.31060791015625,
+              "y": 7.525284767150879,
+              "width": 101.07415771484375,
+              "height": 101.31622314453125,
+              "top": 7.525284767150879,
+              "right": 318.384765625,
+              "bottom": 108.84150791168213,
+              "left": 217.31060791015625
+            }
+          },
+          ".moon-detail-canvas": {
+            "visibility": "visible",
+            "display": "block",
+            "opacity": "1",
+            "zIndex": "0",
+            "rect": {
+              "x": 214,
+              "y": 4.5,
+              "width": 109.5,
+              "height": 109.5,
+              "top": 4.5,
+              "right": 323.5,
+              "bottom": 114,
+              "left": 214
+            }
+          }
+        },
+        "nativeForegroundMoonPixels": 8786,
+        "size": 540,
+        "extent": 1.08,
+        "quality": {
+          "status": "empirical-adaptive",
+          "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+          "thresholdCode": 0.125,
+          "unsettled": 0,
+          "receiverHeuristicRemaining": 64,
+          "projectedMaximumCode": 0.30934906005859375,
+          "projectedGate": 0.5,
+          "lastMaximumCode": 2.1825122833251953,
+          "history": [
+            {
+              "samples": 64,
+              "receivers": 291600,
+              "milliseconds": 2587.399999999441
+            },
+            {
+              "samples": 256,
+              "receivers": 291600,
+              "milliseconds": 4341.299999999814
+            },
+            {
+              "samples": 1024,
+              "receivers": 1193,
+              "milliseconds": 7417.799999999814
+            },
+            {
+              "samples": 4096,
+              "receivers": 142,
+              "milliseconds": 3544.4000000003725
+            }
+          ],
+          "totalMs": 19550.900000000373,
+          "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+        },
+        "state": {
+          "status": "ready",
+          "backend": "metric-terrain-wasm-mb1",
+          "renders": 8,
+          "rejected": 0,
+          "cancelled": 3,
+          "errors": [],
+          "legacyFallback": false,
+          "quality": "empirical-adaptive",
+          "progress": {
+            "stage": "lighting",
+            "row": 517,
+            "total": 540,
+            "sourceSamples": 4096,
+            "selected": null
+          },
+          "last": {
+            "kernel": "metric-radial-terrain-wasm-mb1",
+            "cameraReused": true,
+            "cameraMs": 1.6000000005587935,
+            "lightingMs": 3485.2999999998137,
+            "totalMs": 3544.4000000003725,
+            "knownSurfaceSamples": 196435,
+            "unresolvedShading": 0,
+            "unresolvedContour": 0,
+            "shadowedFacingSamples": 1310,
+            "sourceSamples": 4096,
+            "analyticClearSun": true,
+            "analyticSamples": 0,
+            "shadowRays": 271150,
+            "blockerWitnesses": 299232,
+            "memoryBytes": 163315712,
+            "model": "V5 nominal lunar-Lambert / grey finite Earth; not calibrated spectroscopy",
+            "quality": {
+              "status": "empirical-adaptive",
+              "method": "64/256 full + ambiguous-source minimum1024 + selected4096/8192; local display-change criterion",
+              "thresholdCode": 0.125,
+              "unsettled": 0,
+              "receiverHeuristicRemaining": 64,
+              "projectedMaximumCode": 0.30934906005859375,
+              "projectedGate": 0.5,
+              "lastMaximumCode": 2.1825122833251953,
+              "history": [
+                {
+                  "samples": 64,
+                  "receivers": 291600,
+                  "milliseconds": 2587.399999999441
+                },
+                {
+                  "samples": 256,
+                  "receivers": 291600,
+                  "milliseconds": 4341.299999999814
+                },
+                {
+                  "samples": 1024,
+                  "receivers": 1193,
+                  "milliseconds": 7417.799999999814
+                },
+                {
+                  "samples": 4096,
+                  "receivers": 142,
+                  "milliseconds": 3544.4000000003725
+                }
+              ],
+              "totalMs": 19550.900000000373,
+              "scope": "angular-rule discriminator; independent dense-reference, spatial, terrain and photometry errors are separate"
+            }
+          },
+          "phase": 0.9899935158528588,
+          "reason": "native lunar target changed",
+          "epoch": 3,
+          "pending": false,
+          "accepted": {
+            "identity": "4663be008416bf5a45df4a781739f351e502bd7eca29e9b0c9d161674cd55ec8",
+            "profile": "26c54eedbc94c17f5630320bc180b60232c1a522d42bf55e8aaee81b5ec17a17",
+            "scene": {
+              "size": 540,
+              "outSize": 300,
+              "diameter": 288,
+              "basis": [
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ],
+              "sun": [
+                0.9799870317057175,
+                0.19906134152219748,
+                0
+              ],
+              "earth": [
+                384400,
+                0,
+                0
+              ],
+              "distance": 384400,
+              "extent": 1.08,
+              "profile": {
+                "schema": "lunar-presentation/5",
+                "profile_id": "calendar-neutral-v5-01",
+                "mode": "calendar",
+                "exposure": 2.9195482731525044,
+                "lift": 0.003,
+                "knee": 5.388411226362526e-06,
+                "colour_basis": "linear-sRGB",
+                "gamut": "luminance-preserving-neutral-axis"
+              },
+              "mode": "calendar-canonical",
+              "fraction": 0.9899935158528588,
+              "waxing": true,
+              "tilt": 0,
+              "requestedNativeFraction": 0.99,
+              "phaseQuantumRadians": 0.0004,
+              "geometryConvention": "canonical .0004-radian Sun-angle buckets; native UTC unchanged"
+            }
+          },
+          "retryCount": 0,
+          "workerAlive": true,
+          "currentNativeFraction": 0.99,
+          "maximumCanonicalPhasePositionErrorAtD416": 0.0416,
+          "calendarProxyWeight": 0,
+          "calendarProxy": "native below-horizon display token .020\u00d7material; not physical irradiance"
+        }
+      },
+      "legacyPoisonControl": {
+        "changedPixels": 0,
+        "maximumCode": 0,
+        "rmsCode": 0.0,
+        "meanAbsoluteCode": 0.0
+      },
+      "detailHiddenControl": {
+        "changedPixels": 34238,
+        "maximumCode": 155,
+        "rmsCode": 16.056212932680737,
+        "meanAbsoluteCode": 6.699471144404231
+      },
+      "restoreControl": {
+        "changedPixels": 0,
+        "maximumCode": 0,
+        "rmsCode": 0.0,
+        "meanAbsoluteCode": 0.0
+      },
+      "reference": "outputs/wax_099_q4096/v5/D208.png",
+      "referenceComparison": {
+        "changedPixels": 245,
+        "maximumCode": 1,
+        "rmsCode": 0.04089532960545855,
+        "meanAbsoluteCode": 0.0016724279835390946
+      },
+      "detailHiddenScope": "Negative control exposes the CP9 raster of the SAME accepted terrain, not legacy PBR. Its changed pixels distinguish the visible DPR refinement.",
+      "referenceScope": "Independent linear area integration of actual WASM surface at reference D208 footprint on black. Phase-angle buckets/adaptive angular rules differ; errors recorded, not a new dense-reference certificate.",
+      "captures": {
+        "wax_099-crop.png": "243fee937968d97ac4e62d3ab357a6996e39cc5d3e4ba9160594c2d31fbdd296",
+        "wax_099-diagnostic-detail-hidden.png": "7370e5ea383dcb77b82400b976db138aeed71d4bbb8acfff1a01516fa006eed6",
+        "wax_099-diagnostic-legacy-poison.png": "243fee937968d97ac4e62d3ab357a6996e39cc5d3e4ba9160594c2d31fbdd296",
+        "wax_099-legacy.png": "7fee8cda0c200c344f7531b7363fd2c5d18ffe11f10eb9f548d90bf68bb86592",
+        "wax_099-restored.png": "243fee937968d97ac4e62d3ab357a6996e39cc5d3e4ba9160594c2d31fbdd296",
+        "wax_099-surface.png": "22e94529f13fbed74641bb551ad0679cf53c592dd1f889d5e3cc73db1ab284c5",
+        "wax_099-widget.png": "041d79e89d4c4c2c185b420cbbedeb0ee7e703baa16975ebae642f52e9a76485",
+        "wax_099-worker-D208.png": "d14eefed548c600ba8607a18c28ba912ad4ae094e30b0d86a494c17a352b13e8"
+      },
+      "passed": true
+    }
+  ],
+  "scope": "Actual local HTTP widget, final empirical-adaptive terrain, observed real worker output and reversible layer controls. Refined means donor final angular criterion, not universal physical convergence. Reference comparison uses retained V5 q4096 outputs; no research rerun.",
+  "browser": {
+    "family": "chromium",
+    "version": "148.0.7778.96",
+    "os": "Windows",
+    "machine": "AMD64",
+    "executable": "C:\\Users\\theis\\AppData\\Local\\ms-playwright\\chromium-1223\\chrome-win64\\chrome.exe",
+    "chromiumSandboxRequested": true
+  },
+  "pageErrors": [],
+  "url": "http://127.0.0.1:63595/index.html#lat=24.47&lon=39.61&tz=Asia/Riyadh&label=V5%20terrain&method=4&simTime=23:30&simWx=0&simCloud=0&simTemp=20&units=c&motion=reduced&simMoon=.12&simWax=1&simMoonAlt=20&simMoonH=42&qa=1",
+  "adoptionObserverInstalledAtStatus": "loading",
+  "captureMotionControl": "Frozen simulation clock and paused CSS animations for differential screenshots; no runtime source changes."
+}

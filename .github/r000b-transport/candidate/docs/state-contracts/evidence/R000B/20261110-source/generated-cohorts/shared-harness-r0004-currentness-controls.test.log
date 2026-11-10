@@ -1,0 +1,30 @@
+TAP version 13
+# {"variant":"early-cache-filter","sourceSha256":"dbfcf80eff504ead4d328a1c90d53fd2b60dc2131d73de014aebeef689579d89","result":"offline availability lost; explicit control retained"}
+# {"variant":"removed-day-check","sourceSha256":"b2852f02914b6641fc196d99fb0a3c1f68f7464512d2c0f52482c07d7fc47cd6","result":"no current paint; independent classifier prevents false current; explicit control retained"}
+# Subtest: R0004 retained omitted-hint same-day12Z control needs no correction
+ok 1 - R0004 retained omitted-hint same-day12Z control needs no correction
+  ---
+  duration_ms: 68.681288
+  type: 'test'
+  ...
+# Subtest: R0004 retained early-filter mutant loses offline availability; explicit hint survives
+ok 2 - R0004 retained early-filter mutant loses offline availability; explicit hint survives
+  ---
+  duration_ms: 259.082436
+  type: 'test'
+  ...
+# Subtest: R0004 retained removed-correction mutant is contained by independent adoption
+ok 3 - R0004 retained removed-correction mutant is contained by independent adoption
+  ---
+  duration_ms: 124.564437
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 622.56785

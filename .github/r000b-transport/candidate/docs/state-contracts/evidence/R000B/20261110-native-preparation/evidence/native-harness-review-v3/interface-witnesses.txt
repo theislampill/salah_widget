@@ -1,0 +1,321 @@
+
+FILE /workspace/scratch/15b8fb6ac4c2/r000b-work/src/native/index.html
+
+LINES 865-871
+865: // Ordinary loads follow Date.now(); explicit previews use simBase + realElapsed·timeScale. EVERYTHING
+866: // visual (sun altitude, sky colour, prayer state, countdown, arc, moon) consumes the same simNow() API.
+867: // An explicit timeScale=1 is an anchored 1× preview; >1 fast-forwards (3600 = 1s/hour). A fixed simTime=
+868: // without timeScale= freezes the scene. Parameter presence expresses preview intent, not just its rate.
+869: const _RAFNOW = ()=> (typeof performance!=='undefined' && performance.now) ? performance.now() : Date.now();
+870: const _tsParam=q.get("timeScale");
+871: let TIMESCALE = _tsParam!=null ? Math.max(0,+_tsParam||0) : (SIM.time!=null ? 0 : 1);
+
+LINES 1026-1043
+1026:   return !!op && op.generation===_runtimeGeneration && _requestSlots[op.kind]===op;
+1027: }
+1028: function finishRequest(op){
+1029:   if(!requestEligible(op)) return false;
+1030:   _requestSlots[op.kind]=null; return true;
+1031: }
+1032: function beginAttempt(op,timeoutMs){
+1033:   if(!requestEligible(op) || op.attempt) return null;
+1034:   const a={operationId:op.operationId,attemptId:++_attemptSerial,controller:typeof AbortController!=="undefined"?new AbortController():null,
+1035:     deadlineAt:_RAFNOW()+timeoutMs,timer:null,cancel:null,expired:false};
+1036:   op.attempt=a; return a;
+1037: }
+1038: function attemptEligible(op,a){
+1039:   return requestEligible(op) && !!a && op.attempt===a && !a.expired && _RAFNOW()<a.deadlineAt;
+1040: }
+1041: function finishAttempt(op,a){
+1042:   if(!a) return;
+1043:   if(a.timer!=null){ clearTimeout(a.timer); a.timer=null; }
+
+LINES 1257-1274
+1257: function admitWeatherRecord(input,ctx,cached=false){
+1258:   if(!input||typeof input!=="object"||Array.isArray(input)) return null;
+1259:   const code=cached?input.code:input.weather_code;
+1260:   if(!_WX_CODES.has(code)||(cached&&input.units!=null&&input.units!==ctx.units)) return null;
+1261:   const w={code,units:ctx.units,src:"current",admission:{},target:ctx.target||currentWeatherTarget(),
+1262:     provider:"Open-Meteo",product:"current weather model",quantityKind:"preceding-interval-amount",precipitationUnit:"mm"};
+1263:   for(const [field,key] of Object.entries(_WX_FIELDS)){
+1264:     const raw=input[cached?key:field], v=wxValue(field,raw);
+1265:     w[key]=key==="temp"&&v!=null?Math.round(v):v;
+1266:     if(v==null) w.admission[key]=raw==null?"unavailable":"invalid measurement";
+1267:   }
+1268:   w.currentTime=cached?(typeof input.currentTime==="string"?input.currentTime:null):(typeof input.time==="string"?input.time:null);
+1269:   w.currentZone=cached?(typeof input.currentZone==="string"?input.currentZone:ctx.zone):ctx.zone;
+1270:   w.currentValidAt=cached?wxNumber(input.currentValidAt):wxEpoch(w.currentTime,ctx.zone);
+1271:   const interval=wxNumber(cached?input.currentIntervalSec:input.interval);
+1272:   w.currentIntervalSec=interval!=null&&interval>0?interval:null;
+1273:   w.retrievedAt=ctx.retrievedAt;
+1274:   return w;
+
+LINES 1308-1326
+1308: function captureWeatherTarget(generation,la,lo){
+1309:   const e=CONFIG&&CONFIG.locationEvidence||{}, bounds=e.bounds;
+1310:   const b=bounds&&[bounds.south,bounds.north,bounds.west,bounds.east].every(v=>wxNumber(v)!=null)&&
+1311:     bounds.south>=-90&&bounds.north<=90&&bounds.south<=bounds.north&&bounds.west>=-180&&bounds.east<=180&&bounds.west<=bounds.east?
+1312:     {south:bounds.south,north:bounds.north,west:bounds.west,east:bounds.east}:null;
+1313:   return {generation,lat:la,lon:lo,intent:["fixed-site","device-position","coarse-area","unknown"].includes(e.intent)?e.intent:"unknown",
+1314:     source:["hash","manual","place","browser-geolocation","coarse-ip","legacy","unknown"].includes(e.source)?e.source:"unknown",
+1315:     accuracyM:wxNumber(e.accuracyM,0),acquiredAt:wxNumber(e.acquiredAt,Number.MIN_VALUE,Date.now()),
+1316:     provider:typeof e.provider==="string"?e.provider:null,area:typeof e.area==="string"?e.area:null,bounds:b};
+1317: }
+1318: function weatherTargetSame(a,b){ return !!(a&&b&&a.generation===b.generation&&a.lat===b.lat&&a.lon===b.lon); }
+1319: let _wxTargetCache=null;
+1320: function currentWeatherTarget(){
+1321:   const generation=typeof _runtimeGeneration==="number"?_runtimeGeneration:null, evidence=CONFIG&&CONFIG.locationEvidence;
+1322:   if(!_wxTargetCache||_wxTargetCache.config!==CONFIG||_wxTargetCache.evidence!==evidence||
+1323:     _wxTargetCache.target.generation!==generation||_wxTargetCache.target.lat!==lat||_wxTargetCache.target.lon!==lon)
+1324:     _wxTargetCache={config:CONFIG,evidence,target:captureWeatherTarget(generation,lat,lon)};
+1325:   return _wxTargetCache.target;
+1326: }
+
+LINES 1336-1336
+1336: const _WX_BODY_WAIT=10000, _RADAR_BODY_WAIT=10000, _RADAR_IMAGE_WAIT=10000;
+
+LINES 1368-1397
+1368: async function fetchWeather(){
+1369:   if(SIM.wx!=null) return;                 // simulated weather: never overwrite
+1370:   if(!usableWeatherCoordinates(lat,lon)||wxBusy) return;
+1371:   const now=Date.now();
+1372:   if(selectedWeather(now) && weatherTrack && now-lastWxAt < _WX_CURRENT_TTL) return;   // need the hourly TRACK too — a fresh current-weather cache must not block timeScale demos
+1373:   if(now-lastWxTry < 60*1000) return;
+1374:   const op=beginRequest("weather"); if(!op) return;
+1375:   const captured={lat:op.lat,lon:op.lon,units:op.units,zone:op.requestZone,cacheKey:op.weatherCacheKey,
+1376:     target:captureWeatherTarget(op.generation,op.lat,op.lon)};
+1377:   const a=beginAttempt(op,_WX_BODY_WAIT); if(!a){ finishRequest(op); return; }
+1378:   lastWxTry=now; wxBusy=true;
+1379:   const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;
+1380:   try{
+1381:     const result=await wxFetchJson(op,a,u); if(!result.ok||!attemptEligible(op,a)) return;
+1382:     const j=result.data;
+1383:     if(!j||typeof j!=="object"||Array.isArray(j)||j.error===true) return;
+1384:     if(!wxResponseZoneMatches(j,captured.zone)){
+1385:       wxAttemptState(op,a,"unavailable","response timezone unavailable or contradicts captured request"); return;
+1386:     }
+1387:     const ctx={...captured,retrievedAt:Date.now()}, current=wxUnitsMatch(j.current_units,ctx)?admitWeatherRecord(j.current,ctx):null;
+1388:     const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);
+1389:     if(!attemptEligible(op,a)) return;                     // includes delayed-timer absolute expiry after normalization
+1390:     // Publication must wake the native consumer even at a frozen clock or
+1391:     // between the loader's completed paint and its first animation callback.
+1392:     if((current||track)&&elevation!=null){ siteElev=elevation; _renderDirty=true; }
+1393:     if(current&&attemptEligible(op,a)&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
+1394:       weather=current; _renderDirty=true;
+1395:       if(weatherEligibility(current,ctx.retrievedAt).eligible) lastWxAt=ctx.retrievedAt;
+1396:       try{ if(attemptEligible(op,a)) localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}
+1397:     }
+
+LINES 2574-2580
+2574: function publishCloudAuthority(state,decision,reason){
+2575:   const old=_cloudPublication,target=decision?.target||currentWeatherTarget(),record=decision?.record||null,r=old.receipt,scene=skySceneIdentity(),mode=cloudAuthorityMode();
+2576:   if(r.state===state&&r.reason===reason&&old.record===record&&r.lane===(decision?.lane||null)&&weatherTargetSame(r.target,target)&&old.scene===scene&&old.mode===mode)return r;
+2577:   const receipt=Object.freeze({revision:r.revision+1,state,reason,target:Object.freeze({generation:target.generation,lat:target.lat,lon:target.lon}),
+2578:     lane:decision?.lane||null,sourceValidAt:record?.currentValidAt??null,retrievedAt:record?.retrievedAt??null,conditionState:decision?.conditionState||"unavailable",at:Date.now()});
+2579:   _cloudPublication={decision,record,scene,mode,receipt};return receipt;
+2580: }
+
+FILE /workspace/scratch/15b8fb6ac4c2/r000b-work/tests/rlgwo/r000b-no-timetable-fixture.html
+
+LINES 19-30
+19:   const rootURL=new URL("/product/",location.href),started=performance.now();
+20:   const startUtc=NativeDate.parse("2026-09-08T20:59:50.000Z"),sourceUtc=NativeDate.parse("2026-09-08T20:45:00.000Z");
+21:   // One initial epoch offset, then ordinary native elapsed time at 1x. There is
+22:   // no seek, frozen second, accelerated time, or callable clock-setting seam.
+23:   const elapsed=()=>performance.now()-started,wall=()=>startUtc+Math.floor(elapsed());
+24:   const documentId=crypto.randomUUID(),ownedDocument=document;
+25:   const policy="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'";
+26:   let weatherRequests=0,prayerRequests=0,radarRequests=0;
+27:   const report=window.__withdrawalFixture={schema:"r000b-no-timetable-fixture/v1",run,attempt,caseId,documentId,hash,
+28:     state:"setup",error:null,sourceSha256:null,expectedSourceSha256,scriptBodies:[],bridgeSha256:null,started,startUtc,initialSourceUtc:sourceUtc,visibility,
+29:     clockPolicy:"native-elapsed-1x; integer milliseconds; single initial epoch offset",clockIsolated:false,fetchIntercepted:false,
+30:     storageIsolated:false,initialStorageEntries:null,prayerRecoveryNotBeforeMs:100000,maxElapsedMs:240000,
+
+LINES 61-79
+61:   }
+62:   function jsonResponse(value,row,status=200){
+63:     row.status=status;row.inputBody=value;
+64:     const response=new Response(JSON.stringify(value),{status,headers:{"Content-Type":"application/json"}}),nativeJson=response.json.bind(response);
+65:     response.json=()=>{row.jsonReads++;return nativeJson().then(value=>{
+66:       row.result="json-consumed";row.jsonSettled=true;row.jsonElapsedMs=elapsed();return value;
+67:     });};
+68:     return Promise.resolve(response);
+69:   }
+70:   function fixtureFetch(input,init){
+71:     const u=new URL(typeof input==="string"||input instanceof URL?String(input):input.url,location.href);
+72:     const row={attempt,url:u.origin+u.pathname,jsonReads:0,elapsedMs:elapsed(),wallUtcMs:wall(),result:"requested",cache:init&&init.cache||null};
+73:     report.ledger.push(row);
+74:     if(u.origin===rootURL.origin&&u.pathname.startsWith(rootURL.pathname)){
+75:       row.kind="local-asset";row.url=u.pathname;row.result="local-asset-passthrough";
+76:       return nativeFetch(input,init);
+77:     }
+78:     const sameKeys=keys=>[...u.searchParams.keys()].length===keys.length&&[...u.searchParams.keys()].every(k=>keys.includes(k));
+79:     const owner=kind=>{const op=_requestSlots[kind],a=op?.attempt;return op?{generation:op.generation,operationId:op.operationId,requestedDay:op.requestedDay??null,attemptId:a?.attemptId??null,deadlineAt:a?.deadlineAt??null}:null;};
+
+LINES 87-90
+87:       sameKeys(["latitude","longitude","current","hourly","forecast_days","temperature_unit","wind_speed_unit","timezone"])){
+88:       row.kind="weather";row.url=u.href;row.weatherOrdinal=++weatherRequests;row.nativeOwner=owner("weather");
+89:       return jsonResponse(weatherFixture(),row);
+90:     }
+
+LINES 129-140
+129:       const elapsedMs=performance.now()-report.started,at=Date.now(),M=model(),e=weatherEligibility(weather,at),c=document.querySelector(".c");
+130:       const foregroundOwner=c?.classList.contains("real-sky-composed")?"refined":c?.classList.contains("real-sky-preview-ready")?"preview":null;
+131:       const foreground=foregroundOwner?document.querySelector(foregroundOwner==="refined"?".real-sky-canvas":".real-sky-preview"):null;
+132:       return {wallUtcMs:at,elapsedMs,modelIsNull:M===null,loopStarted:_loopStarted,
+133:         currentDay:prayerCivilDay(),todayDay:today?.date?.gregorian?.date??null,tomorrowDay:tomorrow?.date?.gregorian?.date??null,
+134:         candidate:{eligible:e.eligible,reason:e.reason,sourceAgeMs:e.sourceAgeMs,receiptAgeMs:e.receiptAgeMs,sourceValidAt:weather?.currentValidAt??null,retrievedAt:weather?.retrievedAt??null},
+135:         cloudReady:_cloudReady,coverage:[cloudState.covLow,cloudState.covMid,cloudState.covHigh],
+136:         publication:publication(),motion:motion(),documentHidden:document.hidden,documentVisibility:document.visibilityState,cardPaused:c?.classList.contains("paused"),
+137:         foregroundOwner,foregroundVisible:foreground?.style.visibility==="visible",foregroundHasCloudMask:!!c?.style.getPropertyValue("--native-sun-cloud-mask").includes("data:image/png;base64,"),
+138:         temperature:document.querySelector("#wt")?.textContent,icon:document.querySelector("#wi")?.textContent,
+139:         fx:c?.dataset.fx,precip:c?.dataset.precip,lightning:c?.dataset.lightning,lastRender:copy(_lastRender)};
+140:     }
+
+LINES 199-208
+199:       return {...state,identity:control.identity(),clock:{TIMESCALE,FOLLOW_WALL_CLOCK,ADVANCING},
+200:         motionPreference:{reduced:matchMedia("(prefers-reduced-motion: reduce)").matches,full:new URLSearchParams(location.hash.slice(1)).get("motion")==="full"},
+201:         target:copy(currentWeatherTarget()),sceneIdentity:skySceneIdentity(),runtimeGeneration:_runtimeGeneration,
+202:         prayer:{modelIsNull:state.modelIsNull,currentDay:state.currentDay,todayDay:state.todayDay,tomorrowDay:state.tomorrowDay,
+203:           recordsGeneration:_prayerRecordsGeneration,stale:_prayerStale,lastRender:copy(_lastRender),cooldown:copy(_prayerCooldown),
+204:           requests:{current:copy(_requestSlots.current),prefetch:copy(_requestSlots.prefetch)}},
+205:         raw:copy(weather),selected:!!selectedWeather(state.wallUtcMs),cache:{key:cacheKey,bytes:cacheBytes,parsed:cacheBytes==null?null:JSON.parse(cacheBytes)},
+206:         lastWeatherHeader:copy(_lastWeatherHeader),header:{icon:state.icon,temperature:state.temperature,label:document.querySelector("#wi").title},
+207:         actualCloud:{ready:_cloudReady,coverage:[cloudState.covLow,cloudState.covMid,cloudState.covHigh],targets:[cloudState.tgtLow,cloudState.tgtMid,cloudState.tgtHigh],
+208:           density:{values:density,length:density.length,sum:density.reduce((a,b)=>a+b,0),max:densityMax,nonzero:density.filter(v=>v!==0).length},
+
+LINES 223-235
+223:     }
+224:     let lastRetained=-Infinity,lastKey=null;
+225:     const observer=setInterval(()=>{
+226:       if(report.state!=="ready")return;
+227:       try{
+228:         const state=passive();report.latest=state;
+229:         const key=JSON.stringify([state.modelIsNull,state.candidate.eligible,state.candidate.sourceValidAt,state.cloudReady,state.publication?.state,state.temperature,state.precip]);
+230:         if(state.elapsedMs<16000||key!==lastKey||state.elapsedMs-lastRetained>=1000){
+231:           if(report.passive.length>=4096)throw Error("Bounded passive trace exhausted");
+232:           report.passive.push(state);lastRetained=state.elapsedMs;lastKey=key;
+233:         }
+234:         if(state.elapsedMs>report.maxElapsedMs){clearInterval(observer);throw Error("Bounded fixture elapsed budget exhausted");}
+235:       }catch(error){clearInterval(observer);report.error=String(error.message||error);report.state="error";}
+
+FILE /workspace/scratch/15b8fb6ac4c2/r000b-work/tools/qa/run_r000b_withdrawal.py
+
+LINES 495-514
+495: def healthy_refresh_record(state):
+496:     """Identity of a full capture whose native publication consumes its record."""
+497:     cloud, raw = state.get('actualCloud') or {}, state.get('raw') or {}
+498:     receipt, candidate = cloud.get('publication') or {}, state.get('candidate') or {}
+499:     target = state.get('target')
+500:     source, retrieved = raw.get('currentValidAt'), raw.get('retrievedAt')
+501:     if not (state.get('modelIsNull') is False and state.get('selected') is True
+502:             and _finite_number(source) and _finite_number(retrieved)
+503:             and receipt.get('state') == 'eligible-published' and receipt.get('lane') == 'live'
+504:             and receipt.get('target') == target == raw.get('target')
+505:             and receipt.get('conditionState') == 'model-estimated-rain'
+506:             and receipt.get('sourceValidAt') == source and receipt.get('retrievedAt') == retrieved
+507:             and candidate.get('eligible') is True and candidate.get('sourceValidAt') == source
+508:             and candidate.get('retrievedAt') == retrieved
+509:             and _finite_number(receipt.get('revision')) and isinstance(target, dict) and _finite_number(target.get('generation'))
+510:             and target.get('generation') == state.get('runtimeGeneration')):
+511:         return None
+512:     return {'sourceValidAt': source, 'retrievedAt': retrieved, 'target': target,
+513:             'lane': receipt['lane'], 'publication': receipt}
+514: 
+
+LINES 516-550
+516: def _healthy_refresh_request(record, captured, ledger):
+517:     """Find the actual owned/consumed synthetic response for a record receipt."""
+518:     matches = []
+519:     for request in ledger:
+520:         if not isinstance(request, dict) or request.get('kind') != 'weather':
+521:             continue
+522:         owner, body = request.get('nativeOwner') or {}, request.get('inputBody') or {}
+523:         current = body.get('current') or {}
+524:         try:
+525:             value = current.get('time')
+526:             if not isinstance(value, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}', value):
+527:                 continue
+528:             source = int(datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M').replace(
+529:                 tzinfo=datetime.timezone(datetime.timedelta(hours=3))).timestamp() * 1000)
+530:         except (ValueError, OverflowError):
+531:             continue
+532:         numbers = [request.get('elapsedMs'), request.get('wallUtcMs'), request.get('jsonElapsedMs'),
+533:                    owner.get('deadlineAt'), request.get('weatherOrdinal'), captured.get('elapsedMs'), captured.get('wallUtcMs')]
+534:         if not all(_finite_number(value) for value in numbers):
+535:             continue
+536:         json_wall = INITIAL_SOURCE_UTC + 890000 + math.floor(request['jsonElapsedMs'])
+537:         if (request.get('status') == 200 and request.get('jsonReads') == 1 and request.get('jsonSettled') is True
+538:                 and request.get('result') == 'json-consumed' and body.get('timezone') == 'Asia/Riyadh'
+539:                 and current.get('interval') == 900 and source == record['sourceValidAt']
+540:                 and owner.get('operationId') is not None and owner.get('attemptId') is not None
+541:                 and owner.get('generation') == record['target']['generation']
+542:                 and 0 <= request['elapsedMs'] <= request['jsonElapsedMs'] <= captured['elapsedMs']
+543:                 and request['wallUtcMs'] <= record['retrievedAt'] < owner['deadlineAt']
+544:                 and json_wall <= record['retrievedAt'] <= captured['wallUtcMs']):
+545:             matches.append({'weatherOrdinal': request['weatherOrdinal'], 'elapsedMs': request['elapsedMs'],
+546:                 'wallUtcMs': request['wallUtcMs'], 'jsonElapsedMs': request['jsonElapsedMs'],
+547:                 'status': request['status'], 'jsonReads': request['jsonReads'], 'jsonSettled': request['jsonSettled'],
+548:                 'result': request['result'], 'inputSourceTime': current['time'], 'inputSourceUtc': source,
+549:                 'nativeOwner': owner})
+550:     return matches[0] if len(matches) == 1 else None
+
+LINES 580-590
+580:     layers, targets = sky.get('visibleForegrounds'), cloud.get('targets')
+581:     try:
+582:         if not (healthy_cloud(state) and rain_origin(state)
+583:                 and state.get('prayer', {}).get('modelIsNull') is False and state.get('selected') is True
+584:                 and cloud.get('publication') == state['publication']
+585:                 and cloud.get('coverage') == coverage and isinstance(targets, list) and len(targets) == 3
+586:                 and all(_finite_number(a) and abs(a - b) < 1e-9 for a, b in zip(targets, EXPECTED_COVERAGE))
+587:                 and (raw.get('currentValidAt'), raw.get('retrievedAt')) == (candidate['sourceValidAt'], candidate['retrievedAt'])
+588:                 and raw.get('target') == receipts[0]['target']
+589:                 and isinstance(layers, list) and layers
+590:                 and any(layer.get('owner') == sky.get('owner') for layer in layers)):
+
+LINES 1048-1056
+1048:             # R000B_F01_REQUIRED_ORDINARY_HEALTHY_REFRESH_V1
+1049:             # The original30-second watch above remains uninterrupted. Reuse its
+1050:             # actual full captures when they already bracket an owned refresh.
+1051:             refresh_before = healthy_refresh_record(recovered)
+1052:             if refresh_before is None:
+1053:                 raise ValueError('Recovered capture lacks a bound current record/native receipt')
+1054:             refresh_progress = page.evaluate(HEALTHY_REFRESH_PROGRESS)
+1055:             if refresh_progress['maxElapsedMs'] != 240000:
+1056:                 raise ValueError('Healthy refresh requires the unchanged240-second fixture budget')
+
+FILE /workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-native-oracles.test.py
+
+LINES 293-304
+293: def healthy_refresh_case(refresh_ms=180000, end_ms=None, mode='default'):
+294:     """Invented observations/owned responses; no product or browser execution."""
+295:     start_ms, end_ms = 130000, (refresh_ms + 1000 if end_ms is None else end_ms)
+296:     prior_ms = refresh_ms - 60000
+297:     target = {'generation': 7, 'lat': 24.7136, 'lon': 46.6753}
+298: 
+299:     def receipt(request_ms, revision):
+300:         return {'revision': revision, 'state': 'eligible-published', 'reason': 'complete atmosphere',
+301:                 'target': target.copy(), 'lane': 'live',
+302:                 'sourceValidAt': (REFRESH_START_UTC + request_ms) // 60000 * 60000,
+303:                 'retrievedAt': REFRESH_START_UTC + request_ms + 10,
+304:                 'conditionState': 'model-estimated-rain',
+
+LINES 316-323
+316:             foregroundOwner='refined', foregroundVisible=True, foregroundHasCloudMask=True,
+317:             precip='on', lightning='off', target=target.copy(), runtimeGeneration=7, selected=True,
+318:             prayer={'modelIsNull': False, 'todayDay': '09-09-2026'},
+319:             candidate={'eligible': True, 'sourceValidAt': candidate['sourceValidAt'], 'retrievedAt': candidate['retrievedAt']},
+320:             raw={'currentValidAt': candidate['sourceValidAt'], 'retrievedAt': candidate['retrievedAt'], 'target': target.copy()},
+321:             rainOriginEvidence={'schema': 'r000b-rain-origin/v2', 'ok': True})
+322:         moved = advance(seed, at, seconds=0 if mode == 'reduced' else (at - start_ms) / 1000)['motion']
+323:         state['motion'] = deepcopy(moved)
+
+LINES 332-339
+332: 
+333:     def request(at, active, ordinal):
+334:         civil = datetime.datetime.fromtimestamp(active['sourceValidAt'] / 1000, datetime.timezone.utc) + datetime.timedelta(hours=3)
+335:         return {'kind': 'weather', 'weatherOrdinal': ordinal, 'elapsedMs': at, 'wallUtcMs': REFRESH_START_UTC + at,
+336:                 'jsonElapsedMs': at + 5, 'jsonReads': 1, 'jsonSettled': True, 'status': 200, 'result': 'json-consumed',
+337:                 'nativeOwner': {'generation': 7, 'operationId': ordinal * 2, 'attemptId': ordinal * 3,
+338:                                 'deadlineAt': REFRESH_START_UTC + at + 12000},
+339:                 'inputBody': {'timezone': 'Asia/Riyadh', 'current': {'time': civil.strftime('%Y-%m-%dT%H:%M'), 'interval': 900}}}

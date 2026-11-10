@@ -1,0 +1,17 @@
+{
+  "schema": "r000c-activity-override-diagnostic/v1",
+  "diagnosticOnly": true,
+  "preference": {
+    "layout.testing.top-level-always-active": true
+  },
+  "appliesTo": "Only the fresh isolated Firefox launch options",
+  "wrapperSha256": "af609107a12d81ee3cdd2c93a3d211412758bf44273b07877bd745f0c1a7f98e",
+  "probeSha256": "9d4b7cc44a888aed71224f7566763aeee36e0edccf48cefb09e5005716679e90",
+  "nativeLogging": "timestamp,sync,PresShell:5,nsRefreshDriver:5",
+  "criteria": [
+    "Exact fixture URL logs native Activeness overridden by pref",
+    "Actual last-render summaries resume ordinary progression",
+    "Original native video contains a readable complete card"
+  ],
+  "limitations": "One diagnostic of Firefox's documented automation activity criterion.\n\nFresh isolated browser only. Preserve the reviewed twenty-second passive probe,\noriginal readiness, source, reduced-motion input and native recorder. This does\nnot qualify the weather case or simulate foreground/desktop interaction.\n"
+}

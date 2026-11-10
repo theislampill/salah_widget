@@ -1,0 +1,51 @@
+{
+  "schema": "r0021-independent-bounded-preflight/v1",
+  "atUtc": "2026-10-21T13:33:07.673529+00:00",
+  "status": "SUPPORTED_EXACT_SERIAL_FUNCTIONAL_CONTROLS",
+  "priorReviewSha256": "20f676af58dbf4b815780e90126a112e2f77ecdf49321767b2e78e870b163e79",
+  "pins": {
+    "run_recovery_r121_r122.py": "b9e0518089e39fede6863cbb3f29499fadaaa7d686139d552e0d1a3b81d0bf44",
+    "prepare_recovery_r121_r122.py": "6fbf29ddfc4f02b7724e650e977545cf9b9dc4c21555a80fb3dd182f0ab20d9b",
+    "intake/recovery-r121-r122-preparation.json": "0b6e2735fbdb37d9a4c1b1002471b53f68c7ae1b60cdd464e64d7454b0ed7876",
+    "intake/delayed-body-r121-commands.json": "810f3948b46544d7f5537c5e28f5182d205cdb1b9affb1665417a3d71d5bd3c5",
+    "intake/file-atob-r122-commands.json": "3bc1157b7d5bcfe0587690c1f6b6dcfa6cc99b370f227a0cd9965ca93de1ba47",
+    "recovery-tools-r121-r122/tools/cp9/celestial_startup_check.py": "a4c9ec5070034d364b87e92c0b0dad746978c52575b60028b050a02a21c10764"
+  },
+  "runtime": "3e18b2fa83d0cbfce0a4360d789f7927aef5c064f963e8c18acb430507995821",
+  "scope": {
+    "faults": [
+      "delayed-body realHTTP200 original4096 prefix and20137935-byte Content-Length",
+      "file index.html one malformed base64 payload with valid asset-chunk envelope"
+    ],
+    "engines": [
+      "Chromium148",
+      "Firefox150"
+    ],
+    "perFaultPerEngine": 1,
+    "retryPerCase": 1,
+    "observerSecondsFromFirstNavigation": 540,
+    "outerLaunchCleanupSeconds": 600,
+    "productStartupMs": 120000,
+    "productRefinementMs": 240000,
+    "repeat": "None admitted; any failed attempt retained. ROOT owns serialized lease."
+  },
+  "resolvedFinding": "New wrapper checks one cold run, actual retry true, unexpected browser errors, final current/refined/empirical-adaptive with0.5gate and0unsettled, original primary termination and actual timer/injection/error/restoration chain before advancing. Expected historical Moon errors are preserved. No new acquisition instrumentation or method change.",
+  "sourceEvidence": [
+    "moon/src/moon-worker.mjs:5-9 real fetch body reader;11unbase64;65-71valid envelope then native atob/boot-error",
+    "moon/src/moon-native.mjs:143-148 host file-envelope check before Worker.postMessage;184boot-error propagation;217startup120000;141refinement240000;260explicitretry",
+    "Derived harness301-303 single absolute observation scope;331-370 failure before restore and retry/current final;392-396 ceiling/normal closure. Wrapper40-48 abnormal owned-tree cleanup retains lease."
+  ],
+  "observedPreflight": {
+    "leaseAbsent": true,
+    "destinationsAbsent": true,
+    "harnessPinsMatched": 7,
+    "sixCompanionsUnchanged": true
+  },
+  "limits": [
+    "Prospective method support only; no native run by reviewer. ROOT must verify actual failed/final whole-card pixels, source timer/worker IDs, original bytes, currentness and owned process cleanup.",
+    "No S1/cost/continuous-display or hardware-presentation claim. Firefox uses only declared PNG states; Chromium existing video.",
+    "File atob coverage is not offline.html or malformed-wire decompressor coverage. No source/hash/gate/physics changes; old native evidence retained.",
+    "Normal result checks are screening, not a substitute for independent result review. Failure/interruption partials and held lease require reconciliation, never automatic retry.",
+    "No merge/deploy/closure or formal canonical currentness/epoch/native lifecycle authority."
+  ]
+}

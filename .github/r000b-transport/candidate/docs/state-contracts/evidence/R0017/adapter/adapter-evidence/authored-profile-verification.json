@@ -1,0 +1,109 @@
+{
+  "scope": "bounded authored-source integration repair, no full glob or joined rerun",
+  "contractSha256": "adde2470bba5f276ddae71f0c5a2fad9485854604bbd733c87723583e04b578a",
+  "focusedTestSha256": "ca4be8789b0beb127a2e3d226dd952face79ae8412f13d8b927f9236c9faaef8",
+  "unchangedHotfixConsumerSha256": "1b96aa5ec5ed88c5386eccaeabd38ea07a50f91461da412247b4ddd3e21f07d1",
+  "commands": [
+    {
+      "name": "authored-profile-green",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/r0017-adapters.test.cjs",
+        "tests/moon-fixture-anchors.test.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.7136348760031979,
+      "log": "/workspace/scratch/7a8daf93afaa/adapter-evidence/authored-profile-green.log",
+      "logSha256": "a6073489b3b1533e8a7c4dddd62a2fae3138125e96d565d1e2788bfc7ccfad94",
+      "tapTotals": {
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "authored-hotfix-green",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/hotfix-prayer-weather.test.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 4.556108693002898,
+      "log": "/workspace/scratch/7a8daf93afaa/adapter-evidence/authored-hotfix-green.log",
+      "logSha256": "5e6bdb494cd996992a52aed19027c0e64b65777c798f220ce748bd804bd9aaf3",
+      "tapTotals": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "authored-profile-transport",
+      "command": [
+        "node",
+        "tests/r0017-transport.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.6481507520002197,
+      "log": "/workspace/scratch/7a8daf93afaa/adapter-evidence/authored-profile-transport.log",
+      "logSha256": "12e0ca70602f038d59fa8f69227c979565bbd30edf49eacf3a64dbbd6983b379",
+      "tapTotals": {},
+      "jsonCounts": null,
+      "resultCases": 32
+    },
+    {
+      "name": "authored-profile-date-sinks",
+      "command": [
+        "node",
+        "tests/r0001-date-sinks.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.8672144039956038,
+      "log": "/workspace/scratch/7a8daf93afaa/adapter-evidence/authored-profile-date-sinks.log",
+      "logSha256": "cb9cbda227a427bf7861f0387d968bb690a329a8de5bcfc25a7aa20cad71af55",
+      "tapTotals": {},
+      "jsonCounts": null,
+      "resultCases": 13
+    },
+    {
+      "name": "authored-profile-ce-mutant",
+      "command": [
+        "node",
+        "/workspace/scratch/7a8daf93afaa/adapter-evidence/mutant-sources/product-guard-probe.cjs",
+        "/workspace/scratch/7a8daf93afaa/r0017-explicit-work",
+        "ce"
+      ],
+      "exitCode": 1,
+      "elapsedSeconds": 0.7030667330036522,
+      "log": "/workspace/scratch/7a8daf93afaa/adapter-evidence/authored-profile-ce-mutant.log",
+      "logSha256": "3834c91accddc2f28166111d8583f900e874af13564e755202d7331cdd9b5111",
+      "tapTotals": {},
+      "input": {
+        "field": "ce",
+        "setupAdmitted": true,
+        "sourceSha256": "cc9bd14ffc6bb516938fb8521b25f50edcc095922b6ee0213252d30c77cce185",
+        "runtimeSha256": "b23f540f405f9aee8333a6f63c8f1c44c90086ad4c85f9f7c93694336f7b3812",
+        "productFileWritten": false
+      },
+      "passCases": 5,
+      "failCases": 5,
+      "failedAssertions": [
+        "hash format reaches both sinks inert",
+        "saved format reaches both sinks inert",
+        "provider months reach both sinks inert",
+        "after Maghrib selects tomorrow AH without preview",
+        "Arabic quotes ampersand angle literals encode exactly once"
+      ]
+    }
+  ]
+}

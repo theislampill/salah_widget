@@ -1,0 +1,159 @@
+        
+— local config contract (private stores; no origin storage) —
+✓ PASS  hardcoded: mode + coords + source=hash
+✓ PASS  hardcoded: historical defaults (units f, 24h, school 0, iso date)
+✓ PASS  hardcoded: resolves synchronously (not needsDetect)
+✓ PASS  serialize portable is byte-identical to the legacy builder format
+✓ PASS  bare: mode=bare, no cfg, no detect
+✓ PASS  local (no saved): needsDetect=true
+✓ PASS  preferLocal (no saved): falls back to hash coords
+✓ PASS  serialize local generic = just local=1
+✓ PASS  serialize local keeps a non-default preference
+✓ PASS  datefmt preset back-compat (eu→token)
+✓ PASS  lat=0/lon=0 is a VALID hardcoded location
+✓ PASS  validate rejects a config with no coordinates
+✓ PASS  normalize clamps out-of-range lat/lon
+✓ PASS  applyHashPrefs overlays prefs but keeps the detected location
+✓ PASS  private storageAvailable
+✓ PASS  loadLocal empty after private clear
+✓ PASS  saveLocal ok + savedAt stamped
+✓ PASS  loadLocal returns saved (source=localStorage)
+✓ PASS  local mode uses private saved config
+✓ PASS  preferLocal uses the same private saved config
+✓ PASS  hardcoded ignores private saved config
+✓ PASS  clearLocal removes the private saved config
+✓ PASS  storageAvailable under denial returns {ok:false}
+✓ PASS  loadLocal under denial returns null
+✓ PASS  saveLocal under denial returns {ok:false}
+✓ PASS  clearLocal under denial returns {ok:false}
+        
+— actual fixture transport + weather gate —
+✓ PASS  gateWeatherCode + wxClass reachable on current rendered attempt
+✓ PASS  thunder code + dry downgrades
+✓ PASS  thunder code + heavy keeps thunder
+✓ PASS  thunder code + light NOT thunder
+✓ PASS  rain code + dry downgrades
+✓ PASS  rain code + wet keeps rain
+✓ PASS  clear code unchanged
+✓ PASS  cloud/overcast codes are not precip-gated
+✓ PASS  wxClass mapping
+✓ PASS  unsupported radar proxy2 cannot confirm dry-model rain
+✓ PASS  no radar + dry nowcast still downgrades
+✓ PASS  unsupported radar proxy1.5 cannot confirm thunder
+✓ PASS  light radar does NOT confirm thunder
+✓ PASS  radar never fabricates rain from a clear code
+✓ PASS  current-day fixture request was JSON-consumed
+✓ PASS  actual render current Dhuhr + next Asr
+✓ PASS  frozen 12:30 countdown is exactly 180 minutes
+✓ PASS  actual model next Asr time is 15:30
+        
+— weather truthfulness (qaState integration) —
+✓ PASS  displayCondition is not thunder
+✓ PASS  downgradeReason is reported
+✓ PASS  final data-fx is not thunder
+✓ PASS  displayCondition is rain
+✓ PASS  displayCondition is fog
+✓ PASS  no active precip
+        
+— R0024 actual model admission + independent synthetic present consumers —
+✓ PASS  current model passed actual admission
+✓ PASS  model thunder category + amount remain useful
+✓ PASS  actual model temperature + estimate cue consumed
+✓ PASS  current is estimated wet, local observation unavailable
+✓ PASS  all live strong permissions are off
+✓ PASS  actual particle opacity is zero
+✓ PASS  no fabricated nearby or arrival
+✓ PASS  actual current transport JSON was consumed
+✓ PASS  visible estimate is also accessible
+✓ PASS  fresh current model positive before expiry
+✓ PASS  source/receipt expiry removes current eligibility
+✓ PASS  expired current temperature withdrawn
+✓ PASS  expired current physical inputs withdrawn
+✓ PASS  expiry cannot retain particles
+✓ PASS  fresh admitted input restores model eligibility
+✓ PASS  fresh admitted input restores actual chip
+✓ PASS  recovered live model remains estimated wet/strong off
+✓ PASS  valid synthetic input is refused in ordinary live lane
+✓ PASS  refusal occurred before synthetic-state write
+✓ PASS  refusal is logged for exact input
+✓ PASS  actual live model remains useful and strong off
+✓ PASS  model-clear input is actually admitted
+✓ PASS  actual versioned present admission is positive
+✓ PASS  exact captured target generation is consumed
+✓ PASS  supported wet records model-dry disagreement
+✓ PASS  admitted wet reaches actual rain paint
+✓ PASS  permission is rain with no fabricated lightning
+✓ PASS  unknown amount remains null
+✓ PASS  synthetic lane is visibly marked
+✓ PASS  actual snow evidence admitted
+✓ PASS  snow reaches actual snow paint
+✓ PASS  snow cannot invent rain or lightning
+✓ PASS  actual lightning evidence admitted
+✓ PASS  observed synthetic lightning reaches actual thunder paint
+✓ PASS  rain and lightning permissions independently consumed
+✓ PASS  admitted wet positive before lease end
+✓ PASS  wet remains active one millisecond before end
+✓ PASS  validUntil is exclusive
+✓ PASS  actual paint withdraws immediately
+✓ PASS  readable expired evidence has no permission
+✓ PASS  wet source starts actual rain
+✓ PASS  operational direct dry evidence is admitted
+✓ PASS  rain end is supported dry with model-wet disagreement
+✓ PASS  dry immediately withdraws actual particles
+✓ PASS  fresh wet recovery restores actual rain
+✓ PASS  null outage calls actual unavailable admission
+✓ PASS  outage remains fixture lane and model estimate
+✓ PASS  outage cannot resume preview particles
+✓ PASS  wet positive precedes wrong-target control
+✓ PASS  wrong generation rejected by actual admission
+✓ PASS  wrong target cannot retain particles
+✓ PASS  fresh wet positive recovers before coverage control
+✓ PASS  outside target coverage is unavailable
+✓ PASS  coverage rejection immediately withdraws particles
+✓ PASS  fresh underlying observation positive
+✓ PASS  fresh receipt/frame does not renew old source
+✓ PASS  old source has no present authority
+✓ PASS  old source immediately withdraws actual particles
+✓ PASS  qualified point-dry is admitted
+✓ PASS  surrounding precipitation remains separately qualified
+✓ PASS  explicit trajectory supports only a later horizon interval
+✓ PASS  nearby/approach cannot rain at a supported-dry point
+✓ PASS  actual wet positive precedes target supersession
+✓ PASS  actual owner generation advanced
+✓ PASS  superseded evidence no longer available
+✓ PASS  target supersession withdraws actual particles
+        
+— moon truthfulness + no painted dawn —
+✓ PASS  moonlightOpacity is 0
+✓ PASS  calendarMoonVisible (slot not empty)
+✓ PASS  calendar disc group opaque at deep night
+✓ PASS  --moongrp ~1
+✓ PASS  --moonocc ~1
+✓ PASS  physical moonlight is on
+✓ PASS  moonSky fresh
+✓ PASS  no .falsedawn element
+✓ PASS  no .truedawn element
+        
+— continuity + observability —
+✓ PASS  cloudFieldSeed stable across reads
+✓ PASS  qaState exposes wxTruth + cache + render
+✓ PASS  cache not-stale under sim
+✓ PASS  prayer not stale + no rollover pending
+✓ PASS  render summary has fx + currentKey
+        
+— moon orientation (image decode has a finite deadline) —
+✓ PASS  moon is upright (no rotation)
+✓ PASS  waxing lit side is RIGHT
+✓ PASS  waning lit side is LEFT
+        
+— explicit motion preferences (no assumption about restored OS preference) —
+✓ PASS  reduce=true freezes sunpulse to 1
+✓ PASS  reduce=false controlled sunpulse differs from 1
+✓ PASS  exact original matchMedia function restored
+✓ PASS  motion=full wins over reduce=true
+✓ PASS  override fixture restores exact matchMedia function
+        
+— cloud continuity (bounded accelerated elapsed frames; NOT normal-live M0 evidence) —
+✓ PASS  actual monotonic interval elapsed
+✓ PASS  accelerated overcast deck present + evolves
+✓ PASS  cloudFieldSeed stable across controlled paints

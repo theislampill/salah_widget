@@ -1,0 +1,39 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
+import {nativeJob,nativeIdentity} from '../../real-sky/native-contract.mjs';
+const hook=fs.readFileSync(new URL('../../real-sky/native-host-hooks.js',import.meta.url),'utf8');
+function fixture(){const s={window:{},document:{hidden:false},$ :()=>null,q:new URLSearchParams(),simulationReady:()=>true,skySceneIdentity:()=> 'native-A',selectedWeather:()=>({src:'current',vis:20000}),simNow:()=>Date.parse('2026-09-07T20:30:00Z'),lat:28.54,lon:-81.38,siteElev:900,_runtimeGeneration:1,tz:'America/New_York',TIMESCALE:1,units:'c',LPOLL:0,isMotionReduced:()=>true,today:{},_pbrReady:false,_moonFallbackReady:false,_pbrFailed:false};vm.createContext(s);vm.runInContext(hook,s);return {s,h:s.window.SalahNativeSkyHost};}
+function accept(f,value=900,g=f.s._runtimeGeneration,lat=f.s.lat,lon=f.s.lon){assert.equal(typeof f.h.acceptedElevation,'function','Accepted elevation must have an explicit target-bound handoff');return f.h.acceptedElevation(value,g,lat,lon);}
+test('physical cloud direction reads accepted inputs without forcing solar presentation layout',()=>{
+ const f=fixture();accept(f,25);let supplied;
+ const card={style:{getPropertyValue:()=>0},classList:{contains:()=>false},getBoundingClientRect(){throw Error('unrelated presentation layout read');}};
+ f.s.$=()=>card;f.s.getComputedStyle=()=>{throw Error('unrelated computed style read');};
+ f.s.window.SalahNativeCloudLighting=s=>{supplied=s;return nativeJob(s,true);};
+ const job=f.h.cloudLighting();assert.equal(job.observer.utcMs,f.s.simNow());assert.equal(job.observer.latDeg,f.s.lat);assert.equal(job.observer.heightM,25);assert.equal(supplied.generation,1);assert.equal(supplied.solarAnchor,null);
+ assert.throws(()=>f.h.capture(),/presentation layout/,'the full presentation boundary still reads actual displayed solar geometry');
+});
+test('native paint notification does not duplicate the preview animation-frame producer',()=>{
+ const f=fixture();let requests=0;
+ f.s.window.SalahSkyPreview={update(){throw Error('duplicate synchronous preview');}};
+ f.s.window.SalahRealSky={request(){requests++;}};
+ f.h.notify();assert.equal(requests,1);
+});
+
+test('numerical currentness captures cannot force lunar layout or republish its texture',()=>{
+ const f=fixture();let reads=0;
+ f.s.window.SalahMoonRuntime={surface(){reads++;throw Error('lunar presentation/layout read');}};
+ // This path runs after each composed buffer and must be a pure native-state
+ // read. Lunar readiness is diagnostic presentation data, not sky identity.
+ const current=f.h.capture(false);
+ assert.equal(reads,0);assert.equal(current.moonReady,null);
+ assert.equal(nativeJob(current,true).observer.utcMs,f.s.simNow());
+ assert.throws(()=>f.h.capture(),/lunar presentation\/layout/);
+ assert.equal(reads,1,'full diagnostic capture still inspects the real lunar owner');
+});
+test('CP9 F01 unowned old scalar is not an accepted elevation',()=>{const f=fixture();assert.equal(f.h.capture().heightM,0);assert.match(f.h.capture().elevationSource,/default zero/);});
+test('CP9 F01 A to B with missing and simulated weather never inherits A height',()=>{const f=fixture();accept(f);assert.equal(f.h.capture().heightM,900);f.s._runtimeGeneration=2;f.s.lat=-33.87;f.s.lon=151.21;f.s.selectedWeather=()=>null;assert.equal(f.h.capture().heightM,0);f.s.selectedWeather=()=>({src:'sim',vis:20000});assert.equal(f.h.capture().heightM,0);});
+test('CP9 F01 A to B to A requires new-generation elevation even at same coordinates',()=>{const f=fixture();accept(f);f.s._runtimeGeneration=2;f.s.lat=0;assert.equal(f.h.capture().heightM,0);f.s._runtimeGeneration=3;f.s.lat=28.54;assert.equal(f.h.capture().heightM,0);accept(f,12);assert.equal(f.h.capture().heightM,12);});
+test('CP9 F01 late A callback cannot replace legitimate B elevation',()=>{const f=fixture();accept(f);f.s._runtimeGeneration=2;f.s.lat=-33.87;f.s.lon=151.21;accept(f,25);accept(f,900,1,28.54,-81.38);assert.equal(f.h.capture().heightM,25);});
+test('CP9 F01 legitimate accepted zero is distinguished from unknown zero',()=>{const f=fixture();const before=nativeIdentity(f.h.capture());accept(f,0);const s=f.h.capture();assert.equal(s.heightM,0);assert.match(s.elevationSource,/bound to this target generation/);assert.notEqual(nativeIdentity(s),before);assert.equal(nativeJob(s,true).observer.heightM,0);assert.equal(nativeJob(s,true).options.atmosphere.elevationM,0);});
+test('CP9 F01 invalid height and mismatched longitude refused',()=>{for(const value of [null,'100',NaN,Infinity,-501,10001]){const f=fixture();accept(f,value);assert.equal(f.h.capture().heightM,0);}const f=fixture();accept(f,400,1,f.s.lat,1);assert.equal(f.h.capture().heightM,0);});
+test('CP9 F01 ineligible weather withdraws bound height; eligible same-target restoration retains provenance',()=>{const f=fixture();accept(f,320);f.s.selectedWeather=()=>null;assert.equal(f.h.capture().heightM,0);f.s.selectedWeather=()=>({src:'current'});assert.equal(f.h.capture().heightM,320);});
+test('CP9 F01 subsequent B adoption reaches geometry and atmosphere once',()=>{const f=fixture();accept(f);f.s._runtimeGeneration=2;f.s.lat=-33.87;f.s.lon=151.21;accept(f,56);const s=f.h.capture(),j=nativeJob(s,true);assert.equal(j.observer.heightM,56);assert.equal(j.options.atmosphere.elevationM,56);assert.match(j.native.assumptions.elevation,/bound to this target generation/);});

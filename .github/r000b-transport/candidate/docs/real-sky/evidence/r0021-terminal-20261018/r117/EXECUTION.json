@@ -1,0 +1,110 @@
+{
+  "schema": "r0021-first-boundary-pair/v1",
+  "purpose": "One serial Chromium cold/direct pair, unchanged r105 harness, no profiler.",
+  "harnessInputSha256": {
+    "tools/cp9/celestial_startup_check.py": "0f2bdaac354c58ee0c7808988e0f074431c35d55bbcce35a3c539346d678d100",
+    "tools/cp9/chromium_startup_defaults.py": "db02da45beaaebb6876df8813ac27ea32b6ea9b68b86b2a5e9d989f6e490c46f",
+    "tools/cp9/celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+    "tools/cp9/celestial_layer_controls.js": "a590e5a0573932bebb5cf77bc7a9bcca7d4059eb2b189671e3a34d8c8503281e",
+    "tools/cp9/browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+    "tools/cp9/runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af",
+    "tests/v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692"
+  },
+  "cases": [
+    {
+      "name": "baseline",
+      "build": "baseline-18ff",
+      "runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+      "command": [
+        "${PLAYWRIGHT_PYTHON}",
+        "-I",
+        "-B",
+        "${REPO_ROOT}\\tools\\cp9\\celestial_startup_check.py",
+        "--root",
+        "${WORK_ROOT}\\builds\\baseline-18ff",
+        "--out",
+        "${WORK_ROOT}\\native\\first-boundary-r117\\baseline",
+        "--driver-cli",
+        "${WORK_ROOT}\\capture-driver\\cli.js",
+        "--driver-node",
+        "${DRIVER_NODE24}",
+        "--video-only",
+        "--compositor-marker",
+        "--modes",
+        "cold",
+        "--duration",
+        "20",
+        "--entry",
+        "direct",
+        "--persistent-profile",
+        "--restore-render-document"
+      ],
+      "createdAtUtc": "2026-10-18T18:05:00.685790+00:00",
+      "status": "RETURNED",
+      "pid": 38028,
+      "exitCode": 0,
+      "returnedAtUtc": "2026-10-18T18:05:24.088811+00:00"
+    },
+    {
+      "name": "candidate",
+      "build": "integrated-r29-lunar-rule",
+      "runtime": "70bb508176c976167d783a5c7c7bd09ab20d02f69669dce5d36af5c634b1c55e",
+      "command": [
+        "${PLAYWRIGHT_PYTHON}",
+        "-I",
+        "-B",
+        "${REPO_ROOT}\\tools\\cp9\\celestial_startup_check.py",
+        "--root",
+        "${WORK_ROOT}\\builds\\integrated-r29-lunar-rule",
+        "--out",
+        "${WORK_ROOT}\\native\\first-boundary-r117\\candidate",
+        "--driver-cli",
+        "${WORK_ROOT}\\capture-driver\\cli.js",
+        "--driver-node",
+        "${DRIVER_NODE24}",
+        "--video-only",
+        "--compositor-marker",
+        "--modes",
+        "cold",
+        "--duration",
+        "20",
+        "--entry",
+        "direct",
+        "--persistent-profile",
+        "--restore-render-document"
+      ],
+      "createdAtUtc": "2026-10-18T18:05:24.088811+00:00",
+      "status": "RETURNED",
+      "pid": 3084,
+      "exitCode": 0,
+      "returnedAtUtc": "2026-10-18T18:05:40.833262+00:00"
+    }
+  ],
+  "status": "RETURNED",
+  "noRepeat": true,
+  "scope": "First exposed celestial scene/principal content, original accepted clock, and matched baseline. Existing source gaps stay UNOBSERVED; no blanket S1 or performance claim.",
+  "baselineCustody": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "kind": "original committed generated runtime; not rebuilt",
+    "archiveSha256": "a3bc0cfceca1db23950359f4af5670bd1a9701ec000de5e9fd3563a8c67bfb92",
+    "indexSha256": "ff728552442f4bcce7f213a089bf01d4cf70ea8d74040bdd3323768ca453beee"
+  },
+  "baselineCustodySupplement": {
+    "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+    "reason": "Complete runtime identity inputs omitted by initial scoped archive; no runtime rebuild or replacement",
+    "added": [
+      {
+        "path": "builder.html",
+        "sha256": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+        "bytes": 30333
+      }
+    ]
+  },
+  "returnedAtUtc": "2026-10-18T18:05:40.833262+00:00",
+  "harnessUnchanged": true,
+  "runtimeUnchanged": {
+    "baseline": true,
+    "candidate": true
+  },
+  "leaseReleased": true
+}

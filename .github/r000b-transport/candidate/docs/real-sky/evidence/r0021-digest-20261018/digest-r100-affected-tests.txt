@@ -1,0 +1,682 @@
+TAP version 13
+# Subtest: portable asset identity agrees with independent published SHA-256 vectors
+ok 1 - portable asset identity agrees with independent published SHA-256 vectors
+  ---
+  duration_ms: 1.3261
+  type: 'test'
+  ...
+# Subtest: padding and block carry agree with OpenSSL on both sides of boundaries
+ok 2 - padding and block carry agree with OpenSSL on both sides of boundaries
+  ---
+  duration_ms: 6.2146
+  type: 'test'
+  ...
+# Subtest: digest uses only a nonzero-offset byte view and leaves caller storage intact
+ok 3 - digest uses only a nonzero-offset byte view and leaves caller storage intact
+  ---
+  duration_ms: 0.9145
+  type: 'test'
+  ...
+# Subtest: receiver and compressed terrain assets retain OpenSSL identities across many blocks
+ok 4 - receiver and compressed terrain assets retain OpenSSL identities across many blocks
+  ---
+  duration_ms: 298.0135
+  type: 'test'
+  ...
+# Subtest: the maximum supported byte length retains its OpenSSL identity
+ok 5 - the maximum supported byte length retains its OpenSSL identity
+  ---
+  duration_ms: 310.1015
+  type: 'test'
+  ...
+# Subtest: digest rejects unsupported input types and an oversized byte payload
+ok 6 - digest rejects unsupported input types and an oversized byte payload
+  ---
+  duration_ms: 0.8251
+  type: 'test'
+  ...
+# Subtest: selected compact builder is deterministic and retains exact parent/new identities
+ok 7 - selected compact builder is deterministic and retains exact parent/new identities
+  ---
+  duration_ms: 9.3835
+  type: 'test'
+  ...
+# Subtest: decoded compact candidate retains exact coverage and admits only its new initial identity
+ok 8 - decoded compact candidate retains exact coverage and admits only its new initial identity
+  ---
+  duration_ms: 129.7133
+  type: 'test'
+  ...
+# Subtest: compact decoder rejects wrong-parent
+ok 9 - compact decoder rejects wrong-parent
+  ---
+  duration_ms: 2.2468
+  type: 'test'
+  ...
+# Subtest: compact decoder rejects wrong-schema
+ok 10 - compact decoder rejects wrong-schema
+  ---
+  duration_ms: 2.4699
+  type: 'test'
+  ...
+# Subtest: compact decoder rejects wrong-shape
+ok 11 - compact decoder rejects wrong-shape
+  ---
+  duration_ms: 2.4605
+  type: 'test'
+  ...
+# Subtest: compact decoder rejects tampered-payload
+ok 12 - compact decoder rejects tampered-payload
+  ---
+  duration_ms: 2.1076
+  type: 'test'
+  ...
+# Subtest: compact decoder rejects invalid-codebook-depth
+ok 13 - compact decoder rejects invalid-codebook-depth
+  ---
+  duration_ms: 2.9516
+  type: 'test'
+  ...
+# Subtest: compact decoder rejects oversubscribed-codebook
+ok 14 - compact decoder rejects oversubscribed-codebook
+  ---
+  duration_ms: 2.9843
+  type: 'test'
+  ...
+# Subtest: compact decoder rejects trailing-data
+ok 15 - compact decoder rejects trailing-data
+  ---
+  duration_ms: 37.7659
+  type: 'test'
+  ...
+# Subtest: compact decoder rejects changed-scalar-range
+ok 16 - compact decoder rejects changed-scalar-range
+  ---
+  duration_ms: 74.6244
+  type: 'test'
+  ...
+# Subtest: selected compact builder refuses mutated parent rather than silently repinning
+ok 17 - selected compact builder refuses mutated parent rather than silently repinning
+  ---
+  duration_ms: 67.597
+  type: 'test'
+  ...
+# Subtest: initial document hands off the original head result once through its two startup invalidations
+ok 18 - initial document hands off the original head result once through its two startup invalidations
+  ---
+  duration_ms: 6.6588
+  type: 'test'
+  ...
+# Subtest: head handoff rejects target-round-trip
+ok 19 - head handoff rejects target-round-trip
+  ---
+  duration_ms: 1.5715
+  type: 'test'
+  ...
+# Subtest: head handoff rejects profile-round-trip
+ok 20 - head handoff rejects profile-round-trip
+  ---
+  duration_ms: 1.4678
+  type: 'test'
+  ...
+# Subtest: head handoff rejects hidden-round-trip
+ok 21 - head handoff rejects hidden-round-trip
+  ---
+  duration_ms: 1.4584
+  type: 'test'
+  ...
+# Subtest: head handoff rejects paused-return
+ok 22 - head handoff rejects paused-return
+  ---
+  duration_ms: 1.479
+  type: 'test'
+  ...
+# Subtest: head handoff rejects invalid-return
+ok 23 - head handoff rejects invalid-return
+  ---
+  duration_ms: 1.8167
+  type: 'test'
+  ...
+# Subtest: head handoff rejects seek-round-trip
+ok 24 - head handoff rejects seek-round-trip
+  ---
+  duration_ms: 1.6043
+  type: 'test'
+  ...
+# Subtest: head handoff rejects finished
+ok 25 - head handoff rejects finished
+  ---
+  duration_ms: 1.3725
+  type: 'test'
+  ...
+# Subtest: head handoff rejects dpr
+ok 26 - head handoff rejects dpr
+  ---
+  duration_ms: 1.6622
+  type: 'test'
+  ...
+# Subtest: head handoff rejects phase
+ok 27 - head handoff rejects phase
+  ---
+  duration_ms: 1.625
+  type: 'test'
+  ...
+# Subtest: head handoff rejects clock
+ok 28 - head handoff rejects clock
+  ---
+  duration_ms: 1.5504
+  type: 'test'
+  ...
+# Subtest: head handoff rejects generation
+ok 29 - head handoff rejects generation
+  ---
+  duration_ms: 1.4163
+  type: 'test'
+  ...
+# Subtest: head handoff rejects receiver
+ok 30 - head handoff rejects receiver
+  ---
+  duration_ms: 1.8142
+  type: 'test'
+  ...
+# Subtest: head handoff rejects profile
+ok 31 - head handoff rejects profile
+  ---
+  duration_ms: 1.424
+  type: 'test'
+  ...
+# Subtest: held refinement script leaves the current initial Moon usable and starts only admitted source
+ok 32 - held refinement script leaves the current initial Moon usable and starts only admitted source
+  ---
+  duration_ms: 3.0285
+  type: 'test'
+  ...
+# Subtest: full terrain boot follows a paint opportunity while the current initial surface is available
+ok 33 - full terrain boot follows a paint opportunity while the current initial surface is available
+  ---
+  duration_ms: 3.4601
+  type: 'test'
+  ...
+# Subtest: held source preserves the worker retry budget and explicit pending status
+ok 34 - held source preserves the worker retry budget and explicit pending status
+  ---
+  duration_ms: 1.9109
+  type: 'test'
+  ...
+# Subtest: current initial V5 presentation precedes worker readiness and is replaced by preview then final
+ok 35 - current initial V5 presentation precedes worker readiness and is replaced by preview then final
+  ---
+  duration_ms: 711.1481
+  type: 'test'
+  ...
+# Subtest: initial data grants no authority to an old generation, seek or profile
+ok 36 - initial data grants no authority to an old generation, seek or profile
+  ---
+  duration_ms: 1.9412
+  type: 'test'
+  ...
+# Subtest: missing full assets retain only independently current initial presentation
+ok 37 - missing full assets retain only independently current initial presentation
+  ---
+  duration_ms: 1.3193
+  type: 'test'
+  ...
+# Subtest: presentation footprint motion cannot withdraw the same qualified terrain
+ok 38 - presentation footprint motion cannot withdraw the same qualified terrain
+  ---
+  duration_ms: 307.4732
+  type: 'test'
+  ...
+# Subtest: normal native horizon-scale growth keeps a phase-qualified presentation
+ok 39 - normal native horizon-scale growth keeps a phase-qualified presentation
+  ---
+  duration_ms: 325.9484
+  type: 'test'
+  ...
+# Subtest: ordinary bounded phase refresh starts while the current terrain stays visible
+ok 40 - ordinary bounded phase refresh starts while the current terrain stays visible
+  ---
+  duration_ms: 887.1923
+  type: 'test'
+  ...
+# Subtest: bounded display reuse never crosses a generation, seek, orientation or profile change
+ok 41 - bounded display reuse never crosses a generation, seek, orientation or profile change
+  ---
+  duration_ms: 1373.2473
+  type: 'test'
+  ...
+# Subtest: failed replacement cannot blank an independently validated still-current surface
+ok 42 - failed replacement cannot blank an independently validated still-current surface
+  ---
+  duration_ms: 338.977
+  type: 'test'
+  ...
+# Subtest: normal phase evolution keeps a current surface across two refinement cycles
+ok 43 - normal phase evolution keeps a current surface across two refinement cycles
+  ---
+  duration_ms: 10938.8845
+  type: 'test'
+  ...
+# Subtest: embedded source survives boot-error and a retry replays every chunk
+ok 44 - embedded source survives boot-error and a retry replays every chunk
+  ---
+  duration_ms: 1.2875
+  type: 'test'
+  ...
+# Subtest: current full-spatial terrain preview is visible but never mislabelled refined
+ok 45 - current full-spatial terrain preview is visible but never mislabelled refined
+  ---
+  duration_ms: 780.7596
+  type: 'test'
+  ...
+# Subtest: unsettled final result is never called a refined visible Moon
+ok 46 - unsettled final result is never called a refined visible Moon
+  ---
+  duration_ms: 386.5423
+  type: 'test'
+  ...
+# Subtest: malformed numeric surface withdraws safely without publishing
+ok 47 - malformed numeric surface withdraws safely without publishing
+  ---
+  duration_ms: 2.2917
+  type: 'test'
+  ...
+# Subtest: complete result becomes current, preview remains pending
+ok 48 - complete result becomes current, preview remains pending
+  ---
+  duration_ms: 834.9357
+  type: 'test'
+  ...
+# Subtest: A B A generations cannot publish the original request
+ok 49 - A B A generations cannot publish the original request
+  ---
+  duration_ms: 2.7565
+  type: 'test'
+  ...
+# Subtest: profile change rejects predecessor even at identical phase
+ok 50 - profile change rejects predecessor even at identical phase
+  ---
+  duration_ms: 2.1452
+  type: 'test'
+  ...
+# Subtest: DPR change rejects predecessor
+ok 51 - DPR change rejects predecessor
+  ---
+  duration_ms: 3.0228
+  type: 'test'
+  ...
+# Subtest: native invalid input withdraws accepted surface
+ok 52 - native invalid input withdraws accepted surface
+  ---
+  duration_ms: 424.8099
+  type: 'test'
+  ...
+# Subtest: native time seek invalidates same-geometry work
+ok 53 - native time seek invalidates same-geometry work
+  ---
+  duration_ms: 1.3093
+  type: 'test'
+  ...
+# Subtest: hide return does not retain a predecessor
+ok 54 - hide return does not retain a predecessor
+  ---
+  duration_ms: 1.4635
+  type: 'test'
+  ...
+# Subtest: dead-worker cleanup is nonthrowing and bounded retries
+ok 55 - dead-worker cleanup is nonthrowing and bounded retries
+  ---
+  duration_ms: 1.2853
+  type: 'test'
+  ...
+# Subtest: dispose revokes publication and further retry
+ok 56 - dispose revokes publication and further retry
+  ---
+  duration_ms: 1.191
+  type: 'test'
+  ...
+# Subtest: fully embedded document needs no relative resource base
+ok 57 - fully embedded document needs no relative resource base
+  ---
+  duration_ms: 0.8961
+  type: 'test'
+  ...
+# Subtest: wrong surface extent is rejected before publication
+ok 58 - wrong surface extent is rejected before publication
+  ---
+  duration_ms: 1.1222
+  type: 'test'
+  ...
+# Subtest: wrong output footprint is rejected before publication
+ok 59 - wrong output footprint is rejected before publication
+  ---
+  duration_ms: 1.5149
+  type: 'test'
+  ...
+# Subtest: startup deadline triggers fallback, not a main-thread solver
+ok 60 - startup deadline triggers fallback, not a main-thread solver
+  ---
+  duration_ms: 1.3592
+  type: 'test'
+  ...
+# Subtest: refinement deadline retains only the validated current preview, never a false ready result
+ok 61 - refinement deadline retains only the validated current preview, never a false ready result
+  ---
+  duration_ms: 422.5455
+  type: 'test'
+  ...
+# Subtest: normal 1x observed Firefox sequence admits the 169-second refinement within the original display error
+ok 62 - normal 1x observed Firefox sequence admits the 169-second refinement within the original display error
+  ---
+  duration_ms: 2690.0348
+  type: 'test'
+  ...
+# Subtest: forward and backward seeks reject obsolete results even before the next poll
+ok 63 - forward and backward seeks reject obsolete results even before the next poll
+  ---
+  duration_ms: 2.9104
+  type: 'test'
+  ...
+# Subtest: waxing and reference changes reject old epochs
+ok 64 - waxing and reference changes reject old epochs
+  ---
+  duration_ms: 1.6883
+  type: 'test'
+  ...
+# Subtest: crescent half gibbous and near-full 1x sequences complete at both senses and DPR 1 through 3
+ok 65 - crescent half gibbous and near-full 1x sequences complete at both senses and DPR 1 through 3
+  ---
+  duration_ms: 12760.9688
+  type: 'test'
+  ...
+# Subtest: steady refined requests validate once without duplicate native or layout reads
+ok 66 - steady refined requests validate once without duplicate native or layout reads
+  ---
+  duration_ms: 354.7477
+  type: 'test'
+  ...
+# Subtest: steady refined request still synchronously publishes the changed horizon envelope
+ok 67 - steady refined request still synchronously publishes the changed horizon envelope
+  ---
+  duration_ms: 359.5944
+  type: 'test'
+  ...
+# Subtest: changed texture publication cannot acknowledge a clock-invalidated refined surface
+ok 68 - changed texture publication cannot acknowledge a clock-invalidated refined surface
+  ---
+  duration_ms: 328.5272
+  type: 'test'
+  ...
+# Subtest: steady request cannot acknowledge stale refined authority or an expired display footprint
+ok 69 - steady request cannot acknowledge stale refined authority or an expired display footprint
+  ---
+  duration_ms: 2404.2812
+  type: 'test'
+  ...
+# Subtest: initial scalar V5 operator is exactly equal after Float32 admission
+ok 70 - initial scalar V5 operator is exactly equal after Float32 admission
+  ---
+  duration_ms: 35.9511
+  type: 'test'
+  ...
+# Subtest: initial receiver refuses altered bytes and invalid geometry before publication
+ok 71 - initial receiver refuses altered bytes and invalid geometry before publication
+  ---
+  duration_ms: 143.0301
+  type: 'test'
+  ...
+# Subtest: prepared initial sampling is byte exact to the approved box filter, including clipped edge coverage
+ok 72 - prepared initial sampling is byte exact to the approved box filter, including clipped edge coverage
+  ---
+  duration_ms: 144.9136
+  type: 'test'
+  ...
+# Subtest: initial render lends its exact two prefix tables once without retaining them in the result
+ok 73 - initial render lends its exact two prefix tables once without retaining them in the result
+  ---
+  duration_ms: 216.6491
+  type: 'test'
+  ...
+# Subtest: WASM checksum matches the bound original kernel
+ok 74 - WASM checksum matches the bound original kernel
+  ---
+  duration_ms: 1.2189
+  type: 'test'
+  ...
+# Subtest: subordinate calendar token preserves refined terrain contrast and phase without adding total light
+ok 75 - subordinate calendar token preserves refined terrain contrast and phase without adding total light
+  ---
+  duration_ms: 0.3211
+  type: 'test'
+  ...
+# Subtest: truncated material is rejected before decompression
+ok 76 - truncated material is rejected before decompression
+  ---
+  duration_ms: 11.199
+  type: 'test'
+  ...
+# Subtest: corrupt terrain of correct length is rejected
+ok 77 - corrupt terrain of correct length is rejected
+  ---
+  duration_ms: 24.9565
+  type: 'test'
+  ...
+# Subtest: WASM corruption is rejected
+ok 78 - WASM corruption is rejected
+  ---
+  duration_ms: 18.9254
+  type: 'test'
+  ...
+# Subtest: same material coordinates are used for waxing and waning
+ok 79 - same material coordinates are used for waxing and waning
+  ---
+  duration_ms: 1.2688
+  type: 'test'
+  ...
+# Subtest: scene rejects handedness reversal
+ok 80 - scene rejects handedness reversal
+  ---
+  duration_ms: 0.4573
+  type: 'test'
+  ...
+# Subtest: phase vector mismatch refused
+ok 81 - phase vector mismatch refused
+  ---
+  duration_ms: 0.2107
+  type: 'test'
+  ...
+# Subtest: phase precision preserves endpoints and declared geometric bound
+ok 82 - phase precision preserves endpoints and declared geometric bound
+  ---
+  duration_ms: 2.3509
+  type: 'test'
+  ...
+# Subtest: display-aware phase preserves the original .0416 device-pixel angular displacement bound
+ok 83 - display-aware phase preserves the original .0416 device-pixel angular displacement bound
+  ---
+  duration_ms: 57.7321
+  type: 'test'
+  ...
+# Subtest: black opaque Moon suppresses stars even during calendar fade
+ok 84 - black opaque Moon suppresses stars even during calendar fade
+  ---
+  duration_ms: 0.3801
+  type: 'test'
+  ...
+# Subtest: foreground atmosphere remains in front of an opaque lunar surface at every calendar opacity
+ok 85 - foreground atmosphere remains in front of an opaque lunar surface at every calendar opacity
+  ---
+  duration_ms: 0.2832
+  type: 'test'
+  ...
+# Subtest: zero coverage leaves direct sky intact
+ok 86 - zero coverage leaves direct sky intact
+  ---
+  duration_ms: 0.073
+  type: 'test'
+  ...
+# Subtest: cloud foreground is applied once
+ok 87 - cloud foreground is applied once
+  ---
+  duration_ms: 0.0531
+  type: 'test'
+  ...
+# Subtest: fractional area filtering retains constant field and coverage
+ok 88 - fractional area filtering retains constant field and coverage
+  ---
+  duration_ms: 0.4347
+  type: 'test'
+  ...
+# Subtest: unknown NaN lighting never becomes an alpha hole
+ok 89 - unknown NaN lighting never becomes an alpha hole
+  ---
+  duration_ms: 0.1256
+  type: 'test'
+  ...
+# Subtest: real assets decode, actual terrain renders and cancels
+ok 90 - real assets decode, actual terrain renders and cancels
+  ---
+  duration_ms: 694.4888
+  type: 'test'
+  ...
+# Subtest: V5 grey remains neutral over weak and strong Earthlight
+ok 91 - V5 grey remains neutral over weak and strong Earthlight
+  ---
+  duration_ms: 0.3382
+  type: 'test'
+  ...
+# Subtest: V5 display does not depend on Sun/Earth partition of identical light
+ok 92 - V5 display does not depend on Sun/Earth partition of identical light
+  ---
+  duration_ms: 0.2711
+  type: 'test'
+  ...
+# Subtest: V5 luminance does not fall when neutral illumination increases
+ok 93 - V5 luminance does not fall when neutral illumination increases
+  ---
+  duration_ms: 0.3194
+  type: 'test'
+  ...
+# Subtest: native lunar factor retains reviewed ephemeris/constants and known-observer geometry
+ok 94 - native lunar factor retains reviewed ephemeris/constants and known-observer geometry
+  ---
+  duration_ms: 3.8715
+  type: 'test'
+  ...
+# Subtest: pure lunar presentation retains exact twilight/calendar and physical light permissions
+ok 95 - pure lunar presentation retains exact twilight/calendar and physical light permissions
+  ---
+  duration_ms: 1.1398
+  type: 'test'
+  ...
+# Subtest: calendar scene and sampled bucket-boundary values equal reviewed phase operator
+ok 96 - calendar scene and sampled bucket-boundary values equal reviewed phase operator
+  ---
+  duration_ms: 1.5612
+  type: 'test'
+  ...
+# Subtest: reviewed oracle discriminates a displaced slot and changed twilight/phase operators
+ok 97 - reviewed oracle discriminates a displaced slot and changed twilight/phase operators
+  ---
+  duration_ms: 1.0138
+  type: 'test'
+  ...
+# Subtest: actual head producer maps four forced lunar parameters to native SIM strings
+ok 98 - actual head producer maps four forced lunar parameters to native SIM strings
+  ---
+  duration_ms: 3.5035
+  type: 'test'
+  ...
+# Subtest: head producer leaves explicit temporal ownership to native without another clock read
+ok 99 - head producer leaves explicit temporal ownership to native without another clock read
+  ---
+  duration_ms: 0.5986
+  type: 'test'
+  ...
+# Subtest: raw parameter regression control fails the native SIM mapping discriminator
+ok 100 - raw parameter regression control fails the native SIM mapping discriminator
+  ---
+  duration_ms: 0.821
+  type: 'test'
+  ...
+# Subtest: row-parallel assembly exactly preserves single-worker numerical fields, global filtering and quality signals
+ok 101 - row-parallel assembly exactly preserves single-worker numerical fields, global filtering and quality signals
+  ---
+  duration_ms: 10259.465
+  type: 'test'
+  ...
+# Subtest: first terrain pass computes only its owned rows without changing the owned numerical result
+ok 102 - first terrain pass computes only its owned rows without changing the owned numerical result
+  ---
+  duration_ms: 1356.0844
+  type: 'test'
+  ...
+# Subtest: interrupted real camera and lighting work cannot contaminate resumed or reassigned rows
+ok 103 - interrupted real camera and lighting work cannot contaminate resumed or reassigned rows
+  ---
+  duration_ms: 1954.6338
+  type: 'test'
+  ...
+# Subtest: row ownership rejects invalid bounds before touching the real kernel
+ok 104 - row ownership rejects invalid bounds before touching the real kernel
+  ---
+  duration_ms: 654.6546
+  type: 'test'
+  ...
+# Subtest: row-parallel work rejects a late result after cancellation
+ok 105 - row-parallel work rejects a late result after cancellation
+  ---
+  duration_ms: 0.7545
+  type: 'test'
+  ...
+# Subtest: sparse refinement preserves unselected receivers and global projection across all row boundaries
+ok 106 - sparse refinement preserves unselected receivers and global projection across all row boundaries
+  ---
+  duration_ms: 2073.141
+  type: 'test'
+  ...
+# Subtest: a fourth missing, foreign or corrupted row cannot be published
+ok 107 - a fourth missing, foreign or corrupted row cannot be published
+  ---
+  duration_ms: 705.1259
+  type: 'test'
+  ...
+# Subtest: row owner rejects same-identity but wrong-scene, malformed and nonfinite fields
+ok 108 - row owner rejects same-identity but wrong-scene, malformed and nonfinite fields
+  ---
+  duration_ms: 1444.1955
+  type: 'test'
+  ...
+# Subtest: an idle row-worker failure is terminal and cannot leave a later request waiting forever
+ok 109 - an idle row-worker failure is terminal and cannot leave a later request waiting forever
+  ---
+  duration_ms: 0.7305
+  type: 'test'
+  ...
+# Subtest: a failed row cancels its sibling before waiting for the joined result
+ok 110 - a failed row cancels its sibling before waiting for the joined result
+  ---
+  duration_ms: 1.7815
+  type: 'test'
+  ...
+# Subtest: four-owner failure cancels all siblings and partial boot disposes every worker
+ok 111 - four-owner failure cancels all siblings and partial boot disposes every worker
+  ---
+  duration_ms: 3.2731
+  type: 'test'
+  ...
+# Subtest: row workers get a locally owned Blob instead of reusing an opaque parent URL
+ok 112 - row workers get a locally owned Blob instead of reusing an opaque parent URL
+  ---
+  duration_ms: 0.412
+  type: 'test'
+  ...
+1..112
+# tests 112
+# suites 0
+# pass 112
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 36792.47

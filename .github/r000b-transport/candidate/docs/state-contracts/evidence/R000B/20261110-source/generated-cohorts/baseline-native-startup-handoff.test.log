@@ -1,0 +1,104 @@
+✖ startup handoff does not rebuild an already painted unchanged second (15.629121ms)
+✖ a next-day result between startup and its first frame still paints (9.721808ms)
+✖ a frozen startup still consumes later appearance or data invalidation (9.335567ms)
+✖ startup without a completed render still paints its first loop frame (68.430395ms)
+✖ an earlier painted second cannot suppress a backward clock correction (8.472319ms)
+✖ an advancing preview displays its clock even before a slow next simulated second (12.430691ms)
+✖ a completed render from another generation cannot suppress the first frame (49.111166ms)
+✖ a completed render from an invalid timestamp cannot suppress the first frame (53.577622ms)
+ℹ Error: Test "startup handoff does not rebuild an already painted unchanged second" at tests/real-sky/native-startup-handoff.test.cjs:16:1 generated asynchronous activity after the test ended. This activity created the error "ReferenceError: currentWeatherTarget is not defined" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ Error: Test "a next-day result between startup and its first frame still paints" at tests/real-sky/native-startup-handoff.test.cjs:26:1 generated asynchronous activity after the test ended. This activity created the error "ReferenceError: currentWeatherTarget is not defined" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ Error: Test "a frozen startup still consumes later appearance or data invalidation" at tests/real-sky/native-startup-handoff.test.cjs:36:1 generated asynchronous activity after the test ended. This activity created the error "ReferenceError: currentWeatherTarget is not defined" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ Error: Test "an earlier painted second cannot suppress a backward clock correction" at tests/real-sky/native-startup-handoff.test.cjs:50:1 generated asynchronous activity after the test ended. This activity created the error "ReferenceError: currentWeatherTarget is not defined" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ Error: Test "an advancing preview displays its clock even before a slow next simulated second" at tests/real-sky/native-startup-handoff.test.cjs:56:1 generated asynchronous activity after the test ended. This activity created the error "ReferenceError: currentWeatherTarget is not defined" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ tests 8
+ℹ suites 0
+ℹ pass 0
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 322.045435
+
+✖ failing tests:
+
+test at tests/real-sky/native-startup-handoff.test.cjs:16:1
+✖ startup handoff does not rebuild an already painted unchanged second (15.629121ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'ok')
+      at acceptedBoot (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:10:29)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:17:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests/real-sky/native-startup-handoff.test.cjs:26:1
+✖ a next-day result between startup and its first frame still paints (9.721808ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'ok')
+      at acceptedBoot (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:10:29)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:27:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/real-sky/native-startup-handoff.test.cjs:36:1
+✖ a frozen startup still consumes later appearance or data invalidation (9.335567ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'ok')
+      at acceptedBoot (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:10:29)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:37:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/real-sky/native-startup-handoff.test.cjs:44:1
+✖ startup without a completed render still paints its first loop frame (68.430395ms)
+  ReferenceError [Error]: currentWeatherTarget is not defined
+      at publishCloudAuthority (evalmachine.<anonymous>:613:46)
+      at withdrawCloudState (evalmachine.<anonymous>:636:52)
+      at reconcileCloudPublication (evalmachine.<anonymous>:651:10)
+      at loop (evalmachine.<anonymous>:1217:5)
+      at Object.frame (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/r0003-harness.cjs:100:93)
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:47:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+
+test at tests/real-sky/native-startup-handoff.test.cjs:50:1
+✖ an earlier painted second cannot suppress a backward clock correction (8.472319ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'ok')
+      at acceptedBoot (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:10:29)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:51:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/real-sky/native-startup-handoff.test.cjs:56:1
+✖ an advancing preview displays its clock even before a slow next simulated second (12.430691ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'ok')
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:60:49)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/real-sky/native-startup-handoff.test.cjs:69:3
+✖ a completed render from another generation cannot suppress the first frame (49.111166ms)
+  ReferenceError [Error]: currentWeatherTarget is not defined
+      at publishCloudAuthority (evalmachine.<anonymous>:613:46)
+      at withdrawCloudState (evalmachine.<anonymous>:636:52)
+      at reconcileCloudPublication (evalmachine.<anonymous>:651:10)
+      at loop (evalmachine.<anonymous>:1217:5)
+      at Object.frame (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/r0003-harness.cjs:100:93)
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:72:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+
+test at tests/real-sky/native-startup-handoff.test.cjs:69:3
+✖ a completed render from an invalid timestamp cannot suppress the first frame (53.577622ms)
+  ReferenceError [Error]: currentWeatherTarget is not defined
+      at publishCloudAuthority (evalmachine.<anonymous>:613:46)
+      at withdrawCloudState (evalmachine.<anonymous>:636:52)
+      at reconcileCloudPublication (evalmachine.<anonymous>:651:10)
+      at loop (evalmachine.<anonymous>:1217:5)
+      at Object.frame (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/r0003-harness.cjs:100:93)
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-build-1/tests/real-sky/native-startup-handoff.test.cjs:72:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)

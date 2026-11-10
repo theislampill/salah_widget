@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import {ReferenceRenderClient} from '../../real-sky/core/src/reference-worker-client.mjs';
+const policy=await import('../../real-sky/native-worker-policy.mjs').catch(()=>({}));
+test('CP9 F03 worker loss withdraws optional physical sky instead of executing synchronous physics',async()=>{assert.equal(typeof policy.requireNativeWorker,'function');const client=new ReferenceRenderClient({}, {workerFactory:()=>{throw new Error('Worker unavailable');},fallbackFactory:policy.requireNativeWorker,timeoutMs:10});await assert.rejects(client.run({}),/withdrawn to preserve prayer responsiveness/);client.dispose();});
+test('CP9 F03 native host uses mandatory worker policy; no NativeSkyEngine main-thread fallback',()=>{const text=fs.readFileSync(new URL('../../real-sky/native-host.mjs',import.meta.url),'utf8');assert.match(text,/fallbackFactory:requireNativeWorker/);assert.doesNotMatch(text,/fallbackFactory\s*:\s*\w+\s*=>\s*new NativeSkyEngine/);});

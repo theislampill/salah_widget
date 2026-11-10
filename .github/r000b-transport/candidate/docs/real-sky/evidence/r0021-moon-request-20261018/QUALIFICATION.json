@@ -1,0 +1,790 @@
+{
+  "schema": "r0021-reviewed-source-cost-projection/1",
+  "status": "BOUNDED_SOURCE_AND_CHROMIUM_COST; NOT_MERGE_READY",
+  "build": "integrated-r20",
+  "indexSha256": "31dc055ab24269575f21c87c23592595cbddfc0aa4138d12f39e8b1561b081d0",
+  "runtimeTreeSha256": "e193b433a50b42401735ca36faf44ac02d3ed7687959c48c0b66c5b9da337340",
+  "source": {
+    "moon/src/moon-native.mjs": "0c1f4fdd642cffc748c5ed4de5986134f62cd979ff6885a189fea21225e48d95",
+    "moon/tests/host.test.cjs": "ee04de35e3d7cee525af593ddd38317b34f79d2ff59d06937ede05b12ce28852",
+    "tests/real-sky/native-head-handoff.cjs": "ccd82d749f9a1c30d1630e9b13a318f2e0baa6fb968e38149ac7745b77c0f418",
+    "tests/real-sky/native-host-composition.test.mjs": "2c4bc0a7ff82982fa91fbdbbc8d3c9249db4d046c3a32e899b80b1ea87e8b8bf",
+    "tools/cp9/celestial_startup_check.py": "0f2bdaac354c58ee0c7808988e0f074431c35d55bbcce35a3c539346d678d100",
+    "tools/cp9/chromium_startup_defaults.py": "db02da45beaaebb6876df8813ac27ea32b6ea9b68b86b2a5e9d989f6e490c46f",
+    "tests/real-sky/chromium_startup_defaults_test.py": "ed1426827996230056e970e2fc8ed1012e82e39ed8a4f5305d5439eea6377b28"
+  },
+  "generated": [
+    {
+      "path": "index.html",
+      "beforeSha256": "aa084fcf3f4294e2ccc353a34ff1c259bf78592e7cd9334f41ae7bce8e1c23c6",
+      "afterSha256": "31dc055ab24269575f21c87c23592595cbddfc0aa4138d12f39e8b1561b081d0"
+    },
+    {
+      "path": "offline.html",
+      "beforeSha256": "2898a2af1e957f7de028db99157ee41a260948df3a9558c5acda9f05f04932b5",
+      "afterSha256": "9b0157df1ec37710242521b40cb92c3bcc8e553c46da00da15b62e2931f419bb"
+    },
+    {
+      "path": "moon/moon-host.js",
+      "beforeSha256": "981b38bdfe84df4606db8c15245cd5fb43e5375cc5e0ca85b57849e5244a7de8",
+      "afterSha256": "97161eae0b3d3fd419ba28ddab63be0785d7177cc426a335ae70d467d3f5461d"
+    },
+    {
+      "path": "moon/BUILD.json",
+      "beforeSha256": "fbbd91a65ba5a97596e76bde7b6f44d9ab5d95fd58a8986cd56f9672ff72436e",
+      "afterSha256": "62c8202a594918c63787941d3ef91d3d66a99495178690465074835446e9b396"
+    }
+  ],
+  "hostTestNormalization": "Two CRLF endings and final blank only; immutable tested bytes retained in r20",
+  "sourceFindings": [
+    "The outer ready/refined/no-pending guard preserves original startup and pending polling without an added preflight capture. A healthy reused texture uses one fresh native authority/footprint capture instead of two inside request; updateSkySurface retains its separate original read.",
+    "matches and the original signed phaseDrift < PHASE_POSITION_BUDGET/4 comparison are retained. Invalid authority, discontinuity, scope/DPR or expired phase footprint falls through original poll plus fresh presentation(capture). The existing 250ms timer is unchanged.",
+    "The first proposed unconditional true after syncTexture was rejected: changed-texture publication can call the native read-time surface guard after a clock discontinuity and return no current surface. The retained RED asserts true != false.",
+    "Final syncTexture reports whether an upload/publication occurred. request preserves the fresh post-publication presentation(capture) decision when true, and only returns directly on the unchanged-texture path. Other existing callers ignore this newly explicit boolean, retaining their behavior.",
+    "The joined counterexample models the actual publish -> updateSkySurface -> surface boundary with a controlled publication hook. It is not native DOM/pixel timing evidence. The two-read changed-horizon test uses a simple transport stub; actual native publication also performs its own updateSkySurface read."
+  ],
+  "regressions": {
+    "testReceiptSha256": "02b2208328ba30755c727feef64919263cb2fc4da8faa3976ee1f33cc12bbe93",
+    "host": {
+      "pass": 52
+    },
+    "actualHeadHandoff": {
+      "pass": 6,
+      "limit": "Optical sink double grants no optical pixel evidence"
+    },
+    "canonical": {
+      "pass": 819,
+      "fail": 0,
+      "todo": 4,
+      "files": 63
+    },
+    "checks": [
+      {
+        "name": "moon-host",
+        "exitCode": 0,
+        "logSha256": "294c9f86123f9b5478a0b24bc4b9340fc9d3e4ccd29abfe06a0515b2e46af398"
+      },
+      {
+        "name": "head-handoff",
+        "exitCode": 0,
+        "logSha256": "131bd5f0d00024e96a4423839f34b24fec41225a34b09bedf94f06a51384afa8"
+      },
+      {
+        "name": "frozen-v1",
+        "exitCode": 0,
+        "logSha256": "14bf67f45f95444dacec562dc74aa2bfe665a139c78c258838466f700d330d41"
+      },
+      {
+        "name": "canonical-node",
+        "exitCode": 0,
+        "logSha256": "00adc9e684ecb3c5c8bed49972bfac1f8d5feb7d1bc7efb0ffa8bab4fc053ba7"
+      },
+      {
+        "name": "moon-build-guard",
+        "exitCode": 0,
+        "logSha256": "7ffd3b0463a388ebaca9a3181a99fdaa11d61512837d6b26efc0bc75a392c8e4"
+      },
+      {
+        "name": "native-entry-order",
+        "exitCode": 0,
+        "logSha256": "d49024875e21de1765853537c6bb511b26c98207cfd3dc19f9e6976119c8c88e"
+      }
+    ],
+    "additionalRealPublicationJoin": {
+      "baselinePass": 13,
+      "finalPass": 15,
+      "scope": "Real publication and lifecycle clear/dispose; displayed A, rejected decoded B, pending C, late completion and bounded direct roots. No native decoder, Promise/GC or whole-heap claim."
+    }
+  },
+  "chromium": {
+    "resultSha256": "622a0b15995732297dd11cc2a6b3f0071ce6a4b3c09675bc7b9f28ca97152fcf",
+    "analysisSha256": "3e1d12ecc2f911e6fdcad7c5784fd957c78aa0b733815bcf1d303eac7129a9ef",
+    "independentVerificationSha256": "658a6d633b0d0b97fd6f7363c884113504c313d33436fd1a912546f9aaacd72a",
+    "method": "Actual synchronous exclusive elapsed; no CPU self-time claim.",
+    "observations": {
+      "rawSlots": 16,
+      "rawDecodedCalls": 740937,
+      "globalReasons": [],
+      "combinedCounts": {
+        "INCOMPLETE": 11,
+        "PASS": 13
+      },
+      "owners": [
+        {
+          "scope": "head.prepareNativeFirstPaint",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [
+            "SPARSE"
+          ],
+          "n5": {
+            "A": 0,
+            "B": 0
+          },
+          "n15": {
+            "A": 0,
+            "B": 0
+          }
+        },
+        {
+          "scope": "main.applyTheme",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 40,
+            "B": 40
+          },
+          "n15": {
+            "A": 120,
+            "B": 120
+          }
+        },
+        {
+          "scope": "main.atmosphere",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 40,
+            "B": 40
+          },
+          "n15": {
+            "A": 120,
+            "B": 120
+          }
+        },
+        {
+          "scope": "main.commitSkyScene",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 40,
+            "B": 40
+          },
+          "n15": {
+            "A": 120,
+            "B": 120
+          }
+        },
+        {
+          "scope": "main.firstTaskYield",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [
+            "SPARSE"
+          ],
+          "n5": {
+            "A": 0,
+            "B": 0
+          },
+          "n15": {
+            "A": 0,
+            "B": 0
+          }
+        },
+        {
+          "scope": "main.paint",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "NOISE"
+          ],
+          "reasons15": [
+            "NOISE"
+          ],
+          "n5": {
+            "A": 40,
+            "B": 40
+          },
+          "n15": {
+            "A": 120,
+            "B": 120
+          }
+        },
+        {
+          "scope": "main.paintClouds",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 511,
+            "B": 512
+          },
+          "n15": {
+            "A": 1533,
+            "B": 1539
+          }
+        },
+        {
+          "scope": "main.render",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "PASS",
+          "reasons5": [
+            "NOISE"
+          ],
+          "reasons15": [],
+          "n5": {
+            "A": 40,
+            "B": 40
+          },
+          "n15": {
+            "A": 120,
+            "B": 120
+          }
+        },
+        {
+          "scope": "main.renderLoop",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 13416,
+            "B": 13408
+          },
+          "n15": {
+            "A": 39906,
+            "B": 40581
+          }
+        },
+        {
+          "scope": "main.renderMoon",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [
+            "SPARSE"
+          ],
+          "n5": {
+            "A": 0,
+            "B": 0
+          },
+          "n15": {
+            "A": 0,
+            "B": 0
+          }
+        },
+        {
+          "scope": "moon.adopt",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [
+            "SPARSE"
+          ],
+          "n5": {
+            "A": 0,
+            "B": 0
+          },
+          "n15": {
+            "A": 0,
+            "B": 0
+          }
+        },
+        {
+          "scope": "moon.detailCompose",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 757,
+            "B": 758
+          },
+          "n15": {
+            "A": 2263,
+            "B": 2274
+          }
+        },
+        {
+          "scope": "moon.initialPresentation",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [
+            "SPARSE"
+          ],
+          "n5": {
+            "A": 0,
+            "B": 160
+          },
+          "n15": {
+            "A": 0,
+            "B": 480
+          }
+        },
+        {
+          "scope": "moon.poll",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 160,
+            "B": 160
+          },
+          "n15": {
+            "A": 480,
+            "B": 480
+          }
+        },
+        {
+          "scope": "moon.syncTexture",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 1714,
+            "B": 1756
+          },
+          "n15": {
+            "A": 5126,
+            "B": 5268
+          }
+        },
+        {
+          "scope": "moon.workerMessage",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [
+            "SPARSE"
+          ],
+          "n5": {
+            "A": 0,
+            "B": 0
+          },
+          "n15": {
+            "A": 0,
+            "B": 0
+          }
+        },
+        {
+          "scope": "preview.paint",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [
+            "SPARSE"
+          ],
+          "n5": {
+            "A": 0,
+            "B": 0
+          },
+          "n15": {
+            "A": 0,
+            "B": 0
+          }
+        },
+        {
+          "scope": "preview.present",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 13416,
+            "B": 13407
+          },
+          "n15": {
+            "A": 39906,
+            "B": 40581
+          }
+        },
+        {
+          "scope": "preview.tick",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [
+            "SPARSE"
+          ],
+          "n5": {
+            "A": 0,
+            "B": 0
+          },
+          "n15": {
+            "A": 0,
+            "B": 0
+          }
+        },
+        {
+          "scope": "preview.update",
+          "combined": "INCOMPLETE",
+          "first5": "INCOMPLETE",
+          "full15": "INCOMPLETE",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [
+            "SPARSE"
+          ],
+          "n5": {
+            "A": 0,
+            "B": 0
+          },
+          "n15": {
+            "A": 0,
+            "B": 0
+          }
+        },
+        {
+          "scope": "sky.accept",
+          "combined": "PASS",
+          "first5": "INCOMPLETE",
+          "full15": "PASS",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [],
+          "n5": {
+            "A": 12,
+            "B": 8
+          },
+          "n15": {
+            "A": 30,
+            "B": 24
+          }
+        },
+        {
+          "scope": "sky.animate",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 13416,
+            "B": 13409
+          },
+          "n15": {
+            "A": 39906,
+            "B": 40582
+          }
+        },
+        {
+          "scope": "sky.compose",
+          "combined": "PASS",
+          "first5": "PASS",
+          "full15": "PASS",
+          "reasons5": [],
+          "reasons15": [],
+          "n5": {
+            "A": 757,
+            "B": 758
+          },
+          "n15": {
+            "A": 2263,
+            "B": 2274
+          }
+        },
+        {
+          "scope": "sky.workerMessage",
+          "combined": "PASS",
+          "first5": "INCOMPLETE",
+          "full15": "PASS",
+          "reasons5": [
+            "SPARSE"
+          ],
+          "reasons15": [],
+          "n5": {
+            "A": 12,
+            "B": 8
+          },
+          "n15": {
+            "A": 30,
+            "B": 24
+          }
+        }
+      ],
+      "moonPoll": "Both windows PASS under the admitted elapsed-time method. First5 A/B160/160, median .043/.050ms, p95 .075/.084ms; full15 A/B480/480, p95 .077/.089ms. Every measured poll has no instrumented parent, at4Hz in each paired round; no main.paint-nested poll remains. This supports the changed call topology without erasing historical evidence.",
+      "mainPaint": "INCOMPLETE in both windows and combined. Full15 inclusive n120 each; totals A249.127/B228.588ms, medians2.023/1.933ms, p952.441/2.350ms. These are descriptive. Candidate exclusive median round spread .330ms exceeds the .25ms allowance; pooled median and p95 conservative comparisons also remain INCOMPLETE. First5 has additional baseline p95 spread .623ms. Do not claim parent improvement or PASS.",
+      "mainRender": "First5 INCOMPLETE from candidate p95 round spread .381ms despite pooled PASS. Full15 PASS; combined remains INCOMPLETE. Full15 inclusive totals430.565/366.407ms are descriptive only.",
+      "sparseScopes": "Nine combined owners remain SPARSE/one-sided/absent as steady evidence, including head preparation, firstTaskYield, renderMoon, adopt, initialPresentation, moon workerMessage and preview paint/tick/update. Candidate initialPresentation executes160/480 steady times while baseline has no counterpart; it is not zero-cost. sky.accept and sky.workerMessage retain first5 SPARSE and obtain only the predeclared fixed15 supplement.",
+      "observerLimits": {
+        "fullMaximumEmptyOrNestedControlMs": {
+          "A": 0.1339999958872795,
+          "B": 0.2580000013113022
+        },
+        "rule": "All maxima retained; owner bounds scale with direct children and .005ms per native endpoint. Operational exclusive elapsed, not CPU self-time or a formal uninstrumented optimizer/scheduler bound. No outlier trimming or p95 substitution.",
+        "nativeSpanRangesMs": {
+          "warmup": {
+            "min": 5031.002999998629,
+            "max": 5052.700999997556
+          },
+          "measurement": {
+            "min": 15029.207000002265,
+            "max": 15053.115000002086
+          }
+        },
+        "minimumProofBeforeQuietSeconds": 0.014237100003811065
+      },
+      "custodyAndState": "All54 admission input hashes, original native/raw hashes, runtime A/B and declared served bytes pass recomputation. Native endpoint prefix/document/thread/cardinality and end-crossing inclusion pass. Ready/currentness/geometry, zero transient Moon-work and source-based named asset-consumption guards pass. Retained startup abort notifications are classified by the admitted proof, not removed.",
+      "cleanup": {
+        "browserClosed": true,
+        "playwrightStopped": true,
+        "ownedCleanup": {
+          "killed": [],
+          "remaining": [],
+          "verified": true
+        },
+        "lockReleased": true,
+        "inputsUnchanged": true,
+        "runtimeUnchanged": {
+          "A": true,
+          "B": true
+        },
+        "servedIdentityVerified": true
+      }
+    },
+    "combinedOwners": {
+      "head.prepareNativeFirstPaint": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "main.applyTheme": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "main.atmosphere": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "main.commitSkyScene": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "main.firstTaskYield": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "main.paint": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "main.paintClouds": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "main.render": {
+        "first5": "INCOMPLETE",
+        "full15": "PASS",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "main.renderLoop": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "main.renderMoon": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "moon.adopt": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "moon.detailCompose": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "moon.initialPresentation": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "moon.poll": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "moon.syncTexture": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "moon.workerMessage": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "preview.paint": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "preview.present": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "preview.tick": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "preview.update": {
+        "first5": "INCOMPLETE",
+        "full15": "INCOMPLETE",
+        "status": "INCOMPLETE",
+        "basis": "Both windows retain their own raw data and reasons."
+      },
+      "sky.accept": {
+        "first5": "INCOMPLETE",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Only predeclared first5s sparsity supplemented by fixed15s; original5s remains INCOMPLETE."
+      },
+      "sky.animate": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "sky.compose": {
+        "first5": "PASS",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Both original5s and fixed15s comparisons pass."
+      },
+      "sky.workerMessage": {
+        "first5": "INCOMPLETE",
+        "full15": "PASS",
+        "status": "PASS",
+        "basis": "Only predeclared first5s sparsity supplemented by fixed15s; original5s remains INCOMPLETE."
+      }
+    },
+    "wholeCostGate": "OPEN until independent scope/structural/startup response evidence joins."
+  },
+  "firefox": {
+    "status": "INCOMPLETE",
+    "resultSha256": "d01efdf0923eddc0def029af0fb0fef3a9696b73dc3ae97997a3b92eb50063d9",
+    "finding": "First baseline reached refined and completed warmup/observation; recorder exceeded120000 records during fixed15s window, invalid=true. No successor slot ran. Exact cleanup empty. No cost verdict."
+  },
+  "limits": [
+    "Original r70b poll FAIL and earlier contrary acquisitions remain unchanged.",
+    "Startup/absent callbacks, noisy parent scopes, positive-cloud asynchronous costs and native resource lifetime remain separate open obligations.",
+    "RenderDocument restoration removed a demonstrated capture-driver throttle; r69 uncovered intervals remain. No80ms S1 or continuous-pixel qualification.",
+    "No merge, delivery or issue closure authority."
+  ],
+  "localOnlyEvidence": [
+    {
+      "path": "independent-review/moon-request-r73-review.json",
+      "sha256": "ef4348a62dbce2072ca418034b00c9511f1d6fef919f6461dd714067dccd93a8"
+    },
+    {
+      "path": "independent-review/moon-request-r73-fixture-r74-supplement.json",
+      "sha256": "32143cab680fbbcea388dadf7fd65bde791ed5001264c73a8c384ce8fbcc1dee"
+    },
+    {
+      "path": "intake/candidate-tests-r74/RESULT.json",
+      "sha256": "02b2208328ba30755c727feef64919263cb2fc4da8faa3976ee1f33cc12bbe93"
+    },
+    {
+      "path": "independent-review/cost-v5-chromium-r76-review.json",
+      "sha256": "aedc9d3341011d32bf2df7d8485166230f53bfe00318227aeeddec782a5c68bd"
+    },
+    {
+      "path": "independent-review/cost-v5-chromium-r76-verification.json",
+      "sha256": "658a6d633b0d0b97fd6f7363c884113504c313d33436fd1a912546f9aaacd72a"
+    },
+    {
+      "path": "cost/runs/chromium-native-v5-r76/RESULTS.json",
+      "sha256": "622a0b15995732297dd11cc2a6b3f0071ce6a4b3c09675bc7b9f28ca97152fcf"
+    },
+    {
+      "path": "cost/runs/chromium-native-v5-r76/ANALYSIS.json",
+      "sha256": "3e1d12ecc2f911e6fdcad7c5784fd957c78aa0b733815bcf1d303eac7129a9ef"
+    },
+    {
+      "path": "cost/runs/firefox-native-v5-r76/RESULTS.json",
+      "sha256": "d01efdf0923eddc0def029af0fb0fef3a9696b73dc3ae97997a3b92eb50063d9"
+    },
+    {
+      "path": "independent-review/chromium-render-document-r69-result-review.json",
+      "sha256": "5b2006150345733e66044c84ab96a3beae8b266270df2beef4fcbcb68d7a889d"
+    },
+    {
+      "path": "cost/real-publication-r82-baseline.log",
+      "sha256": "14a95749e7a1fec1ab30e09fe66d93c40b18c4b1b700c39d8b015a501b7d8eaf"
+    },
+    {
+      "path": "cost/real-publication-r82-result.log",
+      "sha256": "8715dc2bbcff47f79fe26a5d0ab88e9e4f09e3fe8d59d86f28c6caa982e48b73"
+    }
+  ],
+  "referenceResolution": "localOnlyEvidence paths are relative to the private r0021-execution-20261016 work-product root, not public repository members. Full profiles, provider payloads, browser profiles and acquisition harnesses are intentionally outside this public projection."
+}

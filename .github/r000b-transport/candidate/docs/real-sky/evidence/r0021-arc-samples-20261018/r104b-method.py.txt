@@ -1,0 +1,50 @@
+"""Bounded native SVG cache-equivalence check; no widget timing or whole-visual qualification."""
+from pathlib import Path
+import asyncio,datetime,hashlib,json,os,sys
+from PIL import Image,ImageChops
+from playwright.async_api import async_playwright
+O=Path(__file__).resolve().parent;R=Path(r'CHECKOUT')
+sys.path.insert(0,str(R/'tools/cp9'));from browser_runtime import browser_options,browser_identity
+out=O/'native/arc-samples-r104b';assert not out.exists();out.mkdir()
+pagefile=O/'intake/arc-samples-r104b.html';sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+record={'scope':__doc__,'scriptSha256':sha(Path(__file__)),'couponSha256':sha(pagefile),'cases':[],'errors':[]}
+async def run():
+ async with async_playwright() as pw:
+  for family,exe in [('chromium',r'HOST_USER\AppData\Local\ms-playwright\chromium-1223\chrome-win64\chrome.exe'),('firefox',r'HOST_USER\AppData\Local\ms-playwright\firefox-1522\firefox\firefox.exe')]:
+   os.environ['SALAH_BROWSER']=family;os.environ['SALAH_BROWSER_EXECUTABLE']=exe
+   _,options=browser_options();browser=await getattr(pw,family).launch(**options)
+   try:
+    ctx=await browser.new_context(viewport={'width':730,'height':360},device_scale_factor=1)
+    page=await ctx.new_page();page.on('pageerror',lambda e:record['errors'].append(str(e)))
+    await page.goto(pagefile.as_uri());identity=browser_identity(browser)
+    for stage in range(6):
+     states=await page.evaluate('(n)=>step(n)',stage)
+     geometry=await page.evaluate('()=>[...document.querySelectorAll(".coupon")].map(e=>({panel:e.getBoundingClientRect().toJSON(),rail:e.querySelector(".rail").getBoundingClientRect().toJSON()}))')
+     assert geometry[0]==geometry[1],geometry
+     await page.evaluate('()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
+     originals=[]
+     for side in [0,1]:
+      await page.evaluate('(side)=>[...document.querySelectorAll(".coupon")].forEach((e,i)=>e.style.visibility=i===side?"visible":"hidden")',side)
+      hidden_visible=await page.evaluate('(side)=>[...[...document.querySelectorAll(".coupon")][1-side].querySelectorAll("*")].filter(e=>getComputedStyle(e).visibility!=="hidden").map(e=>e.tagName)',side)
+      assert not hidden_visible,hidden_visible
+      await page.evaluate('()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))')
+      dest=out/f'{family}-{stage}-{side}.png';await page.screenshot(path=str(dest))
+      originals.append({'file':dest.name,'sha256':sha(dest)})
+     left=Image.open(out/originals[0]['file']).convert('RGB');right=Image.open(out/originals[1]['file']).convert('RGB');diff=ImageChops.difference(left,right)
+     item={'browser':identity,'stage':stage,'states':states,'screenGeometry':geometry,'hiddenPanelVisibleDescendants':0,'originals':originals,'pixelIdentical':diff.getbbox() is None,'channelMax':[x[1] for x in diff.getextrema()]}
+     record['cases'].append(item)
+     assert item['pixelIdentical'],item
+     assert states[0]['result']==states[1]['result'] and states[0]['d']==states[1]['d'],item
+     assert states[0]['queries']==201*(stage+1) and states[1]['queries']==[201,201,201,201,402,603][stage],item
+     assert states[0]['matrices']==states[1]['matrices']==stage+1,item
+     print(json.dumps({'browser':family,'stage':stage,'queries':[s['queries'] for s in states],'pixelIdentical':item['pixelIdentical'],'channelMax':item['channelMax']}),flush=True)
+    await ctx.close()
+   finally:await browser.close()
+lock=O/'native-resource.lock'
+with lock.open('x') as f:f.write('arc-samples-r104b')
+record['startedAtUtc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+try:asyncio.run(run());record['status']='RETURNED_COMPONENT_EQUIVALENCE_OBSERVATIONS'
+except BaseException as e:record['errors'].append(repr(e));record['status']='INCOMPLETE';raise
+finally:
+ record['returnedAtUtc']=datetime.datetime.now(datetime.timezone.utc).isoformat();(out/'RESULT.json').write_bytes((json.dumps(record,indent=2)+'\n').encode())
+ assert lock.read_text()=='arc-samples-r104b';lock.unlink()

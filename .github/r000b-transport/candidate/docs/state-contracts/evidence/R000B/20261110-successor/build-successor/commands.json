@@ -1,0 +1,36 @@
+[
+  {
+    "name": "canonical-build",
+    "command": [
+      "python",
+      "tools/build_native.py"
+    ],
+    "exit": 0,
+    "seconds": 4.091340065002441,
+    "log_sha256": "0370c02e73d605f158ee151bf13d2d0fdab3850e7fcf9f7e7c83a01e064bb47e"
+  },
+  {
+    "name": "frozen-v1",
+    "command": [
+      "python",
+      "tools/verify_v1.py"
+    ],
+    "exit": 0,
+    "seconds": 0.037782907485961914,
+    "log_sha256": "98ab0148dc1403f1ea2c1a8897e676a437640e78c0a9e5dc166bb33314dda789"
+  },
+  {
+    "name": "protected",
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "--",
+      "v1",
+      "vendor"
+    ],
+    "exit": 0,
+    "seconds": 0.4800374507904053,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

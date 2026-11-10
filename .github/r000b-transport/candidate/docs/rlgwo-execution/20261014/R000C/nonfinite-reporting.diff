@@ -1,0 +1,32 @@
+--- fixture-v4/run_r000c_native.py
++++ tools/qa/run_r000c_native.py
+@@ -9,6 +9,7 @@
+ import hashlib
+ import http.server
+ import json
++import math
+ import os
+ from pathlib import Path
+ import struct
+@@ -24,8 +25,20 @@
+     return hashlib.sha256(data).hexdigest()
+ 
+ 
++def json_evidence(value):
++    # Native diagnostic NaN/Infinity are not JSON numbers. Preserve their type
++    # explicitly; never coerce them into a missing or valid weather measurement.
++    if isinstance(value, float) and not math.isfinite(value):
++        return {'$nativeNonFiniteNumber': 'NaN' if math.isnan(value) else 'Infinity' if value > 0 else '-Infinity'}
++    if isinstance(value, dict):
++        return {k: json_evidence(v) for k, v in value.items()}
++    if isinstance(value, list):
++        return [json_evidence(v) for v in value]
++    return value
++
++
+ def dump(path, value):
+-    path.write_text(json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False) + '\n', encoding='utf-8')
++    path.write_text(json.dumps(json_evidence(value), indent=2, ensure_ascii=False, allow_nan=False) + '\n', encoding='utf-8')
+ 
+ 
+ def wait(page, predicate, timeout=45000):

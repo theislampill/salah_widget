@@ -1,0 +1,84 @@
+{
+  "stage": "7.2",
+  "stageStatus": "PARTIAL_DIAGNOSTIC_ONLY",
+  "checkpoint7Status": "OPEN",
+  "productionDiffuseSourceAdmitted": false,
+  "inputKind": "Previously retained authenticated HYG4.0; no new optical survey",
+  "inputNonSolarRecords": 119625,
+  "partitionCounts": {
+    "ambiguous-source-group-withheld": 721,
+    "linked-to-runtime-withheld": 131,
+    "residual-diagnostic": 109852,
+    "runtime-emitter": 8884,
+    "runtime-withheld": 37,
+    "sun-not-stellar-background": 1
+  },
+  "fluxBudgetRelativeV0": {
+    "ambiguous-source-group-withheld": 0.21030452853549333,
+    "linked-to-runtime-withheld": 0.05568194998858837,
+    "residual-diagnostic": 59.89915957353178,
+    "runtime-emitter": 95.82076547392437,
+    "runtime-withheld": 0.7365200529069477,
+    "sun-not-stellar-background": 0.0
+  },
+  "totalListedNonSolarFlux": 156.72243157888718,
+  "residualSourceCount": 109852,
+  "runtimeEmittingIdIntersection": [],
+  "allRuntimeRowsExcluded": true,
+  "duplicatePolicy": "Known HIP/HD/HR aliases and explicit component links unioned. All source-only multi-record groups conservatively withheld; groups touching any runtime row also withheld. No proximity-only merge. Unrecorded astrophysical multiplicity remains unknown.",
+  "partitionCsvUncompressedSha256": "63e908173e0f796986498d17d6fa04d009fc45ed68704524994d2912158c354c",
+  "sourceSha256": "80152c797783b53449458b675eee65656f1404225481e766f8dab21c00ad3c69",
+  "depositionRelativeFluxError": 1.186231561208873e-16,
+  "filter": {
+    "sigmaDeg": 5.0,
+    "truncationSigma": 3.0,
+    "method": "spherical Gaussian with symmetric solid-angle balancing",
+    "balancingIterations": 32,
+    "maxBalancingResidual": 7.105427357601002e-14,
+    "fftNegativeRoundoffClippedFlux": -0.0,
+    "relativeFluxError": 0.0,
+    "measuredOpticalPSF": false
+  },
+  "constantRadianceControlMaxRelativeError": 7.394085344003543e-14,
+  "assets": [
+    {
+      "path": "data/diffuse/hyg-residual-256x128.json",
+      "sha256": "68f06f3c699c89d59c0d8d0b79d69f57b2ac29c37798ba2a9e8b6efa9289c9a7",
+      "width": 256,
+      "height": 128,
+      "totalRelativeV0Flux": 59.89915957353164,
+      "serialisationRelativeFluxError": 2.372463122417746e-15
+    },
+    {
+      "path": "data/diffuse/hyg-residual-128x64.json",
+      "sha256": "937708cdee58f74f336413483bdedb6486fb9cc602f7a374b786b4e4ddbdce5b",
+      "width": 128,
+      "height": 64,
+      "totalRelativeV0Flux": 59.89915957353164,
+      "serialisationRelativeFluxError": 2.372463122417746e-15
+    },
+    {
+      "path": "data/diffuse/hyg-residual-64x32.json",
+      "sha256": "64503f59586acc53855de4d4d15d75a255857ddc475d8ea5d38a821af896ca35",
+      "width": 64,
+      "height": 32,
+      "totalRelativeV0Flux": 59.899159573531456,
+      "serialisationRelativeFluxError": 5.456665181560816e-15
+    }
+  ],
+  "surveyCompleteness": "UNKNOWN; numerical grid definition does not establish observed diffuse coverage",
+  "naturalNightAccounting": "Not composed with CP6. Adding this diagnostic to its lumped night floor is not authorised; survey-dependent decomposition remains CP7.4.",
+  "dependencies": {
+    "builderPython": "3.10+",
+    "numpyTested": "2.3.5",
+    "runtime": "No NumPy or external JS dependencies"
+  },
+  "acceptance": {
+    "finiteIdentityPartition": "PASS",
+    "knownCatalogueOverlap": "PASS for retained identities/links only",
+    "fluxConservation": "PASS",
+    "sphericalConstantControl": "PASS",
+    "actualDiffuseSurvey": "BLOCKED",
+    "totalDiffuseRadiometricCalibration": "NOT_ESTABLISHED"
+  }
+}

@@ -1,0 +1,393 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),crypto=require('node:crypto');
+const src=process.env.SALAH_MOON_SOURCE_DIR||path.join(__dirname,'../src');
+function rig({inline=false,diameter=104,initial=false,deferWorker=false,lateSource=false,file=false}={}){
+ let clock=0,id=0;const jobs=new Map(),frames=new Map(),workers=[],nodes=new Map(),events=new Map(),scripts=[];let published=0,fallbacks=0,initialRenders=0,captures=0,layoutReads=0;
+ const state={utcMs:1000,generation:0,sceneIdentity:'A',fraction:.5,waxing:false,up:1,dpr:1,timeScale:0,paused:false};
+ for(let i=0;i<2;i++)nodes.set('moon-embedded-'+i,{textContent:'AAAA',remove(){nodes.delete('moon-embedded-'+i)}});
+ const detail={available:false,adopt(s){for(const a of [s.linear,s.calendarLinear,s.coverage])for(const v of a)if(!Number.isFinite(v))throw Error('nonfinite worker result');this.available=true},clear(){this.available=false},dispose(){}};
+ class Worker{constructor(){this.sent=[];this.terminated=false;workers.push(this)}postMessage(m){if(this.terminated)throw Error('worker closed');this.sent.push(m)}terminate(){this.terminated=true}emit(m){this.onmessage?.({data:m})}}
+ class U extends URL{};U.createObjectURL=()=> 'blob:mock/'+(++id);U.revokeObjectURL=()=>{};
+ const w={__SALAH_MOON_OFFLINE__:true,__SALAH_MOON_EMBEDDED__:true,SalahMoonHost:{capture:()=>{captures++;return {...state,maximumPresentationRatio:1.13/(1.11+.02*state.up)}},publish:()=>published++,fallback:()=>fallbacks++},SalahRealSky:{compose(){}}};
+ if(file)w.__SALAH_MOON_EMBEDDED__=false;
+ if(initial)w.SalahMoonInitial={identity:{sha256:'fixture-receiver'},render(scene){initialRenders++;const size=2,out=scene.outSize;return {kind:'initial',scene:{...scene,size},width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:size,surfaceExtent:scene.extent,surfaceLinear:new Float32Array(size*size*3),calendarLinear:new Float32Array(size*size*3),surfaceCoverage:new Float32Array(size*size),physicalIdentity:'initial:'+state.generation,profileIdentity:'profile',diagnostics:{receiverIdentity:'fixture-receiver',quality:{status:'initial-v5'}}};}};
+ const doc={currentScript:{src:inline?'':'https://test/moon/moon-host.js'},baseURI:inline?'about:blank':'https://test/',hidden:false,querySelector:()=>({getBoundingClientRect:()=>{layoutReads++;return {width:diameter,height:diameter}}}),getElementById:k=>nodes.get(k),createElement:()=>({width:0,height:0,style:{},getContext:()=>({putImageData(){}}),remove(){this.removed=true}}),head:{append(el){scripts.push(el)}},addEventListener:(n,f)=>events.set(n,f),removeEventListener:n=>events.delete(n)};
+ const digest=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+ const c=vm.createContext({window:w,document:doc,URL:U,Blob,Worker,TextEncoder,assetDigest:digest,performance:{now:()=>clock},structuredClone,Uint8ClampedArray,Float32Array,ImageData:class{constructor(d,w,h){this.data=d;this.width=w;this.height=h}},startMoonDetail:()=>detail,blendCalendarBytes:a=>a,setTimeout:(f,ms)=>{const n=++id;jobs.set(n,{f,ms});return n},clearTimeout:n=>jobs.delete(n),setInterval:()=>++id,clearInterval:()=>{},MOON_DEFAULT_PROFILE:{profile_id:'calendar-neutral-v5-01',mode:'calendar'},MOON_WORKER_SOURCE:lateSource?null:'',MOON_WORKER_PIN:{bytes:10,sha256:digest('testworker')},MOON_OFFLINE_CHUNKS:[{name:'dem',index:0,last:true},{name:'colour',index:0,last:true}]});
+ c.requestAnimationFrame=f=>{const n=++id;frames.set(n,f);return n;};c.cancelAnimationFrame=n=>frames.delete(n);
+ if(file)c.MOON_OFFLINE_CHUNKS=[0,1].map(index=>({name:'assets/dem.bin.gz',index,path:`file-data/dem-${String(index).padStart(3,'0')}.js`,last:false}));
+ const frame=()=>{const callbacks=[...frames.values()];frames.clear();callbacks.forEach(f=>f(clock));};
+ vm.runInContext(fs.readFileSync(path.join(src,'moon-precision.mjs'),'utf8')+'\n'+fs.readFileSync(path.join(src,'moon-native.mjs'),'utf8'),c);
+ if(!deferWorker){frame();frame();}
+ const flush=()=>{for(let guard=0;guard<20;guard++){const j=[...jobs].find(([,v])=>v.ms===0);if(!j)break;jobs.delete(j[0]);j[1].f()}};
+ const request=()=>workers.at(-1).sent.findLast(m=>m.kind==='render');
+ const response=(kind='result')=>{const r=request(),n=r.scene.size,out=r.scene.outSize;return {kind,id:r.id,identity:r.identity,scene:structuredClone(r.scene),width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:n,surfaceExtent:r.scene.extent,surfaceLinear:new Float32Array(n*n*3),calendarLinear:new Float32Array(n*n*3),surfaceCoverage:new Float32Array(n*n),physicalIdentity:'physical',profileIdentity:'profile',diagnostics:{kernel:'metric-radial-terrain-wasm-mb1',quality:{status:kind==='preview'?'preview':'empirical-adaptive'}}}};
+ const head=()=>{
+  state.timeScale=1;
+  c.headCapture={...state,phaseDiameter:Math.ceil(diameter*state.dpr),maximumPhaseDiameter:Math.ceil(diameter*state.dpr)};
+  vm.runInContext('headCapture.phaseQuantum=phaseQuantum(headCapture.phaseDiameter);headCapture.physicalFraction=canonicalFraction(headCapture.fraction,headCapture.phaseDiameter);window.SalahFirstPaint={capturedAt:performance.now(),snapshot:headCapture,moon:{visible:true,capture:headCapture,result:window.SalahMoonInitial.render(nativeCalendarMoonScene(headCapture,MOON_DEFAULT_PROFILE))}};',c);
+  return w.SalahFirstPaint.moon.result;
+ };
+ const execute=el=>{doc.currentScript=el;try{vm.runInContext(fs.readFileSync(path.join(src,'..',new URL(el.src).pathname.replace('/moon/','')),'utf8'),c,{filename:el.src});}finally{doc.currentScript=null;}el.onload?.();};
+ return {w,workers,state,detail,nodes,events,jobs,scripts,execute,flush,frame,request,response,head,doc,resize:value=>diameter=value,get initialRenders(){return initialRenders},get published(){return published},get fallbacks(){return fallbacks},get captures(){return captures},get layoutReads(){return layoutReads},advance:t=>clock+=t};
+}
+
+test('a dispatched file chunk executing after failed-worker cleanup is harmless',()=>{
+ const r=rig({file:true}),old=r.scripts[0],worker=r.workers[0];
+ worker.emit({kind:'boot-error',error:'controlled decode failure'});
+ assert.equal(worker.terminated,true);assert.equal(old.removed,true);
+ assert.doesNotThrow(()=>r.execute(old));r.flush();
+ assert.equal(worker.sent.filter(m=>m.kind==='asset-chunk').length,0);
+ assert.equal(r.scripts.length,1);assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');
+});
+
+test('an old file script cannot deliver to a new retry while its legitimate script can',()=>{
+ const r=rig({file:true}),old=r.scripts[0],lateLoad=old.onload,lateError=old.onerror;
+ r.workers[0].emit({kind:'boot-error',error:'controlled decode failure'});
+ assert.equal(r.w.SalahMoonRuntime.retry(),true);
+ const live=r.scripts[1],worker=r.workers[1];
+ assert.doesNotThrow(()=>r.execute(old));lateLoad();lateError();r.flush();
+ assert.equal(worker.sent.filter(m=>m.kind==='asset-chunk').length,0,'old script must not feed the new worker');
+ assert.equal(worker.terminated,false,'obsolete load/error events must not fail the new attempt');
+ r.execute(live);r.flush();r.execute(r.scripts[2]);r.flush();
+ assert.deepEqual(worker.sent.filter(m=>m.kind==='asset-chunk').map(m=>m.index),[0,1]);
+ worker.emit({kind:'ready'});worker.emit(r.response());
+ assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'refined-terrain');
+ assert.equal(r.w.SalahMoonRuntime.state.current,true);
+ assert.equal(r.jobs.size,0,'transport and deadlines release after successful completion');
+ assert.ok(r.scripts.every(s=>s.removed),'settled scripts leave no DOM roots');
+});
+
+test('dispose discards late file chunks and pending transport continuations',()=>{
+ const r=rig({file:true}),old=r.scripts[0];r.execute(old);
+ r.w.SalahMoonRuntime.dispose();assert.doesNotThrow(()=>r.execute(old));r.flush();
+ assert.equal(r.scripts.length,1);assert.equal(r.jobs.size,0);
+ assert.equal(r.workers[0].terminated,true);assert.equal(r.w.SalahMoonRuntime.retry(),false);
+});
+
+test('an empty surface read preserves native capture without measuring lunar layout',()=>{
+ const r=rig(),captures=r.captures,layoutReads=r.layoutReads;
+ assert.equal(r.w.SalahMoonRuntime.surface(),null);
+ assert.equal(r.captures,captures+1,'preserve native clock observation even without a surface candidate');
+ assert.equal(r.layoutReads,layoutReads,'empty readiness must not force lunar layout');
+});
+
+test('fallback re-entry skips empty layout and preserves the one-use initial head',()=>{
+ const r=rig({initial:true,deferWorker:true}),original=r.head();
+ let fallbackReads=0;
+ r.w.SalahMoonHost.fallback=()=>{
+  fallbackReads++;
+  assert.equal(r.w.SalahMoonRuntime.surface(),null);
+ };
+ const captures=r.captures,layoutReads=r.layoutReads;
+ r.w.SalahMoonRuntime.invalidate('native beginSkyScene',{initialDocument:true});
+ r.w.SalahMoonRuntime.invalidate('native beginSkyScene',{initialDocument:true});
+ assert.equal(fallbackReads,2);
+ assert.equal(r.captures,captures+2,'both fallback reads retain their native clock observation');
+ assert.equal(r.layoutReads,layoutReads);
+ assert.equal(r.w.SalahMoonRuntime.request(),true);
+ assert.equal(r.initialRenders,1,'the head remains available and is not rendered twice');
+ assert.deepEqual(r.w.SalahMoonRuntime.state.accepted.scene,structuredClone(original.scene));
+ assert.equal(r.w.SalahFirstPaint.moon.result,null);
+});
+
+test('surface may adopt a deferred preview without an accepted predecessor and rejects a stale one',()=>{
+ for(const stale of [false,true]){
+  const r=rig();r.workers[0].emit({kind:'ready'});
+  const preview=r.response('preview'),capture=r.w.SalahMoonHost.capture;
+  let reads=0;
+  r.w.SalahMoonHost.capture=()=>{
+   const s=capture();
+   return ++reads===2?{...s,paused:true}:s;
+  };
+  r.workers[0].emit(preview);
+  r.w.SalahMoonHost.capture=capture;
+  assert.equal(reads,2,'admission succeeds while immediate presentation is deferred');
+  assert.equal(r.published,0);
+  if(stale){r.state.generation++;r.state.sceneIdentity='B';}
+  const surface=r.w.SalahMoonRuntime.surface();
+  if(stale){assert.equal(surface,null);assert.equal(r.published,0);}
+  else{assert.ok(surface);assert.equal(r.published,1);assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'terrain-preview');}
+ }
+});
+
+test('initial document hands off the original head result once through its two startup invalidations',()=>{
+ const r=rig({initial:true,deferWorker:true}),original=r.head();
+ r.w.SalahMoonRuntime.invalidate('native beginSkyScene',{initialDocument:true});
+ r.w.SalahMoonRuntime.invalidate('native beginSkyScene',{initialDocument:true});
+ assert.equal(r.w.SalahMoonRuntime.request(),true);assert.equal(r.initialRenders,1,'native boot must not repeat the head computation');
+ assert.deepEqual(r.w.SalahMoonRuntime.state.accepted.scene,structuredClone(original.scene),'retain original phase/time geometry');
+ assert.equal(r.w.SalahFirstPaint.moon.result,null,'release the one-use retained surface');
+ r.w.SalahMoonRuntime.finishInitialDocument();r.w.SalahMoonRuntime.request();assert.equal(r.initialRenders,1);
+ r.w.SalahMoonRuntime.invalidate();r.w.SalahMoonRuntime.request();assert.equal(r.initialRenders,2,'subsequent epochs cannot recover the ticket');
+});
+
+for(const kind of ['target-round-trip','profile-round-trip','hidden-round-trip','paused-return','invalid-return','seek-round-trip','finished','dpr','phase','clock','generation','receiver','profile'])test('head handoff rejects '+kind,()=>{
+ const r=rig({initial:true,deferWorker:true});r.head();
+ if(kind==='target-round-trip'){r.state.sceneIdentity='B';r.w.SalahMoonRuntime.invalidate();r.state.sceneIdentity='A';}
+ if(kind==='profile-round-trip'){r.w.SalahMoonRuntime.setProfile('reference');r.w.SalahMoonRuntime.setProfile('calendar');}
+ if(kind==='hidden-round-trip'){r.doc.hidden=true;r.state.paused=true;r.events.get('visibilitychange')();r.doc.hidden=false;r.state.paused=false;}
+ if(kind==='paused-return'){r.state.paused=true;r.w.SalahMoonRuntime.request();r.state.paused=false;}
+ if(kind==='invalid-return'){r.state.utcMs=NaN;r.w.SalahMoonRuntime.request();r.state.utcMs=1000;}
+ if(kind==='seek-round-trip'){r.state.utcMs+=5000;r.w.SalahMoonRuntime.invalidate();r.state.utcMs-=5000;}
+ if(kind==='finished')r.w.SalahMoonRuntime.finishInitialDocument();
+ if(kind==='dpr')r.state.dpr=2;
+ if(kind==='phase')r.state.fraction=.75;
+ if(kind==='clock')r.state.utcMs+=2000;
+ if(kind==='generation')r.state.generation++;
+ if(kind==='receiver')r.w.SalahFirstPaint.moon.result.diagnostics.receiverIdentity='unknown';
+ if(kind==='profile')r.w.SalahFirstPaint.moon.result.scene.profile={...r.w.SalahFirstPaint.moon.result.scene.profile,mode:'reference'};
+ r.w.SalahMoonRuntime.invalidate('native beginSkyScene',{initialDocument:true});r.w.SalahMoonRuntime.request();
+ assert.ok(r.initialRenders>=2,'rejected head must use the existing current-scene renderer');
+ assert.equal(r.w.SalahFirstPaint.moon.result,null);
+});
+
+test('held refinement script leaves the current initial Moon usable and starts only admitted source',()=>{
+ const r=rig({initial:true,lateSource:true});assert.equal(r.workers.length,0,'missing source must not start an invalid worker');
+ assert.equal(r.w.SalahMoonRuntime.request(),true);assert.ok(r.w.SalahMoonRuntime.surface());
+ assert.throws(()=>r.w.SalahMoonRuntime.installWorkerSource('wrongworker'),/source identity/);assert.equal(r.workers.length,0);
+ assert.equal(r.w.SalahMoonRuntime.installWorkerSource('testworker'),true);r.frame();assert.equal(r.workers.length,0);r.frame();assert.equal(r.workers.length,1);
+ assert.equal(r.workers[0].sent[0].workerSource,'testworker');
+ r.w.SalahMoonRuntime.installWorkerSource('testworker');r.frame();r.frame();assert.equal(r.workers.length,1,'duplicate delivery must not restart refinement');
+ r.w.SalahMoonRuntime.dispose();assert.equal(r.w.SalahMoonRuntime.installWorkerSource('testworker'),false);
+});
+
+test('full terrain boot follows a paint opportunity while the current initial surface is available',()=>{
+ const r=rig({initial:true,deferWorker:true});assert.equal(r.workers.length,0);
+ assert.equal(r.w.SalahMoonRuntime.request(),true);assert.equal(r.workers.length,0);
+ r.frame();assert.equal(r.workers.length,0);r.frame();assert.equal(r.workers.length,1);
+ assert.ok(r.w.SalahMoonRuntime.surface());
+ const disposed=rig({deferWorker:true});disposed.w.SalahMoonRuntime.dispose();disposed.frame();disposed.frame();assert.equal(disposed.workers.length,0);
+ const retry=rig({deferWorker:true});assert.equal(retry.w.SalahMoonRuntime.retry(),true);retry.frame();retry.frame();assert.equal(retry.workers.length,1,'explicit retry revokes deferred boot');
+});
+
+test('held source preserves the worker retry budget and explicit pending status',()=>{
+ const r=rig({initial:true,lateSource:true});r.w.SalahMoonRuntime.request();
+ assert.equal(r.w.SalahMoonRuntime.state.status,'waiting-refinement-source');
+ for(let i=0;i<4;i++)assert.equal(r.w.SalahMoonRuntime.retry(),false,'no worker attempt is possible before its source arrives');
+ assert.equal(r.workers.length,0);assert.equal(r.w.SalahMoonRuntime.state.retryCount,0);
+ r.w.SalahMoonRuntime.installWorkerSource('testworker');r.frame();r.frame();
+ r.workers[0].emit({kind:'boot-error',error:'controlled first actual worker failure'});
+ assert.equal(r.w.SalahMoonRuntime.retry(),true,'first actual failure retains the bounded recovery path');
+ assert.equal(r.workers.length,2);
+});
+
+test('current initial V5 presentation precedes worker readiness and is replaced by preview then final',()=>{
+ const r=rig({initial:true});assert.equal(r.w.SalahMoonRuntime.request(),true);
+ assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'initial-v5');assert.equal(r.w.SalahMoonRuntime.state.pending,false);
+ r.workers[0].emit({kind:'ready'});assert.ok(r.request(),'initial availability must still request the full renderer');
+ r.workers[0].emit(r.response('preview'));assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'terrain-preview');
+ r.workers[0].emit(r.response());assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'refined-terrain');
+});
+
+test('initial data grants no authority to an old generation, seek or profile',()=>{
+ const r=rig({initial:true});r.w.SalahMoonRuntime.request();const a=r.w.SalahMoonRuntime.state.accepted;
+ r.state.generation++;r.state.sceneIdentity='B';assert.equal(r.w.SalahMoonRuntime.surface(),null);
+ r.w.SalahMoonRuntime.request();assert.notEqual(r.w.SalahMoonRuntime.state.accepted.identity,a.identity);
+ r.state.utcMs+=5000;assert.equal(r.w.SalahMoonRuntime.surface(),null);r.w.SalahMoonRuntime.request();assert.ok(r.w.SalahMoonRuntime.surface());
+ r.w.SalahMoonRuntime.setProfile('reference');assert.equal(r.w.SalahMoonRuntime.surface(),null,'unqualified physical/reference presentation stays with full solver');
+});
+
+test('missing full assets retain only independently current initial presentation',()=>{
+ const r=rig({initial:true});r.w.SalahMoonRuntime.request();r.workers[0].emit({kind:'boot-error',error:'controlled missing full assets'});
+ assert.ok(r.w.SalahMoonRuntime.surface());assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'initial-v5');
+ assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');assert.equal(r.w.SalahMoonRuntime.retry(),true);
+ r.workers.at(-1).emit({kind:'ready'});assert.ok(r.request());
+});
+
+test('presentation footprint motion cannot withdraw the same qualified terrain',()=>{
+ const r=rig({diameter:108});r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ const before=r.w.SalahMoonRuntime.surface(),epoch=r.w.SalahMoonRuntime.state.epoch;
+ r.resize(109);r.w.SalahMoonRuntime.request();
+ assert.equal(r.w.SalahMoonRuntime.surface(),before,'one-pixel presentation growth blanked unchanged physical terrain');
+ assert.equal(r.w.SalahMoonRuntime.state.epoch,epoch,'presentation growth is not a new observer epoch');
+});
+
+test('normal native horizon-scale growth keeps a phase-qualified presentation',()=>{
+ const r=rig({diameter:106.56});r.state.timeScale=1;r.state.dpr=3;r.state.up=0;
+ r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ r.resize(108.48);r.state.up=1;
+ assert.ok(r.w.SalahMoonRuntime.surface(),'native 1.11 to 1.13 presentation scale must not blank bounded geometry');
+});
+
+test('ordinary bounded phase refresh starts while the current terrain stays visible',()=>{
+ const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ const before=r.w.SalahMoonRuntime.surface(),old=r.request(),alpha=Math.acos(2*old.scene.fraction-1);
+ r.advance(60000);r.state.utcMs+=60000;r.state.fraction=(1+Math.cos(alpha+.0004))/2;
+ r.w.SalahMoonRuntime.request();
+ assert.notEqual(r.request().id,old.id,'refresh was delayed until current pixels had to be withdrawn');
+ assert.equal(r.w.SalahMoonRuntime.surface(),before,'current result must survive an ordinary bounded refresh');
+ assert.ok(r.w.SalahMoonRuntime.state.phasePrecision.targetPositionErrorBound<=.0416);
+ r.workers[0].emit(r.response('preview'));
+ assert.equal(r.w.SalahMoonRuntime.state.quality,'empirical-adaptive','preview cannot replace still-qualified final pixels');
+ r.workers[0].emit(r.response());assert.ok(r.w.SalahMoonRuntime.surface());
+});
+
+test('bounded display reuse never crosses a generation, seek, orientation or profile change',()=>{
+ for(const change of ['generation','seek','waxing','profile']){
+  const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+  if(change==='generation')r.state.generation++;
+  if(change==='seek')r.state.utcMs+=5000;
+  if(change==='waxing')r.state.waxing=!r.state.waxing;
+  if(change==='profile')r.w.SalahMoonRuntime.setProfile('reference');
+  r.w.SalahMoonRuntime.request();assert.equal(r.w.SalahMoonRuntime.surface(),null,change);
+ }
+});
+
+test('failed replacement cannot blank an independently validated still-current surface',()=>{
+ const r=rig();r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ const before=r.w.SalahMoonRuntime.surface();r.w.SalahMoonRuntime.refresh();
+ r.workers[0].onerror({message:'controlled replacement failure'});
+ assert.equal(r.w.SalahMoonRuntime.surface(),before);
+ assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');
+ assert.equal(r.workers[0].terminated,true);
+ r.state.generation++;assert.equal(r.w.SalahMoonRuntime.surface(),null,'retention never grants a new generation');
+});
+
+test('normal phase evolution keeps a current surface across two refinement cycles',()=>{
+ for(const dpr of [1,1.25,2,3]){
+ const r=rig({diameter:108});r.state.dpr=dpr;r.state.timeScale=1;r.state.fraction=.06808;
+ r.workers[0].emit({kind:'ready'});let id=r.request().id,started=0,visible=false,finals=0;
+ const alpha=Math.acos(2*r.state.fraction-1);
+ for(let sec=1;sec<=900;sec++){
+  r.advance(1000);r.state.utcMs+=1000;
+  r.state.fraction=(1+Math.cos(alpha+2.2e-6*Math.floor(sec/60)*60))/2;
+  r.w.SalahMoonRuntime.request();
+  if(r.request().id!==id){id=r.request().id;started=sec;}
+  if(sec-started===18)r.workers[0].emit(r.response('preview'));
+  if(sec-started===150){r.workers[0].emit(r.response());finals++;}
+  if(sec>=20){assert.ok(r.w.SalahMoonRuntime.surface(),`blank at ${sec}s / DPR ${dpr}`);visible=true;}
+ }
+ assert.ok(visible&&finals>=2,'ordinary operation must also complete final terrain, not remain preview-only');
+ }
+});
+test('embedded source survives boot-error and a retry replays every chunk',()=>{const r=rig();r.flush();assert.equal(r.workers[0].sent.filter(m=>m.kind==='asset-chunk').length,2);r.workers[0].emit({kind:'boot-error',error:'controlled'});assert.equal(r.w.SalahMoonRuntime.retry(),true);r.flush();assert.equal(r.workers[1].sent.filter(m=>m.kind==='asset-chunk').length,2);assert.equal(r.nodes.size,2);});
+
+test('current full-spatial terrain preview is visible but never mislabelled refined',()=>{
+ const r=rig();assert.equal(r.w.SalahMoonRuntime.surface(),null);
+ r.workers[0].emit({kind:'ready'});const p=r.response('preview');p.diagnostics.quality.status='preview';r.workers[0].emit(p);
+ assert.equal(r.w.SalahMoonRuntime.state.status,'refining');
+ assert.ok(r.w.SalahMoonRuntime.surface(),'A current terrain preview must bridge angular refinement');
+ assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'terrain-preview');
+ assert.equal(r.w.SalahMoonRuntime.state.quality,'preview');
+ assert.equal(r.published,1);assert.equal(r.detail.available,true);
+ const f=r.response();f.diagnostics.quality.status='empirical-adaptive';r.workers[0].emit(f);
+ assert.ok(r.w.SalahMoonRuntime.surface());assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'refined-terrain');
+});
+
+test('unsettled final result is never called a refined visible Moon',()=>{
+ const r=rig();r.workers[0].emit({kind:'ready'});const f=r.response();f.diagnostics.quality.status='limit-reached';r.workers[0].emit(f);
+ assert.equal(r.w.SalahMoonRuntime.surface(),null);assert.equal(r.published,0);
+});
+test('malformed numeric surface withdraws safely without publishing',()=>{const r=rig();r.flush();r.workers[0].emit({kind:'ready'});const m=r.response();m.surfaceLinear[0]=NaN;assert.doesNotThrow(()=>r.workers[0].emit(m));assert.equal(r.published,0);assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'awaiting-terrain');assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');assert.equal(r.workers[0].terminated,true);});
+test('complete result becomes current, preview remains pending',()=>{const r=rig();r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response('preview'));assert.equal(r.w.SalahMoonRuntime.state.status,'refining');assert.equal(r.w.SalahMoonRuntime.state.pending,true);assert.ok(r.w.SalahMoonRuntime.surface());r.workers[0].emit(r.response());assert.equal(r.w.SalahMoonRuntime.state.status,'ready');assert.equal(r.w.SalahMoonRuntime.state.pending,false);r.w.SalahMoonRuntime.dispose();});
+test('A B A generations cannot publish the original request',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const stale=r.response();r.state.generation=1;r.state.sceneIdentity='B';r.w.SalahMoonRuntime.request();r.state.generation=2;r.state.sceneIdentity='A';r.w.SalahMoonRuntime.request();r.workers[0].emit(stale);assert.equal(r.published,0);assert.equal(r.w.SalahMoonRuntime.state.rejected,1);});
+test('profile change rejects predecessor even at identical phase',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const stale=r.response();r.w.SalahMoonRuntime.setProfile('reference');r.workers[0].emit(stale);assert.equal(r.published,0);assert.equal(r.request().scene.profile.lift,0);});
+test('DPR change rejects predecessor',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const m=r.response();r.state.dpr=3;r.w.SalahMoonRuntime.request();r.workers[0].emit(m);assert.equal(r.published,0);});
+test('native invalid input withdraws accepted surface',()=>{const r=rig();r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());r.state.utcMs=NaN;assert.equal(r.w.SalahMoonRuntime.request(),false);assert.equal(r.w.SalahMoonRuntime.surface(),null);});
+test('native time seek invalidates same-geometry work',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const m=r.response();r.state.utcMs-=10000;r.w.SalahMoonRuntime.request();r.workers[0].emit(m);assert.equal(r.published,0);});
+test('hide return does not retain a predecessor',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const m=r.response();r.state.paused=true;r.w.SalahMoonRuntime.request();r.state.paused=false;r.w.SalahMoonRuntime.request();r.workers[0].emit(m);assert.equal(r.published,0);});
+test('dead-worker cleanup is nonthrowing and bounded retries',()=>{const r=rig();r.workers[0].terminated=true;assert.doesNotThrow(()=>r.workers[0].onerror({message:'crash'}));for(let i=0;i<3;i++){assert.equal(r.w.SalahMoonRuntime.retry(),true);r.workers.at(-1).emit({kind:'boot-error',error:'again'});}assert.equal(r.w.SalahMoonRuntime.retry(),false);});
+test('dispose revokes publication and further retry',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const m=r.response();r.w.SalahMoonRuntime.dispose();r.workers[0].emit(m);assert.equal(r.published,0);assert.equal(r.w.SalahMoonRuntime.retry(),false);assert.equal(r.events.size,0);});
+
+test('fully embedded document needs no relative resource base',()=>{const r=rig({inline:true});r.flush();assert.equal(r.workers[0].sent.filter(m=>m.kind==='asset-chunk').length,2);});
+test('wrong surface extent is rejected before publication',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const m=r.response();m.surfaceExtent=NaN;r.workers[0].emit(m);assert.equal(r.published,0);assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');});
+test('wrong output footprint is rejected before publication',()=>{const r=rig();r.workers[0].emit({kind:'ready'});const m=r.response();m.width=m.height=8;m.rgba=new Uint8ClampedArray(256);m.calendarRgba=new Uint8ClampedArray(256);r.workers[0].emit(m);assert.equal(r.published,0);assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');});
+test('startup deadline triggers fallback, not a main-thread solver',()=>{const r=rig();const d=[...r.jobs.values()].find(v=>v.ms===120000);assert.ok(d);d.f();assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');assert.equal(r.published,0);assert.equal(r.workers[0].terminated,true);});
+test('refinement deadline retains only the validated current preview, never a false ready result',()=>{const r=rig();r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response('preview'));const before=r.w.SalahMoonRuntime.surface();[...r.jobs.values()].find(v=>v.ms===240000).f();assert.equal(r.w.SalahMoonRuntime.surface(),before);assert.equal(r.w.SalahMoonRuntime.state.quality,'preview');assert.equal(r.w.SalahMoonRuntime.state.status,'unavailable');assert.equal(r.workers[0].terminated,true);r.state.generation++;assert.equal(r.w.SalahMoonRuntime.surface(),null);});
+
+test('normal 1x observed Firefox sequence admits the 169-second refinement within the original display error',()=>{
+ for(const dpr of [1,1.25,2,3]){
+  const r=rig();r.state.dpr=dpr;r.state.timeScale=1;r.state.fraction=.0815410407195768;r.workers[0].emit({kind:'ready'});
+  const start=r.request(),final=r.response();r.workers[0].emit(r.response('preview'));
+  for(let sec=1;sec<=169;sec++){
+   r.advance(1000);r.state.utcMs+=1000;
+   // The recorded native phase updates at 60-second intervals; the Moon host polls faster.
+   r.state.fraction=sec<60?.0815410407195768:sec<120?.0814985561:.08145601121898355;
+   r.w.SalahMoonRuntime.request();
+   assert.equal(r.request().id,start.id,`unnecessary phase cancellation at ${sec}s / DPR ${dpr}`);
+   const angleError=Math.abs(Math.acos(2*start.scene.fraction-1)-Math.acos(2*r.state.fraction-1));
+   assert.ok(104*dpr/2*angleError<=.041600001,'projected terminator displacement exceeds existing budget');
+  }
+  r.workers[0].emit(final);assert.equal(r.w.SalahMoonRuntime.state.status,'ready');assert.equal(r.w.SalahMoonRuntime.state.pending,false);
+  r.advance(600000);r.state.utcMs+=600000;r.state.fraction=.0809;r.w.SalahMoonRuntime.request();
+  assert.notEqual(r.request().id,start.id,'phase must not freeze permanently');
+ }
+});
+
+test('forward and backward seeks reject obsolete results even before the next poll',()=>{
+ for(const delta of [-60000,60000]){const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});const old=r.response();r.state.utcMs+=delta;r.workers[0].emit(old);assert.equal(r.published,0);r.w.SalahMoonRuntime.request();assert.notEqual(r.request().id,old.id);}
+});
+
+test('waxing and reference changes reject old epochs',()=>{
+ const r=rig();r.workers[0].emit({kind:'ready'});const old=r.response();r.state.waxing=!r.state.waxing;r.w.SalahMoonRuntime.request();r.workers[0].emit(old);assert.equal(r.published,0);
+ const prior=r.response();r.w.SalahMoonRuntime.setReferenceScene({mode:'physical-reference',size:32,outSize:32,basis:[0,1,0,0,0,1,1,0,0],sun:[1,0,0],earth:[384400,0,0],distance:384400,extent:1.08});r.workers[0].emit(prior);assert.equal(r.published,0);
+});
+
+test('crescent half gibbous and near-full 1x sequences complete at both senses and DPR 1 through 3',()=>{
+ for(const fraction of [.01,.12,.5,.75,.99])for(const waxing of [false,true])for(const dpr of [1,1.25,2,3]){
+  const r=rig(),alpha=Math.acos(2*fraction-1);Object.assign(r.state,{fraction,waxing,dpr,timeScale:1});r.workers[0].emit({kind:'ready'});
+  let request=r.request(),since=0,complete=false;
+  for(let sec=1;sec<=480;sec++){
+   r.advance(1000);r.state.utcMs+=1000;
+   const a=Math.max(0,Math.min(Math.PI,alpha+(waxing?-1:1)*2.7e-6*Math.floor(sec/60)*60));r.state.fraction=(1+Math.cos(a))/2;
+   r.w.SalahMoonRuntime.request();
+   if(r.request().id!==request.id){request=r.request();since=sec;}
+   const error=104*dpr/2*Math.abs(Math.acos(2*request.scene.fraction-1)-a);assert.ok(error<=.041600001);
+   if(sec-since>=169){r.workers[0].emit(r.response());complete=r.w.SalahMoonRuntime.state.status==='ready';break;}
+  }
+  assert.ok(complete,`${fraction} / ${waxing} / ${dpr} starved`);
+ }
+});
+
+test('steady refined requests validate once without duplicate native or layout reads',()=>{
+ const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ const request=r.request(),published=r.published;
+ for(let i=0;i<5;i++){
+  r.advance(1000);r.state.utcMs+=1000;const captures=r.captures,layoutReads=r.layoutReads;
+  assert.equal(r.w.SalahMoonRuntime.request(),true);
+  assert.equal(r.captures-captures,1,'validate current authority once per steady request');
+  assert.equal(r.layoutReads-layoutReads,1,'validate the actual display footprint once');
+  assert.equal(r.request(),request,'steady requests must not enqueue redundant terrain jobs');
+ }
+ assert.equal(r.published,published,'unchanged texture must not be republished');
+});
+
+test('steady refined request still synchronously publishes the changed horizon envelope',()=>{
+ const r=rig();r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ const request=r.request(),published=r.published,captures=r.captures;r.state.up=.5;
+ assert.equal(r.w.SalahMoonRuntime.request(),true);
+ assert.equal(r.published,published+1,'request callers need the current horizon-blended texture');
+ assert.equal(r.captures-captures,2,'publication requires a fresh authority decision');assert.equal(r.request(),request);
+});
+
+test('changed texture publication cannot acknowledge a clock-invalidated refined surface',()=>{
+ const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+ let publishedSurface='not-called';
+ // The real native publish hook calls updateSkySurface, which reads surface().
+ // A discontinuity during upload must be rejected by both that read and request.
+ r.w.SalahMoonHost.publish=()=>{r.state.utcMs+=5000;publishedSurface=r.w.SalahMoonRuntime.surface();};
+ r.state.up=.5;
+ assert.equal(r.w.SalahMoonRuntime.request(),false);
+ assert.equal(publishedSurface,null);
+});
+
+test('steady request cannot acknowledge stale refined authority or an expired display footprint',()=>{
+ for(const change of ['generation','scene','waxing','dpr','seek','paused','invalid','footprint']){
+  const r=rig();r.state.timeScale=1;r.workers[0].emit({kind:'ready'});r.workers[0].emit(r.response());
+  if(change==='generation')r.state.generation++;
+  if(change==='scene')r.state.sceneIdentity='B';
+  if(change==='waxing')r.state.waxing=!r.state.waxing;
+  if(change==='dpr')r.state.dpr=2;
+  if(change==='seek')r.state.utcMs+=5000;
+  if(change==='paused')r.state.paused=true;
+  if(change==='invalid')r.state.utcMs=NaN;
+  if(change==='footprint'){
+   const alpha=Math.acos(2*r.request().scene.fraction-1);
+   r.state.fraction=(1+Math.cos(alpha+.0005))/2;r.resize(208);
+  }
+  const fallbacks=r.fallbacks;
+  assert.equal(r.w.SalahMoonRuntime.request(),false,change);
+  assert.ok(r.fallbacks>fallbacks,change+' must withdraw synchronously');
+ }
+});

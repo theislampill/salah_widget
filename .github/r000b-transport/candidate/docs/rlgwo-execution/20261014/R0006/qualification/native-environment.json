@@ -1,0 +1,48 @@
+{
+  "schema": "r0006-native-environment/v1",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "machine": "AMD64",
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "playwright": "1.60.0",
+  "viewport": [
+    370,
+    570
+  ],
+  "dpr": 1,
+  "browserTimezone": "America/New_York",
+  "browserBinaries": {
+    "chromium-full": {
+      "file": "chrome.exe",
+      "sha256": "290fa7018fda22c52ada5eddb0113baf3ebc41fd0fde6085eddb19793606c635",
+      "versionDirectory": "chromium-1223"
+    },
+    "chromium-headless-shell": {
+      "file": "chrome-headless-shell.exe",
+      "sha256": "2d8f2abad1a0f2998aaf861967c374d4aad6a104916b8794318760ed35db772f",
+      "versionDirectory": "chromium_headless_shell-1223"
+    },
+    "firefox": {
+      "file": "firefox.exe",
+      "sha256": "960a9a013187e337fc03b685ec8bed803791033620985e99fa66438b4fcd6c80",
+      "versionDirectory": "firefox-1522"
+    }
+  },
+  "dependencySetup": "Owner order section6 explicitly authorizes routine dependency use. Pinned Playwright1.60.0 cached wheel installed only in private evidence directory because default Python has no package and older available venv1.58 names missing browser builds. Existing installed browser binaries reused; no browser download or product dependency change.",
+  "preservationScope": "Retained preservation controls use their original explicitly bound full Chromium executable and original headed/headless modes. Fresh Chromium native cases use the launcher-selected default headless shell. Original preservation is not relabelled as a fresh headless-shell motion or Moon test.",
+  "defaultOptions": {
+    "headless": true,
+    "chromiumSandboxRequested": true,
+    "chromiumArgs": [
+      "--disable-dev-shm-usage"
+    ],
+    "explicitExecutableOverride": null
+  },
+  "modeOverrides": {
+    "batch11/firefox/R0006-tomorrow-promotion": {
+      "headless": false,
+      "observationPollingMs": 100,
+      "inputPacket": "tests/rlgwo/R0006-promotion-polling.json"
+    },
+    "batch5/firefox": "headed failed/incomplete acquisitions retained; no qualification"
+  }
+}

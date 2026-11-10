@@ -1,0 +1,8 @@
+{
+  "schema": "r0006-preflight-error/v1",
+  "status": "REJECTED_BEFORE_BROWSER_LAUNCH",
+  "originalSha256": "43cbb60ee64b0af449df062704b869f680643c00ab4652503862db7a2d39605f",
+  "projection": "Only exact worktree absolute prefix replaced with <worktree>; complete original private log retained.",
+  "log": "Traceback (most recent call last):\r\n  File \"<worktree>\\tools\\cp9\\r0007_browser.py\", line 356, in <module>\r\n    raise SystemExit(main())\r\n                     ^^^^^^\r\n  File \"<worktree>\\tools\\cp9\\r0007_browser.py\", line 152, in main\r\n    summary=validate_cases(packet,root)\r\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"<worktree>\\tools\\cp9\\r0007_browser.py\", line 45, in validate_cases\r\n    raise ValueError(\"unsupported action: \"+action[\"type\"])\r\nValueError: unsupported action: widgetOffscreen\r\n",
+  "repair": "Added widgetOffscreen to the existing action allowlist, then passed validate-only before native execution."
+}

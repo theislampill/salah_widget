@@ -1,0 +1,139 @@
+{
+  "schema": "r0021-bounded-source-review/1",
+  "disposition": "REFINEMENT_QUALITY_FAILURE_RETAINED; EXACT_REJECTED_DIAGNOSTICS_MISSING",
+  "scope": "Read-only source and retained JSON assessment; no tests, native work, asset decoding, trace processing or pixel claim.",
+  "result": {
+    "path": "${WORK_ROOT}\\native\\firefox-clear-iframe-dpr2-entries-r3\\results.json",
+    "sha256": "4f6d891f1be16b9cafbe2171d66e487b6f28f5a6ff111d230b9a4f9c028d9328",
+    "runtimeTreeSha256": "61ceff2276153be01c0b2d319ac036691982fe6999be9fac8d6458758f89f565",
+    "indexSha256": "2b42147824c19334180738eb5530da16118b56181963b126d214becb59174a01"
+  },
+  "observed": {
+    "mode": "new-tab",
+    "elapsedMs": 131467.99999999348,
+    "status": "unavailable",
+    "error": [
+      "Moon refinement did not meet the admitted quality criterion"
+    ],
+    "quality": "preview",
+    "visibleSource": "terrain-preview",
+    "current": true,
+    "workerAlive": false,
+    "pending": false,
+    "progress": {
+      "stage": "refinement",
+      "row": null,
+      "total": null,
+      "sourceSamples": 8192,
+      "selected": 17
+    },
+    "retainedReason": "replacement worker failure; original current surface",
+    "lastIsAcceptedPreview": {
+      "status": "preview",
+      "samples": 64
+    },
+    "acceptedPreviewIdentity": "428c6d89fcbd821f382e79a3da717aac89c9a88be7615e5f48c09d29dee86539",
+    "acceptedPreviewScene": {
+      "size": 540,
+      "outSize": 300,
+      "diameter": 288,
+      "basis": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "sun": [
+        0.9366604833596847,
+        0.3502386884860122,
+        0
+      ],
+      "earth": [
+        384400,
+        0,
+        0
+      ],
+      "distance": 384400,
+      "extent": 1.08,
+      "profile": {
+        "schema": "lunar-presentation/5",
+        "profile_id": "calendar-neutral-v5-01",
+        "mode": "calendar",
+        "exposure": 2.9195482731525044,
+        "lift": 0.003,
+        "knee": 5.388411226362526e-06,
+        "colour_basis": "linear-sRGB",
+        "gamut": "luminance-preserving-neutral-axis"
+      },
+      "mode": "calendar-canonical",
+      "fraction": 0.9683302416798423,
+      "waxing": true,
+      "tilt": 0,
+      "requestedNativeFraction": 0.9682630647265152,
+      "phaseQuantumRadians": 0.0007668202764976958,
+      "phaseDisplayDiameter": 217,
+      "geometryConvention": "native accepted phase; leading-edge bounded display approximation while advancing, nearest while fixed; .0416 device px maximum; no future UTC"
+    },
+    "workerEvents": []
+  },
+  "sourceFindings": [
+    {
+      "file": "moon/src/moon-native.mjs",
+      "lines": [
+        181,
+        206
+      ],
+      "finding": "Current pending identity, scene, shapes and finite premultiplied surfaces are checked before explicit non-empirical-adaptive rejection. This error differs from the 240000 ms refinement deadline; elapsed run time is not the failure timestamp."
+    },
+    {
+      "file": "moon/src/moon-quality.mjs",
+      "lines": [
+        25,
+        39
+      ],
+      "finding": "Normal producer iterates 64/256/1024/4096/8192. Final refinement progress selected=17 is emitted only after neither local-count-zero nor projected <=0.5 acceptance succeeded. This supports limit exhaustion, but the actual rejected quality record and its projected magnitude were not preserved."
+    },
+    {
+      "file": "moon/src/moon-native.mjs",
+      "lines": [
+        54,
+        76
+      ],
+      "finding": "failed() retains a previously current surface and closes the worker without adopting rejected diagnostics. status.last therefore remains the 64-sample preview; current=true does not mean refined."
+    },
+    {
+      "file": "moon/src/moon-worker.mjs",
+      "lines": [
+        25,
+        31
+      ],
+      "finding": "Final quality diagnostics survive worker publication; only receiverCodes/ambiguous/qualityImages are deleted. Capture rejected metadata at the message boundary before host failed() to preserve it."
+    }
+  ],
+  "reuse": {
+    "generatedR3WorkerSha256": "760ce0838e62724ef158e74f13a19c9e2acea02b5bd86a492006d2f6e13aa6ce",
+    "generatedR17WorkerSha256": "eba392c377504c82d05a8599c3bd03a34465487b53829c063e3687ed3c089d87",
+    "verified": "Original generated host/worker/kernel/manifest match this result runtime pins. Numerical quality/pool/engine/worker function bodies are identical in old/current generated worker. Whole-worker difference is only the previously reviewed Moon detail preview-publication guard, outside angular calculation.",
+    "tests": "Host limit-reached control uses a fabricated result; pool controls use size25 and other phases/low angular rules. No exact failed phase/identity fixture was found in current moon/tests or tests/real-sky. Cold and reload use different phase jobs. None of these establish success for this failed 540-grid job.",
+    "testedPhase": 0.9683302416798423,
+    "scopeLimit": "Accepted preview scene is the best retained input candidate; rejected message job id/key/epoch and scene were not separately retained, so exact failed-job equality is not asserted."
+  },
+  "minimumDiscriminator": [
+    "First preserve one rejected reply metadata record: kind,id,identity(id/key/epoch), exact scene, physicalIdentity, profileIdentity and complete diagnostics. Bind source/kernel/assets and current pending job at rejection. Do not alter accepted status.last or the quality gate.",
+    "After ROOT lease admission, one fixed-input replay of that bound job using unchanged four-row worker and 64..8192 rules can distinguish reproducible numerical limit from job/transport mismatch; no phase sweep, increased sample cap, gate relaxation or automatic retry.",
+    "If reproduced, retain only the maximum-difference witness for each existing projected comparison (312px, zero and .37/- .21 offsets), its 4096/8192 values, and unsettled receiver indices/code differences. These discriminate a real convergence floor from sparse-cache/projection behavior without a renderer redesign."
+  ],
+  "remaining": "S7 current-refined requirement for this case and continuous qualification remain open. S1 and callback budgets unaffected. No diagnosis of capture blank, timeout, H1 change, or faulty quadrature is established.",
+  "ownerPins": {
+    "moon-quality.mjs": "724916035b92df8b02dc2e798dd74f5515249ef9bc09a6effc1d844357a8477c",
+    "moon-pool.mjs": "e905d5bfc1ab4893cb7774b85203628081deb231f05284c5cef20b14fd1484bd",
+    "moon-worker.mjs": "9c2264c12e2e7d40736bbcafaaeb686eaa3a51083b715c9b785b52cbba818204",
+    "moon-engine.mjs": "05ec2e8b0eef0e5bc6b3c6556eb2f901b126c717f469b3c609a49b4edeaa8a32",
+    "moon-native.mjs": "ef70ef1a6365af7bd6a26c8f02ab53a4f6b3003ec936859ecd44616dd920b036"
+  }
+}

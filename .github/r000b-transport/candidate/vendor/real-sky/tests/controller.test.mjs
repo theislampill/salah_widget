@@ -1,0 +1,16 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import {SkyController,projectCatalogue,annotationSegments,discOccults} from '../src/scene.mjs';
+const cat=JSON.parse(fs.readFileSync(new URL('../data/bright-stars.json',import.meta.url))),ann=JSON.parse(fs.readFileSync(new URL('../data/annotations.json',import.meta.url)));
+const o={utcMs:Date.UTC(2026,0,15,2),latDeg:28.54,lonDeg:-81.38};
+test('every constellation endpoint resolves to a measured star',()=>{const ids=new Set(cat.stars.map(s=>s.hip));assert.ok(ann.patterns.length>=24);for(const p of ann.patterns)for(const path of p.paths)for(const id of path)assert.ok(ids.has(id));});
+test('projection same inputs is deterministic with no seed',()=>assert.deepEqual(projectCatalogue(cat,o),projectCatalogue(cat,o)));
+test('same location and scene ID do not freeze wall-clock geometry',()=>{const c=new SkyController(cat);const a=c.update(o,{sceneIdentity:'same'}),b=c.update({...o,utcMs:o.utcMs+3600000},{sceneIdentity:'same'});assert.equal(b.sceneIdentity,'same');assert.notDeepEqual(a.sources.map(s=>s.x),b.sources.map(s=>s.x));});
+test('backward time jump reprojects rather than reuses future geometry',()=>{const c=new SkyController(cat);const a=c.update(o);c.update({...o,utcMs:o.utcMs+1000000});assert.deepEqual(c.update(o).sources,a.sources);});
+test('invalid accepted observer clears previous geometry, terminally unavailable',()=>{const c=new SkyController(cat);c.update(o);const a=c.update({...o,latDeg:null});assert.equal(a.status,'unavailable');assert.deepEqual(a.sources,[]);});
+test('equator and Greenwich are valid, not missing data',()=>assert.equal(new SkyController(cat).update({...o,latDeg:0,lonDeg:0}).status,'ready'));
+test('cloud/appearance changes never require a catalogue rebuild',()=>{const c=new SkyController(cat);const a=c.update(o,{appearanceVersion:1}),b=c.update(o,{appearanceVersion:2});assert.deepEqual(a.sources,b.sources);assert.notEqual(a.appearanceVersion,b.appearanceVersion);});
+test('generation ownership rejects late catalogue arrival',async()=>{let finish;const c=new SkyController(cat),slow=c.replaceAsync(()=>new Promise(r=>finish=r));await c.replaceAsync(async()=>structuredClone(cat));finish({...cat,id:'stale'});assert.equal(await slow,false);assert.notEqual(c.catalogue.id,'stale');});
+test('failed catalogue replacement clears stale old-location sources',async()=>{const c=new SkyController(cat);await c.replaceAsync(async()=>{throw Error('offline')});assert.equal(c.update(o).status,'unavailable');});
+test('annotation segments clip at the horizon and do not invent visible endpoints',()=>{const scene=projectCatalogue(cat,o);const segments=annotationSegments(ann,scene);assert.ok(segments.length);assert.ok(segments.every(s=>s.a.visible&&s.b.visible));});
+test('physical occultation uses angular disc, independent of luminous fraction',()=>{assert.equal(discOccults({altDeg:30,azDeg:120},{altDeg:30,azDeg:120,radiusDeg:.26}),true);assert.equal(discOccults({altDeg:31,azDeg:120},{altDeg:30,azDeg:120,radiusDeg:.26}),false);});
+test('southern cross is always below Reykjavik geometric horizon across one day',()=>{for(let hour=0;hour<24;hour++){const s=projectCatalogue(cat,{...o,latDeg:64.15,lonDeg:-21.94,utcMs:o.utcMs+hour*3600000});assert.ok(s.find(x=>x.hip===60718).altDeg<0);}});

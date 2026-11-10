@@ -1,0 +1,41 @@
+--- acquired-driver-v1
++++ current-driver-v2
+@@ -85,6 +85,7 @@
+     parser.add_argument('--python-packages', type=Path, required=True)
+     parser.add_argument('--case-id', action='append')
+     parser.add_argument('--headed', action='store_true')
++    parser.add_argument('--single-document', action='store_true')
+     args = parser.parse_args()
+     root, out = args.root.resolve(), args.out.resolve()
+     if out.is_relative_to(root):
+@@ -106,6 +107,13 @@
+     if not selected or args.case_id and {c['id'] for c in selected} != set(args.case_id):
+         raise ValueError('Empty or unknown case selection')
+     wrapper = root / 'tests/rlgwo/weather-browser-fixture.html'
++    served_wrapper = wrapper.read_bytes()
++    document_binding = None
++    if args.single_document:
++        sys.path.insert(0, str(Path(__file__).resolve().parent))
++        from r000c_single_document import prepare
++        served_wrapper, document_binding = prepare((root / 'index.html').read_bytes(), served_wrapper)
++        dump(out / 'single-document-binding.json', document_binding)
+     tile = tile_png()
+     requests = []
+ 
+@@ -117,7 +125,7 @@
+             path = unquote(urlsplit(self.path).path)
+             requests.append({'path': path, 'hostMonotonic': time.monotonic()})
+             if path == '/fixture.html':
+-                data, mime = wrapper.read_bytes(), 'text/html; charset=utf-8'
++                data, mime = served_wrapper, 'text/html; charset=utf-8'
+             elif path.startswith('/tile/'):
+                 data, mime = tile, 'image/png'
+             elif path.startswith('/product/'):
+@@ -143,6 +151,7 @@
+     report = {'schema': 'r000c-native-acquisition/v1', 'status': 'RUNNING', 'runtime': before,
+               'sourceCommit': packet['sourceCommit'], 'casesSha256': sha(args.cases.read_bytes()),
+               'driverSha256': sha(Path(__file__).read_bytes()), 'wrapperSha256': sha(wrapper.read_bytes()),
++              'servedHtmlSha256': sha(served_wrapper), 'documentMode': 'single-document-preparse' if args.single_document else 'original-document-wrapper',
+               'tileSha256': sha(tile), 'cases': [], 'limitations': __doc__}
+     dump(out / 'results.json', report)
+     try:

@@ -1,0 +1,40 @@
+Native SHA256: b17801b33cc99c95710b916016dfd542eddce304145b493c0adecc4c3412e37f
+Test SHA256: e124a9c9b56152bdd1f3366a7ea0dcbfb717144ea7c77630500036e0945df391
+Command: node --test tests/weather-no-timetable-handoff.test.cjs
+Exit: 0
+
+✔ F01 healthy full-model refresh keeps normal easing: capture-before-render (209.840246ms)
+✔ F01 healthy full-model refresh keeps normal easing: render-before-capture (111.044568ms)
+✔ F01 repeated captures and final checks retain A without a producer, timestamp or easing mutation (317.291117ms)
+✔ F01 fresh B cannot retain A after the genuine model becomes unavailable (106.491601ms)
+✔ F01 cold consumer cannot restore a deck from weather and model availability alone (76.147801ms)
+✔ F01 already-withdrawn consumer cannot restore a deck from weather and model availability alone (162.470709ms)
+✔ F01 owns A currentValidAt boundary with fresh B: 899999 (131.648964ms)
+✔ F01 owns A currentValidAt boundary with fresh B: 900000 (89.022129ms)
+✔ F01 owns A currentValidAt boundary with fresh B: 900001 (111.30008ms)
+✔ F01 owns A currentValidAt boundary with fresh B: -1 (81.031664ms)
+✔ F01 owns A retrievedAt boundary with fresh B: 899999 (162.663848ms)
+✔ F01 owns A retrievedAt boundary with fresh B: 900000 (126.449474ms)
+✔ F01 owns A retrievedAt boundary with fresh B: 900001 (166.089257ms)
+✔ F01 owns A retrievedAt boundary with fresh B: -1 (127.863371ms)
+✔ F01 successive fresh B/C records do not renew A or its cached decision lifetime (83.068059ms)
+✔ F01 generation replacement cannot reuse the old active receipt (91.585412ms)
+✔ F01 coordinates replacement cannot reuse the old active receipt (98.471592ms)
+✔ F01 scene replacement cannot reuse the old active receipt (89.947298ms)
+✔ F01 mode replacement cannot reuse the old active receipt (94.216927ms)
+✔ F01 genuine simulation object turnover; missing model=false (50.668447ms)
+✔ F01 genuine simulation object turnover; missing model=true (48.624236ms)
+✔ F01 genuine forecast object turnover; missing model=false (104.02697ms)
+✔ F01 genuine forecast object turnover; missing model=true (93.004016ms)
+✔ F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=false (52.624115ms)
+✔ F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=true (57.628933ms)
+✔ F01 pending actual solar decode respects active receipt; B published=false (105.318895ms)
+✔ F01 pending actual solar decode respects active receipt; B published=true (96.15222ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3207.074064

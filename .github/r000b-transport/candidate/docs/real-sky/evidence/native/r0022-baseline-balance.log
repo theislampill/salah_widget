@@ -1,0 +1,63 @@
+FAIL eligible .08 matches baseline light gains and projected appearance :: _glintEls is not defined
+FAIL eligible .5 matches baseline light gains and projected appearance :: _glintEls is not defined
+FAIL eligible .92 matches baseline light gains and projected appearance :: _glintEls is not defined
+FAIL eligible 1 matches baseline light gains and projected appearance :: _glintEls is not defined
+FAIL daylight keeps solar/sky/calendar outputs unchanged :: _glintEls is not defined
+FAIL below horizon keeps solar/sky/calendar outputs unchanged :: _glintEls is not defined
+FAIL PBR source remains byte-identical :: Expected values to be strictly equal:
++ actual - expected
+... Skipped lines
+
+  'function renderMoonPBR(frac, waxing){\n' +
++   '  const up=moonSky.up;\n' +
+    '  if(!_pbrReady){ _pbrPending={frac,waxing}; return; }\n' +
++   '  if(_moonCv && Math.abs(frac-_lastPbrFrac)<0.004 && waxing===_lastPbrWax && up===_lastPbrUp) return;\n' +
++   '  _lastPbrFrac=frac; _lastPbrWax=waxing; _lastPbrUp=up;\n' +
+-   '  if(_moonCv && Math.abs(frac-_lastPbrFrac)<0.004 && waxing===_lastPbrWax) return;\n' +
+-   '  _lastPbrFrac=frac; _lastPbrWax=waxing;\n' +
+    '  const N=_MN,R=_MR,cx=N/2,cy=N/2,TW=_MTW,TH=_MTH,alb=_mAlb,nrm=_mNrm,TWO_PI=Math.PI*2;\n' +
+    '  if(!_moonCv){ _moonCv=document.createElement("canvas"); _moonCv.width=N; _moonCv.height=N; _moonCtx=_moonCv.getContext("2d"); _moonOut=_moonCtx.createImageData(N,N); }\n' +
+    '  const out=_moonOut.data;\n' +
+    '  frac=clamp(frac);\n' +
+    '  const pa=Math.acos(2*frac-1), Lx=(waxing?1:-1)*Math.sin(pa), Lz=Math.cos(pa);   // sun dir: waxing → lit on the RIGHT, waning → lit on the LEFT. Only the light side flips; the maria/relief texture is fixed, so the moon shows ONE upright face and the terminator just sweeps across (no record-player spin) — and it matches the footer phase emoji\n' +
++   '  const esFloor=0.09, es=esFloor+0.34*Math.pow(1-frac,1.7);                             // smooth earthshine curve (steeper-than-linear toward full): MODERATE at crescent so the lit crescent clearly dominates, FAINT-but-visible ashen at gibbous (never black), small floor at full\n' +
+-   '  const es=0.09+0.34*Math.pow(1-frac,1.7);                             // smooth earthshine curve (steeper-than-linear toward full): MODERATE at crescent so the lit crescent clearly dominates, FAINT-but-visible ashen at gibbous (never black), small floor at full\n' +
+    '  for(let oy=0;oy<N;oy++) for(let ox=0;ox<N;ox++){\n' +
+    '    const i=(oy*N+ox)*4, dx=(ox-cx)/R, dy=(oy-cy)/R, rr2=dx*dx+dy*dy;\n' +
+    '    if(rr2>1.17){ out[i]=out[i+1]=out[i+2]=0; out[i+3]=0; continue; }   // well outside the disc → clear\n' +
+    '    // OPAQUE disc, NO feather. The thin OUTSIDE ring samples the LIMB colour (position clamped onto the circle)\n' +
+    "    // and writes it with alpha 0 → it BLEEDS the lit RGB outward, so the browser's downscale AA blends moon→moon,\n" +
+...
+    '    const lit=a*refl, earth=es*a;   // es already carries the all-phase floor; multiply by albedo so the ashen side stays TEXTURED terrain\n' +
++   '    // A below-horizon calendar disc uses existing Earthshine; the opaque surface rises with the same horizon envelope.\n' +
++   '    const surfaceCeiling=earth+(1-earth)*up;\n' +
++   '    // Display-transfer only the albedo floor in shadow; retain the existing Earthshine channel weights.\n' +
++   '    // Existing horizon/Lommel-Seeliger weights keep full moon and below-horizon calendar bytes unchanged.\n' +
++   '    const floor=esFloor*a, displayFloor=floor+(Math.pow(floor*_EXPO,1/2.2)/_EXPO-floor)*(1-clamp(lsf))*up;\n' +
++   '    out[i]  =Math.min(255,Math.min(surfaceCeiling,Math.max(floor,lit+earth*0.42,displayFloor*0.42))*255*_EXPO);\n' +
++   '    out[i+1]=Math.min(255,Math.min(surfaceCeiling,Math.max(floor,lit*0.985+earth*0.50,displayFloor*0.50))*255*_EXPO);\n' +
++   '    out[i+2]=Math.min(255,Math.min(surfaceCeiling,Math.max(floor,lit*0.93+earth*0.66,displayFloor*0.66))*255*_EXPO);\n' +
+-   '    out[i]  =Math.min(255,(lit+earth*0.42)*255*_EXPO);\n' +
+-   '    out[i+1]=Math.min(255,(lit*0.985+earth*0.50)*255*_EXPO);\n' +
+-   '    out[i+2]=Math.min(255,(lit*0.93+earth*0.66)*255*_EXPO);\n' +
+    '    // COVERAGE ANTIALIASING on the limb: alpha ramps over ~1.8 canvas px across the geometric edge, so the large\n' +
+    '    // upscaled disc has a smooth circular edge — no jaggy stair-steps, no hard stroke. Outside the band the RGB is\n' +
+    '    // still the bled limb colour (alpha 0), so any further browser resampling blends moon→moon, never moon→black.\n' +
+    '    const edgePx=(1-rr)*R, cov=edgePx>=0.9?1:edgePx<=-0.9?0:(edgePx+0.9)/1.8;\n' +
+    '    out[i+3]=cov*255;\n' +
+
+PASS puff template source remains byte-identical
+PASS puff shader source remains byte-identical
+PASS cloud deck sizes/bands/opacity/slots remain identical
+PASS cloud colour/volume/sun/moon lighting equations remain identical
+PASS cloud growth/radius/coverage gate equations remain identical
+PASS protected cloud shader guard catches a flattened core gradient
+PASS solar arc source matches exact accepted R000A reference
+PASS Madinah noon actual solar path/horizon/marker geometry matches baseline
+PASS London shallow night actual solar path/horizon/marker geometry matches baseline
+PASS Tromso summer actual solar path/horizon/marker geometry matches baseline
+PASS Tromso winter actual solar path/horizon/marker geometry matches baseline
+PASS solar geometry guard detects displaced horizon despite accepted metadata
+PASS MOON_ALBEDO payload/provenance line remains byte-identical
+PASS MOON_NORMAL payload/provenance line remains byte-identical
+{"baseCommit":"fd2972ba64225fe9d6848e92497e6d0ed20ea624","baselineSha256":"446453b522f56f5f1bc0afd1a3abd09b73756754fa58a6b3b0ff09ce953a2eec","acceptedPrayerCommit":"8b83df029966c203a503ab217d121c48b8ee6e8a","acceptedPrayerSha256":"63d2b3e46f71854cc383b5cd240d44f9dc3e006378ff4d3cd85bfb5861d3adf1","sourcePath":"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\index.html","sourceSha256":"8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643","fixtureSha256":"fc37ffd83ef5d3d139bc092ff086ad0f25e4ebb0c6383e6c6c071ad31636833b","pass":14,"fail":7,"limits":"matched VM/source controls, not native no-op/crops/performance"}

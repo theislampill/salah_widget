@@ -1,0 +1,208 @@
+{
+  "schema": "r0021-independent-bounded-review/1",
+  "createdAtUtc": "2026-10-18T00:10:09.291616+00:00",
+  "reviewer": "/root/r0021_review",
+  "decision": "SUPPORT_BOUNDED_INACTIVE_LUNAR_OPTIC_CORRECTION",
+  "authority": "Read-only recommendation; ROOT retains integration, native/performance acquisition, effects and closure.",
+  "sourceRoot": "<r0021-source>",
+  "evidenceRoot": "<r0021-evidence>",
+  "sourceBinding": {
+    "head": "ffbb6e239a770e03beae1d76a6e0189d2134898e",
+    "headTree": "4e79c90192960c82fb6e21036f7f93d6efddaf3d",
+    "dirtyPaths": [
+      "src/native/index.html",
+      "tests/real-sky/native-solar-startup.test.cjs"
+    ],
+    "files": [
+      {
+        "path": "src/native/index.html",
+        "sha256": "a1aca8d5a2e6a6609d6e49d82fcece891634435473436536f2993c307e017f34",
+        "equalImmutableR15Copy": true
+      },
+      {
+        "path": "tests/real-sky/native-solar-startup.test.cjs",
+        "sha256": "f41b8ab1610a98b8e9c70351b295510599cf96d249f0b84f4c42ad81af55e0c8",
+        "equalImmutableR15Copy": true
+      }
+    ],
+    "build": "integrated-r15",
+    "indexSha256": "98e4b3f1c3ecdb89ae1ceb33463fc02dad3b47cc32482aa5c2a456886e6b11a5"
+  },
+  "actionableFindings": [],
+  "sourceAssessment": [
+    {
+      "lines": "src/native/index.html:193-195,2804-2816",
+      "finding": "Default-hidden applies only to the three optional lunar optics. Existing serialized opacity values, DOM, filters, geometry, blend modes and opacity transitions remain unchanged. Positive values set inherit; only finite exact computed zero removes it. Invalid reads retain the fade."
+    },
+    {
+      "lines": "src/native/index.html:2831,3100,3104-3105",
+      "finding": "Both ordinary and no-timetable writers use the helper. The source test covers fresh zero without a getter, exact existing sink strings, mid-fade retention/reversal, invalid reads, finite-zero retirement, rounded-to-zero input and reentry."
+    },
+    {
+      "lines": "src/native/index.html:3627",
+      "finding": "No scheduler is added. Pruning is revisited by the existing render path. A stopped simulated clock, hidden/offscreen state or no further render may leave an already opacity-zero effect inherited until the next paint; this bounds the optimization, not visible parity."
+    }
+  ],
+  "receiptReview": {
+    "red": "5 passed / 1 genuine finite-empty failure",
+    "green": "6 passed / 0 failed",
+    "reviewerReranTests": false
+  },
+  "nativeControls": [
+    {
+      "engine": "chromium",
+      "browserVersion": "148.0.7778.96",
+      "resultPath": "native/lunar-optics-r35/RESULT.json",
+      "statesPerSide": 25,
+      "pngPairsByteIdentical": 25,
+      "pairManifestSha256": "85851b126297895e81477c8cd575440967e7a9e43c33b21eb02cd906d8fda130",
+      "pairManifestEncoding": "sorted filenames; JSON objects name/baseline/candidate/byteEqual; sort_keys=True; separators comma/colon; UTF-8",
+      "afterScreenshotMarkerCountPerSide": [
+        25,
+        25
+      ],
+      "pageErrorsPerSide": [
+        [],
+        []
+      ],
+      "scope": "Held native DOM; actual production helper versus original opacity sink; native opacity animations sampled at matched times."
+    },
+    {
+      "engine": "firefox",
+      "browserVersion": "150.0.2",
+      "resultPath": "native/lunar-optics-firefox-r36/RESULT.json",
+      "statesPerSide": 25,
+      "pngPairsByteIdentical": 25,
+      "pairManifestSha256": "66f2e66dc737249f6ef61da5ba3e1e09761feac6c983112ad868a56cd7d72f21",
+      "pairManifestEncoding": "sorted filenames; JSON objects name/baseline/candidate/byteEqual; sort_keys=True; separators comma/colon; UTF-8",
+      "afterScreenshotMarkerCountPerSide": [
+        25,
+        25
+      ],
+      "pageErrorsPerSide": [
+        [],
+        []
+      ],
+      "scope": "Held native DOM; actual production helper versus original opacity sink; native opacity animations sampled at matched times."
+    }
+  ],
+  "viewedOriginals": [
+    {
+      "path": "native/lunar-optics-r35/chromium-integrated-r15/initial-zero.png",
+      "sha256": "18018c150f1e04945b21f80a34ae72ad2849f83f37b568907a29330436cf319c"
+    },
+    {
+      "path": "native/lunar-optics-r35/chromium-integrated-r15/mhalo-on.png",
+      "sha256": "b38af30cf57711ef5d290965aed2ab593e4ba635d9b1b24341549800e8422a74"
+    },
+    {
+      "path": "native/lunar-optics-r35/chromium-integrated-r15/mhalo-exit-mid.png",
+      "sha256": "78b5c03e41dd69fa7329ee43940a884dcc3963ba8c129ca68d5b4989d7a5c265"
+    },
+    {
+      "path": "native/lunar-optics-r35/chromium-integrated-r15/mcorona-on.png",
+      "sha256": "94cbc79bcce72add6823a8217252943d81a20226e803428d938bfd963cc92b24"
+    },
+    {
+      "path": "native/lunar-optics-r35/chromium-integrated-r15/mparhelia-on.png",
+      "sha256": "c81bb609a55317c2d165a9d71ea6673385f9e84044e04f59e344ac0110d2dc49"
+    },
+    {
+      "path": "native/lunar-optics-firefox-r36/firefox-integrated-r15/initial-zero.png",
+      "sha256": "6719ed5039da380937ce923c0864b1c4a5dba23f5a07667430856be675da1830"
+    },
+    {
+      "path": "native/lunar-optics-firefox-r36/firefox-integrated-r15/mhalo-on.png",
+      "sha256": "dcecb8aa8c78e8136353b3a9a133629b6f8fd9ebf37de0f6e07000037833b875"
+    },
+    {
+      "path": "native/lunar-optics-firefox-r36/firefox-integrated-r15/mhalo-exit-mid.png",
+      "sha256": "c3b712e8cbc976b3ceda9035b7754bf3db481b7ded348cfcdd952fecbed6f307"
+    },
+    {
+      "path": "native/lunar-optics-firefox-r36/firefox-integrated-r15/mcorona-on.png",
+      "sha256": "fa3df6a085eeb9c221eb3972b5578389eb615bae0cb03ca7006cba021eeae95f"
+    },
+    {
+      "path": "native/lunar-optics-firefox-r36/firefox-integrated-r15/mparhelia-on.png",
+      "sha256": "93ce5eb6b86c7732f70cadb3d0a3f5067ebf57da6844eb7068aa970be2151de2"
+    },
+    {
+      "path": "native/lunar-optics-firefox-r36/firefox-integrated-r15/mhalo-sky-pending.png",
+      "sha256": "34fe2f6fbdcae5b5e0a8851772dfc37549254aad46f2ee86e276ca5834a8cebb"
+    },
+    {
+      "path": "native/lunar-optics-firefox-r36/firefox-integrated-r15/mhalo-not-moon-ready.png",
+      "sha256": "6719ed5039da380937ce923c0864b1c4a5dba23f5a07667430856be675da1830"
+    }
+  ],
+  "visualFinding": "Both engines show the positive halo ring, close corona and in-frame paraselene, with weaker halo during the sampled exit. Candidate zero and Firefox ancestor-guard samples have no optional optic. Head Moon pixels remaining under the guard are not treated as failure of the SVG optic guard. All candidate samples have byte-identical baseline counterparts.",
+  "harnessReview": [
+    "r35 records and cancels the owned native timeouts, interval and RAF before component sampling; this removes the observed r34 class-withdrawal confound. Both completed engine pairs record frozen counts 3/1/0.",
+    "r36 changes Firefox navigation wait from load to commit, requires current moon-ready geometry with 20 ms polling, checks the setup class, and records primary/cleanup exceptions separately. No product source change is involved.",
+    "Held Date, unavailable external providers, held preview/refinement owners, frozen native scheduling and manually sampled native CSS animations make this a component preservation control. It is not ordinary live motion or lifecycle/currentness qualification.",
+    "The harness asserts unchanged classes and optic state before/after each screenshot and positive visibility/opacity or ancestor hiding as applicable. Results retain before state and afterScreenshotAt, not complete after states; the independent review does not claim a second-state recomputation."
+  ],
+  "contraryEvidenceRetained": [
+    {
+      "path": "native/lunar-optics-r34/RESULT.json",
+      "disposition": "Excluded from parity/positive acceptance where live native class withdrawal confounded paired snapshots."
+    },
+    {
+      "path": "native/lunar-optics-r35/RESULT.json",
+      "disposition": "Chromium 25-state pair is complete. Firefox is incomplete with only two baseline states and no candidate; no whole-r35 PASS. ROOT reports expired geometry and subsequent cleanup internal error; the partial record remains retained."
+    }
+  ],
+  "limits": [
+    "No S1 timing, accepted-scene interval, continuous original-frame coverage, live motion, ordinary weather eligibility or actual-parent credit.",
+    "Additional computed-style observation occurs only while an inherited optic receives zero; its callback cost is unmeasured. No formal callback-budget PASS or performance improvement follows.",
+    "Forced individual opacity 0.650 establishes bounded component preservation, not a new physical permission or whole H1/V5 qualification.",
+    "The ROOT-reported r37 ordinary diagnostic is outside this review and is not promoted by these controls."
+  ],
+  "nextAction": "ROOT may retain the exact correction for continuing engineering; original S1, callback, continuity and parent/closure gates remain binding.",
+  "mergeReady": false,
+  "closureCredit": false,
+  "pins": [
+    {
+      "path": "builds/integrated-r15/index.html",
+      "sha256": "98e4b3f1c3ecdb89ae1ceb33463fc02dad3b47cc32482aa5c2a456886e6b11a5"
+    },
+    {
+      "path": "lunar_optic_controls_r34.py",
+      "sha256": "69afe3c38185a7b26fb992151f6ed07db9ed3ea24eb6bdfbda049d3a6da218eb"
+    },
+    {
+      "path": "lunar_optic_controls_r35.py",
+      "sha256": "5023c65dec90848e428788be193fb40217502f2f019f59a1d1e228b857ecef05"
+    },
+    {
+      "path": "lunar_optic_controls_r36.py",
+      "sha256": "f9e7a42272969cb7828d48ba44daf46cfbe62cb035a5ff8462e54b12df93b711"
+    },
+    {
+      "path": "native/lunar-optics-r34/RESULT.json",
+      "sha256": "721169b9dc1d6b768771dff6f15c1c1ba881e19fdb644cde1e4f6a59d3abd606"
+    },
+    {
+      "path": "native/lunar-optics-r35/RESULT.json",
+      "sha256": "eca497ccee238b6b031ce9b003ae61d15bddddd039113e7d518b356bfcb12b56"
+    },
+    {
+      "path": "native/lunar-optics-firefox-r36/RESULT.json",
+      "sha256": "a444e4c2a2e29c631381c210c0c8a56763857bdc9e126e801eef93b45a2e89db"
+    },
+    {
+      "path": "intake/lunar-optic-finite-red-r34.txt",
+      "sha256": "e18665b16f1c3f63838317a0a6eefdb57329b4f8e9f7e3d53ed2da3d7451243e"
+    },
+    {
+      "path": "intake/lunar-optic-finite-green-r34.txt",
+      "sha256": "af8e5b4bcf1146a13efcf396a5e141dd26c30f83d558af6b52bd4f9f28e6503a"
+    },
+    {
+      "path": "independent-review/lunar-optics-visibility-design-review.json",
+      "sha256": "576bad6bcc54121473de67d38e81d821e539b03c60956cc353a0caf3a6977176"
+    }
+  ],
+  "effects": "Read-only source/evidence and selected original PNG inspection; writes limited to these review JSON/Markdown files. No browser, native run, test, source edit or external effect."
+}

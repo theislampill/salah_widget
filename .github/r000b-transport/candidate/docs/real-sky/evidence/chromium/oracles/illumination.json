@@ -1,0 +1,99 @@
+{
+  "status": "PASS",
+  "observerCases": 3456,
+  "bodyDirectionCases": 6912,
+  "oracle": "Swiss Ephemeris 2.10.03",
+  "scope": "2020,2026,2035; 12 months/year; four days/month; four UT1 times/day; six sites including poles. Refraction and eclipses excluded. Matched explicit TT/UT1, not a future clock prediction.",
+  "acceptance": {
+    "sunDirectionDeg": 0.05,
+    "moonDirectionDeg": 0.15,
+    "lunarPhaseDeg": 0.2,
+    "lunarDistanceKm": 1500
+  },
+  "maximumErrors": {
+    "sunDirectionDeg": 0.008693171046070865,
+    "moonDirectionDeg": 0.0878924200251842,
+    "lunarPhaseDeg": 0.0677563989267469,
+    "lunarDistanceKm": 1247.925329954538
+  },
+  "horizontalMaximumErrors": {
+    "sunDeg": 0.008678172841805208,
+    "moonDeg": 0.087912386409398
+  },
+  "worst": {
+    "sunDirectionDeg": {
+      "observer": {
+        "utcMs": 1775671200000,
+        "ttMinusUtcSeconds": 68.86802315711975,
+        "dut1Seconds": 0,
+        "latDeg": 28.54,
+        "lonDeg": -81.38,
+        "heightM": 0
+      },
+      "expected": {
+        "raDeg": 17.449991753736892,
+        "decDeg": 7.405395798800613,
+        "altDeg": 67.49967230425801,
+        "azDeg": 201.62950797892947,
+        "distanceKm": 149790923.59740588,
+        "returnedFlags": 36436
+      },
+      "got": {
+        "altDeg": 67.50554073222935,
+        "azDeg": 201.6128000642374,
+        "enu": [
+          -0.14092174445335873,
+          -0.3556955128918955,
+          0.923916535217762
+        ],
+        "raDeg": 17.45803373015883,
+        "decDeg": 7.408855960009611,
+        "distanceKm": 149791230.757673,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "distanceAu": 1.00133193619435
+      }
+    },
+    "moonDirectionDeg": {
+      "observer": {
+        "utcMs": 2081354400000,
+        "ttMinusUtcSeconds": 70.74952572584152,
+        "dut1Seconds": 0,
+        "latDeg": 24.47,
+        "lonDeg": 39.61,
+        "heightM": 600
+      },
+      "expected": {
+        "raDeg": 95.00250197233139,
+        "decDeg": 19.009584853475356,
+        "altDeg": 33.36431831079577,
+        "azDeg": 82.59874212432386,
+        "distanceKm": 354203.82330038375,
+        "returnedFlags": 36436
+      },
+      "got": {
+        "altDeg": 33.4290120198282,
+        "azDeg": 82.67004068030354,
+        "enu": [
+          0.82774880786591,
+          0.10647702064279715,
+          0.5509033991105865
+        ],
+        "raDeg": 94.91846464040492,
+        "decDeg": 18.97202596440523,
+        "distanceKm": 354372.0547813941,
+        "frame": "topocentric-mean-equator-of-date",
+        "geometric": true,
+        "geocentricDistanceKm": 357921.95217466215,
+        "phaseAngleDeg": 11.028276004217247,
+        "illuminatedFraction": 0.990766448942725,
+        "angularRadiusDeg": 0.2809083977820066
+      }
+    }
+  },
+  "limits": [
+    "Numerical ephemeris comparison, not measured atmospheric conditions",
+    "No claim of CP4 stellar angular precision for this separate low-order lunar model",
+    "Eclipse attenuation, actual terrain and horizon refraction not applied"
+  ]
+}

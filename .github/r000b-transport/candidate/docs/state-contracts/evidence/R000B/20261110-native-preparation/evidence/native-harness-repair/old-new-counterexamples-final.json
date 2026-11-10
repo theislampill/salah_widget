@@ -1,0 +1,193 @@
+{
+  "HN2": {
+    "oldPass": true,
+    "newResult": {
+      "schema": "r000b-motion-continuity/v2",
+      "ok": false,
+      "steps": 1,
+      "violations": [
+        {
+          "step": 0,
+          "axis": "phase0",
+          "delta": 0.019131481071783307,
+          "maximumForwardDistance": 4.299209229614208e-05,
+          "reason": "Wrong direction or excessive phase step"
+        },
+        {
+          "step": 0,
+          "axis": "phase1",
+          "delta": 0.02391435133972908,
+          "maximumForwardDistance": 5.37401153701776e-05,
+          "reason": "Wrong direction or excessive phase step"
+        },
+        {
+          "step": 0,
+          "axis": "phase2",
+          "delta": 0.02869722160767485,
+          "maximumForwardDistance": 6.448813844421312e-05,
+          "reason": "Wrong direction or excessive phase step"
+        },
+        {
+          "step": 0,
+          "axis": "life0",
+          "delta": 4262867296.0,
+          "maximumForwardDistance": 0.00035999999999999997,
+          "reason": "Lifecycle reset/backwards/excessive step"
+        },
+        {
+          "step": 0,
+          "axis": "life1",
+          "delta": 4255767296.0,
+          "maximumForwardDistance": 0.00043999999999999996,
+          "reason": "Lifecycle reset/backwards/excessive step"
+        },
+        {
+          "step": 0,
+          "axis": "life2",
+          "delta": 4248667296.0,
+          "maximumForwardDistance": 0.00052,
+          "reason": "Lifecycle reset/backwards/excessive step"
+        },
+        {
+          "step": 0,
+          "axis": "wander",
+          "delta": 4275367296.0,
+          "maximumForwardDistance": 0.00021999999999999998,
+          "reason": "Wander reset/backwards/excessive step"
+        }
+      ],
+      "phaseDirection": "decreasing modulo1.25 for declared225deg wind",
+      "phaseRatesPerSecond": [
+        0.002149604614807104,
+        0.00268700576850888,
+        0.0032244069222106563
+      ],
+      "lifeRatesPerSecond": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "wanderRatePerSecond": 0.011,
+      "phaseNumericalTolerance": 1e-09,
+      "noiseNumericalTolerance": 1e-05,
+      "hiddenIntervalsElapsedMs": []
+    }
+  },
+  "HN3": {
+    "displaced-base": {
+      "oldHealthyPass": true,
+      "oldRainPass": true,
+      "newRainPass": false,
+      "evidence": {
+        "schema": "r000b-rain-origin/v2",
+        "ok": false,
+        "particles": [
+          {
+            "index": 0,
+            "baseOrigin": {
+              "left": 12.215277777777779,
+              "top": 1,
+              "width": 1.5,
+              "height": 14
+            },
+            "visibleSegment": {
+              "left": 16.21527777777778,
+              "top": 62.0,
+              "width": 1.5,
+              "height": 14
+            },
+            "visibleSegmentOpacity": 0.6,
+            "animation": "fall",
+            "errors": [
+              "Declared19% CSS base origin displaced"
+            ],
+            "fallFraction": 0.5,
+            "publishedCoordinateAllowanceCssPx": 0.4969230769230769,
+            "nativeAssociationAllowanceCssPx": 2.771527777777778,
+            "nativeSupport": {
+              "firstColumn": 3,
+              "lastColumn": 6,
+              "alphaSum": 255,
+              "alphaMax": 255,
+              "nonzeroPixels": 1
+            },
+            "publishedSupport": {
+              "firstColumn": 10,
+              "lastColumn": 13,
+              "alphaSum": 255,
+              "alphaMax": 255,
+              "nonzeroPixels": 1
+            }
+          }
+        ],
+        "contract": "measured CSS base origin plus assigned visible cloud column; not an exact cloud contour at an invisible animation start",
+        "coordinateToleranceCssPx": 0.75,
+        "supportAlphaThreshold": 0,
+        "publishedSupport": "exact inverse-alpha PNG already includes native scaling, blur and vertical mask"
+      }
+    },
+    "empty-actual-column": {
+      "oldHealthyPass": true,
+      "oldRainPass": true,
+      "newRainPass": false,
+      "evidence": {
+        "schema": "r000b-rain-origin/v2",
+        "ok": false,
+        "particles": [
+          {
+            "index": 0,
+            "baseOrigin": {
+              "left": 12.215277777777779,
+              "top": 101.32000000000001,
+              "width": 1.5,
+              "height": 14
+            },
+            "visibleSegment": {
+              "left": 16.21527777777778,
+              "top": 162.32,
+              "width": 1.5,
+              "height": 14
+            },
+            "visibleSegmentOpacity": 0.6,
+            "animation": "fall",
+            "errors": [
+              "No independently read native cloud alpha near the assigned source column",
+              "No actually published masked cloud alpha in the assigned source column"
+            ],
+            "fallFraction": 0.5,
+            "publishedCoordinateAllowanceCssPx": 0.4969230769230769,
+            "nativeAssociationAllowanceCssPx": 2.771527777777778,
+            "nativeSupport": {
+              "firstColumn": 3,
+              "lastColumn": 6,
+              "alphaSum": 0,
+              "alphaMax": 0,
+              "nonzeroPixels": 0
+            },
+            "publishedSupport": {
+              "firstColumn": 10,
+              "lastColumn": 13,
+              "alphaSum": 0,
+              "alphaMax": 0,
+              "nonzeroPixels": 0
+            }
+          }
+        ],
+        "contract": "measured CSS base origin plus assigned visible cloud column; not an exact cloud contour at an invisible animation start",
+        "coordinateToleranceCssPx": 0.75,
+        "supportAlphaThreshold": 0,
+        "publishedSupport": "exact inverse-alpha PNG already includes native scaling, blur and vertical mask"
+      }
+    }
+  },
+  "HN4": {
+    "oldFirstGuardPass": true,
+    "oldSelectsFirst": false,
+    "oldLaterPass": true,
+    "newFirstJoinPass": false,
+    "newSequencePass": false
+  },
+  "scope": "Fresh pure predicates extracted from final harness bytes; no native execution",
+  "oldDriverSha256": "6f0669ced88030c2dd3b9db40520cf1b5aa68669e019cfc3623b0952494f0e7f",
+  "newDriverSha256": "73afb4d772e32bd21f2697777914f3db8d2d28c3833271ef669037b079fb28bc"
+}

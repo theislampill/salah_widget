@@ -1,0 +1,143 @@
+{
+  "schema": "r0021-independent-bounded-result-review/v1",
+  "atUtc": "2026-10-21T13:49:03.187580+00:00",
+  "status": "CONFIRMED_FILE_TRANSPORT_CLEANUP_DEFECT_GROUP_INCOMPLETE",
+  "runtime": "3e18b2fa83d0cbfce0a4360d789f7927aef5c064f963e8c18acb430507995821",
+  "executionSha256": "07e6d158cc316ad2d610d00d4874273dfc06e337c9e8d4540ad45008d77904af",
+  "resultSha256": "4e7c980bf0065c8334888315e5966fbf7ff4cd768b243c972adbada25127623d",
+  "preflightReviewSha256": "bdb8c9b838245e7729a42d4fa5fb7cab89a671d8d84a25c592958ed7b7440b3e",
+  "sourcePins": {
+    "moon\\src\\moon-native.mjs": "24f9e1d438483cd8150fbd683a56852a044d3bb66e3b58f0623f4c4238285d07",
+    "moon\\src\\moon-worker.mjs": "9c2264c12e2e7d40736bbcafaaeb686eaa3a51083b715c9b785b52cbba818204",
+    "tools\\build_moon.py": "e6dffda0c1d6bfba288128d46d1f9effb5bc60b7270531d9bd006091a0de7284"
+  },
+  "harnessSha256": "a4c9ec5070034d364b87e92c0b0dad746978c52575b60028b050a02a21c10764",
+  "observedChain": {
+    "injection": {
+      "kind": "malformed-base64-injected",
+      "at": 592.7999999970198,
+      "absolute": 1792590164619.2,
+      "worker": 1,
+      "name": "assets/dem.bin.gz",
+      "index": 0,
+      "last": false,
+      "type": "string",
+      "originalLength": 1048576,
+      "originalPrefix": "H4sIAAAAAAAC/yS8Wa8lWXqet+YV8449",
+      "originalSuffix": "5MRyxApfzIIXu+99/y/t3PDug5sThJKC"
+    },
+    "nativeBootError": {
+      "kind": "worker-message",
+      "at": 595.3999999910593,
+      "absolute": 1792590164621.7998,
+      "worker": 1,
+      "messageKind": "boot-error",
+      "error": "Failed to execute 'atob' on 'WorkerGlobalScope': The string to be decoded is not correctly encoded."
+    },
+    "termination": {
+      "kind": "worker-terminate",
+      "at": 595.6999999880791,
+      "absolute": 1792590164622.0999,
+      "worker": 1
+    },
+    "failedAt": 15105.199999988079,
+    "failedStatus": {
+      "status": "unavailable",
+      "current": true,
+      "visibleSource": "initial-v5",
+      "workerAlive": false,
+      "pending": false,
+      "errors": [
+        "Failed to execute 'atob' on 'WorkerGlobalScope': The string to be decoded is not correctly encoded."
+      ]
+    },
+    "restoredOriginalMetadata": {
+      "kind": "original-base64-delivered",
+      "at": 15346,
+      "absolute": 1792590179372.4,
+      "worker": 3,
+      "name": "assets/dem.bin.gz",
+      "index": 0,
+      "last": false,
+      "type": "string",
+      "originalLength": 1048576,
+      "originalPrefix": "H4sIAAAAAAAC/yS8Wa8lWXqet+YV8449",
+      "originalSuffix": "5MRyxApfzIIXu+99/y/t3PDug5sThJKC"
+    },
+    "retry": {
+      "atMs": 15281.999999991967,
+      "retry": {
+        "moon": true,
+        "sky": {
+          "status": "ready",
+          "generation": 2,
+          "error": null
+        }
+      }
+    },
+    "finalAt": 30476.89999999106,
+    "final": {
+      "status": "ready",
+      "current": true,
+      "visibleSource": "refined-terrain",
+      "retryCount": 1,
+      "errors": [
+        "Failed to execute 'atob' on 'WorkerGlobalScope': The string to be decoded is not correctly encoded."
+      ]
+    },
+    "finalQuality": {
+      "status": "empirical-adaptive",
+      "projectedMaximumCode": 0.0821685791015625,
+      "projectedGate": 0.5,
+      "unsettled": 0,
+      "receiverHeuristicRemaining": 4
+    },
+    "browserErrors": [
+      "window.SalahMoonAssetChunk is not a function"
+    ]
+  },
+  "findings": [
+    {
+      "id": "R122-LATE-FILE-CALLBACK",
+      "priority": "P2",
+      "kind": "product-source-cleanup-defect",
+      "evidence": [
+        "moon/src/moon-native.mjs:53-55 closeWorker removes the current script and deletes window.SalahMoonAssetChunk",
+        "moon/src/moon-native.mjs:63-67 actual failure calls closeWorker",
+        "moon/src/moon-native.mjs:145-165 receiver guards exist inside the callback; asynchronously dispatched file scripts call the global",
+        "tools/build_moon.py:113-115 emits unconditional window.SalahMoonAssetChunk(...)",
+        "moon/src/moon-worker.mjs:65-71 actual atob failure is returned as boot-error",
+        "harness:223 only replaces one Worker.postMessage payload; it does not delete the product global"
+      ],
+      "conclusion": "An asynchronous asset script can deliver after failure has deleted the receiver, causing the observed uncaught not-a-function pageerror. This is product transport cleanup, not a screenshot/acquisition classification.",
+      "precisionLimit": "The retained pageerror is a string without timestamp/stack/asset URL. No particular late chunk or exact execution instant is asserted.",
+      "minimumCorrectionBoundary": "If further correction is authorized, make post-revocation delivery harmless while retaining original transport/worker generation identity, including delivery after a new retry receiver exists. Do not hide the error globally or weaken envelope/currentness checks. No correction or new run is authorized by this review."
+    }
+  ],
+  "pixels": {
+    "reviewed": "All three original Chromium whole-card PNGs independently viewed; current initial failure and refined final endpoints retain opaque textured Moon/catalogue/six rows/footer with no selected material or scale substitution. These endpoints do not erase the pageerror.",
+    "hashes": {
+      "cold-00.png": "b23971088a9644f5ede4c89d11db8e83155315fb2d18e841f5aefafd3763ea8c",
+      "cold-failed-before-recovery.png": "31b398ddf91f46820448780d0665e3126306e128d8a09c49a074eb0e0f062fd5",
+      "cold-final.png": "f3cfaef03a6d0f4099fdf59f1e392fd00a0fc7cd2766ceb9122632f5af5caa04"
+    }
+  },
+  "disposition": {
+    "chromium": "Native atob failure, termination/current-initial and one successful original-payload retry observed; complete error-free row NOT qualified.",
+    "firefox": "PREPARED_NOT_RUN; no extrapolation from Chromium.",
+    "group": "INCOMPLETE_STOP preserved; no repeat or product edit performed."
+  },
+  "cleanup": {
+    "leaseReleasedRecorded": true,
+    "liveLockAbsent": true,
+    "inputIdentitiesUnchanged": true,
+    "boundedCIM": "No matching chrome/firefox/python/node command lines containing exact r121/r122 output paths at review; no unrelated PID touched."
+  },
+  "limits": [
+    "No decompressor/corrupt gzip, delayed-body, automatic retry, S1, cost, whole-UI or continuous-watch qualification from this case.",
+    "No exact late-script stack/time was recorded; source mechanism and native error are retained without invented event detail.",
+    "Remaining independent authorized resource/visual/event rows are not converted to failure or success by this localized result.",
+    "Formal lifecycle/currentness/epoch and merge/release authority remain unasserted."
+  ],
+  "nextAction": "Retain the real r122 defect and stopped Firefox case for owner disposition under the finite order. Continue only independent already-authorized work; no implicit extra correction or acquisition."
+}

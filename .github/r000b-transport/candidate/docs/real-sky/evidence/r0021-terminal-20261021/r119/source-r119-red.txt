@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: stable publication callbacks receive their original context across decode, cached reuse, failure and cancellation
+not ok 1 - stable publication callbacks receive their original context across decode, cached reuse, failure and cancellation
+  ---
+  duration_ms: 1.9591
+  type: 'test'
+  location: '${REPO_ROOT}\\tests\\real-sky\\native-solar-publication.test.mjs:17:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   undefined
+    -   {
+    -     id: 'a'
+    -   }
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      id: 'a'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///${REPO_ROOT}/tests/real-sky/native-solar-publication.test.mjs:22:47)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: changing solar mask cannot expose an undecoded frame; CSS anonymous request mode is required
+ok 2 - changing solar mask cannot expose an undecoded frame; CSS anonymous request mode is required
+  ---
+  duration_ms: 0.1838
+  type: 'test'
+  ...
+# Subtest: one pending decode bounds work; cancellation fences late A after B and disposal
+ok 3 - one pending decode bounds work; cancellation fences late A after B and disposal
+  ---
+  duration_ms: 0.1221
+  type: 'test'
+  ...
+# Subtest: decoded bytes can be reused after a rejected scene, but failed and cancelled decodes never enter the cache
+ok 4 - decoded bytes can be reused after a rejected scene, but failed and cancelled decodes never enter the cache
+  ---
+  duration_ms: 0.156
+  type: 'test'
+  ...
+# Subtest: exactly transparent captured clouds need no encoded solar mask; one alpha code still does
+ok 5 - exactly transparent captured clouds need no encoded solar mask; one alpha code still does
+  ---
+  duration_ms: 0.582
+  type: 'test'
+  ...
+# Subtest: full transmission publishes synchronously through the same commit guard
+ok 6 - full transmission publishes synchronously through the same commit guard
+  ---
+  duration_ms: 0.1032
+  type: 'test'
+  ...
+# Subtest: clear/cloud/clear transition retains decode and cancellation fences
+ok 7 - clear/cloud/clear transition retains decode and cancellation fences
+  ---
+  duration_ms: 0.1763
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 6
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 59.9457

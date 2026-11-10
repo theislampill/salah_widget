@@ -1,0 +1,35 @@
+# R000C independently reviewed frontier
+
+This is an intermediate review, not exact-head qualification or closure. C01–C14, C15 and C17 are supported within the scopes below. Chromium C16 is supported for the specified controls. Firefox C16 still lacks qualified continuous recovered motion: all three original recovered watches contain missing pixels. The separately reviewed observer-only default-night pilot remains to be assessed.
+
+## Binding and method
+
+Repository base: `7827099dff3c9bc5ecb1b7a67dc4c25414bcfb69`; branch: `codex/r000c-close-20261014`. Product runtime: 135 files, aggregate SHA256 `5003d304bd0dba119fbc74773cd8e9a97113948259203d8c5390c9062fcc7514`. Generated `index.html`: `7dd8067334c842025ea209d8cbdc20ce1ee31cd783a1f4da279072b1b310f0de`; source-owning `src/native/index.html`: `b3094034d50bf0867a0f62c9f3e86a61f132c0126bed2a3fcdbd1bde38bc4dbd`. Runtime is unchanged. Frozen V1 independently verifies without errors.
+
+I read the immutable specification and accepted assessment, inspected source, fixture and driver semantics and the narrow documentation diff, independently reconciled original hashes and all indexed native frames, and viewed selected original native pixels and temporal sequences. The full-frame hash checks establish custody and completeness, not visual correctness. No manual inspection of every frame or unique frame-to-render association is claimed. No browser, desktop interaction, source edit, Git write or external mutation was performed. Writes are confined to private independent reports and offline extractions of original media.
+
+## Acceptance frontier
+
+| Obligations | Independent finding |
+|---|---|
+| C01–C13 | Original accepted owner spans remain exact at their current locations; all 13 rows are reconciled against original commit `18ff14860ff41c084b1db5f396bb62aa9c22b1be`. All five original regression files are byte-identical. No new parser or weather authority architecture is introduced. |
+| C14 | All four independent original-source mutations are exact single replacements. Each is killed by its intended unchanged assertion, rather than syntax/harness failure. Each has a paired unchanged-source GREEN and five surviving healthy/zero/negative-unit/hourly positive controls. |
+| C15 | All six Chromium and six Firefox canonical day cases reach actual controlled fetch/native JSON consumption, admission/cache, displayed header and effect DOM. Relevant original state pixels confirm blank/null versus genuine `0°`, healthy `20°`, malformed/zero dry amounts, supported 2 mm wet effects, retained condition icon and no lightning/direct-observation authority. |
+| C16 Chromium | Scoped malformed/zero/wet layout and effect pixels, night malformed-to-healthy recovery, opaque half-Moon, and original real-clock default/reduced/full sequences support the affected controls. The complete nine-case original frame inventory is intact, with no low-information candidates. Pixel sequences and native crops, rather than cloud hashes, support motion. |
+| C16 Firefox | Stable day and night state crops are readable and preserve the scoped geometry/effects/Moon. Actual ordinary ingress recovery and preference semantics are present. All three original recovered continuous watches fail because they contain missing pixels. No later healthy crop repairs them. The bounded observer-only successor is an experiment, not acceptance. |
+| C17 | README/DESIGN state unavailable versus zero, valid negatives and C/F, optional condition availability, quantitative model effect support, direct-observation limits and no new provider/config/schema migration/installer behavior accurately. |
+| C18 | PENDING. Independent final exact-candidate qualification, public PR head/artifact readback, reserved exact-head owner approval, authorized merge, served-source/public consumer proof, certificate and issue closure remain separate obligations. This frontier is not a qualified Draft gate. |
+
+Detailed independent checks are in `source-and-receipts-check.json`, `native-readback-check.json`, `firefox-day-readback-check.json` and `firefox-night-readback-check.json`. Currentness spans and raw source/test/mutation receipts remain in their original evidence paths. The original driver/packet used for acquired cases remains preserved in `../fixture-v2/`; the unchanged wrapper is SHA256 `917c651c95184eab56e72701a73a2338d3cf1e3131f38af40c4bcd77203de26f`. Later observer pins do not retroactively rebind older acquisitions.
+
+## Preserved contrary evidence and limits
+
+The four inherited source TODOs remain TODO. Retained generated weather tests report 119 PASS / 4 TODO; native-owner hotfix tests 21 PASS; related original controls 97 PASS. The separate attempt to select authored native HTML into the generated-only R000C extraction harness fails at its missing generated-only star anchor before consumer execution. It is retained as `HARNESS_NOT_APPLICABLE_NO_PRODUCT_CREDIT`; it is neither a product defect nor a passing authored test. Original RED attribution and the unrelated historical renderer/Moon limitations remain unchanged.
+
+The eight reused preservation controls are limited to their exact original inputs and execution modes. I verified 91 retained file hashes and independently regenerated their observed HTML identically. They do not replace the new hostile R000C cases, qualify new all-phase/Sun science, or close prior N001/N002/N003 limitations. Original SIM dry/wet and explicit advancing/current-versus-hourly controls remain in the unchanged logic fixtures and retained raw test outputs.
+
+All four Firefox pilots and the six initial day watches retain their failures/limits. `recording-decision.md`, `recording-decision-addendum.md` and `observer-decision.md` document the decisions and exact video identities. The fourth single-document/headed pilot is all-blank despite passing semantics. Headless day state crops support C15 without supplying continuous-watch credit. The three original night recovered failures have been independently reproduced from their original media, including missing footer at 111.04 s and whole-card blanks at 99.40 s and 119.88 s.
+
+No causal source/renderer/capturer/encoder finding is established. The existing diagnostic observer reads canvas pixels, recomputes atmospheric state and may adopt pending lunar previews. This limits unassisted first-Moon claims and justifies testing a reduction of diagnostic sampling. It does not invalidate actual weather ingress or prove the cause of missing recorded pixels.
+
+The reviewed successor driver is `ed610a2ce09ebdfce661b563338d0cf31f89162676b9f03de40544f59e350737`; packet is `4bbe653b82edff0512a2dcd047aac069b6c96a535e5cb773224b973098acff77`. `boundary-observer-check.json` confirms unchanged assertion/readiness AST, canonical inputs and all source pins. Only one original night-default pilot is the next reviewed action. Its original complete video and predeclared intervals must be inspected before any further preference acquisition or C16 decision. No arbitrary settling delay, first-frame SLA, altered recorder, shortened interval or healthy-tail selection is accepted.

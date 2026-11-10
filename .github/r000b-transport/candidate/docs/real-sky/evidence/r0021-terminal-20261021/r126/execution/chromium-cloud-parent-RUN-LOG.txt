@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "${WORK_ROOT}\parent-tools-r125\tools\cp9\celestial_startup_check.py", line 313, in run
+    frame=page.main_frame if a.entry not in ['iframe','extension'] else next(f for f in page.frames if f.url.startswith(origin+'/salah_widget/'))
+                                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+StopIteration
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "${WORK_ROOT}\parent-tools-r125\tools\cp9\celestial_startup_check.py", line 381, in <module>
+    asyncio.run(run(p.parse_args()))
+  File "${STDLIB_PYTHON}\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "${STDLIB_PYTHON}\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "${STDLIB_PYTHON}\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+RuntimeError: coroutine raised StopIteration

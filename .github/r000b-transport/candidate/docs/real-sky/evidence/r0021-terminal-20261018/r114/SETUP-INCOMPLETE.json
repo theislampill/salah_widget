@@ -1,0 +1,42 @@
+{
+  "schema": "r0021-reference-execution/v1",
+  "status": "INCOMPLETE",
+  "startedAt": "2026-10-18T17:21:43.114614+00:00",
+  "sourceHead": "9df79b98d8dda7a0286b1b287dc03d1b4d760bdb",
+  "harnessSha256": "3dcc434f96ac589b87aaf4ba4d5eca56f0fba0e6bf5806c1e63fd311c994a201",
+  "planSha256": "d72aad68bc90751ab14b280d4fbab4ff62d1916df040d6cd2624a36262594c36",
+  "compilerSha256": "1ddf230367e07738c4a769eae66c1db7469e37bd520e81c86356453d0db2b9fd",
+  "productWasmSha256": "4fcf7888b55486947189c4a701c75ab25465714036c42fc60980e98ac0bdcbb7",
+  "compileTimeoutSeconds": 120,
+  "numericalTimeoutSeconds": 600,
+  "commands": [
+    [
+      "${WORK_ROOT}\\reference-tools-r114\\zig-x86_64-windows-0.14.1\\zig.exe",
+      "cc",
+      "-target",
+      "wasm32-freestanding",
+      "-O2",
+      "-fno-fast-math",
+      "-ffp-contract=off",
+      "-fno-builtin",
+      "-nostdlib",
+      "-Wl,--no-entry",
+      "-Wl,--export-all",
+      "-Wl,--allow-undefined",
+      "-Wl,--initial-memory=4194304",
+      "-Wl,--max-memory=536870912",
+      "${WORK_ROOT}\\reference-tools-r114\\build\\moon_kernel_reference.c",
+      "-o",
+      "${WORK_ROOT}\\reference-tools-r114\\build\\moon_kernel_reference.wasm"
+    ]
+  ],
+  "ownerApproval": "Approve one diagnostic reference",
+  "errors": [
+    "AssertionError: Diagnostic compilation failed; no numerical attempt"
+  ],
+  "compileExitCode": 1,
+  "productUnchanged": true,
+  "finishedAt": "2026-10-18T17:21:43.287561+00:00",
+  "lockReleased": true,
+  "terminationUnverified": false
+}

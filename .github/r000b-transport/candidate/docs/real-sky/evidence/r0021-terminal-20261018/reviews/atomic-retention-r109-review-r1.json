@@ -1,0 +1,54 @@
+{
+  "schema": "r0021-independent-source-review/1",
+  "observationCutoffUtc": "2026-10-18T16:17:42.752694Z",
+  "head": "179539c617aef6f4e2ffe27a9d741c156ffe0e68",
+  "decision": "ORDERING REPAIR SUPPORTED; ONE PAUSED-RETENTION FENCE FINDING",
+  "sourcePins": {
+    "real-sky/native-preview-host.mjs": "f11a99cf355694756921bb3733bdc0cdb7025aa489eb52212bc861eb77cfc5a1",
+    "real-sky/native-host.mjs": "1d90ed66774ff86aa647c9fce1a3fc1147eb1ea8f029c5f5d6d3bd45b1fa3ef1",
+    "tests/real-sky/native-preview-host.test.mjs": "e769586a90aa0a0460a7c1701e0b39b0541e6cff1b9670a1ecb96c399d487840",
+    "tests/real-sky/native-host-composition.test.mjs": "a9a6fe3530148ecb157e4c1a55a0a3fbf93acd944557a64d9dd2acf4bb98d54a"
+  },
+  "supported": [
+    "Prospective preview detail composition now precedes base/mask/value/ready writes; first failure with no predecessor is pending rather than retained ready.",
+    "A displayed current preview retains its original pixels/identity on failed B; successful retry commits B.",
+    "Refined detail composition precedes background/painted identity. Its temporary composed class restores prior state on throw, and original acceptedJob is rechecked before final commit.",
+    "Global refined worker failure retains only independently current paintedJob and cancels pending replacement. Currentness loss still clears.",
+    "No demonstrated additional warranted/current silent-clear counterexample was established; a broader detail-composition API change is not required by this review."
+  ],
+  "receiptsRead": {
+    "intake/preview-atomic-r109-red.tap": {
+      "sha256": "e8f334f016a16dc1d66e53a097825c52d31f9c0261c900328e2339884a0369ae",
+      "result": "2 behavioral failures: unpublished first preview reported ready, failed B replaced old identity"
+    },
+    "intake/refined-atomic-r109-red.tap": {
+      "sha256": "265ef5e5f206848f241127e749386da42c619212fb6d4b1e022906481783c0e6",
+      "result": "3 behavioral failures: first/replacement background writes and expired final write"
+    },
+    "intake/atomic-retention-r109-green.tap": {
+      "sha256": "9ce9fe71e2a879ccc0a0f65734406a956502695558cd80d6501e062585327267",
+      "result": "63 passed; no reviewer rerun"
+    }
+  },
+  "findings": [
+    {
+      "id": "PREVIEW-PAUSED-FAILURE-RETENTION",
+      "severity": "P2",
+      "file": "real-sky/native-preview-host.mjs",
+      "lines": [
+        55,
+        142
+      ],
+      "observation": "Both failure paths with a previously displayed value use publishable(value, retained) without rejecting retained.paused. nativeResultCurrent/nativeIdentity validate source identity and age, not paused. A pending decode rejection after the page becomes hidden can therefore mark the old preview retained, unlike retainFirstPaint and normal final commit.",
+      "smallestControl": "Displayed current A, pending changed-mask decode, set paused before rejecting decode: require withdrawal, not retained. Cover the preparation-exception path with the same predicate.",
+      "limit": "Source-supported control counterexample; no native visible loss asserted, no browser/control executed by reviewer."
+    }
+  ],
+  "limits": [
+    "Controls use actual host bodies and mask owner with substituted browser/detail transports; not native pixel continuity or a complete product qualification.",
+    "No material/physics/quality/sample/accepted-origin change supported or inferred.",
+    "Built/generated successor and applicable native observations still require exact binding.",
+    "Prior TA1 map remains immutable; its atomic-publication finding is addressed for the reviewed exception paths, subject to this remaining pause fence."
+  ],
+  "authority": "Read-only source recommendation; no effect, merge, closure or qualification authority."
+}

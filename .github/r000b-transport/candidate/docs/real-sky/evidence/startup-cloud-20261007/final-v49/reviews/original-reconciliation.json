@@ -1,0 +1,1357 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-08T22:15:45.354747+00:00",
+  "role": "Bounded delivery reconciliation only; retained source/receipts read, no new review round or test programme",
+  "authority": {
+    "output": "H/geo-v48/B/delivery-reconciliation.json",
+    "prohibitedEffectsPerformed": [],
+    "sourceAndSharedReportsAltered": false,
+    "browsersSolversBuildsOrTestsRun": false,
+    "gitOrGitHubWrites": false
+  },
+  "identity": {
+    "existingDraftPR": 42,
+    "branch": "codex/hotfix-startup-clouds",
+    "publishedHead": "ded843848111c2094f9a3ad4f61cb3098b4bc86a",
+    "baseMain": "c1a480c97e9af188cf57704502d818c0584cf265",
+    "publishedV47Runtime": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+    "publishedV47Index": "36c0d8eef2708de22812f8e0697b89c8a095d9c22a2bb7672d27eb575cc4d6ea",
+    "currentV49Runtime": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+    "currentV49Disposition": "UNDER_AFFECTED_QUALIFICATION_NOT_ACCEPTED",
+    "geographyBrowserSupplement": "PENDING",
+    "reconciliationDoesNotGrant": "Latest visual acceptance, current release/main/Pages mutation, merge or deployment"
+  },
+  "nativeHistoricalFailures": [
+    {
+      "id": "historical-native-1",
+      "suite": "r0021-reveal",
+      "testFile": "tests/r0021-reveal.cjs",
+      "testName": "moon PBR shader and embedded payloads retain exact accepted bytes",
+      "failureLiteral": "FAIL moon PBR shader and embedded payloads retain exact accepted bytes :: Expected values to be strictly equal:",
+      "reportedCause": "Expected values to be strictly equal:",
+      "causeClassification": "ARCHIVE_PINNED_PBR_SOURCE_BYTE_IDENTITY_EXPECTATION",
+      "explanation": "The legacy guard compares an old renderMoonPBR source slice byte-for-byte. The current wrapper/native detail route and authorised fallback/horizon/Earthshine changes differ; retained albedo/normal payload checks pass separately in R0022. This failure remains FAIL, not relabelled passed.",
+      "evidence": "H/native-final-v47-final/r0021-reveal.log",
+      "line": 18,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "indexSha256": "36c0d8eef2708de22812f8e0697b89c8a095d9c22a2bb7672d27eb575cc4d6ea",
+      "fixtureSha256": "c66a0b967fd2de957c656f33ad32d9b84099ed7e3ce7f4c0841ac780918f76ca",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0021-reveal.cjs",
+        "--cp8-snapshot-only"
+      ],
+      "exitCode": 1,
+      "sameFailureCountsOnC1": {
+        "baseCommit": "c1a480c97e9af188cf57704502d818c0584cf265",
+        "baselineExit": 1,
+        "baselineCounts": {
+          "passLines": 14,
+          "failLines": 1
+        },
+        "source": "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json"
+      },
+      "disposition": "RETAINED_HISTORICAL_FAIL_NOT_NEWLY_FIXED_NOT_CURRENT_V49_GREEN"
+    },
+    {
+      "id": "historical-native-2",
+      "suite": "r0022-baseline-balance",
+      "testFile": "tests/r0022-baseline-balance.cjs",
+      "testName": "eligible .08 matches baseline light gains and projected appearance",
+      "failureLiteral": "FAIL eligible .08 matches baseline light gains and projected appearance :: _glintEls is not defined",
+      "reportedCause": "_glintEls is not defined",
+      "causeClassification": "LEGACY_FIXTURE_REFERENCES_REMOVED_SYNTHETIC_GLINT_ARRAY",
+      "explanation": "The legacy comparison sampler evaluates _glintEls, removed from the native catalogue path. It fails before a meaningful phase/daylight/below-horizon comparison; this is not proof of a rendered celestial regression.",
+      "evidence": "H/native-final-v47-final/r0022-baseline-balance.log",
+      "line": 1,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "indexSha256": "36c0d8eef2708de22812f8e0697b89c8a095d9c22a2bb7672d27eb575cc4d6ea",
+      "fixtureSha256": "02a18711143cf3de149471d3a6fbee393594d5d267d1ab1f1c48019b41b272b1",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-baseline-balance.cjs"
+      ],
+      "exitCode": 1,
+      "sameFailureCountsOnC1": {
+        "baseCommit": "c1a480c97e9af188cf57704502d818c0584cf265",
+        "baselineExit": 1,
+        "baselineCounts": {
+          "passLines": 14,
+          "failLines": 7
+        },
+        "source": "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json"
+      },
+      "disposition": "RETAINED_HISTORICAL_FAIL_NOT_NEWLY_FIXED_NOT_CURRENT_V49_GREEN"
+    },
+    {
+      "id": "historical-native-3",
+      "suite": "r0022-baseline-balance",
+      "testFile": "tests/r0022-baseline-balance.cjs",
+      "testName": "eligible .5 matches baseline light gains and projected appearance",
+      "failureLiteral": "FAIL eligible .5 matches baseline light gains and projected appearance :: _glintEls is not defined",
+      "reportedCause": "_glintEls is not defined",
+      "causeClassification": "LEGACY_FIXTURE_REFERENCES_REMOVED_SYNTHETIC_GLINT_ARRAY",
+      "explanation": "The legacy comparison sampler evaluates _glintEls, removed from the native catalogue path. It fails before a meaningful phase/daylight/below-horizon comparison; this is not proof of a rendered celestial regression.",
+      "evidence": "H/native-final-v47-final/r0022-baseline-balance.log",
+      "line": 2,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "indexSha256": "36c0d8eef2708de22812f8e0697b89c8a095d9c22a2bb7672d27eb575cc4d6ea",
+      "fixtureSha256": "02a18711143cf3de149471d3a6fbee393594d5d267d1ab1f1c48019b41b272b1",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-baseline-balance.cjs"
+      ],
+      "exitCode": 1,
+      "sameFailureCountsOnC1": {
+        "baseCommit": "c1a480c97e9af188cf57704502d818c0584cf265",
+        "baselineExit": 1,
+        "baselineCounts": {
+          "passLines": 14,
+          "failLines": 7
+        },
+        "source": "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json"
+      },
+      "disposition": "RETAINED_HISTORICAL_FAIL_NOT_NEWLY_FIXED_NOT_CURRENT_V49_GREEN"
+    },
+    {
+      "id": "historical-native-4",
+      "suite": "r0022-baseline-balance",
+      "testFile": "tests/r0022-baseline-balance.cjs",
+      "testName": "eligible .92 matches baseline light gains and projected appearance",
+      "failureLiteral": "FAIL eligible .92 matches baseline light gains and projected appearance :: _glintEls is not defined",
+      "reportedCause": "_glintEls is not defined",
+      "causeClassification": "LEGACY_FIXTURE_REFERENCES_REMOVED_SYNTHETIC_GLINT_ARRAY",
+      "explanation": "The legacy comparison sampler evaluates _glintEls, removed from the native catalogue path. It fails before a meaningful phase/daylight/below-horizon comparison; this is not proof of a rendered celestial regression.",
+      "evidence": "H/native-final-v47-final/r0022-baseline-balance.log",
+      "line": 3,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "indexSha256": "36c0d8eef2708de22812f8e0697b89c8a095d9c22a2bb7672d27eb575cc4d6ea",
+      "fixtureSha256": "02a18711143cf3de149471d3a6fbee393594d5d267d1ab1f1c48019b41b272b1",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-baseline-balance.cjs"
+      ],
+      "exitCode": 1,
+      "sameFailureCountsOnC1": {
+        "baseCommit": "c1a480c97e9af188cf57704502d818c0584cf265",
+        "baselineExit": 1,
+        "baselineCounts": {
+          "passLines": 14,
+          "failLines": 7
+        },
+        "source": "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json"
+      },
+      "disposition": "RETAINED_HISTORICAL_FAIL_NOT_NEWLY_FIXED_NOT_CURRENT_V49_GREEN"
+    },
+    {
+      "id": "historical-native-5",
+      "suite": "r0022-baseline-balance",
+      "testFile": "tests/r0022-baseline-balance.cjs",
+      "testName": "eligible 1 matches baseline light gains and projected appearance",
+      "failureLiteral": "FAIL eligible 1 matches baseline light gains and projected appearance :: _glintEls is not defined",
+      "reportedCause": "_glintEls is not defined",
+      "causeClassification": "LEGACY_FIXTURE_REFERENCES_REMOVED_SYNTHETIC_GLINT_ARRAY",
+      "explanation": "The legacy comparison sampler evaluates _glintEls, removed from the native catalogue path. It fails before a meaningful phase/daylight/below-horizon comparison; this is not proof of a rendered celestial regression.",
+      "evidence": "H/native-final-v47-final/r0022-baseline-balance.log",
+      "line": 4,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "indexSha256": "36c0d8eef2708de22812f8e0697b89c8a095d9c22a2bb7672d27eb575cc4d6ea",
+      "fixtureSha256": "02a18711143cf3de149471d3a6fbee393594d5d267d1ab1f1c48019b41b272b1",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-baseline-balance.cjs"
+      ],
+      "exitCode": 1,
+      "sameFailureCountsOnC1": {
+        "baseCommit": "c1a480c97e9af188cf57704502d818c0584cf265",
+        "baselineExit": 1,
+        "baselineCounts": {
+          "passLines": 14,
+          "failLines": 7
+        },
+        "source": "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json"
+      },
+      "disposition": "RETAINED_HISTORICAL_FAIL_NOT_NEWLY_FIXED_NOT_CURRENT_V49_GREEN"
+    },
+    {
+      "id": "historical-native-6",
+      "suite": "r0022-baseline-balance",
+      "testFile": "tests/r0022-baseline-balance.cjs",
+      "testName": "daylight keeps solar/sky/calendar outputs unchanged",
+      "failureLiteral": "FAIL daylight keeps solar/sky/calendar outputs unchanged :: _glintEls is not defined",
+      "reportedCause": "_glintEls is not defined",
+      "causeClassification": "LEGACY_FIXTURE_REFERENCES_REMOVED_SYNTHETIC_GLINT_ARRAY",
+      "explanation": "The legacy comparison sampler evaluates _glintEls, removed from the native catalogue path. It fails before a meaningful phase/daylight/below-horizon comparison; this is not proof of a rendered celestial regression.",
+      "evidence": "H/native-final-v47-final/r0022-baseline-balance.log",
+      "line": 5,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "indexSha256": "36c0d8eef2708de22812f8e0697b89c8a095d9c22a2bb7672d27eb575cc4d6ea",
+      "fixtureSha256": "02a18711143cf3de149471d3a6fbee393594d5d267d1ab1f1c48019b41b272b1",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-baseline-balance.cjs"
+      ],
+      "exitCode": 1,
+      "sameFailureCountsOnC1": {
+        "baseCommit": "c1a480c97e9af188cf57704502d818c0584cf265",
+        "baselineExit": 1,
+        "baselineCounts": {
+          "passLines": 14,
+          "failLines": 7
+        },
+        "source": "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json"
+      },
+      "disposition": "RETAINED_HISTORICAL_FAIL_NOT_NEWLY_FIXED_NOT_CURRENT_V49_GREEN"
+    },
+    {
+      "id": "historical-native-7",
+      "suite": "r0022-baseline-balance",
+      "testFile": "tests/r0022-baseline-balance.cjs",
+      "testName": "below horizon keeps solar/sky/calendar outputs unchanged",
+      "failureLiteral": "FAIL below horizon keeps solar/sky/calendar outputs unchanged :: _glintEls is not defined",
+      "reportedCause": "_glintEls is not defined",
+      "causeClassification": "LEGACY_FIXTURE_REFERENCES_REMOVED_SYNTHETIC_GLINT_ARRAY",
+      "explanation": "The legacy comparison sampler evaluates _glintEls, removed from the native catalogue path. It fails before a meaningful phase/daylight/below-horizon comparison; this is not proof of a rendered celestial regression.",
+      "evidence": "H/native-final-v47-final/r0022-baseline-balance.log",
+      "line": 6,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "indexSha256": "36c0d8eef2708de22812f8e0697b89c8a095d9c22a2bb7672d27eb575cc4d6ea",
+      "fixtureSha256": "02a18711143cf3de149471d3a6fbee393594d5d267d1ab1f1c48019b41b272b1",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-baseline-balance.cjs"
+      ],
+      "exitCode": 1,
+      "sameFailureCountsOnC1": {
+        "baseCommit": "c1a480c97e9af188cf57704502d818c0584cf265",
+        "baselineExit": 1,
+        "baselineCounts": {
+          "passLines": 14,
+          "failLines": 7
+        },
+        "source": "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json"
+      },
+      "disposition": "RETAINED_HISTORICAL_FAIL_NOT_NEWLY_FIXED_NOT_CURRENT_V49_GREEN"
+    },
+    {
+      "id": "historical-native-8",
+      "suite": "r0022-baseline-balance",
+      "testFile": "tests/r0022-baseline-balance.cjs",
+      "testName": "PBR source remains byte-identical",
+      "failureLiteral": "FAIL PBR source remains byte-identical :: Expected values to be strictly equal:",
+      "reportedCause": "Expected values to be strictly equal:",
+      "causeClassification": "ARCHIVE_PINNED_PBR_SOURCE_BYTE_IDENTITY_EXPECTATION",
+      "explanation": "The legacy guard compares an old renderMoonPBR source slice byte-for-byte. The current wrapper/native detail route and authorised fallback/horizon/Earthshine changes differ; retained albedo/normal payload checks pass separately in R0022. This failure remains FAIL, not relabelled passed.",
+      "evidence": "H/native-final-v47-final/r0022-baseline-balance.log",
+      "line": 7,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "indexSha256": "36c0d8eef2708de22812f8e0697b89c8a095d9c22a2bb7672d27eb575cc4d6ea",
+      "fixtureSha256": "02a18711143cf3de149471d3a6fbee393594d5d267d1ab1f1c48019b41b272b1",
+      "command": [
+        "node",
+        "--test-reporter=tap",
+        "tests/r0022-baseline-balance.cjs"
+      ],
+      "exitCode": 1,
+      "sameFailureCountsOnC1": {
+        "baseCommit": "c1a480c97e9af188cf57704502d818c0584cf265",
+        "baselineExit": 1,
+        "baselineCounts": {
+          "passLines": 14,
+          "failLines": 7
+        },
+        "source": "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json"
+      },
+      "disposition": "RETAINED_HISTORICAL_FAIL_NOT_NEWLY_FIXED_NOT_CURRENT_V49_GREEN"
+    }
+  ],
+  "nativeHistoricalFailureCount": 8,
+  "nodeTodos": [
+    {
+      "tapNumber": 304,
+      "testName": "R0003 join: obsolete acquisition cannot install/persist or clear successor attempt",
+      "sourceFile": "tests/r000c-weather.test.cjs",
+      "sourceLineAtReconciliation": 524,
+      "evidence": "H/native-final-v47-final/native-test-glob.log",
+      "logLine": 1830,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "disposition": "RETAINED_EXPLICIT_TODO_NOT_A_FAILURE_NOT_AN_EXECUTED_PASS",
+      "replacementOrScope": "Executed actual request-generation/A→B→A ownership tests; old join placeholder remains TODO."
+    },
+    {
+      "tapNumber": 305,
+      "testName": "R000D join: unresolving JSON and image bodies settle within accepted deadline",
+      "sourceFile": "tests/r000c-weather.test.cjs",
+      "sourceLineAtReconciliation": 525,
+      "evidence": "H/native-final-v47-final/native-test-glob.log",
+      "logLine": 1836,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "disposition": "RETAINED_EXPLICIT_TODO_NOT_A_FAILURE_NOT_AN_EXECUTED_PASS",
+      "replacementOrScope": "Executed weather/radar body/image deadline and stale-settlement controls; old join placeholder remains TODO."
+    },
+    {
+      "tapNumber": 306,
+      "testName": "R0024 join: fresh current model eligibility remains positive while final live strong-particle permission is withheld",
+      "sourceFile": "tests/r000c-weather.test.cjs",
+      "sourceLineAtReconciliation": 526,
+      "evidence": "H/native-final-v47-final/native-test-glob.log",
+      "logLine": 1842,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "disposition": "RETAINED_EXPLICIT_TODO_NOT_A_FAILURE_NOT_AN_EXECUTED_PASS",
+      "replacementOrScope": "Executed separated model/direct-observation policy controls. PR42 permits supported labelled current-model particles while direct observation authority remains absent; old withholding placeholder is not the owner’s current policy."
+    },
+    {
+      "tapNumber": 307,
+      "testName": "native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence",
+      "sourceFile": "tests/r000c-weather.test.cjs",
+      "sourceLineAtReconciliation": 527,
+      "evidence": "H/native-final-v47-final/native-test-glob.log",
+      "logLine": 1848,
+      "runtimeTreeSha256": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+      "disposition": "RETAINED_EXPLICIT_TODO_NOT_A_FAILURE_NOT_AN_EXECUTED_PASS",
+      "replacementOrScope": "Browser-dependent condition/chip/layout/Moon/motion evidence remains separate from a Node placeholder; no conversion of this TODO into a blanket native PASS."
+    }
+  ],
+  "nodeTodoCount": 4,
+  "explicitLegacyExclusions": [
+    {
+      "suite": "r0021-reveal",
+      "literal": "SKIP_EXPLICIT ordinary held star positions remain stable across a healthy render — removed synthetic-array producer; actual catalogue sink lifecycle tested separately",
+      "evidence": "H/native-final-v47-final/r0021-reveal.log",
+      "line": 1,
+      "disposition": "EXPLICITLY_EXCLUDED_REMOVED_SYNTHETIC_PRODUCER_NOT_PASS_NOT_TODO"
+    },
+    {
+      "suite": "r0021-reveal",
+      "literal": "SKIP_EXPLICIT first accepted target cannot retain the unresolved-coordinate projection — removed synthetic-array producer; actual first accepted catalogue tested separately",
+      "evidence": "H/native-final-v47-final/r0021-reveal.log",
+      "line": 2,
+      "disposition": "EXPLICITLY_EXCLUDED_REMOVED_SYNTHETIC_PRODUCER_NOT_PASS_NOT_TODO"
+    },
+    {
+      "suite": "r0021-reveal",
+      "literal": "SKIP_EXPLICIT same-day explicit preview anchor correction reprojects accepted stars — removed synthetic-array producer; actual catalogue seeks tested separately",
+      "evidence": "H/native-final-v47-final/r0021-reveal.log",
+      "line": 3,
+      "disposition": "EXPLICITLY_EXCLUDED_REMOVED_SYNTHETIC_PRODUCER_NOT_PASS_NOT_TODO"
+    }
+  ],
+  "countAccounting": {
+    "nativeLegacyAggregateStatus": "FAIL",
+    "failingLegacyScripts": [
+      {
+        "suite": "r0021-reveal",
+        "exitCode": 1,
+        "log": "r0021-reveal.log"
+      },
+      {
+        "suite": "r0022-baseline-balance",
+        "exitCode": 1,
+        "log": "r0022-baseline-balance.log"
+      }
+    ],
+    "nativeNodeGlobV47": {
+      "tests": 439,
+      "pass": 435,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 4
+    },
+    "documentedSeparateTargetedV47Total": {
+      "tests": 608,
+      "pass": 604,
+      "todo": 4,
+      "fail": 0,
+      "provenance": "Inspected register; this is not the439-test native glob alone and does not include the8 failing custom legacy assertions."
+    },
+    "baselineParity": "Retained comparison binds basec1a480... and shows the same1+7 failure counts and4 TODOs. These historic failures are not repaired or hidden by final-targeted zero-failure totals."
+  },
+  "originalReviewers": {
+    "A": {
+      "role": "Astronomy, optical presentation, retained visual and custody review",
+      "originalRuntime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "originalDisposition": "No newly demonstrated V45 astronomical/visual blocker in inspected scope; joined qualification remains open.",
+      "originalMatrix": "H/review-v45/A/matrix.json",
+      "confirmedNewOriginalRendererDefects": [],
+      "findingsAndDispositions": [
+        {
+          "id": "A11",
+          "classification": "MATCHED_COMPARISON_COVERAGE_GAP",
+          "original": "Owner attachment/runtime/UTC/weather were not bound; unmatched V38 overcast and newer clear/twilight images could not establish richness regression.",
+          "resolution": "V46 matched six paused DPR1 clear/partial/overcast comparisons in both engines close this exact-input discriminator. Five whole-card pairs decode identically; Chromium partial differs in13942 upper-band pixels by at most8 codes. Exact raw fields and attributed unobscured stars match.",
+          "runtime": "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+          "evidence": [
+            "H/review-v45/A/final-followup.json",
+            "H/joined-v46-chromium-matched-richness/results.json",
+            "H/joined-v46-firefox-matched-richness/results.json"
+          ],
+          "remaining": "Owner attachment identity remains unverified; no universal whole-frame equality, live motion, fresh terrain-performance or every-site claim."
+        },
+        {
+          "id": "A12",
+          "classification": "FINAL_RUNTIME_QUALIFICATION_GAP",
+          "original": "Final joined 27h60x/600x,49h600x,normal1x recovery and visible-star/twinkle claims must be bound to their actual runtime.",
+          "resolution": "Retained follow-up inspected25 V46 C27h60 PNGs with no new H2/H7 defect in those samples; it preserves the actual V46 availability failure and earlier captured V47 scoped recovery.",
+          "evidence": [
+            "H/review-v45/A/v47-motion-followup.json"
+          ],
+          "reviewedRuntimes": [
+            "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+            "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+            "062ee482f6cad133ab0f384296545f96b4db04855af1256fd2e66ff0127aa5aa"
+          ],
+          "remaining": "Latest V49 affected traversal campaign is pending. Sparse60x views are not default real-time M0 or full-tier terrain qualification."
+        },
+        {
+          "id": "A13",
+          "classification": "REPORT_CURRENTNESS_AND_CALIBRATION_LIMIT",
+          "original": "Older frontier/test paragraphs called V44/54-test material current while later V45 text used55; corona uses middle-cloud/fog proxies without measured droplet phase/size.",
+          "resolution": "Inspected register now states V47/Moon55 and separates V48 local follow-up. Final V49 head/runtime/totals still require the primary delivery update after qualification.",
+          "evidence": [
+            "W/docs/real-sky/STARTUP_CLOUD_HOTFIX.md"
+          ],
+          "remaining": "Display exposure/enlarged calendar bodies/near-zenith continuation/art-directed optics remain disclosed approximations, not photometric or liquid-water calibration."
+        }
+      ],
+      "originalScenarioDispositions": [
+        {
+          "id": "A01",
+          "scenario": "V45 runtime and retained owner custody",
+          "disposition": "supported"
+        },
+        {
+          "id": "A02",
+          "scenario": "Orlando Maghrib, physical Sun about -8.64 degrees, south-facing camera",
+          "disposition": "supported"
+        },
+        {
+          "id": "A03",
+          "scenario": "Late-twilight -12 to -18 degree handoff",
+          "disposition": "supported"
+        },
+        {
+          "id": "A04",
+          "scenario": "Matched -8.64 degree dusk/dawn with 90/270 degree cameras",
+          "disposition": "supported"
+        },
+        {
+          "id": "A05",
+          "scenario": "True dawn / false dawn semantics",
+          "disposition": "supported"
+        },
+        {
+          "id": "A06",
+          "scenario": "V45 normal, equatorial zenith, arctic and antarctic solar geometry",
+          "disposition": "supported"
+        },
+        {
+          "id": "A07",
+          "scenario": "Enlarged calendar Sun / surface-brightness display mapping",
+          "disposition": "documented limit"
+        },
+        {
+          "id": "A08",
+          "scenario": "Half-waning clear/humid lunar veil control and fresh V45 half",
+          "disposition": "supported"
+        },
+        {
+          "id": "A09",
+          "scenario": "Native lunar opacity and physical/calendar separation",
+          "disposition": "supported"
+        },
+        {
+          "id": "A10",
+          "scenario": "V45 Firefox normal1x near-half DPR3 continuity versus V43",
+          "disposition": "supported"
+        },
+        {
+          "id": "A11",
+          "scenario": "Latest star-richness attachment versus retained V38 evening-overcast and current fresh half",
+          "disposition": "coverage gap"
+        },
+        {
+          "id": "A12",
+          "scenario": "Final V45 joined 27h60x/600x and49h600x traversals",
+          "disposition": "coverage gap"
+        },
+        {
+          "id": "A13",
+          "scenario": "Report frontier and optical/calibration claims",
+          "disposition": "documented limit"
+        }
+      ],
+      "followupEvidence": [
+        "H/review-v45/A/matrix.json",
+        "H/review-v45/A/final-followup.json",
+        "H/review-v45/A/findings.md",
+        "H/review-v45/A/v47-motion-followup.json"
+      ]
+    },
+    "B": {
+      "role": "Weather admission/provenance, cloud transfer, composition and entry review",
+      "originalRuntime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "originalDisposition": "NO_NEW_PROVEN_RUNTIME_DEFECT_IN_INSPECTED_SCOPE",
+      "originalMatrix": "H/review-v45/B/matrix.json",
+      "confirmedNewOriginalRendererDefects": [],
+      "findingsAndDispositions": [
+        {
+          "id": "B09",
+          "classification": "CORRECTED_HARNESS_ORACLE",
+          "finding": "Older current-boundaries assertions used coarse expectations for overcast/drizzle and omitted drizzle from positive wet-particle expectations.",
+          "resolution": "Expected fine categories and dependent drizzle-positive condition corrected with unchanged runtime hashes; failing original receipts retained.",
+          "evidence": [
+            "H/review-v45/B/findings.md",
+            "H/review-v45/B/matrix.json"
+          ],
+          "remaining": "No runtime gate was weakened; not a product regression."
+        },
+        {
+          "id": "B10",
+          "classification": "HISTORICAL_INCIDENT_AND_LIVE_PROVIDER_CLAIM_LIMIT",
+          "finding": "Original personal rain location/cache/provider bytes were not recorded. Model current is not direct observation.",
+          "resolution": "V46 A/V1-B/c1-C/PR42 controlled replay uses identical rain/clear bytes; candidate restores condition/model rain permissions while c1 suppresses them. V46 final live current-model dry overcast remains distinct from hourly drizzle.",
+          "runtime": "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+          "evidence": [
+            "H/review-v45/B/final-followup.json",
+            "H/joined-v46-firefox-rain-abc/results.json",
+            "H/joined-v46-firefox-live-provider/results.json"
+          ],
+          "remaining": "Controlled Orlando substitution does not reconstruct the owner’s event. This delivery reconciliation did not inspect a new V49 wet-provider witness; eligible rain is still model estimate, never on-site observation."
+        },
+        {
+          "id": "B11",
+          "classification": "SPECULATIVE_COUNTEREXAMPLE_NOT_PROVEN_DEFECT",
+          "finding": "Fresh supported WMO63 with explicit zero low/mid/high cover can permit rain without native cloud columns; missing layers use a separate fallback deck.",
+          "resolution": "No retained original review establishes a visual failure or an owner-defined source-origin rule. Keep optional discriminator separate from blockers.",
+          "evidence": [
+            "H/review-v45/B/matrix.json"
+          ],
+          "remaining": "Optional bounded scene only if the owner chooses the meaning of above-camera precipitation; no new programme or mandatory blocker."
+        },
+        {
+          "id": "B12",
+          "classification": "OPTIONAL_ARTIFACT_PRESENTATION_IMPROVEMENT",
+          "finding": "Startup montage prepends first-visible353ms before nominal250ms/actual281ms; times are labelled.",
+          "resolution": "Documented ordering issue does not invalidate actual daylight gates or demonstrate a startup flash.",
+          "evidence": [
+            "H/review-v45/B/findings.md"
+          ],
+          "remaining": "Optional chronological montage sort; no product defect."
+        },
+        {
+          "id": "B-V46-ROOTV1",
+          "classification": "CORRECTED_PROVIDER_FIXTURE_ENVELOPE",
+          "finding": "Old combined-entry root weather fixture lacked the required zone/time/interval/units envelope.",
+          "resolution": "V46 corrected caller supplies the same valid dry code2/temp28 model envelope to root and V1 in both engines. Root settings-cog PNG overlay is not icon/pixel equality.",
+          "runtime": "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+          "evidence": [
+            "H/review-v45/B/final-followup.json"
+          ],
+          "remaining": "Condition/temp admission demonstrated in that controlled scene only."
+        },
+        {
+          "id": "B-600-AVAIL",
+          "classification": "CONFIRMED_RETAINED_V46_AVAILABILITY_FAILURE",
+          "finding": "V46 49h600x frame55 had unavailable owner and32160ms original accepted age; screenshot is a dark atmospheric shell, not a passing sky.",
+          "runtime": "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+          "evidence": [
+            "H/review-v45/B/v46-600x-followup.json",
+            "H/joined-v46-chromium-two-midnights-600/frame-00055.png"
+          ],
+          "resolution": "Source/byte-equivalence opportunities were supplied; cloud quantization was implemented during that review. V48 lazy join is described in the register with old-negative/new-positive controls.",
+          "remaining": "Arithmetic equality is not consumer availability. Current V49 actual affected qualification remains pending."
+        }
+      ],
+      "performanceOpportunitiesNotIndependentRuntimeBlockers": [
+        {
+          "id": "P01",
+          "originalStatus": "PRIMARY_IMPLEMENTED_DURING_REVIEW_SOURCE_AUDITED_PROFILE_PENDING",
+          "summary": "Three forward sRGB gamma pow calls per covered preview cloud pixel repeat a monotone byte-quantization decision.",
+          "disposition": "EXACT_OPTIMIZATION_PROPOSAL_OR_SOURCE_CONTROL_SCOPE; no automatic latest-runtime availability acceptance"
+        },
+        {
+          "id": "P02",
+          "originalStatus": "PROPOSED_EXACT_POST_PROOF_MATERIALIZATION",
+          "summary": "After the existing exact encoded-contrast proof establishes a zero displayed stellar contribution, render allocates516750zero doubles, then join allocates and fills gas+linear (another2×516750 doubles). These three Float64planes alone total12402000bytes per such preview, beforeRGBA/tables.",
+          "disposition": "EXACT_OPTIMIZATION_PROPOSAL_OR_SOURCE_CONTROL_SCOPE; no automatic latest-runtime availability acceptance"
+        },
+        {
+          "id": "P03",
+          "originalStatus": "OPTIONAL_EXACT_MASK_REUSE",
+          "summary": "prepareSolarMask reconstructs and PNG-encodes325×530 on every preparation, even for identical alpha snapshots. V46 CPU summary attributes1735.031ms self time to toDataURL.",
+          "disposition": "EXACT_OPTIMIZATION_PROPOSAL_OR_SOURCE_CONTROL_SCOPE; no automatic latest-runtime availability acceptance"
+        },
+        {
+          "id": "P04",
+          "originalStatus": "OPTIONAL_PURE_GEOMETRY_REUSE_IF_PROFILE_JUSTIFIES",
+          "summary": "Fixed camera/grid geometry repeats above-horizon decisions, node unprojection/solid-angle, bilinear indices/weights and perspective display gains for each new UTC.",
+          "disposition": "EXACT_OPTIMIZATION_PROPOSAL_OR_SOURCE_CONTROL_SCOPE; no automatic latest-runtime availability acceptance"
+        }
+      ],
+      "originalScenarioDispositions": [
+        {
+          "id": "B01",
+          "scenario": "Ordinary 1x current weather, 14 categories",
+          "disposition": "SUPPORTED_SCOPED"
+        },
+        {
+          "id": "B02",
+          "scenario": "Model thunder and uncalibrated radar",
+          "disposition": "SUPPORTED_SCOPED"
+        },
+        {
+          "id": "B03",
+          "scenario": "Current record expiry, consumed503, then recovery",
+          "disposition": "SUPPORTED_SCOPED"
+        },
+        {
+          "id": "B04",
+          "scenario": "Forecast still matrix versus live current lane",
+          "disposition": "SUPPORTED_WITH_SCOPE_LIMIT"
+        },
+        {
+          "id": "B05",
+          "scenario": "Bounded cloud transfer and retained negative controls",
+          "disposition": "SUPPORTED_SCOPED_HISTORICAL_CONTROL_NOT_NEW_JOINED_PASS"
+        },
+        {
+          "id": "B06",
+          "scenario": "Ordinary 1x clear/partial/rain/clear with Moon/horizon/failure/retry",
+          "disposition": "SUPPORTED_SCOPED"
+        },
+        {
+          "id": "B07",
+          "scenario": "Dark lunar disc, foreground air/clouds, horizon presentation",
+          "disposition": "SUPPORTED_WITH_SCOPE_LIMIT"
+        },
+        {
+          "id": "B08",
+          "scenario": "Dawn/dusk/day cloud color and exposure samples",
+          "disposition": "SUPPORTED_WITH_SCOPE_LIMIT"
+        },
+        {
+          "id": "B09",
+          "scenario": "Preserved invalid current-boundaries oracle",
+          "disposition": "TEST_HARNESS_PROBLEM_CORRECTED"
+        },
+        {
+          "id": "B10",
+          "scenario": "Rain incident attribution and current live-provider coverage",
+          "disposition": "HISTORICAL_LIMITATION_AND_CLAIM_BOUND"
+        },
+        {
+          "id": "B11",
+          "scenario": "Explicit zero cloud-layer cover with supported current rain",
+          "disposition": "NONBLOCKING_BOUNDARY_GAP_NOT_PROVEN_DEFECT"
+        },
+        {
+          "id": "B12",
+          "scenario": "Startup montage order",
+          "disposition": "OPTIONAL_TEST_PRESENTATION_IMPROVEMENT"
+        }
+      ],
+      "followupEvidence": [
+        "H/review-v45/B/matrix.json",
+        "H/review-v45/B/final-followup.json",
+        "H/review-v45/B/findings.md",
+        "H/review-v45/B/v46-600x-followup.json"
+      ]
+    },
+    "C": {
+      "role": "Lifecycle/currentness, real entry, ordinary1x continuity, startup and acceptance-oracle review",
+      "originalRuntime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "originalDisposition": "PARTIAL_NOT_RELEASE_ACCEPTANCE",
+      "originalMatrix": "H/review-v45/C/matrix.json",
+      "confirmedNewOriginalRendererDefects": [],
+      "findingsAndDispositions": [
+        {
+          "id": "C-H1",
+          "classification": "CONFIRMED_CONTINUITY_HARNESS_FALSE_GREEN",
+          "finding": "Caught visibility-observer errors or truncated ownership coverage could leave a green continuity result.",
+          "resolution": "Exact original block false-green negative retained. Pure offline custody/error/coverage gate revalidated five original V45 runs, passed=True; validatorSHA e993631a953f669f9c00a64482344c81c3dbb7b8bd352b060abc097dbdbb9357.",
+          "runtime": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+          "evidence": [
+            "H/observer-negative-v45.json",
+            "H/observer-revalidation-v45.json",
+            "H/review-v45/C/matrix.json"
+          ],
+          "remaining": "Offline gate does not create new captures or certify unrecorded pixels."
+        },
+        {
+          "id": "C-V46-STARTUP",
+          "classification": "CONFIRMED_V45_BOOTSTRAP_PRESENTATION_LOSS",
+          "finding": "Uninstrumented warm Firefox rain first-visible60ms PNG is dark; instrumented repeat is a cause trace, not a captured reproduction.",
+          "resolution": "V46 cached/network prayer-adoption branches republish accepted sky before async yield. Original bright V46 rain first-visible images and16 startup jobs support scoped bootstrap closure.",
+          "runtime": "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+          "evidence": [
+            "H/review-v45/C/v46-startup-review.json",
+            "H/review-v45/C/final-followup.json",
+            "H/joined-v45-firefox-startup-rain/warm-first-visible.png",
+            "H/joined-v46-firefox-startup-rain/warm-first-visible.png"
+          ],
+          "remaining": "Sampled first-visible frames and cold acquisition latency are not zero-ms first paint or continuous framebuffer coverage."
+        },
+        {
+          "id": "C-V46-COUNTERS",
+          "classification": "CONFIRMED_ASSERTION_COVERAGE_GAP",
+          "finding": "updates==renders alone can miss extra equally increased update/render pairs after loop start.",
+          "resolution": "Final follow-up reads the correction: capture both counters before loop-start call and deep-compare both unchanged afterward.",
+          "runtime": "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+          "evidence": [
+            "H/review-v45/C/v46-startup-review.json",
+            "H/review-v45/C/final-followup.json"
+          ],
+          "remaining": "Reviewer read tests and source; no extra expensive replay required solely for this predicate repair."
+        },
+        {
+          "id": "C-600-AVAIL/C-600-EXPIRY",
+          "classification": "CONFIRMED_RETAINED_V46_PIXEL_AND_CONSUMER_BOUNDARY_FAILURE",
+          "finding": "49h600x had25 unavailable owners and2 previews aged30060ms; frame55 dark shell.49.9ms publication plus0.2ms consumer tail crosses the unchanged50ms wall allowance at600x.",
+          "runtime": "f0715c5a95cb6e981d472dd87508212f0f424fa88e6e41a528178b929bfdcc05",
+          "evidence": [
+            "H/review-v45/C/v46-600x-followup.json",
+            "H/joined-v46-chromium-two-midnights-600/results.json"
+          ],
+          "resolution": "Narrower5ms admission headroom plus bounded fresh retry has source/control evidence; earlier Chromium49h and Firefox6h recovered controls retain their separate runtime identities.",
+          "remaining": "No widening of the30s lease.5ms is empirical tuning, not a universal scheduling bound. Current V49 long gate remains pending."
+        },
+        {
+          "id": "C-600-EXCEPTION",
+          "classification": "CONFIRMED_RETAINED_VISIBLE_EXCEPTION_RESERVE_BYPASS",
+          "finding": "Detail/update exception catches previously retained through nativeResultCurrent without the narrower publishable headroom predicate, bypassing retry.",
+          "resolution": "Final V47 publishable predicate guards publication and both catches; old throwing-detail negative retained, focused final29 passes support corrected source paths.",
+          "runtime": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+          "evidence": [
+            "H/review-v45/C/v46-600x-followup-finalreadback.json",
+            "H/v47-negative-exception-tail.txt",
+            "H/v47-focused-final.txt"
+          ],
+          "remaining": "Source-path closure is distinct from subsequent final-runtime long qualification."
+        },
+        {
+          "id": "C-600-ORACLE",
+          "classification": "CONFIRMED_TELEMETRY_ONLY_ACCEPTANCE_OMISSION",
+          "finding": "Screenshot-only final acceptance could ignore telemetry expiry/withdrawal/error/coverage violations.",
+          "resolution": "Actual runner now joins telemetry checks;3 focused Python controls cover positives, telemetry-only violations, absent observations and inconsistent maximum age. Final retained Python receipt31 OK.",
+          "runtime": "4874cf791e8bd5df2d3846d07b74fd61c73c31335ab1f08831f9f287e2114376",
+          "evidence": [
+            "H/review-v45/C/v46-600x-followup-finalreadback.json",
+            "H/v47-negative-telemetry-gate.txt",
+            "H/python-final-v47-final.log"
+          ],
+          "remaining": "Paired screenshot ownership, DOM observations and sampled pixels remain distinct."
+        }
+      ],
+      "remainingCoverage": [
+        "N003 real browser/OS background visibility/throttling and BFCache remains unqualified; injected events establish fences only.",
+        "Cold Moon acquisition can be blank until first preview; postfirst continuity is separate.",
+        "Two540px row WASM memories total326631424 bytes; whole-browser memory is a different measurement.",
+        "Small actual-solver A→B→A tests are protocol evidence, not full-size repeated-target throughput.",
+        "Final joined/traversal and fast full-tier terrain qualification are not closed by these reviewer readbacks."
+      ],
+      "originalScenarioDispositions": [
+        {
+          "scenario": "Cold and HTTP-cache-warm daytime startup: Chromium clear/partial/heavy",
+          "disposition": "PASS_SCOPED_CHROMIUM_CAPTURED_STARTUP"
+        },
+        {
+          "scenario": "Cold and HTTP-cache-warm night startup: both engines",
+          "disposition": "PASS_SCOPED_WITH_DOCUMENTED_COLD_LATENCY"
+        },
+        {
+          "scenario": "Native-phase near-half advancing1x, FirefoxDPR3,660s",
+          "disposition": "PASS_SCOPED_ORDINARY1X_CURRENTNESS"
+        },
+        {
+          "scenario": "V43 negative near-half control, FirefoxDPR3,660s",
+          "disposition": "EXPECTED_FAIL_RETAINED_ADVERSE_CONTROL"
+        },
+        {
+          "scenario": "Ordinary1x clear→cloud→rain→clear plus below/above presentation and failure/retry",
+          "disposition": "PASS_SCOPED_CONSUMED_WEATHER_AND_RECOVERY"
+        },
+        {
+          "scenario": "Direct below-horizon calendar, ordinary1xDPR3,660s: both engines",
+          "disposition": "PASS_SCOPED_RECEIPTS_PIXEL_REVIEW_BOUNDED"
+        },
+        {
+          "scenario": "Actual file-offline entry and locally owned nested Blob workers",
+          "disposition": "PASS_SCOPED_ACTUAL_FILE_ENTRY"
+        },
+        {
+          "scenario": "Lunar A→B→A stale result and matching malformed replacement",
+          "disposition": "PASS_SCOPED_PROTOCOL_NOT_FULL_SIZE_TRANSITION_LATENCY"
+        },
+        {
+          "scenario": "Explicit forward/backward seeks and hidden/show event control",
+          "disposition": "PASS_SCOPED_EVENT_FENCES_REAL_BROWSER_LIFECYCLE_OPEN"
+        },
+        {
+          "scenario": "Control responsiveness during actual native and offline refinement",
+          "disposition": "PASS_SCOPED_RESPONSIVENESS"
+        },
+        {
+          "scenario": "Current root and frozenV1 ownership/isolation",
+          "disposition": "PASS_SCOPED_ENTRY_STORAGE_PIXELS"
+        },
+        {
+          "scenario": "Continuity observer failure and observation coverage",
+          "disposition": "CONFIRMED_HARNESS_DEFECT_PRIMARY_FIX_AND_OFFLINE_REVALIDATION"
+        },
+        {
+          "scenario": "Real browser/OS background lifecycle,BFCache and full final joined/traversal coverage",
+          "disposition": "OPEN_NOT_RELEASE_ACCEPTANCE"
+        }
+      ],
+      "followupEvidence": [
+        "H/review-v45/C/matrix.json",
+        "H/review-v45/C/final-followup.json",
+        "H/review-v45/C/findings.md",
+        "H/review-v45/C/v46-startup-review.json",
+        "H/review-v45/C/v46-600x-followup.json",
+        "H/review-v45/C/v46-600x-followup-finalreadback.json"
+      ]
+    }
+  },
+  "independenceLimit": "Three independently authored original reviews reused many common acquisition receipts; they are not three independent browser campaigns.",
+  "speculativeOrOptionalNotBlockers": [
+    "B11 explicit-zero-layer supported-rain origin counterexample",
+    "B12 startup montage chronology",
+    "B P02/P03/P04 exact optimisation proposals except their separately implemented/source-controlled scope; proposal is not a performance failure or acceptance"
+  ],
+  "remainingGates": [
+    "Primary consumes already-running V49 affected serial browser qualification and actual captured pixels before declaring latest runtime accepted.",
+    "Geography browser supplement pending; scalar fixtures/oracle repair do not complete it.",
+    "N001/N002 remain PARTIAL, N003 remains BLOCKED; controlled lifecycle injection does not qualify real OS/BFCache.",
+    "Final source-bound command/test/evidence publication must reconcile retained negative controls and original runtime identities; no new blanket review requested."
+  ],
+  "documentationUpdateNeeded": {
+    "register": "W/docs/real-sky/STARTUP_CLOUD_HOTFIX.md",
+    "snapshotSha256": "1f5a770d9114310827568339a467132afb69c725122f9bd54e85713803081fff",
+    "currentSnapshotFrontier": "PublishedV47 plus localV48; V49 remains pending by primary authority.",
+    "existingPublicQualificationRuntime": "0876e05e00dd84aa5bec03aa668591ef9e928ba2c11876b61649d8f5ed40b636",
+    "existingPublicQualificationStatus": "JOINED_QUALIFICATION_OPEN",
+    "action": "After primary final gates, update current register and compact QUALIFICATION/CANDIDATE_RUNTIME/INDEX/command ledgers consistently. Retain older published packages under their original runtime/history labels; do not silently upgrade their54-test/599-test counts."
+  },
+  "publicEvidenceFilesNeeded": [
+    {
+      "id": "historical-native-accounting",
+      "purpose": "Exact eight failures, four TODOs, exited scripts and baseline parity",
+      "localSources": [
+        {
+          "source": "H/native-final-v47-final/results.json",
+          "exists": true,
+          "bytes": 13855
+        },
+        {
+          "source": "H/native-final-v47-final/r0021-reveal.log",
+          "exists": true,
+          "bytes": 2147
+        },
+        {
+          "source": "H/native-final-v47-final/r0022-baseline-balance.log",
+          "exists": true,
+          "bytes": 6593
+        },
+        {
+          "source": "H/native-final-v47-final/native-test-glob.log",
+          "exists": true,
+          "bytes": 97022
+        },
+        {
+          "source": "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json",
+          "exists": true,
+          "bytes": 7108
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/native-accounting.json",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "Retained historical/scoped evidence; never relabelled latest acceptance",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "three-original-reviews",
+      "purpose": "Independent authored reviewer findings, source pins, follow-up resolutions and remaining gaps",
+      "localSources": [
+        {
+          "source": "H/review-v45/A/matrix.json",
+          "exists": true,
+          "bytes": 55830
+        },
+        {
+          "source": "H/review-v45/B/matrix.json",
+          "exists": true,
+          "bytes": 27686
+        },
+        {
+          "source": "H/review-v45/C/matrix.json",
+          "exists": true,
+          "bytes": 23358
+        },
+        {
+          "source": "H/review-v45/A/final-followup.json",
+          "exists": true,
+          "bytes": 29298
+        },
+        {
+          "source": "H/review-v45/B/final-followup.json",
+          "exists": true,
+          "bytes": 8161
+        },
+        {
+          "source": "H/review-v45/C/final-followup.json",
+          "exists": true,
+          "bytes": 6288
+        },
+        {
+          "source": "H/review-v45/A/v47-motion-followup.json",
+          "exists": true,
+          "bytes": 88267
+        },
+        {
+          "source": "H/review-v45/B/v46-600x-followup.json",
+          "exists": true,
+          "bytes": 11498
+        },
+        {
+          "source": "H/review-v45/C/v46-600x-followup-finalreadback.json",
+          "exists": true,
+          "bytes": 10519
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/review-reconciliation.json",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "Retained historical/scoped evidence; never relabelled latest acceptance",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "observer-false-green",
+      "purpose": "Preserved old false green plus five-run offline closure",
+      "localSources": [
+        {
+          "source": "H/observer-negative-v45.json",
+          "exists": true,
+          "bytes": 526
+        },
+        {
+          "source": "H/observer-revalidation-v45.json",
+          "exists": true,
+          "bytes": 7500
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/continuity-coverage.json",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "Retained historical/scoped evidence; never relabelled latest acceptance",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "warm-bootstrap-pair",
+      "purpose": "Original dark V45 first-visible and corrected bright V46 first-visible",
+      "localSources": [
+        {
+          "source": "H/joined-v45-firefox-startup-rain/warm-first-visible.png",
+          "exists": true,
+          "bytes": 81234
+        },
+        {
+          "source": "H/joined-v46-firefox-startup-rain/warm-first-visible.png",
+          "exists": true,
+          "bytes": 126947
+        },
+        {
+          "source": "H/joined-v45-firefox-startup-rain/results.json",
+          "exists": true,
+          "bytes": 67072869
+        },
+        {
+          "source": "H/joined-v46-firefox-startup-rain/results.json",
+          "exists": true,
+          "bytes": 69147859
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/startup/",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "Uninstrumented original pair; traced instrumented repeat is not relabelled as the pixel negative.",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "continuity-before-after",
+      "purpose": "Visible Moon-slot negative/recovery with timeline and exact receipts",
+      "localSources": [
+        {
+          "source": "H/continuity-v45-proof/before-after.png",
+          "exists": true,
+          "bytes": 810212
+        },
+        {
+          "source": "H/continuity-v45-proof/timeline.png",
+          "exists": true,
+          "bytes": 10636
+        },
+        {
+          "source": "H/joined-v45-firefox-continuous-near-half-dpr3/results.json",
+          "exists": true,
+          "bytes": 80277
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/continuity/",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "V43/V45 control identities and sampled PNGs; not every-frame or V49 terrain acceptance.",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "matched-richness",
+      "purpose": "Six exact-input reference/candidate comparisons in both engines",
+      "localSources": [
+        {
+          "source": "H/joined-v46-chromium-matched-richness/matched-complete.png",
+          "exists": true,
+          "bytes": 850092
+        },
+        {
+          "source": "H/joined-v46-firefox-matched-richness/matched-complete.png",
+          "exists": true,
+          "bytes": 818208
+        },
+        {
+          "source": "H/joined-v46-chromium-matched-richness/results.json",
+          "exists": true,
+          "bytes": 7192
+        },
+        {
+          "source": "H/joined-v46-firefox-matched-richness/results.json",
+          "exists": true,
+          "bytes": 7180
+        },
+        {
+          "source": "H/review-v45/A/final-followup.json",
+          "exists": true,
+          "bytes": 29298
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/richness/",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "V38 versusV46; partial-card8-code difference and unverified owner-attachment identity retained. No owner clipboard image or raw data planes.",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "model-rain-causality",
+      "purpose": "Identical-byte V1/c1/candidate rain replay with separate provenance",
+      "localSources": [
+        {
+          "source": "H/joined-v46-firefox-rain-abc/A-frozen-V1-rain/widget.png",
+          "exists": true,
+          "bytes": 275189
+        },
+        {
+          "source": "H/joined-v46-firefox-rain-abc/B-deployed-c1-rain/widget.png",
+          "exists": true,
+          "bytes": 185061
+        },
+        {
+          "source": "H/joined-v46-firefox-rain-abc/C-PR42-rain/widget.png",
+          "exists": true,
+          "bytes": 180709
+        },
+        {
+          "source": "H/joined-v46-firefox-rain-abc/results.json",
+          "exists": true,
+          "bytes": 25347
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/weather-replay/",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "Public Orlando substitution only; model effect permissions, not owner-incident reconstruction or direct observations.",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "current-versus-hourly",
+      "purpose": "Actual live dry-current model compatibility without forecast overwrite",
+      "localSources": [
+        {
+          "source": "H/joined-v46-firefox-live-provider/results.json",
+          "exists": true,
+          "bytes": 58820
+        },
+        {
+          "source": "H/joined-v46-firefox-live-provider/live-15.png",
+          "exists": true,
+          "bytes": 182281
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/weather-live/",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "Retained V46 dry/overcast evidence. New eligible rain requires its own exact current-model witness; never label direct observation.",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "expiry-dark-shell-control",
+      "purpose": "V46 adverse600x PNG beside earlier V47 recovered consumer, each identity retained",
+      "localSources": [
+        {
+          "source": "H/joined-v46-chromium-two-midnights-600/frame-00055.png",
+          "exists": true,
+          "bytes": 111867
+        },
+        {
+          "source": "H/joined-v47-chromium-two-midnights-600/frame-00055.png",
+          "exists": true,
+          "bytes": 154604
+        },
+        {
+          "source": "H/joined-v46-chromium-two-midnights-600/results.json",
+          "exists": true,
+          "bytes": 86708
+        },
+        {
+          "source": "H/joined-v47-chromium-two-midnights-600/results.json",
+          "exists": true,
+          "bytes": 86835
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/deadline/",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "Nearby UTC, not a pixel-identical pair. Recovery runtime062ee482..., final published4874... and newV49 are distinct.",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "source-negative-controls",
+      "purpose": "Finite old-failing/new-passing exception, telemetry and lazy-join controls",
+      "localSources": [
+        {
+          "source": "H/v47-negative-exception-tail.txt",
+          "exists": true,
+          "bytes": 3449
+        },
+        {
+          "source": "H/v47-negative-telemetry-gate.txt",
+          "exists": true,
+          "bytes": 2615
+        },
+        {
+          "source": "H/v47-focused-final.txt",
+          "exists": true,
+          "bytes": 6713
+        },
+        {
+          "source": "H/python-final-v47-final.log",
+          "exists": true,
+          "bytes": 135
+        },
+        {
+          "source": "H/v48-negative-lazy-join-bounded.tap",
+          "exists": true,
+          "bytes": 4347
+        },
+        {
+          "source": "H/v48-lazy-join-pass.tap",
+          "exists": true,
+          "bytes": 2439
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/controls/",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "Retained historical/scoped evidence; never relabelled latest acceptance",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "root-v1-entry",
+      "purpose": "Retain fixed native card and separate V1 storage/config ownership",
+      "localSources": [
+        {
+          "source": "H/joined-v46-firefox-normal-root-v1/root-iframe.png",
+          "exists": true,
+          "bytes": 146660
+        },
+        {
+          "source": "H/joined-v46-firefox-normal-root-v1/v1-iframe.png",
+          "exists": true,
+          "bytes": 293428
+        },
+        {
+          "source": "H/joined-v46-firefox-normal-root-v1/results.json",
+          "exists": true,
+          "bytes": 806840
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/entries/",
+      "status": "READY_FOR_COMPACT_SANITISED_COPY",
+      "scope": "Bounded V46 entry fixture evidence; preservation manifest remains separate.",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "final-current-runtime",
+      "purpose": "Source/runtime/build/V1/test ledgers and accepted returned V49 affected browser receipts",
+      "localSources": [
+        {
+          "source": "H/runtime-v49.json",
+          "exists": true,
+          "bytes": 21233
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/CANDIDATE_RUNTIME.json",
+      "status": "PENDING_PRIMARY_FINAL_GATE",
+      "scope": "Do not replace historical source identities. V49 is UNDER_AFFECTED_QUALIFICATION, not accepted; final summary/capture set selected only after primary reconciliation.",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "geography",
+      "purpose": "Six city/date/method/zone bindings, synthetic weather families, finite scalar controls and forthcoming actual browser result",
+      "localSources": [
+        {
+          "source": "H/geo-v48/A/scenarios.json",
+          "exists": true,
+          "bytes": 37889
+        },
+        {
+          "source": "H/geo-v48/B/scenario-weather-verification.json",
+          "exists": true,
+          "bytes": 7943
+        },
+        {
+          "source": "H/geo-v48/B/harness-followup-final-probes.json",
+          "exists": true,
+          "bytes": 5688
+        }
+      ],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/geography/",
+      "status": "PENDING_PRIMARY_FINAL_GATE",
+      "scope": "Browser supplement remains PENDING. Paused synthetic hourly/model previews are separate from ordinary1x live-current rain; acquired Aladhan clock/policy evidence stays exact-date bound.",
+      "copyRule": "Use a compact summary/selected originals; strip absolute home/worktree/temp paths and unapproved personal site/cache/provider fields. Preserve original test literals, SHA256/runtime identities, UTC/source age, declared mode and negative disposition."
+    },
+    {
+      "id": "final-motion-and-traversal-pixels",
+      "purpose": "Compact actual final-runtime scene stills/contact sheets plus one real15–60s default/allowed-motion clip and recorded capture cadence/ownership; latest joined/traversal/entry controls",
+      "localSources": [],
+      "proposedDestination": "docs/real-sky/evidence/startup-cloud-20261007/final-PR42/final-captured/",
+      "status": "PENDING_PRIMARY_FINAL_GATE",
+      "scope": "Primary selects originals from its already-authorised serial campaign. Do not substitute60x stills orqaState cloud hash for normal realtime motion. Declare motion=full/reduced-motion, preview/refined tier and every captured runtime. No new programme requested."
+    }
+  ],
+  "publicExclusions": [
+    "Owner clipboard attachments with unverified source identity or private capture context",
+    "Raw personal coordinates, browser-geolocation fixes, saved configs/caches, IP/location provider payloads, tokens or home/temp paths",
+    "Entire h8/worktree/archive/profile directories, all PNG sequences, WASM heaps, raw full Float64 fields, duplicate80MB offline entry, texture/catalogue asset re-bundles",
+    "Unreturned/currently-running receipts or merely proposed tests presented as completed"
+  ],
+  "publicScopeRule": "Public city representatives and synthetic fixtures may be retained explicitly. For compact copies preserve test names, original SHA256/runtime/UTC/mode/claim limits, replace local paths by relative evidence IDs, and include selected originals plus negative controls instead of huge archives.",
+  "inputFiles": {
+    "H/native-final-v47-final/results.json": {
+      "sha256": "5771db1320e5d8f1e24ece8c8e1fae764b13d259f246e1eb4b823ac3fcb2305f",
+      "bytes": 13855
+    },
+    "H/runtime-v47-final.json": {
+      "sha256": "7c8164e0a6ace955feeee8387917e7dbde3f71312cd65bda2008f234e027e950",
+      "bytes": 21234
+    },
+    "H/runtime-v49.json": {
+      "sha256": "b5e5ea601a7ecbb4f99fe36014c9a34f54a3a71eb36d805f19a8f1b2a2244168",
+      "bytes": 21233
+    },
+    "W/docs/real-sky/STARTUP_CLOUD_HOTFIX.md": {
+      "sha256": "1f5a770d9114310827568339a467132afb69c725122f9bd54e85713803081fff",
+      "bytes": 32078
+    },
+    "W/docs/real-sky/evidence/startup-cloud-20261007/native-baseline-comparison.json": {
+      "sha256": "bb87b99d39ef4278a3d725754788975bc577ebd961f0639374ee2c9750aab81a",
+      "bytes": 7108
+    },
+    "W/docs/real-sky/evidence/startup-cloud-20261007/QUALIFICATION.json": {
+      "sha256": "85bc34e16576479daa23c132c44d396e68c72aa2f793bf0e4ef151738db308b4",
+      "bytes": 1368
+    },
+    "H/native-final-v47-final/r0021-reveal.log": {
+      "sha256": "c22164b6f8c208eaa12d81a8a3c520060ca3d7c232e47febaf287d5dbab8970b",
+      "bytes": 2147
+    },
+    "H/native-final-v47-final/r0022-baseline-balance.log": {
+      "sha256": "ecd7f1d7185ea61c813512630febf596c1af3bcf5141ad079cdd904d4c334797",
+      "bytes": 6593
+    },
+    "H/historical-failures-v44.json": {
+      "sha256": "08488c9ecfa081288a43063d7945479fc6a4236a2d210f371e703b0558a80929",
+      "bytes": 987
+    },
+    "H/native-final-v47-final/native-test-glob.log": {
+      "sha256": "d217e7dd02e727ff68bec8297e75688903f66a026498a2f782ed2ac817d0a718",
+      "bytes": 97022
+    },
+    "W/tests/r000c-weather.test.cjs": {
+      "sha256": "c8c366eff371ae36f9b5f9a376d596f83b0979d641ee2c0ada20b42c7523db8f",
+      "bytes": 37558
+    },
+    "H/review-v45/A/matrix.json": {
+      "sha256": "92bf7fecf39e481be5ba49558044cd2408f57c1bc51356ba254a4bb19def98dd",
+      "bytes": 55830
+    },
+    "H/review-v45/B/matrix.json": {
+      "sha256": "ba0332965267acc8b376f8c7572e55367a7c6f40f288f2fea01a4a50bb298bdb",
+      "bytes": 27686
+    },
+    "H/review-v45/C/matrix.json": {
+      "sha256": "8e9f87bfe596462252ad04485c0038889c1adf5caabc46a3c4cc0aed6d4fba16",
+      "bytes": 23358
+    },
+    "H/review-v45/A/final-followup.json": {
+      "sha256": "9486f780c9e05bcfdb7da3c45147284979089d202eea163a3c55e56683117e59",
+      "bytes": 29298
+    },
+    "H/review-v45/B/final-followup.json": {
+      "sha256": "b890bc1d8dbc027ddec6a08321847ffeae3d9e4d72f6fd1d3867727aa83f999e",
+      "bytes": 8161
+    },
+    "H/review-v45/C/final-followup.json": {
+      "sha256": "78d8c3a5842cbbf1bdac842986204df6b3e3e3fa9d6495e1d452514014b5db92",
+      "bytes": 6288
+    },
+    "H/review-v45/A/findings.md": {
+      "sha256": "c89aebf6f62a1ea0c57dd9a012e65874f7667b30a57ec6fe66c3a8694b44226a",
+      "bytes": 7283
+    },
+    "H/review-v45/B/findings.md": {
+      "sha256": "260144b0ccf740d2b89376cca5853001574b366bbd02d69ec8a3aeed8687e349",
+      "bytes": 8448
+    },
+    "H/review-v45/C/findings.md": {
+      "sha256": "c791efe76339a46a6384d2b5f67547daa7bdc26fc122782c55878b9027c9ade1",
+      "bytes": 12993
+    },
+    "H/review-v45/A/v47-motion-followup.json": {
+      "sha256": "05b7529d9e4fea334c709d66b2ebb2cbb64c811e24cd07a7ee2c603db91d8656",
+      "bytes": 88267
+    },
+    "H/review-v45/B/v46-600x-followup.json": {
+      "sha256": "b4b3ec66d271c4cfe635c54cad087531ce71bd568f76b08803c7f30c9b18660c",
+      "bytes": 11498
+    },
+    "H/review-v45/C/v46-startup-review.json": {
+      "sha256": "181947545ab9e127572a22b9f3562ad6896c402c0b4b86d93f515536a2f7c3a8",
+      "bytes": 3855
+    },
+    "H/review-v45/C/v46-600x-followup.json": {
+      "sha256": "572d9391742e489848d8f99c33c7070b969f13ae5d81ab80c32e186ec562bc71",
+      "bytes": 17757
+    },
+    "H/review-v45/C/v46-600x-followup-finalreadback.json": {
+      "sha256": "b28afc726c9b070942cf45abf228ca7fcd275fc0abd3a18341e6d33e007c14e6",
+      "bytes": 10519
+    },
+    "H/observer-revalidation-v45.json": {
+      "sha256": "5ef7fe77dc099e84f6a07630c4470e65b23dd1da8c74544f43409a05c4099a96",
+      "bytes": 7500
+    },
+    "H/observer-negative-v45.json": {
+      "sha256": "d67f1885d04e55e123d9915186b97e731b6531a12d7fbfc2eb4dfba7ecfc8526",
+      "bytes": 526
+    }
+  },
+  "decision": "DELIVERY_ACCOUNTING_COMPLETE_CURRENT_V49_AND_GEOGRAPHY_ACCEPTANCE_PENDING"
+}

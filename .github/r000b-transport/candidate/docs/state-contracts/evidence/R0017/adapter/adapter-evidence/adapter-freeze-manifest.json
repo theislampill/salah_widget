@@ -1,0 +1,82 @@
+{
+  "base": "f71fef6ccf7e4efcb57b5a26688d2360461a3253",
+  "scope": "R0017 delegated adapter slice; source frozen after exact 18ff profile addition",
+  "adapterFiles": {
+    "tests/native-script-contract.js": "fe8d0db668c85fe2c6281763f342636c44a0b354a45ef594ca0c2a6765aac627",
+    "tests/native-inline-runtime.cjs": "f73ee21f6e745f0e4a60ea8732caaefa5e2e367be1048affba5abed81258c5db",
+    "tests/r000f-fixture.cjs": "740e9f3476466c978aa4bc12491bd71a3a3f3010f4b5a5a40360fa1f30d66aa2",
+    "tests/r0011-fixture.cjs": "bcb1d8f4bff8ea97746253768c70b9fb756bc2258c94713c80cbb29a26d692fd",
+    "tests/r001d-harness.cjs": "7c83c45ed757bdf7e5ae72cf0992a2aeeedbef65bf407e1a88b929deef44cf32",
+    "tests/widget-fixture.html": "2975111135aac3197dda912de7d06c2452e42d22e304736b82cf3c686a975ac6",
+    "tests/r0017-transport.cjs": "48676a026db9c336229575e4dfcec121f8b6802b469eede53024f8e90db08f98",
+    "tests/r0010-preferences.cjs": "5345a1037c3442188f4f1ad977c0f7daab1f6dd33fda9147aa6d6f7601df091c",
+    "tests/r0011-storage.cjs": "9c09b1a3a1420a3571b3ade8b3fff5bf0cd0b8d5a043ec6230a0aeccdd018f1d",
+    "tests/r0025-lifecycle.cjs": "b7744212576e8a6ff671d7443f79b93f0046a0a05273bd1d89df43019f317cc2",
+    "tests/r0017-adapters.test.cjs": "8af39ab967aa3cf636fc434664a45e95557e6e0c41c43de3d77be9428575ee7a"
+  },
+  "sourceBindingsUnchangedAfter": true,
+  "verification": [
+    {
+      "name": "final-focused-adapters",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/r0017-adapters.test.cjs",
+        "tests/moon-fixture-anchors.test.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.7957317419932224,
+      "log": "final-focused-adapters.log"
+    },
+    {
+      "name": "final-transport",
+      "command": [
+        "node",
+        "tests/r0017-transport.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.6587662429956254,
+      "log": "final-transport.log"
+    },
+    {
+      "name": "final-date-sinks",
+      "command": [
+        "node",
+        "tests/r0001-date-sinks.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.9469841509999242,
+      "log": "final-date-sinks.log"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "tests/native-script-contract.js",
+        "tests/native-inline-runtime.cjs",
+        "tests/r000f-fixture.cjs",
+        "tests/r0011-fixture.cjs",
+        "tests/r001d-harness.cjs",
+        "tests/widget-fixture.html",
+        "tests/r0017-transport.cjs",
+        "tests/r0010-preferences.cjs",
+        "tests/r0011-storage.cjs",
+        "tests/r0025-lifecycle.cjs",
+        "tests/r0017-adapters.test.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.018803654005751014,
+      "log": "diff-check.log"
+    }
+  ],
+  "protectedSource": {
+    "index.html": "b4a6831b80439d3002f9cf4fae5bc15943bc9f9f2fa5ab0c4a1fc09f33a57298",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "builder.html": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "src/native/index.html": "6054f1eb3e7f04aa5975707345810b64fc824bc99e17ce3798369a959a123fad"
+  }
+}

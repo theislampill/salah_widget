@@ -1,0 +1,28 @@
+diff --git a/src/native/index.html b/src/native/index.html
+index 2d99b5a..1390c46 100644
+--- a/src/native/index.html
++++ b/src/native/index.html
+@@ -2562,18 +2562,21 @@ function cloudAuthorityMatches(decision,now=Date.now()){
+   const p=_cloudPublication,d=p.decision;
+   if(p.receipt.state!=="eligible-published"||!d||decision.conditionState==="unavailable"||d.lane!==decision.lane||
+     !weatherTargetSame(d.target,decision.target)||p.scene===null||p.scene!==skySceneIdentity()||p.mode!==cloudAuthorityMode())return false;
++  // A stable model record cannot renew the separately consumed present-evidence lease.
++  const evidence=d.present.evidence;
++  if(evidence&&(evidence!==decision.present.evidence||!weatherFixtureEligibility(evidence,decision.target,now).eligible))return false;
+   if(p.record===decision.record)return !!(decision.record ||
+     (d.present.evidence===decision.present.evidence&&decision.present.available&&d.renderCode===decision.renderCode));
+   // A healthy full-model refresh may finish the still-active A publication before
+   // ordinary paint consumes B. A keeps its own lease; this read neither adopts B
+   // nor invokes a producer. No-model replacement continues to withhold coverage.
+-  const evidence=d.present.evidence;
+   return !!(p.record&&decision.record&&selectedWeather(now,p.record)===p.record&&selectedWeather(now,decision.record)===decision.record&&model()!==null&&
+     (!evidence||(evidence===decision.present.evidence&&weatherFixtureEligibility(evidence,decision.target,now).eligible)));
+ }
+ function publishCloudAuthority(state,decision,reason){
+   const old=_cloudPublication,target=decision?.target||currentWeatherTarget(),record=decision?.record||null,r=old.receipt,scene=skySceneIdentity(),mode=cloudAuthorityMode();
+-  if(r.state===state&&r.reason===reason&&old.record===record&&r.lane===(decision?.lane||null)&&weatherTargetSame(r.target,target)&&old.scene===scene&&old.mode===mode)return r;
++  if(r.state===state&&r.reason===reason&&old.record===record&&r.lane===(decision?.lane||null)&&weatherTargetSame(r.target,target)&&old.scene===scene&&old.mode===mode&&
++    old.decision?.present?.evidence===decision?.present?.evidence&&old.decision?.renderCode===decision?.renderCode&&r.conditionState===(decision?.conditionState||"unavailable"))return r;
+   const receipt=Object.freeze({revision:r.revision+1,state,reason,target:Object.freeze({generation:target.generation,lat:target.lat,lon:target.lon}),
+     lane:decision?.lane||null,sourceValidAt:record?.currentValidAt??null,retrievedAt:record?.retrievedAt??null,conditionState:decision?.conditionState||"unavailable",at:Date.now()});
+   _cloudPublication={decision,record,scene,mode,receipt};return receipt;

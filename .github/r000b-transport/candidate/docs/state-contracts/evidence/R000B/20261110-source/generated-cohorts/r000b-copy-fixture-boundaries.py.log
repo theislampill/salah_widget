@@ -1,0 +1,9 @@
+from pathlib import Path
+import hashlib,json,sys,shutil
+plans=json.loads('{"tests/r000b-sky-withdrawal.test.mjs": {"before": "de418202fcc8372ec92f1644a6eed0d50a6928347abb7da8189c2f5b0cbe57b8", "after": "7f37bb3158d7c886bd74feb61f219cb88881f6b75d2fed72f581d326a79f4037", "anchor": "Explicit cloud-port double"}, "tests/real-sky/native-head-handoff.cjs": {"before": "757be97483c5772afe92d08d93c3c94b7d81f6b264de53bb5242a9768b4608fc", "after": "4a167590ac6b0e447520f5ac329044c4b71913853d648f7769d9cab1112411cc", "anchor": "const cloudPublication=["}, "tests/r0003-harness.cjs": {"before": "2137a34c4f8685bdc26382837788d4815ea3c81321923c0eabd0994418892abd", "after": "c95cef02a0ce728e62106efc6f86dc7f88a48260e856c87ddd8522b869ab9ba6", "anchor": "The unavailable weather double uses the real current target"}}')
+name=sys.argv[1];plan=plans[name];src=Path('/workspace/scratch/15b8fb6ac4c2/r000b-work')/name;dst=Path('/workspace/scratch/15b8fb6ac4c2/r000b-build-1')/name
+assert hashlib.sha256(src.read_bytes()).hexdigest()==plan["after"]
+assert hashlib.sha256(dst.read_bytes()).hexdigest()==plan["before"]
+shutil.copyfile(src,dst)
+assert src.read_bytes()==dst.read_bytes()
+print("copied exact fixture: "+name)

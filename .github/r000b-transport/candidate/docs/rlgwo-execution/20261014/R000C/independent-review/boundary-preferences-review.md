@@ -1,0 +1,26 @@
+# R000C independent boundary-observer preference review
+
+Full override supports its separately declared recovered 30-second control. Reduced-motion recovery fails. The remaining requirement is affected reduced-motion native evidence; neither full-recording continuity nor repeated clean watches for every mode should be invented as additional requirements.
+
+`firefox-boundary-preferences-readback-check.json` independently reconciles both canonical cases, actual request/native JSON consumption, raw/cache/header/effect assertions, real-clock progression, preference flags and all 6,065 original decoded frame digests/PTS. Both use the previously reviewed driver `ed610a2ce09ebdfce661b563338d0cf31f89162676b9f03de40544f59e350737` and unchanged wrapper, source, current ingress and ordinary retry.
+
+| Original case in `../native/firefox-boundary-preferences/` | Video SHA256 | Native frames / final PTS | Scoped outcome |
+|---|---|---:|---|
+| `R000C-night-full` | `3f9ec376cc1e3dd7047e6a5f142612810cdaf42901fa160178cb5444893abf45` | 3,032 / 121.24 s | Recovered 30 s supported; whole recording has a blank at 62.56 s. |
+| `R000C-night-reduced` | `53557f9e41c86ad5d8218d9c88ec53dba0fc8b2cf93cfcdd99adcb83b44618ba` | 3,033 / 121.28 s | Recovered watch FAIL: original frame 2685 / 107.40 s is whole-card blank. |
+
+I directly extracted and viewed both listed defective native frames. The full-override defect is between its watches, not in its predeclared recovered interval. Full's recovered host interval is 111692.421–111722.421, exactly 30 seconds, or navigation +90.265 to +120.265 seconds. Native one-second sequences from 90 through 121 seconds show complete header/buckle, prayer rows, footer and opaque textured half-Moon, with changing rain positions and cloud appearance. No nominated missing region occurs near this interval. The stored preference is OS reduce plus full override, and the actual pixels show motion. This acceptance is limited to that declared recovered control; it is not a repaired full recording.
+
+Reduced's recovered host interval is 111571.046–111601.046, exactly 30 seconds, or navigation +90.281 to +120.281 seconds. Its blank 107.40-second frame is well inside the relevant portion. There are also earlier candidates at 1.52 and 58.48 seconds. The valid admitted state, correct preferences and later healthy frames cannot overrule the original missing pixels. No shorter segment is selected to rescue the failed watch.
+
+## Contract boundary and remaining action
+
+The original accepted C16 obligation is relevant native preservation, not a blanket requirement that every two-minute acquisition be continuously readable. A03 specifies one night malformed-to-healthy case, 30-second no-preference motion and reduced/full controls in the stated Riyadh/current-ingress environment. It does not explicitly require both initial and recovered 30-second watches to pass for every preference. The expanded diagnostic matrix and its failures stay visible; their existence does not create new obligations beyond the original contract.
+
+Exact R0007 reduced preservation remains valid for its original input and mode. I independently re-read `headed-replacement/firefox/shared-preservation-reduce/case-input.json` and its accepted review. It uses a 370×570 viewport with the same 325×530 card, native Date, Honolulu, SIM WMO2/cloud50 and offline weather. It proves the unchanged reduced-motion policy for that retained control. It does not supply this A03 affected current-ingress/night reduced scenario or make its failed watch pass. The reuse boundary in the immutable specification permits only the unaffected identified interface/input evidence; it is not interchangeable all-scene credit.
+
+The smallest remaining acquisition is therefore one declared reduced-motion control for the affected scenario. The coordinator identified a concrete previously successful preservation difference: R0007 uses host `time.sleep(action["ms"]/1000)` during its native 30-second watches. I verified this in the original driver blob at commit `87c3a19ff275197e1a49bebd7abc30ad2849137e`, as well as the current retained driver. The accepted Firefox control also uses headed mode and native video-only acquisition.
+
+One reduced-only run adopting that known successful headed/video-only/host-wait preservation mode is justified after inspection of the minimal pinned driver change. Preserve the current observer-boundary policy, original readiness and full assertion predicates, same canonical input, source, native 1× clock, ordinary recovery and the already declared watch boundaries. Archive the prior exact driver/packet; retain all original recordings. No other cases, settling delay, recorder/browser replacement, product change or tail cutoff is justified by this decision.
+
+This is a bounded configuration test, not an assertion that host waiting or headed mode fixes the cause. Earlier headed pilots failed and missing pixels persisted after diagnostic reads were removed; both are contrary evidence. A failure of the new control would remain a failure and require another evidence-led decision, not automatic repetition. C16 and pre-delivery qualification remain pending the affected reduced control.

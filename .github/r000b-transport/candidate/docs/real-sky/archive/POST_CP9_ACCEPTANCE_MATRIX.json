@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "authoritativeTree": "widget",
+  "sourceIdentity": "CP9_RUNTIME_IDENTITY.json",
+  "overallStatus": "PARTIAL",
+  "passRule": "All mandatory node closure conditions must be met on the same final runtime, with actual evidence and independent review. MEASURED/RECORDED/ENGINE_LAUNCH_ONLY/NOT_TESTED are never PASS.",
+  "nodeAcceptance": [
+    {
+      "nodeId": "CP9-N001",
+      "priority": "mandatory",
+      "status": "OPEN",
+      "commands": [
+        "python tools/cp9_profile.py --output ../post-cp9-profile",
+        "python tools/cp9_performance.py --trials 5 --output ../post-cp9-performance",
+        "python tools/cp9_presentation_check.py --output ../post-cp9-presentation",
+        "python tools/native_material_check.py --output ../post-cp9-material",
+        "python tools/native_composition_check.py --output ../post-cp9-composition",
+        "python tools/native_motion_check.py --output ../post-cp9-motion",
+        "python tools/cp9_memory_check.py --output ../post-cp9-memory"
+      ],
+      "closureConditions": [
+        "All 20 candidate trials (five each at CPU1/CPU4 × full/reduced motion) have maxGapMs <= 250 and maxScheduledDialogLagMs <= 250, six prayer rows, working dialog actions, no page errors, and an actual current physical sky in supported normal playback.",
+        "The 8,044 opaque native lunar samples and full-frame moved-Moon composition remain exact; dirty-input metadata, cloud/PBR changes and moving foreground controls pass.",
+        "No lifecycle/source-admission/native-regression failure or memory-resource leak is introduced. Results bind to the exact rebuilt widget tree, with raw trials and negative controls retained.",
+        "A reviewer checks the source delta and new oracle/negative controls; rerunning only the old CP8 receipt does not close this node."
+      ],
+      "requiredEvidence": [
+        {
+          "path": "evidence/cp9/performance-final/results.json",
+          "observation": "Five sequential trials per condition; inspect candidate cases separately from the native baseline. This pre-seal run precedes only the diagnostic-metadata refresh fix; final archive qualification reruns the exact final runtime.",
+          "jsonPointer": "/cases"
+        },
+        {
+          "path": "evidence/cp9/profile-final/results.json",
+          "observation": "Exact final runtime sampled under CPU×4; CP9 top-self linearToSrgb 1437.258 ms, encodeFrame 1307.661 ms, nativeForeground 727.751 ms and getImageData 601.960 ms across a 12224.768 ms sample interval. Inclusive times overlap; (program) is not assigned to an invented JS owner.",
+          "jsonPointer": "/cases/1/profile"
+        },
+        {
+          "path": "evidence/cp9/mask-benchmark-final/results.json",
+          "observation": "Mask hoist already closed: exact samples and roughly 9× median improvement. Do not redo or claim this as new work."
+        },
+        {
+          "path": "evidence/cp9/presentation-final/results.json",
+          "observation": "Identical-input skip and changes to PBR pixels, cloud pixels, cutout geometry, physical frame and metadata are all discriminating controls."
+        }
+      ]
+    },
+    {
+      "nodeId": "CP9-N002",
+      "priority": "mandatory",
+      "status": "OPEN",
+      "commands": [
+        "python tools/cp9_temporal_rates.py --output ../post-cp9-rates",
+        "python tools/native_lifecycle_check.py --group all --output ../post-cp9-lifecycle",
+        "python tools/native_lifecycle_mutations.py --output ../post-cp9-mutations",
+        "python tools/cp9_seasonal_check.py --output ../post-cp9-seasonal"
+      ],
+      "closureConditions": [
+        "All four rate cases meet newAcceptedFrames >= 2 and visibleSamples/sampleCount >= 0.8 in the exact retained 10-second transition test, with no stale publications or page errors and exact current frozen recovery.",
+        "Ordinary native time, hidden/visible and target/source invalidation do not starve; a failed/unsupported request reports a finite explicit unavailable state without disabling prayer or preventing recovery. This status change alone is not availability PASS.",
+        "Any accelerated/reused result meets the preserved composition/astrometric/source-support contract on the same native scenes; no unapproved light, coordinate, exposure, resolution or age-budget change is used as compensation.",
+        "Close this node on its currentness/availability tests without claiming CP9-N001 is closed. Re-run and retain the responsiveness measurements after any shared host/message change; the downstream CP9-N003 join, not an implicit prerequisite on this independently ready node, requires both mandatory gates to pass on the combined tree."
+      ],
+      "requiredEvidence": [
+        {
+          "path": "evidence/cp9/temporal-after-mask/results.json",
+          "observation": "At 1/10/60/600×, new accepted frames = 3/2/0/0. Visibility = 65/16/0/0 samples out of 99/100/99/92 in this retained run; consult exact JSON. All frozen recoveries current and no stale publications. First-current and post-first-current metrics explicitly distinguish warm-up.",
+          "jsonPointer": "/cases"
+        },
+        {
+          "path": "evidence/cp9/affected-cp8/native-lifecycle/results.json",
+          "observation": "Ordinary clock changes, A→B→A, old completion and hidden/restore safety controls already exist. This finding is additional high-rate liveness, not a general assertion that CP8 explicit seeks were broken."
+        }
+      ]
+    },
+    {
+      "nodeId": "CP9-N003",
+      "priority": "mandatory",
+      "status": "OPEN",
+      "commands": [
+        "python tools/native_navigation_probe.py --output ../post-cp9-navigation",
+        "python tools/cp9_platform_probe.py --output ../post-cp9-platform-inventory",
+        "python tools/native_browser_check.py --scenes tests/native-scenes-82.json --output ../post-cp9-native-scenes",
+        "python tools/verify_native_scenes.py ../post-cp9-native-scenes/results.json --output ../post-cp9-native-scenes-acceptance.json",
+        "python tools/qualify_cp9.py --output ../post-cp9-integrated-verification"
+      ],
+      "closureConditions": [
+        "Native Windows Chromium and Firefox and explicitly identified-host WebKit all have actual-widget evidence for both applicable entry forms, lifecycle/currentness/source failure, PBR/composition, prayer/calendar/settings and documented provider admission outcomes. Required cases are neither absent nor engine-launch-only.",
+        "Actual BFCache/navigation and deployment/CSP behaviour are evidenced rather than inferred from synthetic events; externally unavailable providers are correctly labelled and cannot supply stale state. Live-admission successes and unavailable-path successes are distinguished.",
+        "The acceptance collector detects wrong/stale/missing/fixture-mislabelled evidence and every accepted result binds the final CP9 runtime tree after CP9-N001/N002.",
+        "All mandatory nodes are closed by their exact conditions with fresh extraction/rebuild/hash verification and independent review. A sealed archive or completed report alone is not release authority."
+      ],
+      "requiredEvidence": [
+        {
+          "path": "evidence/cp9/navigation/results.json",
+          "observation": "Both direct local HTTP and file entry attempts report ERR_BLOCKED_BY_ADMINISTRATOR. This is environmental, not evidence of a product navigation defect."
+        },
+        {
+          "path": "evidence/cp9/platform/results.json",
+          "observation": "Actual OS/engine launch identities and absent Firefox/WebKit executables; no silently substituted engine."
+        },
+        {
+          "path": "evidence/cp9/platform/install-attempt.json",
+          "observation": "Attempted managed browser install lacks success receipt; no platform PASS."
+        },
+        {
+          "path": "evidence/cp9/controls-final/results.json",
+          "observation": "Controlled pagehide/persisted-pageshow ordering passes; explicitly not an actual browser BFCache traversal."
+        },
+        {
+          "path": "evidence/cp9/environment.json",
+          "observation": "Exact development/qualification tool environment."
+        }
+      ]
+    }
+  ],
+  "retainedAcceptance": {
+    "integrationJS": 97,
+    "nativeApplicable": 849,
+    "scientificJS": 305,
+    "scientificPython": 117,
+    "pythonHandoffTools": 22,
+    "nativeScenes": 15,
+    "nativeSceneAssertions": 88,
+    "seasonalScenes": 43,
+    "lifecycleCases": 19,
+    "lifecycleAssertions": 386,
+    "cp9NativeControls": 4,
+    "cp9NativeControlAssertions": 87,
+    "meaning": "Expected baseline counts, not a substitute for the separately supplied fresh-extraction receipt. Existing four native TODOs and explicit historical exclusions remain; see docs/CP8_3_REGRESSION_SCOPE.md."
+  },
+  "platformRunnerNote": "The current cp9_platform_probe inventories engines only. CP9-N003 must implement a real evidence collector; toggling its status or hard-coded final nativePlatform gate is not closure."
+}

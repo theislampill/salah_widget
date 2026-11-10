@@ -1,0 +1,236 @@
+SOURCE 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643 TEMPORAL 4fadb995f60d76f51a23e884f9fbc343db9827c1bfb04baaa9de6cd7e94283f0
+MUTANT single-offset 8d076097ab90f123330327d1c30a083e7c04221ace402267261cc8250a6cfdfd rejected spring oracle; ordinary control retained
+MUTANT first-fold 3ae2372abb8e9bb66fd9cce2029a76ef098406964ecd8a8bcdb6fbd0a2962a8c / ignored-zone 276d78ddb63b354ba84656bfbf6225f26bc6a91b7321bbcfbc6004d2088b62e9 rejected
+MUTANT invalid-scene-bypass 9543d51e0c1afc60c3bdb61558a89bb4e696139fe8872ae98f1bd3e240141f62 rejected by boot boundary
+TAP version 13
+# Subtest: CLOCK DOM begins with actual SKY markup while successful prayer rendering cannot qualify excluded producers
+ok 1 - CLOCK DOM begins with actual SKY markup while successful prayer rendering cannot qualify excluded producers
+  ---
+  duration_ms: 53.6945
+  type: 'test'
+  ...
+# Subtest: actual SKY reset clears stale gates before CLOCK boot and retains the unavailable surface
+ok 2 - actual SKY reset clears stale gates before CLOCK boot and retains the unavailable surface
+  ---
+  duration_ms: 6.2183
+  type: 'test'
+  ...
+# Subtest: valid spring post-transition 03:30
+ok 3 - valid spring post-transition 03:30
+  ---
+  duration_ms: 30.7382
+  type: 'test'
+  ...
+# Subtest: pre-transition positive control
+ok 4 - pre-transition positive control
+  ---
+  duration_ms: 0.3682
+  type: 'test'
+  ...
+# Subtest: ordinary positive control
+ok 5 - ordinary positive control
+  ---
+  duration_ms: 27.9737
+  type: 'test'
+  ...
+# Subtest: post-fold valid control
+ok 6 - post-fold valid control
+  ---
+  duration_ms: 28.0746
+  type: 'test'
+  ...
+# Subtest: fractional offset and previous UTC date
+ok 7 - fractional offset and previous UTC date
+  ---
+  duration_ms: 26.2807
+  type: 'test'
+  ...
+# Subtest: leap day
+ok 8 - leap day
+  ---
+  duration_ms: 29.1564
+  type: 'test'
+  ...
+# Subtest: year one does not become 1901
+ok 9 - year one does not become 1901
+  ---
+  duration_ms: 28.7142
+  type: 'test'
+  ...
+# Subtest: year 99 does not become 1999
+ok 10 - year 99 does not become 1999
+  ---
+  duration_ms: 27.3635
+  type: 'test'
+  ...
+# Subtest: spring gap fails closed
+ok 11 - spring gap fails closed
+  ---
+  duration_ms: 27.3405
+  type: 'test'
+  ...
+# Subtest: fall fold fails closed
+ok 12 - fall fold fails closed
+  ---
+  duration_ms: 30.4091
+  type: 'test'
+  ...
+# Subtest: invalid Gregorian date fails closed
+ok 13 - invalid Gregorian date fails closed
+  ---
+  duration_ms: 0.3491
+  type: 'test'
+  ...
+# Subtest: invalid IANA zone fails closed
+ok 14 - invalid IANA zone fails closed
+  ---
+  duration_ms: 0.3877
+  type: 'test'
+  ...
+# Subtest: nonfinite year fails closed
+ok 15 - nonfinite year fails closed
+  ---
+  duration_ms: 0.2404
+  type: 'test'
+  ...
+# Subtest: fractional fields fails closed
+ok 16 - fractional fields fails closed
+  ---
+  duration_ms: 0.276
+  type: 'test'
+  ...
+# Subtest: hour 24 fails closed
+ok 17 - hour 24 fails closed
+  ---
+  duration_ms: 0.2121
+  type: 'test'
+  ...
+# Subtest: minute 60 fails closed
+ok 18 - minute 60 fails closed
+  ---
+  duration_ms: 0.2541
+  type: 'test'
+  ...
+# Subtest: nonpositive year fails closed
+ok 19 - nonpositive year fails closed
+  ---
+  duration_ms: 0.2535
+  type: 'test'
+  ...
+# Subtest: synthetic 30-second offset rejects and caches the unsupported profile
+ok 20 - synthetic 30-second offset rejects and caches the unsupported profile
+  ---
+  duration_ms: 1.5809
+  type: 'test'
+  ...
+# Subtest: synthetic >24-hour offset rejects and caches the unsupported profile
+ok 21 - synthetic >24-hour offset rejects and caches the unsupported profile
+  ---
+  duration_ms: 1.0656
+  type: 'test'
+  ...
+# Subtest: same-day callers reuse the bounded exhaustive profile and fifth day evicts
+ok 22 - same-day callers reuse the bounded exhaustive profile and fifth day evicts
+  ---
+  duration_ms: 188.8777
+  type: 'test'
+  ...
+# Subtest: invalid explicit simulation rejects its anchor; changing to a valid zone recovers
+ok 23 - invalid explicit simulation rejects its anchor; changing to a valid zone recovers
+  ---
+  duration_ms: 63.5779
+  type: 'test'
+  ...
+# Subtest: legacy valid hour/minute parsing and frozen/accelerated explicit modes survive
+ok 24 - legacy valid hour/minute parsing and frozen/accelerated explicit modes survive
+  ---
+  duration_ms: 76.2506
+  type: 'test'
+  ...
+# Subtest: actual boot rejects an invalid scene before stars/moon/day acquisition
+ok 25 - actual boot rejects an invalid scene before stars/moon/day acquisition
+  ---
+  duration_ms: 51.7168
+  type: 'test'
+  ...
+# Subtest: actual render/apply/loop invalidate a prior scene and restore valid configuration visibility
+ok 26 - actual render/apply/loop invalidate a prior scene and restore valid configuration visibility
+  ---
+  duration_ms: 81.7121
+  type: 'test'
+  ...
+# Subtest: all actual inline widget scripts parse
+ok 27 - all actual inline widget scripts parse
+  ---
+  duration_ms: 2.9762
+  type: 'test'
+  ...
+# Subtest: single-offset mutant preserves ordinary control and fails the exact spring oracle
+ok 28 - single-offset mutant preserves ordinary control and fails the exact spring oracle
+  ---
+  duration_ms: 2.0406
+  type: 'test'
+  ...
+# Subtest: first-fold-candidate and ignored-explicit-zone mutants are discriminated
+ok 29 - first-fold-candidate and ignored-explicit-zone mutants are discriminated
+  ---
+  duration_ms: 67.364
+  type: 'test'
+  ...
+# Subtest: bypassing simulation validity is caught by the actual boot caller
+ok 30 - bypassing simulation validity is caught by the actual boot caller
+  ---
+  duration_ms: 40.3575
+  type: 'test'
+  ...
+# Subtest: local UTC boot keeps actual settings button reachable before scene validity
+ok 31 - local UTC boot keeps actual settings button reachable before scene validity
+  ---
+  duration_ms: 39.5375
+  type: 'test'
+  ...
+# Subtest: local America/New_York boot keeps actual settings button reachable before scene validity
+ok 32 - local America/New_York boot keeps actual settings button reachable before scene validity
+  ---
+  duration_ms: 39.2876
+  type: 'test'
+  ...
+# Subtest: preferLocal UTC boot keeps actual settings button reachable before scene validity
+ok 33 - preferLocal UTC boot keeps actual settings button reachable before scene validity
+  ---
+  duration_ms: 35.692
+  type: 'test'
+  ...
+# Subtest: preferLocal America/New_York boot keeps actual settings button reachable before scene validity
+ok 34 - preferLocal America/New_York boot keeps actual settings button reachable before scene validity
+  ---
+  duration_ms: 34.8543
+  type: 'test'
+  ...
+# Subtest: initial invalid boot then valid config initializes scene builders once across further recoveries
+ok 35 - initial invalid boot then valid config initializes scene builders once across further recoveries
+  ---
+  duration_ms: 76.3299
+  type: 'test'
+  ...
+# Subtest: valid boot and subsequent config reuse builders; bare embeds keep existing settings behavior
+ok 36 - valid boot and subsequent config reuse builders; bare embeds keep existing settings behavior
+  ---
+  duration_ms: 38.6621
+  type: 'test'
+  ...
+# Subtest: actual failed save discloses session-only state before acquisition and a successful retry clears it
+ok 37 - actual failed save discloses session-only state before acquisition and a successful retry clears it
+  ---
+  duration_ms: 40.7177
+  type: 'test'
+  ...
+1..37
+# tests 37
+# suites 0
+# pass 37
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1218.304

@@ -1,0 +1,557 @@
+{
+  "schemaVersion": 1,
+  "programme": "Cumulative CP1-CP9 integration and post-CP9 implementation",
+  "overallStatus": "PARTIAL_DRAFT_CANDIDATE",
+  "mergeOrReleaseApproved": false,
+  "mainBase": "fd2972ba64225fe9d6848e92497e6d0ed20ea624",
+  "mainBaseTree": "c5382ee6cb32e71992da963f56b00c2eaa091d1c",
+  "archiveSha256": "8d094b138c5970eae087a96458bcaefd8c988a12b2abd1fbc0c1b34b9f0c9bff",
+  "archiveRuntimeTreeSha256": "2ebde007ff96fa1b69e9df97f785d41bcf6c38437342913a2d10bed128cdd45b",
+  "runtimeTreeSha256": "9f7146f0735bb5d999bada4680ca15393cf3b9457c66ff6ce32855c54134bb7a",
+  "startingState": {
+    "historicallyClosedFindings": 11,
+    "boundaries": 1,
+    "mandatoryOpenNodes": [
+      "CP9-N001",
+      "CP9-N002",
+      "CP9-N003"
+    ],
+    "ready": [
+      "CP9-N001",
+      "CP9-N002"
+    ],
+    "finalJoinDependencies": {
+      "CP9-N003": [
+        "CP9-N001",
+        "CP9-N002"
+      ]
+    }
+  },
+  "currentnessRule": "All integration-dependent historical receipts were treated as stale until relevant observations were rerun. Any subsequent runtime change invalidates the affected observations and N003 final join. Hashes identify evidence; they do not establish correctness.",
+  "nodes": [
+    {
+      "id": "CP9-N001",
+      "finding": "CP9-F101",
+      "archiveStatus": "OPEN",
+      "prerequisites": [],
+      "prerequisiteState": "READY_ON_COMBINED_MAIN_PLUS_CP9",
+      "status": "PARTIAL",
+      "technicalObservationStatus": "PASS_WITH_DOCUMENTED_NATIVE_COMPARISON_LIMITS",
+      "implementation": [
+        "Added native-encoding.mjs: exact binary64 quantization transitions derived from the unchanged scientific encoder; preserved numerical evaluation order, exposure, resolution and catalogue.",
+        "Used the native encoder at the three authored host composition sites and regenerated all runtime outputs."
+      ],
+      "owners": [
+        "real-sky/native-encoding.mjs",
+        "real-sky/native-host.mjs",
+        "tools/build_native.py"
+      ],
+      "observations": {
+        "loadedCandidateTrials": 20,
+        "maxGapMs": 148.6000000089407,
+        "maxScheduledDialogLagMs": 106.79999999701977,
+        "limitMs": 250,
+        "opaqueMoonSamples": 8047,
+        "materialMaxCodeDifference": 0,
+        "fullFrameMaxCodeDifference": 0,
+        "exactEncodingControls": "255 transitions and adjacent doubles; 1.26 million finite random channels at seven exposures; multiplication and invalid-input controls",
+        "resourceLifetime": "Eight restarts then disposal; one worker/URL/canvas during operation, zero after, six prayer rows; +36,956 bytes main heap. Not total-memory proof."
+      },
+      "remaining": [
+        "Independent source delta and oracle/negative-control review.",
+        "Eight historical native comparison failures remain visible and require their documented source-generation scope to be respected. No blanket native A-M visual-gate completion."
+      ],
+      "evidence": [
+        {
+          "path": "evidence/performance/results.json",
+          "sha256": "3e27a4b308ce448e6889a6b970fe599b2cb69f89b5f9c4fa74167d0889caa0bd"
+        },
+        {
+          "path": "evidence/sandbox/command-receipts.json",
+          "sha256": "2bfab1a595906f7c3b688374bd0bf03651d26f6c80ba6d524146107d245f9aac"
+        },
+        {
+          "path": "evidence/sandbox/material/results.json",
+          "sha256": "a3010eb1182f1f5fd35137ad19cc56c57ebcd3d18a857f5e140fa8f2a10f0866"
+        },
+        {
+          "path": "evidence/sandbox/composition/results.json",
+          "sha256": "20e0aed9fe6b983d65f705f5eb5f79c48efa6d63cf9cfc5d3eda55f11a1838c6"
+        },
+        {
+          "path": "evidence/integration.tap",
+          "sha256": "a6cadf2fb639dc8787c25ae73eafff331e3ab4baff638629ce6a6b863d7669d9"
+        },
+        {
+          "path": "evidence/chromium/presentation/results.json",
+          "sha256": "e6d20190598f4f3e9804eb95ef35e938ee9d58769d1fa5f0ea42dfe7a311d5fa"
+        },
+        {
+          "path": "evidence/chromium/profile/results.json",
+          "sha256": "8a87487aa000d1d581a1c3d6db4f7bb1544e3d7ca271d78cf2cc33fd45b0eaa7"
+        },
+        {
+          "path": "evidence/chromium/memory/results.json",
+          "sha256": "55a3eab82714e416d7687297c17ea7edda747c6b1a216210ae3d7a1c3bd4e3dc"
+        },
+        {
+          "path": "evidence/chromium/motion/results.json",
+          "sha256": "b71462869114f70f2b8651c0d668aabc9e376e1829bff828760cc1d653f33b1c"
+        },
+        {
+          "path": "evidence/native/results.json",
+          "sha256": "0f0b12bf3ba532b240a07295adc44f6a58c1237b9e59a1c74fec817c3338a70a"
+        }
+      ]
+    },
+    {
+      "id": "CP9-N002",
+      "finding": "CP9-F102",
+      "archiveStatus": "OPEN",
+      "prerequisites": [],
+      "prerequisiteState": "READY_ON_COMBINED_MAIN_PLUS_CP9",
+      "status": "PARTIAL",
+      "availabilityTargetStatus": "FAIL_AT_60_AND_600",
+      "currentnessSafetyStatus": "PASS",
+      "implementation": [
+        "Refresh at a rate-aware cadence, coalesce identical forced pending requests, and preserve newer compatible in-flight work when an older displayed frame expires.",
+        "Report finite unsupported-rate availability with measured execution and wall-time budget. Preserve the exact 30,000 ms accepted-UTC fence, identity/epoch ownership and frozen/normal recovery."
+      ],
+      "owners": [
+        "real-sky/native-lifecycle.mjs",
+        "real-sky/native-host.mjs",
+        "tests/real-sky/native-rate-availability.test.mjs"
+      ],
+      "observations": [
+        {
+          "rate": 1,
+          "newAcceptedFrames": 3,
+          "visibleSamples": 83,
+          "sampleCount": 100,
+          "firstCurrentSeconds": 1.7010999999940395,
+          "visibleFractionAfterFirstCurrent": 1.0,
+          "stalePublications": [],
+          "frozenRecoveryCurrent": true,
+          "pageErrors": [],
+          "meetsAvailability": true
+        },
+        {
+          "rate": 10,
+          "newAcceptedFrames": 6,
+          "visibleSamples": 83,
+          "sampleCount": 100,
+          "firstCurrentSeconds": 1.701,
+          "visibleFractionAfterFirstCurrent": 1.0,
+          "stalePublications": [],
+          "frozenRecoveryCurrent": true,
+          "pageErrors": [],
+          "meetsAvailability": true
+        },
+        {
+          "rate": 60,
+          "newAcceptedFrames": 0,
+          "visibleSamples": 0,
+          "sampleCount": 100,
+          "firstCurrentSeconds": null,
+          "visibleFractionAfterFirstCurrent": null,
+          "stalePublications": [],
+          "frozenRecoveryCurrent": true,
+          "pageErrors": [],
+          "meetsAvailability": false
+        },
+        {
+          "rate": 600,
+          "newAcceptedFrames": 0,
+          "visibleSamples": 0,
+          "sampleCount": 100,
+          "firstCurrentSeconds": null,
+          "visibleFractionAfterFirstCurrent": null,
+          "stalePublications": [],
+          "frozenRecoveryCurrent": true,
+          "pageErrors": [],
+          "meetsAvailability": false
+        }
+      ],
+      "remaining": [
+        "Exact worker throughput remains insufficient at 60x and 600x; refusal is not availability completion.",
+        "Further reuse/cancellation work requires exact unchanged-renderer comparisons and the existing seasonal/source/camera/currentness controls; no approximate renderer is authorized by this disposition."
+      ],
+      "evidence": [
+        {
+          "path": "evidence/chromium/rates/results.json.gz",
+          "sha256": "b75ed1bcc966224fc20fb3e89e77a6cd810812cf4758d9ab9b73b0f25623ea0a"
+        },
+        {
+          "path": "evidence/integration.tap",
+          "sha256": "a6cadf2fb639dc8787c25ae73eafff331e3ab4baff638629ce6a6b863d7669d9"
+        },
+        {
+          "path": "evidence/chromium/lifecycle/results.json.gz",
+          "sha256": "a4c4d02270b1ab8c8864776a43d8812d458d5f8dee6ce77d8c224d4d4fbfc11e"
+        },
+        {
+          "path": "evidence/firefox/lifecycle/results.json.gz",
+          "sha256": "d3157c25b22c7b24fb96ed82420da3fe242a3b7ed5d96c57d3e890757ca57fa9"
+        },
+        {
+          "path": "evidence/webkit-lifecycle/lifecycle/results.json.gz",
+          "sha256": "71efca55f425bbebdbf275175db3d092a88203737550d94c9af685d195d2077a"
+        },
+        {
+          "path": "evidence/mutations/results.json",
+          "sha256": "8fab35d521b15cf07c590dd2e09cb48b3e2205629175a7fdfa29d06f0deee4d6"
+        },
+        {
+          "path": "evidence/chromium/seasonal/results.json.gz",
+          "sha256": "4dc5283d931012f44dbf87f3b68cae69e2f641b2b311de6af2722b7ebecd9e0d"
+        },
+        {
+          "path": "evidence/performance/results.json",
+          "sha256": "3e27a4b308ce448e6889a6b970fe599b2cb69f89b5f9c4fa74167d0889caa0bd"
+        }
+      ]
+    },
+    {
+      "id": "CP9-N003",
+      "finding": "CP9-F103",
+      "archiveStatus": "OPEN",
+      "prerequisites": [
+        "CP9-N001",
+        "CP9-N002"
+      ],
+      "prerequisiteState": "RUNNER_PREPARATION_READY_FINAL_JOIN_BLOCKED",
+      "status": "BLOCKED_ON_PREREQUISITES",
+      "platformObservationStatus": "PARTIAL",
+      "implementation": [
+        "Added hash-bound acceptance collector and eleven adversarial record tests.",
+        "Added actual HTTP/index and file/offline entry tests in explicitly selected Chromium, Firefox and Windows-host Playwright WebKit, with separate unmodified live provider observations.",
+        "Corrected the WebKit test route to allow local Blob/data worker requests; preserved original lifecycle faults/assertions.",
+        "Enabled Chromium process sandbox explicitly and removed the inherited BFCache-disable flag only for the real-navigation probe."
+      ],
+      "owners": [
+        "tools/cp9/platform_acceptance.py",
+        "tools/cp9/platform_widget_check.py",
+        "tools/cp9/browser_runtime.py",
+        "tools/cp9/native_lifecycle_check.py",
+        "tools/cp9/qualify_candidate.py"
+      ],
+      "observations": [
+        "All six engine/entry pairs have actual entry/material/composition/currentness/worker-failure/prayer-calendar-settings and live prayer/model-weather admission observations.",
+        "All engines pass 15 scene/88 assertions, 19 lifecycle/386 assertions and 87 CP9 native controls.",
+        "Chromium HTTP persisted BFCache return, fresh renderer and current sky observed.",
+        "HTTP CSP fixture passes in all engines; file entries have no HTTP header and retain partial CSP status.",
+        "Collector rejects missing/stale/wrong-mode evidence and remains PARTIAL, not a PASS label."
+      ],
+      "remaining": [
+        "N001 independent review and N002 availability closure on one final runtime.",
+        "Persisted BFCache return not established for Chromium file or Firefox/WebKit entries; ordinary navigation recovery is only partial evidence.",
+        "Offline deployment-policy qualification remains partial because file entries do not receive the tested HTTP CSP.",
+        "Independent review of final source and observations; Windows WebKit is not macOS/Safari/device qualification."
+      ],
+      "evidence": [
+        {
+          "path": "evidence/platform-records.json",
+          "sha256": "ae82b318496aff3330af0aed4b4f9ae7183a20fe5ef8d8f2f5710be24a1cb317"
+        },
+        {
+          "path": "evidence/platform-acceptance.json",
+          "sha256": "6256ea2bca57dbfa946191506576dab25cf2597e99cc38b1b0f86fb7e53d0292"
+        },
+        {
+          "path": "evidence/candidate-tool-tests.log",
+          "sha256": "337b562cb03074193302062e1d1bb287c3cb8d2712cb31990101588592f22036"
+        },
+        {
+          "path": "evidence/sandbox/command-receipts.json",
+          "sha256": "2bfab1a595906f7c3b688374bd0bf03651d26f6c80ba6d524146107d245f9aac"
+        },
+        {
+          "path": "evidence/diagnostics/webkit-blocked-blob-results.json",
+          "sha256": "b07fd06a6c6dd485f783fbf476aa95196e0468e5f6341b106c6358e1ea2a876c"
+        },
+        {
+          "path": "evidence/diagnostics/webkit-worker-controls.json.gz",
+          "sha256": "13362c8d7463a11a3e341b8cde5d4d1809067266ede0b6f1e60b5642434235c7"
+        }
+      ]
+    }
+  ],
+  "retainedFindings": [
+    {
+      "id": "CP8-F01",
+      "title": "Target-bound accepted elevation",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Target/elevation generation custody retained; current browser and negative controls requalified.",
+      "evidence": [
+        {
+          "path": "evidence/chromium/native-controls/results.json",
+          "sha256": "7e9b338a911282a8a4796af867a45b765f8fe8f9c4d27292f6a1288c86f79c7c"
+        },
+        {
+          "path": "evidence/firefox/native-controls/results.json",
+          "sha256": "759432caf8c0d22fd6373ef241a1b44bf79c6774a65f5391de9fe78e15da5ef9"
+        },
+        {
+          "path": "evidence/webkit-lifecycle/native-controls/results.json",
+          "sha256": "8718662b21ce3922396421b800836c4be52638cd696e2ec88bd43e4364d9fe8d"
+        },
+        {
+          "path": "evidence/platform-records.json",
+          "sha256": "ae82b318496aff3330af0aed4b4f9ae7183a20fe5ef8d8f2f5710be24a1cb317"
+        }
+      ]
+    },
+    {
+      "id": "CP8-F02",
+      "title": "Currentness and scheduler comparison",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Scheduler changed by N002; currentness and invalidation controls rerun against the combined runtime.",
+      "evidence": [
+        {
+          "path": "evidence/integration.tap",
+          "sha256": "a6cadf2fb639dc8787c25ae73eafff331e3ab4baff638629ce6a6b863d7669d9"
+        },
+        {
+          "path": "evidence/chromium/lifecycle/results.json.gz",
+          "sha256": "a4c4d02270b1ab8c8864776a43d8812d458d5f8dee6ce77d8c224d4d4fbfc11e"
+        },
+        {
+          "path": "evidence/chromium/rates/results.json.gz",
+          "sha256": "b75ed1bcc966224fc20fb3e89e77a6cd810812cf4758d9ab9b73b0f25623ea0a"
+        }
+      ]
+    },
+    {
+      "id": "CP8-F03",
+      "title": "Worker loss may block the prayer event loop",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Worker-only optional astronomy retained; worker/asset failures, prayer responsiveness and mutation controls rerun.",
+      "evidence": [
+        {
+          "path": "evidence/chromium/responsiveness/results.json",
+          "sha256": "1a621779647bf8078cb428d230949178fc340ffd2042f0ad5f70673352367235"
+        },
+        {
+          "path": "evidence/mutations/results.json",
+          "sha256": "8fab35d521b15cf07c590dd2e09cb48b3e2205629175a7fdfa29d06f0deee4d6"
+        },
+        {
+          "path": "evidence/platform-records.json",
+          "sha256": "ae82b318496aff3330af0aed4b4f9ae7183a20fe5ef8d8f2f5710be24a1cb317"
+        }
+      ]
+    },
+    {
+      "id": "CP8-F04",
+      "title": "Composition, exposure, camera and lunar alternatives",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Composition owner retained, display encoder changed; exact full-frame and opaque PBR oracles rerun.",
+      "evidence": [
+        {
+          "path": "evidence/sandbox/material/results.json",
+          "sha256": "a3010eb1182f1f5fd35137ad19cc56c57ebcd3d18a857f5e140fa8f2a10f0866"
+        },
+        {
+          "path": "evidence/sandbox/composition/results.json",
+          "sha256": "20e0aed9fe6b983d65f705f5eb5f79c48efa6d63cf9cfc5d3eda55f11a1838c6"
+        },
+        {
+          "path": "evidence/chromium/controls/results.json.gz",
+          "sha256": "9079a78328a2b591cbc0ceb552b9df924f97c42e85f7fff27e5f31e1fd12df73"
+        }
+      ]
+    },
+    {
+      "id": "CP9-F005",
+      "title": "Page exit cleanup and persisted return",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Controlled cleanup/return requalified in all three engines. Actual persisted HTTP return additionally observed in Chromium; other real BFCache entries remain N003 open work.",
+      "evidence": [
+        {
+          "path": "evidence/chromium/native-controls/results.json",
+          "sha256": "7e9b338a911282a8a4796af867a45b765f8fe8f9c4d27292f6a1288c86f79c7c"
+        },
+        {
+          "path": "evidence/firefox/native-controls/results.json",
+          "sha256": "759432caf8c0d22fd6373ef241a1b44bf79c6774a65f5391de9fe78e15da5ef9"
+        },
+        {
+          "path": "evidence/webkit-lifecycle/native-controls/results.json",
+          "sha256": "8718662b21ce3922396421b800836c4be52638cd696e2ec88bd43e4364d9fe8d"
+        },
+        {
+          "path": "evidence/platform-records.json",
+          "sha256": "ae82b318496aff3330af0aed4b4f9ae7183a20fe5ef8d8f2f5710be24a1cb317"
+        }
+      ]
+    },
+    {
+      "id": "CP9-F006",
+      "title": "Second cloud owner admitted accidentally",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Single cloud owner preserved; exact composition with three deliberately wrong equations discriminates duplicate transmission/color/order.",
+      "evidence": [
+        {
+          "path": "evidence/integration.tap",
+          "sha256": "a6cadf2fb639dc8787c25ae73eafff331e3ab4baff638629ce6a6b863d7669d9"
+        },
+        {
+          "path": "evidence/sandbox/composition/results.json",
+          "sha256": "20e0aed9fe6b983d65f705f5eb5f79c48efa6d63cf9cfc5d3eda55f11a1838c6"
+        }
+      ]
+    },
+    {
+      "id": "CP9-F007",
+      "title": "Ignored scintillation disable parameter",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Explicit registered-scintillation disable semantics preserved and requalified; no new twinkle feature or old native star-gate credit.",
+      "evidence": [
+        {
+          "path": "evidence/integration.tap",
+          "sha256": "a6cadf2fb639dc8787c25ae73eafff331e3ab4baff638629ce6a6b863d7669d9"
+        },
+        {
+          "path": "evidence/chromium/native-controls/results.json",
+          "sha256": "7e9b338a911282a8a4796af867a45b765f8fe8f9c4d27292f6a1288c86f79c7c"
+        }
+      ]
+    },
+    {
+      "id": "CP9-F008",
+      "title": "Obsolete native synthetic diagnostic ownership",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Diagnostic ownership preserved and checked; removed synthetic producer exclusions remain explicit.",
+      "evidence": [
+        {
+          "path": "evidence/integration.tap",
+          "sha256": "a6cadf2fb639dc8787c25ae73eafff331e3ab4baff638629ce6a6b863d7669d9"
+        },
+        {
+          "path": "evidence/native/results.json",
+          "sha256": "0f0b12bf3ba532b240a07295adc44f6a58c1237b9e59a1c74fec817c3338a70a"
+        },
+        {
+          "path": "evidence/chromium/native-controls/results.json",
+          "sha256": "7e9b338a911282a8a4796af867a45b765f8fe8f9c4d27292f6a1288c86f79c7c"
+        }
+      ]
+    },
+    {
+      "id": "CP9-F009",
+      "title": "Per-pixel native transform reads",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Existing mask hoist retained; exact mask tests and moved-Moon composition rerun. No new speedup credited for inherited work.",
+      "evidence": [
+        {
+          "path": "evidence/integration.tap",
+          "sha256": "a6cadf2fb639dc8787c25ae73eafff331e3ab4baff638629ce6a6b863d7669d9"
+        },
+        {
+          "path": "evidence/sandbox/composition/results.json",
+          "sha256": "20e0aed9fe6b983d65f705f5eb5f79c48efa6d63cf9cfc5d3eda55f11a1838c6"
+        }
+      ]
+    },
+    {
+      "id": "CP9-F010",
+      "title": "Redundant unchanged native presentation",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Presentation cache and metadata refresh retained; new encoding exercised with all dirty-input and metadata controls.",
+      "evidence": [
+        {
+          "path": "evidence/chromium/presentation/results.json",
+          "sha256": "e6d20190598f4f3e9804eb95ef35e938ee9d58769d1fa5f0ea42dfe7a311d5fa"
+        },
+        {
+          "path": "evidence/integration.tap",
+          "sha256": "a6cadf2fb639dc8787c25ae73eafff331e3ab4baff638629ce6a6b863d7669d9"
+        }
+      ]
+    },
+    {
+      "id": "CP9-F011",
+      "title": "Hard-coded browser launcher",
+      "archiveStatus": "CLOSED",
+      "disposition": "REQUALIFIED_WITHIN_RETAINED_SCOPE",
+      "newClosureCredit": false,
+      "observation": "Portable explicit engine selection retained, Chromium sandbox enabled explicitly, and launcher rejection controls rerun.",
+      "evidence": [
+        {
+          "path": "evidence/candidate-tool-tests.log",
+          "sha256": "337b562cb03074193302062e1d1bb287c3cb8d2712cb31990101588592f22036"
+        },
+        {
+          "path": "evidence/platform-records.json",
+          "sha256": "ae82b318496aff3330af0aed4b4f9ae7183a20fe5ef8d8f2f5710be24a1cb317"
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "id": "CP9-B001",
+      "archiveStatus": "BOUNDARY",
+      "status": "UNCHANGED_BOUNDARY",
+      "disposition": "Scientific/presentation limitations remain as documented by CP9. No invented synthetic stars, optical calibration, registered-star twinkle, high-DPR/device certification or future Moon-PBR work added."
+    }
+  ],
+  "finalState": {
+    "newlyClosedMandatoryNodes": 0,
+    "implementedPartial": [
+      "CP9-N001",
+      "CP9-N002"
+    ],
+    "preparedAndPartiallyObservedBlockedJoin": [
+      "CP9-N003"
+    ],
+    "retainedFindingsRequalifiedWithinScope": 11,
+    "unchangedBoundaries": [
+      "CP9-B001"
+    ],
+    "independentReview": "PENDING"
+  },
+  "invalidationEdges": [
+    {
+      "change": "N001 or N002 runtime, builder output, accepted configuration/source or host boundary",
+      "invalidate": [
+        "affected numerical/browser/currentness/performance observations",
+        "CP9-N003 final join"
+      ]
+    },
+    {
+      "change": "Supplied forthcoming Moon-PBR package",
+      "invalidate": [
+        "affected lunar geometry/material/Earthshine/terrain tests",
+        "opaque material and composition observations",
+        "loaded performance and platform acceptance"
+      ]
+    }
+  ],
+  "nextOperations": [
+    "Independent source/evidence review of N001 and this candidate.",
+    "Continue exact N002 worker throughput at 60x/600x without relaxing currentness or fidelity.",
+    "Complete N003 entry/BFCache/deployment matrix after both prerequisites close.",
+    "If supplied, reconcile the Moon-PBR package atop this branch at documented authored owners, then rebuild and requalify affected cells."
+  ]
+}

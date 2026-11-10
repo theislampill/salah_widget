@@ -1,0 +1,465 @@
+{
+  "schema_version": 1,
+  "reviewer": "B",
+  "review_type": "Independent bounded weather/composition review",
+  "authority": "Read-only repository; writes restricted to reviewer B namespace. No browser, solver or test campaign launched; no release authority.",
+  "target": {
+    "worktree": "workspace",
+    "base_main": "c1a480c97e9af188cf57704502d818c0584cf265",
+    "published_head": "d42f31e6fbc55b735ab06d6189462aba182e5fed",
+    "local_iteration": "V45",
+    "runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+    "index_sha256": "c9579ac9aa9d158cc4ad0ce4288781f3ff3db40afdc4820510203e6e64c80a7a",
+    "cloud_transfer_sha256": "ead5a9cee844d2d190988ab3482a900f7cf49c03f10ec34f3a4e9147e2b85f9b",
+    "identity_check": "Live index and material source hashes read back; runtime identity bound to existing runtime-v45/results receipts. Whole runtime tree not independently recomputed."
+  },
+  "result": "NO_NEW_PROVEN_RUNTIME_DEFECT_IN_INSPECTED_SCOPE",
+  "blocking_findings": [],
+  "automatic_pass": false,
+  "merge_release_authority": false,
+  "test_harness_problems": [
+    "B09"
+  ],
+  "historical_limits": [
+    "B05",
+    "B10"
+  ],
+  "nonblocking_gaps": [
+    "B11"
+  ],
+  "optional_improvements": [
+    "B12"
+  ],
+  "proposed_discriminator": {
+    "id": "B11",
+    "launch_by_reviewer": false,
+    "classification": "Optional one-scene current-lane discriminator after source-origin rule is chosen",
+    "payload": {
+      "timezone": "America/New_York",
+      "current_units": {
+        "time": "iso8601",
+        "interval": "seconds",
+        "weather_code": "wmo code",
+        "temperature_2m": "°C",
+        "precipitation": "mm",
+        "cloud_cover": "%",
+        "cloud_cover_low": "%",
+        "cloud_cover_mid": "%",
+        "cloud_cover_high": "%"
+      },
+      "current": {
+        "time": "ACCEPTED_ZONE_LOCAL_FRESH_MINUTE (not a fixed historical timestamp)",
+        "interval": 900,
+        "weather_code": 63,
+        "temperature_2m": 24,
+        "precipitation": 2,
+        "rain": 2,
+        "showers": 0,
+        "snowfall": 0,
+        "cloud_cover": 0,
+        "cloud_cover_low": 0,
+        "cloud_cover_mid": 0,
+        "cloud_cover_high": 0
+      }
+    },
+    "positive_control": "Same current record with cloud layers absent: cloudLow unavailable invokes the existing wet-category decorative cloud deck.",
+    "observable_predicate": "Fresh current/live WMO63 header/temp/provenance stay coherent; model rain permission true; native cloud alpha and column density0; actual visible drops>0; lightning off.",
+    "caveat": "This establishes permissive rendering with explicit zero cloud cover; it does not decide whether precipitation entering from above the camera is a defect."
+  },
+  "scenarios": [
+    {
+      "id": "B01",
+      "scenario": "Ordinary 1x current weather, 14 categories",
+      "invariant": "One eligible current snapshot owns condition, temperature, provenance and permitted model precipitation.",
+      "expected": "Fresh admitted current WMO condition stays recognizable; quantities permit model particles; no observed claim.",
+      "observed": "Retained V45 Chromium receipts have no failed checks. Viewed rain, drizzle, snow, thunder and missing-amount PNGs. Rain has31 visible particles; drizzle10; snow40. Missing amount and amount0 have0 particles, with retained rain icon and disclosed quantitative uncertainty.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-current-boundaries/current-boundaries.json",
+        "local:h8/joined-v45-chromium-current-boundaries/results.json",
+        "local:h8/joined-v45-chromium-current-boundaries/rain/current-widget.png",
+        "local:h8/joined-v45-chromium-current-boundaries/drizzle/current-widget.png",
+        "local:h8/joined-v45-chromium-current-boundaries/partial-rain/current-widget.png",
+        "local:h8/joined-v45-chromium-current-boundaries/snow/current-widget.png",
+        "local:h8/joined-v45-chromium-current-boundaries/thunder/current-widget.png"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "SUPPORTED_SCOPED",
+      "source_locations": [
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1625
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1654
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2400
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2760
+        }
+      ]
+    },
+    {
+      "id": "B02",
+      "scenario": "Model thunder and uncalibrated radar",
+      "invariant": "A condition category is not a lightning observation; RainViewer alpha is not mm.",
+      "expected": "Fresh model thunder may show its condition and supported rain, with lightning off.",
+      "observed": "V45 current thunder receipt and PNG show thunder condition plus rain, no bolt; all14 cases have lightning off. Source keeps direct permission separate, and radarPrecipNow returns0.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-current-boundaries/current-boundaries.json",
+        "local:h8/joined-v45-chromium-current-boundaries/thunder/current-widget.png"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "SUPPORTED_SCOPED",
+      "source_locations": [
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1387
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1399
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1616
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1638
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2957
+        }
+      ]
+    },
+    {
+      "id": "B03",
+      "scenario": "Current record expiry, consumed503, then recovery",
+      "invariant": "Expiry cannot retain an old condition/temp/effect pair; transport success must be consumed before recovery is claimed.",
+      "expected": "Withdraw icon/temp/particles together, then readmit a fresh current record through native retry.",
+      "observed": "V45 availability has136 captures over153.937s, actual503 in providerFailures, unknown at9.281s with icon dash/empty temp/0 particles, and wet recovery at149.266s. Viewed initial, unavailable and recovery PNGs.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-availability/results.json",
+        "local:h8/joined-v45-chromium-availability/frames.jsonl",
+        "local:h8/joined-v45-chromium-availability/frame-00000.png",
+        "local:h8/joined-v45-chromium-availability/frame-00009.png",
+        "local:h8/joined-v45-chromium-availability/frame-00135.png"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "SUPPORTED_SCOPED",
+      "source_locations": [
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1278
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1330
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1663
+        },
+        {
+          "file": "workspace/tools/cp9/hotfix_stress_check.py",
+          "line": 351
+        }
+      ]
+    },
+    {
+      "id": "B04",
+      "scenario": "Forecast still matrix versus live current lane",
+      "invariant": "Accelerated/explicit clock preview cannot be counted as ordinary current weather evidence.",
+      "expected": "56 awaited sky stills remain preview-scoped; returning live excludes forecast records.",
+      "observed": "Matrix scope explicitly says held weather and not chronology. Fourteen current-boundaries cases use current/live. Controls receipt records liveClockRestored and forecastNotLive. Matrix Moon is still rendering, so these stills do not prove lunar refinement.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-matrix/results.json",
+        "local:h8/joined-v45-chromium-matrix/matrix.json",
+        "local:h8/joined-v45-chromium-controls/results.json",
+        "local:h8/joined-v45-chromium-current-boundaries/results.json"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "SUPPORTED_WITH_SCOPE_LIMIT",
+      "source_locations": [
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1288
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1480
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1625
+        },
+        {
+          "file": "workspace/tools/cp9/hotfix_stress_check.py",
+          "line": 373
+        }
+      ]
+    },
+    {
+      "id": "B05",
+      "scenario": "Bounded cloud transfer and retained negative controls",
+      "invariant": "Coverage must precede inversion of rounded low-alpha display bytes; color/opacity are applied once.",
+      "expected": "Shared display-linear transfer for sky and Moon, complete-buffer rejection, original epoch/target/age for retained good pixels.",
+      "observed": "Source uses one shared nativeCloudChannel, including lunar detail. V45 cloud-transfer/composition/encoding module digests equal V38. Viewed historical before/after edge controls and current V45 cloud PNGs: rejected colored edge beads are distinct from catalogue stars; inspected V45 samples show soft continuous edges without those beads.",
+      "evidence_location": [
+        "C:/Users/theis/Documents/Codex/startup-cloud-hotfix-20261007/cloud-before-after.png",
+        "C:/Users/theis/Documents/Codex/startup-cloud-hotfix-20261007/cloud-motion-contact.png",
+        "C:/Users/theis/Documents/Codex/startup-cloud-hotfix-20261007/composition/results.json",
+        "local:h8/joined-v45-chromium-continuous-above-transitions/frame-0120.png",
+        "local:h8/runtime-v45.json"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "SUPPORTED_SCOPED_HISTORICAL_CONTROL_NOT_NEW_JOINED_PASS",
+      "source_locations": [
+        {
+          "file": "workspace/real-sky/native-cloud-transfer.mjs",
+          "line": 1
+        },
+        {
+          "file": "workspace/real-sky/native-composition.mjs",
+          "line": 27
+        },
+        {
+          "file": "workspace/real-sky/native-preview-host.mjs",
+          "line": 49
+        },
+        {
+          "file": "workspace/moon/src/moon-detail.mjs",
+          "line": 111
+        }
+      ]
+    },
+    {
+      "id": "B06",
+      "scenario": "Ordinary 1x clear/partial/rain/clear with Moon/horizon/failure/retry",
+      "invariant": "Cloud motion and lunar continuity need actual temporal pixels; a cloud hash is insufficient.",
+      "expected": "Consumed current records and visible cloud motion while original admitted terrain remains usable only within its bound.",
+      "observed": "V45 Chromium141 captures/216.765s and Firefox248/432.360s receipts report no unexpected withdrawals or visible-layer gaps after first surface. Viewed rain PNG pairs150.312→176.484s and271.219→297.375s: cloud shapes/positions visibly change over26.17/26.16s with identical terrain identity. No claim that every frame was personally inspected. Runs force motion=full in no-preference contexts.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-continuous-above-transitions/results.json",
+        "local:h8/joined-v45-chromium-continuous-above-transitions/frames.jsonl",
+        "local:h8/joined-v45-chromium-continuous-above-transitions/frame-0107.png",
+        "local:h8/joined-v45-chromium-continuous-above-transitions/frame-0120.png",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/results.json",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/frames.jsonl",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/frame-0167.png",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/frame-0180.png"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "SUPPORTED_SCOPED",
+      "source_locations": [
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2476
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2487
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2536
+        },
+        {
+          "file": "workspace/tools/cp9/hotfix_stress_check.py",
+          "line": 135
+        }
+      ]
+    },
+    {
+      "id": "B07",
+      "scenario": "Dark lunar disc, foreground air/clouds, horizon presentation",
+      "invariant": "Opaque geometry cuts distant stars but does not erase foreground atmosphere or cloud light.",
+      "expected": "Retain gas on dark limb; join cloud once; below-horizon dim calendar emphasis grants no physical moonlight.",
+      "observed": "Inspected V45 half-waning above/below and rainy PNGs in both engines: no obvious star penetration; intervening clouds veil illuminated and dark lunar regions. Source beforeCloud includes gas independently of coverage and removes direct sources by coverage. This is a sampled composition finding, not all-phase/all-DPR visual qualification.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-continuous-above-transitions/frame-0077.png",
+        "local:h8/joined-v45-chromium-continuous-above-transitions/frame-0087.png",
+        "local:h8/joined-v45-chromium-continuous-above-transitions/frame-0107.png",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/frame-0137.png",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/frame-0147.png",
+        "local:h8/joined-v45-firefox-continuous-above-transitions/frame-0180.png"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "SUPPORTED_WITH_SCOPE_LIMIT",
+      "source_locations": [
+        {
+          "file": "workspace/moon/src/moon-detail.mjs",
+          "line": 31
+        },
+        {
+          "file": "workspace/moon/src/moon-detail.mjs",
+          "line": 72
+        },
+        {
+          "file": "workspace/moon/src/moon-detail.mjs",
+          "line": 94
+        },
+        {
+          "file": "workspace/real-sky/native-cloud-transfer.mjs",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "id": "B08",
+      "scenario": "Dawn/dusk/day cloud color and exposure samples",
+      "invariant": "Cloud palette must follow accepted solar geometry and not regain noisy chromatic fringes or a painted dawn band.",
+      "expected": "Continuous geometric lighting and shared display exposure, preserving the legitimate horizon.",
+      "observed": "Viewed V45 partial at solar−1.01°/−6.44°, near sunset+0.12°, and overcast+55.74° plus startup partial montage. No observed isolated chromatic edge beads or painted dawn cone/strip in those samples; cloudy sun region is neutral/warm rather than purple. No measured atmospheric radiance or whole-day art acceptance is inferred.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-matrix/partial/11.35.png",
+        "local:h8/joined-v45-chromium-matrix/partial/23.00.png",
+        "local:h8/joined-v45-chromium-matrix/partial/23.50.png",
+        "local:h8/joined-v45-chromium-matrix/overcast/17.30.png",
+        "local:h8/joined-v45-chromium-matrix/matrix.json",
+        "local:h8/joined-v45-chromium-startup-partial/startup-sequence.png"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "SUPPORTED_WITH_SCOPE_LIMIT",
+      "source_locations": [
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2623
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2578
+        },
+        {
+          "file": "workspace/real-sky/native-preview.mjs",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "B09",
+      "scenario": "Preserved invalid current-boundaries oracle",
+      "invariant": "A test expectation error must not be turned into a runtime regression or silently discarded.",
+      "expected": "Retain old negative output; fix broad wxInfo versus fine data-fx confusion; keep runtime constant.",
+      "observed": "Read DISPOSITION and diffed saved harnesses. Changes are overcast cloud→overcast, drizzle rain→drizzle, plus adding drizzle to the dependent positive-particle category list. Runtime receipt hash remains V45. Corrected receipts have14 cases and no failures; no weakened runtime gate is visible.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-current-boundaries-invalid-oracle/DISPOSITION.json",
+        "local:h8/joined-v45-chromium-current-boundaries-invalid-oracle/harness.py",
+        "local:h8/joined-v45-chromium-current-boundaries/harness.py",
+        "local:h8/joined-v45-chromium-current-boundaries/results.json"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "TEST_HARNESS_PROBLEM_CORRECTED",
+      "source_locations": [
+        {
+          "file": "workspace/tools/cp9/hotfix_stress_check.py",
+          "line": 401
+        },
+        {
+          "file": "workspace/tools/cp9/hotfix_stress_check.py",
+          "line": 410
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2414
+        }
+      ]
+    },
+    {
+      "id": "B10",
+      "scenario": "Rain incident attribution and current live-provider coverage",
+      "invariant": "Controlled fixture causality differs from reconstruction of the owner's historical event or a live wet-provider witness.",
+      "expected": "A/V1-B/c1-C/PR42 can isolate permission divergence; unavailable original coordinates/cache/payload remain unavailable.",
+      "observed": "Docs explicitly preserve the historical limitation. Existing V38 real-provider final is overcast WMO3,23°C,precipitation0,900s interval, with no response interception. It is model compatibility evidence, not a live wet-rain witness on final V45.",
+      "evidence_location": [
+        "workspace/docs/real-sky/STARTUP_CLOUD_HOTFIX.md",
+        "local:h8/joined-v38-chromium-live-provider/results.json",
+        "local:h8/rain-replay-chromium-v1"
+      ],
+      "runtime_identity": "053c073f1a54a0b0f2dc44c685758100fe9d4353b23de0612c55b0d5bacbd0b3",
+      "reviewer": "B",
+      "disposition": "HISTORICAL_LIMITATION_AND_CLAIM_BOUND",
+      "source_locations": []
+    },
+    {
+      "id": "B11",
+      "scenario": "Explicit zero cloud-layer cover with supported current rain",
+      "invariant": "Precipitation source-origin claims require an explicit visual rule; fallback alone does not prove a failure.",
+      "expected": "Distinguish missing cloudLow (wet-category synthesized cloud deck) from explicit zero low/mid/high. Do not invent unsupported clouds or treat above-camera rain entry as automatically false.",
+      "observed": "All reviewed wet fixtures populate low cloud coverage. Source admits current WMO63/precipitation2 with zero layers, paintClouds leaves cloud alpha0, and tieRainToClouds fails open for weak/no column density. This is a source-based uncovered boundary; no browser defect or blocker is claimed. Proposed predicate is cloudAlpha0 with visibleDrops>0, then owner decides whether above-camera origin is acceptable.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-current-boundaries/current-boundaries.json"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "NONBLOCKING_BOUNDARY_GAP_NOT_PROVEN_DEFECT",
+      "source_locations": [
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 1640
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2542
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2598
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2605
+        },
+        {
+          "file": "workspace/src/native/index.html",
+          "line": 2725
+        },
+        {
+          "file": "workspace/tools/cp9/hotfix_stress_check.py",
+          "line": 110
+        }
+      ]
+    },
+    {
+      "id": "B12",
+      "scenario": "Startup montage order",
+      "invariant": "Diagnostic contact-sheet order should not masquerade as chronological presented order.",
+      "expected": "Read actualPresentedMs, or sort montage by actual timestamp while retaining requested labels.",
+      "observed": "V45 partial startup montage puts first-visible353ms before nominal250ms/actual281ms. Source prepends first-visible before requested targets. Raw frame times remain labeled and daylight gate uses all visible actual frames; this is a presentation improvement, not a detected startup flash or false numeric pass.",
+      "evidence_location": [
+        "local:h8/joined-v45-chromium-startup-partial/startup-sequence.png",
+        "local:h8/joined-v45-chromium-startup-partial/results.json"
+      ],
+      "runtime_identity": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+      "reviewer": "B",
+      "disposition": "OPTIONAL_TEST_PRESENTATION_IMPROVEMENT",
+      "source_locations": [
+        {
+          "file": "workspace/tools/cp9/startup_video_check.py",
+          "line": 205
+        },
+        {
+          "file": "workspace/tools/cp9/startup_video_check.py",
+          "line": 234
+        }
+      ]
+    }
+  ],
+  "memory_use": "Source-owner orientation only, refreshed against live AGENTS and source; no current-state conclusion derived from memory.",
+  "stop": "Bounded review returned while primary serial queue remains active. No automatic acceptance, merge, deployment or release claim."
+}

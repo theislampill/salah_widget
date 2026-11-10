@@ -1,0 +1,1821 @@
+{
+  "schema": "independent-r0006-trace-review/v1",
+  "traces": [
+    {
+      "caseId": "R0006-accelerated-recovery",
+      "trace": "r0006-evidence/batch6/firefox/R0006-accelerated-recovery/trace.json",
+      "traceSha256": "45f82b20a762a7879a3565f7204b0403150e71d1b425d498161abe6554694479",
+      "traceBytes": 635596468,
+      "caseInputSha256": "ac17e96df9260a881331e3a35bb6c4771f09e9fad0d01d9d99a946dcdf4cf10e",
+      "status": "PASS_TRACE_ONLY",
+      "errors": [],
+      "snapshotCount": 5063,
+      "counts": {
+        "render-completed": 5058,
+        "original-completed": 5057,
+        "error-output": 1,
+        "read-only-checkpoint": 4
+      },
+      "traceTransport": {
+        "kind": "complete-json-batches",
+        "snapshotCount": 5060,
+        "batchSize": 16
+      },
+      "expectedClock": {
+        "TIMESCALE": 120,
+        "FOLLOW_WALL_CLOCK": false,
+        "ADVANCING": true
+      },
+      "generationValues": [
+        0
+      ],
+      "currentDates": {
+        "07-09-2026": 110
+      },
+      "firstCurrent": {
+        "ordinal": 4948,
+        "elapsedMs": 60331,
+        "clock": {
+          "TIMESCALE": 120,
+          "FOLLOW_WALL_CLOCK": false,
+          "ADVANCING": true
+        }
+      },
+      "snapshotElapsedRangeMs": [
+        237,
+        63222
+      ],
+      "checkpointNames": [
+        "first-current",
+        "settled",
+        "unavailable"
+      ],
+      "requestCount": 5,
+      "requests": [
+        {
+          "requestSerial": 3,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 244,
+          "timer": 3,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 3,
+            "ms": 10000,
+            "realElapsedMs": 244
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 3,
+              "realElapsedMs": 244
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60335
+          },
+          "rule": "failed",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 4,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "atMs": 1186,
+          "timer": 11,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 11,
+            "ms": 10000,
+            "realElapsedMs": 1185
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 11,
+              "realElapsedMs": 1186
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60335
+          },
+          "rule": "failed",
+          "occurrence": 2
+        },
+        {
+          "requestSerial": 5,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "atMs": 2987,
+          "timer": 15,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 15,
+            "ms": 10000,
+            "realElapsedMs": 2987
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 15,
+              "realElapsedMs": 2987
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60335
+          },
+          "rule": "failed",
+          "occurrence": 3
+        },
+        {
+          "requestSerial": 6,
+          "kind": "current",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 60284,
+          "timer": 70,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 70,
+            "ms": 10000,
+            "realElapsedMs": 60284
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 70,
+              "realElapsedMs": 60290
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 120375
+          },
+          "rule": "next-current",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 7,
+          "kind": "prefetch",
+          "operationId": 5,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "atMs": 60294,
+          "timer": 72,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 72,
+            "ms": 10000,
+            "realElapsedMs": 60294
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 72,
+              "realElapsedMs": 60368
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 120375
+          },
+          "rule": "prefetch",
+          "occurrence": 1
+        }
+      ],
+      "operationAttemptCounts": [
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "attempts": 3
+        },
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "current",
+          "attempts": 1
+        },
+        {
+          "generation": 0,
+          "operationId": 5,
+          "kind": "prefetch",
+          "attempts": 1
+        }
+      ],
+      "recovery": {
+        "operationStartMs": 244,
+        "eligibleMs": 60244,
+        "recoveryRequestMs": 60284,
+        "firstCompletedCurrentOrdinal": 4948,
+        "firstCompletedCurrentMs": 60331
+      },
+      "captureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 4949,
+          "afterOrdinal": 4953,
+          "receiptOrdinal": 4948
+        }
+      ],
+      "limits": [
+        "Native trace only; original video pixels reviewed separately.",
+        "No unique render ordinal to native frame association is inferred.",
+        "Concurrent cache backoff owner association remains observationally ambiguous."
+      ]
+    },
+    {
+      "caseId": "R0006-cache-denied",
+      "trace": "r0006-evidence/batch6/firefox/R0006-cache-denied/trace.json",
+      "traceSha256": "a6a81102fe6d921630202b72f2a8634c2348103741328eb04fea75705f9874b3",
+      "traceBytes": 1778466,
+      "caseInputSha256": "c244168677365511fac59b833c8fb332471e25c461e27bd25045d3262c204b1e",
+      "status": "PASS_TRACE_ONLY",
+      "errors": [],
+      "snapshotCount": 8,
+      "counts": {
+        "render-completed": 6,
+        "original-completed": 5,
+        "read-only-checkpoint": 2
+      },
+      "traceTransport": null,
+      "expectedClock": {
+        "TIMESCALE": 1,
+        "FOLLOW_WALL_CLOCK": true,
+        "ADVANCING": false
+      },
+      "generationValues": [
+        0
+      ],
+      "currentDates": {
+        "07-09-2026": 4
+      },
+      "firstCurrent": {
+        "ordinal": 2,
+        "elapsedMs": 343,
+        "clock": {
+          "TIMESCALE": 1,
+          "FOLLOW_WALL_CLOCK": true,
+          "ADVANCING": false
+        }
+      },
+      "snapshotElapsedRangeMs": [
+        302,
+        2004
+      ],
+      "checkpointNames": [
+        "first-current",
+        "warm-retained"
+      ],
+      "requestCount": 2,
+      "requests": [
+        {
+          "requestSerial": 3,
+          "kind": "prefetch",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "atMs": 321,
+          "timer": 3,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 3,
+            "ms": 10000,
+            "realElapsedMs": 321
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 3,
+              "realElapsedMs": 448
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60374
+          },
+          "rule": "healthy-next",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 4,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 447,
+          "timer": 4,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 4,
+            "ms": 10000,
+            "realElapsedMs": 447
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 4,
+              "realElapsedMs": 1653
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60374
+          },
+          "rule": "healthy",
+          "occurrence": 1
+        }
+      ],
+      "operationAttemptCounts": [
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attempts": 1
+        },
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "attempts": 1
+        }
+      ],
+      "recovery": null,
+      "captureMismatches": [],
+      "limits": [
+        "Native trace only; original video pixels reviewed separately.",
+        "No unique render ordinal to native frame association is inferred.",
+        "Concurrent cache backoff owner association remains observationally ambiguous."
+      ]
+    },
+    {
+      "caseId": "R0006-cache-offline",
+      "trace": "r0006-evidence/batch6/firefox/R0006-cache-offline/trace.json",
+      "traceSha256": "4bc7674d179f82f56677ed5a7b03c42b7f93d47e9b6c7a18ff10166bffb82185",
+      "traceBytes": 1874397,
+      "caseInputSha256": "332b26c9d781176b1650f5e372478da5ded2153fddeef91ab3d00a264d534882",
+      "status": "PASS_TRACE_ONLY",
+      "errors": [],
+      "snapshotCount": 7,
+      "counts": {
+        "render-completed": 5,
+        "original-completed": 4,
+        "read-only-checkpoint": 2
+      },
+      "traceTransport": null,
+      "expectedClock": {
+        "TIMESCALE": 1,
+        "FOLLOW_WALL_CLOCK": true,
+        "ADVANCING": false
+      },
+      "generationValues": [
+        0
+      ],
+      "currentDates": {
+        "07-09-2026": 3
+      },
+      "firstCurrent": {
+        "ordinal": 2,
+        "elapsedMs": 320,
+        "clock": {
+          "TIMESCALE": 1,
+          "FOLLOW_WALL_CLOCK": true,
+          "ADVANCING": false
+        }
+      },
+      "snapshotElapsedRangeMs": [
+        272,
+        4005
+      ],
+      "checkpointNames": [
+        "first-current",
+        "warm-retained"
+      ],
+      "requestCount": 6,
+      "requests": [
+        {
+          "requestSerial": 3,
+          "kind": "prefetch",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "atMs": 294,
+          "timer": 3,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 3,
+            "ms": 10000,
+            "realElapsedMs": 294
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 3,
+              "realElapsedMs": 421
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60502
+          },
+          "rule": "healthy",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 4,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 421,
+          "timer": 4,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 4,
+            "ms": 10000,
+            "realElapsedMs": 421
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 4,
+              "realElapsedMs": 422
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60502
+          },
+          "rule": "healthy",
+          "occurrence": 2
+        },
+        {
+          "requestSerial": 5,
+          "kind": "prefetch",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 2,
+          "day": "08-09-2026",
+          "atMs": 1333,
+          "timer": 13,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 13,
+            "ms": 10000,
+            "realElapsedMs": 1333
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 13,
+              "realElapsedMs": 1333
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60502
+          },
+          "rule": "healthy",
+          "occurrence": 3
+        },
+        {
+          "requestSerial": 6,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "atMs": 1333,
+          "timer": 15,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 15,
+            "ms": 10000,
+            "realElapsedMs": 1333
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 15,
+              "realElapsedMs": 1333
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60502
+          },
+          "rule": "healthy",
+          "occurrence": 4
+        },
+        {
+          "requestSerial": 7,
+          "kind": "prefetch",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 3,
+          "day": "08-09-2026",
+          "atMs": 3140,
+          "timer": 18,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 18,
+            "ms": 10000,
+            "realElapsedMs": 3140
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 18,
+              "realElapsedMs": 3140
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60502
+          },
+          "rule": "healthy",
+          "occurrence": 5
+        },
+        {
+          "requestSerial": 8,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "atMs": 3140,
+          "timer": 19,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 19,
+            "ms": 10000,
+            "realElapsedMs": 3140
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 19,
+              "realElapsedMs": 3140
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60502
+          },
+          "rule": "healthy",
+          "occurrence": 6
+        }
+      ],
+      "operationAttemptCounts": [
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attempts": 3
+        },
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "attempts": 3
+        }
+      ],
+      "recovery": null,
+      "captureMismatches": [],
+      "limits": [
+        "Native trace only; original video pixels reviewed separately.",
+        "No unique render ordinal to native frame association is inferred.",
+        "Concurrent cache backoff owner association remains observationally ambiguous."
+      ]
+    },
+    {
+      "caseId": "R0006-cold-body",
+      "trace": "r0006-evidence/batch6/firefox/R0006-cold-body/trace.json",
+      "traceSha256": "18ad5a463bd7973443423342ffd69cddb7c7e3be002580dd417f691c2c82a647",
+      "traceBytes": 10354765,
+      "caseInputSha256": "0c55c00fc29897bc7e6f1441bf2c188b4afcfa1d45c83b4628c21ffb6c28917f",
+      "status": "PASS_TRACE_ONLY",
+      "errors": [],
+      "snapshotCount": 44,
+      "counts": {
+        "render-completed": 35,
+        "original-completed": 34,
+        "read-only-checkpoint": 8,
+        "error-output": 1
+      },
+      "traceTransport": null,
+      "expectedClock": {
+        "TIMESCALE": 1,
+        "FOLLOW_WALL_CLOCK": true,
+        "ADVANCING": false
+      },
+      "generationValues": [
+        0
+      ],
+      "currentDates": {
+        "07-09-2026": 5
+      },
+      "firstCurrent": {
+        "ordinal": 30,
+        "elapsedMs": 60419,
+        "clock": {
+          "TIMESCALE": 1,
+          "FOLLOW_WALL_CLOCK": true,
+          "ADVANCING": false
+        }
+      },
+      "snapshotElapsedRangeMs": [
+        368,
+        63005
+      ],
+      "checkpointNames": [
+        "after-late",
+        "before-late",
+        "first-current",
+        "loading",
+        "unavailable"
+      ],
+      "requestCount": 5,
+      "requests": [
+        {
+          "requestSerial": 3,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 377,
+          "timer": 3,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 3,
+            "ms": 10000,
+            "realElapsedMs": 377
+          },
+          "deadlineEnds": [
+            {
+              "operation": "fire",
+              "id": 3,
+              "realElapsedMs": 10378
+            },
+            {
+              "operation": "clear",
+              "id": 3,
+              "realElapsedMs": 10378
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60512
+          },
+          "rule": "stalled",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 4,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "atMs": 11278,
+          "timer": 14,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 14,
+            "ms": 10000,
+            "realElapsedMs": 11278
+          },
+          "deadlineEnds": [
+            {
+              "operation": "fire",
+              "id": 14,
+              "realElapsedMs": 21278
+            },
+            {
+              "operation": "clear",
+              "id": 14,
+              "realElapsedMs": 21278
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60512
+          },
+          "rule": "stalled",
+          "occurrence": 2
+        },
+        {
+          "requestSerial": 5,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "atMs": 23078,
+          "timer": 19,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 19,
+            "ms": 10000,
+            "realElapsedMs": 23078
+          },
+          "deadlineEnds": [
+            {
+              "operation": "fire",
+              "id": 19,
+              "realElapsedMs": 33092
+            },
+            {
+              "operation": "clear",
+              "id": 19,
+              "realElapsedMs": 33092
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60512
+          },
+          "rule": "stalled",
+          "occurrence": 3
+        },
+        {
+          "requestSerial": 6,
+          "kind": "current",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 60376,
+          "timer": 29,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 29,
+            "ms": 10000,
+            "realElapsedMs": 60376
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 29,
+              "realElapsedMs": 60377
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 120512
+          },
+          "rule": "next-current",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 7,
+          "kind": "prefetch",
+          "operationId": 5,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "atMs": 60393,
+          "timer": 30,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 30,
+            "ms": 10000,
+            "realElapsedMs": 60393
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 30,
+              "realElapsedMs": 60533
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 120512
+          },
+          "rule": "prefetch",
+          "occurrence": 1
+        }
+      ],
+      "operationAttemptCounts": [
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "attempts": 3
+        },
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "current",
+          "attempts": 1
+        },
+        {
+          "generation": 0,
+          "operationId": 5,
+          "kind": "prefetch",
+          "attempts": 1
+        }
+      ],
+      "recovery": {
+        "operationStartMs": 376,
+        "eligibleMs": 60376,
+        "recoveryRequestMs": 60376,
+        "firstCompletedCurrentOrdinal": 30,
+        "firstCompletedCurrentMs": 60419
+      },
+      "captureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 31,
+          "afterOrdinal": 31,
+          "receiptOrdinal": 30
+        }
+      ],
+      "limits": [
+        "Native trace only; original video pixels reviewed separately.",
+        "No unique render ordinal to native frame association is inferred.",
+        "Concurrent cache backoff owner association remains observationally ambiguous."
+      ]
+    },
+    {
+      "caseId": "R0006-frozen-recovery",
+      "trace": "r0006-evidence/batch6/firefox/R0006-frozen-recovery/trace.json",
+      "traceSha256": "32298ee44601e234e4d95f3b5de2bfcafda09a5754ec5b257ebcdf81dcd7e500",
+      "traceBytes": 5187143,
+      "caseInputSha256": "6823fc8e05b545e20b396f5fcf2da1eee1b6f31098683006a38ccdb8e128042e",
+      "status": "PASS_TRACE_ONLY",
+      "errors": [],
+      "snapshotCount": 10,
+      "counts": {
+        "render-completed": 5,
+        "original-completed": 4,
+        "error-output": 1,
+        "read-only-checkpoint": 4
+      },
+      "traceTransport": null,
+      "expectedClock": {
+        "TIMESCALE": 0,
+        "FOLLOW_WALL_CLOCK": false,
+        "ADVANCING": false
+      },
+      "generationValues": [
+        0
+      ],
+      "currentDates": {
+        "07-09-2026": 2
+      },
+      "firstCurrent": {
+        "ordinal": 3,
+        "elapsedMs": 60371,
+        "clock": {
+          "TIMESCALE": 0,
+          "FOLLOW_WALL_CLOCK": false,
+          "ADVANCING": false
+        }
+      },
+      "snapshotElapsedRangeMs": [
+        330,
+        62175
+      ],
+      "checkpointNames": [
+        "first-current",
+        "settled",
+        "unavailable"
+      ],
+      "requestCount": 5,
+      "requests": [
+        {
+          "requestSerial": 3,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 338,
+          "timer": 3,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 3,
+            "ms": 10000,
+            "realElapsedMs": 338
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 3,
+              "realElapsedMs": 338
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60426
+          },
+          "rule": "failed",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 4,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "atMs": 1243,
+          "timer": 11,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 11,
+            "ms": 10000,
+            "realElapsedMs": 1243
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 11,
+              "realElapsedMs": 1243
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60426
+          },
+          "rule": "failed",
+          "occurrence": 2
+        },
+        {
+          "requestSerial": 5,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "atMs": 3054,
+          "timer": 14,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 14,
+            "ms": 10000,
+            "realElapsedMs": 3054
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 14,
+              "realElapsedMs": 3054
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60426
+          },
+          "rule": "failed",
+          "occurrence": 3
+        },
+        {
+          "requestSerial": 6,
+          "kind": "current",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 60340,
+          "timer": 15,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 15,
+            "ms": 10000,
+            "realElapsedMs": 60339
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 15,
+              "realElapsedMs": 60340
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 120427
+          },
+          "rule": "next-current",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 7,
+          "kind": "prefetch",
+          "operationId": 5,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "atMs": 60345,
+          "timer": 16,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 16,
+            "ms": 10000,
+            "realElapsedMs": 60345
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 16,
+              "realElapsedMs": 60480
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 120427
+          },
+          "rule": "prefetch",
+          "occurrence": 1
+        }
+      ],
+      "operationAttemptCounts": [
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "attempts": 3
+        },
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "current",
+          "attempts": 1
+        },
+        {
+          "generation": 0,
+          "operationId": 5,
+          "kind": "prefetch",
+          "attempts": 1
+        }
+      ],
+      "recovery": {
+        "operationStartMs": 338,
+        "eligibleMs": 60338,
+        "recoveryRequestMs": 60340,
+        "firstCompletedCurrentOrdinal": 3,
+        "firstCompletedCurrentMs": 60371
+      },
+      "captureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 4,
+          "afterOrdinal": 4,
+          "receiptOrdinal": 3
+        }
+      ],
+      "limits": [
+        "Native trace only; original video pixels reviewed separately.",
+        "No unique render ordinal to native frame association is inferred.",
+        "Concurrent cache backoff owner association remains observationally ambiguous."
+      ]
+    },
+    {
+      "caseId": "R0006-generation-late-cleanup",
+      "trace": "r0006-evidence/batch6/firefox/R0006-generation-late-cleanup/trace.json",
+      "traceSha256": "b7abc8cbae4258203798556275b90486b38c8ee681a3bdc36d6b779d92cea016",
+      "traceBytes": 3179213,
+      "caseInputSha256": "3574da62d4d5c1606016fba1684abf7b4884974950230b9f47399f2aed7d29c4",
+      "status": "PASS_TRACE_ONLY",
+      "errors": [],
+      "snapshotCount": 14,
+      "counts": {
+        "render-completed": 6,
+        "original-completed": 5,
+        "read-only-checkpoint": 8
+      },
+      "traceTransport": null,
+      "expectedClock": {
+        "TIMESCALE": 1,
+        "FOLLOW_WALL_CLOCK": true,
+        "ADVANCING": false
+      },
+      "generationValues": [
+        0,
+        1
+      ],
+      "currentDates": {
+        "07-09-2026": 4
+      },
+      "firstCurrent": {
+        "ordinal": 2,
+        "elapsedMs": 2051,
+        "clock": {
+          "TIMESCALE": 1,
+          "FOLLOW_WALL_CLOCK": true,
+          "ADVANCING": false
+        }
+      },
+      "snapshotElapsedRangeMs": [
+        299,
+        4005
+      ],
+      "checkpointNames": [
+        "B-after-old",
+        "B-owning",
+        "first-current",
+        "loading",
+        "settled"
+      ],
+      "requestCount": 3,
+      "requests": [
+        {
+          "requestSerial": 3,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 306,
+          "timer": 3,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 3,
+            "ms": 10000,
+            "realElapsedMs": 306
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 3,
+              "realElapsedMs": 887
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60377
+          },
+          "rule": "old-A",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 6,
+          "kind": "current",
+          "operationId": 6,
+          "generation": 1,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 890,
+          "timer": 15,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 15,
+            "ms": 10000,
+            "realElapsedMs": 890
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 15,
+              "realElapsedMs": 1996
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60961
+          },
+          "rule": "new-B",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 7,
+          "kind": "prefetch",
+          "operationId": 7,
+          "generation": 1,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "atMs": 2014,
+          "timer": 17,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 17,
+            "ms": 10000,
+            "realElapsedMs": 2014
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 17,
+              "realElapsedMs": 2160
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60961
+          },
+          "rule": "healthy",
+          "occurrence": 1
+        }
+      ],
+      "operationAttemptCounts": [
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "attempts": 1
+        },
+        {
+          "generation": 1,
+          "operationId": 6,
+          "kind": "current",
+          "attempts": 1
+        },
+        {
+          "generation": 1,
+          "operationId": 7,
+          "kind": "prefetch",
+          "attempts": 1
+        }
+      ],
+      "recovery": null,
+      "captureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 3,
+          "afterOrdinal": 3,
+          "receiptOrdinal": 2
+        }
+      ],
+      "limits": [
+        "Native trace only; original video pixels reviewed separately.",
+        "No unique render ordinal to native frame association is inferred.",
+        "Concurrent cache backoff owner association remains observationally ambiguous."
+      ]
+    },
+    {
+      "caseId": "R0006-offline-entry",
+      "trace": "r0006-evidence/batch6/firefox/R0006-offline-entry/trace.json",
+      "traceSha256": "cd4c1007174ea0c2d7c9995bf50c2d8bb101793ff84b3db3a2ff9c2959851e3c",
+      "traceBytes": 2532092,
+      "caseInputSha256": "951b4a47762045429777eae0f000dd9afcfe33b248248ef5f4e17981e3486f19",
+      "status": "PASS_TRACE_ONLY",
+      "errors": [],
+      "snapshotCount": 9,
+      "counts": {
+        "render-completed": 7,
+        "original-completed": 6,
+        "read-only-checkpoint": 2
+      },
+      "traceTransport": null,
+      "expectedClock": {
+        "TIMESCALE": 1,
+        "FOLLOW_WALL_CLOCK": true,
+        "ADVANCING": false
+      },
+      "generationValues": [
+        0
+      ],
+      "currentDates": {
+        "07-09-2026": 5
+      },
+      "firstCurrent": {
+        "ordinal": 2,
+        "elapsedMs": 2945,
+        "clock": {
+          "TIMESCALE": 1,
+          "FOLLOW_WALL_CLOCK": true,
+          "ADVANCING": false
+        }
+      },
+      "snapshotElapsedRangeMs": [
+        197,
+        6005
+      ],
+      "checkpointNames": [
+        "first-current",
+        "settled"
+      ],
+      "requestCount": 4,
+      "requests": [
+        {
+          "requestSerial": 3,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 205,
+          "timer": 3,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 3,
+            "ms": 10000,
+            "realElapsedMs": 205
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 3,
+              "realElapsedMs": 205
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60342
+          },
+          "rule": "failed",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 4,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "atMs": 1105,
+          "timer": 79,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 79,
+            "ms": 10000,
+            "realElapsedMs": 1105
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 79,
+              "realElapsedMs": 1105
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60342
+          },
+          "rule": "failed",
+          "occurrence": 2
+        },
+        {
+          "requestSerial": 5,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "atMs": 2906,
+          "timer": 82,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 82,
+            "ms": 10000,
+            "realElapsedMs": 2906
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 82,
+              "realElapsedMs": 2907
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60342
+          },
+          "rule": "healthy",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 6,
+          "kind": "prefetch",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "atMs": 2920,
+          "timer": 83,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 83,
+            "ms": 10000,
+            "realElapsedMs": 2920
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 83,
+              "realElapsedMs": 3049
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60342
+          },
+          "rule": "healthy",
+          "occurrence": 2
+        }
+      ],
+      "operationAttemptCounts": [
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "attempts": 3
+        },
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attempts": 1
+        }
+      ],
+      "recovery": null,
+      "captureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 3,
+          "afterOrdinal": 3,
+          "receiptOrdinal": 2
+        }
+      ],
+      "limits": [
+        "Native trace only; original video pixels reviewed separately.",
+        "No unique render ordinal to native frame association is inferred.",
+        "Concurrent cache backoff owner association remains observationally ambiguous."
+      ]
+    },
+    {
+      "caseId": "R0006-third-success",
+      "trace": "r0006-evidence/batch6/firefox/R0006-third-success/trace.json",
+      "traceSha256": "cb438ca9df48ee5cc505bd38668ee54197b365406d338944a6cdcd20e8938bc4",
+      "traceBytes": 1965809,
+      "caseInputSha256": "de49286788a4b44fa7406a637c12fa795762d8740d21821b617807db52f18b36",
+      "status": "PASS_TRACE_ONLY",
+      "errors": [],
+      "snapshotCount": 9,
+      "counts": {
+        "render-completed": 7,
+        "original-completed": 6,
+        "read-only-checkpoint": 2
+      },
+      "traceTransport": null,
+      "expectedClock": {
+        "TIMESCALE": 1,
+        "FOLLOW_WALL_CLOCK": true,
+        "ADVANCING": false
+      },
+      "generationValues": [
+        0
+      ],
+      "currentDates": {
+        "07-09-2026": 5
+      },
+      "firstCurrent": {
+        "ordinal": 2,
+        "elapsedMs": 3063,
+        "clock": {
+          "TIMESCALE": 1,
+          "FOLLOW_WALL_CLOCK": true,
+          "ADVANCING": false
+        }
+      },
+      "snapshotElapsedRangeMs": [
+        300,
+        6006
+      ],
+      "checkpointNames": [
+        "first-current",
+        "settled"
+      ],
+      "requestCount": 4,
+      "requests": [
+        {
+          "requestSerial": 3,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 308,
+          "timer": 3,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 3,
+            "ms": 10000,
+            "realElapsedMs": 308
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 3,
+              "realElapsedMs": 308
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60385
+          },
+          "rule": "failed",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 4,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 2,
+          "day": "07-09-2026",
+          "atMs": 1220,
+          "timer": 11,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 11,
+            "ms": 10000,
+            "realElapsedMs": 1220
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 11,
+              "realElapsedMs": 1220
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60385
+          },
+          "rule": "failed",
+          "occurrence": 2
+        },
+        {
+          "requestSerial": 5,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 3,
+          "day": "07-09-2026",
+          "atMs": 3020,
+          "timer": 14,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 14,
+            "ms": 10000,
+            "realElapsedMs": 3020
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 14,
+              "realElapsedMs": 3021
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60385
+          },
+          "rule": "healthy",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 6,
+          "kind": "prefetch",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "atMs": 3036,
+          "timer": 15,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 15,
+            "ms": 10000,
+            "realElapsedMs": 3036
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 15,
+              "realElapsedMs": 3158
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60385
+          },
+          "rule": "healthy",
+          "occurrence": 2
+        }
+      ],
+      "operationAttemptCounts": [
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "attempts": 3
+        },
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attempts": 1
+        }
+      ],
+      "recovery": null,
+      "captureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 3,
+          "afterOrdinal": 3,
+          "receiptOrdinal": 2
+        }
+      ],
+      "limits": [
+        "Native trace only; original video pixels reviewed separately.",
+        "No unique render ordinal to native frame association is inferred.",
+        "Concurrent cache backoff owner association remains observationally ambiguous."
+      ]
+    },
+    {
+      "caseId": "R0006-tomorrow-promotion",
+      "trace": "r0006-evidence/batch6/firefox/R0006-tomorrow-promotion/trace.json",
+      "traceSha256": "d475633743eb74a76a641570d9d183b55c810eb11bfeb79a010e7f7bdd97ca27",
+      "traceBytes": 22524418,
+      "caseInputSha256": "57a478bd82122f6cff9c300f25bc721b4b58fdc410c4c8edd22209bb232263e5",
+      "status": "PASS_TRACE_ONLY",
+      "errors": [],
+      "snapshotCount": 81,
+      "counts": {
+        "render-completed": 75,
+        "original-completed": 74,
+        "read-only-checkpoint": 6
+      },
+      "traceTransport": null,
+      "expectedClock": {
+        "TIMESCALE": 1,
+        "FOLLOW_WALL_CLOCK": true,
+        "ADVANCING": false
+      },
+      "generationValues": [
+        0
+      ],
+      "currentDates": {
+        "07-09-2026": 69,
+        "08-09-2026": 4
+      },
+      "firstCurrent": {
+        "ordinal": 2,
+        "elapsedMs": 379,
+        "clock": {
+          "TIMESCALE": 1,
+          "FOLLOW_WALL_CLOCK": true,
+          "ADVANCING": false
+        }
+      },
+      "snapshotElapsedRangeMs": [
+        325,
+        67041
+      ],
+      "checkpointNames": [
+        "first-current",
+        "matching-tomorrow",
+        "promoted",
+        "settled"
+      ],
+      "requestCount": 3,
+      "requests": [
+        {
+          "requestSerial": 3,
+          "kind": "current",
+          "operationId": 3,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "07-09-2026",
+          "atMs": 334,
+          "timer": 3,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 3,
+            "ms": 10000,
+            "realElapsedMs": 334
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 3,
+              "realElapsedMs": 334
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60408
+          },
+          "rule": "healthy",
+          "occurrence": 1
+        },
+        {
+          "requestSerial": 4,
+          "kind": "prefetch",
+          "operationId": 4,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "08-09-2026",
+          "atMs": 352,
+          "timer": 4,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 4,
+            "ms": 10000,
+            "realElapsedMs": 352
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 4,
+              "realElapsedMs": 489
+            }
+          ],
+          "cooldown": {
+            "day": "07-09-2026",
+            "nextTry": 60408
+          },
+          "rule": "healthy",
+          "occurrence": 2
+        },
+        {
+          "requestSerial": 5,
+          "kind": "prefetch",
+          "operationId": 5,
+          "generation": 0,
+          "prayerAttempts": 1,
+          "day": "09-09-2026",
+          "atMs": 65061,
+          "timer": 28,
+          "deadlineStart": {
+            "operation": "start",
+            "id": 28,
+            "ms": 10000,
+            "realElapsedMs": 65061
+          },
+          "deadlineEnds": [
+            {
+              "operation": "clear",
+              "id": 28,
+              "realElapsedMs": 65142
+            }
+          ],
+          "cooldown": {
+            "day": "08-09-2026",
+            "nextTry": 0
+          },
+          "rule": "healthy",
+          "occurrence": 3
+        }
+      ],
+      "operationAttemptCounts": [
+        {
+          "generation": 0,
+          "operationId": 3,
+          "kind": "current",
+          "attempts": 1
+        },
+        {
+          "generation": 0,
+          "operationId": 4,
+          "kind": "prefetch",
+          "attempts": 1
+        },
+        {
+          "generation": 0,
+          "operationId": 5,
+          "kind": "prefetch",
+          "attempts": 1
+        }
+      ],
+      "recovery": null,
+      "captureMismatches": [
+        {
+          "capture": "first-current",
+          "beforeOrdinal": 3,
+          "afterOrdinal": 5,
+          "receiptOrdinal": 2
+        }
+      ],
+      "limits": [
+        "Native trace only; original video pixels reviewed separately.",
+        "No unique render ordinal to native frame association is inferred.",
+        "Concurrent cache backoff owner association remains observationally ambiguous."
+      ]
+    }
+  ]
+}

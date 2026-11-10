@@ -1,0 +1,23 @@
+--- a/moon/tests/browser_check.py
++++ b/moon/tests/browser_check.py
+@@ -50,6 +50,12 @@
+     from urllib.parse import urlparse,unquote
+     u=urlparse(r.request.url);requests.append(r.request.url)
+     if u.scheme in ['blob','data']:r.continue_();return
++    if u.scheme=='file':
++     from urllib.request import url2pathname
++     local=Path(url2pathname(u.path)).resolve()
++     if transport=='navigation' and root in local.parents:r.continue_()
++     else:r.abort()
++     return
+     if u.hostname not in ['127.0.0.1','moon.cp9.test']:r.abort();return
+     f=root/unquote(u.path.lstrip('/'))
+     if not f.is_file() or root not in f.resolve().parents:r.abort();return
+@@ -59,6 +65,7 @@
+      if mode=='truncated':data=data[:-1]
+      elif mode=='corrupt':data=bytes([data[0]^1])+data[1:]
+      r.fulfill(body=data,content_type='application/octet-stream');return
++    if transport=='navigation' and u.hostname=='127.0.0.1':r.continue_();return
+     r.fulfill(path=str(f),content_type=mimetypes.guess_type(str(f))[0] or 'application/octet-stream')
+    c.route('**/*',route)
+    h='lat=24.47&lon=39.61&tz=Asia/Riyadh&label=Moon-test&method=4&simTime=23:30&simWx=0&simCloud=0&simTemp=20&units=c&motion=reduced&simMoon=.5&simWax=0&simMoonAlt=20&simMoonH=42&qa=1'

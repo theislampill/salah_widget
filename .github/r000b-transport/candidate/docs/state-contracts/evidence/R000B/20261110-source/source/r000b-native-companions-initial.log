@@ -1,0 +1,772 @@
+✔ native linear composition module exists (2.813037ms)
+✔ solar obstruction shares cloud coverage without a second cloud colour (1.110124ms)
+✔ actual native alpha attenuates direct light once, not twice (0.662403ms)
+✔ zero-alpha native cloud leaves physical sky byte-identical (0.406219ms)
+✔ fully opaque native colour appears once at the shared exposure (0.372979ms)
+✔ native PBR material is in front of stars but behind the cloud screen (0.398127ms)
+✔ cloud colour is not multiplied by a second source-alpha factor (0.26036ms)
+✔ native cloud vertical mask reproduces the existing support, not a whole-card veil (0.231046ms)
+✔ invalid foreground buffers or exposures are rejected (0.351327ms)
+✔ PBR transparent edge does not punch a dark halo in the physical sky (0.379048ms)
+✔ opaque dark lunar material cannot occult foreground atmospheric radiance (0.343355ms)
+✔ region calendar join is exactly the corresponding full-frame prefix (0.465468ms)
+✔ foreground region includes current and previous Moon extents, with whole-frame bound (0.26717ms)
+✔ regional foreground retains identical encoded pixel values (0.376935ms)
+✔ new worker acceptance cannot extend the original displayed job while its replacement mask is pending (4.265044ms)
+✖ failed first refined detail cannot publish its background or withdraw the preview class (110.088318ms)
+✖ failed replacement detail retains the original complete refined pixels and identity (63.514187ms)
+✖ refined detail cannot spend the original accepted-job fence before background commit (39.599975ms)
+✖ refined host encodes each final pixel once and preserves composed bytes: 183 (47.33696ms)
+✖ refined host encodes each final pixel once and preserves composed bytes: 284 (85.642911ms)
+✖ refined host encodes each final pixel once and preserves composed bytes: 530 (103.892489ms)
+✔ refined host never publishes an expired or failed prepared update (176.923514ms)
+✔ skipped raw prefix and encoded tail retain nonfinite rejection (53.420284ms)
+✖ new accepted frame with exact cloud alpha reuses only published solar mask (35.248152ms)
+✖ failed publication leaves solar reuse state unpublished (88.931786ms)
+✖ refined publication keeps matching immutable foreground private until mask readiness (69.342374ms)
+✖ late mask readiness cannot publish over a newer accepted frame, changed target or disposal (22.969865ms)
+✔ solar mask comparator validates types, lengths and every alpha boundary (1.74105ms)
+✔ actual host clear withdraws the mask cache along with the previous presentation (15.282561ms)
+✖ worker failure retains original current pixels while a stale preview and changed mask await replacement (34.563586ms)
+✔ ignoring the final alpha difference is killed by the same exact mask discriminator (3.112136ms)
+✖ real refined publication retains coherent pixels and releases owned masks on clear (114.357287ms)
+✖ real refined publication retains coherent pixels and releases owned masks on dispose (26.824864ms)
+✖ failed changed-mask decode cannot retain a preview after the owner pauses (7.602237ms)
+✖ failed preview mask decode retains a current initial head and later publishes a complete retry (1.765918ms)
+✔ failed preview preparation retains only a current unpaused initial head (4.135149ms)
+✖ preview waits for its mask and rejects readiness after owner transfer, clear and disposal (1.673799ms)
+✖ near-expiry preview cannot remove first paint and wait for a second decode after writing (3.902781ms)
+✖ an unresolved preview decode cannot block the owner after its prepared job expires (4.599486ms)
+✖ a pending mask may retain only a current initial head, never its expired CSS background (3.563992ms)
+✖ revoked initial pixels are replaced in the same turn when captured clouds are exactly clear (1.717976ms)
+✖ foreground preparation cannot consume the new astronomical calculation age budget (3.085165ms)
+✖ already native-size pixels need no canvas round trip; smaller fast-clock raster still resamples (4.175149ms)
+✖ a near-expiry preview cannot be published without consumer callback headroom (3.688199ms)
+✖ deadline recovery is bounded and cannot turn a persistently slow calculation into a current frame (4.483642ms)
+✖ a throwing detail compositor cannot bypass publication headroom through retained-frame recovery (8.275216ms)
+✔ failed first detail composition cannot claim a ready retained preview that was never visible (5.373826ms)
+✖ failed replacement detail preserves the displayed preview pixels and identity until a complete retry (7.632372ms)
+✖ a delayed rAF timestamp never skips the accepted-clock expiry check (5.91647ms)
+✖ native presentation handoff stops the duplicate loop and timestamps after native painting (6.587937ms)
+✖ catalogue admission preserves the current atmosphere and defers first stellar paint to a separate native turn (6.547856ms)
+✖ invalid catalogue cannot become the displayed identity or defer currentness validation (5.492755ms)
+✖ late catalogue hash completion cannot resurrect a revoked asset admission (5.27603ms)
+✖ ordinary presentation republishes a fresh preview after weather withdrawal (4.774618ms)
+✖ refined withdrawal publishes the replacement preview in the same turn without waiting for native paint (4.521488ms)
+✔ same-turn withdrawal cannot fabricate a preview when accepted input is absent (4.860807ms)
+✖ a still-current preview recomposes lunar detail before withdrawal returns without relabelling its UTC (4.500677ms)
+✖ withdrawal preserves already-current preview-owned detail and pixels (5.026285ms)
+✖ first frame and full-pack reset/failure retain the independent same-catalogue bootstrap (5.902229ms)
+✔ resetting an unchanged bootstrap cancels admission without rebuilding its sky (4.519546ms)
+✔ stable publication callbacks receive their original context across decode, cached reuse, failure and cancellation (7.249618ms)
+✔ reentrant replacement owns its displayed resource after old commit returns (0.564096ms)
+✔ reentrant replacement owns its displayed resource after old commit throws (0.310726ms)
+✔ changing solar mask cannot expose an undecoded frame; CSS anonymous request mode is required (0.498307ms)
+✔ one pending decode bounds work; cancellation fences late A after B and disposal (0.438628ms)
+✔ decoded bytes can be reused after a rejected scene, but failed and cancelled decodes never enter the cache (0.389564ms)
+✔ exactly transparent captured clouds need no encoded solar mask; one alpha code still does (1.912898ms)
+✔ full transmission publishes synchronously through the same commit guard (0.372539ms)
+✔ clear/cloud/clear transition retains decode and cancellation fences (0.459449ms)
+ℹ tests 69
+ℹ suites 0
+ℹ pass 33
+ℹ fail 36
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1242.743778
+
+✖ failing tests:
+
+test at tests/real-sky/native-host-composition.test.mjs:49:1
+✖ failed first refined detail cannot publish its background or withdraw the preview class (110.088318ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /detail readback/. Input:
+  
+  "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')"
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:52:64)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')",
+    expected: /detail readback/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:54:1
+✖ failed replacement detail retains the original complete refined pixels and identity (63.514187ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:58:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:64:1
+✖ refined detail cannot spend the original accepted-job fence before background commit (39.599975ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /detail/. Input:
+  
+  "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')"
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:68:54)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')",
+    expected: /detail/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:70:33
+✖ refined host encodes each final pixel once and preserves composed bytes: 183 (47.33696ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')"
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:71:31)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')" ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:70:33
+✖ refined host encodes each final pixel once and preserves composed bytes: 284 (85.642911ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')"
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:71:31)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')" ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:70:33
+✖ refined host encodes each final pixel once and preserves composed bytes: 530 (103.892489ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')"
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:71:31)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ "TypeError: Cannot read properties of undefined (reading 'reconcileClouds')" ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:89:1
+✖ new accepted frame with exact cloud alpha reuses only published solar mask (35.248152ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:90:30)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:98:1
+✖ failed publication leaves solar reuse state unpublished (88.931786ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:99:44)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:101:1
+✖ refined publication keeps matching immutable foreground private until mask readiness (69.342374ms)
+  TypeError [Error]: pendingMasks.shift(...) is not a function
+      at Object.finishMask (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:47:160)
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:103:4)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/real-sky/native-host-composition.test.mjs:105:1
+✖ late mask readiness cannot publish over a newer accepted frame, changed target or disposal (22.969865ms)
+  TypeError [Error]: pendingMasks.shift(...) is not a function
+      at Object.finishMask (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:47:160)
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:112:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/real-sky/native-host-composition.test.mjs:129:1
+✖ worker failure retains original current pixels while a stale preview and changed mask await replacement (34.563586ms)
+  AssertionError [ERR_ASSERTION]: a failed worker cannot expose a stale preview or a pending decode
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:141:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:158:43
+✖ real refined publication retains coherent pixels and releases owned masks on clear (114.357287ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:164:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-host-composition.test.mjs:158:43
+✖ real refined publication retains coherent pixels and releases owned masks on dispose (26.824864ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-host-composition.test.mjs:164:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:41:1
+✖ failed changed-mask decode cannot retain a preview after the owner pauses (7.602237ms)
+  TypeError [Error]: pendingMasks.shift(...) is not a function
+      at Object.finishMask (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:32:233)
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:42:76)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests/real-sky/native-preview-host.test.mjs:49:1
+✖ failed preview mask decode retains a current initial head and later publishes a complete retry (1.765918ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'reject')
+      at Object.rejectMask (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:32:342)
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:51:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests/real-sky/native-preview-host.test.mjs:70:1
+✖ preview waits for its mask and rejects readiness after owner transfer, clear and disposal (1.673799ms)
+  TypeError [Error]: pendingMasks.shift(...) is not a function
+      at Object.finishMask (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:32:233)
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:71:96)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/real-sky/native-preview-host.test.mjs:80:1
+✖ near-expiry preview cannot remove first paint and wait for a second decode after writing (3.902781ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:82:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:90:1
+✖ an unresolved preview decode cannot block the owner after its prepared job expires (4.599486ms)
+  AssertionError [ERR_ASSERTION]: expired pending job is revoked and fresh preparation starts
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:92:32)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:96:1
+✖ a pending mask may retain only a current initial head, never its expired CSS background (3.563992ms)
+  AssertionError [ERR_ASSERTION]: current initial pixels survive the pending decode
+  
+  2 !== 0
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:99:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:104:1
+✖ revoked initial pixels are replaced in the same turn when captured clouds are exactly clear (1.717976ms)
+  AssertionError [ERR_ASSERTION]: A fully transmitted mask must not open an asynchronous legacy-layer gap
+  
+  'pending' !== 'ready'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:108:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:112:1
+✖ foreground preparation cannot consume the new astronomical calculation age budget (3.085165ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'pending' !== 'ready'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:113:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:117:1
+✖ already native-size pixels need no canvas round trip; smaller fast-clock raster still resamples (4.175149ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'pending' !== 'ready'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:118:68)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:123:1
+✖ a near-expiry preview cannot be published without consumer callback headroom (3.688199ms)
+  AssertionError [ERR_ASSERTION]: a bounded fresh retry must recover from one transient overrun
+  
+  'pending' !== 'ready'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:125:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:132:1
+✖ deadline recovery is bounded and cannot turn a persistently slow calculation into a current frame (4.483642ms)
+  AssertionError [ERR_ASSERTION]: at most one retry per presentation opportunity
+  
+  0 !== 110
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:135:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 110,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:138:1
+✖ a throwing detail compositor cannot bypass publication headroom through retained-frame recovery (8.275216ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'pending' !== 'ready'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:140:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:150:1
+✖ failed replacement detail preserves the displayed preview pixels and identity until a complete retry (7.632372ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:153:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:163:1
+✖ a delayed rAF timestamp never skips the accepted-clock expiry check (5.91647ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'pending' !== 'ready'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:167:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:170:1
+✖ native presentation handoff stops the duplicate loop and timestamps after native painting (6.587937ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 31200
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:172:54)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 31200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:177:1
+✖ catalogue admission preserves the current atmosphere and defers first stellar paint to a separate native turn (6.547856ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'pending' !== 'ready'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:183:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:191:1
+✖ invalid catalogue cannot become the displayed identity or defer currentness validation (5.492755ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - null
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:194:26)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:198:1
+✖ late catalogue hash completion cannot resurrect a revoked asset admission (5.27603ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - null
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:202:26)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:205:1
+✖ ordinary presentation republishes a fresh preview after weather withdrawal (4.774618ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'pending' !== 'ready'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:213:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'pending',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:217:1
+✖ refined withdrawal publishes the replacement preview in the same turn without waiting for native paint (4.521488ms)
+  TypeError [Error]: Cannot read properties of null (reading 'current')
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:222:48)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/real-sky/native-preview-host.test.mjs:238:1
+✖ a still-current preview recomposes lunar detail before withdrawal returns without relabelling its UTC (4.500677ms)
+  TypeError [Error]: Cannot read properties of null (reading 'current')
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:242:48)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/real-sky/native-preview-host.test.mjs:249:1
+✖ withdrawal preserves already-current preview-owned detail and pixels (5.026285ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:254:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-preview-host.test.mjs:258:1
+✖ first frame and full-pack reset/failure retain the independent same-catalogue bootstrap (5.902229ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-preview-host.test.mjs:260:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

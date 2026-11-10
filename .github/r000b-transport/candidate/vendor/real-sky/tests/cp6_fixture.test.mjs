@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import {physicalSkyState} from '../src/sky-state.mjs';import {radecVector,angularSeparation} from '../src/astronomy.mjs';
+const f=JSON.parse(fs.readFileSync(new URL('./fixtures/cp6-illumination.json',import.meta.url)));
+test('CP6 all 6912 independent Sun/Moon directions meet predefined bounds',()=>{assert.equal(f.rows.length,3456);for(const r of f.rows){const p=physicalSkyState(r.observer);for(const body of ['sun','moon'])assert.ok(angularSeparation(radecVector(r[body].raDeg,r[body].decDeg),radecVector(p[body].raDeg,p[body].decDeg))<=f.acceptanceSetBeforeComparison[body+'DirectionDeg']);assert.ok(Math.abs(p.moon.phaseAngleDeg-r.moonPhaseDeg)<=f.acceptanceSetBeforeComparison.lunarPhaseDeg);assert.ok(Math.abs(p.moon.distanceKm-r.moon.distanceKm)<=f.acceptanceSetBeforeComparison.lunarDistanceKm);}});

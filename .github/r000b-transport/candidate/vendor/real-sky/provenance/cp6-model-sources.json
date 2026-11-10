@@ -1,0 +1,71 @@
+{
+  "schema": "salah-real-sky/model-sources/1",
+  "checkpoint": 6,
+  "accessedUtcDate": "2026-10-04",
+  "status": "Primary-source methods read; independent implementation with explicitly marked empirical/engineering extensions; not acquired whole-paper raw-byte authentication",
+  "sources": [
+    {
+      "id": "patat2006",
+      "title": "UBVRI twilight sky brightness at ESO-Paranal",
+      "authors": [
+        "F. Patat",
+        "O. Ugolnikov",
+        "O. Postylyako"
+      ],
+      "url": "https://arxiv.org/abs/astro-ph/0604128",
+      "pdf": "https://arxiv.org/pdf/astro-ph/0604128",
+      "doi": "10.1051/0004-6361:20064992",
+      "used": "Table 1 B/V polynomial coefficients, fit domain and reference night floors; table inspected in PDF screenshot",
+      "notClaimed": "Published all-sky or globally calibrated site model; our angular continuation, depth scaling and tail are engineering extensions"
+    },
+    {
+      "id": "ks1991",
+      "title": "A model of the brightness of moonlight",
+      "authors": [
+        "Kevin Krisciunas",
+        "Bradley E. Schaefer"
+      ],
+      "url": "https://ntrs.nasa.gov/citations/19910069763",
+      "pdf": "https://articles.adsabs.harvard.edu/pdf/1991PASP..103.1033K",
+      "doi": "10.1086/132921",
+      "used": "Original equations, phase-intensity relation, scattering functions and 20 numeric Table 2 entries; table inspected in PDF screenshot",
+      "extensions": "Smooth near/far branch; finite disc; horizon-disc fraction; lunar range; wrapper effective scattering albedo; not claimed original calibration"
+    },
+    {
+      "id": "schlyter",
+      "title": "How to compute planetary positions",
+      "author": "Paul Schlyter",
+      "url": "https://stjarnhimlen.se/comp/ppcomp.html",
+      "used": "Solar/lunar elements and complete listed lunar longitude, latitude and radial perturbations; independent equation implementation",
+      "changes": "CP4 TT/UT1 and ellipsoidal topocentre; no claim to inherit author advertised accuracy, instead separately tested"
+    },
+    {
+      "id": "rayleigh-fife",
+      "title": "Optical Thickness (FIFE staff science), ORNL DAAC",
+      "url": "https://daac.ornl.gov/FIFE/guides/optical_thick_staff.html",
+      "used": "Visible Rayleigh optical-depth polynomial and station-pressure scaling",
+      "status": "Primary text retrieved during initial research; a later refresh produced tool error. Not an authenticated raw-file acquisition."
+    },
+    {
+      "id": "pbrt-phase",
+      "title": "Physically Based Rendering, fourth edition, Phase Functions",
+      "url": "https://www.pbr-book.org/4ed/Volume_Scattering/Phase_Functions",
+      "used": "Phase normalisation and HG convention comparison; independent implementation with viewing-towards-Sun cosine"
+    },
+    {
+      "id": "swiss-oracle",
+      "title": "Swiss Ephemeris programmer documentation",
+      "url": "https://www.astro.com/swisseph/swephprg.htm",
+      "used": "Separately installed 2.10.03 Moshier numeric oracle and flag/frame conventions; generation scripts/fixtures retained",
+      "redistribution": "No Swiss Ephemeris implementation or ephemeris binaries included"
+    }
+  ],
+  "declaredAssumptions": {
+    "solarContinuumK": 5778,
+    "solarIlluminanceLuxAt1AU": 127500,
+    "zeroVIlluminanceLux": 2.54e-06,
+    "meaning": "Chosen reference calibration constants, not newly measured solar passband/observer data"
+  },
+  "runtimeNetworkDependencies": [],
+  "githubWrites": 0
+}

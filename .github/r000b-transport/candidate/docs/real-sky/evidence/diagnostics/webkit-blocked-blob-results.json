@@ -1,0 +1,986 @@
+{
+  "status": "RUNNING",
+  "cases": [
+    {
+      "name": "slow-assets",
+      "passed": false,
+      "assertions": 8,
+      "error": "Traceback (most recent call last):\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 156, in case\n    w=Widget(browser,root,out,name,**options);body(w);result=w.finish()\n                                              ^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 169, in slow\n    w.wait(\"window.SalahRealSkyAssets?.state.status==='loading'\");w.proof_ui();s=w.snap('loading-prayer-usable');w.check(s['visible']!='visible','No sky before bytes');w.release_asset();w.ready();w.snap('recovered')\n                                                                                                                                                                                          ^^^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 119, in ready\n    def ready(self):self.wait(\"window.realSkyState?.().status==='ready'&&!!window.realSkyState().last\")\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 118, in wait\n    def wait(self,expression,timeout=60000):self.page.wait_for_function(expression,timeout=timeout)\n                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\sync_api\\_generated.py\", line 11595, in wait_for_function\n    self._sync(\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_sync_base.py\", line 115, in _sync\n    return task.result()\n           ^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_page.py\", line 1110, in wait_for_function\n    return await self._main_frame.wait_for_function(**locals_to_params(locals()))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_frame.py\", line 878, in wait_for_function\n    await self._channel.send(\"waitForFunction\", self._timeout, params)\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_connection.py\", line 69, in send\n    return await self._connection.wrap_api_call(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_connection.py\", line 559, in wrap_api_call\n    raise rewrite_error(error, f\"{parsed_st['apiName']}: {error}\") from None\nplaywright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 60000ms exceeded.\n",
+      "pageErrors": [],
+      "controls": [
+        {
+          "name": "loading-prayer-usable",
+          "sky": {
+            "status": "loading",
+            "reason": null,
+            "renders": null,
+            "errors": [],
+            "lifecycle": null,
+            "last": null
+          },
+          "assets": {
+            "status": "loading",
+            "generation": 1,
+            "error": null
+          },
+          "host": {
+            "utcMs": 1788813000000,
+            "lat": 24.47,
+            "lon": 39.61,
+            "heightM": 0,
+            "elevationSource": "default zero; no bound eligible weather height",
+            "elevationOwner": null,
+            "generation": 0,
+            "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:135:0",
+            "tz": "Asia/Riyadh",
+            "timeScale": 0,
+            "units": "c",
+            "lp": 0,
+            "reducedMotion": true,
+            "paused": false,
+            "camera": {
+              "azDeg": 180,
+              "altDeg": 45,
+              "fovYDeg": 90,
+              "rollDeg": 0
+            },
+            "allowEstimates": true,
+            "weather": {
+              "src": "sim",
+              "temp": 72,
+              "rh": 45,
+              "vis": 20000,
+              "cloud": 60,
+              "code": 2,
+              "wind": 3
+            },
+            "prayerReady": true,
+            "moonReady": true,
+            "pbrFailed": false
+          },
+          "rows": 6,
+          "synthetic": 0,
+          "visible": "absent",
+          "canvasCount": 0,
+          "pbr": 43134,
+          "classes": "c moon-ready",
+          "next": "04:46",
+          "countdown": "5h 16m left until Fajr",
+          "ce": "2026-09-07CE",
+          "ah": "\u06471448-03-09",
+          "dateTruth": {
+            "gregorianText": "2026-09-07",
+            "hijriText": "1448-03-09",
+            "previewDay": null,
+            "previewText": "",
+            "explanation": "Advanced at Maghrib using the next day's payload. Aladhan; HJCoSA. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+            "requestedGregorianDay": "07-09-2026",
+            "loadedGregorianDay": "07-09-2026",
+            "selectedGregorianDay": "08-09-2026",
+            "timezone": "Asia/Riyadh",
+            "beforeOrAfterMaghrib": "after",
+            "maghribRollAvailable": true,
+            "maghribRollApplied": true,
+            "selectedSource": "tomorrow",
+            "calendarSource": "Aladhan",
+            "hijriMethod": "HJCoSA",
+            "unavailableReason": null,
+            "selectionReason": null,
+            "staleDateState": "current",
+            "hijriAnomaly": null
+          },
+          "prayerModel": {
+            "t": {
+              "Fajr": "04:46",
+              "Sunrise": "06:05",
+              "Dhuhr": "12:19",
+              "Asr": "15:48",
+              "Sunset": "18:33",
+              "Maghrib": "18:33",
+              "Isha": "20:03"
+            },
+            "noon": 739,
+            "decl": 0.0881528850400248,
+            "doy": 250,
+            "sunrise": 365,
+            "sunset": 1113,
+            "nowMin": 1410,
+            "nowAbs": 1410,
+            "warmEnd": 1459,
+            "dots": [
+              {
+                "k": "Fajr",
+                "abs": 286
+              },
+              {
+                "k": "Sunrise",
+                "abs": 365
+              },
+              {
+                "k": "Dhuhr",
+                "abs": 739
+              },
+              {
+                "k": "Asr",
+                "abs": 948
+              },
+              {
+                "k": "Maghrib",
+                "abs": 1113
+              },
+              {
+                "k": "Isha",
+                "abs": 1203
+              }
+            ],
+            "currentKey": "Isha",
+            "nextKey": "Fajr",
+            "nextTime": "04:46",
+            "leftMin": 316,
+            "nowEpoch": 1788813000000,
+            "nextEpoch": 1788831960000,
+            "nextDateStr": "08-09-2026",
+            "nextZone": "Asia/Riyadh",
+            "progress": 0.39579349904397704,
+            "needTomorrow": true
+          },
+          "publishes": [],
+          "worker": {
+            "submissions": [],
+            "held": 0,
+            "rawResults": 0,
+            "instances": 0
+          }
+        },
+        {
+          "name": "failure",
+          "sky": {
+            "status": "unavailable",
+            "reason": "render failure",
+            "renders": 0,
+            "errors": [
+              "Native physical-sky worker unavailable; visual withdrawn to preserve prayer responsiveness. Retry real-sky assets to restart the worker."
+            ],
+            "lifecycle": {
+              "requests": 15,
+              "accepted": 0,
+              "superseded": 0,
+              "rejected": 0,
+              "invalidations": 1,
+              "epoch": 1,
+              "disposed": false,
+              "pending": false,
+              "paused": false,
+              "availability": {
+                "status": "pending",
+                "reason": "new accepted native scene"
+              }
+            },
+            "last": null
+          },
+          "assets": {
+            "status": "ready",
+            "generation": 1,
+            "error": null
+          },
+          "host": {
+            "utcMs": 1788813000000,
+            "lat": 24.47,
+            "lon": 39.61,
+            "heightM": 0,
+            "elevationSource": "default zero; no bound eligible weather height",
+            "elevationOwner": null,
+            "generation": 0,
+            "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:135:0",
+            "tz": "Asia/Riyadh",
+            "timeScale": 0,
+            "units": "c",
+            "lp": 0,
+            "reducedMotion": true,
+            "paused": false,
+            "camera": {
+              "azDeg": 180,
+              "altDeg": 45,
+              "fovYDeg": 90,
+              "rollDeg": 0
+            },
+            "allowEstimates": true,
+            "weather": {
+              "src": "sim",
+              "temp": 72,
+              "rh": 45,
+              "vis": 20000,
+              "cloud": 60,
+              "code": 2,
+              "wind": 3
+            },
+            "prayerReady": true,
+            "moonReady": true,
+            "pbrFailed": false
+          },
+          "rows": 6,
+          "synthetic": 0,
+          "visible": "hidden",
+          "canvasCount": 1,
+          "pbr": 43134,
+          "classes": "c moon-ready",
+          "next": "04:46",
+          "countdown": "5h 16m left until Fajr",
+          "ce": "2026-09-07CE",
+          "ah": "\u06471448-03-09",
+          "dateTruth": {
+            "gregorianText": "2026-09-07",
+            "hijriText": "1448-03-09",
+            "previewDay": null,
+            "previewText": "",
+            "explanation": "Advanced at Maghrib using the next day's payload. Aladhan; HJCoSA. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+            "requestedGregorianDay": "07-09-2026",
+            "loadedGregorianDay": "07-09-2026",
+            "selectedGregorianDay": "08-09-2026",
+            "timezone": "Asia/Riyadh",
+            "beforeOrAfterMaghrib": "after",
+            "maghribRollAvailable": true,
+            "maghribRollApplied": true,
+            "selectedSource": "tomorrow",
+            "calendarSource": "Aladhan",
+            "hijriMethod": "HJCoSA",
+            "unavailableReason": null,
+            "selectionReason": null,
+            "staleDateState": "current",
+            "hijriAnomaly": null
+          },
+          "prayerModel": {
+            "t": {
+              "Fajr": "04:46",
+              "Sunrise": "06:05",
+              "Dhuhr": "12:19",
+              "Asr": "15:48",
+              "Sunset": "18:33",
+              "Maghrib": "18:33",
+              "Isha": "20:03"
+            },
+            "noon": 739,
+            "decl": 0.0881528850400248,
+            "doy": 250,
+            "sunrise": 365,
+            "sunset": 1113,
+            "nowMin": 1410,
+            "nowAbs": 1410,
+            "warmEnd": 1459,
+            "dots": [
+              {
+                "k": "Fajr",
+                "abs": 286
+              },
+              {
+                "k": "Sunrise",
+                "abs": 365
+              },
+              {
+                "k": "Dhuhr",
+                "abs": 739
+              },
+              {
+                "k": "Asr",
+                "abs": 948
+              },
+              {
+                "k": "Maghrib",
+                "abs": 1113
+              },
+              {
+                "k": "Isha",
+                "abs": 1203
+              }
+            ],
+            "currentKey": "Isha",
+            "nextKey": "Fajr",
+            "nextTime": "04:46",
+            "leftMin": 316,
+            "nowEpoch": 1788813000000,
+            "nextEpoch": 1788831960000,
+            "nextDateStr": "08-09-2026",
+            "nextZone": "Asia/Riyadh",
+            "progress": 0.39579349904397704,
+            "needTomorrow": true
+          },
+          "publishes": [],
+          "worker": {
+            "submissions": [],
+            "held": 0,
+            "rawResults": 0,
+            "instances": 1
+          }
+        }
+      ],
+      "requests": [
+        "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap",
+        "https://native.cp8.test/real-sky/native-sky.css",
+        "https://native.cp8.test/config.js",
+        "https://native.cp8.test/real-sky/native-sky.js",
+        "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap",
+        "https://native.cp8.test/real-sky/native-sky.css",
+        "https://native.cp8.test/config.js",
+        "https://native.cp8.test/real-sky/native-data.js?nativeSkyGeneration=1",
+        "blob:null/9b744f11-b96d-4d63-9fc3-877085e4efd4"
+      ],
+      "seconds": 62.09399999999732
+    },
+    {
+      "name": "missing",
+      "passed": false,
+      "assertions": 8,
+      "error": "Traceback (most recent call last):\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 156, in case\n    w=Widget(browser,root,out,name,**options);body(w);result=w.finish()\n                                              ^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 172, in retry\n    w.wait(\"window.realSkyState?.().status==='unavailable'\");w.proof_ui();s=w.snap('unavailable-prayer-usable');w.check(s['visible']!='visible','No failed source light');w.mode='normal';w.page.evaluate('()=>{SalahRealSkyAssets.retry();}');w.ready();s=w.snap('recovered');w.check(s['canvasCount']==1,'One renderer after retry');w.check(s['sky']['last']['catalogue']['emitters']==8884,'Recovered admitted catalogue')\n                                                                                                                                                                                                                                               ^^^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 119, in ready\n    def ready(self):self.wait(\"window.realSkyState?.().status==='ready'&&!!window.realSkyState().last\")\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 118, in wait\n    def wait(self,expression,timeout=60000):self.page.wait_for_function(expression,timeout=timeout)\n                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\sync_api\\_generated.py\", line 11595, in wait_for_function\n    self._sync(\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_sync_base.py\", line 115, in _sync\n    return task.result()\n           ^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_page.py\", line 1110, in wait_for_function\n    return await self._main_frame.wait_for_function(**locals_to_params(locals()))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_frame.py\", line 878, in wait_for_function\n    await self._channel.send(\"waitForFunction\", self._timeout, params)\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_connection.py\", line 69, in send\n    return await self._connection.wrap_api_call(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_connection.py\", line 559, in wrap_api_call\n    raise rewrite_error(error, f\"{parsed_st['apiName']}: {error}\") from None\nplaywright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 60000ms exceeded.\n",
+      "pageErrors": [],
+      "controls": [
+        {
+          "name": "unavailable-prayer-usable",
+          "sky": {
+            "status": "unavailable",
+            "reason": null,
+            "renders": null,
+            "errors": [
+              "Local native-data.js unavailable"
+            ],
+            "lifecycle": null,
+            "last": null
+          },
+          "assets": {
+            "status": "unavailable",
+            "generation": 1,
+            "error": "Local native-data.js unavailable"
+          },
+          "host": {
+            "utcMs": 1788813000000,
+            "lat": 24.47,
+            "lon": 39.61,
+            "heightM": 0,
+            "elevationSource": "default zero; no bound eligible weather height",
+            "elevationOwner": null,
+            "generation": 0,
+            "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:79:0",
+            "tz": "Asia/Riyadh",
+            "timeScale": 0,
+            "units": "c",
+            "lp": 0,
+            "reducedMotion": true,
+            "paused": false,
+            "camera": {
+              "azDeg": 180,
+              "altDeg": 45,
+              "fovYDeg": 90,
+              "rollDeg": 0
+            },
+            "allowEstimates": true,
+            "weather": {
+              "src": "sim",
+              "temp": 72,
+              "rh": 45,
+              "vis": 20000,
+              "cloud": 60,
+              "code": 2,
+              "wind": 3
+            },
+            "prayerReady": true,
+            "moonReady": true,
+            "pbrFailed": false
+          },
+          "rows": 6,
+          "synthetic": 0,
+          "visible": "absent",
+          "canvasCount": 0,
+          "pbr": 43134,
+          "classes": "c moon-ready",
+          "next": "04:46",
+          "countdown": "5h 16m left until Fajr",
+          "ce": "2026-09-07CE",
+          "ah": "\u06471448-03-09",
+          "dateTruth": {
+            "gregorianText": "2026-09-07",
+            "hijriText": "1448-03-09",
+            "previewDay": null,
+            "previewText": "",
+            "explanation": "Advanced at Maghrib using the next day's payload. Aladhan; HJCoSA. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+            "requestedGregorianDay": "07-09-2026",
+            "loadedGregorianDay": "07-09-2026",
+            "selectedGregorianDay": "08-09-2026",
+            "timezone": "Asia/Riyadh",
+            "beforeOrAfterMaghrib": "after",
+            "maghribRollAvailable": true,
+            "maghribRollApplied": true,
+            "selectedSource": "tomorrow",
+            "calendarSource": "Aladhan",
+            "hijriMethod": "HJCoSA",
+            "unavailableReason": null,
+            "selectionReason": null,
+            "staleDateState": "current",
+            "hijriAnomaly": null
+          },
+          "prayerModel": {
+            "t": {
+              "Fajr": "04:46",
+              "Sunrise": "06:05",
+              "Dhuhr": "12:19",
+              "Asr": "15:48",
+              "Sunset": "18:33",
+              "Maghrib": "18:33",
+              "Isha": "20:03"
+            },
+            "noon": 739,
+            "decl": 0.0881528850400248,
+            "doy": 250,
+            "sunrise": 365,
+            "sunset": 1113,
+            "nowMin": 1410,
+            "nowAbs": 1410,
+            "warmEnd": 1459,
+            "dots": [
+              {
+                "k": "Fajr",
+                "abs": 286
+              },
+              {
+                "k": "Sunrise",
+                "abs": 365
+              },
+              {
+                "k": "Dhuhr",
+                "abs": 739
+              },
+              {
+                "k": "Asr",
+                "abs": 948
+              },
+              {
+                "k": "Maghrib",
+                "abs": 1113
+              },
+              {
+                "k": "Isha",
+                "abs": 1203
+              }
+            ],
+            "currentKey": "Isha",
+            "nextKey": "Fajr",
+            "nextTime": "04:46",
+            "leftMin": 316,
+            "nowEpoch": 1788813000000,
+            "nextEpoch": 1788831960000,
+            "nextDateStr": "08-09-2026",
+            "nextZone": "Asia/Riyadh",
+            "progress": 0.39579349904397704,
+            "needTomorrow": true
+          },
+          "publishes": [],
+          "worker": {
+            "submissions": [],
+            "held": 0,
+            "rawResults": 0,
+            "instances": 0
+          }
+        },
+        {
+          "name": "failure",
+          "sky": {
+            "status": "unavailable",
+            "reason": "render failure",
+            "renders": 0,
+            "errors": [
+              "Native physical-sky worker unavailable; visual withdrawn to preserve prayer responsiveness. Retry real-sky assets to restart the worker."
+            ],
+            "lifecycle": {
+              "requests": 15,
+              "accepted": 0,
+              "superseded": 0,
+              "rejected": 0,
+              "invalidations": 1,
+              "epoch": 1,
+              "disposed": false,
+              "pending": false,
+              "paused": false,
+              "availability": {
+                "status": "pending",
+                "reason": "new accepted native scene"
+              }
+            },
+            "last": null
+          },
+          "assets": {
+            "status": "ready",
+            "generation": 2,
+            "error": null
+          },
+          "host": {
+            "utcMs": 1788813000000,
+            "lat": 24.47,
+            "lon": 39.61,
+            "heightM": 0,
+            "elevationSource": "default zero; no bound eligible weather height",
+            "elevationOwner": null,
+            "generation": 0,
+            "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:79:0",
+            "tz": "Asia/Riyadh",
+            "timeScale": 0,
+            "units": "c",
+            "lp": 0,
+            "reducedMotion": true,
+            "paused": false,
+            "camera": {
+              "azDeg": 180,
+              "altDeg": 45,
+              "fovYDeg": 90,
+              "rollDeg": 0
+            },
+            "allowEstimates": true,
+            "weather": {
+              "src": "sim",
+              "temp": 72,
+              "rh": 45,
+              "vis": 20000,
+              "cloud": 60,
+              "code": 2,
+              "wind": 3
+            },
+            "prayerReady": true,
+            "moonReady": true,
+            "pbrFailed": false
+          },
+          "rows": 6,
+          "synthetic": 0,
+          "visible": "hidden",
+          "canvasCount": 1,
+          "pbr": 43134,
+          "classes": "c moon-ready",
+          "next": "04:46",
+          "countdown": "5h 16m left until Fajr",
+          "ce": "2026-09-07CE",
+          "ah": "\u06471448-03-09",
+          "dateTruth": {
+            "gregorianText": "2026-09-07",
+            "hijriText": "1448-03-09",
+            "previewDay": null,
+            "previewText": "",
+            "explanation": "Advanced at Maghrib using the next day's payload. Aladhan; HJCoSA. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+            "requestedGregorianDay": "07-09-2026",
+            "loadedGregorianDay": "07-09-2026",
+            "selectedGregorianDay": "08-09-2026",
+            "timezone": "Asia/Riyadh",
+            "beforeOrAfterMaghrib": "after",
+            "maghribRollAvailable": true,
+            "maghribRollApplied": true,
+            "selectedSource": "tomorrow",
+            "calendarSource": "Aladhan",
+            "hijriMethod": "HJCoSA",
+            "unavailableReason": null,
+            "selectionReason": null,
+            "staleDateState": "current",
+            "hijriAnomaly": null
+          },
+          "prayerModel": {
+            "t": {
+              "Fajr": "04:46",
+              "Sunrise": "06:05",
+              "Dhuhr": "12:19",
+              "Asr": "15:48",
+              "Sunset": "18:33",
+              "Maghrib": "18:33",
+              "Isha": "20:03"
+            },
+            "noon": 739,
+            "decl": 0.0881528850400248,
+            "doy": 250,
+            "sunrise": 365,
+            "sunset": 1113,
+            "nowMin": 1410,
+            "nowAbs": 1410,
+            "warmEnd": 1459,
+            "dots": [
+              {
+                "k": "Fajr",
+                "abs": 286
+              },
+              {
+                "k": "Sunrise",
+                "abs": 365
+              },
+              {
+                "k": "Dhuhr",
+                "abs": 739
+              },
+              {
+                "k": "Asr",
+                "abs": 948
+              },
+              {
+                "k": "Maghrib",
+                "abs": 1113
+              },
+              {
+                "k": "Isha",
+                "abs": 1203
+              }
+            ],
+            "currentKey": "Isha",
+            "nextKey": "Fajr",
+            "nextTime": "04:46",
+            "leftMin": 316,
+            "nowEpoch": 1788813000000,
+            "nextEpoch": 1788831960000,
+            "nextDateStr": "08-09-2026",
+            "nextZone": "Asia/Riyadh",
+            "progress": 0.39579349904397704,
+            "needTomorrow": true
+          },
+          "publishes": [],
+          "worker": {
+            "submissions": [],
+            "held": 0,
+            "rawResults": 0,
+            "instances": 1
+          }
+        }
+      ],
+      "requests": [
+        "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap",
+        "https://native.cp8.test/real-sky/native-sky.css",
+        "https://native.cp8.test/config.js",
+        "https://native.cp8.test/real-sky/native-sky.js",
+        "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap",
+        "https://native.cp8.test/real-sky/native-sky.css",
+        "https://native.cp8.test/config.js",
+        "https://native.cp8.test/real-sky/native-data.js?nativeSkyGeneration=1",
+        "https://native.cp8.test/real-sky/native-data.js?nativeSkyGeneration=2",
+        "blob:null/bf6835ea-00b1-4693-ba1f-0be2d01a00ed"
+      ],
+      "seconds": 61.625
+    },
+    {
+      "name": "empty",
+      "passed": false,
+      "assertions": 8,
+      "error": "Traceback (most recent call last):\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 156, in case\n    w=Widget(browser,root,out,name,**options);body(w);result=w.finish()\n                                              ^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 172, in retry\n    w.wait(\"window.realSkyState?.().status==='unavailable'\");w.proof_ui();s=w.snap('unavailable-prayer-usable');w.check(s['visible']!='visible','No failed source light');w.mode='normal';w.page.evaluate('()=>{SalahRealSkyAssets.retry();}');w.ready();s=w.snap('recovered');w.check(s['canvasCount']==1,'One renderer after retry');w.check(s['sky']['last']['catalogue']['emitters']==8884,'Recovered admitted catalogue')\n                                                                                                                                                                                                                                               ^^^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 119, in ready\n    def ready(self):self.wait(\"window.realSkyState?.().status==='ready'&&!!window.realSkyState().last\")\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\theis\\.codex\\worktrees\\cp9-real-sky-integration\\salah_widget\\tools\\cp9\\native_lifecycle_check.py\", line 118, in wait\n    def wait(self,expression,timeout=60000):self.page.wait_for_function(expression,timeout=timeout)\n                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\sync_api\\_generated.py\", line 11595, in wait_for_function\n    self._sync(\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_sync_base.py\", line 115, in _sync\n    return task.result()\n           ^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_page.py\", line 1110, in wait_for_function\n    return await self._main_frame.wait_for_function(**locals_to_params(locals()))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_frame.py\", line 878, in wait_for_function\n    await self._channel.send(\"waitForFunction\", self._timeout, params)\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_connection.py\", line 69, in send\n    return await self._connection.wrap_api_call(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\workspace\\ai\\cp9-integration-20261005\\venv\\Lib\\site-packages\\playwright\\_impl\\_connection.py\", line 559, in wrap_api_call\n    raise rewrite_error(error, f\"{parsed_st['apiName']}: {error}\") from None\nplaywright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 60000ms exceeded.\n",
+      "pageErrors": [],
+      "controls": [
+        {
+          "name": "unavailable-prayer-usable",
+          "sky": {
+            "status": "unavailable",
+            "reason": null,
+            "renders": null,
+            "errors": [
+              "Native sky asset script supplied no pack"
+            ],
+            "lifecycle": null,
+            "last": null
+          },
+          "assets": {
+            "status": "unavailable",
+            "generation": 1,
+            "error": "Native sky asset script supplied no pack"
+          },
+          "host": {
+            "utcMs": 1788813000000,
+            "lat": 24.47,
+            "lon": 39.61,
+            "heightM": 0,
+            "elevationSource": "default zero; no bound eligible weather height",
+            "elevationOwner": null,
+            "generation": 0,
+            "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:76:0",
+            "tz": "Asia/Riyadh",
+            "timeScale": 0,
+            "units": "c",
+            "lp": 0,
+            "reducedMotion": true,
+            "paused": false,
+            "camera": {
+              "azDeg": 180,
+              "altDeg": 45,
+              "fovYDeg": 90,
+              "rollDeg": 0
+            },
+            "allowEstimates": true,
+            "weather": {
+              "src": "sim",
+              "temp": 72,
+              "rh": 45,
+              "vis": 20000,
+              "cloud": 60,
+              "code": 2,
+              "wind": 3
+            },
+            "prayerReady": true,
+            "moonReady": true,
+            "pbrFailed": false
+          },
+          "rows": 6,
+          "synthetic": 0,
+          "visible": "absent",
+          "canvasCount": 0,
+          "pbr": 43134,
+          "classes": "c moon-ready",
+          "next": "04:46",
+          "countdown": "5h 16m left until Fajr",
+          "ce": "2026-09-07CE",
+          "ah": "\u06471448-03-09",
+          "dateTruth": {
+            "gregorianText": "2026-09-07",
+            "hijriText": "1448-03-09",
+            "previewDay": null,
+            "previewText": "",
+            "explanation": "Advanced at Maghrib using the next day's payload. Aladhan; HJCoSA. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+            "requestedGregorianDay": "07-09-2026",
+            "loadedGregorianDay": "07-09-2026",
+            "selectedGregorianDay": "08-09-2026",
+            "timezone": "Asia/Riyadh",
+            "beforeOrAfterMaghrib": "after",
+            "maghribRollAvailable": true,
+            "maghribRollApplied": true,
+            "selectedSource": "tomorrow",
+            "calendarSource": "Aladhan",
+            "hijriMethod": "HJCoSA",
+            "unavailableReason": null,
+            "selectionReason": null,
+            "staleDateState": "current",
+            "hijriAnomaly": null
+          },
+          "prayerModel": {
+            "t": {
+              "Fajr": "04:46",
+              "Sunrise": "06:05",
+              "Dhuhr": "12:19",
+              "Asr": "15:48",
+              "Sunset": "18:33",
+              "Maghrib": "18:33",
+              "Isha": "20:03"
+            },
+            "noon": 739,
+            "decl": 0.0881528850400248,
+            "doy": 250,
+            "sunrise": 365,
+            "sunset": 1113,
+            "nowMin": 1410,
+            "nowAbs": 1410,
+            "warmEnd": 1459,
+            "dots": [
+              {
+                "k": "Fajr",
+                "abs": 286
+              },
+              {
+                "k": "Sunrise",
+                "abs": 365
+              },
+              {
+                "k": "Dhuhr",
+                "abs": 739
+              },
+              {
+                "k": "Asr",
+                "abs": 948
+              },
+              {
+                "k": "Maghrib",
+                "abs": 1113
+              },
+              {
+                "k": "Isha",
+                "abs": 1203
+              }
+            ],
+            "currentKey": "Isha",
+            "nextKey": "Fajr",
+            "nextTime": "04:46",
+            "leftMin": 316,
+            "nowEpoch": 1788813000000,
+            "nextEpoch": 1788831960000,
+            "nextDateStr": "08-09-2026",
+            "nextZone": "Asia/Riyadh",
+            "progress": 0.39579349904397704,
+            "needTomorrow": true
+          },
+          "publishes": [],
+          "worker": {
+            "submissions": [],
+            "held": 0,
+            "rawResults": 0,
+            "instances": 0
+          }
+        },
+        {
+          "name": "failure",
+          "sky": {
+            "status": "unavailable",
+            "reason": "render failure",
+            "renders": 0,
+            "errors": [
+              "Native physical-sky worker unavailable; visual withdrawn to preserve prayer responsiveness. Retry real-sky assets to restart the worker."
+            ],
+            "lifecycle": {
+              "requests": 15,
+              "accepted": 0,
+              "superseded": 0,
+              "rejected": 0,
+              "invalidations": 1,
+              "epoch": 1,
+              "disposed": false,
+              "pending": false,
+              "paused": false,
+              "availability": {
+                "status": "pending",
+                "reason": "new accepted native scene"
+              }
+            },
+            "last": null
+          },
+          "assets": {
+            "status": "ready",
+            "generation": 2,
+            "error": null
+          },
+          "host": {
+            "utcMs": 1788813000000,
+            "lat": 24.47,
+            "lon": 39.61,
+            "heightM": 0,
+            "elevationSource": "default zero; no bound eligible weather height",
+            "elevationOwner": null,
+            "generation": 0,
+            "sceneIdentity": "24.47|39.61|Asia/Riyadh|1788813000000:Asia/Riyadh:76:0",
+            "tz": "Asia/Riyadh",
+            "timeScale": 0,
+            "units": "c",
+            "lp": 0,
+            "reducedMotion": true,
+            "paused": false,
+            "camera": {
+              "azDeg": 180,
+              "altDeg": 45,
+              "fovYDeg": 90,
+              "rollDeg": 0
+            },
+            "allowEstimates": true,
+            "weather": {
+              "src": "sim",
+              "temp": 72,
+              "rh": 45,
+              "vis": 20000,
+              "cloud": 60,
+              "code": 2,
+              "wind": 3
+            },
+            "prayerReady": true,
+            "moonReady": true,
+            "pbrFailed": false
+          },
+          "rows": 6,
+          "synthetic": 0,
+          "visible": "hidden",
+          "canvasCount": 1,
+          "pbr": 43134,
+          "classes": "c moon-ready",
+          "next": "04:46",
+          "countdown": "5h 16m left until Fajr",
+          "ce": "2026-09-07CE",
+          "ah": "\u06471448-03-09",
+          "dateTruth": {
+            "gregorianText": "2026-09-07",
+            "hijriText": "1448-03-09",
+            "previewDay": null,
+            "previewText": "",
+            "explanation": "Advanced at Maghrib using the next day's payload. Aladhan; HJCoSA. Zone Asia/Riyadh; requested Gregorian day 07-09-2026; loaded day 07-09-2026.",
+            "requestedGregorianDay": "07-09-2026",
+            "loadedGregorianDay": "07-09-2026",
+            "selectedGregorianDay": "08-09-2026",
+            "timezone": "Asia/Riyadh",
+            "beforeOrAfterMaghrib": "after",
+            "maghribRollAvailable": true,
+            "maghribRollApplied": true,
+            "selectedSource": "tomorrow",
+            "calendarSource": "Aladhan",
+            "hijriMethod": "HJCoSA",
+            "unavailableReason": null,
+            "selectionReason": null,
+            "staleDateState": "current",
+            "hijriAnomaly": null
+          },
+          "prayerModel": {
+            "t": {
+              "Fajr": "04:46",
+              "Sunrise": "06:05",
+              "Dhuhr": "12:19",
+              "Asr": "15:48",
+              "Sunset": "18:33",
+              "Maghrib": "18:33",
+              "Isha": "20:03"
+            },
+            "noon": 739,
+            "decl": 0.0881528850400248,
+            "doy": 250,
+            "sunrise": 365,
+            "sunset": 1113,
+            "nowMin": 1410,
+            "nowAbs": 1410,
+            "warmEnd": 1459,
+            "dots": [
+              {
+                "k": "Fajr",
+                "abs": 286
+              },
+              {
+                "k": "Sunrise",
+                "abs": 365
+              },
+              {
+                "k": "Dhuhr",
+                "abs": 739
+              },
+              {
+                "k": "Asr",
+                "abs": 948
+              },
+              {
+                "k": "Maghrib",
+                "abs": 1113
+              },
+              {
+                "k": "Isha",
+                "abs": 1203
+              }
+            ],
+            "currentKey": "Isha",
+            "nextKey": "Fajr",
+            "nextTime": "04:46",
+            "leftMin": 316,
+            "nowEpoch": 1788813000000,
+            "nextEpoch": 1788831960000,
+            "nextDateStr": "08-09-2026",
+            "nextZone": "Asia/Riyadh",
+            "progress": 0.39579349904397704,
+            "needTomorrow": true
+          },
+          "publishes": [],
+          "worker": {
+            "submissions": [],
+            "held": 0,
+            "rawResults": 0,
+            "instances": 1
+          }
+        }
+      ],
+      "requests": [
+        "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap",
+        "https://native.cp8.test/real-sky/native-sky.css",
+        "https://native.cp8.test/config.js",
+        "https://native.cp8.test/real-sky/native-sky.js",
+        "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap",
+        "https://native.cp8.test/real-sky/native-sky.css",
+        "https://native.cp8.test/config.js",
+        "https://native.cp8.test/real-sky/native-data.js?nativeSkyGeneration=1",
+        "https://native.cp8.test/real-sky/native-data.js?nativeSkyGeneration=2",
+        "blob:null/26c1b45e-f584-4dbc-a395-1a0267137020"
+      ],
+      "seconds": 61.73400000001129
+    }
+  ]
+}

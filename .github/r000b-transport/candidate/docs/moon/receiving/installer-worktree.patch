@@ -1,0 +1,52 @@
+--- a/install.py
++++ b/install.py
+@@ -30,7 +30,7 @@
+  if root!=p.resolve().parent and root not in p.resolve().parents:raise ValueError('path escape '+key)
+  return p
+ 
+-def inventory(root):
++def inventory(root, *, worktree_gitfile=False):
+  result={}
+  for directory,dirs,files in os.walk(root,followlinks=False):
+   dirs[:]=sorted(d for d in dirs if d not in {'.git','__pycache__','.pytest_cache'})
+@@ -39,6 +39,9 @@
+    if p.is_symlink() or (hasattr(p,'is_junction') and p.is_junction()):raise ValueError('symlink/junction directory: '+str(p))
+   for n in sorted(files):
+    p=Path(directory)/n
++   # A verified linked checkout has a root .git pointer file, not a directory.
++   # Exclude Git metadata only for receiver inventory; payload .git stays forbidden.
++   if worktree_gitfile and p==root/'.git' and p.is_file() and not p.is_symlink():continue
+    if p.suffix=='.pyc':continue
+    key=p.relative_to(root).as_posix();secure(root,key);result[key]=digest(p)
+  return result
+@@ -114,7 +117,7 @@
+  report={'status':'READY','pin':m['pin'],'head':head,'branch':branch,'payloadFiles':len(m['payload']),'generatedFiles':len(m['outputs']),'writes':0}
+  if mode=='check':return report
+  if branch in m.get('protected_branches',['main','master']):raise ValueError('create a dependent Moon branch; protected branch '+branch)
+- original=inventory(root)
++ original=inventory(root,worktree_gitfile=True)
+  # Worktree-local Git path supports both a .git directory and linked worktrees.
+  lockpath=Path(git(root,'rev-parse','--git-path','moon-integration.lock'))
+  if not lockpath.is_absolute():lockpath=root/lockpath
+@@ -144,7 +147,7 @@
+    differing=[k for k in set(b)|set(expected) if b.get(k)!=expected.get(k)]
+    raise ValueError('build wrote outside declared scope: '+','.join(sorted(differing)[:20]))
+   if before_publish:before_publish(stage)
+-  if git(root,'rev-parse','HEAD')!=head or git(root,'status','--porcelain','--untracked-files=no') or inventory(root)!=original:raise ValueError('receiver changed during staging; no files installed')
++  if git(root,'rev-parse','HEAD')!=head or git(root,'status','--porcelain','--untracked-files=no') or inventory(root,worktree_gitfile=True)!=original:raise ValueError('receiver changed during staging; no files installed')
+   for key in sorted(post):
+    dest=secure(root,key)
+    if dest.exists():
+@@ -178,10 +181,10 @@
+   if not keep_temp:shutil.rmtree(temp,ignore_errors=True)
+ 
+ def main():
+- a=argparse.ArgumentParser(description=__doc__);a.add_argument('--repo',type=Path,required=True);g=a.add_mutually_exclusive_group();g.add_argument('--apply',action='store_true');g.add_argument('--check',action='store_true');g.add_argument('--verify-installed',action='store_true');a.add_argument('--receipt',type=Path);args=a.parse_args()
++ a=argparse.ArgumentParser(description=__doc__);a.add_argument('--repo',type=Path,required=True);a.add_argument('--package',type=Path,default=Path(__file__).resolve().parent);g=a.add_mutually_exclusive_group();g.add_argument('--apply',action='store_true');g.add_argument('--check',action='store_true');g.add_argument('--verify-installed',action='store_true');a.add_argument('--receipt',type=Path);args=a.parse_args()
+  if args.receipt and (args.repo.resolve()==args.receipt.absolute() or args.repo.resolve() in args.receipt.absolute().parents):
+   print('Receipt must be outside repository',file=sys.stderr);return 1
+- try:r=install(args.repo,Path(__file__).resolve().parent,'apply' if args.apply else 'verify-installed' if args.verify_installed else 'check')
++ try:r=install(args.repo,args.package,'apply' if args.apply else 'verify-installed' if args.verify_installed else 'check')
+  except Exception as e:print(json.dumps({'status':'REFUSED_OR_FAILED','error':str(e)},indent=2));return 1
+  if args.receipt:
+   dest=args.receipt.absolute();root=args.repo.resolve()

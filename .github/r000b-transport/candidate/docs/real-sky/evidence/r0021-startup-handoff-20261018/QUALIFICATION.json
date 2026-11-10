@@ -1,0 +1,395 @@
+{
+  "schema": "r0021-startup-handoff/1",
+  "status": "REVIEWED_BOUNDED_SOURCE_CORRECTION; NOT_MERGE_READY",
+  "baseCommit": "3e4bbf5c0fbc5dc850fa84b557b785f4804a8b95",
+  "runtimeTreeSha256": "29777f91d596a367910c35141bb4099a0c216fb31536d634f6612087710c5b78",
+  "sourceAndGeneratedSha256": {
+    "src/native/index.html": "65517bdc927a4b4fb44926ff6c7c9743743bf7297c037c77a1de0429331d296c",
+    "tools/build_native.py": "a0635c58da3d47b421fc4f703361a1b10b6017f67f6cca352db1fc6b0f1c9366",
+    "tests/real-sky/native-startup-handoff.test.cjs": "ac10381ac93120a7ac951f62b5162fce7575f8b5775134c80a639cf49e0ff587",
+    "tests/r000c-weather.test.cjs": "c471747554f742aebb69161c40c20822881b25b953a99263cdab5d3e401fbd36",
+    "tests/r0008-clock-harness.cjs": "b0579f5546348b3296b1beef1db21a3634324d76d254dffbc15c29cc8bc5700a",
+    "tests/r0008-timezone.cjs": "5e5e56ba480c1471927ec42ef4feb71a5b14acf4edc350422d07a6f56420349d",
+    "index.html": "5d8590fc846da212f9e203abffcc3288dddde3bfe29dda6e512090d4d92eec87",
+    "offline.html": "5a0acd898681d912e3095719e209214ea2f74c1a331931e4395aafda78c2ecd3",
+    "moon/BUILD.json": "910c696ba398d30fe43e0452f28105f6f6bc46dc4414bf7711c37d05b7e3de8f"
+  },
+  "changes": [
+    "Reuse a loader-completed accepted-second paint without discarding later dirty state.",
+    "Accepted weather/current-track/elevation publication invalidates the native consumer at frozen time too.",
+    "Initialize the advancing simulation readout independently of full rendering.",
+    "Repair the CLOCK fixture script boundary and drive the existing native boot scheduler."
+  ],
+  "tests": {
+    "pass": 331,
+    "fail": 0,
+    "todo": 4,
+    "log": "affected-tests.txt",
+    "sha256": "a9cbdbb72cd749bd821a5189039c659318cbced502b02df1ed8eefa39a38996c",
+    "scope": "Affected native startup, weather, clock, ownership and lifecycle controls; no full-suite rerun claim.",
+    "baselineFailures": "Duplicate startup render and missing weather invalidation reproduced; readout regression caught and repaired. CLOCK fixture failure also reproduced on immutable r21.",
+    "originalLogSha256": "ed1ff07c1491e6596999c69a349d9b8a8471fffab8568e88aec132ed73e8fa37",
+    "logProjection": "CRLF to LF only; original raw log retained privately."
+  },
+  "nativeFunctional": {
+    "methodSha256": "d2c746194773daa8283bb5827250a67a61972fabe7a8030843556e3fd7eacea1",
+    "resultSha256": "1a48b4c40d8beecff9f910d0f87758d8c6267ee01302b86148cf6a3fc2f7eabb",
+    "cases": [
+      {
+        "name": "chromium-before",
+        "browser": {
+          "family": "chromium",
+          "version": "148.0.7778.96",
+          "os": "Windows",
+          "machine": "AMD64"
+        },
+        "runtimeTreeSha256": "ab1980a395473ccb2dd97c6bb3bf01797d268138e4f26ef643cbe041ac2a4840",
+        "nativeHeaderUpdated": false,
+        "states": [
+          {
+            "stage": "held",
+            "file": "chromium-before-held.png",
+            "sha256": "b14657e18934b4758dbf6e2c358f5af0dffe60e59769ac8f39f407e5cca46ccf",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.42",
+              "0.42",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": null,
+            "temperature": null,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          },
+          {
+            "stage": "published",
+            "file": "chromium-before-published.png",
+            "sha256": "80d0f3b3b87ecd3ad5e2a79471a57f6eccda15ed70e8a85f3da72bb2d201b213",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.42",
+              "0.42",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": null,
+            "temperature": null,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "chromium-after",
+        "browser": {
+          "family": "chromium",
+          "version": "148.0.7778.96",
+          "os": "Windows",
+          "machine": "AMD64"
+        },
+        "runtimeTreeSha256": "29777f91d596a367910c35141bb4099a0c216fb31536d634f6612087710c5b78",
+        "nativeHeaderUpdated": true,
+        "states": [
+          {
+            "stage": "held",
+            "file": "chromium-after-held.png",
+            "sha256": "b14657e18934b4758dbf6e2c358f5af0dffe60e59769ac8f39f407e5cca46ccf",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.42",
+              "0.42",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": null,
+            "temperature": null,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          },
+          {
+            "stage": "published",
+            "file": "chromium-after-published.png",
+            "sha256": "3caef9e2ee170acfb3f6e44991807d2ea37bb2ba0df1f1e3ae070976d8e72b51",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.42",
+              "0.42",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": 2,
+            "temperature": 81,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          },
+          {
+            "stage": "contrast",
+            "file": "chromium-after-contrast.png",
+            "sha256": "9df3041347d9dc112b651515e4769b4b653926b5a66288c5d65e07bad63e3a6a",
+            "appearance": "contrast",
+            "applied": "contrast",
+            "generation": 0,
+            "rowOpacity": [
+              "0.900565",
+              "0.900565",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": 2,
+            "temperature": 81,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          },
+          {
+            "stage": "glass",
+            "file": "chromium-after-glass.png",
+            "sha256": "45b60486edc6c5d44af9c55d4c7a1e46db2e6fc501b326a7269d909a28bb0f55",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.49527",
+              "0.49527",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": 2,
+            "temperature": 81,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "firefox-before",
+        "browser": {
+          "family": "firefox",
+          "version": "150.0.2",
+          "os": "Windows",
+          "machine": "AMD64"
+        },
+        "runtimeTreeSha256": "ab1980a395473ccb2dd97c6bb3bf01797d268138e4f26ef643cbe041ac2a4840",
+        "nativeHeaderUpdated": false,
+        "states": [
+          {
+            "stage": "held",
+            "file": "firefox-before-held.png",
+            "sha256": "14eae22c33ca62dc9f97b9832fa350aa38c9da626a0aa6286fe7af85d0eef245",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.42",
+              "0.42",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": null,
+            "temperature": null,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          },
+          {
+            "stage": "published",
+            "file": "firefox-before-published.png",
+            "sha256": "5ff4c038614ac3efdd3dfc34757ba11196826cffea653812aacdc72dd0f37665",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.42",
+              "0.42",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": null,
+            "temperature": null,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "firefox-after",
+        "browser": {
+          "family": "firefox",
+          "version": "150.0.2",
+          "os": "Windows",
+          "machine": "AMD64"
+        },
+        "runtimeTreeSha256": "29777f91d596a367910c35141bb4099a0c216fb31536d634f6612087710c5b78",
+        "nativeHeaderUpdated": true,
+        "states": [
+          {
+            "stage": "held",
+            "file": "firefox-after-held.png",
+            "sha256": "14eae22c33ca62dc9f97b9832fa350aa38c9da626a0aa6286fe7af85d0eef245",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.42",
+              "0.42",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": null,
+            "temperature": null,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          },
+          {
+            "stage": "published",
+            "file": "firefox-after-published.png",
+            "sha256": "49697a6d312eeb488a1d77372a9b8efc371de418208cdff818cb466ad2eda514",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.42",
+              "0.42",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": 2,
+            "temperature": 81,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          },
+          {
+            "stage": "contrast",
+            "file": "firefox-after-contrast.png",
+            "sha256": "f482c802ff8602c8909081f360978302422de65f0a158c549b3b01f769911f65",
+            "appearance": "contrast",
+            "applied": "contrast",
+            "generation": 0,
+            "rowOpacity": [
+              "0.856303",
+              "0.856303",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": 2,
+            "temperature": 81,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          },
+          {
+            "stage": "glass",
+            "file": "firefox-after-glass.png",
+            "sha256": "13817699571f03c527705ecd80511079c88b41c56958379c0b300aea7095b6ac",
+            "appearance": "glass",
+            "applied": "glass",
+            "generation": 0,
+            "rowOpacity": [
+              "0.656563",
+              "0.656563",
+              "1",
+              "1",
+              "1",
+              "1"
+            ],
+            "headerCode": 2,
+            "temperature": 81,
+            "acceptedUtcMs": 1790352000000,
+            "sunPosition": [
+              "6.2%",
+              "7.5%"
+            ]
+          }
+        ]
+      }
+    ],
+    "limits": [
+      "Current-only provider fixture; no hourly-track-only native proof.",
+      "Screenshots are endpoints; opacity state sampled during CSS transitions is not settled contrast measurement.",
+      "White parent background does not prove backdrop integration; no continuous-pixel, motion or cost credit.",
+      "Mode selection uses the actual buckle/select/close controls. No claim to explain the owner original intermittent flicker."
+    ]
+  },
+  "contraryNativeS1": {
+    "run": "chromium-startup-handoff-r96",
+    "resultSha256": "df77f57a9845ee3379645acf4cfcd6a6ff08fa63727c1bb5aba55f60ec527af5",
+    "sourceGapsMs": [
+      81.85219764709473,
+      192.08502769470215
+    ],
+    "disposition": "INCOMPLETE. Sampled originals retain Moon/stars; uncovered source intervals do not establish continuous presentation or unique cause."
+  },
+  "independentReviews": {
+    "startup-handoff-r95b-review.json": "de9673d0fb42b037e5355f88639eb686f1ef58b582a31c161e4790f7c0cf4ff2",
+    "startup-handoff-r96-r97-review.json": "fe1ba5b539db27eb8ea2e7b9140d7b16a2fb1ff019ec49b0490c5ff625064246",
+    "frozen-weather-r97-review.json": "7ee0efb63846069f26f2a68a8aeae392851a717d91bc56f3df6cdb840a29c691"
+  },
+  "retainedOpen": [
+    "Original S1 timing/80 ms continuity and missing presentation coverage.",
+    "Callback-cost qualification, including changed weather wakeups; Firefox r76 capacity and r81 interference remain INCOMPLETE.",
+    "Remaining continuous native visual checks and historical Firefox quality rejection.",
+    "Final candidate review, exact-head/base owner merge approval, delivery, independent closure certificate and intentional issue closure."
+  ],
+  "custody": "This directory publishes the listed endpoint originals and test log. Full native recordings, raw results and reviews remain local-only; their hashes are identity references, not public availability proof."
+}

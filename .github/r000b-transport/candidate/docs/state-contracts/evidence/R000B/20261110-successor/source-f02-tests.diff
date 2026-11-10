@@ -1,0 +1,73 @@
+diff --git a/tests/weather-no-timetable-handoff.test.cjs b/tests/weather-no-timetable-handoff.test.cjs
+index 41058b8..cad5620 100644
+--- a/tests/weather-no-timetable-handoff.test.cjs
++++ b/tests/weather-no-timetable-handoff.test.cjs
+@@ -204,13 +204,13 @@ for(const kind of ['simulation','forecast'])for(const missingModel of [false,tru
+  sameDeck(read(h),before);
+  h.run('render();paintClouds(simNow()/1000)');assert(read(h).ready);assert(h.raster.currentFills>0);assert.equal(h.run('cloudPublicationCurrent(__receiptA)'),false);
+ });
+-function installPresent(h,leaseMs){
++function installPresent(h,leaseMs,state='wet'){
+  const t=copy(h.run('currentWeatherTarget()')),now=h.clock.wall;
+  h.ctx.__presentInput={scope:'simulation-fixture',provider:'Synthetic QA',product:'present/nearby contract',policy:'synthetic-present-v1',
+   target:{generation:t.generation,lat:t.lat,lon:t.lon},measurementAt:now,validFrom:now,validUntil:now+leaseMs,retrievedAt:now,
+   frameAt:now,issuedAt:now,units:'categorical',footprint:{kind:'point',lat:t.lat,lon:t.lon,coverage:'target'},
+   quality:{status:'qualified',sampling:'direct',localObservationAt:now,operationalHealth:'operational'},
+-  present:{state:'wet',type:'rain',lightning:'unavailable',quantity:null}};
++  present:{state,type:state==='wet'?'rain':null,lightning:'unavailable',quantity:null}};
+  assert(h.run('(weatherSynthetic=admitWeatherFixture(__presentInput,currentWeatherTarget(),Date.now())).ok'));
+ }
+ for(const renewedCandidate of [false,true])test('F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed='+renewedCandidate,async()=>{
+@@ -223,6 +223,52 @@ for(const renewedCandidate of [false,true])test('F01 consumed direct evidence le
+  if(renewedCandidate)assert.notEqual(h.run('weatherDecision().present.evidence'),consumed);
+  await refused(h);
+ });
++
++// F02: a stable model record does not renew separately consumed present evidence.
++for(const [elapsed,eligible] of [[999,true],[1000,false],[1001,false]])
++test('F02 same-record present lease reaches no-model raster at '+elapsed+'ms',async()=>{
++ const h=await fixture({hash:'&simWx=0&simCloud=0'});installPresent(h,1000);
++ h.run('render();paintClouds(simNow()/1000)');
++ h.ctx.__recordA=h.run('weather');h.ctx.__receiptA=h.run('cloudPublicationReceipt()');
++ const before=read(h);assert.deepEqual(before.cov,[.9,.85,.3]);assert(h.raster.currentFills>0);
++ h.at(890000+elapsed);h.run('today=null;');
++ assert.equal(h.run('weather===__recordA'),true,'the actual SIM record is deliberately unchanged');
++ assert.equal(h.run('weatherDecision().present.available'),eligible);
++ assert.equal(h.run('cloudPublicationCurrent(__receiptA)'),eligible,'F02 expired present lease must fence its old receipt');
++ h.run('render();paintClouds(simNow()/1000)');
++ const after=read(h);assert.equal(after.population,before.population,'expiry cannot reseed');
++ if(eligible){assert.deepEqual(after.cov,before.cov);assert(after.ready);assert(h.raster.currentFills>0);}
++ else{clearDeck(h);assert.equal(h.run('weatherDecision().renderCode'),0,'underlying SIM clear remains available');}
++});
++for(const state of ['wet','dry'])test('F02 same-record replacement publishes the actual '+state+' receipt',async()=>{
++ const h=await fixture({hash:'&simWx=0&simCloud=0'});installPresent(h,60000);
++ h.run('render();paintClouds(simNow()/1000)');
++ h.ctx.__recordA=h.run('weather');h.ctx.__receiptA=h.run('cloudPublicationReceipt()');
++ h.ctx.__evidenceA=h.run('_cloudPublication.decision.present.evidence');const before=read(h);
++ installPresent(h,60000,state);h.ctx.__evidenceB=h.run('weatherDecision().present.evidence');
++ assert.notEqual(h.ctx.__evidenceB,h.ctx.__evidenceA,'new source admission, not metadata renewal');
++ assert.equal(h.run('weather===__recordA'),true);
++ h.run('render();paintClouds(simNow()/1000)');
++ assert.notEqual(h.run('cloudPublicationReceipt()'),h.ctx.__receiptA,'F02 actual new evidence must receive a new publication identity');
++ assert.equal(h.run('_cloudPublication.decision.present.evidence===__evidenceB'),true);
++ assert.equal(h.run('cloudPublicationCurrent(__receiptA)'),false,'pending old completion cannot restore superseded evidence');
++ const after=read(h);assert.equal(after.population,before.population);assert.deepEqual(after.phase,before.phase);
++ assert.deepEqual(after.targets,state==='wet'?[.9,.85,.3]:[0,0,0]);
++ after.cov.forEach((v,i)=>assert(Math.abs(v-(state==='wet'?before.cov[i]:before.cov[i]*.92))<1e-12,'ordinary same-record replacement keeps one easing step'));
++ const current=h.run('cloudPublicationReceipt()');h.run('render();paintClouds(simNow()/1000)');
++ assert.equal(h.run('cloudPublicationReceipt()'),current,'unchanged current evidence remains idempotent');
++});
++test('F02 no-model same-record replacement stays withheld until genuine full publication',async()=>{
++ const h=await fixture({hash:'&simWx=0&simCloud=0'});installPresent(h,60000);
++ h.run('render();paintClouds(simNow()/1000)');h.ctx.__recordA=h.run('weather');h.ctx.__receiptA=h.run('cloudPublicationReceipt()');
++ const population=read(h).population;installPresent(h,60000);h.run('today=null;');
++ assert.equal(h.run('weather===__recordA'),true);assert(h.run('weatherDecision().present.available'));
++ await refused(h);assert.equal(read(h).population,population);
++ assert(h.run('adoptPrayerBundle(__fixturePrayer,"08-09-2026",null,true,false)'));
++ h.run('render();paintClouds(simNow()/1000)');assert(read(h).ready);assert(h.raster.currentFills>0);
++ assert.equal(read(h).population,population);assert.equal(h.run('cloudPublicationCurrent(__receiptA)'),false);
++});
++
+ // Mutation oracles must fail at their named consumed-authority assertion, not setup.
+ const handoffMutants=[
+  ['missing-model guard','&&model()!==null&&','&&',async source=>{

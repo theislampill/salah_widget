@@ -1,0 +1,24 @@
+{
+  "schema": "r000c-firefox-scheduling-source-inspection/v1",
+  "installedBrowser": "firefox-1522 /150.0.2 /20260505203843",
+  "officialPatchRevision": "c8604ecd97ffcc50b6c269df544b7cc36f258d3b",
+  "officialBaseRevision": "c7fa3c91990bac266ee99a9e31863c202469f369",
+  "matchedInstalledFile": {
+    "archive": "firefox/omni.ja",
+    "member": "chrome/juggler/content/TargetRegistry.js",
+    "sha256": "b430c0f6a9f946eb2082c85948f19d19bbe9233124055562f3e79c45fb66a98e",
+    "officialBytesEqual": true
+  },
+  "limitations": [
+    "This is installed automation JS byte identity plus the associated upstream revision; not a reproducible binary/source attestation for C++.",
+    "The initially inspected v1.60.0 tag differed from installed JS; its files are retained as excluded source candidates.",
+    "Installed playwright.cfg adds dom.permissions.testing.enabled=true compared with matching roll; no scheduling-related additional pref was found.",
+    "Observed last-render summaries are not raw rAF callbacks. Native content visibility does not expose PresShell activity.",
+    "Headless missing pixels are a distinct unresolved failure. No cause or fix has been certified."
+  ],
+  "concreteBranch": [
+    "PresShell::ComputeActiveness consults BrowsingContext/BrowserChild activity separately from native DOM visibility.",
+    "SetIsActive calls RefreshDriver::SetActivity; inactive timer doubles and PaintIfNeeded returns false while throttled."
+  ],
+  "nextDiagnostic": "One twenty-second unchanged headed passive probe with process-local MOZ_LOG=timestamp,PresShell:5,nsRefreshDriver:5; no preference, source, foreground or recorder change."
+}

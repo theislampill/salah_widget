@@ -1,0 +1,879 @@
+{
+  "schema_version": 1,
+  "reviewer": "A",
+  "reviewed_at_utc": "2026-10-08T12:43:47.908936+00:00",
+  "scope": "Independent bounded astronomical/visual source and retained capture review for existing PR42 local V45; read-only repository; no browser launch, solver/test campaign, Git write or child agent.",
+  "verdict": "No newly demonstrated V45 astronomical/visual blocker in inspected scope; joined qualification remains open.",
+  "identity": {
+    "worktree": "workspace",
+    "declared_base": "c1a480c97e9af188cf57704502d818c0584cf265",
+    "observed_local_head": "d42f31e6fbc55b735ab06d6189462aba182e5fed",
+    "runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+    "index_sha256": "c9579ac9aa9d158cc4ad0ce4288781f3ff3db40afdc4820510203e6e64c80a7a",
+    "runtime_files_verified": 135,
+    "mismatches": [],
+    "aggregate_verified": true,
+    "reviewed_source_sha256": {
+      "real-sky/native-preview.mjs": "93672ddd9bfce3847ac6e846d10eb94368f7228a23fe0e7046e6ff967ecbe192",
+      "tests/real-sky/native-preview.test.mjs": "214b80da9ef3391b49d1800e264b9ea9d9dc1ad231e5d38b248b822c96dcefd7",
+      "real-sky/core/src/projection.mjs": "d76857e2b12889f2848a62861aab4c089cf86fce1559a343036e096765438343",
+      "real-sky/native-host-hooks.js": "8c2f19380fd002795ef01aa55c509ab6ed5ed71eec1f5512036ae3dae743bf8f",
+      "src/native/index.html": "27bc8a08419869056dddebac2c3c8f9b9bfaa44407ca429a2ebcf58eef29b7f9",
+      "DESIGN.md": "a550fbf819d28ecc854216d61e65a5cd2a2a4aa56df3e34acaa1a72346d08648",
+      "moon/src/moon-detail.mjs": "3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0",
+      "real-sky/native-composition.mjs": "6c6454eac4d55003bbb171ff566fe4a30c9c676ed37354a3503b4af3eae1f671",
+      "docs/real-sky/STARTUP_CLOUD_HOTFIX.md": "b97c99f99a2213d8b0915a3e9fe5a8409e659f6c0e4de1d3a317ab5ebb3636fb",
+      "real-sky/native-star-preview.mjs": "217f9eab7361e5f55aca8eef2a64ea0bd72e3a58f58dce33d2ec607d0c6f2674",
+      "tests/real-sky/native-star-preview.test.mjs": "b579e96c69e7776d02635a58229a6e07503a1d4d0dca012fb0fd8d22dafddec0"
+    },
+    "attachment": {
+      "path": "C:\\Users\\theis\\AppData\\Local\\Temp\\codex-clipboard-8cf1e25b-72ec-4c94-b72d-828468211f9c.png",
+      "bytes": 195698,
+      "sha256": "fe1ba82b0818aa7e840ff1ad7e130c15bc98af7131a8a14f5f9ea44c684a05f4",
+      "capture_identity": "unverified"
+    }
+  },
+  "dispositions_allowed": [
+    "demonstrated regression",
+    "harness flaw",
+    "documented limit",
+    "coverage gap",
+    "future enhancement",
+    "supported"
+  ],
+  "scenarios": [
+    {
+      "id": "A01",
+      "reviewer": "A",
+      "scenario": "V45 runtime and retained owner custody",
+      "invariant": "Only exact source/runtime identities support current claims",
+      "expected": "Fresh layer receipt equals the current served runtime; historical reuse is limited to byte-identical owners.",
+      "observed": "Independently read and hashed all 135 runtime files: zero byte/hash mismatches; sorted-record aggregate equals V45. Served index equals c9579ac9aa9d158cc4ad0ce4288781f3ff3db40afdc4820510203e6e64c80a7a. All eight V38 owner comparisons equal current bytes; six owners in both V37 direction receipts also equal current.",
+      "disposition": "supported",
+      "source": [],
+      "evidence": [
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\results.json",
+          "sha256": "3703b85fdfee669d3cef4d4ad8c9c43a8847679f94c097b35a67cdb30cf8e3e2",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\unchanged-field-owners-v45.json",
+          "sha256": "832ed25e4923f230314e49aaa9396193fb29fc9bdfcb77f11f8d2f39ba426f52",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": "Narrow field-owner reuse; not new worker/lifecycle/throughput qualification"
+          }
+        }
+      ],
+      "uncertainty": "Remote main/PR state is parent-provided; local HEAD was read as d42f31e6fbc55b735ab06d6189462aba182e5fed. No GitHub effect was performed.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A02",
+      "reviewer": "A",
+      "scenario": "Orlando Maghrib, physical Sun about -8.64 degrees, south-facing camera",
+      "invariant": "Subordinate twilight horizon warmth without an isolated timetable spotlight; raw radiance retained",
+      "expected": "Smooth solar-only display shoulder starts at sqrt(2) atmospheric median and approaches twice that median; no screen relocation or subtraction of non-solar contributors.",
+      "observed": "Source copies source/solar arrays, removes at most the solar share, and keeps the raw input field. Actual before/after atmosphere/widget montage shows a broad subdued lower-right rise after correction, with no isolated amber pool apparent. x280 peak/upper changes 3.6641 to 2.0281; x305 3.3921 to 1.8168; x30 is unchanged.",
+      "disposition": "supported",
+      "source": [
+        {
+          "path": "workspace\\real-sky\\native-preview.mjs",
+          "line_start": 64,
+          "line_end": 192,
+          "sha256": "93672ddd9bfce3847ac6e846d10eb94368f7228a23fe0e7046e6ff967ecbe192",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\tests\\real-sky\\native-preview.test.mjs",
+          "line_start": 172,
+          "line_end": 197,
+          "sha256": "214b80da9ef3391b49d1800e264b9ea9d9dc1ad231e5d38b248b822c96dcefd7",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\spatial-v38-proof\\exact-scene-atmosphere-widget.png",
+          "sha256": "eff0b93b56b8783c3197375e85812269fd45b53037a3042394614909f351afe6",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": "Source-bound V37/V38 proof; montage/profile receipt does not independently name complete before/after runtime trees"
+          }
+        },
+        {
+          "path": "local:h8\\spatial-v38-proof\\spatial-luminance-chroma.png",
+          "sha256": "1ba60c5e2227bfc66d7b433c19d25e00b0afb98d21666354503b647a79c2109c",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\spatial-v38-proof\\profiles-summary.json",
+          "sha256": "78dffa5f4dd902c5af0fd6a5b1fcbeacf739617a56919958dd360ead0d1582e6",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\complete.png",
+          "sha256": "b1c17fd1a56df2149232b59e9fb9cfaed3c4a12b12568e9c561946e681430217",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "This is a declared calendar display bound, not a calibrated angular twilight model. The twice-median bound does not suppress an independently bright non-solar source. Tests were read, not rerun by A.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A03",
+      "reviewer": "A",
+      "scenario": "Late-twilight -12 to -18 degree handoff",
+      "invariant": "No return of the uncorrected solar highlight during night adaptation",
+      "expected": "Recover only independently owned non-solar background on the legacy night path; keep solar light on its corrected display path.",
+      "observed": "native-preview.mjs computes neutral = source - raw solar, blends only its old/new mappings, and leaves corrected solar on the mapped path. A retained temporal negative in the test source explains the previous 35/26/14 to 134/115/63 relighting and checks falling solar flux, chroma and step sizes.",
+      "disposition": "supported",
+      "source": [
+        {
+          "path": "workspace\\real-sky\\native-preview.mjs",
+          "line_start": 168,
+          "line_end": 192,
+          "sha256": "93672ddd9bfce3847ac6e846d10eb94368f7228a23fe0e7046e6ff967ecbe192",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\tests\\real-sky\\native-preview.test.mjs",
+          "line_start": 157,
+          "line_end": 169,
+          "sha256": "214b80da9ef3391b49d1800e264b9ea9d9dc1ad231e5d38b248b822c96dcefd7",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\joined-v38-chromium-evening-overcast\\star-timeline.json",
+          "sha256": "ca621af58f4ea6f7db0617f59ea461b0d8e3bdc55eacfbebdfd5f37b4741819b",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "053c073f1a54a0b0f2dc44c685758100fe9d4353b23de0612c55b0d5bacbd0b3",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "Source and retained settled timeline support the operator; A did not independently watch the entire final V45 night handoff. Final traversals are the second planned gate.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A04",
+      "reviewer": "A",
+      "scenario": "Matched -8.64 degree dusk/dawn with 90/270 degree cameras",
+      "invariant": "Physical twilight direction stays in rigid camera space independently of the decorative upper-left Sun",
+      "expected": "Dusk solar-side warmth lies toward west; dawn solar-side warmth toward east; moving the enlarged body must not translate the physical horizon or twilight.",
+      "observed": "Inspected actual east/west camera crops: dusk warmth is stronger in az270, dawn in az90, with cool opposite views. Source disables twilight aerosol relocation through +10 degrees and smoothly releases the daytime forward excess over +10 to +20 degrees. Six relevant owners in both V37 receipts match current bytes.",
+      "disposition": "supported",
+      "source": [
+        {
+          "path": "workspace\\real-sky\\native-preview.mjs",
+          "line_start": 9,
+          "line_end": 40,
+          "sha256": "93672ddd9bfce3847ac6e846d10eb94368f7228a23fe0e7046e6ff967ecbe192",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\real-sky\\core\\src\\projection.mjs",
+          "line_start": 21,
+          "line_end": 49,
+          "sha256": "d76857e2b12889f2848a62861aab4c089cf86fce1559a343036e096765438343",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\real-sky\\native-host-hooks.js",
+          "line_start": 18,
+          "line_end": 35,
+          "sha256": "8c2f19380fd002795ef01aa55c509ab6ed5ed71eec1f5512036ae3dae743bf8f",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\joined-v37-chromium-dusk-spatial\\az270-after-complete.png",
+          "sha256": "c7a63faba5eeab6bbc560150f569f3c6a3ff9f1f7671151589c9685d743bffc2",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "814dadc44c413bb177571a59b74ef00c71e1a9c5d4bbd7ebd3c768ad5a6e0246",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v37-chromium-dusk-spatial\\az90-after-complete.png",
+          "sha256": "6274d343c984cbd5eb7c5a248c61227ff0960e249253223e50966fd182c3771c",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "814dadc44c413bb177571a59b74ef00c71e1a9c5d4bbd7ebd3c768ad5a6e0246",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v37-chromium-dawn-spatial\\az90-after-complete.png",
+          "sha256": "b8edf6ddc863e5bc99817899538f9b2aa924faf74a298be1193152f6bb35fd61",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "814dadc44c413bb177571a59b74ef00c71e1a9c5d4bbd7ebd3c768ad5a6e0246",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v37-chromium-dawn-spatial\\az270-after-complete.png",
+          "sha256": "6d1f7b35a899afbf6f8123ea233e09ccbecb6a5344c5a8019aa6cd6ba38a8aef",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "814dadc44c413bb177571a59b74ef00c71e1a9c5d4bbd7ebd3c768ad5a6e0246",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v37-chromium-dusk-spatial\\results.json",
+          "sha256": "b0cb06480fe05721fbf99e85d54beb93a210c4cb61db8e632dd33611e3552f00",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "814dadc44c413bb177571a59b74ef00c71e1a9c5d4bbd7ebd3c768ad5a6e0246",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v37-chromium-dawn-spatial\\results.json",
+          "sha256": "ca9dd079044a2942f3026556ac1f31efcff317a7e01f23df7189c0dccf984db2",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "814dadc44c413bb177571a59b74ef00c71e1a9c5d4bbd7ebd3c768ad5a6e0246",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "Historical camera captures qualify unchanged field owners, not the latest whole-runtime worker availability. A does not require moving physical twilight behind the decorative Sun.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A05",
+      "reviewer": "A",
+      "scenario": "True dawn / false dawn semantics",
+      "invariant": "Prayer events do not paint an invented dawn band or cone",
+      "expected": "Fajr remains a timetable marker; dawn is physical twilight; false dawn is fail-closed.",
+      "observed": "Source retains the deprecated debugDawn no-op and the unpainted dawn policy. Inspected east/west dawn crops show a continuous camera-dependent horizon gradient rather than a detached horizontal strip or diagonal cone.",
+      "disposition": "supported",
+      "source": [
+        {
+          "path": "workspace\\src\\native\\index.html",
+          "line_start": 733,
+          "line_end": 734,
+          "sha256": "27bc8a08419869056dddebac2c3c8f9b9bfaa44407ca429a2ebcf58eef29b7f9",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\src\\native\\index.html",
+          "line_start": 2713,
+          "line_end": 2719,
+          "sha256": "27bc8a08419869056dddebac2c3c8f9b9bfaa44407ca429a2ebcf58eef29b7f9",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\DESIGN.md",
+          "line_start": 117,
+          "line_end": 123,
+          "sha256": "a550fbf819d28ecc854216d61e65a5cd2a2a4aa56df3e34acaa1a72346d08648",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\joined-v37-chromium-dawn-spatial\\az90-after-complete.png",
+          "sha256": "b8edf6ddc863e5bc99817899538f9b2aa924faf74a298be1193152f6bb35fd61",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "814dadc44c413bb177571a59b74ef00c71e1a9c5d4bbd7ebd3c768ad5a6e0246",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v37-chromium-dawn-spatial\\az270-after-complete.png",
+          "sha256": "6d1f7b35a899afbf6f8123ea233e09ccbecb6a5344c5a8019aa6cd6ba38a8aef",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "814dadc44c413bb177571a59b74ef00c71e1a9c5d4bbd7ebd3c768ad5a6e0246",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "A did not independently validate every calculation method or prayer time; no prayer-clock correctness promotion follows from these pixels.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A06",
+      "reviewer": "A",
+      "scenario": "V45 normal, equatorial zenith, arctic and antarctic solar geometry",
+      "invariant": "Solar body presence follows the accepted physical Sun, with finite rigid projection",
+      "expected": "Native atmospheric altitude matches accepted astronomy; polar night suppresses the body even where adjusted prayer rows exist; the enlarged body remains a stated display convention.",
+      "observed": "Current geometry receipt records 19 fixed critical-time cases. Read samples track native rounded altitude against physical altitude and pass no-body-below-horizon. Inspected V45 north-equinox daytime and equator near-zenith images show one defined bright body; arctic winter noon at physical -4.13 degrees shows twilight with no solar body.",
+      "disposition": "supported",
+      "source": [
+        {
+          "path": "workspace\\src\\native\\index.html",
+          "line_start": 2627,
+          "line_end": 2629,
+          "sha256": "27bc8a08419869056dddebac2c3c8f9b9bfaa44407ca429a2ebcf58eef29b7f9",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\real-sky\\core\\src\\projection.mjs",
+          "line_start": 21,
+          "line_end": 49,
+          "sha256": "d76857e2b12889f2848a62861aab4c089cf86fce1559a343036e096765438343",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\joined-v45-chromium-geometry-edges\\results.json",
+          "sha256": "4ca139e9328b4793192a47f297b2fb8c965bc45dbf4119d9da1655aee2ef312f",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-geometry-edges\\geometry.json",
+          "sha256": "13a210852795211ba74d6f7bcac6f49ffb6e952ab30e4e7ea4ee572925361af3",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-geometry-edges\\north-equinox\\16.png",
+          "sha256": "c523af9160a143735b39a91e8cc16e5aec9aeabf77663c5a1dd1a9d861da761e",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-geometry-edges\\equator-zenith\\12.1.png",
+          "sha256": "279b20d69b0e5c4c8c7df37d33259ea1658a3b663221df1459b6798234509d9e",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-geometry-edges\\arctic-winter\\12.png",
+          "sha256": "f577b95c34eb02f4213a0c4296a033e3d5ceea817ee3da76035ec728ad23a37b",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "Fixed geometry stills are not live weather, continuous solar motion, lunar refinement or an independently rerun external ephemeris comparison.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A07",
+      "reviewer": "A",
+      "scenario": "Enlarged calendar Sun / surface-brightness display mapping",
+      "invariant": "Display conventions are disclosed separately from astronomical or photometric claims",
+      "expected": "Rigid 180/45/90 camera and point-source photometry remain distinct from the enlarged corner body; flux-to-surface-brightness conversion affects a display copy.",
+      "observed": "Source divides display background by perspective pixel solid angle relative to its centre, meters the physical field before decorative registration, and scales channels by common luminance mapping. The Sun size/colour comparisons separate size from radial colour and retain rejected white-core/orange-collar controls.",
+      "disposition": "documented limit",
+      "source": [
+        {
+          "path": "workspace\\real-sky\\native-preview.mjs",
+          "line_start": 80,
+          "line_end": 120,
+          "sha256": "93672ddd9bfce3847ac6e846d10eb94368f7228a23fe0e7046e6ff967ecbe192",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\DESIGN.md",
+          "line_start": 27,
+          "line_end": 42,
+          "sha256": "a550fbf819d28ecc854216d61e65a5cd2a2a4aa56df3e34acaa1a72346d08648",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\DESIGN.md",
+          "line_start": 372,
+          "line_end": 386,
+          "sha256": "a550fbf819d28ecc854216d61e65a5cd2a2a4aa56df3e34acaa1a72346d08648",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\solar-final-comparison\\rise-comparison.png",
+          "sha256": "b4f1e6a346fd852a731541c705cfbf498e983ef2fcf28e0d67464986a6fe4d06",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": "Historical body-only comparison; not promoted to whole-current-runtime qualification"
+          }
+        },
+        {
+          "path": "local:h8\\solar-final-comparison\\set-comparison.png",
+          "sha256": "ee40707d3c4c73590458cb859f4f2a84aef29b2eeecadcaf22377763a2a440d7",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\solar-final-comparison\\results.json",
+          "sha256": "5de40a07d7aaa61d6444107bf6fe2ee8b6444bb2093aef5a8956904cec1479bb",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "Solar angular size and slot, exposure target, twilight white point, cloud lighting and optical graphics are art-directed calendar/display choices. Near-zenith/site reference use is not local angular photometric calibration; no full multiple-scattering or measured cloud phase claim.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A08",
+      "reviewer": "A",
+      "scenario": "Half-waning clear/humid lunar veil control and fresh V45 half",
+      "invariant": "Terrain/terminator/Earthshine must not receive an unrelated clear-humidity corona veil",
+      "expected": "Opaque terrain comes after native optical background; clear humid air alone gives corona zero; preserve foreground atmosphere/clouds once.",
+      "observed": "The old complete crop is visibly lifted across the dark half. Removing only corona and correcting order remove the same 13,831 changed pixels; old disc mean lift is 19.1326 codes. Current source uses .sky.after(canvas), and the fresh V45 DOM receipt places terrain after native SVG with corona opacity 0 in clear/humid weather. Current complete/nearest crops retain terrain and a faint textured dark limb.",
+      "disposition": "supported",
+      "source": [
+        {
+          "path": "workspace\\moon\\src\\moon-detail.mjs",
+          "line_start": 72,
+          "line_end": 78,
+          "sha256": "3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\src\\native\\index.html",
+          "line_start": 2727,
+          "line_end": 2733,
+          "sha256": "27bc8a08419869056dddebac2c3c8f9b9bfaa44407ca429a2ebcf58eef29b7f9",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\lunar-veil-v37-comparison\\before-after-actual-crops.png",
+          "sha256": "ad6e655693f32bb2fbad6e7bd365de2267d3a8bf25eff62c2c8215e2aebab308",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": "Matched V36/V37 layer ablation with exact reused surface per receipt"
+          }
+        },
+        {
+          "path": "local:h8\\lunar-veil-v37-comparison\\source-layers-diagnostic.png",
+          "sha256": "2ba9befa6b55ce1cab51f8715558d39a9b23709eb99a1d989e3c74c51c00d04d",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\lunar-veil-v37-comparison\\receipt.json",
+          "sha256": "ed94279bf1b1c7840a1c80f5ae2909f298814f265bbd3f044e0ac6ed52e0e126",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\lunar-veil-v37-comparison\\corona-footprint.json",
+          "sha256": "7a094a943c4303b5b0bcd3e07e91063b8f2c6833f33088c78367a5655f910765",
+          "source_identity": {
+            "capture_runtime_tree_sha256": null,
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\layers.json",
+          "sha256": "426ebb15285797988972f54b3f87bcc207a2df1d67453b4ec56e9c3911ee3c05",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\complete-moon-nearest.png",
+          "sha256": "5634591c6728c53710a2e3d4e3091970fe056207ded3cc28bdd00ee7e6c0f7b3",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "V45 is a fresh, advancing phase-bucket surface ef394aa9ad67391b5268174b8843221f5e1242757cc64dbc9b7395f70626eb32, not claimed pixel-identical to the earlier 50700308a3b9fdd13c23a041fec836967b65a0615a6c1a3615e310a4f181feed fixture.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A09",
+      "reviewer": "A",
+      "scenario": "Native lunar opacity and physical/calendar separation",
+      "invariant": "Opaque lunar geometry blocks distant stars while retaining foreground air; deliberate native phase override is not the real ephemeris",
+      "expected": "Full-coverage direct stellar/diffuse contribution is zero regardless of calendar opacity; native display and physical sky Moon identities remain separate.",
+      "observed": "joinLunarPixel uses direct*(1-coverage), preserving gas and scaling only surface emphasis by group opacity. Fresh half capture shows no visible stellar leak through the disc. Native fixture is fraction .5, waning, +25 degrees; real sky Moon in its receipt is -29.73 degrees and fraction .08091. Native disc rectangle is mostly in frame at about x214/y4, 108 by108 pixels.",
+      "disposition": "supported",
+      "source": [
+        {
+          "path": "workspace\\moon\\src\\moon-detail.mjs",
+          "line_start": 31,
+          "line_end": 40,
+          "sha256": "3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\moon\\src\\moon-detail.mjs",
+          "line_start": 98,
+          "line_end": 114,
+          "sha256": "3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\real-sky\\native-composition.mjs",
+          "line_start": 47,
+          "line_end": 51,
+          "sha256": "6c6454eac4d55003bbb171ff566fe4a30c9c676ed37354a3503b4af3eae1f671",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\docs\\real-sky\\STARTUP_CLOUD_HOTFIX.md",
+          "line_start": 61,
+          "line_end": 77,
+          "sha256": "b97c99f99a2213d8b0915a3e9fe5a8409e659f6c0e4de1d3a317ab5ebb3636fb",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\complete.png",
+          "sha256": "b1c17fd1a56df2149232b59e9fb9cfaed3c4a12b12568e9c561946e681430217",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\complete-moon-nearest.png",
+          "sha256": "5634591c6728c53710a2e3d4e3091970fe056207ded3cc28bdd00ee7e6c0f7b3",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\atmosphere-only.png",
+          "sha256": "0ab5c42d788196b8de233c7f77d1a5634f254b7394b96d42b14c0efc2cb3ea05",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\state.json",
+          "sha256": "505395f159b623de66915b4cb10c990258e337fb91665e9d5827f0f63fe9ea2d",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\layers.json",
+          "sha256": "426ebb15285797988972f54b3f87bcc207a2df1d67453b4ec56e9c3911ee3c05",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "Supports this inspected half-phase and the general source operator, not visual acceptance of every phase, altitude, cloud or cold-start frame. Near-dark foreground air is expected and is not lunar transparency.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A10",
+      "reviewer": "A",
+      "scenario": "V45 Firefox normal1x near-half DPR3 continuity versus V43",
+      "invariant": "No empty visible lunar slot after the first current terrain publication; quality labels stay honest",
+      "expected": "Retain only geometrically current V5 terrain and replace within the unchanged .0416 device-pixel bound; distinguish terrain-preview from refined quality.",
+      "observed": "Scoped V45 repeat ran 660.109 seconds with 361 captures, first terrain preview 22.296 seconds, first refinement 178.437 seconds, zero withdrawals and no recorded visible-layer gaps after initial publication. V43 negative had no refined result and 15 withdrawals, with visible empty slots around 240 and480 seconds. Timeline and before/after actual captures show the difference.",
+      "disposition": "supported",
+      "source": [],
+      "evidence": [
+        {
+          "path": "local:h8\\continuity-v45-proof\\REGRESSION.json",
+          "sha256": "7bf1b07588dc1b3b5826c11cb081e5b9b4d50b62909b2a87cc4cbc3e50be8ee7",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": "Contains separately bound V43 failing control and V45 corrected case"
+          }
+        },
+        {
+          "path": "local:h8\\continuity-v45-proof\\before-after.png",
+          "sha256": "6f5232f855d3cce1d09dc57428c995b10581febbc837f3112a2f266ef4dd7d6f",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\continuity-v45-proof\\timeline.png",
+          "sha256": "2f8dddc1d68142dbe948d424e63ca450fa637152aee6105f240974a2b894ffcb",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "Initial cold acquisition remains a visible availability limit; V45 has preview-quality intervals. This is not instantaneous first paint, universal latency, every-frame refinement, or 60x/600x qualification.",
+      "next_action": null,
+      "blocking": false
+    },
+    {
+      "id": "A11",
+      "reviewer": "A",
+      "scenario": "Latest star-richness attachment versus retained V38 evening-overcast and current fresh half",
+      "invariant": "Use matched scene, weather, camera, display tier and actual identity before declaring lost stars",
+      "expected": "Compare current V45 to V38 at the same accepted UTC2026-10-08T00:00Z, south-facing camera, overcast and declared Moon fixture; preserve full-compositor and actual visible-source diagnostics.",
+      "observed": "Attachment bytes were read: SHA256 fe1ba82b0818aa7e840ff1ad7e130c15bc98af7131a8a14f5f9ea44c684a05f4. It visually resembles retained star-6 but has a different cloud shape; its capture runtime/UTC is unbound. Verified star-6 is V38, -13.03496 degree Sun, overcast; current fresh-half is clear at about -8.798 degrees. V38 timeline shows contrast-driven return (0 until -5.35 degrees; at -6.44 counts29; -8.64 counts888; -13.03 counts1010).",
+      "disposition": "coverage gap",
+      "source": [
+        {
+          "path": "workspace\\real-sky\\native-star-preview.mjs",
+          "line_start": 54,
+          "line_end": 101,
+          "sha256": "217f9eab7361e5f55aca8eef2a64ea0bd72e3a58f58dce33d2ec607d0c6f2674",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\tests\\real-sky\\native-star-preview.test.mjs",
+          "line_start": 12,
+          "line_end": 20,
+          "sha256": "b579e96c69e7776d02635a58229a6e07503a1d4d0dca012fb0fd8d22dafddec0",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\joined-v38-chromium-evening-overcast\\star-6.png",
+          "sha256": "3ca9c62d34b4dbe43526ff320c9542699762e6f90b7914ccbaaefe4073644086",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "053c073f1a54a0b0f2dc44c685758100fe9d4353b23de0612c55b0d5bacbd0b3",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v38-chromium-evening-overcast\\star-timeline.json",
+          "sha256": "ca621af58f4ea6f7db0617f59ea461b0d8e3bdc55eacfbebdfd5f37b4741819b",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "053c073f1a54a0b0f2dc44c685758100fe9d4353b23de0612c55b0d5bacbd0b3",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v38-chromium-evening-overcast\\results.json",
+          "sha256": "7cdfe73ba9c1f180bc57f20140e0f8c0299f481a0ab88399bd468fc4aae822d6",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "053c073f1a54a0b0f2dc44c685758100fe9d4353b23de0612c55b0d5bacbd0b3",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\complete.png",
+          "sha256": "b1c17fd1a56df2149232b59e9fb9cfaed3c4a12b12568e9c561946e681430217",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "Count diagnostics support source attribution, not aesthetic acceptance. Current asynchronous catalogue admission keeps the pinned schema/hash and the same numeric renderer, but source similarity is not enough to accept latest actual star richness. A did not infer a regression from unmatched images.",
+      "next_action": "Use the already-planned bounded exact-input V38/current richness comparison; return compact receipts plus complete crops and visible catalogue/diffuse tier. No additional campaign requested.",
+      "blocking": false
+    },
+    {
+      "id": "A12",
+      "reviewer": "A",
+      "scenario": "Final V45 joined 27h60x/600x and49h600x traversals",
+      "invariant": "Latest worker/currentness changes require final-runtime whole-traversal evidence",
+      "expected": "Join actual captured atmosphere/stars/Moon/currentness/quality and normal1x recovery under the final V45 identity; preserve prior negative controls.",
+      "observed": "Earlier V38 traversals and source-bound field controls exist, but they cannot qualify new V45 worker lifetime, transport, continuity or throughput. This reviewer did not wait for or accept future V45 campaigns. Fresh 30-second early-twilight endpoints were inspected; their subtle faint-star differences are not a substitute for a perceptible deep-night twinkle clip.",
+      "disposition": "coverage gap",
+      "source": [
+        {
+          "path": "workspace\\docs\\real-sky\\STARTUP_CLOUD_HOTFIX.md",
+          "line_start": 18,
+          "line_end": 44,
+          "sha256": "b97c99f99a2213d8b0915a3e9fe5a8409e659f6c0e4de1d3a317ab5ebb3636fb",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\docs\\real-sky\\STARTUP_CLOUD_HOTFIX.md",
+          "line_start": 316,
+          "line_end": 345,
+          "sha256": "b97c99f99a2213d8b0915a3e9fe5a8409e659f6c0e4de1d3a317ab5ebb3636fb",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\motion-00000.png",
+          "sha256": "eadbfe96b60aabe829b9a54e11f2b2cb87165ed2bc61d30a562c40ca38520dc3",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\motion-00015.png",
+          "sha256": "ad51d622681dc9b8ac5fbde1d14b700c4538af24bb66296eda0a6c0b87d2c29f",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        },
+        {
+          "path": "local:h8\\joined-v45-chromium-fresh-half\\motion-telemetry.json",
+          "sha256": "88ae5efb1d19118e3585989b2bd68849bcd02d699a7a470589bde7b1375f33cf",
+          "source_identity": {
+            "capture_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "current_runtime_tree_sha256": "0c5acdf57311196f58e951c16a73422ee2029abac00223a5f64c3fed94258281",
+            "binding_note": ""
+          }
+        }
+      ],
+      "uncertainty": "N001/N002 PARTIAL and N003 BLOCKED remain. No blanket A-to-M0 pass or release/merge authorization follows.",
+      "next_action": "Consume the two planned final V45 traversal families and normal1x recovery receipts/images through the existing serial queue; a focused readback can close only their demonstrated scope.",
+      "blocking": false
+    },
+    {
+      "id": "A13",
+      "reviewer": "A",
+      "scenario": "Report frontier and optical/calibration claims",
+      "invariant": "Keep historical wording and atmospheric proxies from becoming current or measured claims",
+      "expected": "Final publication explicitly identifies V45 and its final totals; clear/humid negative gating must not be called measured droplet physics.",
+      "observed": "STARTUP_CLOUD_HOTFIX correctly binds the V45 tree but still says current V44/54 Moon tests in older frontier and test paragraphs, while a later V45 paragraph says55. DESIGN already discloses art-directed optical approximations. Corona source admits mid-cover/fog proxies and removes humidity-only permission; it has no measured liquid-water phase or droplet-size input.",
+      "disposition": "documented limit",
+      "source": [
+        {
+          "path": "workspace\\docs\\real-sky\\STARTUP_CLOUD_HOTFIX.md",
+          "line_start": 26,
+          "line_end": 34,
+          "sha256": "b97c99f99a2213d8b0915a3e9fe5a8409e659f6c0e4de1d3a317ab5ebb3636fb",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\docs\\real-sky\\STARTUP_CLOUD_HOTFIX.md",
+          "line_start": 171,
+          "line_end": 179,
+          "sha256": "b97c99f99a2213d8b0915a3e9fe5a8409e659f6c0e4de1d3a317ab5ebb3636fb",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\docs\\real-sky\\STARTUP_CLOUD_HOTFIX.md",
+          "line_start": 302,
+          "line_end": 305,
+          "sha256": "b97c99f99a2213d8b0915a3e9fe5a8409e659f6c0e4de1d3a317ab5ebb3636fb",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\src\\native\\index.html",
+          "line_start": 2727,
+          "line_end": 2733,
+          "sha256": "27bc8a08419869056dddebac2c3c8f9b9bfaa44407ca429a2ebcf58eef29b7f9",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        },
+        {
+          "path": "workspace\\DESIGN.md",
+          "line_start": 381,
+          "line_end": 386,
+          "sha256": "a550fbf819d28ecc854216d61e65a5cd2a2a4aa56df3e34acaa1a72346d08648",
+          "identity_scope": "current authored/copied owner read directly; generated scientific core is inspection only"
+        }
+      ],
+      "evidence": [],
+      "uncertainty": "No newly demonstrated rendering defect follows from these report/proxy limits. Positive optical branches and broad gates remain part of existing joined qualification.",
+      "next_action": "During the already-planned final report update, label V44 paragraphs historical or replace with exact final-head-bound totals; retain the stated optical/display approximations.",
+      "blocking": false
+    }
+  ],
+  "planned_gaps": [
+    "A11 matched exact-input star richness",
+    "A12 final V45 joined traversals"
+  ],
+  "new_browser_or_solver_cases_requested": [],
+  "programme_status": {
+    "N001": "PARTIAL",
+    "N002": "PARTIAL",
+    "N003": "BLOCKED"
+  },
+  "negative_results_preserved": [
+    "Old humidity-only corona veil",
+    "V43 no refinement and visible lunar withdrawals",
+    "Uncorrected late-twilight solar relighting",
+    "Unmatched attachment/current scene cannot discriminate a star regression"
+  ],
+  "review_limits": [
+    "Visual inspection is of retained actual captures, not independent live browser observation.",
+    "Component/test source was inspected; no test success is asserted from a reviewer-run campaign.",
+    "No absolute local photometric calibration or external ephemeris qualification was performed.",
+    "Historical scoped capture reuse is limited to matching source owners and does not qualify latest runtime lifecycle/performance."
+  ]
+}

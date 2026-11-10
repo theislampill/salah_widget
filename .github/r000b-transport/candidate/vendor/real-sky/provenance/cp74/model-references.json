@@ -1,0 +1,16 @@
+{
+  "stage": "7.4",
+  "researchScope": "New transport/composition references only; source acquisition and photometric references are retained from CP5–CP7.3",
+  "sources": [
+    {"title":"Physically Based Rendering, Fourth Edition — Transmittance", "url":"https://pbr-book.org/4ed/Volume_Scattering/Transmittance", "use":"Direct-beam optical-depth/transmittance separation; multiplicative transport through media"},
+    {"title":"Physically Based Rendering, Fourth Edition — The Equation of Transfer", "url":"https://pbr-book.org/4ed/Light_Transport_II_Volume_Rendering/The_Equation_of_Transfer", "use":"Distinguish direct attenuation from additional in-scattered radiance; CP7.4 does not implement the latter for the diffuse map"},
+    {"title":"Physically Based Rendering, Fourth Edition — Working with Radiometric Integrals", "url":"https://pbr-book.org/4ed/Radiometry,_Spectra,_and_Color/Working_with_Radiometric_Integrals", "use":"Radiance/solid-angle integration and explicitly accounted change of variables"},
+    {"title":"NIST FIPS 180-4 — Secure Hash Standard", "url":"https://csrc.nist.gov/pubs/fips/180-4/upd1/final", "use":"Portable SHA-256 catalogue-byte binding, checked against independent Node crypto; not a signature claim"}
+  ],
+  "assumptionsNotDerivedFromTheseSources": [
+    "Vega SED as within-V effective-transmission weight for all diffuse pixels",
+    "0.00014 cd/m2 demo nonstellar zenith residual",
+    "Inherited CP6 empirical residual angular law",
+    "Neutral V-equivalent display channel and CP6 display-contrast threshold"
+  ]
+}

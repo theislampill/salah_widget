@@ -1,0 +1,75 @@
+{
+  "schema": "r0021-first-boundary-preflight-review/v1",
+  "reviewer": "/root/r0021_review",
+  "sealedAtUtc": "2026-10-18T18:05:43.695136+00:00",
+  "decision": "SUPPORTED_ONE_SERIAL_BASELINE_CURRENT_CHROMIUM_COLD_DIRECT_PAIR",
+  "observationOrder": "Source/guard reads and absent lock/destination observations preceded prospective transport support. ROOT then launched after accepting that support, before this file seal. The first seal attempt refused its repeated absent-output assertion after launch; it wrote no review file and launched no process. This seal preserves the actual prelaunch review; it does not claim the lease is currently free.",
+  "wrapper": {
+    "path": "${WORK_ROOT}\\run_first_boundary_r117.py",
+    "sha256": "77b4343e55b9c9143dfa63a5b9143a1688e3fd9e952773bcb07606de3d117fb2"
+  },
+  "priorHarnessReceipt": {
+    "path": "${WORK_ROOT}\\native\\chromium-arc-samples-r105\\EXECUTION.json",
+    "sha256": "2eacd6922578f9d3c4b7d6508f618994c331e85620f2c9d08387b22e2b9c5913"
+  },
+  "verifiedPrelaunchHarnessPins": {
+    "tools/cp9/celestial_startup_check.py": "0f2bdaac354c58ee0c7808988e0f074431c35d55bbcce35a3c539346d678d100",
+    "tools/cp9/chromium_startup_defaults.py": "db02da45beaaebb6876df8813ac27ea32b6ea9b68b86b2a5e9d989f6e490c46f",
+    "tools/cp9/celestial_lifecycle_check.py": "cbf779ad0a23dd496b8ede14629fbdedbc55e79a81875c2a807e6563d17ec399",
+    "tools/cp9/celestial_layer_controls.js": "a590e5a0573932bebb5cf77bc7a9bcca7d4059eb2b189671e3a34d8c8503281e",
+    "tools/cp9/browser_runtime.py": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0",
+    "tools/cp9/runtime_identity.py": "12e6ae1779e37d9fd5f1bd4700ba64b10543fe9afe4106b2bd18432e973758af",
+    "tests/v1_browser.py": "968627665f4290d6f6b567b9fb9f507eec4da95aad60191b4dcf51f111461692"
+  },
+  "runtimePreconditions": {
+    "baseline": {
+      "build": "baseline-18ff",
+      "expectedTreeSha256": "f443cf0820e6879dfa7c3ce857d6b2baf554b1fdd2f889433d22e2c532cec260",
+      "commit": "18ff14860ff41c084b1db5f396bb62aa9c22b1be",
+      "files": 135,
+      "custodySha256": "f0768dce0c8cc1133817dbf1e32fe4f41b27624d953f9ca574056ca6b82d2c4b",
+      "supplementSha256": "1b974622141563bb62e0d669e75cfa7ef7b049913856b806933310938301b4f1"
+    },
+    "candidate": {
+      "build": "integrated-r29-lunar-rule",
+      "expectedTreeSha256": "70bb508176c976167d783a5c7c7bd09ab20d02f69669dce5d36af5c634b1c55e",
+      "files": 142,
+      "runtimeManifestSha256": "c27739ca8a79fdb58c51ef5f09ae08987fdeb5d422d82b27d331f31276ae093d"
+    },
+    "scope": "Wrapper recomputes both complete runtime identities and asserts these exact trees before acquiring the lease; reviewer reused frozen custody rather than rehashing all assets."
+  },
+  "permittedOperation": {
+    "arms": [
+      "baseline",
+      "candidate"
+    ],
+    "browser": "Chromium148.0.7778.96 through unchanged restored-RenderDocument guard",
+    "mode": "cold/direct/persistent isolated profile",
+    "capture": "unchanged r105 video-only plus exterior compositor marker",
+    "durationArgumentSeconds": 20,
+    "unpolledFirstSeconds": 15,
+    "hostDeadlineSecondsPerArm": 90,
+    "noRepeat": true,
+    "noTraceOrProfiler": true,
+    "noFirefox": true,
+    "owner": "ROOT"
+  },
+  "causalValue": "Supplies exact current first-exposure/coherence observations and contemporaneous original-baseline comparison under the same harness/options. A partial first exposed celestial scene, warranted loss or supported bound violation is a falsifier; readable complete observations may narrow the corresponding bounds. It is not a repeatability or unique speedup experiment.",
+  "guardsReviewed": [
+    "All seven prior harness source pins verified before prospective support; wrapper checks them before lease and after execution.",
+    "Both runtime trees validated by wrapper before lease and compared afterward; baseline missing RUNTIME.json is handled by actual runtime_identity rather than fabricated metadata.",
+    "Exclusive lock, absent destination and serial arms; nonzero first-arm return stops the second arm.",
+    "Each owned process wait is bounded; interruption attempts owned PID-tree termination/reap, records termination unverified and retains lease.",
+    "No source/browser preference/capture infrastructure change; normal harness close paths retained."
+  ],
+  "reportingLimits": [
+    "--duration20 is a ceiling after the first15s, not a guaranteed20s watch: unchanged harness may stop once ready.",
+    "Added latency must use conservative matched intervals, including candidate upper minus baseline lower when asserting an upper bound. Subtracting two receipt upper bounds is descriptive only.",
+    "Use earliest original accepted-state fields actually available. Missing original accepted origin cannot be replaced by later publication/readiness time.",
+    "Every source acquisition gap remains UNOBSERVED; coherent endpoints and the accepted r116 negative do not fill holes.",
+    "Any post-run runtime/harness mismatch, error, absent required output or incomplete owned cleanup prevents qualification despite exit0/RETURNED. Wrapper normal return is not independent process-cleanup certification.",
+    "No first_complete_scene, current S1/wholeTA1, cost, fullwatch, lifecycle/currentness, merge or closure PASS is prospectively granted."
+  ],
+  "blockingFindings": [],
+  "nextAction": "ROOT may run this exact pair once under the exclusive native lease, inspect original outputs and retain all contrary/unobserved intervals. Reviewer remains idle during acquisition; no extra campaign follows automatically."
+}

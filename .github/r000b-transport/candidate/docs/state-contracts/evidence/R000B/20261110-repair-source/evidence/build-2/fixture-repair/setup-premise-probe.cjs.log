@@ -1,0 +1,9 @@
+const assert=require('node:assert/strict'),{cloudFixture}=require('./tests/r0025-context.cjs'),{prayerForDate}=require('./tests/r001d-harness.cjs');
+const summary=(h,label)=>{const painted=h.paint();return {label,...JSON.parse(h.run('JSON.stringify({rate:TIMESCALE,day:prayerCivilDay(),loadedDay:today?.date?.gregorian?.date,hasModel:model()!==null,state:cloudPublicationReceipt().state,sceneMatches:_cloudPublication.scene===skySceneIdentity(),modeMatches:_cloudPublication.mode===cloudAuthorityMode()})')),gradients:painted.trace.length,noise:painted.noise.length,nonzeroColumns:painted.columns.filter(v=>v>0).length};};
+const results=[];
+const rate=cloudFixture({extraHash:'&timeScale=1'});results.push(summary(rate,'original published loader rate'));rate.run('TIMESCALE=1');results.push(summary(rate,'rate changed without a complete render'));rate.run('render()');results.push(summary(rate,'real render under final intended rate'));
+const utc=cloudFixture({extraHash:'&timeScale=1'});utc.run('_simBase=Date.parse("2026-09-08T23:59:59.962Z");_rafT0=0;TIMESCALE=1');utc.run('render()');results.push(summary(utc,'UTC boundary with previous prayer day'));
+for(const day of [utc.run('prayerCivilDay()'),utc.run('prayerNextDay(prayerCivilDay())')]){utc.ctx.__diagnosticPrayer=prayerForDate(day);assert.equal(utc.run('adoptPrayerBundle(__diagnosticPrayer,__diagnosticPrayer.date.gregorian.date,null,true,false)'),true);}
+utc.run('render()');results.push(summary(utc,'real render after admitted corresponding prayer bundles'));
+assert.equal(results[1].gradients,0);assert.equal(results[1].state,'withdrawn-unavailable');assert.ok(results[2].gradients>20);assert.equal(results[3].hasModel,false);assert.equal(results[3].gradients,0);assert.ok(results[4].gradients>20);assert.equal(results[4].hasModel,true);
+console.log(JSON.stringify({results,limits:'Controlled VM setup diagnosis only; no file/product mutation or native pixels.'},null,2));

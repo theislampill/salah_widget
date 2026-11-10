@@ -1,0 +1,171 @@
+..FF....F......FF.F.                                                     [100%]
+================================== FAILURES ===================================
+_________________ test_apply_exact_postimages_preserves_other _________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-805/test_apply_exact_postimages_pr0/repo'), Win...': 'a8d83be668f700277b5a2fe077408741b3dbd59a', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+>   def test_apply_exact_postimages_preserves_other(case):r,p,m=case;v=run(case,'apply');assert v['status']=='APPLIED';assert (r/'output.txt').read_text()=='after\n';assert (r/'other.txt').read_text()=='untouched\n';assert (r/'moon/new.dat').read_text()=='data';assert git(r,'rev-parse','HEAD')==m['pin']
+                                                                       ^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:142: in install
+    build('build-1');a=inventory(stage);verify_paths(stage,post)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = WindowsPath('C:/Users/theis/AppData/Local/Temp/salah-moon-install-xrvd_a4s/stage')
+expected = {'moon/new.dat': '3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7', 'src/input.txt': '1235f8f435b1d16...29ff1bd2b74652392c4accb5ec5565973da', 'output.txt': '7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919'}
+
+    def verify_paths(root,expected):
+     for key,h in expected.items():
+      p=secure(root,key)
+>     if not p.is_file() or digest(p)!=h:raise ValueError('identity mismatch: '+key)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E     ValueError: identity mismatch: output.txt
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:52: ValueError
+_______________________________ test_idempotent _______________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-805/test_idempotent0/repo'), WindowsPath('C:/Us...': '7cdaeba09b72a7cda2531eaae028b160f968215f', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+>   def test_idempotent(case):run(case,'apply');r,_,_=case;before=tree(r);v=run(case,'apply');assert v['status']=='ALREADY_APPLIED';assert tree(r)==before
+                              ^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:142: in install
+    build('build-1');a=inventory(stage);verify_paths(stage,post)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = WindowsPath('C:/Users/theis/AppData/Local/Temp/salah-moon-install-7mudavw7/stage')
+expected = {'moon/new.dat': '3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7', 'src/input.txt': '1235f8f435b1d16...29ff1bd2b74652392c4accb5ec5565973da', 'output.txt': '7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919'}
+
+    def verify_paths(root,expected):
+     for key,h in expected.items():
+      p=secure(root,key)
+>     if not p.is_file() or digest(p)!=h:raise ValueError('identity mismatch: '+key)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E     ValueError: identity mismatch: output.txt
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:52: ValueError
+_____________________ test_preserves_unrelated_untracked ______________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-805/test_preserves_unrelated_untra0/repo'), Win...': '634edd3f23a2967dd20d9d7e32d4711914369887', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+>   def test_preserves_unrelated_untracked(case):r,_,_=case;(r/'notes.txt').write_text('mine');run(case,'apply');assert (r/'notes.txt').read_text()=='mine'
+                                                                                               ^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:142: in install
+    build('build-1');a=inventory(stage);verify_paths(stage,post)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = WindowsPath('C:/Users/theis/AppData/Local/Temp/salah-moon-install-mb7js78u/stage')
+expected = {'moon/new.dat': '3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7', 'src/input.txt': '1235f8f435b1d16...29ff1bd2b74652392c4accb5ec5565973da', 'output.txt': '7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919'}
+
+    def verify_paths(root,expected):
+     for key,h in expected.items():
+      p=secure(root,key)
+>     if not p.is_file() or digest(p)!=h:raise ValueError('identity mismatch: '+key)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E     ValueError: identity mismatch: output.txt
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:52: ValueError
+_________________________ test_late_edit_is_retained __________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-805/test_late_edit_is_retained0/repo'), Windows...': '35ceb14fecb4a06a6fe4a38dca24dda9b953f7c4', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+    def test_late_edit_is_retained(case):
+     r,p,m=case
+     def late(stage): (r/'src/input.txt').write_text('changed while staging')
+>    pytest.raises(ValueError,run,case,'apply',before_publish=late);assert (r/'src/input.txt').read_text()=='changed while staging';assert not (r/'moon/new.dat').exists()
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E    AssertionError: assert 'before\n' == 'changed while staging'
+E      
+E      - changed while staging
+E      + before
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:46: AssertionError
+_________________________ test_partial_write_rollback _________________________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-805/test_partial_write_rollback0/repo'), Window...': '35ceb14fecb4a06a6fe4a38dca24dda9b953f7c4', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+
+    def test_partial_write_rollback(case):
+     r,p,m=case;before=tree(r)
+     def fail(n,path):
+      if n==2:raise OSError('controlled write failure')
+>    pytest.raises(OSError,run,case,'apply',after_write=fail);assert tree(r)==before
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:25: in run
+    def run(case,mode='check',**kw):r,p,m=case;return load().install(r,p,mode=mode,**kw)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:142: in install
+    build('build-1');a=inventory(stage);verify_paths(stage,post)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = WindowsPath('C:/Users/theis/AppData/Local/Temp/salah-moon-install-b6t0dqsm/stage')
+expected = {'moon/new.dat': '3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7', 'src/input.txt': '1235f8f435b1d16...29ff1bd2b74652392c4accb5ec5565973da', 'output.txt': '7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919'}
+
+    def verify_paths(root,expected):
+     for key,h in expected.items():
+      p=secure(root,key)
+>     if not p.is_file() or digest(p)!=h:raise ValueError('identity mismatch: '+key)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E     ValueError: identity mismatch: output.txt
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:52: ValueError
+___________ test_linked_worktree_applies_and_preserves_git_metadata ___________
+
+case = (WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-805/test_linked_worktree_applies_a0/repo'), Win...': '6a94eebe34ab322bc3848611dca13fe4bd951395', 'repository': 'fixture', 'protected_branches': ['main', 'master'], ...})
+tmp_path = WindowsPath('C:/Users/theis/AppData/Local/Temp/pytest-of-theis/pytest-805/test_linked_worktree_applies_a0')
+
+    def test_linked_worktree_applies_and_preserves_git_metadata(case,tmp_path):
+     r,p,m=case
+     w=tmp_path/'linked';git(r,'worktree','add','-b','moon-work',str(w))
+     before=(w/'.git').read_bytes()
+>    result=load().install(w,p,mode='apply')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:142: in install
+    build('build-1');a=inventory(stage);verify_paths(stage,post)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = WindowsPath('C:/Users/theis/AppData/Local/Temp/salah-moon-install-h84tayw2/stage')
+expected = {'moon/new.dat': '3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7', 'src/input.txt': '1235f8f435b1d16...29ff1bd2b74652392c4accb5ec5565973da', 'output.txt': '7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919'}
+
+    def verify_paths(root,expected):
+     for key,h in expected.items():
+      p=secure(root,key)
+>     if not p.is_file() or digest(p)!=h:raise ValueError('identity mismatch: '+key)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E     ValueError: identity mismatch: output.txt
+
+C:\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\install.py:52: ValueError
+=========================== short test summary info ===========================
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py::test_apply_exact_postimages_preserves_other
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py::test_idempotent
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py::test_preserves_unrelated_untracked
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py::test_late_edit_is_retained
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py::test_partial_write_rollback
+FAILED ..\..\..\Users\theis\Documents\Codex\moon-cp9-integration-20261007\receiving-installer\tests\test_installer.py::test_linked_worktree_applies_and_preserves_git_metadata
+6 failed, 14 passed, 2 deselected in 7.19s

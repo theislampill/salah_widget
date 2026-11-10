@@ -1,0 +1,95 @@
+✔ actual foreground capture withdraws expired cloud state before reading raster when render and painter have not run (118.268509ms)
+✔ captured authority is serializable and final-currentness read rejects expiry without repairing cloud state (99.018836ms)
+✖ refined rejects an old cloud capture and publishes clear successor at next opportunity (180.705242ms)
+✖ refined rejects an old cloud capture and publishes clear successor at decode completion (140.265626ms)
+✖ preview rejects an old cloud capture and publishes clear successor at next opportunity (91.481816ms)
+✖ preview rejects an old cloud capture and publishes clear successor at decode completion (82.346554ms)
+✔ refined checks cloud authority again after detail composition (163.897704ms)
+✔ preview checks cloud authority again after detail composition (438.504948ms)
+✔ pending solar context is bounded and released without adding owner references to decoded cache (0.713684ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 5
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1477.0767
+
+✖ failing tests:
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:71:100
+✖ refined rejects an old cloud capture and publishes clear successor at next opportunity (180.705242ms)
+  AssertionError [ERR_ASSERTION]: cleared successor must publish without awaiting obsolete cloud decode
+  
+  undefined !== 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:76:9
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:40:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:71:100
+✖ refined rejects an old cloud capture and publishes clear successor at decode completion (140.265626ms)
+  AssertionError [ERR_ASSERTION]: cleared successor must publish without awaiting obsolete cloud decode
+  + actual - expected
+  
+  + 0.7529411764705882
+  - 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:76:9
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:40:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0.7529411764705882,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:71:100
+✖ preview rejects an old cloud capture and publishes clear successor at next opportunity (91.481816ms)
+  AssertionError [ERR_ASSERTION]: cleared successor must publish without awaiting obsolete cloud decode
+  
+  undefined !== 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:76:9
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:40:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:71:100
+✖ preview rejects an old cloud capture and publishes clear successor at decode completion (82.346554ms)
+  AssertionError [ERR_ASSERTION]: cleared successor must publish without awaiting obsolete cloud decode
+  + actual - expected
+  
+  + 0.7529411764705882
+  - 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:76:9
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:40:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0.7529411764705882,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

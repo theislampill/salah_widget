@@ -1,0 +1,8 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import {nativeJob,nativeResultCurrent} from '../../real-sky/native-contract.mjs';
+import {NativeSkyEngine} from '../../real-sky/native-engine.mjs';
+const base={utcMs:Date.parse('2026-09-07T20:30Z'),lat:24.47,lon:39.61,heightM:0,generation:1,sceneIdentity:'A',camera:{azDeg:180,altDeg:45,fovYDeg:90,rollDeg:0}};
+test('CP9 currentness adopts donor 30 second ceiling, inclusive boundary, no 60 second stale admission',()=>{const j=nativeJob(base,true);assert.equal(nativeResultCurrent(j,{...base,utcMs:base.utcMs+30000}),true);assert.equal(nativeResultCurrent(j,{...base,utcMs:base.utcMs+30001}),false);assert.equal(nativeResultCurrent(j,{...base,utcMs:base.utcMs-30001}),false);});
+const root=new URL('../../vendor/real-sky/',import.meta.url),text=p=>fs.readFileSync(new URL(p,root),'utf8'),pack={catalogueText:text('data/bright-stars.json'),manifestText:text('data/registered-starlight/runtime-manifest.json'),assetTexts:{}};
+test('CP9 native worker refuses a second cloud transmission owner',async()=>{const e=new NativeSkyEngine(pack),j=nativeJob(base,true);j.options.atmosphere.cloudTransmission=.5;try{await assert.rejects(()=>e.render(j),/native foreground owns cloud/i);}finally{e.dispose();}});
+test('CP9 native worker refuses an added physical cloud glow; accepted local light keeps its existing owner',async()=>{const e=new NativeSkyEngine(pack),j=nativeJob(base,true);j.options.atmosphere.cloudGlowCdM2=.01;try{await assert.rejects(()=>e.render(j),/native foreground owns cloud/i);}finally{e.dispose();}});

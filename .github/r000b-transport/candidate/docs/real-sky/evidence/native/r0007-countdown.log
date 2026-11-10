@@ -1,0 +1,151 @@
+SOURCE 8e53f5f68e764497f33914eab3195e0927714e0b48deba9c74c332c7dd8ee643 MODEL e61cf0482eb6ab3155687f0865c99a6a1b9f8d5d9d6ac4f7abeb438c1528644a RENDER fb976eca5d52e4c631e8b864312fb227d1adb978c6b0a5e25f31d20a6b6ef7df
+MUTANT wall-minutes bb635ebac96c578e6974347acfebd1642623b601de66ae6e858ccb5ffad5135e / elapsed-24h a52f919f49921269337d48e4422d791d0afa104466bb8e4c8fe8689c51a45f2b rejected
+MUTANT sec-only 956f3fd6fb1b5b677bdf043ac9d4b27f280965f52a0f171be386f8f37581f448 rejected by actual late-prefetch consumer
+TAP version 13
+# Subtest: spring reaches actual model and countdown assignments
+ok 1 - spring reaches actual model and countdown assignments
+  ---
+  duration_ms: 59.93
+  type: 'test'
+  ...
+# Subtest: fall first 01:30 reaches actual model and countdown assignments
+ok 2 - fall first 01:30 reaches actual model and countdown assignments
+  ---
+  duration_ms: 38.1463
+  type: 'test'
+  ...
+# Subtest: ordinary control reaches actual model and countdown assignments
+ok 3 - ordinary control reaches actual model and countdown assignments
+  ---
+  duration_ms: 36.2458
+  type: 'test'
+  ...
+# Subtest: fall 00:30 additional control reaches actual model and countdown assignments
+ok 4 - fall 00:30 additional control reaches actual model and countdown assignments
+  ---
+  duration_ms: 37.8977
+  type: 'test'
+  ...
+# Subtest: fall second 01:30 reaches actual model and countdown assignments
+ok 5 - fall second 01:30 reaches actual model and countdown assignments
+  ---
+  duration_ms: 37.6572
+  type: 'test'
+  ...
+# Subtest: fractional offset control reaches actual model and countdown assignments
+ok 6 - fractional offset control reaches actual model and countdown assignments
+  ---
+  duration_ms: 36.1676
+  type: 'test'
+  ...
+# Subtest: overnight uses the actual next-day date across spring; missing/wrong-day data stays unavailable then recovers
+ok 7 - overnight uses the actual next-day date across spring; missing/wrong-day data stays unavailable then recovers
+  ---
+  duration_ms: 40.383
+  type: 'test'
+  ...
+# Subtest: gap endpoint is withheld by actual render
+ok 8 - gap endpoint is withheld by actual render
+  ---
+  duration_ms: 35.7791
+  type: 'test'
+  ...
+# Subtest: fold endpoint is withheld by actual render
+ok 9 - fold endpoint is withheld by actual render
+  ---
+  duration_ms: 36.4843
+  type: 'test'
+  ...
+# Subtest: exact boundary selects the following event and ordinary wall progress is retained
+ok 10 - exact boundary selects the following event and ordinary wall progress is retained
+  ---
+  duration_ms: 40.3484
+  type: 'test'
+  ...
+# Subtest: year boundary resolves next-day Fajr without adding 24 elapsed hours
+ok 11 - year boundary resolves next-day Fajr without adding 24 elapsed hours
+  ---
+  duration_ms: 37.8376
+  type: 'test'
+  ...
+# Subtest: leap boundary resolves next-day Fajr without adding 24 elapsed hours
+ok 12 - leap boundary resolves next-day Fajr without adding 24 elapsed hours
+  ---
+  duration_ms: 32.5347
+  type: 'test'
+  ...
+# Subtest: finite model defense precedes normalization {"Fajr":"--:--"}
+ok 13 - finite model defense precedes normalization {"Fajr":"--:--"}
+  ---
+  duration_ms: 4.4706
+  type: 'test'
+  ...
+# Subtest: finite model defense precedes normalization {"Sunset":"Infinity:00"}
+ok 14 - finite model defense precedes normalization {"Sunset":"Infinity:00"}
+  ---
+  duration_ms: 4.6209
+  type: 'test'
+  ...
+# Subtest: finite model defense precedes normalization {"Sunset":"1e300:00"}
+ok 15 - finite model defense precedes normalization {"Sunset":"1e300:00"}
+  ---
+  duration_ms: 5.5434
+  type: 'test'
+  ...
+# Subtest: ordinary baseline control reaches real render without tomorrow
+ok 16 - ordinary baseline control reaches real render without tomorrow
+  ---
+  duration_ms: 37.2863
+  type: 'test'
+  ...
+# Subtest: actual repeated model consumer reuses the same day profile
+ok 17 - actual repeated model consumer reuses the same day profile
+  ---
+  duration_ms: 43.7042
+  type: 'test'
+  ...
+# Subtest: invalid explicit model exits before nonfinite wall projection
+ok 18 - invalid explicit model exits before nonfinite wall projection
+  ---
+  duration_ms: 34.3823
+  type: 'test'
+  ...
+# Subtest: wall-minute subtraction and today-plus-24h mutants are caught while ordinary control survives
+ok 19 - wall-minute subtraction and today-plus-24h mutants are caught while ordinary control survives
+  ---
+  duration_ms: 124.4326
+  type: 'test'
+  ...
+# Subtest: finite equal/reordered polar records remain usable
+ok 20 - finite equal/reordered polar records remain usable
+  ---
+  duration_ms: 61.363
+  type: 'test'
+  ...
+# Subtest: actual held prefetch restores the frozen overnight countdown on the dirty visible frame
+ok 21 - actual held prefetch restores the frozen overnight countdown on the dirty visible frame
+  ---
+  duration_ms: 67.6539
+  type: 'test'
+  ...
+# Subtest: sec-only loop mutant cannot paint a late countdown in a frozen scene
+ok 22 - sec-only loop mutant cannot paint a late countdown in a frozen scene
+  ---
+  duration_ms: 65.9678
+  type: 'test'
+  ...
+# Subtest: actual config generation cancels a held old-zone prefetch before the recovered countdown
+ok 23 - actual config generation cancels a held old-zone prefetch before the recovered countdown
+  ---
+  duration_ms: 91.2486
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1021.4489
