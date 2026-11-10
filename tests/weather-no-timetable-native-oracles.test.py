@@ -672,5 +672,55 @@ class HealthyRefreshInterfaceTests(unittest.TestCase):
                 self.assertFalse(refresh_verdict(case)['ok'])
 
 
+
+
+def inclusive_boundary_samples(samples):
+    """Exercise the actual main() classification expression without a browser."""
+    parsed = ast.parse(DRIVER.read_text())
+    main = next(node for node in parsed.body
+                if isinstance(node, ast.FunctionDef) and node.name == 'main')
+    assignments = [node for node in ast.walk(main)
+                   if isinstance(node, ast.Assign)
+                   and any(isinstance(target, ast.Name) and target.id == 'warm'
+                           for target in node.targets)]
+    assert len(assignments) == 1
+    expression = ast.Expression(body=assignments[0].value)
+    return eval(compile(expression, str(DRIVER), 'eval'),
+                {'fixture': {'passive': samples}, 'INITIAL_SOURCE_UTC': 1788900300000})
+
+
+class InclusiveBoundaryObservationTests(unittest.TestCase):
+    def sample(self, source=1788900300000, age=900000, **changes):
+        result = {'modelIsNull': True, 'wallUtcMs': source + age,
+                  'candidate': {'eligible': True, 'sourceValidAt': source, 'sourceAgeMs': age}}
+        result.update(changes)
+        return result
+
+    def test_later_fresh_record_is_not_initial_midnight_overlap(self):
+        samples = [self.sample(source=1788901260000, age=age) for age in (20000, 40000, 60000)]
+        self.assertEqual(inclusive_boundary_samples(samples), [])
+
+    def test_only_exact_source_age_is_the_inclusive_edge(self):
+        samples = [self.sample(age=age) for age in (899999, 900000, 900001)]
+        self.assertEqual(inclusive_boundary_samples(samples), [samples[1]])
+
+    def test_wall_and_original_source_identity_are_required(self):
+        samples = [self.sample(wallUtcMs=1788901200001), self.sample(source=1788901260000)]
+        missing = self.sample(); del missing['candidate']['sourceValidAt']; samples.append(missing)
+        self.assertEqual(inclusive_boundary_samples(samples), [])
+
+    def test_actual_initial_boundary_is_retained_without_mutation(self):
+        samples = [self.sample()]
+        before = deepcopy(samples)
+        self.assertEqual(inclusive_boundary_samples(samples), samples)
+        self.assertEqual(samples, before)
+
+    def test_no_model_and_current_eligibility_are_still_required(self):
+        model = self.sample(modelIsNull=False)
+        expired = self.sample(); expired['candidate']['eligible'] = False
+        self.assertEqual(inclusive_boundary_samples([model, expired]), [])
+        self.assertEqual(inclusive_boundary_samples([]), [])
+
+
 if __name__ == '__main__':
     unittest.main()

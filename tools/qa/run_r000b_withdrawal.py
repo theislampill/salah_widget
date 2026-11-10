@@ -1191,10 +1191,14 @@ def main():
             row['checks']['healthyRefreshContinuity'] = refresh_evidence['ok']
             dump(out / 'healthy-refresh-evidence.json', refresh_evidence)
 
-        warm = [s for s in fixture['passive'] if s['modelIsNull'] and s['candidate']['eligible']]
+        warm = [s for s in fixture['passive']
+                if s['modelIsNull'] and s['candidate']['eligible']
+                and s['candidate'].get('sourceValidAt') == INITIAL_SOURCE_UTC
+                and s['candidate'].get('sourceAgeMs') == 900000
+                and s.get('wallUtcMs') == INITIAL_SOURCE_UTC + 900000]
         row['inclusiveBoundaryObservation'] = {'observed': bool(warm), 'samples': warm,
             'status': 'OBSERVED' if warm else 'NOT_NATURALLY_REACHED',
-            'scope': 'The900000 ms inclusive source bound and midnight share one integer millisecond. No clock or render was forced to manufacture the overlap; deterministic source tests qualify the exact boundary separately.'}
+            'scope': 'The 900000 ms inclusive source bound and midnight share one integer millisecond. No clock or render was forced to manufacture the overlap; deterministic source tests qualify the exact boundary separately.'}
         weather = [r for r in fixture['ledger'] if r.get('kind') == 'weather']
         prayer = [r for r in fixture['ledger'] if r.get('kind') == 'prayer']
         failed_prayer = [r for r in prayer if r.get('status') == 503]

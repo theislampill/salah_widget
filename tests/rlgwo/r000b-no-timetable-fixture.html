@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' data:; font-src 'none'; base-uri 'self'; form-action 'none'">
 <title>R000B isolated no-timetable withdrawal</title>
 </head>
 <body><pre id="fixture-error">Loading verified widget source…</pre>
@@ -22,7 +22,7 @@
   // no seek, frozen second, accelerated time, or callable clock-setting seam.
   const elapsed=()=>performance.now()-started,wall=()=>startUtc+Math.floor(elapsed());
   const documentId=crypto.randomUUID(),ownedDocument=document;
-  const policy="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'";
+  const policy="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' data:; font-src 'none'; base-uri 'self'; form-action 'none'";
   let weatherRequests=0,prayerRequests=0,radarRequests=0;
   const report=window.__withdrawalFixture={schema:"r000b-no-timetable-fixture/v1",run,attempt,caseId,documentId,hash,
     state:"setup",error:null,sourceSha256:null,expectedSourceSha256,scriptBodies:[],bridgeSha256:null,started,startUtc,initialSourceUtc:sourceUtc,visibility,
