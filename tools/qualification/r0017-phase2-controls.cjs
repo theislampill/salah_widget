@@ -671,7 +671,7 @@ async function observedPublicReadback(api){
 async function run(api,options={}){
  const passive=['passive-bidi/v1','passive-bidi-cdp/v2'].includes(api.networkObservation),accounted=api.networkObservation==='passive-bidi-cdp/v2',publicSchema=accounted?'r0017-public-passive-proof/v2':'r0017-public-passive-proof/v1';
  if(api.networkObservation!==undefined&&!passive)throw Error('Unknown phase-2 network observation method');
- if(passive)require('./r0017-passive-network.cjs').assertSelection({...options,'network-observation':'passive'});
+ if(passive)require('./r0017-passive-network.cjs').assertSelection({...options,'network-observation':'passive','request-accounting':accounted?'observed-records':undefined});
  const groups=(options.groups||'current,public,calendar-diagnostics').split(',').filter(Boolean),allowed=['current','public','calendar-diagnostics','waning-diagnostic','optional-recorder','optional-config-storage'];
  if(!groups.length||new Set(groups).size!==groups.length||groups.some(x=>!allowed.includes(x)))throw Error('Use a unique explicit selection from '+allowed.join(','));
  const population=selectPopulation(groups,options.cases),planned=passive?Object.freeze(population.planned.map(p=>Object.freeze({...p,schema:publicSchema}))):population.planned,publicRows=planned.filter(p=>p.group==='public');

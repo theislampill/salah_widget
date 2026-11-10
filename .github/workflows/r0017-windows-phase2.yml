@@ -1,4 +1,4 @@
-name: R0017 C18 observed request qualification
+name: R0017 C18 remaining reduced-motion qualification
 
 on:
   push:
@@ -63,12 +63,12 @@ jobs:
             vendor
             docs/state-contracts
 
-      - name: Qualify C18 accounting for the bounded Chromium public population
+      - name: Observe the remaining Chromium reduced-motion context
         id: native_collection
         timeout-minutes: 17
         shell: pwsh
         run: |
-          node qualification/tools/qualification/r0017-windows-passive.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha da890861d874a8fe5b05351071bca9bb290a061dbe51f59bb8cfa78ff19a2279 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --network-observation passive --security-provenance csp --request-accounting observed-records --groups public --cases chromium-public-healthy-no-preference,chromium-public-healthy-reduce
+          node qualification/tools/qualification/r0017-windows-passive.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha da890861d874a8fe5b05351071bca9bb290a061dbe51f59bb8cfa78ff19a2279 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --network-observation passive --security-provenance csp --request-accounting observed-records --groups public --cases chromium-public-healthy-reduce
           exit $LASTEXITCODE
 
       - name: Preserve workflow setup outcomes on every result
@@ -87,16 +87,18 @@ jobs:
             schema = 'r0017-workflow-passive-outcomes/v1'
             phase = 'C18'
             purpose = 'BOUNDED_QUALIFICATION_CANDIDATE_NO_AUTOMATIC_ACCEPTANCE'
-            evidenceQuestion = 'Do the original consumers qualify with exact observed-record accounting, truthful unknown outcomes and retained errors?'
+            evidenceQuestion = 'What is the remaining reduced-motion outcome under the reviewed source-only nested-request accounting?'
+            preservedPriorRun = '42784152352 attempt1 remains failed; no-preference is not replayed or promoted'
+            wholePreferenceDenominator = 'no-preference and reduce; this invocation supplies only the previously unattempted reduce observation'
             securityProvenance = 'csp; same owned connection and setup; source and security receipts retained'
             imageAssignmentProvenance = 'NOT_REQUESTED; unchanged original storage preload'
             networkObservation = 'passive-bidi-cdp/v2'
             requestAccounting = 'observed-records; outcomes remain completed, error or unknown'
             interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'
-            plannedCases = @('chromium-public-healthy-no-preference', 'chromium-public-healthy-reduce')
-            plannedNativeSessions = 2
-            plannedTopLevelDocuments = 3
-            plannedInitializationDocuments = 2
+            plannedCases = @('chromium-public-healthy-reduce')
+            plannedNativeSessions = 1
+            plannedTopLevelDocuments = 1
+            plannedInitializationDocuments = 1
             initializationScope = 'Driver-created blank contexts, separate from meaningful public documents'
             plannedCalendarPrerequisiteDocuments = 0
             plannedCalendarTargetDocuments = 0

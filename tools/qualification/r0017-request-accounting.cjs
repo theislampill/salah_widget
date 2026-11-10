@@ -262,13 +262,15 @@ function reconcile(row,policy=defaultPolicy){
   if(observed.some(a=>a.index<=start.index||!bootstrapAttachment(p,a.p.targetInfo))){issue('INCOHERENT_BOOTSTRAP_ATTACHMENT',{start:start.reference,attachments:observed.map(a=>a.reference)});return null;}
   const document=documentFor(start);if(!document)return null;
   if(start.session===rootSession)return {kind:'PINNED_WINDOW_BLOB_PRODUCER_SET',exactProducer:null,possibleProducers:['moon-refinement','native-sky'],document,bootstrap:start.reference};
-  const a=childAttachments.get(start.session)||[];if(a.length!==1||a[0].p.targetInfo.type!=='worker')return null;
+  const a=childAttachments.get(start.session)||[];if(a.length!==1||a[0].index>=start.index||a[0].p.targetInfo.type!=='worker')return null;
   const parents=bySessionId.get(JSON.stringify([a[0].session,a[0].p.targetInfo.targetId]))||[];if(parents.length!==1)return null;
   const parent=parents[0],owner=bootstrap(parent,visited);if(!owner||owner.document.documentId!==document.documentId||!sameURL(a[0].p.targetInfo.url,parent.p.request.url))return null;
   const child=targetAttachments.get(JSON.stringify([start.session,p.requestId]))||[];
-  if(child.length!==1||child[0].p.targetInfo.type!=='worker'||child[0].p.targetInfo.parentId!==parent.p.requestId||child[0].p.targetInfo.parentFrameId!==document.frameId)return null;
-  if(!starts.some(x=>x.session===start.session&&moonAsset(x,a[0],parent)))return null;
-  return {kind:'PINNED_MOON_SHARD_BOOTSTRAP',exactProducer:'moon-refinement',document,bootstrap:start.reference,creatorBootstrap:parent.reference,creatorAttachment:a[0].reference,childAttachment:child[0].reference};
+  if(child.length>1||child.length===1&&(child[0].p.targetInfo.type!=='worker'||child[0].p.targetInfo.parentId!==parent.p.requestId||child[0].p.targetInfo.parentFrameId!==document.frameId))return null;
+  if(!starts.some(x=>x.index>a[0].index&&x.index<start.index&&x.session===start.session&&moonAsset(x,a[0],parent)))return null;
+  // The pinned Moon parent proves the finite producer of this emitted request.
+  // A missing subject attachment proves neither child realization nor outcome.
+  return {kind:'PINNED_MOON_SHARD_BOOTSTRAP',exactProducer:'moon-refinement',document,bootstrap:start.reference,creatorBootstrap:parent.reference,creatorAttachment:a[0].reference,childAttachment:child[0]?.reference??null,...(child.length?{}:{subjectAttachmentObserved:false,scope:'Source-bound nested bootstrap request; no child realization is inferred and network outcome is accounted separately'})};
  }
  function moonAsset(start,attachment,parent){const p=start.p,u=parent.p.request?.url,stack=p.initiator?.stack?.callFrames,want=[['read',609],['from',617],['boot',618],['self.onmessage',667]];
   return start.session===attachment.p.sessionId&&attachment.p.targetInfo.type==='worker'&&sameURL(attachment.p.targetInfo.url,u)&&p.request?.method==='GET'&&p.type==='Fetch'&&p.loaderId===''&&[PUBLIC+'moon/assets/dem.bin.gz',PUBLIC+'moon/assets/colour.bin.gz'].includes(p.request.url)&&p.documentURL===u&&p.initiator.type==='script'&&Array.isArray(stack)&&stack.length===4&&want.every(([fn,line],i)=>stack[i].functionName===fn&&stack[i].lineNumber===line&&stack[i].url===u);

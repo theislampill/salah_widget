@@ -95,26 +95,33 @@ function diagnosticReceipt(id,attempted){
  });
  await check('C13 case is refused by the actual default groups',()=>rejected({cases:waningCase}));
  await check('C13 case is refused by the legacy diagnostic group',()=>rejected({groups:'calendar-diagnostics',cases:waningCase}));
- await check('C18 workflow selects observed-record accounting and only two public contexts without setter instrumentation',async()=>{
+ await check('C18 continuation workflow selects only the missing reduce context without replay or setter instrumentation',async()=>{
   const workflow=fs.readFileSync(path.join(root,'.github/workflows/r0017-windows-phase2.yml'),'utf8'),entry=require('./r0017-windows-passive.cjs');
   const commands=workflow.split('\n').filter(line=>line.trim().startsWith('node qualification/tools/qualification/'));assert.equal(commands.length,1);
   const tokens=commands[0].trim().split(/\s+/);assert.equal(tokens[1],'qualification/tools/qualification/r0017-windows-passive.cjs');
-  const args=entry.parse(tokens.slice(2)),cases=['chromium-public-healthy-no-preference','chromium-public-healthy-reduce'];
+  const args=entry.parse(tokens.slice(2)),cases=['chromium-public-healthy-reduce'];
   assert.equal(args['network-observation'],'passive');assert.equal(args.groups,'public');assert.equal(args.cases,cases.join(','));
   assert.equal(args['security-provenance'],'csp');assert.equal(args['image-assignment-provenance'],undefined);assert.equal(args['request-accounting'],'observed-records');
   const baseHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'r0017-windows-proof.cjs'))).digest('hex');
   assert.equal(args['base-sha'],baseHash);assert.equal(entry.BOUND_BASE_SHA,baseHash);
   const x=await execute({groups:args.groups,cases:args.cases},args);
-  assert.equal(x.result.publicReadbackError,undefined);assert.deepEqual(x.launches.map(r=>r.name),cases);assert.equal(x.plan.plans.length,0);assert.equal(x.plan.publicContexts.length,2);
+  assert.equal(x.result.publicReadbackError,undefined);assert.deepEqual(x.launches.map(r=>r.name),cases);assert.equal(x.plan.plans.length,0);assert.equal(x.plan.publicContexts.length,1);
   assert.equal(x.result.schema,'r0017-windows-passive/v2');assert.equal(x.result.networkObservation.method,'passive-bidi-cdp/v2');assert.equal(x.result.qualification,'PARTIAL');
-  assert.equal(x.result.documentPlan.nativeSessions,2);assert.equal(x.result.documentPlan.topLevelNavigations,3);assert.equal(x.result.documentPlan.additionalPublicBaselineDocuments,1);assert.equal(x.result.documentPlan.initializationDocuments,2);
+  assert.equal(x.result.documentPlan.nativeSessions,1);assert.equal(x.result.documentPlan.topLevelNavigations,1);assert.equal(x.result.documentPlan.additionalPublicBaselineDocuments,0);assert.equal(x.result.documentPlan.initializationDocuments,1);
   const receiptCases=workflow.match(/^\s+plannedCases = @\(([^\n]+)\)$/m);assert(receiptCases);assert.equal(receiptCases[1],cases.map(s=>"'"+s+"'").join(', '));
-  for(const [field,count] of [['plannedNativeSessions',2],['plannedTopLevelDocuments',3],['plannedInitializationDocuments',2],['plannedCalendarPrerequisiteDocuments',0],['plannedCalendarTargetDocuments',0]])assert.equal(Number(workflow.match(new RegExp('^\\s+'+field+' = (\\d+)$','m'))?.[1]),count,field);
+  for(const [field,count] of [['plannedNativeSessions',1],['plannedTopLevelDocuments',1],['plannedInitializationDocuments',1],['plannedCalendarPrerequisiteDocuments',0],['plannedCalendarTargetDocuments',0]])assert.equal(Number(workflow.match(new RegExp('^\\s+'+field+' = (\\d+)$','m'))?.[1]),count,field);
+  assert(workflow.includes("preservedPriorRun = '42784152352 attempt1 remains failed; no-preference is not replayed or promoted'"));
   assert(workflow.includes("networkObservation = 'passive-bidi-cdp/v2'"));assert(workflow.includes("interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'"));
   assert(workflow.includes('timeout-minutes: 20')&&workflow.includes('timeout-minutes: 17')&&workflow.includes('AddMinutes(16)'));
   return {nativeExecutions:0,simulatedLaunches:x.launches,documentPlan:x.result.documentPlan};
  });
  await check('legacy explicit passive selection retains v1 schema and original two-case orchestration',async()=>{const args={groups:'public',cases:'chromium-public-healthy-no-preference,chromium-public-healthy-reduce','network-observation':'passive'};const x=await execute({groups:args.groups,cases:args.cases},args);assert.equal(x.result.schema,'r0017-windows-passive/v1');assert.equal(x.result.networkObservation.method,'passive-bidi/v1');assert.deepEqual(x.launches.map(r=>r.name),args.cases.split(','));assert.equal(x.exitCode,0);});
+ await check('observed-record full two-context selection remains available without changing its denominator',async()=>{const args={groups:'public',cases:'chromium-public-healthy-no-preference,chromium-public-healthy-reduce','network-observation':'passive','request-accounting':'observed-records','security-provenance':'csp'};const x=await execute({groups:args.groups,cases:args.cases},args);assert.deepEqual(x.launches.map(r=>r.name),args.cases.split(','));assert.equal(x.result.plannedCount,2);assert.equal(x.result.documentPlan.topLevelNavigations,3);assert.equal(x.result.documentPlan.additionalPublicBaselineDocuments,1);});
+ for(const fault of ['legacy-reduce','no-preference-only','reversed','duplicate-reduce','firefox','wrong-group','missing-csp','image-probe'])await check('remaining-context selection refuses '+fault+' before acquisition',()=>{
+  const entry=require('./r0017-windows-passive.cjs'),args={'network-observation':'passive',groups:'public',cases:'chromium-public-healthy-reduce','request-accounting':'observed-records','security-provenance':'csp','base-file':path.join(__dirname,'r0017-windows-proof.cjs'),'base-sha':entry.BOUND_BASE_SHA,root,out:'SIMULATION_ONLY'};
+  if(fault==='legacy-reduce')delete args['request-accounting'];if(fault==='no-preference-only')args.cases='chromium-public-healthy-no-preference';if(fault==='reversed')args.cases+=',chromium-public-healthy-no-preference';if(fault==='duplicate-reduce')args.cases+=','+args.cases;if(fault==='firefox')args.cases='firefox-public-healthy-reduce';if(fault==='wrong-group')args.groups='current,public';if(fault==='missing-csp')delete args['security-provenance'];if(fault==='image-probe')args['image-assignment-provenance']='src';
+  assert.throws(()=>entry.parse(Object.entries(args).flatMap(([k,v])=>['--'+k,v])));
+ });
  await check('C14 actual orchestration refuses expanded population before source setup or launch',async()=>{
   const args={groups:'public',cases:'chromium-public-healthy-no-preference,chromium-public-healthy-reduce','network-observation':'passive'};
   let observed;try{await execute({groups:'current,public',cases:args.cases},args);}catch(e){observed=e;}

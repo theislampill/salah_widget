@@ -208,7 +208,12 @@ pinned read/from/boot/onmessage initiator stack. The exact direct producer can
 remain unknown inside the proved two-producer set. Arbitrary same-origin blobs
 or assets receive no optional-resource exemption. Reported realm disposal,
 creator lifetime, observed outcomes and identity-safe owned process exit remain
-separate. No individual resource is declared JSON-consumed from a fixture ledger
+separate. A nested source-only bootstrap may lack its own target attachment
+when its unique parent attachment, same live fixture document/frame, and preceding
+pinned Moon asset stack already establish the finite creator. Such a record keeps
+childAttachment:null, no subject realm or terminal, and an unknown outcome.
+Every present contradictory attachment still defeats the source claim. A later
+parent or asset witness cannot retrospectively supply this preceding-source proof. No individual resource is declared JSON-consumed from a fixture ledger
 that has no protocol request ID.
 
 The actual finalizer computes this ledger after owned close/join and
@@ -241,3 +246,31 @@ Later available readback in that analysis is not retroactive preflight evidence.
 Source controls and replay provide no native qualification credit. Publication,
 finite native execution, whole-contract review and exact final merge remain
 separate gates; F03 historical noncompliance and F04 formal limits persist.
+
+
+### C18 first native outcome and minimum remaining context
+
+[C18 run 42784152352](https://github.com/theislampill/salah_widget/actions/runs/42784152352),
+at `b3bc33e89f45b59b02b7b23c608c0c362b402c21`, attempt1, remains **failed**.
+Artifact13748116068, ZIP SHA256
+`57aa86ab1dcfdb2bcc6073a83e127435df2cceb1f23f7b75b6c31bbf64d0ba54`,
+retained30/30 original callbacks and141 assertions,392 requests,328 completions,
+one observed request error and63 unknown outcomes, with50 supported cross-session
+joins. Six material source-gap labels concern three distinct nested Moon bootstrap
+requests whose child attachments were not emitted. Exact parent/document/preceding
+Moon-stack evidence supports the bounded source-only accounting correction above.
+Retrospective classification is a new analysis; the original stored failed verdict
+and unattempted reduced context are immutable.
+
+A favicon404 and a CSP-blocked data-PNG request independently fail cleanliness.
+Accounting repair supplies no error exemption, successful network terminal, child
+realization or healthy native credit. Actual source/public readbacks, required
+consumers, SETTLED finalization and verified owned cleanup remain separately earned.
+The native result's five captured PNGs support only their sampled controlled scenes.
+
+The continuation workflow selects only `chromium-public-healthy-reduce`: one native
+session, one meaningful document and one initialization document, with unchanged
+source, storage, original30/141, error, readiness and cleanup predicates. It preserves
+the original two-preference obligation across both records and does not replay or
+qualify the failed no-preference context. No automatic repeat, product change,
+CSP relaxation, whole-contract acceptance or final merge approval is implied.

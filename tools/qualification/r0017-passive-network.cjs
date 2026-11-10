@@ -26,7 +26,8 @@ function admitInventoryHost(row,fs,sha){
 }
 function assertSelection(options){
  if(options?.['security-provenance']!==undefined&&options['security-provenance']!=='csp')throw Error('Security provenance requires the explicit csp diagnostic mode');
- if(options?.['network-observation']!=='passive'||options.groups!=='public'||options.cases!==CASES.join(','))throw Error('C14 passive observation requires the explicit public group and exactly the two commissioned Chromium cases in order');
+ const remainingReduce=options?.['request-accounting']==='observed-records'&&options.cases===CASES[1];
+ if(options?.['network-observation']!=='passive'||options.groups!=='public'||options.cases!==CASES.join(',')&&!remainingReduce)throw Error('Passive observation requires the original ordered pair, or the explicitly accounted remaining Chromium reduce context');
 }
 function assertSession(engine,preference,viewport,dpr,row,origin){
  if(engine!=='chromium'||origin!==PUBLIC||!['no-preference','reduce'].includes(preference)||viewport?.width!==1100||viewport?.height!==900||dpr!==1||row.plannedTopLevelDocuments!==(preference==='no-preference'?2:1))throw Error('Passive observation scope is the commissioned Chromium public preference population only');

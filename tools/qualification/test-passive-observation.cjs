@@ -129,6 +129,24 @@ function publicAbsentSeed(h){return Object.fromEntries(Object.keys(h.api.seeds('
 function configuredImagePreload(h){require(entryFile).configure(h.api,imageOptions());return h.api.preload(publicAbsentSeed(h),PUBLIC,false);}
 (async()=>{
  const v2={requestAccounting:'observed-records',securityProvenance:'csp',accountingUnknown:true};
+ for(const fault of ['absent','missing-parent','wrong-parent-url','wrong-frame','missing-moon-stack','wrong-stack','late-moon-stack','late-parent','wrong-child-url','wrong-child-parent'])await check('c18 source-only nested '+fault+' governs the actual next consumer',async make=>{
+  const h=await make({...v2,onClose:({socket,session})=>{
+   const event=(name,params,id='simulated-owned-cdp')=>socket.message({method:'goog:cdp.'+name,params:{event:name,params,session:id}});
+   const parent=session.row.network.lifecycle.findLast(e=>e.method==='goog:cdp.Network.requestWillBeSent'&&e.params.session==='simulated-owned-cdp'&&e.params.params.requestId.startsWith('unknown-')).params.params;
+   const u=parent.request.url,v='blob:https://theislampill.github.io/simulated-shard';
+   const attachParent=()=>event('Target.attachedToTarget',{sessionId:'MOON',targetInfo:{targetId:parent.requestId,type:'worker',url:fault==='wrong-parent-url'?'blob:https://theislampill.github.io/alien':u,parentFrameId:parent.frameId},waitingForDebugger:false});
+   if(!['missing-parent','late-parent'].includes(fault))attachParent();
+   const addAsset=()=>event('Network.requestWillBeSent',{requestId:'moon-asset',request:{url:PUBLIC+'moon/assets/dem.bin.gz',method:'GET'},documentURL:u,loaderId:'',type:'Fetch',initiator:{type:'script',stack:{callFrames:[['read',609],['from',617],['boot',618],['self.onmessage',667]].map(([functionName,lineNumber],i)=>({functionName:fault==='wrong-stack'&&i===0?'alien':functionName,lineNumber,url:u}))}}},'MOON');
+   if(!['missing-moon-stack','late-moon-stack'].includes(fault))addAsset();
+   event('Network.requestWillBeSent',{requestId:'shard',request:{url:v,method:'GET'},documentURL:v,frameId:fault==='wrong-frame'?'ALIEN':parent.frameId,loaderId:'',type:'Script',initiator:parent.initiator},'MOON');
+   if(fault==='late-parent')attachParent();if(fault==='late-moon-stack')addAsset();
+   if(fault.startsWith('wrong-child'))event('Target.attachedToTarget',{sessionId:'SHARD',targetInfo:{targetId:'shard',type:'worker',url:fault==='wrong-child-url'?u:v,parentId:fault==='wrong-child-parent'?'ALIEN':parent.requestId,parentFrameId:parent.frameId},waitingForDebugger:false},'MOON');
+  }}),first=await h.publicCase('no-preference'),second=await h.publicCase('reduce');equalCuts(first);
+  const a=first.row.network.accounting,record=a.records.find(x=>x.requestId==='shard');assert.equal(record.outcome,'unobserved');assert.equal(record.terminals.length,0);assert.equal(a.allNetworkOutcomesObserved,false);assert.equal(record.reportedLifetime.physicalDeathProven,false);
+  if(fault==='absent'){assert.equal(a.sourceClaimsBound,true);assert.equal(record.sourceClass.childAttachment,null);assert.equal(a.materialUnknowns.length,0);assert.equal(first.row.status,'PUBLIC_HEALTHY_PASSED_NOT_CLOSURE');equalCuts(second);assert.equal(second.row.status,'PUBLIC_HEALTHY_PASSED_NOT_CLOSURE');assert.equal(h.spawnCount,2);}
+  else{assert.equal(a.sourceClaimsBound,false);assert.equal(record.sourceClass,null);assert.equal(first.row.status,'PUBLIC_HEALTHY_FAILURE');assert.equal(first.row.passiveObservationContinuation.decision,'BLOCK_EQUIVALENT_ENGINE');assert.equal(second.row.status,'NOT_ATTEMPTED');assert.deepEqual(second.row,second.stored);assert.deepEqual(second.stored,second.summary);assert.equal(h.spawnCount,1);}
+  return {firstStatus:first.row.status,outcome:record.outcome,childAttachment:record.sourceClass?.childAttachment??null,secondStatus:second.row.status,simulatedSpawnCount:h.spawnCount};
+ });
  for(const fault of ['matching','wrong-url','missing-url','wrong-type','wrong-parent-frame'])await check('c18 unknown bootstrap '+fault+' attachment governs the actual next consumer without a terminal',async make=>{
   const h=await make({...v2,onClose:({socket})=>{
    const targetInfo={targetId:'unknown-2',type:'worker',url:'blob:https://theislampill.github.io/simulated-owned-worker',parentFrameId:'simulated-fixture'};
