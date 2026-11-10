@@ -1,0 +1,20 @@
+{"probe": "ignored-recipe", "acceptedRecipe": "__pycache__/uncommitted-recipe.json", "claimedCommit": "test-committed-head", "recipeHashRecorded": true, "membershipChecked": false, "gitCalls": [["rev-parse", "--show-toplevel"], ["status", "--porcelain", "--untracked-files=normal"], ["rev-parse", "HEAD"], ["rev-parse", "HEAD^{tree}"], ["ls-files", "--", "real-sky", "moon"]]}
+test_cross_case_cache_dependency_and_mutant_as_control_reject (__main__.IndependentLauncherProbes.test_cross_case_cache_dependency_and_mutant_as_control_reject) ... ok
+test_dirty_identity_refuses_source (__main__.IndependentLauncherProbes.test_dirty_identity_refuses_source) ... ok
+test_each_mutant_closes_healthy_control_selection_before_itself (__main__.IndependentLauncherProbes.test_each_mutant_closes_healthy_control_selection_before_itself) ... ok
+test_hosted_selection_is_exactly_thirty_unique_cases (__main__.IndependentLauncherProbes.test_hosted_selection_is_exactly_thirty_unique_cases) ... ok
+test_ignored_uncommitted_recipe_must_not_claim_commit_binding (__main__.IndependentLauncherProbes.test_ignored_uncommitted_recipe_must_not_claim_commit_binding) ... FAIL
+test_unknown_and_unsafe_and_duplicate_case_names_reject (__main__.IndependentLauncherProbes.test_unknown_and_unsafe_and_duplicate_case_names_reject) ... ok
+
+======================================================================
+FAIL: test_ignored_uncommitted_recipe_must_not_claim_commit_binding (__main__.IndependentLauncherProbes.test_ignored_uncommitted_recipe_must_not_claim_commit_binding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-b20e3aa/currentness-selection-probe.py", line 58, in test_ignored_uncommitted_recipe_must_not_claim_commit_binding
+    self.fail('bind_packet accepts an ignored, uncommitted --recipe and labels it with the clean commit/tree')
+AssertionError: bind_packet accepts an ignored, uncommitted --recipe and labels it with the clean commit/tree
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.006s
+
+FAILED (failures=1)

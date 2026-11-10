@@ -1,0 +1,126 @@
+{
+  "status": "FINAL",
+  "disposition": "PASS_BOUNDED_INPUT_REANCHOR_ONLY",
+  "candidateCommit": "226c5e8fb1badc7244ca3fa4e0ce8d5f726972e5",
+  "candidateTree": "d42f5ba6290aee94c677202cc64fba3024f427d5",
+  "authoring_context_reuse": "no",
+  "other_reviewer_output_seen": "no",
+  "native_executed": false,
+  "newFindings": [],
+  "verification": {
+    "identity": {
+      "commit": "226c5e8fb1badc7244ca3fa4e0ce8d5f726972e5",
+      "tree": "d42f5ba6290aee94c677202cc64fba3024f427d5"
+    },
+    "status": "PREPARED_NOT_EXECUTED",
+    "oldCasesIdentical": 30,
+    "addedCase": "NE07-dst-recovery12",
+    "validatedCases": 31,
+    "healthy": 22,
+    "mutants": 9,
+    "selectedDefault": 18,
+    "selectedPreservation": 4,
+    "sourceFiles": 147,
+    "onlyChangedBinding": [
+      "tests/rlgwo/R0007-next-event-recipes.json"
+    ],
+    "protectedIdentitiesUnchanged": 19,
+    "acceptedBaseProtectedIdentitiesUnchanged": 13,
+    "inputsReverified": 18,
+    "rawRequirementSha256": "edf91261070a446f76659601c95290f8236851a7a6d9732467aedd8f7faae041",
+    "rawRequirementSource": "docs/state-contracts/evidence/R0007/qualification/coverage-2f2d64c/evidence/original-native-requirement-excerpt.json",
+    "rawRequirementNetworkRetrieval": false,
+    "newLiteralUtcEndpoints": [
+      "2026-03-08T04:30:00+00:00",
+      "2026-03-08T09:00:00+00:00"
+    ],
+    "newLiteralLeftMin": 270,
+    "publicFilesOutsideNativeBinding": [
+      ".github/workflows/r0007-public-delivery.yml",
+      "tests/rlgwo/r0007-public-observer-control.cjs",
+      "tests/test_r0007_public_delivery.py",
+      "tools/qualification/r0007_public_cases.json",
+      "tools/qualification/r0007_public_consumer.py"
+    ],
+    "nativeWorkflowUnchanged": true,
+    "candidateClean": true,
+    "mainInvoked": false,
+    "nativeInvoked": false
+  },
+  "testRuns": [
+    {
+      "name": "five-predicate-controls",
+      "command": [
+        "node",
+        "--test",
+        "tests/r0007-recovery-precondition.test.cjs"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-226c5e8/candidate",
+      "exitCode": 0,
+      "seconds": 0.468,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-226c5e8/five-predicate-controls.log"
+    },
+    {
+      "name": "actual-reanchor-binding",
+      "command": [
+        "python",
+        "verify-reanchor.py"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-226c5e8",
+      "exitCode": 0,
+      "seconds": 1.925,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-226c5e8/actual-reanchor-binding.log"
+    }
+  ],
+  "reusedOwnPriorReportSha256": "0206cc43ebc2092632b874ea2fe20bda90ada0f3e278f6a100bf6f0f34f8c9fe",
+  "files": {
+    "FINAL.md": {
+      "sha256": "94a98755ed4da8af67fb6a4afb82df6e8f5d72abfad06f38177e18666f777d99",
+      "bytes": 10705
+    },
+    "PARTIAL.md": {
+      "sha256": "32504c9f0a341e2faf15c89e12179a2109098bc8412a299f93fcd2f3423b11db",
+      "bytes": 810
+    },
+    "actual-bound-packet.json": {
+      "sha256": "447083317050392b0b3984e906369e3fc567ae91fbc80c3bc99d5bb7285f95db",
+      "bytes": 258313
+    },
+    "actual-reanchor-binding.log": {
+      "sha256": "a8b64b51846aa49e1b1587fd1fe8fcea4f3d4a613da6c1732bc06f15473fe2f2",
+      "bytes": 1380
+    },
+    "five-predicate-controls.log": {
+      "sha256": "3c774fa9ff9ec4db7f40dc46480528e642ac22a9426e2c1a8867b99464be9877",
+      "bytes": 1670
+    },
+    "input-manifest.json": {
+      "sha256": "c9b874934267634b0e17910a0ed2ec82ddf36278e18f486ebcc00b7e5b2d9944",
+      "bytes": 3041
+    },
+    "isolated-checkout.json": {
+      "sha256": "c12ad2cc3aab3bee3752a122586ad6e3e3c589d6e96d0f2cdbb10d2f94df1b8d",
+      "bytes": 1470
+    },
+    "original-native-requirement-excerpt.json": {
+      "sha256": "edf91261070a446f76659601c95290f8236851a7a6d9732467aedd8f7faae041",
+      "bytes": 4457
+    },
+    "test-runs.json": {
+      "sha256": "d92dea75374a4892647c5a48de9fe06540cb363236cd20ae9f6dbee66e0ae52b",
+      "bytes": 777
+    },
+    "unchanged-identities.json": {
+      "sha256": "2e6903637abbf6e7ecac9da171c09802836f1ec03b23cf298fbbcddfa645e1af",
+      "bytes": 4667
+    },
+    "verification.json": {
+      "sha256": "a8b64b51846aa49e1b1587fd1fe8fcea4f3d4a613da6c1732bc06f15473fe2f2",
+      "bytes": 1380
+    },
+    "verify-reanchor.py": {
+      "sha256": "c7484d48147a007875aba8bc52a50a63c507d2dead9778d5cebac77f23d48766",
+      "bytes": 8840
+    }
+  }
+}

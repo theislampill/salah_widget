@@ -12,6 +12,24 @@ from urllib.parse import quote, urlsplit
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
+def bound_launch(browser_type, options, requested_engine):
+    """Bind the executable actually passed to this launch, without changing policy."""
+    if browser_type.name != requested_engine:
+        raise ValueError("selected browser family differs from requested engine")
+    selected=options.get("executable_path")
+    selection=("explicit-override" if os.environ.get("SALAH_BROWSER_EXECUTABLE") else "runtime-selected") if selected else "playwright-managed"
+    executable=Path(selected or browser_type.executable_path).expanduser().resolve(strict=True)
+    if not executable.is_file():raise ValueError("selected browser executable is not a file")
+    checksum=hashlib.sha256()
+    with executable.open("rb") as stream:
+        for chunk in iter(lambda:stream.read(1024*1024),b""):checksum.update(chunk)
+    # Supplying the resolved managed executable explicitly also avoids claiming
+    # its hash while Playwright selects a different headless-shell executable.
+    bound={**options,"executable_path":str(executable)}
+    return bound,{"engineRequested":requested_engine,"family":browser_type.name,
+                  "executable":str(executable),"executableSha256":checksum.hexdigest(),
+                  "executableSelection":selection,"executableHashPhase":"before-launch"}
+
 def dump(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('w',encoding='utf-8') as stream:
@@ -23,6 +41,8 @@ def validate_cases(packet, root):
         raise ValueError("case schema mismatch")
     if packet["issue"] not in (2,3,4,6,7):
         raise ValueError("issue outside bounded assignment")
+    if packet["issue"] == 7 and "tools/cp9/r0007_font_observer.js" not in packet["sourceFiles"]:
+        raise ValueError("R0007 startup font observer binding is missing")
     for relative, expected in packet["sourceFiles"].items():
         path=(root/relative).resolve()
         if not path.is_relative_to(root.resolve()) or digest(path.read_bytes()) != expected:
@@ -192,13 +212,21 @@ def main(argv=None):
         thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
         trace={"caseId":case["caseId"],"status":"FAIL","actions":[],"snapshots":[],"captureMismatches":[],"variant":case.get('variant'),"expectedOracleFailure":case.get('expectedFailure',False)}
         playwright=None;browser=None;context=None;frame=None
+        failure_stage="browser-launch"
         try:
             playwright=sync_playwright().start()
             if playwright:
                 family,options=runtime.browser_options()
                 if args.headed:options['headless']=False
-                browser=getattr(playwright,family).launch(**options)
+                if family!=args.engine:raise ValueError("runtime selected a different engine")
+                browser_type=getattr(playwright,family)
+                options,launch_binding=bound_launch(browser_type,options,args.engine)
+                browser=browser_type.launch(**options)
+                dump(case_output/"browser-identity.json",{**runtime.browser_identity(browser),**launch_binding,"headless":options.get("headless",True)})
+                failure_stage="browser-context"
                 context=browser.new_context(viewport={"width":370,"height":570},device_scale_factor=1,timezone_id="America/New_York",reduced_motion=case.get("motionPreference","no-preference"),record_video_dir=str(case_output/"video"),record_video_size={"width":370,"height":570})
+                if args.issue==7:
+                    context.add_init_script((root/"tools/cp9/r0007_font_observer.js").read_text(encoding="utf-8"))
                 page=context.new_page();errors=[];page.on("pageerror",lambda error:errors.append(str(error)))
                 if case.get('offline'):
                     # The static local origin supplies the installed document/assets.
@@ -226,6 +254,7 @@ def main(argv=None):
                         del image_pending[target["id"]]
                 if case.get("imageRules"):page.route("**/fixture-radar-*/**",image_route)
                 consumer=None
+                failure_stage="navigation"
                 if case.get("iframe"):
                     page.goto(f"http://127.0.0.1:{server.server_port}/__iframe.html",wait_until="domcontentloaded")
                     consumer=page.frame_locator("#actual-consumer")
@@ -233,7 +262,7 @@ def main(argv=None):
                 else:
                     page.goto(f"http://127.0.0.1:{server.server_port}/{case['entry']}?case={quote(case['caseId'])}"+case["hash"],wait_until="domcontentloaded")
                     frame=page.main_frame
-                dump(case_output/"browser-identity.json",{**runtime.browser_identity(browser),"headless":not args.headed})
+                failure_stage="case-actions"
                 for action in case["orderedActions"]:
                     trace["actions"].append(action)
                     kind=action["type"]
@@ -287,7 +316,9 @@ def main(argv=None):
                             if not args.video_only:
                                 page.screenshot(path=str(case_output/(action["name"]+".png")))
                             after=frame.evaluate("window.__prayerFixture.ordinal")
-                            dump(case_output/(action["name"]+"-presentation.json"),{"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"],"capture":"native-video-only" if args.video_only else "native-full-viewport","requestedSelector":action.get("selector",".c"),"requestedBounds":bounds,"viewport":page.viewport_size})
+                            dump(case_output/(action["name"]+"-presentation.json"),{"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"],"capture":"native-video-only" if args.video_only else "native-full-viewport","requestedSelector":action.get("selector",".c"),"requestedBounds":bounds,"viewport":page.viewport_size,
+                                "firstRenderRequested":bool(action.get("firstRender")),"firstPredicate":action.get("firstPredicate"),
+                                "selectionKind":"first-matching-render" if action.get("firstRender") else "read-only-checkpoint" if action.get("readOnly") else "latest-render"})
                             if action.get("preservation"):
                                 # Separate warm-preservation checkpoint, never a first-prayer
                                 # observer. The existing lunar diagnostic may admit a pending
@@ -309,14 +340,13 @@ def main(argv=None):
                                 # Preserve the failed still association. Continue collecting the
                                 # native video and original assertions; this is not a first-frame PASS.
                                 trace["captureMismatches"].append({"capture":action["name"],"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"]})
-                                if action["name"]!="first-current":raise AssertionError("first-render crop crossed another product render")
                 if args.video_only:
                     # Completed DOM writes can precede the recorder's next frame.
                     # Keep observing through native presentation before closing;
                     # do not advance the fixture clock or call product rendering.
                     page.wait_for_timeout(1000)
                     trace["nativePresentationTailMs"]=1000
-                export_expression="(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,resourceTiming:f.resourceTiming(),fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight}))}}})()"
+                export_expression="(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,resourceTiming:f.resourceTiming(),fontSettlement:window.__r0007FontSettlement?.read()??null,fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight}))}}})()"
                 # Fast previews produce thousands of complete render receipts. Seal
                 # the observation cut in fixture-owned storage, then transport every
                 # receipt in bounded JSON batches. One large protocol object/string
@@ -336,8 +366,9 @@ def main(argv=None):
                 trace["status"]="PARTIAL_FIRST_PRESENTATION_REVIEW_REQUIRED" if trace["captureMismatches"] else "PASS_ASSERTIONS_PENDING_PIXEL_REVIEW"
         except Exception as error:
             trace["failure"]=repr(error)
+            trace["failureStage"]=failure_stage
             try:
-                trace["rawOnFailure"]=frame.evaluate("(()=>{const f=window.__prayerFixture;return {events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,unexpected:f.unexpected}})()")
+                trace["rawOnFailure"]=frame.evaluate("(()=>{const f=window.__prayerFixture;return {events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,unexpected:f.unexpected,fontSettlement:window.__r0007FontSettlement?.read()}})()")
                 if not args.video_only:
                     page.screenshot(path=str(case_output/"failure.png"))
             except Exception as capture_error:trace["failureCapture"]=repr(capture_error)

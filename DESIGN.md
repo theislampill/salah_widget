@@ -124,7 +124,17 @@ Complete values keep their 14px font, normal whitespace, anywhere wrapping and s
 - **Next and current:** `.p.on` is the next event and uses a stable accent plate
   with dark text; `.p.now` independently outlines the current prayer. Future rows
   stay readable glass, elapsed rows are subdued, and Forenoon has no current row.
-  Tomorrow's Fajr row, countdown and next arc marker use the same admitted target.
+  The next row, countdown and next arc marker share one date-aware selected target:
+  the earliest uniquely supported future epoch from the admitted current civil day,
+  then the matching next civil day when needed. Equal future epochs use declared
+  row order; current equal-clock labels retain the last elapsed row convention.
+  Missing next-day data or a potentially earlier unresolved gap/fold clears the
+  next highlight while preserving a valid current timetable and calendar.
+  Current labels and progress remain wall-based. Before the first event the
+  previous-day interval is explicitly decorative, with no invented observed date
+  or epoch; unavailable endpoints also retain only decorative progress. A selected
+  next-day event supplies its own clock/key to the boundary interval and marker.
+  See [R0007 state contract](docs/state-contracts/R0007.md) for guards and evidence.
 - **Timetable appearances:** the owner's 16 October 2026 decision restores the
   historical Liquid Glass default: translucent white tint, 7px backdrop blur with
   135% saturation, and elapsed rows at `.42` group opacity. High Contrast retains

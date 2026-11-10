@@ -1,0 +1,333 @@
+{
+  "status": "FINAL",
+  "disposition": "PASS_BOUNDED_TEST_INPUT_REBIND_AND_NATIVE_REANCHOR",
+  "candidateCommit": "e46f9dae61b2990a2b5dd5007feaa8342bd0b748",
+  "candidateTree": "6934f644f150dd2d41edb872b528b99fcd51f29b",
+  "priorCommit": "9d24fb4b34f5979aac9961f34794ffbf4490e049",
+  "priorTree": "0f0385b51b08e62a3668e8aa8e3534cadac70749",
+  "model_requested": "gpt-6-astra",
+  "model_actual": "GPT-6 Astra Pro; active-instruction self-report; independent backend identity unavailable",
+  "authoring_context_reuse": "no",
+  "other_reviewer_output_seen": "no",
+  "native_executed": false,
+  "newFindings": [],
+  "environment": {
+    "os": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "node": "v24.22.1"
+  },
+  "nativeVerification": {
+    "identity": {
+      "commit": "e46f9dae61b2990a2b5dd5007feaa8342bd0b748",
+      "tree": "6934f644f150dd2d41edb872b528b99fcd51f29b"
+    },
+    "status": "PREPARED_NOT_EXECUTED",
+    "caseCount": 31,
+    "healthy": 22,
+    "mutants": 9,
+    "sourceFiles": 147,
+    "allCaseValuesEqualAccepted226": true,
+    "all147SourceHashesEqualAccepted226": true,
+    "sharedFileMembership": [
+      {
+        "path": "tests/native-script-contract.js",
+        "inAccepted226Binding": false,
+        "inCandidateBinding": false,
+        "actualCandidateSha256": "68f2480c6e340b512855e2ba99b16612fb0a6376e86b142707f3c41006ae1f64"
+      },
+      {
+        "path": "tests/r0017-transport.cjs",
+        "inAccepted226Binding": false,
+        "inCandidateBinding": false,
+        "actualCandidateSha256": "1d6833c403c97f0a2fdd288a725c2fbbf5587592bebae4346ceb50e696cca179"
+      }
+    ],
+    "nativeHelpersAndProtectedObjects": 21,
+    "protectedObjectsEqualAccepted5e": 13,
+    "unchangedAdapterOwnerCount": 7,
+    "onlyExecutableScopeChanges": [
+      "tests/native-script-contract.js",
+      "tests/r0017-transport.cjs"
+    ],
+    "inputsReverified": 27,
+    "candidateClean": true,
+    "mainInvoked": false,
+    "nativeInvoked": false
+  },
+  "affectedControlRuns": [
+    {
+      "name": "prior-adapters",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/r0017-adapters.test.cjs"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/prior-inputs",
+      "exitCode": 1,
+      "tests": 11,
+      "pass": 10,
+      "fail": 1,
+      "failures": [
+        "the exact current authored source retains its separate input identity"
+      ],
+      "seconds": 0.569,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/prior-adapters.log"
+    },
+    {
+      "name": "prior-hotfix",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/hotfix-prayer-weather.test.cjs"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/prior-inputs",
+      "exitCode": 1,
+      "tests": 21,
+      "pass": 0,
+      "fail": 21,
+      "failures": [
+        "native celestial presence follows the accepted physical Sun, not timetable-fitted altitude",
+        "lunar droplet corona needs admitted water cloud or fog, not humidity alone",
+        "solar body has one radiometric colour profile, without a brighter independent orange collar",
+        "enlarged solar body does not inflate at the horizon; high Sun and horizon presence stay independent",
+        "low solar body has a resolved continuous radiance profile instead of a flat central fill",
+        "clear low-Sun colour recovers with atmospheric beam transmission before noon",
+        "cloud twilight colour follows solar geometry, never the binary timetable day flag",
+        "predawn clouds retain cool ambient light and low-Sun cloud colour evolves continuously",
+        "second-level boundaries for every event and Sunrise to Forenoon retain independent current/next",
+        "overnight next row uses tomorrow Fajr, same target as countdown and arc",
+        "new target withdraws old prayer rows, countdown and weather together before provider settlement",
+        "yesterday cannot nominate a current next prayer at midnight; eligible tomorrow promotion restores it",
+        "live current categories keep condition icons and model-supported precipitation without observed strikes",
+        "weather unavailable, expired and wrong target never retains old temperature/icon pair",
+        "missing or contradictory amounts retain a model condition without inventing rain effects",
+        "missing temperature does not discard an eligible model condition or retain an old value",
+        "every supported provider WMO code retains its category in the live condition lane",
+        "new-generation tomorrow adoption cannot re-admit old-generation current rows",
+        "native clock controls pause, seek, change rate and return to the live current-weather lane",
+        "pausing an explicit forecast playback retains preview provenance instead of dropping its weather",
+        "hourly thunder model in time-lapse does not invent lightning observations or flashes"
+      ],
+      "seconds": 0.322,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/prior-hotfix.log"
+    },
+    {
+      "name": "prior-transport",
+      "command": [
+        "node",
+        "tests/r0017-transport.cjs"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/prior-inputs",
+      "exitCode": 1,
+      "tests": 32,
+      "pass": 31,
+      "fail": 1,
+      "failures": [
+        {
+          "name": "legacy Moon structural branch admits its exact positive source before parser stop",
+          "error": "retained structural input must be explicitly rebound on source change\n+ actual - expected\n\n+ 'c60eef46e0feeb4fcbc2daa34ec7069af470326648d8cf53943ee42a21865308'\n- 'f6650909f7d2defc2edffa25c7510b4ae476fc3208d4a9625090107ff77de1de'\n"
+        }
+      ],
+      "seconds": 0.619,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/prior-transport.log"
+    },
+    {
+      "name": "candidate-adapters",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/r0017-adapters.test.cjs"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/candidate",
+      "exitCode": 0,
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "failures": [],
+      "seconds": 0.571,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/candidate-adapters.log"
+    },
+    {
+      "name": "candidate-hotfix",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/hotfix-prayer-weather.test.cjs"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/candidate",
+      "exitCode": 0,
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "failures": [],
+      "seconds": 3.5,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/candidate-hotfix.log"
+    },
+    {
+      "name": "candidate-transport",
+      "command": [
+        "node",
+        "tests/r0017-transport.cjs"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/candidate",
+      "exitCode": 0,
+      "tests": 32,
+      "pass": 32,
+      "fail": 0,
+      "failures": [],
+      "seconds": 0.681,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/candidate-transport.log"
+    }
+  ],
+  "independentProbeRuns": [
+    {
+      "name": "identity-boundary-probe",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "identity-boundary-probe.cjs"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da",
+      "exitCode": 0,
+      "seconds": 0.522,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/identity-boundary-probe.log",
+      "infrastructureRetry": "explicit bounded 4 MiB Git stdout buffer; candidate unchanged"
+    },
+    {
+      "name": "native-reanchor",
+      "command": [
+        "python",
+        "verify-native-reanchor.py"
+      ],
+      "cwd": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da",
+      "exitCode": 0,
+      "seconds": 3.85,
+      "log": "/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-e46f9da/native-reanchor.log"
+    }
+  ],
+  "finalInputReverification": {
+    "candidateExactFiles": 27,
+    "priorExactFiles": 12,
+    "candidateClean": true
+  },
+  "files": {
+    "FINAL.md": {
+      "sha256": "9d281d02288b1602e9f2c5607f992e20a2261c304913dbb06dd267b1b9f0978f",
+      "bytes": 13571
+    },
+    "PARTIAL.md": {
+      "sha256": "5eb7b643249e2611ee9283f536b9ffe048b28e4cf36febb6aca88dce50de78c6",
+      "bytes": 983
+    },
+    "actual-bound-packet.json": {
+      "sha256": "59a19b734261c234539b1855306a0cdd7ec4c786c555b6cc6cdeb29bf789ec28",
+      "bytes": 258313
+    },
+    "affected-control-runs.json": {
+      "sha256": "eec4a686bce2ea2da7170bf37cc6224d7473ab4ee9af8d3d58c51f23e777d51e",
+      "bytes": 5317
+    },
+    "candidate-adapters.log": {
+      "sha256": "d326cdf0bf0e0956de16150d482a2d419384d97145f565ce3d172e67cd6abb4d",
+      "bytes": 2529
+    },
+    "candidate-hotfix.log": {
+      "sha256": "fb11bb65a9eb3e6f6c975568dd0ad808b3a8b9d1ad56a93687d3f3c3a12fa77c",
+      "bytes": 5324
+    },
+    "candidate-transport.log": {
+      "sha256": "ef822aff0f1cd631d7c89b75141f25a7ca5294691356193572ac51997d2e5fe2",
+      "bytes": 5403
+    },
+    "full-delta-path-scope.json": {
+      "sha256": "d6585901c3ff2154299a537e6c20f8222f9470ae979fd93262a0c63eb9c24b47",
+      "bytes": 250
+    },
+    "identity-boundary-probe.cjs": {
+      "sha256": "3ad1be9d1b6e183eb7c256e8b86a86f4c8ad45f4179388347b2cb772f7dec379",
+      "bytes": 8228
+    },
+    "identity-boundary-probe.initial-enobufs.log": {
+      "sha256": "10b935e5ed8097feab4c1e2f3cdc6caaac1d3690110fc968dc4d739e3f4f7016",
+      "bytes": 25041
+    },
+    "identity-boundary-probe.initial.cjs": {
+      "sha256": "36a67cd46e09b2f90004a669f04aa6241880b549706450bf5589b18f73e68fba",
+      "bytes": 8080
+    },
+    "identity-boundary-probe.log": {
+      "sha256": "1e84acd8001e4407a6857241e4b147c5a8f3eea20b15a4a7031a51660701636c",
+      "bytes": 1913
+    },
+    "identity-command.log": {
+      "sha256": "1f0d7b02887ceef580d1c6276bd8fad5307edfc4aea3284a6ba901e30c4efa62",
+      "bytes": 164
+    },
+    "identity-probe-bindings.json": {
+      "sha256": "2fa8a53a60bd2034a1219165319dcd7349ed02f3f90dd0560c5b8c78b80857bd",
+      "bytes": 810
+    },
+    "independent-probe-runs.json": {
+      "sha256": "f5d44648c1a3eea67dff15262286fc7b91df13bad8cbb51f882feacea95a96f5",
+      "bytes": 863
+    },
+    "initial-independent-probe-runs.json": {
+      "sha256": "05533b0166207f79422d46724b152c27f449df457a509790d5e1a4fddbaa19c4",
+      "bytes": 869
+    },
+    "input-manifest.json": {
+      "sha256": "9ed767976e71ad110d3c86e11e587045c7e5d059170901a959236f8e17a72064",
+      "bytes": 4506
+    },
+    "isolated-checkout.json": {
+      "sha256": "8a4d7e1174a238b42bd4fc3b61d90c63800f12a0e484f3764d0ea96170f580ee",
+      "bytes": 1748
+    },
+    "native-reanchor-verification.json": {
+      "sha256": "36af6b2cf3b182fcc11a088c65339a8d79961231f59271033fdfca1cdfb96591",
+      "bytes": 1155
+    },
+    "native-reanchor.log": {
+      "sha256": "36af6b2cf3b182fcc11a088c65339a8d79961231f59271033fdfca1cdfb96591",
+      "bytes": 1155
+    },
+    "prior-adapters.log": {
+      "sha256": "cae935dc23e5944a9ebd8c7738ffae4dd0b553b1ad7000e3f6715c7ede643cbd",
+      "bytes": 3802
+    },
+    "prior-hotfix.log": {
+      "sha256": "4ac27fb4bf4f849aca77a16bbd340ada7d815bd6573ae15e85fa7836b1b3315b",
+      "bytes": 35219
+    },
+    "prior-input-manifest.json": {
+      "sha256": "bdd419028a7887b774b16f9efdd58ca6643d665d610f971ea367d0683290cb1f",
+      "bytes": 2046
+    },
+    "prior-transport.log": {
+      "sha256": "05f9512345a2447e7b3985ab76a265b3f303a48d49ab231408c3a1deb63112e7",
+      "bytes": 5659
+    },
+    "protected-identities.json": {
+      "sha256": "e297d1f095c76bbf82470fdab660275af75cd87da45dc929616903e6b15bf7f3",
+      "bytes": 6044
+    },
+    "source-delta.patch": {
+      "sha256": "1341941555edb69e4a50c99a887e9db9dfef9341a1b12a63316565ab5b0b3289",
+      "bytes": 3855
+    },
+    "structural-preservation.json": {
+      "sha256": "6ef47479cda95386655dc3c201a443db273eaaced28ace598d2efe2ac2aafcba",
+      "bytes": 338
+    },
+    "verify-native-reanchor.py": {
+      "sha256": "9cfb38c82af701a9de49ffaaa9e4a869318f5283fb11f193539df5f407a2a63f",
+      "bytes": 5711
+    }
+  }
+}

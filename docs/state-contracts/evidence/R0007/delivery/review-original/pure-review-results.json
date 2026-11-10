@@ -1,0 +1,123 @@
+{
+  "schema": "independent-review-pure-controls/v1",
+  "scope": "Instrument control flow only; no browser, network, workflow, or product qualification.",
+  "probeSha256": "0e7bca4c7a8ac97f81eb4fb7ad94202d63c51aca613eaf2c7bde30de0efcd892",
+  "artifactRoot": "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review/pure-control-artifacts/run-xnj0p_0t",
+  "results": [
+    {
+      "name": "independent-literal-oracles",
+      "result": "PASS",
+      "evidence": {
+        "now": 1788822000000,
+        "isha": 1788827460000,
+        "fajr": 1788843600000
+      }
+    },
+    {
+      "name": "unbound-template-rejected",
+      "result": "PASS",
+      "evidence": "served file identity is unbound: index.html"
+    },
+    {
+      "name": "wrong-visible-duration-accepted:public-reordered24",
+      "result": "REPRODUCED",
+      "evidence": {
+        "receiptMinutes": 91,
+        "visible": "999h 59m left until Isha"
+      }
+    },
+    {
+      "name": "wrong-visible-duration-accepted:public-ordinary24",
+      "result": "REPRODUCED",
+      "evidence": {
+        "receiptMinutes": 360,
+        "visible": "999h 59m left until Fajr"
+      }
+    },
+    {
+      "name": "wrong-visible-duration-accepted:public-recovery24",
+      "result": "REPRODUCED",
+      "evidence": {
+        "receiptMinutes": 91,
+        "visible": "999h 59m left until Isha"
+      }
+    },
+    {
+      "name": "wrong-visible-duration-accepted:public-reordered-offline",
+      "result": "REPRODUCED",
+      "evidence": {
+        "receiptMinutes": 91,
+        "visible": "999h 59m left until Isha"
+      }
+    },
+    {
+      "name": "expected-epoch-discriminator",
+      "result": "PASS",
+      "evidence": "Each applicable expectedFinal rejects an endpoint changed by 60,000 ms."
+    },
+    {
+      "name": "export-failure-keeps-assertion-success",
+      "result": "REPRODUCED",
+      "evidence": {
+        "status": "ASSERTIONS_MET_INDEPENDENT_PIXELS_PENDING",
+        "exportFailure": "RuntimeError('controlled-export-failure')",
+        "observationsPresent": false
+      }
+    },
+    {
+      "name": "missing-video-not-gated",
+      "result": "REPRODUCED",
+      "evidence": {
+        "status": "ASSERTIONS_MET_INDEPENDENT_PIXELS_PENDING",
+        "videoFiles": []
+      }
+    },
+    {
+      "name": "launch-without-handle-claims-cleanup",
+      "result": "REPRODUCED",
+      "evidence": {
+        "status": "FAILED_OR_UNVERIFIED",
+        "ownedCleanupReturned": true,
+        "closeCalls": 0
+      }
+    },
+    {
+      "name": "returned-owner-close-failure-discriminator",
+      "result": "PASS",
+      "evidence": {
+        "status": "FAILED_OR_UNVERIFIED",
+        "cleanupFailures": [
+          {
+            "owner": "context",
+            "error": "RuntimeError('controlled-context-close-failure')"
+          }
+        ]
+      }
+    },
+    {
+      "name": "recovery-accepted-before-font-settlement",
+      "result": "REPRODUCED",
+      "evidence": {
+        "status": "ASSERTIONS_MET_INDEPENDENT_PIXELS_PENDING",
+        "checkpointFontStates": [
+          "loading",
+          "loading"
+        ],
+        "waitPredicates": [
+          "() => {const p=window.__r0007PublicDelivery,s=p?.sample('current-readiness');return !!(s?.cache?.prayerLoaded&&s.render&&s.rows.length===6)}",
+          "() => !!window.__r0007PublicDelivery.sample('tomorrow-admission-readiness')?.cache?.tomorrowLoaded"
+        ]
+      }
+    },
+    {
+      "name": "approval-head-base-not-consulted",
+      "result": "REPRODUCED",
+      "evidence": {
+        "approvalHeadActualTreeInDouble": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "declaredApprovedAndMergedTree": "dddddddddddddddddddddddddddddddddddddddd",
+        "verification": "returned normally",
+        "approvalIdentityCommands": []
+      }
+    }
+  ]
+}

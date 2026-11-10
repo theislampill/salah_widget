@@ -1,0 +1,125 @@
+SOURCE 4f63d01b85c7979ba884a58ce6a3edc071047444efee0eb2a405fe58023a2256 MODEL 2cbd552a7b7f24d0f448e570540925d5290ced86662ae8bb51e5c8bf0644c0fc RENDER 3689a6fa7a779cabf0443bf96ba262e01836daa4d0ed402927aae7d5b85ecc83
+MUTANT sec-only e34024e35d7affb575555234932218d55a2c7136bae8d7cb98a1cb123a00e6d5 rejected by actual late-prefetch consumer
+✔ spring reaches actual model and countdown assignments (65.737131ms)
+✔ fall first 01:30 reaches actual model and countdown assignments (37.646764ms)
+✔ ordinary control reaches actual model and countdown assignments (39.365216ms)
+✔ fall 00:30 additional control reaches actual model and countdown assignments (37.87711ms)
+✔ fall second 01:30 reaches actual model and countdown assignments (43.285157ms)
+✔ fractional offset control reaches actual model and countdown assignments (38.247156ms)
+✔ overnight uses the actual next-day date across spring; missing/wrong-day data stays unavailable then recovers (73.30392ms)
+✔ gap endpoint is withheld by actual render (49.56298ms)
+✔ fold endpoint is withheld by actual render (40.130736ms)
+✔ exact boundary selects the following event and ordinary wall progress is retained (36.474833ms)
+✔ year boundary resolves next-day Fajr without adding 24 elapsed hours (70.080146ms)
+✔ leap boundary resolves next-day Fajr without adding 24 elapsed hours (68.402225ms)
+✔ finite model defense precedes normalization {"Fajr":"--:--"} (7.366267ms)
+✔ finite model defense precedes normalization {"Sunset":"Infinity:00"} (37.092162ms)
+✔ finite model defense precedes normalization {"Sunset":"1e300:00"} (36.838955ms)
+✔ ordinary baseline control reaches real render without tomorrow (38.081597ms)
+✖ actual repeated model consumer reuses the same day profile (44.88539ms)
+✔ invalid explicit model exits before nonfinite wall projection (38.050872ms)
+✖ wall-minute subtraction and today-plus-24h mutants are caught while ordinary control survives (112.980167ms)
+✔ finite equal/reordered polar records remain usable (119.091926ms)
+✔ actual held prefetch restores the frozen overnight countdown on the dirty visible frame (102.881839ms)
+✔ sec-only loop mutant cannot paint a late countdown in a frozen scene (249.898323ms)
+✔ actual config generation cancels a held old-zone prefetch before the recovered countdown (107.618006ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 21
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1504.281756
+
+✖ failing tests:
+
+test at tests/r0007-countdown.cjs:93:1
+✖ actual repeated model consumer reuses the same day profile (44.88539ms)
+  AssertionError [ERR_ASSERTION]: one wall projection and one endpoint check per model; no day rebuild
+  
+  140 !== 40
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-countdown.cjs:98:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 140,
+    expected: 40,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/r0007-countdown.cjs:108:1
+✖ wall-minute subtraction and today-plus-24h mutants are caught while ordinary control survives (112.980167ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to:
+  
+  '// build everything render() needs, in tz minutes\n' +
+    'function prayerDayFields(record){\n' +
+    '  const g=record && record.date && record.date.gregorian;\n' +
+    '  if(!g) return null;\n' +
+    '  const y=+g.year, mo=+(g.month && g.month.number), d=+g.day;\n' +
+    '  return y>0 && Number.isFinite(utcFields(y,mo,d)) ? {y,mo,d,dateStr:`${pad(d)}-${pad(mo)}-${y}`} : null;\n' +
+    '}\n' +
+    '// Ephemeral derived events retain the admitted source identity. Only the existing\n' +
+    '// unique inverse supplies a precise epoch; profile bounds never become endpoints.\n' +
+    'function prayerEventCandidates(record,generation){\n' +
+    '  const day=prayerDayFields(record), zone=record.meta.timezone;\n' +
+    '  return Object.freeze(prayers.map((key,rank)=>{\n' +
+    '    const clock=record.timings[key], minute=mins(clock);\n' +
+    '    const epoch=epochForTzTime(day.y,day.mo,day.d,Math.floor(minute/60),minute%60,zone);\n' +
+    '    let lowerEpoch=epoch, upperEpoch=epoch, unavailableReason=null;\n' +
+    '    if(!Number.isFinite(epoch)){\n' +
+    '      lowerEpoch=-Infinity; upperEpoch=Infinity;\n' +
+    '      const profile=zoneDay(day.y,day.mo,day.d,zone), entry=profile.minutes && profile.minutes[minute];\n' +
+    '      unavailableReason=entry && entry.length>1 ? "fold" : entry && !entry.length ? "gap" : "unsupported-inverse";\n' +
+    '      if(entry && entry.length>1){ lowerEpoch=Math.min(...entry); upperEpoch=Math.max(...entry); }\n' +
+    '      else if(entry && !entry.length){\n' +
+    '        let before=minute-1, after=minute+1;\n' +
+    '        while(before>=0 && !profile.minutes[before].length) before--;\n' +
+    '        while(after<1440 && !profile.minutes[after].length) after++;\n' +
+    '        // Missing either neighbor leaves ordering unknown. Retain every fold\n' +
+    '        // alternative around a gap; never interpolate or pick one alternative.\n' +
+    '        if(before>=0 && after<1440){\n' +
+    '          const lower=Math.min(...profile.minutes[before]), upper=Math.max(...profile.minutes[after]);\n' +
+    '          if(lower<=upper){ lowerEpoch=lower; upperEpoch=upper; }\n' +
+    '        }\n' +
+    '      }\n' +
+    '    }\n' +
+    '    return Object.freeze({key,clock,dateStr:day.dateStr,zone,minute,rank,generation,sourceRecord:record,\n' +
+    '      epoch,unavailableReason,lowerEpoch,upperEpoch});\n' +
+    '  }));\n' +
+    '}\n' +
+    'function selectPrayerEvent(currentRecord,nextRecord,nowEpoch,wallParts){\n' +
+    '  const generation=_runtimeGeneration;\n' +
+    '  let currentCandidates=Object.freeze([]);\n' +
+    '  const result=(state,target=null,reason=null,dayOffset=0)=>Object.freeze({state,target,reason,dayOffset,nowEpoch,generation,currentCandidates});\n' +
+    '  const eligible=(record,day)=>!!(day && record && record.timings && record.meta?.timezone===tz &&\n' +
+    '    record.date.gregorian.date===day.dateStr && prayers.every(key=>{\n' +
+    '      const minute=mins(record.timings[key]); return Number.isFinite(minute) && minute>=0 && minute<1440;\n' +
+    '    }));\n' +
+    '  const currentDay=prayerDayFields(currentRecord);\n' +
+    '  if(!Number.isFinite(nowEpoch) || _prayerRecordsGeneration!==generation || !eligible(currentRecord,currentDay) ||\n' +
+  ...
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-countdown.cjs:117:229)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '// build everything render() needs, in tz minutes\nfunction prayerDayFields(record){\n  const g=record && record.date && record.date.gregorian;\n  if(!g) return null;\n  const y=+g.year, mo=+(g.month && g.month.number), d=+g.day;\n  return y>0 && Number.isFinite(utcFields(y,mo,d)) ? {y,mo,d,dateStr:`${pad(d)}-${pad(mo)}-${y}`} : null;\n}\n// Ephemeral derived events retain the admitted source identity. Only the existing\n// unique inverse supplies a precise epoch; profile bounds never become endpoints.\nfunction prayerEventCandidates(record,generation){\n...',
+    expected: '// build everything render() needs, in tz minutes\nfunction prayerDayFields(record){\n  const g=record && record.date && record.date.gregorian;\n  if(!g) return null;\n  const y=+g.year, mo=+(g.month && g.month.number), d=+g.day;\n  return y>0 && Number.isFinite(utcFields(y,mo,d)) ? {y,mo,d,dateStr:`${pad(d)}-${pad(mo)}-${y}`} : null;\n}\n// Ephemeral derived events retain the admitted source identity. Only the existing\n// unique inverse supplies a precise epoch; profile bounds never become endpoints.\nfunction prayerEventCandidates(record,generation){\n...',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }

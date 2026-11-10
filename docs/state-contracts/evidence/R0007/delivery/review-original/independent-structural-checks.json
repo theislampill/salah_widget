@@ -1,0 +1,55 @@
+{
+  "pythonCompile": "PASS",
+  "observerNodeCheck": {
+    "exitCode": 0,
+    "stderr": ""
+  },
+  "workflowParse": "PASS",
+  "workflowTriggers": {
+    "push": {
+      "branches": [
+        "pro/r0007-explicit-next-event-state-20261106"
+      ],
+      "paths": [
+        "docs/state-contracts/evidence/R0007/delivery/request.json"
+      ]
+    }
+  },
+  "workflowPermissions": {
+    "contents": "read"
+  },
+  "checks": [
+    {
+      "name": "template",
+      "command": [
+        "python",
+        "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-preparation/r0007_public_consumer.py",
+        "--request",
+        "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-preparation/delivery-request.template.json",
+        "--cases",
+        "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-preparation/r0007_public_cases.json",
+        "--validate-only",
+        "--template"
+      ],
+      "exitCode": 0,
+      "expectedExit": 0,
+      "passed": true
+    },
+    {
+      "name": "unbound",
+      "command": [
+        "python",
+        "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-preparation/r0007_public_consumer.py",
+        "--request",
+        "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-preparation/delivery-request.template.json",
+        "--cases",
+        "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-preparation/r0007_public_cases.json",
+        "--validate-only"
+      ],
+      "exitCode": 1,
+      "expectedExit": 1,
+      "passed": true
+    }
+  ],
+  "scope": "Pure only; no HTTP, browser or workflow execution."
+}

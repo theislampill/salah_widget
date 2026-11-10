@@ -1,0 +1,31 @@
+--- prepared/test_delivery_instrument.py
++++ tests/test_r0007_public_delivery.py
+@@ -23,13 +23,15 @@
+ 
+ sys.dont_write_bytecode = True
+ HERE = Path(__file__).resolve().parent
+-PROBE = Path(os.environ.get("R0007_PROBE_UNDER_TEST", HERE / "r0007_public_consumer.py"))
++REPOSITORY = HERE.parent
++FONT_PATH = REPOSITORY / "tools/cp9/r0007_font_observer.js"
++PROBE = Path(os.environ.get("R0007_PROBE_UNDER_TEST", REPOSITORY / "tools/qualification/r0007_public_consumer.py"))
+ spec = importlib.util.spec_from_file_location("delivery_instrument_under_test", PROBE)
+ subject = importlib.util.module_from_spec(spec); spec.loader.exec_module(subject)
+ CASES = json.loads((PROBE.parent / "r0007_public_cases.json").read_text())
+-TEMPLATE = json.loads((PROBE.parent / "delivery-request.template.json").read_text())
+-FONT_SOURCE = (HERE / "r0007_font_observer.js").read_bytes().decode("utf-8")
+-RUN = Path(tempfile.mkdtemp(prefix="pure-run-", dir=HERE))
++TEMPLATE = json.loads(Path(os.environ.get("R0007_DELIVERY_TEMPLATE", REPOSITORY / "docs/state-contracts/evidence/R0007/delivery/request.template.json")).read_text())
++FONT_SOURCE = FONT_PATH.read_bytes().decode("utf-8")
++RUN = Path(tempfile.mkdtemp(prefix="r0007-public-pure-", dir=os.environ.get("R0007_TEST_OUTPUT_ROOT")))
+ BINARY = RUN / "not-a-browser"; BINARY.write_text("Synthetic file; never executed.\n")
+ KEYS = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"]
+ 
+@@ -272,7 +274,7 @@
+         # population loop and failing acquire_case run unchanged, without a browser.
+         with mock.patch.object(subject, "validate", return_value={}), mock.patch.object(subject, "verify_git", return_value={}), mock.patch.object(subject, "served_readback", return_value=[]), mock.patch.dict(sys.modules, {"playwright": SimpleNamespace(), "playwright.sync_api": fake_api}):
+             arguments = ["--request", str(request_path), "--cases", str(PROBE.parent / "r0007_public_cases.json"), "--repository-root", str(RUN / "unopened-repo"), "--output", str(output)]
+-            if hasattr(subject, "FONT_OBSERVER_PATH"): arguments.extend(["--font-observer", str(HERE / "r0007_font_observer.js")])
++            if hasattr(subject, "FONT_OBSERVER_PATH"): arguments.extend(["--font-observer", str(FONT_PATH)])
+             code = subject.main(arguments)
+         self.assertEqual(code, 1)
+         self.assertEqual(driver.events.count("launch"), 1)

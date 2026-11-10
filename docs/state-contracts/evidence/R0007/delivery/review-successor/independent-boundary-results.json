@@ -1,0 +1,135 @@
+{
+  "scope": "Pure review-owned fixtures only; no browser/HTTP/server/workflow/candidate effect. Local Git objects and local-file fetch are synthetic controls, never approval evidence.",
+  "probeSha256": "e76debff6c6b2ebba1c191aa7eddd07699d886cf020b272462f8f091fc4ff209",
+  "fixtureArtifacts": "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/pure-run-8xwn2pj2",
+  "results": [
+    {
+      "name": "single-init-exact-order-and-service-worker-boundary",
+      "status": "PASS",
+      "evidence": {
+        "initCalls": 1,
+        "fontObserverFirst": true,
+        "serviceWorkers": "block"
+      }
+    },
+    {
+      "name": "acquire-rejects-wrong-local-observer-before-launch",
+      "status": "PASS",
+      "evidence": {
+        "launches": 0,
+        "failure": "ValueError('actual local font observer bytes differ from explicit request')"
+      }
+    },
+    {
+      "name": "response-disposal-failure-remains-nonpassing",
+      "status": "PASS",
+      "evidence": {
+        "blockedCount": 1,
+        "failure": "RuntimeError('controlled-dispose-failure')"
+      }
+    },
+    {
+      "name": "fulfillment-failure-aborts-and-disposes",
+      "status": "PASS",
+      "evidence": {
+        "blockedCount": 1,
+        "policy": "ORIGINAL_ALLOWLISTED_TRANSPORT_FAILED"
+      }
+    },
+    {
+      "name": "identical-tree-ordered-parents-do-not-bypass-base-ancestry",
+      "status": "PASS",
+      "evidence": {
+        "rejection": "approved base is not proven ancestor of approved head; require complete immutable history"
+      }
+    },
+    {
+      "name": "moved-fetch-head-is-rejected",
+      "status": "PASS",
+      "evidence": {
+        "rejection": "freshly fetched main moved from requested merge; reconcile before delivery acceptance"
+      }
+    },
+    {
+      "name": "cli-template",
+      "status": "PASS",
+      "evidence": {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_public_consumer.py",
+          "--request",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/delivery-request.template.json",
+          "--cases",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_public_cases.json",
+          "--font-observer",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_font_observer.js",
+          "--validate-only",
+          "--template"
+        ],
+        "exitCode": 0,
+        "log": "independent-template.log",
+        "logSha256": "6a90d821cb9e81aaaf8ff1f7b95befe4febca58d610e72c82da7ef4b31a268c4"
+      }
+    },
+    {
+      "name": "cli-unbound",
+      "status": "PASS",
+      "evidence": {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_public_consumer.py",
+          "--request",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/delivery-request.template.json",
+          "--cases",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_public_cases.json",
+          "--font-observer",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_font_observer.js",
+          "--validate-only"
+        ],
+        "exitCode": 1,
+        "log": "independent-unbound.log",
+        "logSha256": "b8cbd6d1316ca796c7bd6b257fbbc8347e45a8cd89e93704b291a4448e122195"
+      }
+    },
+    {
+      "name": "cli-observer-required",
+      "status": "PASS",
+      "evidence": {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_public_consumer.py",
+          "--request",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/delivery-request.template.json",
+          "--cases",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_public_cases.json",
+          "--validate-only",
+          "--template"
+        ],
+        "exitCode": 2,
+        "log": "independent-observer-required.log",
+        "logSha256": "9d275f878e6e380acef1f9495f21c98d16297aaa3a3814c60eb59255bc7b5dc5"
+      }
+    },
+    {
+      "name": "cli-observer-hash-mismatch",
+      "status": "PASS",
+      "evidence": {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_public_consumer.py",
+          "--request",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/delivery-request.template.json",
+          "--cases",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/scope/r0007_public_cases.json",
+          "--font-observer",
+          "/workspace/scratch/8726e3e6def5/analysis-r0007/delivery-review-successor/wrong-observer-control.js",
+          "--validate-only",
+          "--template"
+        ],
+        "exitCode": 1,
+        "log": "independent-observer-hash-mismatch.log",
+        "logSha256": "e841f2b1ddfad6da70aa7614940a3e555ec9964955fed0ca439565282f19b1b7"
+      }
+    }
+  ]
+}

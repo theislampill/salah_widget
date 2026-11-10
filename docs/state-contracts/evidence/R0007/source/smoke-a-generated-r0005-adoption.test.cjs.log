@@ -1,0 +1,25 @@
+{"warmLoop":{"frames":100,"elapsed":1600,"intl":0,"admission":0,"paints":1,"requests":0,"stale":false}}
+✔ R0005 completed prefetch promotes at midnight while network is offline (77.342521ms)
+✔ R0005 positive normal next-day prefetch remains tomorrow before midnight (49.946423ms)
+✔ R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day (15.743892ms)
+✔ R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF (90.196554ms)
+✔ R0005 held-out warm 100-frame control avoids repeated admission/Intl construction (63.938839ms)
+✔ R0005 late next-day prefetch rescues current when midnight acquisition exhausts (54.650513ms)
+✔ R0005 payload neither current nor successor is discarded after further day movement (51.890018ms)
+✔ R0005 backward correction reclassifies and acquires the actual earlier civil day (98.961775ms)
+✔ R0005 hidden next-day completion marks dirty and paints once on frozen visible resume (119.356152ms)
+✔ R0005 usable next-day record suppresses redundant work; promotion allows one new successor (105.832065ms)
+✔ R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC (49.679778ms)
+✔ R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC (53.876892ms)
+✔ R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York (56.002227ms)
+✔ R0005 mutant removing promotion is killed by offline completed prefetch (78.972411ms)
+✔ R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate (32.379908ms)
+✔ R0005 mutant removing dirty consumer is killed by frozen async visible resume (80.145921ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1104.615545

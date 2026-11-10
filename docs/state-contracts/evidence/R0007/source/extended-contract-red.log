@@ -1,0 +1,374 @@
+✖ ES07-01 actual admitted reordered tomorrow selects Isha 00:31 and 91 elapsed minutes (90.87929ms)
+✔ ES07-02 actual admitted ordinary tomorrow retains Fajr 05:00 and 360 elapsed minutes (39.609619ms)
+✖ ES07-05/12 missing, rejected, foreign-zone and wrong-day successors never guess a next target (10.087373ms)
+✖ ES07-03 same day preserves ordinary rendered labels (51.532685ms)
+✖ ES07-03 strict exact event preserves ordinary rendered labels (44.089208ms)
+✖ ES07-03 Sunrise instant preserves ordinary rendered labels (40.27654ms)
+✖ ES07-03 Forenoon boundary preserves ordinary rendered labels (41.561652ms)
+✖ ES07-11/13 reordered target supplies one date/zone/interval/marker and completed-render receipt (41.514621ms)
+✖ ES07-13 supported before-first target retains decorative wall progress without invented previous history (62.509158ms)
+✖ ES07-04 future tie stays admitted with deterministic rank and finite progress (63.243987ms)
+✖ ES07-04 exact tie stays admitted with deterministic rank and finite progress (71.683899ms)
+✖ ES07-04 midnight polar tie stays admitted with deterministic rank and finite progress (36.888763ms)
+✔ ES07-08 gap later than healthy winner does not blanket-disable a supported target (38.773002ms)
+✔ ES07-08 gap already elapsed does not blanket-disable a supported target (38.173461ms)
+✔ ES07-08 fold later than healthy winner does not blanket-disable a supported target (39.849771ms)
+✔ ES07-08 fold all alternatives elapsed does not blanket-disable a supported target (40.04321ms)
+✖ ES07-08 potentially earlier gap blocks false next precision (43.008856ms)
+✖ ES07-08 fold wall past but second epoch future blocks false next precision (51.752014ms)
+✖ ES07-08 unsupported inverse profile cannot skip uncertain candidates (9.287992ms)
+✖ ES07-09 reordered target uses actual successor 2026-10-01 (40.072795ms)
+✖ ES07-09 reordered target uses actual successor 2027-01-01 (44.629701ms)
+✖ ES07-09 reordered target uses actual successor 2024-02-29 (52.281054ms)
+✖ ES07-09 reordered target uses actual successor 2024-03-01 (75.960944ms)
+✖ ES07-11 diagnostics retain the rendered model instant when wall time moves during the consumer (81.846485ms)
+✖ ES07-06 actual frozen next-day arrival restores reordered target on first dirty frame 24h (115.802563ms)
+✖ ES07-06 actual frozen next-day arrival restores reordered target on first dirty frame 12h (82.860739ms)
+✖ ES07-10 A to B to A rejects old held current and next replies before frozen selected target (74.11376ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 5
+ℹ fail 22
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1432.980437
+
+✖ failing tests:
+
+test at tests/prayer-next-event-state.test.cjs:19:1
+✖ ES07-01 actual admitted reordered tomorrow selects Isha 00:31 and 91 elapsed minutes (90.87929ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'Fajr' !== 'Isha'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:22:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Fajr',
+    expected: 'Isha',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:56:1
+✖ ES07-05/12 missing, rejected, foreign-zone and wrong-day successors never guess a next target (10.087373ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at assertUnavailable (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:45:73)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:63:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:72:3
+✖ ES07-03 same day preserves ordinary rendered labels (51.532685ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:74:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:72:3
+✖ ES07-03 strict exact event preserves ordinary rendered labels (44.089208ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:74:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:72:3
+✖ ES07-03 Sunrise instant preserves ordinary rendered labels (40.27654ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:74:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:72:3
+✖ ES07-03 Forenoon boundary preserves ordinary rendered labels (41.561652ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:74:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:78:1
+✖ ES07-11/13 reordered target supplies one date/zone/interval/marker and completed-render receipt (41.514621ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:80:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:90:1
+✖ ES07-13 supported before-first target retains decorative wall progress without invented previous history (62.509158ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - -270
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:92:74)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: -270,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:100:3
+✖ ES07-04 future tie stays admitted with deterministic rank and finite progress (63.243987ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:104:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:100:3
+✖ ES07-04 exact tie stays admitted with deterministic rank and finite progress (71.683899ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:104:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:100:3
+✖ ES07-04 midnight polar tie stays admitted with deterministic rank and finite progress (36.888763ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:104:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:120:3
+✖ ES07-08 potentially earlier gap blocks false next precision (43.008856ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at assertUnavailable (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:45:73)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:121:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:120:3
+✖ ES07-08 fold wall past but second epoch future blocks false next precision (51.752014ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at assertUnavailable (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:45:73)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:121:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:124:1
+✖ ES07-08 unsupported inverse profile cannot skip uncertain candidates (9.287992ms)
+  TypeError: Cannot read properties of undefined (reading 'state')
+      at assertUnavailable (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:45:73)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:129:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/prayer-next-event-state.test.cjs:137:3
+✖ ES07-09 reordered target uses actual successor 2026-10-01 (40.072795ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'Fajr' !== 'Isha'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:139:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Fajr',
+    expected: 'Isha',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:137:3
+✖ ES07-09 reordered target uses actual successor 2027-01-01 (44.629701ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'Fajr' !== 'Isha'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:139:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Fajr',
+    expected: 'Isha',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:137:3
+✖ ES07-09 reordered target uses actual successor 2024-02-29 (52.281054ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'Fajr' !== 'Isha'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:139:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Fajr',
+    expected: 'Isha',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:137:3
+✖ ES07-09 reordered target uses actual successor 2024-03-01 (75.960944ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'Fajr' !== 'Isha'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:139:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Fajr',
+    expected: 'Isha',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:143:1
+✖ ES07-11 diagnostics retain the rendered model instant when wall time moves during the consumer (81.846485ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '07-09-2026 23:01'
+  - '07-09-2026 23:00'
+                    ^
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:148:104)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '07-09-2026 23:01',
+    expected: '07-09-2026 23:00',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:158:36
+✖ ES07-06 actual frozen next-day arrival restores reordered target on first dirty frame 24h (115.802563ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'Fajr' !== 'Isha'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:162:39)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Fajr',
+    expected: 'Isha',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:158:36
+✖ ES07-06 actual frozen next-day arrival restores reordered target on first dirty frame 12h (82.860739ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'Fajr' !== 'Isha'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:162:39)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Fajr',
+    expected: 'Isha',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:166:1
+✖ ES07-10 A to B to A rejects old held current and next replies before frozen selected target (74.11376ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'Fajr' !== 'Isha'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:176:68)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Fajr',
+    expected: 'Isha',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
