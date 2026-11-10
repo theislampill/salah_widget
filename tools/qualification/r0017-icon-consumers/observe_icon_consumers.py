@@ -53,7 +53,7 @@ def main(root, out):
         raise RuntimeError("Refusing nonempty evidence directory")
     out.mkdir(parents=True, exist_ok=True)
     sys.path.insert(0, str(root / "tools/cp9"))
-    from browser_runtime import launch_browser, browser_identity
+    from browser_runtime import browser_options, browser_identity
     sha = lambda b: hashlib.sha256(b).hexdigest()
     paths = ["tests/smoke.html", "tests/widget-fixture.html", "tests/r0017-smoke-icon.svg"]
     expected = json.loads((out.parent / "integrated/SOURCE_IDENTITY.json").read_text())
@@ -85,7 +85,11 @@ def main(root, out):
     browser=None
     try:
         with sync_playwright() as p:
-            browser=launch_browser(p)
+            family,launch_options=browser_options()
+            assert family=="chromium", "The icon CDP observation requires the explicitly selected Chromium engine"
+            # Chromium exposes the actual owned command line only in automation mode.
+            launch_options["args"]=[*launch_options.get("args",[]),"--enable-automation"]
+            browser=getattr(p,family).launch(**launch_options)
             result["browser"]=browser_identity(browser)
             browser_cdp=browser.new_browser_cdp_session()
             result["browserCommandLine"]=browser_cdp.send("Browser.getBrowserCommandLine")

@@ -317,7 +317,11 @@ required singleton socket, before any case/navigation. It supplied no product or
 icon observation. Its conservative `CLEANUP_UNVERIFIED` result and actual process
 exit/temporary-directory cleanup records are preserved. The Windows invocation
 uses the same reviewed predicates and the installed Chrome executable; it does
-not disable sandboxing or CSP. The workflow records the actual pushed commit/tree,
+not disable sandboxing or CSP. Prepublication review found that Chromium requires
+`--enable-automation` for `Browser.getBrowserCommandLine`; this one-off launch adds
+that normal automation flag to the unchanged shared helper's selected options.
+The installed executable, sandbox request and all consumer predicates are preserved.
+The workflow records the actual pushed commit/tree,
 binary identity, dependency version and setup/collection outcomes. Its source
 binding is the retained precommit integration receipt, not a substitute for the
 current checked-out commit. A future native result must be received and reviewed
