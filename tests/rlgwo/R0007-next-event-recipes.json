@@ -59,7 +59,8 @@
       "NE07-mut-remove-next-dirty",
       "NE07-mut-epoch-plus24",
       "NE07-mut-wall-spring",
-      "NE07-mut-wall-fall"
+      "NE07-mut-wall-fall",
+      "NE07-mut-dst-sec-only"
     ],
     "conditionalPreservationCaseIds": [
       "NE07-preserve-no-preference",
@@ -91,7 +92,8 @@
     "noCrossCaseCacheDependencies": true,
     "firstFrameConstraint": "firstPredicate binds actual current civil day/timetableDate and required admitted next day only, never expected target key/time. All-render raw traces + video/crops must independently establish actual first presented eligible frame; still ordinal mismatch remains explicit.",
     "recoveryConstraint": "Actual held prefetch body is released only after authored optional-font LINK load/error terminality, media activation on load, read-only native layout, actual FontFaceSet.ready, typed per-face loadingdone/loadingerror receipts deferred until dispatch returns, zero pending observer receipts and the existing clear dirty flag. The R0007-only pre-document observer is bound to static authored font startup; missing receipts and observed lifecycle changes fail diagnostically. No product render/clock/target wait or replacement scheduler is added. The250ms actual scheduling observation is eventual; independent all-render/video review still owns earliest eligible/visible recovery.",
-    "durationGuidance": "Functional recipes add at most one250ms scheduling observation; old loading recipes retain250ms loading hold; no deliberate10s request deadline or60s cooldown replay. Browser/bootstrap/font readiness costs are host-dependent. Each conditional motion recipe retains its original30s watch and60s warm bound. Run engines and cases serially; do not repeatedly replay accepted subsets without a changed risk."
+    "durationGuidance": "Functional recipes add at most one250ms scheduling observation; old loading recipes retain250ms loading hold; no deliberate10s request deadline or60s cooldown replay. Browser/bootstrap/font readiness costs are host-dependent. Each conditional motion recipe retains its original30s watch and60s warm bound. Run engines and cases serially; do not repeatedly replay accepted subsets without a changed risk.",
+    "secOnlyRecoveryException": "Only this sec-only negative omits dirty===false from the otherwise identical genuine stylesheet/native-font/deferred-typed-receipt barrier. Its loop deliberately cannot consume unrelated font dirty at the fixed second. The observer never clears dirty, renders or advances time. The healthy NE07-dst-recovery24 companion retains its complete barrier."
   },
   "comparisonRequirements": [
     {
@@ -7545,6 +7547,307 @@
       "motionPreference": "no-preference",
       "expectedFailure": false,
       "conditionalExecution": "Run only when exact source/caller/dependency/input/environment reuse cannot establish the corresponding ledger preservation obligation. Preserve real platform scope; not part of default prayer-only subset."
+    },
+    {
+      "caseId": "NE07-mut-dst-sec-only",
+      "entry": "index.html",
+      "hash": "#lat=40.71&lon=-74.01&label=NewYork&method=2&school=0&time=24&tz=America%2FNew_York&simTime=23%3A30",
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "cacheSeeds": [],
+      "responseRules": [
+        {
+          "id": "today",
+          "kind": "prayer",
+          "day": "07-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "07-03-2026",
+                  "day": "07",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          }
+        },
+        {
+          "id": "tomorrow",
+          "kind": "prayer",
+          "day": "08-03-2026",
+          "payload": {
+            "code": 200,
+            "status": "OK",
+            "data": {
+              "timings": {
+                "Fajr": "05:00",
+                "Sunrise": "06:00",
+                "Dhuhr": "12:00",
+                "Asr": "15:30",
+                "Sunset": "18:00",
+                "Maghrib": "18:00",
+                "Isha": "19:30"
+              },
+              "date": {
+                "gregorian": {
+                  "date": "08-03-2026",
+                  "day": "08",
+                  "month": {
+                    "number": 3,
+                    "en": "March"
+                  },
+                  "year": "2026"
+                },
+                "hijri": {
+                  "date": "19-02-1448",
+                  "day": "19",
+                  "month": {
+                    "number": 2,
+                    "en": "Safar"
+                  },
+                  "year": "1448"
+                }
+              },
+              "meta": {
+                "timezone": "America/New_York"
+              }
+            }
+          },
+          "hold": true,
+          "phase": "body",
+          "failure": false
+        },
+        {
+          "id": "weather-offline",
+          "kind": "weather",
+          "failure": true
+        },
+        {
+          "id": "radar-offline",
+          "kind": "radar",
+          "failure": true
+        }
+      ],
+      "orderedActions": [
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.snapshots.some(s=>s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render&&s.render.timetableDate==='07-03-2026')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.pending().includes('tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "capture",
+          "name": "unavailable",
+          "selector": ".c",
+          "readOnly": false,
+          "firstRender": true,
+          "firstPredicate": "s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render&&s.render.timetableDate==='07-03-2026'"
+        },
+        {
+          "type": "wait",
+          "predicate": "async () => { const f=window.__prayerFixture, link=document.querySelector('link[rel=\"stylesheet\"][href^=\"https://fonts.googleapis.com/css2?\"]'); if(!link) return false; const terminal=window.__r0007FontSettlement.stylesheetTerminal(link); if(!terminal||(terminal.event==='load'&&link.media!=='all')) return false; f.readSnapshot(); await document.fonts.ready; const snapshot=f.readSnapshot(); return document.fonts.status==='loaded'&&window.__r0007FontSettlement.settled(); }",
+          "timeoutMs": 15000,
+          "awaitResult": true
+        },
+        {
+          "type": "release",
+          "id": "tomorrow"
+        },
+        {
+          "type": "wait",
+          "predicate": "window.__prayerFixture.events.some(e=>e.type==='json-settle'&&e.key==='tomorrow:1')",
+          "timeoutMs": 15000
+        },
+        {
+          "type": "sleep",
+          "ms": 250
+        },
+        {
+          "type": "checkpoint",
+          "name": "matching-tomorrow-settled",
+          "readOnly": true
+        },
+        {
+          "type": "capture",
+          "name": "after-next-settlement",
+          "selector": ".c",
+          "readOnly": false,
+          "firstRender": false
+        },
+        {
+          "type": "capture",
+          "name": "actual-arc",
+          "selector": ".arc",
+          "readOnly": false
+        }
+      ],
+      "expected": [
+        {
+          "stage": "unavailable",
+          "equals": {
+            "render/selectionState": "next-day-required",
+            "render/nextKey": null,
+            "render/nextTime": null,
+            "render/nextDate": null,
+            "render/nextZone": null,
+            "render/nextEpoch": {
+              "finite": false,
+              "value": null
+            },
+            "render/leftMin": {
+              "finite": false,
+              "value": null
+            },
+            "currentDay": "07-03-2026",
+            "dom/.nt/text": "—",
+            "dom/.left/text": "Countdown unavailable",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530,
+            "wallUtcMs": 1772944200000,
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false
+          },
+          "numberRange": {
+            "render/progress": [
+              0,
+              1
+            ]
+          },
+          "regex": {
+            "dom/.times/html": "(?s)(?!.*class=\"p on).*",
+            "dom/.arc/html": "(?s)(?!.*class=\"dot next).*",
+            "dom/#ce/text": "(?s).*2026.*"
+          },
+          "noInvalidText": true
+        },
+        {
+          "stage": "matching-tomorrow-settled",
+          "equals": {
+            "tomorrowDay": "08-03-2026",
+            "wallUtcMs": 1772944200000,
+            "clock/TIMESCALE": 0,
+            "clock/FOLLOW_WALL_CLOCK": false,
+            "clock/ADVANCING": false
+          }
+        },
+        {
+          "stage": "after-next-settlement",
+          "equals": {
+            "dom/.nt/text": "05:00",
+            "render/nextKey": "Fajr",
+            "render/nextTime": "05:00",
+            "render/nextDate": "08-03-2026",
+            "render/nextZone": "America/New_York",
+            "render/nextEpoch": 1772960400000,
+            "render/acceptedUtcMs": 1772944200000,
+            "render/leftMin": 270,
+            "render/selectionState": "next-day-target",
+            "currentDay": "07-03-2026",
+            "timezone": "America/New_York",
+            "dom/.c/geometry/width": 325,
+            "dom/.c/geometry/height": 530,
+            "render/prevMin": 1170,
+            "render/nextMin": 1740,
+            "render/progressKind": "wall-interval"
+          },
+          "contains": {
+            "dom/.left/text": "until Fajr"
+          },
+          "numberRange": {
+            "render/progress": [
+              0,
+              1
+            ]
+          },
+          "regex": {
+            "dom/.times/html": "(?s).*class=\"p on[^\"]*\" data-prayer-key=\"Fajr\"><b>Fajr</b><span class=\"tm\">05:00</span></div>.*",
+            "dom/.arc/html": "(?s).*class=\"dot next[^\"]*\"[^>]*data-prayer-key=\"Fajr\".*"
+          },
+          "noInvalidText": true
+        }
+      ],
+      "acceptanceIds": [
+        "R0007-A06",
+        "7.07",
+        "7.15",
+        "ES07-06"
+      ],
+      "status": "UNBOUND_MUTANT_RECIPE_NOT_EXECUTED",
+      "reviewRequirements": [
+        "original first-frame crop",
+        "325x530 card/header/footer readable",
+        "exact source/input/environment binding",
+        "six usable today rows/date/arc",
+        "no clock/manual render calls",
+        "unsupported gap/fold unavailable, not automatically replaced",
+        "Exact candidate/source/fixture/driver/browser/OS/font/viewport/DPR bindings; actual original native crops/video decide readability.",
+        "Receipt key/time/date/zone/epoch/countdown/highlight and selected arc marker must agree on one actual render.",
+        "No manual product render, simulated state seed or expected-target-key wait.",
+        "All six admitted rows remain usable; Sunrise stays a ring; ordinary progress/geometry preserved.",
+        "At identical04:30Z, actual admitted tomorrow and fixed clock flags precede the intended stale-output assertion; inspect original negative pixels and healthy first recovery."
+      ],
+      "independentEndpoint": {
+        "now": "2026-03-08T04:30:00Z",
+        "target": "2026-03-08T09:00:00Z",
+        "leftMin": 270,
+        "duration": "4h 30m",
+        "sameEpochBeforeAfter": true
+      },
+      "firstEligibleFrameReview": {
+        "required": true,
+        "afterEvent": {
+          "type": "json-settle",
+          "key": "tomorrow:1"
+        },
+        "currentDay": "07-03-2026",
+        "tomorrowDay": "08-03-2026",
+        "fixedAcceptedUtcMs": 1772944200000,
+        "rule": "After genuine matching adoption at the unchanged fixed epoch, inspect original all-render trace and native video for the absent required recovery; stale dash and Countdown unavailable must remain. The healthy same-acquisition companion must restore05:00/270. No manual render, clock advance or timeout credit."
+      },
+      "expectedFailure": true,
+      "variant": "sec-only",
+      "healthyControlCaseIds": [
+        "NE07-dst-recovery24"
+      ],
+      "expectedFailureContains": "dom/.nt/text: expected '05:00', observed '—'",
+      "expectedFailurePolicy": "Credit only driver exit1 with AssertionError containing the exact stale DOM predicate, successful matching-day adoption and unchanged frozen clock/flags asserted first, real completed-render snapshots and bound observed source. Timeout/setup/anchor/page error/unexpected-provider failure is not mutant discrimination.",
+      "mutationMechanism": "Existing sec-only fixture variant removes only || _renderDirty from the real render-loop guard. The frozen second does not change after matching next-day adoption. Preserve both product dirty producers; this tests ignored dirty consumption, separately from the UTC91 remove-next-dirty mutation.",
+      "setupDistinction": "Only this sec-only negative omits dirty===false from the otherwise identical genuine stylesheet/native-font/deferred-typed-receipt barrier. Its loop deliberately cannot consume unrelated font dirty at the fixed second. The observer never clears dirty, renders or advances time. The healthy NE07-dst-recovery24 companion retains its complete barrier."
     }
   ]
 }

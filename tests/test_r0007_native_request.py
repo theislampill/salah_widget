@@ -17,9 +17,9 @@ def request(profile):
 
 
 class SelectionTests(unittest.TestCase):
-    def test_full_preserves_the_original_62_cell_population(self):
+    def test_full_contains_the_original_population_and_two_sec_only_cells(self):
         plan = SELECTOR.plan_request(request("full"), RECIPE)
-        self.assertEqual(plan["plannedCells"], 62)
+        self.assertEqual(plan["plannedCells"], 64)
         self.assertEqual(set(plan["selectedCaseIds"]), {c["caseId"] for c in RECIPE["cases"]})
         self.assertFalse(plan["videoOnly"])
 
@@ -47,6 +47,52 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(set(plan["selectedCaseIds"]), set(SELECTOR.BARRIERS))
         self.assertEqual(plan["plannedCells"], 5)
         self.assertFalse(plan["videoOnly"])
+
+    def test_sec_only_profiles_include_fresh_new_york_control_before_negative(self):
+        for profile, engine, cells, video_only in [
+                ("chromium-recovery-sec-only", "chromium", 6, False),
+                ("firefox-dst-sec-only", "firefox", 2, True)]:
+            with self.subTest(profile=profile):
+                plan = SELECTOR.plan_request(request(profile), RECIPE)
+                self.assertEqual(plan["engines"], [engine])
+                self.assertEqual(plan["plannedCells"], cells)
+                self.assertEqual(plan["videoOnly"], video_only)
+                selected = plan["selectedCaseIds"]
+                self.assertLess(selected.index("NE07-dst-recovery24"),
+                                selected.index("NE07-mut-dst-sec-only"))
+                expected = set(SELECTOR.BARRIERS) if engine == "chromium" else {"NE07-dst-recovery24"}
+                self.assertEqual(set(selected), expected | {"NE07-mut-dst-sec-only"})
+
+    def test_sec_only_uses_literal_frozen_ny_adoption_and_exact_stale_output(self):
+        cases = {c["caseId"]: c for c in RECIPE["cases"]}
+        case, healthy = cases["NE07-mut-dst-sec-only"], cases["NE07-dst-recovery24"]
+        for field in ("entry", "hash", "clockPolicy", "cacheSeeds", "responseRules", "independentEndpoint"):
+            self.assertEqual(case[field], healthy[field], field)
+        self.assertNotIn("timeScale", case["hash"])
+        self.assertIn("simTime=23%3A30", case["hash"])
+        self.assertEqual(case["clockPolicy"], {"mode": "fixed", "epoch": "2026-03-08T04:30:00Z"})
+        self.assertEqual(case["variant"], "sec-only")
+        self.assertEqual(case["healthyControlCaseIds"], ["NE07-dst-recovery24"])
+        self.assertEqual(case["expectedFailureContains"], "dom/.nt/text: expected '05:00', observed '—'")
+        expected = {e["stage"]: e for e in case["expected"]}
+        for field, value in {"wallUtcMs": 1772944200000, "clock/TIMESCALE": 0,
+                             "clock/FOLLOW_WALL_CLOCK": False, "clock/ADVANCING": False}.items():
+            self.assertEqual(expected["unavailable"]["equals"][field], value)
+        self.assertEqual(expected["matching-tomorrow-settled"]["equals"], {
+            "tomorrowDay": "08-03-2026", "wallUtcMs": 1772944200000,
+            "clock/TIMESCALE": 0, "clock/FOLLOW_WALL_CLOCK": False, "clock/ADVANCING": False})
+        self.assertLess([e["stage"] for e in case["expected"]].index("matching-tomorrow-settled"),
+                        [e["stage"] for e in case["expected"]].index("after-next-settlement"))
+        after = expected["after-next-settlement"]["equals"]
+        self.assertEqual(next(iter(after)), "dom/.nt/text")
+        self.assertEqual(after["render/nextEpoch"], 1772960400000)
+        self.assertEqual(after["render/leftMin"], 270)
+        self.assertEqual(after, next(e["equals"] for e in healthy["expected"] if e["stage"] == "after-next-settlement"))
+        for actual, original in zip(case["orderedActions"], healthy["orderedActions"], strict=True):
+            if original.get("awaitResult"):
+                self.assertEqual(actual, {**original, "predicate": original["predicate"].replace("&&snapshot.dirty===false", "")})
+            else:
+                self.assertEqual(actual, original)
 
     def test_invalid_or_command_bearing_requests_fail_closed(self):
         examples = [None, [], {}, request("typo"), dict(request("full"), arguments=["--case-timeout-seconds", "99999"]),

@@ -140,3 +140,39 @@ test('unused relevant faces and unrelated font families do not invent product di
   for(const face of [{family:'Inter',status:'unloaded'},{family:'Unrelated',status:'loaded'}])
     assert.equal(await evaluate(p.source,scene({faces:[face]})),true,p.id+' '+face.family+' '+face.status);
 }));
+
+function secOnlyPredicate(){
+  const c=recipes.cases.find(c=>c.caseId==='NE07-mut-dst-sec-only');
+  assert(c,'literal NY sec-only native case exists');
+  const release=c.orderedActions.findIndex(a=>a.type==='release'&&a.id==='tomorrow');
+  const barrier=c.orderedActions[release-1];
+  assert.equal(barrier.type,'wait');assert.equal(barrier.awaitResult,true);
+  return barrier.predicate;
+}
+test('sec-only precondition accepts ignored dirty only after genuine font settlement; healthy still rejects it',async()=>{
+  const source=secOnlyPredicate(),face={family:'Inter',weight:'400',style:'normal',status:'loaded'};
+  const s=scene({dirty:true,faces:[face]});
+  assert.equal(await evaluate(source,s),false,'queued native completion is not settlement');
+  s.fire('loadingdone');assert.equal(await evaluate(source,s),false,'dispatch has not returned');
+  s.flushObservers();assert.equal(await evaluate(source,s),true,'settled fonts do not require the mutant to consume dirty');
+  assert.equal(s.state.dirty,true,'observer never clears product dirty');
+  const healthy=predicates.find(p=>p.id==='NE07-dst-recovery24');
+  assert.equal(await evaluate(healthy.source,s),false,'healthy recovery keeps the full clear-dirty precondition');
+  s.clearDirty();assert.equal(await evaluate(healthy.source,s),true);
+});
+test('sec-only precondition retains real stylesheet identity, activation and typed font requirements',async()=>{
+  const source=secOnlyPredicate();
+  for(const options of [{event:null},{linkPresent:false},{media:'print'},{trusted:false},{differentTarget:true},
+      {url:'https://fonts.googleapis.com/css2?family=Other'},{faces:[{family:'Inter',status:'loaded'}]}])
+    assert.equal(await evaluate(source,scene({dirty:true,...options})),false,JSON.stringify(options));
+  const face={family:'Inter',status:'error'},s=scene({dirty:true,faces:[face]});
+  s.fire('loadingdone');s.flushObservers();assert.equal(await evaluate(source,s),false,'wrong terminal type');
+  s.fire('loadingerror');s.flushObservers();assert.equal(await evaluate(source,s),true,'genuine failure permits settled fallback');
+  s.state.faces=[{...face}];assert.equal(await evaluate(source,s),false,'replacement cannot inherit receipt');
+});
+test('sec-only precondition still awaits real pending fonts exposed by read-only layout',async()=>{
+  const s=scene({dirty:true,layoutStartsLoad:true});let finished=false;
+  const result=evaluate(secOnlyPredicate(),s).then(value=>{finished=true;return value;});
+  await new Promise(resolve=>setImmediate(resolve));assert.equal(finished,false);
+  assert(s.state.readyReads>0);s.settle();assert.equal(await result,true);assert.equal(s.state.dirty,true);
+});

@@ -45,6 +45,12 @@ def plan_request(request, recipe):
     elif profile == "chromium-recovery":
         engines, video_only = ["chromium"], False
         requested = BARRIERS
+    elif profile == "chromium-recovery-sec-only":
+        engines, video_only = ["chromium"], False
+        requested = BARRIERS + ["NE07-mut-dst-sec-only"]
+    elif profile == "firefox-dst-sec-only":
+        engines, video_only = ["firefox"], True
+        requested = ["NE07-mut-dst-sec-only"]
     else:
         raise ValueError("unknown native request profile")
     selected = native.select_cases(recipe, requested)
